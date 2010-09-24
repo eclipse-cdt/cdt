@@ -12,6 +12,10 @@ package org.eclipse.cdt.tests.dsf.vm;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.dsf.concurrent.DefaultDsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
+import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.tests.dsf.IViewerUpdatesListenerConstants;
 import org.eclipse.cdt.tests.dsf.vm.TestModel.TestElement;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
@@ -28,9 +32,11 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Tests to measure the performance of the viewer updates.  
  */
-abstract public class PerformanceTests extends TestCase implements ITestModelUpdatesListenerConstants {
+abstract public class PerformanceTests extends TestCase implements IViewerUpdatesListenerConstants {
     Display fDisplay;
     Shell fShell;
+    DsfExecutor fDsfExecutor;
+    DsfSession fDsfSession;
     ITreeModelViewer fViewer;
     TestModelUpdatesListener fListener;
     TestModel fModel;
@@ -46,6 +52,9 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
      */
     @Override
     protected void setUp() throws Exception {
+        fDsfExecutor = new DefaultDsfExecutor();
+        fDsfSession = DsfSession.startSession(fDsfExecutor, getClass().getName());
+        
         fDisplay = PlatformUI.getWorkbench().getDisplay();
         fShell = new Shell(fDisplay/*, SWT.ON_TOP | SWT.SHELL_TRIM*/);
         fShell.setMaximized(true);
@@ -55,7 +64,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
         
         fListener = new TestModelUpdatesListener(fViewer, false, false);
        
-        fModel = new TestModel();
+        fModel = new TestModel(fDsfSession);
         fModel.setRoot( new TestElement(fModel, "root", new TestElement[0] ) ); 
         fModel.setElementChildren(TreePath.EMPTY, makeModelElements(fModel, getTestModelDepth(), "model"));
         fVMAdapter = new TestModelVMAdapter();
@@ -78,6 +87,8 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
         // Close the shell and exit.
         fShell.close();
         while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        DsfSession.endSession(fDsfSession);
+        fDsfExecutor.shutdown();
     }
 
     /**
@@ -166,32 +177,31 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
     }
 
     public void _x_testRefreshStructReplaceElements() {
-        TestModel model = new TestModel();
-        model.setRoot( new TestElement(model, "root", new TestElement[0] ) ); 
-        model.setElementChildren(TreePath.EMPTY, makeModelElements(model, getTestModelDepth(), "model"));
+        fModel.setRoot( new TestElement(fModel, "root", new TestElement[0] ) ); 
+        fModel.setElementChildren(TreePath.EMPTY, makeModelElements(fModel, getTestModelDepth(), "model"));
         
         fViewer.setAutoExpandLevel(-1);
 
         // Create the listener
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+        fListener.reset(TreePath.EMPTY, fModel.getRootElement(), -1, true, false); 
 
         // Set the input into the view and update the view.
-        fViewer.setInput(model.getRootElement());
+        fViewer.setInput(fModel.getRootElement());
         while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
-        model.validateData(fViewer, TreePath.EMPTY);
+        fModel.validateData(fViewer, TreePath.EMPTY);
 
         Performance perf = Performance.getDefault();
         PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
         try {
             for (int i = 0; i < 2000; i++) {
                 // Update the model
-                model.setElementChildren(TreePath.EMPTY, makeModelElements(model, getTestModelDepth(), "pass " + i));
+                fModel.setElementChildren(TreePath.EMPTY, makeModelElements(fModel, getTestModelDepth(), "pass " + i));
                 
-                TestElement element = model.getRootElement();
+                TestElement element = fModel.getRootElement();
                 fListener.reset(TreePath.EMPTY, element, -1, false, false);
                 
                 meter.start();
-                model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
+                //fModel.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
                 while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) 
                     if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
                 //model.validateData(fViewer, TreePath.EMPTY);

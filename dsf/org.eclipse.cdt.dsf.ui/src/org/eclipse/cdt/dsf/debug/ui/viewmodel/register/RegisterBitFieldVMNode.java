@@ -22,8 +22,8 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
+import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IBitFieldChangedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IBitFieldDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IBitFieldDMData;
@@ -33,11 +33,12 @@ import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.ErrorLabelForeground;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.ErrorLabelText;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.AbstractExpressionVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueLabelText;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueVMUtil;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueRetriever;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IFormattedValueVMContext;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterBitFieldCellModifier.BitFieldEditorStyle;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableLabelFont;
@@ -56,6 +57,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelForeground;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.VMDelegatingPropertiesUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.ICachingVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.StaleDataLabelBackground;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.StaleDataLabelForeground;
@@ -83,7 +85,6 @@ import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 
 public class RegisterBitFieldVMNode extends AbstractExpressionVMNode 
@@ -173,12 +174,25 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      */    
     private IElementLabelProvider fLabelProvider;
 
+    /**
+     * Retriever for formatted values configured for this VM node.
+     * @since 2.2
+     */
+    private final FormattedValueRetriever fFormattedValueRetriever;
+    
     public RegisterBitFieldVMNode(AbstractDMVMProvider provider, DsfSession session, SyncRegisterDataAccess access) {
         super(provider, session, IBitFieldDMContext.class);
         fSyncRegisterDataAccess = access;
         fLabelProvider = createLabelProvider();
+        fFormattedValueRetriever = 
+            new FormattedValueRetriever(this, session, IRegisters.class, IBitFieldDMContext.class);
     }
-    
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        fFormattedValueRetriever.dispose();
+    }
     
     @Override
     public String toString() {
@@ -284,15 +298,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
                         IRegisterVMConstants.PROP_CURRENT_MNEMONIC_LONG_NAME}), 
                 new FormattedValueLabelText(),
                 new ErrorLabelText(),
-                new LabelForeground(new RGB(255, 0, 0)) // TODO: replace with preference error color
-                {
-                    { setPropertyNames(new String[] { PROP_NAME }); }
-
-                    @Override
-                    public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
-                        return !status.isOK();
-                    }
-                },
+                new ErrorLabelForeground(),
                 new LabelBackground(
                     DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB()) 
                 {
@@ -493,23 +499,51 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
     }
 
     /**
+     * Update the variable view properties.  The formatted values need to be 
+     * updated in the VM executor thread while the rest of the properties is
+     * updated in the service session's executor thread.  The implementation
+     * splits the handling of the updates to accomplish that.  
+     * 
      * @see IElementPropertiesProvider#update(IPropertiesUpdate[])
      * 
      * @since 2.0
      */    
     public void update(final IPropertiesUpdate[] updates) {
+        final CountingRequestMonitor countingRm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), null) {
+            @Override
+            protected void handleCompleted() {
+                for (int i = 0; i < updates.length; i++) {
+                    updates[i].done();
+                }
+            };
+        };
+        int count = 0;
+
+        fFormattedValueRetriever.update(updates, countingRm);
+        count++;
+
+        final IPropertiesUpdate[] subUpdates = new IPropertiesUpdate[updates.length];
+        for (int i = 0; i < updates.length; i++) {
+            final IPropertiesUpdate update = updates[i];
+            subUpdates[i] = new VMDelegatingPropertiesUpdate(update, countingRm);
+            count++;
+        }
+        countingRm.setDoneCount(count);
+
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
                 public void run() {
-                    updatePropertiesInSessionThread(updates);
+                    updatePropertiesInSessionThread(subUpdates);
                 }});
         } catch (RejectedExecutionException e) {
-            for (IPropertiesUpdate update : updates) {
-                handleFailedUpdate(update);
+            for (IPropertiesUpdate subUpdate : subUpdates) {
+                subUpdate.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Session executor shut down " + getSession().getExecutor(), e)); //$NON-NLS-1$
+                subUpdate.done();
             }
         }
     }
     
+
     //
     //  @param return-value Boolean.TRUE  --> Show Types ICON is     selected/depressed
     //  @param return-value Boolean.FALSE --> Show Types ICON is not selected/depressed
@@ -540,11 +574,6 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             };
         };
         int count = 0;
-        
-        if (service != null) {
-            FormattedValueVMUtil.updateFormattedValues(updates, service, IBitFieldDMContext.class, countingRm);
-            count++;
-        }
         
         for (final IPropertiesUpdate update : updates) {
             IExpression expression = (IExpression)DebugPlugin.getAdapter(update.getElement(), IExpression.class);

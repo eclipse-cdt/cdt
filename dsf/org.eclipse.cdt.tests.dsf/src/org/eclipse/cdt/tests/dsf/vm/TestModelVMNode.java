@@ -13,9 +13,10 @@ package org.eclipse.cdt.tests.dsf.vm;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueLabelText;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMNode;
+import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
-import org.eclipse.cdt.dsf.ui.viewmodel.IVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
@@ -23,6 +24,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
+import org.eclipse.cdt.tests.dsf.DsfTestPlugin;
 import org.eclipse.cdt.tests.dsf.vm.TestModel.TestElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -33,7 +35,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdat
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 
 /**
- * 
+ * @since 2.2
  */
 public class TestModelVMNode extends AbstractVMNode implements IRootVMNode, IElementLabelProvider, IElementPropertiesProvider {
 
@@ -41,10 +43,16 @@ public class TestModelVMNode extends AbstractVMNode implements IRootVMNode, IEle
     
     final private static PropertiesBasedLabelProvider fLabelProvider = new PropertiesBasedLabelProvider();
     {
+        LabelColumnInfo idLabelInfo = new LabelColumnInfo(new LabelAttribute[] { 
+            new LabelText("{0}", new String[] { PROP_TEST_ELEMENT_LABEL })
+        });  
+        
+        fLabelProvider.setColumnInfo(PropertiesBasedLabelProvider.ID_COLUMN_NO_COLUMNS, idLabelInfo); 
+        fLabelProvider.setColumnInfo(TestModelCachingVMProvider.COLUMN_ID, idLabelInfo);
         fLabelProvider.setColumnInfo(
-            PropertiesBasedLabelProvider.ID_COLUMN_NO_COLUMNS, 
-            new LabelColumnInfo(new LabelAttribute[] { 
-                new LabelText("{0}", new String[] { PROP_TEST_ELEMENT_LABEL })
+            TestModelCachingVMProvider.COLUMN_FORMATTED_VALUE, 
+            new LabelColumnInfo(new LabelAttribute[] {
+                new FormattedValueLabelText()
             }));
     }
     
@@ -52,7 +60,7 @@ public class TestModelVMNode extends AbstractVMNode implements IRootVMNode, IEle
         fLabelProvider.update(updates);
     }
     
-    public TestModelVMNode(IVMProvider provider) {
+    public TestModelVMNode(AbstractVMProvider provider) {
         super(provider);
     }
 
@@ -123,7 +131,7 @@ public class TestModelVMNode extends AbstractVMNode implements IRootVMNode, IEle
     }
 
     public void createRootDelta(Object rootObject, Object event, DataRequestMonitor<VMDelta> rm) {
-        rm.setStatus(new Status(IStatus.ERROR, TestDsfVMPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED,  "Not implemented", null));
+        rm.setStatus(new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED,  "Not implemented", null));
         rm.done();
     }
 

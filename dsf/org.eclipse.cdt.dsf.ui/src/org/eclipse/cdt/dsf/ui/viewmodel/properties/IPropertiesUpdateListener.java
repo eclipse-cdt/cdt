@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,20 +10,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel.properties;
 
-import org.eclipse.osgi.util.NLS;
-
 /**
- * @noinstantiate This class is not intended to be instantiated by clients.
+ * Listener for properties updates requested by a property based label provider.
+ * 
+ * @since 2.2
  */
-class MessagesForProperties extends NLS {
-    public static String DefaultLabelMessage_label;
-    public static String PropertiesUpdateStatus_message;
+public interface IPropertiesUpdateListener {
     
-    static {
-        // initialize resource bundle
-        NLS.initializeMessages(MessagesForProperties.class.getName(), MessagesForProperties.class);
-    }
+    /**
+     * Indicates that the given updates were requested from a properties provider.
+     */
+    public void propertiesUpdatesStarted(IPropertiesUpdate[] updates);
+    
+    /**
+     * Indicates that the given update has been completed.
+     */
+    public void propertiesUpdateCompleted(IPropertiesUpdate update);
 
-    private MessagesForProperties() {
-    }
 }

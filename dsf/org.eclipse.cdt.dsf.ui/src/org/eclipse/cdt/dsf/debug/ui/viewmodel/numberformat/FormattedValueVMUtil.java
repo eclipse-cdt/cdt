@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat;
 
-import com.ibm.icu.text.MessageFormat;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
@@ -34,6 +33,8 @@ import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * A helper class for View Model Node implementations that support elements 
  * to be formatted using different number formats.  The various static methods in 
@@ -47,6 +48,12 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  */
 public class FormattedValueVMUtil {
 
+    /**
+     * Cache to avoid creating many duplicate strings of formats and properties.
+     */
+    private static Map<String, Map<String, String>> fFormatProperties = 
+        Collections.synchronizedMap(new TreeMap<String, Map<String, String>>());
+    
     /**
      * Common map of user-readable labels for format IDs.  
      */
@@ -66,7 +73,7 @@ public class FormattedValueVMUtil {
      * add its label to the map of format IDs using this method. 
      * 
      * @param formatId Format ID to set the label for.
-     * @param label User-readable lable for a format.
+     * @param label User-readable label for a format.
      */
     public static void setFormatLabel(String formatId, String label) {
         fFormatLabels.put(formatId, label);
@@ -87,20 +94,102 @@ public class FormattedValueVMUtil {
     
     /**
      * Returns an element property representing an element value in a given format.  
+
+     * @deprecated Replaced by {@link #getPropertyForFormatId(String, String)}
      */
     public static String getPropertyForFormatId(String formatId) {
+        return getPropertyForFormatId(formatId, ""); //$NON-NLS-1$
+    }    
+
+    /**
+     * Returns an element property representing an element value in a given format.  
+     * 
+     * @param Format ID to create the property for.
+     * @param prefix The prefix for the property that is used to distinguish 
+     * it from other number format values in a given property map.   May be 
+     * <code>null</code> or an empty string if no prefix is used.
+     * @return The generated property name.
+     * 
+     * @since 2.2
+     */
+    public static String getPropertyForFormatId(String formatId, String prefix) {
         if (formatId == null) {
             return null;
         }
-        return IDebugVMConstants.PROP_FORMATTED_VALUE_BASE + "." + formatId;  //$NON-NLS-1$ 
+        if (prefix == null) {
+            prefix = ""; //$NON-NLS-1$
+        }
+        synchronized(fFormatProperties) {
+            Map<String, String> formatsMap = getFormatsMap(prefix);
+            String property = formatsMap.get(formatId);
+            if (property == null) {
+                property = (prefix + IDebugVMConstants.PROP_FORMATTED_VALUE_BASE + "." + formatId).intern();  //$NON-NLS-1$
+                formatsMap.put(formatId, property);
+            }
+            return property;
+        }
+    }    
+
+    private static Map<String, String> getFormatsMap(String prefix) {
+        synchronized(fFormatProperties) {
+            Map<String, String> prefixMap = fFormatProperties.get(prefix);
+            if (prefixMap == null) {
+                prefixMap = new TreeMap<String, String>();
+                fFormatProperties.put(prefix, prefixMap);
+            }
+            return prefixMap;
+        }
+    }
+    
+    /**
+     * Returns a format ID based on the element property representing a 
+     * formatted element value.
+     * 
+     * @deprecated Replaced by {@link #getFormatFromProperty(String, String)}
+     */
+    public static String getFormatFromProperty(String property) {
+        return getFormatFromProperty(property, ""); //$NON-NLS-1$
     }    
 
     /**
      * Returns a format ID based on the element property representing a 
-     * formatted element value. 
+     * formatted element value.  This method has an additional prefix parameter
+     * which is used when multiple number formats are stored in a single 
+     * property map. 
+     * 
+     * @param property The property to extract the format from.
+     * @param prefix The prefix for the property that is used to distinguish 
+     * it from other number format values in a given property map.   May be 
+     * <code>null</code> or an empty string if no prefix is used.
+     * @return The format ID.
+     * 
+     * @throws IllegalArgumentException if the property is not a formatted value
+     * property.
+     * 
+     * @since 2.2
      */
-    public static String getFormatFromProperty(String property) {
-        return property.substring(IDebugVMConstants.PROP_FORMATTED_VALUE_BASE.length() + 1); 
+    public static String getFormatFromProperty(String property, String prefix) {
+        if (prefix == null) {
+            prefix = ""; //$NON-NLS-1$
+        }
+        
+        synchronized(fFormatProperties) {
+            Map<String, String> formatsMap = getFormatsMap(prefix);
+            for (Map.Entry<String, String> entry : formatsMap.entrySet()) {
+                if (entry.getValue().equals(property)) {
+                    return entry.getKey();
+                }
+            }
+            if ( !property.startsWith(prefix) || 
+                !property.startsWith(IDebugVMConstants.PROP_FORMATTED_VALUE_BASE, prefix.length()) )
+            {
+               throw new IllegalArgumentException("Property " + property + " is not a valid formatted value format property.");  //$NON-NLS-1$//$NON-NLS-2$
+            }
+            String formatId = property.substring(
+                prefix.length() + IDebugVMConstants.PROP_FORMATTED_VALUE_BASE.length() + 1).intern();
+            formatsMap.put(formatId, property);
+            return formatId;
+        }
     }    
 
 
@@ -116,6 +205,7 @@ public class FormattedValueVMUtil {
         return IFormattedValues.NATURAL_FORMAT;        
     }
 
+    
     /**
      * This method fills in the formatted value properties in the given array 
      * of property update objects using data retrieved from the given 
@@ -131,6 +221,9 @@ public class FormattedValueVMUtil {
      * method assures that there is no ambiguity in which context should be 
      * used.
      * @param monitor Request monitor used to signal completion of work
+     * 
+     * @deprecated This method has been replaced by the {@link FormattedValueRetriever}
+     * utility.
      */
     @ConfinedToDsfExecutor("service.getExecutor()")
     public static void updateFormattedValues(

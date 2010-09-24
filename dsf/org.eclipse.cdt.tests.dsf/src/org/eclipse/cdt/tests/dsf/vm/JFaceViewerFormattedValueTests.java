@@ -12,26 +12,27 @@ package org.eclipse.cdt.tests.dsf.vm;
 
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 2.2
  */
-public class VirtualViewerPerformanceTests extends PerformanceTests {
+public class JFaceViewerFormattedValueTests extends FormattedValueTests {
     
-    public VirtualViewerPerformanceTests(String name) {
+    public JFaceViewerFormattedValueTests(String name) {
         super(name);
     }
 
     @Override
     protected ITreeModelContentProviderTarget createViewer(Display display, Shell shell) {
-        return new VirtualTreeModelViewer(fDisplay, 0, new PresentationContext("TestViewer"));
+        return new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer"));
     }
     
     @Override
     protected int getTestModelDepth() {
-        return 7;
+        return 5;
     }
 }

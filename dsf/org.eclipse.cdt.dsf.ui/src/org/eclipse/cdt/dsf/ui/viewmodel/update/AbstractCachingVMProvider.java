@@ -14,10 +14,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -40,6 +42,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.VMChildrenUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMHasChildrenUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesUpdateStatus;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.VMPropertiesUpdate;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -62,7 +65,7 @@ import org.eclipse.swt.widgets.TreeItem;
  * @since 1.0
  */
 public class AbstractCachingVMProvider extends AbstractVMProvider 
-    implements ICachingVMProvider, IElementPropertiesProvider, ICachingVMProviderExtension
+    implements ICachingVMProvider, IElementPropertiesProvider, ICachingVMProviderExtension, ICachingVMProviderExtension2 
 {
     /**
      * @since 2.0
@@ -175,7 +178,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
     /**
      * Entry with cached element data. 
      */
-    private static class ElementDataEntry extends Entry {
+    private static class ElementDataEntry extends Entry implements ICacheEntry {
         ElementDataEntry(ElementDataKey key) {
             super(key);
         }
@@ -254,6 +257,16 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                 ", properties=" + fProperties + //$NON-NLS-1$ 
                 ", oldProperties=" + fArchiveProperties + "]"; //$NON-NLS-1$ //$NON-NLS-2$ 
         }
+
+        public IVMNode getNode() { return ((ElementDataKey)fKey).fNode; }
+        public Object getViewerInput() { return ((ElementDataKey)fKey).fViewerInput; }
+        public TreePath getElementPath() { return ((ElementDataKey)fKey).fPath; }
+        public boolean isDirty() { return fDirty; }
+        public Boolean getHasChildren() { return fHasChildren; }
+        public Integer getChildCount() { return fChildrenCount; }
+        public Map<Integer, Object> getChildren() { return fChildren; }
+        public Map<String, Object> getProperties() { return fProperties; }
+        public java.util.Map<String,Object> getArchiveProperties() { return fArchiveProperties; }
     }
 
     /**
@@ -294,7 +307,6 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         public String toString() {
             return fElementTester.toString() + " " + fRootElement.toString(); //$NON-NLS-1$
         }
-
     }
     
     /**
@@ -443,13 +455,18 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         }
     }
     
+    public ICacheEntry getCacheEntry(IVMNode node, Object viewerInput, TreePath path) {
+        ElementDataKey key = makeEntryKey(node, viewerInput, path);
+        return getElementDataEntry(key, false);
+    }
+    
     @Override
     public void updateNode(final IVMNode node, IHasChildrenUpdate[] updates) {
         LinkedList <IHasChildrenUpdate> missUpdates = new LinkedList<IHasChildrenUpdate>();
         for(final IHasChildrenUpdate update : updates) {
             // Find or create the cache entry for the element of this update.
             ElementDataKey key = makeEntryKey(node, update);
-            final ElementDataEntry entry = getElementDataEntry(key);
+            final ElementDataEntry entry = getElementDataEntry(key, true);
             updateRootElementMarker(key.fRootElement, node, update);
             
             // Check if the cache entry has this request result cached. 
@@ -498,7 +515,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
     public void updateNode(final IVMNode node, final IChildrenCountUpdate update) {
         // Find or create the cache entry for the element of this update.
         ElementDataKey key = makeEntryKey(node, update);
-        final ElementDataEntry entry = getElementDataEntry(key);
+        final ElementDataEntry entry = getElementDataEntry(key, true);
         updateRootElementMarker(key.fRootElement, node, update);
         
         // Check if the cache entry has this request result cached. 
@@ -541,7 +558,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
     public void updateNode(final IVMNode node, final IChildrenUpdate update) {
         // Find or create the cache entry for the element of this update.
         ElementDataKey key = makeEntryKey(node, update);
-        final ElementDataEntry entry = getElementDataEntry(key);
+        final ElementDataEntry entry = getElementDataEntry(key, true);
         updateRootElementMarker(key.fRootElement, node, update);
         
         final int flushCounter = entry.fFlushCounter;
@@ -928,14 +945,21 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
      * update and creates an element cache entry key.
      */
     private ElementDataKey makeEntryKey(IVMNode node, IViewerUpdate update) {
-        Object rootElement = update.getViewerInput();  // Default
+        return makeEntryKey(node, update.getViewerInput(), update.getElementPath());
+    }
+    
+    /**
+     * Convenience class that searches for the root element for the given
+     * update and creates an element cache entry key.
+     */
+    private ElementDataKey makeEntryKey(IVMNode node, Object viewerInput, TreePath path) {
+        Object rootElement = viewerInput;  // Default
         outer: for (IVMModelProxy proxy : getActiveModelProxies()) {
             Object proxyRoot = proxy.getRootElement();
-            if (proxyRoot.equals(update.getViewerInput())) {
+            if (proxyRoot.equals(viewerInput)) {
                 rootElement = proxyRoot;
                 break;
             }
-            TreePath path = update.getElementPath();
             for (int i = 0; i < path.getSegmentCount(); i++) {
                 if (proxyRoot.equals(path.getSegment(i))) {
                     rootElement = proxyRoot;
@@ -944,27 +968,29 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
             }
         }
         
-        return new ElementDataKey(rootElement, node, update.getViewerInput(), update.getElementPath());
+        return new ElementDataKey(rootElement, node, viewerInput, path);
     }
+
     
     /**
      * This is the only method that should be used to access a cache entry.  
      * It creates a new entry if needed and it maintains the ordering in 
      * the least-recently-used linked list.   
+     * @param create Create the entry if needed.
+     * @return cache element entry, may be <code>null</code> if entry does 
+     * not exist and the create parameter is <code>false</code>
      */
-    private ElementDataEntry getElementDataEntry(ElementDataKey key) {
+    private ElementDataEntry getElementDataEntry(ElementDataKey key, boolean create) {
         assert key != null;
         ElementDataEntry entry = (ElementDataEntry)fCacheData.get(key);
-        if (entry == null) {
+        if (entry != null) {
+            // Entry exists, move it to the end of the list.
+            entry.reinsert(fCacheListHead);
+        } else if (create) {
             // Create a new entry and add it to the end of the list.
             entry = new ElementDataEntry(key);
             addEntry(key, entry);
-        } else {
-            // Entry exists, move it to the end of the list.
-            entry.reinsert(fCacheListHead);
         }
-        
-        
         return entry;
     }
 
@@ -991,7 +1017,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         if (created) {
             ElementDataKey rootElementDataKey = 
                 new ElementDataKey(rootElement, node, update.getViewerInput(), update.getElementPath());
-            ElementDataEntry entry = getElementDataEntry(rootElementDataKey);
+            ElementDataEntry entry = getElementDataEntry(rootElementDataKey, false);
             
             Object[] rootElementChildren = getActiveUpdatePolicy().getInitialRootElementChildren(rootElement);
             if (rootElementChildren != null) {
@@ -1104,7 +1130,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         for(final IPropertiesUpdate update : updates) {
             // Find or create the cache entry for the element of this update.
             ElementDataKey key = makeEntryKey(node, update);
-            final ElementDataEntry entry = getElementDataEntry(key);
+            final ElementDataEntry entry = getElementDataEntry(key, true);
             updateRootElementMarker(key.fRootElement, node, update);
             
             // The request can be retrieved from cache if all the properties that were requested in the update are 
@@ -1120,28 +1146,59 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                 update.setAllProperties(entry.fProperties);
                 update.setStatus((IStatus)entry.fProperties.get(PROP_UPDATE_STATUS));
                 update.done();
-            } else if (entry.fProperties != null && entry.fDirty) {
-                // Cache miss, BUT the entry is dirty already.  Rather then fetch new data from model, return 
-                // incomplete data to user.  User can refresh the view to get the complete data set.
-                if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                    DsfUIPlugin.debug("cacheHitPropertiesPartialStaleData(node = " + node + ", update = " + update + ", " + entry.fProperties + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                }
-                if (entry.fProperties.containsKey(PROP_UPDATE_POLICY_ID)) {
-                    entry.fProperties.put(PROP_UPDATE_POLICY_ID, getActiveUpdatePolicy().getID());
-                }
-                update.setAllProperties(entry.fProperties);
-                update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_STATE, "Cache contains partial stale data for this request.", null)); //$NON-NLS-1$
-                update.done();
             } else {
-                // Cache miss!  Save the flush counter of the entry and create a proxy update.
+                // Cache miss!  Check if already cached properties can be re-used. 
+                Set<String> missingProperties = null;
+                if (entry.fProperties != null) {
+                    missingProperties = new HashSet<String>(update.getProperties().size() * 4/3);
+                    missingProperties.addAll(update.getProperties());
+                    missingProperties.removeAll(entry.fProperties.keySet());
+                    
+                    if (entry.fDirty) {
+                        // Cache miss, BUT the entry is dirty already.  Determine which properties can still be updated 
+                        // (if any), then request the missing properties from node, or return an error.
+                        if (getActiveUpdatePolicy() instanceof IVMUpdatePolicyExtension) {
+                            IVMUpdatePolicyExtension updatePolicyExt = (IVMUpdatePolicyExtension)getActiveUpdatePolicy();
+                            for (Iterator<String> itr = missingProperties.iterator(); itr.hasNext();) {
+                                String missingProperty = itr.next();
+                                if ( !updatePolicyExt.canUpdateDirtyProperty(entry, missingProperty) ) {
+                                    itr.remove();
+                                    PropertiesUpdateStatus.getPropertiesStatus(update).setStatus(
+                                        missingProperty, 
+                                        DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_STATE, "Cache contains stale data.  Refresh view.", null ));//$NON-NLS-1$                                    
+                                }
+                            }
+                        } else {
+                            PropertiesUpdateStatus.getPropertiesStatus(update).setStatus(
+                                missingProperties.toArray(new String[missingProperties.size()]), 
+                                DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_STATE, "Cache contains stale data.  Refresh view.", null ));//$NON-NLS-1$                                    
+                            missingProperties.clear();
+                        }
+                        if (missingProperties.isEmpty()) {
+                            if (entry.fProperties.containsKey(PROP_UPDATE_POLICY_ID)) {
+                                entry.fProperties.put(PROP_UPDATE_POLICY_ID, getActiveUpdatePolicy().getID());
+                            }
+                            update.setAllProperties(entry.fProperties);
+                            update.done();
+                            return;
+                        }
+                    }
+                } else {
+                    missingProperties = update.getProperties();
+                }
+                
+                final Set<String> _missingProperties = missingProperties;
+                // Save the flush counter of the entry and create a proxy update.
                 final int flushCounter = entry.fFlushCounter;
                 missUpdates.add(new VMPropertiesUpdate(
-                    update.getProperties(),
+                    missingProperties,
                     update, 
                     new ViewerDataRequestMonitor<Map<String, Object>>(getExecutor(), update) {
                         @Override
                         protected void handleCompleted() {
-                            Map<String, Object> properties;
+                            PropertiesUpdateStatus missUpdateStatus = (PropertiesUpdateStatus)getStatus();
+                            Map<String, Object> cachedProperties;
+                            PropertiesUpdateStatus cachedStatus;
                             if (!isCanceled() && flushCounter == entry.fFlushCounter) {
                                 // We are caching the result of this update.  Copy the properties from the update
                                 // to the cached properties map.
@@ -1150,56 +1207,67 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                                     if (update.getProperties().contains(PROP_CACHE_ENTRY_DIRTY)) {
                                         entry.fProperties.put(PROP_CACHE_ENTRY_DIRTY, entry.fDirty);
                                     }
+                                    entry.fProperties.put(PROP_UPDATE_STATUS, new PropertiesUpdateStatus());
                                 } 
-                                properties = entry.fProperties;
-                                properties.putAll(getData());
+                                cachedProperties = entry.fProperties;
+                                cachedProperties.putAll(getData());
                                 
-								// Make sure that all the properties that were
-								// requested by the update object are in the
-								// cache entry's properties map. It's possible the
-								// ViewerDataRequestMonitor was able to provide
-								// us only a subset of the requested ones. We
-								// want to prevent that from causing future
-								// cache misses, since a cache hit requires the
-								// cache entry to contain all requested
-								// properties. Use a null value for the missing
-                                // items.
-                                for (String updateProperty : update.getProperties()) {
-                                    if (!properties.containsKey(updateProperty)) {
-                                        properties.put(updateProperty, null);
+								// Make sure that all the properties that were requested by the update object are in 
+                                // the cache entry's properties map. It's possible he ViewerDataRequestMonitor was able 
+                                // to provide us only a subset of the requested ones. We want to prevent that from 
+                                // causing future cache misses, since a cache hit requires the cache entry to contain 
+                                // all requested properties. Use a null value for the missing items.
+                                for (String property : _missingProperties) {
+                                    if (!getData().containsKey(property)) {
+                                        cachedProperties.put(property, null);
                                     }
                                 }
+                                
+                                // Merge status from properties that came back from the node into the status that's in 
+                                // the cache. 
+                                cachedStatus = (PropertiesUpdateStatus)cachedProperties.get(PROP_UPDATE_STATUS);
+                                cachedStatus = PropertiesUpdateStatus.mergePropertiesStatus(
+                                    cachedStatus, missUpdateStatus, _missingProperties);
+                                cachedProperties.put(PROP_UPDATE_STATUS, cachedStatus);
                             } else {
-                                // We are not caching the result of this update, but we should still
-                                // return valid data to the client.  In case the update was canceled 
-                                // we can also return valid data to the client even if the client
-                                // is likely to ignore it since the cost of doing so is relatively low.
-                                properties = new HashMap<String, Object>((getData().size() + 3) * 4/3);        
-                                if (update.getProperties().contains(PROP_CACHE_ENTRY_DIRTY)) {
-                                    properties.put(PROP_CACHE_ENTRY_DIRTY, Boolean.TRUE);
+                                // We are not caching the result of this update, but we should still return valid data 
+                                // to the client.  In case the update was canceled we can also return valid data to the 
+                                // client even if the client is likely to ignore it since the cost of doing so is 
+                                // relatively low.
+                                // Create a temporary cached properties map and add existing cache and node update 
+                                // properties to it.
+                                if (entry.fProperties != null) {
+                                    cachedProperties = new HashMap<String, Object>((entry.fProperties.size() + getData().size() + 3) * 4/3);
+                                    cachedProperties.putAll(entry.fProperties);
+                                    cachedStatus = PropertiesUpdateStatus.mergePropertiesStatus(
+                                        (PropertiesUpdateStatus)cachedProperties.get(PROP_UPDATE_STATUS), 
+                                        missUpdateStatus, _missingProperties);
+                                } else {
+                                    cachedProperties = new HashMap<String, Object>((getData().size() + 3) * 4/3);
+                                    cachedStatus = missUpdateStatus;
                                 }
-                                properties.putAll(getData());
+                                cachedProperties.putAll(getData());
+                                cachedProperties.put(PROP_UPDATE_STATUS, missUpdateStatus);
+                                if (update.getProperties().contains(PROP_CACHE_ENTRY_DIRTY)) {
+                                    cachedProperties.put(PROP_CACHE_ENTRY_DIRTY, Boolean.TRUE);
+                                }
                             }
                             
+                            // Refresh the update policy property.
                             if (update.getProperties().contains(PROP_UPDATE_POLICY_ID)) {
-                                properties.put(PROP_UPDATE_POLICY_ID, getActiveUpdatePolicy().getID());
+                                cachedProperties.put(PROP_UPDATE_POLICY_ID, getActiveUpdatePolicy().getID());
                             }
                             
-                            // Save the update status result in the properties as well, it will be 
-                            // written to the client update when client updates are completed from
-                            // cache.
-                            properties.put(PROP_UPDATE_STATUS, getStatus());
-
                             // If there is archive data available, calculate the requested changed value properties.
                             // Do not calculate the changed flags if the entry has been flushed. 
                             if (entry.fArchiveProperties != null && flushCounter == entry.fFlushCounter) {
                                 for (String updateProperty : update.getProperties()) {
                                     if (updateProperty.startsWith(PROP_IS_CHANGED_PREFIX)) {
                                         String changedPropertyName = updateProperty.substring(LENGTH_PROP_IS_CHANGED_PREFIX);
-                                        Object newValue = properties.get(changedPropertyName);
+                                        Object newValue = cachedProperties.get(changedPropertyName);
                                         Object oldValue = entry.fArchiveProperties.get(changedPropertyName);
                                         if (oldValue != null) {
-                                            properties.put(updateProperty, !oldValue.equals(newValue));
+                                            cachedProperties.put(updateProperty, !oldValue.equals(newValue));
                                         }
                                     }
                                 }
@@ -1209,8 +1277,14 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                                 DsfUIPlugin.debug("cacheSavedProperties(node = " + node + ", update = " + update + ", " + getData() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                             }
                             
-                            update.setAllProperties(properties);                            
-                            update.setStatus(getStatus());
+                            // Fill in requested properties and status into the update.
+                            for (String property : update.getProperties()) {
+                                update.setProperty(property, cachedProperties.get(property));
+                            }
+                            PropertiesUpdateStatus updateStatus = PropertiesUpdateStatus.getPropertiesStatus(update); 
+                            updateStatus = PropertiesUpdateStatus.mergePropertiesStatus(
+                                updateStatus, cachedStatus, update.getProperties());
+                            update.setStatus(updateStatus);
                             update.done();
                         }
                     }));

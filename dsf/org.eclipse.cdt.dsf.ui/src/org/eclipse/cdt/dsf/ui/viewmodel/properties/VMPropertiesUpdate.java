@@ -22,12 +22,20 @@ import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.cdt.dsf.internal.LoggingUtils;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMViewerUpdate;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
- * Properties update used as to collect property data from the provider.
+ * Properties update used as to collect property data from the provider.  
+ * <p>
+ * The status returned by the VMPropertiesUpdate is always going to be of type
+ * PropertiesUpdateStatus, which allows for setting status for individual
+ * properties.
+ * </p>
+ * 
+ * @see PropertiesUpdateStatus
  * 
  * @since 2.0
  */
@@ -51,11 +59,13 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
 
     public VMPropertiesUpdate(Set<String> properties, IViewerUpdate parentUpdate, DataRequestMonitor<Map<String,Object>> rm) {
         super(parentUpdate, rm);
+        super.setStatus(new PropertiesUpdateStatus()); 
         fProperties = properties;
     }
 
     public VMPropertiesUpdate(Set<String> properties, TreePath elementPath, Object viewerInput, IPresentationContext presentationContext, DataRequestMonitor<Map<String,Object>> rm) {
         super(elementPath, viewerInput, presentationContext, rm);
+        super.setStatus(new PropertiesUpdateStatus()); 
         fProperties = properties;
     }
     
@@ -64,6 +74,13 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
         return fProperties;
     }
 
+    /**
+     * @since 2.2
+     */
+    public Map<String, Object> getValues() {
+        return fValues;
+    }
+    
     public synchronized void setProperty(String property, Object value) {
         if (!fCreatedOwnMap) {
             fCreatedOwnMap = true;
@@ -84,6 +101,25 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
             fValues = properties;
         }
     }
+    
+    /**
+     * Overrides the base class to implement special handling of 
+     * {@link PropertiesUpdateStatus}.  If the given status is an instance of 
+     * properties status, this new status will be set to the update.  Otherwise, the
+     * given status will be merged into the updates existing properties status.
+     * This way {@link #getStatus()} should always return an instance of 
+     * <code>PropertiesUpdateStatus</code>.
+     */
+    @Override
+    public void setStatus(IStatus status) {
+        if (status instanceof PropertiesUpdateStatus) {
+            super.setStatus(status);
+        } else if ((getStatus() instanceof PropertiesUpdateStatus)) {
+            ((PropertiesUpdateStatus)getStatus()).add(status);
+        } else {
+            assert false : "VMPropertiesUpdate status should always be a PropertiesUpdateStatus";  //$NON-NLS-1$
+        }
+    }    
     
     /**
      * Overrides the standard done in order to store the retrieved values 

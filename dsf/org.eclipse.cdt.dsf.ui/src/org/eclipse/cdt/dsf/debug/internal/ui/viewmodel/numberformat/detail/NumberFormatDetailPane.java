@@ -323,7 +323,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
                                 IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS);
                             if (formats != null) {
                                 for (String format : formats) {
-                                    properties.add(FormattedValueVMUtil.getPropertyForFormatId(format));
+                                    properties.add(FormattedValueVMUtil.getPropertyForFormatId(format, null));
                                 }
                             }
                             
@@ -341,7 +341,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
                                         		finalResult.append(SPACES);
                                         		finalResult.append( FormattedValueVMUtil.getFormatLabel(formatId) );
                                         		finalResult.append(FORMAT_SEPARATOR);
-                                        		finalResult.append( getData().get(FormattedValueVMUtil.getPropertyForFormatId(formatId)) );                                            
+                                        		finalResult.append( getData().get(FormattedValueVMUtil.getPropertyForFormatId(formatId, null)) );                                            
                                         		if ( i < formats.length + 1 ) {
                                         			finalResult.append(CRLF); 
                                         		}

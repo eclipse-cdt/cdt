@@ -12,6 +12,7 @@ package org.eclipse.cdt.tests.dsf;
 
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.swt.widgets.Display;
 
 /*
  * This class provides a way to wait for an asynchronous ServerEvent
@@ -34,14 +35,16 @@ public class ServiceEventWaitor<V> {
 
 	/* The type of event to wait for */
 	private Class<V> fEventTypeClass;
-	private DsfSession fSession;
+	private final DsfSession fSession;
     private V fEvent;
+    private final Display fDisplay;
 	
 
 	/* Empty contructor.  registerForEvent() should be called when
 	 * this constructor is used.
 	 */
 	public ServiceEventWaitor(DsfSession session) {
+	    fDisplay = Display.getDefault();
 		fSession = session;
 	}
 	
@@ -62,10 +65,12 @@ public class ServiceEventWaitor<V> {
 		fSession.addServiceEventListener(this, null);
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		if (fEventTypeClass != null) fSession.removeServiceEventListener(this);
+	public DsfSession getSession() {
+	    return fSession;
+	}
+	
+	public void dispose() {
+        if (fEventTypeClass != null) fSession.removeServiceEventListener(this);
 	}
 
 	/* Block until 'timeout' or the previously specified event has been
@@ -80,7 +85,15 @@ public class ServiceEventWaitor<V> {
 		// The event might have already been received
 		if (fEvent != null) return fEvent;
 		
-		wait(timeout);
+		long timeoutTime = System.currentTimeMillis() + timeout;
+		while (timeoutTime > System.currentTimeMillis()) {
+		    if (fEvent != null) {
+		        break;
+		    }
+		    if (!fDisplay.readAndDispatch()) {
+		        Thread.sleep(0);
+		    }
+		}
 		
 		if (fEvent == null) {
 			throw new Exception("Timed out waiting for ServiceEvent: " + fEventTypeClass.getName());

@@ -47,11 +47,13 @@ import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMData;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.ErrorLabelForeground;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.ErrorLabelText;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.AbstractExpressionVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionUpdate;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueLabelText;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueRetriever;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueVMUtil;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IFormattedValueVMContext;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
@@ -70,6 +72,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelForeground;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.VMDelegatingPropertiesUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.ICachingVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.StaleDataLabelBackground;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.StaleDataLabelForeground;
@@ -100,7 +103,6 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
 
@@ -143,6 +145,12 @@ public class VariableVMNode extends AbstractExpressionVMNode
      */    
     private final IElementLabelProvider fLabelProvider;
 
+    /**
+     * Retriever for formatted values configured for this VM node.
+     * @since 2.2
+     */
+    private final FormattedValueRetriever fFormattedValueRetriever;
+    
     public class VariableExpressionVMC extends DMVMContext implements IFormattedValueVMContext  {
         
         private IExpression fExpression;
@@ -227,6 +235,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
         super(provider, session, IExpressions.IExpressionDMContext.class);
         fSyncVariableDataAccess = syncVariableDataAccess;
         fLabelProvider = createLabelProvider();
+        fFormattedValueRetriever = 
+            new FormattedValueRetriever(this, session, IExpressions.class, IExpressionDMContext.class);
     }
 
     /**
@@ -263,7 +273,10 @@ public class VariableVMNode extends AbstractExpressionVMNode
     		DebugUITools.getPreferenceStore().removePropertyChangeListener(fPreferenceChangeListener);
     	}
     	
-        super.dispose();	
+    	
+        super.dispose();
+        
+        fFormattedValueRetriever.dispose();
     }
 
     /**
@@ -459,16 +472,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 },
                 new FormattedValueLabelText(),
                 new ErrorLabelText(),
-                new LabelForeground(new RGB(255, 0, 0)) // TODO: replace with preference error color
-                {
-                    { setPropertyNames(new String[] { PROP_NAME }); }
-
-                    @Override
-                    public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
-                        return !status.isOK();
-                    }
-                },
-                // 
+                new ErrorLabelForeground(),
                 columnIdValueBackground,
                 new StaleDataLabelForeground(),
                 new VariableLabelFont(),
@@ -607,15 +611,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 POINTER_LABEL_IMAGE,
                 AGGREGATE_LABEL_IMAGE, 
                 SIMPLE_LABEL_IMAGE,
-                new LabelForeground(new RGB(255, 0, 0)) // TODO: replace with preference error color
-                {
-                    { setPropertyNames(new String[] { PROP_NAME }); }
-
-                    @Override
-                    public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
-                        return !status.isOK();
-                    }
-                },
+                new ErrorLabelForeground(),
                 new LabelForeground(
                     DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR).getRGB())
                 {
@@ -659,19 +655,46 @@ public class VariableVMNode extends AbstractExpressionVMNode
     }
 
     /**
+     * Update the variable view properties.  The formatted values need to be 
+     * updated in the VM executor thread while the rest of the properties is
+     * updated in the service session's executor thread.  The implementation
+     * splits the handling of the updates to accomplish that.  
+     * 
      * @see IElementPropertiesProvider#update(IPropertiesUpdate[])
      * 
      * @since 2.0
      */    
     public void update(final IPropertiesUpdate[] updates) {
+        final CountingRequestMonitor countingRm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), null) {
+            @Override
+            protected void handleCompleted() {
+                for (int i = 0; i < updates.length; i++) {
+                    updates[i].done();
+                }
+            };
+        };
+        int count = 0;
+
+        fFormattedValueRetriever.update(updates, countingRm);
+        count++;
+
+        final IPropertiesUpdate[] subUpdates = new IPropertiesUpdate[updates.length];
+        for (int i = 0; i < updates.length; i++) {
+            final IPropertiesUpdate update = updates[i];
+            subUpdates[i] = new VMDelegatingPropertiesUpdate(update, countingRm);
+            count++;
+        }
+        countingRm.setDoneCount(count);
+
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
                 public void run() {
-                    updatePropertiesInSessionThread(updates);
+                    updatePropertiesInSessionThread(subUpdates);
                 }});
         } catch (RejectedExecutionException e) {
-            for (IPropertiesUpdate update : updates) {
-                handleFailedUpdate(update);
+            for (IPropertiesUpdate subUpdate : subUpdates) {
+                subUpdate.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Session executor shut down " + getSession().getExecutor(), e)); //$NON-NLS-1$
+                subUpdate.done();
             }
         }
     }
@@ -706,11 +729,6 @@ public class VariableVMNode extends AbstractExpressionVMNode
             };
         };
         int count = 0;
-        
-        if (service != null) {
-            FormattedValueVMUtil.updateFormattedValues(updates, service, IExpressionDMContext.class, countingRm);
-            count++;
-        }
         
         for (final IPropertiesUpdate update : updates) {
             IExpression expression = (IExpression)DebugPlugin.getAdapter(update.getElement(), IExpression.class);

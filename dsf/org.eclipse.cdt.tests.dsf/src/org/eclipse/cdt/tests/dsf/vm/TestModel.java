@@ -11,38 +11,45 @@
 package org.eclipse.cdt.tests.dsf.vm;
 
 import java.util.Arrays;
+import java.util.Hashtable;
 
 import junit.framework.Assert;
 
-import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
+import org.eclipse.cdt.dsf.service.AbstractDsfService;
+import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.tests.dsf.DsfTestPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelCheckProviderTarget;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckUpdate;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
-import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.viewers.Viewer;
+import org.osgi.framework.BundleContext;
 
 /**
  * Test model for the use in unit tests.  This test model contains a set of 
  * elements in a tree structure.  It contains utility methods for modifying the 
  * model and for verifying that the viewer content matches the model.
  * 
- * @since 3.6
+ * @since 2.2
  */
-public class TestModel {
+public class TestModel extends AbstractDsfService implements IFormattedValues {
     
-    public static class TestElement extends PlatformObject {
+    public interface TestElementValidator {
+        public void validate(TestElement modelElement, TestElement viewerElement, TreePath viewerPath);
+    }
+    
+    public static class TestElement extends AbstractDMContext implements IFormattedDataDMContext {
         private final TestModel fModel;
         private final String fID;
         TestElement[] fChildren;
@@ -51,18 +58,37 @@ public class TestModel {
         boolean fChecked;
         boolean fGrayed;
         
+        private TestElement[] fParents = new TestElement[1];
+        
         public TestElement(TestModel model, String text, TestElement[] children) {
             this (model, text, false, false, children);
         }
 
         public TestElement(TestModel model, String text, boolean checked, boolean grayed, TestElement[] children) {
+            super(model, EMPTY_PARENTS_ARRAY);
             fModel = model;
             fID = text;
             fChildren = children;
+            for (TestElement child : children) {
+                child.setParent(this);
+            }
             fChecked = checked;
             fGrayed = grayed;
         }
         
+        public void setParent(TestElement parent) {
+            fParents[0] = parent;
+        }
+
+        public TestElement getParent() {
+            return fParents[0];
+        }
+        
+        @Override
+        public IDMContext[] getParents() {
+            return fParents;
+        }
+
         public TestModel getModel() {
             return fModel;
         }
@@ -129,39 +155,72 @@ public class TestModel {
         }
     }
 
-    private class ModelProxy extends AbstractModelProxy {
-        @Override
-        public void installed(Viewer viewer) {
-            super.installed(viewer);
-            ModelDelta rootDelta = TestModel.this.getBaseDelta(new ModelDelta(fInput, IModelDelta.NO_CHANGE));
-            installSubModelProxies(fRootPath, rootDelta);
-            fireModelChanged(rootDelta);
+    public static final class TestEvent {
+        private final TestElement fElement;
+        private final int fType;
+        
+        public TestEvent(TestElement element, int type) {
+            fElement = element;
+            fType = type;
         }
         
-        private void installSubModelProxies(TreePath path, ModelDelta delta) {
-            TestElement element = getElement(path);
-            if (element.fModel != TestModel.this) {
-                // Found an element from a different model.  Install its proxy and return.
-                delta.setFlags(delta.getFlags() | IModelDelta.INSTALL);
-            } else {
-                TestElement[] children = element.getChildren();
-    
-                for (int i = 0; i < children.length; i++) {
-                    installSubModelProxies(path.createChildPath(children[i]), delta.addNode(children[i], IModelDelta.NO_CHANGE));
-                }
-            }
+        public TestElement getElement() {
+            return fElement;
+        }
+        
+        /**
+         * @see IModelDelta#getFlags()
+         */
+        public int getType() {
+            return fType;
         }
     }
-
+    
+    private static final IFormattedValuesListener NULL_LISTENER = new IFormattedValuesListener() {
+        public void formattedValueUpdated(FormattedValueDMContext formattedValueDmc) {}
+    };
+    
     private TestElement fRoot;
     private Object fInput = null;
     private TreePath fRootPath = TreePath.EMPTY;
-    private ModelProxy fModelProxy;
+    private IFormattedValuesListener fListener = NULL_LISTENER;
     
     /**
      * Constructor private.  Use static factory methods instead. 
      */
-    public TestModel() {}
+    public TestModel(DsfSession session) {
+        super(session);
+    }
+
+    @Override
+    protected BundleContext getBundleContext() {
+        return DsfTestPlugin.getBundleContext();
+    }
+    
+    @Override
+    public void initialize(RequestMonitor rm) {
+        super.initialize(new RequestMonitor(getExecutor(), rm)  {
+            @Override
+            protected void handleSuccess() {
+                register(new String[0], new Hashtable<String, String>() );
+                super.handleSuccess();
+            }
+        });
+    }
+
+    @Override
+    public void shutdown(RequestMonitor rm) {
+        unregister();
+        super.shutdown(rm);
+    }
+    
+    public void setTestModelListener(IFormattedValuesListener listener) {
+        if (listener != null) {
+            fListener = listener;
+        } else {
+            fListener = NULL_LISTENER;
+        }
+    }
     
     public TestElement getRootElement() {
         return fRoot;
@@ -197,48 +256,6 @@ public class TestModel {
         return depth;
     }
     
-    public void update(IHasChildrenUpdate[] updates) {
-        for (int i = 0; i < updates.length; i++) {
-            TestElement element = (TestElement)updates[i].getElement();
-            updates[i].setHasChilren(element.getChildren().length > 0);
-            updates[i].done();
-        }
-    }
-    
-    public void update(IChildrenCountUpdate[] updates) {
-        for (int i = 0; i < updates.length; i++) {
-            TestElement element = (TestElement)updates[i].getElement();
-            updates[i].setChildCount(element.getChildren().length);
-            updates[i].done();
-        }
-    }
-    
-    public void update(IChildrenUpdate[] updates) {
-        for (int i = 0; i < updates.length; i++) {
-            TestElement element = (TestElement)updates[i].getElement();
-            int endOffset = updates[i].getOffset() + updates[i].getLength();
-            for (int j = updates[i].getOffset(); j < endOffset; j++) {
-                if (j < element.getChildren().length) {
-                    updates[i].setChild(element.getChildren()[j], j);
-                }
-            }
-            updates[i].done();
-        }
-    }
-    
-    public void update(ILabelUpdate[] updates) {
-        for (int i = 0; i < updates.length; i++) {
-            TestElement element = (TestElement)updates[i].getElement();
-            updates[i].setLabel(element.fID, 0);
-            if (updates[i] instanceof ICheckUpdate && 
-                Boolean.TRUE.equals(updates[i].getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK))) 
-            {
-                ((ICheckUpdate)updates[i]).setChecked(element.getChecked(), element.getGrayed());
-            }
-            updates[i].done();
-        }        
-    }
-    
     public final static String ELEMENT_MEMENTO_ID = "id";
     
     public void compareElements(IElementCompareRequest[] updates) {
@@ -259,22 +276,10 @@ public class TestModel {
         }        
     }
     
-    
     public void elementChecked(IPresentationContext context, Object viewerInput, TreePath path, boolean checked) {
         TestElement element = getElement(path); 
         Assert.assertFalse(element.getGrayed());
         element.setChecked(checked, false);
-    }
-    
-    public IModelProxy createTreeModelProxy(Object input, TreePath path, IPresentationContext context) {
-        fModelProxy = new ModelProxy();
-        fInput = input;
-        fRootPath = path;
-        return fModelProxy;
-    }
-    
-    public IModelProxy getModelProxy() {
-        return fModelProxy;
     }
     
     public TestElement getElement(TreePath path) {
@@ -288,6 +293,14 @@ public class TestModel {
             }
             return null;
         }
+    }
+    
+    public TestElement getElementFromViewer(ITreeModelContentProviderTarget viewer, TreePath parentPath, int index) {
+        Object element = viewer.getChildElement(parentPath, index);
+        if (element instanceof TestElementVMContext) {
+            return ((TestElementVMContext)element).getElement();
+        }
+        return null;
     }
 
     public void setAllExpanded() {
@@ -314,10 +327,16 @@ public class TestModel {
 
     public void validateData(ITreeModelViewer viewer, TreePath path) {
         
-        validateData(viewer, path, false);
+        validateData(viewer, path, null, false);
     }
 
-    public void validateData(ITreeModelViewer _viewer, TreePath path, boolean expandedElementsOnly) {
+    public void validateData(ITreeModelViewer viewer, TreePath path, TestElementValidator validator) {
+        
+        validateData(viewer, path, validator, false);
+    }
+
+    public void validateData(ITreeModelViewer _viewer, TreePath path, TestElementValidator validator, boolean expandedElementsOnly) {
+        
         ITreeModelContentProviderTarget viewer = (ITreeModelContentProviderTarget)_viewer;
         TestElement element = getElement(path);
         if ( Boolean.TRUE.equals(_viewer.getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK)) ) {
@@ -331,8 +350,17 @@ public class TestModel {
             Assert.assertEquals(children.length, viewer.getChildCount(path));
 
             for (int i = 0; i < children.length; i++) {
-                Assert.assertEquals(children[i], viewer.getChildElement(path, i));
-                validateData(viewer, path.createChildPath(children[i]), expandedElementsOnly);
+                Object viewerObject = viewer.getChildElement(path, i);
+                if (viewerObject instanceof TestElementVMContext) {
+                    TreePath childPath = path.createChildPath(viewerObject);
+                    TestElement viewerElement = ((TestElementVMContext)viewerObject).getElement();
+                    Assert.assertEquals(children[i], viewerElement);
+                    if (validator != null) {
+                        validator.validate(children[i], viewerElement, childPath);
+                    }
+                    
+                    validateData(viewer, childPath, validator, expandedElementsOnly);
+                }
             }
         } else if (!viewer.getExpandedState(path)) {
             // If element not expanded, verify the plus sign.
@@ -342,10 +370,6 @@ public class TestModel {
 
     public void setRoot(TestElement root) {
         fRoot = root;
-    }
-    
-    public void postDelta(IModelDelta delta) {
-        fModelProxy.fireModelChanged(delta);
     }
     
     /** Create or retrieve delta for given path
@@ -560,6 +584,27 @@ public class TestModel {
         return null;
     }
     
+    public void getAvailableFormats(IFormattedDataDMContext dmc, DataRequestMonitor<String[]> rm) {
+        rm.setData(new String[] { HEX_FORMAT, DECIMAL_FORMAT, OCTAL_FORMAT, BINARY_FORMAT, NATURAL_FORMAT });
+        rm.done();
+    }
+    
+    public void getFormattedExpressionValue(FormattedValueDMContext dmc, DataRequestMonitor<FormattedValueDMData> rm) {
+        TestElement te = DMContexts.getAncestorOfType(dmc, TestElement.class);
+        rm.setData(new FormattedValueDMData( getFormattedValueText(te, dmc.getFormatID())));
+        rm.done();
+        fListener.formattedValueUpdated(dmc);
+    }
+    
+    public FormattedValueDMContext getFormattedValueContext(IFormattedDataDMContext dmc, String formatId) {
+        // Creates a context that can be used to retrieve a formatted value.
+        return new FormattedValueDMContext(this, dmc, formatId);
+    }
+
+    public String getFormattedValueText(TestElement te, String formatId) {
+        return te.getLabel() + " (" + formatId + ")";
+    }
+    
     @Override
     public String toString() {
         return getElementString(fRoot, "");
@@ -577,8 +622,7 @@ public class TestModel {
         return builder.toString();
     }
     
-    public static TestModel simpleSingleLevel() {
-        TestModel model = new TestModel();
+    public static void simpleSingleLevel(TestModel model) {
         model.setRoot( new TestElement(model, "root", new TestElement[] {
             new TestElement(model, "1", true, true, new TestElement[0]),
             new TestElement(model, "2", true, false, new TestElement[0]),
@@ -587,11 +631,9 @@ public class TestModel {
             new TestElement(model, "5", new TestElement[0]),
             new TestElement(model, "6", new TestElement[0])
         }) );
-        return model;
     }
     
-    public static TestModel simpleMultiLevel() {
-        TestModel model = new TestModel();
+    public static void simpleMultiLevel(TestModel model) {
         model.setRoot( new TestElement(model, "root", new TestElement[] {
             new TestElement(model, "1", new TestElement[0]),
             new TestElement(model, "2", true, false, new TestElement[] {
@@ -617,53 +659,6 @@ public class TestModel {
                 }),
             })
         }) );
-        return model;
     }
-
-    public static TestModel compositeMultiLevel() {
-        TestModel m2 = new TestModel();
-        m2.setRoot( new TestElement(m2, "m2.root", new TestElement[] {
-            new TestElement(m2, "m2.1", new TestElement[0]),
-            new TestElement(m2, "m2.2", true, false, new TestElement[] {
-                new TestElement(m2, "m2.2.1", true, true, new TestElement[0]),
-                new TestElement(m2, "m2.2.2", false, true, new TestElement[0]),
-                new TestElement(m2, "m2.2.3", true, false, new TestElement[0]),
-            }),
-        }) );
-
-        TestModel m3 = new TestModel();
-        m3.setRoot( new TestElement(m3, "m3.root", new TestElement[] {
-            new TestElement(m3, "m3.1", new TestElement[0]),
-            new TestElement(m3, "m3.2", true, false, new TestElement[] {
-                new TestElement(m3, "m3.2.1", true, true, new TestElement[0]),
-                new TestElement(m3, "m3.2.2", false, true, new TestElement[0]),
-                new TestElement(m3, "m3.2.3", true, false, new TestElement[0]),
-            }),
-        }) );
-
-        TestModel m4 = new TestModel();
-        m4.setRoot( new TestElement(m4, "m4.root", new TestElement[] {
-            new TestElement(m4, "m4.1", new TestElement[0]),
-            new TestElement(m4, "m4.2", true, false, new TestElement[] {
-                new TestElement(m4, "m4.2.1", true, true, new TestElement[0]),
-                new TestElement(m4, "m4.2.2", false, true, new TestElement[0]),
-                new TestElement(m4, "m4.2.3", true, false, new TestElement[0]),
-            }),
-        }) );
-
-        TestModel m1 = new TestModel();
-        m1.setRoot( new TestElement(m1, "m1.root", new TestElement[] {
-            new TestElement(m1, "m1.1", new TestElement[0]),
-            new TestElement(m1, "m1.2", true, false, new TestElement[] {
-                m2.fRoot,
-                m3.fRoot,
-                m4.fRoot,
-            }),
-        }) );
-
-
-        return m1;
-    }
-
     
 }

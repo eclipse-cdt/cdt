@@ -36,6 +36,9 @@ public interface IPropertiesUpdate extends IViewerUpdate {
     
     /**
      * Sets the given map as the complete property map for this update.
+     * If other properties were already set to this update, the properties
+     * given here will be added.  If properties are added later, the properties 
+     * map given here will not be modified, instead it will be copied.
      * 
      * @param properties Full properties map.
      */

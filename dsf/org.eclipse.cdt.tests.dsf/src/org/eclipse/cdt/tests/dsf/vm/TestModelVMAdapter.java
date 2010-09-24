@@ -15,7 +15,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.IVMProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
- * 
+ * @since 2.2
  */
 public class TestModelVMAdapter extends AbstractVMAdapter {
 

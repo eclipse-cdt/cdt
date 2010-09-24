@@ -1531,6 +1531,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			return getOutlinePage();
 		} else if (required == IShowInTargetList.class) {
 			return new IShowInTargetList() {
+				@SuppressWarnings("deprecation")
 				public String[] getShowInTargetIds() {
 					return new String[] { IPageLayout.ID_PROJECT_EXPLORER, IPageLayout.ID_OUTLINE, IPageLayout.ID_RES_NAV };
 				}
@@ -3588,7 +3589,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 		ICElement inputCElement = getInputCElement();
 		if (provideAST && inputCElement instanceof ITranslationUnit) {
-			ASTProvider.getASTProvider().runOnAST(inputCElement, ASTProvider.WAIT_NO, getProgressMonitor(), new ASTRunnable() {
+			ASTProvider.getASTProvider().runOnAST(inputCElement, ASTProvider.WAIT_ACTIVE_ONLY, getProgressMonitor(), new ASTRunnable() {
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 					if (ast != null)
 						fOverrideIndicatorManager.reconciled(ast, true, getProgressMonitor());

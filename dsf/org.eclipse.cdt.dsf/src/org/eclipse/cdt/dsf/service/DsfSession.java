@@ -459,7 +459,12 @@ public class DsfSession
     @ThreadSafe
     public int hashCode() { return fId.hashCode(); }
 
-    private void doDispatchEvent(Object event, Dictionary<?,?> serviceProperties) {
+    private void doDispatchEvent(Object event, Dictionary<?,?> _serviceProperties) {
+        // Need to cast to dictionary with String keys to satisfy OSGI in platform 3.7.
+        // Bug 326233
+        @SuppressWarnings("unchecked") 
+        Dictionary<String,?> serviceProperties = (Dictionary<String,?>)_serviceProperties;
+        
         // Build a list of listeners;
         SortedMap<ListenerEntry,List<Method>> listeners = new TreeMap<ListenerEntry,List<Method>>(new Comparator<ListenerEntry>() {
                 public int compare(ListenerEntry o1, ListenerEntry o2) {

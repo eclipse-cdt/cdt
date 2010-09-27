@@ -12,6 +12,11 @@ package org.eclipse.cdt.dsf.gdb.launching;
 
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
  
+/**
+ * A special launch delegate for the attach debug session, which
+ * supports the launch when the project and/or binary is not specified.
+ * @since 4.0
+ */
 @ThreadSafe
 public class GdbAttachLaunchDelegate extends GdbLaunchDelegate
 {

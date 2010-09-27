@@ -357,4 +357,28 @@ public class BasicSearchTest extends BaseUITestCase {
 		PDOMSearchResult result= (PDOMSearchResult) query.getSearchResult();
 		assertEquals(expected, result.getMatchCount());
 	}
+	
+	//	template<typename T> class CT {};
+	//	template<typename T> class CT<T*> {};
+	//	template<typename T> void f(T) {};
+	//	template<typename T> void f(T*) {};
+
+	//	void a() {
+	//	  CT<int>* r1;
+	//	  CT<char>* r2;
+	//	  CT<int*>* r3;
+	//
+	//	  int a;
+	//	  f(a);
+	//	  f(&a);
+	//	  f<int>(a);
+	//	  f<int>(&a);
+	//	}
+	public void testSearchAndTemplateIDs() throws Exception {
+		PDOMSearchQuery query= makeProjectQuery("CT");
+		assertOccurrences(query, 5); 
+		query= makeProjectQuery("f");
+		assertOccurrences(query, 6);
+	}
+
 }

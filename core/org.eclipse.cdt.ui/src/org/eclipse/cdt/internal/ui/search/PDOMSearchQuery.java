@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -310,14 +310,20 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 			return;
 		List<IIndexName> names= new ArrayList<IIndexName>();
 		List<IIndexName> polymorphicNames= null;
+		HashSet<IBinding> handled= new HashSet<IBinding>();
+		
 		for (IBinding binding : bindings) {
-			if (binding != null) {
+			if (binding != null && handled.add(binding)) {
 				createMatches1(index, binding, names);
-
-				if ((flags & FIND_REFERENCES) != 0) {
+			}
+		}
+		
+		if ((flags & FIND_REFERENCES) != 0) {
+			for (IBinding binding : bindings) {
+				if (binding != null) {
 					List<? extends IBinding> specializations = IndexUI.findSpecializations(binding);
-					if (!specializations.isEmpty()) {
-						for (IBinding spec : specializations) {
+					for (IBinding spec : specializations) {
+						if (spec != null && handled.add(spec)) {
 							createMatches1(index, spec, names);
 						}
 					}
@@ -331,7 +337,9 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 									polymorphicNames= new ArrayList<IIndexName>();
 								}
 								for (ICPPMethod mInBase : msInBases) {
-									createMatches1(index, mInBase, polymorphicNames);
+									if (mInBase != null && handled.add(mInBase)) {
+										createMatches1(index, mInBase, polymorphicNames);
+									}
 								}
 							}
 						} catch (DOMException e) {

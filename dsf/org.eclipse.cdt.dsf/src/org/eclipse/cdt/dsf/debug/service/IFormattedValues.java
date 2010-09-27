@@ -73,7 +73,6 @@ public interface IFormattedValues extends IDsfService {
      * DMC that represents a value with specific format.  The format ID can be
      * persisted and used for comparison. 
      */
-
     public static class FormattedValueDMContext extends AbstractDMContext 
     {
         private final String fFormatID;
@@ -81,14 +80,24 @@ public interface IFormattedValues extends IDsfService {
         /**
 		 * @since 2.0
 		 */
-        public FormattedValueDMContext(IDsfService service, IDMContext parent, String formatId) {
-            super(service, new IDMContext[] { parent });
+        public FormattedValueDMContext(IDsfService service, IDMContext parentValue, String formatId) {
+            super(service, new IDMContext[] { parentValue });
             fFormatID = formatId;
         }
 
-        public FormattedValueDMContext(String sessionId, IDMContext parent, String formatId) {
-            super(sessionId, new IDMContext[] { parent });
+        public FormattedValueDMContext(String sessionId, IDMContext parentValue, String formatId) {
+            super(sessionId, new IDMContext[] { parentValue });
             fFormatID = formatId;
+        }
+        
+        /**
+         * Returns the parent context which represents the value on which this 
+         * formatted value is based on.   
+         * 
+         * @since 2.2
+         */
+        public IDMContext getParentValueDMContext() {
+            return getParents()[0];
         }
         
         public String getFormatID() {

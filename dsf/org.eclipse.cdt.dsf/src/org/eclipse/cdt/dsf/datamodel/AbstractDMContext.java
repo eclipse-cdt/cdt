@@ -35,6 +35,8 @@ import org.eclipse.core.runtime.PlatformObject;
 abstract public class AbstractDMContext extends PlatformObject 
     implements IDMContext     
 {
+    public static final IDMContext[] EMPTY_PARENTS_ARRAY = new IDMContext[0];
+    
     private final String fSessionId;
     private final IDMContext[] fParents;
 
@@ -70,9 +72,10 @@ abstract public class AbstractDMContext extends PlatformObject
     }
 
     private boolean areParentsEqual(IDMContext[] otherParents) {
-        if ( !(fParents.length == otherParents.length) ) return false;
-        for (int i = 0; i < fParents.length; i++) {
-            if (!fParents[i].equals(otherParents[i])) {
+        IDMContext[] parents = getParents();
+        if ( !(parents.length == otherParents.length) ) return false;
+        for (int i = 0; i < parents.length; i++) {
+            if (!parents[i].equals(otherParents[i])) {
                 return false;
             }
         }
@@ -95,14 +98,14 @@ abstract public class AbstractDMContext extends PlatformObject
 	 */
     protected String baseToString() {
         StringBuilder retVal = new StringBuilder(); 
-        for (IDMContext parent : fParents) {
+        for (IDMContext parent : getParents()) {
             retVal.append(parent);
             retVal.append(',');
         }
         if (retVal.length() > 0) {
         	retVal.deleteCharAt(retVal.length() - 1);	// remove trailing comma
         }
-        if (fParents.length > 1) {
+        if (getParents().length > 1) {
         	retVal.insert(0, '(');
         	retVal.insert(retVal.length(), ')');
         }

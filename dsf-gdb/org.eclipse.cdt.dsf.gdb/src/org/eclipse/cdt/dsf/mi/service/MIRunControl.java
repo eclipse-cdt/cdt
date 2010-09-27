@@ -1119,6 +1119,10 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	 */
 	public void runToLine(IExecutionDMContext context, String sourceFile,
 			int lineNumber, boolean skipBreakpoints, RequestMonitor rm) {
+		
+		// Hack around a MinGW bug; see 196154
+		sourceFile = MIBreakpointsManager.adjustDebuggerPath(sourceFile);
+		
 		runToLocation(context, sourceFile + ":" + Integer.toString(lineNumber), skipBreakpoints, rm); //$NON-NLS-1$
 	}
 

@@ -43,9 +43,13 @@ public class DsfSequenceTests {
     
     @After 
     public void shutdownExecutor() throws ExecutionException, InterruptedException {
-        fExecutor.submit(new DsfRunnable() { public void run() {
-            fExecutor.shutdown();
-        }}).get();
+        if (!fExecutor.isShutdown()) {
+            // Some tests shut down the executor deliberatly)
+            
+            fExecutor.submit(new DsfRunnable() { public void run() {
+                fExecutor.shutdown();
+            }}).get();
+        }
         if (fExecutor.exceptionsCaught()) {
             Throwable[] exceptions = fExecutor.getExceptions();
             throw new ExecutionException(exceptions[0]);
@@ -81,8 +85,8 @@ public class DsfSequenceTests {
         Sequence sequence = new Sequence(fExecutor) {
             @Override public Step[] getSteps() { return steps; }
         };
-        Assert.assertTrue(!sequence.isDone());
-        Assert.assertTrue(!sequence.isCancelled());
+        Assert.assertFalse(sequence.isDone());
+        Assert.assertFalse(sequence.isCancelled());
         
         fExecutor.execute(sequence);
         sequence.get();
@@ -92,7 +96,7 @@ public class DsfSequenceTests {
         
         // Check post conditions
         Assert.assertTrue(sequence.isDone());
-        Assert.assertTrue(!sequence.isCancelled());
+        Assert.assertFalse(sequence.isCancelled());
     }
 
 
@@ -129,8 +133,8 @@ public class DsfSequenceTests {
         SimpleReflectionSequence sequence = new SimpleReflectionSequence();
 
         //Sequence sequence = new SimpleReflectionSequence();
-        Assert.assertTrue(!sequence.isDone());
-        Assert.assertTrue(!sequence.isCancelled());
+        Assert.assertFalse(sequence.isDone());
+        Assert.assertFalse(sequence.isCancelled());
         
         fExecutor.execute(sequence);
         sequence.get();
@@ -140,7 +144,7 @@ public class DsfSequenceTests {
         
         // Check post conditions
         Assert.assertTrue(sequence.isDone());
-        Assert.assertTrue(!sequence.isCancelled());
+        Assert.assertFalse(sequence.isCancelled());
     }
 
     
@@ -183,7 +187,7 @@ public class DsfSequenceTests {
         };
         fExecutor.execute(sequence);
      
-        // Block and wait for sequence to bomplete.
+        // Block and wait for sequence to complete.
         try {
             sequence.get();
         } finally {
@@ -194,7 +198,63 @@ public class DsfSequenceTests {
             
             // Check state from Future interface
             Assert.assertTrue(sequence.isDone());
-            Assert.assertTrue(!sequence.isCancelled());            
+            Assert.assertFalse(sequence.isCancelled());            
+        }
+        Assert.assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
+    }
+
+    @Test (expected = ExecutionException.class)
+    public void rejectedTest() throws InterruptedException, ExecutionException {
+        // Create a counter for tracking number of steps performed and steps 
+        // rolled back.
+        class IntegerHolder { int fInteger; }
+        final IntegerHolder stepCounter = new IntegerHolder();
+        final IntegerHolder rollBackCounter = new IntegerHolder();
+
+        // Create the steps of the sequence
+        final Sequence.Step[] steps = new Sequence.Step[] {
+            new Sequence.Step() { 
+                @Override public void execute(RequestMonitor requestMonitor) {
+                    stepCounter.fInteger++;
+                    requestMonitor.done(); 
+                }
+                @Override public void rollBack(RequestMonitor requestMonitor) {
+                    rollBackCounter.fInteger++;
+                    requestMonitor.done(); 
+                }
+            },
+            new Sequence.Step() { 
+                @Override public void execute(RequestMonitor requestMonitor) {
+                    stepCounter.fInteger++;
+                    // Shutdown exectutor to force a RejectedExecutionException
+                    fExecutor.shutdown();
+                    requestMonitor.done(); 
+                }
+                @Override public void rollBack(RequestMonitor requestMonitor) {
+                    rollBackCounter.fInteger++;
+                    requestMonitor.done(); 
+                }
+            }
+        };
+        
+        // Create and start.
+        Sequence sequence = new Sequence(fExecutor) {
+            @Override public Step[] getSteps() { return steps; }
+        };
+        fExecutor.execute(sequence);
+     
+        // Block and wait for sequence to complete.
+        try {
+            sequence.get();
+        } finally {
+            // Both steps should be performed
+            Assert.assertTrue(stepCounter.fInteger == 2);
+            // No steps should be rolled back.
+            Assert.assertTrue(rollBackCounter.fInteger == 0);
+            
+            // Check state from Future interface
+            Assert.assertTrue(sequence.isDone());
+            Assert.assertFalse(sequence.isCancelled());            
         }
         Assert.assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
     }
@@ -257,7 +317,7 @@ public class DsfSequenceTests {
             
             // Check state from Future interface
             Assert.assertTrue(sequence.isDone());
-            Assert.assertTrue(!sequence.isCancelled());            
+            Assert.assertFalse(sequence.isCancelled());            
         }
         Assert.assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
     }
@@ -320,7 +380,7 @@ public class DsfSequenceTests {
             
             // Check state from Future interface
             Assert.assertTrue(sequence.isDone());
-            Assert.assertTrue(!sequence.isCancelled());                        
+            Assert.assertFalse(sequence.isCancelled());                        
         }
         Assert.assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
     }
@@ -352,7 +412,7 @@ public class DsfSequenceTests {
         } finally {
             // Check state from Future interface
             Assert.assertTrue(sequence.isDone());
-            Assert.assertTrue(!sequence.isCancelled());            
+            Assert.assertFalse(sequence.isCancelled());            
         }
         Assert.assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
     }
@@ -375,7 +435,7 @@ public class DsfSequenceTests {
         // Cancel before invoking the sequence.
         sequence.cancel(false);
 
-        Assert.assertTrue(!sequence.isDone());
+        Assert.assertFalse(sequence.isDone());
         Assert.assertTrue(sequence.isCancelled());
 
         // Start the sequence

@@ -421,9 +421,18 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
                 
                 @Override
                 protected void handleErrorOrWarning() {
-                    abortExecution(getStatus());                    
+                    abortExecution(getStatus(), true);                    
                 };
 
+                @Override
+                protected void handleRejectedExecutionException() {
+                    abortExecution(
+                        new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, 0, 
+                            "Executor shut down while executing Sequence " + this + ", step #" + fCurrentStepIdx,  //$NON-NLS-1$ //$NON-NLS-2$
+                            null), 
+                        false);
+                }
+                
                 @Override
                 public String toString() {
                     return "Sequence \"" + fTaskName + "\", result for executing step #" + fStepIdx + " = " + getStatus(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -450,10 +459,11 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
              * when the execute submits other runnables, and the other runnables
              * encounter the exception.
              */ 
-            abortExecution(new Status(
-                IStatus.ERROR, DsfPlugin.PLUGIN_ID, 0, 
-                "Unhandled exception when executing Sequence " + this + ", step #" + fCurrentStepIdx,  //$NON-NLS-1$ //$NON-NLS-2$
-                t));
+            abortExecution(
+                new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, 0, 
+                           "Unhandled exception when executing Sequence " + this + ", step #" + fCurrentStepIdx,  //$NON-NLS-1$ //$NON-NLS-2$
+                           t), 
+                true);
             
             /*
              * Since we caught the exception, it will not be logged by 
@@ -548,8 +558,13 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
     /**
      * Tells the sequence that its execution is to be aborted and it 
      * should start rolling back the sequence as if it was cancelled by user.  
+     * 
+     * @param status Status to use for reporting the error.
+     * @param rollBack Whether to start rolling back the sequence after abort.
+     * If this parameter is <code>false</code> then the sequence will also 
+     * finish. 
      */
-    private void abortExecution(final IStatus error) {
+    private void abortExecution(final IStatus error, boolean rollBack) {
         if (fRollbackTaskName != null) {
             fProgressMonitor.subTask(fRollbackTaskName);
         }
@@ -558,9 +573,13 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
             fRequestMonitor.setStatus(error);
         }
         fSync.doAbort(new CoreException(error));
-        
-        // Roll back starting with previous step, since current step failed.
-        rollBackStep(fCurrentStepIdx - 1);
+
+        if (rollBack) {
+            // Roll back starting with previous step, since current step failed.
+            rollBackStep(fCurrentStepIdx - 1);
+        } else {
+            finish();
+        }
     }
 
     /**

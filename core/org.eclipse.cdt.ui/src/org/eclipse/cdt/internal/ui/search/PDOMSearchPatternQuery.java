@@ -148,11 +148,7 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 			for (int i = 0; i < bindings.length; ++i) {
 				IIndexBinding pdomBinding = bindings[i];
 
-				//check for the element type of this binding and create matches if 
-				//the element type checkbox is checked in the C/C++ Search Page
-
-				//TODO search for macro
-
+				// Select the requested bindings  
 				boolean matches= false;
 				if ((flags & FIND_ALL_TYPES) == FIND_ALL_TYPES) {
 					matches= true;

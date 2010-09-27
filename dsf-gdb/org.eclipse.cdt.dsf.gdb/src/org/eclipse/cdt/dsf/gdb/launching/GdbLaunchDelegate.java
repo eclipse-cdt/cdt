@@ -65,6 +65,9 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 		super();
 	}
 
+	/**
+	 * @since 4.0
+	 */
 	public GdbLaunchDelegate(boolean requireCProject) {
 		super(requireCProject);
 	}

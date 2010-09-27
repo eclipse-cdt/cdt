@@ -27,7 +27,7 @@
             id="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"
             type="org.eclipse.cdt.launch.attachLaunchType"
             modes="debug"
-            delegate="org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate"
+            delegate="org.eclipse.cdt.dsf.gdb.launching.GdbAttachLaunchDelegate"
             name="%launchDelegate.attach.name"
             delegateDescription="%launchDelegate.attach.description"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"

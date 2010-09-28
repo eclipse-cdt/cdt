@@ -2282,15 +2282,7 @@ public class CPPSemantics {
 
 		// No arguments to resolve function
 		if (!data.hasFunctionArguments()) {
-			ICPPFunction cand= fns[0];
-			if (!(cand instanceof ICPPFunctionTemplate)) {
-				if (fns.length == 1)
-					return cand;
-				// Just one binding from ast, use it.
-				if (!(cand instanceof IIndexBinding) && fns[1] instanceof IIndexBinding) 
-					return cand;
-			}
-			return new CPPFunctionSet(fns);
+			return createFunctionSet(data.astName, fns);
 		}
 
 		if (data.astName instanceof ICPPASTConversionName) {
@@ -2407,6 +2399,46 @@ public class CPPSemantics {
 			if (firstConversion instanceof ICPPConstructor) 
 				return firstConversion;
 		}
+		return result;
+	}
+
+	private static IBinding createFunctionSet(IASTName name, ICPPFunction[] fns) {
+		// First try to find a unique function
+		ICPPFunction f= getUniqueFunctionForSet(name, fns);
+		return f == null ? new CPPFunctionSet(fns) : f;
+	}
+
+	private static ICPPFunction getUniqueFunctionForSet(IASTName name, ICPPFunction[] fns) {
+		// First try to find a unique function
+		if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME) {
+			name= (IASTName) name.getParent();
+		}
+		final boolean haveTemplateArgs= name instanceof ICPPASTTemplateId;
+		ICPPFunction result= null;
+		boolean haveASTResult= false;
+		for (ICPPFunction f : fns) {
+			// Use the ast binding
+			final boolean fromIndex = f instanceof IIndexBinding;
+			if (haveASTResult && fromIndex) 
+				break;
+			
+			if (f instanceof ICPPFunctionTemplate) {
+				// Works only if there are template arguments
+				if (!haveTemplateArgs || result != null) 
+					return null;
+				result= f;
+				haveASTResult= !fromIndex;
+			} else if (!haveTemplateArgs) {
+				if (result != null)
+					return null;
+				result= f;
+				haveASTResult= !fromIndex;
+			}
+		}
+		
+		if (result instanceof ICPPFunctionTemplate) 
+			return CPPTemplates.instantiateFunctionTemplate((ICPPFunctionTemplate) result, null, name);
+			
 		return result;
 	}
 

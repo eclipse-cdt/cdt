@@ -99,7 +99,11 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public static TestSuite suite() {
 		return suite(AST2TemplateTests.class);
 	}
-	
+
+	private IASTTranslationUnit parseAndCheckBindings() throws Exception {
+		return parseAndCheckBindings(getAboveComment());
+	}
+
 	private IASTTranslationUnit parseAndCheckBindings(final String code) throws Exception {
 		return parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
@@ -4587,7 +4591,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  int k = g<int>(5.6); 		// Y is deduced to be double, Z is deduced to an empty sequence
 	//	  f<void>(g<int, bool>); 	// Y for outer f deduced to be
 	//  }							// int (*)(bool), Z is deduced to an empty sequence
-	public void _testVariadicTemplateExamples_280909h() throws Exception {
+	public void testVariadicTemplateExamples_280909h() throws Exception {
 		final String code= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		bh.assertNonProblem("f<int>(5.6)", 6);
@@ -5139,5 +5143,15 @@ public class AST2TemplateTests extends AST2BaseTest {
 		final IBinding method = methodName.resolveBinding();
 		final IBinding reference = name.resolveBinding();
 		assertSame(method, ((ICPPSpecialization) reference).getSpecializedBinding());
+	}
+	
+	//	template<typename T> bool MySort(const T& a);
+	//	bool MySort(const int& a);
+	//	template<typename V> void sort(V __comp);
+	//	void test() {
+	//	    sort(MySort<int>);
+	//	}
+	public void testAdressOfUniqueTemplateInst_Bug326076() throws Exception {
+		parseAndCheckBindings();
 	}
 }

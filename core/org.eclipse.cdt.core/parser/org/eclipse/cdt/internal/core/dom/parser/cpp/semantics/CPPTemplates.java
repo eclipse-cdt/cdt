@@ -1672,7 +1672,7 @@ public class CPPTemplates {
 			name= (IASTName) name.getParent();
 		}
 		try {
-			if (isDependentType(target)) {
+			if (target != null && isDependentType(target)) {
 				return CPPUnknownFunction.createForSample(template);
 			}
 

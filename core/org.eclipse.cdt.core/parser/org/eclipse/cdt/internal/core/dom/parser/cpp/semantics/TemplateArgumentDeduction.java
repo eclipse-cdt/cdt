@@ -168,17 +168,19 @@ public class TemplateArgumentDeduction {
 		if (isDependentPar) {
 			TemplateArgumentDeduction deduct= new TemplateArgumentDeduction(tmplParams, map, new CPPTemplateParameterMap(tmplParams.length), 0);
 			par= SemanticUtil.getNestedType(par, SemanticUtil.TDEF); 
-			if (!deduct.fromType(par, arg, false))
+			if (arg != null && !deduct.fromType(par, arg, false))
 				return null;
 			if (!map.mergeToExplicit(deduct.fDeducedArgs))
 				return null;
-			if (!verifyDeduction(tmplParams, map, true))
-				return null;
-			
-			par= CPPTemplates.instantiateType(par, map, -1, null);
 		}
+
+		if (!verifyDeduction(tmplParams, map, true))
+			return null;
+
+		if (isDependentPar)
+			par= CPPTemplates.instantiateType(par, map, -1, null);
 		
-		if (arg.isSameType(par)) {
+		if (arg == null || arg.isSameType(par)) {
 			List<ICPPTemplateArgument> result= new ArrayList<ICPPTemplateArgument>(numTmplParams);
 			for (ICPPTemplateParameter tpar : tmplParams) {
 				if (tpar.isParameterPack()) {

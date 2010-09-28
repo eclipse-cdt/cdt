@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google) 
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
@@ -148,4 +149,18 @@ public class CCorePreferenceConstants {
 	 * @since 5.2
 	 */
 	public static final String SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT = CCorePlugin.PLUGIN_ID + ".showSourceRootsAtTopLevelOfProject"; //$NON-NLS-1$
+
+	/**
+	 * "Build All Configurations" preference key.
+	 * 
+	 * @since 4.0
+	 */
+	public static final String PREF_BUILD_ALL_CONFIGS = "build.all.configs.enabled"; //$NON-NLS-1$
+
+	/**
+	 * Preference key for "build only if resources in (related) projects are modified".
+	 * 
+	 * @since 5.1
+	 */
+	public static final String PREF_BUILD_CONFIGS_RESOURCE_CHANGES = "build.proj.ref.configs.enabled"; //$NON-NLS-1$
 }

@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -35,8 +36,6 @@ import org.eclipse.osgi.util.NLS;
 
 public abstract class ACBuilder extends IncrementalProjectBuilder implements IMarkerGenerator {
 
-	private static final String PREF_BUILD_ALL_CONFIGS = "build.all.configs.enabled"; //$NON-NLS-1$
-	private static final String PREF_BUILD_CONFIGS_RESOURCE_CHANGES = "build.proj.ref.configs.enabled"; //$NON-NLS-1$
 	private static final Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
 
 	private static final String CONTENTS_CONFIGURATION_IDS = "org.eclipse.cdt.make.core.configurationIds"; //$NON-NLS-1$
@@ -126,11 +125,11 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	}
 	
 	public static boolean needAllConfigBuild() {
-		return prefs.getBoolean(PREF_BUILD_ALL_CONFIGS);
+		return prefs.getBoolean(CCorePreferenceConstants.PREF_BUILD_ALL_CONFIGS);
 	}
 	
 	public static void setAllConfigBuild(boolean enable) {
-		prefs.setValue(PREF_BUILD_ALL_CONFIGS, enable);		
+		prefs.setValue(CCorePreferenceConstants.PREF_BUILD_ALL_CONFIGS, enable);		
 	}
 	
 	/**
@@ -142,7 +141,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	 */
 	public static boolean buildConfigResourceChanges() {
 		//bug 219337
-		return prefs.getBoolean(PREF_BUILD_CONFIGS_RESOURCE_CHANGES);
+		return prefs.getBoolean(CCorePreferenceConstants.PREF_BUILD_CONFIGS_RESOURCE_CHANGES);
 	}
 	
 	/**
@@ -152,7 +151,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	 * @since 5.1
 	 */
 	public static void setBuildConfigResourceChanges(boolean enable) {
-		prefs.setValue(PREF_BUILD_CONFIGS_RESOURCE_CHANGES, enable);		
+		prefs.setValue(CCorePreferenceConstants.PREF_BUILD_CONFIGS_RESOURCE_CHANGES, enable);		
 	}
 	
 	@SuppressWarnings("nls")

@@ -238,8 +238,6 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 	public static void initDefaults(IPreferenceStore prefs) {
 		prefs.setDefault(PreferenceConstants.PREF_LINK_TO_EDITOR, false);
 		prefs.setDefault(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE, false);
-		ACBuilder.setAllConfigBuild(false);
-		ACBuilder.setBuildConfigResourceChanges(false);
 	}
 	
 	/* (non-Javadoc)

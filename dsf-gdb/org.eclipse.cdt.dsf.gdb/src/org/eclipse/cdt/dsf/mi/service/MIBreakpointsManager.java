@@ -1453,18 +1453,21 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         }
     }
 
-    /**
-     * See bug232415
-     * 
-     * @param path	the absolute path to the source file
-     * @return
-     */
-    private String adjustDebuggerPath(String path) {
+	/**
+	 * See bug 232415
+	 * 
+	 * @param path
+	 *            the absolute path to the source file
+	 * @return the simple filename if running on Windows and [path] is not an
+	 *         absolute UNIX one. Otherwise, [path] is returned
+	 */
+    static String adjustDebuggerPath(String path) {
     	String result = path;
     	// Make it MinGW-specific
     	if (Platform.getOS().startsWith("win")) { //$NON-NLS-1$
         	if (!path.startsWith("/")) { //$NON-NLS-1$
-        		result = path.substring(path.lastIndexOf('\\') + 1);
+        		path = path.replace('\\', '/');
+        		result = path.substring(path.lastIndexOf('/') + 1);
         	}
     	}
     	return result;

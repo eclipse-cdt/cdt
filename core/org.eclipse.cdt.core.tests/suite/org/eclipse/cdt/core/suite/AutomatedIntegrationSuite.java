@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTests;
 import org.eclipse.cdt.core.tests.templateengine.AllTemplateEngineTests;
 import org.eclipse.cdt.internal.index.tests.IndexTests;
 import org.eclipse.cdt.internal.pdom.tests.PDOMTests;
+import org.eclipse.cdt.utils.CdtVariableResolverTest;
 import org.eclipse.cdt.utils.CommandLineUtilTest;
 
 /**
@@ -39,23 +40,24 @@ import org.eclipse.cdt.utils.CommandLineUtilTest;
  */
 public class AutomatedIntegrationSuite extends TestSuite {
 
-	public AutomatedIntegrationSuite() {}
-	
+	public AutomatedIntegrationSuite() {
+	}
+
 	public AutomatedIntegrationSuite(Class theClass, String name) {
 		super(theClass, name);
 	}
-	
+
 	public AutomatedIntegrationSuite(Class theClass) {
 		super(theClass);
 	}
-	
+
 	public AutomatedIntegrationSuite(String name) {
 		super(name);
 	}
-	
+
 	public static Test suite() throws Exception {
 		final AutomatedIntegrationSuite suite = new AutomatedIntegrationSuite();
-		
+
 		// Add all success tests
 		suite.addTest(CDescriptorTests.suite());
 		suite.addTest(CDescriptorOldTests.suite());
@@ -65,21 +67,22 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(AllCoreTests.suite());
 		suite.addTest(ElementDeltaTests.suite());
 		suite.addTest(WorkingCopyTests.suite());
-        suite.addTest(PositionTrackerTests.suite());
-        suite.addTest(ResourceLookupTests.suite());
-        suite.addTest(StringBuilderTest.suite());
-        suite.addTest(AllLanguageTests.suite());
-        suite.addTest(RewriteTests.suite());
+		suite.addTest(PositionTrackerTests.suite());
+		suite.addTest(ResourceLookupTests.suite());
+		suite.addTest(StringBuilderTest.suite());
+		suite.addTest(AllLanguageTests.suite());
+		suite.addTest(RewriteTests.suite());
+		suite.addTest(CdtVariableResolverTest.suite());
 		suite.addTest(CommandLineUtilTest.suite());
 		suite.addTest(EFSExtensionTests.suite());
-				
+
 		// Add in PDOM tests
 		suite.addTest(PDOMTests.suite());
 		suite.addTest(IndexTests.suite());
-	
-        suite.addTest(AllTemplateEngineTests.suite());
+
+		suite.addTest(AllTemplateEngineTests.suite());
 
 		return suite;
 	}
-	
+
 }

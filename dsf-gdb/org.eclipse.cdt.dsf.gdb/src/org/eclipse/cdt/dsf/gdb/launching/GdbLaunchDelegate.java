@@ -360,4 +360,10 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	protected String getPluginID() {
 		return GdbPlugin.PLUGIN_ID;
 	}
+
+
+	@Override
+	protected ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
+		return LaunchUtils.verifyCProject(config);
+	}
 }

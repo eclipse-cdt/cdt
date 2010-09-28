@@ -697,7 +697,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 			if (functionLength > fMaxFunctionLength) {
 				fMaxFunctionLength = functionLength;
 			}
-			if (fNumberOfInstructions < 100) {
+			if (fNumberOfInstructions < 100 && fMeanSizeOfInstructions < 16.0) {
 				fMeanSizeOfInstructions = (fMeanSizeOfInstructions * fNumberOfInstructions + pos.fAddressLength.floatValue()) / (++fNumberOfInstructions);
 			}
 		}

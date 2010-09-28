@@ -31,6 +31,7 @@ import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.internal.provisional.service.IInstructionWithSize;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
@@ -568,8 +569,8 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 			// return true to avoid a retry
 			return true;
 		}
-		// indicates whether [startAddress] was inserted
-		boolean insertedStartAddress = startAddress == null;
+
+		boolean insertedAnyAddress = false;
 
 		try {
 			fCallback.lockScroller();
@@ -590,7 +591,7 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 					fCallback.getDocument().addInvalidAddressRange(p);
 				} else if (p == null || address.compareTo(endAddress) > 0) {
 					if (DEBUG) System.out.println("Excess disassembly lines at " + DisassemblyUtils.getAddressText(address)); //$NON-NLS-1$
-					return insertedStartAddress;
+					return insertedAnyAddress;
 				} else if (p.fValid) {
 					if (DEBUG) System.out.println("Excess disassembly lines at " + DisassemblyUtils.getAddressText(address)); //$NON-NLS-1$
 					if (!p.fAddressOffset.equals(address)) {
@@ -598,7 +599,7 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 						p.fValid = false;
 						fCallback.getDocument().addInvalidAddressRange(p);
 					} else {
-						return insertedStartAddress;
+						continue;
 					}
 				}
 				boolean hasSource= false;
@@ -610,12 +611,17 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 				}
 				// determine instruction byte length
 				BigInteger instrLength= null;
-				if (j < instructions.length - 1) {
-					instrLength= instructions[j+1].getAdress().subtract(instruction.getAdress()).abs();
-				}
-				if (instrLength == null) {
-					// cannot determine length of last instruction
-					break;
+				if (instruction instanceof IInstructionWithSize
+					&& ((IInstructionWithSize)instruction).getSize() != null) {
+					instrLength= new BigInteger(((IInstructionWithSize)instruction).getSize().toString());
+				} else {
+					if (j < instructions.length - 1) {
+						instrLength= instructions[j+1].getAdress().subtract(instruction.getAdress()).abs();
+					}
+					if (instrLength == null) {
+						// cannot determine length of last instruction
+						break;
+					}
 				}
 				final String opCode;
 				// insert function name+offset instead of opcode bytes
@@ -624,18 +630,19 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 				} else {
 					opCode= ""; //$NON-NLS-1$
 				}
-				insertedStartAddress= insertedStartAddress || address.compareTo(startAddress) == 0;
+
 				p = fCallback.getDocument().insertDisassemblyLine(p, address, instrLength.intValue(), opCode, instruction.getInstruction(), compilationPath, -1);
-				if (p == null && insertedStartAddress) {
+				if (p == null) {
 					break;
 				}
+				insertedAnyAddress = true;
 			}
 		} catch (BadLocationException e) {
 			// should not happen
 			DisassemblyUtils.internalError(e);
 		} finally {
 			fCallback.setUpdatePending(false);
-			if (insertedStartAddress) {
+			if (insertedAnyAddress) {
 				fCallback.updateInvalidSource();
 				fCallback.unlockScroller();
 				fCallback.doPending();
@@ -644,7 +651,7 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 				fCallback.unlockScroller();
 			}
 		}
-		return insertedStartAddress;
+		return insertedAnyAddress;
 	}
 
 	/**
@@ -676,8 +683,8 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 			// return true to avoid a retry
 			return true;
 		}
-		// indicates whether [startAddress] was inserted
-		boolean insertedStartAddress = startAddress == null;
+
+		boolean insertedAnyAddress = false;
 		try {
 			fCallback.lockScroller();
 			
@@ -702,7 +709,7 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 						fCallback.getDocument().addInvalidAddressRange(p);
 					} else if (p == null || address.compareTo(endAddress) > 0) {
 						if (DEBUG) System.out.println("Excess disassembly lines at " + DisassemblyUtils.getAddressText(address)); //$NON-NLS-1$
-						return insertedStartAddress;
+						return insertedAnyAddress;
 					} else if (p.fValid) {
 						if (DEBUG) System.out.println("Excess disassembly lines at " + DisassemblyUtils.getAddressText(address)); //$NON-NLS-1$
 						if (!p.fAddressOffset.equals(address)) {
@@ -725,25 +732,30 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 					}
 					// determine instruction byte length
 					BigInteger instrLength= null;
-					if (j < instructions.length - 1) {
-						instrLength= instructions[j+1].getAdress().subtract(instruction.getAdress()).abs();
-					} else if (i < mixedInstructions.length - 1) {
-						int nextSrcLineIdx= i+1;
-						while (nextSrcLineIdx < mixedInstructions.length) {
-							IInstruction[] nextInstrs= mixedInstructions[nextSrcLineIdx].getInstructions();
-							if (nextInstrs.length > 0) {
-								instrLength= nextInstrs[0].getAdress().subtract(instruction.getAdress()).abs();
+					if (instruction instanceof IInstructionWithSize
+						&& ((IInstructionWithSize)instruction).getSize() != null) {
+						instrLength= new BigInteger(((IInstructionWithSize)instruction).getSize().toString());
+					} else {
+						if (j < instructions.length - 1) {
+							instrLength= instructions[j+1].getAdress().subtract(instruction.getAdress()).abs();
+						} else if (i < mixedInstructions.length - 1) {
+							int nextSrcLineIdx= i+1;
+							while (nextSrcLineIdx < mixedInstructions.length) {
+								IInstruction[] nextInstrs= mixedInstructions[nextSrcLineIdx].getInstructions();
+								if (nextInstrs.length > 0) {
+									instrLength= nextInstrs[0].getAdress().subtract(instruction.getAdress()).abs();
+									break;
+								}
+								++nextSrcLineIdx;
+							}
+							if (nextSrcLineIdx >= mixedInstructions.length) {
 								break;
 							}
-							++nextSrcLineIdx;
 						}
-						if (nextSrcLineIdx >= mixedInstructions.length) {
+						if (instrLength == null) {
+							// cannot determine length of last instruction
 							break;
 						}
-					}
-					if (instrLength == null) {
-						// cannot determine length of last instruction
-						break;
 					}
 					final String opCode;
 					// insert function name+offset instead of opcode bytes
@@ -752,11 +764,11 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 					} else {
 						opCode= ""; //$NON-NLS-1$
 					}
-					insertedStartAddress= insertedStartAddress || address.compareTo(startAddress) == 0;
 					p = fCallback.getDocument().insertDisassemblyLine(p, address, instrLength.intValue(), opCode, instruction.getInstruction(), file, lineNumber);
-					if (p == null && insertedStartAddress) {
+					if (p == null) {
 						break;
 					}
+					insertedAnyAddress = true;
 				}
 			}
 			
@@ -765,7 +777,7 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 			DisassemblyUtils.internalError(e);
 		} finally {
 			fCallback.setUpdatePending(false);
-			if (insertedStartAddress) {
+			if (insertedAnyAddress) {
 				fCallback.updateInvalidSource();
 				fCallback.unlockScroller();
 				fCallback.doPending();
@@ -774,7 +786,7 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 				fCallback.unlockScroller();
 			}
 		}
-		return insertedStartAddress;
+		return insertedAnyAddress;
 	}
 
 	/* (non-Javadoc)

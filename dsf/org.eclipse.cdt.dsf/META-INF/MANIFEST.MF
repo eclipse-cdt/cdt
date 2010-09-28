@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-SymbolicName: org.eclipse.cdt.dsf;singleton:=true
-Bundle-Version: 2.1.0.qualifier
+Bundle-Version: 2.1.1.qualifier
 Bundle-Activator: org.eclipse.cdt.dsf.internal.DsfPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
@@ -14,6 +14,7 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.dsf.concurrent,
  org.eclipse.cdt.dsf.datamodel,
  org.eclipse.cdt.dsf.debug.internal.provisional.model;x-friends:="org.eclipse.cdt.dsf.ui",
+ org.eclipse.cdt.dsf.debug.internal.provisional.service;x-internal:=true,
  org.eclipse.cdt.dsf.debug.model,
  org.eclipse.cdt.dsf.debug.service,
  org.eclipse.cdt.dsf.debug.service.command,

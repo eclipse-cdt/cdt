@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.ASTNameCollector;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
@@ -189,21 +190,23 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				if (binding != null && !(binding instanceof IProblemBinding)) {
 					IName[] names = findDeclNames(ast, kind, binding);
 					for (final IName name : names) {
-						if (name instanceof IIndexName &&
-								filename.equals(((IIndexName) name).getFileLocation().getFileName())) {
-							// Exclude index names from the current file.
-						} else if (areOverlappingNames(name, sourceName)) {
-							// Exclude the current location.
-						} else if (binding instanceof IParameter) {
-							if (isInSameFunction(sourceName, name)) {
+						if (name != null) {
+							if (name instanceof IIndexName &&
+									filename.equals(((IIndexName) name).getFileLocation().getFileName())) {
+								// Exclude index names from the current file.
+							} else if (areOverlappingNames(name, sourceName)) {
+								// Exclude the current location.
+							} else if (binding instanceof IParameter) {
+								if (isInSameFunction(sourceName, name)) {
+									targets = ArrayUtil.append(targets, name);
+								}
+							} else if (binding instanceof ICPPTemplateParameter) {
+								if (isInSameTemplate(sourceName, name)) {
+									targets = ArrayUtil.append(targets, name);
+								}
+							} else {
 								targets = ArrayUtil.append(targets, name);
 							}
-						} else if (binding instanceof ICPPTemplateParameter) {
-							if (isInSameTemplate(sourceName, name)) {
-								targets = ArrayUtil.append(targets, name);
-							}
-						} else if (name != null) {
-							targets = ArrayUtil.append(targets, name);
 						}
 					}
 				}
@@ -392,24 +395,27 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				min(loc1.getNodeOffset() + loc1.getNodeLength(), loc2.getNodeOffset() + loc2.getNodeLength());
 	}
 
-	private static boolean isInSameFunction(IASTName name1, IName name2) {
-		IASTDeclaration decl1 = getEnclosingDeclaration(name1);
-		IASTDeclaration decl2 = name2 instanceof IASTName ? getEnclosingDeclaration((IASTName) name2) : null;
-		return decl1 != null && decl1.equals(decl2) || decl1 == null && decl2 == null;
+	private static boolean isInSameFunction(IASTName refName, IName funcDeclName) {
+		if (funcDeclName instanceof IASTName) {
+			IASTDeclaration fdef = getEnclosingFunctionDefinition((IASTNode) funcDeclName);
+			return fdef != null && fdef.contains(refName);
+		} 
+		return false;
 	}
 
-	private static IASTDeclaration getEnclosingDeclaration(IASTNode node) {
-		while (node != null && !(node instanceof IASTDeclaration)) {
+	private static IASTDeclaration getEnclosingFunctionDefinition(IASTNode node) {
+		while (node != null && !(node instanceof IASTFunctionDefinition)) {
 			node= node.getParent();
 		}
 		return (IASTDeclaration) node;
 	}
 
-	private static boolean isInSameTemplate(IASTName name1, IName name2) {
-		IASTDeclaration decl1 = getEnclosingTemplateDeclaration(name1);
-		IASTDeclaration decl2 = name2 instanceof IASTName ?
-				getEnclosingTemplateDeclaration((IASTName) name2) : null;
-		return decl1 != null && decl1.equals(decl2) || decl1 == null && decl2 == null;
+	private static boolean isInSameTemplate(IASTName refName, IName templateDeclName) {
+		if (templateDeclName instanceof IASTName) {
+			IASTDeclaration template = getEnclosingTemplateDeclaration(refName);
+			return template != null && template.contains(refName);
+		} 
+		return false;
 	}
 
 	private static IASTDeclaration getEnclosingTemplateDeclaration(IASTNode node) {

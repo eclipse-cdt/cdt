@@ -76,6 +76,7 @@ import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.osgi.framework.BundleContext;
@@ -1344,6 +1345,10 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	 */
 	public void runToLine(IExecutionDMContext context, String sourceFile,
 			int lineNumber, boolean skipBreakpoints, RequestMonitor rm) {
+		
+		// Hack around a MinGW bug; see 196154
+		sourceFile = adjustDebuggerPath(sourceFile);
+		
 		runToLocation(context, sourceFile + ":" + Integer.toString(lineNumber), skipBreakpoints, rm); //$NON-NLS-1$
 	}
 
@@ -1454,4 +1459,23 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		}
 	}
 
+	/**
+	 * See bug 196154
+	 * 
+	 * @param path
+	 *            the absolute path to the source file
+	 * @return the simple filename if running on Windows and [path] is not an
+	 *         absolute UNIX one. Otherwise, [path] is returned
+	 */
+    private static String adjustDebuggerPath(String path) {
+    	String result = path;
+    	// Make it MinGW-specific
+    	if (Platform.getOS().startsWith("win")) { //$NON-NLS-1$
+        	if (!path.startsWith("/")) { //$NON-NLS-1$
+        		path = path.replace('\\', '/');
+        		result = path.substring(path.lastIndexOf('/') + 1);
+        	}
+    	}
+    	return result;
+    }
 }

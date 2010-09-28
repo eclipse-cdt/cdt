@@ -3,10 +3,10 @@
 	<category-def name="CDT Main Features" label="CDT Main Features"/>
 	<category-def name="CDT Optional Features" label="CDT Optional Features"/>
 	
-	<feature id="org.eclipse.cdt" url="features/org.eclipse.cdt_7.0.1.@timeStamp@.jar" version="7.0.1.@timeStamp@">
+	<feature id="org.eclipse.cdt" url="features/org.eclipse.cdt_7.0.2.@timeStamp@.jar" version="7.0.1.@timeStamp@">
 		<category name="CDT Main Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.sdk" url="features/org.eclipse.cdt.sdk_7.0.1.@timeStamp@.jar" version="7.0.1.@timeStamp@">
+	<feature id="org.eclipse.cdt.sdk" url="features/org.eclipse.cdt.sdk_7.0.2.@timeStamp@.jar" version="7.0.1.@timeStamp@">
 		<category name="CDT Main Features"/>
 	</feature>
 	<feature id="org.eclipse.cdt.debug.gdbjtag" url="features/org.eclipse.cdt.debug.gdbjtag_7.0.0.@timeStamp@.jar" version="7.0.0.@timeStamp@">

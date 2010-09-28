@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.platform"
       label="%featureName"
-      version="7.0.1.qualifier"
+      version="7.0.2.qualifier"
       provider-name="Eclipse.org">
 
    <description>
@@ -68,7 +68,7 @@
       <import plugin="org.eclipse.ui" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.debug.ui" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.dsf" version="2.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.cdt.dsf" version="2.1.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.cdt.core" version="5.1.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.cdt.debug.core" version="6.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.cdt.debug.ui" version="6.1.0" match="greaterOrEqual"/>

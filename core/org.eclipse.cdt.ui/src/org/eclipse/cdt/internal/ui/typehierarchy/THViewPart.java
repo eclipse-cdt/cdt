@@ -525,7 +525,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 
 	private Control createHierarchyControl(ViewForm parent) {
 		Display display= getSite().getShell().getDisplay();
-		fModel= new THHierarchyModel(this, display);
+		fModel= new THHierarchyModel(this, display, false);
 		fHierarchyLabelProvider= new THLabelProvider(display, fModel);
     	fHierarchyTreeViewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
     	fHierarchyTreeViewer.setContentProvider(new THContentProvider());

@@ -129,5 +129,15 @@ public class THNode implements IAdaptable {
 			}
 		}
 	}
+
+	public void removeNonImplementorLeafs() {
+		for (Iterator<THNode> iterator = fChildren.iterator(); iterator.hasNext();) {
+			THNode child = iterator.next();
+			child.removeNonImplementorLeafs();
+			if (!child.isImplementor() && !child.hasChildren()) {
+				iterator.remove();
+			}
+		}
+	}
 }
 

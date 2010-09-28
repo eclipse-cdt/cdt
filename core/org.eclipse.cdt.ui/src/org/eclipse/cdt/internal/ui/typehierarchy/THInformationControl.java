@@ -56,7 +56,7 @@ public class THInformationControl extends AbstractInformationControl implements 
 	@Override
 	protected TreeViewer createTreeViewer(Composite parent, int style) {
 		Display display= getShell().getDisplay();
-		fModel= new THHierarchyModel(this, display);
+		fModel= new THHierarchyModel(this, display, true);
 		fHierarchyLabelProvider= new THLabelProvider(display, fModel);
 		fHierarchyLabelProvider.setMarkImplementers(false);
     	fHierarchyTreeViewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -151,7 +151,7 @@ public class THInformationControl extends AbstractInformationControl implements 
 				THNode selection= fModel.getSelectionInHierarchy();
 				if (selection != null) {
 					fHierarchyTreeViewer.setSelection(new StructuredSelection(selection));
-					fHierarchyTreeViewer.expandToLevel(selection, 1);
+					fHierarchyTreeViewer.expandToLevel(selection, 2);
 				}
 				break;
 			}		
@@ -176,8 +176,8 @@ public class THInformationControl extends AbstractInformationControl implements 
 	}
 
 	private THNode findElement(TreeItem[] items) {
-		for (int i= 0; i < items.length; i++) {
-			Object item= items[i].getData();
+		for (TreeItem item2 : items) {
+			Object item= item2.getData();
 			THNode element= null;
 			if (item instanceof THNode) {
 				element= (THNode)item;
@@ -188,7 +188,7 @@ public class THInformationControl extends AbstractInformationControl implements 
 				if (fStringMatcher.match(label))
 					return element;
 			}
-			element= findElement(items[i].getItems());
+			element= findElement(item2.getItems());
 			if (element != null)
 				return element;
 		}

@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.ui.typehierarchy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -71,10 +70,12 @@ class THHierarchyModel {
 	private Display fDisplay;
 	private ITHModelPresenter fView;
 	private WorkingSetFilterUI fFilter;
+	private final boolean fHideNonImplementorLeaves;
 	
-	public THHierarchyModel(ITHModelPresenter view, Display display) {
+	public THHierarchyModel(ITHModelPresenter view, Display display, boolean hideNonImplementors) {
 		fDisplay= display;
 		fView= view;
+		fHideNonImplementorLeaves= hideNonImplementors;
 	}
 	
 	public ICElement getInput() {
@@ -121,7 +122,7 @@ class THHierarchyModel {
 		fSelectedTypeNode= null;
 		fTypeToSelect= input;
 	}
-
+	
 	synchronized public void computeGraph() {
 		if (fJob != null) {
 			fJob.cancel();
@@ -201,8 +202,7 @@ class THHierarchyModel {
 			}
 		}
 		
-		for (Iterator<THGraphNode> iterator = groots.iterator(); iterator.hasNext();) {
-			THGraphNode gnode = iterator.next();
+		for (THGraphNode gnode : groots) {
 			THNode node = createNode(null, gnode, inputNode);
 			roots.add(node);
 			stack.add(node);
@@ -216,8 +216,7 @@ class THHierarchyModel {
 				leafs.add(node);
 			}
 			else {
-				for (Iterator<THGraphEdge> iterator = edges.iterator(); iterator.hasNext();) {
-					THGraphEdge edge = iterator.next();
+				for (THGraphEdge edge : edges) {
 					THGraphNode gchildNode= fwd ? edge.getEndNode() : edge.getStartNode();
 					THNode childNode= createNode(node, gchildNode, inputNode);
 					node.addChild(childNode);
@@ -234,12 +233,19 @@ class THHierarchyModel {
 		}
 		
 		updateImplementors();
+		if (!fwd && fHideNonImplementorLeaves && fSelectedMember != null && fMemberSignatureToSelect != null) 
+			removeNonImplementorLeaves(fRootNodes);
 	}
 
 	private void removeFilteredLeafs(THNode[] rootNodes) {
-		for (int i = 0; i < rootNodes.length; i++) {
-			THNode node = rootNodes[i];
+		for (THNode node : rootNodes) {
 			node.removeFilteredLeafs();
+		}
+	}
+
+	private void removeNonImplementorLeaves(THNode[] rootNodes) {
+		for (THNode node : rootNodes) {
+			node.removeNonImplementorLeafs();
 		}
 	}
 
@@ -252,9 +258,9 @@ class THHierarchyModel {
 		return result[1];
 	}
 
-	private void findSelection(THNode[] seachme, THNode[] result) {
-		for (int i = 0; i < seachme.length; i++) {
-			findSelection(seachme[i], result);
+	private void findSelection(THNode[] searchme, THNode[] result) {
+		for (THNode element : searchme) {
+			findSelection(element, result);
 			if (result[0] != null) {
 				break;
 			}
@@ -283,15 +289,13 @@ class THHierarchyModel {
 			if (gnode != null) {
 				ICElement[] members= gnode.getMembers(fShowInheritedMembers);
 				if (members != null) {
-					for (int i = 0; i < members.length; i++) {
-						ICElement member= members[i];
+					for (ICElement member : members) {
 						if (member.equals(oldSelection)) {
 							fSelectedMember= member;
 							return;
 						}
 					}
-					for (int i = 0; i < members.length; i++) {
-						ICElement member= members[i];
+					for (ICElement member : members) {
 						if (fMemberSignatureToSelect.equals(TypeHierarchyUI.getLocalElementSignature(member))) {
 							fSelectedMember= member;
 							return;
@@ -383,8 +387,7 @@ class THHierarchyModel {
 
 	private void updateImplementors() {
 		if (fRootNodes != null) {
-			for (int i = 0; i < fRootNodes.length; i++) {
-				THNode node = fRootNodes[i];
+			for (THNode node : fRootNodes) {
 				updateImplementors(node);
 			}
 		}
@@ -393,8 +396,7 @@ class THHierarchyModel {
 	private void updateImplementors(THNode node) {
 		node.setIsImplementor(isImplementor(node.getElement()));
 		THNode[] children= node.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			THNode child = children[i];
+		for (THNode child : children) {
 			updateImplementors(child);
 		}
 	}
@@ -408,8 +410,7 @@ class THHierarchyModel {
 		if (gnode != null) {
 			ICElement[] members= gnode.getMembers(false);
 			if (members != null) {
-				for (int i = 0; i < members.length; i++) {
-					ICElement member = members[i];
+				for (ICElement member : members) {
 					if (member == fSelectedMember) {
 						return true;
 					}

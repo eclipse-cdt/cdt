@@ -245,20 +245,24 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 				stack.getTopFrame(fTargetContext, new DataRequestMonitor<IFrameDMContext>(executor, null) {
 					@Override
 					protected void handleCompleted() {
-						fCallback.setUpdatePending(false);
 						fTargetFrameContext= getData();
 						if (fTargetFrameContext != null) {
 							retrieveFrameAddressInSessionThread(frame);
+						} else {
+						    fCallback.setUpdatePending(false);
 						}
 					}
 				});
 			} else {
 				// TODO retrieve other stack frame
+	            fCallback.setUpdatePending(false);
 			}
 			return;
 		}
-		else {
-			assert frame == fTargetFrameContext.getLevel();
+		else if (frame != fTargetFrameContext.getLevel()) {
+		    // frame context has changed in the meantime - reinvoke
+            retrieveFrameAddressInSessionThread(fTargetFrameContext.getLevel());
+			return;
 		}
 		
 		stack.getFrameData(fTargetFrameContext, new DataRequestMonitor<IFrameDMData>(executor, null) {
@@ -282,7 +286,6 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 								fCallback.gotoFrame(frame, addressValue);
 							}
 						}
-
 					});
 				} else {
 					final IStatus status= getStatus();

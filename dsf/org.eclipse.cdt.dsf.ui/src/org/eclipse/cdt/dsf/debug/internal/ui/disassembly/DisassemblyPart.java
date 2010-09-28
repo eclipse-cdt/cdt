@@ -1340,19 +1340,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		AddressRangePosition pos = getPositionOfAddress(address);
 		if (pos != null) {
 			if (pos.fValid) {
-				AddressRangePosition previousPos = /* fUpdateBeforeFocus ? getPositionOfAddress(pos.fAddressOffset-1): */ null;
-				if (previousPos == null || previousPos.fValid) {
-					if (fGotoAddressPending.equals(address)) {
-						fGotoAddressPending = PC_UNKNOWN;
-					}
-					gotoPosition(pos, false);
-				} else {
-					int lines = fBufferZone+3;
-					BigInteger endAddress = pos.fAddressOffset;
-					BigInteger startAddress = previousPos.fAddressOffset.max(
-							endAddress.subtract(BigInteger.valueOf(lines * fDocument.getMeanSizeOfInstructions())));
-					retrieveDisassembly(startAddress, endAddress, lines);
-				}
+				if (fGotoAddressPending.equals(address)) {
+                	fGotoAddressPending = PC_UNKNOWN;
+                }
+                gotoPosition(pos, false);
 			} else {
 				int lines = fBufferZone+3;
 				BigInteger endAddress = pos.fAddressOffset.add(pos.fAddressLength).min(
@@ -2032,6 +2023,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 */
 	public void gotoFrame(int frame) {
 		assert isGuiThread();
+        fGotoAddressPending = PC_UNKNOWN;
 		gotoFrame(frame, PC_UNKNOWN);
 	}
 
@@ -2051,6 +2043,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	public void gotoFrame(int frame, BigInteger address) {
 		assert isGuiThread();
 		if (DEBUG) System.out.println("gotoFrame " + frame + " " + getAddressText(address)); //$NON-NLS-1$ //$NON-NLS-2$
+        if (fGotoAddressPending == fFrameAddress) {
+            // cancel goto address from previous goto frame
+            fGotoAddressPending = PC_UNKNOWN;
+        }
 		fTargetFrame = frame;
 		fFrameAddress = address;
 		if (fTargetFrame == -1) {
@@ -2091,10 +2087,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				addToPCHistory(pcPos);
 			}
 			fGotoFramePending = false;
-			if (fGotoAddressPending == fFrameAddress) {
-				fGotoAddressPending = PC_UNKNOWN;
-			}
-//			if (DEBUG) System.out.println("pc updated "+getAddressText(address)); //$NON-NLS-1$
 			gotoPosition(pcPos, false);
 			updateVisibleArea();
 		} else {

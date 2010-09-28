@@ -19,8 +19,6 @@ import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -59,9 +57,11 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 @ConfinedToDsfExecutor("#getExecutor()")
 public final class SteppingController {
     /**
-     * Amount of time in milliseconds, that it takes the SteppingTimedOutEvent 
+     * Default delay in milliseconds, that it takes the SteppingTimedOutEvent 
      * event to be issued after a step is started. 
-     * @see SteppingTimedOutEvent  
+     * @see SteppingTimedOutEvent
+     * @see #setStepTimeout(int)
+     * @see #getStepTimeout()
      */
     public final static int STEPPING_TIMEOUT = 500;
     
@@ -135,7 +135,12 @@ public final class SteppingController {
 	/**
 	 * Minimum step interval in milliseconds.
 	 */
-	private AtomicInteger fMinStepInterval= new AtomicInteger(0);
+	private volatile int fMinStepInterval;
+
+    /**
+     * Step timeout in milliseconds.
+     */
+    private volatile int fStepTimeout = STEPPING_TIMEOUT;
 
 	/**
 	 * Map of execution contexts for which a step is in progress.
@@ -194,7 +199,29 @@ public final class SteppingController {
      */
     @ThreadSafe
     public void setMinimumStepInterval(int interval) {
-    	fMinStepInterval.set(interval);
+    	fMinStepInterval = interval;
+    }
+
+    /**
+     * Configure the step timeout value. This controls the delay how long it takes
+     * to send out the {@link SteppingTimedOutEvent} after a step has been issued.
+     * 
+     * @param timeout  The timeout value in milliseconds (must be non-negative).
+     * @since 2.1.1
+     */
+    @ThreadSafe
+    public void setStepTimeout(int timeout) {
+        assert timeout >= 0;
+        fStepTimeout = timeout;
+    }
+    
+    /**
+     * @return the currently configured step timeout value
+     * @since 2.1.1
+     */
+    @ThreadSafe
+    public int getStepTimeout() {
+        return fStepTimeout;
     }
 
 	/**
@@ -315,7 +342,7 @@ public final class SteppingController {
 	 * @return  the number of milliseconds before the next possible step
 	 */
 	private int getStepDelay(IExecutionDMContext execCtx) {
-	    int minStepInterval = fMinStepInterval.get();
+	    int minStepInterval = fMinStepInterval;
 		if (minStepInterval > 0) {
 	        for (IExecutionDMContext lastStepCtx : fLastStepTimes.keySet()) {
 	            if (execCtx.equals(lastStepCtx) || DMContexts.isAncestorOf(execCtx, lastStepCtx)) {
@@ -588,7 +615,7 @@ public final class SteppingController {
                                 null);
                         }
                     }},
-                    STEPPING_TIMEOUT, TimeUnit.MILLISECONDS)
+                    fStepTimeout, TimeUnit.MILLISECONDS)
                 );
             
         } 

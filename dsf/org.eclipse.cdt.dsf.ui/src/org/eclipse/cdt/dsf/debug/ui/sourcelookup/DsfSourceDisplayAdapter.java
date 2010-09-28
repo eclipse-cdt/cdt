@@ -686,6 +686,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 	}
 
 	private void doDisplaySource(final IFrameDMContext context, final IWorkbenchPage page, final boolean force, final boolean eventTriggered) {
+	    if (DEBUG) System.out.println("[DsfSourceDisplayAdapter] doDisplaySource ctx="+context+" eventTriggered="+eventTriggered); //$NON-NLS-1$ //$NON-NLS-2$
     	if (context.getLevel() < 0) {
     		return;
     	}
@@ -760,6 +761,13 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
     		}
     		// cancel running display job
     		fRunningDisplayJob.cancel();
+            // make sure doneStepping() is called even if the job never ran - bug 325394
+    		if (fRunningDisplayJob.fEventTriggered && !fRunningDisplayJob.fDoneStepping.getAndSet(true)) {
+    		    // ... but not if this request is event-triggered for the same context (duplicate suspended event)
+    		    if (!eventTriggered || !fRunningDisplayJob.getDmc().equals(lookupResult.getDmc())) {
+    		        doneStepping(fRunningDisplayJob.getDmc());
+    		    }
+    		}
     	}
     	if (fRunningClearingJob != null) {
             // Wait for the clearing job to finish, instead, set the 
@@ -855,6 +863,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
     public void eventDispatched(final IRunControl.ISuspendedDMEvent e) {
 		updateStepTiming();
     	if (e.getReason() == StateChangeReason.STEP || e.getReason() == StateChangeReason.BREAKPOINT) {
+    	    if (DEBUG) System.out.println("[DsfSourceDisplayAdapter] eventDispatched e="+e); //$NON-NLS-1$
 	        // trigger source display immediately (should be optional?)
 	        Display.getDefault().asyncExec(new Runnable() {
 				public void run() {

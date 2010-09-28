@@ -35,8 +35,6 @@ import org.eclipse.core.runtime.PlatformObject;
 abstract public class AbstractDMContext extends PlatformObject 
     implements IDMContext     
 {
-    public static final IDMContext[] EMPTY_PARENTS_ARRAY = new IDMContext[0];
-    
     private final String fSessionId;
     private final IDMContext[] fParents;
 

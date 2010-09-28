@@ -50,6 +50,8 @@ public class TestModel extends AbstractDsfService implements IFormattedValues {
     }
     
     public static class TestElement extends AbstractDMContext implements IFormattedDataDMContext {
+        public static final IDMContext[] EMPTY_PARENTS_ARRAY = new IDMContext[0];
+        
         private final TestModel fModel;
         private final String fID;
         TestElement[] fChildren;

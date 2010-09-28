@@ -348,7 +348,7 @@ public class ResourceHelper {
 	 * The intention of the method is to create folders which do not belong to any project.
 	 *
 	 * @param name - folder name.
-	 * @return full folder path.
+	 * @return absolute location of the folder on the file system.
 	 * @throws IOException if something goes wrong.
 	 */
 	public static IPath createWorkspaceFolder(String name) throws CoreException, IOException {
@@ -369,7 +369,7 @@ public class ResourceHelper {
 	/**
 	 * Creates new temporary folder with generated name from workspace root.
 	 *
-	 * @return full folder path.
+	 * @return absolute location of the folder on the file system.
 	 * @throws IOException if something goes wrong.
 	 */
 	public static IPath createTemporaryFolder() throws CoreException, IOException {

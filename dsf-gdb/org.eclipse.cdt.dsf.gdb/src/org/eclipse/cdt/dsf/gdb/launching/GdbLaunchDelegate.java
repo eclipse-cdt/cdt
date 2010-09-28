@@ -62,14 +62,6 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
     private final static String TRACING_FIRST_VERSION = "7.1.50"; //$NON-NLS-1$
 	private boolean fIsPostMortemTracingSession;
 	
-	public GdbLaunchDelegate() {
-		super();
-	}
-
-	public GdbLaunchDelegate(boolean requireCProject) {
-		super(requireCProject);
-	}
-
 	@Override
 	public void launch( ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor ) throws CoreException {
 		org.eclipse.cdt.launch.LaunchUtils.enableActivity("org.eclipse.cdt.debug.dsfgdbActivity", true); //$NON-NLS-1$

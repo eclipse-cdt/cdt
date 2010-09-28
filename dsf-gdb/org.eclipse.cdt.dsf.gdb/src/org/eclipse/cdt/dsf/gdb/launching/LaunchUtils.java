@@ -350,13 +350,9 @@ public class LaunchUtils {
 	public static String[] getLaunchEnvironment(ILaunchConfiguration config) throws CoreException {
 		// Get the project
 		String projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
-		if (projectName == null) {
+		if (projectName == null)
 			return null;
-		}
-		projectName = projectName.trim();
-		if (projectName.length() == 0) {
-			return null;
-		}
+
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		if (project == null || !project.isAccessible())
 			return null;

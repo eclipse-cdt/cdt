@@ -24,9 +24,10 @@ import org.eclipse.cdt.managedbuilder.core.IBuildPathResolver;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.gnu.ui.GnuUIPlugin;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.cdt.utils.WindowsRegistry;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 
 
 /**
@@ -167,20 +168,11 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		String rootValue = null;
 		
 		// 1. Look in PATH values. Look for bin\cygwin1.dll
-		String pathVariable = System.getenv("PATH"); //$NON-NLS-1$
-		String[] paths = pathVariable.split(";"); //$NON-NLS-1$
-		for (String pathStr : paths) {
-			// If there is a trailing / or \, remove it
-			if ((pathStr.endsWith("\\") || pathStr.endsWith("/")) && pathStr.length() > 1) //$NON-NLS-1$ //$NON-NLS-2$
-				pathStr = pathStr.substring(0, pathStr.length() - 1);
-
-			Path pathFile = new Path(pathStr + "\\cygwin1.dll"); //$NON-NLS-1$
-			if (pathFile.toFile().exists()) {
-				rootValue = pathFile.removeLastSegments(2).toOSString();
-				break;
-			}
+		IPath location = PathUtil.findProgramLocation("cygwin1.dll"); //$NON-NLS-1$
+		if (location!=null) {
+			rootValue = location.removeLastSegments(2).toOSString();
 		}
-		
+
 		// 2. Try to find the root dir in SOFTWARE\Cygwin\setup
 		if(rootValue == null) {
 			rootValue = readValueFromRegistry(REGISTRY_KEY_SETUP, "rootdir"); //$NON-NLS-1$

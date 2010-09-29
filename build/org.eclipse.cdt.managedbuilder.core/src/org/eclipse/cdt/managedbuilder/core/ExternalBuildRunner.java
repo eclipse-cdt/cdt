@@ -44,6 +44,7 @@ import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.newmake.internal.core.StreamMonitor;
 import org.eclipse.cdt.utils.CommandLineUtil;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -68,6 +69,7 @@ public class ExternalBuildRunner implements IBuildRunner {
 	private static final String TYPE_INC = "ManagedMakeBuider.type.incremental";	//$NON-NLS-1$
 	private static final String CONSOLE_HEADER = "ManagedMakeBuilder.message.console.header";	//$NON-NLS-1$
 	private static final String WARNING_UNSUPPORTED_CONFIGURATION = "ManagedMakeBuilder.warning.unsupported.configuration";	//$NON-NLS-1$
+	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	public boolean invokeBuild(int kind, IProject project, IConfiguration configuration,
 			IBuilder builder, IConsole console, IMarkerGenerator markerGenerator,
@@ -106,16 +108,15 @@ public class ExternalBuildRunner implements IBuildRunner {
 
 				consoleHeader[1] = configuration.getName();
 				consoleHeader[2] = project.getName();
-				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-				buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
-				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+				buf.append(NEWLINE);
+				buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader)).append(NEWLINE);
+				buf.append(NEWLINE);
 
 				if(!configuration.isSupported()){
-					buf.append(ManagedMakeMessages.getFormattedString(WARNING_UNSUPPORTED_CONFIGURATION,
-							new String[] { configuration.getName(), configuration.getToolChain().getName() }));
-					buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-					buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+					String unsupportedToolchainMsg = ManagedMakeMessages.getFormattedString(WARNING_UNSUPPORTED_CONFIGURATION,
+							new String[] { configuration.getName(), configuration.getToolChain().getName() });
+					buf.append(unsupportedToolchainMsg).append(NEWLINE);
+					buf.append(NEWLINE);
 				}
 				cos.write(buf.toString().getBytes());
 				cos.flush();
@@ -140,7 +141,8 @@ public class ExternalBuildRunner implements IBuildRunner {
 				launcher.showCommand(true);
 
 				// Set the environment
-				String[] env = getEnvStrings(getEnvironment(builder));
+				Map<String, String> envMap = getEnvironment(builder);
+				String[] env = getEnvStrings(envMap);
 				String[] buildArguments = targets;
 
 				String[] newArgs = CommandLineUtil.argumentsToArray(builder.getBuildArguments());
@@ -181,31 +183,38 @@ public class ExternalBuildRunner implements IBuildRunner {
 					try {
 						// Do not allow the cancel of the refresh, since the builder is external
 						// to Eclipse, files may have been created/modified and we will be out-of-sync.
-						// The caveat is for hugue projects, it may take sometimes at every build.
+						// The caveat is for huge projects, it may take sometimes at every build.
 						
 						// TODO should only refresh output folders
 						project.refreshLocal(IResource.DEPTH_INFINITE, null);
 					} catch (CoreException e) {
 					}
 				} else {
+					buf = new StringBuffer(launcher.getCommandLine()).append(NEWLINE);
 					errMsg = launcher.getErrorMessage();
 				}
 				project.setSessionProperty(qName, !monitor.isCanceled() && !isClean ? new Integer(streamMon.getWorkDone()) : null);
 
 				if (errMsg != null) {
-					buf = new StringBuffer(buildCommand.toString() + " "); //$NON-NLS-1$
-					for (String arg : buildArguments) {
-						buf.append(arg);
-						buf.append(' ');
+					// Launching failed, trying to figure out possible cause
+					String errorPrefix = ManagedMakeMessages.getResourceString("ManagedMakeBuilder.error.prefix"); //$NON-NLS-1$
+					String buildCommandStr = buildCommand.toString();
+					if (PathUtil.findProgramLocation(buildCommandStr)==null) {
+						buf.append(errMsg).append(NEWLINE);
+						errMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.program.not.in.path", buildCommandStr); //$NON-NLS-1$
+						buf.append(errorPrefix).append(errMsg).append(NEWLINE);
+						buf.append(NEWLINE);
+						buf.append("PATH=["+envMap.get("PATH")+"]").append(NEWLINE); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+					} else {
+						buf.append(errorPrefix).append(errMsg).append(NEWLINE);
 					}
-
-					String errorDesc = ManagedMakeMessages.getFormattedString("MakeBuilder.buildError", buf.toString()); //$NON-NLS-1$
-					buf = new StringBuffer(errorDesc);
-					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
-					buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
-					cos.write(buf.toString().getBytes());
-					cos.flush();
+					consoleErr.write(buf.toString().getBytes());
+					consoleErr.flush();
 				}
+				
+				buf = new StringBuffer(NEWLINE);
+				buf.append(ManagedMakeMessages.getResourceString("ManagedMakeBuilder.message.build.finished")).append(NEWLINE); //$NON-NLS-1$
+				consoleOut.write(buf.toString().getBytes());
 
 				stdout.close();
 				stderr.close();

@@ -272,6 +272,7 @@
          <pattern description-expr="$0" eat-processed-line="true" file-expr="" line-expr="" regex=".*make.*\[.*\] Error [-]{0,1}\d*.*" severity="Warning"/>
          <pattern description-expr="make: $3" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="(.*):(\d*): (\S*: No such file or directory)" severity="Warning"/>
          <pattern description-expr="$0" eat-processed-line="true" file-expr="" line-expr="" regex=".*make.*: Circular .* dependency dropped." severity="Warning"/>
+         <pattern description-expr="$0" eat-processed-line="true" file-expr="" line-expr="" regex="Error:\s*(.*)" severity="Error"/>
       </errorparser>
    </extension>
    <extension

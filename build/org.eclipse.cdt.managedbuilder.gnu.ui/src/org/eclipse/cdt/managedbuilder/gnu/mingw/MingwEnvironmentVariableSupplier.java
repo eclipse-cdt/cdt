@@ -11,12 +11,11 @@
 
 package org.eclipse.cdt.managedbuilder.gnu.mingw;
 
-import java.io.File;
-
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.cdt.utils.WindowsRegistry;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -88,18 +87,9 @@ public class MingwEnvironmentVariableSupplier implements
 		
 		// 3. Look in PATH values. Look for mingw32-gcc.exe
 		if (binDir == null) {
-			String pathVariable = System.getenv("PATH"); //$NON-NLS-1$
-			String[] paths = pathVariable.split(";"); //$NON-NLS-1$
-			for (String pathStr : paths) {
-				// If there is a trailing / or \, remove it
-				if ((pathStr.endsWith("\\") || pathStr.endsWith("/")) && pathStr.length() > 1) //$NON-NLS-1$ //$NON-NLS-2$
-					pathStr = pathStr.substring(0, pathStr.length() - 1);
-				
-				File pathFile = new File(pathStr + "\\mingw32-gcc.exe"); //$NON-NLS-1$
-				if (pathFile.exists()) {
-					binDir = new Path(pathStr);
-					break;
-				}
+			IPath location = PathUtil.findProgramLocation("mingw32-gcc.exe"); //$NON-NLS-1$
+			if (location!=null) {
+				binDir = location.removeLastSegments(1);
 			}
 		}
 		

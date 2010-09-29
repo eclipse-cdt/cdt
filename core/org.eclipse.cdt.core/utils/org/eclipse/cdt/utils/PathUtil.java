@@ -27,6 +27,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -272,5 +273,74 @@ public class PathUtil {
 			count++;
 		}
 		return count;
+	}
+
+	/**
+	 * Find location of the program inspecting each path in the path list.
+	 * 
+	 * @param prog - program to find. For Windows, extensions "com" and "exe"
+	 *     can be omitted.
+	 * @param pathsStr - the list of paths to inspect separated by path separator
+	 *     defined in the platform (i.e. ":" in Unix and ";" in Windows).
+	 * @return - absolute location of the file on the file system.
+	 */
+	public static IPath findProgramLocation(String prog, String pathsStr) {
+		if (prog.trim().length()==0 || pathsStr.trim().length()==0)
+			return null;
+
+		String locationStr = null;
+		String[] dirs = pathsStr.split(File.pathSeparator);
+
+		// try to find "prog.exe" or "prog.com" on Windows
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			for (String dir : dirs) {
+				IPath dirLocation = new Path(dir);
+				File file = null;
+
+				file = dirLocation.append(prog+".exe").toFile(); //$NON-NLS-1$
+				if (file.isFile() && file.canRead()) {
+					locationStr = file.getAbsolutePath();
+					break;
+				}
+				file = dirLocation.append(prog+".com").toFile(); //$NON-NLS-1$
+				if (file.isFile() && file.canRead()) {
+					locationStr = file.getAbsolutePath();
+					break;
+				}
+			}
+		}
+
+		// check "prog" on Unix and Windows too (if was not found) - could be cygwin or something
+		// do it in separate loop due to performance and correctness of Windows regular case
+		if (locationStr==null) {
+			for (String dir : dirs) {
+				IPath dirLocation = new Path(dir);
+				File file = null;
+				
+				file = dirLocation.append(prog).toFile();
+				if (file.isFile() && file.canRead()) {
+					locationStr = file.getAbsolutePath();
+					break;
+				}
+			}
+		}
+
+		if (locationStr!=null)
+			return new Path(locationStr);
+
+		return null;
+	}
+
+	/**
+	 * Find location of the program inspecting each path in the path list
+	 * defined by environment variable ${PATH}.
+	 * 
+	 * @param prog - program to find. For Windows, extensions "com" and "exe"
+	 *     can be omitted.
+	 * @return - absolute location of the file on the file system.
+	 */
+	public static IPath findProgramLocation(String prog) {
+		String pathVariable = System.getenv("PATH"); //$NON-NLS-1$
+		return findProgramLocation(prog, pathVariable);
 	}
 }

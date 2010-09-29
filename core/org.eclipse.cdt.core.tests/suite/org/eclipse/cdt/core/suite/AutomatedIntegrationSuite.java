@@ -34,6 +34,7 @@ import org.eclipse.cdt.internal.index.tests.IndexTests;
 import org.eclipse.cdt.internal.pdom.tests.PDOMTests;
 import org.eclipse.cdt.utils.CdtVariableResolverTest;
 import org.eclipse.cdt.utils.CommandLineUtilTest;
+import org.eclipse.cdt.utils.FindProgramLocationTest;
 
 /**
  * @author vhirsl
@@ -74,6 +75,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(RewriteTests.suite());
 		suite.addTest(CdtVariableResolverTest.suite());
 		suite.addTest(CommandLineUtilTest.suite());
+		suite.addTest(FindProgramLocationTest.suite());
 		suite.addTest(EFSExtensionTests.suite());
 
 		// Add in PDOM tests

@@ -14,7 +14,7 @@
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
 		<tstamp/>
-		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/R-3.6-201006080911/eclipse-SDK-3.6-linux-gtk-${osgi.arch}.tar.gz"/>
+		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/R-3.6.1-201009090800/eclipse-SDK-3.6.1-linux-gtk-${osgi.arch}.tar.gz"/>
 		<property name="rseDist" value="/home/data/httpd/download.eclipse.org/dsdp/tm/downloads/drops/R-3.2-201006071030/RSE-SDK-3.2.zip"/>
 		<property name="branchVersion" value="7.0.1"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
@@ -39,7 +39,7 @@
 		<property name="baseos" value="${osgi.os}"/>
 		<property name="basews" value="${osgi.ws}"/>
 		<property name="basearch" value="${osgi.arch}"/>
-		<property name="tagbranch" value="-r cdt_7_0"/>
+		<property name="tagbranch" value="-r cdt_7_0_1"/>
 		<property name="tagname" value="v${timestamp}"/>
 		<property name="testReports" value="${zipsdir}/testReports"/>
 		<property name="junit-report-output" value="${testReports}"/>
@@ -303,7 +303,7 @@
 	</target>
 	
 	<target name="update.index.html" depends="init" unless="hasErrors">
-		<property name="copyToDir" value="/home/www/tools/cdt/builds/${branchVersion}"/>
+		<property name="copyToDir" value="/home/data/httpd/download.eclipse.org/tools/cdt/builds/${branchVersion}"/>
 		<replace file="${copyToDir}/index.html">
 			<replacetoken><![CDATA[  <!-- add here -->]]></replacetoken>
 			<replacevalue><![CDATA[  <!-- add here -->
@@ -319,7 +319,7 @@
 	</target>
 	
 	<target name="copy" depends="init" unless="hasErrors">
-		<property name="copyToDir" value="/home/www/tools/cdt/builds/${branchVersion}"/>
+		<property name="copyToDir" value="/home/data/httpd/download.eclipse.org/tools/cdt/builds/${branchVersion}"/>
 		<mkdir dir="${copyToDir}/${buildType}.${buildId}"/>
 		<copy todir="${copyToDir}/${buildType}.${buildId}">
 			<fileset dir="${buildDirectory}/${buildType}.${buildId}"/>

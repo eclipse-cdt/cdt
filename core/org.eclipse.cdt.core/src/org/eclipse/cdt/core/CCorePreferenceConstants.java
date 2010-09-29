@@ -153,14 +153,14 @@ public class CCorePreferenceConstants {
 	/**
 	 * "Build All Configurations" preference key.
 	 * 
-	 * @since 4.0
+	 * @since 5.3
 	 */
 	public static final String PREF_BUILD_ALL_CONFIGS = "build.all.configs.enabled"; //$NON-NLS-1$
 
 	/**
 	 * Preference key for "build only if resources in (related) projects are modified".
 	 * 
-	 * @since 5.1
+	 * @since 5.3
 	 */
 	public static final String PREF_BUILD_CONFIGS_RESOURCE_CHANGES = "build.proj.ref.configs.enabled"; //$NON-NLS-1$
 }

@@ -283,6 +283,7 @@ public class PathUtil {
 	 * @param pathsStr - the list of paths to inspect separated by path separator
 	 *     defined in the platform (i.e. ":" in Unix and ";" in Windows).
 	 * @return - absolute location of the file on the file system.
+	 * @since 5.3
 	 */
 	public static IPath findProgramLocation(String prog, String pathsStr) {
 		if (prog.trim().length()==0 || pathsStr.trim().length()==0)
@@ -338,6 +339,7 @@ public class PathUtil {
 	 * @param prog - program to find. For Windows, extensions "com" and "exe"
 	 *     can be omitted.
 	 * @return - absolute location of the file on the file system.
+	 * @since 5.3
 	 */
 	public static IPath findProgramLocation(String prog) {
 		String pathVariable = System.getenv("PATH"); //$NON-NLS-1$

@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.model.ext;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -22,6 +23,7 @@ import org.eclipse.cdt.internal.core.model.MethodDeclaration;
 
 public class MethodDeclarationHandle extends CElementHandle implements IMethodDeclaration {
 	private String[] fParameterTypes;
+	private String fReturnType;
 	private ASTAccessVisibility fVisibility;
 	private boolean fIsStatic;
 	private boolean fIsConstructor;
@@ -34,6 +36,7 @@ public class MethodDeclarationHandle extends CElementHandle implements IMethodDe
 	protected MethodDeclarationHandle(ICElement parent, int type, ICPPMethod method) throws DOMException {
 		super(parent, type, method.getName());
 		fParameterTypes= extractParameterTypes(method);
+		fReturnType= ASTTypeUtil.getType(method.getType().getReturnType(), false);
 		fVisibility= getVisibility(method);
 		fIsStatic= method.isStatic();
 		fIsConstructor= method instanceof ICPPConstructor;
@@ -58,6 +61,10 @@ public class MethodDeclarationHandle extends CElementHandle implements IMethodDe
 		return fParameterTypes;
 	}
 
+	public String getReturnType() {
+		return fReturnType;
+	}
+	
 	public String getSignature() throws CModelException {
 		return FunctionDeclaration.getSignature(this);
 	}

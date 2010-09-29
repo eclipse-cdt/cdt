@@ -11,6 +11,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.model.ext;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.model.CModelException;
@@ -18,9 +19,10 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.internal.core.model.FunctionDeclaration;
 
-public class FunctionDeclarationHandle extends CElementHandle implements org.eclipse.cdt.core.model.IFunctionDeclaration {
+public class FunctionDeclarationHandle extends CElementHandle implements IFunctionDeclaration {
 
 	private String[] fParameterTypes;
+	private String fReturnType;
 	private boolean fIsStatic;
 
 	public FunctionDeclarationHandle(ICElement parent, IFunction func) throws DOMException {
@@ -30,6 +32,7 @@ public class FunctionDeclarationHandle extends CElementHandle implements org.ecl
 	protected FunctionDeclarationHandle(ICElement parent, int type, IFunction func) throws DOMException {
 		super(parent, type, func.getName());
 		fParameterTypes= extractParameterTypes(func);
+		fReturnType= ASTTypeUtil.getType(func.getType().getReturnType(), false);
 		fIsStatic= func.isStatic();
 	}
 
@@ -49,6 +52,10 @@ public class FunctionDeclarationHandle extends CElementHandle implements org.ecl
 		return fParameterTypes;
 	}
 
+	public String getReturnType() {
+		return fReturnType;
+	}
+	
 	public String getSignature() throws CModelException {
 		return FunctionDeclaration.getSignature(this);
 	}

@@ -213,10 +213,6 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		return ""; //$NON-NLS-1$
 	}
 
-	public String getReturnType() {
-		return ""; //$NON-NLS-1$
-	}
-	
 	public boolean isConst() {
 		return false;
 	}

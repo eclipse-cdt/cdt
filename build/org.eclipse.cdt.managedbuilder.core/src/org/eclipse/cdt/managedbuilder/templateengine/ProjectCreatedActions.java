@@ -50,6 +50,8 @@ import org.eclipse.core.runtime.Preferences;
  * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
+ * 
+ * Note that this class is used by ISVs, see bug 318063.
  */
 public class ProjectCreatedActions {
 	IProject project;

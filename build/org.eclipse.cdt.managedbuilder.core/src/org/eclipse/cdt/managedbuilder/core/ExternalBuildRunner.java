@@ -70,6 +70,7 @@ public class ExternalBuildRunner implements IBuildRunner {
 	private static final String CONSOLE_HEADER = "ManagedMakeBuilder.message.console.header";	//$NON-NLS-1$
 	private static final String WARNING_UNSUPPORTED_CONFIGURATION = "ManagedMakeBuilder.warning.unsupported.configuration";	//$NON-NLS-1$
 	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String PATH = "PATH"; //$NON-NLS-1$
 
 	public boolean invokeBuild(int kind, IProject project, IConfiguration configuration,
 			IBuilder builder, IConsole console, IMarkerGenerator markerGenerator,
@@ -204,7 +205,10 @@ public class ExternalBuildRunner implements IBuildRunner {
 						errMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.program.not.in.path", buildCommandStr); //$NON-NLS-1$
 						buf.append(errorPrefix).append(errMsg).append(NEWLINE);
 						buf.append(NEWLINE);
-						buf.append("PATH=["+envMap.get("PATH")+"]").append(NEWLINE); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+						String envPath = envMap.get(PATH);
+						if (envPath==null)
+							envPath = System.getenv(PATH);
+						buf.append(PATH+"=["+envPath+"]").append(NEWLINE); //$NON-NLS-1$//$NON-NLS-2$
 					} else {
 						buf.append(errorPrefix).append(errMsg).append(NEWLINE);
 					}

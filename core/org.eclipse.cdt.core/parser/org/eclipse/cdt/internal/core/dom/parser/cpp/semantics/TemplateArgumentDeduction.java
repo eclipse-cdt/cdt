@@ -61,7 +61,7 @@ public class TemplateArgumentDeduction {
 	 * 14.8.2.1
 	 */
 	static ICPPTemplateArgument[] deduceForFunctionCall(ICPPFunctionTemplate template,
-			ICPPTemplateArgument[] tmplArgs, IType[] fnArgs, ValueCategory[] argIsLValue, CPPTemplateParameterMap map)
+			ICPPTemplateArgument[] tmplArgs, List<IType> fnArgs, List<ValueCategory> argIsLValue, CPPTemplateParameterMap map)
 			throws DOMException {
 		final ICPPTemplateParameter[] tmplParams = template.getTemplateParameters();
 		final int numTmplParams = tmplParams.length;
@@ -235,7 +235,7 @@ public class TemplateArgumentDeduction {
 	 * Deduces the mapping for the template parameters from the function parameters,
 	 * returns <code>false</code> if there is no mapping.
 	 */
-	static boolean deduceFromFunctionArgs(ICPPFunctionTemplate template, IType[] fnArgs, ValueCategory[] argIsLValue,
+	static boolean deduceFromFunctionArgs(ICPPFunctionTemplate template, List<IType> fnArgs, List<ValueCategory> argCats,
 			CPPTemplateParameterMap map, boolean checkExactMatch) {
 		try {
 			IType[] fnPars = template.getType().getParameterTypes();
@@ -246,7 +246,7 @@ public class TemplateArgumentDeduction {
 			final ICPPTemplateParameter[] tmplPars = template.getTemplateParameters();
 			TemplateArgumentDeduction deduct= new TemplateArgumentDeduction(tmplPars, map, new CPPTemplateParameterMap(fnParCount), 0);
 			IType fnParPack= null;
-			for (int j= 0; j < fnArgs.length; j++) {
+			for (int j= 0; j < fnArgs.size(); j++) {
 				IType par;
 				if (fnParPack != null) {
 					par= fnParPack;
@@ -258,7 +258,7 @@ public class TemplateArgumentDeduction {
 							continue; 	// non-deduced context
 						
 						par= fnParPack= ((ICPPParameterPackType) par).getType();
-						deduct= new TemplateArgumentDeduction(deduct, fnArgs.length - j);
+						deduct= new TemplateArgumentDeduction(deduct, fnArgs.size() - j);
 					} 
 				} else {
 					break;
@@ -270,7 +270,7 @@ public class TemplateArgumentDeduction {
 				
 				boolean isDependentPar= CPPTemplates.isDependentType(par);
 				if (checkExactMatch || isDependentPar) {
-					IType arg = fnArgs[j];
+					IType arg = fnArgs.get(j);
 					par= SemanticUtil.getNestedType(par, SemanticUtil.TDEF); // adjustParameterType preserves typedefs
 					
 					// C++0x: 14.9.2.1-1
@@ -293,7 +293,7 @@ public class TemplateArgumentDeduction {
 					}
 
 					// 14.8.2.1-2
-					ValueCategory cat= argIsLValue != null ? argIsLValue[j] : LVALUE;
+					ValueCategory cat= argCats != null ? argCats.get(j) : LVALUE;
 					if (!deduceFromFunctionArg(par, arg, cat, checkExactMatch, isDependentPar, deduct)) {
 						return false;
 					}

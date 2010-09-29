@@ -19,6 +19,8 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromReturnType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
+import java.util.Collections;
+
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
@@ -668,7 +670,8 @@ public class Conversions {
 		FunctionCost cost1= null;
 		Cost cost2= null;
 		ICPPFunction[] ctors= t.getConstructors();
-		ctors= CPPTemplates.instantiateFunctionTemplates(ctors, new IType[]{source}, new ValueCategory[] {valueCat}, null, false);
+		ctors = CPPTemplates.instantiateForFunctionCall(null, ctors,
+				Collections.singletonList(source), Collections.singletonList(valueCat), false);
 
 		for (ICPPFunction f : ctors) {
 			if (!(f instanceof ICPPConstructor) || f instanceof IProblemBinding)

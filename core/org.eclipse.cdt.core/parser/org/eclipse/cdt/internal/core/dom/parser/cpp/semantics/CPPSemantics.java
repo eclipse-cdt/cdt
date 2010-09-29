@@ -22,6 +22,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionT
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -2295,8 +2296,9 @@ public class CPPSemantics {
 		// Reduce our set of candidate functions to only those who have the right number of parameters
 		final IType[] argTypes = data.getFunctionArgumentTypes();
 		ICPPFunction[] tmp= selectByArgumentCount(data, fns);
-	    tmp= CPPTemplates.instantiateFunctionTemplates(tmp, argTypes, data.getFunctionArgumentValueCategories(), 
-	    		data.astName, data.argsContainImpliedObject);
+	    tmp= CPPTemplates.instantiateForFunctionCall(data.astName, tmp, 
+	    		Arrays.asList(argTypes), 
+	    		Arrays.asList(data.getFunctionArgumentValueCategories()), data.argsContainImpliedObject);
 	    if (tmp.length == 0 || tmp[0] == null) 
 			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, fns);
 	    	
@@ -2437,7 +2439,7 @@ public class CPPSemantics {
 		}
 		
 		if (result instanceof ICPPFunctionTemplate) 
-			return CPPTemplates.instantiateFunctionTemplate((ICPPFunctionTemplate) result, null, name);
+			return CPPTemplates.instantiateForAddressOfFunction((ICPPFunctionTemplate) result, null, name);
 			
 		return result;
 	}
@@ -2452,8 +2454,10 @@ public class CPPSemantics {
 
 	private static IBinding resolveFunctionDeclaration(LookupData data, ICPPFunction[] fns) throws DOMException {
 		if (data.forExplicitFunctionSpecialization()) {
-			fns= CPPTemplates.instantiateFunctionTemplates(fns, data.getFunctionArgumentTypes(),
-					data.getFunctionArgumentValueCategories(), data.astName, data.argsContainImpliedObject);
+			fns = CPPTemplates.instantiateForFunctionCall(data.astName,
+					fns,
+					Arrays.asList(data.getFunctionArgumentTypes()), Arrays.asList(data.getFunctionArgumentValueCategories()),
+					data.argsContainImpliedObject);
 		}
 
 		int argCount = data.getFunctionArgumentCount();
@@ -2812,7 +2816,7 @@ public class CPPSemantics {
     		try {
     			if (fn instanceof ICPPFunctionTemplate) {
     				final ICPPFunctionTemplate template = (ICPPFunctionTemplate) fn;
-					ICPPFunction inst= CPPTemplates.instantiateFunctionTemplate(template, (ICPPFunctionType) targetType, name);
+					ICPPFunction inst= CPPTemplates.instantiateForAddressOfFunction(template, (ICPPFunctionType) targetType, name);
     				if (inst != null) {
     					int cmp= -1;
     					if (result != null) {

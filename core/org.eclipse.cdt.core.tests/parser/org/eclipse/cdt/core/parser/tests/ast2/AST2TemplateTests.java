@@ -5154,4 +5154,36 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testAdressOfUniqueTemplateInst_Bug326076() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T> void f(T (*)(int), char);
+	//	template <typename T> void f(int (*)(T), int);
+	//	template <typename T> void f(T, int);
+	//
+	//	int g(char);
+	//	void g(int);
+	//
+	//	void b() {
+	//	  f(g, '1');
+	//	  f(g, 1);
+	//	}
+	public void testInstantiationOfFunctionTemplateWithOverloadedFunctionSetArgument_Bug326492() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPFunctionTemplate f1= bh.assertNonProblem("f(T (*)(int), char)", 1);
+		ICPPFunctionTemplate f2= bh.assertNonProblem("f(int (*)(T), int)", 1);
+		IFunction g1= bh.assertNonProblem("g(char)", 1);
+		IFunction g2= bh.assertNonProblem("g(int)", 1);
+
+		ICPPTemplateInstance t;
+		t= bh.assertNonProblem("f(g, '1')", 1);
+		assertSame(f1, t.getTemplateDefinition());
+		t= bh.assertNonProblem("f(g, 1)", 1);
+		assertSame(f2, t.getTemplateDefinition());
+		
+		ICPPFunction g;
+		g= bh.assertNonProblem("g, '1')", 1);
+		assertSame(g2, g);
+		g= bh.assertNonProblem("g, 1)", 1);
+		assertSame(g1, g);
+	}
 }

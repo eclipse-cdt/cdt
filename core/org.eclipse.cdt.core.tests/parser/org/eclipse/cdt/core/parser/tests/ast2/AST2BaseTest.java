@@ -648,7 +648,7 @@ public class AST2BaseTest extends BaseTestCase {
 		Iterator i = col.nameList.iterator();
 		while (i.hasNext()) {
 			IASTName n = (IASTName) i.next();
-			assertFalse(n.resolveBinding() instanceof IProblemBinding);
+			assertFalse("ProblemBinding for " + n.getRawSignature(), n.resolveBinding() instanceof IProblemBinding);
 		}
 	}
 

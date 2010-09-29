@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -1819,8 +1820,8 @@ public class CPPVisitor extends ASTQueries {
 		}
 		ICPPFunctionTemplate template = new AutoTypeResolver(type);
 		CPPTemplateParameterMap paramMap = new CPPTemplateParameterMap(1);
-		TemplateArgumentDeduction.deduceFromFunctionArgs(template, new IType[] { initType },
-				new ValueCategory[] { valueCat }, paramMap, false);
+		TemplateArgumentDeduction.deduceFromFunctionArgs(template, Collections.singletonList(initType),
+				Collections.singletonList(valueCat), paramMap, false);
 		ICPPTemplateArgument argument = paramMap.getArgument(0, 0);
 		if (argument == null) {
 			return null;

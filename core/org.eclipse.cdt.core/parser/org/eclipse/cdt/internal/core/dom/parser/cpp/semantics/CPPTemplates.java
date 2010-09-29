@@ -16,8 +16,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -1538,97 +1542,126 @@ public class CPPTemplates {
 		return result;
 	}
 	
-	static ICPPFunction[] instantiateFunctionTemplates(ICPPFunction[] fns, IType[] allFnArgs, 
-			ValueCategory[] allValueCategories, IASTName name, boolean argsContainImpliedObject) {
-		boolean requireTemplate= false;
-		if (name != null) {
-			if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME) {
-				name= (IASTName) name.getParent();
-				requireTemplate= true;
-			} else if (name instanceof ICPPASTTemplateId) {
-				requireTemplate= true;
-			} 
+	static ICPPFunction[] instantiateForFunctionCall(IASTName name, ICPPFunction[] fns,
+			List<IType> fnArgs, List<ValueCategory> argCats, boolean withImpliedObjectArg) {
+		if (name != null && name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME) {
+			name= (IASTName) name.getParent();
 		}
 
-		IType[] reducedFnArgs= null;
-		ValueCategory[] reducedValueCategories= null;
-		ICPPTemplateArgument[] tmplArgs= null;
-		ICPPFunction[] result= fns;
-		int idx= 0;
-		for (int i = 0; i < fns.length; i++) {
-			final ICPPFunction func = fns[i];
-			ICPPFunction rf= null;
+		// Extract template arguments.
+		ICPPTemplateArgument[] tmplArgs= ICPPTemplateArgument.EMPTY_ARGUMENTS;
+		boolean requireTemplate= name instanceof ICPPASTTemplateId;
+		boolean haveTemplate= false;
+		
+		for (final ICPPFunction func : fns) {
+			if (func instanceof ICPPConstructor || (func instanceof ICPPMethod && ((ICPPMethod) func).isDestructor()))
+				requireTemplate= false;
+
 			if (func instanceof ICPPFunctionTemplate) {
 				ICPPFunctionTemplate template= (ICPPFunctionTemplate) func;
-				final IType[] fnArgs;
-				final ValueCategory[] valueCategories;
-				if (argsContainImpliedObject && template instanceof ICPPMethod) {
-					if (reducedValueCategories == null) {
-						if (allFnArgs != null && allFnArgs.length > 0) {
-							reducedFnArgs= ArrayUtil.removeFirst(allFnArgs);
-						}
-						if (allValueCategories == null || allValueCategories.length == 0) {
-							reducedValueCategories= new ValueCategory[0];
-						} else {
-							reducedValueCategories= ArrayUtil.removeFirst(allValueCategories);
-						}
-					}
-					fnArgs= reducedFnArgs;
-					valueCategories= reducedValueCategories;
-				} else {
-					fnArgs= allFnArgs;
-					valueCategories= allValueCategories;
-				}
-				
-				// extract template arguments and parameter types.
-				if (tmplArgs == null || fnArgs == null) {
-					tmplArgs = ICPPTemplateArgument.EMPTY_ARGUMENTS;
-					try {
-						if (fnArgs == null || containsDependentType(fnArgs)) {
-							return new ICPPFunction[] {CPPUnknownFunction.createForSample(template)};
-						}
-						if (name instanceof ICPPASTTemplateId && !(template instanceof ICPPConstructor)) {
-							tmplArgs = createTemplateArgumentArray((ICPPASTTemplateId) name);
-							if (hasDependentArgument(tmplArgs)) {
-								return new ICPPFunction[] {CPPUnknownFunction.createForSample(template)};
-							}
-						}
-					} catch (DOMException e) {
-						return NO_FUNCTIONS;
-					}
-				}
-				CPPTemplateParameterMap map= new CPPTemplateParameterMap(fnArgs.length);
 				try {
-					ICPPTemplateArgument[] args= TemplateArgumentDeduction.deduceForFunctionCall(template, tmplArgs, fnArgs, valueCategories, map);
-					if (args != null) {
-						IBinding instance= instantiateFunctionTemplate(template, args, map);
-						if (instance instanceof ICPPFunction) {
-							rf= (ICPPFunction) instance;
-						} 
+					if (containsDependentType(fnArgs)) 
+						return new ICPPFunction[] {CPPUnknownFunction.createForSample(template)};
+
+					if (requireTemplate) {
+						tmplArgs = createTemplateArgumentArray((ICPPASTTemplateId) name);
+						if (hasDependentArgument(tmplArgs)) 
+							return new ICPPFunction[] {CPPUnknownFunction.createForSample(template)};
 					}
 				} catch (DOMException e) {
-					// try next candidate
+					return NO_FUNCTIONS;
 				}
-			} else if (!requireTemplate 
-					|| (func instanceof ICPPConstructor) || (func instanceof ICPPUnknownBinding)
-					|| (func instanceof ICPPMethod && ((ICPPMethod) func).isDestructor())) {
-				rf= func;
+				haveTemplate= true;
+				break;
 			}
-			if (rf != func || result != fns) {
-				if (result == fns) {
-					result= new ICPPFunction[fns.length-(i-idx)];
-					System.arraycopy(fns, 0, result, 0, idx);
+		}
+
+		if (!haveTemplate && !requireTemplate) 
+			return fns;
+		
+		final List<ICPPFunction> result= new ArrayList<ICPPFunction>(fns.length);
+		final List<List<IType>> crossProduct= expandOverloadedSets(fnArgs);
+		for (ICPPFunction fn : fns) {
+			if (fn != null) {
+				if (fn instanceof ICPPFunctionTemplate) {
+					ICPPFunctionTemplate fnTmpl= (ICPPFunctionTemplate) fn;
+					for (List<IType> args : crossProduct) {
+						ICPPFunction inst = instantiateForFunctionCall(fnTmpl, tmplArgs, args, argCats, withImpliedObjectArg);
+						if (inst != null)
+							result.add(inst);
+					}
+				} else if (!requireTemplate || fn instanceof ICPPUnknownBinding) {
+					result.add(fn);
 				}
-				if (rf != null) 
-					result[idx]= rf;
 			}
-			if (rf != null)
-				idx++;
+		}
+		return result.toArray(new ICPPFunction[result.size()]);
+	}
+
+	private static List<List<IType>> expandOverloadedSets(List<IType> fnArgs) {
+		List<List<IType>> result= Collections.singletonList(fnArgs);
+		int i= 0;
+		for (IType arg : fnArgs) {
+			if (arg instanceof FunctionSetType) {				
+				Collection<ICPPFunctionType> targetTypes= getFunctionTypes((FunctionSetType) arg);
+				if (targetTypes.isEmpty())
+					return Collections.emptyList();
+				
+				List<List<IType>> expanded= new ArrayList<List<IType>>(targetTypes.size() * result.size());
+				for (IType targetType : targetTypes) {
+					for (List<IType> orig : result) {
+						ArrayList<IType> copy = new ArrayList<IType>(orig);
+						copy.set(i, new CPPPointerType(targetType));
+						expanded.add(copy);
+					}
+				}
+				result= expanded;
+			}
+			i++;
+		}		
+		return result;
+	}
+
+	private static Collection<ICPPFunctionType> getFunctionTypes(FunctionSetType fst) {
+		final ICPPFunction[] functionSet = fst.getFunctionSet();
+		Set<String> handled= new HashSet<String>();
+		Collection<ICPPFunctionType> result= new ArrayList<ICPPFunctionType>(functionSet.length);
+		for (ICPPFunction f : functionSet) {
+			if (! (f instanceof ICPPFunctionTemplate)) {
+				try {
+					ICPPFunctionType t= f.getType();
+					if (handled.add(ASTTypeUtil.getType(t, true))) 
+						result.add(t);
+				} catch (DOMException e) {
+				}
+			}
 		}
 		return result;
 	}
 
-	static protected void instantiateConversionTemplates(IFunction[] functions, IType conversionType) {
+	private static ICPPFunction instantiateForFunctionCall(ICPPFunctionTemplate template,
+			ICPPTemplateArgument[] tmplArgs, List<IType> fnArgs, List<ValueCategory> argCats,
+			boolean withImpliedObjectArg) {
+		if (withImpliedObjectArg && template instanceof ICPPMethod) {
+			fnArgs= fnArgs.subList(1, fnArgs.size());
+			argCats= argCats.subList(1, argCats.size());
+		}
+		
+		CPPTemplateParameterMap map= new CPPTemplateParameterMap(fnArgs.size());
+		try {
+			ICPPTemplateArgument[] args= TemplateArgumentDeduction.deduceForFunctionCall(template, tmplArgs, fnArgs, argCats, map);
+			if (args != null) {
+				IBinding instance= instantiateFunctionTemplate(template, args, map);
+				if (instance instanceof ICPPFunction) {
+					return (ICPPFunction) instance;
+				} 
+			}
+		} catch (DOMException e) {
+		}
+		return null;
+	}
+
+	static void instantiateConversionTemplates(IFunction[] functions, IType conversionType) {
 		boolean checkedForDependentType= false;
 		for (int i = 0; i < functions.length; i++) {
 			IFunction func = functions[i];
@@ -1667,7 +1700,7 @@ public class CPPTemplates {
 	/**
 	 * 14.8.2.2 Deducing template arguments taking the address of a function template [temp.deduct.funcaddr]
 	 */
-	static protected ICPPFunction instantiateFunctionTemplate(ICPPFunctionTemplate template, IFunctionType target, IASTName name) {
+	static ICPPFunction instantiateForAddressOfFunction(ICPPFunctionTemplate template, IFunctionType target, IASTName name) {
 		if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME) {
 			name= (IASTName) name.getParent();
 		}
@@ -1728,7 +1761,7 @@ public class CPPTemplates {
 		return args;
 	}
 
-	static protected int orderTemplateFunctions(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2)
+	static int orderTemplateFunctions(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2)
 			throws DOMException {
 		// 14.5.5.2
 		// A template is more specialized than another if and only if it is at least as specialized as the
@@ -1765,7 +1798,7 @@ public class CPPTemplates {
 		
 		map= new CPPTemplateParameterMap(2);
 		final IType[] transferredParameterTypes = ((ICPPFunction) transferredTemplate).getType().getParameterTypes();
-		if (!TemplateArgumentDeduction.deduceFromFunctionArgs(f2, transferredParameterTypes, null, map, true))
+		if (!TemplateArgumentDeduction.deduceFromFunctionArgs(f2, Arrays.asList(transferredParameterTypes), null, map, true))
 			return false;
 		
 		final int last = tmplParams1.length -1;
@@ -1912,7 +1945,7 @@ public class CPPTemplates {
 		return arg != null && isValidType(arg.isTypeValue() ? arg.getTypeValue() : arg.getTypeOfNonTypeValue());
 	}
 
-	static protected ICPPTemplateArgument matchTemplateParameterAndArgument(ICPPTemplateParameter param, 
+	static ICPPTemplateArgument matchTemplateParameterAndArgument(ICPPTemplateParameter param, 
 			ICPPTemplateArgument arg, CPPTemplateParameterMap map) {
 		if (arg == null || !isValidType(arg.getTypeValue())) {
 			return null;
@@ -2078,7 +2111,15 @@ public class CPPTemplates {
 		
 		return Value.isDependentValue(arg.getNonTypeValue());
 	}
-	
+
+	public static boolean containsDependentType(List<IType> ts) {
+		for (IType t : ts) {
+			if (isDependentType(t))
+				return true;
+		}
+		return false;
+	}
+
 	public static boolean containsDependentType(IType[] ts) {
 		for (IType t : ts) {
 			if (isDependentType(t))

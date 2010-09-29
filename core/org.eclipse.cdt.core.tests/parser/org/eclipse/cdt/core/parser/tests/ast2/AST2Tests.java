@@ -5915,12 +5915,13 @@ public class AST2Tests extends AST2BaseTest {
 		final Runtime runtime = Runtime.getRuntime();
 		long mem= runtime.totalMemory()-runtime.freeMemory();
 		long newMem= mem;
+		int i=0;
 		do {
 			Thread.sleep(50);
 			System.gc();
 			mem= newMem; 
 			newMem= runtime.totalMemory()-runtime.freeMemory();
-		} while (newMem < mem);
+		} while (newMem < mem && ++i<5);
 		return mem;
 	}
 

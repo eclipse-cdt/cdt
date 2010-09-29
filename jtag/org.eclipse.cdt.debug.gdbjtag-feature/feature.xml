@@ -30,13 +30,12 @@
       <import plugin="org.eclipse.cdt.debug.mi.core"/>
       <import plugin="org.eclipse.cdt.core"/>
       <import plugin="org.eclipse.core.variables"/>
+      <import plugin="org.eclipse.cdt.dsf.gdb"/>
+      <import plugin="org.eclipse.cdt.dsf"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.debug.ui"/>
-      <import plugin="org.eclipse.cdt.ui"/>
-      <import plugin="org.eclipse.cdt.managedbuilder.ui"/>
       <import plugin="org.eclipse.ui.ide"/>
-      <import feature="org.eclipse.cdt.gnu.debug" version="6.0.0"/>
-      <import plugin="com.ibm.icu"/>
+      <import plugin="org.eclipse.cdt.dsf.gdb.ui"/>
    </requires>
 
    <plugin

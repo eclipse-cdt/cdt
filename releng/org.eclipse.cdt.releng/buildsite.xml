@@ -42,7 +42,7 @@
 	<feature id="org.eclipse.cdt.gnu.debug" url="features/org.eclipse.cdt.gnu.debug_7.0.1.@timeStamp@.jar" version="7.0.1.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.platform" url="features/org.eclipse.cdt.platform_7.0.1.@timeStamp@.jar" version="7.0.1.@timeStamp@">
+	<feature id="org.eclipse.cdt.platform" url="features/org.eclipse.cdt.platform_7.0.2.@timeStamp@.jar" version="7.0.2.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
 	<feature id="org.eclipse.cdt.gnu.dsf" url="features/org.eclipse.cdt.gnu.dsf_2.1.0.@timeStamp@.jar" version="2.1.0.@timeStamp@">

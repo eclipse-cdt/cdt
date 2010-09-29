@@ -40,6 +40,7 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IInstruction;
+import org.eclipse.cdt.dsf.debug.service.IInstructionWithSize;
 import org.eclipse.cdt.dsf.debug.service.IMixedInstruction;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -613,12 +614,17 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 				}
 				// determine instruction byte length
 				BigInteger instrLength= null;
-				if (j < instructions.length - 1) {
-					instrLength= instructions[j+1].getAdress().subtract(instruction.getAdress()).abs();
-				}
-				if (instrLength == null) {
-					// cannot determine length of last instruction
-					break;
+				if (instruction instanceof IInstructionWithSize
+				        && ((IInstructionWithSize)instruction).getSize() != null) {
+					instrLength= new BigInteger(((IInstructionWithSize)instruction).getSize().toString());
+				} else {
+					if (j < instructions.length - 1) {
+						instrLength= instructions[j+1].getAdress().subtract(instruction.getAdress()).abs();
+					}
+					if (instrLength == null) {
+						// cannot determine length of last instruction
+						break;
+					}
 				}
 				final String opCode;
 				// insert function name+offset instead of opcode bytes
@@ -667,7 +673,6 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 	 * @param showDisassembly
 	 * @return whether [startAddress] was inserted
 	 */
-
 	private boolean insertDisassembly(BigInteger startAddress, BigInteger endAddress, IMixedInstruction[] mixedInstructions, boolean showSymbols, boolean showDisassembly) {
 		if (!fCallback.hasViewer() || fDsfSessionId == null) {
 			// return true to avoid a retry
@@ -730,25 +735,30 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 					}
 					// determine instruction byte length
 					BigInteger instrLength= null;
-					if (j < instructions.length - 1) {
-						instrLength= instructions[j+1].getAdress().subtract(instruction.getAdress()).abs();
-					} else if (i < mixedInstructions.length - 1) {
-						int nextSrcLineIdx= i+1;
-						while (nextSrcLineIdx < mixedInstructions.length) {
-							IInstruction[] nextInstrs= mixedInstructions[nextSrcLineIdx].getInstructions();
-							if (nextInstrs.length > 0) {
-								instrLength= nextInstrs[0].getAdress().subtract(instruction.getAdress()).abs();
+					if (instruction instanceof IInstructionWithSize
+					        && ((IInstructionWithSize)instruction).getSize() != null) {
+						instrLength= new BigInteger(((IInstructionWithSize)instruction).getSize().toString());
+					} else {
+						if (j < instructions.length - 1) {
+							instrLength= instructions[j+1].getAdress().subtract(instruction.getAdress()).abs();
+						} else if (i < mixedInstructions.length - 1) {
+							int nextSrcLineIdx= i+1;
+							while (nextSrcLineIdx < mixedInstructions.length) {
+								IInstruction[] nextInstrs= mixedInstructions[nextSrcLineIdx].getInstructions();
+								if (nextInstrs.length > 0) {
+									instrLength= nextInstrs[0].getAdress().subtract(instruction.getAdress()).abs();
+									break;
+								}
+								++nextSrcLineIdx;
+							}
+							if (nextSrcLineIdx >= mixedInstructions.length) {
 								break;
 							}
-							++nextSrcLineIdx;
 						}
-						if (nextSrcLineIdx >= mixedInstructions.length) {
+						if (instrLength == null) {
+							// cannot determine length of last instruction
 							break;
 						}
-					}
-					if (instrLength == null) {
-						// cannot determine length of last instruction
-						break;
 					}
 					final String opCode;
 					// insert function name+offset instead of opcode bytes

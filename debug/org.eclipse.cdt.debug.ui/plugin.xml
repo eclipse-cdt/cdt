@@ -1231,14 +1231,6 @@
             super="org.eclipse.debug.core.breakpoint"
             name="org.eclipse.cdt.debug.core.breakpoint">
       </type>
-      <type
-            markerType="org.eclipse.cdt.debug.ui.disassemblyInstructionPointer.current"
-            name="org.eclipse.cdt.debug.ui.currentDisassemblyIP">
-      </type>
-      <type
-            markerType="org.eclipse.cdt.debug.ui.disassemblyInstructionPointer.secondary"
-            name="org.eclipse.cdt.debug.ui.secondaryDisassemblyIP">
-      </type>
    </extension>
    <extension
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
@@ -1256,38 +1248,6 @@
             textPreferenceValue="false"
             verticalRulerPreferenceKey="breakpointVerticalRuler"
             verticalRulerPreferenceValue="true">
-      </specification>
-      <specification
-            colorPreferenceValue="198,219,174"
-            annotationType="org.eclipse.cdt.debug.ui.currentDisassemblyIP"
-            verticalRulerPreferenceValue="true"
-            colorPreferenceKey="currentDisassemblyIPColor"
-            highlightPreferenceKey="currentDisassemblyIPHighlight"
-            overviewRulerPreferenceValue="true"
-            highlightPreferenceValue="true"
-            presentationLayer="6"
-            icon="icons/obj16/inst_ptr_top.gif"
-            label="%DisassemblyCurrentInstructionPointer"
-            textPreferenceValue="false"
-            textPreferenceKey="currentDisassemblyIPIndication"
-            verticalRulerPreferenceKey="currentDisassemblyIPVerticalRuler"
-            overviewRulerPreferenceKey="currentDisassemblyIPOverviewRuler">
-      </specification>
-      <specification
-            colorPreferenceValue="219,235,204"
-            annotationType="org.eclipse.cdt.debug.ui.secondaryDisassemblyIP"
-            verticalRulerPreferenceValue="true"
-            colorPreferenceKey="secondaryDisassemblyIPColor"
-            highlightPreferenceKey="secondaryDisassemblyIPHighlight"
-            overviewRulerPreferenceValue="true"
-            highlightPreferenceValue="true"
-            presentationLayer="6"
-            icon="icons/obj16/inst_ptr.gif"
-            label="%DisassemblySecondaryInstructionPointer"
-            textPreferenceValue="false"
-            textPreferenceKey="secondaryDisassemblyIPIndication"
-            verticalRulerPreferenceKey="secondaryDisassemblyIPVerticalRuler"
-            overviewRulerPreferenceKey="secondaryDisassemblyIPOverviewRuler">
       </specification>
    </extension>
    <extension
@@ -1478,15 +1438,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.themes">
-      <fontDefinition
-            label="%DisassemblyFontDefinition.label"
-            categoryId="org.eclipse.debug.ui.presentation"
-            defaultsTo="org.eclipse.jface.textfont"
-            id="org.eclipse.cdt.debug.ui.disassemblyFont">
-         <description>
-            %DisassemblyFontDefinition.description
-         </description>
-      </fontDefinition>
       <fontDefinition
             defaultsTo="org.eclipse.jface.textfont"
             label="%ModulesDetailPaneFontDefinition.label"
@@ -1738,7 +1689,6 @@
             <or>
                <instanceof value="org.eclipse.cdt.internal.ui.editor.CEditor"/>
                <instanceof value="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor"/>
-               <instanceof value="org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView"/>
                <instanceof value="org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditor"/>
                <with variable="selection">
                   <count value="1"/>
@@ -1765,7 +1715,6 @@
                <or>
                   <instanceof value="org.eclipse.cdt.internal.ui.editor.CEditor"/>
                   <instanceof value="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor"/>
-                  <instanceof value="org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView"/>
                   <instanceof value="org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditor"/>
                   <with variable="selection">
                      <count value="1"/>

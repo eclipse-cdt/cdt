@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Sergey Prigogin (Google)
  *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
@@ -61,6 +62,10 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 		defaultPreferences.putBoolean(CCorePlugin.PREF_USE_STRUCTURAL_PARSE_MODE, false);
 		defaultPreferences.putBoolean(CCorePreferenceConstants.FILE_PATH_CANONICALIZATION, true);
 		defaultPreferences.putBoolean(CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT, true);
+
+		// build defaults
+		defaultPreferences.putBoolean("build.all.configs.enabled", false); //$NON-NLS-1$
+		defaultPreferences.putBoolean("build.proj.ref.configs.enabled", false); //$NON-NLS-1$
 		
 		// indexer defaults
 		IndexerPreferences.initializeDefaultPreferences(defaultPreferences);

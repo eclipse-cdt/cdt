@@ -8,11 +8,14 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Patrick Hofer [bug 325488]
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.PopupDialog;
@@ -52,6 +55,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.keys.IBindingService;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
@@ -129,7 +136,9 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 	 * Field for tree style since it must be remembered by the instance.
 	 */
 	private int fTreeStyle;
-
+	private Command fInvokingCommand;
+	private TriggerSequence fInvokingTriggerSequence; 
+	
 	/**
 	 * Creates a tree information control with the given shell as parent. The given
 	 * styles are applied to the shell and the tree widget.
@@ -138,10 +147,23 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 	 * @param shellStyle the additional styles for the shell
 	 * @param treeStyle the additional styles for the tree widget
 	 * @param invokingCommandId the id of the command that invoked this control or <code>null</code>
-	 * @param showStatusField <code>true</code> iff the control has a status field at the bottom
+	 * @param showStatusField <code>true</code> if the control has a status field at the bottom
 	 */
 	public AbstractInformationControl(Shell parent, int shellStyle, int treeStyle, String invokingCommandId, boolean showStatusField) {
 		super(parent, shellStyle, true, true, true, true, true, null, null);
+		if (invokingCommandId != null) {
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			ICommandService commandSupport = (ICommandService)workbench.getAdapter(ICommandService.class);
+			if (commandSupport != null)	{
+				fInvokingCommand = commandSupport.getCommand(invokingCommandId);
+				if (fInvokingCommand != null && !fInvokingCommand.isDefined())
+					fInvokingCommand= null;
+				else {
+					IBindingService bindingService = (IBindingService) workbench.getService(IBindingService.class);
+					fInvokingTriggerSequence = bindingService.getBestActiveBindingFor(invokingCommandId);
+				}
+			}
+		}
 		fTreeStyle= treeStyle;
 		// Title and status text must be set to get the title label created, so force empty values here. 
 		if (hasHeader())
@@ -319,6 +341,10 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 		return fFilterText;
 	}
 
+	protected void updateStatusFieldText() {
+		setInfoText(getStatusFieldText());
+	}
+	
 	protected String getStatusFieldText() {
 		return ""; //$NON-NLS-1$
 	}
@@ -617,6 +643,14 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 		getShell().removeFocusListener(listener);
 	}
 
+	final protected Command getInvokingCommand() {
+		return fInvokingCommand;
+	}
+	
+	final protected TriggerSequence getInvokingCommandTriggerSequence() {
+		return fInvokingTriggerSequence;
+	}
+	
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#getDialogSettings()
 	 */

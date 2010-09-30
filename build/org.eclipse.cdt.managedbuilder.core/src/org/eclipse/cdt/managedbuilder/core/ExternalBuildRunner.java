@@ -200,14 +200,15 @@ public class ExternalBuildRunner implements IBuildRunner {
 					// Launching failed, trying to figure out possible cause
 					String errorPrefix = ManagedMakeMessages.getResourceString("ManagedMakeBuilder.error.prefix"); //$NON-NLS-1$
 					String buildCommandStr = buildCommand.toString();
-					if (PathUtil.findProgramLocation(buildCommandStr)==null) {
+					String envPath = envMap.get(PATH);
+					if (envPath==null) {
+						envPath = System.getenv(PATH);
+					}
+					if (PathUtil.findProgramLocation(buildCommandStr, envPath)==null) {
 						buf.append(errMsg).append(NEWLINE);
 						errMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.program.not.in.path", buildCommandStr); //$NON-NLS-1$
 						buf.append(errorPrefix).append(errMsg).append(NEWLINE);
 						buf.append(NEWLINE);
-						String envPath = envMap.get(PATH);
-						if (envPath==null)
-							envPath = System.getenv(PATH);
 						buf.append(PATH+"=["+envPath+"]").append(NEWLINE); //$NON-NLS-1$//$NON-NLS-2$
 					} else {
 						buf.append(errorPrefix).append(errMsg).append(NEWLINE);

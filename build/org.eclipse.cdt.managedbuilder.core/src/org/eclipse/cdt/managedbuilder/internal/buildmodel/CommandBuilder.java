@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -210,7 +211,19 @@ public class CommandBuilder implements IBuildModelBuilder {
 			if(DbgUtil.DEBUG)
 				DbgUtil.trace("error launching the command: " + fErrMsg);	//$NON-NLS-1$
 			
-			printMessage(fErrMsg, out);
+			String program = fCmd.getCommand().toOSString();
+			String envPath = fCmd.getEnvironment().get(PATH_ENV);
+			if (envPath==null) {
+				envPath = System.getenv(PATH_ENV);
+			}
+			if (PathUtil.findProgramLocation(program, envPath)==null) {
+				printMessage(fErrMsg, out);
+				String errMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.program.not.in.path", program); //$NON-NLS-1$
+				printErrorMessage(errMsg + LINE_SEPARATOR, out);
+				printMessage(null, PATH_ENV+"=["+envPath+"]", out); //$NON-NLS-1$//$NON-NLS-2$
+			} else {
+				printErrorMessage(fErrMsg, out);
+			}
 			break;
 		}
 		
@@ -242,9 +255,12 @@ public class CommandBuilder implements IBuildModelBuilder {
 		return list.toArray(new String[list.size()]);
 	}
 
-	protected void printMessage(String msg, OutputStream os){
+	private void printMessage(String prefix, String msg, OutputStream os){
 		if (os != null) {
-			msg = ManagedMakeMessages.getFormattedString(BUILDER_MSG_HEADER, msg) + LINE_SEPARATOR;
+			if (prefix==null) {
+				prefix=""; //$NON-NLS-1$
+			}
+			msg = prefix + msg + LINE_SEPARATOR;
 			try {
 				os.write(msg.getBytes());
 				os.flush();
@@ -255,6 +271,22 @@ public class CommandBuilder implements IBuildModelBuilder {
 		
 	}
 
+	protected void printMessage(String msg, OutputStream os){
+		if (os != null) {
+			msg = ManagedMakeMessages.getFormattedString(BUILDER_MSG_HEADER, msg);
+			printMessage(null, msg, os);
+		}
+		
+	}
+	
+	private void printErrorMessage(String msg, OutputStream os){
+		if (os != null) {
+			String errorPrefix = ManagedMakeMessages.getResourceString("ManagedMakeBuilder.error.prefix"); //$NON-NLS-1$
+			printMessage(errorPrefix, msg, os);
+		}
+		
+	}
+	
 	public int getNumCommands() {
 		return 1;
 	}

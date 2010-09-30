@@ -70,12 +70,12 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		TreeItem node= checkTreeNode(outlineTree, 0, 0, "method() : void");
 
 		openCH(workbenchWindow, node);
-		Tree chTree= checkTreeNode(ch, 0, "SomeClass::method()").getParent();
+		Tree chTree= checkTreeNode(ch, 0, "SomeClass::method() : void").getParent();
 		checkTreeNode(chTree, 0, 1, null);
 		
 		ch.onSetShowReferencedBy(false);
-		checkTreeNode(chTree, 0, "SomeClass::method()");
-		checkTreeNode(chTree, 0, 0, "SomeClass::field");
+		checkTreeNode(chTree, 0, "SomeClass::method() : void");
+		checkTreeNode(chTree, 0, 0, "SomeClass::field : int");
 	}
 	
 	// class SomeClass {
@@ -114,12 +114,12 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		openCH(workbenchWindow, node1);
 		ch.onSetShowReferencedBy(false);
 
-		Tree chTree= checkTreeNode(ch, 0, "SomeClass::ambiguous_impl()").getParent();
-		checkTreeNode(chTree, 0, 0, "SomeClass::ref1");
+		Tree chTree= checkTreeNode(ch, 0, "SomeClass::ambiguous_impl() : void").getParent();
+		checkTreeNode(chTree, 0, 0, "SomeClass::ref1 : int");
 
 		// open and check call hierarchy
 		openCH(workbenchWindow, node2);
-		checkTreeNode(chTree, 0, "other()");
+		checkTreeNode(chTree, 0, "other() : void");
 
 		
 		// open editor, check outline
@@ -130,8 +130,8 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		// open and check call hierarchy
 		openCH(workbenchWindow, node1);
 		ch.onSetShowReferencedBy(false);
-		chTree= checkTreeNode(ch, 0, "SomeClass::ambiguous_impl()").getParent();
-		checkTreeNode(chTree, 0, 0, "SomeClass::ref2");
+		chTree= checkTreeNode(ch, 0, "SomeClass::ambiguous_impl() : void").getParent();
+		checkTreeNode(chTree, 0, 0, "SomeClass::ref2 : int");
 	}
 
 	private void openCH(final IWorkbenchWindow workbenchWindow, TreeItem node1) {
@@ -172,33 +172,33 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor);
 
-		Tree chTree= checkTreeNode(ch, 0, "Base::vmethod()").getParent();
-		checkTreeNode(chTree, 0, 0, "regRefs()");
-		checkTreeNode(chTree, 0, 1, "vrefs()");
+		Tree chTree= checkTreeNode(ch, 0, "Base::vmethod() : void").getParent();
+		checkTreeNode(chTree, 0, 0, "regRefs() : void");
+		checkTreeNode(chTree, 0, 1, "vrefs() : void");
 		checkTreeNode(chTree, 0, 2, null);
 
 		idx = content.indexOf("vmethod", idx+1);
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor);
 
-		chTree= checkTreeNode(ch, 0, "Derived::vmethod()").getParent();
-		checkTreeNode(chTree, 0, 0, "vrefs()");
+		chTree= checkTreeNode(ch, 0, "Derived::vmethod() : void").getParent();
+		checkTreeNode(chTree, 0, 0, "vrefs() : void");
 		checkTreeNode(chTree, 0, 1, null);
 
 		idx = content.indexOf(" method")+1;
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor);
 
-		chTree= checkTreeNode(ch, 0, "Base::method()").getParent();
-		checkTreeNode(chTree, 0, 0, "regRefs()");
-		checkTreeNode(chTree, 0, 1, "vrefs()");
+		chTree= checkTreeNode(ch, 0, "Base::method() : void").getParent();
+		checkTreeNode(chTree, 0, 0, "regRefs() : void");
+		checkTreeNode(chTree, 0, 1, "vrefs() : void");
 		checkTreeNode(chTree, 0, 2, null);
 
 		idx = content.indexOf(" method", idx+1)+1;
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor);
 
-		chTree= checkTreeNode(ch, 0, "Derived::method()").getParent();
+		chTree= checkTreeNode(ch, 0, "Derived::method() : void").getParent();
 		checkTreeNode(chTree, 0, 0, null);
 	}
 
@@ -228,13 +228,13 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, false);
 
-		Tree chTree= checkTreeNode(ch, 0, "vrefs()").getParent();
-		TreeItem item= checkTreeNode(chTree, 0, 0, "Base::vmethod()");
+		Tree chTree= checkTreeNode(ch, 0, "vrefs() : void").getParent();
+		TreeItem item= checkTreeNode(chTree, 0, 0, "Base::vmethod() : void");
 		checkTreeNode(chTree, 0, 1, null);
 
 		expandTreeItem(item);
-		checkTreeNode(item, 0, "Base::vmethod()");
-		checkTreeNode(item, 1, "Derived::vmethod()");
+		checkTreeNode(item, 0, "Base::vmethod() : void");
+		checkTreeNode(item, 1, "Derived::vmethod() : void");
 		checkTreeNode(item, 2, null);
 	}
 	
@@ -263,8 +263,8 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		int idx = content.indexOf("Foo(3)");
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, true);
-		Tree chTree= checkTreeNode(ch, 0, "CSome<int>::Foo(const int &)").getParent();
-		TreeItem item= checkTreeNode(chTree, 0, 0, "test()");
+		Tree chTree= checkTreeNode(ch, 0, "CSome<int>::Foo(const int &) : int").getParent();
+		TreeItem item= checkTreeNode(chTree, 0, 0, "test() : void");
 		checkTreeNode(chTree, 0, 1, null);
 	}
 	
@@ -304,23 +304,23 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, false);
 
-		Tree chTree= checkTreeNode(ch, 0, "main()").getParent();
-		TreeItem ti= checkTreeNode(chTree, 0, 0, "func(Base *)");
+		Tree chTree= checkTreeNode(ch, 0, "main() : int").getParent();
+		TreeItem ti= checkTreeNode(chTree, 0, 0, "func(Base *) : void");
 		expandTreeItem(ti);
 		checkTreeNode(chTree, 0, 1, null);
 
-		TreeItem ti1= checkTreeNode(ti, 0, "Base::First()");
+		TreeItem ti1= checkTreeNode(ti, 0, "Base::First() : void");
 		expandTreeItem(ti1);
-		TreeItem ti2= checkTreeNode(ti, 1, "Base::Second()");
+		TreeItem ti2= checkTreeNode(ti, 1, "Base::Second() : void");
 		expandTreeItem(ti2);
 		checkTreeNode(ti, 2, null);
 		
-		checkTreeNode(ti1, 0, "Base::First()");
-		checkTreeNode(ti1, 1, "Derived::First()");
+		checkTreeNode(ti1, 0, "Base::First() : void");
+		checkTreeNode(ti1, 1, "Derived::First() : void");
 		checkTreeNode(ti1, 2, null);
 
-		checkTreeNode(ti2, 0, "Base::Second()");
-		checkTreeNode(ti2, 1, "Derived::Second()");
+		checkTreeNode(ti2, 0, "Base::Second() : void");
+		checkTreeNode(ti2, 1, "Derived::Second() : void");
 		checkTreeNode(ti2, 2, null);
 
 	}
@@ -345,14 +345,14 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, false);
 
-		Tree chTree= checkTreeNode(ch, 0, "PREFIX_Test(char *, char *)").getParent();
-		TreeItem ti= checkTreeNode(chTree, 0, 0, "call(int)");
+		Tree chTree= checkTreeNode(ch, 0, "PREFIX_Test(char *, char *) : void").getParent();
+		TreeItem ti= checkTreeNode(chTree, 0, 0, "call(int) : void");
 
 		idx = content.indexOf("CALL(0");
 		editor.selectAndReveal(idx+4, 0);
 		openCallHierarchy(editor, true);
-		chTree= checkTreeNode(ch, 0, "call(int)").getParent();
-		ti= checkTreeNode(chTree, 0, 0, "PREFIX_Test(char *, char *)");
+		chTree= checkTreeNode(ch, 0, "call(int) : void").getParent();
+		ti= checkTreeNode(chTree, 0, 0, "PREFIX_Test(char *, char *) : void");
 	}
 
 	//	void shared_func();
@@ -380,8 +380,8 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, true);
 
-		Tree chTree= checkTreeNode(ch, 0, "shared_func()").getParent();
-		TreeItem ti= checkTreeNode(chTree, 0, 0, "call()");
+		Tree chTree= checkTreeNode(ch, 0, "shared_func() : void").getParent();
+		TreeItem ti= checkTreeNode(chTree, 0, 0, "call() : void");
 		checkTreeNode(chTree, 0, 1, null);
 	}
 
@@ -410,8 +410,8 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, true);
 
-		Tree chTree= checkTreeNode(ch, 0, "shared_func()").getParent();
-		TreeItem ti= checkTreeNode(chTree, 0, 0, "call()");
+		Tree chTree= checkTreeNode(ch, 0, "shared_func() : void").getParent();
+		TreeItem ti= checkTreeNode(chTree, 0, 0, "call() : void");
 		checkTreeNode(chTree, 0, 1, null);
 	}
 	
@@ -438,8 +438,8 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, true);
 
-		Tree chTree= checkTreeNode(ch, 0, "doNothing()").getParent();
-		TreeItem ti= checkTreeNode(chTree, 0, 0, "main()");
+		Tree chTree= checkTreeNode(ch, 0, "doNothing() : void").getParent();
+		TreeItem ti= checkTreeNode(chTree, 0, 0, "main() : int");
 		checkTreeNode(chTree, 0, 1, null);
 	}
 
@@ -473,10 +473,10 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		editor.selectAndReveal(idx, 0);
 		openCallHierarchy(editor, false);
 
-		Tree chTree= checkTreeNode(ch, 0, "Base::dosomething()").getParent();
-		TreeItem item= checkTreeNode(chTree, 0, 0, "Base::dosomething()");
+		Tree chTree= checkTreeNode(ch, 0, "Base::dosomething() : void").getParent();
+		TreeItem item= checkTreeNode(chTree, 0, 0, "Base::dosomething() : void");
 		expandTreeItem(item);
-		checkTreeNode(chTree, 0, 1, "Derived::dosomething()");
+		checkTreeNode(chTree, 0, 1, "Derived::dosomething() : void");
 		checkTreeNode(chTree, 0, 2, null);
 	}
 }

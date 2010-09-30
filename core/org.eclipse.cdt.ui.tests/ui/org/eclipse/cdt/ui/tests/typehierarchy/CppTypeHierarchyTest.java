@@ -74,7 +74,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		
 		assertEquals(0, item3.getItemCount());
 		assertEquals(0, item4.getItemCount());
-		checkMethodTable(new String[] {"field1", "method1()"});
+		checkMethodTable(new String[] {"field1 : int", "method1() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("Simple2"), 1);
@@ -90,7 +90,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item2.getItemCount());
 		
 		assertEquals(0, item3.getItemCount());
-		checkMethodTable(new String[] {"field2", "method2()"});
+		checkMethodTable(new String[] {"field2 : int", "method2() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("Simple3"), 1);
@@ -106,7 +106,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item2.getItemCount());
 		
 		assertEquals(0, item3.getItemCount());
-		checkMethodTable(new String[] {"field3", "method3()"});
+		checkMethodTable(new String[] {"field3 : int", "method3() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("Simple4"), 1);
@@ -119,7 +119,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item1.getItemCount());
 		
 		assertEquals(0, item4.getItemCount());
-		checkMethodTable(new String[] {"field4", "method4()"});
+		checkMethodTable(new String[] {"field4 : int", "method4() : int"});
 	}
 
 	// class Simple1 {
@@ -167,7 +167,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		
 		assertEquals(0, item3.getItemCount());
 		assertEquals(0, item4.getItemCount());
-		checkMethodTable(new String[] {"field1", "method1()"});
+		checkMethodTable(new String[] {"field1 : int", "method1() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("method2"), 1);
@@ -183,7 +183,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item2.getItemCount());
 		
 		assertEquals(0, item3.getItemCount());
-		checkMethodTable(new String[] {"field2", "method2()"});
+		checkMethodTable(new String[] {"field2 : int", "method2() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("field3"), 1);
@@ -199,7 +199,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item2.getItemCount());
 		
 		assertEquals(0, item3.getItemCount());
-		checkMethodTable(new String[] {"field3", "method3()"});
+		checkMethodTable(new String[] {"field3 : int", "method3() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("method4"), 1);
@@ -212,7 +212,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item1.getItemCount());
 		
 		assertEquals(0, item4.getItemCount());
-		checkMethodTable(new String[] {"field4", "method4()"});
+		checkMethodTable(new String[] {"field4 : int", "method4() : int"});
 	}
 
 	// class Multi1 {
@@ -259,7 +259,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item3.getItemCount());
 		
 		assertEquals(0, item4.getItemCount());
-		checkMethodTable(new String[] {"field1", "method1()"});
+		checkMethodTable(new String[] {"field1 : int", "method1() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("Multi2"), 1);
@@ -277,7 +277,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item3.getItemCount());
 		
 		assertEquals(0, item4.getItemCount());
-		checkMethodTable(new String[] {"field2", "method2()"});
+		checkMethodTable(new String[] {"field2 : int", "method2() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("Multi3"), 1);
@@ -300,7 +300,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item3.getItemCount());
 		assertEquals(0, item4.getItemCount());
 
-		checkMethodTable(new String[] {"field3", "method3()"});
+		checkMethodTable(new String[] {"field3 : int", "method3() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("Multi4"), 1);
@@ -323,7 +323,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item3.getItemCount());
 		assertEquals(0, item4.getItemCount());
 
-		checkMethodTable(new String[] {"field4", "method4()"});
+		checkMethodTable(new String[] {"field4 : int", "method4() : int"});
 	}
 
 	// class Multi1 {
@@ -370,7 +370,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item3.getItemCount());
 		
 		assertEquals(0, item4.getItemCount());
-		checkMethodTable(new String[] {"field1", "method1()"});
+		checkMethodTable(new String[] {"field1 : int", "method1() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("method2"), 1);
@@ -388,7 +388,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item3.getItemCount());
 		
 		assertEquals(0, item4.getItemCount());
-		checkMethodTable(new String[] {"field2", "method2()"});
+		checkMethodTable(new String[] {"field2 : int", "method2() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("field3"), 1);
@@ -411,7 +411,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item3.getItemCount());
 		assertEquals(0, item4.getItemCount());
 
-		checkMethodTable(new String[] {"field3", "method3()"});
+		checkMethodTable(new String[] {"field3 : int", "method3() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("method4"), 1);
@@ -434,7 +434,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item3.getItemCount());
 		assertEquals(0, item4.getItemCount());
 
-		checkMethodTable(new String[] {"field4", "method4()"});
+		checkMethodTable(new String[] {"field4 : int", "method4() : int"});
 	}
 
 	// class Diamond1 {
@@ -486,7 +486,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item3.getItemCount());
 		assertEquals(0, item4.getItemCount());
 
-		checkMethodTable(new String[] {"field1", "method1()"});
+		checkMethodTable(new String[] {"field1 : int", "method1() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("Diamond2"), 1);
@@ -504,7 +504,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item2.getItemCount());
 		assertEquals(0, item4.getItemCount());
 
-		checkMethodTable(new String[] {"field2", "method2()"});
+		checkMethodTable(new String[] {"field2 : int", "method2() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("Diamond3"), 1);
@@ -522,7 +522,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item3.getItemCount());
 		assertEquals(0, item4.getItemCount());
 
-		checkMethodTable(new String[] {"field3", "method3()"});
+		checkMethodTable(new String[] {"field3 : int", "method3() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("Diamond4"), 1);
@@ -545,7 +545,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item3.getItemCount());
 		assertEquals(0, item4.getItemCount());
 
-		checkMethodTable(new String[] {"field4", "method4()"});
+		checkMethodTable(new String[] {"field4 : int", "method4() : int"});
 	}	
 	
 	// class Diamond1 {
@@ -597,7 +597,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item3.getItemCount());
 		assertEquals(0, item4.getItemCount());
 
-		checkMethodTable(new String[] {"field1", "method1()"});
+		checkMethodTable(new String[] {"field1 : int", "method1() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("method2"), 1);
@@ -615,7 +615,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item2.getItemCount());
 		assertEquals(0, item4.getItemCount());
 
-		checkMethodTable(new String[] {"field2", "method2()"});
+		checkMethodTable(new String[] {"field2 : int", "method2() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("field3"), 1);
@@ -633,7 +633,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item3.getItemCount());
 		assertEquals(0, item4.getItemCount());
 
-		checkMethodTable(new String[] {"field3", "method3()"});
+		checkMethodTable(new String[] {"field3 : int", "method3() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("method4"), 1);
@@ -656,7 +656,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item3.getItemCount());
 		assertEquals(0, item4.getItemCount());
 
-		checkMethodTable(new String[] {"field4", "method4()"});
+		checkMethodTable(new String[] {"field4 : int", "method4() : int"});
 	}	
 
 	// class ViaTypedef1 {
@@ -702,7 +702,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		
 		assertEquals(0, item3.getItemCount());
 		assertEquals(0, item4.getItemCount());
-		checkMethodTable(new String[] {"field1", "method1()"});
+		checkMethodTable(new String[] {"field1 : int", "method1() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("ViaTypedef2"), 1);
@@ -734,7 +734,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item2.getItemCount());
 		
 		assertEquals(0, item3.getItemCount());
-		checkMethodTable(new String[] {"field3", "method3()"});
+		checkMethodTable(new String[] {"field3 : int", "method3() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("ViaTypedef4"), 1);
@@ -747,7 +747,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item1.getItemCount());
 		
 		assertEquals(0, item4.getItemCount());
-		checkMethodTable(new String[] {"field4", "method4()"});
+		checkMethodTable(new String[] {"field4 : int", "method4() : int"});
 	}
 
 	// class ViaTypedef1 {
@@ -793,7 +793,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		
 		assertEquals(0, item3.getItemCount());
 		assertEquals(0, item4.getItemCount());
-		checkMethodTable(new String[] {"field1", "method1()"});
+		checkMethodTable(new String[] {"field1 : int", "method1() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("ViaTypedef2"), 1);
@@ -825,7 +825,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item2.getItemCount());
 		
 		assertEquals(0, item3.getItemCount());
-		checkMethodTable(new String[] {"field3", "method3()"});
+		checkMethodTable(new String[] {"field3 : int", "method3() : int"});
 
 		
 		editor.selectAndReveal(content.indexOf("method4"), 1);
@@ -838,7 +838,7 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item1.getItemCount());
 		
 		assertEquals(0, item4.getItemCount());
-		checkMethodTable(new String[] {"field4", "method4()"});
+		checkMethodTable(new String[] {"field4 : int", "method4() : int"});
 	}
 
 	// template <typename T> class SimpleTemplate {
@@ -862,6 +862,6 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item1= checkTreeNode(tree, 0, "SimpleTemplate");
 		assertEquals(1, tree.getItemCount());
 		assertEquals(0, item1.getItemCount());
-		checkMethodTable(new String[] {"field1", "method1()"});
+		checkMethodTable(new String[] {"field1 : T", "method1() : T"});
 	}
 }

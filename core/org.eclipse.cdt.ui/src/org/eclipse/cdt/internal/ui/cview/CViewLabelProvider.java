@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -35,7 +36,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
  */
 public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 	
-	public CViewLabelProvider(int textFlags, int imageFlags) {
+	public CViewLabelProvider(long textFlags, int imageFlags) {
 		super(textFlags, imageFlags);
 	}
 
@@ -46,8 +47,8 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 	public String getText(Object element) {
 		if (element instanceof IncludeReferenceProxy) {
 			final IIncludeReference ref = ((IncludeReferenceProxy)element).getReference();
-			final IPath location = ref.getPath();
-			final IContainer[] containers= ResourcesPlugin.getWorkspace().getRoot().findContainersForLocation(location);
+			final IPath uriPathLocation = ref.getPath().makeAbsolute();
+			final IContainer[] containers= ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(URIUtil.toURI(uriPathLocation));
 			if (containers.length > 0) {
 				// bug 192707, prefer the project the reference belongs to.
 				final ICProject prj= ref.getCProject();

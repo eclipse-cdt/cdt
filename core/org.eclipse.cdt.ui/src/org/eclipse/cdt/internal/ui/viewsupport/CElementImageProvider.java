@@ -77,22 +77,22 @@ public class CElementImageProvider {
 	public final static int LIGHT_TYPE_ICONS= 0x4;
 	
 	/**
-	 * Show error overrlay. 
+	 * Show error overlay. 
 	 */	
 	public final static int OVERLAY_ERROR= 0x8;
 
 	/**
-	 * Show warning overrlay
+	 * Show warning overlay
 	 */	
 	public final static int OVERLAY_WARNING= 0x10;
 	
 	/**
-	 * Show override overrlay. 
+	 * Show override overlay. 
 	 */	
 	public final static int OVERLAY_OVERRIDE= 0x20;
 
 	/**
-	 * Show implements overrlay. 
+	 * Show implements overlay. 
 	 */	
 	public final static int OVERLAY_IMPLEMENTS= 0x40;
 	

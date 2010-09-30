@@ -66,7 +66,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.actions.CdtActionConstants;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
@@ -82,6 +81,7 @@ import org.eclipse.cdt.internal.ui.util.CoreUtility;
 import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.internal.ui.viewsupport.AdaptingSelectionProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
 import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
@@ -318,7 +318,7 @@ public class CHViewPart extends ViewPart {
         fLabelProvider= new CHLabelProvider(display, fContentProvider);
         fTreeViewer= new ExtendedTreeViewer(fViewerPage);
         fTreeViewer.setContentProvider(fContentProvider);
-        fTreeViewer.setLabelProvider(fLabelProvider);
+        fTreeViewer.setLabelProvider(new DecoratingCLabelProvider(fLabelProvider));
         fTreeViewer.setAutoExpandLevel(2);     
         fTreeViewer.addOpenListener(new IOpenListener() {
 			public void open(OpenEvent event) {
@@ -641,7 +641,7 @@ public class CHViewPart extends ViewPart {
                 String format, scope, label;
             	
                 // label
-                label= CElementBaseLabels.getElementLabel(elem, CHHistoryAction.LABEL_OPTIONS);
+                label= CElementLabels.getElementLabel(elem, CHHistoryAction.LABEL_OPTIONS);
             	
                 // scope
                 IWorkingSet workingSet= fWorkingSetFilterUI.getWorkingSet();
@@ -704,7 +704,7 @@ public class CHViewPart extends ViewPart {
 				final ICElement element= node.getRepresentedDeclaration();
 				if (element != null) {
 					String label= Messages.format(CHMessages.CHViewPart_FocusOn_label, 
-							CElementLabels.getTextLabel(element, CElementBaseLabels.ALL_FULLY_QUALIFIED | CElementBaseLabels.M_PARAMETER_TYPES));
+							CElementLabels.getTextLabel(element, CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.M_PARAMETER_TYPES));
 					menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, new Action(label) {
 						@Override
 						public void run() {

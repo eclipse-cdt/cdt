@@ -196,7 +196,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		Tree tree = getHierarchyViewer().getTree();
 		TreeItem item= checkTreeNode(tree, 0, "S1");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a1", "b1"});
+		checkMethodTable(new String[] {"a1 : int", "b1 : int"});
 		
 		editor.selectAndReveal(content.indexOf("S2"), 1);
 		openTypeHierarchy(editor);
@@ -204,7 +204,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item = checkTreeNode(tree, 0, "S2");
 		item= checkTreeNode(item, 0, "S2");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a2", "b2"});
+		checkMethodTable(new String[] {"a2 : int", "b2 : int"});
 
 		editor.selectAndReveal(content.indexOf("S2;"), 1);
 		openTypeHierarchy(editor);
@@ -220,7 +220,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item= checkTreeNode(tree, 0, "S3");
 		item= checkTreeNode(item, 0, "T3");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a3", "b3"});
+		checkMethodTable(new String[] {"a3 : int", "b3 : int"});
 
 		editor.selectAndReveal(content.indexOf("T3"), 1);
 		openTypeHierarchy(editor);
@@ -250,7 +250,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		Tree tree = getHierarchyViewer().getTree();
 		TreeItem item= checkTreeNode(tree, 0, "S1");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a1", "b1"});
+		checkMethodTable(new String[] {"a1 : int", "b1 : int"});
 		
 		editor.selectAndReveal(content.indexOf("b3"), 1);
 		openTypeHierarchy(editor);
@@ -258,7 +258,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item= checkTreeNode(tree, 0, "S3");
 		item= checkTreeNode(item, 0, "T3");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a3", "b3"});
+		checkMethodTable(new String[] {"a3 : int", "b3 : int"});
 	}
 
 	// struct S1 {
@@ -284,7 +284,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		Tree tree = getHierarchyViewer().getTree();
 		TreeItem item= checkTreeNode(tree, 0, "S1");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a1", "b1"});
+		checkMethodTable(new String[] {"a1 : int", "b1 : int"});
 
 		editor.selectAndReveal(content.indexOf("S2"), 1);
 		openTypeHierarchy(editor);
@@ -292,7 +292,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item= checkTreeNode(tree, 0, "S2");
 		item= checkTreeNode(item, 0, "S2");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a2", "b2"});
+		checkMethodTable(new String[] {"a2 : int", "b2 : int"});
 
 		editor.selectAndReveal(content.indexOf("S2;"), 1);
 		openTypeHierarchy(editor);
@@ -308,7 +308,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item= checkTreeNode(tree, 0, "S3");
 		item= checkTreeNode(item, 0, "T3");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a3", "b3"});
+		checkMethodTable(new String[] {"a3 : int", "b3 : int"});
 		
 		editor.selectAndReveal(content.indexOf("T3"), 1);
 		openTypeHierarchy(editor);
@@ -339,7 +339,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		Tree tree = getHierarchyViewer().getTree();
 		TreeItem item= checkTreeNode(tree, 0, "S1");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a1", "b1"});
+		checkMethodTable(new String[] {"a1 : int", "b1 : int"});
 
 		editor.selectAndReveal(content.indexOf("a3"), 1);
 		openTypeHierarchy(editor);
@@ -347,7 +347,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item= checkTreeNode(tree, 0, "S3");
 		item= checkTreeNode(item, 0, "T3");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a3", "b3"});
+		checkMethodTable(new String[] {"a3 : int", "b3 : int"});
 	}
 
 	// union U1 {
@@ -373,7 +373,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		Tree tree = getHierarchyViewer().getTree();
 		TreeItem item= checkTreeNode(tree, 0, "U1");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a1", "b1"});
+		checkMethodTable(new String[] {"a1 : int", "b1 : char"});
 
 		editor.selectAndReveal(content.indexOf("U2"), 1);
 		openTypeHierarchy(editor);
@@ -381,7 +381,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item = checkTreeNode(tree, 0, "U2");
 		item= checkTreeNode(item, 0, "U2");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a2", "b2"});
+		checkMethodTable(new String[] {"a2 : int", "b2 : int"});
 
 		editor.selectAndReveal(content.indexOf("U2;"), 1);
 		openTypeHierarchy(editor);
@@ -397,7 +397,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item= checkTreeNode(tree, 0, "U3");
 		item= checkTreeNode(item, 0, "T3");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a3", "b3"});
+		checkMethodTable(new String[] {"a3 : int", "b3 : int"});
 
 		editor.selectAndReveal(content.indexOf("T3"), 1);
 		openTypeHierarchy(editor);
@@ -423,7 +423,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		Tree tree = getHierarchyViewer().getTree();
 		TreeItem item= checkTreeNode(tree, 0, "U1");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a1", "b1"});
+		checkMethodTable(new String[] {"a1 : int", "b1 : char"});
 	}
 
 	// union U1 {
@@ -449,7 +449,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		Tree tree = getHierarchyViewer().getTree();
 		TreeItem item= checkTreeNode(tree, 0, "U1");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a1", "b1"});
+		checkMethodTable(new String[] {"a1 : int", "b1 : int"});
 
 		editor.selectAndReveal(content.indexOf("U2"), 1);
 		openTypeHierarchy(editor);
@@ -457,7 +457,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item= checkTreeNode(tree, 0, "U2");
 		item= checkTreeNode(item, 0, "U2");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a2", "b2"});
+		checkMethodTable(new String[] {"a2 : int", "b2 : int"});
 
 
 		editor.selectAndReveal(content.indexOf("U2;"), 1);
@@ -474,7 +474,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item= checkTreeNode(tree, 0, "U3");
 		item= checkTreeNode(item, 0, "T3");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a3", "b3"});
+		checkMethodTable(new String[] {"a3 : int", "b3 : int"});
 		
 		editor.selectAndReveal(content.indexOf("T3"), 1);
 		openTypeHierarchy(editor);
@@ -508,7 +508,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		Tree tree = getHierarchyViewer().getTree();
 		TreeItem item= checkTreeNode(tree, 0, "U1");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a1", "b1"});
+		checkMethodTable(new String[] {"a1 : int", "b1 : int"});
 
 		editor.selectAndReveal(content.indexOf("b3"), 1);
 		openTypeHierarchy(editor);
@@ -516,6 +516,6 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item= checkTreeNode(tree, 0, "U3");
 		item= checkTreeNode(item, 0, "T3");
 		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a3", "b3"});
+		checkMethodTable(new String[] {"a3 : int", "b3 : int"});
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,10 +24,10 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 
 public class OpenActionUtil {
@@ -67,17 +67,17 @@ public class OpenActionUtil {
 	}
 						
 	/**
-	 * Shows a dialog for resolving an ambigous C element.
-	 * Utility method that can be called by subclassers.
+	 * Shows a dialog for resolving an ambiguous C element.
+	 * Utility method that can be called by subclasses.
 	 */
 	public static ICElement selectCElement(ICElement[] elements, Shell shell, String title, String message) {
 		return selectCElement(elements, shell, title, message, 0, 0);
 	}
 
 	/**
-	 * Shows a dialog for resolving an ambigous C element.
-	 * @see CElementBaseLabels
-	 * @param elements an array of ambigous elements.
+	 * Shows a dialog for resolving an ambiguous C element.
+	 * @see CElementLabels
+	 * @param elements an array of ambiguous elements.
 	 * @param shell parent shell for showing the dialog
 	 * @param title title of the dialog
 	 * @param message message to be shown in the dialog
@@ -86,7 +86,7 @@ public class OpenActionUtil {
 	 * @return the selected element or <code>null</code>
 	 * @since 4.0
 	 */
-	public static ICElement selectCElement(ICElement[] elements, Shell shell, String title, String message, int textFlags, int imageFlags) {
+	public static ICElement selectCElement(ICElement[] elements, Shell shell, String title, String message, long textFlags, int imageFlags) {
 		int nResults= elements.length;
 		
 		if (nResults == 0)

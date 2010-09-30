@@ -97,39 +97,39 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 		openCallHierarchy(editor, true);
 		Tree tree = getCHTreeViewer().getTree();
 
-		checkTreeNode(tree, 0, "MyClass::method()");
-		checkTreeNode(tree, 0, 0, "func()");
-		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 2, "MyClass::method()");
+		checkTreeNode(tree, 0, "MyClass::method() : void");
+		checkTreeNode(tree, 0, 0, "func() : void");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method() : void");
+		checkTreeNode(tree, 0, 2, "MyClass::method() : void");
 
 		editor.selectAndReveal(source.indexOf("method(); // r2"), 2);
 		openCallHierarchy(editor);
 
-		checkTreeNode(tree, 0, "MyClass::method()");
-		checkTreeNode(tree, 0, 0, "func()");
-		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 2, "MyClass::method()");
+		checkTreeNode(tree, 0, "MyClass::method() : void");
+		checkTreeNode(tree, 0, 0, "func() : void");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method() : void");
+		checkTreeNode(tree, 0, 2, "MyClass::method() : void");
 
 		editor.selectAndReveal(source.indexOf("inline_method(); // r2"), 2);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 0, "func()");
-		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 2, "MyClass::method()");
+		checkTreeNode(tree, 0, "MyClass::inline_method() : void");
+		checkTreeNode(tree, 0, 0, "func() : void");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method() : void");
+		checkTreeNode(tree, 0, 2, "MyClass::method() : void");
 
 		editor.selectAndReveal(source.indexOf("method(); // r3"), 2);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "MyClass::method()");
-		checkTreeNode(tree, 0, 0, "func()");
-		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 2, "MyClass::method()");
+		checkTreeNode(tree, 0, "MyClass::method() : void");
+		checkTreeNode(tree, 0, 0, "func() : void");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method() : void");
+		checkTreeNode(tree, 0, 2, "MyClass::method() : void");
 
 		editor.selectAndReveal(source.indexOf("inline_method(); // r3"), 2);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 0, "func()");
-		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 2, "MyClass::method()");
+		checkTreeNode(tree, 0, "MyClass::inline_method() : void");
+		checkTreeNode(tree, 0, 0, "func() : void");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method() : void");
+		checkTreeNode(tree, 0, 2, "MyClass::method() : void");
 	}
 	
 	
@@ -170,11 +170,11 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 		openCallHierarchy(editor);
 		TreeViewer tv = getCHTreeViewer();
 
-		checkTreeNode(tv.getTree(), 0, "MyClass::method3()");
-		TreeItem item= checkTreeNode(tv.getTree(), 0, 0, "MyClass::method2()");
+		checkTreeNode(tv.getTree(), 0, "MyClass::method3() : void");
+		TreeItem item= checkTreeNode(tv.getTree(), 0, 0, "MyClass::method2() : void");
 		checkTreeNode(tv.getTree(), 0, 1, null); 
 		tv.setExpandedState(item.getData(), true); 
-		TreeItem nextItem= checkTreeNode(item, 0, "MyClass::method1()");
+		TreeItem nextItem= checkTreeNode(item, 0, "MyClass::method1() : void");
 		checkTreeNode(item, 1, null); item= nextItem;
 		tv.setExpandedState(item.getData(), true); 
 		checkTreeNode(item, 0, null);
@@ -221,9 +221,9 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 		openCallHierarchy(editor);
 		TreeViewer tv = getCHTreeViewer();
 
-		checkTreeNode(tv.getTree(), 0, "MyClass::method3()");
-		TreeItem item0= checkTreeNode(tv.getTree(), 0, 0, "MyClass::method1()");
-		TreeItem item1= checkTreeNode(tv.getTree(), 0, 1, "MyClass::method2()");
+		checkTreeNode(tv.getTree(), 0, "MyClass::method3() : void");
+		TreeItem item0= checkTreeNode(tv.getTree(), 0, 0, "MyClass::method1() : void");
+		TreeItem item1= checkTreeNode(tv.getTree(), 0, 1, "MyClass::method2() : void");
 		checkTreeNode(tv.getTree(), 0, 2, null); 
 		
 		// method 1
@@ -232,7 +232,7 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 		
 		// method 2
 		tv.setExpandedState(item1.getData(), true); 
-		TreeItem nextItem= checkTreeNode(item1, 0,  "MyClass::method1()");
+		TreeItem nextItem= checkTreeNode(item1, 0,  "MyClass::method1() : void");
 		checkTreeNode(item1, 1, null); item1= nextItem;
 		tv.setExpandedState(item1.getData(), true); 
 		checkTreeNode(item1, 0, null);
@@ -282,18 +282,18 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 		TreeViewer tv = getCHTreeViewer();
 
 		final Tree tree = tv.getTree();
-		checkTreeNode(tree, 0, "main()");
-		TreeItem item= checkTreeNode(tree, 0, 0,  "MyClass::method1()");
+		checkTreeNode(tree, 0, "main() : void");
+		TreeItem item= checkTreeNode(tree, 0, 0,  "MyClass::method1() : void");
 		checkTreeNode(tree, 0, 1, null); 
 		tv.setExpandedState(item.getData(), true); 
 
-		TreeItem item0= checkTreeNode(item, 0, "MyClass::method1()");
-		TreeItem item1= checkTreeNode(item, 1, "MyClass::method1()");
+		TreeItem item0= checkTreeNode(item, 0, "MyClass::method1() : void");
+		TreeItem item1= checkTreeNode(item, 1, "MyClass::method1() : void");
 		checkTreeNode(item, 2, null); item= null;
 		
 		try {
 			tv.setExpandedState(item0.getData(), true); 
-			checkTreeNode(item0, 0,  "MyClass::method2()");
+			checkTreeNode(item0, 0,  "MyClass::method2() : void");
 		}
 		catch (Throwable e) {
 			TreeItem tmp= item0; item0= item1; item1= tmp;
@@ -301,14 +301,14 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 
 		// method 1
 		tv.setExpandedState(item0.getData(), true); 
-		TreeItem nextItem= checkTreeNode(item0, 0,  "MyClass::method2()");
+		TreeItem nextItem= checkTreeNode(item0, 0,  "MyClass::method2() : void");
 		checkTreeNode(item0, 1, null); item0= nextItem;
 		tv.setExpandedState(item0.getData(), true); 
 		checkTreeNode(item0, 0, null);
 		
 		// method 2
 		tv.setExpandedState(item1.getData(), true); 
-		nextItem= checkTreeNode(item1, 0,  "MyClass::method3()");
+		nextItem= checkTreeNode(item1, 0,  "MyClass::method3() : void");
 		checkTreeNode(item1, 1, null); item1= nextItem;
 		tv.setExpandedState(item1.getData(), true); 
 		checkTreeNode(item1, 0, null);

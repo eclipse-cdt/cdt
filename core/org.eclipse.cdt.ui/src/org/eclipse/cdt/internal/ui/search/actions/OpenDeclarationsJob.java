@@ -74,7 +74,7 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.util.CElementBaseLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -493,7 +493,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 					ICElement[] elemArray= uniqueElements.toArray(new ICElement[uniqueElements.size()]);
 					target = (ISourceReference) OpenActionUtil.selectCElement(elemArray, fAction.getSite().getShell(),
 							CEditorMessages.OpenDeclarationsAction_dialog_title, CEditorMessages.OpenDeclarationsAction_selectMessage,
-							CElementBaseLabels.ALL_DEFAULT | CElementBaseLabels.ALL_FULLY_QUALIFIED | CElementBaseLabels.MF_POST_FILE_QUALIFIED, 0);
+							CElementLabels.ALL_DEFAULT | CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.MF_POST_FILE_QUALIFIED, 0);
 				}
 				if (target != null) {
 					ITranslationUnit tu= target.getTranslationUnit();

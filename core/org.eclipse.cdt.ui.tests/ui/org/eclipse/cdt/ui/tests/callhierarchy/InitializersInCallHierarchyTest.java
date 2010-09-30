@@ -40,6 +40,6 @@ public class InitializersInCallHierarchyTest extends CallHierarchyBaseTest {
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "a");
-		checkTreeNode(tree, 0, 0, "{init b}()");
+		checkTreeNode(tree, 0, 0, "{init b}() : int");
 	}
 }

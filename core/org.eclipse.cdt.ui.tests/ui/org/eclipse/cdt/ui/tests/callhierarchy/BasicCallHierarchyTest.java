@@ -65,24 +65,24 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("proto"), 5);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
-		checkTreeNode(tree, 0, "proto()");
+		checkTreeNode(tree, 0, "proto() : void");
 		expandTreeItem(tree, 0);
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, 0, "main() : void");
 
 		editor.selectAndReveal(content.indexOf("func"), 2);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "func()");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "func() : void");
+		checkTreeNode(tree, 0, 0, "main() : void");
 
 		editor.selectAndReveal(content.indexOf("proto(); //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "proto()");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "proto() : void");
+		checkTreeNode(tree, 0, 0, "main() : void");
 
 		editor.selectAndReveal(content.indexOf("func(); //ref"), 4);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "func()");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "func() : void");
+		checkTreeNode(tree, 0, 0, "main() : void");
 	}
 
 	public void testVariablesC() throws Exception {
@@ -109,23 +109,23 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("extern_var"), 0);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
-		checkTreeNode(tree, 0, "extern_var");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "extern_var : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 
 		editor.selectAndReveal(content.indexOf("global_var"), 2);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "global_var");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "global_var : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 
 		editor.selectAndReveal(content.indexOf("extern_var; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "extern_var");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "extern_var : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 
 		editor.selectAndReveal(content.indexOf("global_var; //ref"), 7);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "global_var");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "global_var : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 	}
 
 	public void testEnumeratorC() throws Exception {
@@ -165,20 +165,20 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "enumerator");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, 0, "main() : void");
 
 		editor.selectAndReveal(content.indexOf("main"), 2);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "main()");
+		checkTreeNode(tree, 0, "main() : void");
 
 		editor.selectAndReveal(content.indexOf("enumerator; //ref"), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "enumerator");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, 0, "main() : void");
 
 		editor.selectAndReveal(content.indexOf("main"), 2);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "main()");
+		checkTreeNode(tree, 0, "main() : void");
 	}
 	
 	// {testStructMembers}
@@ -219,41 +219,41 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
-		checkTreeNode(tree, 0, "s1::mem1");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "s1::mem1 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem2"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s2::mem2");
-		checkTreeNode(tree, 0, 0, "main() (2 matches)");
+		checkTreeNode(tree, 0, "s2::mem2 : int");
+		checkTreeNode(tree, 0, 0, "main() : void (2 matches)");
 		
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, ANON+"::mem3");
+		checkTreeNode(tree, 0, ANON+"::mem3 : int");
 		
 		editor.selectAndReveal(content.indexOf("mem4"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s4::mem4");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "s4::mem4 : {struct_member.c:129}");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, ANON+"::mem5");
+		checkTreeNode(tree, 0, ANON+"::mem5 : int");
 		
 		editor.selectAndReveal(content.indexOf("mem1; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s1::mem1");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "s1::mem1 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem2; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s2::mem2");
-		checkTreeNode(tree, 0, 0, "main() (2 matches)");
+		checkTreeNode(tree, 0, "s2::mem2 : int");
+		checkTreeNode(tree, 0, 0, "main() : void (2 matches)");
 		
 		editor.selectAndReveal(content.indexOf("mem4."), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s4::mem4");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "s4::mem4 : {struct_member.c:129}");
+		checkTreeNode(tree, 0, 0, "main() : void");
 	}
 	
 	public void testStructMembersCpp() throws Exception {
@@ -265,41 +265,41 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
-		checkTreeNode(tree, 0, "s1::mem1");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "s1::mem1 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem2"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s2::mem2");
-		checkTreeNode(tree, 0, 0, "main() (2 matches)");
+		checkTreeNode(tree, 0, "s2::mem2 : int");
+		checkTreeNode(tree, 0, 0, "main() : void (2 matches)");
 		
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, ANON+"::mem3");
+		checkTreeNode(tree, 0, ANON+"::mem3 : int");
 		
 		editor.selectAndReveal(content.indexOf("mem4"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s4::mem4");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "s4::mem4 : s4::{struct_member.cpp:129}");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s4::"+ANON+"::mem5");
+		checkTreeNode(tree, 0, "s4::"+ANON+"::mem5 : int");
 		
 		editor.selectAndReveal(content.indexOf("mem1; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s1::mem1");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "s1::mem1 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem2; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s2::mem2");
-		checkTreeNode(tree, 0, 0, "main() (2 matches)");
+		checkTreeNode(tree, 0, "s2::mem2 : int");
+		checkTreeNode(tree, 0, 0, "main() : void (2 matches)");
 		
 		editor.selectAndReveal(content.indexOf("mem4."), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s4::mem4");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "s4::mem4 : s4::{struct_member.cpp:129}");
+		checkTreeNode(tree, 0, 0, "main() : void");
 	}
 	
 	public void testAnonymousStructMembersC_156671() throws Exception {
@@ -311,23 +311,23 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
-		checkTreeNode(tree, 0, ANON+"::mem3");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, ANON+"::mem3 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, ANON+"::mem5");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, ANON+"::mem5 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem3; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, ANON+"::mem3");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, ANON+"::mem3 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem5; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, ANON+"::mem5");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, ANON+"::mem5 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 	}
 	
 	public void testAnonymousStructMembersCpp_156671() throws Exception {
@@ -339,23 +339,23 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
-		checkTreeNode(tree, 0, ANON+"::mem3");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, ANON+"::mem3 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s4::"+ANON+"::mem5");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "s4::"+ANON+"::mem5 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem3; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, ANON+"::mem3");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, ANON+"::mem3 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem5; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s4::"+ANON+"::mem5");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "s4::"+ANON+"::mem5 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 	}
 	
 	// {testUnionMembers}
@@ -401,41 +401,41 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
-		checkTreeNode(tree, 0, "u1::mem1");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "u1::mem1 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem2"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u2::mem2");
-		checkTreeNode(tree, 0, 0, "main() (2 matches)");
+		checkTreeNode(tree, 0, "u2::mem2 : int");
+		checkTreeNode(tree, 0, 0, "main() : void (2 matches)");
 		
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, ANON+"::mem3");
+		checkTreeNode(tree, 0, ANON+"::mem3 : int");
 		
 		editor.selectAndReveal(content.indexOf("mem4"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u4::mem4");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "u4::mem4 : {union_member.c:161}");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, ANON+"::mem5");
+		checkTreeNode(tree, 0, ANON+"::mem5 : int");
 		
 		editor.selectAndReveal(content.indexOf("mem1; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u1::mem1");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "u1::mem1 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem2; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u2::mem2");
-		checkTreeNode(tree, 0, 0, "main() (2 matches)");
+		checkTreeNode(tree, 0, "u2::mem2 : int");
+		checkTreeNode(tree, 0, 0, "main() : void (2 matches)");
 		
 		editor.selectAndReveal(content.indexOf("mem4."), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u4::mem4");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "u4::mem4 : {union_member.c:161}");
+		checkTreeNode(tree, 0, 0, "main() : void");
 	}
 	
 	public void testUnionMembersCpp() throws Exception {
@@ -447,41 +447,41 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
-		checkTreeNode(tree, 0, "u1::mem1");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "u1::mem1 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem2"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u2::mem2");
-		checkTreeNode(tree, 0, 0, "main() (2 matches)");
+		checkTreeNode(tree, 0, "u2::mem2 : int");
+		checkTreeNode(tree, 0, 0, "main() : void (2 matches)");
 		
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, ANON+"::mem3");
+		checkTreeNode(tree, 0, ANON+"::mem3 : int");
 		
 		editor.selectAndReveal(content.indexOf("mem4"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u4::mem4");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "u4::mem4 : u4::{union_member.cpp:161}");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u4::"+ANON+"::mem5");
+		checkTreeNode(tree, 0, "u4::"+ANON+"::mem5 : int");
 		
 		editor.selectAndReveal(content.indexOf("mem1; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u1::mem1");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "u1::mem1 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem2; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u2::mem2");
-		checkTreeNode(tree, 0, 0, "main() (2 matches)");
+		checkTreeNode(tree, 0, "u2::mem2 : int");
+		checkTreeNode(tree, 0, 0, "main() : void (2 matches)");
 		
 		editor.selectAndReveal(content.indexOf("mem4."), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u4::mem4");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "u4::mem4 : u4::{union_member.cpp:161}");
+		checkTreeNode(tree, 0, 0, "main() : void");
 	}
 
 	public void testAnonymousUnionMembersC_156671() throws Exception {
@@ -493,23 +493,23 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
-		checkTreeNode(tree, 0, ANON+"::mem3");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, ANON+"::mem3 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, ANON+"::mem5");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, ANON+"::mem5 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem3; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, ANON+"::mem3");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, ANON+"::mem3 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem5; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, ANON+"::mem5");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, ANON+"::mem5 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 	}
 	
 	public void testAnonymousUnionMembersCpp_156671() throws Exception {
@@ -521,23 +521,23 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
-		checkTreeNode(tree, 0, ANON+"::mem3");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, ANON+"::mem3 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u4::"+ANON+"::mem5");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "u4::"+ANON+"::mem5 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem3; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, ANON+"::mem3");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, ANON+"::mem3 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 		
 		editor.selectAndReveal(content.indexOf("mem5; //ref"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u4::"+ANON+"::mem5");
-		checkTreeNode(tree, 0, 0, "main()");
+		checkTreeNode(tree, 0, "u4::"+ANON+"::mem5 : int");
+		checkTreeNode(tree, 0, 0, "main() : void");
 	}
 	
 	// void gf();
@@ -567,19 +567,19 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content1.indexOf("sf"), 0);
 		openCallHierarchy(editor);
 		tree = getCHTreeViewer().getTree();
-		checkTreeNode(tree, 0, "sf()");
+		checkTreeNode(tree, 0, "sf() : void");
 		assertEquals(1, tree.getItemCount());
 
-		i1= checkTreeNode(tree, 0, 0, "gf()");	// sf()[f1] <- gf()
-		i2= checkTreeNode(tree, 0, 1, "sf()");   // sf()[f1] <- sf()[f1]
+		i1= checkTreeNode(tree, 0, 0, "gf() : void");	// sf()[f1] <- gf()
+		i2= checkTreeNode(tree, 0, 1, "sf() : void");   // sf()[f1] <- sf()[f1]
 		checkTreeNode(tree, 0, 2, null);
 
 		expandTreeItem(i1);
 		expandTreeItem(i2);
 		checkTreeNode(i2, 0, null);
-		i3= checkTreeNode(i1, 0, "gf()");   // sf()[f1] <- gf() <- gf()
-		i4= checkTreeNode(i1, 1, "sf()");   // sf()[f1] <- gf() <- sf()[f1]
-		i5= checkTreeNode(i1, 2, "sf()");   // sf()[f1] <- gf() <- sf()[f2]
+		i3= checkTreeNode(i1, 0, "gf() : void");   // sf()[f1] <- gf() <- gf()
+		i4= checkTreeNode(i1, 1, "sf() : void");   // sf()[f1] <- gf() <- sf()[f1]
+		i5= checkTreeNode(i1, 2, "sf() : void");   // sf()[f1] <- gf() <- sf()[f2]
 
 		if (((CHNode) i4.getData()).getRepresentedDeclaration().getResource().equals(file2)) {
 			TreeItem i0= i4; i4=i5; i5=i0;
@@ -589,7 +589,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		expandTreeItem(i5);
 		checkTreeNode(i3, 0, null);
 		checkTreeNode(i4, 0, null);
-		i6= checkTreeNode(i5, 0, "sf()"); 	// sf()[f1] <- gf() <- sf()[f2] <- sf()[f2]
+		i6= checkTreeNode(i5, 0, "sf() : void"); 	// sf()[f1] <- gf() <- sf()[f2] <- sf()[f2]
 		
 		expandTreeItem(i6);
 		checkTreeNode(i6, 0, null);
@@ -599,10 +599,10 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content1.indexOf("sf"), 0);
 		openCallHierarchy(editor);
 		tree = getCHTreeViewer().getTree();
-		checkTreeNode(tree, 0, "sf()");
+		checkTreeNode(tree, 0, "sf() : void");
 		assertEquals(1, tree.getItemCount());
 
-		i1= checkTreeNode(tree, 0, 0, "sf()");	// sf()[f2] <- sf()[f2]
+		i1= checkTreeNode(tree, 0, 0, "sf() : void");	// sf()[f2] <- sf()[f2]
 		checkTreeNode(tree, 0, 1, null);			// not called by gf()
 
 		expandTreeItem(i1);
@@ -637,19 +637,19 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content1.indexOf("sf"), 0);
 		openCallHierarchy(editor);
 		tree = getCHTreeViewer().getTree();
-		i0= checkTreeNode(tree, 0, "sf()");
+		i0= checkTreeNode(tree, 0, "sf() : void");
 		assertEquals(1, tree.getItemCount());
 
-		i1= checkTreeNode(tree, 0, 0, "gf()");	// sf()[f1] <- gf()
-		i2= checkTreeNode(tree, 0, 1, "sf()");   // sf()[f1] <- sf()[f1]
+		i1= checkTreeNode(tree, 0, 0, "gf() : void");	// sf()[f1] <- gf()
+		i2= checkTreeNode(tree, 0, 1, "sf() : void");   // sf()[f1] <- sf()[f1]
 		checkTreeNode(tree, 0, 2, null);
 
 		expandTreeItem(i1);
 		expandTreeItem(i2);
 		checkTreeNode(i2, 0, null);
-		i3= checkTreeNode(i1, 0, "gf()");   // sf()[f1] <- gf() <- gf()
-		i4= checkTreeNode(i1, 1, "sf()");   // sf()[f1] <- gf() <- sf()[f1]
-		i5= checkTreeNode(i1, 2, "sf()");   // sf()[f1] <- gf() <- sf()[f2]
+		i3= checkTreeNode(i1, 0, "gf() : void");   // sf()[f1] <- gf() <- gf()
+		i4= checkTreeNode(i1, 1, "sf() : void");   // sf()[f1] <- gf() <- sf()[f1]
+		i5= checkTreeNode(i1, 2, "sf() : void");   // sf()[f1] <- gf() <- sf()[f2]
 
 		if (((CHNode) i4.getData()).getRepresentedDeclaration().getResource().equals(file2)) {
 			i0= i4; i4=i5; i5=i0;
@@ -659,7 +659,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		expandTreeItem(i5);
 		checkTreeNode(i3, 0, null);
 		checkTreeNode(i4, 0, null);
-		i6= checkTreeNode(i5, 0, "sf()"); 	// sf()[f1] <- gf() <- sf()[f2] <- sf()[f2]
+		i6= checkTreeNode(i5, 0, "sf() : void"); 	// sf()[f1] <- gf() <- sf()[f2] <- sf()[f2]
 		
 		expandTreeItem(i6);
 		checkTreeNode(i6, 0, null);
@@ -669,10 +669,10 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content1.indexOf("sf"), 0);
 		openCallHierarchy(editor);
 		tree = getCHTreeViewer().getTree();
-		i0= checkTreeNode(tree, 0, "sf()");
+		i0= checkTreeNode(tree, 0, "sf() : void");
 		assertEquals(1, tree.getItemCount());
 
-		i1= checkTreeNode(tree, 0, 0, "sf()");	// sf()[f2] <- sf()[f2]
+		i1= checkTreeNode(tree, 0, 0, "sf() : void");	// sf()[f2] <- sf()[f2]
 		checkTreeNode(tree, 0, 1, null);			// not called by gf()
 
 		expandTreeItem(i1);
@@ -707,23 +707,23 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 			editor.selectAndReveal(content.indexOf("proto"), 5);
 			openCallHierarchy(editor);
 			Tree tree = getCHTreeViewer().getTree();
-			checkTreeNode(tree, 0, "proto(int)");
-			checkTreeNode(tree, 0, 0, "main(int)");
+			checkTreeNode(tree, 0, "proto(int) : void");
+			checkTreeNode(tree, 0, 0, "main(int) : void");
 
 			editor.selectAndReveal(content.indexOf("func"), 2);
 			openCallHierarchy(editor);
-			checkTreeNode(tree, 0, "func(int)");
-			checkTreeNode(tree, 0, 0, "main(int)");
+			checkTreeNode(tree, 0, "func(int) : void");
+			checkTreeNode(tree, 0, 0, "main(int) : void");
 
 			editor.selectAndReveal(content.indexOf("proto(1); //ref"), 0);
 			openCallHierarchy(editor);
-			checkTreeNode(tree, 0, "proto(int)");
-			checkTreeNode(tree, 0, 0, "main(int)");
+			checkTreeNode(tree, 0, "proto(int) : void");
+			checkTreeNode(tree, 0, 0, "main(int) : void");
 
 			editor.selectAndReveal(content.indexOf("func(1); //ref"), 4);
 			openCallHierarchy(editor);
-			checkTreeNode(tree, 0, "func(int)");
-			checkTreeNode(tree, 0, 0, "main(int)");
+			checkTreeNode(tree, 0, "func(int) : void");
+			checkTreeNode(tree, 0, 0, "main(int) : void");
 		}
 		finally {
 			CProjectHelper.delete(triggerCompositeBindings);

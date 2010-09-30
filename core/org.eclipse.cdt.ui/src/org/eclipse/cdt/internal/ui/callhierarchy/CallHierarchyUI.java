@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.util.CElementBaseLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
@@ -103,7 +103,7 @@ public class CallHierarchyUI {
 			}
 			elem = OpenActionUtil.selectCElement(input, window.getShell(),
 					CHMessages.CallHierarchyUI_label, CHMessages.CallHierarchyUI_selectMessage,
-					CElementBaseLabels.ALL_DEFAULT | CElementBaseLabels.MF_POST_FILE_QUALIFIED, 0);
+					CElementLabels.ALL_DEFAULT | CElementLabels.MF_POST_FILE_QUALIFIED, 0);
 			break;
 		}
 		if (elem != null) {

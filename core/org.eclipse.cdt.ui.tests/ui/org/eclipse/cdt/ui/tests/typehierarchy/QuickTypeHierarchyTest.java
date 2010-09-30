@@ -165,18 +165,7 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		
 		item1= checkTreeNode(tree, 0, "Simple1");
 		assertEquals(1, tree.getItemCount());
-		
-		item2= checkTreeNode(item1, 0, "Simple2");
-		item4= checkTreeNode(item1, 1, "Simple4");
-		assertEquals(2, item1.getItemCount());
-		
-		item3= checkTreeNode(item2, 0, "Simple3");
-		assertEquals(1, item2.getItemCount());
-		
-		assertEquals(0, item3.getItemCount());
-		assertEquals(0, item4.getItemCount());
-
-
+		assertEquals(0, item1.getItemCount());
 		
 		editor.selectAndReveal(content.indexOf("method2"), 1);
 		openQuickTypeHierarchy(editor);
@@ -187,11 +176,7 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item2= checkTreeNode(item1, 0, "Simple2");
 		assertEquals(1, item1.getItemCount());
 		
-		item3= checkTreeNode(item2, 0, "Simple3");
-		assertEquals(1, item2.getItemCount());
-		
-		assertEquals(0, item3.getItemCount());
-
+		assertEquals(0, item2.getItemCount());
 
 		
 		editor.selectAndReveal(content.indexOf("field3"), 1);
@@ -374,15 +359,8 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item1= checkTreeNode(tree, 0, "Multi1");
 		assertEquals(1, tree.getItemCount());
 
-		item3= checkTreeNode(item1, 0, "Multi3");
-		assertEquals(1, item1.getItemCount());
+		assertEquals(0, item1.getItemCount());
 		
-		item4= checkTreeNode(item3, 0, "Multi4");
-		assertEquals(1, item3.getItemCount());
-		
-		assertEquals(0, item4.getItemCount());
-
-
 		
 		editor.selectAndReveal(content.indexOf("method2"), 1);
 		openQuickTypeHierarchy(editor);
@@ -391,16 +369,9 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item2= checkTreeNode(tree, 0, "Multi2");
 		assertEquals(1, tree.getItemCount());
 
-		item3= checkTreeNode(item2, 0, "Multi3");
-		assertEquals(1, item2.getItemCount());
+		assertEquals(0, item2.getItemCount());
 		
-		item4= checkTreeNode(item3, 0, "Multi4");
-		assertEquals(1, item3.getItemCount());
-		
-		assertEquals(0, item4.getItemCount());
 
-
-		
 		editor.selectAndReveal(content.indexOf("field3"), 1);
 		openQuickTypeHierarchy(editor);
 		tree= getQuickTypeHierarchyViewer(editor);
@@ -410,16 +381,11 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		
 		item3= checkTreeNode(item1, 0, "Multi3");
 		assertEquals(1, item1.getItemCount());
-		item4= checkTreeNode(item3, 0, "Multi4");
-		assertEquals(1, item3.getItemCount());
-		assertEquals(0, item4.getItemCount());
+		assertEquals(0, item3.getItemCount());
 
 		item3= checkTreeNode(item2, 0, "Multi3");
-		assertEquals(1, item1.getItemCount());
-		item4= checkTreeNode(item3, 0, "Multi4");
-		assertEquals(1, item3.getItemCount());
-		assertEquals(0, item4.getItemCount());
-
+		assertEquals(1, item2.getItemCount());
+		assertEquals(0, item3.getItemCount());
 
 
 		
@@ -596,19 +562,8 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item1= checkTreeNode(tree, 0, "Diamond1");
 		assertEquals(1, tree.getItemCount());
 		
-		item2= checkTreeNode(item1, 0, "Diamond2");
-		item3= checkTreeNode(item1, 1, "Diamond3");
-		assertEquals(2, item1.getItemCount());
+		assertEquals(0, item1.getItemCount());
 		
-		item4= checkTreeNode(item2, 0, "Diamond4");
-		assertEquals(1, item2.getItemCount());
-		assertEquals(0, item4.getItemCount());
-
-		item4= checkTreeNode(item3, 0, "Diamond4");
-		assertEquals(1, item3.getItemCount());
-		assertEquals(0, item4.getItemCount());
-
-
 
 		
 		editor.selectAndReveal(content.indexOf("method2"), 1);
@@ -620,13 +575,8 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		
 		item2= checkTreeNode(item1, 0, "Diamond2");
 		assertEquals(1, item1.getItemCount());
-		
-		item4= checkTreeNode(item2, 0, "Diamond4");
-		assertEquals(1, item2.getItemCount());
-		assertEquals(0, item4.getItemCount());
-
-
-
+		assertEquals(0, item2.getItemCount());
+	
 		
 		editor.selectAndReveal(content.indexOf("field3"), 1);
 		openQuickTypeHierarchy(editor);
@@ -637,11 +587,9 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		
 		item3= checkTreeNode(item1, 0, "Diamond3");
 		assertEquals(1, item1.getItemCount());
-		
-		item4= checkTreeNode(item3, 0, "Diamond4");
-		assertEquals(1, item3.getItemCount());
-		assertEquals(0, item4.getItemCount());
+		assertEquals(0, item3.getItemCount());
 
+		
 		editor.selectAndReveal(content.indexOf("method4"), 1);
 		openQuickTypeHierarchy(editor);
 		tree= getQuickTypeHierarchyViewer(editor);
@@ -794,17 +742,7 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		
 		item1= checkTreeNode(tree, 0, "ViaTypedef1");
 		assertEquals(1, tree.getItemCount());
-		
-		item2= checkTreeNode(item1, 0, "ViaTypedef2");
-		item4= checkTreeNode(item1, 1, "ViaTypedef4");
-		assertEquals(2, item1.getItemCount());
-		
-		item3= checkTreeNode(item2, 0, "ViaTypedef3");
-		assertEquals(1, item2.getItemCount());
-		
-		assertEquals(0, item3.getItemCount());
-		assertEquals(0, item4.getItemCount());
-
+		assertEquals(0, item1.getItemCount());
 
 		
 		editor.selectAndReveal(content.indexOf("ViaTypedef2"), 1);

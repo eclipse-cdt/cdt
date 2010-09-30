@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -66,7 +66,7 @@ public class CHHistoryListAction extends Action {
 				}				
 			};
 		
-			LabelProvider labelProvider= new CUILabelProvider(CHHistoryAction.LABEL_OPTIONS, CElementImageProvider.OVERLAY_ICONS);
+			ILabelProvider labelProvider= new CUILabelProvider(CHHistoryAction.LABEL_OPTIONS, CElementImageProvider.OVERLAY_ICONS);
 			
 			fHistoryList= new ListDialogField<ICElement>(adapter, buttonLabels, labelProvider);
 			fHistoryList.setLabelText(CHMessages.CHHistoryListAction_HistoryList_label); 

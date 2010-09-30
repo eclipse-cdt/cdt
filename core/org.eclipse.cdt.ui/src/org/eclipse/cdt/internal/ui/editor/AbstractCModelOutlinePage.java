@@ -60,7 +60,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.util.CElementBaseLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IncludesGrouping;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -100,7 +100,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		 */
 		private boolean fSimpleName;
 
-		public COutlineLabelProvider(int textFlags, int imageFlags) {
+		public COutlineLabelProvider(long textFlags, int imageFlags) {
 			super(textFlags, imageFlags);
 			PreferenceConstants.getPreferenceStore().addPropertyChangeListener(this);
 			fSimpleName= PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS);
@@ -113,9 +113,9 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		}
 		
 		@Override
-		protected int evaluateTextFlags(Object element) {
+		protected long evaluateTextFlags(Object element) {
 			if (fSimpleName) {
-				return super.evaluateTextFlags(element) | CElementBaseLabels.M_SIMPLE_NAME | CElementBaseLabels.F_SIMPLE_NAME;
+				return super.evaluateTextFlags(element) | CElementLabels.M_SIMPLE_NAME | CElementLabels.F_SIMPLE_NAME;
 			}
 			return super.evaluateTextFlags(element);
 		}
@@ -272,7 +272,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		}
 	}
 	
-	private static final int TEXT_FLAGS = AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS | CElementBaseLabels.F_APP_TYPE_SIGNATURE | CElementBaseLabels.M_APP_RETURNTYPE;
+	private static final long TEXT_FLAGS = AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS | CElementLabels.F_APP_TYPE_SIGNATURE | CElementLabels.M_APP_RETURNTYPE;
 	private static final int IMAGE_FLAGS = AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS;
 	protected ITextEditor fEditor;
 	protected ITranslationUnit fInput;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Patrick Hofer [bug 325799]
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
@@ -18,16 +19,19 @@ import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.util.CElementBaseLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-public class CUILabelProvider extends LabelProvider implements IColorProvider {
+public class CUILabelProvider extends LabelProvider implements IColorProvider, IStyledLabelProvider {
 	
 	protected CElementImageProvider fImageLabelProvider;
 	protected StorageLabelProvider fStorageLabelProvider;
@@ -35,7 +39,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	private ArrayList<ILabelDecorator> fLabelDecorators;
 
 	private int fImageFlags;
-	private int fTextFlags;
+	private long fTextFlags;
 	private Color fInactiveColor;
 	private Color fDefaultColor;
 
@@ -43,17 +47,17 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	 * Creates a new label provider with default flags.
 	 */
 	public CUILabelProvider() {
-		this(CElementBaseLabels.M_PARAMETER_TYPES, CElementImageProvider.OVERLAY_ICONS);
+		this(CElementLabels.M_PARAMETER_TYPES, CElementImageProvider.OVERLAY_ICONS);
 	}
 
 	/**
-	 * @param textFlags Flags defined in <code>CElementBaseLabels</code>.
+	 * @param textFlags Flags defined in <code>CElementLabels</code>.
 	 * @param imageFlags Flags defined in <code>CElementImageProvider</code>.
 	 */
-	public CUILabelProvider(int textFlags, int imageFlags) {
+	public CUILabelProvider(long textFlags, int imageFlags) {
 		fImageLabelProvider= new CElementImageProvider();
-		fLabelDecorators= null; 
-		
+		fLabelDecorators= null;
+
 		fStorageLabelProvider= new StorageLabelProvider();
 		fImageFlags= imageFlags;
 		fTextFlags= textFlags;
@@ -61,6 +65,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	
 	/**
 	 * Adds a decorator to the label provider
+	 * @param decorator the decorator to add
 	 */
 	public void addLabelDecorator(ILabelDecorator decorator) {
 		if (fLabelDecorators == null) {
@@ -73,12 +78,12 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	 * Sets the textFlags.
 	 * @param textFlags The textFlags to set
 	 */
-	public final void setTextFlags(int textFlags) {
+	public final void setTextFlags(long textFlags) {
 		fTextFlags= textFlags;
 	}
 
 	/**
-	 * Sets the imageFlags 
+	 * Sets the imageFlags
 	 * @param imageFlags The imageFlags to set
 	 */
 	public final void setImageFlags(int imageFlags) {
@@ -87,7 +92,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	
 	/**
 	 * Gets the image flags.
-	 * Can be overwriten by super classes.
+	 * Can be overwritten by super classes.
 	 * @return Returns a int
 	 */
 	public final int getImageFlags() {
@@ -98,13 +103,14 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	 * Gets the text flags.
 	 * @return Returns a int
 	 */
-	public final int getTextFlags() {
+	public final long getTextFlags() {
 		return fTextFlags;
 	}
 	
 	/**
 	 * Evaluates the image flags for a element.
-	 * Can be overwriten by super classes.
+	 * Can be overwritten by super classes.
+	 * @param element the element to compute the image flags for
 	 * @return Returns a int
 	 */
 	protected int evaluateImageFlags(Object element) {
@@ -112,10 +118,11 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	}
 
 	/**
-	 * Evaluates the text flags for a element. Can be overwriten by super classes.
+	 * Evaluates the text flags for a element. Can be overwritten by super classes.
+	 * @param element the element to compute the text flags for
 	 * @return Returns a int
 	 */
-	protected int evaluateTextFlags(Object element) {
+	protected long evaluateTextFlags(Object element) {
 		return getTextFlags();
 	}
 
@@ -165,6 +172,19 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 		
 		return decorateText(result, element);
 	}
+
+	public StyledString getStyledText(Object element) {
+		StyledString string= CElementLabels.getStyledTextLabel(element, (evaluateTextFlags(element) | CElementLabels.COLORIZE));
+		if (string.length() == 0 && (element instanceof IStorage)) {
+			string= new StyledString(fStorageLabelProvider.getText(element));
+		}
+		String decorated= decorateText(string.getString(), element);
+		if (decorated != null) {
+			return StyledCellLabelProvider.styleDecoratedString(decorated, StyledString.DECORATIONS_STYLER, string);
+		}
+		return string;
+	}
+	
 
 	/* (non-Javadoc)
 	 * @see IBaseLabelProvider#dispose

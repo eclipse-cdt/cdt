@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import org.eclipse.cdt.core.model.util.CElementBaseLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 
 /**
  * CUILabelProvider that respects settings from the Appearance preference page.
@@ -23,13 +23,13 @@ import org.eclipse.cdt.core.model.util.CElementBaseLabels;
  */
 public class AppearanceAwareLabelProvider extends CUILabelProvider implements IPropertyChangeListener {
 
-	public final static int DEFAULT_TEXTFLAGS= CElementBaseLabels.M_PARAMETER_TYPES | CElementBaseLabels.PROJECT_POST_QUALIFIED;
+	public final static long DEFAULT_TEXTFLAGS= CElementLabels.M_PARAMETER_TYPES | CElementLabels.PROJECT_POST_QUALIFIED | CElementLabels.F_APP_TYPE_SIGNATURE | CElementLabels.M_APP_RETURNTYPE;
 	public final static int DEFAULT_IMAGEFLAGS= CElementImageProvider.OVERLAY_ICONS;
 
 	/**
 	 * Constructor for AppearanceAwareLabelProvider.
 	 */
-	public AppearanceAwareLabelProvider(int textFlags, int imageFlags) {
+	public AppearanceAwareLabelProvider(long textFlags, int imageFlags) {
 		super(textFlags, imageFlags);
 	}
 

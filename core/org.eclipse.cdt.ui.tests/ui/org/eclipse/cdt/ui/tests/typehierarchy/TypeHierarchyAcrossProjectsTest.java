@@ -113,7 +113,7 @@ public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
 		
 		assertEquals(0, item3.getItemCount());
 		assertEquals(0, item4.getItemCount());
-		checkMethodTable(new String[] {"field1", "method1()"});
+		checkMethodTable(new String[] {"field1 : int", "method1() : int"});
 
 		
 		editor.selectAndReveal(source.indexOf("Simple2"), 1);
@@ -129,7 +129,7 @@ public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item2.getItemCount());
 		
 		assertEquals(0, item3.getItemCount());
-		checkMethodTable(new String[] {"field2", "method2()"});
+		checkMethodTable(new String[] {"field2 : int", "method2() : int"});
 
 		
 		editor.selectAndReveal(source.indexOf("Simple3"), 1);
@@ -145,7 +145,7 @@ public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item2.getItemCount());
 		
 		assertEquals(0, item3.getItemCount());
-		checkMethodTable(new String[] {"field3", "method3()"});
+		checkMethodTable(new String[] {"field3 : int", "method3() : int"});
 
 		
 		editor.selectAndReveal(source.indexOf("Simple4"), 1);
@@ -158,6 +158,6 @@ public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
 		assertEquals(1, item1.getItemCount());
 		
 		assertEquals(0, item4.getItemCount());
-		checkMethodTable(new String[] {"field4", "method4()"});
+		checkMethodTable(new String[] {"field4 : int", "method4() : int"});
 	}
 }

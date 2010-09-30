@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.util.CElementBaseLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.core.resources.IContainer;
@@ -30,9 +30,9 @@ import org.eclipse.osgi.util.NLS;
  */
 public class StatusBarUpdater implements ISelectionChangedListener {
 	
-	private final int LABEL_FLAGS= CElementBaseLabels.DEFAULT_QUALIFIED | CElementBaseLabels.ROOT_POST_QUALIFIED | CElementBaseLabels.APPEND_ROOT_PATH |
-			CElementBaseLabels.M_PARAMETER_TYPES | CElementBaseLabels.M_APP_RETURNTYPE | CElementBaseLabels.M_EXCEPTIONS | 
-			CElementBaseLabels.F_APP_TYPE_SIGNATURE;
+	private final long LABEL_FLAGS= CElementLabels.DEFAULT_QUALIFIED | CElementLabels.ROOT_POST_QUALIFIED | CElementLabels.APPEND_ROOT_PATH |
+			CElementLabels.M_PARAMETER_TYPES | CElementLabels.M_APP_RETURNTYPE | CElementLabels.M_EXCEPTIONS | 
+			CElementLabels.F_APP_TYPE_SIGNATURE;
 
 	private IStatusLineManager fStatusLineManager;
 	
@@ -68,13 +68,13 @@ public class StatusBarUpdater implements ISelectionChangedListener {
 	}
 		
 	private String formatCElementMessage(ICElement element) {
-		return CElementBaseLabels.getElementLabel(element, LABEL_FLAGS);
+		return CElementLabels.getElementLabel(element, LABEL_FLAGS);
 	}
 		
 	private String formatResourceMessage(IResource element) {
 		IContainer parent= element.getParent();
 		if (parent != null && parent.getType() != IResource.ROOT)
-			return element.getName() + CElementBaseLabels.CONCAT_STRING + parent.getFullPath().makeRelative().toString();
+			return element.getName() + CElementLabels.CONCAT_STRING + parent.getFullPath().makeRelative().toString();
 		return element.getName();
 	}	
 

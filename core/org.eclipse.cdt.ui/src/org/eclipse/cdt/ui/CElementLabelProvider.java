@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.util.CElementBaseLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
@@ -65,8 +65,8 @@ public class CElementLabelProvider extends LabelProvider {
 	public final static int SHOW_QUALIFIED=				0x400;
 
 	/**
-	 * Flag (bit mask) indicating that Complation Units, Class Files, Types, Declarations and Members
-	 * should be rendered qualified. The qualifcation is appended
+	 * Flag (bit mask) indicating that Compilation Units, Class Files, Types, Declarations and Members
+	 * should be rendered qualified. The qualification is appended
 	 * Examples: String - java.lang, size() - java.util.Vector
 	 * 
 	 * @since 2.0
@@ -112,7 +112,7 @@ public class CElementLabelProvider extends LabelProvider {
 		fImageLabelProvider= new CElementImageProvider();
 
 		fFlags = flags;
-		fCElementLabelProvider= new CUILabelProvider(getTextFlags() | CElementBaseLabels.TEMPLATE_PARAMETERS, getImageFlags());
+		fCElementLabelProvider= new CUILabelProvider(getTextFlags() | CElementLabels.TEMPLATE_PARAMETERS, getImageFlags());
 	}
 
 	@Override
@@ -152,7 +152,7 @@ public class CElementLabelProvider extends LabelProvider {
 
 	/**
 	 * Gets the image flags.
-	 * Can be overwriten by super classes.
+	 * Can be overwritten by super classes.
 	 * @return Returns a int
 	 */
 	public int getImageFlags() {
@@ -167,22 +167,22 @@ public class CElementLabelProvider extends LabelProvider {
 	}
 
 	/**
-	 * Gets the text flags. Can be overwriten by super classes.
+	 * Gets the text flags. Can be overwritten by super classes.
 	 * @return Returns a int
 	 */
 	public int getTextFlags() {
 		fTextFlags = 0;
 		if (getFlag(SHOW_RETURN_TYPE)) {
-			fTextFlags |= CElementBaseLabels.M_APP_RETURNTYPE;
+			fTextFlags |= CElementLabels.M_APP_RETURNTYPE;
 		}
 		if (getFlag(SHOW_PARAMETERS)) {
-			fTextFlags |= CElementBaseLabels.M_PARAMETER_TYPES;
+			fTextFlags |= CElementLabels.M_PARAMETER_TYPES;
 		}
 		if (getFlag(SHOW_EXCEPTION)) {
-			fTextFlags |= CElementBaseLabels.M_EXCEPTIONS;
+			fTextFlags |= CElementLabels.M_EXCEPTIONS;
 		}
 		if (getFlag(SHOW_POST_QUALIFIED)) {
-			fTextFlags |= CElementBaseLabels.M_POST_QUALIFIED;
+			fTextFlags |= CElementLabels.M_POST_QUALIFIED;
 		}
 		return fTextFlags;
 	}

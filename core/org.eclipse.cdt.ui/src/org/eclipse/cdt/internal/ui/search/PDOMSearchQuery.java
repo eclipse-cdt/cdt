@@ -58,7 +58,6 @@ import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.util.CElementBaseLabels;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -68,6 +67,7 @@ import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 
 import org.eclipse.cdt.internal.ui.search.LineSearchElement.Match;
 import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 
@@ -78,10 +78,10 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	public static final int FIND_DECLARATIONS_DEFINITIONS = FIND_DECLARATIONS | FIND_DEFINITIONS;
 	public static final int FIND_ALL_OCCURRENCES = FIND_DECLARATIONS | FIND_DEFINITIONS | FIND_REFERENCES;
 	
-	protected final static int LABEL_FLAGS= 
-		CElementBaseLabels.M_PARAMETER_TYPES | 
-		CElementBaseLabels.ALL_FULLY_QUALIFIED |
-		CElementBaseLabels.TEMPLATE_ARGUMENTS;
+	protected final static long LABEL_FLAGS= 
+		CElementLabels.M_PARAMETER_TYPES | 
+		CElementLabels.ALL_FULLY_QUALIFIED |
+		CElementLabels.TEMPLATE_ARGUMENTS;
 
 
 	protected PDOMSearchResult result = new PDOMSearchResult(this);
@@ -129,7 +129,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		if (names.length > 0) {
 			ICElementHandle elem= IndexUI.getCElementForName((ICProject) null, index, names[0]);
 			if (elem != null) {
-				return CElementBaseLabels.getElementLabel(elem, LABEL_FLAGS);
+				return CElementLabels.getElementLabel(elem, LABEL_FLAGS);
 			}
 		}
 		return defaultLabel;

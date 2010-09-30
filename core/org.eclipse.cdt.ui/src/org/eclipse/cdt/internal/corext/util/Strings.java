@@ -37,7 +37,6 @@ public class Strings {
 	 * <p>
 	 * This is used for performance optimization.
 	 * </p>
-	 * @since 3.4
 	 */
 	public static final boolean USE_TEXT_PROCESSOR;
 	static {
@@ -467,6 +466,47 @@ public class Strings {
 
 	public static String removeMnemonicIndicator(String string) {
 		return LegacyActionTools.removeMnemonics(string);
+	}
+
+	
+	/**
+	 * Adds special marks so that that the given styled string is readable in a BiDi environment.
+	 * 
+	 * @param styledString the styled string
+	 * @return the processed styled string
+	 */
+	public static StyledString markLTR(StyledString styledString) {
+		
+		/*
+		 * NOTE: For performance reasons we do not call  markLTR(styledString, null)
+		 */
+		
+		if (!USE_TEXT_PROCESSOR)
+			return styledString;
+
+		String inputString= styledString.getString();
+		String string= TextProcessor.process(inputString);
+		if (string != inputString)
+			insertMarks(styledString, inputString, string);
+		return styledString;
+	}
+
+	/**
+	 * Adds special marks so that that the given styled string is readable in a BiDi environment.
+	 * 
+	 * @param styledString the styled string
+	 * @param delimiters the additional delimiters
+	 * @return the processed styled string
+	 */
+	public static StyledString markLTR(StyledString styledString, String delimiters) {
+		if (!USE_TEXT_PROCESSOR)
+			return styledString;
+
+		String inputString= styledString.getString();
+		String string= TextProcessor.process(inputString, delimiters);
+		if (string != inputString)
+			insertMarks(styledString, inputString, string);
+		return styledString;
 	}
 
 	/**

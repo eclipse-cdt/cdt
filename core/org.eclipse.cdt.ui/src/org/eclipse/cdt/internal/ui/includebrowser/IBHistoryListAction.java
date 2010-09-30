@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.StatusDialog;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -27,7 +28,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.util.CElementBaseLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
@@ -66,7 +67,7 @@ public class IBHistoryListAction extends Action {
 				}				
 			};
 		
-			CUILabelProvider labelProvider= new CUILabelProvider(CElementBaseLabels.APPEND_ROOT_PATH, CElementImageProvider.OVERLAY_ICONS);
+			ILabelProvider labelProvider= new CUILabelProvider(CElementLabels.APPEND_ROOT_PATH, CElementImageProvider.OVERLAY_ICONS);
 			
 			fHistoryList= new ListDialogField<ITranslationUnit>(adapter, buttonLabels, labelProvider);
 			fHistoryList.setLabelText(IBMessages.IBHistoryListAction_HistoryList_label); 

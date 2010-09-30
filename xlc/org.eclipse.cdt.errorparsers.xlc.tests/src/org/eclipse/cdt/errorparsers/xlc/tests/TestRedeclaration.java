@@ -24,17 +24,17 @@ public class TestRedeclaration extends TestCase {
 	public void testparseLine()
 	{
 		XlcErrorParserTester aix = new XlcErrorParserTester();
-		// Redeclaration warning generates 2 cross-referencing messages.
-		String err_msg = "\"src/temp1.c\", line 6.6: 1506-343 (S) Redeclaration of fun differs from previous declaration on line 334 of \"include/temp1.h\".";
+		// Redeclaration error generates 2 cross-referencing messages.
+		String err_msg = "\"src/temp1.c\", line 6.6: 1506-343 (S) Redeclaration of my_fun differs from previous declaration on line 334 of \"include/temp1.h\".";
 		aix.parseLine(err_msg);
 		assertEquals(2, aix.getNumberOfMarkers());
 		
-		assertEquals("Redeclaration of fun differs from another declaration on line 6 of \"src/temp1.c\".", aix.getMessage(0));
+		assertEquals("Redeclaration of my_fun differs from another declaration on line 6 of \"src/temp1.c\".", aix.getMessage(0));
 		assertEquals("temp1.h", aix.getFileName(0));
 		assertEquals(334, aix.getLineNumber(0));
-		assertEquals(IMarkerGenerator.SEVERITY_INFO, aix.getSeverity(0));
+		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity(0));
 		
-		assertEquals("Redeclaration of fun differs from previous declaration on line 334 of \"include/temp1.h\".", aix.getMessage(1));
+		assertEquals("Redeclaration of my_fun differs from previous declaration on line 334 of \"include/temp1.h\".", aix.getMessage(1));
 		assertEquals("temp1.c", aix.getFileName(1));
 		assertEquals(6, aix.getLineNumber(1));
 		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity(1));

@@ -318,4 +318,19 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	private Button createSkipMacroAndTypeReferencesButton(Composite page) {
 		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_skipTypeAndMacroReferences);
 	}
+	
+	/**
+	 * Enable or disable support for parsing files up front. Essentially the according widget will be 
+	 * enabled or disabled.
+	 * There will be no effect by calling this function before the IndexerPage is created 
+	 * (by {@link #createControl(Composite)}). 
+	 * <p> By default, support for parsing files up front is enabled.
+	 * 
+	 * @since 5.3
+	 */
+	protected void setSupportForFilesParsedUpFront(boolean enable){
+		if(fFilesToParseUpFront!=null){
+			fFilesToParseUpFront.setEnabled(enable);
+		}
+	}
 }

@@ -45,7 +45,13 @@ public class PDOMSetupJob extends Job {
 			
 			final IProject project= cproject.getProject();
 			monitor.setTaskName(project.getName());
-			if (project.isOpen() && !fManager.postponeSetup(cproject)) {
+			if (!project.isOpen()) {
+				if (fManager.fTraceIndexerSetup) 
+					System.out.println("Indexer: Project is not open: " + project.getName()); //$NON-NLS-1$
+			} else if (fManager.postponeSetup(cproject)) {
+				if (fManager.fTraceIndexerSetup) 
+					System.out.println("Indexer: Setup is postponed: " + project.getName()); //$NON-NLS-1$
+			} else {
 				syncronizeProjectSettings(project, new SubProgressMonitor(monitor, 1));
 				if (fManager.getIndexer(cproject) == null) {
 					try {
@@ -54,6 +60,8 @@ public class PDOMSetupJob extends Job {
 						Thread.currentThread().interrupt();
 						return Status.CANCEL_STATUS;
 					}
+				} else if (fManager.fTraceIndexerSetup) { 
+					System.out.println("Indexer: No action, indexer already exists: " + project.getName()); //$NON-NLS-1$
 				}
 			}
 		}

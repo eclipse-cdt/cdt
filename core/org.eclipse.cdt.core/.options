@@ -27,6 +27,9 @@ org.eclipse.cdt.core/debug/typeresolver=false
 # Reports issues with locking the index
 org.eclipse.cdt.core/debug/index/locks=false
 
+# Reports events related to setting up the indexer for a project
+org.eclipse.cdt.core/debug/indexer/setup=false
+
 # Reports sequence of files indexed
 org.eclipse.cdt.core/debug/indexer/activity=false
 

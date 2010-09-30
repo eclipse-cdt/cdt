@@ -114,6 +114,8 @@ import com.ibm.icu.text.MessageFormat;
  * stabilized.
  */
 public class PDOMManager implements IWritableIndexManager, IListener {
+	private static final String TRACE_INDEXER_SETUP = CCorePlugin.PLUGIN_ID + "/debug/indexer/setup"; //$NON-NLS-1$
+
 	private final class PCL implements IPreferenceChangeListener {
 		private ICProject fProject;
 		public PCL(ICProject prj) {
@@ -178,6 +180,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private Set<ICProject> fPostponedProjects= new HashSet<ICProject>();
 	private int fLastNotifiedState= IndexerStateEvent.STATE_IDLE;
 	private boolean fInShutDown;
+
+	boolean fTraceIndexerSetup;
     
 	public PDOMManager() {
 		PDOM.sDEBUG_LOCKS= "true".equals(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/locks"));  //$NON-NLS-1$//$NON-NLS-2$
@@ -224,6 +228,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		updatePathCanonicalizationStrategy();
 		fIndexProviderManager.startup();
 		
+		fTraceIndexerSetup= String.valueOf(true).equals(Platform.getDebugOption(TRACE_INDEXER_SETUP));
 		final CoreModel model = CoreModel.getDefault();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(fCModelListener, IResourceChangeEvent.POST_BUILD);
 		model.addElementChangedListener(fCModelListener);
@@ -528,12 +533,20 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	void createIndexer(ICProject project, IProgressMonitor pm) throws InterruptedException {
+		final IProject prj= project.getProject();
+		final String name = prj.getName();
+		if (fTraceIndexerSetup) 
+			System.out.println("Indexer: Creation for project " + name); //$NON-NLS-1$
+		
+		
 		assert !Thread.holdsLock(fProjectToPDOM);
-		IProject prj= project.getProject();
 		try {
 			synchronized (fUpdatePolicies) {
-				if (fClosingProjects.contains(prj.getName())) 
+				if (fClosingProjects.contains(name)) {
+					if (fTraceIndexerSetup) 
+						System.out.println("Indexer: Aborting setup (1) for closing project " + name + " [1]"); //$NON-NLS-1$ //$NON-NLS-2$
 					return;
+				}
 				
 				WritablePDOM pdom= getOrCreatePDOM(project);
 				Properties props= IndexerPreferences.getProperties(prj);
@@ -568,6 +581,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 							pdom.releaseReadLock();
 						}
 						if (resume) {
+							if (fTraceIndexerSetup) 
+								System.out.println("Indexer: Resuming for project " + name); //$NON-NLS-1$
+
 							enqueue(new PDOMUpdateTask(indexer,
 									IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONTENTS_HASH));
 						}
@@ -581,8 +597,11 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			operation.run(pm);
 
 			synchronized (fUpdatePolicies) {
-				if (fClosingProjects.contains(prj.getName())) 
+				if (fClosingProjects.contains(name)) {
+					if (fTraceIndexerSetup) 
+						System.out.println("Indexer: Aborting setup for closing project " + name + " [2]"); //$NON-NLS-1$ //$NON-NLS-2$
 					return;
+				}
 
 				Properties props= IndexerPreferences.getProperties(prj);
 				IPDOMIndexer indexer = newIndexer(getIndexerId(project), props);
@@ -593,10 +612,13 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 				IPDOMIndexerTask task= null;
 				if (operation.wasSuccessful()) {
+					if (fTraceIndexerSetup) 
+						System.out.println("Indexer: Imported shared index for project " + name); //$NON-NLS-1$ 
 					task= new PDOMUpdateTask(indexer,
 							IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONTENTS_HASH);
-				}
-				else {
+				} else {
+					if (fTraceIndexerSetup) 
+						System.out.println("Indexer: Rebuiding for project " + name); //$NON-NLS-1$ 
 					task= new PDOMRebuildTask(indexer);
 				}
 				enqueue(task);
@@ -707,8 +729,13 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     }
 
 	void addProject(final ICProject cproject) {
+		final String name = cproject.getProject().getName();
+		if (fTraceIndexerSetup) {
+			System.out.println("Indexer: Adding new project " + name); //$NON-NLS-1$
+		}	
+		
 		synchronized (fUpdatePolicies) {
-			fClosingProjects.remove(cproject.getProject().getName());
+			fClosingProjects.remove(name);
 		}
 		
 		setupProject(cproject);
@@ -796,12 +823,17 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	private void preRemoveProject(ICProject cproject, final boolean delete) {
 		assert !Thread.holdsLock(fProjectToPDOM);
-		
-		IProject rproject= cproject.getProject();
+
+		final IProject rproject= cproject.getProject();
+		final String name = rproject.getName();
+
+		if (fTraceIndexerSetup) 
+			System.out.println("Indexer: Removing project " + name + "; delete=" + delete); //$NON-NLS-1$ //$NON-NLS-2$ 
+
 		IPDOMIndexer indexer;
 		synchronized (fUpdatePolicies) {
 			// Prevent recreating the indexer
-			fClosingProjects.add(rproject.getName());
+			fClosingProjects.add(name);
 			indexer= getIndexer(cproject);
 		}
 

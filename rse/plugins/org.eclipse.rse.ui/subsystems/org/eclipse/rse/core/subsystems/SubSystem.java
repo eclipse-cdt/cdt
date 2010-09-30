@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 20010 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -49,6 +49,7 @@
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  * David McKnight   (IBM)        - [284018] concurrent SubSystem.connect() calls can result in double login-prompt
  * David McKnight   (IBM)        - [318836] Period in filter name causes wrong message on drag and drop
+ * David McKnight   (IBM)        - [326555] Dead lock when debug session starts
  *  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -2478,7 +2479,8 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 		}
 		
 		public synchronized void waitUntilNotContained(IConnectorService cs) {
-			while (contains(cs)){ // wait until the connector service is no longer in the list
+			while (contains(cs) &&                    // wait until the connector service is no longer in the list
+					Display.getCurrent() == null){    // for bug 326555, don't wait when on the main thread - otherwise there will be a hang
 				try {				
 						wait();			
 				}

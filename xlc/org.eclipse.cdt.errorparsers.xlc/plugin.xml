@@ -9,7 +9,7 @@
 			<pattern regex="%CDTXLCErrorParser.pattern.macro.ignore" severity="Ignore" file-expr="" line-expr="" description-expr="" eat-processed-line="true" />
 			<pattern regex="%CDTXLCErrorParser.pattern.macro" severity="Warning" file-expr="$6" line-expr="$5" description-expr="%CDTXLCErrorParser.pattern.macro.replacement" eat-processed-line="false" />
 			<pattern regex="%CDTXLCErrorParser.pattern.macro" severity="Warning" file-expr="$1" line-expr="$2" description-expr="%CDTXLCErrorParser.pattern.macro.crossreference" eat-processed-line="true" />
-			<pattern regex="%CDTXLCErrorParser.pattern.redeclaration" severity="Info" file-expr="$6" line-expr="$5" description-expr="%CDTXLCErrorParser.pattern.redeclaration.crossreference" eat-processed-line="false" />
+			<pattern regex="%CDTXLCErrorParser.pattern.redeclaration" severity="Error" file-expr="$6" line-expr="$5" description-expr="%CDTXLCErrorParser.pattern.redeclaration.crossreference" eat-processed-line="false" />
 			<pattern regex="%CDTXLCErrorParser.pattern.error" severity="Error" file-expr="$1" line-expr="$2" description-expr="$4" eat-processed-line="true"/>
 			<pattern regex="%CDTXLCErrorParser.pattern.warning" severity="Warning" file-expr="$1" line-expr="$2" description-expr="$4" eat-processed-line="true"/>
 			<pattern regex="%CDTXLCErrorParser.pattern.info" severity="Info" file-expr="$1" line-expr="$2" description-expr="$4" eat-processed-line="true"/>

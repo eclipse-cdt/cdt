@@ -10,50 +10,6 @@
    <extension point="org.eclipse.core.runtime.preferences">
 		<initializer class="org.eclipse.cdt.dsf.debug.internal.ui.PreferenceInitializer"/>
    </extension>
-	
-   <extension point="org.eclipse.ui.editors.annotationTypes">
-      <type
-         name="org.eclipse.cdt.dsf.debug.currentIP">
-      </type>
-      <type
-         name="org.eclipse.cdt.dsf.debug.secondaryIP">
-      </type>
-   </extension>   
-   
-   <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
-      <specification
-            annotationImageProvider="org.eclipse.cdt.dsf.debug.ui.sourcelookup.InstructionPointerImageProvider"
-            annotationType="org.eclipse.cdt.dsf.debug.currentIP"
-            colorPreferenceKey="currentIPColor"
-            colorPreferenceValue="198,219,174"
-            highlightPreferenceKey="currentIPHighlight"
-            highlightPreferenceValue="true"
-            label="%debugCurrentInstructionPointer"
-            overviewRulerPreferenceKey="currentIPOverviewRuler"
-            overviewRulerPreferenceValue="true"
-            presentationLayer="6"
-            textPreferenceKey="currentIPIndication"
-            textPreferenceValue="false"
-            verticalRulerPreferenceKey="currentIPVerticalRuler"
-            verticalRulerPreferenceValue="true">
-      </specification>
-      <specification
-            annotationImageProvider="org.eclipse.cdt.dsf.debug.ui.sourcelookup.InstructionPointerImageProvider"
-            annotationType="org.eclipse.cdt.dsf.debug.secondaryIP"
-            colorPreferenceKey="secondaryIPColor"
-            colorPreferenceValue="219,235,204"
-            highlightPreferenceKey="secondaryIPHighlight"
-            highlightPreferenceValue="true"
-            label="%debugCallStack"
-            overviewRulerPreferenceKey="secondaryIPOverviewRuler"
-            overviewRulerPreferenceValue="true"
-            presentationLayer="6"
-            textPreferenceKey="secondaryIPIndication"
-            textPreferenceValue="false"
-            verticalRulerPreferenceKey="secondaryIPVerticalRuler"
-            verticalRulerPreferenceValue="true">
-      </specification>
-   </extension>
 
    <extension point="org.eclipse.ui.viewActions">
       <!-- Variables View menu contributions -->

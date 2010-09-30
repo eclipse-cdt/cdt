@@ -19,15 +19,19 @@ import java.util.List;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationPresentation;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -41,17 +45,17 @@ class InstructionPointerManager {
 	/**
 	 * Current instruction pointer annotation type.
 	 */
-	private static final String ID_CURRENT_IP= "org.eclipse.cdt.dsf.debug.currentIP"; //$NON-NLS-1$
+	private static final String ID_CURRENT_IP= IDebugUIConstants.ANNOTATION_TYPE_INSTRUCTION_POINTER_CURRENT;
 	
     /**
 	 * Secondary instruction pointer annotation type.
 	 */
-	private static final String ID_SECONDARY_IP= "org.eclipse.cdt.dsf.debug.secondaryIP"; //$NON-NLS-1$
+	private static final String ID_SECONDARY_IP= IDebugUIConstants.ANNOTATION_TYPE_INSTRUCTION_POINTER_SECONDARY;
 
 	/**
      * Editor annotation object for instruction pointers.
      */
-    static class IPAnnotation extends Annotation {
+    static class IPAnnotation extends Annotation implements IAnnotationPresentation {
         
         /** The image for this annotation. */
         private Image fImage;
@@ -99,6 +103,21 @@ class InstructionPointerManager {
         @Override
         public int hashCode() {
             return fFrame.hashCode();
+        }
+
+        /*
+         * @see org.eclipse.jface.text.source.IAnnotationPresentation#paint(org.eclipse.swt.graphics.GC, org.eclipse.swt.widgets.Canvas, org.eclipse.swt.graphics.Rectangle)
+         */
+        public void paint(GC gc, Canvas canvas, Rectangle bounds) {
+            Rectangle imageBounds = fImage.getBounds();
+            gc.drawImage(fImage, bounds.x + (bounds.width - imageBounds.width) / 2 , bounds.y + (bounds.height - imageBounds.height) / 2);
+        }
+
+        /*
+         * @see org.eclipse.jface.text.source.IAnnotationPresentation#getLayer()
+         */
+        public int getLayer() {
+            return 5;
         }
 
     }

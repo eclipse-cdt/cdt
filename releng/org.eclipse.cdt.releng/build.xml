@@ -32,7 +32,7 @@
 		<property name="masterFile" value="cdt-master-${branchVersion}-${buildId}.zip"/>
 		<property name="masterFeature" value="org.eclipse.cdt.master_${branchVersion}.jar"/>
 		<property name="cdtTest" value="org.eclipse.cdt.testing_7.0.0.${timestamp}"/>
-		<property name="eclipseTest" value="org.eclipse.test_3.3.0"/>
+		<property name="eclipseTest" value="org.eclipse.test_3.3.100"/>
 		<property name="messagefile" value="message.in"/>
 		<property name="mailto" value="vivkong@ca.ibm.com"/>
 		<property name="eclipseRoot" value=":pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse"/>

@@ -119,8 +119,8 @@ public class MakeScannerProvider extends ScannerProvider {
 	private MakeScannerInfo loadScannerInfo(IProject project) throws CoreException {
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
 		ICStorageElement root = descriptor.getProjectStorageElement(CDESCRIPTOR_ID);
-		ArrayList includes = new ArrayList();
-		ArrayList symbols = new ArrayList();
+		ArrayList<String> includes = new ArrayList<String>();
+		ArrayList<String> symbols = new ArrayList<String>();
 		for (ICStorageElement child : root.getChildren()) {
 			if (child.getName().equals(INCLUDE_PATH)) {
 				// Add the path to the property list
@@ -131,21 +131,21 @@ public class MakeScannerProvider extends ScannerProvider {
 			}
 		}
 		MakeScannerInfo info = new MakeScannerInfo(project);
-		info.setIncludePaths((String[])includes.toArray(new String[includes.size()]));
-		info.setPreprocessorSymbols((String[])symbols.toArray(new String[symbols.size()]));
+		info.setIncludePaths(includes.toArray(new String[includes.size()]));
+		info.setPreprocessorSymbols(symbols.toArray(new String[symbols.size()]));
 		return info;
 	}
 
 	static void migrateToCPathEntries(MakeScannerInfo info) throws CoreException {
-		Map symbols = info.getDefinedSymbols();
+		Map<String, String> symbols = info.getDefinedSymbols();
 		String[] includes = info.getIncludePaths();
 		ICProject cProject = CoreModel.getDefault().create(info.getProject());
 		IPathEntry[] entries = cProject.getRawPathEntries();
-		List cPaths = new ArrayList(Arrays.asList(entries));
+		List<IPathEntry> cPaths = new ArrayList<IPathEntry>(Arrays.asList(entries));
 
-		Iterator cpIter = cPaths.iterator();
+		Iterator<IPathEntry> cpIter = cPaths.iterator();
 		while(cpIter.hasNext()) {
-			int kind = ((IPathEntry)cpIter.next()).getEntryKind();
+			int kind = cpIter.next().getEntryKind();
 			if(kind == IPathEntry.CDT_INCLUDE || kind == IPathEntry.CDT_MACRO) {
 				cpIter.remove();
 			}
@@ -156,16 +156,15 @@ public class MakeScannerProvider extends ScannerProvider {
 				cPaths.add(include);
 			}
 		}
-		Iterator syms = symbols.entrySet().iterator();
+		Iterator<Entry<String, String>> syms = symbols.entrySet().iterator();
 		while (syms.hasNext()) {
-			Map.Entry entry = (Entry)syms.next();
-			IMacroEntry sym = CoreModel.newMacroEntry(info.getProject().getFullPath(), (String)entry.getKey(),
-					(String)entry.getValue());
+			Entry<String, String> entry = syms.next();
+			IMacroEntry sym = CoreModel.newMacroEntry(info.getProject().getFullPath(), entry.getKey(), entry.getValue());
 			if (!cPaths.contains(sym)) {
 				cPaths.add(sym);
 			}
 		}
-		cProject.setRawPathEntries((IPathEntry[])cPaths.toArray(new IPathEntry[cPaths.size()]), null);
+		cProject.setRawPathEntries(cPaths.toArray(new IPathEntry[cPaths.size()]), null);
 	}
 
 	/**

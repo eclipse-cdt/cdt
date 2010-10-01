@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -30,7 +31,6 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceInfo;
@@ -175,7 +175,7 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		ConflictMatchSet parentConflicts = getParentConflictMatchSet();
 		ToolChain sysTCs[] = (ToolChain[])getAllSysToolChains();
 		
-		Map<Builder, List<ConflictMatch>>  conflictMap = parentConflicts.fObjToConflictListMap;
+		Map<IBuilder, List<ConflictMatch>>  conflictMap = parentConflicts.fObjToConflictListMap;
 		for (ToolChain tc : sysTCs) {
 			List<ConflictMatch> l = conflictMap.get(tc);
 			ToolChainCompatibilityInfoElement info = new ToolChainCompatibilityInfoElement(tc, l);

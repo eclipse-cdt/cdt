@@ -50,7 +50,7 @@ import org.eclipse.core.runtime.Status;
 public abstract class ToolListModification implements
 		IToolListModification {
 //	private Tool []fTools;
-	private HashSet fInputExtsSet = new HashSet();
+	private HashSet<String> fInputExtsSet = new HashSet<String>();
 	private ResourceInfo fRcInfo;
 	private LinkedHashMap fProjCompInfoMap = new LinkedHashMap();
 	private HashMap fSysCompInfoMap = new HashMap();
@@ -268,7 +268,7 @@ public abstract class ToolListModification implements
 
 	}
 	
-	protected Set getInputExtsSet(){
+	protected Set<String> getInputExtsSet(){
 		return fInputExtsSet;
 	}
 
@@ -531,11 +531,11 @@ public abstract class ToolListModification implements
 		}
 	}
 	
-	private void apply(ResourceInfo rcInfo, int type, Set set) throws CoreException {
+	private void apply(ResourceInfo rcInfo, int type, Set<IRealBuildObjectAssociation> set) throws CoreException {
 		switch(type){
 		case IRealBuildObjectAssociation.OBJECT_TOOL:
 			ToolListModificationInfo info = rcInfo == fRcInfo ? getModificationInfo() : 
-				ToolChainModificationHelper.getModificationInfo(rcInfo, rcInfo.getTools(), (Tool[])set.toArray(new Tool[set.size()]));
+				ToolChainModificationHelper.getModificationInfo(rcInfo, rcInfo.getTools(), set.toArray(new Tool[set.size()]));
 		info.apply();
 			break;
 		case IRealBuildObjectAssociation.OBJECT_TOOLCHAIN:

@@ -804,6 +804,17 @@
    </extension>  
 
    <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?before=additions">
+         <separator
+               name="buildGroup"
+               visible="true">
+         </separator>
+      </menuContribution>
+   </extension>
+
+   <extension
          point="org.eclipse.ui.editorActions">
       <editorContribution
             targetID="org.eclipse.cdt.ui.editor.CEditor"
@@ -3573,30 +3584,39 @@
  <extension
        point="org.eclipse.ui.menus">
     <menuContribution
-          locationURI="popup:org.eclipse.ui.popup.any?endof=buildGroup">
-       <menu
+          locationURI="popup:org.eclipse.ui.popup.any?after=buildGroup">
+        <menu
              id="org.eclipse.cdt.ui.buildConfigContributionM"
              label="%ResourceConfigurations.menu">
             <visibleWhen
                   checkEnabled="false">
               <with variable="activeMenuSelection">
-		         <iterate ifEmpty="false">
-		         	<or>
-			            <adapt type="org.eclipse.core.resources.IFile">
-				            <test
-				                  property="org.eclipse.core.resources.projectNature"
-				                  value="org.eclipse.cdt.core.cnature"/>
-			            </adapt>
-			            <adapt type="org.eclipse.core.resources.IFolder">
-				            <test
-				                  property="org.eclipse.core.resources.projectNature"
-				                  value="org.eclipse.cdt.core.cnature"/>
-			            </adapt>
-			        </or> 
-		         </iterate>
+                  <iterate operator="and" ifEmpty="false">
+                      <adapt type="org.eclipse.core.resources.IResource">
+                          <test
+                                property="org.eclipse.core.resources.projectNature"
+                                value="org.eclipse.cdt.core.cnature"/>
+                      </adapt>
+                      <or>
+                          <adapt type="org.eclipse.core.resources.IFolder"/>
+                          <adapt type="org.eclipse.core.resources.IFile">
+                              <or>
+                                  <test
+                                        property="org.eclipse.core.resources.contentTypeId"
+                                        value="org.eclipse.cdt.core.cSource"/>
+                                  <test
+                                        property="org.eclipse.core.resources.contentTypeId"
+                                        value="org.eclipse.cdt.core.cxxSource"/>
+                                  <test
+                                        property="org.eclipse.core.resources.contentTypeId"
+                                        value="org.eclipse.cdt.core.asmSource"/>
+                              </or>
+                          </adapt>
+                      </or>
+                  </iterate>
               </with>
             </visibleWhen>
-       </menu>
+        </menu>
     </menuContribution>
     <menuContribution
           locationURI="popup:org.eclipse.ui.popup.any?after=additions">

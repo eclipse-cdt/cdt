@@ -174,7 +174,7 @@ public class MIRunControlTest extends BaseTestCase {
 	/*
 	 * For Multi-threaded application - In case of one thread, Thread id should start with 1. 
 	 */
-	//@Test
+	@Test
 	public void getExecutionContext() throws InterruptedException{
 	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		/*
@@ -233,7 +233,7 @@ public class MIRunControlTest extends BaseTestCase {
 	 * Get Execution DMCs for a valid container DMC
 	 * Testing for two execution DMC with id 1 & 2
 	 */
-	//@Test
+	@Test
 	public void getExecutionContexts() throws Throwable {
 	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		/*
@@ -311,7 +311,7 @@ public class MIRunControlTest extends BaseTestCase {
 	/*
 	 * Testing getModelData() for ExecutionDMC
 	 */
-	//@Test
+	@Test
 	public void getModelDataForThread() throws InterruptedException{
 	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		/*
@@ -360,7 +360,7 @@ public class MIRunControlTest extends BaseTestCase {
 		return StateChangeReason.USER_REQUEST;
 	}
 
-	//@Test
+	@Test
 	public void getModelDataForThreadWhenStep() throws Throwable {
 	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		/*
@@ -404,7 +404,7 @@ public class MIRunControlTest extends BaseTestCase {
 	/*
 	 * getModelData() for ExecutionDMC when a breakpoint is hit
 	 */
-	//@Test
+	@Test
 	public void getModelDataForThreadWhenBreakpoint() throws Throwable {
 	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		/* 
@@ -450,7 +450,7 @@ public class MIRunControlTest extends BaseTestCase {
 	/*
 	 * getModelData() for Container DMC
 	 */
-	//@Test
+	@Test
 	public void getModelDataForContainer() throws Throwable {
 	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		/* 
@@ -494,7 +494,7 @@ public class MIRunControlTest extends BaseTestCase {
 	 * getExecutionContexts for an invalid container DMC 
 	 */
 	@Ignore
-	//@Test
+	@Test
 	public void getExecutionContextsForInvalidContainerDMC() throws InterruptedException{
 	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
@@ -525,7 +525,7 @@ public class MIRunControlTest extends BaseTestCase {
     /*
      * Cache after ContainerSuspendEvent should be re-set
      */
-    //@Test
+    @Test
     public void cacheAfterContainerSuspendEvent() throws InterruptedException{
     	/*
     	 * Step to fire ContainerSuspendEvent
@@ -544,7 +544,7 @@ public class MIRunControlTest extends BaseTestCase {
 
     
      //Also test Cache after ContainerResumeEvent 
-    //@Test
+    @Test
     public void resume() throws InterruptedException{
 	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 	    
@@ -594,7 +594,7 @@ public class MIRunControlTest extends BaseTestCase {
         wait.waitReset();
     }
 
-    //@Test
+    @Test
     public void resumeContainerContext() throws InterruptedException{
 	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
@@ -692,7 +692,7 @@ public class MIRunControlTest extends BaseTestCase {
     /**
      * Test that interrupting a running target works 
      */
-    //@Test
+    @Test
     public void interruptRunningTarget() throws Throwable {
     	final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 

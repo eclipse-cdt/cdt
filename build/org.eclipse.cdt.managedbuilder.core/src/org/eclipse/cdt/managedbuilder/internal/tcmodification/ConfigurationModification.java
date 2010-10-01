@@ -35,8 +35,8 @@ public class ConfigurationModification extends FolderInfoModification implements
 	private IBuilder fSelectedBuilder;
 	private IBuilder fRealBuilder;
 	private boolean fCompatibilityInfoInited;
-	private Map<Builder, BuilderCompatibilityInfoElement> fCompatibleBuilders;
-	private Map<Builder, BuilderCompatibilityInfoElement> fInCompatibleBuilders;
+	private Map<IBuilder, BuilderCompatibilityInfoElement> fCompatibleBuilders;
+	private Map<IBuilder, BuilderCompatibilityInfoElement> fInCompatibleBuilders;
 	private ConflictMatchSet fConflicts;
 	private IBuilder[] fAllSysBuilders;
 	private BuilderCompatibilityInfoElement fCurrentBuilderCompatibilityInfo;
@@ -126,13 +126,13 @@ public class ConfigurationModification extends FolderInfoModification implements
 		if(fCompatibilityInfoInited)
 			return;
 		
-		fCompatibleBuilders = new HashMap<Builder, BuilderCompatibilityInfoElement>();
-		fInCompatibleBuilders = new HashMap<Builder, BuilderCompatibilityInfoElement>();
+		fCompatibleBuilders = new HashMap<IBuilder, BuilderCompatibilityInfoElement>();
+		fInCompatibleBuilders = new HashMap<IBuilder, BuilderCompatibilityInfoElement>();
 		ConflictMatchSet conflicts = getParentConflictMatchSet();
-		Builder sysBs[] = (Builder[])getAllSysBuilders();
-		Map<Builder, List<ConflictMatch>> conflictMap = conflicts.fObjToConflictListMap;
+		IBuilder sysBs[] = getAllSysBuilders();
+		Map<IBuilder, List<ConflictMatch>> conflictMap = conflicts.fObjToConflictListMap;
 		for(int i = 0; i < sysBs.length; i++){
-			Builder b = sysBs[i];
+			Builder b = (Builder) sysBs[i];
 			List<ConflictMatch> l = conflictMap.get(b);
 			BuilderCompatibilityInfoElement info = new BuilderCompatibilityInfoElement(b, l);
 			if(info.isCompatible()){
@@ -158,15 +158,15 @@ public class ConfigurationModification extends FolderInfoModification implements
 	
 	public IBuilder[] getCompatibleBuilders() {
 		initCompatibilityInfo();
-		List<Builder> l = new ArrayList<Builder>(fCompatibleBuilders.size());
+		List<IBuilder> l = new ArrayList<IBuilder>(fCompatibleBuilders.size());
 		IConfiguration cfg = getResourceInfo().getParent();
 		
-		Set<Builder> keySet = fCompatibleBuilders.keySet();
-		for (Builder b : keySet) {
+		Set<IBuilder> keySet = fCompatibleBuilders.keySet();
+		for (IBuilder b : keySet) {
 			if(b != fRealBuilder && cfg.isBuilderCompatible(b))
 				l.add(b);
 		}
-		return l.toArray(new Builder[l.size()]);
+		return l.toArray(new IBuilder[l.size()]);
 	}
 
 	public boolean isBuilderCompatible() {

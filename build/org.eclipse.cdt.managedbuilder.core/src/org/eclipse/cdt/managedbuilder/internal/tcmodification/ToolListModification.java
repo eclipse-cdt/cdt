@@ -56,12 +56,12 @@ public abstract class ToolListModification implements IToolListModification {
 	private LinkedHashMap<Tool, IToolModification> fProjCompInfoMap = new LinkedHashMap<Tool, IToolModification>();
 	private HashMap<Tool, IToolModification> fSysCompInfoMap = new HashMap<Tool, IToolModification>();
 	private Tool[] fAllSysTools;
-	private HashSet fFilteredOutSysTools;
+	private HashSet<ITool> fFilteredOutSysTools;
 //	private LinkedHashMap fRealToToolMap = new LinkedHashMap();
 //	private boolean fSysInfoMapInited;
 	private PerTypeMapStorage fCompleteObjectStorage;
 	protected TreeMap fCompletePathMapStorage;
-	private HashSet fAddCapableTools;
+	private HashSet<Tool> fAddCapableTools;
 	private Map fFilteredOutTools;
  
 	private ToolListModificationInfo fModificationInfo;
@@ -122,8 +122,8 @@ public abstract class ToolListModification implements IToolListModification {
 	
 	public class ProjToolCompatibilityStatusInfo implements IToolModification {
 		private ToolCompatibilityInfoElement fCurrentElement;
-		private Map fCompatibleTools;
-		private Map fInCompatibleTools;
+		private Map<Tool, ToolCompatibilityInfoElement> fCompatibleTools;
+		private Map<Tool, ToolCompatibilityInfoElement> fInCompatibleTools;
 		private IModificationOperation[] fOperations;
 		private Tool fSelectedTool;
 		private Tool fRealTool;
@@ -152,7 +152,7 @@ public abstract class ToolListModification implements IToolListModification {
 			return true;
 		}
 		
-		public Map getCompatibleTools(){
+		public Map<Tool, ToolCompatibilityInfoElement> getCompatibleTools(){
 			checkInitCompatibleTools();
 			return fCompatibleTools;
 		}
@@ -176,8 +176,8 @@ public abstract class ToolListModification implements IToolListModification {
 
 				ConflictMatchSet conflicts = ToolChainModificationManager.getInstance().getConflictInfo(IRealBuildObjectAssociation.OBJECT_TOOL, storage);
 				
-				fCompatibleTools = new HashMap();
-				fInCompatibleTools = new HashMap();
+				fCompatibleTools = new HashMap<Tool, ToolCompatibilityInfoElement>();
+				fInCompatibleTools = new HashMap<Tool, ToolCompatibilityInfoElement>();
 				Tool sysTools[] = getTools(false, true);
 				Map conflictMap = conflicts.fObjToConflictListMap;
 				for(int i = 0; i < sysTools.length; i++){
@@ -226,9 +226,9 @@ public abstract class ToolListModification implements IToolListModification {
 						fOperations = new ModificationOperation[0];
 					}
 				} else {
-					List opList = new ArrayList(fCompatibleTools.size() + 1);
-					for(Iterator iter = fCompatibleTools.keySet().iterator(); iter.hasNext(); ){
-						Tool tool = (Tool)iter.next();
+					List<ModificationOperation> opList = new ArrayList<ModificationOperation>(fCompatibleTools.size() + 1);
+					Set<Tool> keySet = fCompatibleTools.keySet();
+					for (Tool tool : keySet) {
 						if(tool == fRealTool)
 							continue;
 						
@@ -240,7 +240,7 @@ public abstract class ToolListModification implements IToolListModification {
 						opList.add(new ModificationOperation(this, null));
 					}
 					
-					fOperations = (ModificationOperation[])opList.toArray(new ModificationOperation[opList.size()]);
+					fOperations = opList.toArray(new ModificationOperation[opList.size()]);
 				}
 			}
 			return fOperations.clone();
@@ -321,21 +321,21 @@ public abstract class ToolListModification implements IToolListModification {
 
 		public IModificationOperation[] getSupportedOperationsArray() {
 			if(fOperations == null){
-				Set addCompatibleSysToolsSet = getAddCompatibleSysTools();
+				Set<Tool> addCompatibleSysToolsSet = getAddCompatibleSysTools();
 				if(addCompatibleSysToolsSet.contains(fRealTool) && canAdd(fRealTool)){
 					fOperations = new ModificationOperation[]{new ModificationOperation(this, null)};
 				} else {
-					Map projMap = getMap(true);
-					List opList = new ArrayList(projMap.size());
-					for(Iterator iter = projMap.values().iterator(); iter.hasNext(); ){
-						ProjToolCompatibilityStatusInfo info = (ProjToolCompatibilityStatusInfo)iter.next();
+					Map<Tool, IToolModification> projMap = getMap(true);
+					List<ModificationOperation> opList = new ArrayList<ModificationOperation>(projMap.size());
+					for (IToolModification tm : projMap.values()) {
+						ProjToolCompatibilityStatusInfo info = (ProjToolCompatibilityStatusInfo)tm;
 						if(info.getCompatibleTools().containsKey(fRealTool) 
 								&& !fFilteredOutTools.containsKey(info.fRealTool) 
 								&& canReplace(info.fSelectedTool, this.fSelectedTool)){
 							opList.add(new ModificationOperation(this, info.fSelectedTool));
 						}
 					}
-					fOperations = (ModificationOperation[])opList.toArray(new ModificationOperation[opList.size()]);
+					fOperations = opList.toArray(new ModificationOperation[opList.size()]);
 				}
 			}					
 			return fOperations;
@@ -364,9 +364,9 @@ public abstract class ToolListModification implements IToolListModification {
 		}
 	}
 	
-	private Set getAddCompatibleSysTools(){
+	private Set<Tool> getAddCompatibleSysTools(){
 		if(fAddCapableTools == null){
-			fAddCapableTools = new HashSet(Arrays.asList(getAllSysTools()));
+			fAddCapableTools = new HashSet<Tool>(Arrays.asList(getAllSysTools()));
 			PerTypeMapStorage storage = getCompleteObjectStore();
 			ConflictMatchSet conflicts = ToolChainModificationManager.getInstance().getConflictInfo(IRealBuildObjectAssociation.OBJECT_TOOL, storage);
 			fAddCapableTools.removeAll(conflicts.fObjToConflictListMap.keySet());
@@ -410,8 +410,11 @@ public abstract class ToolListModification implements IToolListModification {
 		if(base.fAllSysTools != null)
 			fAllSysTools = base.fAllSysTools.clone();
 
-		if(base.fFilteredOutSysTools != null)
-			fFilteredOutSysTools = (HashSet)base.fFilteredOutSysTools.clone();
+		if(base.fFilteredOutSysTools != null) {
+			@SuppressWarnings("unchecked")
+			HashSet<ITool> clone = (HashSet<ITool>)base.fFilteredOutSysTools.clone();
+			fFilteredOutSysTools = clone;
+		}
 		
 		if(base.fCompleteObjectStorage != null){
 			fCompleteObjectStorage = TcModificationUtil.cloneRealToolToPathSet(base.fCompleteObjectStorage);
@@ -490,7 +493,7 @@ public abstract class ToolListModification implements IToolListModification {
 		if(fAllSysTools == null){
 			ITool[] allSys = ManagedBuildManager.getRealTools();
 			fAllSysTools = filterTools((Tool[])allSys);
-			HashSet set = new HashSet(Arrays.asList(allSys));
+			HashSet<ITool> set = new HashSet<ITool>(Arrays.asList(allSys));
 			set.removeAll(Arrays.asList(fAllSysTools));
 			fFilteredOutSysTools = set;
 		}
@@ -648,7 +651,7 @@ public abstract class ToolListModification implements IToolListModification {
 
 		List list = new ArrayList();
 		list.addAll(map.values());
-		clearToolInfo((Tool[])map.values().toArray(new Tool[map.size()]));
+		clearToolInfo(map.values().toArray(new Tool[map.size()]));
 
 		PerTypeMapStorage storage = getCompleteObjectStore();
 		Map toolMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, true);

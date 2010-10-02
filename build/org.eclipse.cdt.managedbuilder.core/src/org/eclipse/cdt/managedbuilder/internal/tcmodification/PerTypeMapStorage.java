@@ -12,12 +12,15 @@ package org.eclipse.cdt.managedbuilder.internal.tcmodification;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
 
 public class PerTypeMapStorage implements Cloneable {
 	private ObjectTypeBasedStorage fStorage = new ObjectTypeBasedStorage();
 	
 	public Map getMap(int type, boolean create){
-		Map map = (Map)fStorage.get(type);
+		Map<IRealBuildObjectAssociation, Set> map = (Map<IRealBuildObjectAssociation, Set>)fStorage.get(type);
 		if(map == null && create){
 			map = createMap(null);
 			fStorage.set(type, map);
@@ -25,10 +28,13 @@ public class PerTypeMapStorage implements Cloneable {
 		return map;
 	}
 	
-	protected Map createMap(Map map){
-		if(map == null)
-			return new HashMap();
-		return (Map)((HashMap)map).clone();
+	protected Map<IRealBuildObjectAssociation, Set> createMap(Map<IRealBuildObjectAssociation, Set> map){
+		if(map == null) {
+			return new HashMap<IRealBuildObjectAssociation, Set>();
+		}
+		@SuppressWarnings("unchecked")
+		Map<IRealBuildObjectAssociation, Set> clone = (Map<IRealBuildObjectAssociation, Set>)((HashMap<IRealBuildObjectAssociation, Set>)map).clone();
+		return clone;
 	}
 
 	@Override
@@ -37,9 +43,10 @@ public class PerTypeMapStorage implements Cloneable {
 			PerTypeMapStorage clone = (PerTypeMapStorage)super.clone();
 			int types[] = ObjectTypeBasedStorage.getSupportedObjectTypes();
 			for(int i = 0; i < types.length; i++){
-				Object o = clone.fStorage.get(types[i]);
+				@SuppressWarnings("unchecked")
+				Map<IRealBuildObjectAssociation, Set> o = (Map<IRealBuildObjectAssociation, Set>) clone.fStorage.get(types[i]);
 				if(o != null){
-					clone.fStorage.set(types[i], clone.createMap((Map)o));
+					clone.fStorage.set(types[i], clone.createMap(o));
 				}
 			}
 			return clone;

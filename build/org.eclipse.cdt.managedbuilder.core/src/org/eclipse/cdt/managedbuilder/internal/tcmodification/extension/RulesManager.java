@@ -237,8 +237,8 @@ public class RulesManager {
 		if(all == null)
 			all = TcModificationUtil.getExtensionObjects(obj.getType());
 
-		Map<IRealBuildObjectAssociation, Set<IRealBuildObjectAssociation>> map = fObjToChildSuperClassMap.getMap(obj.getType(), true);
-		Set<IRealBuildObjectAssociation> set = map.get(obj);
+		Map<IRealBuildObjectAssociation, Set> map = fObjToChildSuperClassMap.getMap(obj.getType(), true);
+		Set set = map.get(obj);
 		if(set == null){
 			set = createChildSuperClassRealSet(obj, all, null);
 			map.put(obj, set);

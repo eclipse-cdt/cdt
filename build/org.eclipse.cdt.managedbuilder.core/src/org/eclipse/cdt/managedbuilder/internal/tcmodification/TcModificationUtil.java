@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -30,6 +31,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
@@ -183,22 +185,23 @@ public class TcModificationUtil {
 		return storage;
 	}
 	
-	public static TreeMap createResultingChangesMap(TreeMap resultingMap, TreeMap initialMap){
+	public static TreeMap<IPath, PerTypeSetStorage> createResultingChangesMap(TreeMap<IPath, PerTypeSetStorage> resultingMap, TreeMap<IPath, PerTypeSetStorage> initialMap){
 		int[] types = new int []{
 				IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, 
 				IRealBuildObjectAssociation.OBJECT_BUILDER,
 				IRealBuildObjectAssociation.OBJECT_TOOL,
 				};
 		
-		TreeMap result = new TreeMap(PathComparator.INSTANCE);
-		initialMap = (TreeMap)initialMap.clone();
+		TreeMap<IPath, PerTypeSetStorage> result = new TreeMap<IPath, PerTypeSetStorage>(PathComparator.INSTANCE);
+		@SuppressWarnings("unchecked")
+		TreeMap<IPath, PerTypeSetStorage> clone = (TreeMap<IPath, PerTypeSetStorage>)initialMap.clone();
+		initialMap = clone;
 		
-		for(Iterator iter = resultingMap.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
-			Object oPath = entry.getKey();
+		for (Entry<IPath, PerTypeSetStorage> entry : resultingMap.entrySet()) {
+			IPath oPath = entry.getKey();
 			
-			PerTypeSetStorage resStorage = (PerTypeSetStorage)entry.getValue();
-			PerTypeSetStorage initStorage = (PerTypeSetStorage)initialMap.remove(oPath);
+			PerTypeSetStorage resStorage = entry.getValue();
+			PerTypeSetStorage initStorage = initialMap.remove(oPath);
 			PerTypeSetStorage storage;
 			
 			if(initStorage == null || initStorage.isEmpty(true)){
@@ -233,7 +236,7 @@ public class TcModificationUtil {
 					ToolChain tc = setToStore.size() != 0 ?
 							(ToolChain)setToStore.iterator().next() : null;
 					
-					IPath path = (IPath)oPath;
+					IPath path = oPath;
 					if(tc != null){
 						tInitSet = new LinkedHashSet();
 						TcModificationUtil.getRealObjectsSet((Tool[])tc.getTools(), tInitSet);
@@ -279,7 +282,7 @@ public class TcModificationUtil {
 		if(initialMap.size() != 0){
 			for(Iterator iter = initialMap.entrySet().iterator(); iter.hasNext(); ){
 				Map.Entry entry = (Map.Entry)iter.next();
-				Object oPath = entry.getKey();
+				IPath oPath = (IPath) entry.getKey();
 				
 				PerTypeSetStorage initStorage = (PerTypeSetStorage)entry.getValue();
 
@@ -360,9 +363,9 @@ public class TcModificationUtil {
 		return set;
 	}
 
-	public static Map getRealToObjectsMap(IRealBuildObjectAssociation[] objs, Map map){
+	public static Map<IRealBuildObjectAssociation, IRealBuildObjectAssociation> getRealToObjectsMap(IRealBuildObjectAssociation[] objs, Map<IRealBuildObjectAssociation, IRealBuildObjectAssociation> map){
 		if(map == null)
-			map = new LinkedHashMap();
+			map = new LinkedHashMap<IRealBuildObjectAssociation, IRealBuildObjectAssociation>();
 		for(int i = 0; i < objs.length; i++){
 			map.put(objs[i].getRealBuildObject(), objs[i]);
 		}
@@ -421,7 +424,7 @@ public class TcModificationUtil {
 	}
 
 	public static void restoreBuilderInfo(PerTypeMapStorage storage, IBuilder builder, Object obj){
-		storage.getMap(IRealBuildObjectAssociation.OBJECT_BUILDER, true).put(builder, obj);
+		storage.getMap(IRealBuildObjectAssociation.OBJECT_BUILDER, true).put((Builder) builder, obj);
 	}
 
 //	public static boolean removeToolInfo(PerTypeMapStorage storage, IPath path, ITool tool){
@@ -514,13 +517,13 @@ public class TcModificationUtil {
 		set.add(realBuilder);
 	}
 	
-	public static TreeMap createPathMap(IConfiguration cfg){
+	public static TreeMap<IPath, PerTypeSetStorage> createPathMap(IConfiguration cfg){
 		//TODO: optimize to calculate the map directly
 		PerTypeMapStorage storage = createRealToolToPathSet(cfg, null, false);
 		return createPathMap(storage);
 	}
 
-	public static TreeMap createPathMap(PerTypeMapStorage storage){
+	public static TreeMap<IPath,PerTypeSetStorage> createPathMap(PerTypeMapStorage storage){
 		int[] types = ObjectTypeBasedStorage.getSupportedObjectTypes();
 		TreeMap result = new TreeMap(PathComparator.INSTANCE);
 		for(int i = 0; i < types.length; i++){

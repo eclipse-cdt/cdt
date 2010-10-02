@@ -13,11 +13,13 @@ package org.eclipse.cdt.managedbuilder.internal.tcmodification;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
+
 public class PerTypeSetStorage implements Cloneable {
 	private ObjectTypeBasedStorage fStorage = new ObjectTypeBasedStorage();
 	
 	public Set getSet(int type, boolean create){
-		Set set = (Set)fStorage.get(type);
+		Set<IRealBuildObjectAssociation> set = (Set<IRealBuildObjectAssociation>)fStorage.get(type);
 		if(set == null && create){
 			set = createSet(null);
 			fStorage.set(type, set);
@@ -25,10 +27,12 @@ public class PerTypeSetStorage implements Cloneable {
 		return set;
 	}
 	
-	protected Set createSet(Set set){
+	protected Set<IRealBuildObjectAssociation> createSet(Set<IRealBuildObjectAssociation> set){
 		if(set == null)
-			return new LinkedHashSet();
-		return (Set)((LinkedHashSet)set).clone();
+			return new LinkedHashSet<IRealBuildObjectAssociation>();
+		@SuppressWarnings("unchecked")
+		Set<IRealBuildObjectAssociation> clone = (Set<IRealBuildObjectAssociation>)((LinkedHashSet<IRealBuildObjectAssociation>)set).clone();
+		return clone;
 	}
 
 	@Override
@@ -38,9 +42,10 @@ public class PerTypeSetStorage implements Cloneable {
 			clone.fStorage = (ObjectTypeBasedStorage)fStorage.clone();
 			int types[] = ObjectTypeBasedStorage.getSupportedObjectTypes();
 			for(int i = 0; i < types.length; i++){
-				Object o = clone.fStorage.get(types[i]); 
+				@SuppressWarnings("unchecked")
+				Set<IRealBuildObjectAssociation> o = (Set<IRealBuildObjectAssociation>) clone.fStorage.get(types[i]); 
 				if(o != null){
-					clone.fStorage.set(types[i], createSet((Set)o));
+					clone.fStorage.set(types[i], createSet(o));
 				}
 			}
 			return clone;
@@ -56,8 +61,9 @@ public class PerTypeSetStorage implements Cloneable {
 		if(emptySetAsNull){
 			int types[] = ObjectTypeBasedStorage.getSupportedObjectTypes();
 			for(int i = 0; i < types.length; i++){
-				Object o = fStorage.get(types[i]); 
-				if(o != null && !((Set)o).isEmpty())
+				@SuppressWarnings("unchecked")
+				Set<IRealBuildObjectAssociation> o = (Set<IRealBuildObjectAssociation>) fStorage.get(types[i]); 
+				if(o != null && !((Set<IRealBuildObjectAssociation>)o).isEmpty())
 					return false;
 			}
 			return true;

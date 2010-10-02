@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -120,17 +119,16 @@ public class ToolChainModificationManager implements
 		return flags &= (~value);
 	}
 	
-	private boolean getMatchingObjects(int type, IObjectSet[] oSets, Set skipSet, IRealBuildObjectAssociation additionalSkip, Set result){
-		Set tmp = null;
+	private boolean getMatchingObjects(int type, IObjectSet[] oSets, Set<IRealBuildObjectAssociation> skipSet, IRealBuildObjectAssociation additionalSkip, Set<IRealBuildObjectAssociation> result){
+		Set<IRealBuildObjectAssociation> tmp = null;
 		boolean added = false;
-		for(int i = 0; i < oSets.length; i++){
-			IObjectSet os = oSets[i];
+		for (IObjectSet os : oSets) {
 			int setType = os.getObjectType();
 			if(setType != type)
 				continue;
 
 			if(tmp == null)
-				tmp = new HashSet();
+				tmp = new HashSet<IRealBuildObjectAssociation>();
 			else
 				tmp.clear();
 			
@@ -160,14 +158,13 @@ public class ToolChainModificationManager implements
 
 	public static class ConflictMatch {
 		final int fMatchType;
-		final Map fRObjToPathMap;
+		final Map<IRealBuildObjectAssociation, Set<IPath>> fRObjToPathMap;
 		final int fConflictType;
-		final Set fConflicts;
+		final Set<IRealBuildObjectAssociation> fConflicts;
 		
-		ConflictMatch(int matchType, Map robjToPathMap,
-				int conflictType, Set conflicts){
+		ConflictMatch(int matchType, Map<IRealBuildObjectAssociation, Set<IPath>> rtToPathMap, int conflictType, Set<IRealBuildObjectAssociation> conflicts){
 			fMatchType = matchType;
-			fRObjToPathMap = Collections.unmodifiableMap(robjToPathMap);
+			fRObjToPathMap = Collections.unmodifiableMap(rtToPathMap);
 			fConflictType = conflictType;
 			fConflicts = Collections.unmodifiableSet(conflicts);
 		}
@@ -192,8 +189,8 @@ public class ToolChainModificationManager implements
 		//2. get variants for applicable ones
 		
 		//1.first filter applicable to not-this
-		List conflictList = new ArrayList();
-		Map objToConflictMatchMap = new HashMap();
+		List<ConflictMatch> conflictList = new ArrayList<ConflictMatch>();
+		Map<IRealBuildObjectAssociation, List<ConflictMatch>> objToConflictMatchMap = new HashMap<IRealBuildObjectAssociation, List<ConflictMatch>>();
 		
 		ObjectSetListBasedDefinition[] defs = RulesManager.getInstance().getRules(ObjectSetListBasedDefinition.CONFLICT);
 		for(int i = 0; i < defs.length; i++){
@@ -203,13 +200,14 @@ public class ToolChainModificationManager implements
 			for(int k = 0; k < oss.length; k++){
 				IObjectSet os = oss[k];
 				int objType = os.getObjectType();
-				Map rtToPathMap = rtToPath.getMap(objType, false);
+				Map<IRealBuildObjectAssociation, Set<IPath>> rtToPathMap = rtToPath.getMap(objType, false);
 				if(rtToPathMap == null)
 					continue;
 				
-				rtToPathMap = (Map)((HashMap)rtToPathMap).clone();
-				Set skipSet = skip != null ? skip.getSet(objType, false) : null;
-				Set objSet = rtToPathMap.keySet();
+				Map<IRealBuildObjectAssociation, Set<IPath>> clone = (Map<IRealBuildObjectAssociation, Set<IPath>>)((HashMap<IRealBuildObjectAssociation, Set<IPath>>)rtToPathMap).clone();
+				rtToPathMap = clone;
+				Set<IRealBuildObjectAssociation> skipSet = skip != null ? (Set<IRealBuildObjectAssociation>)skip.getSet(objType, false) : null;
+				Set<IRealBuildObjectAssociation> objSet = rtToPathMap.keySet();
 
 				if(skipSet != null)
 					objSet.removeAll(skipSet);
@@ -217,25 +215,20 @@ public class ToolChainModificationManager implements
 				os.retainMatches(objSet);
 				
 				if(objSet.size() != 0){
-					List remainingList = new ArrayList(Arrays.asList(oss));
+					List<IObjectSet> remainingList = new ArrayList<IObjectSet>(Arrays.asList(oss));
 					remainingList.remove(os);
 
-					IObjectSet[] remaining = (IObjectSet[])remainingList.toArray(new IObjectSet[remainingList.size()]);
+					IObjectSet[] remaining = remainingList.toArray(new IObjectSet[remainingList.size()]);
 					//get objects matching remaining
-					skipSet = skip != null ? skip.getSet(type, false) : null;
-					Set matchingObjects = new HashSet();
-					getMatchingObjects(type, remaining, skipSet, 
-							null,
-							matchingObjects);
+					Set<IRealBuildObjectAssociation> skipSet2 = skip != null ? (Set<IRealBuildObjectAssociation>)skip.getSet(type, false) : null;
+					Set<IRealBuildObjectAssociation> matchingObjects = new HashSet<IRealBuildObjectAssociation>();
+					getMatchingObjects(type, remaining, skipSet2, null, matchingObjects);
 					if(matchingObjects.size() != 0){
-						ConflictMatch conflict = new ConflictMatch(
-								objType,
-								rtToPathMap,
-								type,
-								matchingObjects);
+						ConflictMatch conflict = new ConflictMatch(objType, rtToPathMap, type, matchingObjects);
 						
-						for(Iterator iter = matchingObjects.iterator(); iter.hasNext(); ){
-							TcModificationUtil.getArrayList(objToConflictMatchMap, iter.next()).add(conflict);
+						for (IRealBuildObjectAssociation bo : matchingObjects) {
+							ArrayList<ConflictMatch> list = TcModificationUtil.getArrayList(objToConflictMatchMap, bo);
+							list.add(conflict);
 						}
 						
 						conflictList.add(conflict);
@@ -245,8 +238,6 @@ public class ToolChainModificationManager implements
 			}
 		}
 		
-		return new ConflictMatchSet(
-				(ConflictMatch[])conflictList.toArray(new ConflictMatch[conflictList.size()]),
-				objToConflictMatchMap);
+		return new ConflictMatchSet(conflictList.toArray(new ConflictMatch[conflictList.size()]), objToConflictMatchMap);
 	}
 }

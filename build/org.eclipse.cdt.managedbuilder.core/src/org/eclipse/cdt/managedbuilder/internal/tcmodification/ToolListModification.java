@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.internal.tcmodification;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +20,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -47,13 +49,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-public abstract class ToolListModification implements
-		IToolListModification {
+public abstract class ToolListModification implements IToolListModification {
 //	private Tool []fTools;
 	private HashSet<String> fInputExtsSet = new HashSet<String>();
 	private ResourceInfo fRcInfo;
-	private LinkedHashMap fProjCompInfoMap = new LinkedHashMap();
-	private HashMap fSysCompInfoMap = new HashMap();
+	private LinkedHashMap<Tool, IToolModification> fProjCompInfoMap = new LinkedHashMap<Tool, IToolModification>();
+	private HashMap<Tool, IToolModification> fSysCompInfoMap = new HashMap<Tool, IToolModification>();
 	private Tool[] fAllSysTools;
 	private HashSet fFilteredOutSysTools;
 //	private LinkedHashMap fRealToToolMap = new LinkedHashMap();
@@ -578,8 +579,8 @@ public abstract class ToolListModification implements
 	}
 
 	public IToolModification[] getSystemToolModifications() {
-		Map map = getMap(false);
-		return (SysToolCompatibilityStatusInfo[])map.values().toArray(new SysToolCompatibilityStatusInfo[map.size()]);
+		Map<Tool, IToolModification> map = getMap(false);
+		return map.values().toArray(new SysToolCompatibilityStatusInfo[map.size()]);
 	}
 
 	public IToolModification getToolModification(ITool tool) {
@@ -595,28 +596,29 @@ public abstract class ToolListModification implements
 		return m;
 	}
 
-	private Map getMap(Tool tool){
-		return getMap(isProjectTool(tool));
-	}
+//	private Map<Tool, IToolModification> getMap(Tool tool){
+//		return getMap(isProjectTool(tool));
+//	}
 
-	private Map getMap(boolean proj){
+	private Map<Tool, IToolModification> getMap(boolean proj){
 		return proj ? fProjCompInfoMap : fSysCompInfoMap;
 	}
 	
 	private Tool[] getTools(boolean proj, boolean real){
 		if(proj){
 			if(real)
-				return (Tool[])fProjCompInfoMap.keySet().toArray(new Tool[fProjCompInfoMap.size()]);
+				return fProjCompInfoMap.keySet().toArray(new Tool[fProjCompInfoMap.size()]);
 			
 			Tool[] tools = new Tool[fProjCompInfoMap.size()];
 			int i = 0;
-			for(Iterator iter = fProjCompInfoMap.values().iterator(); iter.hasNext(); ){
-				tools[i++] = ((ProjToolCompatibilityStatusInfo)iter.next()).fSelectedTool;
+			Collection<IToolModification> infos = fProjCompInfoMap.values();
+			for (IToolModification info : infos) {
+				tools[i++] = ((ProjToolCompatibilityStatusInfo)info).fSelectedTool;
 			}
 			return tools;
 		}
 		
-		return (Tool[])fSysCompInfoMap.keySet().toArray(new Tool[fSysCompInfoMap.size()]);
+		return fSysCompInfoMap.keySet().toArray(new Tool[fSysCompInfoMap.size()]);
 	}
 	
 	private boolean isProjectTool(Tool tool){
@@ -624,7 +626,7 @@ public abstract class ToolListModification implements
 	}
 
 	public void changeProjectTools(ITool removeTool, ITool addTool) {
-		Map map = createRealToToolMap();
+		Map<ITool, ITool> map = createRealToToolMap();
 		Tool realAdded = (Tool)ManagedBuildManager.getRealTool(addTool);
 		Tool realRemoved = (Tool)ManagedBuildManager.getRealTool(removeTool);
 		boolean removed = realRemoved != null ? map.remove(realRemoved) != null : false;
@@ -656,11 +658,11 @@ public abstract class ToolListModification implements
 			TcModificationUtil.addPaths(toolMap, realAdded, addSet);
 	}
 	
-	private HashMap createRealToToolMap(/*boolean includeFilteredOut*/){
-		HashMap map = new HashMap();
-		for(Iterator iter = fProjCompInfoMap.entrySet().iterator(); iter.hasNext(); ){
-			Map.Entry entry = (Map.Entry)iter.next();
-			map.put(entry.getKey(), ((IToolModification)entry.getValue()).getTool());
+	private HashMap<ITool, ITool> createRealToToolMap(/*boolean includeFilteredOut*/){
+		HashMap<ITool, ITool> map = new HashMap<ITool, ITool>();
+		Set<Entry<Tool, IToolModification>> entries = fProjCompInfoMap.entrySet();
+		for (Entry<Tool, IToolModification> entry : entries) {
+			map.put(entry.getKey(), entry.getValue().getTool());
 		}
 //		if(includeFilteredOut){
 //			for(Iterator iter = fFilteredOutTools.entrySet().iterator(); iter.hasNext(); ){
@@ -673,12 +675,12 @@ public abstract class ToolListModification implements
 	}
 
 	protected void clearToolCompatibilityInfo(){
-		for(Iterator iter = fProjCompInfoMap.values().iterator(); iter.hasNext(); ){
-			((ProjToolCompatibilityStatusInfo)iter.next()).clearCompatibilityInfo();
+		for (IToolModification info : fProjCompInfoMap.values()) {
+			((ProjToolCompatibilityStatusInfo)info).clearCompatibilityInfo();
 		}
 
-		for(Iterator iter = fSysCompInfoMap.values().iterator(); iter.hasNext(); ){
-			((SysToolCompatibilityStatusInfo)iter.next()).clearCompatibilityInfo();
+		for (IToolModification info : fSysCompInfoMap.values()) {
+			((SysToolCompatibilityStatusInfo)info).clearCompatibilityInfo();
 		}
 	}
 	
@@ -706,7 +708,7 @@ public abstract class ToolListModification implements
 		for(int i = 0; i < tools.length; i++){
 			ITool tool = tools[i];
 			ITool realTool = ManagedBuildManager.getRealTool(tool);
-			fProjCompInfoMap.put(realTool, new ProjToolCompatibilityStatusInfo((Tool)tool));
+			fProjCompInfoMap.put((Tool) realTool, new ProjToolCompatibilityStatusInfo((Tool)tool));
 			if(!fFilteredOutTools.containsKey(realTool))
 				fInputExtsSet.addAll(Arrays.asList(tool.getPrimaryInputExtensions()));
 		}

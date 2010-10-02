@@ -19,8 +19,8 @@ import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
 public class PerTypeMapStorage implements Cloneable {
 	private ObjectTypeBasedStorage fStorage = new ObjectTypeBasedStorage();
 	
-	public Map getMap(int type, boolean create){
-		Map<IRealBuildObjectAssociation, Set> map = (Map<IRealBuildObjectAssociation, Set>)fStorage.get(type);
+	public Map/*<IRealBuildObjectAssociation, ?>*/ getMap(int type, boolean create){
+		Map<IRealBuildObjectAssociation, ?> map = (Map<IRealBuildObjectAssociation, ?>)fStorage.get(type);
 		if(map == null && create){
 			map = createMap(null);
 			fStorage.set(type, map);

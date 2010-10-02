@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
 
 public class ConflictSet {
 	public static final IConflict[] EMPTY_CONFLICT_ARRAY = new IConflict[0];
-	public static final IRealBuildObjectAssociation[] EMPTY_BO_ARRAY = new IRealBuildObjectAssociation[0];
+	public static final IBuildObject[] EMPTY_BO_ARRAY = new IBuildObject[0];
 	
 	private PerTypeMapStorage fConflictStorage;
 	private List fConflictMatchList;

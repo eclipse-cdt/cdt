@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -384,19 +383,21 @@ public abstract class ToolListModification implements IToolListModification {
 	public ToolListModification(ResourceInfo rcInfo, ToolListModification base){
 		fRcInfo = rcInfo;
 		Tool[] initialTools = (Tool[])rcInfo.getTools();
-		Map initRealToToolMap = TcModificationUtil.getRealToObjectsMap(initialTools, new LinkedHashMap());
+		@SuppressWarnings("unchecked")
+		Map<Tool, Tool> initRealToToolMap = (Map<Tool, Tool>) TcModificationUtil.getRealToObjectsMap(initialTools, null);
 		Tool[] updatedTools = base.getTools(true, false);
-		Map updatedRealToToolMap = TcModificationUtil.getRealToObjectsMap(updatedTools, new LinkedHashMap());
-		for(Iterator iter = updatedRealToToolMap.entrySet().iterator(); iter.hasNext(); ){
-			Map.Entry entry = (Map.Entry)iter.next();
-			Object real = entry.getKey();
-			Object initial = initRealToToolMap.get(real);
+		@SuppressWarnings("unchecked")
+		Map<Tool, Tool> updatedRealToToolMap = (Map<Tool, Tool>) TcModificationUtil.getRealToObjectsMap(updatedTools, null);
+		Set<Entry<Tool, Tool>> entrySet = updatedRealToToolMap.entrySet();
+		for (Entry<Tool, Tool> entry : entrySet) {
+			Tool real = entry.getKey();
+			Tool initial = initRealToToolMap.get(real);
 			if(initial != null){
 				entry.setValue(initial);
 			} else {
-				IRealBuildObjectAssociation updated = (IRealBuildObjectAssociation)entry.getValue();
+				Tool updated = entry.getValue();
 				if(!updated.isExtensionBuildObject()){
-					updated = updated.getExtensionObject();
+					updated = (Tool) updated.getExtensionObject();
 					entry.setValue(updated);
 				}
 			}
@@ -656,7 +657,8 @@ public abstract class ToolListModification implements IToolListModification {
 		clearToolInfo(map.values().toArray(new Tool[map.size()]));
 
 		PerTypeMapStorage storage = getCompleteObjectStore();
-		Map toolMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, true);
+		@SuppressWarnings("unchecked")
+		Map<Tool, Tool> toolMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, true);
 		if(rmSet != null)
 			TcModificationUtil.removePaths(toolMap, realRemoved, rmSet);
 		if(addSet != null)
@@ -701,8 +703,10 @@ public abstract class ToolListModification implements IToolListModification {
 		}
 
 		filteredTools = filterTools(allTools);
-		Map filteredMap = TcModificationUtil.getRealToObjectsMap(filteredTools, null);
-		Map allMap = TcModificationUtil.getRealToObjectsMap(allTools, null);
+		@SuppressWarnings("unchecked")
+		Map<Tool, Tool> filteredMap = (Map<Tool, Tool>) TcModificationUtil.getRealToObjectsMap(filteredTools, null);
+		@SuppressWarnings("unchecked")
+		Map<Tool, Tool> allMap = (Map<Tool, Tool>) TcModificationUtil.getRealToObjectsMap(allTools, null);
 		allMap.keySet().removeAll(filteredMap.keySet());
 		fFilteredOutTools = allMap;
 //		tools = filteredTools;

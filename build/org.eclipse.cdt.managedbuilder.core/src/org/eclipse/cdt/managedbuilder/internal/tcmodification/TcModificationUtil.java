@@ -363,7 +363,7 @@ public class TcModificationUtil {
 		return set;
 	}
 
-	public static Map<IRealBuildObjectAssociation, IRealBuildObjectAssociation> getRealToObjectsMap(IRealBuildObjectAssociation[] objs, Map<IRealBuildObjectAssociation, IRealBuildObjectAssociation> map){
+	public static Map<? extends IRealBuildObjectAssociation, ? extends IRealBuildObjectAssociation> getRealToObjectsMap(IRealBuildObjectAssociation[] objs, Map<IRealBuildObjectAssociation, IRealBuildObjectAssociation> map){
 		if(map == null)
 			map = new LinkedHashMap<IRealBuildObjectAssociation, IRealBuildObjectAssociation>();
 		for(int i = 0; i < objs.length; i++){

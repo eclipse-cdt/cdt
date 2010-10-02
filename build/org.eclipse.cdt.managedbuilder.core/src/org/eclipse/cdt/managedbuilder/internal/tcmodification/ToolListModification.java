@@ -180,7 +180,8 @@ public abstract class ToolListModification implements IToolListModification {
 				fCompatibleTools = new HashMap<Tool, ToolCompatibilityInfoElement>();
 				fInCompatibleTools = new HashMap<Tool, ToolCompatibilityInfoElement>();
 				Tool sysTools[] = getTools(false, true);
-				Map<Tool, List<ConflictMatch>> conflictMap = conflicts.fObjToConflictListMap;
+				@SuppressWarnings("unchecked")
+				Map<Tool, List<ConflictMatch>> conflictMap = (Map<Tool, List<ConflictMatch>>) conflicts.fObjToConflictListMap;
 				for(int i = 0; i < sysTools.length; i++){
 					Tool t = sysTools[i];
 					List<ConflictMatch> l = conflictMap.get(t);
@@ -528,7 +529,7 @@ public abstract class ToolListModification implements IToolListModification {
 			PerTypeSetStorage storage = entry.getValue();
 			for(int i = 0; i < types.length; i++){
 				type = types[i];
-				Set<IRealBuildObjectAssociation> set = storage.getSet(type, false);
+				Set<? extends IRealBuildObjectAssociation> set = storage.getSet(type, false);
 				if(set != null){
 					apply(rcInfo, type, set);
 				}
@@ -536,7 +537,7 @@ public abstract class ToolListModification implements IToolListModification {
 		}
 	}
 	
-	private void apply(ResourceInfo rcInfo, int type, Set<IRealBuildObjectAssociation> set) throws CoreException {
+	private void apply(ResourceInfo rcInfo, int type, Set<? extends IRealBuildObjectAssociation> set) throws CoreException {
 		switch(type){
 		case IRealBuildObjectAssociation.OBJECT_TOOL:
 			ToolListModificationInfo info = rcInfo == fRcInfo ? getModificationInfo() : 
@@ -574,8 +575,8 @@ public abstract class ToolListModification implements IToolListModification {
 	}
 
 	public IToolModification[] getProjectToolModifications() {
-		Map map = getMap(true);
-		return (ProjToolCompatibilityStatusInfo[])map.values().toArray(new ProjToolCompatibilityStatusInfo[map.size()]);
+		Map<Tool, IToolModification> map = getMap(true);
+		return map.values().toArray(new ProjToolCompatibilityStatusInfo[map.size()]);
 	}
 
 	public ITool[] getProjectTools() {

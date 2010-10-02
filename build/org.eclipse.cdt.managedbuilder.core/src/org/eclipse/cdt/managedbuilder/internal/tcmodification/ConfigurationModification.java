@@ -130,7 +130,8 @@ public class ConfigurationModification extends FolderInfoModification implements
 		fInCompatibleBuilders = new HashMap<IBuilder, BuilderCompatibilityInfoElement>();
 		ConflictMatchSet conflicts = getParentConflictMatchSet();
 		IBuilder sysBs[] = getAllSysBuilders();
-		Map<Builder, List<ConflictMatch>> conflictMap = conflicts.fObjToConflictListMap;
+		@SuppressWarnings("unchecked")
+		Map<Builder, List<ConflictMatch>> conflictMap = (Map<Builder, List<ConflictMatch>>) conflicts.fObjToConflictListMap;
 		for(int i = 0; i < sysBs.length; i++){
 			Builder b = (Builder) sysBs[i];
 			List<ConflictMatch> l = conflictMap.get(b);

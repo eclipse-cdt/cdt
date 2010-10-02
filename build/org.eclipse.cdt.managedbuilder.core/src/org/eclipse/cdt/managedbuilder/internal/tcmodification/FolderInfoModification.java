@@ -174,7 +174,8 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		ConflictMatchSet parentConflicts = getParentConflictMatchSet();
 		ToolChain sysTCs[] = (ToolChain[])getAllSysToolChains();
 		
-		Map<ToolChain, List<ConflictMatch>>  conflictMap = parentConflicts.fObjToConflictListMap;
+		@SuppressWarnings("unchecked")
+		Map<ToolChain, List<ConflictMatch>>  conflictMap = (Map<ToolChain, List<ConflictMatch>>) parentConflicts.fObjToConflictListMap;
 		for (ToolChain tc : sysTCs) {
 			List<ConflictMatch> l = conflictMap.get(tc);
 			ToolChainCompatibilityInfoElement info = new ToolChainCompatibilityInfoElement(tc, l);
@@ -309,8 +310,10 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		TreeMap<IPath, PerTypeSetStorage> pathMap = getCompletePathMapStorage();
 		
 		PerTypeSetStorage oSet = pathMap.get(path);
-		Set<Tool> toolSet = oSet.getSet(IRealBuildObjectAssociation.OBJECT_TOOL, false);
-		Set<ToolChain> tcSet = oSet.getSet(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
+		@SuppressWarnings("unchecked")
+		Set<Tool> toolSet = (Set<Tool>) oSet.getSet(IRealBuildObjectAssociation.OBJECT_TOOL, false);
+		@SuppressWarnings("unchecked")
+		Set<ToolChain> tcSet = (Set<ToolChain>) oSet.getSet(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
 		
 		ToolChain curTc = tcSet.iterator().next();
 		
@@ -359,7 +362,9 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		for (Entry<IPath, PerTypeSetStorage> entry : entrySet) {
 			PerTypeSetStorage cst = entry.getValue();
 			
+			@SuppressWarnings("unchecked")
 			Set<ToolChain> ctc = (Set<ToolChain>) cst.getSet(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
+			@SuppressWarnings("unchecked")
 			Set<Tool> ct = (Set<Tool>) cst.getSet(IRealBuildObjectAssociation.OBJECT_TOOL, false);
 
 
@@ -384,8 +389,10 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		ToolChainApplicabilityPaths tcApplicability = getToolChainApplicabilityPaths();
 		PerTypeMapStorage storage = getCompleteObjectStore();
 		
-		Map<ToolChain, Set> tcMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
-		Map<Tool, Set> toolMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, false);
+		@SuppressWarnings("unchecked")
+		Map<ToolChain, Set<IPath>> tcMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
+		@SuppressWarnings("unchecked")
+		Map<Tool, Set<IPath>> toolMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, false);
 		
 		
 		TcModificationUtil.removePaths(tcMap, fRealToolChain, tcApplicability.fFolderInfoPaths);

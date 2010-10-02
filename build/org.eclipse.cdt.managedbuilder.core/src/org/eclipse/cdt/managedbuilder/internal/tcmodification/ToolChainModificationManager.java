@@ -175,9 +175,9 @@ public class ToolChainModificationManager implements
 	
 	public static class ConflictMatchSet {
 		ConflictMatch[] fConflicts;
-		Map fObjToConflictListMap;
+		Map<? extends IRealBuildObjectAssociation, List<ConflictMatch>> fObjToConflictListMap;
 		
-		ConflictMatchSet(ConflictMatch[] coflicts, Map objToConflictMap){
+		ConflictMatchSet(ConflictMatch[] coflicts, Map<? extends IRealBuildObjectAssociation, List<ConflictMatch>> objToConflictMap){
 			fConflicts = coflicts;
 			fObjToConflictListMap = objToConflictMap;
 		}

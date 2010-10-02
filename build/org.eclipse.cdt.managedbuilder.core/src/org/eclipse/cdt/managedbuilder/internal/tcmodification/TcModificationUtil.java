@@ -525,26 +525,27 @@ public class TcModificationUtil {
 
 	public static TreeMap<IPath,PerTypeSetStorage> createPathMap(PerTypeMapStorage storage){
 		int[] types = ObjectTypeBasedStorage.getSupportedObjectTypes();
-		TreeMap result = new TreeMap(PathComparator.INSTANCE);
+		TreeMap<IPath,PerTypeSetStorage> result = new TreeMap<IPath,PerTypeSetStorage>(PathComparator.INSTANCE);
 		for(int i = 0; i < types.length; i++){
 			int type = types[i];
-			Map map = storage.getMap(type, false);
+			Map<IRealBuildObjectAssociation, Set<IPath>> map = storage.getMap(type, false);
 			if(map == null)
 				continue;
 			
-			for(Iterator iter = map.entrySet().iterator(); iter.hasNext(); ){
-				Map.Entry entry = (Map.Entry)iter.next();
-				SortedSet pathSet = (SortedSet)entry.getValue();
-				
-				for(Iterator pathIter = pathSet.iterator(); pathIter.hasNext(); ){
-					Object path = pathIter.next();
-					PerTypeSetStorage oset = (PerTypeSetStorage)result.get(path);
+			Set<Entry<IRealBuildObjectAssociation, Set<IPath>>> entrySet = map.entrySet();
+			for (Entry<IRealBuildObjectAssociation, Set<IPath>> entry : entrySet) {
+				IRealBuildObjectAssociation pathKey = entry.getKey();
+				Set<IPath> pathSet = entry.getValue();
+				for (IPath path : pathSet) {
+					PerTypeSetStorage oset = result.get(path);
 					if(oset == null){
 						oset = new PerTypeSetStorage();
 						result.put(path, oset);
 					}
 					
-					oset.getSet(type, true).add(entry.getKey());
+					@SuppressWarnings("unchecked")
+					Set<IRealBuildObjectAssociation> set = (Set<IRealBuildObjectAssociation>) oset.getSet(type, true);
+					set.add(pathKey);
 				}
 			}
 		}

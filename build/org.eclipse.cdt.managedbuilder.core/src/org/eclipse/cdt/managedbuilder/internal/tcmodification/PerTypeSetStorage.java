@@ -18,7 +18,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
 public class PerTypeSetStorage implements Cloneable {
 	private ObjectTypeBasedStorage fStorage = new ObjectTypeBasedStorage();
 	
-	public Set getSet(int type, boolean create){
+	public Set<? extends IRealBuildObjectAssociation> getSet(int type, boolean create){
 		Set<IRealBuildObjectAssociation> set = (Set<IRealBuildObjectAssociation>)fStorage.get(type);
 		if(set == null && create){
 			set = createSet(null);
@@ -63,7 +63,7 @@ public class PerTypeSetStorage implements Cloneable {
 			for(int i = 0; i < types.length; i++){
 				@SuppressWarnings("unchecked")
 				Set<IRealBuildObjectAssociation> o = (Set<IRealBuildObjectAssociation>) fStorage.get(types[i]); 
-				if(o != null && !((Set<IRealBuildObjectAssociation>)o).isEmpty())
+				if(o != null && !o.isEmpty())
 					return false;
 			}
 			return true;

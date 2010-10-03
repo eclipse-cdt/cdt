@@ -147,7 +147,7 @@ public class ToolChainModificationManager implements
 		return added;
 	}
 
-	public ConflictMatchSet getConflictInfo(int objType, PerTypeMapStorage parent){
+	public ConflictMatchSet getConflictInfo(int objType, PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> parent){
 		//parent should be passed - it is constant no need to recalculate every time
 		//PerTypeMapStorage parent = TcModificationUtil.createParentObjectsRealToolToPathSet(foInfo);
 		
@@ -182,7 +182,7 @@ public class ToolChainModificationManager implements
 		
 	}
 	
-	private ConflictMatchSet getConflictMatches(int type, PerTypeMapStorage rtToPath, PerTypeSetStorage skip){
+	private ConflictMatchSet getConflictMatches(int type, PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> rtToPath, PerTypeSetStorage<IRealBuildObjectAssociation> skip){
 		
 		//conversion:
 		//1.first filter applicable to not-this
@@ -204,6 +204,7 @@ public class ToolChainModificationManager implements
 				if(rtToPathMap == null)
 					continue;
 				
+				@SuppressWarnings("unchecked")
 				Map<IRealBuildObjectAssociation, Set<IPath>> clone = (Map<IRealBuildObjectAssociation, Set<IPath>>)((HashMap<IRealBuildObjectAssociation, Set<IPath>>)rtToPathMap).clone();
 				rtToPathMap = clone;
 				Set<IRealBuildObjectAssociation> skipSet = skip != null ? (Set<IRealBuildObjectAssociation>)skip.getSet(objType, false) : null;

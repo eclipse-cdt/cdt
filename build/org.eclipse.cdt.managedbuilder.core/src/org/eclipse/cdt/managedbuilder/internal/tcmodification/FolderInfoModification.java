@@ -51,7 +51,7 @@ public class FolderInfoModification extends ToolListModification implements IFol
 	private IToolChain[] fAllSysToolChains;
 	private Map<ToolChain, ToolChainCompatibilityInfoElement> fCompatibleToolChains;
 	private Map<ToolChain, ToolChainCompatibilityInfoElement> fInCompatibleToolChains;
-	private PerTypeMapStorage fParentObjectStorage;
+	private PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> fParentObjectStorage;
 	private ConflictMatchSet fParentConflicts;
 //	private PerTypeMapStorage fChildObjectStorage;
 //	private ConflictMatchSet fChildConflicts;
@@ -75,13 +75,13 @@ public class FolderInfoModification extends ToolListModification implements IFol
 	
 	private ConflictMatchSet getParentConflictMatchSet(){
 		if(fParentConflicts == null){
-			PerTypeMapStorage storage = getParentObjectStorage();
+			PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> storage = getParentObjectStorage();
 			fParentConflicts = ToolChainModificationManager.getInstance().getConflictInfo(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, storage);
 		}
 		return fParentConflicts;
 	}
 	
-	private PerTypeMapStorage getParentObjectStorage(){
+	private PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> getParentObjectStorage(){
 		if(fParentObjectStorage == null){
 			fParentObjectStorage = TcModificationUtil.createParentObjectsRealToolToPathSet((FolderInfo)getResourceInfo());
 		}
@@ -387,12 +387,10 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		ToolChain newRealTc = (ToolChain)ManagedBuildManager.getRealToolChain(newNonRealTc);
 		
 		ToolChainApplicabilityPaths tcApplicability = getToolChainApplicabilityPaths();
-		PerTypeMapStorage storage = getCompleteObjectStore();
+		PerTypeMapStorage<? extends IRealBuildObjectAssociation, Set<IPath>> storage = getCompleteObjectStore();
 		
-		@SuppressWarnings("unchecked")
-		Map<ToolChain, Set<IPath>> tcMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
-		@SuppressWarnings("unchecked")
-		Map<Tool, Set<IPath>> toolMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, false);
+		Map<ToolChain, Set<IPath>> tcMap = (Map<ToolChain, Set<IPath>>) storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
+		Map<Tool, Set<IPath>> toolMap = (Map<Tool, Set<IPath>>) storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, false);
 		
 		
 		TcModificationUtil.removePaths(tcMap, fRealToolChain, tcApplicability.fFolderInfoPaths);

@@ -13,7 +13,9 @@ package org.eclipse.cdt.managedbuilder.internal.tcmodification;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PerTypeMapStorage<K, V> implements Cloneable {
+import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
+
+public class PerTypeMapStorage<K extends IRealBuildObjectAssociation, V> implements Cloneable {
 	private ObjectTypeBasedStorage<Map<K, V>> fStorage = new ObjectTypeBasedStorage<Map<K, V>>();
 
 	public Map<K, V> getMap(int type, boolean create){

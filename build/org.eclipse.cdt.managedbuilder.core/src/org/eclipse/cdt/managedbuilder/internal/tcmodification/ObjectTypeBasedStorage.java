@@ -12,7 +12,7 @@ package org.eclipse.cdt.managedbuilder.internal.tcmodification;
 
 import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
 
-public final class ObjectTypeBasedStorage implements Cloneable {
+public final class ObjectTypeBasedStorage<T> implements Cloneable {
 	private static final int TOOL_INDEX = 0;
 	private static final int TOOLCHAIN_INDEX = 1;
 	private static final int BUILDER_INDEX = 2;
@@ -26,7 +26,8 @@ public final class ObjectTypeBasedStorage implements Cloneable {
 		IRealBuildObjectAssociation.OBJECT_CONFIGURATION,
 	};
 	
-	private Object fStorage[] = new Object[SIZE];
+	@SuppressWarnings("unchecked")
+	private T fStorage[] = (T[]) new Object[SIZE];
 	
 	public static int[] getSupportedObjectTypes(){
 		return OBJECT_TYPES.clone();
@@ -62,13 +63,13 @@ public final class ObjectTypeBasedStorage implements Cloneable {
 //		}
 //	}
 	
-	public Object get(int type){
+	public T get(int type){
 		return fStorage[getIndex(type)];
 	}
 	
-	public Object set(int type, Object value){
+	public T set(int type, T value){
 		int index = getIndex(type);
-		Object oldValue = fStorage[index];
+		T oldValue = fStorage[index];
 		fStorage[index] = value;
 		return oldValue;
 	}
@@ -76,7 +77,8 @@ public final class ObjectTypeBasedStorage implements Cloneable {
 	@Override
 	public Object clone(){
 		try {
-			ObjectTypeBasedStorage clone = (ObjectTypeBasedStorage)super.clone();
+			@SuppressWarnings("unchecked")
+			ObjectTypeBasedStorage<T> clone = (ObjectTypeBasedStorage<T>)super.clone();
 			clone.fStorage = fStorage.clone();
 			return clone;
 		} catch (CloneNotSupportedException e) {

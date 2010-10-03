@@ -37,7 +37,7 @@ public class MatchObjectElement {
 	public static class TypeToStringAssociation {
 		private int fType;
 		private String fString;
-		private static ObjectTypeBasedStorage fTypeAssociationStorage = new ObjectTypeBasedStorage();
+		private static ObjectTypeBasedStorage<TypeToStringAssociation> fTypeAssociationStorage = new ObjectTypeBasedStorage<TypeToStringAssociation>();
 		private static Map<String, TypeToStringAssociation> fStringAssociationStorage = new HashMap<String, TypeToStringAssociation>();
 		
 		public static TypeToStringAssociation TOOL = new TypeToStringAssociation(IRealBuildObjectAssociation.OBJECT_TOOL, "tool"); //$NON-NLS-1$
@@ -65,7 +65,7 @@ public class MatchObjectElement {
 		}
 		
 		public static TypeToStringAssociation getAssociation(int type){
-			return (TypeToStringAssociation)fTypeAssociationStorage.get(type);
+			return fTypeAssociationStorage.get(type);
 		}
 	}
 

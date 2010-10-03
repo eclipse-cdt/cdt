@@ -44,7 +44,7 @@ public class RulesManager {
 	private ConflictDefinition[] fConflictDefinitions;
 	
 	private Map<MatchObjectElement, IObjectSet> fMatchObjectMap = new HashMap<MatchObjectElement, IObjectSet>();
-	private PerTypeMapStorage fObjToChildSuperClassMap;
+	private PerTypeMapStorage<IRealBuildObjectAssociation, Set<IRealBuildObjectAssociation>> fObjToChildSuperClassMap;
 	private StarterJob fStarter;
 	private boolean fIsStartInited; 
 
@@ -232,13 +232,13 @@ public class RulesManager {
 	
 	private Set<IRealBuildObjectAssociation> getChildSuperClassRealSet(IRealBuildObjectAssociation obj, IRealBuildObjectAssociation[] all){
 		if(fObjToChildSuperClassMap == null)
-			fObjToChildSuperClassMap = new PerTypeMapStorage();
+			fObjToChildSuperClassMap = new PerTypeMapStorage<IRealBuildObjectAssociation, Set<IRealBuildObjectAssociation>>();
 
 		if(all == null)
 			all = TcModificationUtil.getExtensionObjects(obj.getType());
 
-		Map<IRealBuildObjectAssociation, Set> map = fObjToChildSuperClassMap.getMap(obj.getType(), true);
-		Set set = map.get(obj);
+		Map<IRealBuildObjectAssociation, Set<IRealBuildObjectAssociation>> map = fObjToChildSuperClassMap.getMap(obj.getType(), true);
+		Set<IRealBuildObjectAssociation> set = map.get(obj);
 		if(set == null){
 			set = createChildSuperClassRealSet(obj, all, null);
 			map.put(obj, set);

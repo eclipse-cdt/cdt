@@ -28,7 +28,7 @@ public class ConflictSet {
 	public static final IConflict[] EMPTY_CONFLICT_ARRAY = new IConflict[0];
 	public static final IBuildObject[] EMPTY_BO_ARRAY = new IBuildObject[0];
 	
-	private PerTypeMapStorage fConflictStorage;
+	private PerTypeMapStorage<IRealBuildObjectAssociation, Conflict> fConflictStorage;
 	private List<ConflictMatch> fConflictMatchList;
 	private Set<? extends IRealBuildObjectAssociation> fExtConflictSet;
 	private IRealBuildObjectAssociation fRealObj;
@@ -41,10 +41,10 @@ public class ConflictSet {
 	
 	private void init(){
 		if(fConflictStorage == null){
-			fConflictStorage = new PerTypeMapStorage();
+			fConflictStorage = new PerTypeMapStorage<IRealBuildObjectAssociation, Conflict>();
 			if(fConflictMatchList != null && fConflictMatchList.size() != 0){
 				int size = fConflictMatchList.size();
-				PerTypeMapStorage result = new PerTypeMapStorage();
+				PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> result = new PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>>();
 				for(int i = 0; i < size; i++){
 					ConflictMatch match = fConflictMatchList.get(i);
 					int objType = match.fMatchType;

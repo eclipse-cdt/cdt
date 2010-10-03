@@ -167,9 +167,10 @@ public abstract class ToolListModification implements IToolListModification {
 			PerTypeMapStorage storage = getCompleteObjectStore();
 			Tool tool = fRealTool;
 			Set<IPath> rmSet = getToolApplicabilityPathSet(tool, true);
+			Map<Tool, Set<IPath>> toolMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, false);
 			try {
 				if(rmSet != null && rmSet.size() != 0)
-					TcModificationUtil.removePaths(storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, false), tool, rmSet);
+					TcModificationUtil.removePaths(toolMap, tool, rmSet);
 				
 				if(DbgTcmUtil.DEBUG)
 					DbgTcmUtil.dumpStorage(storage);
@@ -179,7 +180,6 @@ public abstract class ToolListModification implements IToolListModification {
 				fCompatibleTools = new HashMap<Tool, ToolCompatibilityInfoElement>();
 				fInCompatibleTools = new HashMap<Tool, ToolCompatibilityInfoElement>();
 				Tool sysTools[] = getTools(false, true);
-				@SuppressWarnings("unchecked")
 				Map<Tool, List<ConflictMatch>> conflictMap = (Map<Tool, List<ConflictMatch>>) conflicts.fObjToConflictListMap;
 				for(int i = 0; i < sysTools.length; i++){
 					Tool t = sysTools[i];
@@ -197,7 +197,7 @@ public abstract class ToolListModification implements IToolListModification {
 				fCurrentElement = new ToolCompatibilityInfoElement(this, t, l);
 			} finally {
 				if(rmSet != null && rmSet.size() != 0)
-					TcModificationUtil.addPaths(storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, false), tool, rmSet);
+					TcModificationUtil.addPaths(toolMap, tool, rmSet);
 			}
 			fInited = true;
 		}
@@ -383,10 +383,8 @@ public abstract class ToolListModification implements IToolListModification {
 	public ToolListModification(ResourceInfo rcInfo, ToolListModification base){
 		fRcInfo = rcInfo;
 		Tool[] initialTools = (Tool[])rcInfo.getTools();
-		@SuppressWarnings("unchecked")
 		Map<Tool, Tool> initRealToToolMap = (Map<Tool, Tool>) TcModificationUtil.getRealToObjectsMap(initialTools, null);
 		Tool[] updatedTools = base.getTools(true, false);
-		@SuppressWarnings("unchecked")
 		Map<Tool, Tool> updatedRealToToolMap = (Map<Tool, Tool>) TcModificationUtil.getRealToObjectsMap(updatedTools, null);
 		Set<Entry<Tool, Tool>> entrySet = updatedRealToToolMap.entrySet();
 		for (Entry<Tool, Tool> entry : entrySet) {
@@ -657,8 +655,7 @@ public abstract class ToolListModification implements IToolListModification {
 		clearToolInfo(map.values().toArray(new Tool[map.size()]));
 
 		PerTypeMapStorage storage = getCompleteObjectStore();
-		@SuppressWarnings("unchecked")
-		Map<Tool, Tool> toolMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, true);
+		Map<Tool, Set<IPath>> toolMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, true);
 		if(rmSet != null)
 			TcModificationUtil.removePaths(toolMap, realRemoved, rmSet);
 		if(addSet != null)
@@ -703,9 +700,7 @@ public abstract class ToolListModification implements IToolListModification {
 		}
 
 		filteredTools = filterTools(allTools);
-		@SuppressWarnings("unchecked")
 		Map<Tool, Tool> filteredMap = (Map<Tool, Tool>) TcModificationUtil.getRealToObjectsMap(filteredTools, null);
-		@SuppressWarnings("unchecked")
 		Map<Tool, Tool> allMap = (Map<Tool, Tool>) TcModificationUtil.getRealToObjectsMap(allTools, null);
 		allMap.keySet().removeAll(filteredMap.keySet());
 		fFilteredOutTools = allMap;

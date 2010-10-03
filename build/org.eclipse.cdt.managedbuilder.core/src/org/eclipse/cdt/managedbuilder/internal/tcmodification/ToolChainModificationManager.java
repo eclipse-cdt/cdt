@@ -228,7 +228,7 @@ public class ToolChainModificationManager implements
 						ConflictMatch conflict = new ConflictMatch(objType, rtToPathMap, type, matchingObjects);
 						
 						for (IRealBuildObjectAssociation bo : matchingObjects) {
-							ArrayList<ConflictMatch> list = TcModificationUtil.getArrayList(objToConflictMatchMap, bo);
+							List<ConflictMatch> list = TcModificationUtil.getArrayList(objToConflictMatchMap, bo);
 							list.add(conflict);
 						}
 						

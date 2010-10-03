@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -57,7 +58,7 @@ public class TcModificationUtil {
 				tc = ManagedBuildManager.getRealToolChain(tc);
 				if(tc == rtc){
 					if(addSkipInfo && tcMap != null){
-						Set set = getPathTreeSet(tcMap, tc);
+						Set<IPath> set = getPathTreeSet(tcMap, (ToolChain)tc);
 						set.add(childFoInfo.getPath());
 					}
 					processFolderInfoChildren(childFoInfo, storage, tc, tcMap, toolMap, addSkipInfo); 
@@ -96,7 +97,7 @@ public class TcModificationUtil {
 
 		IBuilder realBuilder = ManagedBuildManager.getRealBuilder(cfg.getBuilder());
 		Map map = storage.getMap(IRealBuildObjectAssociation.OBJECT_BUILDER, true);
-		TreeSet pathSet = new TreeSet(PathComparator.INSTANCE);
+		Set<IPath> pathSet = new TreeSet<IPath>(PathComparator.INSTANCE);
 		pathSet.add(p);
 		map.put(realBuilder, pathSet);
 		
@@ -147,12 +148,12 @@ public class TcModificationUtil {
 		IBuilder realBuilder = ManagedBuildManager.getRealBuilder(cfg.getBuilder());
 		if(skipMap != null && skipMap.containsKey(realBuilder)){
 			if(addSkipPaths){
-				Set set = getPathTreeSet(skipMap, realBuilder);
+				Set<IPath> set = getPathTreeSet(skipMap, (Builder)realBuilder);
 				set.add(p);
 			}
 		} else {
 			Map map = storage.getMap(IRealBuildObjectAssociation.OBJECT_BUILDER, true);
-			TreeSet pathSet = new TreeSet(PathComparator.INSTANCE);
+			Set<IPath> pathSet = new TreeSet<IPath>(PathComparator.INSTANCE);
 			pathSet.add(p);
 			map.put(realBuilder, pathSet);
 		}
@@ -161,12 +162,12 @@ public class TcModificationUtil {
 		IRealBuildObjectAssociation realCfg = ((Configuration)cfg).getRealBuildObject();
 		if(skipMap != null && skipMap.containsKey(realCfg)){
 			if(addSkipPaths){
-				Set set = getPathTreeSet(skipMap, realCfg);
+				Set<IPath> set = getPathTreeSet(skipMap, realCfg);
 				set.add(p);
 			}
 		} else {
 			Map map = storage.getMap(IRealBuildObjectAssociation.OBJECT_CONFIGURATION, true);
-			TreeSet pathSet = new TreeSet(PathComparator.INSTANCE);
+			Set<IPath> pathSet = new TreeSet<IPath>(PathComparator.INSTANCE);
 			pathSet.add(p);
 			map.put(realCfg, pathSet);
 		}
@@ -332,12 +333,12 @@ public class TcModificationUtil {
 		Map skipMap = skipMapStorage != null ? skipMapStorage.getMap(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false) : null;
 		if(skipMap != null && skipMap.containsKey(rtc)){
 			if(addSkipPaths){
-				TreeSet set = getPathTreeSet(skipMap, rtc);
+				Set<IPath> set = getPathTreeSet(skipMap, (ToolChain)rtc);
 				set.add(p);
 			}
 		} else {
 			Map map = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, true);
-			TreeSet set = getPathTreeSet(map, rtc);
+			Set<IPath> set = getPathTreeSet(map, (ToolChain)rtc);
 			set.add(p);
 		}
 		
@@ -390,30 +391,30 @@ public class TcModificationUtil {
 			ITool rt = ManagedBuildManager.getRealTool(tools[i]);
 			if(skipMap != null && skipMap.containsKey(rt)){
 				if(addSkipPaths){
-					TreeSet set = getPathTreeSet(skipMap, rt);
+					Set<IPath> set = getPathTreeSet(skipMap, (Tool)rt);
 					set.add(path);
 				}
 			} else {
-				TreeSet set = getPathTreeSet(storageMap, rt);
+				Set<IPath> set = getPathTreeSet(storageMap, (Tool)rt);
 				set.add(path);
 			}
 		}
 	}
 		
 	
-	public static TreeSet getPathTreeSet(Map map, Object obj){
-		TreeSet set = (TreeSet)map.get(obj);
+	public static Set<IPath> getPathTreeSet(Map<IRealBuildObjectAssociation, Set<IPath>> map, IRealBuildObjectAssociation bo){
+		Set<IPath> set = map.get(bo);
 		if(set == null){
-			set = new TreeSet(PathComparator.INSTANCE);
-			map.put(obj, set);
+			set = new TreeSet<IPath>(PathComparator.INSTANCE);
+			map.put(bo, set);
 		}
 		return set;
 	}
 
-	public static ArrayList getArrayList(Map map, Object obj){
-		ArrayList list = (ArrayList)map.get(obj);
+	public static <K, V> List<V> getArrayList(Map<K, List<V>> map, K obj){
+		List<V> list = map.get(obj);
 		if(list == null){
-			list = new ArrayList();
+			list = new ArrayList<V>();
 			map.put(obj, list);
 		}
 		return list;
@@ -424,7 +425,7 @@ public class TcModificationUtil {
 	}
 
 	public static void restoreBuilderInfo(PerTypeMapStorage storage, IBuilder builder, Object obj){
-		storage.getMap(IRealBuildObjectAssociation.OBJECT_BUILDER, true).put((Builder) builder, obj);
+		storage.getMap(IRealBuildObjectAssociation.OBJECT_BUILDER, true).put(builder, obj);
 	}
 
 //	public static boolean removeToolInfo(PerTypeMapStorage storage, IPath path, ITool tool){
@@ -468,34 +469,34 @@ public class TcModificationUtil {
 //		set.addAll(restoreSet);
 //	}
 	
-	public static void removePaths(Map map, IRealBuildObjectAssociation obj, Set paths){
-		Set objPaths = (Set)map.get(obj);
+	public static <T extends IRealBuildObjectAssociation> void removePaths(Map<T, Set<IPath>> map, T bo, Set<IPath> paths){
+		Set<IPath> objPaths = map.get(bo);
 		if(objPaths == null)
 			return;
 		
 		objPaths.removeAll(paths);
 		if(objPaths.size() == 0)
-			map.remove(obj);
+			map.remove(bo);
 	}
 	
-	public static void addPaths(Map map, IRealBuildObjectAssociation obj, Set paths){
+	public static <T extends IRealBuildObjectAssociation> void addPaths(Map<T, Set<IPath>> map, T bo, Set<IPath> paths){
 		if(paths.size() == 0)
 			return;
 		
-		Set objPaths = (Set)map.get(obj);
+		Set<IPath> objPaths = map.get(bo);
 		if(objPaths == null){
-			objPaths = new TreeSet(PathComparator.INSTANCE);
-			map.put(obj, objPaths);
+			objPaths = new TreeSet<IPath>(PathComparator.INSTANCE);
+			map.put(bo, objPaths);
 		}
 		
 		objPaths.addAll(paths);
 	}
 	
-	public static void addPath(Map map, IRealBuildObjectAssociation obj, IPath path){
-		Set objPaths = (Set)map.get(obj);
+	public static <T extends IRealBuildObjectAssociation> void addPath(Map<T, Set<IPath>> map, T bo, IPath path){
+		Set<IPath> objPaths = map.get(bo);
 		if(objPaths == null){
-			objPaths = new TreeSet(PathComparator.INSTANCE);
-			map.put(obj, objPaths);
+			objPaths = new TreeSet<IPath>(PathComparator.INSTANCE);
+			map.put(bo, objPaths);
 		}
 		
 		objPaths.add(path);
@@ -505,7 +506,7 @@ public class TcModificationUtil {
 		Map bMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_BUILDER, true);
 		bMap.clear();
 		IBuilder realBuilder = ManagedBuildManager.getRealBuilder(builder);
-		TreeSet set = getPathTreeSet(bMap, realBuilder);
+		Set<IPath> set = getPathTreeSet(bMap, (Builder)realBuilder);
 		set.add(path);
 	}
 
@@ -544,7 +545,7 @@ public class TcModificationUtil {
 					}
 					
 					@SuppressWarnings("unchecked")
-					Set<IRealBuildObjectAssociation> set = (Set<IRealBuildObjectAssociation>) oset.getSet(type, true);
+					Set<IRealBuildObjectAssociation> set = oset.getSet(type, true);
 					set.add(pathKey);
 				}
 			}

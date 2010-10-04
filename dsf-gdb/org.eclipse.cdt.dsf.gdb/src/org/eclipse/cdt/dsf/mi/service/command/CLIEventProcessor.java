@@ -20,15 +20,14 @@ import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
-import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.ISignals.ISignalsDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
@@ -124,10 +123,7 @@ public class CLIEventProcessor
             		
                     IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
                     if (procService != null) {
-                    	String groupId = MIProcesses.UNIQUE_GROUP_ID;
-
-                    	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-                    	IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
+                    	IContainerDMContext processContainerDmc = procService.createContainerContextFromGroupId(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
                     	MIEvent<?> e =  new MIThreadCreatedEvent(processContainerDmc, threadId);
                     	fCommandControl.getSession().dispatchEvent(e, fCommandControl.getProperties());
                     }
@@ -167,10 +163,7 @@ public class CLIEventProcessor
             // if it was a step instruction set state running
             IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
             if (procService != null) {
-            	String groupId = MIProcesses.UNIQUE_GROUP_ID;
-
-            	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-            	IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
+            	IContainerDMContext processContainerDmc = procService.createContainerContextFromGroupId(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
             	MIEvent<?> event = new MIRunningEvent(processContainerDmc, token, type);
             	fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
             }

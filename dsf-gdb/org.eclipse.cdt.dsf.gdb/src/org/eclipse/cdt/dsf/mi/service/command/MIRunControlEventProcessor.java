@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
@@ -192,9 +193,7 @@ public class MIRunControlEventProcessor
     							IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
     							if (runControl != null && procService != null) {
     								// We don't know which thread stopped so we simply create a container event.
-    								String groupId = MIProcesses.UNIQUE_GROUP_ID;
-    								IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-    								IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
+    								IContainerDMContext processContainerDmc = procService.createContainerContextFromGroupId(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
 
     								if (runControl.isSuspended(processContainerDmc) == false) {
     									// Create an MISignalEvent because that is what the *stopped event should have been
@@ -235,13 +234,11 @@ public class MIRunControlEventProcessor
         	return null;
         }
         
-   		String groupId = MIProcesses.UNIQUE_GROUP_ID;
-
-    	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-    	IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
+    	IContainerDMContext processContainerDmc = procService.createContainerContextFromGroupId(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
 
     	IExecutionDMContext execDmc = processContainerDmc;
     	if (threadId != null) {
+    		IProcessDMContext procDmc = DMContexts.getAncestorOfType(processContainerDmc, IProcessDMContext.class);
    			IThreadDMContext threadDmc = procService.createThreadContext(procDmc, threadId);
    			execDmc = procService.createExecutionContext(processContainerDmc, threadDmc, threadId);
     	}
@@ -318,9 +315,7 @@ public class MIRunControlEventProcessor
 
                 IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
                 if (procService != null) {
-                	String groupId = MIProcesses.UNIQUE_GROUP_ID;
-                	IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-                	IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
+                	IContainerDMContext processContainerDmc = procService.createContainerContextFromGroupId(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
 
                 	fCommandControl.getSession().dispatchEvent(
                 			new MIRunningEvent(processContainerDmc, id, type), fCommandControl.getProperties());
@@ -343,9 +338,7 @@ public class MIRunControlEventProcessor
                 if (backendService != null && backendService.getIsAttachSession() == false) {
                 	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
                 	if (procService != null) {
-                		String groupId = MIProcesses.UNIQUE_GROUP_ID;
-                		IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-                		IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
+                		IContainerDMContext processContainerDmc = procService.createContainerContextFromGroupId(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
 
                 		fCommandControl.getSession().dispatchEvent(
                 				new ContainerStartedDMEvent(processContainerDmc), fCommandControl.getProperties());
@@ -367,9 +360,7 @@ public class MIRunControlEventProcessor
             			IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
             			if (runControl != null && procService != null) {
             				// We don't know which thread stopped so we simply create a container event.
-            				String groupId = MIProcesses.UNIQUE_GROUP_ID;
-            				IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-            				IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
+            				IContainerDMContext processContainerDmc = procService.createContainerContextFromGroupId(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
 
             				// An attaching operation is debugging a new inferior and always stops it.
             				// We should not check that the container is suspended, because at startup, we are considered

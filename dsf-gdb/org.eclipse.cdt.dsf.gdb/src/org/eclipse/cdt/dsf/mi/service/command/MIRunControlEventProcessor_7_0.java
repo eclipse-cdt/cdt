@@ -197,8 +197,7 @@ public class MIRunControlEventProcessor_7_0
     		    	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
 
     		    	if (procService != null) {
-    		    		IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-    		    		IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
+    		    		IContainerDMContext processContainerDmc = procService.createContainerContextFromGroupId(fControlDmc, groupId);
 
     		    		MIEvent<?> event = null;
     		    		if ("thread-created".equals(miEvent)) { //$NON-NLS-1$
@@ -216,6 +215,7 @@ public class MIRunControlEventProcessor_7_0
     					   "thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
     				
     				String groupId = null;
+    				String pId = null;
 
     				MIResult[] results = exec.getMIResults();
     				for (int i = 0; i < results.length; i++) {
@@ -225,12 +225,22 @@ public class MIRunControlEventProcessor_7_0
     						if (val instanceof MIConst) {
     							groupId = ((MIConst) val).getString().trim();
     						}
+    					} else if (var.equals("pid")) { //$NON-NLS-1$
+    						// Available starting with GDB 7.2
+    						if (val instanceof MIConst) {
+    							pId = ((MIConst) val).getString().trim();
+    						}
     					}
+    				}
+    				
+    				if (pId == null) {
+    					// Before GDB 7.2, the groupId was the pid of the process
+    					pId = groupId;
     				}
 
 					IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-    				if (groupId != null && procService != null) {
-    					IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
+    				if (pId != null && procService != null) {
+    					IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, pId);
 
     					MIEvent<?> event = null;
     					if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -295,8 +305,7 @@ public class MIRunControlEventProcessor_7_0
    				procDmc = DMContexts.getAncestorOfType(containerDmc, IProcessDMContext.class);
     		} else {
     			// This code would only trigger if the groupId was provided by MI
-    			procDmc = procService.createProcessContext(fControlDmc, groupId);
-    			containerDmc = procService.createContainerContext(procDmc, groupId);
+    			containerDmc = procService.createContainerContextFromGroupId(fControlDmc, groupId);
     		}
 
     		IExecutionDMContext execDmc = containerDmc;

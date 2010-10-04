@@ -413,10 +413,15 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     }
 
     public IMIContainerDMContext createContainerContextFromThreadId(ICommandControlDMContext controlDmc, String threadId) {
-    	String groupId = UNIQUE_GROUP_ID;
+    	return createContainerContextFromGroupId(controlDmc, UNIQUE_GROUP_ID);
+    }
+    
+    /** @since 4.0 */
+    public IMIContainerDMContext createContainerContextFromGroupId(ICommandControlDMContext controlDmc, String groupId) {
     	IProcessDMContext processDmc = createProcessContext(controlDmc, groupId);
     	return createContainerContext(processDmc, groupId);
     }
+
 
 	public void getExecutionData(IThreadDMContext dmc, final DataRequestMonitor<IThreadDMData> rm) {
 		if (dmc instanceof MIProcessDMC) {
@@ -568,9 +573,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 			// This service version only handles a single process to debug, therefore, we can simply
 			// create the context describing this process ourselves.
 			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-			String groupId = MIProcesses.UNIQUE_GROUP_ID;
-			IProcessDMContext procDmc = createProcessContext(controlDmc, groupId);
-			IMIContainerDMContext newContainerDmc = createContainerContext(procDmc, groupId);
+			IMIContainerDMContext newContainerDmc = createContainerContextFromGroupId(controlDmc, UNIQUE_GROUP_ID);
 			rm.setData(new IContainerDMContext[] {newContainerDmc});
 			rm.done();
 		}

@@ -92,8 +92,7 @@ public class GDBProcesses extends MIProcesses {
 				new Hashtable<String, String>());
         
 		ICommandControlService commandControl = getServicesTracker().getService(ICommandControlService.class);
-		IProcessDMContext procDmc = createProcessContext(commandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
-		IContainerDMContext containerDmc = createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+		IContainerDMContext containerDmc = createContainerContextFromGroupId(commandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
 		fGdb.getInferiorProcess().setContainerContext(containerDmc);
 
 		getSession().addServiceEventListener(this, null);		

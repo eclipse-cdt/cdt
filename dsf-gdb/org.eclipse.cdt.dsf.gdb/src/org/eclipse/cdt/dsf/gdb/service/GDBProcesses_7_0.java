@@ -392,6 +392,10 @@ public class GDBProcesses_7_0 extends AbstractDsfService
      *  A map of thread id to thread group id.  We use this to find out to which threadGroup a thread belongs.
      */
     private Map<String, String> fThreadToGroupMap = new HashMap<String, String>();
+    /**
+     *  A map of thread group id to process id.  We use this to find out to which pid a group refers.
+     */
+    private Map<String, String> fGroupToPidMap = new HashMap<String, String>();
 
     private IGDBControl fCommandControl;
     private IGDBBackend fBackend;
@@ -549,10 +553,20 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     			}
     		}
     	}
-    	IProcessDMContext processDmc = createProcessContext(controlDmc, groupId);
-    	return createContainerContext(processDmc, groupId);
+    	
+    	return createContainerContextFromGroupId(controlDmc, groupId);
     }
 
+    /** @since 4.0 */
+    public IMIContainerDMContext createContainerContextFromGroupId(ICommandControlDMContext controlDmc, String groupId) {
+    	String pid = fGroupToPidMap.get(groupId);
+    	if (pid == null) {
+    		pid = groupId;
+    	}
+    	IProcessDMContext processDmc = createProcessContext(controlDmc, pid);
+    	return createContainerContext(processDmc, groupId);
+    }
+    
     public IMIExecutionDMContext[] getExecutionContexts(IMIContainerDMContext containerDmc) {
     	String groupId = containerDmc.getGroupId();
     	List<IMIExecutionDMContext> execDmcList = new ArrayList<IMIExecutionDMContext>(); 
@@ -765,11 +779,10 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 						@Override
 						protected void handleFailure() {
 							// If the target is not available, generate the list ourselves
-							IMIContainerDMContext[] containerDmcs = new IMIContainerDMContext[fDebuggedProcessesAndNames.size()];
+							IMIContainerDMContext[] containerDmcs = new IMIContainerDMContext[fGroupToPidMap.size()];
 							int i = 0;
-							for (String groupId : fDebuggedProcessesAndNames.keySet()) {
-								IProcessDMContext processDmc = createProcessContext(controlDmc, groupId);
-								containerDmcs[i++] = createContainerContext(processDmc, groupId);
+							for (String groupId : fGroupToPidMap.keySet()) {
+								containerDmcs[i++] = createContainerContextFromGroupId(controlDmc, groupId);
 							}
 							rm.setData(containerDmcs);
 							rm.done();
@@ -808,9 +821,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		// code can be removed when GDB 7.2 is released
 		// START OF WORKAROUND
 		if (groups.length == 0 && fBackend.getSessionType() == SessionType.CORE) {
-			String groupId = MIProcesses.UNIQUE_GROUP_ID;
-			IProcessDMContext processDmc = createProcessContext(controlDmc, groupId);
-			return new IMIContainerDMContext[] {createContainerContext(processDmc, groupId)};
+			return new IMIContainerDMContext[] {createContainerContextFromGroupId(controlDmc, MIProcesses.UNIQUE_GROUP_ID)};
 		}
 		// END OF WORKAROUND to be removed when GDB 7.2 is available
 		
@@ -828,8 +839,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 				continue;
 			}
 			String groupId = group.getGroupId();
-			IProcessDMContext procDmc = createProcessContext(controlDmc, groupId); 
-			containerDmcs.add(createContainerContext(procDmc, groupId));
+			containerDmcs.add(createContainerContextFromGroupId(controlDmc, groupId));
 		}
 		return containerDmcs.toArray(new IMIContainerDMContext[containerDmcs.size()]);
 	}
@@ -1049,6 +1059,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     					   "thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
     				
     				String groupId = null;
+    				String pId = null;
 
     				MIResult[] results = exec.getMIResults();
     				for (int i = 0; i < results.length; i++) {
@@ -1058,19 +1069,32 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     						if (val instanceof MIConst) {
     							groupId = ((MIConst) val).getString().trim();
     						}
+    					} else if (var.equals("pid")) { //$NON-NLS-1$
+    						// Available starting with GDB 7.2
+    						if (val instanceof MIConst) {
+    							pId = ((MIConst) val).getString().trim();
+    						}
     					}
+    				}
+
+    				if (pId == null) {
+    					// Before GDB 7.2, the groupId was the pid of the process
+    					pId = groupId;
     				}
 
     				if (groupId != null) {
     					if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
-    						fDebuggedProcessesAndNames.put(groupId, ""); //$NON-NLS-1$
+    						
+    						fGroupToPidMap.put(groupId, pId);
+    						
+    						fDebuggedProcessesAndNames.put(pId, ""); //$NON-NLS-1$
     					
 							// GDB is debugging a new process. Let's fetch its
 							// name and remember it. In order to get the name,
 							// we have to request all running processes, not
 							// just the ones being debugged. We got a lot more 
     						// information when we request all processes.
-        					final String finalGroupId = groupId;
+        					final String finalPId = pId;
     						fListThreadGroupsAvailableCache.execute(
     								fCommandFactory.createMIListThreadGroups(fCommandControl.getContext(), true),
     								new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), null) {
@@ -1081,10 +1105,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     										// sending of this command.
     										fListThreadGroupsAvailableCache.reset();
 
+    										// Note that the output of the "-list-thread-groups --available" command
+    										// still shows the pid as a groupId, even for GDB 7.2.
     										if (isSuccess()) {
     											for (IThreadGroupInfo groupInfo : getData().getGroupList()) {
-    												if (groupInfo.getPid().equals(finalGroupId)) {
-    													fDebuggedProcessesAndNames.put(finalGroupId, groupInfo.getName());
+    												if (groupInfo.getPid().equals(finalPId)) {
+    													fDebuggedProcessesAndNames.put(finalPId, groupInfo.getName());
     												}
     											}
     										}
@@ -1097,10 +1123,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	    											IProcessList list = null;
 	    											try {
 	    												list = CCorePlugin.getDefault().getProcessList();
-	        											int groupId_int = Integer.parseInt(finalGroupId);
+	        											int pId_int = Integer.parseInt(finalPId);
 	        											for (IProcessInfo procInfo : list.getProcessList()) {
-	        												if (procInfo.getPid() == groupId_int) {
-	        													fDebuggedProcessesAndNames.put(finalGroupId, procInfo.getName());
+	        												if (procInfo.getPid() == pId_int) {
+	        													fDebuggedProcessesAndNames.put(finalPId, procInfo.getName());
+	        													break;
 	        												}
 	        											}
 	    											} catch (CoreException e) {
@@ -1110,8 +1137,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     									}
     								});
     					} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
+    						
+    						fGroupToPidMap.remove(groupId);
+
     						// GDB is no longer debugging this process.  Remove it from our list.
-    						fDebuggedProcessesAndNames.remove(groupId);
+    						fDebuggedProcessesAndNames.remove(pId);
     						
     						// Remove any entries for that group from our thread to group map
     						// When detaching from a group, we won't have received any thread-exited event

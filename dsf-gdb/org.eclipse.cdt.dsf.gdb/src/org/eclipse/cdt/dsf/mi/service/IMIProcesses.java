@@ -57,11 +57,23 @@ public interface IMIProcesses extends IProcesses
 
     /**
      * Create a container context based on a threadId.  This implies knowledge
-     * of which threads belong to which container.
+     * of which threads belong to which container.  This method can only be used
+     * if the threadId has been already created.
      * 
      * @param controlDmc The parent command control context of this context
      * @param threadId The thread id belonging to the container we want to create
      */
     IMIContainerDMContext createContainerContextFromThreadId(ICommandControlDMContext controlDmc, String threadId);
+
+    /**
+     * Create a container context based on a groupId.  This implies knowledge
+     * of which pid is represented by the groupId.  This method can only be used
+     * if the groupId has been already created.
+     * 
+     * @param controlDmc The parent command control context of this context
+     * @param goupId The thread-group id of the container we want to create
+     * @since 4.0
+     */
+    IMIContainerDMContext createContainerContextFromGroupId(ICommandControlDMContext controlDmc, String groupId);
 }
 

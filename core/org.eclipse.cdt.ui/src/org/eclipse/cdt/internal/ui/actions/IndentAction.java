@@ -541,10 +541,8 @@ public class IndentAction extends TextEditorAction {
 	 * @return the current document or <code>null</code>
 	 */
 	private IDocument getDocument() {
-		
 		ITextEditor editor= getTextEditor();
 		if (editor != null) {
-			
 			IDocumentProvider provider= editor.getDocumentProvider();
 			IEditorInput input= editor.getEditorInput();
 			if (provider != null && input != null)
@@ -563,7 +561,6 @@ public class IndentAction extends TextEditorAction {
 	private ITextSelection getSelection() {
 		ISelectionProvider provider= getSelectionProvider();
 		if (provider != null) {
-			
 			ISelection selection= provider.getSelection();
 			if (selection instanceof ITextSelection)
 				return (ITextSelection) selection;

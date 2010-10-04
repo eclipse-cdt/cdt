@@ -2017,7 +2017,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	/**
 	 * Get the editor descriptor to be associated with the remote file
 	 * @return the editor descriptor associated with this remote file
-	 * @since 3.3 
+	 * @since 3.2 
 	 */
 	public IEditorDescriptor getEditorDescriptor(){
 		return _editorDescriptor;
@@ -2026,7 +2026,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	/**
 	 * Set the editor descriptor to be associated with the remote file
 	 * @param descriptor the new editor descriptor
-	 * @since 3.3
+	 * @since 3.2
 	 */
 	public void setEditorDescriptor(IEditorDescriptor descriptor){
 		_editorDescriptor = descriptor;

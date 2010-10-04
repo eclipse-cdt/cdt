@@ -220,11 +220,9 @@ public class ASTCache {
 			synchronized (ast) {
 				return astRunnable.runOnAST(lang, ast);
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			return e.getStatus();
-		}
-		finally {
+		} finally {
 			index.releaseReadLock();
 		}
 	}

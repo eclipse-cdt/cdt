@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@
  * David McKnight   (IBM)        - [250417] Restore from memento flag set to false during restore on startup
  * Martin Oberhuber (Wind River) - [286122] Avoid NPE when restoring memento
  * David McKnight   (IBM)        - [286670] TVT35:TCT586: CHS: English Strings Found
+ * Martin Oberhuber (Wind River) - [326910] RSE looses selection when creating a project
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -231,7 +232,21 @@ public class SystemViewPart
 	 */
 	public void selectReveal(ISelection selection)
 	{
-		systemView.setSelection(selection, true);
+		ISelection origSel = systemView.getSelection();
+		if (origSel.isEmpty()) {
+			systemView.setSelection(selection, true);
+		} else {
+			// bug check whether the new selection can be set,
+			// before actually setting it. Restore old selection
+			// if the new one does not work.
+			systemView.setSelection(selection, false);
+			ISelection newSel = systemView.getSelection();
+			if (newSel.isEmpty()) {
+				systemView.setSelection(origSel, false);
+			} else {
+				systemView.setSelection(newSel, true);
+			}
+		}
 	}
 
 	/**

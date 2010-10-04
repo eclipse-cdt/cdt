@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.make.core">
+<schema targetNamespace="org.eclipse.cdt.make.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.make.core" id="ScannerConfigurationDiscoveryProfile" name="Scanner Configuration Discovery Profile"/>
@@ -16,6 +16,9 @@
 
    <element name="extension">
       <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
          <documentation>
             Definition of a profile:
 - A scanner info collector
@@ -188,11 +191,11 @@ If not specified then &lt;samp&gt;org.eclipse.cdt.make.internal.core.scannerconf
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  A fully qualified name of the Java class that implements &lt;samp&gt;org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoReader&lt;/samp&gt; interface.
-If not specified then &lt;samp&gt;org.eclipse.cdt.make.internal.core.scannerconfig.DefaultExternalScannerInfoReader&lt;/samp&gt; is the default one used.
+                  A fully qualified name of the Java class that implements &lt;samp&gt;org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider&lt;/samp&gt; interface.
+If not specified then &lt;samp&gt;org.eclipse.cdt.make.internal.core.scannerconfig2.DefaultSIFileReader&lt;/samp&gt; is the default one used.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.make.core.scannerconfig.IESIFileReader"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -242,13 +245,5 @@ If not specified then &lt;samp&gt;org.eclipse.cdt.make.internal.core.scannerconf
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="copyright"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
 </schema>

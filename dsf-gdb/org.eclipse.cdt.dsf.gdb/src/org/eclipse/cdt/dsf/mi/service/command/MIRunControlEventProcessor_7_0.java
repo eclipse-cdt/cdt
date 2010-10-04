@@ -11,8 +11,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -89,7 +91,12 @@ public class MIRunControlEventProcessor_7_0
     private final ICommandControlDMContext fControlDmc; 
     
     private final DsfServicesTracker fServicesTracker;
-    
+
+    /**
+     *  A map of thread group id to process id.  We use this to find out to which pid a group refers.
+     */
+    private Map<String, String> fGroupToPidMap = new HashMap<String, String>();
+
     /**
      * Creates the event processor and registers it as listener with the debugger
      * control.
@@ -197,7 +204,11 @@ public class MIRunControlEventProcessor_7_0
     		    	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
 
     		    	if (procService != null) {
-    		    		IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
+    		        	String pid = fGroupToPidMap.get(groupId);
+    		        	if (pid == null) {
+    		        		pid = groupId;
+    		        	}
+    		    		IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, pid);
     		    		IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
 
     		    		MIEvent<?> event = null;
@@ -216,6 +227,7 @@ public class MIRunControlEventProcessor_7_0
     					   "thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
     				
     				String groupId = null;
+    				String pId = null;
 
     				MIResult[] results = exec.getMIResults();
     				for (int i = 0; i < results.length; i++) {
@@ -225,17 +237,31 @@ public class MIRunControlEventProcessor_7_0
     						if (val instanceof MIConst) {
     							groupId = ((MIConst) val).getString().trim();
     						}
+    					} else if (var.equals("pid")) { //$NON-NLS-1$
+    						// Available starting with GDB 7.2
+    						if (val instanceof MIConst) {
+    							pId = ((MIConst) val).getString().trim();
+    						}
     					}
+    				}
+    				
+    				if (pId == null) {
+    					// Before GDB 7.2, the groupId was the pid of the process
+    					pId = groupId;
     				}
 
 					IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-    				if (groupId != null && procService != null) {
-    					IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
+    				if (pId != null && procService != null) {
+    					IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, pId);
 
     					MIEvent<?> event = null;
     					if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
+    						fGroupToPidMap.put(groupId, pId);
+
     						event = new MIThreadGroupCreatedEvent(procDmc, exec.getToken(), groupId);
     					} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
+    						fGroupToPidMap.remove(groupId);
+
     						event = new MIThreadGroupExitedEvent(procDmc, exec.getToken(), groupId);
     					}
 
@@ -295,7 +321,12 @@ public class MIRunControlEventProcessor_7_0
    				procDmc = DMContexts.getAncestorOfType(containerDmc, IProcessDMContext.class);
     		} else {
     			// This code would only trigger if the groupId was provided by MI
-    			procDmc = procService.createProcessContext(fControlDmc, groupId);
+	        	String pid = fGroupToPidMap.get(groupId);
+	        	if (pid == null) {
+	        		pid = groupId;
+	        	}
+
+    			procDmc = procService.createProcessContext(fControlDmc, pid);
     			containerDmc = procService.createContainerContext(procDmc, groupId);
     		}
 

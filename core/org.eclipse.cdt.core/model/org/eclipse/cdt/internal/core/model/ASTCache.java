@@ -414,7 +414,6 @@ public class ASTCache {
 			return "null"; //$NON-NLS-1$
 		else
 			return tUnit.getElementName();
-
 	}
 
 	/**
@@ -429,5 +428,4 @@ public class ASTCache {
 
 		return ast.getFilePath();
 	}
-
 }

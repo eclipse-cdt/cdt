@@ -55,9 +55,11 @@ case ${SITEDIR} in
 esac
 case ${SITEDIR} in
   3.2*)  VERSION=3.2 ; DO_CATEGORIES=1 ;;
+  3.3*)  VERSION=3.3 ; DO_CATEGORIES=1 ;;
 esac
 case ${SITEDIR} in
   3.2) DO_STATS=1 ;;
+  3.3) DO_STATS=1 ;;
 esac
 if [ ${TYPE} = test ]; then
     echo "Working on test update site"

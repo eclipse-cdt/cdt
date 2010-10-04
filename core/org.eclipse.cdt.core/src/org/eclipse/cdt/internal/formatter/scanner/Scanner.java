@@ -59,7 +59,7 @@ public class Scanner extends SimpleScanner {
 	 */
 	public void resetTo(int start, int end) {
 		Reader reader;
-		if (end >= source.length-1) {
+		if (end >= source.length - 1) {
 			reader= new CharArrayReader(source);
 		} else {
 			reader= new CharArrayReader(source, 0, Math.min(source.length, end+1));
@@ -107,7 +107,7 @@ public class Scanner extends SimpleScanner {
 
 	/**
 	 * Move to next character iff it is equal to the given expected character.
-	 * If the characters do not match, the sanner does not move forward.
+	 * If the characters do not match, the scanner does not move forward.
 	 * 
 	 * @param c the expected character
 	 * @return <code>true</code> if the next character was the expected character
@@ -138,7 +138,7 @@ public class Scanner extends SimpleScanner {
 		} else if (diff > fTokenBuffer.length()) {
 			resetTo(nextCharacterStart, source.length - 1);
 		} else /* if (diff <= fTokenBuffer.length()) */ {
-			while(diff > 0) {
+			while (diff > 0) {
 				if (fTokenBuffer.length() > 0) {
 					ungetChar(fTokenBuffer.charAt(fTokenBuffer.length() - 1));
 				}
@@ -209,5 +209,4 @@ public class Scanner extends SimpleScanner {
 			+ "<-- Ends here\n===============================\n" //$NON-NLS-1$
 			+ new String(end); 
 	}
-
 }

@@ -77,9 +77,8 @@ public class SimpleScanner {
 
 	private final Token newToken(int t) {
 	    if (!fReuseToken) {
-	    setCurrentToken(new Token(t, fTokenBuffer.toString(), fContext));
-	    }
-	    else {
+	    	setCurrentToken(new Token(t, fTokenBuffer.toString(), fContext));
+	    } else {
 	        fCurrentToken.set(t, fTokenBuffer.toString(), fContext);
 	    }
 	    return fCurrentToken;
@@ -94,7 +93,7 @@ public class SimpleScanner {
 
 	private int categorizePreprocessor(StringBuilder text) {
 	    boolean skipHash= true;
-	    int i=0;
+	    int i= 0;
 	    for (; i < text.length(); i++) {
 	        char c= text.charAt(i);
 	        if (!Character.isWhitespace(c)) {
@@ -215,7 +214,7 @@ public class SimpleScanner {
         	internalUngetChar(c);
 		} else if (fUniversalCharBuffer.length() > 0) {
 			char[] chs = fUniversalCharBuffer.toString().toCharArray();
-			for (int i = chs.length-1; i >= 0; --i) {
+			for (int i = chs.length - 1; i >= 0; --i) {
             	internalUngetChar(chs[i]);
 			}
 		} else {
@@ -737,7 +736,7 @@ public class SimpleScanner {
 	        switch(c) {
 	            case '\'':
 	                if (fTokenBuffer.length() > 1) {
-	                    if (fPreprocessorToken==0) {
+	                    if (fPreprocessorToken == 0) {
 	                        fPreprocessorToken= categorizePreprocessor(fTokenBuffer);
 	                    }
 	                    ungetChar(c);
@@ -885,7 +884,6 @@ public class SimpleScanner {
 	    return encounteredNewline;
 	}
 
-
 	static {
         fgKeywords.put("and", new Integer(Token.t_and)); //$NON-NLS-1$
         fgKeywords.put("and_eq", new Integer(Token.t_and_eq)); //$NON-NLS-1$
@@ -980,7 +978,5 @@ public class SimpleScanner {
         fgKeywords.put("synchronized", new Integer(Token.t_synchronized)); //$NON-NLS-1$
         fgKeywords.put("throws", new Integer(Token.t_throws)); //$NON-NLS-1$
         fgKeywords.put("transient", new Integer(Token.t_transient)); //$NON-NLS-1$
-
     }
-
 }

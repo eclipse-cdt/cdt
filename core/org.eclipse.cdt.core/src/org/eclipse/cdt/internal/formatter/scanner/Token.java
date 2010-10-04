@@ -61,18 +61,18 @@ public class Token {
 
     public boolean looksLikeExpressionStart() {
         switch (type) {
-            case tINTEGER :
-            case t_false :
-            case t_true :
-            case tSTRING :
-            case tLSTRING :
-            case tFLOATINGPT :
-            case tCHAR :
-            case tAMPER :
-            case tDOT :
-            case tLPAREN :
+            case tINTEGER:
+            case t_false:
+            case t_true:
+            case tSTRING:
+            case tLSTRING:
+            case tFLOATINGPT:
+            case tCHAR:
+            case tAMPER:
+            case tDOT:
+            case tLPAREN:
                 return true;
-            default :
+            default:
                 break;
         }
         return false;
@@ -80,15 +80,15 @@ public class Token {
 
     public boolean looksLikeExpressionEnd() {
         switch (type) {
-            case tINTEGER :
-            case tSTRING :
-            case tLSTRING :
-            case tFLOATINGPT :
-            case tCHAR :
-            case tRPAREN :
-            case tIDENTIFIER :
+            case tINTEGER:
+            case tSTRING:
+            case tLSTRING:
+            case tFLOATINGPT:
+            case tCHAR:
+            case tRPAREN:
+            case tIDENTIFIER:
                 return true;
-            default :
+            default:
                 break;
         }
         return false;
@@ -100,113 +100,113 @@ public class Token {
 
     public boolean isOperator() {
         switch (type) {
-            case t_new :
-            case t_delete :
-            case tPLUS :
-            case tMINUS :
-            case tSTAR :
-            case tDIV :
-            case tXOR :
-            case tMOD :
-            case tAMPER :
-            case tBITOR :
-            case tCOMPL :
-            case tNOT :
-            case tASSIGN :
-            case tLT :
-            case tGT :
-            case tPLUSASSIGN :
-            case tMINUSASSIGN :
-            case tSTARASSIGN :
-            case tDIVASSIGN :
-            case tMODASSIGN :
-            case tBITORASSIGN :
-            case tAMPERASSIGN :
-            case tXORASSIGN :
-            case tSHIFTL :
-            case tSHIFTR :
-            case tSHIFTLASSIGN :
-            case tSHIFTRASSIGN :
-            case tEQUAL :
-            case tNOTEQUAL :
-            case tLTEQUAL :
-            case tGTEQUAL :
-            case tAND :
-            case tOR :
-            case tINCR :
-            case tDECR :
-            case tCOMMA :
-            case tDOT :
-            case tDOTSTAR :
-            case tARROW :
-            case tARROWSTAR :
+            case t_new:
+            case t_delete:
+            case tPLUS:
+            case tMINUS:
+            case tSTAR:
+            case tDIV:
+            case tXOR:
+            case tMOD:
+            case tAMPER:
+            case tBITOR:
+            case tCOMPL:
+            case tNOT:
+            case tASSIGN:
+            case tLT:
+            case tGT:
+            case tPLUSASSIGN:
+            case tMINUSASSIGN:
+            case tSTARASSIGN:
+            case tDIVASSIGN:
+            case tMODASSIGN:
+            case tBITORASSIGN:
+            case tAMPERASSIGN:
+            case tXORASSIGN:
+            case tSHIFTL:
+            case tSHIFTR:
+            case tSHIFTLASSIGN:
+            case tSHIFTRASSIGN:
+            case tEQUAL:
+            case tNOTEQUAL:
+            case tLTEQUAL:
+            case tGTEQUAL:
+            case tAND:
+            case tOR:
+            case tINCR:
+            case tDECR:
+            case tCOMMA:
+            case tDOT:
+            case tDOTSTAR:
+            case tARROW:
+            case tARROWSTAR:
                 return true;
-            default :
+            default:
                 return false;
         }
     }
 
     public boolean isInfixOperator() {
         switch (type) {
-            case tPLUS :
-            case tMINUS :
-            case tSTAR :
-            case tDIV :
-            case tXOR :
-            case tMOD :
-            case tAMPER :
-            case tBITOR :
-            case tASSIGN :
-            case tLT :
-            case tGT :
-            case tPLUSASSIGN :
-            case tMINUSASSIGN :
-            case tSTARASSIGN :
-            case tDIVASSIGN :
-            case tMODASSIGN :
-            case tBITORASSIGN :
-            case tAMPERASSIGN :
-            case tXORASSIGN :
-            case tSHIFTL :
-            case tSHIFTR :
-            case tSHIFTLASSIGN :
-            case tSHIFTRASSIGN :
-            case tEQUAL :
-            case tNOTEQUAL :
-            case tLTEQUAL :
-            case tGTEQUAL :
-            case tAND :
-            case tOR :
-            case tCOLON :
-            case tQUESTION :
+            case tPLUS:
+            case tMINUS:
+            case tSTAR:
+            case tDIV:
+            case tXOR:
+            case tMOD:
+            case tAMPER:
+            case tBITOR:
+            case tASSIGN:
+            case tLT:
+            case tGT:
+            case tPLUSASSIGN:
+            case tMINUSASSIGN:
+            case tSTARASSIGN:
+            case tDIVASSIGN:
+            case tMODASSIGN:
+            case tBITORASSIGN:
+            case tAMPERASSIGN:
+            case tXORASSIGN:
+            case tSHIFTL:
+            case tSHIFTR:
+            case tSHIFTLASSIGN:
+            case tSHIFTRASSIGN:
+            case tEQUAL:
+            case tNOTEQUAL:
+            case tLTEQUAL:
+            case tGTEQUAL:
+            case tAND:
+            case tOR:
+            case tCOLON:
+            case tQUESTION:
                 return true;
-            default :
+            default:
                 return false;
         }
     }
 
     public boolean isPrefixOperator() {
         switch (type) {
-            case tPLUS :
-            case tMINUS :
-            case tSTAR :
-            case tAMPER :
-            case tCOMPL :
-            case tNOT :
-            case tINCR :
-            case tDECR :
+            case tPLUS:
+            case tMINUS:
+            case tSTAR:
+            case tAMPER:
+            case tCOMPL:
+            case tNOT:
+            case tINCR:
+            case tDECR:
                 return true;
-            default :
+            default:
                 return false;
         }
     }
 
     public boolean isPostfixOperator() {
         switch (type) {
-            case tINCR :
-            case tDECR :
+            case tINCR:
+            case tDECR:
                 return true;
-            default :
+            default:
                 return false;
         }
     }
@@ -216,36 +216,36 @@ public class Token {
     }
     public static boolean isAssignmentOperator(int type) {
         switch (type) {
-            case tASSIGN :
-            case tPLUSASSIGN :
-            case tMINUSASSIGN :
-            case tSTARASSIGN :
-            case tDIVASSIGN :
-            case tAMPERASSIGN :
-            case tBITORASSIGN :
-            case tXORASSIGN :
-            case tMODASSIGN :
-            case tSHIFTLASSIGN :
-            case tSHIFTRASSIGN :
+            case tASSIGN:
+            case tPLUSASSIGN:
+            case tMINUSASSIGN:
+            case tSTARASSIGN:
+            case tDIVASSIGN:
+            case tAMPERASSIGN:
+            case tBITORASSIGN:
+            case tXORASSIGN:
+            case tMODASSIGN:
+            case tSHIFTLASSIGN:
+            case tSHIFTRASSIGN:
                 return true;
-            default :
+            default:
                 return false;
         }
     }
 
     public boolean isControlStmt() {
         switch (type) {
-            case t_if :
-            case t_else :
-            case t_for :
-            case t_do :
-            case t_while :
-            case t_switch :
-            case t_try :
-            case t_catch :
-            case t_finally :
+            case t_if:
+            case t_else:
+            case t_for:
+            case t_do:
+            case t_while:
+            case t_switch:
+            case t_try:
+            case t_catch:
+            case t_finally:
                 return true;
-            default :
+            default:
                 return false;
         }
     }
@@ -292,27 +292,27 @@ public class Token {
     
     public boolean isCPPToken() {
         switch (type) {
-        case tCOLONCOLON :
-        case t_class :
-        case t_namespace :
-        case t_using :
-        case t_template :
-        case t_public :
-        case t_protected :
-        case t_private :
-        case t_operator :
-        case t_virtual :
-        case t_inline :
-        case t_friend :
-        case t_mutable :
-        case t_new :
-        case t_delete :
-        case t_reinterpret_cast :
-        case t_dynamic_cast :
-        case t_static_cast :
-        case t_finally :
+        case tCOLONCOLON:
+        case t_class:
+        case t_namespace:
+        case t_using:
+        case t_template:
+        case t_public:
+        case t_protected:
+        case t_private:
+        case t_operator:
+        case t_virtual:
+        case t_inline:
+        case t_friend:
+        case t_mutable:
+        case t_new:
+        case t_delete:
+        case t_reinterpret_cast:
+        case t_dynamic_cast:
+        case t_static_cast:
+        case t_finally:
             return true;
-        default :
+        default:
             return false;
         }
     }
@@ -329,7 +329,7 @@ public class Token {
 
     // overrider
     public boolean isPreprocessor() {
-        switch(type) {
+        switch (type) {
         case tPREPROCESSOR:
         case tPREPROCESSOR_DEFINE:
         case tPREPROCESSOR_INCLUDE:
@@ -340,11 +340,11 @@ public class Token {
     
     // overrider
     public boolean isIncludeDirective() {
-        return type==tPREPROCESSOR_INCLUDE;
+        return type == tPREPROCESSOR_INCLUDE;
     }
     // overrider
     public boolean isMacroDefinition() {
-        return type==tPREPROCESSOR_DEFINE;
+        return type == tPREPROCESSOR_DEFINE;
     }
     
     // Special Token types (non-grammar tokens)
@@ -506,5 +506,4 @@ public class Token {
     static public final int t_byte = 214;
     static public final int t_transient = 215;
     static public final int t_native = 216;
-
 }

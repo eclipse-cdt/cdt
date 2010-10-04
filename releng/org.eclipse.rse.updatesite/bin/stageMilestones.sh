@@ -16,7 +16,7 @@ mydir=`pwd`
 umask 022
 
 #Use Java5 on build.eclipse.org - need JRE for pack200
-export PATH=/shared/dsdp/tm/ibm-java2-ppc64-50/jre/bin:/shared/dsdp/tm/ibm-java2-ppc64-50/bin:$PATH
+export PATH=/shared/dsdp/tm/jdk-1.5/jre/bin:/shared/dsdp/tm/jdk-1.5/bin:$PATH
 basebuilder=${HOME}/ws2/org.eclipse.releng.basebuilder
 
 # patch site.xml

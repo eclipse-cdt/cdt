@@ -15,8 +15,8 @@
 umask 22
 
 #Use Java5 on build.eclipse.org
-#export PATH=/shared/dsdp/tm/ibm-java2-ppc64-50/bin:$PATH
-export PATH=/shared/dsdp/tm/ibm-java2-ppc64-50/jre/bin:/shared/dsdp/tm/ibm-java2-ppc64-50/bin:$PATH
+#export PATH=/shared/dsdp/tm/jdk-1.5/bin:$PATH
+export PATH=/shared/dsdp/tm/jdk-1.5/jre/bin:/shared/dsdp/tm/jdk-1.5/bin:$PATH
 #export PATH=${HOME}/ws2/IBMJava2-ppc-142/bin:$PATH
 
 curdir=`pwd`

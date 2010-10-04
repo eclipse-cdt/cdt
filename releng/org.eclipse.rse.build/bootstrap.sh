@@ -178,9 +178,9 @@ fi
 if [ "$HOSTNAME" == "utils" ]
 then
 	#Running on build.eclipse.org
-	java15_home=/shared/dsdp/tm/ibm-java2-ppc64-50
+	java15_home=/shared/dsdp/tm/jdk-1.5
 	#java14_home=/shared/webtools/apps/IBMJava2-ppc64-142
-	java14_home=/shared/webtools/apps/IBMJava2-ppc-142
+	java14_home=/shared/dsdp/tm/jdk-1.4
     javadoc="-Djavadoc15=$java15_home/bin/javadoc"
     PATH=$java15_home/jre/bin:$PATH;export PATH
 elif [ "$HOSTNAME" == "parser.wrs.com" ]

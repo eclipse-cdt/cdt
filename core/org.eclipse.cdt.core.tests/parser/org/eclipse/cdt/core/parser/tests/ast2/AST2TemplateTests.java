@@ -4366,20 +4366,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		m= ms[1-i];
 		assertEquals("const int &&", ASTTypeUtil.getType(m.getType().getParameterTypes()[0]));
 	}
-	
-	//	template<typename T> int f(T&&);
-	//	void test() {
-	//		int i;
-	//		int j = f(i);    // calls f<int&>(i)
-	//	}
-	public void testRValueReferences_2_294730() throws Exception {
-		final String code= getAboveComment();
-		parseAndCheckBindings(code);
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
-		ICPPTemplateInstance inst= bh.assertNonProblem("f(i)", 1);
-		assertEquals("<int &>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
-	}
-	
+		
 	//	template<typename... Pack> void f1(int (* p)(Pack ...a));
 	//	template<typename... Pack> void f2(int (* ...p)(Pack a, int));
 	//	template<typename... Pack> void f3(Pack (* ...p)());
@@ -4643,34 +4630,6 @@ public class AST2TemplateTests extends AST2BaseTest {
 		parseAndCheckBindings(code);
 	}		
 
-	//	template<typename...> struct Tuple { };
-	//	template<typename... Types> void g(Tuple<Types...>); // #1
-	//	template<typename T1, typename... Types> void g(Tuple<T1, Types...>); // #2
-	//	template<typename T1, typename... Types> void g(Tuple<T1, Types&...>); // #3
-	//  void test() {
-	//	  g(Tuple<>()); // calls #1
-	//	  g(Tuple<int, float>()); // calls #2
-	//	  g(Tuple<int, float&>()); // calls #3
-	//	  g(Tuple<int>()); // calls #3	
-	// }
-	public void testVariadicTemplateExamples_280909m() throws Exception {
-		final String code= getAboveComment();
-		parseAndCheckBindings(code);
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
-		ICPPFunction g1= bh.assertNonProblem("g(Tuple<Types...>)", 1);
-		ICPPFunction g2= bh.assertNonProblem("g(Tuple<T1, Types...>)", 1);
-		ICPPFunction g3= bh.assertNonProblem("g(Tuple<T1, Types&...>)", 1);
-		
-		ICPPTemplateInstance x= bh.assertNonProblem("g(Tuple<>())", 1);
-		assertSame(g1, x.getTemplateDefinition());
-		x= bh.assertNonProblem("g(Tuple<int, float>())", 1);
-		assertSame(g2, x.getTemplateDefinition());
-		x= bh.assertNonProblem("g(Tuple<int, float&>())", 1);
-		assertSame(g3, x.getTemplateDefinition());
-		x= bh.assertNonProblem("g(Tuple<int>())", 1);
-		assertSame(g3, x.getTemplateDefinition());
-	}		
-
 	//	template<class> struct X { };
 	//	template<class R, class... ArgTypes> struct X<R(int, ArgTypes...)> { };
 	//	template<class... Types> struct Y { };
@@ -4909,28 +4868,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code);
 	}
-	
-	//	namespace std {
-	//		template<typename T> class initializer_list;
-	//	}
-	//	template<class T> void f(std::initializer_list<T>);
-	//	template<class T> void g(T);
-	//	void test() {
-	//		f({1,2,3}); // T deduced to int
-	//		f({1,"asdf"}); // error: T deduced to both int and const char*
-	//		g({1,2,3}); // error: no argument deduced for T
-	//	}
-	public void testTypeDeductForInitLists_302412() throws Exception {
-		final String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
-	
-		ICPPTemplateInstance inst;
-		inst= bh.assertNonProblem("f({1,2,3})", 1);
-		assertEquals("<int>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
-		bh.assertProblem("f({1,\"asdf\"})", 1);
-		bh.assertProblem("g({1,2,3})", 1);
-	}
-	
+		
 	//	template <typename T> struct CT;
 	//	template<> struct CT<int> {typedef int Type;};
 	//	template <typename T> struct CT <const T> {

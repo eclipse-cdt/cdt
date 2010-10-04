@@ -1779,11 +1779,18 @@ public class CPPTemplates {
 	}
 
 	private static boolean isAtLeastAsSpecializedAs(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2) throws DOMException {
+		// mstodo use function-type, parameter-types or return type.
+		// mstodo perform transformations (references, cv-qualifiers)
+		// mstodo if equal, use differences in cv-qualifiers
+		// mstodo special rule for parameter packs.
 		// 14.5.5.2
 		// Using the transformed parameter list, perform argument deduction against the other
 		// function template
 		// The transformed template is at least as specialized as the other if and only if the deduction
 		// succeeds and the deduced parameter types are an exact match.
+		
+		// Check for parameter packs
+		
 		final ICPPTemplateParameter[] tmplParams1 = f1.getTemplateParameters();
 		ICPPTemplateArgument[] transferArgs = createArgsForFunctionTemplateOrdering(tmplParams1);
 		

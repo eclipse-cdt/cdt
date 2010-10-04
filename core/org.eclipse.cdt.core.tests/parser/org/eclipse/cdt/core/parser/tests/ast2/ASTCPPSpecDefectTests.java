@@ -52,9 +52,7 @@ public class ASTCPPSpecDefectTests extends AST2BaseTest {
 			assertFalse(n.resolveBinding() instanceof IProblemBinding);
 		}
 	}
-	
-	public void testDummy() {}
-	
+		
 	//  // C++ defect #33
 	//	namespace ns {
 	//		struct S {};
@@ -69,4 +67,14 @@ public class ASTCPPSpecDefectTests extends AST2BaseTest {
 	public void testADLForOverloadSet_324842() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//  // C++ defect #38
+	//	template<typename T> T operator+(T&);
+	//	struct A {
+	//	  friend A operator + <>(A&);
+	//	};
+	public void testTemplateArgForOperator() throws Exception {
+		parseAndCheckBindings();
+	}
+
 }

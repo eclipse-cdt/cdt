@@ -50,17 +50,10 @@ public class LRTemplateTests extends AST2TemplateTests {
 	public void testTemplateParameterPacksAmbiguity_280909() throws Exception {}
 	@Override
 	public void testNonTypeTemplateParameterPack_280909() throws Exception {}
-	@Override
-	public void testTypeDeductForInitLists_302412() throws Exception {}
-	
-	
 	
 	//the below test case are for C++0x features which are not included in XLC++ yet
 	@Override
-	public void testRValueReferences_1_294730() throws Exception {}
-	@Override
-	public void testRValueReferences_2_294730() throws Exception {}
-	
+	public void testRValueReferences_1_294730() throws Exception {}	
 	@Override
 	public void testVariadicTemplateExamples_280909a() throws Exception {}
 	@Override
@@ -82,11 +75,7 @@ public class LRTemplateTests extends AST2TemplateTests {
 	@Override
 	public void testVariadicTemplateExamples_280909k() throws Exception {}
 	@Override
-	public void testVariadicTemplateExamples_280909m() throws Exception {}
-	@Override
 	public void testVariadicTemplateExamples_280909n() throws Exception {}
-	@Override
-	public void testVariadicTemplateExamples_280909o() throws Exception {}
 	@Override
 	public void testVariadicTemplateExamples_280909p() throws Exception {}
 	@Override

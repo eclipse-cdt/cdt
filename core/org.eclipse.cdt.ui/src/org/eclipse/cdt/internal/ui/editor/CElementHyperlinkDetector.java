@@ -169,8 +169,10 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 					return true;
 			}
 			for (String keyword : keywords.getPreprocessorKeywords()) {
-				if (keyword.charAt(0) == '#' && keyword.regionMatches(1, word, 0, word.length()))
+				if (keyword.charAt(0) == '#' && keyword.length() == word.length() + 1 &&
+						keyword.regionMatches(1, word, 0, word.length())) {
 					return true;
+				}
 			}
 		}
 		return false;

@@ -45,7 +45,7 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 	private IProject fProject;
 	private ICProjectDescription fProjDes;
 	private ICConfigurationDescription fCfgDes;
-	private Map<Object, IScannerInfo> fIdToLanguageSettingsMap = Collections.synchronizedMap(new HashMap<Object, IScannerInfo>());
+	private Map<String, IScannerInfo> fIdToLanguageSettingsMap = Collections.synchronizedMap(new HashMap<String, IScannerInfo>());
 	private String fCurrentFileDescriptionId;
 	private IScannerInfo fCurrentFileScannerInfo;
 	private static final ScannerInfo INEXISTENT_SCANNER_INFO = new ScannerInfo();
@@ -103,7 +103,7 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 	}
 
 	private IScannerInfo getScannerInfo(ICResourceDescription rcDes, ICLanguageSetting ls){
-		Object mapKey = ls != null ? ls.getId() : null;
+		String mapKey = ls != null ? ls.getId() : null;
 //		if(ls == null)
 //			return INEXISTENT_SCANNER_INFO;
 		boolean useMap = rcDes == null || rcDes.getType() == ICSettingBase.SETTING_FOLDER;

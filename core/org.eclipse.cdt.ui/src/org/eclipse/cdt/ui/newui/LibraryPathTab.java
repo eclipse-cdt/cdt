@@ -15,7 +15,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 
-import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
@@ -28,18 +27,17 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class LibraryPathTab extends AbstractLangsListTab implements IPathEntryStoreListener {
-	IPathEntryStore fStore;
 	private static final int[] PRIVATE_SASH_WEIGHTS = new int[] { 0, 30 };
 
 	@Override
 	public void additionalTableSet() {
-		  columnToFit = new TableColumn(table, SWT.NONE);
+		columnToFit = new TableColumn(table, SWT.NONE);
 	}
 
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-  	    sashForm.setWeights(PRIVATE_SASH_WEIGHTS);
+		sashForm.setWeights(PRIVATE_SASH_WEIGHTS);
 		langTree.setVisible(false);
 	}
 	

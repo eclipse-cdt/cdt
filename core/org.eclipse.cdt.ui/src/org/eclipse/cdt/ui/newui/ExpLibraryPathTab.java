@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
-import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
@@ -21,7 +20,6 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ExpLibraryPathTab extends AbstractExportTab implements IPathEntryStoreListener {
-	IPathEntryStore fStore;
 
 	public void pathEntryStoreChanged(PathEntryStoreChangedEvent event) {
 		updateData(getResDesc());
@@ -37,9 +35,14 @@ public class ExpLibraryPathTab extends AbstractExportTab implements IPathEntrySt
 	public ICLanguageSettingEntry doEdit(String s1, String s2, boolean isWsp) {
 		return doAdd(s1, s2, isWsp);
 	}
-	
+
 	@Override
-	public int getKind() { return ICSettingEntry.LIBRARY_PATH; }
+	public int getKind() {
+		return ICSettingEntry.LIBRARY_PATH;
+	}
+
 	@Override
-	public boolean hasValues() { return false; }
+	public boolean hasValues() {
+		return false;
+	}
 }

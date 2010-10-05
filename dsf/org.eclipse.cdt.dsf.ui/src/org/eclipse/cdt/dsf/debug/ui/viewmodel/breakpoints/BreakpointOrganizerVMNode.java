@@ -65,12 +65,8 @@ public class BreakpointOrganizerVMNode extends AbstractVMNode {
                 this, update.getElementPath(), 
                 new ViewerDataRequestMonitor<List<BreakpointOrganizerVMContext>>(getExecutor(), update) {
                     @Override
-                    protected void handleCompleted() {
-                        if (isSuccess()) {
-                            update.setHasChilren(!getData().isEmpty());
-                        } else {
-                            update.setHasChilren(false);
-                        }
+                    protected void handleSuccess() {
+                        update.setHasChilren(!getData().isEmpty());
                         update.done();
                     }
                 });
@@ -84,12 +80,8 @@ public class BreakpointOrganizerVMNode extends AbstractVMNode {
                 this, update.getElementPath(), 
                 new ViewerDataRequestMonitor<List<BreakpointOrganizerVMContext>>(getExecutor(), update) {
                     @Override
-                    protected void handleCompleted() {
-                        if (isSuccess()) {
-                            update.setChildCount(getData().size());
-                        } else {
-                            update.setChildCount(0);
-                        }
+                    protected void handleSuccess() {
+                        update.setChildCount(getData().size());
                         update.done();
                     }
                 });

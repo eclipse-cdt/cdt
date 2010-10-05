@@ -28,7 +28,6 @@ import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
  * @since 5.1
  */
 public class CLanguageKeywords implements ICLanguageKeywords {
-
 	private final ParserLanguage language;
 	private final IScannerExtensionConfiguration config;
 	
@@ -36,26 +35,23 @@ public class CLanguageKeywords implements ICLanguageKeywords {
 	private String[] keywords = null;
 	private String[] builtinTypes = null;
 	private String[] preprocessorKeywords = null;
-	
-	
+
 	/**
 	 * @throws NullPointerException if either parameter is null
 	 */
 	public CLanguageKeywords(ParserLanguage language, IScannerExtensionConfiguration config) {
-		if(language == null)
+		if (language == null)
 			throw new NullPointerException("language is null"); //$NON-NLS-1$
-		if(config == null)
+		if (config == null)
 			throw new NullPointerException("config is null"); //$NON-NLS-1$
 		
 		this.language = language;
 		this.config = config;
 	}
-
 	
 	public String[] getKeywords() {
-		if(keywords == null) {
+		if (keywords == null) {
 			Set<String> keywordSet = new HashSet<String>(KeywordSets.getKeywords(KeywordSetKey.KEYWORDS, language));
-			
 			CharArrayIntMap additionalKeywords = config.getAdditionalKeywords();
 			if (additionalKeywords != null) {
 				for (Iterator<char[]> iterator = additionalKeywords.toList().iterator(); iterator.hasNext(); ) {
@@ -67,20 +63,17 @@ public class CLanguageKeywords implements ICLanguageKeywords {
 		}
 		return keywords;
 	}
-
-
 	
 	public String[] getBuiltinTypes() {
-		if(builtinTypes == null) {
+		if (builtinTypes == null) {
 			Set<String> types = KeywordSets.getKeywords(KeywordSetKey.TYPES, language);
 			builtinTypes = types.toArray(new String[types.size()]);
 		}
 		return builtinTypes;
 	}
 
-
 	public String[] getPreprocessorKeywords() {
-		if(preprocessorKeywords == null) {
+		if (preprocessorKeywords == null) {
 			Set<String> keywords = new HashSet<String>(KeywordSets.getKeywords(KeywordSetKey.PP_DIRECTIVE, language));
 			CharArrayIntMap additionalKeywords= config.getAdditionalPreprocessorKeywords();
 			if (additionalKeywords != null) {
@@ -93,6 +86,4 @@ public class CLanguageKeywords implements ICLanguageKeywords {
 		}
 		return preprocessorKeywords;
 	}
-	
-	
 }

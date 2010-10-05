@@ -4648,30 +4648,6 @@ public class AST2TemplateTests extends AST2BaseTest {
 		parseAndCheckBindings(code);
 	}		
 
-	//	template<typename... Args> void f(Args... args); // #1
-	//	template<typename T1, typename... Args> void f(T1 a1, Args... args); // #2
-	//	template<typename T1, typename T2> void f(T1 a2, T2 a2); // #3
-	//  void test() {
-	//	  f(); 			// calls #1
-	//	  f(1, 2, 3); 	// calls #2
-	//	  f(1, 2); 		// calls #3; non-variadic template #3 is
-	//	}				// more specialized than the variadic templates #1 and #2
-	public void testVariadicTemplateExamples_280909o() throws Exception {
-		final String code= getAboveComment();
-		parseAndCheckBindings(code);
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
-		ICPPFunction f1= bh.assertNonProblem("f(Args... args)", 1);
-		ICPPFunction f2= bh.assertNonProblem("f(T1 a1, Args... args)", 1);
-		ICPPFunction f3= bh.assertNonProblem("f(T1 a2, T2 a2)", 1);
-		
-		ICPPTemplateInstance x= bh.assertNonProblem("f()", 1);
-		assertSame(f1, x.getTemplateDefinition());
-		x= bh.assertNonProblem("f(1, 2, 3)", 1);
-		assertSame(f2, x.getTemplateDefinition());
-		x= bh.assertNonProblem("f(1, 2)", 1);
-		assertSame(f3, x.getTemplateDefinition());
-	}		
-
 	//	template<typename... Types> struct Tuple { };
 	//  void test() {
 	//	  Tuple<> t0; // Types contains no arguments
@@ -4701,7 +4677,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 
 	//	template<typename... Types>	void f(Types... rest);
 	//	template<typename... Types> void g(Types... rest) {
-	//	   f(&rest...); // ��&rest...�� is a pack expansion, ��&rest�� is its pattern
+	//	   f(&rest...); // '&rest...' is a pack expansion, '&rest' is its pattern
 	//	}
 	public void testVariadicTemplateExamples_280909r() throws Exception {
 		final String code= getAboveComment();
@@ -4723,10 +4699,10 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	template<typename... Args> void f(Args... args) {}
 	//	template<typename... Args> void h(Args... args) {}
 	//	template<typename... Args> void g(Args... args) {
-	//	  f(const_cast<const Args*>(&args)...); // okay: ��Args�� and ��args�� are expanded
+	//	  f(const_cast<const Args*>(&args)...); // okay: 'Args' and 'args' are expanded
 	//	  f(5 ...); // error: pattern does not contain any parameter packs
-	//	  f(args); // error: parameter pack �args� is not expanded
-	//	  f(h(args...) + args...); // okay: first ��args�� expanded within h, second ��args�� expanded within f.
+	//	  f(args); // error: parameter pack 'args' is not expanded
+	//	  f(h(args...) + args...); // okay: first 'args' expanded within h, second 'args' expanded within f.
 	//	}
 	public void testVariadicTemplateExamples_280909s() throws Exception {
 		final String code= getAboveComment();

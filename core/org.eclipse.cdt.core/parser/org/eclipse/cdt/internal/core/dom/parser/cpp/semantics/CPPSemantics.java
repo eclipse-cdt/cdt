@@ -1792,7 +1792,7 @@ public class CPPSemantics {
 	        } else {
 	        	if (obj == null) {
 	        		obj = temp;
-	        	} else if (obj == temp) {
+	        	} else if (obj.equals(temp)) {
 	        	    // Ok, delegates are synonyms.
 	        	} else {
 	        		int c = compareByRelevance(data, obj, temp);

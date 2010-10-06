@@ -9,7 +9,6 @@ mkdir ws2_user
 cd ws2_user
 ln -s `pwd` $HOME/ws2
 ln -s /home/data/httpd/download.eclipse.org/dsdp/tm $HOME/downloads-tm
-cp -R ../ws2/IBMJava2-ppc-142 .
 wget -O setup.sh "http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.rse/releng/org.eclipse.rse.build/setup.sh?rev=HEAD&cvsroot=DSDP_Project&content-type=text/plain"
 chmod a+x setup.sh
 ./setup.sh

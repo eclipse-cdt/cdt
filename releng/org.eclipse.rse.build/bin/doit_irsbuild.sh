@@ -115,10 +115,10 @@ if [ -f package.count -a "$FILES" != "" ]; then
     #DO_SIGN=1
   fi
   
-  if [ "$DO_SIGN" = "1" ]; then
+  #if [ "$DO_SIGN" = "1" ]; then
     #sign the zipfiles
     #${mydir}/batch_sign.sh `pwd`
-  fi
+  #fi
 
   if [ ${buildType} = N -a -d ../N.latest ]; then
     #update the doc server

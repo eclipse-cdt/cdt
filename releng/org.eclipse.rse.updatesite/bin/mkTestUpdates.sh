@@ -62,9 +62,9 @@ case ${SITEDIR} in
   3.3) DO_STATS=1 ;;
 esac
 if [ ${TYPE} = test ]; then
-    echo "Working on test update site"
     TPTYPE="${VERSION} Test"
     TPVERSION="${TPVERSION} ${TPTYPE}"
+    echo "Working on ${TPVERSION} update site"
     REL=`ls $HOME/ws2/working/package | sort | tail -1`
     if [ "$REL" != "" ]; then
       echo "Checking new Updates from $REL"
@@ -155,16 +155,17 @@ if [ ${TYPE} = test ]; then
     #	$HOME/ws2/jarprocessor/jarprocessor.jar \
 	#	-outputDir $SITE -processAll -repack $SITE
 elif [ ${TYPE} = testSigned ]; then
-    echo "Working on signed update site"
     TPTYPE="${VERSION} Signed Test"
     TPVERSION="${TPVERSION} ${TPTYPE}"
-    echo "Signing jars from test update site (expecting conditioned jars)..."
+    echo "Working on ${TPVERSION} update site"
+    echo "Signing jars from ${SITE}/../testUpdates (expecting conditioned jars)..."
     STAGING=/home/data/httpd/download-staging.priv/dsdp/tm
     stamp=`date +'%Y%m%d-%H%M'`
     if [ -d ${STAGING} -a -d ${SITE}/../testUpdates ]; then
       #get jars from testUpdates, sign them and put them here
       mkdir ${SITE}/features.${stamp}
       mkdir -p ${STAGING}/updates.${stamp}/features
+      chmod -R g+w ${STAGING}/updates.${stamp}
       cp -R ${SITE}/../testUpdates/features/*.jar ${STAGING}/updates.${stamp}/features
       cd ${STAGING}/updates.${stamp}/features
       for x in `ls *.jar`; do
@@ -204,6 +205,7 @@ elif [ ${TYPE} = testSigned ]; then
         rmdir ${STAGING}/updates.${stamp}/features
         mkdir ${SITE}/plugins.${stamp}
         mkdir -p ${STAGING}/updates.${stamp}/plugins
+        chmod -R g+w ${STAGING}/updates.${stamp}
         cp ${SITE}/../testUpdates/plugins/*.jar ${STAGING}/updates.${stamp}/plugins
         cd ${STAGING}/updates.${stamp}/plugins
         for x in `ls *.jar`; do
@@ -276,9 +278,9 @@ elif [ ${TYPE} = testSigned ]; then
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
 elif [ ${TYPE} = milestone ]; then
-    echo "Working on ${VERSION} milestone update site"
     TPTYPE="${VERSION} Milestone"
     TPVERSION="${TPVERSION} ${TPTYPE}"
+    echo "Working on ${TPVERSION} update site"
     echo "Expect that you copied your features and plugins yourself"
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
@@ -302,9 +304,9 @@ being contributed to the Galileo coordinated release train (Eclipse 3.5.x).' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
 elif [ ${TYPE} = interim ]; then
-    echo "Working on ${VERSION} interim update site"
     TPTYPE="${VERSION} Interim"
     TPVERSION="${TPVERSION} ${TPTYPE}"
+    echo "Working on ${TPVERSION} update site"
     echo "Expect that you copied your features and plugins yourself"
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
@@ -328,10 +330,10 @@ to test them before going live.' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
 elif [ `basename $SITE` = 3.0 ]; then
-    echo "Working on 3.0 update site"
     TPTYPE="3.0"
     TPVERSION="${TPVERSION} ${TPTYPE}"
     TYPE=official
+    echo "Working on ${TPVERSION} update site"
     echo "Expect that you copied your features and plugins yourself"
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
@@ -355,10 +357,10 @@ being contributed to the Ganymede coordinated release train (Eclipse 3.4).' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
 elif [ `basename $SITE` = 3.1 ]; then
-    echo "Working on 3.1 update site"
     TPTYPE="3.1"
     TPVERSION="${TPVERSION} ${TPTYPE}"
     TYPE=official
+    echo "Working on ${TPVERSION} update site"
     echo "Expect that you copied your features and plugins yourself"
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
@@ -382,10 +384,10 @@ being contributed to the Galileo coordinated release train (Eclipse 3.5).' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
 elif [ `basename $SITE` = 3.2 ]; then
-    echo "Working on 3.2 update site"
     TPTYPE="3.2"
     TPVERSION="${TPVERSION} ${TPTYPE}"
     TYPE=official
+    echo "Working on ${TPVERSION} update site"
     echo "Expect that you copied your features and plugins yourself"
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
@@ -485,6 +487,8 @@ done
 
 if [ x${DO_STATS} = x1 ]; then
   echo "Creating P2 metadata with download stats..."
+  # Sonatype / Tycho app for generating p2 download stats
+  # See https://bugs.eclipse.org/bugs/show_bug.cgi?id=310132
   #  -application org.eclipse.equinox.p2.publisher.UpdateSitePublisher \
   #CMD="java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
   #  -p2.statsTrackedBundles org.eclipse.rse.sdk,org.eclipse.dstore.core,org.eclipse.rse.core,org.eclipse.rse.useractions,org.eclipse.rse.examples.tutorial,org.eclipse.rse.tests,org.eclipse.tm.rapi,org.eclipse.tm.discovery,org.eclipse.tm.terminal,org.eclipse.tm.terminal.view,org.eclipse.tm.terminal.local \
@@ -497,7 +501,7 @@ if [ x${DO_STATS} = x1 ]; then
     -p2.statsURI http://download.eclipse.org/stats/dsdp/tm \
     -p2.statsTrackedFeatures org.eclipse.rse.sdk,org.eclipse.rse.dstore,org.eclipse.rse.core,org.eclipse.rse.useractions,org.eclipse.rse.examples,org.eclipse.rse.tests,org.eclipse.rse.wince,org.eclipse.tm.discovery,org.eclipse.tm.terminal.view,org.eclipse.tm.terminal.local \
     -p2.statsTrackedBundles org.eclipse.rse.core,org.eclipse.rse.core.source,org.eclipse.tm.terminal \
-    -p2.statsSuffix _tm320
+    -p2.statsSuffix _tm330
     -vmargs -Xmx256M"
   echo $CMD
   $CMD

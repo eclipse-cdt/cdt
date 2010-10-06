@@ -135,6 +135,17 @@ if [ ! -f ${DROPIN}/eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
   cd ${DROPUP}
 fi
 
+# Sonatype / Tycho app for generating p2 download stats
+# See https://bugs.eclipse.org/bugs/show_bug.cgi?id=310132
+if [ ! -f ${DROPIN}/org.sonatype.tycho.p2.updatesite_0.9.0.201005191712.jar ]; then
+  echo "Getting Download Stats Generator..."
+  cd ${DROPIN}
+  wget "https://bugs.eclipse.org/bugs/attachment.cgi?id=171500" -O addStats_v3.zip
+  unzip -o addStats_v3.zip
+  rm addStats_v3.zip
+  cd ${DROPUP}
+fi
+
 # CDT Runtime
 #CDTREL=6.0.0
 #CDTVER=200902031437

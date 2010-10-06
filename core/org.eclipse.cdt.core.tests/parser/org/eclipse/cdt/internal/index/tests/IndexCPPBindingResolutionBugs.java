@@ -1279,12 +1279,33 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//     char32_t c32;
 	//     f(c16); f(c32);
 	// }
-
 	public void testChar16_Bug319186() throws Exception {
 		IFunction f= getBindingFromASTName("f(c16)", 1);
 		assertEquals("char16_t", ASTTypeUtil.getType(f.getType().getParameterTypes()[0]));
 		
 		f= getBindingFromASTName("f(c32)", 1);
 		assertEquals("char32_t", ASTTypeUtil.getType(f.getType().getParameterTypes()[0]));
+	}
+	
+	//	namespace ns {
+	//		extern int* var;
+	//		void fun();
+	//		typedef int Type;
+	//	}
+	//	using ns::var;
+	//	using ns::fun;
+	//	using ns::Type;
+	
+	//	#include "header.h"
+	//	using namespace ::ns;
+	//	void sabel() {
+	//	  var = 0;
+	//	  fun();
+	//	  Type x;
+	//	}
+	public void test_Bug326778() throws Exception {
+		IVariable v= getBindingFromASTName("var", 0);
+		IFunction f= getBindingFromASTName("fun", 0);
+		ITypedef t= getBindingFromASTName("Type", 0);
 	}
 }

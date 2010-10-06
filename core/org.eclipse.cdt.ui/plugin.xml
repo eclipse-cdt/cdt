@@ -151,6 +151,14 @@
             class="org.eclipse.cdt.internal.ui.filters.MacroDirectiveFilter"
             id="org.eclipse.cdt.ui.COutlinePage.MacroDirectiveFilter">
       </filter>
+      <filter
+            targetId="org.eclipse.cdt.ui.COutlinePage"
+            name="%ForwardDeclarationFilter.label"
+            enabled="false"
+            description="%ForwardDeclarationFilter.description" 
+            class="org.eclipse.cdt.internal.ui.filters.ForwardDeclarationFilter"
+            id="org.eclipse.cdt.ui.COutlinePage.ForwardDeclarationFilter">
+      </filter>
 <!-- Asm Outline Page -->
       <filter
             targetId="org.eclipse.cdt.ui.AsmOutlinePage"

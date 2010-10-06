@@ -4896,6 +4896,55 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame( col.getName(2).resolveBinding(), col.getName(5).resolveBinding() );
 	}
 	
+	//	void f(const int&);
+	//	void f(int&);
+	//	void g(const int&);
+	//	void g(int);
+	//	void h(const int * const&);
+	//	void h(int *);
+	//	void i(int * const &);
+	//	void i(const int *);
+	//	void test() {
+	//		const int ca= 1; int a;
+	//		f(ca); // f(const int&)
+	//		f(a);  // f(int &)
+	//		g(ca); // ambiguous
+	//		g(a);  // ambiguous
+	//		h(&ca); // h(const int * const&)
+	//		h(&a);  // void h(int *)
+	//		i(&ca); // i(const int *)
+	//		i(&a);  // i(int * const &)
+	//	}
+	public void testRankingQualificationConversions_c() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+
+		ICPPFunction f1= bh.assertNonProblem("f(const int&)", 1);
+		ICPPFunction f2= bh.assertNonProblem("f(int&)", 1);
+		ICPPFunction g1= bh.assertNonProblem("g(const int&)", 1);
+		ICPPFunction g2= bh.assertNonProblem("g(int)", 1);
+		ICPPFunction h1= bh.assertNonProblem("h(const int * const&)", 1);
+		ICPPFunction h2= bh.assertNonProblem("h(int *)", 1);
+		ICPPFunction i1= bh.assertNonProblem("i(int * const &)", 1);
+		ICPPFunction i2= bh.assertNonProblem("i(const int *)", 1);
+		
+		ICPPFunction ref;
+		ref= bh.assertNonProblem("f(ca)", 1);
+		assertSame(f1, ref);
+		ref= bh.assertNonProblem("f(a)", 1);
+		assertSame(f2, ref);
+		bh.assertProblem("g(ca)", 1);
+		bh.assertProblem("g(a)", 1);
+		ref= bh.assertNonProblem("h(&ca)", 1);
+		assertSame(h1, ref);
+		ref= bh.assertNonProblem("h(&a)", 1);
+		assertSame(h2, ref);
+		ref= bh.assertNonProblem("i(&ca)", 1);
+		assertSame(i2, ref);
+		ref= bh.assertNonProblem("i(&a)", 1);
+		assertSame(i1, ref);
+	}
+	
 	// namespace n {                   
 	//    namespace m {                
 	//       class A;                  

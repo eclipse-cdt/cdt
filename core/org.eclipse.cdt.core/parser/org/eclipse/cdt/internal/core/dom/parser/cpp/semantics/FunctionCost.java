@@ -155,7 +155,7 @@ class FunctionCost {
 			} else if (!isTemplate && otherIsTemplate) {
 				haveBetter = true;
 			} else if (isTemplate && otherIsTemplate) {
-				int order = CPPTemplates.orderTemplateFunctions(otherAsTemplate, asTemplate);
+				int order = CPPTemplates.orderFunctionTemplates(otherAsTemplate, asTemplate);
 				if (order < 0) {
 					haveBetter= true;	 				
 				} else if (order > 0) {

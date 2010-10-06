@@ -14,14 +14,11 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.addQualifiers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -41,8 +38,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -104,7 +99,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplatePartialSpecialization;
@@ -125,6 +119,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplateSpecializat
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeParameter;
@@ -157,7 +152,7 @@ public class CPPTemplates {
 	private static final int PACK_SIZE_FAIL = -2;
 	private static final int PACK_SIZE_NOT_FOUND = Integer.MAX_VALUE;
 	private static final ICPPFunction[] NO_FUNCTIONS = {};
-
+	
 	/**
 	 * Instantiates a class template with the given arguments. May return <code>null</code>.
 	 */
@@ -1111,10 +1106,9 @@ public class CPPTemplates {
 					ICPPPointerToMemberType ptm = (ICPPPointerToMemberType) typeContainer;
 					IType memberOfClass = ptm.getMemberOfClass();
 					IType newMemberOfClass = instantiateType(memberOfClass, tpMap, packOffset, within);
-					if (!(newMemberOfClass instanceof ICPPClassType) && 
-							!(newMemberOfClass instanceof IBasicType && ((IBasicType) newMemberOfClass).getModifiers() == CPPBasicType.UNIQUE_TYPE_QUALIFIER) &&
-							!(newMemberOfClass instanceof ICPPUnknownBinding)) {
-						newMemberOfClass= memberOfClass;
+					if (!(newMemberOfClass instanceof ICPPClassType || newMemberOfClass instanceof UniqueType 
+							|| newMemberOfClass instanceof ICPPUnknownBinding)) {
+						newMemberOfClass = memberOfClass;
 					}
 					if (newNestedType != nestedType || newMemberOfClass != memberOfClass) {
 						return new CPPPointerToMemberType(newNestedType, newMemberOfClass,
@@ -1580,63 +1574,19 @@ public class CPPTemplates {
 			return fns;
 		
 		final List<ICPPFunction> result= new ArrayList<ICPPFunction>(fns.length);
-		final List<List<IType>> crossProduct= expandOverloadedSets(fnArgs);
 		for (ICPPFunction fn : fns) {
 			if (fn != null) {
 				if (fn instanceof ICPPFunctionTemplate) {
 					ICPPFunctionTemplate fnTmpl= (ICPPFunctionTemplate) fn;
-					for (List<IType> args : crossProduct) {
-						ICPPFunction inst = instantiateForFunctionCall(fnTmpl, tmplArgs, args, argCats, withImpliedObjectArg);
-						if (inst != null)
-							result.add(inst);
-					}
+					ICPPFunction inst = instantiateForFunctionCall(fnTmpl, tmplArgs, fnArgs, argCats, withImpliedObjectArg);
+					if (inst != null)
+						result.add(inst);
 				} else if (!requireTemplate || fn instanceof ICPPUnknownBinding) {
 					result.add(fn);
 				}
 			}
 		}
 		return result.toArray(new ICPPFunction[result.size()]);
-	}
-
-	private static List<List<IType>> expandOverloadedSets(List<IType> fnArgs) {
-		List<List<IType>> result= Collections.singletonList(fnArgs);
-		int i= 0;
-		for (IType arg : fnArgs) {
-			if (arg instanceof FunctionSetType) {				
-				Collection<ICPPFunctionType> targetTypes= getFunctionTypes((FunctionSetType) arg);
-				if (targetTypes.isEmpty())
-					return Collections.emptyList();
-				
-				List<List<IType>> expanded= new ArrayList<List<IType>>(targetTypes.size() * result.size());
-				for (IType targetType : targetTypes) {
-					for (List<IType> orig : result) {
-						ArrayList<IType> copy = new ArrayList<IType>(orig);
-						copy.set(i, new CPPPointerType(targetType));
-						expanded.add(copy);
-					}
-				}
-				result= expanded;
-			}
-			i++;
-		}		
-		return result;
-	}
-
-	private static Collection<ICPPFunctionType> getFunctionTypes(FunctionSetType fst) {
-		final ICPPFunction[] functionSet = fst.getFunctionSet();
-		Set<String> handled= new HashSet<String>();
-		Collection<ICPPFunctionType> result= new ArrayList<ICPPFunctionType>(functionSet.length);
-		for (ICPPFunction f : functionSet) {
-			if (! (f instanceof ICPPFunctionTemplate)) {
-				try {
-					ICPPFunctionType t= f.getType();
-					if (handled.add(ASTTypeUtil.getType(t, true))) 
-						result.add(t);
-				} catch (DOMException e) {
-				}
-			}
-		}
-		return result;
 	}
 
 	private static ICPPFunction instantiateForFunctionCall(ICPPFunctionTemplate template,
@@ -1732,90 +1682,92 @@ public class CPPTemplates {
 		return null;
 	}
 
-	
-	/**
-	 * Transforms a function template for use in partial ordering, as described in the
-	 * spec 14.5.5.2-3
-	 * @param template
-	 * @return
-	 * -for each type template parameter, synthesize a unique type and substitute that for each
-	 * occurrence of that parameter in the function parameter list
-	 * -for each non-type template parameter, synthesize a unique value of the appropriate type and
-	 * substitute that for each occurrence of that parameter in the function parameter list
-	 * for each template template parameter, synthesize a unique class template and substitute that
-	 * for each occurrence of that parameter in the function parameter list
-	 * @throws DOMException
-	 */
-	static private ICPPTemplateArgument[] createArgsForFunctionTemplateOrdering(ICPPTemplateParameter[] paramList)
-			throws DOMException{
-		int size = paramList.length;
-		ICPPTemplateArgument[] args = new ICPPTemplateArgument[size];
-		for (int i = 0; i < size; i++) {
-			ICPPTemplateParameter param = paramList[i];
-			if (param instanceof ICPPTemplateNonTypeParameter) {
-				args[i]= new CPPTemplateArgument(Value.unique(), ((ICPPTemplateNonTypeParameter) param).getType());
-			} else {
-				args[i] = new CPPTemplateArgument(new CPPBasicType(Kind.eUnspecified, CPPBasicType.UNIQUE_TYPE_QUALIFIER));
-			}
-		}
-		return args;
-	}
-
-	static int orderTemplateFunctions(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2)
+	// 14.5.6.2 Partial ordering of function templates
+	static int orderFunctionTemplates(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2)
 			throws DOMException {
-		// 14.5.5.2
-		// A template is more specialized than another if and only if it is at least as specialized as the
-		// other template and that template is not at least as specialized as the first.
-		boolean f1IsAtLeastAsSpecializedAsF2 = isAtLeastAsSpecializedAs(f1, f2);
-		boolean f2IsAtLeastAsSpecializedAsF1 = isAtLeastAsSpecializedAs(f2, f1);
-
-		if (f1IsAtLeastAsSpecializedAsF2 == f2IsAtLeastAsSpecializedAsF1)
+		int s1 = compareSpecialization(f1, f2);
+		int s2 = compareSpecialization(f2, f1);
+		
+		if (s1 == s2)
 			return 0;
-
-		if (f1IsAtLeastAsSpecializedAsF2)
-			return 1;
-
-		return -1;
+		if (s1 < 0 || s2 > 0)
+			return -1;
+		assert s2 < 0 || s1 > 0;
+		return 1;
 	}
 
-	private static boolean isAtLeastAsSpecializedAs(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2) throws DOMException {
-		// mstodo use function-type, parameter-types or return type.
-		// mstodo perform transformations (references, cv-qualifiers)
-		// mstodo if equal, use differences in cv-qualifiers
-		// mstodo special rule for parameter packs.
-		// 14.5.5.2
-		// Using the transformed parameter list, perform argument deduction against the other
-		// function template
-		// The transformed template is at least as specialized as the other if and only if the deduction
-		// succeeds and the deduced parameter types are an exact match.
+	private static ICPPFunction transferFunctionTemplate(ICPPFunctionTemplate f) throws DOMException {
+		final ICPPTemplateParameter[] tpars = f.getTemplateParameters();
+		final int argLen = tpars.length;
 		
-		// Check for parameter packs
-		
-		final ICPPTemplateParameter[] tmplParams1 = f1.getTemplateParameters();
-		ICPPTemplateArgument[] transferArgs = createArgsForFunctionTemplateOrdering(tmplParams1);
-		
-		final int length = transferArgs.length;
-		CPPTemplateParameterMap map = new CPPTemplateParameterMap(length);
-		for (int i = 0; i < length; i++) {
-			map.put(tmplParams1[i], transferArgs[i]);
-		}
-		IBinding transferredTemplate = instantiateFunctionTemplate(f1, transferArgs, map);
-		if (!(transferredTemplate instanceof ICPPFunction))
-			return false;
-		
-		map= new CPPTemplateParameterMap(2);
-		final IType[] transferredParameterTypes = ((ICPPFunction) transferredTemplate).getType().getParameterTypes();
-		if (!TemplateArgumentDeduction.deduceFromFunctionArgs(f2, Arrays.asList(transferredParameterTypes), null, map, true))
-			return false;
-		
-		final int last = tmplParams1.length -1;
-		if (last >= 0 && tmplParams1[last].isParameterPack()) {
-			final ICPPTemplateParameter[] tmplParams2 = f2.getTemplateParameters();
-			if (last < tmplParams2.length && !tmplParams2[last].isParameterPack()) {
-				return false;
+		// Create arguments and map
+		ICPPTemplateArgument[] args = new ICPPTemplateArgument[argLen];
+		CPPTemplateParameterMap map = new CPPTemplateParameterMap(argLen);
+		for (int i = 0; i < argLen; i++) {
+			final ICPPTemplateParameter tpar = tpars[i];
+			final CPPTemplateArgument arg = uniqueArg(tpar);
+			args[i]= arg;
+			if (tpar.isParameterPack()) {
+				map.put(tpar, new ICPPTemplateArgument[] {arg});
+			} else { 
+				map.put(tpar, arg);
 			}
 		}
-		return true;
+
+		IBinding result = instantiateFunctionTemplate(f, args, map);
+		if (result instanceof ICPPFunction)
+			return (ICPPFunction) result;
+		
+		return null;
+	}
+
+	private static CPPTemplateArgument uniqueArg(final ICPPTemplateParameter tpar) throws DOMException {
+		final CPPTemplateArgument arg; 
+		if (tpar instanceof ICPPTemplateNonTypeParameter) {
+			arg = new CPPTemplateArgument(Value.unique(), ((ICPPTemplateNonTypeParameter) tpar).getType());
+		} else {
+			arg = new CPPTemplateArgument(new UniqueType(tpar.isParameterPack()));
+		}
+		return arg;
+	}
+
+	private static int compareSpecialization(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2) throws DOMException {
+		ICPPFunction transF1 = transferFunctionTemplate(f1);
+		if (transF1 == null)
+			return -1;
+				
+		// mstodo use function-type, parameter-types or return type.
+		IType[] pars= f2.getType().getParameterTypes();
+		IType[] args = transF1.getType().getParameterTypes();
+		boolean nonStaticMember1= isNonStaticMember(f1);
+		boolean nonStaticMember2= isNonStaticMember(f2);
+		if (nonStaticMember1 != nonStaticMember2) {
+			if (nonStaticMember1) {
+				args= addImplicitObjectType(args, (ICPPMethod) f1);
+			} else {
+				pars= addImplicitObjectType(pars, (ICPPMethod) f2);
+			}
+		}
+		return TemplateArgumentDeduction.deduceForPartialOrdering(f2.getTemplateParameters(), pars, args);
+	}
+
+	private static boolean isNonStaticMember(ICPPFunctionTemplate f) {
+		return (f instanceof ICPPMethod) && !((ICPPMethod) f).isStatic();
+	}
+
+	private static IType[] addImplicitObjectType(IType[] types, ICPPMethod f1) {
+		ICPPClassType ct = f1.getClassOwner();
+		if (ct != null) {
+			try {
+				ICPPFunctionType ft = f1.getType();
+				IType[] result= new IType[types.length+1];
+				result[0]= new CPPReferenceType(addQualifiers(ct, ft.isConst(), ft.isVolatile()), false);
+				System.arraycopy(types, 0, result, 1, types.length);
+				return result;
+			} catch (DOMException e) {
+			}
+		}
+		return types;
 	}
 
 	private static ICPPClassTemplatePartialSpecialization findPartialSpecialization(ICPPClassTemplate ct,
@@ -1918,21 +1870,25 @@ public class CPPTemplates {
 		final ICPPTemplateArgument[] targs2 = f2.getTemplateArguments();
 		if (targs1.length != targs2.length)
 			return false;
-
-		// transfer arguments of specialization 1
-		final ICPPTemplateArgument[] helperArgs = createArgsForFunctionTemplateOrdering(tpars1);
-		final CPPTemplateParameterMap transferMap= new CPPTemplateParameterMap(5);
-		for (int i = 0; i < tpars1.length; i++) {
-			transferMap.put(tpars1[i], helperArgs[i]);
+		
+		// Transfer arguments of specialization 1
+		final int tpars1Len = tpars1.length;
+		ICPPTemplateArgument[] args = new ICPPTemplateArgument[tpars1Len];
+		final CPPTemplateParameterMap transferMap= new CPPTemplateParameterMap(tpars1Len);
+		for (int i = 0; i < tpars1Len; i++) {
+			final ICPPTemplateParameter param = tpars1[i];
+			final CPPTemplateArgument arg = uniqueArg(param);
+			args[i]= arg;
+			transferMap.put(param, arg);
 		}
 		final ICPPTemplateArgument[] transferredArgs1 = instantiateArguments(targs1, transferMap, -1, null);
 		
-		// deduce arguments for specialization 2
+		// Deduce arguments for specialization 2
 		final CPPTemplateParameterMap deductionMap= new CPPTemplateParameterMap(2);
 		if (!TemplateArgumentDeduction.fromTemplateArguments(tpars2, targs2, transferredArgs1, deductionMap))
 			return false;
 		
-		// compare
+		// Compare
 		for (int i = 0; i < targs2.length; i++) {
 			ICPPTemplateArgument transferredArg2= instantiateArgument(targs2[i], deductionMap, -1, null);
 			if (!transferredArg2.isSameValue(transferredArgs1[i]))

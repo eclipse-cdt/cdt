@@ -64,7 +64,7 @@ public class ASTCPPSpecDefectTests extends AST2BaseTest {
 	//	void test() {
 	//		fp(f0);  
 	//	}
-	public void testADLForOverloadSet_324842() throws Exception {
+	public void test33_ADLForOverloadSet_324842() throws Exception {
 		parseAndCheckBindings();
 	}
 	
@@ -73,7 +73,15 @@ public class ASTCPPSpecDefectTests extends AST2BaseTest {
 	//	struct A {
 	//	  friend A operator + <>(A&);
 	//	};
-	public void testTemplateArgForOperator() throws Exception {
+	public void test38_templateArgForOperator() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <class T1, class ...Z> class S; // #1
+	//	template <class T1, class ...Z> class S<T1, const Z&...> {}; // #2
+	//	template <class T1, class T2> class S<T1, const T2&> {};; // #3
+	//	S<int, const int&> s; // both #2 and #3 match; #3 is more specialized
+	public void test692_partialOrdering() throws Exception {
 		parseAndCheckBindings();
 	}
 

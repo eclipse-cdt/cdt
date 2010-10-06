@@ -35,6 +35,10 @@ public enum CVQualifier {
 		return other == _ || this == other || this == cv;
 	}
 
+	public boolean isMoreQualifiedThan(CVQualifier other) {
+		return this != other && (other == _ || this == cv);
+	}
+
 	public CVQualifier remove(CVQualifier arg) {
 		if (this == arg)
 			return _;

@@ -38,7 +38,7 @@ public class Cost {
 		USER_DEFINED_CONVERSION, ELLIPSIS_CONVERSION, NO_MATCH
 	}
 	enum ReferenceBinding {
-		RVALUE_REF_BINDS_RVALUE, LVALUE_REF, OTHER
+		RVALUE_REF_BINDS_RVALUE, LVALUE_REF, OTHER_REF, NO_REF
 	}
 
 	public static final Cost NO_CONVERSION = new Cost(null, null, Rank.NO_MATCH) {
@@ -99,7 +99,7 @@ public class Cost {
 		source = s;
 		target = t;
 		fRank= rank;
-		fReferenceBinding= ReferenceBinding.OTHER;
+		fReferenceBinding= ReferenceBinding.NO_REF;
 	}
 
 	public final Rank getRank() {
@@ -207,7 +207,11 @@ public class Cost {
 				return -1;
 		}
 
+		// Top level cv-qualifiers are compared only for reference bindings.
 		int qdiff= fQualificationAdjustments ^ other.fQualificationAdjustments;
+		if (fReferenceBinding == ReferenceBinding.NO_REF || other.fReferenceBinding == ReferenceBinding.NO_REF)
+			qdiff &= ~3;
+		
 		if (qdiff != 0) {
 			if ((fQualificationAdjustments & qdiff) == 0)
 				return -1;

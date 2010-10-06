@@ -446,7 +446,7 @@ public class Value implements IValue {
 			unknownSigs.put(sig, idx);
 			unknowns.add(unknown);
 		}
-		return REFERENCE_CHAR + idx.toString(); 
+		return "" + REFERENCE_CHAR + idx.toString();  //$NON-NLS-1$
 	}
 	
 	private static Object evaluateValue(IValue cv, Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns) throws UnknownValueException {
@@ -536,7 +536,7 @@ public class Value implements IValue {
 		case IASTUnaryExpression.op_minus:
 		case IASTUnaryExpression.op_tilde:
 		case IASTUnaryExpression.op_not:
-			return UNARY_OP_CHAR + unaryOp + SEPARATOR + value.toString(); 
+			return "" + UNARY_OP_CHAR + unaryOp + SEPARATOR + value.toString();  //$NON-NLS-1$
 		}
 		throw UNKNOWN_EX;
 	}
@@ -634,7 +634,7 @@ public class Value implements IValue {
 			throw UNKNOWN_EX;
 		}
 		
-		return BINARY_OP_CHAR + op + SEPARATOR + o1.toString() + SEPARATOR + o2.toString();
+		return "" + BINARY_OP_CHAR + op + SEPARATOR + o1.toString() + SEPARATOR + o2.toString(); //$NON-NLS-1$
 	}
 	
 	public static IValue reevaluate(IValue val, int packOffset, IBinding[] resolvedUnknowns, ICPPTemplateParameterMap map, int maxdepth) {
@@ -699,7 +699,7 @@ public class Value implements IValue {
 				}
 				return po;
 			}
-			return CONDITIONAL_CHAR + SEPARATOR + cond.toString() + SEPARATOR + po.toString() + SEPARATOR + neg.toString();
+			return "" + CONDITIONAL_CHAR + SEPARATOR + cond.toString() + SEPARATOR + po.toString() + SEPARATOR + neg.toString(); //$NON-NLS-1$
 		case REFERENCE_CHAR: 
 			int num= parseNonNegative(buf, idx+1);
 			final IBinding[] resolvedUnknowns= reeval.fResolvedUnknown;

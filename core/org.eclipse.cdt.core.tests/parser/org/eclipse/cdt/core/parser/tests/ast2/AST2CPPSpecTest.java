@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -4246,7 +4248,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// b.f(); //Calls X::f()
 	// }
 	public void test13_3_3_2s3b() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		String[] problems= {"g"};
+		parse(getAboveComment(), ParserLanguage.CPP, problems);
 	}
 
 	// struct A {
@@ -4670,7 +4673,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// template<class P> friend class frd;
 	// // ...
 	// };
-	public void test14_5_3s1() throws Exception { 
+	public void test14_5_4s1() throws Exception { 
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -4689,7 +4692,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// };
 	// }
 	// }
-	public void test14_5_3s2() throws Exception {
+	public void test14_5_4s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
@@ -4697,7 +4700,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// template<class T> friend class B; // OK
 	// template<class T> friend void f(T){  } // OK
 	// };
-	public void test14_5_3s3() throws Exception {
+	public void test14_5_4s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -4707,7 +4710,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// };
 	// template<class T> struct A { X::Y ab; }; // OK
 	// template<class T> struct A<T*> { X::Y ab; }; // OK
-	public void test14_5_3s4() throws Exception {
+	public void test14_5_4s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -4719,7 +4722,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// template<class T> friend struct A<T>::B;
 	// template<class T> friend void A<T>::f();
 	// };
-	public void test14_5_3s6() throws Exception {
+	public void test14_5_4s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -4731,7 +4734,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// A<char>::B<int*> abcip; // uses #2
 	// A<short>::B<int*> absip; // uses #3
 	// A<char>::B<int> abci; // uses #1
-	public void test14_5_4_3s2() throws Exception {
+	public void test14_5_5_3s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -4740,13 +4743,13 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// template<class T1, class T2, int I> class A<T1*, T2, I> { }; // #3
 	// template<class T> class A<int, T*, 5> { }; // #4
 	// template<class T1, class T2, int I> class A<T1, T2*, I> { }; // #5
-	public void test14_5_4s4() throws Exception {
+	public void test14_5_5s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// template <int I, int J> struct B {};
 	// template <int I> struct B<I, I> {}; // OK
-	public void test14_5_4s9b() throws Exception {
+	public void test14_5_5s9b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -4759,7 +4762,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// A<int, int*, 1> a2; // uses #2, T is int, I is 1
 	// A<int, char*, 5> a3; // uses #4, T is char
 	// A<int, char*, 1> a4; // uses #5, T1 is int, T2 is char, I is 1
-	public void test14_5_4_1s2a() throws Exception {
+	public void test14_5_5_1s2a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -4769,7 +4772,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// template<class T>                   class A<int, T*, 5> { }; // #4
 	// template<class T1, class T2, int I> class A<T1, T2*, I> { }; // #5
 	// A<int*, int*, 2> a5; // ambiguous: matches #3 and #5 : expect problem 
-	public void test14_5_4_1s2b() throws Exception {
+	public void test14_5_5_1s2b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 1);
 	}
 
@@ -4778,7 +4781,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// template<int I>                 class X<I, I, int> { }; // #2
 	// template<int I, int J> void f(X<I, J, int>); // #A
 	// template<int I>        void f(X<I, I, int>); // #B
-	public void test14_5_4_2s2() throws Exception {
+	public void test14_5_5_2s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -4809,13 +4812,13 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// a2.f(); //illformed, no definition of f for A<T,2>
 	// // the primary template is not used here
 	// }
-	public void test14_5_4_3s1() throws Exception {
+	public void test14_5_5_3s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
 	// template<class T> class Array { };
 	// template<class T> void sort(Array<T>&);
-	public void test14_5_5s1() throws Exception {
+	public void test14_5_6s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -4826,7 +4829,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// f(p); // call 
 	// // f<int>(int*) 
 	// }
-	public void test14_5_5_1s1a() throws Exception {
+	public void test14_5_6_1s1a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 	// // file2.c
@@ -4836,7 +4839,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// f(p); // call
 	// // f<int*>(int*)
 	// }
-	public void test14_5_5_1s1b() throws Exception {
+	public void test14_5_6_1s1b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -4846,7 +4849,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// template <int I> void f/*2*/(A<I>, A<I+10>);
 	// // Guaranteed to be different
 	// template <int I> void f/*3*/(A<I>, A<I+11>);
-	public void test14_5_5_1s8a() throws Exception {
+	public void test14_5_6_1s8a() throws Exception {
 		final String content= getAboveComment();
 		IASTTranslationUnit tu= parse(content, ParserLanguage.CPP, true, 0);
 		BindingAssertionHelper bh= new BindingAssertionHelper(content, true);
@@ -4860,11 +4863,33 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// // Illformed, no diagnostic required
 	// template <int I> void f(A<I>, A<I+10>);
 	// template <int I> void f(A<I>, A<I+1+2+3+4>);
-	public void test14_5_5_1s8b() throws Exception {
+	public void test14_5_6_1s8b() throws Exception {
 		//test is only for syntax, semantics are not checked here.
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
+	//	struct A { };
+	//	template<class T> struct B {
+	//		template<class R> int operator*(R&); // #1
+	//	};
+	//	template<class T, class R> int operator*(T&, R&); // #2
+	//	// The declaration of B::operator* is transformed into the equivalent of
+	//	// template<class R> int operator*(B<A>&, R&); // #1a
+	//	int main() {
+	//		A a;
+	//		B<A> b;
+	//		b * a; // calls #1a
+	//	}
+	public void test14_5_6_2s3() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IBinding op1= bh.assertNonProblem("operator*(R&)", -4);
+		IASTImplicitName name= bh.assertImplicitName("* a", 1, ICPPFunction.class);
+		ICPPTemplateInstance inst= (ICPPTemplateInstance) name.resolveBinding();
+		ICPPSpecialization templateSpecialization = (ICPPSpecialization) inst.getTemplateDefinition();
+		assertSame(op1, templateSpecialization.getSpecializedBinding());
+	}
+	
 	// template<class T> struct A { A(); };
 	// template<class T> void f(T);
 	// template<class T> void f(T*);
@@ -4883,7 +4908,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// const A<int> z2;
 	// h(z2); // h(const T&) is called because h(A<T>&) is not callable
 	// }
-	public void test14_5_5_2s5() throws Exception {
+	public void test14_5_6_2s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
@@ -4896,7 +4921,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// f(ip); //calls #2
 	// g(ip); //calls #4
 	// }
-	public void test14_5_5_2s6() throws Exception {
+	public void test14_5_6_2s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -5657,7 +5682,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	
 	// template <class T> int f(T[5]);
 	// int I = f<int>(0);
-	// int j = f<void>(0); // invalid array
+	// int j = f<void>(0); // invalid array // also no error with gcc
 	public void _test14_8_2s8b() throws Exception {
 		final String content= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(content, true);
@@ -5829,7 +5854,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	//	char g(char);
 	//	template <class T> T g(T);
 	//	int i = f(1, g); // calls f(int, int (*)(int))
-	public void _test14_8_2_1s9() throws Exception {
+	public void test14_8_2_1s9() throws Exception {
 		final String code= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		ICPPTemplateInstance inst;
@@ -5962,13 +5987,13 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	//		f(i); // calls f<int&>(int&), i.e., #1
 	//		f(0); // calls f<int>(int&&), i.e., #2
 	//	}
-	public void _test14_8_2_5s10() throws Exception {
+	public void test14_8_2_5s10() throws Exception {
 		final String code= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		ICPPTemplateInstance inst;
 		inst= bh.assertNonProblem("f(i)", 1);
 		assertEquals("<int &>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
-		inst= bh.assertNonProblem("f(i)", 1);
+		inst= bh.assertNonProblem("f(0)", 1);
 		assertEquals("<int>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 	}
 
@@ -6021,7 +6046,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	//		g<0>(a1); // OK
 	//		f(a1, a2); // OK
 	//	}
-	public void _test14_8_2_5s16a() throws Exception {
+	public void test14_8_2_5s16a() throws Exception {
 		final String code= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		ICPPTemplateInstance inst;
@@ -6069,7 +6094,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	//		B<1> b;
 	//		g(b); // OK: cv-qualifiers are ignored on template parameter types
 	//	}
-	public void _test14_8_2_5s17() throws Exception {
+	public void test14_8_2_5s17() throws Exception {
 		final String code= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		ICPPTemplateInstance inst;
@@ -6684,7 +6709,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 
 	// template<class T1, class T2, int I> class A<T1, T2, I> { }; // error
-	public void test14_5_4s5() throws Exception {
+	public void test14_5_5s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
@@ -6697,7 +6722,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// template<class T> template<class T2>
 	// struct A<T>::C::B<T2*> { };
 	// A<short>::C::B<int*> absip; // uses partial specialization
-	public void test14_5_4s6() throws Exception {
+	public void test14_5_5s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -6710,14 +6735,14 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// }
 	// A<int,int*> a; // uses the partial specialization, which is found through
 	// // the using declaration which refers to the primary template
-	public void test14_5_4s7() throws Exception {
+	public void test14_5_5s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// template<class T> void f();
 	// template<int I> void f(); // OK: overloads the first template
 	// // distinguishable with an explicit template argument list
-	public void test14_5_5_1s4() throws Exception {
+	public void test14_5_6_1s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -6725,7 +6750,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// template <int I, int J> A<I+J> f/*1*/(A<I>, A<J>); // #1
 	// template <int K, int L> A<K+L> f/*2*/(A<K>, A<L>); // same as #1
 	// template <int I, int J> A<I-J> f/*3*/(A<I>, A<J>); // different from #1
-	public void test14_5_5_1s5() throws Exception { 
+	public void test14_5_6_1s5() throws Exception { 
 		final String content= getAboveComment();
 		IASTTranslationUnit tu= parse(content, ParserLanguage.CPP, true, 0);
 		BindingAssertionHelper bh= new BindingAssertionHelper(content, true);
@@ -6739,7 +6764,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// template <int I> class A;
 	// template <int I, int J> void f/*1*/(A<I+J>); // #1
 	// template <int K, int L> void f/*2*/(A<K+L>); // same as #1
-	public void test14_5_5_1s6() throws Exception { 
+	public void test14_5_6_1s6() throws Exception { 
 		final String content= getAboveComment();
 		IASTTranslationUnit tu= parse(content, ParserLanguage.CPP, true, 0);
 		BindingAssertionHelper bh= new BindingAssertionHelper(content, true);

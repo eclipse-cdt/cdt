@@ -31,6 +31,10 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 		fMap= new ObjectMap(initialSize);
 	}
 
+	public CPPTemplateParameterMap(CPPTemplateParameterMap other) {
+		fMap= (ObjectMap) other.fMap.clone();
+	}
+
 	/**
 	 * Returns whether the map contains the given parameter
 	 */

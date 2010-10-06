@@ -2294,7 +2294,7 @@ public class CPPSemantics {
 	    	return resolveFunctionDeclaration(data, fns);
 
 		// Reduce our set of candidate functions to only those who have the right number of parameters
-		final IType[] argTypes = data.getFunctionArgumentTypes();
+	    final IType[] argTypes = data.getFunctionArgumentTypes();
 		ICPPFunction[] tmp= selectByArgumentCount(data, fns);
 	    tmp= CPPTemplates.instantiateForFunctionCall(data.astName, tmp, 
 	    		Arrays.asList(argTypes), 
@@ -2820,7 +2820,7 @@ public class CPPSemantics {
     				if (inst != null) {
     					int cmp= -1;
     					if (result != null) {
-    						cmp= CPPTemplates.orderTemplateFunctions(resultTemplate, template);
+    						cmp= CPPTemplates.orderFunctionTemplates(resultTemplate, template);
     						if (cmp == 0) 
     							cmp= compareByRelevance(tu, resultTemplate, template);
     					}

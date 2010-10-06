@@ -95,8 +95,8 @@ public class Conversions {
 		final IType cv1T1= getNestedType(target, TDEF | REF);
 		final IType T1= getNestedType(cv1T1, TDEF | REF | ALLCVQ);
 		
-		ReferenceBinding refBindingType= ReferenceBinding.OTHER;
 		if (target instanceof ICPPReferenceType) {
+			ReferenceBinding refBindingType= ReferenceBinding.OTHER_REF;
 			// [8.5.3-5] initialization of a reference 
 			final boolean isLValueRef= !((ICPPReferenceType) target).isRValueReference();
 			final IType cv2T2= exprType;
@@ -239,8 +239,8 @@ public class Conversions {
 			if (!isImpliedObject && ctx != Context.REQUIRE_DIRECT_BINDING) {
 				if (isReferenceRelated(T1, T2) < 0 || compareQualifications(cv1T1, cv2T2) >= 0) {
 					Cost cost= nonReferenceConversion(valueCat, cv2T2, T1, udc, false);
-					if (!isImplicitWithoutRefQualifier && cost.converts()) {
-						cost.setReferenceBinding(isLValueRef ? ReferenceBinding.LVALUE_REF : ReferenceBinding.RVALUE_REF_BINDS_RVALUE);
+					if (cost.converts()) {
+						cost.setReferenceBinding(refBindingType);
 					}
 					return cost;
 				}
@@ -249,11 +249,7 @@ public class Conversions {
 		} 
 		
 		// Non-reference binding
-		Cost cost= nonReferenceConversion(valueCat, exprType, T1, udc, isImpliedObject);
-		if (cost.converts()) {
-			cost.setReferenceBinding(refBindingType);
-		}
-		return cost;
+		return nonReferenceConversion(valueCat, exprType, T1, udc, isImpliedObject);
 	}
 
 	/**
@@ -279,6 +275,8 @@ public class Conversions {
 					IType implicitParameterType= CPPSemantics.getImplicitParameterType(op, ft.isConst(), ft.isVolatile());
 					Cost udcCost= isReferenceCompatible(getNestedType(implicitParameterType, TDEF | REF), cv2T2, true); // expression type to implicit object type
 					if (udcCost != null) {
+						// Make sure top-level cv-qualifiers are compared
+						udcCost.setReferenceBinding(ReferenceBinding.LVALUE_REF);
 						FunctionCost udcFuncCost= new FunctionCost(op, udcCost);
 						int cmp= udcFuncCost.compareTo(null, bestUdcCost);
 						if (cmp <= 0) {
@@ -729,6 +727,8 @@ public class Conversions {
 						IType implicitType= CPPSemantics.getImplicitParameterType(op, ft.isConst(), ft.isVolatile());
 						final Cost udcCost = isReferenceCompatible(getNestedType(implicitType, TDEF | REF), source, true);
 						if (udcCost != null) {
+							// Make sure top-level cv-qualifiers are compared
+							udcCost.setReferenceBinding(ReferenceBinding.LVALUE_REF);
 							FunctionCost c1= new FunctionCost(op, udcCost);
 							int cmp= c1.compareTo(null, cost1);
 							if (cmp <= 0) {
@@ -783,6 +783,8 @@ public class Conversions {
 					IType implicitType= CPPSemantics.getImplicitParameterType(op, ftype.isConst(), ftype.isVolatile());
 					final Cost udcCost = isReferenceCompatible(getNestedType(implicitType, TDEF | REF), source, true);
 					if (udcCost != null) {
+						// Make sure top-level cv-qualifiers are compared
+						udcCost.setReferenceBinding(ReferenceBinding.LVALUE_REF);
 						FunctionCost c1= new FunctionCost(op, udcCost);
 						int cmp= c1.compareTo(null, cost1);
 						if (cmp <= 0) {
@@ -868,7 +870,7 @@ public class Conversions {
 					IASTLiteralExpression lit= (IASTLiteralExpression) val;
 					if (lit.getKind() == IASTLiteralExpression.lk_string_literal) {
 						source= new CPPPointerType(srcTarget, false, false);
-						cost.setQualificationAdjustment(getCVQualifier(targetPtrTgt).isVolatile() ? 2 : 1);
+						cost.setQualificationAdjustment((getCVQualifier(targetPtrTgt).isVolatile() ? 2 : 1) << 2);
 					}
 				}
 			}
@@ -886,11 +888,11 @@ public class Conversions {
 		boolean constInEveryCV2k = true;
 		boolean firstPointer= true;
 		int adjustments= 0;
+		int shift=0;
 		while (true) {
 			s= getNestedType(s, TDEF | REF);
 			t= getNestedType(t, TDEF | REF);
 			if (s instanceof IPointerType && t instanceof IPointerType) {
-				adjustments <<= 2;
 				final int cmp= compareQualifications(t, s);  // is t more qualified than s?
 				if (cmp < 0 || (cmp > 0 && !constInEveryCV2k)) {
 					return false;
@@ -904,19 +906,19 @@ public class Conversions {
 				s= sPtr.getType();
 				t= tPtr.getType();
 				firstPointer= false;
-				adjustments |= cmp;
+				adjustments |= (cmp << shift);
+				shift+= 2;
 			} else {
 				break;
 			}
 		}
 
-		adjustments <<= 2;
 		int cmp= compareQualifications(t, s);  // is t more qualified than s?
 		if (cmp < 0 || (cmp > 0 && !constInEveryCV2k)) {
 			return false;
 		} 
 
-		adjustments |= cmp;
+		adjustments |= (cmp << shift);
 		s= getNestedType(s, ALLCVQ | TDEF | REF);
 		t= getNestedType(t, ALLCVQ | TDEF | REF);
 		

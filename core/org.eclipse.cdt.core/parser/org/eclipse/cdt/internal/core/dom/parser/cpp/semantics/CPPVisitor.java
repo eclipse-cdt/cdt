@@ -1821,7 +1821,7 @@ public class CPPVisitor extends ASTQueries {
 		ICPPFunctionTemplate template = new AutoTypeResolver(type);
 		CPPTemplateParameterMap paramMap = new CPPTemplateParameterMap(1);
 		TemplateArgumentDeduction.deduceFromFunctionArgs(template, Collections.singletonList(initType),
-				Collections.singletonList(valueCat), paramMap, false);
+				Collections.singletonList(valueCat), paramMap);
 		ICPPTemplateArgument argument = paramMap.getArgument(0, 0);
 		if (argument == null) {
 			return null;

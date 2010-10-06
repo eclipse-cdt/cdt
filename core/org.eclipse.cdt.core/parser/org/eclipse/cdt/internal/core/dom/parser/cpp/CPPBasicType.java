@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
  * Integral c++ type.
  */
 public class CPPBasicType implements ICPPBasicType, ISerializableType {
+	// mstodo replace with problem type
 	public static int UNIQUE_TYPE_QUALIFIER= -1;
 	private final Kind fKind;
 	private final int fModifiers;

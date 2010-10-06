@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -576,5 +577,51 @@ public class SemanticUtil {
 		}
 	
 		return -1;
+	}
+
+	public static boolean containsUniqueTypeForParameterPack(IType type) {
+		if (type instanceof ICPPFunctionType) {
+			final ICPPFunctionType ft = (ICPPFunctionType) type;
+			if (containsUniqueTypeForParameterPack(ft.getReturnType()))
+				return true;
+			
+			for (IType pt : ft.getParameterTypes()) {
+				if (containsUniqueTypeForParameterPack(pt))
+					return true;
+			}
+			return false;
+		} 
+		
+		if (type instanceof ICPPPointerToMemberType) {
+			if (containsUniqueTypeForParameterPack(((ICPPPointerToMemberType) type).getMemberOfClass()))
+				return true;
+		}
+
+		if (type instanceof IBinding) {
+			IBinding owner = ((IBinding) type).getOwner();
+			if (owner instanceof IType) {
+				if (containsUniqueTypeForParameterPack((IType) owner))
+					return true;
+			}
+		}
+		
+		if (type instanceof ICPPTemplateInstance) {
+			ICPPTemplateArgument[] args = ((ICPPTemplateInstance) type).getTemplateArguments();
+			for (ICPPTemplateArgument arg : args) {
+				if (containsUniqueTypeForParameterPack(arg.getTypeValue()))
+					return true;
+			}
+		}
+
+		if (type instanceof ITypeContainer) {
+			final ITypeContainer tc = (ITypeContainer) type;
+			final IType nestedType= tc.getType();
+			return containsUniqueTypeForParameterPack(nestedType);
+		}
+		
+		if (type instanceof UniqueType) {
+			return ((UniqueType) type).isForParameterPack();
+		}
+		return false;
 	}
 }

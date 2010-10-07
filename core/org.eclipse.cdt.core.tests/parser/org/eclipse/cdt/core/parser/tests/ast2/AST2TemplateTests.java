@@ -5100,4 +5100,17 @@ public class AST2TemplateTests extends AST2BaseTest {
 		g= bh.assertNonProblem("g, 1)", 1);
 		assertSame(g1, g);
 	}
+	
+	//	template <class T> class Ptr{};
+	//	namespace ns {
+	//	  class T {};
+	//	  void f(Ptr<T>);
+	//	}
+	//	void test() {
+	//	  Ptr<ns::T> parm;
+	//	  f(parm);
+	//	}
+	public void testADLForTemplateSpecializations_Bug327069() throws Exception {
+		parseAndCheckBindings();
+	}
 }

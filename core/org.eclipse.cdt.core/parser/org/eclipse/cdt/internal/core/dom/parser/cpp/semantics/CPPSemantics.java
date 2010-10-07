@@ -652,53 +652,69 @@ public class CPPSemantics {
     	
         IType[] ps = data.getFunctionArgumentTypes();
         Set<ICPPNamespaceScope> namespaces = new HashSet<ICPPNamespaceScope>(2);
-        ObjectSet<ICPPClassType> classes = new ObjectSet<ICPPClassType>(2);
+        ObjectSet<IType> handled = new ObjectSet<IType>(2);
         for (IType p : ps) {
-            p = getUltimateType(p, true);
             try {
-                getAssociatedScopes(p, namespaces, classes, data.tu);
+                getAssociatedScopes(p, namespaces, handled, data.tu);
             } catch (DOMException e) {
             }
         }
         return namespaces;
     }
 
+    // 3.4.2-2 
     private static void getAssociatedScopes(IType t, Set<ICPPNamespaceScope> namespaces,
-    		ObjectSet<ICPPClassType> classes, CPPASTTranslationUnit tu) throws DOMException {
-        // 3.4.2-2 
-		if (t instanceof ICPPClassType) {
+    		ObjectSet<IType> handled, CPPASTTranslationUnit tu) throws DOMException {
+        t = getNestedType(t, TDEF | CVTYPE | PTR | ARRAY | REF);
+    	if (t instanceof IBinding) {
+            if (handled.containsKey(t))
+            	return;
+            handled.put(t);
+            
+    		IBinding owner= ((IBinding) t).getOwner();
+    		if (owner instanceof ICPPClassType) {
+    			getAssociatedScopes((IType) owner, namespaces, handled, tu);
+    		} else {
+    			getAssociatedNamespaceScopes(getContainingNamespaceScope((IBinding) t, tu), namespaces);
+    		}
+    	}
+		if (t instanceof ICPPClassType && !(t instanceof ICPPClassTemplate)) {
 			ICPPClassType ct= (ICPPClassType) t;
-		    if (!classes.containsKey(ct)) {
-		        classes.put(ct);
-		        getAssociatedNamespaceScopes(getContainingNamespaceScope((IBinding) t, tu), namespaces);
-
-			    ICPPClassType cls = (ICPPClassType) t;
-			    ICPPBase[] bases = cls.getBases();
-			    for (ICPPBase base : bases) {
-			        if (base instanceof IProblemBinding)
-			            continue;
-			        IBinding b = base.getBaseClass();
-			        if (b instanceof IType)
-			        	getAssociatedScopes((IType) b, namespaces, classes, tu);
-			    }
-		    }
-		} else if (t instanceof IEnumeration) {
-			getAssociatedNamespaceScopes(getContainingNamespaceScope((IBinding) t, tu), namespaces);
+			ICPPBase[] bases = ct.getBases();
+			for (ICPPBase base : bases) {
+				if (!(base instanceof IProblemBinding)) {
+					IBinding b = base.getBaseClass();
+					if (b instanceof IType)
+						getAssociatedScopes((IType) b, namespaces, handled, tu);
+				}
+			}
+			// Furthermore, if T is a class template ... 
+			// * ... types of the template arguments for template type parameters 
+			//       (excluding template template parameters); 
+			// * ... owners of which any template template arguments are members; 
+			if (ct instanceof ICPPTemplateInstance) {
+				ICPPTemplateArgument[] args = ((ICPPTemplateInstance) ct).getTemplateArguments();
+				for (ICPPTemplateArgument arg : args) {
+					if (arg.isTypeValue()) {
+						getAssociatedScopes(arg.getTypeValue(), namespaces, handled, tu);
+					}
+				}
+			}
 		} else if (t instanceof IFunctionType) {
 		    IFunctionType ft = (IFunctionType) t;
-		    
-		    getAssociatedScopes(getUltimateType(ft.getReturnType(), true), namespaces, classes, tu);
+		    getAssociatedScopes(ft.getReturnType(), namespaces, handled, tu);
 		    IType[] ps = ft.getParameterTypes();
-		    for (IType element : ps) {
-		        getAssociatedScopes(getUltimateType(element, true), namespaces, classes, tu);
+		    for (IType pt : ps) {
+		        getAssociatedScopes(pt, namespaces, handled, tu);
 		    }
 		} else if (t instanceof ICPPPointerToMemberType) {
-		    IType binding = ((ICPPPointerToMemberType) t).getMemberOfClass();
-	        getAssociatedScopes(binding, namespaces, classes, tu);
+		    final ICPPPointerToMemberType pmt = (ICPPPointerToMemberType) t;
+			getAssociatedScopes(pmt.getMemberOfClass(), namespaces, handled, tu);
+	        getAssociatedScopes(pmt.getType(), namespaces, handled, tu);
 		} else if (t instanceof FunctionSetType) {
 			FunctionSetType fst= (FunctionSetType) t;
 			for (ICPPFunction fn : fst.getFunctionSet()) { 
-				getAssociatedScopes(fn.getType(), namespaces, classes, tu);
+				getAssociatedScopes(fn.getType(), namespaces, handled, tu);
 			}
 		}			
     }

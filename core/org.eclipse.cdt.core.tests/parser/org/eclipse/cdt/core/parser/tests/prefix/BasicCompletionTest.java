@@ -275,4 +275,15 @@ public class BasicCompletionTest extends CompletionTestBase {
 		String[] expected= {};
 		checkCompletion(code, false, expected);
 	}
+	
+	//	struct A {
+	//		A(int, char, int){}
+	//	};
+	//	struct B :  A {
+	//		B() : A
+	public void testCompletionInCtorOfMemberInitializer_327064() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"A"};
+		checkNonPrefixCompletion(code, true, expected);
+	}
 }

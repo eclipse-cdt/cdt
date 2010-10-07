@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.util.Arrays;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
@@ -24,14 +22,16 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
@@ -131,28 +131,16 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 
-		ICPPASTBaseSpecifier[] baseClasses = null;
-
+		CharArraySet baseClasses = null;
 		for (int i = 0; i < bindings.length; i++) {
-			if ((bindings[i] instanceof ICPPField) || (bindings[i] instanceof ICPPNamespace)) {
-				continue;
-			} else if (bindings[i] instanceof ICPPConstructor) {
-				if (baseClasses == null) {
+			final IBinding b = bindings[i];
+			if ((b instanceof ICPPField) || (b instanceof ICPPNamespace)) {
+				// OK, keep binding.
+			} else if (b instanceof ICPPConstructor || b instanceof ICPPClassType) {
+				if (baseClasses == null) 
 					baseClasses = getBaseClasses(n);
-				}
-				boolean isBaseClassConstructor = false;
-				if (baseClasses != null) {
-					for (ICPPASTBaseSpecifier b : baseClasses) {
-						char[] bindingName = bindings[i].getNameCharArray();
-						char[] baseName = b.getName().getLastName().getSimpleID();
-						if (Arrays.equals(bindingName, baseName)) {
-							isBaseClassConstructor = true;
-							break;
-						}
-					}
-				}
-
-				if (!isBaseClassConstructor) {
+				
+				if (!baseClasses.containsKey(b.getNameCharArray())) {
 					bindings[i] = null;
 				}
 			} else {
@@ -162,14 +150,17 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 		return (IBinding[]) ArrayUtil.removeNulls(IBinding.class, bindings);
 	}
 
-	private ICPPASTBaseSpecifier[] getBaseClasses(IASTName name) {
+	private CharArraySet getBaseClasses(IASTName name) {
+		CharArraySet result= new CharArraySet(2);
 		for (IASTNode parent = name.getParent(); parent != null; parent = parent.getParent()) {
 			if (parent instanceof ICPPASTCompositeTypeSpecifier) {
 				ICPPASTCompositeTypeSpecifier specifier = (ICPPASTCompositeTypeSpecifier) parent;
-				return specifier.getBaseSpecifiers();
+				for (ICPPASTBaseSpecifier bs : specifier.getBaseSpecifiers()) {
+					result.put(bs.getName().getLastName().getSimpleID());
+				} 
 			}
 		}
-		return null;
+		return result;
 	}
 
 	public boolean isPackExpansion() {

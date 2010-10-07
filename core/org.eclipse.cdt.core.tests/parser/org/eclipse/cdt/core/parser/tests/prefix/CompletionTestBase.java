@@ -94,9 +94,17 @@ public class CompletionTestBase extends BaseTestCase {
 	}
 	
 	protected void checkCompletion(String code, boolean isCpp, String[] expected) throws ParserException {
-		IASTCompletionNode node = isCpp ? getGPPCompletionNode(code) : getGCCCompletionNode(code);
+		checkCompletion(code, true, isCpp, expected);
+	}
+
+	protected void checkNonPrefixCompletion(String code, boolean isCpp, String[] expected) throws ParserException {
+		checkCompletion(code, false, isCpp, expected);
+	}
+
+	private void checkCompletion(String code, boolean isPrefix, boolean isCpp, String[] expected) throws ParserException {
+				IASTCompletionNode node = isCpp ? getGPPCompletionNode(code) : getGCCCompletionNode(code);
 		assertNotNull(node);
-		List<IBinding> bindings= proposeBindings(node);
+		List<IBinding> bindings= proposeBindings(node, isPrefix);
 		String[] names= getSortedNames(bindings);
 		int len= Math.min(expected.length, names.length);
 		for (int i = 0; i < len; i++) {
@@ -131,7 +139,7 @@ public class CompletionTestBase extends BaseTestCase {
 		return TestSourceReader.getContentsForTest(plugin.getBundle(), "parser", getClass(), getName(), sections);
 	}
 	
-	protected List<IBinding> proposeBindings(IASTCompletionNode completionNode) {
+	protected List<IBinding> proposeBindings(IASTCompletionNode completionNode, boolean isPrefix) {
 		List<IBinding> proposals = new ArrayList<IBinding>();
 		boolean handleMacros= false;
 		IASTName[] names = completionNode.getNames();
@@ -145,7 +153,7 @@ public class CompletionTestBase extends BaseTestCase {
 			if (astContext == null) {
 				continue;
 			} 
-			IBinding[] bindings = astContext.findBindings(names[i], true);
+			IBinding[] bindings = astContext.findBindings(names[i], isPrefix);
 			if (bindings != null)
 				for (int j = 0; j < bindings.length; ++j)
 					proposals.add(bindings[j]);

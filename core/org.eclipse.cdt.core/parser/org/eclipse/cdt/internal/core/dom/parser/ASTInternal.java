@@ -15,6 +15,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
@@ -171,5 +173,23 @@ public class ASTInternal {
 		if (b instanceof ICPPInternalBinding && declaration.isActive()) {
 			((ICPPInternalBinding) b).addDefinition(declaration);
 		}
+	}
+
+	public static boolean hasDeclaration(IBinding binding) {
+		if (binding instanceof ICPPInternalBinding) {
+			ICPPInternalBinding internal= (ICPPInternalBinding) binding;
+			if (internal.getDefinition() != null)
+				return true;
+			IASTNode[] decls= internal.getDeclarations();
+			return decls != null && decls.length > 0 && decls[0] != null;
+		} 
+		if (binding instanceof IIndexBinding) {
+			try {
+				return IndexFilter.ALL_DECLARED.acceptBinding(binding);
+			} catch (CoreException e) {
+			}
+			return false;
+		} 
+		return binding != null;
 	}
 }

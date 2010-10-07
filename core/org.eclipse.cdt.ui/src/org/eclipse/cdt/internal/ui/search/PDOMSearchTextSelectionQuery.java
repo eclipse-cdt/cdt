@@ -25,13 +25,12 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
@@ -73,7 +72,7 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 								}
 							}
 							binding = index.findBinding(searchName);
-							binding= findDeclarationForSpecialization(binding);
+							binding= CPPTemplates.findDeclarationForSpecialization(binding);
 							if (binding != null) {
 								label= labelForBinding(index, binding, label);
 								createMatches(index, binding);
@@ -83,22 +82,6 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 					}
 				}
 				return Status.OK_STATUS;
-			}
-
-			private IBinding findDeclarationForSpecialization(IBinding binding) {
-				while (binding instanceof ICPPSpecialization) {
-					try {
-						if (IndexFilter.ALL_DECLARED.acceptBinding(binding))
-							return binding;
-					} catch (CoreException e) {
-					}
-
-					IBinding original= ((ICPPSpecialization) binding).getSpecializedBinding();
-					if (original == null)
-						return binding;
-					binding= original;
-				}
-				return binding;
 			}
 		});
 	}

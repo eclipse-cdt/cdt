@@ -1264,6 +1264,7 @@ public class CPPVisitor extends ASTQueries {
 		
 		
 		public CollectDeclarationsAction(IBinding binding) {
+			binding = CPPTemplates.findDeclarationForSpecialization(binding);
 			shouldVisitNames = true;
 			this.decls = new IASTName[DEFAULT_LIST_SIZE];
 			
@@ -1410,17 +1411,6 @@ public class CPPVisitor extends ASTQueries {
 
 	}
 
-	protected static IBinding unwindBinding(IBinding binding) {
-		while (true) {
-			if (binding instanceof ICPPSpecialization) {
-				binding= ((ICPPSpecialization) binding).getSpecializedBinding();
-			} else {
-				break;
-			}
-		}
-		return binding;
-	}
-
 	public static class CollectReferencesAction extends ASTVisitor {
 		private static final int DEFAULT_LIST_SIZE = 8;
 		private IASTName[] refs;
@@ -1438,7 +1428,7 @@ public class CPPVisitor extends ASTQueries {
 			shouldVisitNames = true;
 			this.refs = new IASTName[DEFAULT_LIST_SIZE];
 
-			binding = unwindBinding(binding);
+			binding = CPPTemplates.findDeclarationForSpecialization(binding);
 			this.bindings = new IBinding[] {binding};
 			
 			if (binding instanceof ICPPUsingDeclaration) {
@@ -1536,7 +1526,7 @@ public class CPPVisitor extends ASTQueries {
 		}
 
 		private boolean isReferenceBinding(IBinding nameBinding) {
-			nameBinding= unwindBinding(nameBinding);
+			nameBinding = CPPTemplates.findDeclarationForSpecialization(nameBinding);
 			if (nameBinding != null) {
 				for (IBinding binding : bindings) {
 					if (nameBinding.equals(binding)) {

@@ -82,6 +82,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
@@ -514,7 +515,7 @@ public class IndexUI {
 
 
 				for (ICPPTemplateInstance inst : instances) {
-					if (!IndexFilter.ALL_DECLARED.acceptBinding(inst)) {
+					if (!ASTInternal.hasDeclaration(inst)) {
 						result.add(inst);
 					}
 				}

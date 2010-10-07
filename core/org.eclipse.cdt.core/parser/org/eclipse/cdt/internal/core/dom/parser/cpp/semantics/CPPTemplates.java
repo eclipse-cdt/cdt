@@ -2314,4 +2314,17 @@ public class CPPTemplates {
 		}
 		return ObjectMap.EMPTY_MAP;
 	}
+
+	public static IBinding findDeclarationForSpecialization(IBinding binding) {
+		while (binding instanceof ICPPSpecialization) {
+			if (ASTInternal.hasDeclaration(binding)) 
+				return binding;
+			
+			IBinding original= ((ICPPSpecialization) binding).getSpecializedBinding();
+			if (original == null)
+				return binding;
+			binding= original;
+		}
+		return binding;
+	}
 }

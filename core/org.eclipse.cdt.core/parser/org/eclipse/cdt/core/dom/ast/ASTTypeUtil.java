@@ -416,6 +416,8 @@ public class ASTTypeUtil {
 			needSpace= appendCVQ(result, needSpace, qt.isConst(), qt.isVolatile());
 		} else if (type instanceof ITypedef) {
 			result.append(((ITypedef) type).getNameCharArray());
+		} else if (type instanceof IProblemBinding) {
+			result.append('?');
 		} else if (type != null) {
 			result.append('@').append(type.hashCode()); 
 		}

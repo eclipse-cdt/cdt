@@ -1230,9 +1230,9 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//public:
 	//  InitializerListTest() : /*cursor*/
 	//};
-	public void testCunstructorInitializerList_EmptyInput_Bug266586() throws Exception {
-		final String[] expected= {"mOne",
-				"Base(int)", "Base(const ns::Base<Helper> &)",
+	public void testConstructorInitializerList_EmptyInput_Bug266586() throws Exception {
+		final String[] expected= {"mOne", "Base",
+				"Base(int)", "Base(const ns::Base<Helper> &)", "Helper",
 				"Helper(void)", "Helper(const Helper &)",
 				// Namespaces must be offered as well. In order for this code
 				// to compile with gcc (e.g. 4.1.2), you need to write
@@ -1309,7 +1309,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//  InitializerListTest() : h/*cursor*/
 	//};
 	public void testConstructorInitializerList_BaseClassInput_Bug266586() throws Exception {
-		final String[] expected= { "Helper(void)", "Helper(const Helper &)" };
+		final String[] expected= { "Helper", "Helper(void)", "Helper(const Helper &)" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
 	}
 	

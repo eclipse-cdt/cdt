@@ -5113,4 +5113,27 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testADLForTemplateSpecializations_Bug327069() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template<typename T, typename V> T* f(V*);
+	//	template<typename T, typename V> T f(V*);
+	//	template<typename T, typename V> T* f(V);
+	//	void x(int* (*) (int*)) {
+	//	  x(f);
+	//	}
+	public void testPartialOrderingInNonCallContext_Bug326900() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	struct X {
+	//	  template<typename T> operator T();
+	//	  template<typename T> operator T*();
+	//	};
+	//	void y(int *) {
+	//	  X x;
+	//	  y(x);
+	//	}
+	public void testPartialOrderingForConversions_Bug326900() throws Exception {
+		parseAndCheckBindings();
+	}
+
 }

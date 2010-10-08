@@ -152,6 +152,7 @@ public class CPPTemplates {
 	private static final int PACK_SIZE_FAIL = -2;
 	private static final int PACK_SIZE_NOT_FOUND = Integer.MAX_VALUE;
 	private static final ICPPFunction[] NO_FUNCTIONS = {};
+	static enum TypeSelection {PARAMETERS, RETURN_TYPE, PARAMETERS_AND_RETURN_TYPE}
 	
 	/**
 	 * Instantiates a class template with the given arguments. May return <code>null</code>.
@@ -1683,10 +1684,10 @@ public class CPPTemplates {
 	}
 
 	// 14.5.6.2 Partial ordering of function templates
-	static int orderFunctionTemplates(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2)
+	static int orderFunctionTemplates(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2, TypeSelection mode)
 			throws DOMException {
-		int s1 = compareSpecialization(f1, f2);
-		int s2 = compareSpecialization(f2, f1);
+		int s1 = compareSpecialization(f1, f2, mode);
+		int s2 = compareSpecialization(f2, f1, mode);
 		
 		if (s1 == s2)
 			return 0;
@@ -1731,22 +1732,38 @@ public class CPPTemplates {
 		return arg;
 	}
 
-	private static int compareSpecialization(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2) throws DOMException {
+	private static int compareSpecialization(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2, TypeSelection mode) throws DOMException {
 		ICPPFunction transF1 = transferFunctionTemplate(f1);
 		if (transF1 == null)
 			return -1;
-				
-		// mstodo use function-type, parameter-types or return type.
-		IType[] pars= f2.getType().getParameterTypes();
-		IType[] args = transF1.getType().getParameterTypes();
-		boolean nonStaticMember1= isNonStaticMember(f1);
-		boolean nonStaticMember2= isNonStaticMember(f2);
-		if (nonStaticMember1 != nonStaticMember2) {
-			if (nonStaticMember1) {
-				args= addImplicitObjectType(args, (ICPPMethod) f1);
-			} else {
-				pars= addImplicitObjectType(pars, (ICPPMethod) f2);
+
+		final ICPPFunctionType ft2 = f2.getType();
+		final ICPPFunctionType transFt1 = transF1.getType();
+		IType[] pars;
+		IType[] args;
+		switch(mode) {
+		case RETURN_TYPE:
+			pars= new IType[] {ft2.getReturnType()};
+			args= new IType[] {transFt1.getReturnType()};
+			break;
+		case PARAMETERS_AND_RETURN_TYPE:
+			pars= concat(ft2.getReturnType(), ft2.getParameterTypes());
+			args= concat(transFt1.getReturnType(), transFt1.getParameterTypes());
+			break;
+		case PARAMETERS:
+		default:
+			pars= ft2.getParameterTypes();
+			args = transFt1.getParameterTypes();
+			boolean nonStaticMember1= isNonStaticMember(f1);
+			boolean nonStaticMember2= isNonStaticMember(f2);
+			if (nonStaticMember1 != nonStaticMember2) {
+				if (nonStaticMember1) {
+					args= addImplicitObjectType(args, (ICPPMethod) f1);
+				} else {
+					pars= addImplicitObjectType(pars, (ICPPMethod) f2);
+				}
 			}
+			break;
 		}
 		return TemplateArgumentDeduction.deduceForPartialOrdering(f2.getTemplateParameters(), pars, args);
 	}
@@ -1760,14 +1777,19 @@ public class CPPTemplates {
 		if (ct != null) {
 			try {
 				ICPPFunctionType ft = f1.getType();
-				IType[] result= new IType[types.length+1];
-				result[0]= new CPPReferenceType(addQualifiers(ct, ft.isConst(), ft.isVolatile()), false);
-				System.arraycopy(types, 0, result, 1, types.length);
-				return result;
+				final CPPReferenceType t = new CPPReferenceType(addQualifiers(ct, ft.isConst(), ft.isVolatile()), false);
+				return concat(t, types);
 			} catch (DOMException e) {
 			}
 		}
 		return types;
+	}
+
+	private static IType[] concat(final IType t, IType[] types) {
+		IType[] result= new IType[types.length+1];
+		result[0]= t;
+		System.arraycopy(types, 0, result, 1, types.length);
+		return result;
 	}
 
 	private static ICPPClassTemplatePartialSpecialization findPartialSpecialization(ICPPClassTemplate ct,

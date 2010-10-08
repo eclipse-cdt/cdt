@@ -10,6 +10,8 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.TypeSelection.PARAMETERS;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.TypeSelection.RETURN_TYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -19,26 +21,28 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.TypeSelection;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.DeferredUDC;
 
 /**
  * Cost for the entire function call
  */
 class FunctionCost {
-	private final IFunction fFunction;
+	private final ICPPFunction fFunction;
 	private final Cost[] fCosts;
 	private final ValueCategory[] fValueCategories;
 	private boolean fIsDirectCopyCtor;
 	
-	public FunctionCost(IFunction fn, int paramCount) {
+	public FunctionCost(ICPPFunction fn, int paramCount) {
 		fFunction= fn;
 		fCosts= new Cost[paramCount];
 		fValueCategories= new ValueCategory[paramCount];
 	}
 	
-	public FunctionCost(IFunction fn, Cost cost) {
+	public FunctionCost(ICPPFunction fn, Cost cost) {
 		fFunction= fn;
 		fCosts= new Cost[] {cost};
 		fValueCategories= null; // no udc will be performed
@@ -57,7 +61,7 @@ class FunctionCost {
 		fValueCategories[idx]= valueCat;
 	}
 
-	public IFunction getFunction() {
+	public ICPPFunction getFunction() {
 		return fFunction;
 	}
 	
@@ -155,7 +159,8 @@ class FunctionCost {
 			} else if (!isTemplate && otherIsTemplate) {
 				haveBetter = true;
 			} else if (isTemplate && otherIsTemplate) {
-				int order = CPPTemplates.orderFunctionTemplates(otherAsTemplate, asTemplate);
+				TypeSelection ts= SemanticUtil.isConversionOperator(getFunction()) ? RETURN_TYPE : PARAMETERS;
+ 				int order = CPPTemplates.orderFunctionTemplates(otherAsTemplate, asTemplate, ts);
 				if (order < 0) {
 					haveBetter= true;	 				
 				} else if (order > 0) {

@@ -200,6 +200,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.TypeSelection;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
@@ -2346,7 +2347,7 @@ public class CPPSemantics {
 
 		// Loop over all functions
 		List<FunctionCost> potentialCosts= null;
-		for (IFunction fn : fns) {
+		for (ICPPFunction fn : fns) {
 			if (fn == null) 
 				continue;
 			
@@ -2516,12 +2517,12 @@ public class CPPSemantics {
 		}
 	}
 
-	private static FunctionCost costForFunctionCall(IFunction fn, boolean allowUDC, LookupData data)
+	private static FunctionCost costForFunctionCall(ICPPFunction fn, boolean allowUDC, LookupData data)
 			throws DOMException {
 		IType[] argTypes = data.getFunctionArgumentTypes();
 		ValueCategory[] isLValue= data.getFunctionArgumentValueCategories();
 		int skipArg= 0;
-	    final ICPPFunctionType ftype= (ICPPFunctionType) fn.getType();
+	    final ICPPFunctionType ftype= fn.getType();
 	    if (ftype == null)
 	    	return null;
 
@@ -2836,7 +2837,7 @@ public class CPPSemantics {
     				if (inst != null) {
     					int cmp= -1;
     					if (result != null) {
-    						cmp= CPPTemplates.orderFunctionTemplates(resultTemplate, template);
+    						cmp= CPPTemplates.orderFunctionTemplates(resultTemplate, template, TypeSelection.PARAMETERS_AND_RETURN_TYPE);
     						if (cmp == 0) 
     							cmp= compareByRelevance(tu, resultTemplate, template);
     					}

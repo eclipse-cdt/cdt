@@ -23,8 +23,6 @@ import org.eclipse.cdt.internal.corext.util.Strings;
 /**
  * A label provider for basic elements like paths. The label provider will make sure that the labels are correctly
  * shown in RTL environments.
- *
- * @since 5.3
  */
 public class BasicElementLabels {
 	// TextProcessor delimiters

@@ -25,10 +25,8 @@ import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional.AllUpdateScope;
-import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional.ICachingVMProviderExtension;
-import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional.IVMUpdateScope;
-import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.update.provisional.VisibleUpdateScope;
+import org.eclipse.cdt.dsf.internal.DsfPlugin;
+import org.eclipse.cdt.dsf.internal.LoggingUtils;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
@@ -49,15 +47,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * Base implementation of a caching view model provider.
@@ -65,7 +62,7 @@ import org.eclipse.swt.widgets.TreeItem;
  * @since 1.0
  */
 public class AbstractCachingVMProvider extends AbstractVMProvider 
-    implements ICachingVMProvider, IElementPropertiesProvider, ICachingVMProviderExtension, ICachingVMProviderExtension2 
+    implements ICachingVMProvider, IElementPropertiesProvider, ICachingVMProviderExtension2 
 {
     /**
      * @since 2.0
@@ -361,7 +358,6 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
     protected static String SELECTED_UPDATE_SCOPE = "org.eclipse.cdt.dsf.ui.viewmodel.update.selectedUpdateScope";  //$NON-NLS-1$
 
     private IVMUpdatePolicy[] fAvailableUpdatePolicies;
-    private IVMUpdateScope[] fAvailableUpdateScopes;
 
     public Map<Object, RootElementMarkerKey> fRootMarkers = new HashMap<Object, RootElementMarkerKey>();
     
@@ -395,22 +391,12 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         fCacheListHead.fPrevious = fCacheListHead;
         
         fAvailableUpdatePolicies = createUpdateModes();
-        
-        fAvailableUpdateScopes = createUpdateScopes();
-        setActiveUpdateScope(new VisibleUpdateScope());
     }
     
     protected IVMUpdatePolicy[] createUpdateModes() {
         return new IVMUpdatePolicy[] { new AutomaticUpdatePolicy() };
     }
-    
-    /**
-     * @since 1.1
-     */
-    protected IVMUpdateScope[] createUpdateScopes() {
-        return new IVMUpdateScope[] { new VisibleUpdateScope(), new AllUpdateScope() };
-    }
-    
+       
     public IVMUpdatePolicy[] getAvailableUpdatePolicies() {
         return fAvailableUpdatePolicies;
     }
@@ -807,78 +793,106 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         flushMarkerEntry.insert(fCacheListHead);
     }
 
+    /**
+     * Listener used to detect when the viewer is finished updating itself 
+     * after a model event.  The  
+     */
+    // Warnings for use of ITreeModelViewer.  ITreeModelViewer is an internal 
+    // interface in platform, but it is more generic than the public TreeModelViewer.
+    // Using ITreeModelViewer will allow us to write unit tests using the 
+    // VirtualTreeModelViewer.
+    @SuppressWarnings("restriction") 
+    private class ViewUpdateFinishedListener implements IViewerUpdateListener, IModelChangedListener {
+        private final org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer fViewer;
+        private boolean fViewerChangeStarted = false;
+        private RequestMonitor fRm;
+        
+        ViewUpdateFinishedListener(org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer viewer) {
+            fViewer = viewer;
+        }
+
+        private void start(RequestMonitor rm) {
+            synchronized(this) {
+                fViewer.addModelChangedListener(this);
+                fViewer.addViewerUpdateListener(this);
+                fRm = rm;
+            }
+        }
+        
+        public synchronized void viewerUpdatesComplete() {
+            done();
+        }
+
+        public void modelChanged(IModelDelta delta, IModelProxy proxy) {
+            synchronized (this) {
+                if (!fViewerChangeStarted) {
+                    done();
+                }
+            }
+        }
+        
+        public void viewerUpdatesBegin() {
+            synchronized(this) {
+                fViewerChangeStarted = true;
+            }
+        }
+        
+        private synchronized void done() {
+            if (fRm != null) {
+                fRm.done();
+                fViewer.removeViewerUpdateListener(this);
+                fViewer.removeModelChangedListener(this);
+            }
+        }
+        
+        public void updateStarted(IViewerUpdate update) {}
+        public void updateComplete(IViewerUpdate update) {}
+        
+    }
+    
     @Override
     protected void handleEvent(final IVMModelProxy proxyStrategy, final Object event, final RequestMonitor rm) {   
         IElementUpdateTester elementTester =  getActiveUpdatePolicy().getElementUpdateTester(event);
    
         flush(new FlushMarkerKey(proxyStrategy.getRootElement(), elementTester));
         
-        CountingRequestMonitor multiRm = new CountingRequestMonitor(getExecutor(), rm);
-        super.handleEvent(proxyStrategy, event, multiRm);
-        int rmCount = 1;
-        
-        if(fDelayEventHandleForViewUpdate) {
-	        if(this.getActiveUpdateScope().getID().equals(AllUpdateScope.ALL_UPDATE_SCOPE_ID)) {
-        	    new MultiLevelUpdateHandler(getExecutor(), proxyStrategy, getPresentationContext(), this, multiRm).
-        	        startUpdate();
-        	    rmCount++;
-	        } else if (!proxyStrategy.isDisposed()) {
-                // block updating only the viewport
-	        	TreeViewer viewer = (TreeViewer) proxyStrategy.getViewer();
-	        	Tree tree = viewer.getTree();
-	        	int count = tree.getSize().y / tree.getItemHeight();
-	        	
-	        	TreeItem topItem = tree.getTopItem();
-	        	int index = computeTreeIndex(topItem);
-	        	
-	        	MultiLevelUpdateHandler handler = new MultiLevelUpdateHandler(
-	        			getExecutor(), proxyStrategy, getPresentationContext(), this, multiRm);
-	        	handler.setRange(index, index + count);
-				handler.startUpdate();
-                rmCount++;
-	        }
+        if (!proxyStrategy.isDisposed()) {
+            if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                trace(event, null, proxyStrategy, EventHandlerAction.processing);
+            }
+            proxyStrategy.createDelta(
+                event, 
+                new DataRequestMonitor<IModelDelta>(getExecutor(), rm) {
+                    @Override
+                    public void handleSuccess() {
+                        if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                            trace(event, null, proxyStrategy, EventHandlerAction.firedDeltaFor);
+                        }
+
+                        // If we need to wait for the view to finish updating, then before posting the delta to the 
+                        // viewer install a listener, which will in turn call rm.done().
+                        if (fDelayEventHandleForViewUpdate) {
+                            @SuppressWarnings("restriction")
+                            org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer viewer = 
+                                (org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer) proxyStrategy.getViewer();
+                            new ViewUpdateFinishedListener(viewer).start(rm);
+                        }
+                        
+                        proxyStrategy.fireModelChanged(getData());
+                        
+                        if (!fDelayEventHandleForViewUpdate) {
+                            rm.done();
+                        }
+                    }
+                    @Override public String toString() {
+                        return "Result of a delta for event: '" + event.toString() + "' in VMP: '" + AbstractCachingVMProvider.this + "'" + "\n" + getData().toString();  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    }   
+                });
         } else {
-        	if(this.getActiveUpdateScope().getID().equals(AllUpdateScope.ALL_UPDATE_SCOPE_ID)) {
-	        	MultiLevelUpdateHandler handler = new MultiLevelUpdateHandler(
-	        			getExecutor(), proxyStrategy, getPresentationContext(), this, multiRm);
-				handler.startUpdate();
-                rmCount++;
-	        } 
+            rm.done();
         }
-        multiRm.setDoneCount(rmCount);
     }
         
-	private static int computeTreeIndex(TreeItem child) {
-		if (child != null) {
-			if(child.getParentItem() != null) {
-				int previous = 0;
-				int index = child.getParentItem().indexOf(child);
-				while (--index >= 0) {
-					previous += computeTreeExtent(child.getParentItem().getItem(index));
-				}
-				return computeTreeIndex(child.getParentItem()) + previous;
-			} else {
-				int previous = 0;
-				int index = child.getParent().indexOf(child);
-				while (--index >= 0) {
-					previous += computeTreeExtent(child.getParent().getItem(index));
-				}
-				return previous;
-			}
-		}
-		return 0;
-	}
-
-	private static int computeTreeExtent(TreeItem item) {
-		int extent = 1;
-		if (item.getExpanded()) {
-			for (TreeItem i : item.getItems()) {
-				extent += computeTreeExtent(i);
-			}
-		}
-		return extent;
-	}
-	
     /**
      * Override default implementation to avoid automatically removing disposed proxies from
      * list of active proxies.  The caching provider only removes a proxy after its root element
@@ -1297,43 +1311,6 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         }
     }
     
-    /**
-     * @noreference This method is an implementation of a provisional interface and 
-     * not intended to be referenced by clients.
-     * @since 1.1
-     */
-    public IVMUpdateScope[] getAvailableUpdateScopes() {
-        return fAvailableUpdateScopes;
-    }
-
-    /**
-     * @noreference This method is an implementation of a provisional interface and 
-     * not intended to be referenced by clients.
-     * @since 1.1
-     */
-    public IVMUpdateScope getActiveUpdateScope() {
-        String updateScopeId = (String)getPresentationContext().getProperty(SELECTED_UPDATE_SCOPE);
-        if (updateScopeId != null) {
-            for (IVMUpdateScope updateScope : getAvailableUpdateScopes()) {
-                if (updateScope.getID().equals(updateScopeId)) {
-                    return updateScope;
-                }
-            }
-        }
-        
-        // Default to the first one.
-        return getAvailableUpdateScopes()[0];
-    }
-
-    /**
-     * @noreference This method is an implementation of a provisional interface and 
-     * not intended to be referenced by clients.
-     * @since 1.1
-     */
-    public void setActiveUpdateScope(IVMUpdateScope updateScope) {
-        getPresentationContext().setProperty(SELECTED_UPDATE_SCOPE, updateScope.getID());
-    }
-
     @Override
     public boolean shouldWaitHandleEventToComplete() {
         return fDelayEventHandleForViewUpdate;
@@ -1345,5 +1322,53 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
 	protected void setDelayEventHandleForViewUpdate(boolean on) {
 		fDelayEventHandleForViewUpdate = on;
 	}
+
+    /**
+     * Used for tracing event handling
+     * <p>
+     * Note: this enum is duplicated from AbstractVMProvider.
+     */
+    private enum EventHandlerAction {
+        received,
+        queued,
+        processing,
+        firedDeltaFor,
+        skipped,
+        canceled
+    }
+
+    /**
+     * Trace that we've reached a particular phase of the handling of an event
+     * for a particular proxy.
+     * <p>
+     * Note: this method is duplicated from AbstractVMProvider.
+     * 
+     * @param event
+     *            the event being handled
+     * @param skippedOrCanceledEvent
+     *            for a 'skip' or 'cancel' action, this is the event that is
+     *            being dismissed. Otherwise null
+     * @param proxy
+     *            the target proxy; n/a (null) for a 'received' action.
+     * @param action
+     *            what phased of the event handling has beeb reached
+     */
+    private void trace(Object event, Object skippedOrCanceledEvent, IVMModelProxy proxy, EventHandlerAction action) {
+        assert DEBUG_DELTA;
+        StringBuilder str = new StringBuilder();
+        str.append(DsfPlugin.getDebugTime());
+        str.append(' ');
+        if (action == EventHandlerAction.skipped || action == EventHandlerAction.canceled) {
+            str.append(LoggingUtils.toString(this) + " " + action.toString() + " event " + LoggingUtils.toString(skippedOrCanceledEvent) + " because of event " + LoggingUtils.toString(event)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$          
+        }
+        else {
+            str.append(LoggingUtils.toString(this) + " " + action.toString() + " event " + LoggingUtils.toString(event)); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        
+        if (action != EventHandlerAction.received) {
+            str.append(" for proxy " + LoggingUtils.toString(proxy) + ", whose root is " + LoggingUtils.toString(proxy.getRootElement())); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        DsfUIPlugin.debug(str.toString());
+    }
 
 }

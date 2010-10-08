@@ -196,7 +196,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter
         if (provider != null) {
             provider.update(update);
         } else {
-            update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, "not supported"));
+            update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, "not supported")); //$NON-NLS-1$
             update.done();
         }
     }

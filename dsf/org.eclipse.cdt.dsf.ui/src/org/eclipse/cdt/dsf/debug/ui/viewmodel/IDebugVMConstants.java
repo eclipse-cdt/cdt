@@ -96,7 +96,7 @@ public interface IDebugVMConstants {
      * 
      * @since 2.0
      */
-    public static final String PROP_IS_STRING_FORMAT_VALUE_CHANGED = ICachingVMProvider.PROP_IS_CHANGED_PREFIX + FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.STRING_FORMAT);
+    public static final String PROP_IS_STRING_FORMAT_VALUE_CHANGED = ICachingVMProvider.PROP_IS_CHANGED_PREFIX + FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.STRING_FORMAT, null);
 
     /**
      * Property which indicates that the element's value formatted using the 
@@ -109,5 +109,5 @@ public interface IDebugVMConstants {
      * 
      * @since 2.0
      */
-    public static final String PROP_IS_ACTIVE_FORMATTED_VALUE_CHANGED = ICachingVMProvider.PROP_IS_CHANGED_PREFIX + FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.NATURAL_FORMAT);
+    public static final String PROP_IS_ACTIVE_FORMATTED_VALUE_CHANGED = ICachingVMProvider.PROP_IS_CHANGED_PREFIX + FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.NATURAL_FORMAT, null);
 }

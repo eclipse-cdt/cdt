@@ -49,6 +49,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
@@ -287,10 +288,6 @@ public class GdbLaunch extends DsfLaunch
                     // 283586
                     DebugPlugin.getDefault().fireDebugEventSet( new DebugEvent[] { new DebugEvent(fMemRetrieval, DebugEvent.TERMINATE) });
 
-                    // endSession takes a full dispatch to distribute the 
-                    // session-ended event, finish step only after the dispatch.
-                    fExecutor.shutdown();
-                    fExecutor = null;
                     fireTerminate();
                     
                     rm.setStatus(getStatus());
@@ -306,5 +303,14 @@ public class GdbLaunch extends DsfLaunch
         // Must force adapters to be loaded.
         Platform.getAdapterManager().loadAdapter(this, adapter.getName());
         return super.getAdapter(adapter);
+    }
+    
+    @Override
+	public void launchRemoved(ILaunch launch) {
+		if (this.equals(launch)) {
+    		fExecutor.shutdown();
+    		fExecutor = null;
+    	}
+    	super.launchRemoved(launch);
     }
 }

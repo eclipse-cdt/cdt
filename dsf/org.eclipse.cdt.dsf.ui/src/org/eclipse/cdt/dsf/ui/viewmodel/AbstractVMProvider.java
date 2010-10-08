@@ -347,7 +347,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
                 eventInfo.fClientRm.done();
                 queue.fCurrentEvent = null;
                 queue.fCurrentRm = null;
-                if (!queue.fEventQueue.isEmpty()) {
+                if (!queue.fEventQueue.isEmpty() && !fDisposed) {
                     EventInfo nextEventInfo = queue.fEventQueue.remove(0);
                     doHandleEvent(queue, proxyStrategy, nextEventInfo);
                 } 

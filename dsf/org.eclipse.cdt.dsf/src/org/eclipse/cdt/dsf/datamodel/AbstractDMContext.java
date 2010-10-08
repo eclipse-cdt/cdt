@@ -35,15 +35,16 @@ import org.eclipse.core.runtime.PlatformObject;
 abstract public class AbstractDMContext extends PlatformObject 
     implements IDMContext     
 {
-    private final String fSessionId;
+    private final DsfSession fSession;
     private final IDMContext[] fParents;
 
     /** 
      * Main constructor provides all data needed to implement the <code>IDMContext</code>
      * interface.
+     * @since 2.2
      */
-    public AbstractDMContext(String sessionId, IDMContext[] parents) {
-        fSessionId = sessionId;
+    public AbstractDMContext(DsfSession session, IDMContext[] parents) {
+        fSession = session;
         fParents = parents;
         for (IDMContext parent : parents) {
         	assert(parent != null);
@@ -52,7 +53,12 @@ abstract public class AbstractDMContext extends PlatformObject
 
     /** Convenience constructor */
     public AbstractDMContext(IDsfService service, IDMContext[] parents) {
-        this(service.getSession().getId(), parents);
+        this(service.getSession(), parents);
+    }
+    
+    /** Backward compatiblity constructor */
+    public AbstractDMContext(String fSessionId, IDMContext[] parents) {
+    	this(DsfSession.getSession(fSessionId), parents);
     }
 
     /** 
@@ -110,7 +116,7 @@ abstract public class AbstractDMContext extends PlatformObject
         return retVal.toString(); 
     }
     
-    public String getSessionId() { return fSessionId; }
+    public String getSessionId() { return fSession.getId(); }
     public IDMContext[] getParents() { return fParents; }
         
     /**
@@ -131,11 +137,7 @@ abstract public class AbstractDMContext extends PlatformObject
     @Override
     @SuppressWarnings("rawtypes")
     public Object getAdapter(Class adapterType) {
-        Object retVal = null;
-        DsfSession session = DsfSession.getSession(fSessionId);
-        if (session != null) {
-            retVal = session.getModelAdapter(adapterType);
-        }
+        Object retVal = fSession.getModelAdapter(adapterType);
         if (retVal == null) {
             retVal = super.getAdapter(adapterType);
         }

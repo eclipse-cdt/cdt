@@ -43,8 +43,6 @@
 		<property name="tagname" value="v${timestamp}"/>
 		<property name="testReports" value="${zipsdir}/testReports"/>
 		<property name="junit-report-output" value="${testReports}"/>
-		<!--property name="jvm1.5" value="/opt/public/common/ibm-java2-ppc-50/bin/java"/-->
-		<property name="jvm1.5" value="java"/>
 		<condition property="onWindows">
 			<os family="windows"/>
 		</condition>
@@ -185,7 +183,7 @@
 	<target name="pack" depends="init" unless="hasErrors">
     	<echo message="Pack200" />
     	<property name="launcher" value="${basedir}/tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar"/>
-        <java jar="${launcher}" fork="true" timeout="10800000" jvm="${jvm1.5}" failonerror="true" maxmemory="768m" dir="${buildDirectory}/eclipse">
+        <java jar="${launcher}" fork="true" timeout="10800000" failonerror="true" maxmemory="768m" dir="${buildDirectory}/eclipse">
             <arg line="-application org.eclipse.update.core.siteOptimizer" />
             <arg line="-jarProcessor"/>
         	<arg line="-verbose"/>
@@ -222,8 +220,7 @@
     	<echo message="Generate p2 Metadata" />
     	<property name="p2site" value="${zipsdir}/p2"/>
     	<property name="launcher" value="${basedir}/tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar"/>
-        <!--java jar="${launcher}" fork="true" timeout="10800000" jvm="${jvm1.5}" failonerror="true" maxmemory="768m" error="${zipsdir}/p2errorlog.txt" dir="${buildDirectory}/eclipse" output="${zipsdir}/p2metadata.txt"-->
-    	<java jar="${launcher}" fork="true" timeout="10800000" jvm="${jvm1.5}" failonerror="true" maxmemory="768m" dir="${buildDirectory}/eclipse">
+    	<java jar="${launcher}" fork="true" timeout="10800000" failonerror="true" maxmemory="768m" dir="${buildDirectory}/eclipse">
             <arg line="-application org.eclipse.equinox.p2.metadata.generator.EclipseGenerator" />
             <arg line="-updateSite ${p2site}"/>
         	<arg line="-site file:${p2site}/site.xml"/>

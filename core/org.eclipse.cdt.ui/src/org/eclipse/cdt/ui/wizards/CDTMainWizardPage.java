@@ -127,7 +127,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 		                 @Override
 						public void getName(AccessibleEvent e) {
 		                	 for (int i = 0; i < tree.getItemCount(); i++) {
-		                		 if (tree.getItem(i).getText().compareTo(e.result) == 0)
+		                		 if (tree.getItem(i).getText().equals(e.result))
 		                			 return;
 		                	 }
 	                         e.result = Messages.CMainWizardPage_0; 

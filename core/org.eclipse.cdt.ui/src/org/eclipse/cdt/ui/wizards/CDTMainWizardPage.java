@@ -127,7 +127,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 		                 @Override
 						public void getName(AccessibleEvent e) {
 		                	 for (int i = 0; i < tree.getItemCount(); i++) {
-		                		 if (tree.getItem(i).getText().compareTo(e.result) == 0)
+		                		 if (tree.getItem(i).getText().equals(e.result))
 		                			 return;
 		                	 }
 	                         e.result = UIMessages.getString("CMainWizardPage.0"); //$NON-NLS-1$

@@ -10,5 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+/**
+ * Representation in the project model of language settings entries of
+ * path-kind such as include paths (-I) or include files and others.
+ * See interface hierarchy for more specifics.
+ */
 public interface ICLanguageSettingPathEntry extends ICLanguageSettingEntry, ICPathEntry {
 }

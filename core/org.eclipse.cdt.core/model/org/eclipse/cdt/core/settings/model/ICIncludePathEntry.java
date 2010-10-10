@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+/**
+ * Representation in the project model of language settings entries
+ * include paths (-I). See {@link ICSettingEntry#INCLUDE_PATH}.
+ */
 public interface ICIncludePathEntry extends ICLanguageSettingPathEntry {
 	boolean isLocal();
 }

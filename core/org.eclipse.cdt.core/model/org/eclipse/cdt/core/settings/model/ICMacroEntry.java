@@ -10,6 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+/**
+ * Representation in the project model of language settings entries having
+ * name-value attributes such as preprocessor defines (-D).
+ * See {@link ICSettingEntry#MACRO}.
+ */
 public interface ICMacroEntry extends ICLanguageSettingEntry {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.settings.model.ICSettingEntry#getValue()
+	 */
 	String getValue();
 }

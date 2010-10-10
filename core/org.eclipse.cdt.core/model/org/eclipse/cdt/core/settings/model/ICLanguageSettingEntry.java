@@ -10,5 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-public interface ICLanguageSettingEntry extends ICSettingEntry{
+/**
+ * Representation in the project model of language settings entries
+ * such as include paths (-I) or preprocessor defines (-D) and others (see
+ * {@link ICSettingEntry#INCLUDE_PATH} and other kinds).
+ */
+public interface ICLanguageSettingEntry extends ICSettingEntry {
 }

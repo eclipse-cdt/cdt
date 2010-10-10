@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+/**
+ * Representation in the project model of language settings entries
+ * such as include files ({@code -include file} gcc option). See {@link ICSettingEntry#INCLUDE_FILE}.
+ */
 public interface ICIncludeFileEntry extends ICLanguageSettingPathEntry {
 
 }

@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+/**
+ * Representation in the project model of language settings entries
+ * such as macro file ({@code -imacros file} gcc option).
+ * See {@link ICSettingEntry#MACRO_FILE}.
+ */
 public interface ICMacroFileEntry extends ICLanguageSettingPathEntry {
 
 }

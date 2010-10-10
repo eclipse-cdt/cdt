@@ -12,6 +12,11 @@ package org.eclipse.cdt.core.settings.model;
 
 import org.eclipse.core.runtime.IPath;
 
+/**
+ * Helper interface capturing 'path' characteristic for {@link ICSettingEntry}
+ * and {@link ICLanguageSettingEntry} interfaces.
+ *
+ */
 public interface ICPathEntry extends ICSettingEntry {
 	IPath getFullPath();
 

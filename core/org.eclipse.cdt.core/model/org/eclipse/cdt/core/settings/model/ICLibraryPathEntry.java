@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+/**
+ * Representation in the project model of language settings entries
+ * such as library path (-L gcc option). See {@link ICSettingEntry#LIBRARY_PATH}.
+ */
 public interface ICLibraryPathEntry extends ICLanguageSettingPathEntry {
 
 }

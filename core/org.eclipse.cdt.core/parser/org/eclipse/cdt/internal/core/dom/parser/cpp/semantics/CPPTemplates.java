@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -246,7 +247,7 @@ public class CPPTemplates {
 
 			IScope scope= CPPVisitor.getContainingScope(start);
 			while (scope instanceof IASTInternalScope) {
-				if (scope instanceof IProblemBinding)
+				if (scope instanceof ISemanticProblem)
 					return null;
 				final IASTInternalScope internalScope = (IASTInternalScope) scope;
 				if (scope instanceof ICPPClassScope) {
@@ -1923,7 +1924,7 @@ public class CPPTemplates {
 		while (t instanceof ITypeContainer) {
 			t = ((ITypeContainer) t).getType();
 		}
-		return !(t instanceof IProblemBinding);
+		return !(t instanceof ISemanticProblem);
 	}
 	
 	static boolean isValidArgument(ICPPTemplateArgument arg) {

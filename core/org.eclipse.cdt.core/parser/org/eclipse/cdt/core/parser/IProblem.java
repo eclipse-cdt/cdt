@@ -1,22 +1,19 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *     IBM Corporation - initial API and implementation
+ *     John Camelon (IBM Corporation) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
-import org.eclipse.cdt.internal.core.parser.ParserMessages;
 
 /**
- * @author jcamelon
- *
- * Description of a C/C++ parse/compilation problem, as detected by the parser or some of the underlying
- * clients of the parser. 
+ * Description of a C/C++ syntax problems and spelling errors as detected by the lexer, preprocessor,
+ * parser or the spelling engine.
  * 
  * A problem provides access to:
  * <ul>
@@ -25,7 +22,7 @@ import org.eclipse.cdt.internal.core.parser.ParserMessages;
  * <li> its ID : an number identifying the very nature of this problem. All possible IDs are listed
  * as constants on this interface. </li>
  * </ul>
- * 
+ * <p> Note, that semantic problems are modeled via {@link org.eclipse.cdt.core.dom.ast.ISemanticProblem}.
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -33,15 +30,11 @@ public interface IProblem
 {
 	/**
 	 * Returns the problem id
-	 * 
-	 * @return the problem id
 	 */
 	int getID();
 
 	/**
-	 * Answer a localized, human-readable message string which describes the problem.
-	 * 
-	 * @return a localized, human-readable message string which describes the problem
+	 * Returns a human-readable message describing the problem.
 	 */
 	String getMessage();
 
@@ -52,67 +45,46 @@ public interface IProblem
 	String getMessageWithLocation();
 
 	/**
-	 * Return to the client a map between parameter names and values.  
-	 * 
-	 * The keys and values are all Strings.  
-	 * 
-	 *
-	 * @return a map between parameter names and values.
+	 * Returns a possibly empty argument array to compute the message.  
 	 */
 	String[] getArguments();
 
 	/**
-	 * Answer the file name in which the problem was found.
-	 * 
-	 * @return the file name in which the problem was found
+	 * Returns the file name in which the problem was found
 	 */
 	char[] getOriginatingFileName();
 
 	/**
-	 * Answer the end position of the problem (inclusive), or -1 if unknown.
-	 * 
-	 * @return the end position of the problem (inclusive), or -1 if unknown
-	 */
-	int getSourceEnd();
-
-	/**
-	 * Answer the line number in source where the problem begins.
-	 * 
-	 * @return the line number in source where the problem begins, or -1 if unknown
-	 */
-	int getSourceLineNumber();
-
-	/**
-	 * Answer the start position of the problem (inclusive), or -1 if unknown.
-	 * 
-	 * @return the start position of the problem (inclusive), or -1 if unknown
+	 * Returns the start position of the problem (inclusive), or {@link #INT_VALUE_NOT_PROVIDED} if unknown.
 	 */
 	int getSourceStart();
 
 	/**
-	 * Checks the severity to see if the Error bit is set.
-	 * 
-	 * @return true if the Error bit is set for the severity, false otherwise
+	 * Returns the end position of the problem (inclusive), or {@link #INT_VALUE_NOT_PROVIDED} if unknown.
+	 */
+	int getSourceEnd();
+
+	/**
+	 * Returns the line number where the problem begins, or {@link #INT_VALUE_NOT_PROVIDED} if unknown.
+	 */
+	int getSourceLineNumber();
+
+	/**
+	 * Returns whether the problem is an error.
 	 */
 	boolean isError();
 
 	/**
-	 * Checks the severity to see if the Warning bit is not set.
-	 * 
-	 * @return true if the Warning bit is not set for the severity, false otherwise
+	 * Returns whether the problem is a warning.
 	 */
 	boolean isWarning();
 
+	
 	/**
-	 * Unknown Numeric Value for line numbers and offsets; use this constant
+	 * -1, returned when an offset or a line number is unknown.
 	 */
 	public final static int INT_VALUE_NOT_PROVIDED = -1;
 	
-	/**
-	 * Unknown filename sentinel value
-	 */
-	public final static String FILENAME_NOT_PROVIDED = ParserMessages.getString("IProblem.unknownFileName"); //$NON-NLS-1$
-
 	/**
 	 * Problem Categories
 	 * The high bits of a problem ID contains information about the category of a problem. 
@@ -141,22 +113,17 @@ public interface IProblem
 	public final static int SYNTAX_RELATED = 0x04000000;
 	
 	/**
-	 * IProblem relates to a valid semantical error in the parser
-	 */
-	public final static int SEMANTICS_RELATED = 0x08000000;
-	
-	/**
 	 * IProblem relates to an implementation of design limitation
 	 */
 	public final static int INTERNAL_RELATED = 0x10000000;
 
 
 	/**
-	 * Check the parameter bitmask against an IProblem's ID to broadly segregate the 
+	 * Check the parameter bit-mask against an IProblem's ID to broadly segregate the 
 	 * types of problems.  
 	 * 
 	 * @param bitmask
-	 * @return true if ( (id & bitmask ) != 0 )
+	 * @return true if ( (id & bit-mask ) != 0 )
 	 */
 	public boolean checkCategory(int bitmask);
 
@@ -165,89 +132,11 @@ public interface IProblem
 	 */
 	public final static int IGNORE_CATEGORIES_MASK = 0xFFFFFF;
 
-	/**
-	 * Below are listed all available problem attributes.  The JavaDoc for each  problem ID indicates
-	 * when they should be contributed to creating a problem of that type.  
-	 */
 
-	// Preprocessor IProblem attributes	 
-	/**
-	 * The text that follows a #error preprocessor directive 
-	 */
-	public final static String A_PREPROC_POUND_ERROR = ParserMessages.getString("IProblem.preproc.poundError"); //$NON-NLS-1$
-	/**
-	 * The text that follows a #warning preprocessor directive 
-	 */
-	public final static String A_PREPROC_POUND_WARNING = ParserMessages.getString("IProblem.preproc.poundWarning"); //$NON-NLS-1$
-
-	/**
-	 * The filename that failed somehow in an preprocessor include directive
-	 */
-	public final static String A_PREPROC_INCLUDE_FILENAME = ParserMessages.getString("IProblem.preproc.include"); //$NON-NLS-1$
-
-	/**
-	 * A preprocessor macro name
-	 */
-	public final static String A_PREPROC_MACRO_NAME = ParserMessages.getString("IProblem.preproc.macro"); //$NON-NLS-1$
-
-	/**
-	 * A preprocessor conditional that could not be evaluated
-	 * 
-	 * #if X + Y == Z       <== that one, if X, Y or Z are not defined 
-	 * #endif 
-	 */
-	public final static String A_PREPROC_CONDITION = ParserMessages.getString("IProblem.preproc.condition"); //$NON-NLS-1$
-
-	/**
-	 * A preprocessor directive that could not be interpretted
-	 * 
-	 * e.g.  #blah 
-	 */
-	public final static String A_PREPROC_UNKNOWN_DIRECTIVE = ParserMessages.getString("IProblem.preproc.unknownDirective"); //$NON-NLS-1$
-
-	/**
-	 * The preprocessor conditional statement that caused an unbalanced mismatch.  
-	 * 
-	 * #if X 
-	 * #else
-	 * #else		<=== that one
-	 * #endif 
-	 */
-	public final static String A_PREPROC_CONDITIONAL_MISMATCH = ParserMessages.getString("IProblem.preproc.conditionalMismatch"); //$NON-NLS-1$
-
-	/**
-	 * The Bad character encountered in scanner 
-	 */
-	public static final String A_SCANNER_BADCHAR = null;
-
-	/**
-	 * A_SYMBOL_NAME  - symbol name 
-	 */
-	public static final String A_SYMBOL_NAME = ParserMessages.getString("IProblem.symbolName"); //$NON-NLS-1$
-	
-	/**
-	 * A_NAMESPACE_NAME = namespace name
-	 */
-	public static final String A_NAMESPACE_NAME = ParserMessages.getString("IProblem.namespaceName"); //$NON-NLS-1$
-	
-	/**
-	 * A_TYPE_NAME - type name 
-	 */
-	public static final String A_TYPE_NAME = ParserMessages.getString("IProblem.typeName"); //$NON-NLS-1$
-	
-	/**
-	 * Below are listed all available problem IDs. Note that this list could be augmented in the future, 
-	 * as new features are added to the C/C++ core implementation.
-	 */
-
-	/*
-	 * Scanner Problems
-	 */
-	 
+	// Lexer
 	/** 
 	 * Bad character encountered by Scanner. 
 	 * Required attributes: A_SCANNER_BADCHAR
-	 * @see #A_SCANNER_BADCHAR  
 	 */
 	public final static int SCANNER_BAD_CHARACTER = SCANNER_RELATED | 0x001;
 	
@@ -270,7 +159,7 @@ public interface IProblem
 	public final static int SCANNER_BAD_FLOATING_POINT = SCANNER_RELATED | 0x004;
 	
 	/** 
-	 * Bad hexidecimal encountered by Scanner. 
+	 * Bad hexadecimal encountered by Scanner. 
 	 * Required attributes: none.  
 	 */
 	public final static int SCANNER_BAD_HEX_FORMAT = SCANNER_RELATED | 0x005;
@@ -336,11 +225,7 @@ public interface IProblem
 	 */
 	public final static int SCANNER_BAD_BINARY_FORMAT = SCANNER_RELATED | 0x00F;
 
-
-	/*
-	 * Preprocessor Problems
-	 */
-	 
+	// Preprocessor
 	/**
 	 *	#error encountered by Preprocessor.  
 	 * Required attributes:  A_PREPROC_POUND_ERROR
@@ -438,82 +323,72 @@ public interface IProblem
 	 */
 	public final static int PREPROCESSOR_POUND_WARNING = PREPROCESSOR_RELATED | 0x00E;
 	
-	/*
-	 * Parser Syntactic Problems
+	/**
+	 * Syntax error, detected by the parser.
 	 */
 	public final static int SYNTAX_ERROR = SYNTAX_RELATED | 0x001;
 
-	/*
-	 * Parser Semantic Problems
-	 */
 	
-	/**
-	 * Attempt to add a unique symbol, yet the value was already defined.
-	 * Require attributes: A_SYMBOL_NAME
-	 * @see #A_SYMBOL_NAME  
-	 */
+	@Deprecated
+	public final static int SEMANTICS_RELATED = 0x08000000;
+	@Deprecated
+	public final static String A_PREPROC_POUND_ERROR = ""; //$NON-NLS-1$
+	@Deprecated
+	public final static String A_PREPROC_POUND_WARNING = ""; //$NON-NLS-1$
+	@Deprecated
+	public final static String A_PREPROC_INCLUDE_FILENAME = ""; //$NON-NLS-1$
+	@Deprecated
+	public final static String A_PREPROC_MACRO_NAME = ""; //$NON-NLS-1$
+	@Deprecated
+	public final static String A_PREPROC_CONDITION = ""; //$NON-NLS-1$
+	@Deprecated
+	public final static String A_PREPROC_UNKNOWN_DIRECTIVE = ""; //$NON-NLS-1$
+	@Deprecated
+	public final static String A_PREPROC_CONDITIONAL_MISMATCH = ""; //$NON-NLS-1$
+	@Deprecated
+	public static final String A_SCANNER_BADCHAR = ""; //$NON-NLS-1$
+	@Deprecated
+	public static final String A_SYMBOL_NAME = ""; //$NON-NLS-1$
+	@Deprecated
+	public static final String A_NAMESPACE_NAME = ""; //$NON-NLS-1$
+	@Deprecated
+	public static final String A_TYPE_NAME = ""; //$NON-NLS-1$
+	@Deprecated
+	public final static String FILENAME_NOT_PROVIDED = ""; //$NON-NLS-1$
+	@Deprecated
 	public final static int SEMANTIC_UNIQUE_NAME_PREDEFINED = SEMANTICS_RELATED | 0x001;
-	
-	/**
-	 * Attempt to use a symbol that was not found. 
-	 * Require attributes: A_SYMBOL_NAME
-	 * @see #A_SYMBOL_NAME  
-	 */	
+	@Deprecated
 	public final static int SEMANTIC_NAME_NOT_FOUND = SEMANTICS_RELATED | 0x002;
-
-	/**
-	 * Name not provided in context that it was required.   
-	 * Require attributes: none
-	 */
+	@Deprecated
 	public final static int SEMANTIC_NAME_NOT_PROVIDED = SEMANTICS_RELATED | 0x003;
-
-	/**
-	 * Invalid overload of a particular name.
-	 * Required attributes: A_SYMBOL_NAME
-	 * @see #A_SYMBOL_NAME  
-	 */
+	@Deprecated
 	public static final int SEMANTIC_INVALID_OVERLOAD = SEMANTICS_RELATED | 0x004;
-
-	/**
-	 * Invalid using directive.  
-	 * Required attributes: A_NAMESPACE_NAME
-	 * @see #A_NAMESPACE_NAME
-	 */
+	@Deprecated
 	public static final int SEMANTIC_INVALID_USING = SEMANTICS_RELATED | 0x005;
-	
-	/**
-	 * Ambiguous lookup for given name. 
-	 * Required attributes: A_SYMBOL_NAME
-	 * @see #A_SYMBOL_NAME
-	 */
+	@Deprecated
 	public static final int SEMANTIC_AMBIGUOUS_LOOKUP = SEMANTICS_RELATED | 0x006;
-
-	/**
-	 * Invalid type provided
-	 * Required attributes: A_TYPE_NAME
-	 * @see #A_TYPE_NAME
-	 */
+	@Deprecated
 	public static final int SEMANTIC_INVALID_TYPE = SEMANTICS_RELATED | 0x007;
-
+	@Deprecated
 	public static final int SEMANTIC_CIRCULAR_INHERITANCE = SEMANTICS_RELATED | 0x008;
-
+	@Deprecated
 	public static final int SEMANTIC_INVALID_TEMPLATE = SEMANTICS_RELATED | 0x009;
-
+	@Deprecated
 	public static final int SEMANTIC_BAD_VISIBILITY = SEMANTICS_RELATED | 0x00A;
-
+	@Deprecated
 	public static final int SEMANTIC_UNABLE_TO_RESOLVE_FUNCTION = SEMANTICS_RELATED | 0x00B;
-
+	@Deprecated
 	public static final int SEMANTIC_INVALID_TEMPLATE_ARGUMENT = SEMANTICS_RELATED | 0x00C;
-
+	@Deprecated
 	public static final int SEMANTIC_INVALID_TEMPLATE_PARAMETER = SEMANTICS_RELATED | 0x00D;
-
+	@Deprecated
 	public static final int SEMANTIC_REDECLARED_TEMPLATE_PARAMETER = SEMANTICS_RELATED | 0x00E;
-
+	@Deprecated
 	public static final int SEMANTIC_INVALID_CONVERSION_TYPE = SEMANTICS_RELATED | 0x00F;
-
+	@Deprecated
 	public static final int SEMANTIC_MALFORMED_EXPRESSION = SEMANTICS_RELATED | 0x010;
-
+	@Deprecated
 	public static final int SEMANTIC_ILLFORMED_FRIEND = SEMANTICS_RELATED | 0x011;
-	
+	@Deprecated
 	public static final int SEMANTIC_RECURSIVE_TEMPLATE_INSTANTIATION = SEMANTICS_RELATED | 0x012;
 }

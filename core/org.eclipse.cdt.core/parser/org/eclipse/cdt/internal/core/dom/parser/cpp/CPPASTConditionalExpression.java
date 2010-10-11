@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -186,11 +187,11 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 		
 		final IType uqt2= getNestedType(t2, TDEF | REF | CVTYPE);
 		final IType uqt3= getNestedType(t3, TDEF | REF | CVTYPE);
-		if (uqt2 instanceof IProblemBinding || uqt2 instanceof ICPPUnknownType) {
+		if (uqt2 instanceof ISemanticProblem || uqt2 instanceof ICPPUnknownType) {
 			fType= uqt2;
 			return;
 		}
-		if (uqt3 instanceof IProblemBinding || uqt3 instanceof ICPPUnknownType) {
+		if (uqt3 instanceof ISemanticProblem || uqt3 instanceof ICPPUnknownType) {
 			fType= uqt3;
 			return;
 		}

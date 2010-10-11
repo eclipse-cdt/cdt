@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
@@ -241,7 +242,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		if (op == op_star) {
 			IType type= operand.getExpressionType();
 			type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
-	    	if (type instanceof IProblemBinding) {
+	    	if (type instanceof ISemanticProblem) {
 	    		return type;
 	    	}
 

@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -301,14 +302,14 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		
         final int op = getOperator();
 		IType type1 = prvalueType(operand1.getExpressionType());
-		if (type1 instanceof IProblemBinding) {
+		if (type1 instanceof ISemanticProblem) {
 			return type1;
 		}
 		
 		IType type2 = null;
 		if (operand2 instanceof IASTExpression) {
 			type2= prvalueType(((IASTExpression) operand2).getExpressionType());
-			if (type2 instanceof IProblemBinding) {
+			if (type2 instanceof ISemanticProblem) {
 				return type2;
 			}
 		}

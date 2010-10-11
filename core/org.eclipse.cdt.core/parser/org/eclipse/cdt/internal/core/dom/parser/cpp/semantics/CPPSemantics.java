@@ -82,6 +82,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -683,11 +684,9 @@ public class CPPSemantics {
 			ICPPClassType ct= (ICPPClassType) t;
 			ICPPBase[] bases = ct.getBases();
 			for (ICPPBase base : bases) {
-				if (!(base instanceof IProblemBinding)) {
-					IBinding b = base.getBaseClass();
-					if (b instanceof IType)
-						getAssociatedScopes((IType) b, namespaces, handled, tu);
-				}
+				IBinding b = base.getBaseClass();
+				if (b instanceof IType)
+					getAssociatedScopes((IType) b, namespaces, handled, tu);
 			}
 			// Furthermore, if T is a class template ... 
 			// * ... types of the template arguments for template type parameters 
@@ -762,6 +761,7 @@ public class CPPSemantics {
     	if (scope instanceof ICPPScope) {
     		return (ICPPScope) scope;
     	} else if (scope instanceof IProblemBinding) {
+    		// mstodo scope problems
     		return new CPPScope.CPPScopeProblem(((IProblemBinding) scope).getASTNode(),
     				IProblemBinding.SEMANTIC_BAD_SCOPE, ((IProblemBinding) scope).getNameCharArray());
     	}
@@ -1047,7 +1047,7 @@ public class CPPSemantics {
 			return false;
 		
 		IType t= SemanticUtil.getNestedType((ITypedef) type, TDEF);
-		if (t instanceof ICPPUnknownBinding || t instanceof IProblemBinding ||
+		if (t instanceof ICPPUnknownBinding || t instanceof ISemanticProblem ||
 				!(t instanceof ICPPClassType)) {
 			return false;
 		}
@@ -3039,7 +3039,7 @@ public class CPPSemantics {
 			type = SemanticUtil.getNestedType(((ICPPVariable) binding).getType(), TDEF | CVTYPE);
 	    	if (!(type instanceof ICPPClassType))
 	    		return null;
-	    	if (type instanceof ICPPClassTemplate || type instanceof ICPPUnknownClassType || type instanceof IProblemBinding)
+	    	if (type instanceof ICPPClassTemplate || type instanceof ICPPUnknownClassType || type instanceof ISemanticProblem)
 	    		return null;
 	    	
 	    	final ICPPClassType classType = (ICPPClassType) type;
@@ -3243,7 +3243,7 @@ public class CPPSemantics {
     	// Find a method
     	LookupData methodData = null;
     	CPPASTName methodName = null;
-    	if (methodLookupType instanceof IProblemBinding)
+    	if (methodLookupType instanceof ISemanticProblem)
     		return null;
     	if (methodLookupType instanceof ICPPClassType) {
 			ICPPClassType classType = (ICPPClassType) methodLookupType;
@@ -3412,7 +3412,7 @@ public class CPPSemantics {
 	}
 
 	private static boolean isUserDefined(IType type) {
-		if (type instanceof IProblemBinding)
+		if (type instanceof ISemanticProblem)
 			return false;
 		
     	return type instanceof ICPPClassType || type instanceof IEnumeration || type instanceof ICPPUnknownType;

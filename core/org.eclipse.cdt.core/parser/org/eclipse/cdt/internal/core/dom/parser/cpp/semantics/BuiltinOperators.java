@@ -30,8 +30,8 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
@@ -85,13 +85,13 @@ class BuiltinOperators {
 		fGlobalCandidates= globCandidates;
 		if (args.length > 0 && args[0] instanceof IASTExpression) {
 			IType type= typeOrFunctionSet((IASTExpression) args[0]);
-			if (!(type instanceof IProblemBinding)) 
+			if (!(type instanceof ISemanticProblem)) 
 				fType1= type;
 			
 		}
 		if (args.length > 1 && args[1] instanceof IASTExpression) {
 			IType type= typeOrFunctionSet((IASTExpression) args[1]);
-			if (!(type instanceof IProblemBinding))
+			if (!(type instanceof ISemanticProblem))
 				fType2= type;
 		}
 	}

@@ -132,9 +132,6 @@ public class AccessContext {
 			ICPPBase[] bases = derivedClass.getBases();
 			if (bases != null) {
 				for (ICPPBase base : bases) {
-					if (base instanceof IProblemBinding) {
-						continue;
-					}
 					IBinding baseBinding = base.getBaseClass();
 					if (!(baseBinding instanceof ICPPClassType)) {
 						continue;
@@ -174,8 +171,7 @@ public class AccessContext {
 		return accessLevel;
 	}
 
-	private boolean isAccessibleBaseClass(ICPPClassType classType, ICPPClassType defived, int depth)
-			throws DOMException {
+	private boolean isAccessibleBaseClass(ICPPClassType classType, ICPPClassType defived, int depth) {
 		if (depth > CPPSemantics.MAX_INHERITANCE_DEPTH)
 			return false;
 
@@ -185,9 +181,6 @@ public class AccessContext {
 		ICPPBase[] bases = defived.getBases();
 		if (bases != null) {
 			for (ICPPBase base : bases) {
-				if (base instanceof IProblemBinding) {
-					continue;
-				}
 				IBinding baseClass = base.getBaseClass();
 				if (!(baseClass instanceof ICPPClassType)) {
 					continue;

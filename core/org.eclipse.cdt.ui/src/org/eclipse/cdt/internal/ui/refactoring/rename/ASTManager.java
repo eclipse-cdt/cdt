@@ -71,6 +71,7 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -482,7 +483,7 @@ public class ASTManager {
         if (t1 == t2) {
             return TRUE;
         }
-        if (t1 == null || t2 == null || t1 instanceof IProblemBinding || t2 instanceof IProblemBinding) {
+        if (t1 == null || t2 == null || t1 instanceof ISemanticProblem || t2 instanceof ISemanticProblem) {
             return UNKNOWN;
         }
         

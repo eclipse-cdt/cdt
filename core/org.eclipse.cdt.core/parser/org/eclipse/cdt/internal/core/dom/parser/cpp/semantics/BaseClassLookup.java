@@ -190,8 +190,6 @@ class BaseClassLookup {
 				}
 				for (int i = 0; i < grandBases.length; i++) {
 					ICPPBase grandBase = grandBases[i];
-					if (grandBase instanceof IProblemBinding)
-						continue;
 					if (selectedBases != null && !selectedBases.get(i))
 						continue;
 	
@@ -282,9 +280,6 @@ class BaseClassLookup {
 			bases= fClassType.getBases();
 			if (bases != null && bases.length > 0) {
 				for (ICPPBase base : bases) {
-					if (base instanceof IProblemBinding)
-						continue;
-	
 					IBinding baseBinding = base.getBaseClass();
 					if (!(baseBinding instanceof ICPPClassType)) {
 						continue;

@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
@@ -130,7 +130,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
     			}
     		} else {
     			IType type= CPPVisitor.createType(arg);
-    			if (type == null || type instanceof IProblemBinding) {
+    			if (type == null || type instanceof ISemanticProblem) {
     				buf.append(arg.getRawSignature());
     			} else {
     				buf.append(ASTTypeUtil.getType(type, false));

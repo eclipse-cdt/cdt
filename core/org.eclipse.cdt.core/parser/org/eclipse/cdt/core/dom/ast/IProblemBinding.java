@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,34 +17,20 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface IProblemBinding extends IBinding, IScope, IType {
+public interface IProblemBinding extends IBinding, IScope, IType, ISemanticProblem {
 
     /**
-     * Returns the problem id
-     * 
-     * @return the problem id
-     */
-    int getID();
-
-    /**
-     * Answer a localized, human-readable message string which describes the problem.
-     * 
-     * @return a localized, human-readable message string which describes the problem
-     */
-    String getMessage();
-    
-    /**
-     * get the AST node that this problem was created for
+     * Returns the AST node that this problem was created for
      */
     public IASTNode getASTNode();
 	
 	/**
-	 * returns the file name this problem occurred in if known.
+	 * Returns the file name this problem occurred in, or <code>null</code> if it is unknown.
 	 */
 	public String getFileName();
 	
 	/**
-	 * returns the line number for this problem if known
+	 * Returns the line number for this problem, or -1 if it is unknown.
 	 */
 	public int getLineNumber();
 

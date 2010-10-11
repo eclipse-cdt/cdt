@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 QNX Software Systems and others.
+ * Copyright (c) 2007, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Bryan Wilkinson (QNX) - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -23,25 +24,25 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	private static final String HEADER_FILE_NAME = "PHTest.h";
 	private static final String SOURCE_FILE_NAME = "PHTest.cpp";
 	
-//{PHTest.h}
-//class aClass {
-//public:
-//	int aField;
-//	void aMethod(char c);
-//  void aMethod(char c, int x);
-//};
-//class bClass {
-//public:
-//	bClass(int x);
-//	bClass(int x, int y);
-//};
-//void aFunc(int i);
-//int anotherFunc(int i, int j);
-//int pi(aClass a);
-//int pie(aClass a);
-//int pies(aClass a);
-//template<class T>class tClass {public:tClass(T t);};
-//template<class T>void tFunc(T x, T y);
+	//	{PHTest.h}
+	//	class aClass {
+	//  public:
+	//	    int aField;
+	//	    void aMethod(char c);
+	//	    void aMethod(char c, int x);
+	//	};
+	//	class bClass {
+	//	public:
+	//	    bClass(int x);
+	//	    bClass(int x, int y);
+	//	};
+	//	void aFunc(int i);
+	//	int anotherFunc(int i, int j);
+	//	int pi(aClass a);
+	//	int pie(aClass a);
+	//	int pies(aClass a);
+	//	template<class T>class tClass {public:tClass(T t);};
+	//	template<class T>void tFunc(T x, T y);
 	
 	public ParameterHintTests(String name) {
 		super(name, true);
@@ -129,8 +130,20 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	}
 
 	//void foo(){bClass b(
-	public void _testConstructor2_Bug223660() throws Exception {
+	public void testConstructor2_Bug223660() throws Exception {
 		// http://bugs.eclipse.org/223660
+		assertParameterHints(new String[] {
+				"bClass(int x)",
+				"bClass(int x,int y)",
+				"bClass(const bClass &)"
+		});
+	}
+	
+	//	struct D {
+	//	  bClass b;
+	//	  D() : b(
+	public void testConstructor3_Bug327064() throws Exception {
+		// http://bugs.eclipse.org/327064
 		assertParameterHints(new String[] {
 				"bClass(int x)",
 				"bClass(int x,int y)",
@@ -147,11 +160,11 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	}
 	
 	//void foo(){tClass<int> t(
-	public void _testTemplateConstructor2_Bug223660() throws Exception {
+	public void testTemplateConstructor2_Bug223660() throws Exception {
 		// http://bugs.eclipse.org/223660
 		assertParameterHints(new String[] {
-				"tClass(T t)",
-				"tClass(const tClass &)"
+				"tClass(int t)",
+				"tClass(const tClass<int> &)"
 		});
 	}
 	

@@ -85,13 +85,19 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
 			}
 			IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 			return filterByElaboratedTypeSpecifier(kind, bindings);
-		}
-		else if (parent instanceof IASTDeclarator) {
+		} else if (parent instanceof IASTDeclarator) {
 			IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
-			for (int i = 0; i < bindings.length; i++) {
-				if (bindings[i] instanceof ICPPNamespace || bindings[i] instanceof ICPPClassType) {
-				} else {
-					bindings[i] = null;
+			if (!isPrefix) {
+				// The lookup does not find the binding, that is defined by this name
+				if (bindings.length == 0) {
+					bindings= new IBinding[] {n.resolveBinding()};
+				}
+			} else {
+				for (int i = 0; i < bindings.length; i++) {
+					if (bindings[i] instanceof ICPPNamespace || bindings[i] instanceof ICPPClassType) {
+					} else {
+						bindings[i] = null;
+					}
 				}
 			}
 			return (IBinding[])ArrayUtil.removeNulls(IBinding.class, bindings);

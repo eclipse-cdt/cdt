@@ -302,10 +302,10 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 				handleClass((ICPPClassType) binding, astContext, cContext, baseRelevance, proposals);
 			} else if (binding instanceof IFunction) {
 				handleFunction((IFunction)binding, cContext, baseRelevance, proposals);
+			} else if (binding instanceof IVariable) {
+				handleVariable((IVariable) binding, cContext, baseRelevance, proposals);
 			} else if (!cContext.isContextInformationStyle()) {
-				if (binding instanceof IVariable) {
-					handleVariable((IVariable) binding, cContext, baseRelevance, proposals);
-				} else if (binding instanceof ITypedef) {
+				if (binding instanceof ITypedef) {
 					proposals.add(createProposal(name, name, getImage(binding),
 							baseRelevance + RelevanceConstants.TYPEDEF_TYPE_RELEVANCE, cContext));
 				} else if (binding instanceof ICPPNamespace) {
@@ -456,6 +456,23 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	
 	private void handleVariable(IVariable variable, CContentAssistInvocationContext context,
 			int baseRelevance, List<ICompletionProposal> proposals) {
+		if (context.isContextInformationStyle()) {
+			// Handle the case where a variable is initialized with a constructor
+			try {
+				IType t = variable.getType();
+				t= unwindTypedefs(t);
+				if (t instanceof ICPPClassType) {
+					ICPPClassType classType= (ICPPClassType) t;
+					ICPPConstructor[] constructors = classType.getConstructors();
+					for (ICPPConstructor constructor : constructors) {
+						handleFunction(constructor, context, baseRelevance, proposals);
+					}
+				}
+			} catch (DOMException e) {
+			}
+			return;
+		} 
+
 		StringBuilder repStringBuff = new StringBuilder();
 		repStringBuff.append(variable.getName());
 		
@@ -490,6 +507,13 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		proposals.add(proposal);
 	}
 	
+	private IType unwindTypedefs(final IType t) {
+		IType r= t;
+		while (r instanceof ITypedef)
+			r= ((ITypedef) r).getType();
+		return r != null ? r : t;
+	}
+
 	private static boolean isField(IVariable variable) {
 		return variable instanceof IField;
 	}

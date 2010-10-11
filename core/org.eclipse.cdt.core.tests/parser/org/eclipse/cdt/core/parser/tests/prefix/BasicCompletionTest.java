@@ -286,4 +286,14 @@ public class BasicCompletionTest extends CompletionTestBase {
 		String[] expected= {"A"};
 		checkNonPrefixCompletion(code, true, expected);
 	}
+	
+	// struct S {};
+	// void foo() {
+	//    S b
+	public void testCompletionInCtorOfVariable_223660() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"b"};
+		checkNonPrefixCompletion(code, true, expected);
+	}
+	
 }

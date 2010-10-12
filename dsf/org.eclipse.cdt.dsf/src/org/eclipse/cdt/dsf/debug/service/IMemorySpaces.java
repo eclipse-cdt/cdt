@@ -28,7 +28,18 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IMemorySpaces extends IDsfService{
 
+	/**
+	 * A context that represents a particular memory space. Simple targets have
+	 * a single, implicit memory space, but some have multiple, e.g., code,
+	 * data, virtual, physical.
+	 */
 	public interface IMemorySpaceDMContext extends IMemoryDMContext {
+		
+		/**
+		 * The string-based handle used to refer to the memory space, as per
+		 * what's returned in
+		 * {@link IMemorySpaces#getMemorySpaces(IDMContext, DataRequestMonitor) 
+		 */
 		public String getMemorySpaceId();
 	}
 
@@ -73,10 +84,15 @@ public interface IMemorySpaces extends IDsfService{
 	 * Provides the memory spaces available in the given context.
 	 * 
 	 * @param ctx
-	 *            a DM context
+	 *            a context which might <i>contain</i> one or more memory
+	 *            spaces. Contexts that may be <i>associated</i> with a memory
+	 *            space should not be passed in. E.g., an expression might be
+	 *            associated with a memory space, but it does not contain memory
+	 *            spaces, and is thus not an appropriate context for this
+	 *            method.
 	 * @param rm
 	 *            the asynchronous data request monitor. Returns a collection of
-	 *            memory space IDs.
+	 *            memory space IDs. Never null, but may be empty.
 	 */
 	void getMemorySpaces(IDMContext context, final DataRequestMonitor<String[]> rm);
 	

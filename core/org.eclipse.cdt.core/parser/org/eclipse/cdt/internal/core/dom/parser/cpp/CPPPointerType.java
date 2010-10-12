@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,20 +30,18 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 	private boolean isConst = false;
 	private boolean isVolatile = false;
 	
-	public CPPPointerType(IType type, IASTPointer operator) {
-		this.type = type;
-		this.isConst = operator.isConst();
-		this.isVolatile = operator.isVolatile();
-	}
-
 	public CPPPointerType(IType type, boolean isConst, boolean isVolatile) {
-		this.type = type;
 		this.isConst = isConst;
 		this.isVolatile = isVolatile;
+		setType(type);
+	}
+
+	public CPPPointerType(IType type, IASTPointer operator) {
+		this(type, operator.isConst(), operator.isVolatile());
 	}
 	
 	public CPPPointerType(IType type) {
-	    this.type = type;
+	    this(type, false, false);
 	}
 
 	public IType stripQualifiers() {
@@ -83,6 +81,7 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 	}
 	
 	public void setType(IType t) {
+		assert t != null;
 	    type = t;
 	}
 

@@ -13,12 +13,13 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
+import org.eclipse.core.runtime.CoreException;
 
 
 /**
  * Implementation of problem types.
  */
-public class ProblemType implements IProblemType {
+public class ProblemType implements IProblemType, ISerializableType {
 	private final int fID;
 
 	public ProblemType(int id) {
@@ -44,5 +45,14 @@ public class ProblemType implements IProblemType {
 		} catch (CloneNotSupportedException e) {
 			return null;
 		}
+	}
+
+	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
+		buffer.putByte(ITypeMarshalBuffer.PROBLEM_TYPE);
+		buffer.putShort((short) getID());
+	}
+	
+	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+		return new ProblemType(buffer.getShort() & 0xffff);
 	}
 }

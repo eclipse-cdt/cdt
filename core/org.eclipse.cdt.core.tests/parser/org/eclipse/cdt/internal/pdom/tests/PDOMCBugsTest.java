@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
-import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -85,17 +85,17 @@ public class PDOMCBugsTest extends BaseTestCase {
 		assertEquals(7, bindings.length);
 		Set bnames= new HashSet();
 		for (IBinding binding : bindings) {
+			final String name = binding.getName();
+			bnames.add(name);
 			assertTrue("expected typedef, got "+binding, binding instanceof ITypedef);
-			bnames.add(binding.getName());
 			IType type= SemanticUtil.getUltimateType((IType)binding, false);
-			
-			if(binding.getName().equals("J")) {
+			if (name.equals("J")) {
 				// for plain C the second J has to be interpreted as a (useless) parameter name.
 				assertTrue(type instanceof IFunctionType);
 				IFunctionType ft= (IFunctionType) type;
 				assertEquals("int (int)", ASTTypeUtil.getType(ft));
 			} else {
-				assertTrue("expected ITypedef, got "+type, type == null || type instanceof ITypedef || type instanceof IPointerType);
+				assertTrue(type instanceof IProblemType);
 			}
 		}
 		

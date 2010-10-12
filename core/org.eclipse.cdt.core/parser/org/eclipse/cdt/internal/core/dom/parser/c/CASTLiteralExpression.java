@@ -16,9 +16,11 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 
 /**
  * Represents a literal
@@ -97,7 +99,7 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 			type = new CQualifierType(type, true, false, false);
 			return new CPointerType(type, 0);
 		}
-		return null;
+		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}
 	
 	public boolean isLValue() {

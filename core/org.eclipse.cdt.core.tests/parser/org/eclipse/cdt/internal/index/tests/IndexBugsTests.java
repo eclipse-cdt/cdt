@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -2211,7 +2212,7 @@ public class IndexBugsTests extends BaseTestCase {
 			tu = TestSourceReader.createIndexBasedAST(index, fCProject, s2);
 			sdecl= (IASTSimpleDeclaration) tu.getDeclarations()[0];
 			var= (IVariable) sdecl.getDeclarators()[0].getName().resolveBinding();
-			assertTrue(var.getType() instanceof IProblemBinding);
+			assertTrue(var.getType() instanceof ISemanticProblem);
 		} finally {
 			index.releaseReadLock();
 		}

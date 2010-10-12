@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -1514,24 +1515,23 @@ public class CPPTemplates {
 	 * @param id the template id containing the template arguments
 	 * @return an array of template arguments, currently modeled as IType objects. The
 	 * empty IType array is returned if id is <code>null</code>
-	 * @throws DOMException 
 	 */
-	public static ICPPTemplateArgument[] createTemplateArgumentArray(ICPPASTTemplateId id) throws DOMException {
+	public static ICPPTemplateArgument[] createTemplateArgumentArray(ICPPASTTemplateId id) {
 		ICPPTemplateArgument[] result= ICPPTemplateArgument.EMPTY_ARGUMENTS;
 		if (id != null) {
-			IASTNode[] params= id.getTemplateArguments();
-			result = new ICPPTemplateArgument[params.length];
-			for (int i = 0; i < params.length; i++) {
-				IASTNode param= params[i];
-				IType type= CPPVisitor.createType(param);
-				if (type == null)
-					throw new DOMException(new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TYPE));
-
-				if (param instanceof IASTExpression) {
-					IValue value= Value.create((IASTExpression) param, Value.MAX_RECURSION_DEPTH);
+			IASTNode[] args= id.getTemplateArguments();
+			result = new ICPPTemplateArgument[args.length];
+			for (int i = 0; i < args.length; i++) {
+				IASTNode arg= args[i];
+				if (arg instanceof IASTTypeId) {
+					result[i]= new CPPTemplateArgument(CPPVisitor.createType((IASTTypeId) arg));
+				} else if (arg instanceof IASTExpression) {
+					IASTExpression expr= (IASTExpression) arg;
+					IType type= expr.getExpressionType();
+					IValue value= Value.create((IASTExpression) arg, Value.MAX_RECURSION_DEPTH);
 					result[i]= new CPPTemplateArgument(value, type);
 				} else {
-					result[i]= new CPPTemplateArgument(type);
+					throw new IllegalArgumentException();
 				}
 			}
 		}

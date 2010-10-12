@@ -521,7 +521,7 @@ public class LookupData {
 				ICPPASTParameterDeclaration[] pdecls= functionParameters;
 				functionArgTypes= new IType[pdecls.length];
 				for (int i = 0; i < pdecls.length; i++) {
-					functionArgTypes[i] = SemanticUtil.getSimplifiedType(CPPVisitor.createParameterType(
+					functionArgTypes[i] = SemanticUtil.getSimplifiedType(CPPVisitor.createType(
 							pdecls[i], true));
 				}
 			} 

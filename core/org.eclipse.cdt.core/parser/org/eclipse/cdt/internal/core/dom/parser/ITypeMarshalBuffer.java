@@ -26,6 +26,7 @@ public interface ITypeMarshalBuffer {
 	final static byte REFERENCE=        		6;
 	final static byte POINTER_TO_MEMBER=    	7;
 	final static byte PACK_EXPANSION= 			8;
+	final static byte PROBLEM_TYPE= 			9;
 	static final byte KIND_MASK = 0xf;
 	
 	final static int FLAG1	= 0x10;

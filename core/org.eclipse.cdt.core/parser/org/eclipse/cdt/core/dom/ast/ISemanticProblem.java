@@ -19,6 +19,11 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISemanticProblem {
+	int TYPE_NO_NAME 								= 10000;
+	int TYPE_UNRESOLVED_NAME 						= 10001;
+	int TYPE_AUTO_FOR_NON_STATIC_FIELD 				= 10002;
+	int TYPE_CANNOT_DEDUCE_AUTO_TYPE 				= 10003;
+	int TYPE_UNKNOWN_FOR_EXPRESSION 				= 10004; 
 
 	/**
      * Returns the ID of the problem.

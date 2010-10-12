@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
@@ -39,7 +40,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
@@ -222,10 +223,10 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 				if (owner instanceof ICPPClassType) {
 					return (ICPPClassType) owner;
 				} 
-				return new ProblemBinding(this, IProblemBinding.SEMANTIC_BAD_SCOPE, binding.getNameCharArray());
+				return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 			} 
 			if (binding instanceof IProblemBinding) {
-				return (IProblemBinding) binding;
+				return new ProblemType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
 			}
 			if (binding instanceof IType) {
 				return prvalueType((IType) binding);
@@ -240,8 +241,7 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 			if (overload != null) {
 				return typeFromFunctionCall(overload);
 			} 
-			// mstodo problem type
-			return null;
+			return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 		}
 		
 		if (t instanceof IPointerType) {
@@ -251,8 +251,7 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 			return typeFromReturnType(((IFunctionType) t).getReturnType());
 		}
 
-		// mstodo problem type
-		return null;
+		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
     }
     
     public boolean isLValue() {

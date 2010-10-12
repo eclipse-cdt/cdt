@@ -73,8 +73,14 @@ public class ParserMessages {
 		return null;
 	}
 
+	@SuppressWarnings("nls")
 	private static String getProblemKey(int id) {
 		switch(id) {
+		case ISemanticProblem.TYPE_NO_NAME: return "ISemanticProblem.TYPE_NO_NAME";
+		case ISemanticProblem.TYPE_UNRESOLVED_NAME: return "ISemanticProblem.TYPE_UNRESOLVED_NAME";
+		case ISemanticProblem.TYPE_AUTO_FOR_NON_STATIC_FIELD: return "ISemanticProblem.TYPE_AUTO_FOR_NON_STATIC_FIELD";
+		case ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE: return "ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE";
+		case ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION: return "ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION";
 		}
 		return null;
 	}

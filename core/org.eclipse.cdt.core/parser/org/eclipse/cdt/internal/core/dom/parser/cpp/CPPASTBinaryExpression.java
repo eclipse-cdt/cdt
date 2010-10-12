@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
@@ -35,7 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
@@ -337,7 +336,6 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         	if (type2 instanceof IPointerType) {
         		return type2;
         	} 
-            // mstodo problem type
         	break;
 
         case IASTBinaryExpression.op_minus:
@@ -347,7 +345,6 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         		}
         		return type1;
         	}
-            // mstodo problem type
         	break;
 
         case ICPPASTBinaryExpression.op_pmarrow:
@@ -361,7 +358,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         		}
         		return glvalueType(t);
         	}
-        	return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE, getRawSignature().toCharArray());
+    		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
         }
         return type1;
 	}

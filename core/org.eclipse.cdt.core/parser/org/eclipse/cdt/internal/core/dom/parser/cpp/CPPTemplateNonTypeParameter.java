@@ -101,7 +101,7 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 			IASTNode parent= getPrimaryDeclaration().getParent();
 			while (parent != null) {
 				if (parent instanceof ICPPASTParameterDeclaration) {
-					type= CPPVisitor.createParameterType((ICPPASTParameterDeclaration) parent, true);
+					type= CPPVisitor.createType((ICPPASTParameterDeclaration) parent, true);
 					break;
 				}
 				parent= parent.getParent();

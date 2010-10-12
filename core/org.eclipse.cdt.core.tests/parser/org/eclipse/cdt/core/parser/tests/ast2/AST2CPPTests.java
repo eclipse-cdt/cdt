@@ -76,8 +76,10 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -8409,9 +8411,11 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPVariable t= bh.assertNonProblem("t =", 1);
 		assertEquals("std::initializer_list<double> *", ASTTypeUtil.getType(t.getType()));
 		ICPPVariable x= bh.assertNonProblem("x;", 1);
-		assertNull(x.getType());
+		IProblemType pt= (IProblemType) x.getType();
+		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE, pt.getID());
 		ICPPVariable y= bh.assertNonProblem("y =", 1);
-		assertNull(y.getType());
+		pt= (IProblemType) y.getType();
+		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE, pt.getID());
 	}
 
 	//	auto x = x;  // Self referring type.
@@ -8419,7 +8423,8 @@ public class AST2CPPTests extends AST2BaseTest {
 		String code= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		ICPPVariable x= bh.assertNonProblem("x =", 1);
-		assertNull(x.getType());
+		IProblemType pt= (IProblemType) x.getType();
+		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE, pt.getID());
 	}
 
 	// struct A { auto a = 1; };         // Auto-typed non-static fields are not allowed.
@@ -8428,7 +8433,8 @@ public class AST2CPPTests extends AST2BaseTest {
 		String code= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		ICPPVariable a= bh.assertNonProblem("a =", 1);
-		assertNull(a.getType());
+		IProblemType pt= (IProblemType) a.getType();
+		assertEquals(ISemanticProblem.TYPE_AUTO_FOR_NON_STATIC_FIELD, pt.getID());
 		ICPPVariable b= bh.assertNonProblem("b =", 1);
 	}
 

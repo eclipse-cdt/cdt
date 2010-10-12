@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
@@ -42,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -117,11 +119,10 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
         }
         try {
 			if (binding instanceof IProblemBinding) {
-				return (IProblemBinding) binding;
+				return new ProblemType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
 			}
 			if (binding instanceof IType || binding instanceof ICPPConstructor) {
-				// mstodo return problem type
-				return null;
+				return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 			} 
 			if (binding instanceof IEnumerator) {
 				IType type= ((IEnumerator) binding).getType();
@@ -157,8 +158,7 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 		} catch (DOMException e) {
 			return e.getProblem();
 		}
-		// mstodo return problem type
-		return null;
+		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}
 
 	/**

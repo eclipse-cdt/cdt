@@ -24,10 +24,12 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 
 /**
  * ID Expression in C.
@@ -103,12 +105,12 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 				return ((IEnumerator)binding).getType();
 			}
 			if (binding instanceof IProblemBinding) {
-				return (IProblemBinding)binding;
+				return new ProblemType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
 			}
 		} catch (DOMException e) {
 			return e.getProblem();
 		}
-		return null;
+		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}
 	
 	public boolean isLValue() {

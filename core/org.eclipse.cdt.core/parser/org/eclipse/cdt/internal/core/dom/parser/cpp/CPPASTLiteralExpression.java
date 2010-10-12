@@ -16,12 +16,13 @@ import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
-
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
@@ -98,8 +99,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     			IScope scope = CPPVisitor.getContainingScope(this);
     			IType type= CPPVisitor.getImpliedObjectType(scope);
     			if (type == null) {
-    				// mstodo problem type
-    				return null;
+    				return new ProblemType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
     			}
     			return new CPPPointerType(type);
     		}
@@ -117,7 +117,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     			type = new CPPQualifierType(type, true, false);
     			return new CPPArrayType(type, getStringLiteralSize());
     	}
-    	return null;
+		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
     }
     
 	public boolean isLValue() {

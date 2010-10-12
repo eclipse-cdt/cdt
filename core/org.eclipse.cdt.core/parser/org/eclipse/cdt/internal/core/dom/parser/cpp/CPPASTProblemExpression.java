@@ -14,7 +14,9 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 
 public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTProblemExpression {
 
@@ -53,7 +55,7 @@ public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTP
     }
     
     public IType getExpressionType() {
-    	return null;
+		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
     }
 
 	public boolean isLValue() {

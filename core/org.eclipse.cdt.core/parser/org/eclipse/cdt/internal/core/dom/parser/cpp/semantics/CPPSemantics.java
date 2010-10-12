@@ -2641,7 +2641,7 @@ public class CPPSemantics {
 	private static IBinding resolveUserDefinedConversion(LookupData data, IFunction[] fns) {
 		ICPPASTConversionName astName= (ICPPASTConversionName) data.astName;
 		IType t= CPPVisitor.createType(astName.getTypeId());
-		if (t == null) {
+		if (t instanceof ISemanticProblem) {
 			return new ProblemBinding(astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.getFoundBindings());
 		}
 		if (!data.forFunctionDeclaration() || data.forExplicitFunctionSpecialization()) {

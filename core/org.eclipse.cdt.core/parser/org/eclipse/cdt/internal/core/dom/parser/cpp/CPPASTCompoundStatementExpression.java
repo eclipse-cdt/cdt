@@ -18,9 +18,11 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 
 /**
  * Gnu-extension: ({ ... })
@@ -87,7 +89,7 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 			if (st instanceof IASTExpressionStatement)
 				return prvalueType(((IASTExpressionStatement) st).getExpression().getExpressionType());
 		}
-		return null;
+		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}
     
 	public boolean isLValue() {

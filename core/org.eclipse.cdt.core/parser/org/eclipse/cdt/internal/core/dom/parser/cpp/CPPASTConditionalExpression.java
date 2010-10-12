@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -33,7 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions;
@@ -182,8 +181,10 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 		
 		IType t2 = expr2.getExpressionType();
 		IType t3 = expr3.getExpressionType();
-		if (t2 == null || t3 == null)
+		if (t2 == null || t3 == null) {
+			fType= new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 			return;
+		}
 		
 		final IType uqt2= getNestedType(t2, TDEF | REF | CVTYPE);
 		final IType uqt3= getNestedType(t3, TDEF | REF | CVTYPE);
@@ -208,7 +209,7 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 			} else if (void2 && void3) {
 				fType= uqt2;
 			} else {
-				createProblem();
+				fType= new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 			}
 			return;
 		}
@@ -238,10 +239,10 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 			if (cost2.converts() || cost3.converts()) {
 				if (cost2.converts()) {
 					if (cost3.converts() || cost2.isAmbiguousUDC()) {
-						fType= createProblem();
+						fType= new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 					}
 				} else if (cost3.isAmbiguousUDC()) {
-					fType= createProblem();
+					fType= new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 				}
 				return;
 			}
@@ -256,7 +257,7 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 				fType= t3;
 				fValueCategory= vcat3;
 			} else {
-				createProblem();
+				fType= new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 			}
 			return;
 		}
@@ -266,8 +267,9 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 			ICPPFunction builtin = CPPSemantics.findOverloadedConditionalOperator(expr2, expr3);
 			if (builtin != null) {
 				fType= ExpressionTypes.typeFromFunctionCall(builtin);
+			} else {
+				fType= new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 			}
-			createProblem();
 			return;
 		}
 
@@ -281,7 +283,7 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 	    	if (fType == null) {
 	    		fType= Conversions.compositePointerType(t2, t3);
 		    	if (fType == null) {
-		    		createProblem();
+					fType= new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 		    	}
 	    	}
 		}
@@ -343,10 +345,6 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 		} catch (DOMException e) {
 		}
 		return Cost.NO_CONVERSION;
-	}
-
-	private ProblemBinding createProblem() {
-		return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE, this.getRawSignature().toCharArray());
 	}
 
 	private boolean isVoidType(IType t) {

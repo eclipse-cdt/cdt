@@ -59,7 +59,7 @@ public class CPPLambdaExpressionParameter extends PlatformObject implements ICPP
 			IASTNode parent= fDeclaration.getParent();
 			while (parent != null) {
 				if (parent instanceof ICPPASTParameterDeclaration) {
-					fType= CPPVisitor.createParameterType((ICPPASTParameterDeclaration) parent, false);
+					fType= CPPVisitor.createType((ICPPASTParameterDeclaration) parent, false);
 					break;
 				}
 				parent= parent.getParent();

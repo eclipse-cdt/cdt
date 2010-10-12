@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
@@ -161,8 +160,15 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 	 * @since 5.1
 	 */
 	public boolean isArrayAllocation() {
-		IType t = CPPVisitor.createType(getTypeId());
-		return t instanceof IArrayType;
+		IASTTypeId typeId= getTypeId();
+		if (typeId != null) {
+			IASTDeclarator dtor= typeId.getAbstractDeclarator();
+			if (dtor != null) {
+				dtor= ASTQueries.findTypeRelevantDeclarator(dtor);
+				return dtor instanceof IASTArrayDeclarator;
+			}
+		}
+		return false;
 	}
 
     @Override

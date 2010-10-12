@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,9 @@ import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -1569,8 +1571,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances( col, foo, 2 );
 	}
 	
-	public void testErrorHandling_1() throws Exception
-	{
+	public void testErrorHandling_1() throws Exception	{
 		IASTTranslationUnit tu = parse( "A anA; int x = c; class A {}; A * anotherA = &anA; int b;", false ); //$NON-NLS-1$
 		
 		CPPNameCollector col = new CPPNameCollector();
@@ -1589,7 +1590,8 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertNotNull( p );
 		assertNotNull( p2 );
 		
-		assertSame( anA.getType(), p );
+		IProblemType pt= (IProblemType) anA.getType();
+		assertEquals(ISemanticProblem.TYPE_UNRESOLVED_NAME, pt.getID());
 	}
 	
 	public void testBug44340() throws Exception {

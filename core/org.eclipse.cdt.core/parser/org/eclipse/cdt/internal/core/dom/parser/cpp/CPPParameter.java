@@ -151,7 +151,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 			IASTNode parent= fDeclarations[0].getParent();
 			while (parent != null) {
 				if (parent instanceof ICPPASTParameterDeclaration) {
-					fType= CPPVisitor.createParameterType((ICPPASTParameterDeclaration) parent, false);
+					fType= CPPVisitor.createType((ICPPASTParameterDeclaration) parent, false);
 					break;
 				}
 				parent= parent.getParent();

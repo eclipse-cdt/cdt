@@ -44,6 +44,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -254,7 +255,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 	    		// mstodo Type of unknown
 				return CPPUnknownClass.createUnnamedInstance();
 			}
-			return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE, this.getRawSignature().toCharArray());
+			return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 		}
 
 		IType typeOfOperand= operand.getExpressionType();

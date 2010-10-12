@@ -67,6 +67,7 @@ import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -94,6 +95,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 
 /**
  * Collection of methods to find information in an AST.
@@ -1295,16 +1297,17 @@ public class CVisitor extends ASTQueries {
 		} else if (declSpec instanceof IASTEnumerationSpecifier) {
 			name = ((IASTEnumerationSpecifier)declSpec).getName();
 		} else {
-			return new ProblemBinding(declSpec, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, declSpec.getRawSignature().toCharArray());
+			throw new IllegalArgumentException();
 		}
 		
+		if (name == null)
+			return new ProblemType(ISemanticProblem.TYPE_NO_NAME);
+		
 		binding = name.resolveBinding();
-		if (binding instanceof IType)
+		if (binding instanceof IType && !(binding instanceof IProblemBinding))
 		    return (IType) binding;
 		
-		if (binding != null)
-			return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_TYPE, name.toCharArray());
-		return new ProblemBinding(name, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, name.toCharArray());
+		return new ProblemType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
 	}
 
 	public static IType createType(ICASTDeclSpecifier declSpec) {
@@ -1341,7 +1344,7 @@ public class CVisitor extends ASTQueries {
 		    }
 		    return parmTypes;
 		} else {
-			return null;
+			throw new IllegalArgumentException();
 		}
 	}
 	

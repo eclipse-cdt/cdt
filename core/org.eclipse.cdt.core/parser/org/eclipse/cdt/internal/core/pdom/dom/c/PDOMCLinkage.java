@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunctionType;
@@ -345,6 +346,8 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			return CFunctionType.unmarshal(firstByte, buffer);
 		case ITypeMarshalBuffer.POINTER:
 			return CPointerType.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.PROBLEM_TYPE:
+			return ProblemType.unmarshal(firstByte, buffer);
 		}
 		
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first byte=" + firstByte)); //$NON-NLS-1$

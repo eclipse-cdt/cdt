@@ -135,10 +135,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		if (lambdaDtor != null) {
 			IASTTypeId trailingReturnType = lambdaDtor.getTrailingReturnType();
 			if (trailingReturnType != null) {
-				IType type= CPPVisitor.createType(trailingReturnType);
-				if (type != null)
-					return type;
-				return CPPSemantics.VOID_TYPE;		
+				return CPPVisitor.createType(trailingReturnType);
 			}
 		}
 		IASTCompoundStatement body = fLambdaExpression.getBody();

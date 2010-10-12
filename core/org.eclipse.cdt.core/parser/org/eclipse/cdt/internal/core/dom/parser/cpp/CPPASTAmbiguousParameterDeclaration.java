@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 IBM Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class CPPASTAmbiguousParameterDeclaration extends ASTAmbiguousNode implem
 		// Setup the ast to use the alternative
 		owner.replace(this, fParameterDecl);
 		
-		IType t= CPPVisitor.createParameterType(fParameterDecl, true);
+		IType t= CPPVisitor.createType(fParameterDecl, true);
 		if (!(t instanceof ICPPParameterPackType) || 
 				!CPPTemplates.containsParameterPack(((ICPPParameterPackType) t).getType())) {
 			final ICPPASTDeclarator dtor = fParameterDecl.getDeclarator();

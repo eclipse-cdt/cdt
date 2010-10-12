@@ -69,6 +69,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
@@ -1026,6 +1027,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPFunctionType.unmarshal(firstByte, buffer);
 		case ITypeMarshalBuffer.POINTER:
 			return CPPPointerType.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.PROBLEM_TYPE:
+			return ProblemType.unmarshal(firstByte, buffer);
 		case ITypeMarshalBuffer.REFERENCE:
 			return CPPReferenceType.unmarshal(firstByte, buffer);
 		case ITypeMarshalBuffer.PACK_EXPANSION:

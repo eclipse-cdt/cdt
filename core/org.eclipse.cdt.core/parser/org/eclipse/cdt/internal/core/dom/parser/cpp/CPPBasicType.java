@@ -27,14 +27,12 @@ import org.eclipse.core.runtime.CoreException;
  * Integral c++ type.
  */
 public class CPPBasicType implements ICPPBasicType, ISerializableType {
-	// mstodo replace with problem type
-	public static int UNIQUE_TYPE_QUALIFIER= -1;
 	private final Kind fKind;
 	private final int fModifiers;
 	private IASTExpression fExpression;
 
 	public CPPBasicType(Kind kind, int qualifiers, IASTExpression expression) {
-		if (kind == Kind.eUnspecified && qualifiers != UNIQUE_TYPE_QUALIFIER) {
+		if (kind == Kind.eUnspecified) {
 			if ( (qualifiers & (IS_COMPLEX | IS_IMAGINARY)) != 0) {
 				fKind= Kind.eFloat;
 			} else if ( (qualifiers & (IS_LONG | IS_SHORT | IS_SIGNED | IS_UNSIGNED | IS_LONG_LONG)) != 0 ) {
@@ -101,9 +99,6 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	public boolean isSameType(IType object) {
 		if (object == this)
 			return true;
-
-		if (fModifiers == UNIQUE_TYPE_QUALIFIER)
-			return false;
 
 	    if (object instanceof ITypedef)
 	        return object.isSameType(this);

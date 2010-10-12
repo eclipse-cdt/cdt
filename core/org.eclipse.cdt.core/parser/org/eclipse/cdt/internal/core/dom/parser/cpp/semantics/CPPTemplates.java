@@ -1974,7 +1974,7 @@ public class CPPTemplates {
 				if (map != null && pType != null) {
 					pType= instantiateType(pType, map, -1, null);
 				}
-				if (argType instanceof ICPPUnknownType || isNonTypeArgumentConvertible(pType, argType)) {
+				if (argType instanceof ICPPUnknownType || argType instanceof ISemanticProblem || isNonTypeArgumentConvertible(pType, argType)) {
 					return new CPPTemplateArgument(arg.getNonTypeValue(), pType);
 				}
 				return null;

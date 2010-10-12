@@ -13,6 +13,9 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
@@ -22,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.core.runtime.CoreException;
 
 public class CQualifierType implements ICQualifierType, ITypeContainer, ISerializableType {
@@ -91,23 +95,26 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 	 * @see org.eclipse.cdt.core.dom.ast.IQualifierType#getType()
 	 */
 	private IType resolveType(ICASTDeclSpecifier declSpec) {
-		IType t = null;
+		IBinding b = null;
 		if (declSpec instanceof ICASTTypedefNameSpecifier) {
 			ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
-			t = (IType) nameSpec.getName().resolveBinding();			
+			b = nameSpec.getName().resolveBinding();			
 		} else if (declSpec instanceof IASTElaboratedTypeSpecifier) {
 			IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) declSpec;
-			t = (IType) elabTypeSpec.getName().resolveBinding();
+			b = elabTypeSpec.getName().resolveBinding();
 		} else if (declSpec instanceof IASTCompositeTypeSpecifier) {
 			IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) declSpec;
-			t = (IType) compTypeSpec.getName().resolveBinding();
+			b = compTypeSpec.getName().resolveBinding();
 		} else if (declSpec instanceof IASTEnumerationSpecifier) {
-			t = new CEnumeration(((IASTEnumerationSpecifier) declSpec).getName());
+			return new CEnumeration(((IASTEnumerationSpecifier) declSpec).getName());
 		} else {
-		    t = new CBasicType((ICASTSimpleDeclSpecifier) declSpec);
+		    return new CBasicType((ICASTSimpleDeclSpecifier) declSpec);
 		}
 		
-		return t;
+		if (b instanceof IType && !(b instanceof IProblemBinding))
+			return (IType) b;
+		
+		return new ProblemType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
 	}
 	
 	public IType getType() {

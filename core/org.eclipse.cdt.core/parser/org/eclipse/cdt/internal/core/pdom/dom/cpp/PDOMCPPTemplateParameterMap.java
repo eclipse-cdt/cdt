@@ -10,12 +10,12 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -146,7 +146,7 @@ public class PDOMCPPTemplateParameterMap {
 			throws CoreException {
 		IType type= linkage.loadType(rec + TYPE_OFFSET);
 		if (type == null) {
-			type= new CPPBasicType(Kind.eUnspecified, CPPBasicType.UNIQUE_TYPE_QUALIFIER);
+			type= new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED);
 		}
 		final long nonTypeValRec= db.getRecPtr(rec+VALUE_OFFSET); 
 		ICPPTemplateArgument arg;

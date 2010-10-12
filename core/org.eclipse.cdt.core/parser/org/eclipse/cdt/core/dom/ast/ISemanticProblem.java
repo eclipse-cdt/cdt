@@ -23,7 +23,8 @@ public interface ISemanticProblem {
 	int TYPE_UNRESOLVED_NAME 						= 10001;
 	int TYPE_AUTO_FOR_NON_STATIC_FIELD 				= 10002;
 	int TYPE_CANNOT_DEDUCE_AUTO_TYPE 				= 10003;
-	int TYPE_UNKNOWN_FOR_EXPRESSION 				= 10004; 
+	int TYPE_UNKNOWN_FOR_EXPRESSION 				= 10004;
+	int TYPE_NOT_PERSISTED 							= 10005; 
 
 	/**
      * Returns the ID of the problem.

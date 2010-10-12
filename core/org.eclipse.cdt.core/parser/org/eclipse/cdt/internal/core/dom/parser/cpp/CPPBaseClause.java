@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
+
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
@@ -36,15 +40,18 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
     public IBinding getBaseClass() {
 		if (baseClass == null) {
 	    	IBinding b = base.getName().resolveBinding();
-	    	while (b instanceof ITypedef && ((ITypedef) b).getType() instanceof IBinding) {
-				b = (IBinding) ((ITypedef) b).getType();
-	    	}
-	    	if (b instanceof ICPPClassType || b instanceof ICPPTemplateParameter) {
-	    		baseClass = b;
-	    	} else if (b instanceof IProblemBinding) {
+	    	if (b instanceof IProblemBinding) {
 	    		baseClass =  new CPPClassType.CPPClassTypeProblem(base.getName(), ((IProblemBinding) b).getID());
 	    	} else {
-				baseClass = new CPPClassType.CPPClassTypeProblem(base.getName(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
+	    		IType t= null;
+	    		if (b instanceof IType) {
+	    			t= getNestedType((IType) b, TDEF);
+	    		}
+	    		if (t instanceof ICPPClassType || t instanceof ICPPTemplateParameter) {
+	    			baseClass = (IBinding) t;
+	    		} else {
+	    			baseClass = new CPPClassType.CPPClassTypeProblem(base.getName(), ISemanticProblem.BINDING_NO_CLASS);
+	    		}
 	    	}
 		}
 		return baseClass;

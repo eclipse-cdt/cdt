@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -53,8 +53,8 @@ public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope 
         
         IASTName [] names = action.getNames();
         IBinding [] result = null;
-        for( int i = 0; i < names.length; i++ ){
-            IBinding b = names[i].resolveBinding();
+        for (IASTName astName : names) {
+            IBinding b = astName.resolveBinding();
             if( b == null ) continue;
             try {
                 if( b.getScope() == this )
@@ -72,7 +72,7 @@ public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope 
 		if (binding instanceof ICompositeType)
 			return (ICompositeType) binding;
 
-		return new CStructure.CStructureProblem( compSpec.getName(), IProblemBinding.SEMANTIC_BAD_SCOPE, compSpec.getName().toCharArray() );
+		return new CStructure.CStructureProblem(compSpec.getName(), ISemanticProblem.BINDING_NO_CLASS, compSpec.getName().toCharArray() );
 	}
 	
 	@Override
@@ -87,8 +87,7 @@ public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope 
 				IASTNode node = members[i];
 				if (node instanceof IASTSimpleDeclaration) {
 					IASTDeclarator[] declarators = ((IASTSimpleDeclaration) node).getDeclarators();
-					for (int j = 0; j < declarators.length; j++) {
-						IASTDeclarator declarator = declarators[j];
+					for (IASTDeclarator declarator : declarators) {
 						IASTName dtorName = ASTQueries.findInnermostDeclarator(declarator).getName();
 						ASTInternal.addName(this, dtorName);
 					}

@@ -33,8 +33,8 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -366,7 +366,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		if (binding instanceof ICPPClassType)
 			return (ICPPClassType) binding;
 
-		return new CPPClassType.CPPClassTypeProblem(name, IProblemBinding.SEMANTIC_BAD_SCOPE, name.toCharArray());
+		return new CPPClassType.CPPClassTypeProblem(name, ISemanticProblem.BINDING_NO_CLASS, name.toCharArray());
 	}
 
 	/* (non-Javadoc)

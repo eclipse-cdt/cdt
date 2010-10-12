@@ -76,6 +76,23 @@ public class ParserMessages {
 	@SuppressWarnings("nls")
 	private static String getProblemKey(int id) {
 		switch(id) {
+		case ISemanticProblem.BINDING_AMBIGUOUS_LOOKUP: return "ISemanticProblem.BINDING_AMBIGUOUS_LOOKUP";
+		case ISemanticProblem.BINDING_BAD_SCOPE: return "ISemanticProblem.BINDING_BAD_SCOPE";
+		case ISemanticProblem.BINDING_CIRCULAR_INHERITANCE: return "ISemanticProblem.BINDING_CIRCULAR_INHERITANCE";
+		case ISemanticProblem.BINDING_DEFINITION_NOT_FOUND: return "ISemanticProblem.BINDING_DEFINITION_NOT_FOUND";
+		case ISemanticProblem.BINDING_INVALID_OVERLOAD: return "ISemanticProblem.BINDING_INVALID_OVERLOAD";
+		case ISemanticProblem.BINDING_INVALID_REDECLARATION: return "ISemanticProblem.BINDING_INVALID_REDECLARATION";
+		case ISemanticProblem.BINDING_INVALID_REDEFINITION: return "ISemanticProblem.BINDING_INVALID_REDEFINITION";
+		case ISemanticProblem.BINDING_INVALID_TEMPLATE_ARGUMENTS: return "ISemanticProblem.BINDING_INVALID_TEMPLATE_ARGUMENTS";
+		case ISemanticProblem.BINDING_INVALID_TYPE: return "ISemanticProblem.BINDING_INVALID_TYPE";
+		case ISemanticProblem.BINDING_INVALID_USING: return "ISemanticProblem.BINDING_INVALID_USING";
+		case ISemanticProblem.BINDING_KNR_PARAMETER_DECLARATION_NOT_FOUND: return "ISemanticProblem.BINDING_KNR_PARAMETER_DECLARATION_NOT_FOUND";
+		case ISemanticProblem.BINDING_LABEL_STATEMENT_NOT_FOUND: return "ISemanticProblem.BINDING_LABEL_STATEMENT_NOT_FOUND";
+		case ISemanticProblem.BINDING_MEMBER_DECLARATION_NOT_FOUND: return "ISemanticProblem.BINDING_MEMBER_DECLARATION_NOT_FOUND";
+		case ISemanticProblem.BINDING_NO_CLASS: return "ISemanticProblem.BINDING_NO_CLASS";
+		case ISemanticProblem.BINDING_NOT_FOUND: return "ISemanticProblem.BINDING_NOT_FOUND";
+		case ISemanticProblem.BINDING_RECURSION_IN_LOOKUP: return "ISemanticProblem.BINDING_RECURSION_IN_LOOKUP";
+		
 		case ISemanticProblem.TYPE_NO_NAME: return "ISemanticProblem.TYPE_NO_NAME";
 		case ISemanticProblem.TYPE_UNRESOLVED_NAME: return "ISemanticProblem.TYPE_UNRESOLVED_NAME";
 		case ISemanticProblem.TYPE_AUTO_FOR_NON_STATIC_FIELD: return "ISemanticProblem.TYPE_AUTO_FOR_NON_STATIC_FIELD";

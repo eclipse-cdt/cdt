@@ -49,75 +49,22 @@ public interface IProblemBinding extends IBinding, IScope, IType, ISemanticProbl
      * Parser Semantic Problems
      * All Semantic problems take a char[] as an argument
      */
-  
-    /**
-     * Attempt to use a symbol that was not found. 
-     * Require attributes: A_SYMBOL_NAME
-     */ 
-    public final static int SEMANTIC_NAME_NOT_FOUND = 0x001;
-
-    /**
-     * Invalid overload of a particular name.
-     * Required attributes: A_SYMBOL_NAME
-     */
-    public static final int SEMANTIC_INVALID_OVERLOAD = 0x002;
-
-    /**
-     * Invalid using directive.  
-     * Required attributes: A_NAMESPACE_NAME
-     */
-    public static final int SEMANTIC_INVALID_USING = 0x003;
-    
-    /**
-     * Ambiguous lookup for given name. 
-     * Required attributes: A_SYMBOL_NAME
-     */
-    public static final int SEMANTIC_AMBIGUOUS_LOOKUP = 0x004;
-
-    /**
-     * Invalid type provided
-     * Required attributes: A_TYPE_NAME
-     */
-    public static final int SEMANTIC_INVALID_TYPE = 0x005;
-
-    /**
-     * circular inheritance was detected for a class
-     */
-    public static final int SEMANTIC_CIRCULAR_INHERITANCE = 0x006;
-
-    /**
-     * the definition for the class/function can not be found
-     */
-    public static final int SEMANTIC_DEFINITION_NOT_FOUND = 0x007;
-    
-    /**
-     * the declaration for the K&R style function parameter can not be found
-     */
-    public static final int SEMANTIC_KNR_PARAMETER_DECLARATION_NOT_FOUND = 0x008;
-    
-    /**
-     * a label statement can not be found to match a goto statement
-     */
-    public static final int SEMANTIC_LABEL_STATEMENT_NOT_FOUND = 0x009;
-    
-    /**
-     * there was a problem creating the scope
-     */
-    public static final int SEMANTIC_BAD_SCOPE = 0x00A;
-    
-    /**
-     * invalid redefinition of the name
-     */
-    public static final int SEMANTIC_INVALID_REDEFINITION = 0x00B;
-    
-    /**
-     * invalid re-declaration of the name
-     */
-    public static final int SEMANTIC_INVALID_REDECLARATION = 0x00C;
-    
-    public static final int SEMANTIC_MEMBER_DECLARATION_NOT_FOUND = 0x00D;
-    
-	public static final int SEMANTIC_RECURSION_IN_LOOKUP = 0x00E;
+    public final static int SEMANTIC_NAME_NOT_FOUND = BINDING_NOT_FOUND;
+    public static final int SEMANTIC_INVALID_OVERLOAD = BINDING_INVALID_OVERLOAD;
+    public static final int SEMANTIC_INVALID_USING = BINDING_INVALID_USING;
+    public static final int SEMANTIC_AMBIGUOUS_LOOKUP = BINDING_AMBIGUOUS_LOOKUP;
+    public static final int SEMANTIC_INVALID_TYPE = BINDING_INVALID_TYPE;
+    public static final int SEMANTIC_CIRCULAR_INHERITANCE = BINDING_CIRCULAR_INHERITANCE;
+    public static final int SEMANTIC_DEFINITION_NOT_FOUND = BINDING_DEFINITION_NOT_FOUND;
+    public static final int SEMANTIC_KNR_PARAMETER_DECLARATION_NOT_FOUND = BINDING_KNR_PARAMETER_DECLARATION_NOT_FOUND;
+    public static final int SEMANTIC_LABEL_STATEMENT_NOT_FOUND = BINDING_LABEL_STATEMENT_NOT_FOUND;
+    public static final int SEMANTIC_BAD_SCOPE = BINDING_BAD_SCOPE;
+    public static final int SEMANTIC_INVALID_REDEFINITION = BINDING_INVALID_REDEFINITION;
+    public static final int SEMANTIC_INVALID_REDECLARATION = BINDING_INVALID_REDECLARATION;
+    public static final int SEMANTIC_MEMBER_DECLARATION_NOT_FOUND = BINDING_MEMBER_DECLARATION_NOT_FOUND;
+	public static final int SEMANTIC_RECURSION_IN_LOOKUP = BINDING_RECURSION_IN_LOOKUP;
+	/** @since 5.1 */
+	public static final int SEMANTIC_INVALID_TEMPLATE_ARGUMENTS = BINDING_INVALID_TEMPLATE_ARGUMENTS;
 
 	/**
 	 * @deprecated, there may be additional problems.
@@ -125,9 +72,5 @@ public interface IProblemBinding extends IBinding, IScope, IType, ISemanticProbl
 	@Deprecated
 	public static final int LAST_PROBLEM = 0x00E;
 
-	/**
-	 * @since 5.1
-	 */
-	public static final int SEMANTIC_INVALID_TEMPLATE_ARGUMENTS = 0x00F;
 
 }

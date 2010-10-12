@@ -82,39 +82,6 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 		candidateBindings= foundBindings;
 	}
 
-    private String getMessagePattern() {
-    	String result= ParserMessages.getProblemPattern(this);
-    	if (result != null)
-    		return result;
-    	
-    	// mstodo remove after reworking problem ids.
-    	String key= getMessageKey();
-    	if (key != null)
-    		return ParserMessages.getString(key);
-    	return ""; //$NON-NLS-1$
-    }
-    
-    private String getMessageKey() {
-    	switch(id) {
-    	case SEMANTIC_NAME_NOT_FOUND:   						return "ASTProblemFactory.error.semantic.nameNotFound"; //$NON-NLS-1$
-    	case SEMANTIC_AMBIGUOUS_LOOKUP:   						return "ASTProblemFactory.error.semantic.pst.ambiguousLookup"; //$NON-NLS-1$ 
-    	case SEMANTIC_INVALID_TYPE:   							return "ASTProblemFactory.error.semantic.pst.invalidType"; //$NON-NLS-1$ 
-    	case SEMANTIC_CIRCULAR_INHERITANCE:   					return "ASTProblemFactory.error.semantic.pst.circularInheritance"; //$NON-NLS-1$
-    	case SEMANTIC_INVALID_OVERLOAD:   						return "ASTProblemFactory.error.semantic.pst.invalidOverload"; //$NON-NLS-1$
-    	case SEMANTIC_INVALID_USING:   							return "ASTProblemFactory.error.semantic.pst.invalidUsing"; //$NON-NLS-1$
-    	case SEMANTIC_DEFINITION_NOT_FOUND:   					return "ASTProblemFactory.error.semantic.dom.definitionNotFound"; //$NON-NLS-1$
-    	case SEMANTIC_KNR_PARAMETER_DECLARATION_NOT_FOUND:   	return "ASTProblemFactory.error.semantic.dom.knrParameterDeclarationNotFound"; //$NON-NLS-1$
-    	case SEMANTIC_LABEL_STATEMENT_NOT_FOUND:   				return "ASTProblemFactory.error.semantic.dom.labelStatementNotFound"; //$NON-NLS-1$
-    	case SEMANTIC_INVALID_REDEFINITION:   					return "ASTProblemFactory.error.semantic.dom.invalidRedefinition"; //$NON-NLS-1$
-    	case SEMANTIC_INVALID_REDECLARATION:   					return "ASTProblemFactory.error.semantic.dom.invalidRedeclaration"; //$NON-NLS-1$
-    	case SEMANTIC_BAD_SCOPE:   								return "ASTProblemFactory.error.semantic.dom.badScope"; //$NON-NLS-1$
-    	case SEMANTIC_RECURSION_IN_LOOKUP:   					return "ASTProblemFactory.error.semantic.dom.recursionInResolution"; //$NON-NLS-1$
-    	case SEMANTIC_MEMBER_DECLARATION_NOT_FOUND:   			return "ASTProblemFactory.error.semantic.dom.memberDeclNotFound"; //$NON-NLS-1$
-    	case SEMANTIC_INVALID_TEMPLATE_ARGUMENTS:   			return "ASTProblemFactory.error.semantic.dom.invalidTemplateArgs"; //$NON-NLS-1$
-    	}
-    	return null;
-    }
-    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IProblemBinding#getID()
      */
@@ -129,7 +96,10 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
         if (message != null)
             return message;
 
-        String msg = getMessagePattern();
+        String msg = ParserMessages.getProblemPattern(this);
+        if (msg == null)
+        	return ""; //$NON-NLS-1$
+        
         if (arg == null && node instanceof IASTName)
         	arg= ((IASTName) node).toCharArray();
         

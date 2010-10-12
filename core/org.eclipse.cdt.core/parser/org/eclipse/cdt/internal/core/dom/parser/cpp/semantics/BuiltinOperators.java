@@ -553,10 +553,7 @@ class BuiltinOperators {
 			if (fGlobalCandidates != null) {
 				for (Object cand : fGlobalCandidates) {
 					if (cand instanceof IFunction && !(cand instanceof ICPPMethod)) {
-						try {
-							fSignatures.add(ASTTypeUtil.getType(((IFunction)cand).getType(), true));
-						} catch (DOMException e) {
-						}
+						fSignatures.add(ASTTypeUtil.getType(((IFunction)cand).getType(), true));
 					}
 				}
 			}

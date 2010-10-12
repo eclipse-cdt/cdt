@@ -11,14 +11,13 @@
 
 package org.eclipse.cdt.internal.core.model.ext;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMethod;
 
 public class MethodHandle extends MethodDeclarationHandle implements IMethod {
 	
-	public MethodHandle(ICElement parent, ICPPMethod method) throws DOMException {
+	public MethodHandle(ICElement parent, ICPPMethod method) {
 		super(parent, ICElement.C_METHOD, method);
 	}
 }

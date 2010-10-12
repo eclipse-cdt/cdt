@@ -166,7 +166,9 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 	}
 	
 	@Override
-	public Object clone() { fail(); return null; }
+	public Object clone() { 
+		throw new UnsupportedOperationException(); 
+	}
 
 
 	public ICPPScope asScope() {

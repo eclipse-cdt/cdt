@@ -98,7 +98,9 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization implements ITyp
 	    return false;
 	}
 
-	public void setType(IType type) { fail(); }
+	public void setType(IType type) { 
+		throw new UnsupportedOperationException(); 
+	}
 
     /* (non-Javadoc)
      * @see java.lang.Object#clone()

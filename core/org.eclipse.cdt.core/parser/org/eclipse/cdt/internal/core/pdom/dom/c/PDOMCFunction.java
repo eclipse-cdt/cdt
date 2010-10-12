@@ -15,14 +15,14 @@
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -75,13 +75,9 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		IFunctionType type;
 		IParameter[] parameters;
 		byte annotations;
-		try {
-			type = function.getType();
-			parameters = function.getParameters();
-			annotations = PDOMCAnnotation.encodeAnnotation(function);
-		} catch(DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
+		type = function.getType();
+		parameters = function.getParameters();
+		annotations = PDOMCAnnotation.encodeAnnotation(function);
 		setType(getLinkage(), type);
 		setParameters(parameters);
 		getDB().putByte(record + ANNOTATIONS, annotations);
@@ -94,13 +90,9 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 			IFunctionType newType;
 			IParameter[] newParams;
 			byte newAnnotation;
-			try {
-				newType= func.getType();
-				newParams = func.getParameters();
-				newAnnotation = PDOMCAnnotation.encodeAnnotation(func);
-			} catch (DOMException e) {
-				throw new CoreException(Util.createStatus(e));
-			}
+			newType= func.getType();
+			newParams = func.getParameters();
+			newAnnotation = PDOMCAnnotation.encodeAnnotation(func);
 				
 			setType(linkage, newType);
 			PDOMCParameter oldParams= getFirstParameter(null);
@@ -148,7 +140,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 			return (IFunctionType) getLinkage().loadType(record + FUNCTION_TYPE);
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
-			return null;
+			return new ProblemFunctionType(ISemanticProblem.TYPE_NOT_PERSISTED);
 		}
 	}
 
@@ -160,7 +152,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
-	public IParameter[] getParameters() throws DOMException {
+	public IParameter[] getParameters() {
 		try {
 			PDOMLinkage linkage= getLinkage();
 			Database db= getDB();
@@ -202,7 +194,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.VARARGS_OFFSET);
 	}
 	
-	public IScope getFunctionScope() throws DOMException {
+	public IScope getFunctionScope() {
 		return null;
 	}
 }

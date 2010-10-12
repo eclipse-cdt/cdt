@@ -27,12 +27,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
  * Binding for a field.
  */
 public class CPPField extends CPPVariable implements ICPPField {
-    public static class CPPFieldProblem extends CPPVariable.CPPVariableProblem implements ICPPField {
+    public static class CPPFieldProblem extends ProblemBinding implements ICPPField {
         private ICPPClassType fOwner;
 
 		public CPPFieldProblem(ICPPClassType owner, IASTNode node, int id, char[] arg ) {

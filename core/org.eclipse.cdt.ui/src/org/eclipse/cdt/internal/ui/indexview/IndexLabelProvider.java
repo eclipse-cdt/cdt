@@ -146,11 +146,7 @@ public class IndexLabelProvider extends LabelProvider {
 				 * we don't currently store return types
 				 */
 				if(element instanceof IFunction) {
-					try {
-						result += " "+ASTTypeUtil.getParameterTypeString(((IFunction) element).getType()); //$NON-NLS-1$
-					} catch(DOMException de) {
-						/* NO-OP: just use plain name as label */
-					}
+					result += " "+ASTTypeUtil.getParameterTypeString(((IFunction) element).getType()); //$NON-NLS-1$
 				}
 				
 				return result;

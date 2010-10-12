@@ -207,8 +207,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 	
 	@Override
 	public Object clone() {
-		fail();
-		return null;
+		throw new UnsupportedOperationException(); 
 	}
 	/**
 	 * @deprecated

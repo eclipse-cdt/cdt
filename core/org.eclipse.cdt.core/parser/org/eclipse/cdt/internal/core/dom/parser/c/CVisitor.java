@@ -737,10 +737,7 @@ public class CVisitor extends ASTQueries {
 							if (binding instanceof IParameter) {
 								return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray());
 							} else if (binding instanceof IVariable) {
-								try {
-									t2 = ((IVariable)binding).getType();
-								} catch (DOMException e1) {
-								}
+								t2 = ((IVariable)binding).getType();
 								if (t1 != null && t2 != null && (
 										t1.isSameType(t2) || isCompatibleArray(t1, t2) != null)) {
 									if (binding instanceof CVariable)

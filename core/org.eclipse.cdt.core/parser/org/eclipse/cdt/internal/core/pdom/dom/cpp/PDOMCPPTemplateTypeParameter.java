@@ -152,8 +152,9 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 	}
 	
 	@Override
-	public Object clone() { fail(); return null; }
-
+	public Object clone() { 
+		throw new UnsupportedOperationException(); 
+	}
 
 	public ICPPScope asScope() {
 		if (fUnknownScope == null) {

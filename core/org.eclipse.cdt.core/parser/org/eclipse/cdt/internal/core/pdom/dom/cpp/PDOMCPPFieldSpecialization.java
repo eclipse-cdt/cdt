@@ -12,14 +12,14 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -43,14 +43,10 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 			throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) field, specialized);
 		
-		try {
-			final Database db = getDB();
-			linkage.storeType(record + TYPE_OFFSET, field.getType());
-			long rec= PDOMValue.store(db, linkage, field.getInitialValue());
-			db.putRecPtr(record + VALUE_OFFSET, rec);
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
+		final Database db = getDB();
+		linkage.storeType(record + TYPE_OFFSET, field.getType());
+		long rec= PDOMValue.store(db, linkage, field.getInitialValue());
+		db.putRecPtr(record + VALUE_OFFSET, rec);
 	}
 
 	public PDOMCPPFieldSpecialization(PDOMLinkage linkage, long bindingRecord) {
@@ -75,13 +71,13 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 		return getClassOwner();
 	}
 
-	public IType getType() throws DOMException {
+	public IType getType() {
 		try {
 			return getLinkage().loadType(record + TYPE_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
+			return new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED);
 		}
-		return null;
 	}
 
 	public IValue getInitialValue() {

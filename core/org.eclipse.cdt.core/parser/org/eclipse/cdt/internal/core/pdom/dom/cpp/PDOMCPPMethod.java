@@ -35,7 +35,6 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
@@ -126,7 +125,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 
 	@Override
 	public boolean isMutable() {
-		throw new PDOMNotImplementedError();
+		return false;
 	}
 
 	public boolean isImplicit() {
@@ -138,8 +137,8 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	}
 
 	@Override
-	public IScope getFunctionScope() throws DOMException {
-		throw new PDOMNotImplementedError();
+	public IScope getFunctionScope() {
+		return null;
 	}
 
 	@Override
@@ -175,7 +174,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 
 	@Override
 	public Object clone() {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException(); 
 	}
 
 	public boolean isConst() {
@@ -208,12 +207,8 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 						if (fieldOwner instanceof IASTIdExpression) {
 							IBinding b= ((IASTIdExpression) fieldOwner).getName().resolveBinding();
 							if (b instanceof IVariable) {
-								try {
-									IType t = ((IVariable) b).getType();
-									if (!(t instanceof ICPPReferenceType)) {
-										return 0;
-									}			
-								} catch (DOMException e) {
+								IType t = ((IVariable) b).getType();
+								if (!(t instanceof ICPPReferenceType)) {
 									return 0;
 								}
 							}

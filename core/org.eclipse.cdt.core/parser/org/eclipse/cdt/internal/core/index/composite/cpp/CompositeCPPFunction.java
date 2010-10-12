@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -39,11 +38,11 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 		return ((ICPPFunction)rbinding).isMutable();
 	}
 
-	public IScope getFunctionScope() throws DOMException {
-		fail(); return null;
+	public IScope getFunctionScope() {
+		return null;
 	}
 
-	public ICPPParameter[] getParameters() throws DOMException {
+	public ICPPParameter[] getParameters() {
 		ICPPParameter[] result = ((ICPPFunction)rbinding).getParameters();
 		for(int i=0; i<result.length; i++) {
 			result[i] = (ICPPParameter) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
@@ -51,7 +50,7 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 		return result;
 	}
 
-	public ICPPFunctionType getType() throws DOMException {
+	public ICPPFunctionType getType() {
 		IType rtype = ((ICPPFunction)rbinding).getType();
 		return (ICPPFunctionType) cf.getCompositeType(rtype);
 	}
@@ -80,7 +79,7 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 		return ((ICPPFunction)rbinding).takesVarArgs();
 	}
 	
-	public int getRequiredArgumentCount() throws DOMException {
+	public int getRequiredArgumentCount() {
 		return ((ICPPFunction)rbinding).getRequiredArgumentCount();
 	}
 
@@ -96,11 +95,7 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 	@Override
 	public String toString() {
 		StringBuffer result = new StringBuffer();
-		try {
-			result.append(getName()+" "+ASTTypeUtil.getParameterTypeString(getType())); //$NON-NLS-1$
-		} catch(DOMException de) {
-			result.append(de);
-		}
+		result.append(getName()+" "+ASTTypeUtil.getParameterTypeString(getType())); //$NON-NLS-1$
 		return result.toString();
 	}
 

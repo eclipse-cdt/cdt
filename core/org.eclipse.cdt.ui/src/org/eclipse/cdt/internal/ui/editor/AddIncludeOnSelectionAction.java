@@ -48,7 +48,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
@@ -218,18 +217,14 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		char[] nameChars = name.toCharArray();
 		lookupName[0] = new String(nameChars);
 		IBinding binding = name.resolveBinding();
-		try {
-			if (binding instanceof ICPPVariable) {
-				IType type = ((ICPPVariable) binding).getType();
-				type = SemanticUtil.getNestedType(type,
-						SemanticUtil.ALLCVQ | SemanticUtil.PTR | SemanticUtil.ARRAY | SemanticUtil.REF);
-				if (type instanceof IBinding) {
-					binding = (IBinding) type;
-					nameChars = binding.getNameCharArray();
-				}
+		if (binding instanceof ICPPVariable) {
+			IType type = ((ICPPVariable) binding).getType();
+			type = SemanticUtil.getNestedType(type,
+					SemanticUtil.ALLCVQ | SemanticUtil.PTR | SemanticUtil.ARRAY | SemanticUtil.REF);
+			if (type instanceof IBinding) {
+				binding = (IBinding) type;
+				nameChars = binding.getNameCharArray();
 			}
-		} catch (DOMException e) {
-			CUIPlugin.log(e);
 		}
 		if (nameChars.length == 0) {
 			return;

@@ -59,7 +59,7 @@ public class CPPUnknownFunction extends CPPUnknownBinding implements ICPPFunctio
 		return false;
 	}
 
-	public IScope getFunctionScope() throws DOMException {
+	public IScope getFunctionScope() {
 		return asScope();
 	}
 

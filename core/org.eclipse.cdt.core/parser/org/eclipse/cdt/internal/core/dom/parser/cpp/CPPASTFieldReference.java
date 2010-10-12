@@ -265,26 +265,23 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 	public ValueCategory getValueCategory() {
 		IASTName name= getFieldName();
 		IBinding binding = name.resolvePreBinding();
-		try {
-			if (binding instanceof IVariable) {
-				IType e2= ((IVariable) binding).getType();
-				e2= SemanticUtil.getNestedType(e2, TDEF);
-				if (e2 instanceof ICPPReferenceType) {
-					return LVALUE;
-				} 
-				if (binding instanceof ICPPField && !((ICPPField) binding).isStatic()) {
-					if (isPointerDereference())
-						return LVALUE;
-
-					return owner.getValueCategory();
-				}
+		if (binding instanceof IVariable) {
+			IType e2= ((IVariable) binding).getType();
+			e2= SemanticUtil.getNestedType(e2, TDEF);
+			if (e2 instanceof ICPPReferenceType) {
 				return LVALUE;
 			} 
-			if (binding instanceof IFunction) {
-				return LVALUE;
-			}  
-	    } catch (DOMException e) {
-        }
+			if (binding instanceof ICPPField && !((ICPPField) binding).isStatic()) {
+				if (isPointerDereference())
+					return LVALUE;
+
+				return owner.getValueCategory();
+			}
+			return LVALUE;
+		} 
+		if (binding instanceof IFunction) {
+			return LVALUE;
+		}
 		return PRVALUE;
 	}
 	

@@ -33,7 +33,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -150,7 +149,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 					CCorePlugin.log(ce);
 				}
 			} else {
-				throw new PDOMNotImplementedError();
+				assert false;
 			}
 		}
 		return cmp;

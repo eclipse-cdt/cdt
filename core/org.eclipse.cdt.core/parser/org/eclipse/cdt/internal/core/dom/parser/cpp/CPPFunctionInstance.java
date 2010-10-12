@@ -11,9 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -72,17 +70,13 @@ public class CPPFunctionInstance extends CPPFunctionSpecialization implements IC
     @Override
 	public boolean equals(Object obj) {
     	if( (obj instanceof ICPPTemplateInstance) && (obj instanceof ICPPFunction)){
-    		try {
-    			final ICPPTemplateInstance inst = (ICPPTemplateInstance)obj;
-    			ICPPFunctionType ct1= ((ICPPFunction)getSpecializedBinding()).getType();
-				ICPPFunctionType ct2= ((ICPPFunction)inst.getTemplateDefinition()).getType();
-    			if(!ct1.isSameType(ct2))
-    				return false;
+    		final ICPPTemplateInstance inst = (ICPPTemplateInstance)obj;
+			ICPPFunctionType ct1= ((ICPPFunction)getSpecializedBinding()).getType();
+			ICPPFunctionType ct2= ((ICPPFunction)inst.getTemplateDefinition()).getType();
+			if(!ct1.isSameType(ct2))
+				return false;
 
-    			return CPPTemplates.haveSameArguments(this, inst);
-    		} catch(DOMException de) {
-    			CCorePlugin.log(de);
-    		}
+			return CPPTemplates.haveSameArguments(this, inst);
     	}
 
     	return false;

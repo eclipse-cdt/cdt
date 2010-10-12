@@ -221,18 +221,14 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	}
 	
 	protected static void assertVariable(IBinding b, String qn, Class expType, String expTypeQN) {
-		try {
-			assertInstance(b, IVariable.class);
-			IVariable variable = (IVariable) b;
-			assertQNEquals(qn, variable);
-			assertInstance(variable.getType(), expType);
-			if (expTypeQN != null) {
-				IType type= variable.getType();
-				assertInstance(type, IBinding.class);
-				assertQNEquals(expTypeQN, (IBinding) type);
-			}
-		} catch (DOMException de) {
-			fail(de.getMessage());
+		assertInstance(b, IVariable.class);
+		IVariable variable = (IVariable) b;
+		assertQNEquals(qn, variable);
+		assertInstance(variable.getType(), expType);
+		if (expTypeQN != null) {
+			IType type= variable.getType();
+			assertInstance(type, IBinding.class);
+			assertQNEquals(expTypeQN, (IBinding) type);
 		}
 	}
 	

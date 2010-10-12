@@ -10,9 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.model.ext;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
@@ -23,12 +21,7 @@ public class VariableHandle extends CElementHandle implements org.eclipse.cdt.co
 
 	public VariableHandle(ICElement parent, IVariable var) {
 		super(parent, ICElement.C_VARIABLE, var.getName());
-		try {
-			fTypeName= ASTTypeUtil.getType(var.getType(), false);
-		} catch (DOMException e) {
-			CCorePlugin.log(e);
-			fTypeName= ""; //$NON-NLS-1$
-		}
+		fTypeName= ASTTypeUtil.getType(var.getType(), false);
 		fIsStatic= var.isStatic();
 	}
 

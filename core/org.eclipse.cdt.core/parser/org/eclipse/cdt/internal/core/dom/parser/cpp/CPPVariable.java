@@ -41,19 +41,12 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IInternalVariable;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInternalBinding, IInternalVariable {
-    public static class CPPVariableProblem extends ProblemBinding implements ICPPVariable {
-        public CPPVariableProblem(IASTNode node, int id, char[] arg) {
-            super(node, id, arg);
-        }
-    }
-
 	private IASTName fDefinition = null;
 	private IASTName fDeclarations[] = null;
 	private IType fType = null;

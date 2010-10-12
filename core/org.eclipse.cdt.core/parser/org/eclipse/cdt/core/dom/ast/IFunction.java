@@ -22,24 +22,18 @@ public interface IFunction extends IBinding {
 
 	/**
 	 * Returns the formal parameters of the function.
-	 * 
-	 * @return array of IParameter
-	 * @throws DOMException if this is a problem binding.
 	 */
-	public IParameter[] getParameters() throws DOMException;
+	public IParameter[] getParameters();
 	
 	/**
 	 * Get the function scope
-	 * 
-	 * @throws DOMException if this is a problem binding.
 	 */
-	public IScope getFunctionScope() throws DOMException;
+	public IScope getFunctionScope();
 	
 	/**
 	 * Get the IFunctionType for this function
-	 * @throws DOMException if this is a problem binding.
 	 */
-	public IFunctionType getType() throws DOMException;
+	public IFunctionType getType();
 	
 	/**
 	 * Returns {@code true} if the function has the static storage-class specifier

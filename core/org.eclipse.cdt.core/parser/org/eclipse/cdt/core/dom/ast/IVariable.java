@@ -22,7 +22,7 @@ public interface IVariable extends IBinding {
 	/**
 	 * Returns the type of the variable
 	 */
-	public IType getType() throws DOMException;
+	public IType getType();
 	
 	/**
 	 * Returns the value for a variable with an initializer,

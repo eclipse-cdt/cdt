@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.internal.core.model.ext;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
@@ -23,7 +22,7 @@ public class StructureHandle extends CElementHandle implements IStructure {
 	private static final IField[] EMPTY_FIELDS = new IField[0];
 	private static final IMethodDeclaration[] EMPTY_METHODS = new IMethodDeclaration[0];
 
-	public StructureHandle(ICElement parent, ICompositeType type) throws DOMException {
+	public StructureHandle(ICElement parent, ICompositeType type) {
 		super(parent, convertKey(type.getKey()), type.getName());
 	}
 

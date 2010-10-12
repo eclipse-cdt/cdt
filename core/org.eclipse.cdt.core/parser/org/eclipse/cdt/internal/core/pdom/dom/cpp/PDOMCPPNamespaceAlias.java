@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -21,7 +22,6 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -88,7 +88,20 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 	}
 
 	public IBinding[] getMemberBindings() {
-		throw new PDOMNotImplementedError();
+		ICPPNamespace ns= this;
+		for (int i = 0; i < 20; i++) {
+			if (ns instanceof ICPPNamespaceAlias) {
+				IBinding b= ((ICPPNamespaceAlias) ns).getBinding();
+				if (b instanceof ICPPNamespace) {
+					ns= (ICPPNamespace) b;
+				} else {
+					return IBinding.EMPTY_BINDING_ARRAY;
+				}
+			} else {
+				break;
+			}
+		}
+		return ns.getMemberBindings();
 	}
 
 	public IBinding getBinding() {

@@ -835,9 +835,7 @@ public class SemanticHighlightings {
 							}
 						} catch (DOMException exc) {
 							CUIPlugin.log(exc);
-						} catch (Error e) /* PDOMNotImplementedError */ {
-							// ignore
-						}
+						} 
 					}
 				}
 			}
@@ -920,9 +918,7 @@ public class SemanticHighlightings {
 							}
 						} catch (DOMException exc) {
 							CUIPlugin.log(exc);
-						} catch (Error e) /* PDOMNotImplementedError */ {
-							// ignore
-						}
+						} 
 					}
 				}
 			}
@@ -1023,9 +1019,7 @@ public class SemanticHighlightings {
 						}
 					} catch (DOMException exc) {
 						CUIPlugin.log(exc);
-					} catch (Error e) /* PDOMNotImplementedError */ {
-						// ignore
-					}
+					} 
 				}
 			}
 			return false;

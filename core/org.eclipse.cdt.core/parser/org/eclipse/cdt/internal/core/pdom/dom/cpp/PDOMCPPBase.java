@@ -20,7 +20,6 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -133,7 +132,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	}
 	
 	public void setBaseClass(IBinding binding) {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException(); 
 	}
 	
 	@Override

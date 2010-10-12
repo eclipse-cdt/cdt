@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -26,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 
@@ -144,13 +142,9 @@ public class NameHelper {
 		IASTName name = parameter.getDeclarator().getName();
 		IBinding binding = name.resolveBinding();
 		if (binding instanceof IVariable) {
-			try {
-				IType type = ((IVariable) binding).getType();
-				if (type != null) {
-					return ASTTypeUtil.getType(type);
-				}
-			} catch (DOMException e) {
-				CUIPlugin.log(e);
+			IType type = ((IVariable) binding).getType();
+			if (type != null) {
+				return ASTTypeUtil.getType(type);
 			}
 		}
 		return ""; //$NON-NLS-1$

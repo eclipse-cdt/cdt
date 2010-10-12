@@ -389,13 +389,10 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			} else {
 				final boolean expectClosingBrace;
 				IType type= null;
-				try {
-					if (binding instanceof ITypedef) {
-						type= ((ITypedef)binding).getType();
-					} else if (binding instanceof IVariable) {
-						type= ((IVariable)binding).getType();
-					} 
-				} catch (DOMException exc) {
+				if (binding instanceof ITypedef) {
+					type= ((ITypedef)binding).getType();
+				} else if (binding instanceof IVariable) {
+					type= ((IVariable)binding).getType();
 				}
 				expectClosingBrace= type instanceof ICompositeType || type instanceof IEnumeration;
 				final int nameLine= doc.getLineOfOffset(nameOffset);

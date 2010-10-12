@@ -44,7 +44,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.browser.ITypeReference;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -330,20 +329,16 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 
 					if (binding instanceof ICPPMethod) {
 						ICPPMethod m= (ICPPMethod) binding;
-						try {
-							ICPPMethod[] msInBases = ClassTypeHelper.findOverridden(m);
-							if (msInBases.length > 0) {
-								if (polymorphicNames == null) {
-									polymorphicNames= new ArrayList<IIndexName>();
-								}
-								for (ICPPMethod mInBase : msInBases) {
-									if (mInBase != null && handled.add(mInBase)) {
-										createMatches1(index, mInBase, polymorphicNames);
-									}
+						ICPPMethod[] msInBases = ClassTypeHelper.findOverridden(m);
+						if (msInBases.length > 0) {
+							if (polymorphicNames == null) {
+								polymorphicNames= new ArrayList<IIndexName>();
+							}
+							for (ICPPMethod mInBase : msInBases) {
+								if (mInBase != null && handled.add(mInBase)) {
+									createMatches1(index, mInBase, polymorphicNames);
 								}
 							}
-						} catch (DOMException e) {
-							CUIPlugin.log(e);
 						}
 					}
 				}

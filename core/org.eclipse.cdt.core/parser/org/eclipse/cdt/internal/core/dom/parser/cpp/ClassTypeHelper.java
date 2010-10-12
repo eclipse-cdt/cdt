@@ -127,9 +127,8 @@ public class ClassTypeHelper {
 	 * @param binding a binding. 
 	 * @param classType a class.
 	 * @return <code>true</code> if <code>binding</code> is a friend of <code>classType</code>.
-	 * @throws DOMException
 	 */
-	public static boolean isFriend(IBinding binding, ICPPClassType classType) throws DOMException {
+	public static boolean isFriend(IBinding binding, ICPPClassType classType) {
 		IType type;
 		if (binding instanceof ICPPClassType) {
 			type = (IType) binding;
@@ -158,7 +157,6 @@ public class ClassTypeHelper {
 
 	/**
 	 * A host maybe backed up with a definition from the index.
-	 * @throws DOMException 
 	 */
 	private static ICPPClassType getBackupDefinition(ICPPInternalClassTypeMixinHost host) {
 		ICPPClassScope scope = host.getCompositeScope();
@@ -437,7 +435,7 @@ public class ClassTypeHelper {
 	 * Returns whether {@code method} is virtual. This is the case if it is declared to be virtual or
 	 * overrides another virtual method.
 	 */
-	public static boolean isVirtual(ICPPMethod m) throws DOMException {
+	public static boolean isVirtual(ICPPMethod m) {
 		if (m instanceof ICPPConstructor)
 			return false;
 		if (m.isVirtual()) 
@@ -489,9 +487,8 @@ public class ClassTypeHelper {
 
 	/**
 	 * Returns {@code true} if {@code source} overrides {@code target}.
-	 * @throws DOMException 
 	 */
-	public static boolean isOverrider(ICPPMethod source, ICPPMethod target) throws DOMException {
+	public static boolean isOverrider(ICPPMethod source, ICPPMethod target) {
 		if (source instanceof ICPPConstructor || target instanceof ICPPConstructor) 
 			return false;
 		if (!isVirtual(target)) 
@@ -515,9 +512,8 @@ public class ClassTypeHelper {
 
 	/**
 	 * Returns all methods that are overridden by the given {@code method}.
-	 * @throws DOMException 
 	 */
-	public static ICPPMethod[] findOverridden(ICPPMethod method) throws DOMException {
+	public static ICPPMethod[] findOverridden(ICPPMethod method) {
 		if (method instanceof ICPPConstructor)
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		
@@ -551,7 +547,7 @@ public class ClassTypeHelper {
 	 * Returns whether {@code cl} contains an overridden method.
 	 */
 	private static boolean findOverridden(ICPPClassType cl, char[] mname, ICPPFunctionType mft,
-			HashMap<ICPPClassType, Boolean> virtualInClass, ArrayList<ICPPMethod> result) throws DOMException {
+			HashMap<ICPPClassType, Boolean> virtualInClass, ArrayList<ICPPMethod> result) {
 		Boolean visitedBefore= virtualInClass.get(cl);
 		if (visitedBefore != null)
 			return visitedBefore;
@@ -589,10 +585,9 @@ public class ClassTypeHelper {
 
 	/**
 	 * Returns all methods found in the index, that override the given {@code method}.
-	 * @throws DOMException 
 	 * @throws CoreException 
 	 */
-	public static ICPPMethod[] findOverriders(IIndex index, ICPPMethod method) throws DOMException, CoreException {
+	public static ICPPMethod[] findOverriders(IIndex index, ICPPMethod method) throws CoreException {
 		if (!isVirtual(method))
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 
@@ -606,10 +601,8 @@ public class ClassTypeHelper {
 
 	/**
 	 * Returns all methods belonging to the given set of classes that override the given {@code method}.
-	 * @throws DOMException 
 	 */
-	public static ICPPMethod[] findOverriders(ICPPClassType[] subclasses, ICPPMethod method)
-			throws DOMException {
+	public static ICPPMethod[] findOverriders(ICPPClassType[] subclasses, ICPPMethod method) {
 		final char[] mname= method.getNameCharArray();
 		final ICPPFunctionType mft= method.getType();
 		final ArrayList<ICPPMethod> result= new ArrayList<ICPPMethod>();
@@ -700,37 +693,34 @@ public class ClassTypeHelper {
 	}
 
 	private static int getImplicitMethodKind(ICPPClassType ct, ICPPMethod method) {
-		try {
-			if (method instanceof ICPPConstructor) {
-				final IFunctionType type= method.getType();
-				final IType[] params= type.getParameterTypes();
-				if (params.length == 0)
+		if (method instanceof ICPPConstructor) {
+			final IFunctionType type= method.getType();
+			final IType[] params= type.getParameterTypes();
+			if (params.length == 0)
+				return KIND_DEFAULT_CTOR;
+			if (params.length == 1) {
+				IType t= SemanticUtil.getNestedType(params[0], SemanticUtil.TDEF);
+				if (SemanticUtil.isVoidType(t))
 					return KIND_DEFAULT_CTOR;
-				if (params.length == 1) {
-					IType t= SemanticUtil.getNestedType(params[0], SemanticUtil.TDEF);
-					if (SemanticUtil.isVoidType(t))
-						return KIND_DEFAULT_CTOR;
 
-					if (isRefToConstClass(ct, t))
-						return KIND_COPY_CTOR;
-				}
-				return KIND_OTHER;
+				if (isRefToConstClass(ct, t))
+					return KIND_COPY_CTOR;
 			}
+			return KIND_OTHER;
+		}
 
-			if (method.isDestructor())
-				return KIND_DTOR;
+		if (method.isDestructor())
+			return KIND_DTOR;
 
-			if (CharArrayUtils.equals(method.getNameCharArray(), OverloadableOperator.ASSIGN.toCharArray())) {
-				final IFunctionType type= method.getType();
-				final IType[] params= type.getParameterTypes();
-				if (params.length == 1) {
-					IType t= params[0];
-					if (isRefToConstClass(ct, t))
-						return KIND_ASSIGNMENT_OP;
-				}
-				return KIND_OTHER;
+		if (CharArrayUtils.equals(method.getNameCharArray(), OverloadableOperator.ASSIGN.toCharArray())) {
+			final IFunctionType type= method.getType();
+			final IType[] params= type.getParameterTypes();
+			if (params.length == 1) {
+				IType t= params[0];
+				if (isRefToConstClass(ct, t))
+					return KIND_ASSIGNMENT_OP;
 			}
-		} catch (DOMException e) {
+			return KIND_OTHER;
 		}
 		return KIND_OTHER;	
 	}

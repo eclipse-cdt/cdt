@@ -1776,12 +1776,9 @@ public class CPPTemplates {
 	private static IType[] addImplicitObjectType(IType[] types, ICPPMethod f1) {
 		ICPPClassType ct = f1.getClassOwner();
 		if (ct != null) {
-			try {
-				ICPPFunctionType ft = f1.getType();
-				final CPPReferenceType t = new CPPReferenceType(addQualifiers(ct, ft.isConst(), ft.isVolatile()), false);
-				return concat(t, types);
-			} catch (DOMException e) {
-			}
+			ICPPFunctionType ft = f1.getType();
+			final CPPReferenceType t = new CPPReferenceType(addQualifiers(ct, ft.isConst(), ft.isVolatile()), false);
+			return concat(t, types);
 		}
 		return types;
 	}

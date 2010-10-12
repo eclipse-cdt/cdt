@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.c;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
-import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 class CompositeCFunction extends CompositeCBinding implements IFunction {
@@ -26,12 +24,11 @@ class CompositeCFunction extends CompositeCBinding implements IFunction {
 		super(cf, rbinding);
 	}
 
-	public IScope getFunctionScope() throws DOMException {
-		IScope scope= ((IFunction)rbinding).getFunctionScope();
-		return cf.getCompositeScope((IIndexScope)scope);
+	public IScope getFunctionScope() {
+		return null;
 	}
 	
-	public IParameter[] getParameters() throws DOMException {
+	public IParameter[] getParameters() {
 		IParameter[] preResult = ((IFunction)rbinding).getParameters();
 		IParameter[] result = new IParameter[preResult.length];
 		for(int i=0; i<preResult.length; i++) {
@@ -40,7 +37,7 @@ class CompositeCFunction extends CompositeCBinding implements IFunction {
 		return result;
 	}
 	
-	public IFunctionType getType() throws DOMException {
+	public IFunctionType getType() {
 		IType rtype = ((IFunction)rbinding).getType();
 		return (IFunctionType) cf.getCompositeType(rtype);
 	}

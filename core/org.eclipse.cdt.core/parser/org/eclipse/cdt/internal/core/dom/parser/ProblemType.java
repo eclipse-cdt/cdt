@@ -53,6 +53,9 @@ public class ProblemType implements IProblemType, ISerializableType {
 	}
 	
 	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
-		return new ProblemType(buffer.getShort() & 0xffff);
+		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0)
+			return ProblemFunctionType.unmarshal(firstByte, buffer);
+		
+		return new ProblemType(buffer.getShort());
 	}
 }

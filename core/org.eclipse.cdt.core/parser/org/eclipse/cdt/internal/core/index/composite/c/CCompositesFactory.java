@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -116,7 +117,7 @@ public class CCompositesFactory extends AbstractCompositeFactory {
 			}
 			return at;
 		} 
-		if (rtype instanceof IBasicType || rtype == null) {
+		if (rtype instanceof IBasicType || rtype instanceof ISemanticProblem || rtype == null) {
 			return rtype;
 		} 
 		

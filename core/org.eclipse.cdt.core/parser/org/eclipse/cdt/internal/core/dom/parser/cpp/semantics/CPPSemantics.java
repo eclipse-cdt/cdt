@@ -1106,13 +1106,10 @@ public class CPPSemantics {
 					}
 				}
 				if (b instanceof IVariable) {
-					try {
-						IType t= SemanticUtil.getUltimateType(((IVariable) b).getType(), true);
-						if (t instanceof ICPPUnknownBinding || t instanceof ICPPTemplateDefinition) {
-							result[0]= true;
-							return PROCESS_ABORT;
-						}
-					} catch (DOMException e) {
+					IType t= SemanticUtil.getUltimateType(((IVariable) b).getType(), true);
+					if (t instanceof ICPPUnknownBinding || t instanceof ICPPTemplateDefinition) {
+						result[0]= true;
+						return PROCESS_ABORT;
 					}
 				}
 				if (name instanceof ICPPASTTemplateId)
@@ -2651,15 +2648,11 @@ public class CPPSemantics {
 		IFunction unknown= null;
 		for (IFunction function : fns) {
 			if (function != null) {
-				try {
-					IType t2= function.getType().getReturnType();
-					if (t.isSameType(t2))
-						return function;
-					if (unknown == null && function instanceof ICPPUnknownBinding) {
-						unknown= function;
-					}
-				} catch (DOMException e) {
-					// ignore, try other candidates
+				IType t2= function.getType().getReturnType();
+				if (t.isSameType(t2))
+					return function;
+				if (unknown == null && function instanceof ICPPUnknownBinding) {
+					unknown= function;
 				}
 			}
 		}
@@ -2717,10 +2710,7 @@ public class CPPSemantics {
     				ICPPASTConstructorChainInitializer memInit= (ICPPASTConstructorChainInitializer) parentOfInit;
     				IBinding var= memInit.getMemberInitializerId().resolveBinding();
     				if (var instanceof IVariable) {
-    					try {
-							targetType= ((IVariable) var).getType();
-						} catch (DOMException e) {
-						}
+    					targetType= ((IVariable) var).getType();
     				}
     			}
     		}
@@ -2783,11 +2773,8 @@ public class CPPSemantics {
     			dtor= ASTQueries.findInnermostDeclarator(dtor);
     			IBinding binding = dtor.getName().resolveBinding();
     			if (binding instanceof IFunction) {
-    				try {
-    					IFunctionType ft = ((IFunction) binding).getType();
-    					targetType= ft.getReturnType();
-    				} catch (DOMException e) {
-    				}
+    				IFunctionType ft = ((IFunction) binding).getType();
+					targetType= ft.getReturnType();
     			}
     		}
 		}
@@ -2815,13 +2802,10 @@ public class CPPSemantics {
 
     	// First pass, consider functions
     	for (ICPPFunction fn : fns) {
-    		try {
-    			if (!(fn instanceof ICPPFunctionTemplate)) {
-    				if (targetType.isSameType(fn.getType()))
-    					return fn;
-    			}
-    		} catch (DOMException e) {
-    		}
+    		if (!(fn instanceof ICPPFunctionTemplate)) {
+				if (targetType.isSameType(fn.getType()))
+					return fn;
+			}
     	}
     	
     	// Second pass, consider templates
@@ -3328,14 +3312,11 @@ public class CPPSemantics {
 					for (Object object : items) {
 						if (object instanceof ICPPFunction) {
 							ICPPFunction func= (ICPPFunction) object;
-							try {
-								ICPPFunctionType ft = func.getType();
-								IType[] pts= ft.getParameterTypes();
-								if ((enum1 != null && pts.length > 0 && enum1.isSameType(getUltimateTypeUptoPointers(pts[0]))) ||
-										(enum2 != null && pts.length > 1 && enum2.isSameType(getUltimateTypeUptoPointers(pts[1])))) {
-									items[j++]= object;
-								} 
-							} catch (DOMException e) {
+							ICPPFunctionType ft = func.getType();
+							IType[] pts= ft.getParameterTypes();
+							if ((enum1 != null && pts.length > 0 && enum1.isSameType(getUltimateTypeUptoPointers(pts[0]))) ||
+									(enum2 != null && pts.length > 1 && enum2.isSameType(getUltimateTypeUptoPointers(pts[1])))) {
+								items[j++]= object;
 							}
 						}
 					}
@@ -3605,12 +3586,9 @@ public class CPPSemantics {
 		}
 
 		declarator= ASTQueries.findTypeRelevantDeclarator(declarator);
-		try {
-			if (declarator instanceof ICPPASTFunctionDeclarator) {
-				IType type = function.getType();
-				return type.isSameType(CPPVisitor.createType(declarator));
-			} 
-		} catch (DOMException e) {
+		if (declarator instanceof ICPPASTFunctionDeclarator) {
+			IType type = function.getType();
+			return type.isSameType(CPPVisitor.createType(declarator));
 		}
 		return false;
 	}

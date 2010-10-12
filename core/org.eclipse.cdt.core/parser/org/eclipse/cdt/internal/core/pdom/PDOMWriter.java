@@ -56,7 +56,6 @@ import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerASTVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -211,8 +210,6 @@ abstract public class PDOMWriter {
 							contextIncludes, lock);
 				} catch (RuntimeException e) {
 					th= e;
-				} catch (PDOMNotImplementedError e) {
-					th= e;
 				} catch (StackOverflowError e) {
 					th= e;
 				} catch (AssertionError e) {
@@ -280,8 +277,6 @@ abstract public class PDOMWriter {
 							fStatistics.fDeclarationCount++;
 						}
 					} catch (RuntimeException e) {
-						th= e;
-					} catch (PDOMNotImplementedError e) {
 						th= e;
 					} catch (StackOverflowError e) {
 						th= e;

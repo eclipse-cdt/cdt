@@ -14,7 +14,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
@@ -137,11 +136,7 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
     public IType getExpressionType() {
         IBinding binding = getFieldName().resolveBinding();
 		if (binding instanceof IVariable) {
-			try {
-				return ((IVariable)binding).getType();
-			} catch (DOMException e) {
-				return e.getProblem();
-			}
+			return ((IVariable)binding).getType();
 		}
     	return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
     }

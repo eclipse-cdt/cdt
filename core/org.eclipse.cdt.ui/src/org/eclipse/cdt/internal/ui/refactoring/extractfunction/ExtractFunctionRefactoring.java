@@ -22,20 +22,16 @@ import java.util.Vector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.text.edits.TextEditGroup;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -78,7 +74,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTBinaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
@@ -584,56 +579,48 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		String name = new String(declarator.getName().toCharArray());
 		if (bind instanceof ICPPClassType) {
 			ICPPClassType classBind = (ICPPClassType) bind;
-			try {
-				IField[] fields = classBind.getFields();
-				for (IField field : fields) {
-					if (field.getName().equals(name)) {
-						return true;
-					}
+			IField[] fields = classBind.getFields();
+			for (IField field : fields) {
+				if (field.getName().equals(name)) {
+					return true;
 				}
-				ICPPMethod[] methods = classBind.getAllDeclaredMethods();
-				for (ICPPMethod method : methods) {
-					if (!method.takesVarArgs() && name.equals(method.getName())) {
-						IParameter[] parameters = method.getParameters();
-						if (parameters.length == declarator.getParameters().length) {
-							for (int i = 0; i < parameters.length; i++) {
-								IASTName[] origParameterName = unit
-										.getDeclarationsInAST(parameters[i]);
+			}
+			ICPPMethod[] methods = classBind.getAllDeclaredMethods();
+			for (ICPPMethod method : methods) {
+				if (!method.takesVarArgs() && name.equals(method.getName())) {
+					IParameter[] parameters = method.getParameters();
+					if (parameters.length == declarator.getParameters().length) {
+						for (int i = 0; i < parameters.length; i++) {
+							IASTName[] origParameterName = unit
+									.getDeclarationsInAST(parameters[i]);
 
-								IASTParameterDeclaration origParameter = (IASTParameterDeclaration) origParameterName[0]
-										.getParent().getParent();
-								IASTParameterDeclaration newParameter = declarator
-										.getParameters()[i];
+							IASTParameterDeclaration origParameter = (IASTParameterDeclaration) origParameterName[0]
+									.getParent().getParent();
+							IASTParameterDeclaration newParameter = declarator
+									.getParameters()[i];
 
-								// if not the same break;
-								if (!(equalityChecker.isEquals(origParameter
-										.getDeclSpecifier(), newParameter
-										.getDeclSpecifier()) && ASTHelper
-										.samePointers(origParameter
-												.getDeclarator()
-												.getPointerOperators(),
-												newParameter.getDeclarator()
-														.getPointerOperators(),
-												equalityChecker))) {
-									break;
-								}
+							// if not the same break;
+							if (!(equalityChecker.isEquals(origParameter
+									.getDeclSpecifier(), newParameter
+									.getDeclSpecifier()) && ASTHelper
+									.samePointers(origParameter
+											.getDeclarator()
+											.getPointerOperators(),
+											newParameter.getDeclarator()
+													.getPointerOperators(),
+											equalityChecker))) {
+								break;
+							}
 
-								if (!(i < (parameters.length - 1))) {
-									return true;
-								}
+							if (!(i < (parameters.length - 1))) {
+								return true;
 							}
 						}
-
 					}
-				}
-				return false;
-			} catch (DOMException e) {
-				ILog logger = CUIPlugin.getDefault().getLog();
-				IStatus status = new Status(IStatus.WARNING,
-						CUIPlugin.PLUGIN_ID, IStatus.OK, e.getMessage(), e);
 
-				logger.log(status);
+				}
 			}
+			return false;
 		}
 		return true;
 	}

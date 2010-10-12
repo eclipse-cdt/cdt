@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -257,14 +256,10 @@ public final class CxxAstUtils {
 				for (IBinding b : bindings) {
 					if (b instanceof IFunction) {
 						IFunction f = (IFunction) b;
-						try {
-							if (f.getParameters().length == expectedParametersNum) {
-								// Consider this overload
-								IIndexName[] decls = index.findDeclarations(b);
-								declSet.addAll(Arrays.asList(decls));
-							}
-						} catch (DOMException e) {
-							continue;
+						if (f.getParameters().length == expectedParametersNum) {
+							// Consider this overload
+							IIndexName[] decls = index.findDeclarations(b);
+							declSet.addAll(Arrays.asList(decls));
 						}
 					}
 				}

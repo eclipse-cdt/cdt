@@ -237,7 +237,7 @@ public class PDOMASTAdapter {
 
 		@Override
 		public Object clone() {
-			throw new PDOMNotImplementedError();
+			throw new UnsupportedOperationException();
 		}
 
 		@SuppressWarnings("rawtypes")
@@ -293,7 +293,7 @@ public class PDOMASTAdapter {
 
 		@Override
 		public Object clone() {
-			throw new PDOMNotImplementedError();
+			throw new UnsupportedOperationException();
 		}
 
 		public IField findField(String name) {
@@ -357,7 +357,7 @@ public class PDOMASTAdapter {
 		
 		@Override
 		public Object clone() {
-			throw new PDOMNotImplementedError();
+			throw new UnsupportedOperationException();
 		}
 
 		public String getName() {

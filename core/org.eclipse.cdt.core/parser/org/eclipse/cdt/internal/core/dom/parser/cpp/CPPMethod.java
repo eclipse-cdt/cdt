@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -28,7 +27,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -39,27 +37,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * The binding for a method.
  */
 public class CPPMethod extends CPPFunction implements ICPPMethod {
-	public static class CPPMethodProblem extends CPPFunctionProblem implements ICPPMethod {
-		private ICPPClassType fOwner;
-		public CPPMethodProblem(ICPPClassType owner, IASTNode node, int id, char[] arg) {
-			super(node, id, arg);
-			fOwner= owner;
-		}
-		public ICPPClassType getClassOwner() {
-			return fOwner;
-		}
-		public boolean isDestructor() {
-			char[] name = getNameCharArray();
-			if (name.length > 1 && name[0] == '~')
-				return true;
-
-			return false;
-		}
-		public int getVisibility() {
-			return ICPPMember.v_private;
-		}
-	}
-    
 	public CPPMethod(IASTDeclarator declarator) {
 		super(declarator);
 	}

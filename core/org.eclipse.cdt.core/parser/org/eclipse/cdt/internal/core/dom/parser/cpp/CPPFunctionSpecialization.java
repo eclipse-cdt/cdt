@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -52,7 +51,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return (ICPPFunction) getSpecializedBinding();
 	}
 
-	public ICPPParameter[] getParameters() throws DOMException {
+	public ICPPParameter[] getParameters() {
 		if (fParams == null) {
 			ICPPFunction function = getFunction();
 			ICPPParameter[] params = function.getParameters();
@@ -76,7 +75,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return fParams;
 	}
 
-	public int getRequiredArgumentCount() throws DOMException {
+	public int getRequiredArgumentCount() {
 		return ((ICPPFunction) getSpecializedBinding()).getRequiredArgumentCount();
 	}
 
@@ -88,7 +87,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return null;
 	}
 
-	public ICPPFunctionType getType() throws DOMException {
+	public ICPPFunctionType getType() {
 		if (type == null) {
 			ICPPFunction function = (ICPPFunction) getSpecializedBinding();
 			type = (ICPPFunctionType) specializeType(function.getType());
@@ -279,11 +278,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 		result.append(getName());
-		IFunctionType t = null;
-		try {
-			t = getType();
-		} catch (DOMException e) {
-		}
+		IFunctionType t = getType();
 		result.append(t != null ? ASTTypeUtil.getParameterTypeString(t) : "()"); //$NON-NLS-1$
 		ICPPTemplateParameterMap tpmap= getTemplateParameterMap();
 		if (tpmap != null) {

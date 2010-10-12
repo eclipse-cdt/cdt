@@ -14,7 +14,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -44,12 +43,8 @@ public class ExpressionTypes {
 
 
 	public static ValueCategory valueCategoryFromFunctionCall(ICPPFunction function) {
-		try {
-			final ICPPFunctionType ft = function.getType();
-			return valueCategoryFromReturnType(ft.getReturnType());
-		} catch (DOMException e) {
-			return ValueCategory.PRVALUE;
-		}
+		final ICPPFunctionType ft = function.getType();
+		return valueCategoryFromReturnType(ft.getReturnType());
 	}
 
 	public static ValueCategory valueCategoryFromReturnType(IType r) {
@@ -68,12 +63,8 @@ public class ExpressionTypes {
 	}
 
 	public static IType typeFromFunctionCall(ICPPFunction function) {
-		try {
-			final ICPPFunctionType ft = function.getType();
-			return typeFromReturnType(ft.getReturnType());
-		} catch (DOMException e) {
-			return e.getProblem();
-		}
+		final ICPPFunctionType ft = function.getType();
+		return typeFromReturnType(ft.getReturnType());
 	}
 	
 	public static IType typeFromReturnType(IType r) {

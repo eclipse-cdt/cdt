@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -37,7 +36,7 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
-	public IType getType() throws DOMException {
+	public IType getType() {
 		return fType;
 	}
 	

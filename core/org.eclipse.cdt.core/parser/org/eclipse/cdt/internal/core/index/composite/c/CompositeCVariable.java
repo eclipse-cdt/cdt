@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.c;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -23,7 +22,7 @@ class CompositeCVariable extends CompositeCBinding implements IVariable {
 		super(cf, rbinding);
 	}
 
-	public IType getType() throws DOMException {
+	public IType getType() {
 		IType rtype = ((IVariable)rbinding).getType();
 		return cf.getCompositeType(rtype);
 	}

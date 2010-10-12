@@ -1592,18 +1592,14 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 			String qn,
 			Class expType,
 			String expTypeQN) {
-		try {
-			assertTrue(binding instanceof ICPPField);
-			ICPPField field = (ICPPField) binding;
-			assertQNEquals(qn, field);
-			assertTrue(expType.isInstance(field.getType()));
-			if (expTypeQN != null) {
-				assert(field.getType() instanceof ICPPBinding);
-				ICPPBinding tyBinding = (ICPPBinding) field.getType();
-				assertQNEquals(expTypeQN, tyBinding);
-			}
-		} catch (DOMException de) {
-			fail(de.getMessage());
+		assertTrue(binding instanceof ICPPField);
+		ICPPField field = (ICPPField) binding;
+		assertQNEquals(qn, field);
+		assertTrue(expType.isInstance(field.getType()));
+		if (expTypeQN != null) {
+			assert(field.getType() instanceof ICPPBinding);
+			ICPPBinding tyBinding = (ICPPBinding) field.getType();
+			assertQNEquals(expTypeQN, tyBinding);
 		}
 	}
 
@@ -1647,7 +1643,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		assertEquals(methods, classType.getMethods().length);
 		assertEquals(declaredMethods, classType.getDeclaredMethods().length);
 		assertEquals(allDeclaredMethods, classType.getAllDeclaredMethods().length);
-		// assertEquals(friends, classType.getFriends().length); (PDOMNotImplementedError)
+		assertEquals(friends, classType.getFriends().length); 
 		assertEquals(constructors, classType.getConstructors().length);
 		assertEquals(nestedClasses, classType.getNestedClasses().length);
 	}

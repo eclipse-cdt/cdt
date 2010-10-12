@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.model.ext;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
@@ -25,11 +24,11 @@ public class FunctionDeclarationHandle extends CElementHandle implements IFuncti
 	private String fReturnType;
 	private boolean fIsStatic;
 
-	public FunctionDeclarationHandle(ICElement parent, IFunction func) throws DOMException {
+	public FunctionDeclarationHandle(ICElement parent, IFunction func) {
 		this(parent, ICElement.C_FUNCTION_DECLARATION, func);
 	}
 
-	protected FunctionDeclarationHandle(ICElement parent, int type, IFunction func) throws DOMException {
+	protected FunctionDeclarationHandle(ICElement parent, int type, IFunction func) {
 		super(parent, type, func.getName());
 		fParameterTypes= extractParameterTypes(func);
 		fReturnType= ASTTypeUtil.getType(func.getType().getReturnType(), false);

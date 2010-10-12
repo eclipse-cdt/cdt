@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.model.ext;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.model.CModelException;
@@ -29,11 +28,11 @@ public class MethodDeclarationHandle extends CElementHandle implements IMethodDe
 	private boolean fIsConstructor;
 	private boolean fIsDestructor;
 	
-	public MethodDeclarationHandle(ICElement parent, ICPPMethod method) throws DOMException {
+	public MethodDeclarationHandle(ICElement parent, ICPPMethod method) {
 		this(parent, ICElement.C_METHOD_DECLARATION, method);
 	}
 	
-	protected MethodDeclarationHandle(ICElement parent, int type, ICPPMethod method) throws DOMException {
+	protected MethodDeclarationHandle(ICElement parent, int type, ICPPMethod method) {
 		super(parent, type, method.getName());
 		fParameterTypes= extractParameterTypes(method);
 		fReturnType= ASTTypeUtil.getType(method.getType().getReturnType(), false);

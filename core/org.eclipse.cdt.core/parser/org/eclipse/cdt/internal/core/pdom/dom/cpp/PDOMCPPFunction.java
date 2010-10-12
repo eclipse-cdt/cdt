@@ -16,12 +16,13 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
-import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -29,7 +30,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
@@ -128,14 +128,10 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			ICPPParameter[] newParams;
 			short newAnnotation;
 			int newBindingRequiredArgCount;
-			try {
-				newType= func.getType();
-				newParams = func.getParameters();
-				newAnnotation = getAnnotation(func);
-				newBindingRequiredArgCount= func.getRequiredArgumentCount();
-			} catch (DOMException e) {
-				throw new CoreException(Util.createStatus(e));
-			}
+			newType= func.getType();
+			newParams = func.getParameters();
+			newAnnotation = getAnnotation(func);
+			newBindingRequiredArgCount= func.getRequiredArgumentCount();
 				
 			fType= null;
 			linkage.storeType(record+FUNCTION_TYPE, newType);
@@ -244,7 +240,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 
 	
-	public int getRequiredArgumentCount() throws DOMException {
+	public int getRequiredArgumentCount() {
 		if (fRequiredArgCount == -1) {
 			try {
 				fRequiredArgCount= getDB().getInt(record + REQUIRED_ARG_COUNT);
@@ -271,14 +267,14 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 
 	public boolean isMutable() {
-		throw new PDOMNotImplementedError();
+		return false;
 	}
 
-	public IScope getFunctionScope() throws DOMException {
-		throw new PDOMNotImplementedError();
+	public IScope getFunctionScope() {
+		return null;
 	}
 
-	public ICPPParameter[] getParameters() throws DOMException {
+	public ICPPParameter[] getParameters() {
 		try {
 			PDOMLinkage linkage= getLinkage();
 			Database db= getDB();
@@ -308,6 +304,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 				fType= (ICPPFunctionType) getLinkage().loadType(record+FUNCTION_TYPE);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
+				fType= new ProblemFunctionType(ISemanticProblem.TYPE_NOT_PERSISTED);
 			}
 		}
 		return fType;
@@ -345,7 +342,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 
 	@Override
 	public Object clone() {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException(); 
 	}
 	
 	@Override
@@ -365,7 +362,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 				CCorePlugin.log(ce);
 			}
 		} else {
-			throw new PDOMNotImplementedError(b.getClass().toString());
+			assert false;
 		}
 		return 0;
 	}

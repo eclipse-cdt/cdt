@@ -28,7 +28,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -162,7 +161,6 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType {
 
 	@Override
 	public Object clone() {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException(); 
 	}
-
 }

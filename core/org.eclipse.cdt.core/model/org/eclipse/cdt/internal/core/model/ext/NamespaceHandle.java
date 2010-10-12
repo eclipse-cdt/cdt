@@ -11,14 +11,13 @@
 
 package org.eclipse.cdt.internal.core.model.ext;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.INamespace;
 
 public class NamespaceHandle extends CElementHandle implements INamespace {
 	
-	public NamespaceHandle(ICElement parent, ICPPNamespace ns) throws DOMException {
+	public NamespaceHandle(ICElement parent, ICPPNamespace ns) {
 		super(parent, ICElement.C_NAMESPACE, ns.getName());
 	}
 

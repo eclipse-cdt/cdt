@@ -91,12 +91,10 @@ public class ASTTypeUtil {
 	/**
 	 * @return Whether the function matching the given function binding takes
 	 *         parameters or not.
-	 * @throws DOMException
 	 * 
 	 * @since 5.1
 	 */
-	public static boolean functionTakesParameters(IFunction function)
-			throws DOMException {
+	public static boolean functionTakesParameters(IFunction function) {
 		IParameter[] parameters = function.getParameters();
 
 		if (parameters.length == 0) {
@@ -624,20 +622,16 @@ public class ASTTypeUtil {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public static String getNodeType(IASTNode node) {
-		try {
-			if (node instanceof IASTDeclarator)
-				return getType((IASTDeclarator) node);
-			if (node instanceof IASTName && ((IASTName) node).resolveBinding() instanceof IVariable)
-				return getType(((IVariable)((IASTName) node).resolveBinding()).getType());
-			if (node instanceof IASTName && ((IASTName) node).resolveBinding() instanceof IFunction)
-				return getType(((IFunction)((IASTName) node).resolveBinding()).getType());
-			if (node instanceof IASTName && ((IASTName) node).resolveBinding() instanceof IType)
-				return getType((IType)((IASTName) node).resolveBinding());
-			if (node instanceof IASTTypeId)
-				return getType((IASTTypeId) node);
-		} catch (DOMException e) {
-			return EMPTY_STRING;
-		}
+		if (node instanceof IASTDeclarator)
+			return getType((IASTDeclarator) node);
+		if (node instanceof IASTName && ((IASTName) node).resolveBinding() instanceof IVariable)
+			return getType(((IVariable)((IASTName) node).resolveBinding()).getType());
+		if (node instanceof IASTName && ((IASTName) node).resolveBinding() instanceof IFunction)
+			return getType(((IFunction)((IASTName) node).resolveBinding()).getType());
+		if (node instanceof IASTName && ((IASTName) node).resolveBinding() instanceof IType)
+			return getType((IType)((IASTName) node).resolveBinding());
+		if (node instanceof IASTTypeId)
+			return getType((IASTTypeId) node);
 		
 		return EMPTY_STRING;
 	}

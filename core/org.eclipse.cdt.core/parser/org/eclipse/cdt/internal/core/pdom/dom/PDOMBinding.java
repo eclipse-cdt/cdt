@@ -255,10 +255,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 			return ASTTypeUtil.getType((IType) this);
 		} else if (this instanceof IFunction) {
 			IFunctionType t= null;
-			try {
-				t = ((IFunction) this).getType();
-			} catch (DOMException e) {
-			}
+			t = ((IFunction) this).getType();
 			if (t != null) {
 				return getName() + ASTTypeUtil.getParameterTypeString(t);
 			} else {
@@ -294,13 +291,6 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 			}
 		}
 		return Integer.toString(value);
-	}
-	
-	/**
-     * Convenience method to shorten subclass file length
-     */
-	protected final void fail() {
-		throw new PDOMNotImplementedError("in " + getClass().getCanonicalName()); //$NON-NLS-1$
 	}
 	
 	public PDOMName getScopeName() {

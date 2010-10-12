@@ -278,8 +278,8 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	
 	
 	// Dummy methods for derived classes
-    public IType getType() throws DOMException {
-        throw new DOMException(this);
+    public IType getType() {
+    	return new ProblemType(getID());
     }
     public boolean isStatic() {
     	return false;

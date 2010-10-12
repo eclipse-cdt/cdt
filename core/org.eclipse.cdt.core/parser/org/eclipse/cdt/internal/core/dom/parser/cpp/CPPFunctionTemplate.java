@@ -15,7 +15,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -29,17 +28,16 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -47,31 +45,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 public class CPPFunctionTemplate extends CPPTemplateDefinition
 		implements ICPPFunctionTemplate, ICPPInternalFunction {
-	public static final class CPPFunctionTemplateProblem extends ProblemBinding
-			implements ICPPFunctionTemplate {
-		public CPPFunctionTemplateProblem(IASTNode node, int id, char[] arg) {
-			super(node, id, arg);
-		}
-		public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
-			throw new DOMException(this);
-		}
-		public ICPPClassTemplatePartialSpecialization[] getTemplateSpecializations() throws DOMException {
-			throw new DOMException(this);		
-		}
-		public ICPPParameter[] getParameters() throws DOMException {
-			throw new DOMException(this);
-		}
-		public IScope getFunctionScope() throws DOMException {
-			throw new DOMException(this);
-		}
-		@Override
-		public ICPPFunctionType getType() throws DOMException {
-			throw new DOMException(this);
-		}
-		public int getRequiredArgumentCount() throws DOMException {
-			throw new DOMException( this );
-		}
-	}
 	
 	protected ICPPFunctionType type = null;
 
@@ -145,7 +118,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		return CPPBuiltinParameter.createParameterList(getType());
 	}
 
-	public int getRequiredArgumentCount() throws DOMException {
+	public int getRequiredArgumentCount() {
 		return CPPFunction.getRequiredArgumentCount(getParameters());
 	}
 
@@ -165,9 +138,15 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 			while (parent.getParent() instanceof IASTDeclarator)
 				parent = parent.getParent();
 
-			IType temp = getNestedType(CPPVisitor.createType((IASTDeclarator)parent), TDEF);
-			if (temp instanceof ICPPFunctionType)
-				type = (ICPPFunctionType) temp;
+			IType t = getNestedType(CPPVisitor.createType((IASTDeclarator)parent), TDEF);
+			if (t instanceof ICPPFunctionType) {
+				type = (ICPPFunctionType) t;
+			} else if (t instanceof ISemanticProblem){
+				type= new ProblemFunctionType(((ISemanticProblem) t).getID());
+			} else {
+				// This case is unexpected
+				type= new ProblemFunctionType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
+			}
 		}
 		return type;
 	}

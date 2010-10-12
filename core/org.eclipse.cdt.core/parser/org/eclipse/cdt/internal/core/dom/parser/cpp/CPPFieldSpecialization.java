@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -45,7 +44,7 @@ public class CPPFieldSpecialization extends CPPSpecialization implements ICPPFie
 		return getField().getClassOwner();
 	}
 	
-	public IType getType() throws DOMException {
+	public IType getType() {
 		if (type == null) {
 			type= specializeType(getField().getType());
 		}

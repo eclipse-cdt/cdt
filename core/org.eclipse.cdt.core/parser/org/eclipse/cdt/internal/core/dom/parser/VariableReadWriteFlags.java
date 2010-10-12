@@ -10,7 +10,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -75,15 +74,12 @@ public abstract class VariableReadWriteFlags {
 	}
 
 	protected int rwInInitializerExpression(int indirection, IASTNode parent) {
-		try {
-			IASTNode grand= parent.getParent();
-			if (grand instanceof IASTDeclarator) {
-				IBinding binding= ((IASTDeclarator) grand).getName().getBinding();
-				if (binding instanceof IVariable) {
-					return rwAssignmentToType(((IVariable) binding).getType(), indirection);
-				}
+		IASTNode grand= parent.getParent();
+		if (grand instanceof IASTDeclarator) {
+			IBinding binding= ((IASTDeclarator) grand).getName().getBinding();
+			if (binding instanceof IVariable) {
+				return rwAssignmentToType(((IVariable) binding).getType(), indirection);
 			}
-		} catch (DOMException e) {
 		}
 		return READ | WRITE;  // fallback
 	}

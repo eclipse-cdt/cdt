@@ -86,9 +86,6 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		public ICPPConstructor[] getConstructors() {
 			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 		}
-		public ICPPMethod[] getDeclaredConversionOperators() throws DOMException {
-			throw new DOMException(this);
-		}
 		public int getKey() {
 			return k_class;
 		}

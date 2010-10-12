@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -113,8 +112,6 @@ public class CRenameMethodProcessor extends CRenameGlobalProcessor {
         		bindings.addAll(Arrays.asList(bs));
         		bs= ClassTypeHelper.findOverriders(getIndex(), m);
         		bindings.addAll(Arrays.asList(bs));
-            } catch (DOMException e) {
-                getAstManager().handleDOMException(argument.getTranslationUnit(), e, status);
             } catch (CoreException e) {
             	status.addError(e.getMessage());
             }

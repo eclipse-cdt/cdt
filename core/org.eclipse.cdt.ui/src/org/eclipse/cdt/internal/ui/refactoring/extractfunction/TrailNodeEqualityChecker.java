@@ -18,7 +18,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -434,12 +433,9 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 	}
 
 	private IType getType(IBinding binding) {
-		try {
-			if (binding instanceof ICPPVariable) {
-				ICPPVariable var = (ICPPVariable) binding;
-				return var.getType();
-			}
-		} catch (DOMException e) {
+		if (binding instanceof ICPPVariable) {
+			ICPPVariable var = (ICPPVariable) binding;
+			return var.getType();
 		}
 		return null;
 	}

@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.parser.util;
 import java.io.PrintStream;
 
 import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -262,13 +261,9 @@ public class ASTPrinter {
 		} else if (n instanceof IVariable) {
 			IVariable var = (IVariable) n;
 			IType t;
-			try {
-				t = var.getType();
-				out.println();
-				print(out, indentLevel, t);
-			} catch (DOMException e) {
-				//e.printStackTrace();
-			}
+			t = var.getType();
+			out.println();
+			print(out, indentLevel, t);
 	
 		} else if (n instanceof IProblemBinding) {
 			IProblemBinding problem = (IProblemBinding)n;

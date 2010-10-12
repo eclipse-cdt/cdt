@@ -71,27 +71,22 @@ public class AccessContext {
 	 * @return <code>true</code> if the binding is accessible.
 	 */
 	public boolean isAccessible(IBinding binding) {
-		try {
-			IBinding owner;
-			while ((owner = binding.getOwner()) instanceof ICompositeType &&
-					((ICompositeType) owner).isAnonymous()) {
-				binding = owner;
-			}
-			if (!(owner instanceof ICPPClassType)) {
-				return true; // The binding is not a class member.
-			}
-			ICPPClassType accessOwner= (ICPPClassType) owner;
-			if (!initialize(accessOwner)) {
-				return true; // Assume visibility if anything goes wrong.
-			}
-			if (namingClass == null) {
-				return true;
-			}
-			return isAccessible(binding, (ICPPClassType) owner, namingClass, v_public, 0);
-		} catch (DOMException e) {
-			CCorePlugin.log(e);
+		IBinding owner;
+		while ((owner = binding.getOwner()) instanceof ICompositeType &&
+				((ICompositeType) owner).isAnonymous()) {
+			binding = owner;
 		}
-		return true;
+		if (!(owner instanceof ICPPClassType)) {
+			return true; // The binding is not a class member.
+		}
+		ICPPClassType accessOwner= (ICPPClassType) owner;
+		if (!initialize(accessOwner)) {
+			return true; // Assume visibility if anything goes wrong.
+		}
+		if (namingClass == null) {
+			return true;
+		}
+		return isAccessible(binding, (ICPPClassType) owner, namingClass, v_public, 0);
 	}
 
 	/**
@@ -116,7 +111,7 @@ public class AccessContext {
 	}
 
 	private boolean isAccessible(IBinding binding, ICPPClassType owner, ICPPClassType derivedClass,
-			int accessLevel, int depth) throws DOMException {
+			int accessLevel, int depth) {
 		if (depth > CPPSemantics.MAX_INHERITANCE_DEPTH)
 			return false;
 
@@ -156,7 +151,7 @@ public class AccessContext {
 	 * v_private.
 	 * @return One of: v_public, v_protected, v_private.
 	 */
-	private int getMemberAccessLevel(ICPPClassType classType, int inheritedAccessLevel) throws DOMException {
+	private int getMemberAccessLevel(ICPPClassType classType, int inheritedAccessLevel) {
 		int accessLevel = inheritedAccessLevel;
 		for (IBinding contextBinding : context) {
 			if (ClassTypeHelper.isFriend(contextBinding, classType))

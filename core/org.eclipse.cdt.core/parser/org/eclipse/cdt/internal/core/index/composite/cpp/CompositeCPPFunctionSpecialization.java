@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -43,11 +42,7 @@ public class CompositeCPPFunctionSpecialization extends CompositeCPPFunction imp
 	@Override
 	public String toString() {
 		StringBuffer result = new StringBuffer();
-		try {
-			result.append(getName()+" "+ASTTypeUtil.getParameterTypeString(getType())); //$NON-NLS-1$
-		} catch(DOMException de) {
-			result.append(de);
-		}
+		result.append(getName()+" "+ASTTypeUtil.getParameterTypeString(getType())); //$NON-NLS-1$
 		return result.toString();
 	}
 

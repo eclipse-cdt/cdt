@@ -12,22 +12,21 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
@@ -84,44 +83,40 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		super(linkage, parent, (ICPPSpecialization) astFunction, specialized);
 		
 		Database db = getDB();
-		try {
-			ICPPParameter[] astParams= astFunction.getParameters();
-			IFunctionType astFt= astFunction.getType();
-			if (astFt != null) {
-				getLinkage().storeType(record + FUNCTION_TYPE, astFt);
-			}
-
-			ICPPFunction origAstFunc= (ICPPFunction) ((ICPPSpecialization)astFunction).getSpecializedBinding();
-			ICPPParameter[] origAstParams= origAstFunc.getParameters();
-			if (origAstParams.length == 0) {
-				db.putInt(record + NUM_PARAMS, 0);
-				db.putRecPtr(record + FIRST_PARAM, 0);
-			} else {
-				final int length= astParams.length;
-				db.putInt(record + NUM_PARAMS, length);
-
-				db.putRecPtr(record + FIRST_PARAM, 0);
-				PDOMCPPParameter origPar= null;
-				PDOMCPPParameterSpecialization next= null;
-				for (int i= length-1; i >= 0; --i) {
-					// There may be fewer or less original parameters, because of parameter packs.
-					if (i < origAstParams.length-1) {
-						// Normal case
-						origPar= new PDOMCPPParameter(linkage, specialized, origAstParams[i], null);
-					} else if (origPar == null) {
-						// Use last parameter
-						origPar= new PDOMCPPParameter(linkage, specialized, origAstParams[origAstParams.length-1], null);
-					}
-					next= new PDOMCPPParameterSpecialization(linkage, this, astParams[i], origPar, next);
-				}
-				db.putRecPtr(record + FIRST_PARAM, next == null ? 0 : next.getRecord());
-			}
-			fAnnotation = getAnnotation(astFunction);
-			db.putShort(record + ANNOTATION_OFFSET, fAnnotation);	
-			db.putInt(record + REQUIRED_ARG_COUNT_OFFSET, astFunction.getRequiredArgumentCount());
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
+		ICPPParameter[] astParams= astFunction.getParameters();
+		IFunctionType astFt= astFunction.getType();
+		if (astFt != null) {
+			getLinkage().storeType(record + FUNCTION_TYPE, astFt);
 		}
+
+		ICPPFunction origAstFunc= (ICPPFunction) ((ICPPSpecialization)astFunction).getSpecializedBinding();
+		ICPPParameter[] origAstParams= origAstFunc.getParameters();
+		if (origAstParams.length == 0) {
+			db.putInt(record + NUM_PARAMS, 0);
+			db.putRecPtr(record + FIRST_PARAM, 0);
+		} else {
+			final int length= astParams.length;
+			db.putInt(record + NUM_PARAMS, length);
+
+			db.putRecPtr(record + FIRST_PARAM, 0);
+			PDOMCPPParameter origPar= null;
+			PDOMCPPParameterSpecialization next= null;
+			for (int i= length-1; i >= 0; --i) {
+				// There may be fewer or less original parameters, because of parameter packs.
+				if (i < origAstParams.length-1) {
+					// Normal case
+					origPar= new PDOMCPPParameter(linkage, specialized, origAstParams[i], null);
+				} else if (origPar == null) {
+					// Use last parameter
+					origPar= new PDOMCPPParameter(linkage, specialized, origAstParams[origAstParams.length-1], null);
+				}
+				next= new PDOMCPPParameterSpecialization(linkage, this, astParams[i], origPar, next);
+			}
+			db.putRecPtr(record + FIRST_PARAM, next == null ? 0 : next.getRecord());
+		}
+		fAnnotation = getAnnotation(astFunction);
+		db.putShort(record + ANNOTATION_OFFSET, fAnnotation);	
+		db.putInt(record + REQUIRED_ARG_COUNT_OFFSET, astFunction.getRequiredArgumentCount());
 		long typelist= 0;
 		if (astFunction instanceof ICPPMethod && ((ICPPMethod) astFunction).isImplicit()) {
 			// don't store the exception specification, computed it on demand.
@@ -176,11 +171,11 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		return false;
 	}
 
-	public IScope getFunctionScope() throws DOMException {
-		throw new PDOMNotImplementedError();
+	public IScope getFunctionScope() {
+		return null;
 	}
 
-	public ICPPParameter[] getParameters() throws DOMException {
+	public ICPPParameter[] getParameters() {
 		try {
 			PDOMLinkage linkage= getLinkage();
 			Database db= getDB();
@@ -204,12 +199,13 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		}
 	}
 
-	public ICPPFunctionType getType() throws DOMException {		
+	public ICPPFunctionType getType() {		
 		if (fType == null) {
 			try {
 				fType= (ICPPFunctionType) getLinkage().loadType(record + FUNCTION_TYPE);
 			} catch(CoreException ce) {
 				CCorePlugin.log(ce);
+				fType= new ProblemFunctionType(ISemanticProblem.TYPE_NOT_PERSISTED);
 			}
 		}
 		return fType;
@@ -242,7 +238,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	}
 
 	
-	public int getRequiredArgumentCount() throws DOMException {
+	public int getRequiredArgumentCount() {
 		if (fRequiredArgCount == -1) {
 			try {
 				fRequiredArgCount= getDB().getInt(record + REQUIRED_ARG_COUNT_OFFSET);

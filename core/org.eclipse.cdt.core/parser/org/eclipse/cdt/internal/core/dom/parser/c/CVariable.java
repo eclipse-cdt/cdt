@@ -26,12 +26,10 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IInternalVariable;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -39,12 +37,6 @@ import org.eclipse.core.runtime.PlatformObject;
  * Binding for a global or a local variable, serves as base class for fields.
  */
 public class CVariable extends PlatformObject implements IInternalVariable, ICInternalBinding {
-	public static class CVariableProblem extends ProblemBinding implements IVariable {
-		public CVariableProblem(IASTNode node, int id, char[] arg) {
-			super(node, id, arg);
-		}
-	}
-
 	private IASTName[] declarations = null;
 	private IType type = null;
 

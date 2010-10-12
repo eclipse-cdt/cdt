@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -32,7 +31,7 @@ class CompositeCPPVariable extends CompositeCPPBinding implements ICPPVariable {
 		return ((ICPPVariable)rbinding).isExternC();
 	}
 
-	public IType getType() throws DOMException {
+	public IType getType() {
 		IType rtype = ((ICPPVariable)rbinding).getType();
 		return cf.getCompositeType(rtype);
 	}

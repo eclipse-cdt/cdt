@@ -681,10 +681,7 @@ public class CPPVisitor extends ASTQueries {
         	    	// Variable declaration
         	    	IType t2= null;
         	    	if (binding != null && binding instanceof IVariable && !(binding instanceof IIndexBinding)) {
-        	    		try {
-        	    			t2 = ((IVariable) binding).getType();
-        	    		} catch (DOMException e1) {
-        	    		}
+        	    		t2 = ((IVariable) binding).getType();
         	    	}
         	    	if (t1 != null && t2 != null) {
         	    		if (t1.isSameType(t2) || isCompatibleArray(t1, t2) != null) {
@@ -1578,22 +1575,18 @@ public class CPPVisitor extends ASTQueries {
 	    IType pt = null;
 	    
 	    for (int i = 0; i < parameters.length; i++) {
-	        try {
-                pt = parameters[i].getType();
-            
-                // remove qualifiers
-                if (pt instanceof IQualifierType) {
-                	pt= ((IQualifierType) pt).getType();
-                }
+	        pt = parameters[i].getType();
+         
+			// remove qualifiers
+			if (pt instanceof IQualifierType) {
+				pt= ((IQualifierType) pt).getType();
+			}
 
-                if (pt instanceof IArrayType) {
-                	pt = new CPPPointerType(((IArrayType) pt).getType());
-                } else if (pt instanceof IFunctionType) {
-                	pt = new CPPPointerType(pt);
-                }
-            } catch (DOMException e) {
-                pt = e.getProblem();
-            }
+			if (pt instanceof IArrayType) {
+				pt = new CPPPointerType(((IArrayType) pt).getType());
+			} else if (pt instanceof IFunctionType) {
+				pt = new CPPPointerType(pt);
+			}
 	        
 	        pTypes[i] = pt; 
 	    }
@@ -1933,15 +1926,11 @@ public class CPPVisitor extends ASTQueries {
 				if (b instanceof IType) {
 					return (IType) b;
 				}
-				try {
-					if (b instanceof IVariable) {
-						return ((IVariable) b).getType();
-					}
-					if (b instanceof IFunction) {
-						return ((IFunction) b).getType();
-					}
-				} catch (DOMException e) {
-					return e.getProblem();
+				if (b instanceof IVariable) {
+					return ((IVariable) b).getType();
+				}
+				if (b instanceof IFunction) {
+					return ((IFunction) b).getType();
 				}
 			}
 		}

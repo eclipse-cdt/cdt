@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -77,28 +76,25 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 		IType type= null;
 		IBinding parent = getParentBinding();
 		if (parent instanceof ICPPSpecialization && parent instanceof ICPPFunction) {
-			try {
-				IParameter[] pars= ((ICPPFunction) parent).getParameters();
-				int parPos= -1;
-				for (parPos= 0; parPos<pars.length; parPos++) {
-					IParameter par= pars[parPos];
-					if (equals(par)) {
-						break;
-					}
+			IParameter[] pars= ((ICPPFunction) parent).getParameters();
+			int parPos= -1;
+			for (parPos= 0; parPos<pars.length; parPos++) {
+				IParameter par= pars[parPos];
+				if (equals(par)) {
+					break;
 				}
-				if (parPos < pars.length) {
-					parent= ((ICPPSpecialization) parent).getSpecializedBinding();
-					if (parent instanceof ICPPFunction) {
-						ICPPFunctionType ftype = ((ICPPFunction) parent).getType();
-						if (ftype != null) {
-							IType[] ptypes= ftype.getParameterTypes();
-							if (parPos < ptypes.length) {
-								type= ptypes[parPos];
-							}
+			}
+			if (parPos < pars.length) {
+				parent= ((ICPPSpecialization) parent).getSpecializedBinding();
+				if (parent instanceof ICPPFunction) {
+					ICPPFunctionType ftype = ((ICPPFunction) parent).getType();
+					if (ftype != null) {
+						IType[] ptypes= ftype.getParameterTypes();
+						if (parPos < ptypes.length) {
+							type= ptypes[parPos];
 						}
 					}
 				}
-			} catch (DOMException e) {
 			}
 		} 
 		return new PDOMCPPParameter(getLinkage(), record, type);

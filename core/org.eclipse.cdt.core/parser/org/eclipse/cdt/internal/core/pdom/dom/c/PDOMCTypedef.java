@@ -138,7 +138,12 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 		return getName() + ": " + super.toStringBase(); //$NON-NLS-1$
 	}
 
-	public void setType(IType type) {fail();}		
+	public void setType(IType type) {
+		throw new UnsupportedOperationException(); 
+	}
+	
 	@Override
-	public Object clone() {fail(); return null;}
+	public Object clone() {
+		throw new UnsupportedOperationException(); 
+	}
 }

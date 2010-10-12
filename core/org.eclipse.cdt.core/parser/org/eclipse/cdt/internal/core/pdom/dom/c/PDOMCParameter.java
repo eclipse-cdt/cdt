@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -26,7 +25,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -89,7 +87,7 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 	}
 
 	public IIndexScope getScope() {
-		throw new PDOMNotImplementedError();
+		return null;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -121,22 +119,10 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 		return true;
 	}
 
-	public int compareTo(Object arg0) {
-		throw new PDOMNotImplementedError();
-	}
-	
 	public String[] getQualifiedName() {
-		throw new PDOMNotImplementedError();
+		return new String[] {getName()};
 	}
 
-	public char[][] getQualifiedNameCharArray() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public boolean isGloballyQualified() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-	
 	public int getBindingConstant() {
 		return getNodeType();
 	}

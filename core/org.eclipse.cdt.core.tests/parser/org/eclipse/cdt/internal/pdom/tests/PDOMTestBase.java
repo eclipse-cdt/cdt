@@ -35,7 +35,6 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IWorkspace;
@@ -187,8 +186,8 @@ public class PDOMTestBase extends BaseTestCase {
 	 */
 	private void assertUniqueNameCount(IName[] names, int count) {
 		Set offsets = new HashSet();
-		for (int i = 0; i < names.length; i++) {
-			offsets.add(names[i].getFileLocation());
+		for (IName name : names) {
+			offsets.add(name.getFileLocation());
 		}
 		assertEquals(count, offsets.size());
 	}
@@ -217,27 +216,23 @@ public class PDOMTestBase extends BaseTestCase {
 
 	// this is only approximate - composite types are not supported
 	public static IBinding[] findIFunctions(Class[] paramTypes, IBinding[] bindings) throws CoreException {
-		try {
-			List preresult = new ArrayList();
-			for(int i=0; i<bindings.length; i++) {
-				if(bindings[i] instanceof IFunction) {
-					IFunction function = (IFunction) bindings[i];
-					IType[] candidate = function.getType().getParameterTypes();
-					boolean areEqual = candidate.length == paramTypes.length;
-					for(int j=0; areEqual && j<paramTypes.length; j++) {
-						if(!paramTypes[j].isAssignableFrom(candidate[j].getClass())) {
-							areEqual = false;
-						}
-					}
-					if(areEqual) {
-						preresult.add(bindings[i]);
+		List preresult = new ArrayList();
+		for (IBinding binding : bindings) {
+			if(binding instanceof IFunction) {
+				IFunction function = (IFunction) binding;
+				IType[] candidate = function.getType().getParameterTypes();
+				boolean areEqual = candidate.length == paramTypes.length;
+				for(int j=0; areEqual && j<paramTypes.length; j++) {
+					if(!paramTypes[j].isAssignableFrom(candidate[j].getClass())) {
+						areEqual = false;
 					}
 				}
+				if(areEqual) {
+					preresult.add(binding);
+				}
 			}
-			return (IBinding[]) preresult.toArray(new IBinding[preresult.size()]);
-		} catch(DOMException e) {
-			throw new CoreException(Util.createStatus(e));
 		}
+		return (IBinding[]) preresult.toArray(new IBinding[preresult.size()]);
 	}
 
 	protected void assertInstance(Object o, Class c) {
@@ -247,8 +242,8 @@ public class PDOMTestBase extends BaseTestCase {
 	
 	public static Pattern[] makePatternArray(String[] args) {
 		List preresult = new ArrayList();
-		for(int i=0; i<args.length; i++) {
-			preresult.add(Pattern.compile(args[i]));
+		for (String arg : args) {
+			preresult.add(Pattern.compile(arg));
 		}
 		return (Pattern[]) preresult.toArray(new Pattern[preresult.size()]);
 	}

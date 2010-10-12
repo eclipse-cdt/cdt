@@ -71,11 +71,11 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 		return null;
 	}
 
-	public ICPPParameter[] getParameters() throws DOMException {
+	public ICPPParameter[] getParameters() {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
-	public int getRequiredArgumentCount() throws DOMException {
+	public int getRequiredArgumentCount() {
 		return 1;
 	}
 
@@ -83,7 +83,7 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 		return false;
 	}
 
-	public IScope getFunctionScope() throws DOMException {
+	public IScope getFunctionScope() {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 

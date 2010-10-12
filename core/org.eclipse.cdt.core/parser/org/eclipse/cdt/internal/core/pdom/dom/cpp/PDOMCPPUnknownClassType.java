@@ -147,8 +147,13 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 	// Not implemented
 
 	@Override
-	public Object clone() { fail(); return null; }
-	public IField findField(String name) { fail(); return null; }
+	public Object clone() { 
+		throw new UnsupportedOperationException(); 
+	}
+	
+	public IField findField(String name) {
+		return null; 
+	}
 
 	@Override
 	public boolean mayHaveChildren() {

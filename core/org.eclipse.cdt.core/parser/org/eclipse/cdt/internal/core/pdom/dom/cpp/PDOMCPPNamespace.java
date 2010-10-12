@@ -235,7 +235,9 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return result;
 	}
 	
-	public void addUsingDirective(ICPPUsingDirective directive) { fail(); }
+	public void addUsingDirective(ICPPUsingDirective directive) { 
+		throw new UnsupportedOperationException();
+	}
 	
 	public IIndexBinding getScopeBinding() {
 		return this;

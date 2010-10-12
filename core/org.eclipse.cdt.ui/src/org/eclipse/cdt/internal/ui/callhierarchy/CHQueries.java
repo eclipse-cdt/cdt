@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -79,13 +78,9 @@ public class CHQueries {
 		if (calleeBinding != null) {
 			findCalledBy1(index, calleeBinding, true, project, result);
 			if (calleeBinding instanceof ICPPMethod) {
-				try {
-					IBinding[] overriddenBindings= ClassTypeHelper.findOverridden((ICPPMethod) calleeBinding);
-					for (IBinding overriddenBinding : overriddenBindings) {
-						findCalledBy1(index, overriddenBinding, false, project, result);
-					}
-				} catch (DOMException e) {
-					// index bindings don't throw DOMExceptions
+				IBinding[] overriddenBindings= ClassTypeHelper.findOverridden((ICPPMethod) calleeBinding);
+				for (IBinding overriddenBinding : overriddenBindings) {
+					findCalledBy1(index, overriddenBinding, false, project, result);
 				}
 			}
 		}
@@ -157,18 +152,14 @@ public class CHQueries {
 	 * Searches for overriders of method and converts them to ICElement, returns null, if there are none.
 	 */
 	static ICElement[] findOverriders(IIndex index, ICPPMethod binding)	throws CoreException {
-		try {
-			IBinding[] virtualOverriders= ClassTypeHelper.findOverriders(index, binding);
-			if (virtualOverriders.length > 0) {
-				ArrayList<ICElementHandle> list= new ArrayList<ICElementHandle>();
-				list.addAll(Arrays.asList(IndexUI.findRepresentative(index, binding)));
-				for (IBinding overrider : virtualOverriders) {
-					list.addAll(Arrays.asList(IndexUI.findRepresentative(index, overrider)));
-				}
-				return list.toArray(new ICElement[list.size()]);
+		IBinding[] virtualOverriders= ClassTypeHelper.findOverriders(index, binding);
+		if (virtualOverriders.length > 0) {
+			ArrayList<ICElementHandle> list= new ArrayList<ICElementHandle>();
+			list.addAll(Arrays.asList(IndexUI.findRepresentative(index, binding)));
+			for (IBinding overrider : virtualOverriders) {
+				list.addAll(Arrays.asList(IndexUI.findRepresentative(index, overrider)));
 			}
-		} catch (DOMException e) {
-			// index bindings don't throw DOMExceptions
+			return list.toArray(new ICElement[list.size()]);
 		}
 		return null;
 	}

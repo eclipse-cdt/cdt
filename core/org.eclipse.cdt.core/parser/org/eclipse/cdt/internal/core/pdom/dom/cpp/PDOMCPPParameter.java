@@ -28,7 +28,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
@@ -197,10 +196,6 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	public boolean hasDeclaration() throws CoreException {
 		// parameter bindings do not span index fragments
 		return true;
-	}
-
-	public int compareTo(Object arg0) {
-		throw new PDOMNotImplementedError();
 	}
 	
 	public int getBindingConstant() {

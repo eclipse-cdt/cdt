@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -261,7 +260,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		return EMPTY_STRING_ARRAY;
 	}
 	
-	protected String[] extractParameterTypes(IFunction func) throws DOMException {
+	protected String[] extractParameterTypes(IFunction func) {
 		IParameter[] params= func.getParameters();
 		String[] parameterTypes= new String[params.length];
 		for (int i = 0; i < params.length; i++) {

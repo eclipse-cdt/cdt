@@ -13,14 +13,12 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -45,15 +43,11 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	public PDOMCPPVariable(PDOMLinkage linkage, PDOMNode parent, IVariable variable) throws CoreException {
 		super(linkage, parent, variable.getNameCharArray());
 		
-		try {
-			// Find the type record
-			Database db = getDB();
-			setType(parent.getLinkage(), variable.getType());
-			db.putByte(record + ANNOTATIONS, encodeFlags(variable));
-			setValue(db, variable);
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
+		// Find the type record
+		Database db = getDB();
+		setType(parent.getLinkage(), variable.getType());
+		db.putByte(record + ANNOTATIONS, encodeFlags(variable));
+		setValue(db, variable);
 	}
 
 	private void setValue(Database db, IVariable variable) throws CoreException {
@@ -68,16 +62,11 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 			final Database db = getDB();
 			IVariable var= (IVariable) newBinding;
 			long valueRec= db.getRecPtr(record + VALUE_OFFSET);
-			try {
-				IType newType= var.getType();
-				setType(linkage, newType);
-				db.putByte(record + ANNOTATIONS, encodeFlags(var));
-				setValue(db, var);
-				PDOMValue.delete(db, valueRec);
-				
-			} catch (DOMException e) {
-				throw new CoreException(Util.createStatus(e));
-			}
+			IType newType= var.getType();
+			setType(linkage, newType);
+			db.putByte(record + ANNOTATIONS, encodeFlags(var));
+			setValue(db, var);
+			PDOMValue.delete(db, valueRec);
 		}
 	}
 

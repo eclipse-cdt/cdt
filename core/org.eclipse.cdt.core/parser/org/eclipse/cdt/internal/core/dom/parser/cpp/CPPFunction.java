@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -47,7 +48,7 @@ import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
@@ -57,28 +58,6 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInternalFunction {
 
-    public static class CPPFunctionProblem extends ProblemBinding implements ICPPFunction {
-        public CPPFunctionProblem(IASTNode node, int id, char[] arg) {
-            super(node, id, arg);
-        }
-        @Override
-		public ICPPFunctionType getType() throws DOMException {
-            throw new DOMException(this);
-        }
-        public ICPPParameter[] getParameters() throws DOMException {
-            throw new DOMException(this);
-        }
-        public IScope getFunctionScope() throws DOMException {
-            throw new DOMException(this);
-        }
-		public int getRequiredArgumentCount() throws DOMException {
-			throw new DOMException(this);
-		}
-		public boolean hasSameFunctionParameterTypeList(ICPPFunction function) {
-			return false;
-		}
-    }
-    
 	protected IASTDeclarator[] declarations;
 	protected ICPPASTFunctionDeclarator definition;
 	protected ICPPFunctionType type = null;
@@ -264,8 +243,14 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     public ICPPFunctionType getType() {
         if (type == null) {
 			final IType t = getNestedType(CPPVisitor.createType((definition != null) ? definition : declarations[0]), TDEF);
-			if (t instanceof ICPPFunctionType)
+			if (t instanceof ICPPFunctionType) {
 				type = (ICPPFunctionType) t;
+			} else if (t instanceof ISemanticProblem){
+				type= new ProblemFunctionType(((ISemanticProblem) t).getID());
+			} else {
+				// This case is unexpected
+				type = new ProblemFunctionType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
+			}
 		}
         return type;
     }
@@ -556,11 +541,11 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         return null;
 	}
 
-	public int getRequiredArgumentCount() throws DOMException {
+	public int getRequiredArgumentCount() {
 		return getRequiredArgumentCount(getParameters());
 	}
 
-	public static int getRequiredArgumentCount(ICPPParameter[] pars) throws DOMException {
+	public static int getRequiredArgumentCount(ICPPParameter[] pars) {
 		int result= pars.length;
 		while(result > 0) {
 			final ICPPParameter p = pars[result-1];

@@ -13,13 +13,11 @@
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -62,15 +60,11 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	public PDOMCVariable(PDOMLinkage linkage, PDOMNode parent, IVariable variable) throws CoreException {
 		super(linkage, parent, variable.getNameCharArray());
 
-		try {
-			final Database db = getDB();
-			setType(parent.getLinkage(), variable.getType());
-			db.putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(variable));
-			
-			setValue(db, variable);
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
+		final Database db = getDB();
+		setType(parent.getLinkage(), variable.getType());
+		db.putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(variable));
+		
+		setValue(db, variable);
 	}
 
 	private void setValue(final Database db, IVariable variable) throws CoreException {
@@ -85,16 +79,12 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 			final Database db = getDB();
 			IVariable var= (IVariable) newBinding;
 			long valueRec= db.getRecPtr(record + VALUE_OFFSET);
-			try {
-				IType newType= var.getType();
-				setType(linkage, newType);
-				db.putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(var));
-				setValue(db, var);
-				
-				PDOMValue.delete(db, valueRec);
-			} catch (DOMException e) {
-				throw new CoreException(Util.createStatus(e));
-			}
+			IType newType= var.getType();
+			setType(linkage, newType);
+			db.putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(var));
+			setValue(db, var);
+			
+			PDOMValue.delete(db, valueRec);
 		}
 	}
 

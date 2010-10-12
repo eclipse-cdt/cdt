@@ -15,9 +15,10 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 public class CField extends CVariable implements IField {
-	public static class CFieldProblem extends CVariable.CVariableProblem implements IField {
+	public static class CFieldProblem extends ProblemBinding implements IField {
 		private ICompositeType fOwner;
 
 		public CFieldProblem(ICompositeType owner, IASTNode node, int id, char[] arg) {
@@ -38,5 +39,4 @@ public class CField extends CVariable implements IField {
 		ICCompositeTypeScope scope = (ICCompositeTypeScope) getScope();
 		return scope.getCompositeType();
 	}
-
 }

@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IType;
 
@@ -50,17 +49,17 @@ public interface ICPPFunction extends IFunction, ICPPBinding {
      * {@inheritDoc}
 	 * @since 5.1
 	 */
-    public ICPPFunctionType getType() throws DOMException;
+    public ICPPFunctionType getType();
     
     /**
 	 * @since 5.2
 	 */
-    public ICPPParameter[] getParameters() throws DOMException;
+    public ICPPParameter[] getParameters();
     
     /**
      * @since 5.2
 	 */
-    public int getRequiredArgumentCount() throws DOMException;
+    public int getRequiredArgumentCount();
     
     /**
 	 * @since 5.2

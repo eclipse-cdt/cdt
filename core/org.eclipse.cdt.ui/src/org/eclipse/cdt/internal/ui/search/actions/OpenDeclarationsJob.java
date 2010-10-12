@@ -74,7 +74,6 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -93,6 +92,7 @@ import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 class OpenDeclarationsJob extends Job implements ASTRunnable {
@@ -730,27 +730,22 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				// For c++ we can check the number of parameters.
 				if (binding instanceof ICPPFunction) {
 					ICPPFunction f= (ICPPFunction) binding;
-					try {
-						if (f.getRequiredArgumentCount() > funcArgCount) {
+					if (f.getRequiredArgumentCount() > funcArgCount) {
+						iterator.remove();
+						result.add(binding);
+						continue;
+					}
+					if (!f.takesVarArgs() && !f.hasParameterPack()) {
+						final IType[] parameterTypes = f.getType().getParameterTypes();
+						int maxArgs= parameterTypes.length;
+						if (maxArgs == 1 && SemanticUtil.isVoidType(parameterTypes[0])) {
+							maxArgs= 0;
+						}
+						if (maxArgs < funcArgCount) {
 							iterator.remove();
 							result.add(binding);
 							continue;
 						}
-						if (!f.takesVarArgs() && !f.hasParameterPack()) {
-							final IType[] parameterTypes = f.getType().getParameterTypes();
-							int maxArgs= parameterTypes.length;
-							if (maxArgs == 1 && SemanticUtil.isVoidType(parameterTypes[0])) {
-								maxArgs= 0;
-							}
-							if (maxArgs < funcArgCount) {
-								iterator.remove();
-								result.add(binding);
-								continue;
-							}
-						}
-					} catch (DOMException e) {
-						// Ignore problem bindings.
-						continue;
 					}
 				}
 			}

@@ -99,12 +99,8 @@ public class LinkedNamesFinder {
 				}
 			} else if (target instanceof ICPPMethod) {
 	        	ICPPMethod method= (ICPPMethod) target;
-        		try {
-					for (ICPPMethod m : ClassTypeHelper.findOverridden(method)) {
-						findBinding(m);
-					}
-				} catch (DOMException e) {
-					// Ignore.
+        		for (ICPPMethod m : ClassTypeHelper.findOverridden(method)) {
+					findBinding(m);
 				}
         		try {
 					for (ICPPMethod m : findOverridersInAST(method)) {

@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -209,47 +208,47 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 	
 	@Deprecated
 	public void addDerivedReference(ITypeReference location) {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public void addReference(ITypeReference location) {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public boolean canSubstituteFor(ITypeInfo info) {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public boolean encloses(ITypeInfo info) {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public boolean exists() {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public ITypeReference[] getDerivedReferences() {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public ITypeInfo[] getEnclosedTypes() {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public ITypeInfo[] getEnclosedTypes(int[] kinds) {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public ITypeInfo getEnclosingNamespace(boolean includeGlobalNamespace) {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
@@ -260,81 +259,81 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 
 	@Deprecated
 	public ITypeInfo getEnclosingType(int[] kinds) {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public ITypeInfo getRootNamespace(boolean includeGlobalNamespace) {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public ITypeInfo[] getSubTypes() {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public ASTAccessVisibility getSuperTypeAccess(ITypeInfo subType) {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public ITypeInfo[] getSuperTypes() {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public boolean hasEnclosedTypes() {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public boolean hasSubTypes() {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public boolean hasSuperTypes() {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public boolean isClass() {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public boolean isEnclosed(ITypeInfo info) {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public boolean isEnclosed(ITypeSearchScope scope) {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public boolean isEnclosedType() {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public boolean isEnclosingType() {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public boolean isReferenced(ITypeSearchScope scope) {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public boolean isUndefinedType() {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	public void setCElementType(int type) {
-		throw new PDOMNotImplementedError();
+		throw new UnsupportedOperationException();
 	}
 }

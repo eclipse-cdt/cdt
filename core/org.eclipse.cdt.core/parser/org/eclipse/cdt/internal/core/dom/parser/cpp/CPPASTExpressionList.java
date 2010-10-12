@@ -18,7 +18,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionT
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
@@ -167,14 +166,13 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 					vcat= valueCat(e2);
 				} else {
 					overloads[i - 1] = overload;
-					try {
-						lookupType = overload.getType().getReturnType();
-						vcat= valueCategoryFromReturnType(lookupType);
-						lookupType= typeFromReturnType(lookupType);
-					} catch (DOMException e) {
+					lookupType = overload.getType().getReturnType();
+					vcat= valueCategoryFromReturnType(lookupType);
+					lookupType= typeFromReturnType(lookupType);
+					if (lookupType instanceof ISemanticProblem) {
 						lookupType = typeOrFunctionSet(e2);
 						vcat= valueCat(e2);
-					}
+					}  
 				}
 			}
     	}

@@ -174,7 +174,9 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
     }
 
 	@Override
-	public Object clone() {fail();return null;}
+	public Object clone() {
+		throw new UnsupportedOperationException(); 
+	}
 
 	public ICPPScope asScope() {
 		if (unknownScope == null) {

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Bug fix (326670)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
@@ -22,11 +23,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.ErrorPosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyDocument;
@@ -202,9 +205,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	protected AbstractDisassemblyAction fActionGotoAddress;
 	protected AbstractDisassemblyAction fActionToggleSource;
 	private AbstractDisassemblyAction fActionToggleFunctionColumn;
-	private AbstractDisassemblyAction fActionToggleSymbols;
+	protected AbstractDisassemblyAction fActionToggleSymbols;
 	protected AbstractDisassemblyAction fActionRefreshView;
-	private Action fActionOpenPreferences;
+	protected Action fActionOpenPreferences;
 	private AbstractDisassemblyAction fActionToggleAddressColumn;
 	private AbstractDisassemblyAction fActionToggleBreakpointEnablement;
 
@@ -267,6 +270,13 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private int fPCHistorySizeMax = 4;
 	private boolean fGotoFramePending;
 
+	protected Action fTrackExpressionAction;
+	protected Action fSyncAction;
+	protected boolean fSynchWithActiveDebugContext = true;
+	protected boolean fTrackExpression = false;
+	private String fPCLastLocationTxt = DisassemblyMessages.Disassembly_GotoLocation_initial_text;
+	private BigInteger fPCLastAddress = PC_UNKNOWN;
+
 	private String fPCAnnotationColorKey;
 
 	private ArrayList<Runnable> fRunnableQueue = new ArrayList<Runnable>();
@@ -310,11 +320,39 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private ArrayList<IHandlerActivation> fHandlerActivations;
 	private IContextActivation fContextActivation;
 	
-	private IDisassemblyBackend fBackend; 
+	private IDisassemblyBackend fBackend;
 	
 	private AddressBarContributionItem fAddressBar = null;
 	private Action fJumpToAddressAction = new JumpToAddressAction(this);
 
+	private final class SyncActiveDebugContextAction extends Action {
+		public SyncActiveDebugContextAction() {
+			setChecked(DisassemblyPart.this.isSyncWithActiveDebugContext());
+			setText(DisassemblyMessages.Disassembly_action_Sync_label);
+			setImageDescriptor(DisassemblyImageRegistry.getImageDescriptor(DisassemblyImageRegistry.ICON_Sync_enabled));
+			setDisabledImageDescriptor(DisassemblyImageRegistry.getImageDescriptor(DisassemblyImageRegistry.ICON_Sync_disabled));
+		}
+		
+		@Override
+		public void run() {
+			DisassemblyPart.this.setSyncWithDebugView(this.isChecked());
+		}
+	}
+	
+	private final class TrackExpressionAction extends Action {
+		public TrackExpressionAction() {
+			setChecked(DisassemblyPart.this.isTrackExpression());
+			setEnabled(!fSynchWithActiveDebugContext);
+			setText(DisassemblyMessages.Disassembly_action_TrackExpression_label);
+		}
+		
+		@Override
+		public void run() {
+			DisassemblyPart.this.setTrackExpression(this.isChecked());
+		}
+		
+	}
+	
 	private final class ActionRefreshView extends AbstractDisassemblyAction {
 		public ActionRefreshView() {
 			super(DisassemblyPart.this);
@@ -324,10 +362,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 		@Override
 		public void run() {
+			fPCLastAddress = getTopAddress();
 			refreshView(10);
 		}
 	}
-
+	
 	private final class ActionToggleAddressColumn extends AbstractDisassemblyAction {
 		ActionToggleAddressColumn () {
 			super(DisassemblyPart.this);
@@ -1157,11 +1196,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fActionToggleSymbols.update();
 		manager.add(new GroupMarker("group.top")); // ICommonMenuConstants.GROUP_TOP //$NON-NLS-1$
 		manager.add(new Separator("group.breakpoints")); //$NON-NLS-1$
-		manager.add(new Separator(IWorkbenchActionConstants.GO_TO));
 		manager.add(new Separator("group.debug")); //$NON-NLS-1$
 		manager.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));
 		manager.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, fGlobalActions.get(ITextEditorActionConstants.COPY));
 		manager.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
+		// TODO add only if this is an editor
 		manager.add(new Separator(ITextEditorActionConstants.GROUP_SETTINGS));
 		manager.add(fActionToggleSource);
 		manager.add(fActionToggleSymbols);
@@ -1206,7 +1245,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		manager.add(new Separator());
 		manager.add(fActionRefreshView);
 		manager.add(fActionGotoPC);
+		manager.add(fSyncAction);
 		manager.add(fActionToggleSource);
+        // Other plug-ins can contribute their actions here
+        manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
 	protected void updateSelectionDependentActions() {
@@ -1286,6 +1328,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fActionToggleFunctionColumn = new ActionToggleFunctionColumn();
 		fActionToggleSymbols = new ActionToggleSymbols();
 		fActionRefreshView = new ActionRefreshView();
+		fSyncAction = new SyncActiveDebugContextAction();
+		fTrackExpressionAction = new TrackExpressionAction();
 		fStateDependentActions.add(fActionRefreshView);
 		fGlobalActions.put(ActionFactory.REFRESH.getId(), fActionRefreshView);
 		fActionOpenPreferences = new ActionOpenPreferences(getSite().getShell());
@@ -1309,7 +1353,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 */
 	public final void gotoProgramCounter() {
 		if (fPCAddress != PC_RUNNING) {
-			updatePC(fPCAddress);
+			fPCLastAddress = PC_UNKNOWN;
+			gotoFrame(getActiveStackFrame());
 		}
 	}
 
@@ -1320,6 +1365,16 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (address != null) {
 			gotoAddress(address.getValue());
 		}
+	}
+	
+	public final void gotoLocationByUser(BigInteger address, String locationTxt) {
+		fPCLastAddress = address;
+		fPCLastLocationTxt = locationTxt;
+		gotoAddress(address);
+	}
+	
+	public final void gotoActiveFrameByUser() {
+		gotoFrame(getActiveStackFrame());
 	}
 	
 	/*
@@ -2043,6 +2098,24 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	public void gotoFrame(int frame, BigInteger address) {
 		assert isGuiThread();
 		if (DEBUG) System.out.println("gotoFrame " + frame + " " + getAddressText(address)); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		// cache the last PC address
+		if (!isSyncWithActiveDebugContext()) {
+			if (isTrackExpression()) {
+				if (!DisassemblyMessages.Disassembly_GotoLocation_initial_text.equals(fPCLastLocationTxt))
+					fPCLastAddress = eval(fPCLastLocationTxt);
+			}
+			if (fPCLastAddress != PC_UNKNOWN) {
+				address = fPCLastAddress;
+			} else if (address != PC_UNKNOWN) {
+			    fPCLastAddress = address;
+			}
+			
+			frame = -2; // clear the annotation
+		} else {
+			fPCLastAddress = address;
+		}
+		
         if (fGotoAddressPending == fFrameAddress) {
             // cancel goto address from previous goto frame
             fGotoAddressPending = PC_UNKNOWN;
@@ -2112,7 +2185,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			return false;
 		}
 		
-		return (fBackend != null) ? fBackend.hasDebugContext() : false; 
+		return (fBackend != null) ? fBackend.hasDebugContext() : false;
 	}
 
 	/*
@@ -2279,12 +2352,16 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			fPCAnnotationUpdatePending = true;
 			return null;
 		}
-		AddressRangePosition pos;
+		AddressRangePosition pos = null;
 		if (fTargetFrame == 0) {
 			// clear secondary
 			updateAddressAnnotation(fSecondaryPCAnnotation, PC_UNKNOWN);
 			// set primary
 			pos = updateAddressAnnotation(fPCAnnotation, fPCAddress);
+		} else if (fTargetFrame < 0) {
+		    // clear both
+			updateAddressAnnotation(fPCAnnotation, PC_UNKNOWN);
+			updateAddressAnnotation(fSecondaryPCAnnotation, PC_UNKNOWN);
 		} else {
 			// clear primary
 			updateAddressAnnotation(fPCAnnotation, PC_UNKNOWN);
@@ -2754,21 +2831,21 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	}
 	
 	public void generateErrorDialog(String message) {
-		MessageDialog messageDialog = new MessageDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), DisassemblyMessages.Disassembly_Error_Dialog_title, null, message, MessageDialog.ERROR, new String[]{DisassemblyMessages.Disassembly_Error_Dialog_ok_button}, 0); 
-		messageDialog.open();	
+		MessageDialog messageDialog = new MessageDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), DisassemblyMessages.Disassembly_Error_Dialog_title, null, message, MessageDialog.ERROR, new String[]{DisassemblyMessages.Disassembly_Error_Dialog_ok_button}, 0);
+		messageDialog.open();
 	}
 	
 	public void activateDisassemblyContext() {
 		IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
 		if (ctxService!=null)
-			fContextActivation = ctxService.activateContext(KEY_BINDING_CONTEXT_DISASSEMBLY);		
+			fContextActivation = ctxService.activateContext(KEY_BINDING_CONTEXT_DISASSEMBLY);
 	}
 	
 	public void deactivateDisassemblyContext() {
 		if (fContextActivation != null) {
 			IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
 			ctxService.deactivateContext(fContextActivation);
-		}		
+		}
 	}
 
 	/* (non-Javadoc)
@@ -2802,23 +2879,22 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		asyncExec(new Runnable() {
 			public void run() {
 				fDebugSessionId = null;
-				debugContextChanged();				
+				debugContextChanged();
 			}
-		});		
-		
+		});
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#setUpdatePending(boolean)
 	 */
-	public void setUpdatePending(boolean pending) { 
+	public void setUpdatePending(boolean pending) {
 		fUpdatePending = pending;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#getUpdatePending()
 	 */
-	public boolean getUpdatePending() { 
+	public boolean getUpdatePending() {
 		assert isGuiThread();
 		return fUpdatePending;
 	}
@@ -2863,6 +2939,51 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			return fBackend.evaluateExpression(expr);
 		}
 		return ""; //$NON-NLS-1$
+	}
+	
+	public BigInteger eval(String expr) {
+		String location = evaluateExpression(expr);
+    	if (location != null) {
+    		StringTokenizer st = new StringTokenizer(location);
+    		if (st.hasMoreTokens()) {
+    			try {
+    				return DisassemblyUtils.decodeAddress(st.nextToken());
+    			} catch (Exception e) {
+    				logWarning("Failed to evaluate expression " + expr, e); //$NON-NLS-1$
+    			}
+    		}
+    	}
+    	return PC_UNKNOWN;
+	}
+
+	protected boolean isTrackExpression() {
+		return fTrackExpression;
+	}
+
+	private void setTrackExpression(boolean track) {
+		fTrackExpression = track;
+	}
+	
+	protected boolean isSyncWithActiveDebugContext() {
+		return fSynchWithActiveDebugContext;
+	}
+	
+	private void setSyncWithDebugView(boolean sync) {
+		fSynchWithActiveDebugContext = sync;
+		fTrackExpressionAction.setEnabled(!sync);
+		
+		if (sync) {
+			gotoActiveFrameByUser();
+		} else {
+			// redraw
+			while (!fPCHistory.isEmpty()) {
+			    AddressRangePosition pos = fPCHistory.removeFirst();
+				fViewer.invalidateTextPresentation(pos.offset, pos.length);
+			}
+			
+			fTargetFrame = -2; // clear the annotation
+			updatePCAnnotation();
+		}
 	}
 	
 	/**

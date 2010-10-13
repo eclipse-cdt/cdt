@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Texas Instruments[nmehregani] - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Bug fix (326670)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions;
@@ -16,7 +17,6 @@ import java.math.BigInteger;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyMessages;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart;
 import org.eclipse.jface.action.Action;
-import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.decodeAddress;
 
 public class JumpToAddressAction extends Action {
 
@@ -30,36 +30,26 @@ public class JumpToAddressAction extends Action {
 	public void run() {	
 		AddressBarContributionItem addressBar = fDisassemblyPart.getAddressBar();
 		if (addressBar!=null && addressBar.isEnabled() && fDisassemblyPart.isSuspended()) {
-        	String location = addressBar.getText();        	
+        	String locationTxt = addressBar.getText();        	
         	        	
-        	if (location==null || location.trim().length()==0)
+        	if (locationTxt==null || locationTxt.trim().length()==0)
         		return;
         	
-        	location = location.trim();        	        	
-        	BigInteger address = null; 
-        	try {
-        		address = decodeAddress(location);
-				if (address.compareTo(BigInteger.ZERO) < 0) {
-					address = null;
-					addressBar.setWarningIconVisible(true);
-					fDisassemblyPart.generateErrorDialog(DisassemblyMessages.Disassembly_GotoAddressDialog_error_invalid_address);	
-					return;
-				}
-			} catch (NumberFormatException x) {
-				// This will be handled below.  location will be treated as a symbol
-			}
+        	locationTxt = locationTxt.trim();
+        	
+        	if (locationTxt.equals(DisassemblyMessages.Disassembly_GotoLocation_initial_text)) {
+        		fDisassemblyPart.gotoActiveFrameByUser();
+        		return;
+        	}
 
-			// hide warning icon if it was shown before
-			addressBar.setWarningIconVisible(false);
-
-			/* Location is an address */
-			if (address!=null) {
-				fDisassemblyPart.gotoAddress(address);
+        	BigInteger address = fDisassemblyPart.eval(locationTxt);
+			if (address.compareTo(BigInteger.ZERO) < 0) {
+				addressBar.setWarningIconVisible(true);
+				fDisassemblyPart.generateErrorDialog(DisassemblyMessages.Disassembly_GotoAddressDialog_error_invalid_address);
+			} else {        				
+				fDisassemblyPart.gotoLocationByUser(address, locationTxt);
+				addressBar.setWarningIconVisible(false);
 			}
-			/* Location is a symbol */
-			else {
-				fDisassemblyPart.gotoSymbol(location);
-			}		
 		}		
 	}
 	

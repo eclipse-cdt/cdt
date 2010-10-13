@@ -447,6 +447,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+            allowMultiple="true"
             category="org.eclipse.debug.ui"
             class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyView"
             icon="icons/disassembly.gif"

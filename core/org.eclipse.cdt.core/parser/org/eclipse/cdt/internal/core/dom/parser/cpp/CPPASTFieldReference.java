@@ -248,15 +248,15 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
     
 	public static IType addQualifiersForAccess(ICPPField field, IType fieldType, IType ownerType) {
 		CVQualifier cvq1 = SemanticUtil.getCVQualifier(ownerType);
+		CVQualifier cvq2 = SemanticUtil.getCVQualifier(fieldType);
 		if (field.isMutable()) {
 			// Remove const, add union of volatile.
-			CVQualifier cvq2 = SemanticUtil.getCVQualifier(fieldType);
 			if (cvq2.isConst()) {
 				fieldType= SemanticUtil.getNestedType(fieldType, ALLCVQ | TDEF | REF);
 			}
-			fieldType= SemanticUtil.addQualifiers(fieldType, false, cvq1.isVolatile() || cvq2.isVolatile());
+			fieldType= SemanticUtil.addQualifiers(fieldType, false, cvq1.isVolatile() || cvq2.isVolatile(), cvq2.isRestrict());
 		} else {
-			fieldType= SemanticUtil.addQualifiers(fieldType, cvq1.isConst(), cvq1.isVolatile());
+			fieldType= SemanticUtil.addQualifiers(fieldType, cvq1.isConst(), cvq1.isVolatile(), cvq2.isRestrict());
 		}
 		return fieldType;
 	}

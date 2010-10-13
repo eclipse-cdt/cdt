@@ -359,7 +359,7 @@ class BuiltinOperators {
 					if (SemanticUtil.calculateInheritanceDepth(c1, c2) >= 0) {
 						IType cvt= SemanticUtil.getNestedType(memPtr.getType(), TDEF);
 						IType rt= new CPPReferenceType(
-								SemanticUtil.addQualifiers(cvt, cv1.isConst(), cv1.isVolatile()), false);
+								SemanticUtil.addQualifiers(cvt, cv1.isConst(), cv1.isVolatile(), cv1.isRestrict()), false);
 						addFunction(rt, clsPtr, memPtr);
 					}
 				}

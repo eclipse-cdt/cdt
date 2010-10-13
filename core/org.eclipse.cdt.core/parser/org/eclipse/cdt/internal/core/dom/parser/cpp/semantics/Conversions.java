@@ -15,7 +15,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier._;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromReturnType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
@@ -113,7 +112,7 @@ public class Conversions {
 			}
 
 			if (exprType instanceof InitializerListType) {
-				if (isLValueRef && getCVQualifier(cv1T1) != CVQualifier.c)
+				if (isLValueRef && getCVQualifier(cv1T1) != CVQualifier.CONST)
 					return Cost.NO_CONVERSION;
 
 				Cost cost= listInitializationSequence(((InitializerListType) exprType), T1, udc, false);
@@ -157,7 +156,7 @@ public class Conversions {
 			// shall be an rvalue or have function type.
 			boolean ok;
 			if (isLValueRef) {
-				ok = getCVQualifier(cv1T1) == CVQualifier.c;
+				ok = getCVQualifier(cv1T1) == CVQualifier.CONST;
 			} else {
 				ok= valueCat.isRValue() || T2 instanceof IFunctionType;
 			}
@@ -272,7 +271,7 @@ public class Conversions {
 				IType t= getNestedType(ft.getReturnType(), TDEF);
 				final boolean isLValueRef= t instanceof ICPPReferenceType && !((ICPPReferenceType) t).isRValueReference();
 				if (isLValueRef == needLValue) { // require an lvalue or rvalue
-					IType implicitParameterType= CPPSemantics.getImplicitParameterType(op, ft.isConst(), ft.isVolatile());
+					IType implicitParameterType= CPPSemantics.getImplicitParameterType(op);
 					Cost udcCost= isReferenceCompatible(getNestedType(implicitParameterType, TDEF | REF), cv2T2, true); // expression type to implicit object type
 					if (udcCost != null) {
 						// Make sure top-level cv-qualifiers are compared
@@ -429,30 +428,7 @@ public class Conversions {
 	 * </ul>
 	 */
 	private static final int compareQualifications(IType t1, IType t2) {
-		CVQualifier cv1= getCVQualifier(t1);
-		CVQualifier cv2= getCVQualifier(t2);
-		
-		// same qualifications
-		if (cv1 == cv2)
-			return 0;
-
-		switch (cv1) {
-		case cv:
-			switch (cv2) {
-			case _: return 3;
-			case c: return 2;
-			case v: return 1;
-			case cv: return 0;
-			}
-			break;
-		case c:
-			return cv2 == _ ? 1 : -1;
-		case v:
-			return cv2 == _ ? 2 : -1;
-		case _:
-			return -1;
-		}
-		return -1;
+		return getCVQualifier(t1).partialComparison(getCVQualifier(t2));
 	}
 
 	/**
@@ -723,8 +699,7 @@ public class Conversions {
 					final IType uqReturnType= getNestedType(returnType, REF | TDEF | CVTYPE);
 					final int dist = SemanticUtil.calculateInheritanceDepth(uqReturnType, t);
 					if (dist >= 0) {
-						final ICPPFunctionType ft = op.getType();
-						IType implicitType= CPPSemantics.getImplicitParameterType(op, ft.isConst(), ft.isVolatile());
+						IType implicitType= CPPSemantics.getImplicitParameterType(op);
 						final Cost udcCost = isReferenceCompatible(getNestedType(implicitType, TDEF | REF), source, true);
 						if (udcCost != null) {
 							// Make sure top-level cv-qualifiers are compared
@@ -779,8 +754,7 @@ public class Conversions {
 				if (c2.converts()) {
 					if (isExplicitConversion && c2.getRank() != Rank.IDENTITY)
 						continue;
-					ICPPFunctionType ftype = op.getType();
-					IType implicitType= CPPSemantics.getImplicitParameterType(op, ftype.isConst(), ftype.isVolatile());
+					IType implicitType= CPPSemantics.getImplicitParameterType(op);
 					final Cost udcCost = isReferenceCompatible(getNestedType(implicitType, TDEF | REF), source, true);
 					if (udcCost != null) {
 						// Make sure top-level cv-qualifiers are compared
@@ -870,7 +844,8 @@ public class Conversions {
 					IASTLiteralExpression lit= (IASTLiteralExpression) val;
 					if (lit.getKind() == IASTLiteralExpression.lk_string_literal) {
 						source= new CPPPointerType(srcTarget, false, false, false);
-						cost.setQualificationAdjustment((getCVQualifier(targetPtrTgt).isVolatile() ? 2 : 1) << 2);
+						CVQualifier cvqTarget = getCVQualifier(targetPtrTgt).add(CVQualifier.CONST);
+						cost.setQualificationAdjustment(cvqTarget.partialComparison(CVQualifier.NONE) << 3);
 					}
 				}
 			}
@@ -907,7 +882,7 @@ public class Conversions {
 				t= tPtr.getType();
 				firstPointer= false;
 				adjustments |= (cmp << shift);
-				shift+= 2;
+				shift+= 3;
 			} else {
 				break;
 			}
@@ -1092,7 +1067,7 @@ public class Conversions {
 					cost.setRank(Rank.CONVERSION);
 					cost.setInheritanceDistance(Short.MAX_VALUE); 
 					CVQualifier cv= getCVQualifier(srcPtr.getType());
-					cost.source= new CPPPointerType(addQualifiers(CPPSemantics.VOID_TYPE, cv.isConst(), cv.isVolatile()));
+					cost.source= new CPPPointerType(addQualifiers(CPPSemantics.VOID_TYPE, cv.isConst(), cv.isVolatile(), cv.isRestrict()));
 					return false; 
 				}
 				
@@ -1114,7 +1089,7 @@ public class Conversions {
 								cost.setInheritanceDistance(depth);
 							}
 							CVQualifier cv= getCVQualifier(srcPtr.getType());
-							cost.source= new CPPPointerType(addQualifiers(tgtPtrTgt, cv.isConst(), cv.isVolatile()));
+							cost.source= new CPPPointerType(addQualifiers(tgtPtrTgt, cv.isConst(), cv.isVolatile(), cv.isRestrict()));
 						}
 						return false;
 					}
@@ -1205,11 +1180,11 @@ public class Conversions {
 		
 		final IType target1 = p1.getType();
 		if (isVoidType(target1)) {
-			return addQualifiers(p1, p2.isConst(), p2.isVolatile());
+			return addQualifiers(p1, p2.isConst(), p2.isVolatile(), p2.isRestrict());
 		}
 		final IType target2 = p2.getType();
 		if (isVoidType(target2)) {
-			return addQualifiers(p2, p1.isConst(), p1.isVolatile());
+			return addQualifiers(p2, p1.isConst(), p1.isVolatile(), p1.isRestrict());
 		}
 		
 		IType t= mergePointers(target1, target2, true);

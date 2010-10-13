@@ -14,7 +14,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.addQualifiers;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -121,7 +120,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplateSpecializat
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeParameter;
@@ -1759,9 +1757,9 @@ public class CPPTemplates {
 			boolean nonStaticMember2= isNonStaticMember(f2);
 			if (nonStaticMember1 != nonStaticMember2) {
 				if (nonStaticMember1) {
-					args= addImplicitObjectType(args, (ICPPMethod) f1);
+					args= addImplicitParameterType(args, (ICPPMethod) f1);
 				} else {
-					pars= addImplicitObjectType(pars, (ICPPMethod) f2);
+					pars= addImplicitParameterType(pars, (ICPPMethod) f2);
 				}
 			}
 			break;
@@ -1773,14 +1771,13 @@ public class CPPTemplates {
 		return (f instanceof ICPPMethod) && !((ICPPMethod) f).isStatic();
 	}
 
-	private static IType[] addImplicitObjectType(IType[] types, ICPPMethod f1) {
-		ICPPClassType ct = f1.getClassOwner();
-		if (ct != null) {
-			ICPPFunctionType ft = f1.getType();
-			final CPPReferenceType t = new CPPReferenceType(addQualifiers(ct, ft.isConst(), ft.isVolatile()), false);
+	private static IType[] addImplicitParameterType(IType[] types, ICPPMethod m) {
+		try {
+			IType t= CPPSemantics.getImplicitParameterType(m);
 			return concat(t, types);
+		} catch (DOMException e) {
+			return types;
 		}
-		return types;
 	}
 
 	private static IType[] concat(final IType t, IType[] types) {

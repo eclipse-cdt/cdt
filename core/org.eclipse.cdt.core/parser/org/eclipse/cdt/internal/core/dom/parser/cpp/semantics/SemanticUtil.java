@@ -168,38 +168,27 @@ public class SemanticUtil {
 		return false;
 	}
 	
-	/** 
-	 * Returns 0 for no qualifier, 1 for const, 2 for volatile and 3 for const volatile.
-	 */
 	public static CVQualifier getCVQualifier(IType t) {
 		if (t instanceof IQualifierType) {
 			IQualifierType qt= (IQualifierType) t;
-			if (qt.isConst()) {
-				if (qt.isVolatile()) {
-					return cv;
-				} 
-				return c;
-			}
-			if (qt.isVolatile())
-				return v;
-			return _;
+			return qt.isConst() 
+				? qt.isVolatile() ? CONST_VOLATILE : CONST
+				: qt.isVolatile() ? VOLATILE : NONE;
 		} 
 		if (t instanceof IPointerType) {
 			IPointerType pt= (IPointerType) t;
-			if (pt.isConst()) {
-				if (pt.isVolatile()) {
-					return cv;
-				} 
-				return c;
-			}
-			if (pt.isVolatile())
-				return v;
-			return _;
+			return pt.isConst() 
+					? pt.isVolatile() 
+							? pt.isRestrict() ? CONST_VOLATILE_RESTRICT : CONST_VOLATILE
+							: pt.isRestrict() ? CONST_RESTRICT : CONST
+					: pt.isVolatile() 
+							? pt.isRestrict() ? VOLATILE_RESTRICT : VOLATILE
+							: pt.isRestrict() ? RESTRICT : NONE;
 		}
 		if (t instanceof IArrayType) {
 			return getCVQualifier(((IArrayType) t).getType());
 		}
-		return _;
+		return NONE;
 	}
 		
 	/**
@@ -263,7 +252,7 @@ public class SemanticUtil {
 					t= getNestedType(qttgt, options);
 					if (t == qttgt) 
 						return qt;
-					return addQualifiers(t, qt.isConst(), qt.isVolatile());
+					return addQualifiers(t, qt.isConst(), qt.isVolatile(), false);
 				} 
 			} else if (type instanceof IArrayType) {
 				final IArrayType atype= (IArrayType) type;
@@ -365,7 +354,7 @@ public class SemanticUtil {
 		// bug 249085 make sure not to add unnecessary qualifications
 		if (type instanceof IQualifierType) {
 			IQualifierType qt= (IQualifierType) type;
-			return addQualifiers(newNestedType, qt.isConst(), qt.isVolatile());
+			return addQualifiers(newNestedType, qt.isConst(), qt.isVolatile(), false);
 		}
 
 		type = (ITypeContainer) type.clone();
@@ -455,8 +444,12 @@ public class SemanticUtil {
 		return arg;
 	}
 
-	public static IType addQualifiers(IType baseType, boolean cnst, boolean vol) {
-		if (cnst || vol) {
+	public static IType constQualify(IType baseType) {
+		return addQualifiers(baseType, true, false, false);
+	}
+
+	public static IType addQualifiers(IType baseType, boolean cnst, boolean vol, boolean restrict) {
+		if (cnst || vol || restrict) {
 			if (baseType instanceof IQualifierType) {
 				IQualifierType qt= (IQualifierType) baseType;
 				if ((cnst && !qt.isConst()) || (vol && !qt.isVolatile())) {
@@ -465,21 +458,24 @@ public class SemanticUtil {
 				return baseType;
 			} else if (baseType instanceof ICPPPointerToMemberType) {
 				ICPPPointerToMemberType pt= (ICPPPointerToMemberType) baseType;
-				if ((cnst && !pt.isConst()) || (vol && !pt.isVolatile())) {
-					return new CPPPointerToMemberType(pt.getType(), pt.getMemberOfClass(), cnst
-							|| pt.isConst(), vol || pt.isVolatile(), pt.isRestrict());
+				if ((cnst && !pt.isConst()) || (vol && !pt.isVolatile()) 
+						|| (restrict && !pt.isRestrict())) {
+					return new CPPPointerToMemberType(pt.getType(), pt.getMemberOfClass(), 
+							cnst || pt.isConst(), vol || pt.isVolatile(), restrict || pt.isRestrict());
 				}
 				return baseType;
 			} else if (baseType instanceof IPointerType) {
 				IPointerType pt= (IPointerType) baseType;
-				if ((cnst && !pt.isConst()) || (vol && !pt.isVolatile())) {
-					return new CPPPointerType(pt.getType(), cnst || pt.isConst(), vol || pt.isVolatile(), pt.isRestrict());
+				if ((cnst && !pt.isConst()) || (vol && !pt.isVolatile()) 
+						|| (restrict && !pt.isRestrict())) {
+					return new CPPPointerType(pt.getType(), 
+							cnst || pt.isConst(), vol || pt.isVolatile(), restrict || pt.isRestrict());
 				}
 				return baseType;
 			} else if (baseType instanceof IArrayType) {
 				IArrayType at= (IArrayType) baseType;
 				IType nested= at.getType();
-				IType newNested= addQualifiers(nested, cnst, vol);
+				IType newNested= addQualifiers(nested, cnst, vol, restrict);
 				if (newNested != nested && at instanceof ITypeContainer) {
 					return replaceNestedType((ITypeContainer) at, newNested);
 				}

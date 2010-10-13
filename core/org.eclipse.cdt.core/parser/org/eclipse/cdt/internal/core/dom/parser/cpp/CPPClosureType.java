@@ -80,7 +80,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		result[0]= ctor;
 		
 		// Copy constructor: A(const A &)
-		IType pType = new CPPReferenceType(SemanticUtil.addQualifiers(this, true, false), false);
+		IType pType = new CPPReferenceType(SemanticUtil.constQualify(this), false);
 		ICPPParameter[] ps = new ICPPParameter[] { new CPPParameter(pType, 0) };
 		ctor = new CPPImplicitConstructor(scope, CharArrayUtils.EMPTY, ps);
 		result[1]= ctor;

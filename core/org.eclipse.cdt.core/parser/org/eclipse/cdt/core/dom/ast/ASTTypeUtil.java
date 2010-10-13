@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
-import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
 import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
@@ -32,7 +31,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPQualifierType;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -368,7 +366,7 @@ public class ASTTypeUtil {
 			}
 			if (type instanceof ICPPFunctionType) {
 				ICPPFunctionType ft= (ICPPFunctionType) type;
-				needSpace= appendCVQ(result, needSpace, ft.isConst(), ft.isVolatile());
+				needSpace= appendCVQ(result, needSpace, ft.isConst(), ft.isVolatile(), false);
 			}
 		} else if (type instanceof IPointerType) {
 			if (type instanceof ICPPPointerToMemberType) {
@@ -376,25 +374,8 @@ public class ASTTypeUtil {
 				result.append(Keywords.cpCOLONCOLON);
 			}
 			result.append(Keywords.cpSTAR); needSpace = true;
-			
-			if (type instanceof IGPPPointerType) {
-				if (((IGPPPointerType) type).isRestrict()) {
-					if (needSpace) {
-						result.append(SPACE); needSpace = false;
-					}
-					result.append(Keywords.RESTRICT); needSpace = true;
-				}
-			} else if (type instanceof ICPointerType) {
-				if (((ICPointerType) type).isRestrict()) {
-					if (needSpace) {
-						result.append(SPACE); needSpace = false;
-					}
-					result.append(Keywords.RESTRICT); needSpace = true;
-				}
-			}
-			
 			IPointerType pt= (IPointerType) type;
-			needSpace= appendCVQ(result, needSpace, pt.isConst(), pt.isVolatile());
+			needSpace= appendCVQ(result, needSpace, pt.isConst(), pt.isVolatile(), pt.isRestrict());
 		} else if (type instanceof IQualifierType) {
 			if (type instanceof ICQualifierType) {
 				if (((ICQualifierType) type).isRestrict()) {
@@ -407,7 +388,7 @@ public class ASTTypeUtil {
 			}
 			
 			IQualifierType qt= (IQualifierType) type;
-			needSpace= appendCVQ(result, needSpace, qt.isConst(), qt.isVolatile());
+			needSpace= appendCVQ(result, needSpace, qt.isConst(), qt.isVolatile(), false);
 		} else if (type instanceof ITypedef) {
 			result.append(((ITypedef) type).getNameCharArray());
 		} else if (type instanceof ISemanticProblem) {
@@ -420,18 +401,27 @@ public class ASTTypeUtil {
 	}
 
 	private static boolean appendCVQ(StringBuilder target, boolean needSpace, final boolean isConst,
-			final boolean isVolatile) {
+			final boolean isVolatile, final boolean isRestrict) {
 		if (isConst) {
 			if (needSpace) {
-				target.append(SPACE); needSpace = false;
+				target.append(SPACE); 
 			}
-			target.append(Keywords.CONST); needSpace = true;
+			target.append(Keywords.CONST); 
+			needSpace = true;
 		}
 		if (isVolatile) {
 			if (needSpace) {
-				target.append(SPACE); needSpace = false;
+				target.append(SPACE); 
 			}
-			target.append(Keywords.VOLATILE); needSpace = true;
+			target.append(Keywords.VOLATILE); 
+			needSpace = true;
+		}
+		if (isRestrict) {
+			if (needSpace) {
+				target.append(SPACE); 
+			}
+			target.append(Keywords.RESTRICT); 
+			needSpace = true;
 		}
 		return needSpace;
 	}
@@ -492,7 +482,7 @@ public class ASTTypeUtil {
 					if (cvq != null) {
 						// merge cv qualifiers
 						if (type instanceof IQualifierType || type instanceof IPointerType) {
-							type= SemanticUtil.addQualifiers(type, cvq.isConst(), cvq.isVolatile());
+							type= SemanticUtil.addQualifiers(type, cvq.isConst(), cvq.isVolatile(), false);
 							cvq= null;
 						} 
 					} 

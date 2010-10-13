@@ -210,7 +210,7 @@ public class Cost {
 		// Top level cv-qualifiers are compared only for reference bindings.
 		int qdiff= fQualificationAdjustments ^ other.fQualificationAdjustments;
 		if (fReferenceBinding == ReferenceBinding.NO_REF || other.fReferenceBinding == ReferenceBinding.NO_REF)
-			qdiff &= ~3;
+			qdiff &= ~7;
 		
 		if (qdiff != 0) {
 			if ((fQualificationAdjustments & qdiff) == 0)

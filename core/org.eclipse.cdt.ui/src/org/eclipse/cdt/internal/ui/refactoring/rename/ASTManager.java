@@ -565,7 +565,7 @@ public class ASTManager {
             if (t2 instanceof IPointerType) {
                 IPointerType a1= (IPointerType) t1;
                 IPointerType a2= (IPointerType) t2;
-                if (a1.isConst() != a2.isConst() || a1.isVolatile() != a2.isVolatile()) {
+                if (a1.isConst() != a2.isConst() || a1.isVolatile() != a2.isVolatile() || a1.isRestrict() != a2.isRestrict()) {
                     return FALSE;
                 }
                 return isSameType(a1.getType(), a2.getType());

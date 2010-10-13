@@ -100,7 +100,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         char[] className = name.getLookupKey();
 
         ICPPParameter[] voidPs = new ICPPParameter[] { new CPPParameter(CPPSemantics.VOID_TYPE, 0) };
-		IType pType = new CPPReferenceType(SemanticUtil.addQualifiers(clsType, true, false), false);
+		IType pType = new CPPReferenceType(SemanticUtil.constQualify(clsType), false);
 		ICPPParameter[] ps = new ICPPParameter[] { new CPPParameter(pType, 0) };
 
 		int i= 0;

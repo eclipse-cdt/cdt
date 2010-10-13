@@ -761,7 +761,6 @@ public class CPPSemantics {
     	if (scope instanceof ICPPScope) {
     		return (ICPPScope) scope;
     	} else if (scope instanceof IProblemBinding) {
-    		// mstodo scope problems
     		return new CPPScope.CPPScopeProblem(((IProblemBinding) scope).getASTNode(),
     				IProblemBinding.SEMANTIC_BAD_SCOPE, ((IProblemBinding) scope).getNameCharArray());
     	}
@@ -2527,7 +2526,7 @@ public class CPPSemantics {
 		IType impliedObjectType= null;
 		final IType[] paramTypes= ftype.getParameterTypes();
 		if (fn instanceof ICPPMethod && !(fn instanceof ICPPConstructor)) {
-		    implicitParameterType = getImplicitParameterType((ICPPMethod) fn, ftype.isConst(), ftype.isVolatile());
+		    implicitParameterType = getImplicitParameterType((ICPPMethod) fn);
 		    if (data.argsContainImpliedObject) {
 		    	impliedObjectType= argTypes[0];
 		    	skipArg= 1;
@@ -2623,16 +2622,15 @@ public class CPPSemantics {
 		return result;
 	}
 
-	static IType getImplicitParameterType(ICPPMethod m, final boolean isConst, final boolean isVolatile)
-			throws DOMException {
+	static IType getImplicitParameterType(ICPPMethod m)	throws DOMException {
 		IType implicitType;
 		ICPPClassType owner= m.getClassOwner();
 		if (owner instanceof ICPPClassTemplate) {
 			owner= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) owner);
 		}
-		implicitType= SemanticUtil.addQualifiers(owner, isConst, isVolatile);
-		implicitType= new CPPReferenceType(implicitType, false);
-		return implicitType;
+		ICPPFunctionType ft= m.getType();
+		implicitType= SemanticUtil.addQualifiers(owner, ft.isConst(), ft.isVolatile(), false);
+		return new CPPReferenceType(implicitType, false);
 	}
 
 	private static IBinding resolveUserDefinedConversion(LookupData data, IFunction[] fns) {
@@ -2907,14 +2905,6 @@ public class CPPSemantics {
     	return foundOperator ? type : null;
     }
     
-    private static ICPPVariable createVariable(IASTName name, final IType type, final boolean isConst, final boolean isVolatile) {
-    	return new CPPVariable(name) {
-			@Override public IType getType() {
-				return SemanticUtil.addQualifiers(type, isConst, isVolatile);
-			}
-		};
-    }
-
     public static ICPPFunction findOverloadedOperator(IASTArraySubscriptExpression exp) {
     	final IASTExpression arrayExpression = exp.getArrayExpression();
 		IASTInitializerClause[] args = {arrayExpression, exp.getArgument()};
@@ -3118,9 +3108,13 @@ public class CPPSemantics {
 		return null;
     }
 
-	public static IASTExpression createArgForType(IASTNode node, IType type) {
+	public static IASTExpression createArgForType(IASTNode node, final IType type) {
 		CPPASTName x= new CPPASTName();
-		x.setBinding(createVariable(x, type, false, false));    		
+		x.setBinding(new CPPVariable(x) {
+			@Override public IType getType() {
+				return type;
+			}
+		});    		
 		final CPPASTIdExpression idExpression = new CPPASTIdExpression(x);
 		idExpression.setParent(node);
 		return idExpression;

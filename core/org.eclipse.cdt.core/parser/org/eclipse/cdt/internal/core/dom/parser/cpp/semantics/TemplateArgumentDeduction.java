@@ -697,7 +697,7 @@ public class TemplateArgumentDeduction {
 			} else if (p instanceof IQualifierType) {
 				final CVQualifier cvqP = SemanticUtil.getCVQualifier(p);
 				final CVQualifier cvqA = SemanticUtil.getCVQualifier(a);
-				CVQualifier remaining= CVQualifier._;
+				CVQualifier remaining= CVQualifier.NONE;
 				if (cvqP != cvqA) {
 					if (!allowCVQConversion && !cvqA.isAtLeastAsQualifiedAs(cvqP))
 						return false;
@@ -707,8 +707,8 @@ public class TemplateArgumentDeduction {
 				a = SemanticUtil.getNestedType(a, ALLCVQ);
 				if (p instanceof IQualifierType)
 					return false;
-				if (remaining != CVQualifier._) {
-					a= SemanticUtil.addQualifiers(a, remaining.isConst(), remaining.isVolatile());
+				if (remaining != CVQualifier.NONE) {
+					a= SemanticUtil.addQualifiers(a, remaining.isConst(), remaining.isVolatile(), remaining.isRestrict());
 				}
 			} else if (p instanceof IFunctionType) {
 				if (!(a instanceof IFunctionType))

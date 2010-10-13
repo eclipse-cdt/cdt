@@ -9207,4 +9207,43 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame(ctor2, dtor.getImplicitNames()[0].resolveBinding());
 	}
 
+	//	void g(int * __restrict a);
+	//	void g(int * a) {}
+	//
+	//	void test1() {
+	//	  int number = 5;
+	//	  g(&number);
+	//	}
+	public void testTopLevelRestrictQualifier_327328() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction g= bh.assertNonProblem("g(int * __restrict a)", 1);
+		IFunction ref;
+		ref= bh.assertNonProblem("g(int * a)", 1);
+		assertSame(g, ref);
+		ref= bh.assertNonProblem("g(&number)", 1);
+		assertSame(g, ref);
+	}
+	
+	//	void f(int * __restrict* a) {}
+	//	void f(int ** a) {}              // different function
+	//
+	//	void test2() {
+	//	  int* __restrict rnumber= 0;
+	//	  int* number = 0;
+	//	  f(&rnumber); // calls f(int* __restrict* a)
+	//	  f(&number); // calls f(int** a)
+	//	}
+	public void testOverloadingWithRestrictQualifier_327328() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction f1= bh.assertNonProblem("f(int * __restrict* a)", 1);
+		IFunction f2= bh.assertNonProblem("f(int ** a)", 1);
+		IFunction ref;
+		ref= bh.assertNonProblem("f(&rnumber)", 1);
+		assertSame(f1, ref);
+		ref= bh.assertNonProblem("f(&number)", 1);
+		assertSame(f2, ref);
+	}
+
 }

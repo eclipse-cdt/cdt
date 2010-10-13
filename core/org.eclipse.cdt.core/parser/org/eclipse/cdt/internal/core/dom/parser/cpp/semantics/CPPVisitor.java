@@ -1670,7 +1670,7 @@ public class CPPVisitor extends ASTQueries {
 		// 8.3.5-3 
 		// Any cv-qualifier modifying a parameter type is deleted. The parameter type remains
 		// to be qualified.
-		if (forFunctionType && SemanticUtil.getCVQualifier(t) != CVQualifier._) {
+		if (forFunctionType && SemanticUtil.getCVQualifier(t) != CVQualifier.NONE) {
 			return SemanticUtil.getNestedType(t, TDEF | ALLCVQ);
 		}
 		return pt;
@@ -1879,7 +1879,7 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	private static IType qualifyType(IType type, IASTDeclSpecifier declSpec) {
-		return SemanticUtil.addQualifiers(type, declSpec.isConst(), declSpec.isVolatile());
+		return SemanticUtil.addQualifiers(type, declSpec.isConst(), declSpec.isVolatile(), declSpec.isRestrict());
 	}
 
 	private static IType createType(IType baseType, IASTDeclarator declarator) {
@@ -1977,7 +1977,7 @@ public class CPPVisitor extends ASTQueries {
 						if (type instanceof ICPPClassTemplate) {
 					    	type= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) type);
 						}
-						return SemanticUtil.addQualifiers(type, dtor.isConst(), dtor.isVolatile());
+						return SemanticUtil.addQualifiers(type, dtor.isConst(), dtor.isVolatile(), false);
 					}
 				}
 			}

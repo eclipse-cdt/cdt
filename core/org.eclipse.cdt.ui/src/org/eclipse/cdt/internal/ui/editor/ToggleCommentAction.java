@@ -155,14 +155,18 @@ public final class ToggleCommentAction extends TextEditorAction {
 			}
 
 			// Perform the check
+			boolean hasComment= false;
 			for (int i = 0, j = 0; i < regions.length; i++, j += 2) {
 				String[] prefixes= fPrefixesMap.get(regions[i].getType());
-				if (prefixes != null && prefixes.length > 0 && lines[j] >= 0 && lines[j + 1] >= 0 &&
-						!isBlockCommented(lines[j], lines[j + 1], prefixes, document)) {
-					return false;
+				if (prefixes != null && prefixes.length > 0 && lines[j] >= 0 && lines[j + 1] >= 0) {
+					if (isBlockCommented(lines[j], lines[j + 1], prefixes, document)) {
+						hasComment= true;
+					} else if (!isBlockEmpty(lines[j], lines[j + 1], document)) {
+						return false;
+					}
 				}
 			}
-			return true;
+			return hasComment;
 		} catch (BadLocationException e) {
 			CUIPlugin.log(e);  // Should not happen
 		}
@@ -179,25 +183,18 @@ public final class ToggleCommentAction extends TextEditorAction {
 	 * @param selection The selection to use
 	 * @param document The document
 	 * @return the region describing the text block comprising the given selection
+	 * @throws BadLocationException
 	 */
-	private IRegion getTextBlockFromSelection(ITextSelection selection, IDocument document) {
-		try {
-			// Until https://bugs.eclipse.org/bugs/show_bug.cgi?id=325438 is fixed, work around it
-			int start= document.getLineOffset(selection.getStartLine());
-			int endLine= selection.getEndLine();
-			IRegion endLineInfo= document.getLineInformation(endLine);
-			int end= endLineInfo.getOffset() + endLineInfo.getLength();
-			return new Region(start, end - start);
-
-//			IRegion line= document.getLineInformationOfOffset(selection.getOffset());
-//			int length= selection.getLength() == 0 ?
-//					line.getLength() : selection.getLength() + (selection.getOffset() - line.getOffset());
-//			return new Region(line.getOffset(), length);
-
-		} catch (BadLocationException e) {
-			CUIPlugin.log(e);  // Should not happen
+	private IRegion getTextBlockFromSelection(ITextSelection selection, IDocument document) throws BadLocationException {
+		int start= document.getLineOffset(selection.getStartLine());
+		int end;
+		int endLine= selection.getEndLine();
+		if (document.getNumberOfLines() > endLine+1) {
+			end= document.getLineOffset(endLine+1);
+		} else {
+			end= document.getLength();
 		}
-		return null;
+		return new Region(start, end - start);
 	}
 
 	/**
@@ -239,21 +236,55 @@ public final class ToggleCommentAction extends TextEditorAction {
 	private boolean isBlockCommented(int startLine, int endLine, String[] prefixes, IDocument document) {
 		try {
 			// Check for occurrences of prefixes in the given lines
+			boolean hasComment = false;
 			for (int i= startLine; i <= endLine; i++) {
 				IRegion line= document.getLineInformation(i);
 				String text= document.get(line.getOffset(), line.getLength());
 
+				boolean isEmptyLine = text.trim().length() == 0;
+				if(isEmptyLine) {
+					continue;
+				}
+				
 				int[] found= TextUtilities.indexOf(prefixes, text, 0);
 
 				if (found[0] == -1) {
 					// Found a line which is not commented
 					return false;
 				}
-
 				String s= document.get(line.getOffset(), found[0]);
 				s= s.trim();
 				if (s.length() != 0) {
 					// Found a line which is not commented
+					return false;
+				}
+				hasComment = true;
+			}
+			return hasComment;
+		} catch (BadLocationException e) {
+			CUIPlugin.log(e);  // Should not happen
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determines whether each line is empty
+	 *
+	 * @param startLine Start line in document
+	 * @param endLine End line in document
+	 * @param document The document
+	 * @return <code>true</code> if each line from <code>startLine</code>
+	 *             to and including <code>endLine</code> is empty
+	 */
+	private boolean isBlockEmpty(int startLine, int endLine, IDocument document) {
+		try {
+			for (int i= startLine; i <= endLine; i++) {
+				IRegion line= document.getLineInformation(i);
+				String text= document.get(line.getOffset(), line.getLength());
+	
+				boolean isEmptyLine = text.trim().length() == 0;
+				if(!isEmptyLine) {
 					return false;
 				}
 			}
@@ -261,7 +292,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 		} catch (BadLocationException e) {
 			CUIPlugin.log(e);  // Should not happen
 		}
-
+	
 		return false;
 	}
 

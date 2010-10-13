@@ -15,10 +15,8 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 /**
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @deprecated Use {@link IPointerType}, instead.
  */
+@Deprecated
 public interface IGPPPointerType extends IPointerType {
-	/**
-	 * is this a restrict pointer
-	 */
-	boolean isRestrict();
 }

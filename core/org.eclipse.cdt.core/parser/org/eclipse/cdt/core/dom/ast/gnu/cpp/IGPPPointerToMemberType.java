@@ -15,7 +15,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 /**
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @deprecated Use {@link ICPPPointerToMemberType}, instead.
  */
+@Deprecated
 public interface IGPPPointerToMemberType extends ICPPPointerToMemberType,
 		IGPPPointerType {
 

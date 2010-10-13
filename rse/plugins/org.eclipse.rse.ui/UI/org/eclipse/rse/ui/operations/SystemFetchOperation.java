@@ -26,6 +26,7 @@
  * David McKnight   (IBM)        - [260777] [ssh] Deadlock when changing selection after multiple hibernate/resume cycles
  * David McKnight   (IBM)        - [283793] [dstore] Expansion indicator(+) does not reset after no connect
  * David McKnight   (IBM)        - [316565] Failed to resolve the filter for a non-connected subsystem
+ * David McKnight   (IBM)        - [325923] [dstore] Cancel message not suitable in "Import Host Certificate" window
  *******************************************************************************/
 
 package org.eclipse.rse.ui.operations;
@@ -318,6 +319,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 				}
 				catch (Exception e)
 				{
+					e.printStackTrace();
 					showOperationErrorMessage(null, e, ss);
 					return false;
 				}
@@ -472,7 +474,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
     	{
     	  String excMsg = exc.getMessage();
     	  if ((excMsg == null) || (excMsg.length()==0))
-				exc.getClass().getName();
+				excMsg = exc.getClass().getName();
 			else
 				excMsg = exc.getClass().getName() + ": " + excMsg; //$NON-NLS-1$
           sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED);

@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 /**
@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 public class NodeWriter {
 
 	protected Scribe scribe;
-	protected CPPASTVisitor visitor;
+	protected ASTVisitor visitor;
 	protected NodeCommentMap commentMap;
 	protected static final String COMMA_SPACE = ", "; //$NON-NLS-1$
 	protected static final String EQUALS = " = "; //$NON-NLS-1$
@@ -59,7 +59,7 @@ public class NodeWriter {
 	protected static final String VAR_ARGS = "..."; //$NON-NLS-1$
 	protected static final String COLON_COLON = "::"; //$NON-NLS-1$
 
-	public NodeWriter(Scribe scribe, CPPASTVisitor visitor, NodeCommentMap commentMap) {
+	public NodeWriter(Scribe scribe, ASTVisitor visitor, NodeCommentMap commentMap) {
 		super();
 		this.scribe = scribe;
 		this.visitor = visitor;

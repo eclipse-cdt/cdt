@@ -146,7 +146,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			IType t= pmt.getType();
 			IType t2= getCompositeType(t);
 			if (ct != ct2 || t != t2) {
-				return new CPPPointerToMemberType(t2, ct2, pmt.isConst(), pmt.isVolatile());
+				return new CPPPointerToMemberType(t2, ct2, pmt.isConst(), pmt.isVolatile(), pmt.isRestrict());
 			}
 			return pmt;
 		} 
@@ -155,7 +155,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			IType r= pt.getType();
 			IType r2= getCompositeType(r);
 			if (r != r2) {
-				return new CPPPointerType(r2, pt.isConst(), pt.isVolatile());
+				return new CPPPointerType(r2, pt.isConst(), pt.isVolatile(), pt.isRestrict());
 			}
 			return pt;
 		}

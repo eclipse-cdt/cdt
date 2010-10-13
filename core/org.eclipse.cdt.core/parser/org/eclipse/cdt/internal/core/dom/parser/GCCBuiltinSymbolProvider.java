@@ -42,7 +42,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerType;
 
 /**
  * This is the IBuiltinBindingsProvider used to implement the "Other" built-in GCC symbols defined:
@@ -323,9 +322,9 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		cpp_unspecified = new CPPBasicType(Kind.eUnspecified, 0);
 		cpp_char = new CPPBasicType(Kind.eChar, 0);
 		cpp_char_p = new CPPPointerType(cpp_char);
-		cpp_char_p_r = new GPPPointerType(cpp_char, false, false, true);
+		cpp_char_p_r = new CPPPointerType(cpp_char, false, false, true);
 		cpp_const_char_p = new CPPPointerType(new CPPQualifierType(cpp_char, true, false));
-		cpp_const_char_p_r = new GPPPointerType(new CPPQualifierType(cpp_char, true, false), false, false, true);
+		cpp_const_char_p_r = new CPPPointerType(new CPPQualifierType(cpp_char, true, false), false, false, true);
 		
 		cpp_double = new CPPBasicType(Kind.eDouble, 0);
 		cpp_double_complex = new CPPBasicType(Kind.eDouble, IBasicType.IS_COMPLEX, null);
@@ -350,9 +349,9 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		
 		cpp_void = new CPPBasicType(Kind.eVoid, 0);
 		cpp_void_p = new CPPPointerType(cpp_void);
-		cpp_void_p_r = new GPPPointerType(cpp_void, false, false, true);
+		cpp_void_p_r = new CPPPointerType(cpp_void, false, false, true);
 		cpp_const_void_p = new CPPPointerType(new CPPQualifierType(cpp_void, true, false));
-		cpp_const_void_p_r = new GPPPointerType(new CPPQualifierType(cpp_void, true, false), false, false, true);
+		cpp_const_void_p_r = new CPPPointerType(new CPPQualifierType(cpp_void, true, false), false, false, true);
 		
 		cpp_FILE_p_r = cpp_void_p_r; // implemented as void* restrict
 	}

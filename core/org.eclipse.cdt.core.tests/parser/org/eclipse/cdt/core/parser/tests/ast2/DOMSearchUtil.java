@@ -18,12 +18,11 @@ import junit.framework.Assert;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -73,12 +72,13 @@ public class DOMSearchUtil {
      * 
      * @author dsteffle
      */
-    static public class CPPNameCollector extends CPPASTVisitor {
+    static public class CPPNameCollector extends ASTVisitor {
         {
             shouldVisitNames = true;
         }
         public List nameList = new ArrayList();
-        public int visit( IASTName name ){
+        @Override
+		public int visit( IASTName name ){
             nameList.add( name );
             return PROCESS_CONTINUE;
         }
@@ -95,12 +95,13 @@ public class DOMSearchUtil {
      * 
      * @author dsteffle
      */
-    static public class CNameCollector extends CASTVisitor {
+    static public class CNameCollector extends ASTVisitor {
         {
             shouldVisitNames = true;
         }
         public List nameList = new ArrayList();
-        public int visit( IASTName name ){
+        @Override
+		public int visit( IASTName name ){
             nameList.add( name );
             return PROCESS_CONTINUE;
         }

@@ -1115,7 +1115,7 @@ public class CPPTemplates {
 					}
 					if (newNestedType != nestedType || newMemberOfClass != memberOfClass) {
 						return new CPPPointerToMemberType(newNestedType, newMemberOfClass,
-								ptm.isConst(), ptm.isVolatile());
+								ptm.isConst(), ptm.isVolatile(), ptm.isRestrict());
 					}
 					return typeContainer;
 				} 

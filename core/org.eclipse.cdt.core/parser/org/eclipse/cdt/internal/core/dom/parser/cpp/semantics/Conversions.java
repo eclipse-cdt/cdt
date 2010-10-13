@@ -869,7 +869,7 @@ public class Conversions {
 				if (val instanceof IASTLiteralExpression) {
 					IASTLiteralExpression lit= (IASTLiteralExpression) val;
 					if (lit.getKind() == IASTLiteralExpression.lk_string_literal) {
-						source= new CPPPointerType(srcTarget, false, false);
+						source= new CPPPointerType(srcTarget, false, false, false);
 						cost.setQualificationAdjustment((getCVQualifier(targetPtrTgt).isVolatile() ? 2 : 1) << 2);
 					}
 				}
@@ -1137,7 +1137,7 @@ public class Conversions {
 							cost.setRank(Rank.CONVERSION);
 							cost.setInheritanceDistance(depth);
 							cost.source = new CPPPointerToMemberType(spm.getType(),
-									tpm.getMemberOfClass(), spm.isConst(), spm.isVolatile());
+									tpm.getMemberOfClass(), spm.isConst(), spm.isVolatile(), spm.isRestrict());
 						}
 						return false;
 					}
@@ -1276,9 +1276,9 @@ public class Conversions {
 			final boolean isVolatile) {
 		if (p1 instanceof ICPPPointerToMemberType) {
 			ICPPPointerToMemberType ptm= (ICPPPointerToMemberType) p1;
-			return new CPPPointerToMemberType(target, ptm.getMemberOfClass(), isConst, isVolatile);
+			return new CPPPointerToMemberType(target, ptm.getMemberOfClass(), isConst, isVolatile, false);
 		}
-		return new CPPPointerType(target, isConst, isVolatile);
+		return new CPPPointerType(target, isConst, isVolatile, false);
 	}
 
 	private static boolean isNullPtr(IType t1) {

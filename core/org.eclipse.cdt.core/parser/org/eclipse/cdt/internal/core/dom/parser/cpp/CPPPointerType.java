@@ -26,34 +26,26 @@ import org.eclipse.core.runtime.CoreException;
  * Pointers in c++
  */
 public class CPPPointerType implements IPointerType, ITypeContainer, ISerializableType {
-	protected IType type = null;
-	private boolean isConst = false;
-	private boolean isVolatile = false;
+	protected IType type;
+	private boolean isConst;
+	private boolean isVolatile;
+	private boolean isRestrict;
 	
-	public CPPPointerType(IType type, boolean isConst, boolean isVolatile) {
+	public CPPPointerType(IType type, boolean isConst, boolean isVolatile, boolean isRestrict) {
 		this.isConst = isConst;
 		this.isVolatile = isVolatile;
+		this.isRestrict = isRestrict;
 		setType(type);
 	}
 
 	public CPPPointerType(IType type, IASTPointer operator) {
-		this(type, operator.isConst(), operator.isVolatile());
+		this(type, operator.isConst(), operator.isVolatile(), operator.isRestrict());
 	}
 	
 	public CPPPointerType(IType type) {
-	    this(type, false, false);
+	    this(type, false, false, false);
 	}
 
-	public IType stripQualifiers() {
-		CPPPointerType result = this;
-		if (isConst || isVolatile) {
-			result = (CPPPointerType) clone();
-			result.isConst = false;
-			result.isVolatile = false;
-		}
-		return result;
-	}
-	
 	public boolean isSameType(IType o) {
 	    if (o == this)
             return true;
@@ -70,7 +62,7 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 	        return false;
 	    
 	    IPointerType pt = (IPointerType) o;
-	    if (isConst == pt.isConst() && isVolatile == pt.isVolatile()) {
+	    if (isConst == pt.isConst() && isVolatile == pt.isVolatile() && isRestrict == pt.isRestrict()) {
 			return type.isSameType(pt.getType());
 	    }
 	    return false;
@@ -92,7 +84,11 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 	public boolean isVolatile() {
 		return isVolatile;
 	}
-	
+
+	public boolean isRestrict() {
+		return isRestrict;
+	}
+
     @Override
 	public Object clone() {
         IType t = null;
@@ -113,6 +109,7 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 		int firstByte= ITypeMarshalBuffer.POINTER;
 		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;
 		if (isVolatile()) firstByte |= ITypeMarshalBuffer.FLAG2;
+		if (isRestrict()) firstByte |= ITypeMarshalBuffer.FLAG3;
 		buffer.putByte((byte) firstByte);
 		final IType nestedType = getType();
 		buffer.marshalType(nestedType);
@@ -121,6 +118,7 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		IType nested= buffer.unmarshalType();
 		return new CPPPointerType(nested, (firstByte & ITypeMarshalBuffer.FLAG1) != 0,
-				(firstByte & ITypeMarshalBuffer.FLAG2) != 0);
+				(firstByte & ITypeMarshalBuffer.FLAG2) != 0,
+				(firstByte & ITypeMarshalBuffer.FLAG3) != 0);
 	}
 }

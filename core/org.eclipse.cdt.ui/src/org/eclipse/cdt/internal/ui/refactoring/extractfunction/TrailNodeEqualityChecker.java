@@ -43,7 +43,6 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
@@ -60,7 +59,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
 
@@ -246,26 +244,13 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 	}
 
 	private boolean isPointerOperatorEquals(IASTNode trailNode, IASTNode node) {
-		if (trailNode instanceof IGPPASTPointer) {
-			IGPPASTPointer trailGPointer = (IGPPASTPointer) trailNode;
-			IGPPASTPointer gPointer = (IGPPASTPointer) node;
+		if (trailNode instanceof IASTPointer) {
+			IASTPointer trailGPointer = (IASTPointer) trailNode;
+			IASTPointer gPointer = (IASTPointer) node;
 			
 			return trailGPointer.isConst() == gPointer.isConst()
 				&& trailGPointer.isRestrict() == gPointer.isRestrict()
 				&& trailGPointer.isVolatile() == gPointer.isVolatile();
-		} else if (trailNode instanceof ICASTPointer) {
-			ICASTPointer trailCPointer = (ICASTPointer) trailNode;
-			ICASTPointer cPointer = (ICASTPointer) node;
-			
-			return trailCPointer.isConst() == cPointer.isConst()
-				&& trailCPointer.isRestrict() == cPointer.isRestrict()
-				&& trailCPointer.isVolatile() == cPointer.isVolatile(); 
-		} else if (trailNode instanceof IASTPointer) {
-			IASTPointer trailCPointer = (IASTPointer) trailNode;
-			IASTPointer cPointer = (IASTPointer) node;
-			
-			return trailCPointer.isConst() == cPointer.isConst()
-				&& trailCPointer.isVolatile() == cPointer.isVolatile(); 
 		} else {
 			//same type
 			return true;

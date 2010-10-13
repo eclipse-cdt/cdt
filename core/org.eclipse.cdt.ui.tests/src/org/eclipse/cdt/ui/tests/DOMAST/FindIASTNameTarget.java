@@ -22,12 +22,11 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.TreeItem;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
@@ -45,13 +44,13 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	boolean wasForward = true;
 	int index = 0;
 	
-    static protected class CNameCollector extends CASTVisitor {
+    static protected class CNameCollector extends ASTVisitor {
         private static final int REGULAR_NAME_ADD = -1;
 		private static final String BLANK_STRING = ""; //$NON-NLS-1$
 		{
             shouldVisitNames = true;
         }
-        public List nameList = new ArrayList();
+        public List<IASTName> nameList = new ArrayList<IASTName>();
         
         String findString = null;
 		boolean caseSensitive = true;
@@ -100,13 +99,14 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
             return PROCESS_CONTINUE;
 		}
 		
-        public int visit( IASTName name ){
+        @Override
+		public int visit( IASTName name ){
         	return processName(name, REGULAR_NAME_ADD);
         }
         public IASTName getName( int idx ){
             if( idx < 0 || idx >= nameList.size() )
                 return null;
-            return (IASTName) nameList.get( idx );
+            return nameList.get( idx );
         }
         public int size() { return nameList.size(); } 
         
@@ -127,9 +127,9 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
         
         public IASTName[] getNameArray(IASTPreprocessorStatement[] statements) {
         	// first merge all of the preprocessor names into the array list
-        	for(int i=0; i<statements.length; i++) {
-        		if (statements[i] instanceof IASTPreprocessorMacroDefinition) {
-        			IASTName name = ((IASTPreprocessorMacroDefinition)statements[i]).getName();
+        	for (IASTPreprocessorStatement statement : statements) {
+        		if (statement instanceof IASTPreprocessorMacroDefinition) {
+        			IASTName name = ((IASTPreprocessorMacroDefinition)statement).getName();
         			if (name != null) {
         				mergeName(name);
         			}
@@ -141,20 +141,20 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
         	
         	for(int i=0; i<nameList.size(); i++) {
         		if (nameList.get(i) instanceof IASTName)
-        			namedArray[i] = (IASTName)nameList.get(i);
+        			namedArray[i] = nameList.get(i);
         	}
         	
         	return namedArray;
         }
     }
     
-    static protected class CPPNameCollector extends CPPASTVisitor {
+    static protected class CPPNameCollector extends ASTVisitor {
         private static final int REGULAR_NAME_ADD = -1;
 		private static final String BLANK_STRING = ""; //$NON-NLS-1$
 		{
             shouldVisitNames = true;
         }
-        public List nameList = new ArrayList();
+        public List<IASTName> nameList = new ArrayList<IASTName>();
         
         String findString = null;
 		boolean caseSensitive = true;
@@ -205,13 +205,14 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
             return PROCESS_CONTINUE;
 		}
 		
-        public int visit( IASTName name ){
+        @Override
+		public int visit( IASTName name ){
         	return processName(name, REGULAR_NAME_ADD);
         }
         public IASTName getName( int idx ){
             if( idx < 0 || idx >= nameList.size() )
                 return null;
-            return (IASTName) nameList.get( idx );
+            return nameList.get( idx );
         }
         public int size() { return nameList.size(); } 
         
@@ -232,9 +233,9 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
         
         public IASTName[] getNameArray(IASTPreprocessorStatement[] statements) {
         	// first merge all of the preprocessor names into the array list
-        	for(int i=0; i<statements.length; i++) {
-        		if (statements[i] instanceof IASTPreprocessorMacroDefinition) {
-        			IASTName name = ((IASTPreprocessorMacroDefinition)statements[i]).getName();
+        	for (IASTPreprocessorStatement statement : statements) {
+        		if (statement instanceof IASTPreprocessorMacroDefinition) {
+        			IASTName name = ((IASTPreprocessorMacroDefinition)statement).getName();
         			if (name != null) {
         				mergeName(name);
         			}
@@ -246,7 +247,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
         	
         	for(int i=0; i<nameList.size(); i++) {
         		if (nameList.get(i) instanceof IASTName)
-        			namedArray[i] = (IASTName)nameList.get(i);
+        			namedArray[i] = nameList.get(i);
         	}
         	
         	return namedArray;
@@ -307,25 +308,25 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	}
 		
 	private TreeItem expandTreeToTreeObject(TreeItem[] treeItems, DOMASTNodeLeaf treeObj) {
-		for (int i=0; i<treeItems.length; i++) {
-			if (treeItems[i].getData() == treeObj) {
- 				return treeItems[i];
+		for (TreeItem treeItem : treeItems) {
+			if (treeItem.getData() == treeObj) {
+ 				return treeItem;
  			}
  			
  			DOMASTNodeParent parent = treeObj.getParent();
  			
  			if (parent == null) return null; 
 
- 			while (parent != treeItems[i].getData()) {
+ 			while (parent != treeItem.getData()) {
  				parent = parent.getParent();
  				if (parent == null) break;
  			}
  			
- 			if (parent == treeItems[i].getData()) {
- 				treeItems[i].setExpanded(true);
+ 			if (parent == treeItem.getData()) {
+ 				treeItem.setExpanded(true);
  				viewer.refresh();
 
- 				return expandTreeToTreeObject(treeItems[i].getItems(), treeObj);
+ 				return expandTreeToTreeObject(treeItem.getItems(), treeObj);
  			}
  		}
  		

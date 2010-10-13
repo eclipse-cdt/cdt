@@ -143,8 +143,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -182,8 +180,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerToMemberType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -1683,12 +1679,8 @@ public class CPPVisitor extends ASTQueries {
 	private static IType getPointerTypes(IType type, IASTDeclarator declarator) {
 	    IASTPointerOperator[] ptrOps = declarator.getPointerOperators();
 		for (IASTPointerOperator ptrOp : ptrOps) {
-		    if (ptrOp instanceof IGPPASTPointerToMember) {
-		        type = new GPPPointerToMemberType(type, (IGPPASTPointerToMember) ptrOp);
-		    } else if (ptrOp instanceof ICPPASTPointerToMember) {
+		    if (ptrOp instanceof ICPPASTPointerToMember) {
 				type = new CPPPointerToMemberType(type, (ICPPASTPointerToMember) ptrOp);
-		    } else if (ptrOp instanceof IGPPASTPointer) {
-			    type = new GPPPointerType(type, (IGPPASTPointer) ptrOp);
 		    } else if (ptrOp instanceof IASTPointer) {
 		        type = new CPPPointerType(type, (IASTPointer) ptrOp);
 		    } else if (ptrOp instanceof ICPPASTReferenceOperator) {

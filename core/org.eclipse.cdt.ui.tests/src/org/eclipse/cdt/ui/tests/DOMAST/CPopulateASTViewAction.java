@@ -12,11 +12,13 @@ package org.eclipse.cdt.ui.tests.DOMAST;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -31,8 +33,6 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
@@ -41,7 +41,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 /**
  * @author dsteffle
  */
-public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMASTAction {
+public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMASTAction {
 	private static final int INITIAL_PROBLEM_SIZE = 4;
 	{
 		shouldVisitNames          = true;
@@ -149,13 +149,13 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 		DOMASTNodeLeaf temp = addRoot(declarator);
 		
 		IASTPointerOperator[] ops = declarator.getPointerOperators();
-		for(int i=0; i<ops.length; i++)
-			addRoot(ops[i]);
+		for (IASTPointerOperator op : ops)
+			addRoot(op);
 		
 		if (declarator instanceof IASTArrayDeclarator) {
 			IASTArrayModifier[] mods = ((IASTArrayDeclarator)declarator).getArrayModifiers();
-			for(int i=0; i<mods.length; i++)
-				addRoot(mods[i]);	
+			for (IASTArrayModifier mod : mods)
+				addRoot(mod);	
 		}
 		
 		if (temp == null)
@@ -310,11 +310,11 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 	}
 	
 	public void mergePreprocessorProblems(IASTProblem[] problems) {
-		for(int i=0; i<problems.length; i++) {
+		for (IASTProblem problem : problems) {
 			if (monitor != null && monitor.isCanceled()) return;
 			
-			if (problems[i] instanceof ASTNode)
-			   mergeNode((ASTNode)problems[i]);
+			if (problem instanceof ASTNode)
+			   mergeNode((ASTNode)problem);
 		}
 	}
 	
@@ -331,10 +331,8 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 
 			final String path= ((IASTPreprocessorIncludeStatement) nodeLeaf.getNode()).getPath();
 			final DOMASTNodeLeaf[] children = root.getChildren(false);
-			for(int j=0; j < children.length; j++) {
-//				if (monitor != null && monitor.isCanceled()) return; // this causes a deadlock when checked here
-				final DOMASTNodeLeaf child = children[j];
-				if (child != null && child != nodeLeaf && 
+			for (final DOMASTNodeLeaf child : children) {
+if (child != null && child != nodeLeaf && 
 						child.getNode().getContainingFilename().equals(path)) {
 					root.removeChild(child);
 					((DOMASTNodeParent)nodeLeaf).addChild(child);

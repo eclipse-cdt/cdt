@@ -39,8 +39,8 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 		this.operator = operator;
 	}
 
-	public CPPPointerToMemberType(IType type, IType thisType, boolean isConst, boolean isVolatile) {
-		super(type, isConst, isVolatile);
+	public CPPPointerToMemberType(IType type, IType thisType, boolean isConst, boolean isVolatile, boolean isRestrict) {
+		super(type, isConst, isVolatile, isRestrict);
 		this.classType = thisType;
 	}
 
@@ -99,6 +99,7 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 		int firstByte= ITypeMarshalBuffer.POINTER_TO_MEMBER;
 		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;
 		if (isVolatile()) firstByte |= ITypeMarshalBuffer.FLAG2;
+		if (isRestrict()) firstByte |= ITypeMarshalBuffer.FLAG3;
 		buffer.putByte((byte) firstByte);
 		buffer.marshalType(getType());
 		buffer.marshalType(getMemberOfClass());
@@ -108,6 +109,7 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 		IType nested= buffer.unmarshalType();
 		IType memberOf= buffer.unmarshalType();
 		return new CPPPointerToMemberType(nested, memberOf, (firstByte & ITypeMarshalBuffer.FLAG1) != 0,
-				(firstByte & ITypeMarshalBuffer.FLAG2) != 0);
+				(firstByte & ITypeMarshalBuffer.FLAG2) != 0,
+				(firstByte & ITypeMarshalBuffer.FLAG3) != 0);
 	}
 }

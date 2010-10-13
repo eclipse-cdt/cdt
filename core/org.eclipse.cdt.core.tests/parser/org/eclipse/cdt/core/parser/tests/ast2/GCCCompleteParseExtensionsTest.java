@@ -19,12 +19,12 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTFunctionDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
@@ -130,8 +130,8 @@ public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
         writer.write( "int * __restrict__ resPointer1;\n"); //$NON-NLS-1$
         writer.write( "int * __restrict resPointer2;\n"); //$NON-NLS-1$
         decls = parseGPP( writer.toString() ).getDeclarations();
-        assertTrue( ((IGPPASTPointer)((IASTSimpleDeclaration)decls[0]).getDeclarators()[0].getPointerOperators()[0]).isRestrict() );
-        assertTrue( ((IGPPASTPointer)((IASTSimpleDeclaration)decls[1]).getDeclarators()[0].getPointerOperators()[0]).isRestrict() );
+        assertTrue( ((IASTPointer)((IASTSimpleDeclaration)decls[0]).getDeclarators()[0].getPointerOperators()[0]).isRestrict() );
+        assertTrue( ((IASTPointer)((IASTSimpleDeclaration)decls[1]).getDeclarators()[0].getPointerOperators()[0]).isRestrict() );
 
 	}
 

@@ -121,8 +121,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerToMemberType;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
@@ -3412,8 +3410,8 @@ public class AST2CPPTests extends AST2BaseTest {
 		
 		IVariable x = (IVariable) col.getName(0).resolveBinding();
 		IType t = x.getType();
-		assertTrue(t instanceof IGPPPointerType);
-		assertTrue(((IGPPPointerType) t).isRestrict());
+		assertTrue(t instanceof IPointerType);
+		assertTrue(((IPointerType) t).isRestrict());
 		
 		tu = parse("class A {}; int A::* __restrict x;", ParserLanguage.CPP, true); //$NON-NLS-1$
 		col = new CPPNameCollector();
@@ -3421,8 +3419,8 @@ public class AST2CPPTests extends AST2BaseTest {
 		
 		x = (IVariable) col.getName(3).resolveBinding();
 		t = x.getType();
-		assertTrue(t instanceof IGPPPointerToMemberType);
-		assertTrue(((IGPPPointerToMemberType) t).isRestrict());
+		assertTrue(t instanceof ICPPPointerToMemberType);
+		assertTrue(((ICPPPointerToMemberType) t).isRestrict());
 	}
 	
 	public void testBug87705() throws Exception {

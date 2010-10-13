@@ -26,8 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.parser.IScanner;
 
 /**
@@ -198,11 +196,19 @@ public interface ICPPNodeFactory extends INodeFactory {
 	
 	public ICPPASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator);
 
-	public IGPPASTPointer newPointerGPP();
+	/**
+	 * @deprecated Replaced by {@link #newPointer()}.
+	 */
+	@Deprecated
+	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer newPointerGPP();
 
 	public ICPPASTPointerToMember newPointerToMember(IASTName name);
 	
-	public IGPPASTPointerToMember newPointerToMemberGPP(IASTName name);
+	/**
+	 * @deprecated Replaced by {@link #newPointerToMember(IASTName)}.
+	 */
+	@Deprecated
+	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember newPointerToMemberGPP(IASTName name);
 	
 	public IASTProblemTypeId newProblemTypeId(IASTProblem problem);
 	

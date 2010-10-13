@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
-import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
@@ -34,7 +33,6 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
@@ -188,47 +186,28 @@ public class ASTSignatureUtil {
 						result.append(SPACE);
 					}
 					if (op instanceof IASTPointer) {
+						final IASTPointer ptr = (IASTPointer) op;
 						result.append(Keywords.cpSTAR); // want to have this before keywords on the pointer
 						needSpace = true;
-					}
-
-					if (op instanceof IGPPASTPointer) {
-						if (((IGPPASTPointer) op).isRestrict()) {
+						if (ptr.isConst()) {
 							if (needSpace) {
 								result.append(SPACE);
-								needSpace = false;
-							}
-							result.append(Keywords.RESTRICT);
-							needSpace = true;
-						}
-					}
-
-					if (op instanceof ICASTPointer) {
-						if (((ICASTPointer) op).isRestrict()) {
-							if (needSpace) {
-								result.append(SPACE);
-								needSpace = false;
-							}
-							result.append(Keywords.RESTRICT);
-							needSpace = true;
-						}
-					}
-
-					if (op instanceof IASTPointer) {
-						if (((IASTPointer) op).isConst()) {
-							if (needSpace) {
-								result.append(SPACE);
-								needSpace = false;
 							}
 							result.append(Keywords.CONST);
 							needSpace = true;
 						}
-						if (((IASTPointer) op).isVolatile()) {
-							if (needSpace) {
+						if (ptr.isVolatile()) {
+							if (needSpace) { 
 								result.append(SPACE);
-								needSpace = false;
 							}
 							result.append(Keywords.VOLATILE);
+							needSpace = true;
+						}
+						if (ptr.isRestrict()) {
+							if (needSpace) { 
+								result.append(SPACE);
+							}
+							result.append(Keywords.RESTRICT);
 							needSpace = true;
 						}
 					}
@@ -236,7 +215,6 @@ public class ASTSignatureUtil {
 					if (op instanceof ICPPASTReferenceOperator) {
 						if (needSpace) {
 							result.append(SPACE);
-							needSpace = false;
 						}
 						result.append(Keywords.cpAMPER);
 						needSpace = true;

@@ -22,6 +22,7 @@ public class CPPASTPointer extends ASTNode implements IASTPointer {
 
     private boolean isConst;
     private boolean isVolatile;
+    private boolean isRestrict;
 
     public CPPASTPointer() {
     }
@@ -30,6 +31,7 @@ public class CPPASTPointer extends ASTNode implements IASTPointer {
 		CPPASTPointer copy = new CPPASTPointer();
 		copy.isConst = isConst;
 		copy.isVolatile = isVolatile;
+		copy.isRestrict = isRestrict;
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
@@ -42,6 +44,10 @@ public class CPPASTPointer extends ASTNode implements IASTPointer {
         return isVolatile;
     }
 
+    public boolean isRestrict() {
+        return isRestrict;
+    }
+
     public void setConst(boolean value) {
         assertNotFrozen();
         isConst = value;
@@ -50,6 +56,11 @@ public class CPPASTPointer extends ASTNode implements IASTPointer {
     public void setVolatile(boolean value) {
         assertNotFrozen();
         isVolatile = value;
+    }
+
+    public void setRestrict(boolean value) {
+        assertNotFrozen();
+        isRestrict = value;
     }
 
     @Override

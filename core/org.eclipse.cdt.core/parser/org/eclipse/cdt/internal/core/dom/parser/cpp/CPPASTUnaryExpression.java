@@ -196,7 +196,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 						if (!member.isStatic()) { // so if the member is static it will fall through
 							overload= null;
 							if (!inParenthesis) {
-								return new CPPPointerToMemberType(member.getType(), member.getClassOwner(), false, false);
+								return new CPPPointerToMemberType(member.getType(), member.getClassOwner(), false, false, false);
 							} else if (member instanceof IFunction) {
 								return new ProblemBinding(operand, IProblemBinding.SEMANTIC_INVALID_TYPE, operand.getRawSignature().toCharArray());
 							}

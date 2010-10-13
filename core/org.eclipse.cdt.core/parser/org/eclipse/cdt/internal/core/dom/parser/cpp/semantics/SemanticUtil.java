@@ -241,18 +241,16 @@ public class SemanticUtil {
 				if ((ptr && !isMbrPtr) || (mptr && isMbrPtr)) {
 					t= ((IPointerType) type).getType();
 				} else if (allcvq) {
-					if (type instanceof CPPPointerType) {
-						return ((CPPPointerType) type).stripQualifiers();
-					}
-					IPointerType p= (IPointerType) type;
-					if (p.isConst() || p.isVolatile()) {
-						if (p instanceof ICPPPointerToMemberType) {
-							final IType memberOfClass = ((ICPPPointerToMemberType) p).getMemberOfClass();
-							return new CPPPointerToMemberType(p.getType(), memberOfClass, false, false);
+					IPointerType pt= (IPointerType) type;
+					if (pt.isConst() || pt.isVolatile() || pt.isRestrict()) {
+						if (pt instanceof ICPPPointerToMemberType) {
+							final IType memberOfClass = ((ICPPPointerToMemberType) pt).getMemberOfClass();
+							return new CPPPointerToMemberType(pt.getType(), memberOfClass, false, false, false);
 						} else {
-							return new CPPPointerType(p.getType(), false, false);
+							return new CPPPointerType(pt.getType(), false, false, false);
 						}
 					}
+					return pt;
 				}
 			} else if (tdef && type instanceof ITypedef) {
 				t= ((ITypedef) type).getType();
@@ -469,13 +467,13 @@ public class SemanticUtil {
 				ICPPPointerToMemberType pt= (ICPPPointerToMemberType) baseType;
 				if ((cnst && !pt.isConst()) || (vol && !pt.isVolatile())) {
 					return new CPPPointerToMemberType(pt.getType(), pt.getMemberOfClass(), cnst
-							|| pt.isConst(), vol || pt.isVolatile());
+							|| pt.isConst(), vol || pt.isVolatile(), pt.isRestrict());
 				}
 				return baseType;
 			} else if (baseType instanceof IPointerType) {
 				IPointerType pt= (IPointerType) baseType;
 				if ((cnst && !pt.isConst()) || (vol && !pt.isVolatile())) {
-					return new CPPPointerType(pt.getType(), cnst || pt.isConst(), vol || pt.isVolatile());
+					return new CPPPointerType(pt.getType(), cnst || pt.isConst(), vol || pt.isVolatile(), pt.isRestrict());
 				}
 				return baseType;
 			} else if (baseType instanceof IArrayType) {

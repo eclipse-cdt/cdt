@@ -48,7 +48,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
-import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
@@ -73,9 +72,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
-import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
@@ -438,16 +435,8 @@ public class ASTStringUtil {
 				if (pointer.isVolatile()) {
 					buffer.append(' ').append(Keywords.VOLATILE);
 				}
-				if (pointerOperator instanceof ICASTPointer) {
-					final ICASTPointer cPointer= (ICASTPointer)pointerOperator;
-					if (cPointer.isRestrict()) {
-						buffer.append(' ').append(Keywords.RESTRICT);
-					}
-				} else if (pointerOperator instanceof IGPPASTPointer) {
-					final IGPPASTPointer gppPointer= (IGPPASTPointer)pointerOperator;
-					if (gppPointer.isRestrict()) {
-						buffer.append(' ').append(Keywords.RESTRICT);
-					}
+				if (pointer.isRestrict()) {
+					buffer.append(' ').append(Keywords.RESTRICT);
 				}
 			} else if (pointerOperator instanceof ICPPASTReferenceOperator) {
 				buffer.append(Keywords.cpAMPER);
@@ -1110,9 +1099,9 @@ public class ASTStringUtil {
 
 	private static String getTypeIdExpressionOperator(IASTTypeIdExpression expression) {
 		switch (expression.getOperator()) {
-		case IGNUASTTypeIdExpression.op_alignof:
+		case IASTTypeIdExpression.op_alignof:
 			return Keywords.ALIGNOF;
-		case IGNUASTTypeIdExpression.op_typeof:
+		case IASTTypeIdExpression.op_typeof:
 			return Keywords.TYPEOF;
 		case ICPPASTTypeIdExpression.op_typeid:
 			return Keywords.TYPEID;

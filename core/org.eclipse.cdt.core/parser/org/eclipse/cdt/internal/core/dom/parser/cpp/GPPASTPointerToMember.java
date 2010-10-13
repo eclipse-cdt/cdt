@@ -14,8 +14,9 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 
 /**
- * @author jcamelon
+ * @deprecated
  */
+@Deprecated
 public class GPPASTPointerToMember extends CPPASTPointerToMember implements
         IGPPASTPointerToMember {
 
@@ -27,31 +28,14 @@ public class GPPASTPointerToMember extends CPPASTPointerToMember implements
 		super(n);
 	}
 
-	private boolean isRestrict;
-
 	@Override
 	public GPPASTPointerToMember copy() {
 		IASTName name = getName();
 		GPPASTPointerToMember copy = new GPPASTPointerToMember(name == null ? null : name.copy());
 		copy.setConst(isConst());
 		copy.setVolatile(isVolatile());
-		copy.setRestrict(isRestrict);
+		copy.setRestrict(isRestrict());
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
-	
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer#isRestrict()
-     */
-    public boolean isRestrict() {
-        return isRestrict;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer#setRestrict(boolean)
-     */
-    public void setRestrict(boolean value) {
-        isRestrict = value;
-    }
-
 }

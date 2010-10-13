@@ -63,7 +63,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
         // void
         IType cpp_void = new CPPBasicType(Kind.eVoid, 0);
         // void *
-        IType cpp_void_p = new GPPPointerType(new CPPQualifierType(new CPPBasicType(Kind.eVoid, 0), false, false), new GPPASTPointer());
+        IType cpp_void_p = new CPPPointerType(new CPPQualifierType(new CPPBasicType(Kind.eVoid, 0), false, false), new CPPASTPointer());
         // size_t // assumed: unsigned long int
         IType cpp_size_t = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG & IBasicType.IS_UNSIGNED);
 

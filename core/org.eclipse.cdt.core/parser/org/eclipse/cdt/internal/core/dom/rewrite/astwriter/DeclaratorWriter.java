@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -25,13 +26,10 @@ import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 
@@ -52,7 +50,7 @@ public class DeclaratorWriter extends NodeWriter {
 	private static final String STAR_SPACE = "* "; //$NON-NLS-1$
 	private static final String PURE_VIRTUAL = " =0"; //$NON-NLS-1$
 	
-	public DeclaratorWriter(Scribe scribe, CPPASTVisitor visitor, NodeCommentMap commentMap) {
+	public DeclaratorWriter(Scribe scribe, ASTVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 	}
 	
@@ -176,22 +174,12 @@ public class DeclaratorWriter extends NodeWriter {
 		
 		if (operator.isConst()) {
 			scribe.printStringSpace(CONST);
-
 		}
 		if (operator.isVolatile()) {
 			scribe.printStringSpace(VOLATILE);
 		}
-		if (operator instanceof ICASTPointer) {
-			ICASTPointer cPoint = (ICASTPointer) operator;
-			if(cPoint.isRestrict()) {
-				scribe.print(RESTRICT);
-			}
-		}
-		if (operator instanceof IGPPASTPointer) {
-			IGPPASTPointer gppPoint = (IGPPASTPointer) operator;
-			if(gppPoint.isRestrict()) {
-				scribe.print(RESTRICT);
-			}
+		if (operator.isRestrict()) {
+			scribe.print(RESTRICT);
 		}
 	}
 

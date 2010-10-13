@@ -13,28 +13,18 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 
 /**
- * @author jcamelon
+ * @deprecated
  */
+@Deprecated
 public class GPPASTPointer extends CPPASTPointer implements IGPPASTPointer {
-
-    private boolean isRestrict;
 
     @Override
 	public GPPASTPointer copy() {
 		GPPASTPointer copy = new GPPASTPointer();
 		copy.setConst(isConst());
 		copy.setVolatile(isVolatile());
-		copy.setRestrict(isRestrict);
+		copy.setRestrict(isRestrict());
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
-    
-    public boolean isRestrict() {
-        return isRestrict;
-    }
-
-    public void setRestrict(boolean value) {
-        isRestrict = value;
-    }
-
 }

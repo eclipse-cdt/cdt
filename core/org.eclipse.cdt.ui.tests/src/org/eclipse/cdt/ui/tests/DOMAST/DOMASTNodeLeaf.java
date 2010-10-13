@@ -54,9 +54,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
-import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
@@ -258,20 +256,6 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		} else if ( node instanceof IASTPointer ) {
 			boolean started = false;
 			
-			if (node instanceof ICASTPointer) {
-				if (((ICASTPointer)node).isRestrict()) {
-					started = true;
-					buffer.append(START_OF_LIST);
-					buffer.append(RESTRICT_);
-				}
-			} else if (node instanceof IGPPASTPointer) {
-				if (((IGPPASTPointer)node).isRestrict()) {
-					started = true;
-					buffer.append(START_OF_LIST);
-					buffer.append(RESTRICT_);
-				}
-			}
-			
 			if (((IASTPointer)node).isConst()) {
 				if (!started) {
 					started = true;
@@ -287,6 +271,15 @@ public class DOMASTNodeLeaf implements IAdaptable {
 				}
 				buffer.append(VOLATILE_);
 			}
+			
+			if (((IASTPointer)node).isRestrict()) {
+				if (!started) {
+					started = true;
+					buffer.append(START_OF_LIST);
+				}
+				buffer.append(RESTRICT_);
+			}
+
 		}
 		
 		return buffer.toString();

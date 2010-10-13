@@ -22,6 +22,7 @@ import java.util.List;
 import junit.framework.AssertionFailedError;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -53,9 +54,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
@@ -291,7 +290,7 @@ public class AST2BaseTest extends BaseTestCase {
 	}
 	
     
-    static protected class CNameCollector extends CASTVisitor {
+    static protected class CNameCollector extends ASTVisitor {
         {
             shouldVisitNames = true;
         }
@@ -322,7 +321,7 @@ public class AST2BaseTest extends BaseTestCase {
         assertEquals(count, num);
     }
 
-    static protected class CPPNameCollector extends CPPASTVisitor {
+    static protected class CPPNameCollector extends ASTVisitor {
         {
             shouldVisitNames = true;
         }
@@ -402,7 +401,7 @@ public class AST2BaseTest extends BaseTestCase {
 		assertEquals(str, ASTTypeUtil.getParameterTypeString(fType));
 	}
 	
-	static protected class CNameResolver extends CASTVisitor {
+	static protected class CNameResolver extends ASTVisitor {
 		{
 			shouldVisitNames = true;
 		}
@@ -427,7 +426,7 @@ public class AST2BaseTest extends BaseTestCase {
 		public int size() { return nameList.size(); } 
 	}
 	
-	static protected class CPPNameResolver extends CPPASTVisitor {
+	static protected class CPPNameResolver extends ASTVisitor {
 		{
 			shouldVisitNames = true;
 		}

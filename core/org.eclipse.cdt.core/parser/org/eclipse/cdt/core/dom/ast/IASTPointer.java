@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,41 +18,40 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTPointer extends IASTPointerOperator {
 
-	// Qualifiers applied to the pointer type
 	/**
-	 * Is this a const pointer?
-	 * 
-	 * @return boolean
+	 * Returns whether the pointer is const qualified.
 	 */
 	public boolean isConst();
 
 	/**
-	 * Is this a volatile pointer?
-	 * 
-	 * @return boolean
+	 * Returns whether the pointer is volatile qualified.
 	 */
 	public boolean isVolatile();
 
 	/**
-	 * Set this to be a const pointer (true/false).
-	 * 
-	 * @param value -
-	 *            the value
+	 * Returns whether the pointer is restrict qualified.
+	 * @since 5.3
+	 */
+	public boolean isRestrict();
+	
+	/**
+	 * Not allowed on frozen ast.
 	 */
 	public void setConst(boolean value);
 
 	/**
-	 * Set this to be a volatile pointer (true/false).
-	 * 
-	 * @param value -
-	 *            the value
+	 * Not allowed on frozen ast.
 	 */
 	public void setVolatile(boolean value);
 	
+	/**
+	 * Not allowed on frozen ast.
+	 * @since 5.3
+	 */
+	public void setRestrict(boolean value);
 	
 	/**
 	 * @since 5.1
 	 */
 	public IASTPointer copy();
-
 }

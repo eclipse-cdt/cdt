@@ -107,8 +107,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.internal.core.dom.parser.NodeFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
@@ -422,7 +420,8 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return new CPPASTPointer();
 	}
 
-	public IGPPASTPointer newPointerGPP() {
+	@Deprecated
+	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer newPointerGPP() {
 		return new GPPASTPointer();
 	}
 
@@ -430,7 +429,8 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return new CPPASTPointerToMember(name);
 	}
 
-	public IGPPASTPointerToMember newPointerToMemberGPP(IASTName name) {
+	@Deprecated
+	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember newPointerToMemberGPP(IASTName name) {
 		return new GPPASTPointerToMember(name);
 	}
 

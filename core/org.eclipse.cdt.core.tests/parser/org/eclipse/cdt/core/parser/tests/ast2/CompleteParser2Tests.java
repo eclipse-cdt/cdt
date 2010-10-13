@@ -18,6 +18,7 @@ import java.util.List;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
@@ -52,8 +53,6 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -102,7 +101,7 @@ public class CompleteParser2Tests extends BaseTestCase {
     	return suite(CompleteParser2Tests.class);
     }
 
-	static private class CPPNameCollector extends CPPASTVisitor {
+	static private class CPPNameCollector extends ASTVisitor {
         {
             shouldVisitNames = true;
         }
@@ -119,7 +118,7 @@ public class CompleteParser2Tests extends BaseTestCase {
         }
         public int size() { return nameList.size(); } 
     }
-    static protected class CNameCollector extends CASTVisitor {
+    static protected class CNameCollector extends ASTVisitor {
         {
             shouldVisitNames = true;
         }

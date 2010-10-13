@@ -115,8 +115,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.parser.IExtensionToken;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
@@ -3393,24 +3391,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 
             IASTPointer pointer;
             if (name != null) {
-            	if (isRestrict) {
-            		IGPPASTPointerToMember gppp2m = nodeFactory.newPointerToMemberGPP(name);
-            		gppp2m.setRestrict(true);
-            		pointer= gppp2m;
-            	} else {
-            		pointer= nodeFactory.newPointerToMember(name);
-            	}
+            	pointer= nodeFactory.newPointerToMember(name);
             } else {
-            	if (isRestrict) {
-            		IGPPASTPointer gpppo = nodeFactory.newPointerGPP();
-            		gpppo.setRestrict(true);
-            		pointer= gpppo;
-            	} else {
-            		pointer = nodeFactory.newPointer();
-            	}
+            	pointer = nodeFactory.newPointer();
             }
             pointer.setConst(isConst);
             pointer.setVolatile(isVolatile);
+            pointer.setRestrict(isRestrict);
             setRange(pointer, startOffset, endOffset);
             if (result == null) {
             	result= new ArrayList<IASTPointerOperator>(4);

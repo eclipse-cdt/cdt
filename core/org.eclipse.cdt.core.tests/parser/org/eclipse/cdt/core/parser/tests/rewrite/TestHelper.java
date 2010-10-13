@@ -15,6 +15,6 @@ public class TestHelper {
 
 	public static String unifyNewLines(String code) {
 		String replacement = System.getProperty("line.separator"); //$NON-NLS-1$
-		return code.replaceAll("(\n)|(\r\n)", replacement); //$NON-NLS-1$
+		return code.replaceAll("(\n)|(\r\n)", replacement).trim(); //$NON-NLS-1$
 	}
 }

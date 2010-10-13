@@ -523,6 +523,15 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 		assertEquals("if (i > 0)\n    {\n    \n    }", tester.fDoc.get());
 	}
 
+	public void testCopyCommentPrefix_Bug327311() throws Exception {
+		AutoEditTester tester = createAutoEditTester();
+		tester.type("/*\n"); //$NON-NLS-1$
+		assertEquals(" * ", tester.getLine());
+		tester.backspace(); // delete space
+		tester.type("\tDemonstrate\n"); //$NON-NLS-1$
+		assertEquals(" *\t", tester.getLine());
+	}
+
 	private void assertNoError() {
 		if (!fStatusLog.isEmpty()) {
 			fail(fStatusLog.get(0).toString());

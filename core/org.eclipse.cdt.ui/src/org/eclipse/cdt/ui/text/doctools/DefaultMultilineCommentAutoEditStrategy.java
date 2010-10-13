@@ -376,11 +376,11 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	}
 	
 	/**
-	 * Returns the range of the java-doc prefix on the given line in
+	 * Returns the range of the comment prefix on the given line in
 	 * <code>document</code>. The prefix greedily matches the following regex
-	 * pattern: <code>\w*\*\w*</code>, that is, any number of whitespace
+	 * pattern: <code>\s*\*\S*\s*</code>, that is, any number of whitespace
 	 * characters, followed by an asterisk ('*'), followed by any number of
-	 * whitespace characters.
+	 * non-whitespace characters, followed by any number of whitespace characters.
 	 *
 	 * @param document the document to which <code>line</code> refers
 	 * @param line the line from which to extract the prefix range
@@ -394,14 +394,18 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 		int indentEnd= findEndOfWhiteSpaceAt(document, lineOffset, lineEnd);
 		if (indentEnd < lineEnd && document.getChar(indentEnd) == '*') {
 			indentEnd++;
-			while (indentEnd < lineEnd && document.getChar(indentEnd) != ' ')
+			while (indentEnd < lineEnd && !isWhitespace(document.getChar(indentEnd)))
 				indentEnd++;
-			while (indentEnd < lineEnd && document.getChar(indentEnd) == ' ')
+			while (indentEnd < lineEnd && isWhitespace(document.getChar(indentEnd)))
 				indentEnd++;
 		}
 		return new Region(lineOffset, indentEnd - lineOffset);
 	}
 	
+	private static boolean isWhitespace(char ch) {
+		return ch == ' ' || ch == '\t';
+	}
+
 	/**
 	 * Returns whether the text ends with one of the specified IDocument object's
 	 * legal line delimiters.

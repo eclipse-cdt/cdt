@@ -2034,6 +2034,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		assert isGuiThread();
 		if (fActive) {
 			gotoFrame(frame);
+		} else {
+			// this will trigger an update in #setActive()
+			fTargetFrame = -1;
 		}
 	}
 

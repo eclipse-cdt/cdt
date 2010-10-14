@@ -1366,4 +1366,32 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//void extend_terminal_bond_to_label(vector<atom_t> &atom, const vector<letters_t> &letters, int n_letters, const vector<bond_t> &bond, int n_bond, const vector<label_t> &label, int n_label, double avg, double maxh, double max_dist_double_bond);
+	
+	//void extend_terminal_bond_to_label(vector<atom_t> &atom, const vector<letters_t> &letters, int n_letters,
+	//                                   const vector<bond_t> &bond, int n_bond, const vector<label_t> &label, int n_label,
+	//                                   double avg, double maxh, double max_dist_double_bond);
+	public void testWrappingOfTemplateIdAsParameterType_Bug325783() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_LINE_SPLIT, "120");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
+	//void extend_terminal_bond_to_label(vector<atom_t> &atom, const vector<letters_t> &letters, int n_letters, const vector<bond_t> &bond, int n_bond, const vector<label_t> &label, int n_label, double avg, double maxh, double max_dist_double_bond);
+	
+	//void extend_terminal_bond_to_label(vector<atom_t> &atom,
+	//                                   const vector<letters_t> &letters,
+	//                                   int n_letters, const vector<bond_t> &bond,
+	//                                   int n_bond, const vector<label_t> &label,
+	//                                   int n_label, double avg, double maxh,
+	//                                   double max_dist_double_bond);
+	public void testWrappingOfTemplateIdAsParameterType_Bug325783_2() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_LINE_SPLIT, "80");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
 }

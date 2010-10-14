@@ -173,6 +173,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		public boolean fSpaceBetweenEmptyParen;
 		public boolean fSpaceBeforeOpeningParen;
 		public int fContinuationIndentation= -1;
+		public int fTieBreakRule = Alignment.R_INNERMOST;
 		public ListAlignment(int mode) {
 			fMode= mode;
 		}
@@ -1013,6 +1014,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				scribe.startNewLine();
 				scribe.indent();
 				final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
+				align.fTieBreakRule = Alignment.R_OUTERMOST;
 				formatList(Arrays.asList(constructorChain), align, false, false);
 				scribe.unIndent();
 			}
@@ -1135,6 +1137,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		align.fSpaceBetweenEmptyParen= preferences.insert_space_between_empty_parens_in_method_declaration;
 		align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_method_declaration_parameters;
 		align.fSpaceAfterComma= preferences.insert_space_after_comma_in_method_declaration_parameters;
+		align.fTieBreakRule = Alignment.R_OUTERMOST;
 		formatList(parameters, align, true, node.takesVarArgs());
 
 		return PROCESS_SKIP;
@@ -1655,6 +1658,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			Alignment listAlignment = scribe.createAlignment(
 					"listElements_"+align, //$NON-NLS-1$
 					align.fMode,
+					align.fTieBreakRule,
 					elementsLength + (addEllipsis ? 1 : 0),
 					scribe.scanner.getCurrentPosition(),
 					continuationIndentation,

@@ -18,6 +18,7 @@ import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils
 import java.math.BigInteger;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
@@ -97,11 +98,43 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 		DsfSession.removeSessionEndedListener(this);
 	}
 
-	public static boolean supportsDebugContext_(IAdaptable context) {
-		return context.getAdapter(IDMVMContext.class) != null;
-	}
-	
-	/* (non-Javadoc)
+    public static boolean supportsDebugContext_(IAdaptable context) {
+        IDMVMContext dmvmContext = (IDMVMContext) context.getAdapter(IDMVMContext.class);
+        return dmvmContext != null && hasDisassemblyService(dmvmContext.getDMContext());
+    }
+    
+    private static boolean hasDisassemblyService(final IDMContext dmContext) {
+        DsfSession session = DsfSession.getSession(dmContext.getSessionId());
+        if (session == null || !session.isActive()) {
+            return false;
+        }
+        if (session.getExecutor().isInExecutorThread()) {
+            DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());
+            IDisassembly disassSvc = tracker.getService(IDisassembly.class);
+            tracker.dispose();
+            return disassSvc != null;
+        }
+        Query<Boolean> query = new Query<Boolean>() {
+            @Override
+            protected void execute(DataRequestMonitor<Boolean> rm) {
+                try {
+                    rm.setData(hasDisassemblyService(dmContext));
+                } finally {
+                    rm.done();
+                }
+            }
+        };
+        try {
+            session.getExecutor().execute(query);
+            Boolean result = query.get(1, TimeUnit.SECONDS);
+            return result != null && result.booleanValue();
+        } catch (Exception exc) {
+            // ignored on purpose
+        }
+        return false;
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#supportsDebugContext(org.eclipse.core.runtime.IAdaptable)
 	 */
 	public boolean supportsDebugContext(IAdaptable context) {

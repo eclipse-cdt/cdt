@@ -18,6 +18,7 @@ import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils
 import java.math.BigInteger;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
@@ -33,23 +34,23 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.internal.provisional.service.IInstructionWithSize;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly;
+import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IInstruction;
 import org.eclipse.cdt.dsf.debug.service.IMixedInstruction;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
-import org.eclipse.cdt.dsf.debug.service.IStack;
-import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
-import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
-import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
+import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
@@ -98,9 +99,41 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 	}
 
 	public static boolean supportsDebugContext_(IAdaptable context) {
-		return context.getAdapter(IDMVMContext.class) != null;
+		IDMVMContext dmvmContext = (IDMVMContext) context.getAdapter(IDMVMContext.class);
+		return dmvmContext != null && hasDisassemblyService(dmvmContext.getDMContext());
 	}
 	
+	private static boolean hasDisassemblyService(final IDMContext dmContext) {
+		DsfSession session = DsfSession.getSession(dmContext.getSessionId());
+		if (session == null || !session.isActive()) {
+			return false;
+		}
+		if (session.getExecutor().isInExecutorThread()) {
+			DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());
+			IDisassembly disassSvc = tracker.getService(IDisassembly.class);
+			tracker.dispose();
+			return disassSvc != null;
+		}
+		Query<Boolean> query = new Query<Boolean>() {
+			@Override
+			protected void execute(DataRequestMonitor<Boolean> rm) {
+				try {
+					rm.setData(hasDisassemblyService(dmContext));
+				} finally {
+					rm.done();
+				}
+			}
+		};
+		try {
+			session.getExecutor().execute(query);
+			Boolean result = query.get(1, TimeUnit.SECONDS);
+			return result != null && result.booleanValue();
+		} catch (Exception exc) {
+			// ignored on purpose
+		}
+		return false;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#supportsDebugContext(org.eclipse.core.runtime.IAdaptable)
 	 */

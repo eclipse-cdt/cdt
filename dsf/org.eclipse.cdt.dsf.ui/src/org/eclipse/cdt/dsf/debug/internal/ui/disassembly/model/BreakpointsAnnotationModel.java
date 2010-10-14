@@ -9,7 +9,6 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - bug 300053
  *******************************************************************************/
-
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model;
 
 import java.math.BigInteger;
@@ -152,7 +151,7 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 		IBreakpointLocationProvider locationProvider = (IBreakpointLocationProvider) breakpoint.getAdapter(IBreakpointLocationProvider.class);
 			
 		/* if there is a location provider, than use the provider to retrieve the location */
-		if (locationProvider != null) {						
+		if (locationProvider != null) {
 
 			/* if there is source info, than create a source line position */
 			String sourceFile = locationProvider.getSourceFile(breakpoint);
@@ -167,7 +166,7 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 					return createPositionFromLabel(labelAddress.getValue());
 				
 				/* Otherwise, create an address position */
-				} else {				
+				} else {
 				
 					// Discussion with Anton - comment #5 (Bug 300053)
 					//
@@ -206,9 +205,7 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 					}
 				} else {
 					String fileName= marker.getAttribute(ICLineBreakpoint.SOURCE_HANDLE, null);
-					if (fileName != null) {
-						position= createPositionFromSourceLine(fileName, lineNumber);
-					}
+					position= createPositionFromSourceLine(fileName, lineNumber);
 				}
 				return position;
 			}
@@ -218,7 +215,10 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 	}
 
 	private Position createPositionFromSourceLine(String fileName, int lineNumber) {
-		return getDisassemblyDocument().getSourcePosition(fileName, lineNumber);
+		if (fileName != null) {
+			return getDisassemblyDocument().getSourcePosition(fileName, lineNumber);
+		}
+		return null;
 	}
 
 	private Position createPositionFromSourceLine(IFile file, int lineNumber) {
@@ -258,15 +258,17 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 	 * @return address value as <code>BigInteger</code> or <code>null</code> in case of a <code>NumberFormatException</code>
 	 */
 	private static BigInteger decodeAddress(String string) {
-		try {
-			if (string.startsWith("0x")) { //$NON-NLS-1$
-				return new BigInteger(string.substring(2), 16);
+		if (string != null) {
+			try {
+				if (string.startsWith("0x")) { //$NON-NLS-1$
+					return new BigInteger(string.substring(2), 16);
+				}
+				if (string.length() > 0) {
+					return new BigInteger(string);
+				}
+			} catch (NumberFormatException nfe) {
+				// don't propagate
 			}
-			if (string.length() > 0) {
-				return new BigInteger(string);
-			}
-		} catch (NumberFormatException nfe) {
-			// don't propagate
 		}
 		return null;
 	}

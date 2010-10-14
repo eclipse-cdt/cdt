@@ -22,14 +22,10 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
-import org.eclipse.cdt.internal.core.dom.parser.c.CVariableReadWriteFlags;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 import org.eclipse.cdt.internal.ui.util.Messages;
 
@@ -174,15 +170,9 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 				final int length= fileLocation.getNodeLength();
 				if (offset >= 0 && length > 0) {
 					if (binding instanceof IVariable) {
-						boolean isWrite;
-						if (binding instanceof ICPPVariable) {
-							isWrite = ((CPPVariableReadWriteFlags.getReadWriteFlags(node) & PDOMName.WRITE_ACCESS) != 0);
-						}
-						else { 
-							isWrite = ((CVariableReadWriteFlags.getReadWriteFlags(node) & PDOMName.WRITE_ACCESS) != 0);
-						}
-						int flag = isWrite ? F_WRITE_OCCURRENCE : F_READ_OCCURRENCE;
-						String description = isWrite ? fWriteDescription : fReadDescription;
+						final boolean isWriteOccurrence = CSearchUtil.isWriteOccurrence(node, binding);
+						int flag = isWriteOccurrence ? F_WRITE_OCCURRENCE : F_READ_OCCURRENCE;
+						String description = isWriteOccurrence ? fWriteDescription : fReadDescription;
 						fResult.add(new OccurrenceLocation(offset, length, flag, description));
 					}
 					else {

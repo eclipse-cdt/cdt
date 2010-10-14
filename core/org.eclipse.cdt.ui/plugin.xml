@@ -569,6 +569,12 @@
             label="%Dummy.label"
             value="206, 204, 247">
       </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.ColoredLabels.writeaccess_highlight"
+            isEditable="false"
+            label="%Dummy.label"
+            value="240, 216, 168">
+      </colorDefinition>
       <theme
          id="org.eclipse.ui.ide.systemDefault">
          <colorOverride

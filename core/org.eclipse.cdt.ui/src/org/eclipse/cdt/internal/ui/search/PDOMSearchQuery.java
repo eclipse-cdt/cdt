@@ -45,7 +45,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -200,10 +202,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		if (names == null)
 			return;
 
-		ICProject preferred= null;
-		if (projects != null && projects.length == 1) {
-			preferred= projects[0];
-		}
+		ICProject preferred = getPreferredProject();
 		for (IIndexName name : names) {
 			if (!filterName(name)) {
 				if (!isPolymorphicOnly || name.couldBePolymorphicMethodCall()) {
@@ -221,7 +220,8 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 					if (enclosingDefinition != null) {
 						enclosingElement = IndexUI.getCElementForName(preferred, index, enclosingDefinition);
 					}
-					matches.add(new Match(nodeOffset, nodeLength, isPolymorphicOnly, enclosingElement));
+					boolean isWriteAccess = name.isWriteAccess();
+					matches.add(new Match(nodeOffset, nodeLength, isPolymorphicOnly, enclosingElement, isWriteAccess));
 				}
 			}
 
@@ -241,7 +241,8 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 				int length = region.getLength();
 				boolean isPolymorphicCall = match.isPolymorphicCall();
 				ICElement enclosingElement = match.getEnclosingElement();
-				convertedMatches.add(new Match(offset, length, isPolymorphicCall, enclosingElement));
+				boolean isWriteAccess = match.isWriteAccess();
+				convertedMatches.add(new Match(offset, length, isPolymorphicCall, enclosingElement, isWriteAccess));
 			}
 			matches = convertedMatches;
 		}
@@ -354,7 +355,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		names.addAll(Arrays.asList(bindingNames));
 	}
 
-	protected void createLocalMatches(IASTTranslationUnit ast, IBinding binding) {
+	protected void createLocalMatches(IASTTranslationUnit ast, IBinding binding) throws CoreException {
 		if (binding != null) {
 			Set<IASTName> names= new HashSet<IASTName>();
 			names.addAll(Arrays.asList(ast.getDeclarationsInAST(binding)));
@@ -371,7 +372,17 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 					if (typeInfo != null) {
 						ITypeReference ref= typeInfo.getResolvedReference();
 						if (ref != null) {
-							localMatches.add(new Match(ref.getOffset(), ref.getLength(), false, null));
+							ICElement element = null;
+							IASTNode node = name;
+							while (node != null && !(node instanceof IASTFunctionDefinition)) {
+								node= node.getParent();
+							}
+							if (node != null) {
+								IASTFunctionDefinition definition = (IASTFunctionDefinition) node;
+								element = IndexUI.getCElementForName(getPreferredProject(), ast.getIndex(), definition.getDeclarator().getName());
+							}
+							boolean isWrite = CSearchUtil.isWriteOccurrence(name, binding);
+							localMatches.add(new Match(ref.getOffset(), ref.getLength(), false, element , isWrite));
 							fileLocation = typeInfo.getIFL();
 						}
 					}
@@ -416,6 +427,14 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 				}
 			}
 		}
+	}
+
+	private ICProject getPreferredProject() {
+		ICProject preferred= null;
+		if (projects != null && projects.length == 1) {
+			preferred= projects[0];
+		}
+		return preferred;
 	}
 
 	public final IStatus run(IProgressMonitor monitor) throws OperationCanceledException {

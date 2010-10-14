@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
@@ -169,7 +170,8 @@ public class PDOMSearchLabelProvider extends LabelProvider implements IStyledLab
 		for (Match match : lineElement.getMatches()) {
 			int offset = Math.max(0, match.getOffset() - lineOffset);
 			int length = Math.min(match.getLength(), lineContent.length() - offset);
-			styled.setStyle(offset, length, ColoringLabelProvider.HIGHLIGHT_STYLE);
+			Styler style = match.isWriteAccess() ? ColoringLabelProvider.HIGHLIGHT_WRITE_STYLE : ColoringLabelProvider.HIGHLIGHT_STYLE;
+			styled.setStyle(offset, length, style);
 		}
 		return styled;
 	}

@@ -37,12 +37,14 @@ public class LineSearchElement extends PDOMSearchElement {
 		private final int fLength;
 		private final boolean fIsPolymorphicCall;
 		private final ICElement fEnclosingElement;
+		private final boolean fIsWriteAccess;
 
-		public Match(int offset, int length, boolean isPolymorphicCall, ICElement enclosingElement) {
+		public Match(int offset, int length, boolean isPolymorphicCall, ICElement enclosingElement, boolean isWriteAccess) {
 			fOffset = offset;
 			fLength = length;
 			fIsPolymorphicCall = isPolymorphicCall;
 			fEnclosingElement = enclosingElement;
+			fIsWriteAccess = isWriteAccess;
 		}
 
 		public int getOffset() {
@@ -61,6 +63,10 @@ public class LineSearchElement extends PDOMSearchElement {
 			return fEnclosingElement;
 		}
 
+		public boolean isWriteAccess() {
+			return fIsWriteAccess;
+		}
+		
 		@Override
 		public boolean equals(Object obj) {
 			if (!(obj instanceof Match))

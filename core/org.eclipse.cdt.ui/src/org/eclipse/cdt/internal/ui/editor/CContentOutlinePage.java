@@ -222,9 +222,14 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 	protected void registerActionBars(IActionBars actionBars) {
 		super.registerActionBars(actionBars);
 		IMenuManager menu= actionBars.getMenuManager();
-		
-		menu.appendToGroup("group.layout", new MemberGroupingAction(this)); //$NON-NLS-1$
-		menu.appendToGroup("group.layout", new NamespaceGroupingAction(this)); //$NON-NLS-1$
+
+		// appendToGroup does not work reliably (bug 326748)
+//		menu.appendToGroup("group.layout", new MemberGroupingAction(this)); //$NON-NLS-1$
+//		menu.appendToGroup("group.layout", new NamespaceGroupingAction(this)); //$NON-NLS-1$
+
+		// add actions directly instead
+		menu.add(new MemberGroupingAction(this));
+		menu.add(new NamespaceGroupingAction(this));
 	}
 
 }

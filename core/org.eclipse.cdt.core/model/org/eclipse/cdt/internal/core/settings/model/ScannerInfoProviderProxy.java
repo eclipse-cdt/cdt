@@ -112,6 +112,7 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements
 		notifyInfoListeners(rc, info);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected Object createDefaultProvider(ICConfigurationDescription des, boolean newStile){
 		if(newStile)

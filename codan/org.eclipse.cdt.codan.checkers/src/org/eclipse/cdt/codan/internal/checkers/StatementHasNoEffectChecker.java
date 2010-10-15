@@ -19,15 +19,15 @@ import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
 
 /**
  * Checker that detects statements without effect such as
@@ -52,6 +52,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 			shouldVisitStatements = true;
 		}
 
+		@Override
 		public int visit(IASTStatement stmt) {
 			if (stmt instanceof IASTExpressionStatement) {
 				IASTExpression expression = ((IASTExpressionStatement) stmt)
@@ -126,6 +127,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		}
 	}
 
+	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
 		addPreference(problem, PARAM_MACRO_ID,
@@ -146,8 +148,8 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 	public boolean isFilteredArg(String arg) {
 		Object[] arr = (Object[]) getPreference(
 				getProblemById(ER_ID, getFile()), PARAM_EXCEPT_ARG_LIST);
-		for (int i = 0; i < arr.length; i++) {
-			String str = (String) arr[i];
+		for (Object element : arr) {
+			String str = (String) element;
 			if (arg.equals(str))
 				return true;
 		}
@@ -162,7 +164,6 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 				PARAM_MACRO_ID);
 	}
 
-	@SuppressWarnings("restriction")
 	public boolean isPossibleAssignment(IASTBinaryExpression expr) {
 		switch (expr.getOperator()) {
 			case IASTBinaryExpression.op_assign:
@@ -178,14 +179,12 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 			case IASTBinaryExpression.op_shiftRightAssign:
 				return true;
 		}
-		if (expr instanceof CPPASTBinaryExpression) {
-			// unfortunately ICPPASTBinaryExpression does not have
-			// getOverload public method
-			CPPASTBinaryExpression cppBin = (CPPASTBinaryExpression) expr;
-			ICPPFunction overload = cppBin.getOverload();
-			if (overload != null)
+		if (expr instanceof IASTImplicitNameOwner) {
+			// Check whether the operator is overloaded
+			IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) expr).getImplicitNames();
+			if (implicitNames.length > 0)
 				return true;
-			IType expressionType = cppBin.getOperand1().getExpressionType();
+			IType expressionType = expr.getOperand1().getExpressionType();
 			if (!(expressionType instanceof IBasicType)) {
 				return true; // must be overloaded but parser could not
 				// find it

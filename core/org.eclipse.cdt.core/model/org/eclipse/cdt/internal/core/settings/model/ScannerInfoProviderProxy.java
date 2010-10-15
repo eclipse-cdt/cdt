@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.core.resources.ScannerProvider;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -117,7 +116,7 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements
 	protected Object createDefaultProvider(ICConfigurationDescription des, boolean newStile){
 		if(newStile)
 			return new DescriptionScannerInfoProvider(getProject());
-		return ScannerProvider.getInstance();
+		return org.eclipse.cdt.core.resources.ScannerProvider.getInstance();
 	}
 
 	@Override

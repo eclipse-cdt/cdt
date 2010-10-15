@@ -29,14 +29,22 @@ import org.eclipse.cdt.core.model.IMacroFileEntry;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.internal.core.model.PathEntryManager;
+import org.eclipse.cdt.internal.core.settings.model.ScannerInfoProviderProxy;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
 /**
+ * Provides scanner information from {@link PathEntryManager}.
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
+ * 
+ * @deprecated Since CDT 4.0 replaced by {@link ScannerInfoProviderProxy}. Still
+ *     used as a default for projects created by earlier CDT versions.
  */
+@Deprecated
 public class ScannerProvider extends AbstractCExtension implements IScannerInfoProvider, IElementChangedListener {
 
 	// Listeners interested in build model changes

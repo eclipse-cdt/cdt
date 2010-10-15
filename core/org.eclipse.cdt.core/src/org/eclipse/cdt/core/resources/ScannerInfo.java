@@ -15,6 +15,15 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 
+/**
+ * #@noextend This class is not intended to be subclassed by clients.
+ * #@noinstantiate This class is not intended to be instantiated by clients. Note
+ *     that protected constructor won't allow to instantiate this class
+ *     outside the package anyway, so it is not really API.
+ * 
+ * @deprecated Since CDT 4.0 not used for the "new style" projects.
+ */
+@Deprecated
 public class ScannerInfo implements IExtendedScannerInfo {
 
 	private final Map<String, String> fMacroMap;

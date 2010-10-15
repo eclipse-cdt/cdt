@@ -38,6 +38,18 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 		this.includeFiles = includeFiles;
 	}
 
+	/**
+	 * @since 5.3
+	 */
+	public ExtendedScannerInfo(Map<String, String> definedSymbols, String[] includePaths,
+			String[] macroFiles, String[] includeFiles, String[] localIncludePaths) {
+		
+		super(definedSymbols, includePaths);
+		this.macroFiles = macroFiles;
+		this.includeFiles = includeFiles;
+		this.localIncludePaths = localIncludePaths;
+	}
+
 	public ExtendedScannerInfo(IScannerInfo info) {
 		super(info.getDefinedSymbols(), info.getIncludePaths());
 		if (info instanceof IExtendedScannerInfo) {

@@ -1487,7 +1487,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					
 					StepBuilder stepBuilder = new StepBuilder(step, null);
 					
-					int status = stepBuilder.build(consoleOutStream, epmOutputStream, new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+					int status = stepBuilder.build(epmOutputStream, epmOutputStream, new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 					
 					// Refresh the output resource without allowing the user to cancel. 
 					// This is probably unkind, but short of this there is no way to ensure 

@@ -31,7 +31,7 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 * @see org.eclipse.cdt.core.settings.model.ICLanguageSetting#getLanguageId()
 	 */
 	public String getLanguageId() {
-		return null; // IDs are different.
+		return items[0].getLanguageId(); // Assuming language is the same.
 	}
 
 	/* (non-Javadoc)

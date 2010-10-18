@@ -44,6 +44,9 @@ public class CxxModelsCache {
 		IControlFlowGraph cfg = cfgmap.get(func);
 		if (cfg!=null) return cfg;
 		cfg = CxxControlFlowGraph.build(func);
+		if (cfgmap.size()>20) { // if too many function better drop the cash XXX should be LRU
+			cfgmap.clear();
+		}
 		cfgmap.put(func, cfg);
 		return cfg;
 	}
@@ -53,11 +56,11 @@ public class CxxModelsCache {
 			return ast;
 		}
 
-		cfgmap.clear();
 		// create translation unit and access index
 		ICElement celement = CoreModel.getDefault().create(file);
 		if (!(celement instanceof ITranslationUnit))
 			return null; // not a C/C++ file
+		clearCash();
 		this.file = file;
 		//System.err.println("Making ast for "+file);
 		tu = (ITranslationUnit) celement;
@@ -73,6 +76,16 @@ public class CxxModelsCache {
 		} finally {
 			index.releaseReadLock();
 		}
+	}
+
+	/**
+	 * Clear cash for current file
+	 */
+	public void clearCash() {
+		cfgmap.clear();
+		ast = null;
+		tu = null;
+		index = null;
 	}
 
 	public synchronized IIndex getIndex(IFile file)

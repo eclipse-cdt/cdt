@@ -121,6 +121,7 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 	@SuppressWarnings("restriction")
 	public synchronized void processModel(Object model) {
 		if (model instanceof IASTTranslationUnit) {
+			 CxxModelsCache.getInstance().clearCash();
 			IASTTranslationUnit ast = (IASTTranslationUnit) model;
 			IPath location = new Path(ast.getFilePath());
 			IFile astFile = ResourceLookup.selectFileForLocation(location,

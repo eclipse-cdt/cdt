@@ -21,6 +21,7 @@ import org.eclipse.cdt.codan.core.internal.checkers.ReturnCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.ReturnStyleCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.StatementHasNoEffectCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.SuggestedParenthesisCheckerTest;
+import org.eclipse.cdt.codan.core.internal.checkers.SuspiciousSemicolonCheckerTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.SuggestedParenthesisQuickFixTest;
 
 public class AutomatedIntegrationSuite extends TestSuite {
@@ -49,6 +50,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(AssignmentInConditionCheckerTest.class);
 		suite.addTestSuite(AssignmentToItselfCheckerTest.class);
 		suite.addTestSuite(ReturnStyleCheckerTest.class);
+		suite.addTestSuite(SuspiciousSemicolonCheckerTest.class);
 		// framework
 		suite.addTest(CodanFastTestSuite.suite());
 		// quick fixes

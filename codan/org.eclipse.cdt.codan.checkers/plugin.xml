@@ -278,7 +278,7 @@
               name="%problem.name.AssignmentToItself">
 		      	</problem>
 		     </checker>
-             <checker
+		     <checker
                 class="org.eclipse.cdt.codan.internal.checkers.ReturnStyleChecker"
                 id="org.eclipse.cdt.codan.internal.checkers.ReturnStyle"
 	            name="%checker.name.ReturnStyle">
@@ -291,6 +291,20 @@
                    messagePattern="%problem.messagePattern.ReturnStyle"
                    name="%problem.name.ReturnStyle">
              </problem>
-      </checker>
+             </checker>
+             <checker
+                   class="org.eclipse.cdt.codan.internal.checkers.SuspiciousSemicolonChecker"
+                   id="org.eclipse.cdt.codan.internal.checkers.SuspiciousSemicolon"
+                   name="%checker.name.SuspiciousSemicolon">
+                <problem
+                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      defaultEnabled="true"
+                      defaultSeverity="Warning"
+                      description="%problem.description.SuspiciousSemicolon"
+                      id="org.eclipse.cdt.codan.internal.checkers.SuspiciousSemicolonProblem"
+                      messagePattern="%problem.messagePattern.SuspiciousSemicolon"
+                      name="%problem.name.SuspiciousSemicolon">
+                </problem>
+             </checker>
    </extension>
 </plugin>

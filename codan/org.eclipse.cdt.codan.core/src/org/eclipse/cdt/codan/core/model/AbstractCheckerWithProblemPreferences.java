@@ -220,4 +220,23 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 		return ((MapProblemPreference) problem.getPreference())
 				.getChildValue(key);
 	}
+
+	/**
+	 * @param arg - actual problem argument
+	 * @param problem - problem kind
+	 * @param exceptionListParamId - parameter id of the parameter representing
+	 *        exception list for the given argumnet
+	 * @return true if argument matches of the names in the exception list
+	 * @since 2.0
+	 */
+	public boolean isFilteredArg(String arg, IProblem problem,
+			String exceptionListParamId) {
+		Object[] arr = (Object[]) getPreference(problem, exceptionListParamId);
+		for (int i = 0; i < arr.length; i++) {
+			String str = (String) arr[i];
+			if (arg.equals(str))
+				return true;
+		}
+		return false;
+	}
 }

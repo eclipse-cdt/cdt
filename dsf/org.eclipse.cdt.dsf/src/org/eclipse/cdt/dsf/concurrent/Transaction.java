@@ -122,7 +122,7 @@ public abstract class Transaction<V> {
 	 * @throws CoreException
 	 *             if an error was encountered getting the data from the source
 	 */
-    protected void validate(RequestCache<?> cache) throws InvalidCacheException, CoreException {
+    protected void validate(ICache<?> cache) throws InvalidCacheException, CoreException {
         if (cache.isValid()) {
             if (!cache.getStatus().isOK()) {
                 throw new CoreException(cache.getStatus());
@@ -141,15 +141,22 @@ public abstract class Transaction<V> {
         }
     }
 
+    /**
+     * See {@link #validate(RequestCache)}. This variant simply validates
+     * multiple cache objects.
+     */
+    protected void validate(RequestCache<?> ... caches) throws InvalidCacheException, CoreException {
+    }
+    
 	/**
 	 * See {@link #validate(RequestCache)}. This variant simply validates
 	 * multiple cache objects.
 	 */
-    protected void validate(RequestCache<?> ... caches) throws InvalidCacheException, CoreException {
+    protected void validate(Iterable<ICache<?>> caches) throws InvalidCacheException, CoreException {
         // Check if any of the caches have errors:
         boolean allValid = true;
         
-        for (RequestCache<?> cache : caches) {
+        for (ICache<?> cache : caches) {
             if (cache.isValid()) {
                 if (!cache.getStatus().isOK()) {
                     throw new CoreException(cache.getStatus());
@@ -169,7 +176,7 @@ public abstract class Transaction<V> {
                 }
             };
             int count = 0;
-            for (RequestCache<?> cache : caches) {
+            for (ICache<?> cache : caches) {
                 if (!cache.isValid()) {
                     cache.wait(countringRm);
                     count++;

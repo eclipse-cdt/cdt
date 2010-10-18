@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.Status;
  * This cache requires an executor to use.  The executor is used to synchronize 
  * access to the cache state and data.   
  * </p>
- * @since 2.1 
+ * @since 2.2
  */ 
 @ConfinedToDsfExecutor("fExecutor") 
 public abstract class RequestCache<V> extends AbstractCache<V> { 
@@ -36,21 +36,15 @@ public abstract class RequestCache<V> extends AbstractCache<V> {
         super(executor);
     }
     
-    /** 
-     * Sub-classes should override this method to retrieve the cache data 
-     * from its source. 
-     * 
-     * @param rm Request monitor for completion of data retrieval.
-     */ 
     @Override
-    protected void retrieve() {
+    protected final void retrieve() {
         // Make sure to cancel the previous rm.  This may lead to the rm being 
         // canceled twice, but that's not harmful.
         if (fRm != null) {
             fRm.cancel();
         }
         
-        fRm = new DataRequestMonitor<V>(getExecutor(), null) {
+        fRm = new DataRequestMonitor<V>(getImmediateInDsfExecutor(), null) {
             
             private IStatus fRawStatus = Status.OK_STATUS;
             
@@ -95,7 +89,7 @@ public abstract class RequestCache<V> extends AbstractCache<V> {
     }    
 
     @Override
-    public void reset(V data, IStatus status) { 
+    protected void reset(V data, IStatus status) { 
         if (fRm != null) { 
             fRm.cancel(); 
             fRm = null; 
@@ -104,7 +98,7 @@ public abstract class RequestCache<V> extends AbstractCache<V> {
     } 
 
     @Override
-    public void disable() {
+    protected void disable() {
         if (fRm != null) { 
             fRm.cancel(); 
             fRm = null; 
@@ -113,7 +107,7 @@ public abstract class RequestCache<V> extends AbstractCache<V> {
     }
 
     @Override
-    public void set(V data, IStatus status) {
+    protected void set(V data, IStatus status) {
         if (fRm != null) { 
             fRm.cancel(); 
             fRm = null; 

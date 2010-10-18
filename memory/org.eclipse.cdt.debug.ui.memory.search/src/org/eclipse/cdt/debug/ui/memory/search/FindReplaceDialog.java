@@ -707,6 +707,7 @@ public class FindReplaceDialog extends SelectionDialog
 		fCaseInSensitiveCheckbox = new Button(optionsGroup, SWT.CHECK);
 		fCaseInSensitiveCheckbox.setText(Messages.getString("FindReplaceDialog.ButtonCaseInsensitive")); //$NON-NLS-1$
 		fCaseInSensitiveCheckbox.setEnabled(format.equals(SEARCH_FORMAT_ASCII));
+		fCaseInSensitiveCheckbox.setSelection(Boolean.parseBoolean(fProperties.getProperty(SEARCH_FORMAT_CASEINSENSTIVE, Boolean.FALSE.toString())));
 		
 		fFormatAsciiButton.addSelectionListener(new SelectionListener()
 		{

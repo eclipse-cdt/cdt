@@ -14,6 +14,7 @@
           menubarPath="additions">
     </action>
  </viewContribution>
+ 
  <viewContribution
        id="org.eclipse.debug.ui.MemoryView.findReplace"
        targetID="org.eclipse.debug.ui.MemoryView">
@@ -39,6 +40,7 @@
           menubarPath="additions">
     </action>
  </viewContribution>
+ 
  <viewContribution
        id="org.eclipse.debug.ui.MemoryView.findReplace"
        targetID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser">
@@ -55,13 +57,30 @@
 </extension>
 
  <extension point="org.eclipse.search.searchResultViewPages">
-	<viewPage
-       	class="org.eclipse.cdt.debug.ui.memory.search.MemorySearchResultsPage"
-       	icon="icons/full/obj16/tsearch_dpdn_obj.gif"
-       	id="org.eclipse.cdt.debug.ui.memory.search.MemorySearchResultsPage"
-       	label="Memory Search Results"
-       	searchResultClass="org.eclipse.cdt.debug.ui.memory.search.MemorySearchResult">
-	</viewPage>
+    <viewPage
+        class="org.eclipse.cdt.debug.ui.memory.search.MemorySearchResultsPage"
+        icon="icons/full/obj16/tsearch_dpdn_obj.gif"
+        id="org.eclipse.cdt.debug.ui.memory.search.MemorySearchResultsPage"
+        label="Memory Search Results"
+        searchResultClass="org.eclipse.cdt.debug.ui.memory.search.MemorySearchResult">
+    </viewPage>
+</extension>
+
+<extension point="org.eclipse.ui.handlers">
+    <handler
+        commandId="org.eclipse.ui.edit.findReplace"
+        class="org.eclipse.cdt.debug.ui.memory.search.FindReplaceHandler">
+        <activeWhen>
+            <or>
+                <with variable="activePartId">
+                    <equals value="org.eclipse.debug.ui.MemoryView"/>
+                </with>
+                <with variable="activePartId">
+                    <equals value="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"/>
+                </with>
+            </or>
+        </activeWhen>
+    </handler>
 </extension>
 
 </plugin>

@@ -33,6 +33,8 @@ public class FindAction implements IViewActionDelegate {
 	
 	private static Properties fSearchDialogProperties = new Properties();
 
+	public static Properties getProperties() { return fSearchDialogProperties; }
+	
 	public void init(IViewPart view) {
 		if (view instanceof IMemoryRenderingSite)
 			fView = (IMemoryRenderingSite) view;

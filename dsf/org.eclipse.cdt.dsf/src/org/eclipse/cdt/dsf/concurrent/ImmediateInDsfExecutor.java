@@ -12,8 +12,11 @@ package org.eclipse.cdt.dsf.concurrent;
 
 import java.util.concurrent.Executor;
 
-
 /**
+ * An executor that behaves like ImmediateExecutor when the runnable is
+ * submitted from a particular executor, otherwise it forwards the runnable to
+ * that executor.
+ * 
  * @since 2.2
  * 
  */

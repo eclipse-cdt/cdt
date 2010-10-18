@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  * David McKnight    (IBM)  - [232004] [dstore][multithread] some miner finish() is not terminated sometimes
+ * David McKnight    (IBM)  - [328060] [dstore] command queue in Miner should be synchronized
  *******************************************************************************/
 
 package org.eclipse.dstore.core.miners;
@@ -216,7 +217,11 @@ implements ISchemaExtender
 		{
 			try
 			{
-				DataElement cmd = (DataElement)_commandQueue.remove(0);
+				DataElement cmd = null;
+				synchronized (_commandQueue){
+					cmd = (DataElement)_commandQueue.remove(0);
+				}
+				
 				if (cmd != null){
 					command(cmd);
 				}
@@ -229,7 +234,9 @@ implements ISchemaExtender
 
 	public final void requestCommand(DataElement command)
 	{
-		_commandQueue.add(command);
+		synchronized (_commandQueue){
+			_commandQueue.add(command);
+		}
 		notifyInput();
 	}
 

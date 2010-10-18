@@ -133,27 +133,14 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		addPreference(problem, PARAM_MACRO_ID,
 				CheckersMessages.StatementHasNoEffectChecker_ParameterMacro,
 				Boolean.TRUE);
-		addListPreference(
-				problem,
-				PARAM_EXCEPT_ARG_LIST,
+		addListPreference(problem, PARAM_EXCEPT_ARG_LIST,
 				CheckersMessages.GenericParameter_ParameterExceptions,
 				CheckersMessages.GenericParameter_ParameterExceptionsItem);
 	}
 
-	/**s
-	 * @param paramExceptArgList
-	 * @param arg
-	 * @return
-	 */
 	public boolean isFilteredArg(String arg) {
-		Object[] arr = (Object[]) getPreference(
-				getProblemById(ER_ID, getFile()), PARAM_EXCEPT_ARG_LIST);
-		for (Object element : arr) {
-			String str = (String) element;
-			if (arg.equals(str))
-				return true;
-		}
-		return false;
+		return isFilteredArg(arg, getProblemById(ER_ID, getFile()),
+				PARAM_EXCEPT_ARG_LIST);
 	}
 
 	/**

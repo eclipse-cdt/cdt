@@ -572,9 +572,10 @@
                name="%Option.Gnu.Assembler.version"
                id="gnu.both.asm.option.version"/>
          <inputType
-            sourceContentType="org.eclipse.cdt.core.asmSource"
-            sources="s,S"
-            id="cdt.managedbuild.tool.gnu.assembler.input">
+               id="cdt.managedbuild.tool.gnu.assembler.input"
+               languageId="org.eclipse.cdt.core.assembly"
+               sourceContentType="org.eclipse.cdt.core.asmSource"
+               sources="s,S">
          </inputType>
          <outputType
 			outputs="o"

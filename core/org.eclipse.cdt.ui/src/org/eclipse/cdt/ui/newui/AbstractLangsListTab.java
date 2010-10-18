@@ -396,6 +396,10 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 				if ((langSetting.getSupportedEntryKinds() & getKind()) != 0) {
 					TreeItem t = new TreeItem(langTree, SWT.NONE);
 					String langId = langSetting.getLanguageId();
+					if (langId==null && (langSetting instanceof MultiLanguageSetting)) {
+						ICLanguageSetting item1 = (ICLanguageSetting) ((MultiLanguageSetting)langSetting).getItems()[0];
+						langId = item1.getLanguageId();
+					}
 					if (langId != null && !langId.equals(EMPTY_STR)) {
 						// Bug #178033: get language name via LangManager.
 						ILanguageDescriptor langDes = LanguageManager.getInstance().getLanguageDescriptor(langId);

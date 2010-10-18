@@ -145,7 +145,8 @@ public abstract class Transaction<V> {
      * See {@link #validate(RequestCache)}. This variant simply validates
      * multiple cache objects.
      */
-    protected void validate(RequestCache<?> ... caches) throws InvalidCacheException, CoreException {
+    protected void validate(ICache<?> ... caches) throws InvalidCacheException, CoreException {
+        validate(caches);
     }
     
 	/**

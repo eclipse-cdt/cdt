@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.concurrent;
 
+import java.util.Arrays;
+
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -147,7 +149,7 @@ public abstract class Transaction<V> {
      * multiple cache objects.
      */
     protected void validate(ICache<?> ... caches) throws InvalidCacheException, CoreException {
-        validate(caches);
+        validate(Arrays.asList(caches));
     }
     
 	/**

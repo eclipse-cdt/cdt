@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alex Collins (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
@@ -39,6 +40,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.ResourceUtil;
+
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * This is the action group for workspace actions such as Build
@@ -75,6 +78,9 @@ public class BuildGroup extends CViewActionGroup {
 	    		}
 	    	}
 	    	saveEditors(prjs);
+
+			// Clear the build console, and open a stream
+			CUIPlugin.getDefault().getConsoleManager().startGlobalConsole();
 
 	    	// Now delegate to the parent
 	    	super.run();

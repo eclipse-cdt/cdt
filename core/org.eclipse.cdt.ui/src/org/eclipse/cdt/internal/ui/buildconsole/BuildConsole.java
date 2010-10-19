@@ -9,6 +9,7 @@
  * QNX Software Systems - Initial API and implementation
  * Red Hat Inc. - Multiple build console support
  * Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
+ * Alex Collins (Broadcom Corp.) - Global build console
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -35,8 +36,11 @@ public class BuildConsole extends AbstractConsole {
 	 */
 	public static final String P_STREAM_COLOR = CUIPlugin.PLUGIN_ID  + ".CONSOLE_P_STREAM_COLOR";	 //$NON-NLS-1$
 
-	private static BuildConsolePage fBuildConsolePage;
-	
+	/** The page containing this build console */
+	private BuildConsolePage fBuildConsolePage;
+	/** The page for the console currently being displayed by the UI */
+	private static BuildConsolePage fCurrentBuildConsolePage;
+
 	private IBuildConsoleManager fConsoleManager;
 	private String fConsoleName;
 	private String fConsoleId;
@@ -51,11 +55,20 @@ public class BuildConsole extends AbstractConsole {
 
 	public IPageBookViewPage createPage(IConsoleView view) {
 		fBuildConsolePage = new BuildConsolePage(view, this, fConsoleId); 
+		fCurrentBuildConsolePage = fBuildConsolePage;
 		return fBuildConsolePage;
 	}
 	
-	static BuildConsolePage getPage() {
+	BuildConsolePage getPage() {
 		return fBuildConsolePage;
+	}
+
+	static BuildConsolePage getCurrentPage() {
+		return fCurrentBuildConsolePage;
+	}
+
+	static void setCurrentPage(BuildConsolePage page) {
+		fCurrentBuildConsolePage = page;
 	}
 
 	public void setTitle(IProject project) {

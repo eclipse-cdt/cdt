@@ -149,6 +149,8 @@ public final class PreferencesMessages extends NLS {
 	public static String BuildLogPreferencePage_ChooseLogFile;
 	public static String BuildLogPreferencePage_EnableLogging;
 	public static String BuildLogPreferencePage_LogLocation;
+	public static String GlobalBuildLogPreferencePage_EnableLogging;
+	public static String GlobalBuildLogPreferencePage_LogLocation;
 	public static String CEditorPreferencePage_folding_title;
 	public static String FoldingConfigurationBlock_enable;
 	public static String FoldingConfigurationBlock_combo_caption;

@@ -239,7 +239,7 @@ public class BuildConsoleViewer extends TextViewer
 		try {
 			Point p = new Point(e.x, e.y);
 			offset = getTextWidget().getOffsetAtLocation(p);
-			BuildConsole.getPage().moveToError(offset);
+			BuildConsole.getCurrentPage().moveToError(offset);
 		} catch (IllegalArgumentException ex) {
 		}
 	}

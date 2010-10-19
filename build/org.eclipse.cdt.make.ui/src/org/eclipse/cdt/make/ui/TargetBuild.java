@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.preferences.MakePreferencePage;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -87,6 +88,9 @@ public class TargetBuild {
 	}
 
 	static public void buildTargets(Shell shell, final IMakeTarget[] targets) {
+		// Setup the global build console
+		CUIPlugin.getDefault().getConsoleManager().startGlobalConsole();
+
 		saveAllResources(targets);
 		Job targetJob = new Job(MakeUIPlugin.getResourceString("TargetBuild.backgroundTask.name")) { //$NON-NLS-1$
 			@Override

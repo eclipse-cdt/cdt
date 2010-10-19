@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Gvozdev (Quoin Inc.) - Initial API and implementation
+ *     Alex Collins (Broadcom Corp.) - Global console
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.buildconsole;
@@ -46,13 +47,17 @@ public class CopyBuildLogAction extends Action {
 
 	@Override
 	public void run() {
-		IProject project = fConsolePage.getProject();
-		if (project == null || !project.isAccessible())
-			return;
-
 		IBuildConsoleManager consoleManager = CUIPlugin.getDefault().getConsoleManager();
+		IConsole console;
+		if (fConsolePage.getConsole() instanceof GlobalBuildConsole)
+			console = consoleManager.getGlobalConsole();
+		else {
+			IProject project = fConsolePage.getProject();
+			if (project == null || !project.isAccessible())
+				return;
+			console = consoleManager.getProjectConsole(project);
+		}
 
-		IConsole console = consoleManager.getConsole(project);
 		if (console instanceof BuildConsolePartitioner) {
 			Shell shell = Display.getCurrent().getActiveShell();
 			URI srcURI = ((BuildConsolePartitioner)console).getLogURI();

@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -67,6 +68,9 @@ public class BuildConfigurationsJob extends Job {
 	 */
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
+		// Setup the global build console
+		CUIPlugin.getDefault().getConsoleManager().startGlobalConsole();
+
 		IConfiguration[] cfgs = new IConfiguration[cfgDescriptions.length];
 		for (int i=0; i<cfgDescriptions.length; i++) {
 			cfgs[i] = ManagedBuildManager.getConfigurationForDescription(cfgDescriptions[i]);

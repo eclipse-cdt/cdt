@@ -22,6 +22,7 @@ public final class ConsoleMessages extends NLS {
 		// Do not instantiate
 	}
 
+	public static String BuildConsole_GlobalConsole;
 	public static String find_replace_action_label;
 	public static String find_replace_action_tooltip;
 	public static String find_replace_action_image;

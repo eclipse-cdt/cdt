@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.jobs.Job;
@@ -36,6 +37,9 @@ public class CleanAllConfigurationsAction implements IObjectActionDelegate {
 	}
 
 	public void run(IAction action) {
+		// Setup the global build console
+		CUIPlugin.getDefault().getConsoleManager().startGlobalConsole();
+
 		for (IProject project : projects) {
 			ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(project, false);
 			if (prjd != null) {

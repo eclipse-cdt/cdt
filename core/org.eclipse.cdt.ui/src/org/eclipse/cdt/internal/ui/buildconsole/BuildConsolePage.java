@@ -10,6 +10,7 @@
  *     Red Hat Inc. - multiple build console support
  *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *                                    Save build output
+ *     Alex Collins (Broadcom Corp.) - Global build console
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -162,11 +163,21 @@ public class BuildConsolePage extends Page
 		IProject project = getProject();
 		if (project != null) {
 			IBuildConsoleManager consoleManager = getConsole().getConsoleManager();
-			getViewer().setDocument(consoleManager.getConsoleDocument(project));
-			IConsole console = consoleManager.getConsole(project);
-			if ( console instanceof BuildConsolePartitioner) {
+			IDocument document;
+			IConsole console;
+			if (getConsole() instanceof GlobalBuildConsole) {
+				document = consoleManager.getGlobalConsoleDocument();
+				console = consoleManager.getGlobalConsole();
+			} else {
+				document = consoleManager.getConsoleDocument(project);
+				console = consoleManager.getProjectConsole(project);
+			}
+			getViewer().setDocument(document);
+			if (console instanceof BuildConsolePartitioner) {
 				BuildConsolePartitioner par = (BuildConsolePartitioner)console;
-				showError(par, fShowErrorAction.isChecked() );
+				// Show the error, but don't show it in the editor if we are viewing the global console.
+				// Prevents showing errors in the editor for projects other than the current project.
+				showError(par, fShowErrorAction.isChecked() && !(getConsole() instanceof GlobalBuildConsole));
 			}
 		}
 		return null;
@@ -549,16 +560,26 @@ public class BuildConsolePage extends Page
 	}
 
 	/**
+	 * Get the current CDT IConsole being displayed on the page
+	 */
+	private IConsole getCurrentConsole() {
+		BuildConsoleManager consoleManager = (BuildConsoleManager)CUIPlugin.getDefault().getConsoleManager();
+		if (getConsole() instanceof GlobalBuildConsole)
+			return consoleManager.getGlobalConsole();
+		else if (getProject() == null)
+			return null;
+		else
+			return consoleManager.getProjectConsole(getProject());
+	}
+
+	/**
 	 * Highlight next/previous error or error by console offset
 	 * @param position POSITION_NEXT (-1), POSITION_PREV (-2), or offset
 	 */
 	void moveToError(int position) {
-		IProject project = getProject();
-		if (project == null) return;
-		
-		IBuildConsoleManager consoleManager = CUIPlugin.getDefault().getConsoleManager();
-		IConsole console = consoleManager.getConsole(project);
-		if ( console instanceof BuildConsolePartitioner) {
+		IConsole console = getCurrentConsole();
+		if (console == null) return;
+		if (console instanceof BuildConsolePartitioner) {
 			BuildConsolePartitioner par = (BuildConsolePartitioner)console;
 			// Move to specified line in the model (BuildConsolePartitioner)
 			if ( position == POSITION_NEXT ) {

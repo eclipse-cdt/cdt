@@ -9,6 +9,7 @@
  *     QNX Software Systems - initial API and implementation
  *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *     Andrew Gvozdev (Quoin Inc.)  - Copy build log (bug 306222)
+ *     Alex Collins (Broadcom Corp.) - Global console
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -90,6 +91,7 @@ public class BuildConsolePartitioner
 		static public final int EVENT_APPEND = 0;
 		static public final int EVENT_OPEN_LOG = 1;
 		static public final int EVENT_CLOSE_LOG = 2;
+		static public final int EVENT_OPEN_APPEND_LOG = 3;
 
 		/** Identifier of the stream written to. */
 		private BuildConsoleStreamDecorator fStream;
@@ -157,6 +159,13 @@ public class BuildConsolePartitioner
 
 	}
 
+	/**
+	 * Construct a partitioner that is not associated with a specific project
+	 */
+	public BuildConsolePartitioner(BuildConsoleManager manager) {
+		this(null, manager);
+	}
+
 	public BuildConsolePartitioner(IProject project, BuildConsoleManager manager) {
 		fProject = project;
 		fManager = manager;
@@ -176,6 +185,16 @@ public class BuildConsolePartitioner
 	 */
 	public void setStreamOpened() {
 		fQueue.add(new StreamEntry(StreamEntry.EVENT_OPEN_LOG));
+		asyncProcessQueue();
+	}
+
+	/**
+	 * Open the stream for appending. Must be called after a call to setStreamOpened().
+	 * Can be used to reopen a stream for writing after it has been closed, without
+	 * emptying the log file.
+	 */
+	public void setStreamAppend() {
+		fQueue.add(new StreamEntry(StreamEntry.EVENT_OPEN_APPEND_LOG));
 		asyncProcessQueue();
 	}
 
@@ -240,7 +259,7 @@ public class BuildConsolePartitioner
 
 	/**
 	 * Asynchronous processing of stream entries to append to console.
-	 * Note that all these are processed by the same by the user-interface thread
+	 * Note that all these are processed by the same thread - the user-interface thread
 	 * as of {@link Display#asyncExec(Runnable)}.
 	 */
 	private void asyncProcessQueue() {
@@ -254,7 +273,8 @@ public class BuildConsolePartitioner
 				}
 				switch (entry.getEventType()) {
 				case StreamEntry.EVENT_OPEN_LOG:
-					logOpen();
+				case StreamEntry.EVENT_OPEN_APPEND_LOG:
+					logOpen(entry.getEventType() == StreamEntry.EVENT_OPEN_APPEND_LOG);
 					break;
 				case StreamEntry.EVENT_APPEND:
 					fLastStream = entry.getStream();
@@ -267,9 +287,12 @@ public class BuildConsolePartitioner
 							fDocumentMarkerManager.clear();
 							fDocument.set(""); //$NON-NLS-1$
 						}
-						addStreamEntryToDocument(entry);
-						log(entry.getText());
-						checkOverflow();
+						String text = entry.getText();
+						if (text.length()>0) {
+							addStreamEntryToDocument(entry);
+							log(text);
+							checkOverflow();
+						}
 					} catch (BadLocationException e) {
 					}
 					break;
@@ -278,12 +301,22 @@ public class BuildConsolePartitioner
 					break;
 				}
 			}
-			private void logOpen() {
+
+			/**
+			 * Open the log
+			 * @param append Set to true if the log should be opened for appending, false for overwriting.
+			 */
+			private void logOpen(boolean append) {
 				fLogURI = getLogURI(fProject);
 				if (fLogURI!=null) {
 					try {
 						IFileStore logStore = EFS.getStore(fLogURI);
-						fLogStream = logStore.openOutputStream(EFS.NONE, null);
+						// Ensure the directory exists before opening the file
+						IFileStore dir = logStore.getParent();
+						if (dir != null)
+							dir.mkdir(EFS.NONE, null);
+						int opts = append ? EFS.APPEND : EFS.NONE;
+						fLogStream = logStore.openOutputStream(opts, null);
 					} catch (CoreException e) {
 						CUIPlugin.log(e);
 					} finally {
@@ -557,13 +590,13 @@ public class BuildConsolePartitioner
 		if (display != null) {
 			display.asyncExec(new Runnable() {
 				public void run() {
+					fLogStream = null;
+					fLogURI = null;
 					fManager.startConsoleActivity(project);
 				}
 			});
 		}
 
-		fLogURI = null;
-		fLogStream = null;
 
 		if (BuildConsolePreferencePage.isClearBuildConsole()) {
 			appendToDocument("", null, null); //$NON-NLS-1$
@@ -619,5 +652,9 @@ public class BuildConsolePartitioner
 	 */
 	public URI getLogURI() {
 		return fLogURI;
+	}
+
+	IProject getProject() {
+		return fProject;
 	}
 }

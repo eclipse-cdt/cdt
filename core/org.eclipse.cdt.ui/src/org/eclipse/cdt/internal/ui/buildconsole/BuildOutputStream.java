@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
+ *     Alex Collins (Broadcom Corp.) - Global build console
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.buildconsole;
@@ -31,7 +32,12 @@ public class BuildOutputStream extends ConsoleOutputStream implements IErrorMark
 	public BuildOutputStream(BuildConsolePartitioner partitioner, 
 			BuildConsoleStreamDecorator stream) {
 		fPartitioner = partitioner;
-		fPartitioner.setStreamOpened();
+		if (fPartitioner.getProject() == null)
+			// Note: The global console log stream should have been
+			// opened by BuildConsoleManager.startGlobalConsole()
+			fPartitioner.setStreamAppend();
+		else
+			fPartitioner.setStreamOpened();
 		fStream = stream;
 	}
 

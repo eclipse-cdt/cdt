@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Dmitry Kozlov (CodeSourcery) - Initial API and implementation
+ * Alex Collins (Broadcom Corp.)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.buildconsole;
@@ -43,15 +44,19 @@ public class ShowErrorAction extends Action {
 	@Override
 	public void run() {
 		super.run();
-		if ( isChecked() ) {
-			IProject project = fConsolePage.getProject();
-			if (project == null) return;
-			
+		if (isChecked()) {
 			IBuildConsoleManager consoleManager = CUIPlugin.getDefault().getConsoleManager();
-			IConsole console = consoleManager.getConsole(project);
-			if ( console instanceof BuildConsolePartitioner) {
+			IProject project = fConsolePage.getProject();
+			IConsole console;
+			if (fConsolePage.getConsole() instanceof GlobalBuildConsole)
+				console = consoleManager.getGlobalConsole();
+			else if (project == null)
+				return;
+			else
+				console = consoleManager.getProjectConsole(project);
+			if (console instanceof BuildConsolePartitioner) {
 				BuildConsolePartitioner par = (BuildConsolePartitioner)console;
-				fConsolePage.showError(par, true );
+				fConsolePage.showError(par, true);
 			}
 		}
 	}	

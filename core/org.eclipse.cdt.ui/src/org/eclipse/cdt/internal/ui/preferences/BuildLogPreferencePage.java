@@ -61,6 +61,7 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 
 			// [v] Enable Logging
 			enableLoggingCheckbox = ControlFactory.createCheckBox(contents, PreferencesMessages.BuildLogPreferencePage_EnableLogging);
+			((GridData) enableLoggingCheckbox.getLayoutData()).horizontalSpan = 2;
 			boolean keepLog = prefs.getBoolean(BuildConsoleManager.KEY_KEEP_LOG, BuildConsoleManager.CONSOLE_KEEP_LOG_DEFAULT);
 			enableLoggingCheckbox.setSelection(keepLog);
 			enableLoggingCheckbox.addSelectionListener(new SelectionAdapter() {

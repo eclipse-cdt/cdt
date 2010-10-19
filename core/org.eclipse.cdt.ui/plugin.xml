@@ -685,6 +685,13 @@
           <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
+            name="%CPluginGlobalBuildLogPreferencePage.name"
+            category="org.eclipse.cdt.make.ui.preferences.BuildSettings"
+            class="org.eclipse.cdt.internal.ui.preferences.GlobalBuildLogPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.CGlobalBuildLogPreferences">
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
+      <page
             name="%CPluginFileTypesPreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.CFileTypesPreferencePage"
@@ -1626,6 +1633,16 @@
       <CBuildConsole
             class="org.eclipse.cdt.internal.ui.buildconsole.CBuildConsole">
       </CBuildConsole>
+   </extension>
+   <extension
+         point="org.eclipse.ui.console.consolePageParticipants">
+      <consolePageParticipant
+            class="org.eclipse.cdt.internal.ui.buildconsole.BuildConsolePageParticipant"
+            id="org.eclipse.cdt.internal.ui.buildconsole.BuildConsolePageParticipant">
+         <enablement>
+            <instanceof value="org.eclipse.cdt.internal.ui.buildconsole.BuildConsole"/>
+         </enablement>
+      </consolePageParticipant>
    </extension>
    <extension
    		 point="org.eclipse.ui.contexts">

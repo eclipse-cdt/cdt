@@ -42,24 +42,17 @@ public interface ICache<V> {
      */    
     public IStatus getStatus();
 
-    /**
-     * Wait for the cache to become valid.  If the cache is valid already, the
-     * request returns immediately, otherwise data will first be retrieved from the 
-     * source. 
-     * 
-     * @param rm RequestMonitor that is called when cache becomes valid.   
-     */
-    public void wait(RequestMonitor rm);
-    
-    /** 
-     * Request data from the cache.  The cache is valid, it will complete the 
-     * request immediately, otherwise data will first be retrieved from the 
-     * source. 
-     * 
-     * @param rm RequestMonitor that is called when cache becomes valid.   
-     */ 
-    public void request(DataRequestMonitor<V> rm);
-    
+	/**
+	 * Asks the cache to update its value from the source. If the cache is
+	 * already valid, the request is completed immediately, otherwise data will
+	 * first be retrieved from the source. Typically, this method is called by a
+	 * client after it discovers the cache is invalid via {@link #isValid()}
+	 * 
+	 * @param rm
+	 *            RequestMonitor that is called when cache becomes valid.
+	 */
+    public void update(RequestMonitor rm);
+
     /**
      * Returns <code>true</code> if the cache is currently valid.  I.e. 
      * whether the cache can return a value immediately without first 

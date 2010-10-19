@@ -98,15 +98,6 @@ public abstract class RequestCache<V> extends AbstractCache<V> {
     } 
 
     @Override
-    protected void disable() {
-        if (fRm != null) { 
-            fRm.cancel(); 
-            fRm = null; 
-        } 
-        super.disable();
-    }
-
-    @Override
     protected void set(V data, IStatus status) {
         if (fRm != null) { 
             fRm.cancel(); 

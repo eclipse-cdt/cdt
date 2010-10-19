@@ -66,11 +66,6 @@ public class CacheTests {
         }
         
         @Override
-        public void disable() {
-            super.disable();
-        }
-        
-        @Override
         public void set(Integer data, IStatus status) {
             super.set(data, status);
         }
@@ -127,13 +122,6 @@ public class CacheTests {
         Assert.assertEquals(fTestCache.getStatus().getCode(), IDsfStatusConstants.INVALID_STATE);
     }
 
-    private void assertCacheDisabledWithoutData() {
-        Assert.assertTrue(fTestCache.isValid());
-        Assert.assertEquals(null, fTestCache.getData());
-        Assert.assertFalse(fTestCache.getStatus().isOK());
-        Assert.assertEquals(fTestCache.getStatus().getCode(), IDsfStatusConstants.INVALID_STATE);
-    }
-
     private void assertCacheWaiting() {
         Assert.assertFalse(fTestCache.isValid());
         Assert.assertEquals(null, fTestCache.getData());
@@ -156,7 +144,7 @@ public class CacheTests {
         Query<Integer> q = new Query<Integer>() { 
             @Override
             protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.request(rm);
+                fTestCache.update(rm);
             }
         };
         // Check initial state
@@ -200,7 +188,7 @@ public class CacheTests {
         Query<Integer> q = new Query<Integer>() { 
             @Override
             protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.request(rm);
+                fTestCache.update(rm);
             }
         };
         fExecutor.execute(q);
@@ -230,7 +218,7 @@ public class CacheTests {
         Query<Integer> q1 = new Query<Integer>() { 
             @Override
             protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.request(rm);
+                fTestCache.update(rm);
             }
         };
         fExecutor.execute(q1);
@@ -239,7 +227,7 @@ public class CacheTests {
         Query<Integer> q2 = new Query<Integer>() { 
             @Override
             protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.request(rm);
+                fTestCache.update(rm);
             }
         };
         fExecutor.execute(q2);
@@ -272,7 +260,7 @@ public class CacheTests {
             Query<Integer> q = new Query<Integer>() { 
                 @Override
                 protected void execute(DataRequestMonitor<Integer> rm) {
-                    fTestCache.request(rm);
+                    fTestCache.update(rm);
                 }
             };
             fExecutor.execute(q);
@@ -296,103 +284,6 @@ public class CacheTests {
         assertCacheValidWithData(1);
     }
     
-    @Test 
-    public void disableBeforeRequestTest() throws InterruptedException, ExecutionException {
-        // Disable the cache with a given value 
-        fExecutor.submit(new DsfRunnable() {
-            public void run() {
-                fTestCache.disable();
-            }
-        }).get();
-        
-        assertCacheDisabledWithoutData();
-        
-        // Try to request data from cache
-        Query<Integer> q = new Query<Integer>() { 
-            @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.request(rm);
-            }
-        };
-        fExecutor.execute(q);
-        
-        Thread.sleep(100);
-        
-        // Retrieval should never have been made.
-        Assert.assertEquals(null, fRetrieveRm);
-        
-        try {
-            Assert.assertEquals(null, q.get());
-        } catch (ExecutionException e) {
-            // expected the exception
-            return;
-        }
-        Assert.fail("expected an exeption");
-    }
-    
-    @Test 
-    public void disableWhilePendingTest() throws InterruptedException, ExecutionException {
-        // Request data from cache 
-        Query<Integer> q = new Query<Integer>() { 
-            @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.request(rm);
-            }
-        };
-        fExecutor.execute(q);
-
-        // Disable the cache with a given value 
-        fExecutor.submit(new DsfRunnable() {
-            public void run() {
-                fTestCache.disable();
-            }
-        }).get();
-        
-        assertCacheDisabledWithoutData();
-
-        // Completed the retrieve RM
-        fExecutor.submit(new DsfRunnable() {
-            public void run() {
-                fRetrieveRm.setData(1);
-                fRetrieveRm.done();
-            }
-        }).get();
-        
-        // Validate that cache is still disabled without data.
-        assertCacheDisabledWithoutData();
-    }
-
-    @Test 
-    public void disableWhileValidTest() throws InterruptedException, ExecutionException {
-        // Request data from cache
-        Query<Integer> q = new Query<Integer>() { 
-            @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.request(rm);
-            }
-        };
-        fExecutor.execute(q);
-        
-        // Wait until the cache starts data retrieval.
-        waitForRetrieveRm();
-        
-        // Complete the request
-        fRetrieveRm.setData(1);
-        fRetrieveRm.done();
-
-        q.get();
-        
-        // Disable cache
-        fExecutor.submit(new DsfRunnable() {
-            public void run() {
-                fTestCache.disable();
-            }
-        }).get();
-        
-        // Check final state
-        assertCacheValidWithData(1);
-    }
-
     @Test 
     public void disableWithValueTest() throws InterruptedException, ExecutionException {
         // Disable the cache with a given value 
@@ -422,7 +313,7 @@ public class CacheTests {
         Query<Integer> q = new Query<Integer>() { 
             @Override
             protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.request(rm);
+                fTestCache.update(rm);
             }
         };
         fExecutor.execute(q);
@@ -446,7 +337,7 @@ public class CacheTests {
         Query<Integer> q = new Query<Integer>() { 
             @Override
             protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.request(rm);
+                fTestCache.update(rm);
             }
         };
         fExecutor.execute(q);
@@ -481,7 +372,7 @@ public class CacheTests {
         Query<Integer> q = new Query<Integer>() { 
             @Override
             protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.request(rm);
+                fTestCache.update(rm);
             }
         };
         fExecutor.execute(q);
@@ -516,7 +407,7 @@ public class CacheTests {
         Query<Integer> q = new Query<Integer>() { 
             @Override
             protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.request(new DataRequestMonitor<Integer>(ImmediateExecutor.getInstance(), rm) {
+                fTestCache.update(new DataRequestMonitor<Integer>(ImmediateExecutor.getInstance(), rm) {
                     @Override
                     public synchronized void addCancelListener(ICanceledListener listener) {
                         // Do not add the cancel listener so that the cancel request is not
@@ -558,7 +449,7 @@ public class CacheTests {
         Query<Integer> q1 = new Query<Integer>() { 
             @Override
             protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.request(rm);
+                fTestCache.update(rm);
             }
         };
         fExecutor.execute(q1);
@@ -567,7 +458,7 @@ public class CacheTests {
         Query<Integer> q2 = new Query<Integer>() { 
             @Override
             protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.request(rm);
+                fTestCache.update(rm);
             }
         };
         fExecutor.execute(q2);
@@ -613,7 +504,7 @@ public class CacheTests {
             Query<Integer> q = new Query<Integer>() { 
                 @Override
                 protected void execute(DataRequestMonitor<Integer> rm) {
-                    fTestCache.request(rm);
+                    fTestCache.update(rm);
                 }
             };
             fExecutor.execute(q);
@@ -644,7 +535,7 @@ public class CacheTests {
             Query<Integer> q = new Query<Integer>() { 
                 @Override
                 protected void execute(DataRequestMonitor<Integer> rm) {
-                    fTestCache.request(rm);
+                    fTestCache.update(rm);
                 }
             };
             fExecutor.execute(q);
@@ -679,7 +570,7 @@ public class CacheTests {
         Query<Integer> q = new Query<Integer>() { 
             @Override
             protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.request(rm);
+                fTestCache.update(rm);
             }
         };
         fExecutor.execute(q);

@@ -18,23 +18,23 @@ import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-/** 
- * A base implementation of a general purpose cache.  Sub classes must implement 
- * {@link #retrieve(DataRequestMonitor)} to fetch data from the data source.  
- * Sub-classes or clients are also responsible for calling {@link #disable()} 
- * and {@link #reset()} to manage the state of the cache in response to events 
+/**
+ * A base implementation of a general purpose cache. Sub classes must implement
+ * {@link #retrieve(DataRequestMonitor)} to fetch data from the data source.
+ * Sub-classes are also responsible for calling {@link #set(Object, IStatus)}
+ * and {@link #reset()} to manage the state of the cache in response to events
  * from the data source.
  * <p>
- * This cache requires an executor to use.  The executor is used to synchronize 
- * access to the cache state and data.   
+ * This cache requires an executor to use. The executor is used to synchronize
+ * access to the cache state and data.
  * </p>
+ * 
  * @since 2.2
  */ 
 @ConfinedToDsfExecutor("fExecutor") 
 public abstract class AbstractCache<V> implements ICache<V> { 
 
     private static final IStatus INVALID_STATUS = new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Cache invalid", null); //$NON-NLS-1$
-    private static final IStatus DISABLED_STATUS = new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Cache disabled", null); //$NON-NLS-1$
     
     private class RequestCanceledListener implements RequestMonitor.ICanceledListener {
         public void requestCanceled(final RequestMonitor canceledRm) {
@@ -69,13 +69,16 @@ public abstract class AbstractCache<V> implements ICache<V> {
     protected ImmediateInDsfExecutor getImmediateInDsfExecutor() {
         return fExecutor;
     }
-    
-    /** 
-     * Sub-classes should override this method to retrieve the cache data 
-     * from its source. 
-     * 
-     * @param rm Request monitor for completion of data retrieval.
-     */ 
+
+	/**
+	 * Sub-classes should override this method to retrieve the cache data from
+	 * its source. The implementation should call {@link #set(Object, IStatus)}
+	 * to store the newly retrieved data when it arrives (or an error, if one
+	 * occurred retrieving the data)
+	 * 
+	 * @param rm
+	 *            Request monitor for completion of data retrieval.
+	 */ 
     abstract protected void retrieve();
 
     
@@ -98,11 +101,7 @@ public abstract class AbstractCache<V> implements ICache<V> {
         return fStatus;
     }
     
-    public void request(final DataRequestMonitor<V> rm) { 
-        wait(rm);
-    } 
-
-    public void wait(RequestMonitor rm) { 
+    public void update(RequestMonitor rm) { 
         assert fExecutor.getDsfExecutor().isInExecutorThread();
 
         if (!fValid) {
@@ -139,11 +138,6 @@ public abstract class AbstractCache<V> implements ICache<V> {
                 retrieve();
             }
         } else {
-            if (rm instanceof DataRequestMonitor<?>) {
-                @SuppressWarnings("unchecked")
-                DataRequestMonitor<V> drm = (DataRequestMonitor<V>)rm;
-                drm.setData(fData);
-            }
             rm.setStatus(fStatus); 
             rm.done(); 
         }
@@ -259,65 +253,59 @@ public abstract class AbstractCache<V> implements ICache<V> {
         
         return canceled;
     }
-    
-    /**
-     * Resets the cache with a data value <code>null</code> and an error 
-     * status with code {@link IDsfStatusConstants#INVALID_STATE}.
-     * 
-     * @see #reset(Object, IStatus)
-     */
+
+	/**
+	 * Resets the cache, setting its data to <code>null</code>, and status to
+	 * {@link #INVALID_STATUS}. Equivalent to reset(null, INVALID_STATUS)
+	 * 
+	 * @see #reset(Object, IStatus)
+	 */
     protected void reset() {
         reset(null, INVALID_STATUS);
     }
-    
-    /** 
-     * Resets the cache with given data and status.  Resetting the cache 
-     * forces the cache to be invalid and cancels any current pending requests
-     * from data source.  
-     * <p>
-     * This method should be called when the data source has issued an event 
-     * indicating that the source data has changed but data may still be 
-     * retrieved.  Clients may need to re-request data following cache reset.
-     * </p>
-     * @param data The data that should be returned to any clients currently 
-     * waiting for cache data.
-     * @status The status that should be returned to any clients currently 
-     * waiting for cache data. 
-     */ 
+
+	/**
+	 * Resets the cache, setting its data to [data], and status to [status].
+	 * Resetting the cache puts it in the invalid state and cancels any current
+	 * pending requests to the data source.
+	 * 
+	 * <p>
+	 * The cache should be reset when the data source has issued an event
+	 * indicating that the source data has changed but data may still be
+	 * retrieved. Clients may need to re-request data following a cache reset.
+	 * 
+	 * @param data
+	 *            The data that should be returned to any client that calls
+	 *            {@link #getData()} despite the invalid state
+	 * @status The status that should be returned to any client that calls
+	 *         {@link #getStatus()()} despite the invalid state
+	 * @see #reset()
+	 * @see #set(Object, IStatus)
+	 */ 
     protected void reset(V data, IStatus status) { 
         doSet(data, status, false); 
-    } 
-
-    /**
-     * Disables the cache from retrieving data from the source.  If the cache 
-     * is already valid the data and status is retained.  If the cache is not 
-     * valid, then data value <code>null</code> and an error status with code 
-     * {@link IDsfStatusConstants#INVALID_STATE} are set. 
-     * 
-     * @see #set(Object, IStatus)
-     */
-    protected void disable() {
-        if (!fValid) {
-            set(null, DISABLED_STATUS);
-        }
     }
 
-    /** 
-     * Resets the cache then disables it.  When a cache is disabled it means 
-     * that it is valid and requests to the data source will not be sent.
-     * <p>
-     * This method should be called when the data source has issued an event 
-     * indicating that the source data has changed and future requests for 
-     * data will return the given data and status.  Once the source data 
-     * becomes available again, clients should call {@link #reset()}.
-     * </p>
-     * @param data The data that should be returned to any clients waiting for 
-     * cache data and for clients requesting data until the cache is reset again.
-     * @status The status that should be returned to any clients waiting for 
-     * cache data and for clients requesting data until the cache is reset again.
-     * 
-     * @see #reset(Object, IStatus)
-     */ 
+	/**
+	 * Puts the cache into the valid state, given it new data and status.
+	 * 
+	 * This method should be called when the subclass has received a response
+	 * for updated data from the source. Note that such a response may be an
+	 * error. That does not make the cache invalid. Invalid strictly means that
+	 * the cache's data has either gone stale or that it's in the initial unset
+	 * state.
+	 * 
+	 * @param data
+	 *            The data that should be returned to any clients waiting for
+	 *            cache data and for clients requesting data, until the cache is
+	 *            invalidated via one of the reset methods.
+	 * @status The status that should be returned to any clients waiting for
+	 *         cache data and for clients requesting status, until the cache is
+	 *         invalidated via one of the reset methods.
+	 * 
+	 * @see #reset()
+	 * @see #reset(Object, IStatus)
+	 */ 
     protected void set(V data, IStatus status) {
         doSet(data, status, true); 
     }

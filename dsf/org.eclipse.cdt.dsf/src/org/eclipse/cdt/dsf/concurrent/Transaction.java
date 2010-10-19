@@ -128,10 +128,11 @@ public abstract class Transaction<V> {
                 throw new CoreException(cache.getStatus());
             }
         } else {
-			// Throw the invalid cache exception, but first schedule a
-			// re-attempt of the transaction logic, to occur when the
-			// stale/unset cache object has been updated
-            cache.wait(new RequestMonitor(ImmediateExecutor.getInstance(), fRm) {
+			// Throw the invalid cache exception, but first ask the cache to
+			// update itself from its source, and schedule a re-attempt of the
+			// transaction logic to occur when the stale/unset cache has been
+			// updated
+            cache.update(new RequestMonitor(ImmediateExecutor.getInstance(), fRm) {
                 @Override
                 protected void handleCompleted() {
                     execute();
@@ -179,7 +180,7 @@ public abstract class Transaction<V> {
             int count = 0;
             for (ICache<?> cache : caches) {
                 if (!cache.isValid()) {
-                    cache.wait(countringRm);
+                    cache.update(countringRm);
                     count++;
                 }
             }

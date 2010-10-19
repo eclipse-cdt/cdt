@@ -23,6 +23,7 @@
  * David McKnight   (IBM)        - [277911] cached results of remote file query need to be sorted
  * David McKnight   (IBM)        - [289387] Remote Search does not return line nodes in result tree
  * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
+ * David McKnight   (IBM)        - [328098] infinite loop when opening file from an UNC path
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -1151,11 +1152,9 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 
 	private String getParentPathFor(String path)
 	{
-		boolean isUnix = getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().isUnixStyle();
-
 		String separator = getSeparator();
 
-		if (isUnix && path.equals(separator))
+		if (path.equals(separator))
 		{
 			return null; // no parent of root
 		}

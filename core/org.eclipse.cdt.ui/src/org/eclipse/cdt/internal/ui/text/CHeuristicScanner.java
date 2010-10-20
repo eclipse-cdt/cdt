@@ -28,7 +28,7 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 /**
  * Utility methods for heuristic based C manipulations in an incomplete C source file.
  *
- * <p>An instance holds some internal position in the document and is therefore not threadsafe.</p>
+ * <p>An instance holds some internal position in the document and is therefore not thread-safe.</p>
  */
 public final class CHeuristicScanner implements Symbols {
 	/**

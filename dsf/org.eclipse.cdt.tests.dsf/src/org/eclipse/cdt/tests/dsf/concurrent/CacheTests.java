@@ -25,6 +25,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateInDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestCache;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.tests.dsf.TestDsfExecutor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -67,6 +68,19 @@ public class CacheTests {
         
     }
 
+    class TestQuery extends Query<Integer> {
+        @Override
+        protected void execute(final DataRequestMonitor<Integer> rm) {
+            fTestCache.update(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+                @Override
+                protected void handleSuccess() {
+                    rm.setData(fTestCache.getData());
+                    rm.done();
+                }
+            });
+        }
+    }
+    
     /**
      * There's no rule on how quickly the cache has to start data retrieval
      * after it has been requested.  It could do it immediately, or it could
@@ -158,12 +172,8 @@ public class CacheTests {
     @Test 
     public void getWithCompletionInDsfThreadTest() throws InterruptedException, ExecutionException {
         // Request data from cache
-        Query<Integer> q = new Query<Integer>() { 
-            @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.update(rm);
-            }
-        };
+        Query<Integer> q = new TestQuery();
+        
         // Check initial state
         Assert.assertFalse(fTestCache.isValid());
         
@@ -200,12 +210,7 @@ public class CacheTests {
         Assert.assertFalse(fTestCache.isValid());
         
         // Request data from cache
-        Query<Integer> q = new Query<Integer>() { 
-            @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.update(rm);
-            }
-        };
+        Query<Integer> q = new TestQuery();
         fExecutor.execute(q);
         
         // Wait until the cache starts data retrieval.
@@ -230,21 +235,11 @@ public class CacheTests {
         Assert.assertFalse(fTestCache.isValid());
         
         // Request data from cache
-        Query<Integer> q1 = new Query<Integer>() { 
-            @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.update(rm);
-            }
-        };
+        Query<Integer> q1 = new TestQuery();
         fExecutor.execute(q1);
 
         // Request data from cache again
-        Query<Integer> q2 = new Query<Integer>() { 
-            @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.update(rm);
-            }
-        };
+        Query<Integer> q2 = new TestQuery(); 
         fExecutor.execute(q2);
         
         // Wait until the cache starts data retrieval.
@@ -272,12 +267,7 @@ public class CacheTests {
         // Request data from cache
         List<Query<Integer>> qList = new ArrayList<Query<Integer>>(); 
         for (int i = 0; i < 10; i++) {
-            Query<Integer> q = new Query<Integer>() { 
-                @Override
-                protected void execute(DataRequestMonitor<Integer> rm) {
-                    fTestCache.update(rm);
-                }
-            };
+            Query<Integer> q = new TestQuery();
             fExecutor.execute(q);
             qList.add(q);
         }
@@ -413,12 +403,7 @@ public class CacheTests {
     @Test 
     public void cancelWhilePendingTest() throws InterruptedException, ExecutionException {
         // Request data from cache 
-        Query<Integer> q = new Query<Integer>() { 
-            @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.update(rm);
-            }
-        };
+        Query<Integer> q = new TestQuery();
         fExecutor.execute(q);
 
         // Wait until the cache starts data retrieval.
@@ -450,12 +435,19 @@ public class CacheTests {
         // Request data from cache 
         Query<Integer> q = new Query<Integer>() { 
             @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.update(new DataRequestMonitor<Integer>(ImmediateExecutor.getInstance(), rm) {
+            protected void execute(final DataRequestMonitor<Integer> rm) {
+                
+                fTestCache.update(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
                     @Override
                     public synchronized void addCancelListener(ICanceledListener listener) {
                         // Do not add the cancel listener so that the cancel request is not
                         // propagated to the cache.
+                    }
+                    
+                    @Override
+                    protected void handleSuccess() {
+                        rm.setData(fTestCache.getData());
+                        rm.done();
                     }
                 });
             }
@@ -498,12 +490,12 @@ public class CacheTests {
 
         // Create a client request with a badly behaved cancel implementation.
         @SuppressWarnings("unchecked")
-        final DataRequestMonitor<Integer>[] rmBad = (DataRequestMonitor<Integer>[])new DataRequestMonitor<?>[1] ;
+        final RequestMonitor[] rmBad = new RequestMonitor[1] ;
         final boolean qBadCanceled[] = new boolean[] { false };
         Query<Integer> qBad = new Query<Integer>() { 
             @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                rmBad[0] = new DataRequestMonitor<Integer>(ImmediateExecutor.getInstance(), rm) {
+            protected void execute(final DataRequestMonitor<Integer> rm) {
+                rmBad[0] = new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
                     @Override
                     public synchronized void removeCancelListener(ICanceledListener listener) {
                         // Do not add the cancel listener so that the cancel request is not
@@ -526,6 +518,11 @@ public class CacheTests {
                     public synchronized void done() {
                         // Avoid clearing cancel listeners list
                     };
+                    
+                    protected void handleSuccess() {
+                        rm.setData(fTestCache.getData());
+                        rm.done();
+                    };
                 };
                 
                 fTestCache.update(rmBad[0]);
@@ -545,12 +542,7 @@ public class CacheTests {
             }
         }).get();
         
-        Query<Integer> qGood = new Query<Integer>() { 
-            @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.update(rm);
-            }
-        };
+        Query<Integer> qGood = new TestQuery();
         fExecutor.execute(qGood);
 
         // Wait until the cache starts data retrieval.
@@ -577,21 +569,11 @@ public class CacheTests {
     @Test 
     public void cancelWhilePendingWithTwoClientsTest() throws InterruptedException, ExecutionException {
         // Request data from cache 
-        Query<Integer> q1 = new Query<Integer>() { 
-            @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.update(rm);
-            }
-        };
+        Query<Integer> q1 = new TestQuery();
         fExecutor.execute(q1);
 
         // Request data from cache again
-        Query<Integer> q2 = new Query<Integer>() { 
-            @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.update(rm);
-            }
-        };
+        Query<Integer> q2 = new TestQuery();
         fExecutor.execute(q2);
         
 
@@ -632,12 +614,7 @@ public class CacheTests {
         // Request data from cache 
         List<Query<Integer>> qList = new ArrayList<Query<Integer>>(); 
         for (int i = 0; i < 10; i++) {
-            Query<Integer> q = new Query<Integer>() { 
-                @Override
-                protected void execute(DataRequestMonitor<Integer> rm) {
-                    fTestCache.update(rm);
-                }
-            };
+            Query<Integer> q = new TestQuery();
             fExecutor.execute(q);
             qList.add(q);
         }
@@ -663,12 +640,7 @@ public class CacheTests {
 
         // Replace canceled requests with new ones
         for (int i = 0; i < toCancel.length; i++) {
-            Query<Integer> q = new Query<Integer>() { 
-                @Override
-                protected void execute(DataRequestMonitor<Integer> rm) {
-                    fTestCache.update(rm);
-                }
-            };
+            Query<Integer> q = new TestQuery();
             fExecutor.execute(q);
             qList.set(toCancel[i], q);
             assertCacheWaiting();
@@ -698,12 +670,7 @@ public class CacheTests {
     @Test 
     public void resetWhileValidTest() throws InterruptedException, ExecutionException {
         // Request data from cache
-        Query<Integer> q = new Query<Integer>() { 
-            @Override
-            protected void execute(DataRequestMonitor<Integer> rm) {
-                fTestCache.update(rm);
-            }
-        };
+        Query<Integer> q = new TestQuery();
         fExecutor.execute(q);
 
         // Wait until the cache starts data retrieval.

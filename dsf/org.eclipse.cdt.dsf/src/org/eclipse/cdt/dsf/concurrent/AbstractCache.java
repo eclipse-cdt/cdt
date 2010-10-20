@@ -156,11 +156,6 @@ public abstract class AbstractCache<V> implements ICache<V> {
     } 
     
     private void completeWaitingRm(RequestMonitor rm) {
-        if (rm instanceof DataRequestMonitor<?>) {
-            @SuppressWarnings("unchecked")
-            DataRequestMonitor<V> drm = (DataRequestMonitor<V>)rm;
-            drm.setData(fData);
-        }
         rm.setStatus(fStatus); 
         rm.removeCancelListener(fRequestCanceledListener);
         rm.done(); 

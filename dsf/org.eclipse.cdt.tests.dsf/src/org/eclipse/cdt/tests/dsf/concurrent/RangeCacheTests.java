@@ -23,9 +23,11 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ICache;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateInDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RangeCache;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.tests.dsf.DsfTestPlugin;
 import org.eclipse.cdt.tests.dsf.TestDsfExecutor;
 import org.eclipse.core.runtime.IStatus;
@@ -70,9 +72,15 @@ public class RangeCacheTests {
         }        
         
         @Override
-        protected void execute(DataRequestMonitor<List<Integer>> rm) {
+        protected void execute(final DataRequestMonitor<List<Integer>> rm) {
             fRangeCache = fTestCache.getRange(fOffset, fCount);
-            fRangeCache.update(rm);
+            fRangeCache.update(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+                @Override
+                protected void handleSuccess() {
+                    rm.setData(fRangeCache.getData());
+                    rm.done();
+                }
+            });
         }
     }
 

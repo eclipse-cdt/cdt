@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.model.CModelException;
  */
 public class BatchOperation extends CModelOperation {
 	protected IWorkspaceRunnable runnable;
+
 	public BatchOperation(IWorkspaceRunnable runnable) {
 		this.runnable = runnable;
 	}

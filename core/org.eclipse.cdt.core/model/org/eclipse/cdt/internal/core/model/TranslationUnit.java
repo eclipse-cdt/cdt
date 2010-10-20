@@ -296,13 +296,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	public INamespace[] getNamespaces() throws CModelException {
 		ICElement[] celements = getChildren();
-		ArrayList<ICElement> aList = new ArrayList<ICElement>();
+		ArrayList<ICElement> elementList = new ArrayList<ICElement>();
 		for (ICElement celement : celements) {
 			if (celement.getElementType() == ICElement.C_NAMESPACE) {
-				aList.add(celement);
+				elementList.add(celement);
 			}
 		}
-		return aList.toArray(new INamespace[0]);
+		return elementList.toArray(new INamespace[0]);
 	}
 
 	protected void setLocationURI(URI loc) {
@@ -343,7 +343,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public void copy(ICElement container, ICElement sibling, String rename, boolean force,
-		IProgressMonitor monitor) throws CModelException {
+			IProgressMonitor monitor) throws CModelException {
 		getSourceManipulationInfo().copy(container, sibling, rename, force, monitor);
 	}
 
@@ -352,12 +352,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public void move(ICElement container, ICElement sibling, String rename, boolean force,
-		IProgressMonitor monitor) throws CModelException {
+			IProgressMonitor monitor) throws CModelException {
 		getSourceManipulationInfo().move(container, sibling, rename, force, monitor);
 	}
 
-	public void rename(String name, boolean force, IProgressMonitor monitor)
-			throws CModelException {
+	public void rename(String name, boolean force, IProgressMonitor monitor) throws CModelException {
 		getSourceManipulationInfo().rename(name, force, monitor);
 	}
 
@@ -418,7 +417,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	@Override
-	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource) throws CModelException {
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm,
+			Map<ICElement, CElementInfo> newElements, IResource underlyingResource) throws CModelException {
 		TranslationUnitInfo unitInfo = (TranslationUnitInfo) info;
 
 		// generate structure
@@ -460,7 +460,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return getWorkingCopy(monitor, null);
 	}
 
-	public IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException{
+	public IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException {
 		WorkingCopy workingCopy;
 		IFile file= getFile();
 		if (file != null) {
@@ -482,7 +482,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	@Override
-	protected void openParent(CElementInfo childInfo, Map<ICElement, CElementInfo> newElements, IProgressMonitor pm) throws CModelException {
+	protected void openParent(CElementInfo childInfo, Map<ICElement, CElementInfo> newElements,
+			IProgressMonitor pm) throws CModelException {
 		try {
 			super.openParent(childInfo, newElements, pm);
 		} catch (CModelException e) {
@@ -503,7 +504,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		makeConsistent(forced, monitor);
 	}
 
-	protected IASTTranslationUnit makeConsistent(boolean computeAST, IProgressMonitor monitor) throws CModelException {
+	protected IASTTranslationUnit makeConsistent(boolean computeAST, IProgressMonitor monitor)
+			throws CModelException {
 		if (!computeAST && isConsistent()) {
 			return null;
 		}
@@ -629,7 +631,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 	}
 
-	private void parseUsingContributedModelBuilder(IContributedModelBuilder mb, boolean quickParseMode, IProgressMonitor monitor) {
+	private void parseUsingContributedModelBuilder(IContributedModelBuilder mb, boolean quickParseMode,
+			IProgressMonitor monitor) {
 		// We did reuse the shared info cache in the internal model builder.
 		// This has been fixed (bug 273471).
 		// Contributed model builders cannot apply the same fix.
@@ -717,7 +720,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			language = LanguageManager.getInstance().getLanguageForFile(file, configuration, contentTypeId);
 		} else {
 			String filename = getElementName();
-			language = LanguageManager.getInstance().getLanguageForFile(new Path(filename), getCProject().getProject(), configuration, contentTypeId);
+			language = LanguageManager.getInstance().getLanguageForFile(new Path(filename),
+					getCProject().getProject(), configuration, contentTypeId);
 		}
 		return language;
 	}
@@ -794,7 +798,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				} else {
 					log= ParserUtil.getParserLogService();
 				}
-				return ((AbstractLanguage) language).getASTTranslationUnit(fileContent, scanInfo, crf, index, options, log);
+				return ((AbstractLanguage) language).getASTTranslationUnit(fileContent, scanInfo, crf, index,
+						options, log);
 			}
 		}
 		return null;
@@ -811,7 +816,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 		
 		if (index != null && (style & AST_SKIP_INDEXED_HEADERS) != 0) {
-			IndexBasedFileContentProvider ibcf= new IndexBasedFileContentProvider(index, pathResolver, linkageID, fileContentsProvider);
+			IndexBasedFileContentProvider ibcf= new IndexBasedFileContentProvider(index, pathResolver, linkageID,
+					fileContentsProvider);
 			if ((style & AST_CONFIGURE_USING_SOURCE_CONTEXT) != 0) {
 				ibcf.setSupportFillGapFromContextToHeader(true);
 			}
@@ -885,7 +891,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		fLanguageOfContext= language;
 		if (language != null) {
 			IncludeFileContentProvider crf= getIncludeFileContentProvider(style, index, language.getLinkageID());
-			IASTCompletionNode result = language.getCompletionNode(fileContent, scanInfo, crf, index, ParserUtil.getParserLogService(), offset);
+			IASTCompletionNode result = language.getCompletionNode(fileContent, scanInfo, crf, index,
+					ParserUtil.getParserLogService(), offset);
 			if (result != null) {
 				final IASTTranslationUnit ast = result.getTranslationUnit();
 				if (ast != null) {

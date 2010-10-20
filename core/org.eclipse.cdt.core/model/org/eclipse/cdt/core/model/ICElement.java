@@ -389,6 +389,7 @@ public interface ICElement extends IAdaptable {
 	 * @return the corresponding resource, or <code>null</code> if none
 	 */
 	IResource getResource();
+
 	/**
 	 * Returns whether this C element is read-only. An element is read-only
 	 * if its structure cannot be modified by the C model. 

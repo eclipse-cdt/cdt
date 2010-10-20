@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -46,7 +45,7 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 			throws CoreException {
 		super(linkage, parent, classInstance);
 		
-		final ICPPTemplateArgument[] args= SemanticUtil.getSimplifiedArguments(classInstance.getArguments());
+		final ICPPTemplateArgument[] args= classInstance.getArguments();
 		long rec= PDOMCPPArgumentList.putArguments(this, args);
 		final Database db = getDB();
 		db.putRecPtr(record + ARGUMENTS, rec);

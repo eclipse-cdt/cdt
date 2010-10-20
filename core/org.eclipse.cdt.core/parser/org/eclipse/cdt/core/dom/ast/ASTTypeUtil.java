@@ -340,13 +340,13 @@ public class ASTTypeUtil {
 				break;
 			}
 		} else if (type instanceof ICPPTemplateParameter) {
-			appendCppName((ICPPTemplateParameter) type, normalize, true, result);
+			appendCppName((ICPPTemplateParameter) type, normalize, normalize, result);
 		} else if (type instanceof ICPPBinding) {
 			if (type instanceof IEnumeration) {
 				result.append(Keywords.ENUM);
 				result.append(SPACE);
 			}
-			appendCppName((ICPPBinding) type, normalize, true, result);
+			appendCppName((ICPPBinding) type, normalize, normalize, result);
 		} else if (type instanceof ICompositeType) {
 //			101114 fix, do not display class, and for consistency don't display struct/union as well
 			appendNameCheckAnonymous((ICompositeType) type, result);
@@ -694,16 +694,27 @@ public class ASTTypeUtil {
 		}
 	}
 
-	private static void appendCppName(IBinding binding, boolean normalize,  boolean addTemplateArgs, StringBuilder result) {
+	/**
+	 * Returns the qualified name for the given binding including template arguments.
+	 * If there are template arguments the arguments are neither normalized nor qualified.
+	 * @since 5.3
+	 */
+	public static String getQualifiedName(ICPPBinding binding) {
+		StringBuilder buf= new StringBuilder();
+		appendCppName(binding, false, true, buf);
+		return buf.toString();
+	}
+	
+	private static void appendCppName(IBinding binding, boolean normalize, boolean qualify, StringBuilder result) {
 		ICPPTemplateParameter tpar= getTemplateParameter(binding);
 		if (tpar != null) {
 			appendTemplateParameter(tpar, normalize, result);
 		} else {
-			if (normalize) {
+			if (qualify) {
 				IBinding owner= binding.getOwner();
 				if (owner instanceof ICPPNamespace || owner instanceof IType) {
 					int pos= result.length();
-					appendCppName(owner, normalize, normalize, result);
+					appendCppName(owner, normalize, qualify, result);
 					if (result.length() > pos)
 						result.append("::"); //$NON-NLS-1$
 				}

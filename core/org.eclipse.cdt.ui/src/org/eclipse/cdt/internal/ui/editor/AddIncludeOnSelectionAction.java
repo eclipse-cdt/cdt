@@ -78,6 +78,7 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IRequiredInclude;
@@ -85,7 +86,6 @@ import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.cdt.ui.text.SharedASTJob;
 import org.eclipse.cdt.utils.PathUtil;
 
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.corext.codemanipulation.AddIncludesOperation;
@@ -648,7 +648,15 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 	 */
 	private static String getBindingQualifiedName(IIndexBinding binding) throws CoreException {
 		String[] qname= binding.getQualifiedName();
-		return CPPVisitor.renderQualifiedName(qname);
+		StringBuilder result = new StringBuilder();
+		boolean needSep= false;
+		for (String element : qname) {
+			if (needSep)
+				result.append(Keywords.cpCOLONCOLON);
+			result.append(element);  
+			needSep= true;
+		}
+		return result.toString();
 	}
 
 	/**

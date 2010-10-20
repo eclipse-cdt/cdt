@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -131,7 +132,7 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer,
 	
 	@Override
 	protected String toStringBase() {
-		return getName() + ": " + super.toStringBase(); //$NON-NLS-1$
+		return ASTTypeUtil.getQualifiedName(this) + " -> " + super.toStringBase(); //$NON-NLS-1$
 	}
 
 	public void setType(IType type) { 

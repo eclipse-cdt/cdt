@@ -2093,20 +2093,6 @@ public class CPPVisitor extends ASTQueries {
 		return found;
 	}
 	
-	/**
-	 * Return the qualified name by concatenating component names with the 
-	 * Scope resolution operator ::
-	 * @param qn the component names
-	 * @return the qualified name
-	 */
-	public static String renderQualifiedName(String[] qn) {
-		StringBuilder result = new StringBuilder();
-		for (int i = 0; i < qn.length; i++) {
-			result.append(qn[i] + (i + 1 < qn.length ? "::" : ""));  //$NON-NLS-1$//$NON-NLS-2$
-		}
-		return result.toString();
-	}
-	
 	public static String[] getQualifiedName(IBinding binding) {
 		String[] ns = null;
 	    for (IBinding owner= binding.getOwner(); owner != null; owner= owner.getOwner()) {

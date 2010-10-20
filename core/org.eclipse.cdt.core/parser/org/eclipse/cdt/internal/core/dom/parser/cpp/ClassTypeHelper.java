@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -64,7 +64,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.CoreException;
 
@@ -627,12 +626,11 @@ public class ClassTypeHelper {
 	}
 
 	private static void getSubClasses(IIndex index, ICPPBinding classOrTypedef, List<ICPPBinding> result, HashSet<String> handled) throws CoreException {
-		try {
-			final String key = CPPVisitor.renderQualifiedName(classOrTypedef.getQualifiedName());
-			if (!handled.add(key)) {
-				return;
-			}
-		} catch (DOMException e) {
+		if (!(classOrTypedef instanceof IType))
+			return;
+		
+		final String key = ASTTypeUtil.getType((IType) classOrTypedef, true);
+		if (!handled.add(key)) {
 			return;
 		}
 

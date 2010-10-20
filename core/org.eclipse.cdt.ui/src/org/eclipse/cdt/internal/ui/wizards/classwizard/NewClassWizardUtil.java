@@ -58,9 +58,8 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.viewsupport.IViewPartInputProvider;
@@ -429,7 +428,7 @@ public class NewClassWizardUtil {
 					ICPPBinding binding = (ICPPBinding)bindings[i];
 
 					//get the fully qualified name of this binding
-					String bindingFullName = CPPVisitor.renderQualifiedName(binding.getQualifiedName());
+					String bindingFullName = renderQualifiedName(binding.getQualifiedName());
 					Class<? extends ICPPBinding> currentNodeType = binding.getClass();
 					// full binding				
 					if (queryType.isAssignableFrom(currentNodeType)) {						
@@ -474,5 +473,17 @@ public class NewClassWizardUtil {
 		finally {
 			index.releaseReadLock();
 		}
+	}
+
+	private static String renderQualifiedName(String[] qn) {
+		StringBuilder result = new StringBuilder();
+		boolean needSep= false;
+		for (String element : qn) {
+			if (needSep)
+				result.append(Keywords.cpCOLONCOLON);
+			result.append(element);  
+			needSep= true;
+		}
+		return result.toString();
 	}
 }

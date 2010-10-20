@@ -433,6 +433,7 @@ public class CPPTemplates {
 				if (defaultArg == null)
 					return null;
 				arg= instantiateArgument(defaultArg, map, -1, null);
+				arg= SemanticUtil.getSimplifiedArgument(arg);
 				if (!isValidArgument(arg)) {
 					return null;
 				}								
@@ -645,6 +646,7 @@ public class CPPTemplates {
 				IBinding owner= template.getOwner();
 				if (owner instanceof ICPPUnknownBinding) {
 					ICPPTemplateArgument[] args= createTemplateArgumentArray(id);
+					args= SemanticUtil.getSimplifiedArguments(args);
 					return new CPPUnknownClassInstance((ICPPUnknownBinding) template.getOwner(), id.getSimpleID(), args);
 				}
 			}
@@ -2186,6 +2188,7 @@ public class CPPTemplates {
             		final ICPPTemplateArgument[] arguments = ucli.getArguments();
             		ICPPTemplateArgument[] newArgs = CPPTemplates.instantiateArguments(arguments, tpMap, packOffset, within);
             		if (!t.equals(owner) && newArgs != arguments) {
+            			newArgs= SemanticUtil.getSimplifiedArguments(newArgs);
             			result= new CPPUnknownClassInstance((ICPPUnknownBinding) t, ucli.getNameCharArray(), newArgs);
             		}
             	} else if (!t.equals(owner)) {

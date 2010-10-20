@@ -16,6 +16,7 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
@@ -38,7 +39,6 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.pdom.tests.PDOMPrettyPrinter;
@@ -155,15 +155,11 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	}
 	
 	protected static void assertQNEquals(String expectedQN, IBinding b) {
-		try {
-			assertInstance(b, IBinding.class);
-			if (b instanceof ICPPBinding) {
-				assertEquals(expectedQN, CPPVisitor.renderQualifiedName(((ICPPBinding)b).getQualifiedName()));
-			} else {
-				assertEquals(expectedQN, b.getName());
-			}
-		} catch (DOMException de) {
-			fail(de.getMessage());
+		assertInstance(b, IBinding.class);
+		if (b instanceof ICPPBinding) {
+			assertEquals(expectedQN, ASTTypeUtil.getQualifiedName((ICPPBinding)b));
+		} else {
+			assertEquals(expectedQN, b.getName());
 		}
 	}
 
@@ -190,7 +186,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		IFunctionType ft = (IFunctionType) function;
 		assertTrue(ICPPClassType.class.isInstance((ft.getParameterTypes()[index])));
 		assertEquals(compositeTypeKey, ((ICPPClassType)ft.getParameterTypes()[index]).getKey());
-		assertEquals(qn, CPPVisitor.renderQualifiedName(((ICPPClassType)ft.getParameterTypes()[index]).getQualifiedName()));
+		assertEquals(qn, ASTTypeUtil.getQualifiedName((ICPPClassType)ft.getParameterTypes()[index]));
 	}
 
 	protected static <T> T assertInstance(Object o, Class<T> clazz, Class ... cs) {

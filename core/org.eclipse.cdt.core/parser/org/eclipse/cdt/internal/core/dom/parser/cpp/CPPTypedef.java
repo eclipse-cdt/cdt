@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -189,7 +190,7 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 
 	@Override
 	public String toString() {
-		return getName();
+		return ASTTypeUtil.getQualifiedName(this) + " -> " + ASTTypeUtil.getType(this, true); //$NON-NLS-1$
 	}
 	
 	public IBinding getOwner() {

@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.Path;
  * Creates labels for ICElement objects.
  * 
  * @deprecated Use org.eclipse.cdt.ui.CElementLabelProvider instead. 
- * Internally you can also use org.eclipse.cdt.internal.ui.viewsupport.CElementBaseLabels.
+ * Internally you can also use org.eclipse.cdt.internal.ui.viewsupport.CElementLabels.
  */
 @Deprecated
 public class CElementBaseLabels {

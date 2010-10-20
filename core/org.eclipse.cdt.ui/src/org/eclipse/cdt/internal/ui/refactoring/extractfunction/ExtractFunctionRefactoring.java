@@ -32,6 +32,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.text.edits.TextEditGroup;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -59,7 +60,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
@@ -284,14 +284,12 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			try {
 				finalConditions = super.checkFinalConditions(pm);
 
-
-				final IASTName astMethodName = new CPPASTName(info.getMethodName()
-						.toCharArray());
+				final IASTName astMethodName = new CPPASTName(info.getMethodName().toCharArray());
 				MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
 
 				if (context.getType() == ContextType.METHOD && !context.isInline()) {
-					ICPPASTCompositeTypeSpecifier classDeclaration = (ICPPASTCompositeTypeSpecifier) context
-					.getMethodDeclaration().getParent();
+					ICPPASTCompositeTypeSpecifier classDeclaration =
+							(ICPPASTCompositeTypeSpecifier) context.getMethodDeclaration().getParent();
 					IASTSimpleDeclaration methodDeclaration = getDeclaration(astMethodName);
 
 					if (isMethodAllreadyDefined(methodDeclaration, classDeclaration, getIndex())) {
@@ -303,10 +301,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 					if (name.isUserSetIsReturnValue()) {
 						info.setReturnVariable(name);
 					}
-
 				}
-			}
-			finally {
+			} finally {
 				unlockIndex();
 			}
 		} catch (InterruptedException e) {
@@ -872,7 +868,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 	private NodeContainer findExtractableNodes() {
 		final NodeContainer container = new NodeContainer();
-		unit.accept(new CPPASTVisitor() {
+		unit.accept(new ASTVisitor() {
 			{
 				shouldVisitStatements = true;
 				shouldVisitExpressions = true;

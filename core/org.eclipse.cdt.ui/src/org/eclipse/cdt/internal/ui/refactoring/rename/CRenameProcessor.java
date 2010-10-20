@@ -42,7 +42,6 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 
-
 /**
  * This is the processor used for the rename. It decides which of the delegates to
  * use and forwards further calls to the delegate.

@@ -40,7 +40,7 @@ public class CModelUtil {
 	
 	public static ITranslationUnit toOriginal(ITranslationUnit unit){
 		if (unit.isWorkingCopy()) {
-			return (((IWorkingCopy)unit).getOriginalElement());
+			return (((IWorkingCopy) unit).getOriginalElement());
 		}
 		return unit;
 	}

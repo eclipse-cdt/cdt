@@ -274,7 +274,7 @@ public class EditorUtility {
 	private static IEditorInput getEditorInput(ICElement element) throws CModelException {
 		while (element != null) {
  			if (element instanceof ISourceReference) {
- 				ITranslationUnit tu = ((ISourceReference)element).getTranslationUnit();
+ 				ITranslationUnit tu = ((ISourceReference) element).getTranslationUnit();
  				if (tu != null) {
  					element = tu;
  				}
@@ -548,18 +548,18 @@ public class EditorUtility {
 	}
 
 	/**
-	 * Gets the working copy of an compilation unit opened in an editor
+	 * Gets the working copy of an translation unit opened in an editor
 	 *
-	 * @param cu the original compilation unit (or another working copy)
-	 * @return the working copy of the compilation unit, or null if not found
+	 * @param tu the original translation unit (or another working copy)
+	 * @return the working copy of the translation unit, or null if not found
 	*/
-	public static ITranslationUnit getWorkingCopy(ITranslationUnit cu) {
-		if (cu == null)
+	public static ITranslationUnit getWorkingCopy(ITranslationUnit tu) {
+		if (tu == null)
 			return null;
-		if (cu.isWorkingCopy())
-			return cu;
+		if (tu.isWorkingCopy())
+			return tu;
 
-		return CDTUITools.getWorkingCopyManager().findSharedWorkingCopy(cu);
+		return CDTUITools.getWorkingCopyManager().findSharedWorkingCopy(tu);
 	}
 
 	/**

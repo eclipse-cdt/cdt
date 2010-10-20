@@ -20,12 +20,12 @@ import junit.framework.Assert;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
-import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateInDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestCache;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.tests.dsf.DsfTestPlugin;
 import org.eclipse.cdt.tests.dsf.TestDsfExecutor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -136,11 +136,11 @@ public class CacheTests {
         } catch (IllegalStateException e) {}
     }
 
-    private void assertCacheDisabledWithoutData() {
+    private void assertCacheValidWithoutData() {
         Assert.assertTrue(fTestCache.isValid());
         Assert.assertEquals(null, fTestCache.getData());
         Assert.assertFalse(fTestCache.getStatus().isOK());
-        Assert.assertEquals(fTestCache.getStatus().getCode(), IDsfStatusConstants.INVALID_STATE);
+        Assert.assertEquals(fTestCache.getStatus().getCode(), ERRCODE_TARGET_RUNNING);
     }
 
     private void assertCacheWaiting() {
@@ -289,106 +289,125 @@ public class CacheTests {
         assertCacheValidWithData(1);
     }
     
-//    @Test 
-//    public void disableBeforeRequestTest() throws InterruptedException, ExecutionException {
-//        // Disable the cache with a given value 
-//        fExecutor.submit(new DsfRunnable() {
-//            public void run() {
-//                fTestCache.disable();
-//            }
-//        }).get();
-//        
-//        assertCacheDisabledWithoutData();
-//        
-//        // Try to request data from cache
-//        Query<Integer> q = new Query<Integer>() { 
-//            @Override
-//            protected void execute(DataRequestMonitor<Integer> rm) {
-//                fTestCache.request(rm);
-//            }
-//        };
-//        fExecutor.execute(q);
-//        
-//        Thread.sleep(100);
-//        
-//        // Retrieval should never have been made.
-//        Assert.assertEquals(null, fRetrieveRm);
-//        
-//        try {
-//            Assert.assertEquals(null, q.get());
-//        } catch (ExecutionException e) {
-//            // expected the exception
-//            return;
-//        }
-//        Assert.fail("expected an exeption");
-//    }
-//    
-//    @Test 
-//    public void disableWhilePendingTest() throws InterruptedException, ExecutionException {
-//        // Request data from cache 
-//        Query<Integer> q = new Query<Integer>() { 
-//            @Override
-//            protected void execute(DataRequestMonitor<Integer> rm) {
-//                fTestCache.request(rm);
-//            }
-//        };
-//        fExecutor.execute(q);
-//
-//        // Disable the cache with a given value 
-//        fExecutor.submit(new DsfRunnable() {
-//            public void run() {
-//                fTestCache.disable();
-//            }
-//        }).get();
-//        
-//        assertCacheDisabledWithoutData();
-//
-//        // Completed the retrieve RM
-//        fExecutor.submit(new DsfRunnable() {
-//            public void run() {
-//                fRetrieveRm.setData(1);
-//                fRetrieveRm.done();
-//            }
-//        }).get();
-//        
-//        // Validate that cache is still disabled without data.
-//        assertCacheDisabledWithoutData();
-//    }
-//
-//    @Test 
-//    public void disableWhileValidTest() throws InterruptedException, ExecutionException {
-//        // Request data from cache
-//        Query<Integer> q = new Query<Integer>() { 
-//            @Override
-//            protected void execute(DataRequestMonitor<Integer> rm) {
-//                fTestCache.request(rm);
-//            }
-//        };
-//        fExecutor.execute(q);
-//        
-//        // Wait until the cache starts data retrieval.
-//        waitForRetrieveRm();
-//        
-//        // Complete the request
-//        fRetrieveRm.setData(1);
-//        fRetrieveRm.done();
-//
-//        q.get();
-//        
-//        // Disable cache
-//        fExecutor.submit(new DsfRunnable() {
-//            public void run() {
-//                fTestCache.disable();
-//            }
-//        }).get();
-//        
-//        // Check final state
-//        assertCacheValidWithData(1);
-//    }
+    private static final int ERRCODE_TARGET_RUNNING = 1234;
+    private static final Status STATUS_TARGET_RUNNING = new Status(Status.ERROR, DsfTestPlugin.PLUGIN_ID, ERRCODE_TARGET_RUNNING, "Target is running", null);
+    
+	// DISABLE TESTS
+	//
+	// We say a cache is "disabled" when its most recent attempt to update from
+	// the source failed. Also, a cache may make itself disabled as a reaction
+	// to a state change notification from its source (e.g., the target
+	// resumed). In either case, the cache is in the valid state but it has no
+	// data and the status reflects an error. Keep in mind that the 'valid'
+	// state is not a reflection of the quality of the data, but merely whether
+	// the cache object's representation of the data is stale or
+	// not. A transaction that uses a "disabled" cache object will simply fail;
+	// it will not ask the cache to update its data from the source. Only a
+	// change in the source's state would cause the cache to put itself back in
+	// the invalid state, thus opening the door to another update.
+
+	/**
+	 * Test behavior when a cache object is asked to update itself after it has
+	 * become "disabled". Since a "disabled" cache is in the valid state, a
+	 * request for it to update from the source should be ignored.
+	 */
+    @Test 
+    public void disableBeforeRequestTest() throws InterruptedException, ExecutionException {
+        // Disable the cache
+        fExecutor.submit(new DsfRunnable() {
+            public void run() {
+                fTestCache.set(null, STATUS_TARGET_RUNNING);
+            }
+        }).get();
+        
+        assertCacheValidWithoutData();
+        
+        // Try to request data from cache
+        Query<Integer> q = new TestQuery(); 
+        fExecutor.execute(q);
+        
+        Thread.sleep(100);
+        
+        // Retrieval should never have been made.
+        Assert.assertEquals(null, fRetrieveRm);
+
+        // The cache has no data so the query should have failed  
+        try {
+            q.get();
+            Assert.fail("expected an exeption");
+        } catch (ExecutionException e) {
+            // expected the exception
+        }
+    }
+
+	/**
+	 * Test behavior when a cache object goes into the "disabled" state while an
+	 * update request is ongoing. The subsequent completion of the request should 
+	 * have no effect on the  cache
+	 */
+    @Test 
+    public void disableWhilePendingTest() throws InterruptedException, ExecutionException {
+        // Request data from cache
+        Query<Integer> q = new TestQuery(); 
+        fExecutor.execute(q);
+
+        // Disable the cache
+        fExecutor.submit(new DsfRunnable() {
+            public void run() {
+                fTestCache.set(null, STATUS_TARGET_RUNNING);
+            }
+        }).get();
+        
+        assertCacheValidWithoutData();
+
+		// Complete the retrieve RM. Note that the disabling of the cache above
+		// disassociates it from its retrieval RM. Thus regardless of how that
+		// request completes, it does not affect the cache.
+        fExecutor.submit(new DsfRunnable() {
+            public void run() {
+                fRetrieveRm.setData(1);
+                fRetrieveRm.done();
+            }
+        }).get();
+        
+        // Validate that cache is still disabled without data.
+        assertCacheValidWithoutData();
+    }
+
+	/**
+	 * Test behavior when a cache object goes into the "disabled" state while
+	 * it's in the valid state. The cache remains in the valid state but it
+	 * loses its data and obtains an error status.
+	 */
+    @Test 
+    public void disableWhileValidTest() throws InterruptedException, ExecutionException {
+        // Request data from cache
+        Query<Integer> q = new TestQuery(); 
+        fExecutor.execute(q);
+        
+        // Wait until the cache starts data retrieval.
+        waitForRetrieveRm();
+        
+        // Complete the request
+        fRetrieveRm.setData(1);
+        fRetrieveRm.done();
+
+        Assert.assertEquals(Integer.valueOf(1), q.get());
+        
+        // Disable the cache
+        fExecutor.submit(new DsfRunnable() {
+            public void run() {
+                fTestCache.set(null, STATUS_TARGET_RUNNING);
+            }
+        }).get();
+        
+        // Check final state
+        assertCacheValidWithoutData();
+    }
 
     @Test 
-    public void disableWithValueTest() throws InterruptedException, ExecutionException {
-        // Disable the cache with a given value 
+    public void setWithValueTest() throws InterruptedException, ExecutionException {
+        // Disable the cache
         fExecutor.submit(new DsfRunnable() {
             public void run() {
                 fTestCache.set(2, Status.OK_STATUS);

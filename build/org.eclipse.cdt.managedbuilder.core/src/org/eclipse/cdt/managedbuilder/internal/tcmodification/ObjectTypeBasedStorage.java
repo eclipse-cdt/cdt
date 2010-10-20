@@ -12,6 +12,12 @@ package org.eclipse.cdt.managedbuilder.internal.tcmodification;
 
 import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
 
+/**
+ * The class implements the storage organized by types extending
+ * {@link IRealBuildObjectAssociation}. 
+ *
+ * @param <T> - the type of object being stored.
+ */
 public final class ObjectTypeBasedStorage<T> implements Cloneable {
 	private static final int TOOL_INDEX = 0;
 	private static final int TOOLCHAIN_INDEX = 1;

@@ -1048,11 +1048,13 @@ public class CPPVisitor extends ASTQueries {
 					// For template functions we may need to resolve a template parameter
 					// as a parent of an unknown type used as parameter type.
 					IBinding binding = names[i - 1].resolvePreBinding();
-					while (binding instanceof ITypedef) {
-						IType t = ((ITypedef) binding).getType();
-						if (t instanceof IBinding)
-							binding = (IBinding) t;
-						else break;
+					
+					// 7.1.3-7 Unwrap typedefs, delete cv-qualifiers.
+					if (binding instanceof ITypedef) {
+						IType type= getNestedType((ITypedef) binding, TDEF | CVTYPE);
+						if (type instanceof IBinding) {
+							binding= (IBinding) type;
+						}
 					}
 					boolean done= true;
 					IScope scope= null;

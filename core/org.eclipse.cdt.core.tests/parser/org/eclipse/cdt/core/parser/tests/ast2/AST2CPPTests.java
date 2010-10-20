@@ -9245,5 +9245,13 @@ public class AST2CPPTests extends AST2BaseTest {
 		ref= bh.assertNonProblem("f(&number)", 1);
 		assertSame(f2, ref);
 	}
-
+	
+	//	struct S {
+	//		class C {};
+	//	};
+	//	typedef const S T;
+	//	T::C c;
+	public void testCVQualifiedClassName_328063() throws Exception {
+		parseAndCheckBindings();
+	}
 }

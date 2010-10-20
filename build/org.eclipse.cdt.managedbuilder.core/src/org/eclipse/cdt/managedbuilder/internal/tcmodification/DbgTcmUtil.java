@@ -11,12 +11,13 @@
 package org.eclipse.cdt.managedbuilder.internal.tcmodification;
 
 import java.io.PrintStream;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
 import org.eclipse.cdt.managedbuilder.internal.tcmodification.extension.MatchObjectElement;
+import org.eclipse.core.runtime.IPath;
 
 public class DbgTcmUtil {
 	private static final PrintStream OUT = System.out;
@@ -67,7 +68,7 @@ public class DbgTcmUtil {
 		throw e;
 	}
 	
-	public static void dumpStorage(PerTypeMapStorage storage){
+	public static void dumpStorage(PerTypeMapStorage<? extends IRealBuildObjectAssociation, Set<IPath>> storage){
 		println("starting storage dump.."); //$NON-NLS-1$
 		int[] types = ObjectTypeBasedStorage.getSupportedObjectTypes();
 		for(int i = 0; i < types.length; i++){
@@ -78,16 +79,17 @@ public class DbgTcmUtil {
 			
 			println(" dumping for type " + assoc.getString()); //$NON-NLS-1$
 			
-			Map map = storage.getMap(type, false);
+			@SuppressWarnings("unchecked")
+			Map<IRealBuildObjectAssociation, Set<IPath>> map = (Map<IRealBuildObjectAssociation, Set<IPath>>) storage.getMap(type, false);
 			if(map != null){
-				for(Iterator iter = map.entrySet().iterator(); iter.hasNext(); ){
-					Map.Entry entry = (Map.Entry)iter.next();
-					IRealBuildObjectAssociation obj = (IRealBuildObjectAssociation)entry.getKey();
+				Set<Entry<IRealBuildObjectAssociation, Set<IPath>>> entrySet = map.entrySet();
+				for (Entry<IRealBuildObjectAssociation, Set<IPath>> entry : entrySet) {
+					IRealBuildObjectAssociation obj = entry.getKey();
 					println("  dumping " + assoc.getString() + " " + obj.getUniqueRealName()); //$NON-NLS-1$ //$NON-NLS-2$
-					Set set = (Set)entry.getValue();
+					Set<IPath> set = entry.getValue();
 					if(set != null){
-						for(Iterator setIter = set.iterator(); setIter.hasNext(); ){
-							println("   path \"" + setIter.next() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+						for (IPath path : set) {
+							println("   path \"" + path + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					}
 					println("  end dumping " + obj.getUniqueRealName()); //$NON-NLS-1$

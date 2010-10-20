@@ -59,8 +59,8 @@ public abstract class ToolListModification implements IToolListModification {
 	private HashSet<ITool> fFilteredOutSysTools;
 //	private LinkedHashMap fRealToToolMap = new LinkedHashMap();
 //	private boolean fSysInfoMapInited;
-	private PerTypeMapStorage fCompleteObjectStorage;
-	protected TreeMap<IPath, PerTypeSetStorage> fCompletePathMapStorage;
+	private PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> fCompleteObjectStorage;
+	protected TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> fCompletePathMapStorage;
 	private HashSet<Tool> fAddCapableTools;
 	private Map<Tool, Tool> fFilteredOutTools;
  
@@ -164,10 +164,11 @@ public abstract class ToolListModification implements IToolListModification {
 			if(DbgTcmUtil.DEBUG)
 				DbgTcmUtil.println("calculating compatibility for tool " + fRealTool.getUniqueRealName()); //$NON-NLS-1$
 
-			PerTypeMapStorage storage = getCompleteObjectStore();
+			PerTypeMapStorage<? extends IRealBuildObjectAssociation, Set<IPath>> storage = getCompleteObjectStore();
 			Tool tool = fRealTool;
 			Set<IPath> rmSet = getToolApplicabilityPathSet(tool, true);
-			Map<Tool, Set<IPath>> toolMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, false);
+			@SuppressWarnings("unchecked")
+			Map<Tool, Set<IPath>> toolMap = (Map<Tool, Set<IPath>>) storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, false);
 			try {
 				if(rmSet != null && rmSet.size() != 0)
 					TcModificationUtil.removePaths(toolMap, tool, rmSet);
@@ -175,11 +176,13 @@ public abstract class ToolListModification implements IToolListModification {
 				if(DbgTcmUtil.DEBUG)
 					DbgTcmUtil.dumpStorage(storage);
 
-				ConflictMatchSet conflicts = ToolChainModificationManager.getInstance().getConflictInfo(IRealBuildObjectAssociation.OBJECT_TOOL, storage);
+				@SuppressWarnings("unchecked")
+				ConflictMatchSet conflicts = ToolChainModificationManager.getInstance().getConflictInfo(IRealBuildObjectAssociation.OBJECT_TOOL, (PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>>) storage);
 				
 				fCompatibleTools = new HashMap<Tool, ToolCompatibilityInfoElement>();
 				fInCompatibleTools = new HashMap<Tool, ToolCompatibilityInfoElement>();
 				Tool sysTools[] = getTools(false, true);
+				@SuppressWarnings("unchecked")
 				Map<Tool, List<ConflictMatch>> conflictMap = (Map<Tool, List<ConflictMatch>>) conflicts.fObjToConflictListMap;
 				for(int i = 0; i < sysTools.length; i++){
 					Tool t = sysTools[i];
@@ -368,7 +371,7 @@ public abstract class ToolListModification implements IToolListModification {
 	private Set<Tool> getAddCompatibleSysTools(){
 		if(fAddCapableTools == null){
 			fAddCapableTools = new HashSet<Tool>(Arrays.asList(getAllSysTools()));
-			PerTypeMapStorage storage = getCompleteObjectStore();
+			PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> storage = getCompleteObjectStore();
 			ConflictMatchSet conflicts = ToolChainModificationManager.getInstance().getConflictInfo(IRealBuildObjectAssociation.OBJECT_TOOL, storage);
 			fAddCapableTools.removeAll(conflicts.fObjToConflictListMap.keySet());
 		}
@@ -383,8 +386,10 @@ public abstract class ToolListModification implements IToolListModification {
 	public ToolListModification(ResourceInfo rcInfo, ToolListModification base){
 		fRcInfo = rcInfo;
 		Tool[] initialTools = (Tool[])rcInfo.getTools();
+		@SuppressWarnings("unchecked")
 		Map<Tool, Tool> initRealToToolMap = (Map<Tool, Tool>) TcModificationUtil.getRealToObjectsMap(initialTools, null);
 		Tool[] updatedTools = base.getTools(true, false);
+		@SuppressWarnings("unchecked")
 		Map<Tool, Tool> updatedRealToToolMap = (Map<Tool, Tool>) TcModificationUtil.getRealToObjectsMap(updatedTools, null);
 		Set<Entry<Tool, Tool>> entrySet = updatedRealToToolMap.entrySet();
 		for (Entry<Tool, Tool> entry : entrySet) {
@@ -502,13 +507,13 @@ public abstract class ToolListModification implements IToolListModification {
 	}
 	
 	public final void apply() throws CoreException {
-		TreeMap<IPath, PerTypeSetStorage> initialMap = TcModificationUtil.createPathMap(fRcInfo.getParent());
-		TreeMap<IPath, PerTypeSetStorage> cur = getCompletePathMapStorage();
-		TreeMap<IPath, PerTypeSetStorage> result = TcModificationUtil.createResultingChangesMap(cur, initialMap);
+		TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> initialMap = TcModificationUtil.createPathMap(fRcInfo.getParent());
+		TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> cur = getCompletePathMapStorage();
+		TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> result = TcModificationUtil.createResultingChangesMap(cur, initialMap);
 		apply(result);
 	}
 	
-	private void apply(TreeMap<IPath, PerTypeSetStorage> resultingChangeMap) throws CoreException {
+	private void apply(TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> resultingChangeMap) throws CoreException {
 		//the order matters here: we first should process tool-chain than a builder and then tools
 		int types[] = new int[]{
 				IRealBuildObjectAssociation.OBJECT_TOOLCHAIN,
@@ -518,17 +523,17 @@ public abstract class ToolListModification implements IToolListModification {
 
 		int type;
 		IConfiguration cfg = fRcInfo.getParent();
-		Set<Entry<IPath, PerTypeSetStorage>> entrySet = resultingChangeMap.entrySet();
-		for (Entry<IPath, PerTypeSetStorage> entry : entrySet) {
+		Set<Entry<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>>> entrySet = resultingChangeMap.entrySet();
+		for (Entry<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> entry : entrySet) {
 			IPath path = entry.getKey();
 			ResourceInfo rcInfo = (ResourceInfo)cfg.getResourceInfo(path, true);
 			if(rcInfo == null){
 				rcInfo = (FolderInfo)cfg.createFolderInfo(path);
 			}
-			PerTypeSetStorage storage = entry.getValue();
+			PerTypeSetStorage<IRealBuildObjectAssociation> storage = entry.getValue();
 			for(int i = 0; i < types.length; i++){
 				type = types[i];
-				Set<? extends IRealBuildObjectAssociation> set = storage.getSet(type, false);
+				Set<IRealBuildObjectAssociation> set = storage.getSet(type, false);
 				if(set != null){
 					apply(rcInfo, type, set);
 				}
@@ -654,8 +659,9 @@ public abstract class ToolListModification implements IToolListModification {
 		list.addAll(map.values());
 		clearToolInfo(map.values().toArray(new Tool[map.size()]));
 
-		PerTypeMapStorage storage = getCompleteObjectStore();
-		Map<Tool, Set<IPath>> toolMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, true);
+		PerTypeMapStorage<? extends IRealBuildObjectAssociation, Set<IPath>> storage = getCompleteObjectStore();
+		@SuppressWarnings("unchecked")
+		Map<Tool, Set<IPath>> toolMap = (Map<Tool, Set<IPath>>) storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, true);
 		if(rmSet != null)
 			TcModificationUtil.removePaths(toolMap, realRemoved, rmSet);
 		if(addSet != null)
@@ -700,7 +706,9 @@ public abstract class ToolListModification implements IToolListModification {
 		}
 
 		filteredTools = filterTools(allTools);
+		@SuppressWarnings("unchecked")
 		Map<Tool, Tool> filteredMap = (Map<Tool, Tool>) TcModificationUtil.getRealToObjectsMap(filteredTools, null);
+		@SuppressWarnings("unchecked")
 		Map<Tool, Tool> allMap = (Map<Tool, Tool>) TcModificationUtil.getRealToObjectsMap(allTools, null);
 		allMap.keySet().removeAll(filteredMap.keySet());
 		fFilteredOutTools = allMap;
@@ -728,7 +736,7 @@ public abstract class ToolListModification implements IToolListModification {
 		fCompletePathMapStorage = null;
 	}
 	
-	protected PerTypeMapStorage getCompleteObjectStore(){
+	protected PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> getCompleteObjectStore(){
 		if(fCompleteObjectStorage == null){
 			fCompleteObjectStorage = TcModificationUtil.createRealToolToPathSet(fRcInfo.getParent(), null, false);
 			if(DbgTcmUtil.DEBUG){
@@ -739,7 +747,7 @@ public abstract class ToolListModification implements IToolListModification {
 		return fCompleteObjectStorage;
 	}
 	
-	protected TreeMap<IPath, PerTypeSetStorage> getCompletePathMapStorage(){
+	protected TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> getCompletePathMapStorage(){
 		if(fCompletePathMapStorage == null){
 			fCompletePathMapStorage = TcModificationUtil.createPathMap(getCompleteObjectStore());
 		}

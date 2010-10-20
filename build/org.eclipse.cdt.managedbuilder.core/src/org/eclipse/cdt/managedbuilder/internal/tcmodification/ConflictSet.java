@@ -30,13 +30,13 @@ public class ConflictSet {
 	
 	private PerTypeMapStorage<IRealBuildObjectAssociation, Conflict> fConflictStorage;
 	private List<ConflictMatch> fConflictMatchList;
-	private Set<? extends IRealBuildObjectAssociation> fExtConflictSet;
-	private IRealBuildObjectAssociation fRealObj;
+//	private Set<IRealBuildObjectAssociation> fExtConflictSet;
+//	private IRealBuildObjectAssociation fRealObj;
 	
 	public ConflictSet(IRealBuildObjectAssociation realObj, List<ConflictMatch> conflictMatchList, Set<? extends IRealBuildObjectAssociation> extConflictSet){
 		fConflictMatchList = conflictMatchList;
-		fExtConflictSet = extConflictSet;
-		fRealObj = realObj; 
+//		fExtConflictSet = (Set<IRealBuildObjectAssociation>) extConflictSet;
+//		fRealObj = realObj; 
 	}
 	
 	private void init(){

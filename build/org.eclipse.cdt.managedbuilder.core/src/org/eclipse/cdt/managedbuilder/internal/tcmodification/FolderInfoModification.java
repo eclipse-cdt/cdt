@@ -307,9 +307,9 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		ToolChainApplicabilityPaths tcApplicabilityPaths = new ToolChainApplicabilityPaths();
 		IPath path = getResourceInfo().getPath();
 		
-		TreeMap<IPath, PerTypeSetStorage> pathMap = getCompletePathMapStorage();
+		TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> pathMap = getCompletePathMapStorage();
 		
-		PerTypeSetStorage oSet = pathMap.get(path);
+		PerTypeSetStorage<? extends IRealBuildObjectAssociation> oSet = pathMap.get(path);
 		@SuppressWarnings("unchecked")
 		Set<Tool> toolSet = (Set<Tool>) oSet.getSet(IRealBuildObjectAssociation.OBJECT_TOOL, false);
 		@SuppressWarnings("unchecked")
@@ -356,11 +356,11 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		}
 	}
 
-	private static void calculateChildPaths(TreeMap<IPath, PerTypeSetStorage> pathMap, IPath path, ToolChain tc, Set<IPath> tcPaths, Map<Tool,Set<IPath>> toolPathsMap, Set<IPath> fileInfoPaths){
-		SortedMap<IPath, PerTypeSetStorage> directCMap = PathComparator.getDirectChildPathMap(pathMap, path);
-		Set<Entry<IPath, PerTypeSetStorage>> entrySet = directCMap.entrySet();
-		for (Entry<IPath, PerTypeSetStorage> entry : entrySet) {
-			PerTypeSetStorage cst = entry.getValue();
+	private static void calculateChildPaths(TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> pathMap, IPath path, ToolChain tc, Set<IPath> tcPaths, Map<Tool,Set<IPath>> toolPathsMap, Set<IPath> fileInfoPaths){
+		SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> directCMap = PathComparator.getDirectChildPathMap(pathMap, path);
+		Set<Entry<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>>> entrySet = directCMap.entrySet();
+		for (Entry<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> entry : entrySet) {
+			PerTypeSetStorage<? extends IRealBuildObjectAssociation> cst = entry.getValue();
 			
 			@SuppressWarnings("unchecked")
 			Set<ToolChain> ctc = (Set<ToolChain>) cst.getSet(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
@@ -389,7 +389,9 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		ToolChainApplicabilityPaths tcApplicability = getToolChainApplicabilityPaths();
 		PerTypeMapStorage<? extends IRealBuildObjectAssociation, Set<IPath>> storage = getCompleteObjectStore();
 		
+		@SuppressWarnings("unchecked")
 		Map<ToolChain, Set<IPath>> tcMap = (Map<ToolChain, Set<IPath>>) storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
+		@SuppressWarnings("unchecked")
 		Map<Tool, Set<IPath>> toolMap = (Map<Tool, Set<IPath>>) storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, false);
 		
 		

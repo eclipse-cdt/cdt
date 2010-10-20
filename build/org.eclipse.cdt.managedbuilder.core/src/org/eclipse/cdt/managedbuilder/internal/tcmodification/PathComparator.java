@@ -18,6 +18,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
 import org.eclipse.core.runtime.IPath;
 
 public class PathComparator implements Comparator<IPath> {
@@ -69,12 +70,12 @@ public class PathComparator implements Comparator<IPath> {
 		return path.append("\0"); //$NON-NLS-1$
 	}
 
-	public static SortedMap<IPath, PerTypeSetStorage> getChildPathMap(SortedMap<IPath, PerTypeSetStorage> map, IPath path, boolean includeThis, boolean copy){
+	public static SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> getChildPathMap(SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> map, IPath path, boolean includeThis, boolean copy){
 		IPath start = includeThis ? path : getFirstChild(path); 
 		IPath next = getNext(path);
-		SortedMap<IPath, PerTypeSetStorage> result = next != null ? map.subMap(start, next) : map.tailMap(start);
+		SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> result = next != null ? map.subMap(start, next) : map.tailMap(start);
 		if(copy)
-			result = new TreeMap<IPath, PerTypeSetStorage>(result);
+			result = new TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>>(result);
 		return result;
 	}
 
@@ -99,12 +100,12 @@ public class PathComparator implements Comparator<IPath> {
 		return result;
 	}
 	
-	public static SortedMap<IPath,PerTypeSetStorage> getDirectChildPathMap(SortedMap<IPath, PerTypeSetStorage> map, IPath path){
+	public static SortedMap<IPath,PerTypeSetStorage<IRealBuildObjectAssociation>> getDirectChildPathMap(SortedMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>> map, IPath path){
 		//all children
-		SortedMap<IPath,PerTypeSetStorage> children = getChildPathMap(map, path, false, false);
-		SortedMap<IPath,PerTypeSetStorage> result = new TreeMap<IPath, PerTypeSetStorage>(INSTANCE);
-		for(Iterator<Map.Entry<IPath,PerTypeSetStorage>> iter = children.entrySet().iterator(); iter.hasNext(); iter = children.entrySet().iterator()){
-			Map.Entry<IPath,PerTypeSetStorage> entry = iter.next();
+		SortedMap<IPath,PerTypeSetStorage<IRealBuildObjectAssociation>> children = getChildPathMap(map, path, false, false);
+		SortedMap<IPath,PerTypeSetStorage<IRealBuildObjectAssociation>> result = new TreeMap<IPath, PerTypeSetStorage<IRealBuildObjectAssociation>>(INSTANCE);
+		for(Iterator<Map.Entry<IPath,PerTypeSetStorage<IRealBuildObjectAssociation>>> iter = children.entrySet().iterator(); iter.hasNext(); iter = children.entrySet().iterator()){
+			Map.Entry<IPath,PerTypeSetStorage<IRealBuildObjectAssociation>> entry = iter.next();
 			IPath childPath = entry.getKey();
 			result.put(childPath, entry.getValue());
 			

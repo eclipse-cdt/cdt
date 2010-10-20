@@ -28,6 +28,7 @@ import org.eclipse.cdt.managedbuilder.internal.tcmodification.ToolChainModificat
 import org.eclipse.cdt.managedbuilder.internal.tcmodification.ToolChainModificationManager.ConflictMatchSet;
 import org.eclipse.cdt.managedbuilder.tcmodification.CompatibilityStatus;
 import org.eclipse.cdt.managedbuilder.tcmodification.IConfigurationModification;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 
 public class ConfigurationModification extends FolderInfoModification implements
@@ -104,8 +105,8 @@ public class ConfigurationModification extends FolderInfoModification implements
 
 	private ConflictMatchSet getParentConflictMatchSet(){
 		if(fConflicts == null){
-			PerTypeMapStorage storage = getCompleteObjectStore();
-			Object restore = TcModificationUtil.removeBuilderInfo(storage, fRealBuilder);
+			PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> storage = getCompleteObjectStore();
+			Set<IPath> restore = TcModificationUtil.removeBuilderInfo(storage, fRealBuilder);
 			try {
 				fConflicts = ToolChainModificationManager.getInstance().getConflictInfo(IRealBuildObjectAssociation.OBJECT_BUILDER, storage);
 			} finally {
@@ -187,7 +188,7 @@ public class ConfigurationModification extends FolderInfoModification implements
 		fRealBuilder = realBuilder;
 		fCompletePathMapStorage = null;
 		
-		PerTypeMapStorage storage = getCompleteObjectStore();
+		PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> storage = getCompleteObjectStore();
 		TcModificationUtil.applyBuilder(storage, getResourceInfo().getPath(), fSelectedBuilder);
 		
 		clearBuilderCompatibilityInfo();

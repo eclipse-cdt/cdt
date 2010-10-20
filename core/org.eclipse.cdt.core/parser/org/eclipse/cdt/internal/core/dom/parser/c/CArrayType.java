@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -184,7 +184,7 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 		if (nval >= 0) {
 			buffer.putShort(nval);
 		} else if (val != null) {
-			buffer.putValue(val);
+			buffer.marshalValue(val);
 		}
 		buffer.marshalType(getType());
 	}
@@ -198,7 +198,7 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 		if ((firstByte & ITypeMarshalBuffer.FLAG3) != 0) {
 			value = Value.create(buffer.getShort());
 		} else if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0) {
-			value = buffer.getValue();
+			value = buffer.unmarshalValue();
 		}
 		IType nested= buffer.unmarshalType();		
 		CArrayType result= new CArrayType(nested, (flags & 0x01) != 0, (flags & 0x02) != 0, (flags & 0x04) != 0, value);

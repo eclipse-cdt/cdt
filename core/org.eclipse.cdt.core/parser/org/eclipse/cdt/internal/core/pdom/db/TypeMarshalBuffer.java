@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.core.runtime.CoreException;
@@ -31,7 +30,7 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	public final static byte NULL_TYPE= 0;
 	public final static byte INDIRECT_TYPE= (byte) -1;
 	public final static byte BINDING_TYPE= (byte) -2;
-	
+
 	static {
 		assert EMPTY.length == Database.TYPE_SIZE;
 	}
@@ -63,9 +62,11 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		return fBuffer;
 	}
 
-	public void marshalType(IType type) throws CoreException {
-		if (type instanceof IBinding) {
-			PDOMBinding pb= fLinkage.addTypeBinding((IBinding) type);
+	public void marshalBinding(IBinding binding) throws CoreException {
+		if (binding instanceof ISerializableType) {
+			((ISerializableType) binding).marshal(this);
+		} else {
+			PDOMBinding pb= fLinkage.addTypeBinding(binding);
 			if (pb == null) {
 				putByte(NULL_TYPE);
 			} else {
@@ -73,12 +74,71 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 				putByte((byte) 0);
 				putRecordPointer(pb.getRecord());
 			}
+		} 
+	}
+
+	public IBinding unmarshalBinding() throws CoreException {
+		if (fPos >= fBuffer.length)
+			throw unmarshallingError();
+		
+		byte firstByte= fBuffer[fPos];
+		if (firstByte == BINDING_TYPE) {
+			fPos+= 2;
+			long rec= getRecordPointer();
+			return (IBinding) fLinkage.getNode(rec);
+		} else if (firstByte == 0) {
+			fPos++;
+			return null;
+		}
+		
+		IType type= fLinkage.unmarshalType(this);
+		if (type == null || type instanceof IBinding)
+			return (IBinding) type;
+		
+		throw unmarshallingError();
+	}
+
+	public void marshalType(IType type) throws CoreException {
+		if (type instanceof IBinding) {
+			marshalBinding((IBinding) type);
 		} else if (type instanceof ISerializableType) {
 			((ISerializableType) type).marshal(this);
 		} else {
 			assert type == null : "Cannot serialize " + ASTTypeUtil.getType(type) + "(" + type.getClass().getName() + ")";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			putByte(NULL_TYPE);
 		}
+	}
+
+	public IType unmarshalType() throws CoreException {
+		if (fPos >= fBuffer.length)
+			throw unmarshallingError();
+		
+		byte firstByte= fBuffer[fPos];
+		if (firstByte == BINDING_TYPE) {
+			fPos+= 2;
+			long rec= getRecordPointer();
+			return (IType) fLinkage.getNode(rec);
+		} else if (firstByte == 0) {
+			fPos++;
+			return null;
+		}
+		
+		return fLinkage.unmarshalType(this);
+	}
+
+	public void marshalValue(IValue value) throws CoreException {
+		if (value instanceof Value) {
+			((Value) value).marshall(this);
+		} else {
+			putByte(NULL_TYPE);
+		} 
+	}
+
+	public IValue unmarshalValue() throws CoreException {
+		if (fPos >= fBuffer.length)
+			throw unmarshallingError();
+		
+		return Value.unmarshal(this);
 	}
 
 	private void request(int i) {
@@ -131,6 +191,56 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		final int byte2 = 0xff & fBuffer[fPos++];
 		return (((byte1 << 8) | (byte2 & 0xff)));
 	}
+	
+	public void putInt(int value) {
+		request(4);
+		fPos += 4;
+		int p= fPos;
+		fBuffer[--p]= (byte)(value); value >>= 8;
+		fBuffer[--p]= (byte)(value); value >>= 8;
+		fBuffer[--p]= (byte)(value); value >>= 8;
+		fBuffer[--p]= (byte)(value); 
+	}
+
+	public int getInt() throws CoreException {
+		if (fPos+4 > fBuffer.length)
+			throw unmarshallingError();
+		int result= 0;
+		result |= fBuffer[fPos++] & 0xff; result <<= 8;
+		result |= fBuffer[fPos++] & 0xff; result <<= 8;
+		result |= fBuffer[fPos++] & 0xff; result <<= 8;
+		result |= fBuffer[fPos++] & 0xff;
+		return result;
+	}
+
+	public void putLong(long value) {
+		request(8);
+		fPos += 8;
+		int p= fPos;
+		fBuffer[--p]= (byte)(value); value >>= 8;
+		fBuffer[--p]= (byte)(value); value >>= 8;
+		fBuffer[--p]= (byte)(value); value >>= 8;
+		fBuffer[--p]= (byte)(value); value >>= 8;
+		fBuffer[--p]= (byte)(value); value >>= 8;
+		fBuffer[--p]= (byte)(value); value >>= 8;
+		fBuffer[--p]= (byte)(value); value >>= 8;
+		fBuffer[--p]= (byte)(value); 
+	}
+
+	public long getLong() throws CoreException {
+		if (fPos+8 > fBuffer.length)
+			throw unmarshallingError();
+		long result= 0;
+		result |= fBuffer[fPos++] & 0xff; result <<= 8;
+		result |= fBuffer[fPos++] & 0xff; result <<= 8;
+		result |= fBuffer[fPos++] & 0xff; result <<= 8;
+		result |= fBuffer[fPos++] & 0xff; result <<= 8;
+		result |= fBuffer[fPos++] & 0xff; result <<= 8;
+		result |= fBuffer[fPos++] & 0xff; result <<= 8;
+		result |= fBuffer[fPos++] & 0xff; result <<= 8;
+		result |= fBuffer[fPos++] & 0xff;
+		return result;
+	}
 
 	private void putRecordPointer(long record) {
 		request(Database.PTR_SIZE);
@@ -148,56 +258,19 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		return Chunk.getRecPtr(fBuffer, pos);
 	}
 
-	public IValue getValue() throws CoreException {
-		int replen= getShort();
-		int unknwonLen= getShort();
-		
-		char[] rep= new char[replen];
-		for (int i = 0; i < replen; i++) {
-			rep[i]= (char) getShort();
-		}
-		ICPPUnknownBinding[] unknown= new ICPPUnknownBinding[unknwonLen];
-		for (int i = 0; i < unknwonLen; i++) {
-			long ptr= getRecordPointer();
-			IBinding b= fLinkage.getBinding(ptr);
-			if (b instanceof ICPPUnknownBinding) {
-				unknown[i]= (ICPPUnknownBinding) b;
-			}
-		}
-		return Value.fromInternalRepresentation(rep, unknown);
-	}
-
-	public void putValue(IValue value) throws CoreException {
-		char[] rep= value.getInternalExpression();
-		IBinding[] unknown= value.getUnknownBindings();
-		putShort((short) rep.length);
-		putShort((short) unknown.length);
-
-		int len= rep.length & 0xffff;
-		for (int i = 0; i < len; i++) {
-			putShort((short) rep[i]);
-		}
-		len= unknown.length & 0xffff;
-		for (int i = 0; i < len; i++) {
-			PDOMBinding uv = fLinkage.addUnknownValue(unknown[i]);
-			putRecordPointer(uv != null ? uv.getRecord() : 0);
+	public void putCharArray(char[] chars) {
+		putShort((short) chars.length);
+		for (char c : chars) {
+			putShort((short) c);
 		}
 	}
 
-	public IType unmarshalType() throws CoreException {
-		if (fPos >= fBuffer.length)
-			throw unmarshallingError();
-		
-		byte firstByte= fBuffer[fPos];
-		if (firstByte == BINDING_TYPE) {
-			fPos+= 2;
-			long rec= getRecordPointer();
-			return (IType) fLinkage.getNode(rec);
-		} else if (firstByte == 0) {
-			fPos++;
-			return null;
+	public char[] getCharArray() throws CoreException {
+		int len= getShort();
+		char[] expr= new char[len];
+		for (int i = 0; i < expr.length; i++) {
+			expr[i]= (char) getShort();
 		}
-		
-		return fLinkage.unmarshalType(this);
+		return expr;
 	}
 }

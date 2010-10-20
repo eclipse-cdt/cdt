@@ -25,7 +25,6 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMValue;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
@@ -36,7 +35,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 
 	private static final int TYPE_OFFSET = PDOMCPPBinding.RECORD_SIZE;
 	private static final int VALUE_OFFSET = TYPE_OFFSET + Database.TYPE_SIZE;
-	protected static final int ANNOTATIONS = VALUE_OFFSET + Database.PTR_SIZE; // byte
+	protected static final int ANNOTATIONS = VALUE_OFFSET + Database.VALUE_SIZE; // byte
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = ANNOTATIONS + 1;
 	
@@ -52,8 +51,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 
 	private void setValue(Database db, IVariable variable) throws CoreException {
 		IValue val= variable.getInitialValue();
-		long valueRec= PDOMValue.store(db, getLinkage(), val);
-		db.putRecPtr(record + VALUE_OFFSET, valueRec);
+		getLinkage().storeValue(record + VALUE_OFFSET, val);
 	}
 
 	@Override
@@ -61,12 +59,10 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 		if (newBinding instanceof IVariable) {
 			final Database db = getDB();
 			IVariable var= (IVariable) newBinding;
-			long valueRec= db.getRecPtr(record + VALUE_OFFSET);
 			IType newType= var.getType();
 			setType(linkage, newType);
-			db.putByte(record + ANNOTATIONS, encodeFlags(var));
 			setValue(db, var);
-			PDOMValue.delete(db, valueRec);
+			db.putByte(record + ANNOTATIONS, encodeFlags(var));
 		}
 	}
 
@@ -109,9 +105,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	
 	public IValue getInitialValue() {
 		try {
-			final Database db = getDB();
-			long valRec = db.getRecPtr(record + VALUE_OFFSET);
-			return PDOMValue.restore(db, getLinkage(), valRec);
+			return getLinkage().loadValue(record + VALUE_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

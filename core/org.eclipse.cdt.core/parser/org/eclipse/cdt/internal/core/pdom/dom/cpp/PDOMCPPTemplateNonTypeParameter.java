@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 QNX Software Systems and others.
+ * Copyright (c) 2007, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,6 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMValue;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -41,7 +40,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 
 	private static final int TYPE_OFFSET= PDOMCPPBinding.RECORD_SIZE;
 	private static final int PARAMETERID= TYPE_OFFSET + Database.TYPE_SIZE;
-	private static final int DEFAULTVAL= PARAMETERID + 4;
+	private static final int DEFAULTVAL= PARAMETERID + Database.VALUE_SIZE;
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = DEFAULTVAL + Database.PTR_SIZE;
 
@@ -71,9 +70,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 	
 	public ICPPTemplateArgument getDefaultValue() {
 		try {
-			final Database db = getDB();
-			long rec= db.getRecPtr(record + DEFAULTVAL);
-			IValue val= PDOMValue.restore(db, getLinkage(), rec);
+			IValue val= getLinkage().loadValue(record + DEFAULTVAL);
 			if (val == null) 
 				return null;
 			return new CPPTemplateArgument(val, getType());
@@ -89,13 +86,10 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 			ICPPTemplateNonTypeParameter ntp= (ICPPTemplateNonTypeParameter) newBinding;
 			updateName(newBinding.getNameCharArray());
 			final Database db = getDB();
-			long valueRec= db.getRecPtr(record + DEFAULTVAL);
 			try {
 				IType newType= ntp.getType();
 				setType(linkage, newType);
-				if (setDefaultValue(db, ntp)) {
-					PDOMValue.delete(db, valueRec);
-				}
+				setDefaultValue(db, ntp);
 			} catch (DOMException e) {
 				throw new CoreException(Util.createStatus(e));
 			}
@@ -105,9 +99,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 	public void forceDelete(PDOMLinkage linkage) throws CoreException {
 		getDBName().delete();
 		linkage.storeType(record+TYPE_OFFSET, null);
-		final Database db= getDB();
-		final long valueRec= db.getRecPtr(record + DEFAULTVAL);
-		PDOMValue.delete(db, valueRec);
+		linkage.storeValue(record+DEFAULTVAL, null);
 	}
 
 	public short getParameterPosition() {
@@ -159,17 +151,14 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 		}
 	}
 
-	private boolean setDefaultValue(Database db, ICPPTemplateNonTypeParameter nonTypeParm) throws CoreException {
+	private void setDefaultValue(Database db, ICPPTemplateNonTypeParameter nonTypeParm) throws CoreException {
 		ICPPTemplateArgument val= nonTypeParm.getDefaultValue();
 		if (val != null) {
 			IValue sval= val.getNonTypeValue();
 			if (sval != null) {
-				long valueRec= PDOMValue.store(db, getLinkage(), sval);
-				db.putRecPtr(record + DEFAULTVAL, valueRec);
-				return true;
+				getLinkage().storeValue(record + DEFAULTVAL, sval);
 			}
 		}
-		return false;
 	}
 
 	public IType getType() {

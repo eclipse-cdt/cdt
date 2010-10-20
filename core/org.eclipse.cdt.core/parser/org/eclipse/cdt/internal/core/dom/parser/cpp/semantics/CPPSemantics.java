@@ -3610,8 +3610,10 @@ public class CPPSemantics {
         } catch (DOMException e) {
             binding = e.getProblem();
         }
-        // 4: post processing
-		binding = postResolution(binding, data);
+        // 4: Normal post processing is not possible, because the name is not rooted in AST
+        if (binding == null)
+			binding = new ProblemBinding(unknownName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
+        	
 		return binding;
 	}
 }

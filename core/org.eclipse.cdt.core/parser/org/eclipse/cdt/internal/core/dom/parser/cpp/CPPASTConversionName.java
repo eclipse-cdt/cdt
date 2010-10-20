@@ -106,7 +106,7 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 		buf.append(Keywords.cOPERATOR);
 		buf.append(' ');
 		if (t != null) {
-			buf.append(ASTTypeUtil.getType(t, true));
+			ASTTypeUtil.appendType(t, true, buf);
 		} else {
 			buf.append(typeId.getRawSignature());
 			WHITESPACE_SEQ.matcher(buf).replaceAll(" "); //$NON-NLS-1$

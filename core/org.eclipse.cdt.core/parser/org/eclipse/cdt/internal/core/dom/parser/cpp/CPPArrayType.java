@@ -124,7 +124,7 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
 			} 
 		}
 		buffer.putByte((byte) (firstByte | ITypeMarshalBuffer.FLAG2));
-		buffer.putValue(val);
+		buffer.marshalValue(val);
 		buffer.marshalType(getType());
 	}
 
@@ -133,7 +133,7 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
 		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0) {
 			value = Value.create(buffer.getShort());
 		} else if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0) {
-			value = buffer.getValue();
+			value = buffer.unmarshalValue();
 		}
 		IType nested= buffer.unmarshalType();
 		return new CPPArrayType(nested, value);

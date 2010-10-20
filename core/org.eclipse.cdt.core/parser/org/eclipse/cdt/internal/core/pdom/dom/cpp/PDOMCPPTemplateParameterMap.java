@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMValue;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -30,7 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMCPPTemplateParameterMap {
 	private static final int TYPE_OFFSET= 0;
 	private static final int VALUE_OFFSET= TYPE_OFFSET + Database.TYPE_SIZE;
-	private static final int NODE_SIZE = VALUE_OFFSET + Database.PTR_SIZE;
+	private static final int NODE_SIZE = VALUE_OFFSET + Database.VALUE_SIZE;
 
 	/**
 	 * Stores the given template parameter map in the database.
@@ -80,7 +79,7 @@ public class PDOMCPPTemplateParameterMap {
 			final ICPPTemplateArgument arg) throws CoreException {
 		if (arg.isNonTypeValue()) {
 			linkage.storeType(p + TYPE_OFFSET, arg.getTypeOfNonTypeValue());
-			db.putRecPtr(p+VALUE_OFFSET, PDOMValue.store(db, linkage, arg.getNonTypeValue())); 
+			linkage.storeValue(p + VALUE_OFFSET, arg.getNonTypeValue());
 		} else {
 			linkage.storeType(p + TYPE_OFFSET, arg.getTypeValue());
 		}
@@ -103,7 +102,7 @@ public class PDOMCPPTemplateParameterMap {
 				packSize= 1;
 			for (int j = 0; j < packSize; j++) {
 				linkage.storeType(p+TYPE_OFFSET, null);
-				PDOMValue.delete(db, db.getRecPtr(p+VALUE_OFFSET));
+				linkage.storeValue(p+VALUE_OFFSET, null);
 				p+= NODE_SIZE;
 			}
 		}
@@ -148,10 +147,9 @@ public class PDOMCPPTemplateParameterMap {
 		if (type == null) {
 			type= new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED);
 		}
-		final long nonTypeValRec= db.getRecPtr(rec+VALUE_OFFSET); 
+		IValue val= linkage.loadValue(rec + VALUE_OFFSET);
 		ICPPTemplateArgument arg;
-		if (nonTypeValRec != 0) {
-			IValue val= PDOMValue.restore(db, linkage, nonTypeValRec);
+		if (val != null) {
 			arg= new CPPTemplateArgument(val, type);
 		} else {
 			arg= new CPPTemplateArgument(type);

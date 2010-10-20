@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -108,5 +109,10 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownCla
 	
 	public boolean isAnonymous() {
 		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return ASTTypeUtil.getType(this);
 	}
 }

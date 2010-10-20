@@ -25,7 +25,6 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMValue;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -36,17 +35,15 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 	private static final int TYPE_OFFSET = PDOMCPPSpecialization.RECORD_SIZE + 0;
 	private static final int VALUE_OFFSET = TYPE_OFFSET + Database.TYPE_SIZE;
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = VALUE_OFFSET + Database.PTR_SIZE;
+	protected static final int RECORD_SIZE = VALUE_OFFSET + Database.VALUE_SIZE;
 	
 	public PDOMCPPFieldSpecialization(PDOMLinkage linkage, PDOMNode parent,
 			ICPPField field, PDOMBinding specialized)
 			throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) field, specialized);
 		
-		final Database db = getDB();
 		linkage.storeType(record + TYPE_OFFSET, field.getType());
-		long rec= PDOMValue.store(db, linkage, field.getInitialValue());
-		db.putRecPtr(record + VALUE_OFFSET, rec);
+		linkage.storeValue(record + VALUE_OFFSET, field.getInitialValue());
 	}
 
 	public PDOMCPPFieldSpecialization(PDOMLinkage linkage, long bindingRecord) {
@@ -82,9 +79,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 
 	public IValue getInitialValue() {
 		try {
-			final Database db = getDB();
-			long valRec = db.getRecPtr(record + VALUE_OFFSET);
-			return PDOMValue.restore(db, getLinkage(), valRec);
+			return getLinkage().loadValue(record + VALUE_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

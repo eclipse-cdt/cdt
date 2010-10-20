@@ -201,10 +201,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  111.0 - correct marshalling of basic types, bug 319186.
 	 *  111.1 - defaulted and deleted functions, bug 305978
 	 *  112.0 - inline namespaces, bug 305980
+	 *  113.0 - Changed marshaling of values, bug 327878
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(112, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(112, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(112, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(113, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(113, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(113, 0);
 	
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

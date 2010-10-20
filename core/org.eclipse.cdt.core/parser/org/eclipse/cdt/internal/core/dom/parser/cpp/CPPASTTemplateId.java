@@ -133,7 +133,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
     			if (type instanceof ISemanticProblem) {
     				buf.append(arg.getRawSignature());
     			} else {
-    				buf.append(ASTTypeUtil.getType(type, false));
+    				ASTTypeUtil.appendType(type, false, buf);
     			}
     		}
     		if (cleanupWhitespace)

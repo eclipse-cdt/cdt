@@ -34,6 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
@@ -63,7 +64,8 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 			throws CoreException {
 		super(linkage, parent, classType, instantiated);
 
-		final long argListRec= PDOMCPPArgumentList.putArguments(this, classType.getTemplateArguments());
+		final ICPPTemplateArgument[] args= SemanticUtil.getSimplifiedArguments(classType.getTemplateArguments());
+		final long argListRec= PDOMCPPArgumentList.putArguments(this, args);
 		getDB().putRecPtr(record+ARGUMENTS, argListRec);
 	}
 

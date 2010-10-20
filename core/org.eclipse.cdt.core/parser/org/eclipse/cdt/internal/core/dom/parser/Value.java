@@ -36,6 +36,8 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
+import org.eclipse.cdt.internal.core.pdom.db.TypeMarshalBuffer;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Represents values of variables, enumerators or expressions. The primary purpose of the representation
@@ -145,6 +147,59 @@ public class Value implements IValue {
 		return parseLong(fExpression);
 	}
 	
+	public void marshall(TypeMarshalBuffer buf) throws CoreException {
+		if (UNKNOWN == this) {
+			buf.putByte((byte) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG1));
+		} else {
+			Long num= numericalValue();
+			if (num != null) {
+				long lv= num;
+				if (lv >= Integer.MIN_VALUE && lv <= Integer.MAX_VALUE) {
+					buf.putByte((byte) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG2));
+					buf.putInt((int) lv);
+				} else {
+					buf.putByte((byte) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG3));
+					buf.putLong(lv);
+				}
+			} else {
+				buf.putByte((ITypeMarshalBuffer.VALUE));
+				buf.putCharArray(fExpression);
+				buf.putShort((short) fUnknownBindings.length);
+				for (ICPPUnknownBinding b : fUnknownBindings) {
+					buf.marshalBinding(b);
+				}
+			}
+		}
+	}
+	
+	public static IValue unmarshal(TypeMarshalBuffer buf) throws CoreException {
+		int firstByte= buf.getByte();
+		if (firstByte == TypeMarshalBuffer.NULL_TYPE)
+			return null;
+		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0) 
+			return Value.UNKNOWN;
+		if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0) {
+			int val= buf.getInt();
+			return Value.create(val);
+		}
+		if ((firstByte & ITypeMarshalBuffer.FLAG3) != 0) {
+			long val= buf.getLong();
+			return Value.create(val);
+		}
+		
+		char[] expr = buf.getCharArray();
+		final int len= buf.getShort();
+		ICPPUnknownBinding[] unknowns= new ICPPUnknownBinding[len];
+		for (int i = 0; i < unknowns.length; i++) {
+			final ICPPUnknownBinding unknown = (ICPPUnknownBinding) buf.unmarshalBinding();
+			if (unknown == null) {
+				return Value.UNKNOWN;
+			}
+			unknowns[i]= unknown;
+		}
+		return new Value(expr, unknowns);
+	}
+
 	@Override
 	public int hashCode() {
 		return CharArrayUtils.hash(fExpression);
@@ -863,7 +918,9 @@ public class Value implements IValue {
 	private static String getSignatureForUnknown(ICPPUnknownBinding binding) {
 		IBinding owner= binding.getOwner();
 		if (owner instanceof IType) {
-			return ASTTypeUtil.getType((IType) owner, true) + SCOPE_OP + binding.getName();
+			StringBuilder buf= new StringBuilder();
+			ASTTypeUtil.appendType((IType) owner, true, buf);
+			return buf.append(SCOPE_OP).append(binding.getName()).toString();
 		}
 		return binding.getName();
 	}

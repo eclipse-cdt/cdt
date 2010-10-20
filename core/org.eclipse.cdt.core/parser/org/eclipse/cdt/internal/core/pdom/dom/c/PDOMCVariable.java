@@ -25,7 +25,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMValue;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -49,7 +48,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
-	private static final int ANNOTATIONS = VALUE_OFFSET + Database.PTR_SIZE;
+	private static final int ANNOTATIONS = VALUE_OFFSET + Database.VALUE_SIZE;
 	
 	/**
 	 * The size in bytes of a PDOMCVariable record in the database.
@@ -61,35 +60,20 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 		super(linkage, parent, variable.getNameCharArray());
 
 		final Database db = getDB();
-		setType(parent.getLinkage(), variable.getType());
+		linkage.storeType(record + TYPE_OFFSET, variable.getType());
+		linkage.storeValue(record + VALUE_OFFSET, variable.getInitialValue());
 		db.putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(variable));
-		
-		setValue(db, variable);
 	}
 
-	private void setValue(final Database db, IVariable variable) throws CoreException {
-		IValue val= variable.getInitialValue();
-		long valrec= PDOMValue.store(db, getLinkage(), val);
-		db.putRecPtr(record + VALUE_OFFSET, valrec);
-	}
-	
 	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof IVariable) {
 			final Database db = getDB();
 			IVariable var= (IVariable) newBinding;
-			long valueRec= db.getRecPtr(record + VALUE_OFFSET);
-			IType newType= var.getType();
-			setType(linkage, newType);
+			linkage.storeType(record + TYPE_OFFSET, var.getType());
+			linkage.storeValue(record + VALUE_OFFSET, var.getInitialValue());
 			db.putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(var));
-			setValue(db, var);
-			
-			PDOMValue.delete(db, valueRec);
 		}
-	}
-
-	private void setType(final PDOMLinkage linkage, final IType type) throws CoreException {
-		linkage.storeType(record + TYPE_OFFSET, type);
 	}
 
 	public PDOMCVariable(PDOMLinkage linkage, long record) {
@@ -117,9 +101,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 
 	public IValue getInitialValue() {
 		try {
-			final Database db = getDB();
-			long valRec = db.getRecPtr(record + VALUE_OFFSET);
-			return PDOMValue.restore(db, getLinkage(), valRec);
+			return getLinkage().loadValue(record + VALUE_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

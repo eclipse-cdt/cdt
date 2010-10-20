@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.dom.ast;
 
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -21,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
@@ -42,6 +40,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
@@ -65,25 +64,28 @@ public class ASTTypeUtil {
 	 */
 	public static String getParameterTypeString(IFunctionType type) {
 		StringBuilder result = new StringBuilder();
-		String[] parms = getParameterTypeStringArray(type);
-		
+		appendParameterTypeString(type, result);
+		return result.toString();
+	}
+	
+	private static void appendParameterTypeString(IFunctionType ft, StringBuilder result) {
+		IType[] types = ft.getParameterTypes();
 		result.append(Keywords.cpLPAREN);
 		boolean needComma= false;
-		for (String parm : parms) {
-			if (parm != null) {
+		for (IType type : types) {
+			if (type != null) {
 				if (needComma)
 					result.append(COMMA_SPACE);
-				result.append(parm);
+				appendType(type, true, result);
 				needComma= true;
 			}
 		}
-		if (type instanceof ICPPFunctionType && ((ICPPFunctionType) type).takesVarArgs()) {
+		if (ft instanceof ICPPFunctionType && ((ICPPFunctionType) ft).takesVarArgs()) {
 			if (needComma)
 				result.append(COMMA_SPACE);
 			result.append(Keywords.cpELLIPSIS);
 		}
 		result.append(Keywords.cpRPAREN);
-		return result.toString();
 	}
 
 	/**
@@ -125,7 +127,7 @@ public class ASTTypeUtil {
 		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < types.length; i++) {
 			if (types[i] != null) {
-				result.append(getType(types[i], normalize));
+				appendType(types[i], normalize, result);
 				if (i < types.length - 1)
 					result.append(COMMA_SPACE);
 			}
@@ -144,6 +146,11 @@ public class ASTTypeUtil {
 	 */
 	public static String getArgumentListString(ICPPTemplateArgument[] args, boolean normalize) {
 		StringBuilder result= new StringBuilder();
+		appendArgumentList(args, normalize, result);
+		return result.toString();
+	}
+
+	private static void appendArgumentList(ICPPTemplateArgument[] args, boolean normalize, StringBuilder result) {
 		boolean first= true;
 		result.append('<');
 		for (ICPPTemplateArgument arg : args) {
@@ -151,10 +158,9 @@ public class ASTTypeUtil {
 				result.append(',');
 			}
 			first= false;
-			result.append(getArgumentString(arg, normalize));
+			appendArgument(arg, normalize, result);
 		}
 		result.append('>');
-		return result.toString();
 	}
 
 	/**
@@ -166,11 +172,18 @@ public class ASTTypeUtil {
 	 * @since 5.1
 	 */
 	public static String getArgumentString(ICPPTemplateArgument arg, boolean normalize) {
+		StringBuilder buf= new StringBuilder();
+		appendArgument(arg, normalize, buf);
+		return buf.toString();
+	}
+	
+	private static void appendArgument(ICPPTemplateArgument arg, boolean normalize, StringBuilder buf) {
 		IValue val= arg.getNonTypeValue();
-		if (val != null)
-			return new String(val.getSignature());
-
-		return getType(arg.getTypeValue(), normalize);
+		if (val != null) {
+			buf.append(val.getSignature());
+		} else {
+			appendType(arg.getTypeValue(), normalize, buf);
+		}
 	}
 
 	/**
@@ -191,8 +204,7 @@ public class ASTTypeUtil {
 		return result;
 	}
 	
-	private static String getTypeString(IType type, boolean normalize) {
-		StringBuilder result = new StringBuilder();
+	private static void appendTypeString(IType type, boolean normalize, StringBuilder result) {
 		boolean needSpace = false;
 		
 		if (type instanceof IArrayType) {
@@ -328,25 +340,18 @@ public class ASTTypeUtil {
 				break;
 			}
 		} else if (type instanceof ICPPTemplateParameter) {
-			final ICPPTemplateParameter tpar = (ICPPTemplateParameter) type;
-			if (normalize) {
-				result.append('#');
-				result.append(Integer.toString(tpar.getParameterID(), 16));
-			} else {
-				result.append(tpar.getName());
+			appendCppName((ICPPTemplateParameter) type, normalize, true, result);
+		} else if (type instanceof ICPPBinding) {
+			if (type instanceof IEnumeration) {
+				result.append(Keywords.ENUM);
+				result.append(SPACE);
 			}
+			appendCppName((ICPPBinding) type, normalize, true, result);
 		} else if (type instanceof ICompositeType) {
 //			101114 fix, do not display class, and for consistency don't display struct/union as well
-			if (type instanceof ICPPClassType) {
-				String qn = CPPVisitor.renderQualifiedName(getQualifiedNameForAnonymous((ICPPClassType) type, normalize));
-				result.append(qn);
-			} else {
-				result.append(getNameForAnonymous((ICompositeType) type));
-			}
-			if (type instanceof ICPPTemplateInstance) {
-				ICPPTemplateInstance inst = (ICPPTemplateInstance) type;
-				result.append(getArgumentListString(inst.getTemplateArguments(), normalize));
-			}
+			appendNameCheckAnonymous((ICompositeType) type, result);
+		} else if (type instanceof ITypedef) {
+			result.append(((ITypedef) type).getNameCharArray());
 		} else if (type instanceof ICPPReferenceType) {
 			if (((ICPPReferenceType) type).isRValueReference()) {
 				result.append(Keywords.cpAND);
@@ -358,19 +363,17 @@ public class ASTTypeUtil {
 		} else if (type instanceof IEnumeration) {
 			result.append(Keywords.ENUM);
 			result.append(SPACE);
-			result.append(getNameForAnonymous((IEnumeration) type));
+			appendNameCheckAnonymous((IEnumeration) type, result);
 		} else if (type instanceof IFunctionType) {
-			String temp = getParameterTypeString((IFunctionType) type);
-			if (temp != null && !temp.equals(EMPTY_STRING)) {
-				result.append(temp); needSpace = false;
-			}
+			appendParameterTypeString((IFunctionType) type, result);
+			needSpace = false;
 			if (type instanceof ICPPFunctionType) {
 				ICPPFunctionType ft= (ICPPFunctionType) type;
 				needSpace= appendCVQ(result, needSpace, ft.isConst(), ft.isVolatile(), false);
 			}
 		} else if (type instanceof IPointerType) {
 			if (type instanceof ICPPPointerToMemberType) {
-				result.append(getTypeString(((ICPPPointerToMemberType) type).getMemberOfClass(), normalize));
+				appendTypeString(((ICPPPointerToMemberType) type).getMemberOfClass(), normalize, result);
 				result.append(Keywords.cpCOLONCOLON);
 			}
 			result.append(Keywords.cpSTAR); needSpace = true;
@@ -389,15 +392,20 @@ public class ASTTypeUtil {
 			
 			IQualifierType qt= (IQualifierType) type;
 			needSpace= appendCVQ(result, needSpace, qt.isConst(), qt.isVolatile(), false);
-		} else if (type instanceof ITypedef) {
-			result.append(((ITypedef) type).getNameCharArray());
 		} else if (type instanceof ISemanticProblem) {
 			result.append('?');
 		} else if (type != null) {
 			result.append('@').append(type.hashCode()); 
 		}
-		
-		return result.toString();
+	}
+
+	private static void appendTemplateParameter(ICPPTemplateParameter type, boolean normalize, StringBuilder result) {
+		if (normalize) {
+			result.append('#');
+			result.append(Integer.toString(type.getParameterID(), 16));
+		} else {
+			result.append(type.getName());
+		}
 	}
 
 	private static boolean appendCVQ(StringBuilder target, boolean needSpace, final boolean isConst,
@@ -446,6 +454,15 @@ public class ASTTypeUtil {
 	 */
 	public static String getType(IType type, boolean normalize) {
 		StringBuilder result = new StringBuilder();
+		appendType(type, normalize, result);
+		return result.toString();
+	}
+	
+	/**
+	 * Appends the the result of {@link #getType(IType, boolean)} to the given buffer.
+	 * @since 5.3
+	 */
+	public static void appendType(IType type, boolean normalize, StringBuilder result) {
 		IType[] types = new IType[DEAULT_ITYPE_SIZE];
 		
 		// push all of the types onto the stack
@@ -516,23 +533,26 @@ public class ASTTypeUtil {
 		List<IType> postfix= null;
 		BitSet parenthesis= null;
 		boolean needParenthesis= false;
+		boolean needSpace= false;
 		for (int j = types.length - 1; j >= 0; j--) {
 			IType tj = types[j];
 			if (tj != null) {
 				if (j > 0 && types[j - 1] instanceof IQualifierType) {
-					if (result.length() > 0)
-						result.append(SPACE); // only add a space if this is not the first type being added
-					result.append(getTypeString(types[j - 1], normalize));
+					if (needSpace)
+						result.append(SPACE); 
+					appendTypeString(types[j - 1], normalize, result);
 					result.append(SPACE);
-					result.append(getTypeString(tj, normalize));
+					appendTypeString(tj, normalize, result);
+					needSpace= true;
 					--j;
 				} else {
 					// handle post-fix 
 					if (tj instanceof IFunctionType || tj instanceof IArrayType) {
 						if (j == 0) {
-							if (result.length() > 0)
-								result.append(SPACE); // only add a space if this is not the first type being added
-							result.append(getTypeString(tj, normalize));
+							if (needSpace)
+								result.append(SPACE); 
+							appendTypeString(tj, normalize, result);
+							needSpace= true;
 						} else {
 							if (postfix == null) {
 								postfix= new ArrayList<IType>();
@@ -541,8 +561,8 @@ public class ASTTypeUtil {
 							needParenthesis= true;
 						}
 					} else {
-						if (result.length() > 0)
-							result.append(SPACE); // only add a space if this is not the first type being added
+						if (needSpace)
+							result.append(SPACE);
 						if (needParenthesis && postfix != null) {
 							result.append('(');
 							if (parenthesis == null) {
@@ -550,8 +570,9 @@ public class ASTTypeUtil {
 							}
 							parenthesis.set(postfix.size()-1);
 						}
-						result.append(getTypeString(tj, normalize));
+						appendTypeString(tj, normalize, result);
 						needParenthesis= false;
+						needSpace= true;
 					}
 				}
 			}
@@ -563,11 +584,9 @@ public class ASTTypeUtil {
 					result.append(')');
 				}
 				IType tj = postfix.get(j);
-				result.append(getTypeString(tj, normalize));
+				appendTypeString(tj, normalize, result);
 			}
 		}
-
-		return result.toString();
 	}
 
 	/**
@@ -675,55 +694,66 @@ public class ASTTypeUtil {
 		}
 	}
 
-	private static String[] getQualifiedNameForAnonymous(ICPPBinding binding, boolean normalize) {
-		LinkedList<String> result= new LinkedList<String>();
-		result.addFirst(getNameForAnonymous(binding));
-		
-		IBinding owner= binding;
-		for (;;) {
-			if (owner instanceof ICPPTemplateParameter)
-				break;
-			if (owner instanceof ICPPDeferredClassInstance) {
-				ICPPDeferredClassInstance deferredInst = (ICPPDeferredClassInstance) owner;
-				if (deferredInst.getTemplateDefinition() instanceof ICPPTemplateParameter)
-					break;
-			}
-			
-			owner = owner.getOwner();
-			if (!(owner instanceof ICPPNamespace || owner instanceof IType))
-				break;
-
-			char[] name = owner.getNameCharArray();
-			if (name == null || name.length == 0) {
-				if (!(owner instanceof ICPPNamespace)) {
-					char[] altname = createNameForAnonymous(owner);
-					if (altname != null) {
-						result.addFirst(new String(altname));
-					}
-				}
-			} else {
-				if (normalize && owner instanceof IType) {
-					result.addFirst(getType((IType) owner, normalize));
-				} else {
-					result.addFirst(new String(name));
+	private static void appendCppName(IBinding binding, boolean normalize,  boolean addTemplateArgs, StringBuilder result) {
+		ICPPTemplateParameter tpar= getTemplateParameter(binding);
+		if (tpar != null) {
+			appendTemplateParameter(tpar, normalize, result);
+		} else {
+			if (normalize) {
+				IBinding owner= binding.getOwner();
+				if (owner instanceof ICPPNamespace || owner instanceof IType) {
+					int pos= result.length();
+					appendCppName(owner, normalize, normalize, result);
+					if (result.length() > pos)
+						result.append("::"); //$NON-NLS-1$
 				}
 			}
+			appendNameCheckAnonymous(binding, result);
 		}
-	    return result.toArray(new String[result.size()]);
+		
+		if (binding instanceof ICPPTemplateInstance) {
+			appendArgumentList(((ICPPTemplateInstance) binding).getTemplateArguments(), normalize, result);
+		} else if (binding instanceof ICPPUnknownClassInstance) {
+			appendArgumentList(((ICPPUnknownClassInstance) binding).getArguments(), normalize, result);
+		}
 	}
 	
-	private static String getNameForAnonymous(IBinding binding) {
+	private static ICPPTemplateParameter getTemplateParameter(IBinding binding) {
+		if (binding instanceof ICPPTemplateParameter) 
+			return (ICPPTemplateParameter) binding;
+		
+		if (binding instanceof ICPPDeferredClassInstance)
+			return getTemplateParameter(((ICPPDeferredClassInstance) binding).getTemplateDefinition());
+
+		return null;
+	}
+
+	private static void appendNameCheckAnonymous(IBinding binding, StringBuilder result) {
 		char[] name= binding.getNameCharArray();
-		if (name == null || name.length == 0) {
-			char[] altname= createNameForAnonymous(binding);
-			if (altname != null) {
-				return new String(altname);
-			}
+		if (name != null && name.length > 0) {
+			result.append(name);
+		} else if (!(binding instanceof ICPPNamespace)) {
+			appendNameForAnonymous(binding, result);
 		}
-		return new String(name);
 	}
 
 	public static char[] createNameForAnonymous(IBinding binding) {
+		StringBuilder result= new StringBuilder();
+		appendNameForAnonymous(binding, result);
+		if (result.length() == 0)
+			return null;
+		
+		return extractChars(result);
+	}
+	
+	private static char[] extractChars(StringBuilder buf) {
+		final int length = buf.length();
+		char[] result= new char[length];
+		buf.getChars(0, length, result, 0);
+		return result;
+	}
+
+	private static void appendNameForAnonymous(IBinding binding, StringBuilder buf) {
 		IASTNode node= null;
 		if (binding instanceof ICInternalBinding) {
 			node= ((ICInternalBinding) binding).getPhysicalNode();
@@ -741,16 +771,13 @@ public class ASTTypeUtil {
 			if (loc != null) {
 				char[] fname= loc.getFileName().toCharArray();
 				int fnamestart= findFileNameStart(fname);
-				StringBuilder buf= new StringBuilder();
 				buf.append('{');
 				buf.append(fname, fnamestart, fname.length-fnamestart);
 				buf.append(':');
 				buf.append(loc.getNodeOffset());
 				buf.append('}');
-				return buf.toString().toCharArray();
 			}
 		}
-		return null;
 	}
 
 	private static int findFileNameStart(char[] fname) {

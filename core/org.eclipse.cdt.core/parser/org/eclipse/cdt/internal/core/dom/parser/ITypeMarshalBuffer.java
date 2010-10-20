@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.core.runtime.CoreException;
@@ -27,6 +28,7 @@ public interface ITypeMarshalBuffer {
 	final static byte POINTER_TO_MEMBER=    	7;
 	final static byte PACK_EXPANSION= 			8;
 	final static byte PROBLEM_TYPE= 			9;
+	final static byte VALUE= 				   10;
 	static final byte KIND_MASK = 0xf;
 	
 	final static int FLAG1	= 0x10;
@@ -37,12 +39,18 @@ public interface ITypeMarshalBuffer {
 	CoreException unmarshallingError();
 	
 	IType unmarshalType() throws CoreException;
+	IValue unmarshalValue() throws CoreException;
+	IBinding unmarshalBinding() throws CoreException;
 	int getByte() throws CoreException;
 	int getShort() throws CoreException;
-	IValue getValue() throws CoreException;
+	long getLong() throws CoreException;
+	char[] getCharArray() throws CoreException;
 
 	void marshalType(IType type) throws CoreException;
+	void marshalValue(IValue value) throws CoreException;
+	void marshalBinding(IBinding binding) throws CoreException;
 	void putByte(byte data);
 	void putShort(short data);
-	void putValue(IValue val) throws CoreException;
+	void putLong(long data);
+	void putCharArray(char[] data);
 }

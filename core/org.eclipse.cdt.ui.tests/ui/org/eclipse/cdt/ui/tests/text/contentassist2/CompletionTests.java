@@ -1232,7 +1232,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//};
 	public void testConstructorInitializerList_EmptyInput_Bug266586() throws Exception {
 		final String[] expected= {"mOne", "Base",
-				"Base(int)", "Base(const ns::Base<Helper> &)", "Helper",
+				"Base(int)", "Base(const Base<Helper> &)", "Helper",
 				"Helper(void)", "Helper(const Helper &)",
 				// Namespaces must be offered as well. In order for this code
 				// to compile with gcc (e.g. 4.1.2), you need to write

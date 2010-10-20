@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexLinkage;
@@ -476,19 +477,65 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			db.getBytes(ptr+2, data);
 			break;
 		case TypeMarshalBuffer.NULL_TYPE:
-			break;
+			return null;
 		default:
 			data= new byte[Database.TYPE_SIZE];
 			db.getBytes(offset, data);
 			break;
 		}
-			
-		if (data != null) {
-			return new TypeMarshalBuffer(this, data).unmarshalType();
-		}
-		return null;
+		return new TypeMarshalBuffer(this, data).unmarshalType();
 	}
 
+	public void storeValue(long offset, IValue type) throws CoreException {
+		final Database db= getDB();
+		deleteValue(db, offset);
+		storeValue(db, offset, type);
+	}
+	
+	private void storeValue(Database db, long offset, IValue value) throws CoreException {
+		if (value != null) {
+			TypeMarshalBuffer bc= new TypeMarshalBuffer(this);
+			bc.marshalValue(value);
+			int len= bc.getPosition();
+			if (len > 0) {
+				if (len <= Database.TYPE_SIZE) {
+					db.putBytes(offset, bc.getBuffer(), len);
+				} else if (len <= Database.MAX_MALLOC_SIZE-2){
+					long ptr= db.malloc(len+2);
+					db.putShort(ptr, (short) len);
+					db.putBytes(ptr+2, bc.getBuffer(), len);
+					db.putByte(offset, TypeMarshalBuffer.INDIRECT_TYPE);
+					db.putRecPtr(offset+2, ptr);
+				}
+			}
+		}
+	}
+
+	private void deleteValue(Database db, long offset) throws CoreException {
+		deleteType(db, offset);
+	}
+
+	public IValue loadValue(long offset) throws CoreException {
+		final Database db= getDB();
+		final byte firstByte= db.getByte(offset);
+		byte[] data= null;
+		switch(firstByte) {
+		case TypeMarshalBuffer.INDIRECT_TYPE:
+			long ptr= db.getRecPtr(offset+2);
+			int len= db.getShort(ptr) & 0xffff;
+			data= new byte[len];
+			db.getBytes(ptr+2, data);
+			break;
+		case TypeMarshalBuffer.NULL_TYPE:
+			return null;
+		default:
+			data= new byte[Database.TYPE_SIZE];
+			db.getBytes(offset, data);
+			break;
+		}
+		return new TypeMarshalBuffer(this, data).unmarshalValue();
+	}
+	
 	public IIndexScope[] getInlineNamespaces() {
 		return IIndexScope.EMPTY_INDEX_SCOPE_ARRAY;
 	}

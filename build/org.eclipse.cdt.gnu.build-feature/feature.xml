@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.gnu.build"
       label="%featureName"
-      version="7.0.0.qualifier"
+      version="8.0.0.qualifier"
       provider-name="%providerName">
 
    <description>

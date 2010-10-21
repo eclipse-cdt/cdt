@@ -3,10 +3,10 @@
 	<category-def name="CDT Main Features" label="CDT Main Features"/>
 	<category-def name="CDT Optional Features" label="CDT Optional Features"/>
 	
-	<feature id="org.eclipse.cdt" url="features/org.eclipse.cdt_7.1.0.@timeStamp@.jar" version="7.1.0.@timeStamp@">
+	<feature id="org.eclipse.cdt" url="features/org.eclipse.cdt_8.0.0.@timeStamp@.jar" version="8.0.0.@timeStamp@">
 		<category name="CDT Main Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.sdk" url="features/org.eclipse.cdt.sdk_7.1.0.@timeStamp@.jar" version="7.1.0.@timeStamp@">
+	<feature id="org.eclipse.cdt.sdk" url="features/org.eclipse.cdt.sdk_8.0.0.@timeStamp@.jar" version="8.0.0.@timeStamp@">
 		<category name="CDT Main Features"/>
 	</feature>
 	<feature id="org.eclipse.cdt.debug.gdbjtag" url="features/org.eclipse.cdt.debug.gdbjtag_7.0.0.@timeStamp@.jar" version="7.0.0.@timeStamp@">
@@ -33,19 +33,19 @@
 	<feature id="org.eclipse.cdt.util" url="features/org.eclipse.cdt.util_5.1.0.@timeStamp@.jar" version="5.1.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.testing" url="features/org.eclipse.cdt.testing_7.1.0.@timeStamp@.jar" version="7.1.0.@timeStamp@">
+	<feature id="org.eclipse.cdt.testing" url="features/org.eclipse.cdt.testing_8.0.0.@timeStamp@.jar" version="8.0.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.gnu.build" url="features/org.eclipse.cdt.gnu.build_7.0.0.@timeStamp@.jar" version="7.0.0.@timeStamp@">
+	<feature id="org.eclipse.cdt.gnu.build" url="features/org.eclipse.cdt.gnu.build_8.0.0.@timeStamp@.jar" version="8.0.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
 	<feature id="org.eclipse.cdt.gnu.debug" url="features/org.eclipse.cdt.gnu.debug_7.1.0.@timeStamp@.jar" version="7.1.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.platform" url="features/org.eclipse.cdt.platform_7.1.0.@timeStamp@.jar" version="7.1.0.@timeStamp@">
+	<feature id="org.eclipse.cdt.platform" url="features/org.eclipse.cdt.platform_8.0.0.@timeStamp@.jar" version="8.0.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.gnu.dsf" url="features/org.eclipse.cdt.gnu.dsf_2.2.0.@timeStamp@.jar" version="2.2.0.@timeStamp@">
+	<feature id="org.eclipse.cdt.gnu.dsf" url="features/org.eclipse.cdt.gnu.dsf_4.0.0.@timeStamp@.jar" version="4.0.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
 	<feature id="org.eclipse.cdt.examples.dsf" url="features/org.eclipse.cdt.examples.dsf_2.1.0.@timeStamp@.jar" version="2.1.0.@timeStamp@">
@@ -69,7 +69,7 @@
 	<feature id="org.eclipse.cdt.bupc" url="features/org.eclipse.cdt.bupc_1.0.3.@timeStamp@.jar" version="1.0.3.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.codan.feature" url="features/org.eclipse.cdt.codan.feature_1.1.0.@timeStamp@.jar" version="1.1.0.@timeStamp@">
+	<feature id="org.eclipse.cdt.codan.feature" url="features/org.eclipse.cdt.codan.feature_2.0.0.@timeStamp@.jar" version="2.0.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
 </site>

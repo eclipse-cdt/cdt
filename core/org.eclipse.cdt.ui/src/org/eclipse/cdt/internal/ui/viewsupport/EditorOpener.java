@@ -20,8 +20,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -38,6 +41,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
 
 /**
  * An utility to open editors for references or elements.
@@ -54,12 +58,28 @@ public class EditorOpener {
 				timestamp= file.getLocalTimeStamp();
 			}
 			try {
+				// Bug 328321: Linked resources of closed projects report wrong location.
+				if (!file.exists()) {
+					final IWorkbenchPartSite site = page.getActivePart().getSite();
+					showStatus(site, 3000,
+							NLS.bind(Messages.EditorOpener_fileDoesNotExist, file.getName()));
+					return;
+				}
 				editor= IDE.openEditor(page, file, false);
 			} catch (PartInitException e) {
 				CUIPlugin.log(e);
 			}
 			selectRegion(file.getFullPath(), region, timestamp, editor);
 		}
+	}
+
+	private static void showStatus(final IWorkbenchPartSite site, int duration, String msg) {
+		StatusLineHandler.showStatusLineMessage(site, msg);
+		 Display.getCurrent().timerExec(duration, new Runnable() {
+			public void run() {
+				StatusLineHandler.clearStatusLine(site);
+			}
+		});
 	}
 
 	private static void selectRegion(IPath filebufferKey, IRegion region, long timestamp, IEditorPart editor) {

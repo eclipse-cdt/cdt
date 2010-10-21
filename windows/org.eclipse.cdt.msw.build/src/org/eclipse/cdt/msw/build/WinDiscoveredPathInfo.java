@@ -25,6 +25,16 @@ public class WinDiscoveredPathInfo implements IDiscoveredPathInfo {
 		symbols.put("_M_IX86", "600");
 		symbols.put("_WIN32", "1");
 		symbols.put("_MSC_VER", "1400");
+		
+		// Microsoft specific modifiers that can be ignored
+		symbols.put("__cdecl", "");
+		symbols.put("__fastcall", "");
+		symbols.put("__restrict", "");
+		symbols.put("__sptr", "");
+		symbols.put("__stdcall", "");
+		symbols.put("__unaligned", "");
+		symbols.put("__uptr", "");
+		symbols.put("__w64", "");
 	}
 	
 	public IPath[] getIncludePaths() {

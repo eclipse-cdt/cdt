@@ -9254,4 +9254,13 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testCVQualifiedClassName_328063() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	void test() {
+	//		int array[5] = { 1, 2, 3, 4, 5 };
+	//		for (int& x : array)
+	//			x *= 2;
+	//	}
+	public void testRangeBasedForLoop_327223() throws Exception {
+		parseAndCheckBindings();
+	}
 }

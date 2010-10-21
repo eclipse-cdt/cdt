@@ -28,6 +28,7 @@ public class DeclarationOptions {
 	final public static int REQUIRE_SIMPLE_NAME=    		0x800;
 	final public static int ALLOW_FOLLOWED_BY_BRACE=    	0x1000;
 	final public static int ALLOW_OPAQUE_ENUM=				0x2000;
+	final public static int SINGLE_DTOR=					0x4000;
 
     public static final DeclarationOptions 
     	GLOBAL=     new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | ALLOW_OPAQUE_ENUM),
@@ -42,7 +43,8 @@ public class DeclarationOptions {
     	TYPEID_CONVERSION= new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER | NO_FUNCTIONS | NO_NESTED),
         EXCEPTION= new DeclarationOptions(ALLOW_ABSTRACT | NO_INITIALIZER),
         CONDITION= new DeclarationOptions(NO_CTOR_STYLE_INITIALIZER),
-        C_PARAMETER_NON_ABSTRACT= new DeclarationOptions(ALLOW_ABSTRACT | ALLOW_EMPTY_SPECIFIER);
+        C_PARAMETER_NON_ABSTRACT= new DeclarationOptions(ALLOW_ABSTRACT | ALLOW_EMPTY_SPECIFIER),
+        RANGE_BASED_FOR = new DeclarationOptions(NO_INITIALIZER | REQUIRE_SIMPLE_NAME | SINGLE_DTOR);
 
 	final public boolean fAllowEmptySpecifier;
 	final public boolean fAllowAbstract;
@@ -57,6 +59,7 @@ public class DeclarationOptions {
 	final public boolean fAllowParameterPacks;
 	final public boolean fRequireSimpleName;
 	final public boolean fAllowOpaqueEnum;
+	final public boolean fSingleDtor;
 	
 	public DeclarationOptions(int options) {
 		fAllowEmptySpecifier= (options & ALLOW_EMPTY_SPECIFIER) != 0;
@@ -72,5 +75,6 @@ public class DeclarationOptions {
 		fRequireSimpleName= (options & REQUIRE_SIMPLE_NAME) != 0;
 		fCanBeFollowedByBrace= fAllowBracedInitializer || (options & ALLOW_FOLLOWED_BY_BRACE) != 0;
 		fAllowOpaqueEnum= (options & ALLOW_OPAQUE_ENUM) != 0;
+		fSingleDtor= (options & SINGLE_DTOR) != 0;
 	}
 }

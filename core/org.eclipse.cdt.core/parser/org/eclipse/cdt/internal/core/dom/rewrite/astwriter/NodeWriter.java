@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *    Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
@@ -58,6 +58,7 @@ public class NodeWriter {
 	protected static final String CLASS_SPACE = "class "; //$NON-NLS-1$
 	protected static final String VAR_ARGS = "..."; //$NON-NLS-1$
 	protected static final String COLON_COLON = "::"; //$NON-NLS-1$
+	protected static final String COLON_SPACE = ": "; //$NON-NLS-1$
 
 	public NodeWriter(Scribe scribe, ASTVisitor visitor, NodeCommentMap commentMap) {
 		super();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -32,10 +32,10 @@ import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
@@ -77,7 +77,7 @@ public class StatementWriter extends NodeWriter{
 	private boolean decrementIndentationLevelOneMore = false;
 	private final DeclarationWriter declWriter;
 
-	public StatementWriter(Scribe scribe, CPPASTVisitor visitor, NodeCommentMap commentMap) {
+	public StatementWriter(Scribe scribe, ASTVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 		declWriter = new DeclarationWriter(scribe, visitor, commentMap);
 	}
@@ -140,6 +140,9 @@ public class StatementWriter extends NodeWriter{
 		} else if (statement instanceof IASTForStatement) {
 			writeForStatement((IASTForStatement) statement);
 			newLine = false;
+		} else if (statement instanceof ICPPASTRangeBasedForStatement) {
+			writeForStatement((ICPPASTRangeBasedForStatement) statement);
+			newLine = false;
 		} else if (statement instanceof IASTDoStatement) {
 			writeDoStatement((IASTDoStatement) statement);
 			newLine = true;
@@ -198,6 +201,18 @@ public class StatementWriter extends NodeWriter{
 		}
 		
 		visitNodeIfNotNull(forStatment.getIterationExpression());
+		scribe.print(')');
+		scribe.newLines();
+		nextCompoundNoNewLine();
+		writeBodyStatement(forStatment.getBody(), false);
+	}
+
+	private void writeForStatement(ICPPASTRangeBasedForStatement forStatment) {
+		scribe.noNewLines();
+		scribe.print(FOR);
+		writeDeclarationWithoutSemicolon(forStatment.getDeclaration());
+		scribe.print(COLON_SPACE);
+		visitNodeIfNotNull(forStatment.getInitializerClause());
 		scribe.print(')');
 		scribe.newLines();
 		nextCompoundNoNewLine();

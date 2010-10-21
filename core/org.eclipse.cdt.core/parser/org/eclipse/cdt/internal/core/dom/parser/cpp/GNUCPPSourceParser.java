@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -95,6 +96,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpandable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
@@ -2036,19 +2038,21 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         IASTDeclarator[] declarators= IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
         if (dtor != null) {
         	declarators= new IASTDeclarator[]{dtor};
-        	while (LTcatchEOF(1) == IToken.tCOMMA) {
-        		consume();
-        		try {
-        			dtor= initDeclarator(declSpec, declOption);
-        		} catch (FoundAggregateInitializer e) {
-        	        // scalability: don't keep references to tokens, initializer may be large
-        			declarationMark= null;
-        			markBeforDtor= null;
-        			dtor= addInitializer(e, declOption);
+        	if (!declOption.fSingleDtor) {
+        		while (LTcatchEOF(1) == IToken.tCOMMA) {
+        			consume();
+        			try {
+        				dtor= initDeclarator(declSpec, declOption);
+        			} catch (FoundAggregateInitializer e) {
+        				// scalability: don't keep references to tokens, initializer may be large
+        				declarationMark= null;
+        				markBeforDtor= null;
+        				dtor= addInitializer(e, declOption);
+        			}
+        			declarators = (IASTDeclarator[]) ArrayUtil.append(IASTDeclarator.class, declarators, dtor);
         		}
-        		declarators = (IASTDeclarator[]) ArrayUtil.append(IASTDeclarator.class, declarators, dtor);
+        		declarators = (IASTDeclarator[]) ArrayUtil.removeNulls(IASTDeclarator.class, declarators);
         	}
-        	declarators = (IASTDeclarator[]) ArrayUtil.removeNulls(IASTDeclarator.class, declarators);
         }
 
         final int lt1= LTcatchEOF(1);
@@ -2059,8 +2063,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tSEMI:
         	endOffset= consume().getEndOffset();
         	break;
-        case IToken.t_try:
         case IToken.tCOLON:
+        	if (declOption == DeclarationOptions.RANGE_BASED_FOR) {
+        		endOffset= figureEndOffset(declSpec, declarators);
+        		break;
+        	}
+			//$FALL-THROUGH$
+		case IToken.t_try:
         case IToken.tLBRACE:
         case IToken.tASSIGN: // defaulted or deleted function definition
         	if (declarators.length != 1)
@@ -4232,70 +4241,85 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     protected IASTStatement parseForStatement() throws EndOfFileException, BacktrackException {
-        int startOffset;
-        startOffset = consume().getOffset();
+        final int offset= consume(IToken.t_for).getOffset();
         consume(IToken.tLPAREN);
-        IASTStatement init = forInitStatement();
-        IASTNode for_condition = null;
-        switch (LT(1)) {
-        case IToken.tSEMI:
-        case IToken.tEOC:
-            break;
-        default:
-            for_condition = cppStyleCondition(IToken.tSEMI);
+        IToken mark= mark();
+        IASTStatement forStmt;
+        try {
+        	forStmt= startRangeBasedForLoop();
+        } catch (BacktrackException e) {
+        	backup(mark);
+        	forStmt= startTraditionalForLoop();
         }
-        switch (LT(1)) {
-        case IToken.tSEMI:
-            consume();
-            break;
-        case IToken.tEOC:
-            break;
-        default:
-            throw backtrack;
-        }
-        IASTExpression iterationExpression = null;
-        switch (LT(1)) {
-        case IToken.tRPAREN:
-        case IToken.tEOC:
-            break;
-        default:
-            iterationExpression = expression();
-        }
-        switch (LT(1)) {
-        case IToken.tRPAREN:
-            consume();
-            break;
-        case IToken.tEOC:
-            break;
-        default:
-            throw backtrack;
-        }
-        ICPPASTForStatement for_statement = nodeFactory.newForStatement();
-        IASTStatement for_body = null;
+        mark= null;
+        int endOffset= consumeOrEOC(IToken.tRPAREN).getEndOffset();
+
         if (LT(1) != IToken.tEOC) {
-            for_body = statement();
-            ((ASTNode) for_statement).setOffsetAndLength(startOffset, calculateEndOffset(for_body) - startOffset);
+        	IASTStatement body = statement();
+        	if (forStmt instanceof ICPPASTRangeBasedForStatement) {
+        		((ICPPASTRangeBasedForStatement) forStmt).setBody(body);
+        	} else {
+        		((IASTForStatement) forStmt).setBody(body);
+        	}
+        	endOffset= calculateEndOffset(body);
         }
-    
-        for_statement.setInitializerStatement(init);
-        
-        if (for_condition != null) {
-            if (for_condition instanceof IASTExpression) {
-                for_statement.setConditionExpression((IASTExpression) for_condition);
-            } else if (for_condition instanceof IASTDeclaration) {
-                for_statement.setConditionDeclaration((IASTDeclaration) for_condition);              
-            }
-        }
-        if (iterationExpression != null) {
-            for_statement.setIterationExpression(iterationExpression);
-        }
-        if (for_body != null) {
-            for_statement.setBody(for_body);
-        }
-        return for_statement;
+        return setRange(forStmt, offset, endOffset);
     }
     
-    @Override
+    //	Look for "for-range-declaration : for-range-initializer"
+    //	for-range-declaration:
+    //			attribute-specifier? type-specifier-seq declarator
+    //	for-range-initializer:
+    //		expression
+    //		braced-init-list
+	private ICPPASTRangeBasedForStatement startRangeBasedForLoop() throws EndOfFileException, BacktrackException {
+        IASTDeclaration decl= simpleDeclaration(DeclarationOptions.RANGE_BASED_FOR);
+        consume(IToken.tCOLON);
+        IASTInitializerClause init= null;
+		switch (LT(1)) {
+        case IToken.tEOC:
+        	break;
+        case IToken.tLBRACE:
+        	init= bracedInitList(false);
+        	break;
+        default:
+        	init= expression();
+        }
+        	
+        ICPPASTRangeBasedForStatement result = nodeFactory.newRangeBasedForStatement();
+        result.setDeclaration(decl);
+        result.setInitializerClause(init);
+        return result;
+	}
+
+	private IASTForStatement startTraditionalForLoop() throws BacktrackException, EndOfFileException {
+        final IASTStatement initStmt = forInitStatement();
+		IASTNode condition= null;
+		IASTExpression iterExpr= null;
+		
+        int lt1 = LT(1);
+		if (lt1 != IToken.tSEMI && lt1 != IToken.tEOC) {
+            condition = cppStyleCondition(IToken.tSEMI);
+        }
+        consumeOrEOC(IToken.tSEMI);
+
+        lt1 = LT(1);
+		if (lt1 != IToken.tRPAREN && lt1 != IToken.tEOC) {
+            iterExpr = expression();
+        }
+		
+        ICPPASTForStatement result = nodeFactory.newForStatement();
+		result.setInitializerStatement(initStmt);
+        if (condition instanceof IASTExpression) {
+            result.setConditionExpression((IASTExpression) condition);
+        } else if (condition instanceof IASTDeclaration) {
+            result.setConditionDeclaration((IASTDeclaration) condition);              
+        }
+		result.setIterationExpression(iterExpr);
+		return result;
+	}
+
+	@Override
 	protected IASTStatement parseReturnStatement() throws EndOfFileException, BacktrackException {
         final int offset= consume(IToken.t_return).getOffset(); // t_return
 

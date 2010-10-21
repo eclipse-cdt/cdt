@@ -111,6 +111,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
@@ -842,6 +843,8 @@ public class CPPVisitor extends ASTQueries {
 					return getContainingScope((IASTStatement) parent);
 				} else if (parent instanceof IASTForStatement) {
 				    return ((IASTForStatement) parent).getScope();
+				} else if (parent instanceof ICPPASTRangeBasedForStatement) {
+				    return ((ICPPASTRangeBasedForStatement) parent).getScope();
 				} else if (parent instanceof IASTCompositeTypeSpecifier) {
 				    return ((IASTCompositeTypeSpecifier) parent).getScope();
 				} else if (parent instanceof ICPPASTNamespaceDefinition) {
@@ -930,6 +933,8 @@ public class CPPVisitor extends ASTQueries {
 		    	IASTNode parent = node.getParent();
 			    if (parent instanceof IASTForStatement) {
 			        return ((IASTForStatement) parent).getScope();
+				} else if (parent instanceof ICPPASTRangeBasedForStatement) {
+				    return ((ICPPASTRangeBasedForStatement) parent).getScope();
 			    } else if (parent instanceof ICPPASTIfStatement) {
 			    	return ((ICPPASTIfStatement) parent).getScope();
 			    } else if (parent instanceof ICPPASTSwitchStatement) {
@@ -1125,6 +1130,8 @@ public class CPPVisitor extends ASTQueries {
 		    scope = compound.getScope();
 		} else if (parent instanceof IASTForStatement) {
 		    scope = ((IASTForStatement) parent).getScope();
+		} else if (parent instanceof ICPPASTRangeBasedForStatement) {
+		    scope= ((ICPPASTRangeBasedForStatement) parent).getScope();
 		} else if (parent instanceof ICPPASTSwitchStatement) {
 			scope = ((ICPPASTSwitchStatement) parent).getScope();
 		} else if (parent instanceof ICPPASTIfStatement) {
@@ -1164,6 +1171,8 @@ public class CPPVisitor extends ASTQueries {
 				IASTNode p = parent.getParent();
 				if (p instanceof IASTForStatement)
 				    return parent;
+				if (p instanceof ICPPASTRangeBasedForStatement)
+					return parent;
 				if (p instanceof IASTStatement)
 					return p;
 			} else if (parent instanceof IASTStatement || parent instanceof IASTTranslationUnit) {

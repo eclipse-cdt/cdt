@@ -215,6 +215,12 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTQualifiedName newQualifiedName();
 	
 	/**
+	 * Creates a range based for statement.
+	 * @since 5.3
+	 */
+	public ICPPASTRangeBasedForStatement newRangeBasedForStatement();
+
+	/**
 	 * @deprecated Replaced by {@link #newReferenceOperator(boolean)}.
 	 */
 	@Deprecated	public ICPPASTReferenceOperator newReferenceOperator();

@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
@@ -197,9 +198,12 @@ public abstract class VariableReadWriteFlags {
 			if (parent instanceof IGNUASTCompoundStatementExpression) {
 				return rwAnyNode(parent, indirection);
 			}
-		}
-		else if (stmt instanceof IASTForStatement) {
+		} else if (stmt instanceof IASTForStatement) {
 			if (node.getPropertyInParent() == IASTForStatement.CONDITION) {
+				return READ;
+			}
+		} else if (stmt instanceof ICPPASTRangeBasedForStatement) {
+			if (node.getPropertyInParent() == ICPPASTRangeBasedForStatement.INITIALIZER) {
 				return READ;
 			}
 		}

@@ -109,6 +109,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -1379,6 +1380,10 @@ public class CPPSemantics {
 			} else {
 				nodes= new IASTNode[] {initDeclaration};
 			}
+		} else if (parent instanceof ICPPASTRangeBasedForStatement) {
+			ICPPASTRangeBasedForStatement forStatement = (ICPPASTRangeBasedForStatement) parent;
+			final IASTDeclaration decl = forStatement.getDeclaration();
+			nodes= new IASTNode[] {decl};
 		} else if (parent instanceof ICPPASTEnumerationSpecifier) {
 			// The enumeration scope contains the enumeration items
 	    	for (IASTEnumerator enumerator : ((ICPPASTEnumerationSpecifier) parent).getEnumerators()) {

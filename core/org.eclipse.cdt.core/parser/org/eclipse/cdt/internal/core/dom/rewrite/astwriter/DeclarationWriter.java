@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -20,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
@@ -61,7 +61,7 @@ public class DeclarationWriter extends NodeWriter{
 	private static final String USING = "using "; //$NON-NLS-1$
 	private boolean printSemicolon;
 	
-	public DeclarationWriter(Scribe scribe, CPPASTVisitor visitor, NodeCommentMap commentMap) {
+	public DeclarationWriter(Scribe scribe, ASTVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 	}
 	

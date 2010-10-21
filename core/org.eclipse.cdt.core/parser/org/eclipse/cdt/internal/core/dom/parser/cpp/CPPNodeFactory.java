@@ -86,6 +86,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
@@ -456,6 +457,10 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 
 	public ICPPASTQualifiedName newQualifiedName() {
 		return new CPPASTQualifiedName();
+	}
+
+	public ICPPASTRangeBasedForStatement newRangeBasedForStatement() {
+		return new CPPASTRangeBasedForStatement();
 	}
 
 	public ICPPASTReferenceOperator newReferenceOperator() {

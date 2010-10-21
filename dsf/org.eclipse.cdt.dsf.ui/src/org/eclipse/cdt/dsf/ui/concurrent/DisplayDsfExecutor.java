@@ -43,12 +43,19 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor
      * Internal mapping of display objects to executors.
      */
     private static Map<Display, DisplayDsfExecutor> fExecutors = Collections.synchronizedMap( new HashMap<Display, DisplayDsfExecutor>() );
-    
-    /**
-     * Factory method for display executors.
-     * @param display Display to create an executor for.
-     * @return The new (or re-used) executor.
-     */
+
+	/**
+	 * Factory method for display executors.
+	 * 
+	 * <p>
+	 * Call this from the GUI thread unless you are certain an instance has
+	 * already been created for the given display (creation of new instance will
+	 * fail on a non-GUI thread).
+	 * 
+	 * @param display
+	 *            Display to create an executor for.
+	 * @return The new (or re-used) executor.
+	 */
     public static DisplayDsfExecutor getDisplayDsfExecutor(Display display) {
         synchronized (fExecutors) {
             DisplayDsfExecutor executor = fExecutors.get(display);

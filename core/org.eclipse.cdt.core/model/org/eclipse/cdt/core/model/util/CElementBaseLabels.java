@@ -839,7 +839,7 @@ public class CElementBaseLabels {
 		if (getFlag(flags, T_FULLY_QUALIFIED)) {
 			ICElement parent= elem.getParent();
 			boolean isQualifier= true;
-			if (parent != null && parent.exists()) {
+			if (parent != null) {
 				switch (parent.getElementType()) {
 				case ICElement.C_ARCHIVE:
 				case ICElement.C_BINARY:

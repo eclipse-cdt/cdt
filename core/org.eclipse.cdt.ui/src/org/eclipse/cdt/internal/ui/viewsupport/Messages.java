@@ -14,6 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.viewsupport.messages"; //$NON-NLS-1$
+	public static String EditorOpener_fileDoesNotExist;
 	public static String IndexedFilesCache_jobName;
 	public static String IndexUI_infoNotInIndex;
 	public static String IndexUI_infoNotInSource;

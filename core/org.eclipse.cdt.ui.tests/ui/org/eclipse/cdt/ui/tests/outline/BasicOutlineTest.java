@@ -92,6 +92,7 @@ public class BasicOutlineTest extends BaseUITestCase {
 	//#include "user.h"
 	//#include <system.h>
 	//#define MACRO
+	//#define MACRO2()
 	//int main(int argc, char** argv) {}
 	public void testSimpleOutlineContent() throws Exception {
 		StringBuffer[] contents= getContentsForTest(1);
@@ -105,7 +106,8 @@ public class BasicOutlineTest extends BaseUITestCase {
 		Tree tree= checkTreeNode(outline, 0, "user.h").getParent();
 		checkTreeNode(tree, 1, "system.h");
 		checkTreeNode(tree, 2, "MACRO");
-		checkTreeNode(tree, 3, "main(int, char**) : int");
+		checkTreeNode(tree, 3, "MACRO2()");
+		checkTreeNode(tree, 4, "main(int, char**) : int");
 	}
 
 	//class Foo {

@@ -296,6 +296,12 @@ public class CElementLabelComposer {
 	 */
 	public void appendMacroLabel(IMacro macro, long flags) {
 		fBuffer.append(macro.getElementName());
+		if( getFlag( flags, CElementLabels.M_PARAMETER_TYPES ) ) {
+			if (macro.isFunctionStyle()) {
+				fBuffer.append("()"); //$NON-NLS-1$
+			}
+		}
+		
 		if( getFlag(flags, CElementLabels.MF_POST_FILE_QUALIFIED)) {
 			IPath path= macro.getPath();
 			if (path != null) {

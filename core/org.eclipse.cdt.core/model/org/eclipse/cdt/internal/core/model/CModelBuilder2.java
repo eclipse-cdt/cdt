@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
@@ -305,6 +306,9 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		// set positions
 		setIdentifierPosition(element, name);
 		setBodyPosition(element, macro);
+		if (macro instanceof IASTPreprocessorFunctionStyleMacroDefinition) {
+			element.setFunctionStyle(true);
+		}
 		return element;
 	}
 

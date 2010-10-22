@@ -21,11 +21,11 @@ public interface IObjectSet {
 
 	IRealBuildObjectAssociation[] getRealBuildObjects();
 
-	Collection getRealBuildObjects(Collection list);
+	Collection<IRealBuildObjectAssociation> getRealBuildObjects(Collection<IRealBuildObjectAssociation> list);
 	
 	boolean matchesObject(IRealBuildObjectAssociation obj);
 	
-	boolean retainMatches(Collection collection);
+	boolean retainMatches(Collection<IRealBuildObjectAssociation> collection);
 	
 	public int getNumObjects();
 }

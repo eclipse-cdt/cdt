@@ -12,7 +12,6 @@ package org.eclipse.cdt.managedbuilder.internal.tcmodification;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
@@ -20,9 +19,9 @@ import org.eclipse.cdt.managedbuilder.internal.tcmodification.extension.MatchObj
 
 public class ObjectSet implements IObjectSet {
 	private int fObjectType;
-	private Set fObjectSet;
+	private Set<IRealBuildObjectAssociation> fObjectSet;
 	
-	public ObjectSet(int objectType, Set objectSet){
+	public ObjectSet(int objectType, Set<IRealBuildObjectAssociation> objectSet){
 		fObjectType = objectType;
 		fObjectSet = objectSet;
 	}
@@ -32,12 +31,12 @@ public class ObjectSet implements IObjectSet {
 	}
 
 	public IRealBuildObjectAssociation[] getRealBuildObjects() {
-		return (IRealBuildObjectAssociation[])fObjectSet.toArray(new IRealBuildObjectAssociation[fObjectSet.size()]);
+		return fObjectSet.toArray(new IRealBuildObjectAssociation[fObjectSet.size()]);
 	}
 
-	public Collection getRealBuildObjects(Collection set) {
+	public Collection<IRealBuildObjectAssociation> getRealBuildObjects(Collection<IRealBuildObjectAssociation> set) {
 		if(set == null)
-			set = new HashSet();
+			set = new HashSet<IRealBuildObjectAssociation>();
 		
 		set.addAll(fObjectSet);
 			
@@ -48,7 +47,7 @@ public class ObjectSet implements IObjectSet {
 		return fObjectSet.contains(obj.getRealBuildObject());
 	}
 
-	public boolean retainMatches(Collection collection) {
+	public boolean retainMatches(Collection<IRealBuildObjectAssociation> collection) {
 		return collection.retainAll(fObjectSet);
 	}
 
@@ -56,20 +55,21 @@ public class ObjectSet implements IObjectSet {
 		return fObjectSet.size();
 	}
 	
+	@SuppressWarnings("nls")
 	@Override
 	public String toString(){
 		StringBuffer buf = new StringBuffer();
 		buf.append(MatchObjectElement.TypeToStringAssociation.getAssociation(fObjectType).getString());
-		buf.append("["); //$NON-NLS-1$
+		buf.append("[");
 		boolean isFirst = true;
-		for(Iterator iter = fObjectSet.iterator(); iter.hasNext(); ){
+		for (IRealBuildObjectAssociation obj : fObjectSet) {
 			if(isFirst){
-				buf.append(", "); //$NON-NLS-1$
+				buf.append(", ");
 				isFirst = false;
 			}
-			buf.append(((IRealBuildObjectAssociation)iter.next()).getId());
+			buf.append(obj.getId());
 		}
-		buf.append("]"); //$NON-NLS-1$
+		buf.append("]");
 		
 		return buf.toString();
 	}

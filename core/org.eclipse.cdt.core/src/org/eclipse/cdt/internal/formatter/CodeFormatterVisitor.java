@@ -1866,6 +1866,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		align.fSpaceBetweenEmptyParen= preferences.insert_space_between_empty_parens_in_method_invocation;
 		align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_method_invocation_arguments;
 		align.fSpaceAfterComma= preferences.insert_space_after_comma_in_method_invocation_arguments;
+		align.fTieBreakRule = Alignment.R_OUTERMOST;
 		formatList(expressions, align, true, false);
 	}
 

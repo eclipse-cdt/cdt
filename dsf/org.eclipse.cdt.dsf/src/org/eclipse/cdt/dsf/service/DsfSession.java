@@ -555,17 +555,17 @@ public class DsfSession
                 if (method.isAnnotationPresent(DsfServiceEventHandler.class)) {
                     Class<?>[] paramTypes = method.getParameterTypes();
                     if (paramTypes.length != 1) {	// must have one and only param
-                        throw new IllegalArgumentException("ServiceEventHandler method has incorrect number of parameters"); //$NON-NLS-1$
+                        throw new IllegalArgumentException("@DsfServiceEventHandler method has incorrect number of parameters"); //$NON-NLS-1$
                     } 
                     retVal.add(method);
                 }
             }
         } catch(SecurityException e) {
-            throw new IllegalArgumentException("No permission to access ServiceEventHandler method"); //$NON-NLS-1$
+            throw new IllegalArgumentException("No permission to access @DsfServiceEventHandler method"); //$NON-NLS-1$
         }
         
         if (retVal.isEmpty()) {
-            throw new IllegalArgumentException("No methods marked with @ServiceEventHandler in listener, is listener declared public?"); //$NON-NLS-1$
+            throw new IllegalArgumentException("No methods annotated with @DsfServiceEventHandler in listener, is listener declared public?"); //$NON-NLS-1$
         }
         return retVal.toArray(new Method[retVal.size()]);
     }

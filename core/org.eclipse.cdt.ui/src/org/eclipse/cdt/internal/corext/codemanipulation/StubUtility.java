@@ -187,7 +187,7 @@ public class StubUtility {
 		context.setVariable(CodeTemplateContextType.ENCLOSING_TYPE, typeName);
 		context.setVariable(CodeTemplateContextType.BODY_STATEMENT, bodyStatement != null ? bodyStatement : ""); //$NON-NLS-1$
 		String str= evaluateTemplate(context, template, new String[] { CodeTemplateContextType.BODY_STATEMENT });
-		if (str == null && !Strings.containsOnlyWhitespaces(bodyStatement)) {
+		if (str == null && bodyStatement != null && !Strings.containsOnlyWhitespaces(bodyStatement)) {
 			return bodyStatement;
 		}
 		return str;

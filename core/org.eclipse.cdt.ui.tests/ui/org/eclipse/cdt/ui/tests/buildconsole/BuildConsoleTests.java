@@ -99,7 +99,7 @@ public class BuildConsoleTests extends BaseUITestCase {
 		assertEquals("Text not written to console", stdoutText+stderrText, doc.get());
 		
 		// verify that the Console view can show the console to the user
-		BuildConsolePage page = (BuildConsolePage) new Accessor(BuildConsole.class).invoke("getPage");
+		BuildConsolePage page = (BuildConsolePage) new Accessor(BuildConsole.class).invoke("getCurrentPage");
 		assertNotNull("Couldn't get the build console page", page);
 		
 		page.selectionChanged(null, new StructuredSelection(simpleProject));

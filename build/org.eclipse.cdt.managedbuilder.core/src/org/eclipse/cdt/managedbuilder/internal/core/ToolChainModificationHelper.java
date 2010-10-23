@@ -12,13 +12,10 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
@@ -45,25 +42,25 @@ public class ToolChainModificationHelper {
 		return lMap;
 	}
 	
-	private static ToolListMap calculateDifference(ToolListMap m1, ToolListMap m2){
-		m1 = (ToolListMap)m1.clone();
-		Set ceSet2 = m2.collectionEntrySet();
-		
-		for(Iterator iter = ceSet2.iterator(); iter.hasNext(); ){
-			CollectionEntry entry = (CollectionEntry)iter.next();
-			Collection c1 = m2.get(entry.getKey(), false);
-			if(c1 != null){
-				Collection c2 = entry.getValue();
-				int i = c2.size();
-				for(Iterator c1Iter = c1.iterator(); i >= 0 && c1Iter.hasNext(); i--){
-					c1Iter.next();
-					c1Iter.remove();
-				}
-			}
-		}
-		
-		return m1;
-	}
+//	private static ListMap calculateDifference(ListMap m1, ListMap m2){
+//		m1 = (ListMap)m1.clone();
+//		Set ceSet2 = m2.collectionEntrySet();
+//		
+//		for(Iterator iter = ceSet2.iterator(); iter.hasNext(); ){
+//			CollectionEntry entry = (CollectionEntry)iter.next();
+//			Collection c1 = m2.get((ITool) entry.getKey(), false);
+//			if(c1 != null){
+//				Collection c2 = entry.getValue();
+//				int i = c2.size();
+//				for(Iterator c1Iter = c1.iterator(); i >= 0 && c1Iter.hasNext(); i--){
+//					c1Iter.next();
+//					c1Iter.remove();
+//				}
+//			}
+//		}
+//		
+//		return m1;
+//	}
 
 	static public ToolListModificationInfo getModificationInfo(IResourceInfo rcInfo, ITool[] fromTools, ITool[] addedTools, ITool[] removedTools){
 		ToolListMap addedMap = createRealToToolMap(addedTools, false);
@@ -90,10 +87,9 @@ public class ToolChainModificationHelper {
 		removedMap.clearEmptyLists();
 		
 		ToolListMap curMap = createRealToToolMap(fromTools, false);
-		for(Iterator iter = removedMap.collectionEntrySet().iterator(); iter.hasNext();){
-			CollectionEntry entry = (CollectionEntry)iter.next();
-			List cur = curMap.get(entry.getKey(), false);
-			List removed = entry.getValue();
+		for (CollectionEntry entry : removedMap.collectionEntrySet()) {
+			List<ITool> cur = curMap.get(entry.getKey(), false);
+			List<ITool> removed = entry.getValue();
 			if(cur != null){
 				int numToRemove = removed.size();
 				int curSize = cur.size();
@@ -109,10 +105,9 @@ public class ToolChainModificationHelper {
 
 		curMap.clearEmptyLists();
 		
-		for(Iterator iter = addedMap.collectionEntrySet().iterator(); iter.hasNext();){
-			CollectionEntry entry = (CollectionEntry)iter.next();
-			List cur = curMap.get(entry.getKey(), true);
-			List added = entry.getValue();
+		for (CollectionEntry entry : addedMap.collectionEntrySet()) {
+			List<ITool> cur = curMap.get(entry.getKey(), true);
+			List<ITool> added = entry.getValue();
 			int numToAdd = added.size();
 			numToAdd -= cur.size();
 			for(int i = 0; i < numToAdd; i++){
@@ -125,19 +120,20 @@ public class ToolChainModificationHelper {
 		
 		curMap.clearEmptyLists();
 		
-		List resultingList = new ArrayList();
+		List<ITool> resultingList = new ArrayList<ITool>();
 		curMap.putValuesToCollection(resultingList);
 		
-		return getModificationInfo(rcInfo, fromTools, (ITool[])resultingList.toArray(new ITool[resultingList.size()]));
+		return getModificationInfo(rcInfo, fromTools, resultingList.toArray(new ITool[resultingList.size()]));
 	}
 
 	static public ToolListModificationInfo getModificationInfo(IResourceInfo rcInfo, ITool[] fromTools, ITool[] toTools){
 		
 		ToolListMap curMap = createRealToToolMap(fromTools, false);
-		List resultingList = new ArrayList();
-		List addedList = new ArrayList(7);
-		List remainedList = new ArrayList(7);
-		List removedList = new ArrayList(7);
+		List<ToolInfo> resultingList = new ArrayList<ToolInfo>();
+		List<ToolInfo> addedList = new ArrayList<ToolInfo>(7);
+		List<ToolInfo> remainedList = new ArrayList<ToolInfo>(7);
+		List<ToolInfo> removedList = new ArrayList<ToolInfo>(7);
+		List<ITool> removedToolsList = new ArrayList<ITool>(7);
 		
 		for(int i = 0; i < toTools.length; i++){
 			ITool tool = toTools[i];
@@ -145,7 +141,7 @@ public class ToolChainModificationHelper {
 			if(realTool == null)
 				realTool = tool;
 			
-			ITool remaining = (ITool)curMap.remove(realTool, 0);
+			ITool remaining = curMap.remove(realTool, 0);
 			ToolInfo tInfo;
 			if(remaining != null){
 				tInfo = new ToolInfo(rcInfo, remaining, ToolInfo.REMAINED);
@@ -158,10 +154,9 @@ public class ToolChainModificationHelper {
 			resultingList.add(tInfo);
 		}
 		
-		curMap.valuesToCollection(removedList);
-		for(ListIterator iter = removedList.listIterator(); iter.hasNext(); ){
-			ITool t = (ITool)iter.next();
-			iter.set(new ToolInfo(rcInfo, t, ToolInfo.REMOVED));
+		curMap.valuesToCollection(removedToolsList);
+		for (ITool t : removedToolsList) {
+			removedList.add(new ToolInfo(rcInfo, t, ToolInfo.REMOVED));
 		}
 		
 		ToolInfo[] added = listToArray(addedList);
@@ -198,7 +193,9 @@ public class ToolChainModificationHelper {
 	
 	private static int getLevel(ITool tool){
 		int i= 0;
-		for(; tool != null; tool = tool.getSuperClass(), i++);
+		for(; tool != null; tool = tool.getSuperClass(), i++) {
+			// empty
+		}
 		return i;
 	}
 	
@@ -238,15 +235,15 @@ public class ToolChainModificationHelper {
 		}
 	}
 	
-	private static ToolInfo[] listToArray(List list){
-		return (ToolInfo[])list.toArray(new ToolInfo[list.size()]);
+	private static ToolInfo[] listToArray(List<ToolInfo> list){
+		return list.toArray(new ToolInfo[list.size()]);
 	}
 	
-	private static Map calculateConverterTools(IResourceInfo rcInfo, ToolInfo[] removed, ToolInfo[] added, List remainingRemoved, List remainingAdded){
+	private static Map<ITool, ConverterInfo> calculateConverterTools(IResourceInfo rcInfo, ToolInfo[] removed, ToolInfo[] added, List<ToolInfo> remainingRemoved, List<ToolInfo> remainingAdded){
 		if(remainingAdded == null)
-			remainingAdded = new ArrayList(added.length);
+			remainingAdded = new ArrayList<ToolInfo>(added.length);
 		if(remainingRemoved == null)
-			remainingRemoved = new ArrayList(removed.length);
+			remainingRemoved = new ArrayList<ToolInfo>(removed.length);
 		
 		remainingAdded.clear();
 		remainingRemoved.clear();
@@ -254,22 +251,22 @@ public class ToolChainModificationHelper {
 		remainingAdded.addAll(Arrays.asList(added));
 		remainingRemoved.addAll(Arrays.asList(removed));
 		
-		Map resultMap = new HashMap();
+		Map<ITool, ConverterInfo> resultMap = new HashMap<ITool, ConverterInfo>();
 		
-		for(Iterator rIter = remainingRemoved.iterator(); rIter.hasNext();){
-			ToolInfo rti = (ToolInfo)rIter.next();
+		for(Iterator<ToolInfo> rIter = remainingRemoved.iterator(); rIter.hasNext();){
+			ToolInfo rti = rIter.next();
 			ITool r = rti.getInitialTool();
 			
 			if(r == null || r.getParentResourceInfo() != rcInfo)
 				continue;
 			
 
-			Map map = ManagedBuildManager.getConversionElements(r);
+			Map<String, IConfigurationElement> map = ManagedBuildManager.getConversionElements(r);
 			if(map.size() == 0)
 				continue;
 
-			for(Iterator aIter = remainingAdded.iterator(); aIter.hasNext();){
-				ToolInfo ati = (ToolInfo)aIter.next();
+			for(Iterator<ToolInfo> aIter = remainingAdded.iterator(); aIter.hasNext();){
+				ToolInfo ati = aIter.next();
 				ITool a = ati.getBaseTool();
 				
 				if(a == null || a.getParentResourceInfo() == rcInfo)

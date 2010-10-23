@@ -32,10 +32,16 @@ import org.eclipse.core.runtime.IPath;
 
 public class ManagedCommandLineGeneratorTest extends TestCase {
 
-    private static String[] testCommandLinePatterns = {null, "${COMMAND}", "${COMMAND} ${FLAGS}", "${COMMAND} ${FLAGS} ${OUTPUT_FLAG}",
-            "${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}", "${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT}",
+    private static String[] testCommandLinePatterns = {
+            null,
+            "${COMMAND}",
+            "${COMMAND} ${FLAGS}",
+            "${COMMAND} ${FLAGS} ${OUTPUT_FLAG}",
+            "${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}",
+            "${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT}",
             "${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}", 
-            "${command} ${flags} ${output_flag}${output_prefix}${output} ${WRONG_VAR_NAME}"};
+            "${command} ${flags} ${output_flag}${output_prefix}${output} ${WRONG_VAR_NAME}"
+        };
     private static String COMMAND_VAL = "[command]";
     private static String FLAGS_VAL = "[flags]";
     private static String[] FLAGS_ARRAY_VAL = FLAGS_VAL.split( "\\s" );
@@ -46,19 +52,13 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
     private static String[] INPUTS_ARRAY_VAL = INPUTS_VAL.split( "\\s" );
     private static String[] commandLineEtalonesForPatterns = {
             COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL + "\"" + OUTPUT_VAL + "\"" + " " + "\"" + INPUTS_VAL + "\"",
-            COMMAND_VAL, COMMAND_VAL + " " + FLAGS_VAL, COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL, 
+            COMMAND_VAL,
+            COMMAND_VAL + " " + FLAGS_VAL,
+            COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL, 
             COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL,
-            COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL +  OUTPUT_PREFIX_VAL + "\"" + OUTPUT_VAL + "\"",
+            COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL + "\"" + OUTPUT_VAL + "\"",
             COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL + "\"" + OUTPUT_VAL + "\"" + " " + "\"" + INPUTS_VAL + "\"",
             COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL + "\"" + OUTPUT_VAL + "\"" + " " + "${WRONG_VAR_NAME}" };
-    private static String[] commandLineEtalonesForParameters = {
-            FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL + OUTPUT_VAL + " " + INPUTS_VAL,
-            COMMAND_VAL + "  " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL + OUTPUT_VAL + " " + INPUTS_VAL,
-            COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_PREFIX_VAL + OUTPUT_VAL + " " + INPUTS_VAL,
-            COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_VAL + " " + INPUTS_VAL,
-            COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL + " " + INPUTS_VAL,
-            COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + OUTPUT_PREFIX_VAL + OUTPUT_VAL + " ",
-             };
     
     public ManagedCommandLineGeneratorTest( String name ) {
         super(name);
@@ -68,8 +68,7 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
         TestSuite suite = new TestSuite( ManagedCommandLineGeneratorTest.class.getName() );
         suite.addTest( new ManagedCommandLineGeneratorTest( "testGetCommandLineGenerator" ) );
         suite.addTest( new ManagedCommandLineGeneratorTest( "testGenerateCommandLineInfoPatterns" ) );
-        //  TODO:  The parameters set to NULL in these tests are not currently allowed to be null
-        //suite.addTest( new ManagedCommandLineGeneratorTest( "testGenerateCommandLineInfoParameters" ) );
+        suite.addTest( new ManagedCommandLineGeneratorTest( "testGenerateCommandLineInfoParameters" ) );
         suite.addTest( new ManagedCommandLineGeneratorTest( "testCustomGenerator" ) );
         suite.addTest( new ManagedCommandLineGeneratorTest( "testDollarValue" ) );
         return suite;
@@ -88,31 +87,37 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
                     testCommandLinePatterns[i] );
             assertNotNull( info );
             if( i < commandLineEtalonesForPatterns.length ) {
-                assertEquals( info.getCommandLine(), commandLineEtalonesForPatterns[i] );
+                assertEquals("i="+i, commandLineEtalonesForPatterns[i], info.getCommandLine());
             }
         }
     }
     
     public final void testGenerateCommandLineInfoParameters() {
         IManagedCommandLineGenerator gen = ManagedCommandLineGenerator.getCommandLineGenerator();
-        IManagedCommandLineInfo info = gen.generateCommandLineInfo( null, null, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, OUTPUT_VAL, INPUTS_ARRAY_VAL, null );
+        
+        IManagedCommandLineInfo info = gen.generateCommandLineInfo( null, "", FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, OUTPUT_VAL, INPUTS_ARRAY_VAL, null );
         assertNotNull( info );
-        assertEquals( info.getCommandLine(), commandLineEtalonesForParameters[0] );
-        info = gen.generateCommandLineInfo( null, COMMAND_VAL, null, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, OUTPUT_VAL, INPUTS_ARRAY_VAL, null );
+        assertEquals(FLAGS_VAL+" "+OUTPUT_FLAG_VAL+OUTPUT_PREFIX_VAL + "\""+OUTPUT_VAL + "\""+" " + "\""+INPUTS_VAL + "\"", info.getCommandLine());
+        
+        info = gen.generateCommandLineInfo( null, COMMAND_VAL, new String[0], OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, OUTPUT_VAL, INPUTS_ARRAY_VAL, null );
         assertNotNull( info );
-        assertEquals( info.getCommandLine(), commandLineEtalonesForParameters[1] );
-        info = gen.generateCommandLineInfo( null, COMMAND_VAL, FLAGS_ARRAY_VAL, null, OUTPUT_PREFIX_VAL, OUTPUT_VAL, INPUTS_ARRAY_VAL, null );
+        assertEquals(COMMAND_VAL+"  "+OUTPUT_FLAG_VAL+OUTPUT_PREFIX_VAL + "\""+OUTPUT_VAL + "\""+" " + "\""+INPUTS_VAL + "\"", info.getCommandLine());
+        
+        info = gen.generateCommandLineInfo( null, COMMAND_VAL, FLAGS_ARRAY_VAL, "", OUTPUT_PREFIX_VAL, OUTPUT_VAL, INPUTS_ARRAY_VAL, null );
         assertNotNull( info );
-        assertEquals( info.getCommandLine(), commandLineEtalonesForParameters[2] );
-        info = gen.generateCommandLineInfo( null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, null, OUTPUT_VAL, INPUTS_ARRAY_VAL, null );
+        assertEquals(COMMAND_VAL+" "+FLAGS_VAL+" "+OUTPUT_PREFIX_VAL + "\""+OUTPUT_VAL + "\""+" " + "\""+INPUTS_VAL + "\"", info.getCommandLine());
+        
+        info = gen.generateCommandLineInfo( null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, "", OUTPUT_VAL, INPUTS_ARRAY_VAL, null );
         assertNotNull( info );
-        assertEquals( info.getCommandLine(), commandLineEtalonesForParameters[3] );
-        info = gen.generateCommandLineInfo( null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, null, INPUTS_ARRAY_VAL, null );
+        assertEquals(COMMAND_VAL+" "+FLAGS_VAL+" "+OUTPUT_FLAG_VAL + "\""+OUTPUT_VAL + "\""+" " + "\""+INPUTS_VAL + "\"", info.getCommandLine());
+        
+        info = gen.generateCommandLineInfo( null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, "", INPUTS_ARRAY_VAL, null );
         assertNotNull( info );
-        assertEquals( info.getCommandLine(), commandLineEtalonesForParameters[4] );
-        info = gen.generateCommandLineInfo( null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, OUTPUT_VAL, null, null );
+        assertEquals(COMMAND_VAL+" "+FLAGS_VAL+" "+OUTPUT_FLAG_VAL+OUTPUT_PREFIX_VAL+" " + "\""+INPUTS_VAL + "\"", info.getCommandLine());
+        
+        info = gen.generateCommandLineInfo( null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, OUTPUT_VAL, new String[0], null );
         assertNotNull( info );
-        assertEquals( info.getCommandLine().trim(), commandLineEtalonesForParameters[5].trim() );
+        assertEquals(COMMAND_VAL+" "+FLAGS_VAL+" "+OUTPUT_FLAG_VAL+OUTPUT_PREFIX_VAL + "\""+OUTPUT_VAL + "\"", info.getCommandLine());
     }
 
     public final void testCustomGenerator() {
@@ -134,7 +139,8 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
     	assertNotNull(option);
     	Object val = option.getValue();
     	assertTrue(val instanceof ArrayList);
-    	ArrayList list = (ArrayList)val;
+    	@SuppressWarnings("unchecked")
+		ArrayList<String> list = (ArrayList<String>)val;
     	assertEquals("foo", list.get(0));
     	assertEquals("bar", list.get(1));
     	

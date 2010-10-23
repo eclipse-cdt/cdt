@@ -22,11 +22,11 @@ import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 
-public class ListMap implements Cloneable {
+public class ToolListMap implements Cloneable {
 	private HashMap fMap;
 	private CollectionEntrySet fCollectionEntrySet;
 
-	public ListMap(){
+	public ToolListMap(){
 		fMap = new HashMap();
 	}
 	
@@ -248,7 +248,7 @@ public class ListMap implements Cloneable {
 		return fCollectionEntrySet;
 	}
 
-	public void difference(ListMap map){
+	public void difference(ToolListMap map){
 		for(Iterator iter = map.fMap.entrySet().iterator(); iter.hasNext(); ){
 			Map.Entry entry = (Map.Entry)iter.next();
 			Collection thisC = (Collection)fMap.get(entry.getKey());
@@ -271,7 +271,7 @@ public class ListMap implements Cloneable {
 	@Override
 	public Object clone() {
 		try {
-			ListMap clone = (ListMap)super.clone();
+			ToolListMap clone = (ToolListMap)super.clone();
 			clone.fMap = (HashMap)fMap.clone();
 			for(Iterator iter = clone.fMap.entrySet().iterator(); iter.hasNext();){
 				Map.Entry entry = (Map.Entry)iter.next();

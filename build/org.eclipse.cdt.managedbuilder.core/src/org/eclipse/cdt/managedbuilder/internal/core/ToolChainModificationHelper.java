@@ -23,14 +23,14 @@ import java.util.Set;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.tcmodification.ListMap;
-import org.eclipse.cdt.managedbuilder.internal.tcmodification.ListMap.CollectionEntry;
+import org.eclipse.cdt.managedbuilder.internal.tcmodification.ToolListMap;
+import org.eclipse.cdt.managedbuilder.internal.tcmodification.ToolListMap.CollectionEntry;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 public class ToolChainModificationHelper {
 	
-	private static ListMap createRealToToolMap(ITool[] tools, boolean ext){
-		ListMap lMap = new ListMap();
+	private static ToolListMap createRealToToolMap(ITool[] tools, boolean ext){
+		ToolListMap lMap = new ToolListMap();
 		for(int i = 0; i < tools.length; i++){
 			ITool tool = tools[i];
 			ITool rt = ManagedBuildManager.getRealTool(tool);
@@ -45,8 +45,8 @@ public class ToolChainModificationHelper {
 		return lMap;
 	}
 	
-	private static ListMap calculateDifference(ListMap m1, ListMap m2){
-		m1 = (ListMap)m1.clone();
+	private static ToolListMap calculateDifference(ToolListMap m1, ToolListMap m2){
+		m1 = (ToolListMap)m1.clone();
 		Set ceSet2 = m2.collectionEntrySet();
 		
 		for(Iterator iter = ceSet2.iterator(); iter.hasNext(); ){
@@ -66,7 +66,7 @@ public class ToolChainModificationHelper {
 	}
 
 	static public ToolListModificationInfo getModificationInfo(IResourceInfo rcInfo, ITool[] fromTools, ITool[] addedTools, ITool[] removedTools){
-		ListMap addedMap = createRealToToolMap(addedTools, false);
+		ToolListMap addedMap = createRealToToolMap(addedTools, false);
 		for(int i = 0; i < removedTools.length; i++){
 			ITool removedTool = removedTools[i];
 			ITool realTool = ManagedBuildManager.getRealTool(removedTool);
@@ -76,7 +76,7 @@ public class ToolChainModificationHelper {
 			addedMap.remove(realTool, 0);
 		}
 		
-		ListMap removedMap = createRealToToolMap(removedTools, false);
+		ToolListMap removedMap = createRealToToolMap(removedTools, false);
 		for(int i = 0; i < addedTools.length; i++){
 			ITool addedTool = addedTools[i];
 			ITool realTool = ManagedBuildManager.getRealTool(addedTool);
@@ -89,7 +89,7 @@ public class ToolChainModificationHelper {
 		addedMap.clearEmptyLists();
 		removedMap.clearEmptyLists();
 		
-		ListMap curMap = createRealToToolMap(fromTools, false);
+		ToolListMap curMap = createRealToToolMap(fromTools, false);
 		for(Iterator iter = removedMap.collectionEntrySet().iterator(); iter.hasNext();){
 			CollectionEntry entry = (CollectionEntry)iter.next();
 			List cur = curMap.get(entry.getKey(), false);
@@ -133,7 +133,7 @@ public class ToolChainModificationHelper {
 
 	static public ToolListModificationInfo getModificationInfo(IResourceInfo rcInfo, ITool[] fromTools, ITool[] toTools){
 		
-		ListMap curMap = createRealToToolMap(fromTools, false);
+		ToolListMap curMap = createRealToToolMap(fromTools, false);
 		List resultingList = new ArrayList();
 		List addedList = new ArrayList(7);
 		List remainedList = new ArrayList(7);

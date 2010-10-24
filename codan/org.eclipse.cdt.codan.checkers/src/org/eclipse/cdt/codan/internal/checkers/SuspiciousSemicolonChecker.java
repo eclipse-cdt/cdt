@@ -11,6 +11,8 @@
 package org.eclipse.cdt.codan.internal.checkers;
 
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
+import org.eclipse.cdt.codan.core.model.IProblem;
+import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
@@ -21,7 +23,8 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
-	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.SuspiciousSemicolonProblem"; //$NON-NLS-1$
+	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.SuspiciousSemicolonProblem"; //$NON-NLS-1$
+	public static final String PARAM_ELSE = "else"; //$NON-NLS-1$
 
 	public void processAst(IASTTranslationUnit ast) {
 		ast.accept(new ASTVisitor() {
@@ -34,6 +37,10 @@ public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 				if (statement instanceof IASTIfStatement) {
 					IASTStatement thenStmt = ((IASTIfStatement) statement)
 							.getThenClause();
+					IASTStatement elseStmt = ((IASTIfStatement) statement)
+							.getElseClause();
+					if (elseStmt != null && doNotReportIfElse() == true)
+						return PROCESS_CONTINUE;
 					if (thenStmt instanceof IASTNullStatement
 							&& noMacroInvolved(thenStmt)) {
 						reportProblem(ER_ID, thenStmt, (Object) null);
@@ -44,6 +51,10 @@ public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 		});
 	}
 
+	protected boolean doNotReportIfElse() {
+		final IProblem pt = getProblemById(ER_ID, getFile());
+		return (Boolean) getPreference(pt, PARAM_ELSE);
+	}
 
 	protected boolean noMacroInvolved(IASTStatement node) {
 		IASTNodeSelector nodeSelector = node.getTranslationUnit()
@@ -53,5 +64,12 @@ public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 				.findEnclosingMacroExpansion(fileLocation.getNodeOffset() - 1,
 						1);
 		return macro == null;
+	}
+
+	public void initPreferences(IProblemWorkingCopy problem) {
+		super.initPreferences(problem);
+		addPreference(problem, PARAM_ELSE,
+				CheckersMessages.SuspiciousSemicolonChecker_ParamElse,
+				Boolean.FALSE);
 	}
 }

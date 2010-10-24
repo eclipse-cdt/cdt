@@ -22,7 +22,7 @@ all: TestATO.out
 TestATO.out: $(OBJS) $(OPT_SRCS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: AssignToOption Executable Linker'
-	ATOL -opt../TestATO1.opt -opt../TestATO2.opt -o"TestATO.out" $(OBJS)
+	ATOL -opt../TestATO1.opt -opt../TestATO2.opt -o "TestATO.out" $(OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

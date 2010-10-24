@@ -51,7 +51,7 @@ all: test_40
 test_40: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Test 4.0 ToolName.linker.gnu.cpp'
-	g++ -Llib/path/2 -o"test_40" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -Llib/path/2 -o "test_40" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

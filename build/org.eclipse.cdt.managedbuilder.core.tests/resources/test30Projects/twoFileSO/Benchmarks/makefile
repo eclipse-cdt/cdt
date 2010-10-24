@@ -28,7 +28,7 @@ all: libtwoFileSO.SOS
 libtwoFileSO.SOS: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MBS30.linker.gnu.c'
-	gcc -shared -o"libtwoFileSO.SOS" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -shared -o "libtwoFileSO.SOS" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

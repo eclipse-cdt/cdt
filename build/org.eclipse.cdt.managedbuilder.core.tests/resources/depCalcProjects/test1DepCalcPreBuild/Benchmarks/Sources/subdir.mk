@@ -23,13 +23,13 @@ C_DEPS += \
 Sources/%.o: ../Sources/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
-	gcc -I../Headers -I../Sources/sub\ sources -O0 -g3 -Wall -c -fmessage-length=0 -o"$@" "$<"
+	gcc -I../Headers -I../Sources/sub\ sources -O0 -g3 -Wall -c -fmessage-length=0 -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
 Sources/%.d: ../Sources/%.c
 	@echo 'Regenerating dependency file: $@'
-	gcc -w -MM -MP -MT"$@" -MT"$(@:%.d=%.o)" -I../Headers -I../Sources/sub\ sources -MF"$@" "$<"
+	gcc -w -MM -MP -MT"$@" -MT"$(@:%.d=%.o)" -I../Headers -I../Sources/sub\ sources -MF "$@" "$<"
 	@echo ' '
 
 

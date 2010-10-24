@@ -30,7 +30,7 @@ all: test1DepCalc2
 test1DepCalc2: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc  -o"test1DepCalc2" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc  -o "test1DepCalc2" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

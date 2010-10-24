@@ -40,7 +40,7 @@ all: libtestDoubleSO.so
 libtestDoubleSO.so: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: linker.gnu.cpp'
-	g++ -shared -o"libtestDoubleSO.so" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -shared -o "libtestDoubleSO.so" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

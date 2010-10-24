@@ -40,7 +40,7 @@ all: DeleteFile
 DeleteFile: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MBS30.linker.gnu.cpp'
-	g++  -o"DeleteFile" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++  -o "DeleteFile" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

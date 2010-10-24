@@ -43,7 +43,7 @@ all: test20.exe
 test20.exe: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++  -o"test20.exe" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++  -o "test20.exe" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

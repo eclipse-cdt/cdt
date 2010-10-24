@@ -43,7 +43,7 @@ main-build: preAndPostBuildSteps
 preAndPostBuildSteps: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MBS30.linker.gnu.cpp'
-	g++  -o"preAndPostBuildSteps" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++  -o "preAndPostBuildSteps" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build

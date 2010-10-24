@@ -28,7 +28,7 @@ all: inputTypeOption
 inputTypeOption: $(OBJS) C:\An\ Absolute\ Path\ With\ Spaces\foo.linker $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.linker'
-	gcc --linkerInputTypeOption="C:\An Absolute Path With Spaces\foo.linker" -o"inputTypeOption" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc --linkerInputTypeOption="C:\An Absolute Path With Spaces\foo.linker" -o "inputTypeOption" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

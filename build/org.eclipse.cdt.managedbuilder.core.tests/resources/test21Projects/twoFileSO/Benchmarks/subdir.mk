@@ -20,9 +20,9 @@ C_DEPS += \
 %.o: ../%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: compiler.gnu.cpp'
-	g++ -DXXX -O0 -g3 -Wall -c -o"$@" "$<" && \
+	g++ -DXXX -O0 -g3 -Wall -c -o "$@" "$<" && \
 	echo -n '$(@:%.o=%.d)' $(dir $@) > '$(@:%.o=%.d)' && \
-	g++ -MM -MG -P -w -DXXX -O0 -g3 -Wall -c  "$<" >> '$(@:%.o=%.d)'
+	g++ -MM -MG -P -w -DXXX -O0 -g3 -Wall -c   "$<" >> '$(@:%.o=%.d)'
 	@echo 'Finished building: $<'
 	@echo ' '
 

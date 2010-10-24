@@ -92,7 +92,7 @@ import org.osgi.framework.Version;
  */
 public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatchKeyProvider, IRealBuildObjectAssociation {
 
-	public static final String DEFAULT_PATTERN = "${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"; //$NON-NLS-1$
+	public static final String DEFAULT_PATTERN = "${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"; //$NON-NLS-1$
 	public static final String DEFAULT_CBS_PATTERN = "${COMMAND}"; //$NON-NLS-1$
 
 	//property name for holding the rebuild state

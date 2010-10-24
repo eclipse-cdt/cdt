@@ -17,7 +17,7 @@ CPP_DEPS += \
 dir1/dd/excluded_c/asd/%.o: ../dir1/dd/excluded_c/asd/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: Test 4.0 ToolName.compiler.gnu.cpp'
-	g++ -O2 -g -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
+	g++ -O2 -g -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

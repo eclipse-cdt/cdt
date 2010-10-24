@@ -21,7 +21,7 @@ OBJS += \
 %.obj: ../%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: AssignToOption Compiler'
-	ATOC -opt../TestATO.cop "$@" "$<"
+	ATOC -opt../TestATO.cop  "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

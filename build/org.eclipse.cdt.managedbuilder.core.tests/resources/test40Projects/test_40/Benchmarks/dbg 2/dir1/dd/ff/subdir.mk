@@ -24,14 +24,14 @@ CPP_DEPS += \
 dir1/dd/ff/%.o: ../dir1/dd/ff/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: Test 4.0 ToolName.compiler.gnu.c'
-	gcc -O2 -g -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
+	gcc -O2 -g -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
 dir1/dd/ff/%.o: ../dir1/dd/ff/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: Test 4.0 ToolName.compiler.gnu.cpp'
-	g++ -O2 -g -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
+	g++ -O2 -g -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

@@ -38,7 +38,7 @@ TestCopyandDeploy: $(EXECUTABLES)
 
 USER_OBJS.foo: $(OBJS) $(USER_OBJS)
 	@echo 'Invoking: MBS30.linker.gnu.c'
-	gcc  -o"USER_OBJS.foo" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc  -o "USER_OBJS.foo" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building: $@'
 	@echo ' '
 

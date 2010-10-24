@@ -43,7 +43,7 @@ all: testResCfg
 testResCfg: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: linker.gnu.cpp'
-	g++ --strip-all -o"testResCfg" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ --strip-all -o "testResCfg" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

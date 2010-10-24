@@ -43,7 +43,7 @@ all: test12.exe
 test12.exe: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cygwin C++ Linker'
-	g++  -o"test12.exe" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++  -o "test12.exe" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

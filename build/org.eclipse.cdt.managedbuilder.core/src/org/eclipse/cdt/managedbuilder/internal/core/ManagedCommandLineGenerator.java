@@ -57,6 +57,10 @@ public class ManagedCommandLineGenerator implements
 		return cmdLineGen;
 	}
 	
+	private String makeVariable(String variableName) {
+		return "${"+variableName+"}"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator#getCommandLineInfo(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String[], java.lang.String)
 	 */
@@ -65,78 +69,45 @@ public class ManagedCommandLineGenerator implements
 			String outputPrefix, String outputName, 
 			String[] inputResources, String commandLinePattern) 
 	{
-		StringBuffer sb = new StringBuffer();
 		if( commandLinePattern == null || commandLinePattern.length() <= 0 )
-		    commandLinePattern = Tool.DEFAULT_PATTERN;
-/*		    
-			sb.append( commandName + WHITESPACE + stringArrayToString( flags ) + WHITESPACE + outputFlag + WHITESPACE + outputPrefix + 
-				outputName + WHITESPACE + stringArrayToString( inputResources ) );
-		else {
-*/		    
-			int start =  0;
-			int stop = 0;
-			while( (start = commandLinePattern.indexOf( VAR_FIRST_CHAR, start )) >= 0 ) {
-				if( commandLinePattern.charAt( start + 1 ) != VAR_SECOND_CHAR  ) {
-					sb.append(VAR_FIRST_CHAR);
-					start++;
-					continue;
+			commandLinePattern = Tool.DEFAULT_PATTERN;
+		
+		// if the output name isn't a variable then quote it
+		if(outputName.length()>0 && outputName.indexOf("$(") != 0) //$NON-NLS-1$
+			outputName = DOUBLE_QUOTE + outputName + DOUBLE_QUOTE;
+		
+		String inputsStr=""; //$NON-NLS-1$
+		for (String inp : inputResources) {
+			if(inp!=null && inp.length()>0) {
+				// if the input resource isn't a variable then quote it
+				if(inp.indexOf("$(") != 0) { //$NON-NLS-1$
+					inp = DOUBLE_QUOTE + inp + DOUBLE_QUOTE;
 				}
-				if( start > stop ) {
-					sb.append( commandLinePattern.substring(stop, start) );
-				}
-				stop = commandLinePattern.indexOf( VAR_FINAL_CHAR, start + 1 );
-				if( stop > 0 && stop <= commandLinePattern.length() ) try {
-					String varName = commandLinePattern.substring( start+2, stop ).trim();
-					if( varName.compareToIgnoreCase( CMD_LINE_PRM_NAME ) == 0 ) sb.append( commandName.trim() );
-					else if( varName.compareToIgnoreCase( FLAGS_PRM_NAME ) == 0 ) sb.append( stringArrayToString( flags ) );
-					else if( varName.compareToIgnoreCase( OUTPUT_FLAG_PRM_NAME ) == 0 ) sb.append( outputFlag.trim() );
-					else if( varName.compareToIgnoreCase( OUTPUT_PREFIX_PRM_NAME ) == 0 ) sb.append( outputPrefix.trim() );
-					else if( varName.compareToIgnoreCase( OUTPUT_PRM_NAME ) == 0 )
-						{
-							StringBuffer tempBuffer = new StringBuffer(EMPTY);
-						
-							if(!outputName.equals(EMPTY))
-							{
-//								 if the output name isn't a variable then quote it
-								if(outputName.indexOf("$(") != 0) //$NON-NLS-1$
-									tempBuffer.append( DOUBLE_QUOTE + outputName + DOUBLE_QUOTE);
-								else
-									tempBuffer.append(outputName);
-							}
-							
-							sb.append(tempBuffer.toString().trim());
-						}
-					else if( varName.compareToIgnoreCase( INPUTS_PRM_NAME ) == 0 && 
-							(inputResources != null)){
-						StringBuffer tempBuffer = new StringBuffer(EMPTY);
-						for(int k = 0; k < inputResources.length; k++)
-						{
-							if(!inputResources[k].equals(EMPTY))
-							{
-								// if the input resource isn't a variable then quote it
-								if(inputResources[k].indexOf("$(") != 0) //$NON-NLS-1$
-									tempBuffer.append(DOUBLE_QUOTE + inputResources[k] + DOUBLE_QUOTE + WHITESPACE);
-								else
-									tempBuffer.append(inputResources[k] + WHITESPACE);
-							}
-						}
-						
-						sb.append(tempBuffer.toString().trim());
-						
-					}
-					else sb.append( VAR_FIRST_CHAR + VAR_SECOND_CHAR + varName + VAR_FINAL_CHAR );
-				} catch( Exception ex ) {
-					// 	do nothing for a while
-				}
-				start = ++stop;
-//			}
+				inputsStr = inputsStr + inp + WHITESPACE;
+			}
 		}
-		if (stop<commandLinePattern.length()){
-			sb.append(commandLinePattern.substring(stop));
-		}
+		inputsStr = inputsStr.trim();
+		
+		String flagsStr = stringArrayToString(flags);
+		
+		String command = commandLinePattern;
 
-		return new ManagedCommandLineInfo( sb.toString().trim(), commandLinePattern, commandName, stringArrayToString( flags ),
-				outputFlag, outputPrefix, outputName, stringArrayToString( inputResources ) );
+		command = command.replace(makeVariable(CMD_LINE_PRM_NAME), commandName);
+		command = command.replace(makeVariable(FLAGS_PRM_NAME), flagsStr);
+		command = command.replace(makeVariable(OUTPUT_FLAG_PRM_NAME), outputFlag);
+		command = command.replace(makeVariable(OUTPUT_PREFIX_PRM_NAME), outputPrefix);
+		command = command.replace(makeVariable(OUTPUT_PRM_NAME), outputName);
+		command = command.replace(makeVariable(INPUTS_PRM_NAME), inputsStr);
+		
+		command = command.replace(makeVariable(CMD_LINE_PRM_NAME.toLowerCase()), commandName);
+		command = command.replace(makeVariable(FLAGS_PRM_NAME.toLowerCase()), flagsStr);
+		command = command.replace(makeVariable(OUTPUT_FLAG_PRM_NAME.toLowerCase()), outputFlag);
+		command = command.replace(makeVariable(OUTPUT_PREFIX_PRM_NAME.toLowerCase()), outputPrefix);
+		command = command.replace(makeVariable(OUTPUT_PRM_NAME.toLowerCase()), outputName);
+		command = command.replace(makeVariable(INPUTS_PRM_NAME.toLowerCase()), inputsStr);
+
+		return new ManagedCommandLineInfo(command.trim(), commandLinePattern, commandName, stringArrayToString(flags),
+				outputFlag, outputPrefix, outputName, stringArrayToString(inputResources));
 	}
 	
 	private String stringArrayToString( String[] array ) {

@@ -26,7 +26,7 @@ C_DEPS += \
 f1.o: C:/Documents\ and\ Settings/ltreggia/CDTMBSTest/f1.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MBS30.compiler.gnu.c'
-	gcc -O0 -g3 -Wall -c -fmessage-length=0 -v -o"$@" "$<" && \
+	gcc -O0 -g3 -Wall -c -fmessage-length=0 -v -o "$@" "$<" && \
 	echo -n '$(@:%.o=%.d)' $(dir $@) > '$(@:%.o=%.d)' && \
 	gcc -MM -MG -P -w -O0 -g3 -Wall -c -fmessage-length=0 -v  "$<" >> '$(@:%.o=%.d)'
 	@echo 'Finished building: $<'
@@ -35,7 +35,7 @@ f1.o: C:/Documents\ and\ Settings/ltreggia/CDTMBSTest/f1.c
 f1_30.o: C:/Documents\ and\ Settings/agvozdev/CDTMBSTest/f1_30.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MBS30.compiler.gnu.c'
-	gcc -O0 -g3 -Wall -c -fmessage-length=0 -v -o"$@" "$<" && \
+	gcc -O0 -g3 -Wall -c -fmessage-length=0 -v -o "$@" "$<" && \
 	echo -n '$(@:%.o=%.d)' $(dir $@) > '$(@:%.o=%.d)' && \
 	gcc -MM -MG -P -w -O0 -g3 -Wall -c -fmessage-length=0 -v  "$<" >> '$(@:%.o=%.d)'
 	@echo 'Finished building: $<'
@@ -44,7 +44,7 @@ f1_30.o: C:/Documents\ and\ Settings/agvozdev/CDTMBSTest/f1_30.c
 f2.o: C:/Documents\ and\ Settings/ltreggia/CDTMBSTest/f2.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MBS30.compiler.gnu.c'
-	gcc -O0 -g3 -Wall -c -fmessage-length=0 -v -o"$@" "$<" && \
+	gcc -O0 -g3 -Wall -c -fmessage-length=0 -v -o "$@" "$<" && \
 	echo -n '$(@:%.o=%.d)' $(dir $@) > '$(@:%.o=%.d)' && \
 	gcc -MM -MG -P -w -O0 -g3 -Wall -c -fmessage-length=0 -v  "$<" >> '$(@:%.o=%.d)'
 	@echo 'Finished building: $<'
@@ -53,7 +53,7 @@ f2.o: C:/Documents\ and\ Settings/ltreggia/CDTMBSTest/f2.c
 f2_30.o: C:/Documents\ and\ Settings/agvozdev/CDTMBSTest/f2_30.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MBS30.compiler.gnu.c'
-	gcc -O0 -g3 -Wall -c -fmessage-length=0 -v -o"$@" "$<" && \
+	gcc -O0 -g3 -Wall -c -fmessage-length=0 -v -o "$@" "$<" && \
 	echo -n '$(@:%.o=%.d)' $(dir $@) > '$(@:%.o=%.d)' && \
 	gcc -MM -MG -P -w -O0 -g3 -Wall -c -fmessage-length=0 -v  "$<" >> '$(@:%.o=%.d)'
 	@echo 'Finished building: $<'

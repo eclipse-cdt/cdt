@@ -42,7 +42,7 @@ default.so.4.5.6: Test30_1.so.4.5.6 $(EXECUTABLES)
 
 test30_1.so.1.2.3: $(STRIPPEDOBJS)
 	@echo 'Invoking: MBS30.linker.gnu.c'
-	gcc -shared -Wl,-soname=test30_1.so.1.2.3 -o"test30_1.so.1.2.3" $(STRIPPEDOBJS)
+	gcc -shared -Wl,-soname=test30_1.so.1.2.3 -o "test30_1.so.1.2.3" $(STRIPPEDOBJS)
 	@echo 'Finished building: $@'
 	@echo ' '
 

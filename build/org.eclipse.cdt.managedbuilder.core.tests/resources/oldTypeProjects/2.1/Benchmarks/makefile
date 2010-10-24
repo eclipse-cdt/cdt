@@ -29,7 +29,7 @@ all: MBS2dot1.exe
 MBS2dot1.exe: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc  -o"MBS2dot1.exe" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc  -o "MBS2dot1.exe" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

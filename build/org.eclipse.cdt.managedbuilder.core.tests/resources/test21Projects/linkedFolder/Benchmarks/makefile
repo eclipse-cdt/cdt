@@ -28,7 +28,7 @@ all: liblinkedFolder.a
 liblinkedFolder.a: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: archiver.gnu'
-	ar -r "liblinkedFolder.a" $(OBJS) $(USER_OBJS) $(LIBS)
+	ar -r  "liblinkedFolder.a" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

@@ -28,7 +28,7 @@ all: testSingleExe
 testSingleExe: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: linker.gnu.c'
-	gcc  -o"testSingleExe" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc  -o "testSingleExe" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

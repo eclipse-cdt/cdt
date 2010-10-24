@@ -44,7 +44,7 @@ all: Test21CXX
 Test21CXX: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++  -o"Test21CXX" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++  -o "Test21CXX" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

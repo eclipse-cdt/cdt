@@ -70,13 +70,13 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 		synchronized(this){
 			if(recreate || rescan || !fInited){
 				ICExtensionReference ref = null;
-				boolean newStile = true;
+				boolean newStyle = true;
 				ICConfigurationDescription cfg = null;
 				if(des != null){
 					cfg = des.getDefaultSettingConfiguration();
 					if(cfg != null){
 						ref = getRef(cfg, false);
-						newStile = CProjectDescriptionManager.getInstance().isNewStyleCfg(cfg);
+						newStyle = CProjectDescriptionManager.getInstance().isNewStyleCfg(cfg);
 					}
 				}
 				
@@ -92,9 +92,9 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 				}
 					
 				if(newProvider == null){
-					if(recreate || fProvider == null || newStile != fIsNewStyle){
-						newStile = isNewStyleCfg(cfg);
-						newProvider = createDefaultProvider(cfg, newStile);
+					if(recreate || fProvider == null || newStyle != fIsNewStyle){
+						newStyle = isNewStyleCfg(cfg);
+						newProvider = createDefaultProvider(cfg, newStyle);
 					}
 				}
 				
@@ -108,7 +108,7 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 					if(ref != null)
 						fExtId = ref.getID();
 					
-					fIsNewStyle = newStile;
+					fIsNewStyle = newStyle;
 					
 					initializeProvider(fProvider);
 				}

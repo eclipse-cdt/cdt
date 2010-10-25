@@ -20,6 +20,7 @@ David McKnight (IBM) - [209593] [api] add support for "file permissions" and "ow
 Johnson Ma (Wind River) - [195402] Add tar.gz archive support
 David McKnight   (IBM)        - [261019] New File/Folder actions available in Work Offline mode
 David McKnight   (IBM)        - [218227][usability] Contribute a "Show in RSE" action to Resource Navigator and Project Explorer
+David McKnight   (IBM)        - [328617] synchronize cache operation should also support individual files
 -->
 <?eclipse version="3.0"?>
 <plugin>
@@ -448,9 +449,15 @@ David McKnight   (IBM)        - [218227][usability] Contribute a "Show in RSE" a
       <extension point="org.eclipse.ui.popupMenus">
 	      <objectContribution
             objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"
-            id="org.eclipse.rse.files.ui.actions.synchronizeCache">
+            id="org.eclipse.rse.files.ui.actions.synchronizeCache">          
                 <visibility> 
-                	<objectState name="isdirectory" value="true"/>    
+                  <and>
+                    <or>
+                    	<objectState name="isdirectory" value="true"/>    
+                    	<objectState name="isfile" value="true"/>  
+                    </or>	
+                    <objectState name="isroot" value="false"/> 
+                  </and>                  
                 </visibility>        
          <action
                label="%synchronizeCache.label"

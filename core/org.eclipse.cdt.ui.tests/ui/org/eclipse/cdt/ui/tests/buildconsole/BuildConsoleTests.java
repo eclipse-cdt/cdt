@@ -30,6 +30,7 @@ import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsole;
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsolePage;
+import org.eclipse.cdt.internal.ui.buildconsole.ConsoleMessages;
 
 /**
  * BuildConsoleTests.
@@ -80,7 +81,8 @@ public class BuildConsoleTests extends BaseUITestCase {
 		for (org.eclipse.ui.console.IConsole next : consoles) {
 			if (next instanceof BuildConsole) {
 				buildConsole = (BuildConsole) next;
-				break;
+				if (buildConsole.getName().contains(simpleProject.getName()))
+					break;
 			}
 		}
 		assertNotNull("Couldn't find the build console", buildConsole);
@@ -107,5 +109,21 @@ public class BuildConsoleTests extends BaseUITestCase {
 		
 		buildConsole = (BuildConsole) new Accessor(page).invoke("getConsole");
 		assertTrue("Project console not selected", buildConsole.getName().contains(simpleProject.getName()));
+	}
+
+	public void testGlobalCdtConsole() throws IOException, CoreException {
+		IBuildConsoleManager mgr = CUIPlugin.getDefault().getConsoleManager();
+		IConsole globalConsole = mgr.getGlobalConsole();
+		assertNotNull(globalConsole);
+		
+		// the console view
+		org.eclipse.ui.console.IConsole[] consoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
+		boolean isConsoleFound = false;
+		for (org.eclipse.ui.console.IConsole console : consoles) {
+			isConsoleFound = console.getName().equals(ConsoleMessages.BuildConsole_GlobalConsole);
+			if (isConsoleFound)
+				break;
+		}
+		assertTrue("Global CDT Console is not found", isConsoleFound);
 	}
 }

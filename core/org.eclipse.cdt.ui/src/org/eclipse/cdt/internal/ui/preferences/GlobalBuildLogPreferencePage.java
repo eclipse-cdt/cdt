@@ -30,8 +30,8 @@ import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
  */
 public class GlobalBuildLogPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	public GlobalBuildLogPreferencePage() {
-		 super(GRID);
-		 setPreferenceStore(BuildConsoleManager.getBuildLogPreferenceStore(null));
+		super(GRID);
+		setPreferenceStore(BuildConsoleManager.getBuildLogPreferenceStore(null));
 	}
 
 	/**
@@ -55,21 +55,22 @@ public class GlobalBuildLogPreferencePage extends FieldEditorPreferencePage impl
 
 	@Override
 	protected void createFieldEditors() {
-		 Composite parent = getFieldEditorParent();
-		 BooleanFieldEditor keepLog = new BooleanFieldEditor(BuildConsoleManager.KEY_KEEP_LOG,
-				   PreferencesMessages.GlobalBuildLogPreferencePage_EnableLogging, parent);
-		 addField(keepLog);
-		 FilePathEditor logLocation = new FilePathEditor(BuildConsoleManager.KEY_LOG_LOCATION,
-				   PreferencesMessages.GlobalBuildLogPreferencePage_LogLocation, parent);
-		 addField(logLocation);
+		Composite parent = getFieldEditorParent();
+		BooleanFieldEditor keepLog = new BooleanFieldEditor(BuildConsoleManager.KEY_KEEP_LOG,
+				PreferencesMessages.GlobalBuildLogPreferencePage_EnableLogging, parent);
+		addField(keepLog);
+		FilePathEditor logLocation = new FilePathEditor(BuildConsoleManager.KEY_LOG_LOCATION,
+				PreferencesMessages.GlobalBuildLogPreferencePage_LogLocation, parent);
+		addField(logLocation);
 	}
 
 	public void init(IWorkbench workbench) {
-		 initDefaults(BuildConsoleManager.getBuildLogPreferenceStore(null));
+		initDefaults(BuildConsoleManager.getBuildLogPreferenceStore(null));
 	}
 
 	public static void initDefaults(IPreferenceStore prefs) {
-		 prefs.setDefault(BuildConsoleManager.KEY_KEEP_LOG, BuildConsoleManager.CONSOLE_KEEP_LOG_DEFAULT);
-		 prefs.setDefault(BuildConsoleManager.KEY_LOG_LOCATION, BuildConsoleManager.getDefaultConsoleLogLocation(null));
+		prefs.setDefault(BuildConsoleManager.KEY_KEEP_LOG, BuildConsoleManager.CONSOLE_KEEP_LOG_DEFAULT);
+		prefs.setDefault(BuildConsoleManager.KEY_LOG_LOCATION,
+				BuildConsoleManager.getDefaultConsoleLogLocation(null));
 	}
 }

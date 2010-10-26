@@ -44,6 +44,7 @@ import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.newmake.internal.core.StreamMonitor;
 import org.eclipse.cdt.utils.CommandLineUtil;
+import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -55,6 +56,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -128,8 +130,13 @@ public class ExternalBuildRunner implements IBuildRunner {
 				if (markers != null)
 					workspace.deleteMarkers(markers);
 
-				IPath workingDirectory = ManagedBuildManager.getBuildLocation(configuration, builder);
 				URI workingDirectoryURI = ManagedBuildManager.getBuildLocationURI(configuration, builder);
+				final String pathFromURI = EFSExtensionManager.getDefault().getPathFromURI(workingDirectoryURI);
+				if(pathFromURI == null) {
+					throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, ManagedMakeMessages.getString("ManagedMakeBuilder.message.error"), null)); //$NON-NLS-1$
+				}
+				
+				IPath workingDirectory = new Path(pathFromURI);
 
 				String[] targets = getTargets(kind, builder);
 				if (targets.length != 0 && targets[targets.length - 1].equals(builder.getCleanBuildTarget()))

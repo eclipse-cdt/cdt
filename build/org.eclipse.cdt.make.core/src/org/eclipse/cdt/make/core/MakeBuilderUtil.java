@@ -67,4 +67,29 @@ public class MakeBuilderUtil {
 		}
 		return project.getLocationURI();
 	}
+	
+	/**
+	 * @param builderID 
+	 * @return URI of the build directory, or the Project's URI if one couldn't be found
+	 * @since 7.1
+	 */
+	public static URI getBuildDirectoryURI(IProject project, String builderID) {
+		IMakeBuilderInfo info;
+		try {
+			info = MakeCorePlugin.createBuildInfo(project, builderID);
+		} catch (CoreException e) {
+			return project.getLocationURI();
+		}
+		
+		IPath buildDirectory = info.getBuildLocation();
+		if (!buildDirectory.isEmpty()) {
+			IResource res = project.getParent().findMember(buildDirectory);
+			if (res instanceof IContainer && res.exists()) {
+				return res.getLocationURI();
+			}
+		}
+		return project.getLocationURI();
+	}
+	
+	
 }

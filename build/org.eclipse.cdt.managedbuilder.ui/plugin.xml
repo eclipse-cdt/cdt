@@ -485,8 +485,9 @@
          </filter>            
          <enabledWhen>
             <or>
-		     <instanceof value="org.eclipse.core.resources.IProject"/>
-		     <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
+               <adapt
+                     type="org.eclipse.core.resources.IProject">
+               </adapt>
 		     
 		     <instanceof value="org.eclipse.core.resources.IFolder"/>
 		     <instanceof value="org.eclipse.cdt.core.model.ICContainer"/>

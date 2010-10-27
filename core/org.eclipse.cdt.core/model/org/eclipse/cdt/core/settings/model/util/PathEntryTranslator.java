@@ -84,6 +84,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 
 public class PathEntryTranslator {
 	public static final int OP_ADD = 1;
@@ -2045,7 +2046,7 @@ public class PathEntryTranslator {
 					PathEntryCollector child = cr.createChild(container.getPath());
 					for (int kind : kinds) {
 						List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
-						if(collectEntries(kind, data, list)){
+						if(collectResourceDataEntries(kind, data, list)){
 							ICLanguageSettingEntry[] entries = list.toArray(new ICLanguageSettingEntry[list.size()]);
 							child.setEntries(kind, entries, exportedSettings);
 						}
@@ -2058,36 +2059,32 @@ public class PathEntryTranslator {
 		return cr;
 	}
 
-	private static boolean collectEntries(int kind, CResourceData data, List<ICLanguageSettingEntry> list){
-		if(data.getType() == ICSettingBase.SETTING_FOLDER){
-			return collectEntries(kind, (CFolderData)data, list);
+	private static boolean collectResourceDataEntries(int kind, CResourceData data, List<ICLanguageSettingEntry> list){
+		CLanguageData[] lDatas = null;
+		if(data instanceof CFolderData) {
+			lDatas = ((CFolderData)data).getLanguageDatas();
+		} else if(data instanceof CFileData) {
+			CLanguageData lData = ((CFileData)data).getLanguageData();
+			if (lData!=null)
+				lDatas = new CLanguageData[] {lData};
+		} else {
+			Exception e = new Exception(UtilMessages.getString("PathEntryTranslator.1") + data.getClass().getName()); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, e.getMessage(), e);
+			CCorePlugin.log(status);
 		}
-		return collectEntries(kind, (CFileData)data, list);
-	}
+		if (lDatas==null || lDatas.length==0) {
+			return false;
+		}
 
-	private static boolean collectEntries(int kind, CFolderData data, List<ICLanguageSettingEntry> list){
-
-		CLanguageData lDatas[] = data.getLanguageDatas();
 		boolean supported = false;
-		if(lDatas != null && lDatas.length != 0){
-			for (CLanguageData lData : lDatas) {
-				if(collectEntries(kind, lData, list))
-					supported = true;
-			}
+		for (CLanguageData lData : lDatas) {
+			if(collectLanguageDataEntries(kind, lData, list))
+				supported = true;
 		}
 		return supported;
 	}
 
-	private static boolean collectEntries(int kind, CFileData data, List<ICLanguageSettingEntry> list){
-
-		CLanguageData lData = data.getLanguageData();
-		if(lData != null){
-			return collectEntries(kind, lData, list);
-		}
-		return false;
-	}
-
-	private static boolean collectEntries(int kind, CLanguageData lData, List<ICLanguageSettingEntry> list){
+	private static boolean collectLanguageDataEntries(int kind, CLanguageData lData, List<ICLanguageSettingEntry> list){
 		if((kind & lData.getSupportedEntryKinds()) != 0){
 			ICLanguageSettingEntry[] entries = lData.getEntries(kind);
 			if(entries != null && entries.length != 0){

@@ -80,6 +80,7 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator2;
 import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
 import org.eclipse.cdt.newmake.internal.core.StreamMonitor;
 import org.eclipse.cdt.utils.CommandLineUtil;
+import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -1871,9 +1872,14 @@ public class CommonBuilder extends ACBuilder {
 				// remove all markers for this project
 				removeAllMarkers(currProject);
 
-				IPath workingDirectory = ManagedBuildManager.getBuildLocation(cfg, builder);
 				URI workingDirectoryURI = ManagedBuildManager.getBuildLocationURI(cfg, builder);
-
+				final String pathFromURI = EFSExtensionManager.getDefault().getPathFromURI(workingDirectoryURI);
+				if(pathFromURI == null) {
+					throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, ManagedMakeMessages.getString("ManagedMakeBuilder.message.error"), null)); //$NON-NLS-1$
+				}
+				
+				IPath workingDirectory = new Path(pathFromURI);
+				
 				String[] targets = getTargets(kind, builder);
 				if (targets.length != 0 && targets[targets.length - 1].equals(builder.getCleanBuildTarget()))
 					isClean = true;

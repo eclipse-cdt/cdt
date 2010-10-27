@@ -39,6 +39,7 @@ import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.DescriptionBuilder;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IBuildModelBuilder;
@@ -47,6 +48,7 @@ import org.eclipse.cdt.managedbuilder.internal.buildmodel.StepBuilder;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
+import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -65,6 +67,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.URIUtil;
 
@@ -877,9 +880,14 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 
 		try {
-			// Figure out the working directory for the build and make sure there is a makefile there 
-			IPath workingDirectory = getWorkingDirectory().append(buildDir);
-			final URI workingDirectoryURI = URIUtil.append(getProject().getLocationURI(), buildDir.toOSString());
+			// Figure out the working directory for the build and make sure there is a makefile there 			
+			final URI workingDirectoryURI = getProject().getFolder(buildDir).getLocationURI();
+			final String pathFromURI = EFSExtensionManager.getDefault().getPathFromURI(workingDirectoryURI);
+			if(pathFromURI == null) {
+				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, ManagedMakeMessages.getString("ManagedMakeBuilder.message.error"), null)); //$NON-NLS-1$
+			}
+			
+			IPath workingDirectory = new Path(pathFromURI);
 
 			IWorkspace workspace = currentProject.getWorkspace();
 			if (workspace == null) {

@@ -13,6 +13,7 @@ package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -23,6 +24,7 @@ import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
+import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.MakeBuilder;
 import org.eclipse.cdt.make.core.MakeBuilderUtil;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -35,8 +37,11 @@ import org.eclipse.cdt.make.internal.core.StreamMonitor;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoConsoleParserFactory;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
+import org.eclipse.cdt.utils.EFSExtensionManager;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -167,6 +172,25 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
                 buildInfo.isUseDefaultProviderCommand(providerId));
     }
     
+ 
+	private URI getBuildDirectoryURI(IProject project, String builderID) {
+		IMakeBuilderInfo info;
+		try {
+			info = MakeCorePlugin.createBuildInfo(project, builderID);
+		} catch (CoreException e) {
+			return project.getLocationURI();
+		}
+		
+		IPath buildDirectory = info.getBuildLocation();
+		if (!buildDirectory.isEmpty()) {
+			IResource res = project.getParent().findMember(buildDirectory);
+			if (res instanceof IContainer && res.exists()) {
+				return res.getLocationURI();
+			}
+		}
+		return project.getLocationURI();
+	}
+    
     /**
      * Initialization of protected fields. 
      * Subclasses are most likely to override default implementation.
@@ -175,7 +199,17 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
     	
 		IProject currProject = resource.getProject();
         //fWorkingDirectory = resource.getProject().getLocation();
-		fWorkingDirectory = MakeBuilderUtil.getBuildDirectory(currProject, MakeBuilder.BUILDER_ID);
+		URI workingDirURI = getBuildDirectoryURI(currProject, MakeBuilder.BUILDER_ID);
+		String pathString = EFSExtensionManager.getDefault().getPathFromURI(workingDirURI);
+		if(pathString != null) {
+			fWorkingDirectory = new Path(pathString);
+		}
+		
+		else {
+			// blow up
+			throw new IllegalStateException();
+		}
+		
         fCompileCommand = new Path(buildInfo.getProviderRunCommand(providerId));
         fCompileArguments = ScannerConfigUtil.tokenizeStringWithQuotes(buildInfo.getProviderRunArguments(providerId), "\"");//$NON-NLS-1$
         return (fCompileCommand != null);

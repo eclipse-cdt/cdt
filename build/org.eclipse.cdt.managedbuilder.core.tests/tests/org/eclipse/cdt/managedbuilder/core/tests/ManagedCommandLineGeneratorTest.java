@@ -81,7 +81,7 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
         for( int i = 0; i < testCommandLinePatterns.length; i++ ) {
             info = gen.generateCommandLineInfo( null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, OUTPUT_VAL, INPUTS_ARRAY_VAL, 
                     testCommandLinePatterns[i] );
-            assertNotNull( info );
+            assertNotNull(info);
             if( i < commandLineEtalonesForPatterns.length ) {
                 assertEquals("i="+i, commandLineEtalonesForPatterns[i], info.getCommandLine());
             }
@@ -93,7 +93,7 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
         
         IManagedCommandLineInfo info = gen.generateCommandLineInfo( null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, OUTPUT_VAL, INPUTS_ARRAY_VAL,
                 "${OUTPUT_FLAG} ${OUTPUT_FLAG}" );
-        assertNotNull( info );
+        assertNotNull(info);
         assertEquals(OUTPUT_FLAG_VAL+" "+OUTPUT_FLAG_VAL, info.getCommandLine());
     }
     
@@ -101,27 +101,31 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
     	IManagedCommandLineGenerator gen = ManagedCommandLineGenerator.getCommandLineGenerator();
     	
     	IManagedCommandLineInfo info = gen.generateCommandLineInfo( null, "", FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, OUTPUT_VAL, INPUTS_ARRAY_VAL, null );
-    	assertNotNull( info );
+    	assertNotNull(info);
     	assertEquals(FLAGS_VAL+" "+OUTPUT_FLAG_VAL+" "+OUTPUT_PREFIX_VAL + "\""+OUTPUT_VAL + "\""+" " + "\""+INPUTS_VAL + "\"", info.getCommandLine());
         
         info = gen.generateCommandLineInfo( null, COMMAND_VAL, new String[0], OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, OUTPUT_VAL, INPUTS_ARRAY_VAL, null );
-        assertNotNull( info );
+        assertNotNull(info);
         assertEquals(COMMAND_VAL+"  "+OUTPUT_FLAG_VAL+" "+OUTPUT_PREFIX_VAL + "\""+OUTPUT_VAL + "\""+" " + "\""+INPUTS_VAL + "\"", info.getCommandLine());
         
         info = gen.generateCommandLineInfo( null, COMMAND_VAL, FLAGS_ARRAY_VAL, "", OUTPUT_PREFIX_VAL, OUTPUT_VAL, INPUTS_ARRAY_VAL, null );
-        assertNotNull( info );
+        assertNotNull(info);
         assertEquals(COMMAND_VAL+" "+FLAGS_VAL+"  "+OUTPUT_PREFIX_VAL + "\""+OUTPUT_VAL + "\""+" " + "\""+INPUTS_VAL + "\"", info.getCommandLine());
         
         info = gen.generateCommandLineInfo( null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, "", OUTPUT_VAL, INPUTS_ARRAY_VAL, null );
-        assertNotNull( info );
+        assertNotNull(info);
         assertEquals(COMMAND_VAL+" "+FLAGS_VAL+" "+OUTPUT_FLAG_VAL+" "+"\""+OUTPUT_VAL + "\""+" " + "\""+INPUTS_VAL + "\"", info.getCommandLine());
         
         info = gen.generateCommandLineInfo( null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, "", INPUTS_ARRAY_VAL, null );
-        assertNotNull( info );
+        assertNotNull(info);
         assertEquals(COMMAND_VAL+" "+FLAGS_VAL+" "+OUTPUT_FLAG_VAL+" "+OUTPUT_PREFIX_VAL+" " + "\""+INPUTS_VAL + "\"", info.getCommandLine());
         
         info = gen.generateCommandLineInfo( null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, OUTPUT_VAL, new String[0], null );
-        assertNotNull( info );
+        assertNotNull(info);
+        assertEquals(COMMAND_VAL+" "+FLAGS_VAL+" "+OUTPUT_FLAG_VAL+" "+OUTPUT_PREFIX_VAL + "\""+OUTPUT_VAL + "\"", info.getCommandLine());
+        
+        info = gen.generateCommandLineInfo( null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, OUTPUT_VAL, null, null );
+        assertNotNull(info);
         assertEquals(COMMAND_VAL+" "+FLAGS_VAL+" "+OUTPUT_FLAG_VAL+" "+OUTPUT_PREFIX_VAL + "\""+OUTPUT_VAL + "\"", info.getCommandLine());
     }
 

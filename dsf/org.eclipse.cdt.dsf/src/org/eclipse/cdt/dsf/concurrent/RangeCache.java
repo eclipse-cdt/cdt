@@ -16,8 +16,10 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -93,108 +95,13 @@ abstract public class RangeCache<V> {
         protected List<V> process() throws InvalidCacheException, CoreException {
             clearCanceledRequests();
             
-            List<ICache<?>> transactionRequests = new ArrayList<ICache<?>>(1);
+            List<ICache<?>> transactionRequests = getRequests(fOffset, fCount);
             
-            // Create a new request for the data to retrieve.
-            Request current = new Request(fOffset, fCount);
-            
-            current = adjustRequestHead(current, transactionRequests);
-            if (current != null) {
-                current = adjustRequestTail(current, transactionRequests);
-            }
-            if (current != null) {
-                transactionRequests.add(current);
-                fRequests.add(current);
-            }
-                
             validate(transactionRequests);
 
-            return makeElementsListFromRequests(transactionRequests);
+            return makeElementsListFromRequests(transactionRequests, fOffset, fCount);
         }
-        
-        
-        // Adjust the beginning of the requested range of data.  If there 
-        // is already an overlapping range in front of the requested range, 
-        // then use it.
-        private Request adjustRequestHead(Request request, List<ICache<?>> transactionRequests) {
-            SortedSet<Request> headRequests = fRequests.headSet(request);
-            if (!headRequests.isEmpty()) {
-                Request headRequest = headRequests.last();
-                long headEndOffset = headRequest.fOffset + headRequest.fCount;
-                if (headEndOffset > fOffset) {
-                    transactionRequests.add(headRequest);
-                    request.fCount = (int)(request.fCount - (headEndOffset - fOffset));
-                    request.fOffset = headEndOffset;
-                }
-            }
-            if (request.fCount > 0) {
-                return request;
-            } else {
-                return null;
-            }
-        }
-
-        /**
-         * Adjust the end of the requested range of data.
-         * @param current
-         * @param transactionRequests
-         * @return
-         */
-        private Request adjustRequestTail(Request current, List<ICache<?>> transactionRequests) {
-            // Create a duplicate of the tailSet, in order to avoid a concurrent modification exception.
-            List<Request> tailSet = new ArrayList<Request>(fRequests.tailSet(current));
-            
-            // Iterate through the matching requests and add them to the requests list.
-            for (Request tailRequest : tailSet) {
-                if (tailRequest.fOffset < current.fOffset + fCount) {
-                    // found overlapping request add it to list
-                    if (tailRequest.fOffset <= current.fOffset) {
-                        // next request starts off at the beginning of current request
-                        transactionRequests.add(tailRequest);
-                        current.fOffset = tailRequest.fOffset + tailRequest.fCount;
-                        current.fCount = ((int)(fOffset - current.fOffset)) + fCount ;
-                        if (current.fCount <= 0) {
-                            return null;
-                        }
-                    } else {
-                        current.fCount = (int)(tailRequest.fOffset - current.fOffset);
-                        transactionRequests.add(current);
-                        fRequests.add(current);
-                        current = null;
-                        transactionRequests.add(tailRequest);
-                        long tailEndOffset = tailRequest.fOffset + tailRequest.fCount;
-                        long rangeEndOffset = fOffset + fCount;
-                        if (tailEndOffset >= rangeEndOffset) {
-                            return null;
-                        } else {
-                            current = new Request(tailEndOffset, (int)(rangeEndOffset - tailEndOffset));
-                        }
-                    }
-                } else {
-                    break;
-                }
-            }
-            return current;
-        }
-        
-        private List<V> makeElementsListFromRequests(List<ICache<?>> requests) {
-            List<V> retVal = new ArrayList<V>(fCount);
-            long index = fOffset;
-            long end = fOffset + fCount;
-            int requestIdx = 0;
-            while (index < end ) {
-                @SuppressWarnings("unchecked")
-                Request request = (Request)requests.get(requestIdx);
-                if (index < request.fOffset + request.fCount) {
-                    retVal.add( request.getData().get((int)(index - request.fOffset)) );
-                    index ++;
-                } else {
-                    requestIdx++;
-                }
-            }
-            return retVal;
-        }
-        
+                
         private void clearCanceledRequests() {
             for (Iterator<Request> itr = fRequests.iterator(); itr.hasNext();) {
                 Request request = itr.next();
@@ -237,12 +144,41 @@ abstract public class RangeCache<V> {
     public ICache<List<V>> getRange(final long offset, final int count) {
         assert fExecutor.getDsfExecutor().isInExecutorThread();
         
-        return new RequestCache<List<V>>(fExecutor) {
+        List<ICache<?>> requests = getRequests(offset, count);
+        
+        RequestCache<List<V>> range = new RequestCache<List<V>>(fExecutor) {
             @Override
             protected void retrieve(DataRequestMonitor<List<V>> rm) {
                 new RangeTransaction(offset, count).request(rm);
             }
         };
+        
+        boolean valid = true;
+        MultiStatus status = new MultiStatus(DsfPlugin.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+        for (ICache<?> request : requests) {
+            if (request.isValid()) {
+                if (!request.getStatus().isOK()) {
+                    status.add(request.getStatus());
+                }
+            } else {
+                valid = false;
+                break;
+            }
+        }
+        
+        if (valid) {
+            if (status.isOK()) {
+                range.set(makeElementsListFromRequests(requests, offset, count), Status.OK_STATUS);
+            } else {
+                if (status.getChildren().length == 1) {
+                    range.set(null, status.getChildren()[0]);
+                } else {
+                    range.set(null, status);
+                }
+            }
+        }
+        
+        return range; 
     }
     
     /**
@@ -283,4 +219,103 @@ abstract public class RangeCache<V> {
             }
         }
     }
+    
+    private List<ICache<?>> getRequests(long fOffset, int fCount) {
+        List<ICache<?>> requests = new ArrayList<ICache<?>>(1);
+        
+        // Create a new request for the data to retrieve.
+        Request current = new Request(fOffset, fCount);
+        
+        current = adjustRequestHead(current, requests, fOffset, fCount);
+        if (current != null) {
+            current = adjustRequestTail(current, requests, fOffset, fCount);
+        }
+        if (current != null) {
+            requests.add(current);
+            fRequests.add(current);
+        }
+        return requests;
+    }
+    
+    // Adjust the beginning of the requested range of data.  If there 
+    // is already an overlapping range in front of the requested range, 
+    // then use it.
+    private Request adjustRequestHead(Request request, List<ICache<?>> transactionRequests, long offset, int count) {
+        SortedSet<Request> headRequests = fRequests.headSet(request);
+        if (!headRequests.isEmpty()) {
+            Request headRequest = headRequests.last();
+            long headEndOffset = headRequest.fOffset + headRequest.fCount;
+            if (headEndOffset > offset) {
+                transactionRequests.add(headRequest);
+                request.fCount = (int)(request.fCount - (headEndOffset - offset));
+                request.fOffset = headEndOffset;
+            }
+        }
+        if (request.fCount > 0) {
+            return request;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Adjust the end of the requested range of data.
+     * @param current
+     * @param transactionRequests
+     * @return
+     */
+    private Request adjustRequestTail(Request current, List<ICache<?>> transactionRequests, long offset, int count) {
+        // Create a duplicate of the tailSet, in order to avoid a concurrent modification exception.
+        List<Request> tailSet = new ArrayList<Request>(fRequests.tailSet(current));
+        
+        // Iterate through the matching requests and add them to the requests list.
+        for (Request tailRequest : tailSet) {
+            if (tailRequest.fOffset < current.fOffset + count) {
+                // found overlapping request add it to list
+                if (tailRequest.fOffset <= current.fOffset) {
+                    // next request starts off at the beginning of current request
+                    transactionRequests.add(tailRequest);
+                    current.fOffset = tailRequest.fOffset + tailRequest.fCount;
+                    current.fCount = ((int)(offset - current.fOffset)) + count ;
+                    if (current.fCount <= 0) {
+                        return null;
+                    }
+                } else {
+                    current.fCount = (int)(tailRequest.fOffset - current.fOffset);
+                    transactionRequests.add(current);
+                    fRequests.add(current);
+                    current = null;
+                    transactionRequests.add(tailRequest);
+                    long tailEndOffset = tailRequest.fOffset + tailRequest.fCount;
+                    long rangeEndOffset = offset + count;
+                    if (tailEndOffset >= rangeEndOffset) {
+                        return null;
+                    } else {
+                        current = new Request(tailEndOffset, (int)(rangeEndOffset - tailEndOffset));
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+        return current;
+    }
+    
+    private List<V> makeElementsListFromRequests(List<ICache<?>> requests, long offset, int count) {
+        List<V> retVal = new ArrayList<V>(count);
+        long index = offset;
+        long end = offset + count;
+        int requestIdx = 0;
+        while (index < end ) {
+            @SuppressWarnings("unchecked")
+            Request request = (Request)requests.get(requestIdx);
+            if (index < request.fOffset + request.fCount) {
+                retVal.add( request.getData().get((int)(index - request.fOffset)) );
+                index ++;
+            } else {
+                requestIdx++;
+            }
+        }
+        return retVal;
+    }    
 }

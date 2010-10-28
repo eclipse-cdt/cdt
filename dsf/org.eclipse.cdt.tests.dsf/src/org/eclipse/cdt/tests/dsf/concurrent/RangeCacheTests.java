@@ -162,6 +162,11 @@ public class RangeCacheTests {
         Assert.assertTrue(cache.getStatus().isOK());
     }
 
+    private void assertCacheValidWithError(ICache<List<Integer>> cache) {
+        Assert.assertTrue(cache.isValid());
+        Assert.assertFalse(cache.getStatus().isOK());
+    }
+    
     private void assertCacheWaiting(ICache<List<Integer>> cache) {
         Assert.assertFalse(cache.isValid());
         try {
@@ -388,16 +393,29 @@ public class RangeCacheTests {
     }
 
     @Test 
-    public void setOneRangeTest() throws InterruptedException, ExecutionException {
+    public void setRangeErrorTest() throws InterruptedException, ExecutionException {
+        
+        // Retrieve a range of data.
         getRange(0, 100, new long[] { 0 }, new int[] { 100 });
         
+        // Force an error status into the range cache.
         fExecutor.submit(new DsfRunnable() {
             public void run() {
                 fTestCache.set(0, 100, null, new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Cache invalid", null));
             };
         }).get();
+
+        // Retrieve a range cache and check that it immediately contains the error status in it.
+        fRangeCache = null;
+        fExecutor.submit(new DsfRunnable() {
+            public void run() {
+                fRangeCache = fTestCache.getRange(0, 100);
+            }
+        }).get();
+
+        assertCacheValidWithError(fRangeCache);
         
-        // Request data from cache
+        // Request an update from the range and check for exception. 
         TestQuery q = new TestQuery(10, 100);
 
         fRangeCache = null;
@@ -410,6 +428,37 @@ public class RangeCacheTests {
             Assert.fail("Expected an ExecutionException");            
         } catch (ExecutionException e) {}
     }
+
+    @Test 
+    public void getOneRangeUsingDifferentRangeInstanceTest() throws InterruptedException, ExecutionException {
+        // Request data from cache
+        TestQuery q = new TestQuery(0, 100);
+
+        fRangeCache = null;
+        fRetrieveInfos.clear();
+        
+        fExecutor.execute(q);
+        
+        // Wait until the cache requests the data.
+        waitForRetrieveRm(1);
+        
+        assertCacheWaiting(fRangeCache);
+        
+        // Set the data without using an executor.
+        Assert.assertEquals(1, fRetrieveInfos.size());
+        RetrieveInfo info = fRetrieveInfos.iterator().next();
+        completeInfo(info, 0, 100);
+
+        fExecutor.submit(new DsfRunnable() {
+            public void run() {
+                fRangeCache = fTestCache.getRange(0, 100);
+            }
+        }).get();
+        
+        // Check state while waiting for data
+        assertCacheValidWithData(fRangeCache, 0, 100);
+    }
+    
     
     
 }

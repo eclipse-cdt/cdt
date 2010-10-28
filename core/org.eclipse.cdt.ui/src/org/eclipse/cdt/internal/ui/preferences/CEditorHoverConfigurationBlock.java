@@ -44,7 +44,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -52,12 +51,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
-
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
@@ -66,7 +62,7 @@ import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
 
 /**
- * CEditorHoverConfigurationBlock
+ * Configures C/C++ Editor hover preferences.
  */
 public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationBlock {
 	static final String DELIMITER= PreferencesMessages.CEditorHoverConfigurationBlock_delimiter; 
@@ -150,8 +146,6 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 	private TableColumn fNameColumn;
 	private TableColumn fModifierColumn;
 	private Text fDescription;
-	//private Button fShowHoverAffordanceCheckbox;
-	private Button fShowEditorAnnotationCheckbox;
 	
 	private PreferencePage fMainPreferencePage;
 
@@ -171,8 +165,6 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 		ArrayList<OverlayKey> overlayKeys= new ArrayList<OverlayKey>();
 	
 		//overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER));
-		//overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS));
 		
@@ -181,51 +173,47 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 		return keys;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#createControl(org.eclipse.swt.widgets.Composite)
+	/**
+	 * Creates page for hover preferences.
+	 *
+	 * @param parent the parent composite
+	 * @return the control for the preference page
 	 */
 	public Control createControl(Composite parent) {
 
-		Composite hoverComposite= new Composite(parent, SWT.NONE);
+		ScrolledPageContent scrolled= new ScrolledPageContent(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+		scrolled.setExpandHorizontal(true);
+		scrolled.setExpandVertical(true);
+
+
+		Composite hoverComposite= new Composite(scrolled, SWT.NONE);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
+		layout.marginWidth= 0;
+		layout.marginHeight= 0;
 		hoverComposite.setLayout(layout);
-		GridData gd= new GridData(GridData.FILL_BOTH);
-		hoverComposite.setLayoutData(gd);
-
+		hoverComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
 		//String rollOverLabel= PreferencesMessages.getString("CEditorHoverConfigurationBlock.annotationRollover"); //$NON-NLS-1$
 		//addCheckBox(hoverComposite, rollOverLabel, PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER, 0); //$NON-NLS-1$
 
-		// Affordance checkbox
-		//fShowHoverAffordanceCheckbox= new Button(hoverComposite, SWT.CHECK);
-		//fShowHoverAffordanceCheckbox.setText(PreferencesMessages.getString("CEditorHoverConfigurationBlock.showAffordance")); //$NON-NLS-1$
-		//fShowHoverAffordanceCheckbox.setLayoutData(gd);
-		
-		// Disable/enable editor problem annotaion checkbox
-		fShowEditorAnnotationCheckbox = new Button(hoverComposite, SWT.CHECK);
-		fShowEditorAnnotationCheckbox.setText(PreferencesMessages.CEditorPreferencePage_behaviourPage_EnableEditorProblemAnnotation); 
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= 0;
-		gd.horizontalSpan= 2;
-		fShowEditorAnnotationCheckbox.setLayoutData(gd);
-
-		addFiller(hoverComposite);
+		//addFiller(hoverComposite);
 
 		Label label= new Label(hoverComposite, SWT.NONE);
 		label.setText(PreferencesMessages.CEditorHoverConfigurationBlock_hoverPreferences); 
-		gd= new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
 		label.setLayoutData(gd);
 
 		TableLayoutComposite layouter= new TableLayoutComposite(hoverComposite, SWT.NONE);
 		addColumnLayoutData(layouter);
-		
+
 		// Hover table
-		fHoverTable= new Table(layouter, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK);
+		fHoverTable= new Table(layouter, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK);
 		fHoverTable.setHeaderVisible(true);
 		fHoverTable.setLinesVisible(true);
-		
+
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint= SWTUtil.getTableHeightHint(fHoverTable, 10);
 		gd.horizontalSpan= 2;
@@ -239,14 +227,14 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-		
+
 		TableLayout tableLayout= new TableLayout();
 		fHoverTable.setLayout(tableLayout);
 
 		fNameColumn= new TableColumn(fHoverTable, SWT.NONE);
 		fNameColumn.setText(PreferencesMessages.CEditorHoverConfigurationBlock_nameColumnTitle); 
 		fNameColumn.setResizable(true);
-		
+
 		fModifierColumn= new TableColumn(fHoverTable, SWT.NONE);
 		fModifierColumn.setText(PreferencesMessages.CEditorHoverConfigurationBlock_modifierColumnTitle); 
 		fModifierColumn.setResizable(true);
@@ -342,14 +330,16 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 		gd= new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan= 2;
 		fDescription.setLayoutData(gd);
-		
+
 		initialize();
 
-		Dialog.applyDialogFont(hoverComposite);
-		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(hoverComposite, ICHelpContextIds.C_EDITOR_HOVERS_PAGE);
+		scrolled.setContent(hoverComposite);
+		final Point size= hoverComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		scrolled.setMinSize(size.x, size.y);
 
-		return hoverComposite;
+		Dialog.applyDialogFont(scrolled);
+		
+		return scrolled;
 	}
 	
 	private void addColumnLayoutData(TableLayoutComposite layouter) {
@@ -376,9 +366,6 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 	}
 
 	void initializeFields() {
-		//fShowHoverAffordanceCheckbox.setSelection(fStore.getBoolean(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE));
-		
-		fShowEditorAnnotationCheckbox.setSelection(fStore.getBoolean(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS));
 		fModifierEditor.setEnabled(false);
 		
 		CEditorTextHoverDescriptor[] hoverDescs= getContributedHovers();
@@ -412,8 +399,6 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 		fStore.setValue(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS, buf.toString());
 		fStore.setValue(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS, maskBuf.toString());
 		
-		//fStore.setValue(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, fShowHoverAffordanceCheckbox.getSelection());
-		fStore.setValue(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS, fShowEditorAnnotationCheckbox.getSelection());
 		CUIPlugin.getDefault().resetCEditorTextHoverDescriptors();
 	}
 
@@ -421,16 +406,12 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#performDefaults()
 	 */
 	public void performDefaults() {
-		fStatus= new StatusInfo();
 		restoreFromPreferences();
 		initializeFields();
 		updateStatus(null);
 	}
 
 	private void restoreFromPreferences() {
-
-		//fShowHoverAffordanceCheckbox.setSelection(fStore.getBoolean(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE));
-
 		String compiledTextHoverModifiers= fStore.getString(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS);
 		
 		StringTokenizer tokenizer= new StringTokenizer(compiledTextHoverModifiers, CEditorTextHoverDescriptor.VALUE_SEPARATOR);
@@ -548,14 +529,14 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 	}
 	
 	
-	private void addFiller(Composite composite) {
-		PixelConverter pixelConverter= new PixelConverter(composite);
-		Label filler= new Label(composite, SWT.LEFT );
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
-		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(1) / 2;
-		filler.setLayoutData(gd);
-	}
+//	private void addFiller(Composite composite) {
+//		PixelConverter pixelConverter= new PixelConverter(composite);
+//		Label filler= new Label(composite, SWT.LEFT );
+//		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+//		gd.horizontalSpan= 2;
+//		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(1) / 2;
+//		filler.setLayoutData(gd);
+//	}
 	
 	/*
 	 * @see DialogPage#dispose()

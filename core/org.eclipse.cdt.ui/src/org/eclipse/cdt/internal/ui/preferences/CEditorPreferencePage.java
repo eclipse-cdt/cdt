@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -77,6 +77,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.SUB_WORD_NAVIGATION));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.MATCHING_BRACKETS_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.MATCHING_BRACKETS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.INACTIVE_CODE_COLOR));
@@ -132,6 +133,9 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 
 		String label= PreferencesMessages.CEditorPreferencePage_behaviorPage_subWordNavigation;
 		addCheckBox(behaviorComposite, label, CEditor.SUB_WORD_NAVIGATION, 0);
+
+		label = PreferencesMessages.CEditorPreferencePage_behaviourPage_EnableEditorProblemAnnotation; 
+		addCheckBox(behaviorComposite, label, PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS, 0);
 
 		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_matchingBrackets;
 		addCheckBox(behaviorComposite, label, CEditor.MATCHING_BRACKETS, 0);

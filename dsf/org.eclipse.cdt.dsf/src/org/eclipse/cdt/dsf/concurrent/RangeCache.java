@@ -23,10 +23,22 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * Cache for retrieving ranges of elements from an asynchronous data source.  
+ * Cache for efficiently retrieving overlapping ranges of elements from an
+ * asynchronous data source. The results of a range request (see
+ * {@link #getRange(long, int)}) are kept around and reused in subsequent
+ * requests. E.g., two individual, initial requests for 4 bytes at offsets 0 and
+ * 4 will relieve a subsequent request for 4 bytes at offset 2 from having to
+ * asynchronously retrieve the data from the source. The results from the first
+ * two range requests are used to service the third.
+ * 
+ * <p>
  * Clients of this cache should call {@link #getRange(long, int)} to get a cache
- * for that given range of elements.  Sub-classes must implement {@link #retrieve(long, int, DataRequestMonitor)}
- * to retrieve data from the asynchronous data source.
+ * for that given range of elements. Sub-classes must implement
+ * {@link #retrieve(long, int, DataRequestMonitor)} to retrieve data from the
+ * asynchronous data source.
+ * 
+ * 
+ * 
  * @since 2.2
  */
 abstract public class RangeCache<V> {

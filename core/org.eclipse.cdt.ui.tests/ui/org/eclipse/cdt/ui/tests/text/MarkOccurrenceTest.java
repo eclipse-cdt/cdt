@@ -124,10 +124,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertNotNull(fgWriteHighlightRGB);
 		final IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(PreferenceConstants.EDITOR_MARK_OCCURRENCES, true);
-	    // TLETODO temporary fix for bug 314635
-		store.setValue(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX 
-				            + SemanticHighlightings.OVERLOADED_OPERATOR 
-				            + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX, true);
+		store.setValue(PreferenceConstants.EDITOR_MARK_OVERLOADED_OPERATOR_OCCURRENCES, true);
 		fEditor= openCEditor(new Path("/" + PROJECT + "/src/occurrences.cpp"));
 		assertNotNull(fEditor);
 		fTextWidget= fEditor.getViewer().getTextWidget();

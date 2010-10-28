@@ -1350,9 +1350,9 @@ public class PreferenceConstants {
 	 */
 	public static final String EDITOR_MARK_OCCURRENCES= "markOccurrences"; //$NON-NLS-1$
 
-
 	/**
 	 * A named preference that controls whether occurrences are sticky in the editor.
+	 * Only valid if {@link #EDITOR_MARK_OCCURRENCES} is <code>true</code>.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -1360,6 +1360,17 @@ public class PreferenceConstants {
 	 * @since 5.0
 	 */
 	public static final String EDITOR_STICKY_OCCURRENCES= "stickyOccurrences"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether occurrences of overloaded operators are marked in the editor.
+	 * Only valid if {@link #EDITOR_MARK_OCCURRENCES} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 5.3
+	 */
+	public static final String EDITOR_MARK_OVERLOADED_OPERATOR_OCCURRENCES= "markOverloadedOperatorsOccurrences"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether all scalability mode options should be turned on.
@@ -1661,6 +1672,7 @@ public class PreferenceConstants {
 		
 		// mark occurrences
 		store.setDefault(PreferenceConstants.EDITOR_MARK_OCCURRENCES, true);
+		store.setDefault(PreferenceConstants.EDITOR_MARK_OVERLOADED_OPERATOR_OCCURRENCES, false);
 		store.setDefault(PreferenceConstants.EDITOR_STICKY_OCCURRENCES, true);
 		
 		// Scalability

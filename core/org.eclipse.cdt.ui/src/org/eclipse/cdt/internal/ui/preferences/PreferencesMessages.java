@@ -393,6 +393,7 @@ public final class PreferencesMessages extends NLS {
 	public static String MarkOccurrencesConfigurationBlock_link;
 	public static String MarkOccurrencesConfigurationBlock_link_tooltip;
 	public static String MarkOccurrencesConfigurationBlock_markOccurrences;
+	public static String MarkOccurrencesConfigurationBlock_markOverloadOccurrences;
 	public static String MarkOccurrencesConfigurationBlock_stickyOccurrences;
 	
 	public static String ScalabilityPreferencePage_description;

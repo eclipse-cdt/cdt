@@ -79,6 +79,7 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 		ArrayList<OverlayKey> overlayKeys= new ArrayList<OverlayKey>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_MARK_OCCURRENCES));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_MARK_OVERLOADED_OPERATOR_OCCURRENCES));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_STICKY_OCCURRENCES));
 		
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
@@ -122,8 +123,14 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 		
 		addFiller(composite);
 		
+		label= PreferencesMessages.MarkOccurrencesConfigurationBlock_markOverloadOccurrences; 
+		Button slave = addCheckBox(composite, label, PreferenceConstants.EDITOR_MARK_OVERLOADED_OPERATOR_OCCURRENCES, 0); 
+		createDependency(master, PreferenceConstants.EDITOR_MARK_OVERLOADED_OPERATOR_OCCURRENCES, slave);
+
+		addFiller(composite);
+		
 		label= PreferencesMessages.MarkOccurrencesConfigurationBlock_stickyOccurrences; 
-		Button slave = addCheckBox(composite, label, PreferenceConstants.EDITOR_STICKY_OCCURRENCES, 0); 
+		slave = addCheckBox(composite, label, PreferenceConstants.EDITOR_STICKY_OCCURRENCES, 0); 
 		createDependency(master, PreferenceConstants.EDITOR_STICKY_OCCURRENCES, slave);
 
 		return composite;
@@ -171,7 +178,7 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 
 	private static void indent(Control control) {
 		GridData gridData= new GridData();
-		gridData.horizontalIndent= 20;
+		gridData.horizontalIndent= 10;
 		control.setLayoutData(gridData);		
 	}
 

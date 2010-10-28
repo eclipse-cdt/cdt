@@ -1479,6 +1479,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			((CSourceViewer) getSourceViewer()).setPreferenceStore(store);
 
 		fMarkOccurrenceAnnotations= store.getBoolean(PreferenceConstants.EDITOR_MARK_OCCURRENCES);
+		fMarkOverloadedOperatorOccurrences= store.getBoolean(PreferenceConstants.EDITOR_MARK_OVERLOADED_OPERATOR_OCCURRENCES);
 		fStickyOccurrenceAnnotations= store.getBoolean(PreferenceConstants.EDITOR_STICKY_OCCURRENCES);
 	}
 
@@ -1689,6 +1690,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				}
 				if (PreferenceConstants.EDITOR_STICKY_OCCURRENCES.equals(property)) {
 					fStickyOccurrenceAnnotations= newBooleanValue;
+					return;
+				}
+				if (PreferenceConstants.EDITOR_MARK_OVERLOADED_OPERATOR_OCCURRENCES.equals(property)) {
+					fMarkOverloadedOperatorOccurrences= newBooleanValue;
 					return;
 				}
 
@@ -2783,6 +2788,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 */
 	private boolean fStickyOccurrenceAnnotations;
 	/**
+	 * Tells whether to mark overloaded operator occurrences in this editor.
+	 * Only valid if {@link #fMarkOccurrenceAnnotations} is <code>true</code>.
+	 * @since 5.3
+	 */
+	private boolean fMarkOverloadedOperatorOccurrences;
+	/**
 	 * The selection used when forcing occurrence marking
 	 * through code.
 	 * @since 5.0
@@ -3360,12 +3371,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			if (binding != null) {
 				OccurrencesFinder occurrencesFinder= new OccurrencesFinder();
 				if (occurrencesFinder.initialize(astRoot, name) == null) {
-				    // TLETODO temporary fix for bug 314635
-				    boolean overloadedOperatorsEnabled = getPreferenceStore().getBoolean(
-				            PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX 
-				            + SemanticHighlightings.OVERLOADED_OPERATOR 
-				            + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX);
-				    if (!overloadedOperatorsEnabled) {
+				    if (!fMarkOverloadedOperatorOccurrences) {
 				        occurrencesFinder.setOptions(OccurrencesFinder.OPTION_EXCLUDE_IMPLICIT_REFERENCES);
 				    }
 					locations= occurrencesFinder.getOccurrences();

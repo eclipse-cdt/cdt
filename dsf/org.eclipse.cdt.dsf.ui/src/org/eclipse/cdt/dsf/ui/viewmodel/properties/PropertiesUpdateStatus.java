@@ -203,8 +203,7 @@ public class PropertiesUpdateStatus extends DsfMultiStatus {
      * Convenience method that returns and optionally creates a properties 
      * update status object for the given update.
      */
-    public static PropertiesUpdateStatus getPropertiesStatus(IPropertiesUpdate update) {
-        IStatus updateStatus = update.getStatus();
+    public static PropertiesUpdateStatus makePropertiesStatus(IStatus updateStatus) {
         if (updateStatus instanceof PropertiesUpdateStatus) {
             return (PropertiesUpdateStatus)updateStatus; 
         } else {

@@ -1177,13 +1177,13 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                                 String missingProperty = itr.next();
                                 if ( !updatePolicyExt.canUpdateDirtyProperty(entry, missingProperty) ) {
                                     itr.remove();
-                                    PropertiesUpdateStatus.getPropertiesStatus(update).setStatus(
+                                    PropertiesUpdateStatus.makePropertiesStatus(update.getStatus()).setStatus(
                                         missingProperty, 
                                         DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_STATE, "Cache contains stale data.  Refresh view.", null ));//$NON-NLS-1$                                    
                                 }
                             }
                         } else {
-                            PropertiesUpdateStatus.getPropertiesStatus(update).setStatus(
+                            PropertiesUpdateStatus.makePropertiesStatus(update.getStatus()).setStatus(
                                 missingProperties.toArray(new String[missingProperties.size()]), 
                                 DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_STATE, "Cache contains stale data.  Refresh view.", null ));//$NON-NLS-1$                                    
                             missingProperties.clear();
@@ -1210,7 +1210,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                     new ViewerDataRequestMonitor<Map<String, Object>>(getExecutor(), update) {
                         @Override
                         protected void handleCompleted() {
-                            PropertiesUpdateStatus missUpdateStatus = (PropertiesUpdateStatus)getStatus();
+                            PropertiesUpdateStatus missUpdateStatus = PropertiesUpdateStatus.makePropertiesStatus(getStatus());
                             Map<String, Object> cachedProperties;
                             PropertiesUpdateStatus cachedStatus;
                             if (!isCanceled() && flushCounter == entry.fFlushCounter) {
@@ -1295,7 +1295,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                             for (String property : update.getProperties()) {
                                 update.setProperty(property, cachedProperties.get(property));
                             }
-                            PropertiesUpdateStatus updateStatus = PropertiesUpdateStatus.getPropertiesStatus(update); 
+                            PropertiesUpdateStatus updateStatus = PropertiesUpdateStatus.makePropertiesStatus(update.getStatus()); 
                             updateStatus = PropertiesUpdateStatus.mergePropertiesStatus(
                                 updateStatus, cachedStatus, update.getProperties());
                             update.setStatus(updateStatus);

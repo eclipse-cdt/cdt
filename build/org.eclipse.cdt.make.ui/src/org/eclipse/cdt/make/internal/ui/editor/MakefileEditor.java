@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     IBM Corporation
+ *     Patrick Hofer - Bug 326265
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
@@ -18,10 +19,12 @@ import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.preferences.MakefileEditorPreferenceConstants;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileWordDetector;
+import org.eclipse.cdt.make.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
@@ -61,6 +64,12 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	ProjectionSupport projectionSupport;
 	ProjectionMakefileUpdater fProjectionMakefileUpdater;
 	private FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
+
+	/**
+	 * The action group for folding.
+	 * @since 7.1
+	 */
+	private FoldingActionGroup fFoldingGroup;
 
 	/**
 	 * Reconciling listeners.
@@ -119,6 +128,26 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	boolean isFoldingEnabled() {
 		return MakeUIPlugin.getDefault().getPreferenceStore().getBoolean(MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
 	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#rulerContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	 */
+	@Override
+	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
+		super.rulerContextMenuAboutToShow(menu);
+		IMenuManager foldingMenu= new MenuManager(MakefileEditorMessages.MakefileEditor_menu_folding, "projection");  //$NON-NLS-1$
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, foldingMenu);
+
+		IAction action= getAction("FoldingToggle"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action= getAction("FoldingExpandAll"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action= getAction("FoldingCollapseAll"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action= getAction("FoldingRestore"); //$NON-NLS-1$
+		foldingMenu.add(action);
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -158,6 +187,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	/* (non-Javadoc)
 	 * Method declared on IAdaptable
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class key) {
 		if (ProjectionAnnotationModel.class.equals(key)) {
@@ -216,6 +246,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		setAction("OpenDeclarationAction", a); //$NON-NLS-1$
 		markAsStateDependentAction("OpenDeclarationAction", true); //$NON-NLS-1$
 
+		fFoldingGroup = new FoldingActionGroup(this, getSourceViewer());
 	}
 
 	/* (non-Javadoc)
@@ -347,6 +378,15 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 			((IReconcilingParticipant)listeners[i]).reconciled();
 		}
 	}
+	
+	/**
+	 * Returns the folding action group, or <code>null</code> if there is none.
+	 *
+	 * @return the folding action group, or <code>null</code> if there is none
+	 */
+	protected FoldingActionGroup getFoldingActionGroup() {
+		return fFoldingGroup;
+	}
 
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#performRevert()
@@ -377,6 +417,17 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		}
 	}
 
+	/**
+	 * Resets the foldings structure according to the folding
+	 * preferences.
+	 *
+	 * @since 7.1
+	 */
+	public void resetProjection() {
+		if (fProjectionMakefileUpdater != null) {
+			fProjectionMakefileUpdater.initialize();
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)

@@ -29,8 +29,12 @@ import org.eclipse.swt.widgets.Display;
 /**
  * Label provider for DiscoveredElement-s. DiscoveredElement can be active or removed.
  * 
+ * @deprecated as of CDT 4.0. This class was used to set preferences/properties
+ * for 3.X style projects.
+ * 
  * @author vhirsl
  */
+@Deprecated
 public class DiscoveredElementLabelProvider extends LabelProvider implements IColorProvider {
 	private final Color inDirect = new Color(Display.getDefault(), new RGB(170, 170, 170));
 

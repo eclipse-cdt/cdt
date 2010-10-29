@@ -14,10 +14,12 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
- * TODO Provide description
+ * @deprecated as of CDT 4.0. This class was used to set preferences/properties
+ * for 3.X style projects.
  * 
  * @author vhirsl
  */
+@Deprecated
 public class DiscoveredElementSorter extends ViewerSorter {
 	private static final int CONTAINER = 0;
 	private static final int PATHS_GROUP = 1;

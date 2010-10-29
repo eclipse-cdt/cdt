@@ -19,8 +19,12 @@ import org.eclipse.core.resources.IProject;
  * Similar to CPElement. Describes discovered paths and symbols available
  * through DiscoveredPathInfo instead of CPathEntry.
  * 
+ * @deprecated as of CDT 4.0. This class was used to set preferences/properties
+ * for 3.X style projects.
+ * 
  * @author vhirsl
  */
+@Deprecated
 public class DiscoveredElement {
 	public static final int CONTAINER = 1;
 	public static final int INCLUDE_PATH = 2;

@@ -55,6 +55,10 @@ import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 
+/**
+ * @deprecated in CDT 8.0. This class appears to be never used.
+ */
+@Deprecated
 public class PathEntryVariablesGroup {
 	
 	/**

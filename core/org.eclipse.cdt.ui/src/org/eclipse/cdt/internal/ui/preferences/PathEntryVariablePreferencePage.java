@@ -27,6 +27,10 @@ import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
+/**
+ * @deprecated in CDT 8.0. This class appears to be never used.
+ */
+@Deprecated
 public class PathEntryVariablePreferencePage extends PreferencePage 
 implements IWorkbenchPreferencePage {
 	

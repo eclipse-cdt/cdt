@@ -38,6 +38,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * @deprecated in CDT 8.0. This class appears to be never used.
+ */
+@Deprecated
 public class PathEntryVariableDialog extends TitleAreaDialog {
 	
 	// UI widgets

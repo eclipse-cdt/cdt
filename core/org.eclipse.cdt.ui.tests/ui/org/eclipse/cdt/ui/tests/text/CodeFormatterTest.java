@@ -1396,4 +1396,16 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		assertFormatterResult();
 	}
+
+	//void f() {int array[5] = { 1, 2, 3, 4, 5 };for (int& x:array) x *= 2;}
+
+	//void f() {
+	//	int array[5] = { 1, 2, 3, 4, 5 };
+	//	for (int& x : array)
+	//		x *= 2;
+	//}
+	public void testRangeBasedFor_Bug328472() throws Exception {
+		assertFormatterResult();
+	}
+	
 }

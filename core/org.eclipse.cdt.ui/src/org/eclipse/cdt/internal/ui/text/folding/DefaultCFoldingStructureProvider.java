@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,6 +77,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -211,7 +212,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				if (statement instanceof IASTForStatement
 						|| statement instanceof IASTWhileStatement
 						|| statement instanceof IASTDoStatement
-						|| statement instanceof IASTSwitchStatement) {
+						|| statement instanceof IASTSwitchStatement
+						|| statement instanceof ICPPASTRangeBasedForStatement) {
 					fl = statement.getFileLocation();
 					mr.setLength(fl.getNodeLength());
 					mr.setOffset(fl.getNodeOffset());

@@ -117,6 +117,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
@@ -622,6 +623,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
     			visit((IASTDeclarationStatement)node);
     		} else if (node instanceof IASTForStatement) {
     			visit((IASTForStatement)node);
+    		} else if (node instanceof ICPPASTRangeBasedForStatement) {
+    			visit((ICPPASTRangeBasedForStatement) node);
     		} else if (node instanceof IASTIfStatement) {
     			visit((IASTIfStatement)node);
     		} else if (node instanceof ICPPASTCatchHandler) {
@@ -2486,6 +2489,34 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_for);
 		}
 
+		formatAction(line, node.getBody(), preferences.brace_position_for_block);
+		return PROCESS_SKIP;
+	}
+	
+	private int visit(ICPPASTRangeBasedForStatement node) {
+		scribe.printNextToken(Token.t_for);
+		final int line = scribe.line;
+		scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_for);
+		fInsideFor= true;
+		try {
+			if (preferences.insert_space_after_opening_paren_in_for) {
+				scribe.space();
+			}
+			IASTDeclaration declaration = node.getDeclaration();
+			declaration.accept(this);
+			scribe.printNextToken(Token.tCOLON, true /* preferences.insert_space_before_colon_in_for */);
+			final IASTInitializerClause initializer = node.getInitializerClause();
+			if (true /*preferences.insert_space_after_colon_in_for*/) {
+				scribe.space();
+			}
+			initializer.accept(this);
+		} finally {
+			fInsideFor= false;
+		}
+		if (peekNextToken() == Token.tRPAREN) {
+			scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_for);
+		}
+		
 		formatAction(line, node.getBody(), preferences.brace_position_for_block);
 		return PROCESS_SKIP;
 	}

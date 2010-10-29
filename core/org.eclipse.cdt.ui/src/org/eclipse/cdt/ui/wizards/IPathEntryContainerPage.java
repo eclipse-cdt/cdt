@@ -28,8 +28,12 @@ import org.eclipse.jface.wizard.IWizardPage;
  * Clients implementing this interface may subclass from 
  * <code>org.eclipse.jface.wizard.WizardPage</code>.
  * </p>
+ * 
+ * @deprecated as of CDT 4.0. This tab was used to set preferences/properties
+ * for 3.X style projects.
  */
 
+@Deprecated
 public interface IPathEntryContainerPage extends IWizardPage {
 
 	/**

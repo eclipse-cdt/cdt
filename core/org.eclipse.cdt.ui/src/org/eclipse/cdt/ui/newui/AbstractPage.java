@@ -1217,6 +1217,8 @@ implements
 			internalElement = ((ICElement)el).getResource();
 		else if (el instanceof IResource) 
 			internalElement = (IResource)el;
+		else
+		    internalElement = (IResource) el.getAdapter(IResource.class);
 		if (internalElement == null) return false;
 		isProject = internalElement instanceof IProject;
 		isFolder  = internalElement instanceof IFolder;

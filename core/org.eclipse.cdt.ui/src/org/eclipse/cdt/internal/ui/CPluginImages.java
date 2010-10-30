@@ -147,7 +147,7 @@ public class CPluginImages {
 	public static final String IMG_OBJS_UNKNOWN = NAME_PREFIX + "unknown_obj.gif"; //$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_BUILD_CONSOLE = createManaged(T_VIEW, IMG_VIEW_BUILD);
-	public static final ImageDescriptor IMG_SAVE_CONSOLE_DESC = createManaged(T_VIEW, IMG_SAVE_CONSOLE);
+	public static final ImageDescriptor IMG_SAVE_CONSOLE_DESC = null; // not used
 
 	public static final ImageDescriptor DESC_OBJS_VARIABLE= createManaged(T_OBJ, IMG_OBJS_VARIABLE);
 	public static final ImageDescriptor DESC_OBJS_LOCAL_VARIABLE= createManaged(T_OBJ, IMG_OBJS_LOCAL_VARIABLE);

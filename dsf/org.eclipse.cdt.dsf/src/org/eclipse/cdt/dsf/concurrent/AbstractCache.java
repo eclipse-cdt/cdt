@@ -233,36 +233,44 @@ public abstract class AbstractCache<V> implements ICache<V> {
         
         return canceled;
     }
-    
-    /**
-     * Resets the cache with a data value <code>null</code> and an error 
-     * status with code {@link IDsfStatusConstants#INVALID_STATE}.
-     * 
-     * @see #reset(Object, IStatus)
-     */
+
+	/**
+	 * Resets the cache, setting the data to null and the status to
+	 * INVALID_STATUS. When in the invalid state, neither the data nor the
+	 * status can be queried.
+	 */
     protected void reset() {
         if (!fValid) {
             throw new IllegalStateException("Cache is not valid.  Cache can be reset only when it's in a valid state"); //$NON-NLS-1$
         }
         fValid = false;
+        fData = null;
+        fStatus = INVALID_STATUS;
     }
 
-    /** 
-     * Resets the cache then disables it.  When a cache is disabled it means 
-     * that it is valid and requests to the data source will not be sent.
-     * <p>
-     * This method should be called when the data source has issued an event 
-     * indicating that the source data has changed and future requests for 
-     * data will return the given data and status.  Once the source data 
-     * becomes available again, clients should call {@link #reset()}.
-     * </p>
-     * @param data The data that should be returned to any clients waiting for 
-     * cache data and for clients requesting data until the cache is reset again.
-     * @status The status that should be returned to any clients waiting for 
-     * cache data and for clients requesting data until the cache is reset again.
-     * 
-     * @see #reset(Object, IStatus)
-     */ 
+	/**
+	 * Moves the cache to the valid state with the given data and status. Note
+	 * that data may be null and status may be an error status. 'Valid' simply
+	 * means that our data is not stale. In other words, if the request to the
+	 * source encounters an error, the cache object becomes valid all the same.
+	 * The status indicates what error was encountered.
+	 * 
+	 * <p>
+	 * This method is called internally, typically in response to having
+	 * obtained the result from the asynchronous request to the source. The
+	 * data/status will remain valid until the cache object receives an event
+	 * notification from the source indicating otherwise.
+	 * 
+	 * @param data
+	 *            The data that should be returned to any clients waiting for
+	 *            cache data and for clients requesting data until the cache is
+	 *            invalidated.
+	 * @status The status that should be returned to any clients waiting for
+	 *         cache data and for clients requesting data until the cache is
+	 *         invalidated
+	 * 
+	 * @see #reset(Object, IStatus)
+	 */ 
     protected void set(V data, IStatus status) {
         assert fExecutor.getDsfExecutor().isInExecutorThread();
         

@@ -29,17 +29,20 @@ public interface ICache<V> {
      * The executor that must be used to access this cache.
      */
     public DsfExecutor getExecutor();
-        
-    /**
-     * Returns the current data value held by this cache.  Clients should first
-     * call isValid() to determine if the data is up to date.
-     */
+
+	/**
+	 * Returns the current data value held by this cache. Clients should first
+	 * call isValid() to determine if the data is up to date. Calling this when
+	 * in the invalid state will throw an IllegalStateException
+	 */
     public V getData();
-    
-    /**
-     * Returns the status of the source request held by this cache.  Clients 
-     * should first call isValid() to determine if the data is up to date.
-     */    
+
+	/**
+	 * Returns the status of the source request held by this cache. Clients
+	 * should first call isValid() to determine if the data is up to date.
+	 * Calling this when in the invalid state will throw an
+	 * IllegalStateException
+	 */    
     public IStatus getStatus();
 
 	/**

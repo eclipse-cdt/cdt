@@ -25,6 +25,7 @@
  * David McKnight   (IBM)        - [260346] RSE view for jobs does not remember resized columns
  * Martin Oberhuber (Wind River) - [289533] NPE on "Show in Table"
  * Noriaki Takatsu  (IBM)        - [288894] CANCEL has to be pressed 3 times in Userid/Password prompt window in Remote System Details view
+ * David McKnight   (IBM)        - [329170] Show in table does not work after showing empty folder in table
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -439,6 +440,8 @@ public class SystemTableView
 	{
 		if (newObject instanceof IAdaptable)
 		{
+			boolean wasShowColumns = _showColumns;
+			_showColumns = true; // bug 329170 - always reset to ensure columns are available
 			getTable().setVisible(true);
 
 			// columns may change so we want to keep track of the current ones
@@ -460,7 +463,7 @@ public class SystemTableView
 			// reset the filter
 			//setViewFilters(null);
 
-			if (_showColumns != false) {
+			if (_showColumns || wasShowColumns) {
 				super.inputChanged(newObject, oldObject);
 			}
 

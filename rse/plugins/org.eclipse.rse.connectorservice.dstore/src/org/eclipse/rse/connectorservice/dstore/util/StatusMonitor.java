@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [229947] [dstore] interruption to Thread.sleep()  should not stop waitForUpdate()
  * David McKnight   (IBM)        - [231126] [dstore] status monitor needs to reset WaitThreshold on nudge
  * David McKnight   (IBM)        - [278341] [dstore] Disconnect on idle causes the client hang
+ * David McKnight   (IBM)        - [329263] [dstore] [dstore] StatusMonitor updates to be like DStoreStatusMonitor
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore.util;
@@ -177,10 +178,35 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
 		    if (isStatusDone)
 		    {
 		        setDone(parent);
+		        notifyAll();
 		    }
 		}
 	}
 	
+    
+	private synchronized void waitForUpdate()
+	{
+		try
+		{
+			wait(200);
+		}
+		catch (InterruptedException e)
+		{
+			//InterruptedException is used to report user cancellation, so no need to log
+			//This should be reviewed (use OperationCanceledException) with bug #190750
+
+			return;
+		}
+	}
+	/**
+	 * Causes all threads waiting for this class request to be filled
+	 * to wake up.
+	 */
+	private synchronized void notifyUpdate()
+	{
+		notifyAll();
+	}
+
     
     /**
      * Determines whether the status is done.
@@ -284,8 +310,7 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
         }
         
         setWorking(status);
-     
-		Display display = Display.getCurrent();
+
 				
 	  // Prevent infinite looping by introducing a threshold for wait 
 	  
@@ -298,119 +323,49 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
       int initialWaitThreshold = WaitThreshold;
 	  int nudges = 0; // nudges used for waking up server with slow connections
       // nudge up to 12 times before giving up
- 
-      if (display != null) 
+
+		// Current thread is not UI thread
+		while (_workingStatuses.contains(status))
 		{
-			// Current thread is UI thread
-			while (_workingStatuses.contains(status)) 
-			{
-			//	while (display.readAndDispatch()) {
-					//Process everything on event queue
-			//	}
-				
-				if ((monitor != null) && (monitor.isCanceled())) 
-				{
-				    setCancelled(status);
-					throw new InterruptedException();
-				}
-				
-				boolean statusDone = determineStatusDone(status);
-				
-				if (statusDone)
-				{
-					setDone(status);
-				}
-				else
-				{
-					try
-					{
-						Thread.sleep(100);
-					}
-					catch (InterruptedException e)
-					{
-						// Continue waiting in case of spurious interrupt.
-					    // We check the progress monitor to listen for Eclipse Shutdown.
-						continue;
-					}
-				    if (WaitThreshold > 0) // update timer count if
-                        // threshold not reached
-                        --WaitThreshold; // decrement the timer count
-                   
-				  if (WaitThreshold == 0)
-				    {
-                   	wakeupServer(status);
-                    
-			        // no diagnostic factory but there is a timeout
-                	if (nudges >= 12)
-                		return status;  // returning the undone status object
-                	
-                	nudges++;
-                	WaitThreshold = initialWaitThreshold;
-				    }
-                    else if (_networkDown ||  !_dataStore.isConnected())
-                    {
-                        dispose();
-    					throw new InterruptedException();
-                    }
-                }
-			}
 			
-		} 
-		else 
-		{
-			// Current thread is not UI thread
-			while (_workingStatuses.contains(status))
+			if ((monitor != null && monitor.isCanceled()) || 
+					!status.getDataStore().getStatus().getName().equals("okay")){ // datastore not okay?
+				setCancelled(status);
+				throw new InterruptedException();
+			}
+	
+			boolean statusDone = determineStatusDone(status);
+			
+			if (statusDone)
 			{
+				setDone(status);
+			}
+			else 
+			{
+				waitForUpdate();
 				
-			    if ((monitor != null) && (monitor.isCanceled()))
+	            if (WaitThreshold > 0) // update timer count if
+	                // threshold not reached
+	                --WaitThreshold; // decrement the timer count
+	
+	           if (WaitThreshold == 0)
 			    {
-					setCancelled(status);
+	             	wakeupServer(status);
+	                
+			        // no diagnostic factory but there is a timeout
+	            	if (nudges >= 12)
+	            		return status;  // returning the undone status object
+	            	
+	            	nudges++;
+	            	WaitThreshold = initialWaitThreshold;
+			    }
+	            else if (_networkDown)
+	            {
+					dispose();
 					throw new InterruptedException();
-				}
-
-				boolean statusDone = determineStatusDone(status);
-				
-				if (statusDone)
-				{
-					setDone(status);
-				}
-				else 
-				{
-					try
-					{
-						Thread.sleep(100);
-					}
-					catch (InterruptedException e)
-					{
-						// Continue waiting in case of spurious interrupt.
-					    // We check the progress monitor to listen for Eclipse Shutdown.
-						continue;
-					}
-					
-                    if (WaitThreshold > 0) // update timer count if
-                        // threshold not reached
-                        --WaitThreshold; // decrement the timer count
-
-                   if (WaitThreshold == 0)
-				    {
-                     	wakeupServer(status);
-                        
-				        // no diagnostic factory but there is a timeout
-                    	if (nudges >= 12)
-                    		return status;  // returning the undone status object
-                    	
-                    	nudges++;
-                    	WaitThreshold = initialWaitThreshold;
-				    }
-                    else if (_networkDown)
-                    {
-    					dispose();
-    					throw new InterruptedException();
-                    }
-                }
-			}		
-		}
-
+	            }
+	        }
+		}		
 	
 		return status;
 	}

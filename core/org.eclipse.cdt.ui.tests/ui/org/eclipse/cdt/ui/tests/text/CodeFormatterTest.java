@@ -1382,6 +1382,25 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	////#define throws /* */
+	//struct Foo {
+	//    void foo() const throws {
+	//    }
+	//    void bar() const throws {
+	//    }
+	//};
+
+	////#define throws /* */
+	//struct Foo {
+	//	void foo() const throws {
+	//	}
+	//	void bar() const throws {
+	//	}
+	//};
+	public void testCodeCorruptionWithIllegalKeyword_Bug329165() throws Exception {
+		assertFormatterResult();
+	}
+
 	//void extend_terminal_bond_to_label(vector<atom_t> &atom, const vector<letters_t> &letters, int n_letters, const vector<bond_t> &bond, int n_bond, const vector<label_t> &label, int n_label, double avg, double maxh, double max_dist_double_bond);
 	
 	//void extend_terminal_bond_to_label(vector<atom_t> &atom,

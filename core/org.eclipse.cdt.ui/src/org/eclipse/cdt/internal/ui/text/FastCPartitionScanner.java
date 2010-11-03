@@ -63,6 +63,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	private static final int BACKSLASH_CR= 6; // postfix for STRING, CHARACTER and SINGLE_LINE_COMMENT
 	private static final int BACKSLASH_BACKSLASH= 7; // postfix for STRING, CHARACTER
 	private static final int RAW_STRING_R= 8; // prefix for RAW_STRING
+	private static final int IDENT= 9;
 	
 	/** The scanner. */
 	private final BufferedDocumentScanner fScanner= new BufferedDocumentScanner(1000);	// faster implementation
@@ -210,13 +211,6 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 					continue;
 				}
 
-	 		case 'R':
-	 			if (fState == CCODE) {
-	 				fLast = RAW_STRING_R;
-	 			}
-	 			fTokenLength++;
-	 			continue;
-
 			default:
 				if (fLast == CARRIAGE_RETURN) {
 					switch (fState) {
@@ -343,6 +337,24 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 						break;
 					}
 
+				case 'u':
+				case 'U':
+				case 'L':
+					if (fLast != IDENT) {
+						fLast = NONE;
+					}
+					fTokenLength++;
+					continue;
+					
+		 		case 'R':
+		 			if (fLast == RAW_STRING_R) {
+		 				fLast = IDENT;
+		 			} else if (fLast != IDENT) {
+			 			fLast = RAW_STRING_R;
+		 			}
+			 		fTokenLength++;
+		 			continue;
+
 				case '"':
 					int newState = STRING;
 					if (fLast == RAW_STRING_R) {
@@ -376,7 +388,14 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 					consume();
 					break;
 				default:
-					consume();
+					if ('a' <= ch && ch <= 'z' || 'A' <= ch && 'Z' <= ch || ch =='_') {
+						fLast = IDENT;
+						fTokenOffset++;
+					} else if ('0' <= ch && ch <= '9' && fLast == IDENT) {
+						fTokenOffset++;
+					} else {
+						consume();
+					}
 					break;
 				}
 				break;
@@ -509,8 +528,12 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	 			case OPEN_DELIMITER:
 	 				if (ch == '(') {
 	 					rawStringState = RawStringState.CONTENT;
-	 				} else {
+	 				} else if (ch == '"') {
+	 					return postFix(RAW_STRING);
+	 				} else if (ch != ' ' && ch != '\\' && ch != ')' && fRawStringDelimiter.length() < 12) {
 	 					fRawStringDelimiter.append((char) ch);
+	 				} else {
+	 					fState = STRING;
 	 				}
 		 			consume();
 	 				break;
@@ -565,6 +588,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 			return -1;
 
 		case NONE:
+		case IDENT:
 			return 0;
 			
 		case CARRIAGE_RETURN:

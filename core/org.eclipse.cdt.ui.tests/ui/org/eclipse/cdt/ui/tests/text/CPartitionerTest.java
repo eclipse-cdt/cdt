@@ -1189,6 +1189,24 @@ public class CPartitionerTest extends TestCase {
 		}
 	}
 
+	public void testString2() {
+		try {
+
+			fDocument.replace(0, fDocument.getLength(), "\"string\"RRRRRRRR\"string\"nostring");
+			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
+			TypedRegion[] expectation= {
+					new TypedRegion(0,  8,  ICPartitions.C_STRING),
+					new TypedRegion(8,  8,  IDocument.DEFAULT_CONTENT_TYPE),
+					new TypedRegion(16, 8,  ICPartitions.C_STRING),
+					new TypedRegion(24, 8,  IDocument.DEFAULT_CONTENT_TYPE)
+			};
+			checkPartitioning(expectation, result);
+
+		} catch (BadLocationException x) {
+			assertTrue(false);
+		}
+	}
+
 	public void testRawString1() {
 		try {
 

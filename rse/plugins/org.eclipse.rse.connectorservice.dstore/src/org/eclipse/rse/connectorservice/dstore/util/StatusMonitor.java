@@ -17,7 +17,7 @@
  * David McKnight   (IBM)        - [229947] [dstore] interruption to Thread.sleep()  should not stop waitForUpdate()
  * David McKnight   (IBM)        - [231126] [dstore] status monitor needs to reset WaitThreshold on nudge
  * David McKnight   (IBM)        - [278341] [dstore] Disconnect on idle causes the client hang
- * David McKnight   (IBM)        - [329263] [dstore] [dstore] StatusMonitor updates to be like DStoreStatusMonitor
+ * David McKnight   (IBM)        - [329263] [dstore] StatusMonitor updates to be like DStoreStatusMonitor
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore.util;
@@ -178,7 +178,7 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
 		    if (isStatusDone)
 		    {
 		        setDone(parent);
-		        notifyAll();
+		        notifyUpdate();
 		    }
 		}
 	}

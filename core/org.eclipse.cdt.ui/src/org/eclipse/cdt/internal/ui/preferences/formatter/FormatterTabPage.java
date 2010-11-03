@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,12 +21,20 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 public abstract class FormatterTabPage extends ModifyDialogTabPage {
 	
 	private final static String SHOW_INVISIBLE_PREFERENCE_KEY= CUIPlugin.PLUGIN_ID + ".formatter_page.show_invisible_characters"; //$NON-NLS-1$
-	
+
+    /**
+     * Constant array for boolean true/false selection.
+     * 
+     * @since 5.3
+     */
+    protected static String[] TRUE_FALSE= { DefaultCodeFormatterConstants.TRUE, DefaultCodeFormatterConstants.FALSE };
+
 	private CPreview fPreview;
 	private final IDialogSettings fDialogSettings;
 	private Button fShowInvisibleButton;

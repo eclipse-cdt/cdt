@@ -56,8 +56,8 @@ public class DefaultCodeFormatterOptions {
 	}
 
 	public int alignment_for_arguments_in_method_invocation;
-//	public int alignment_for_assignment;
-//	public int alignment_for_binary_expression;
+	public int alignment_for_assignment;
+	public int alignment_for_binary_expression;
 	public int alignment_for_compact_if;
 	public int alignment_for_conditional_expression;
 	public int alignment_for_expressions_in_initializer_list;
@@ -238,6 +238,7 @@ public class DefaultCodeFormatterOptions {
 	public boolean keep_simple_if_on_one_line;
 	public boolean keep_then_statement_on_same_line;
 	public int number_of_empty_lines_to_preserve;
+	public boolean join_wrapped_lines;
 	public boolean put_empty_statement_on_new_line;
 	public int tab_size;
 	public int page_width;
@@ -264,8 +265,8 @@ public class DefaultCodeFormatterOptions {
 		Map<String,String> options = new HashMap<String,String>();
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ALLOCATION_EXPRESSION, getAlignment(this.alignment_for_arguments_in_allocation_expression));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION, getAlignment(this.alignment_for_arguments_in_method_invocation));
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ASSIGNMENT, getAlignment(this.alignment_for_assignment));
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BINARY_EXPRESSION, getAlignment(this.alignment_for_binary_expression));
+		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ASSIGNMENT, getAlignment(this.alignment_for_assignment));
+		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BINARY_EXPRESSION, getAlignment(this.alignment_for_binary_expression));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_COMPACT_IF, getAlignment(this.alignment_for_compact_if));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION, getAlignment(this.alignment_for_conditional_expression));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_INITIALIZER_LIST, getAlignment(this.alignment_for_expressions_in_initializer_list));
@@ -439,6 +440,7 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_KEEP_SIMPLE_IF_ON_ONE_LINE, this.keep_simple_if_on_one_line ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_KEEP_THEN_STATEMENT_ON_SAME_LINE, this.keep_then_statement_on_same_line ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_NUMBER_OF_EMPTY_LINES_TO_PRESERVE, Integer.toString(this.number_of_empty_lines_to_preserve));
+		options.put(DefaultCodeFormatterConstants.FORMATTER_JOIN_WRAPPED_LINES, this.join_wrapped_lines ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_PUT_EMPTY_STATEMENT_ON_NEW_LINE, this.put_empty_statement_on_new_line ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_LINE_SPLIT, Integer.toString(this.page_width));
 		switch(this.tab_char) {
@@ -478,26 +480,26 @@ public class DefaultCodeFormatterOptions {
 				this.alignment_for_arguments_in_method_invocation = Alignment.M_COMPACT_SPLIT;
 			}
 		}
-//		final Object alignmentForAssignmentOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ASSIGNMENT);
-//		if (alignmentForAssignmentOption != null) {
-//			try {
-//				this.alignment_for_assignment = Integer.parseInt((String) alignmentForAssignmentOption);
-//			} catch (NumberFormatException e) {
-//				this.alignment_for_assignment =  Alignment.M_ONE_PER_LINE_SPLIT;
-//			} catch (ClassCastException e) {
-//				this.alignment_for_assignment =  Alignment.M_ONE_PER_LINE_SPLIT;
-//			}
-//		}
-//		final Object alignmentForBinaryExpressionOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BINARY_EXPRESSION);
-//		if (alignmentForBinaryExpressionOption != null) {
-//			try {
-//				this.alignment_for_binary_expression = Integer.parseInt((String) alignmentForBinaryExpressionOption);
-//			} catch (NumberFormatException e) {
-//				this.alignment_for_binary_expression =  Alignment.M_COMPACT_SPLIT;
-//			} catch (ClassCastException e) {
-//				this.alignment_for_binary_expression =  Alignment.M_COMPACT_SPLIT;
-//			}
-//		}
+		final Object alignmentForAssignmentOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ASSIGNMENT);
+		if (alignmentForAssignmentOption != null) {
+			try {
+				this.alignment_for_assignment = Integer.parseInt((String) alignmentForAssignmentOption);
+			} catch (NumberFormatException e) {
+				this.alignment_for_assignment =  Alignment.M_ONE_PER_LINE_SPLIT;
+			} catch (ClassCastException e) {
+				this.alignment_for_assignment =  Alignment.M_ONE_PER_LINE_SPLIT;
+			}
+		}
+		final Object alignmentForBinaryExpressionOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BINARY_EXPRESSION);
+		if (alignmentForBinaryExpressionOption != null) {
+			try {
+				this.alignment_for_binary_expression = Integer.parseInt((String) alignmentForBinaryExpressionOption);
+			} catch (NumberFormatException e) {
+				this.alignment_for_binary_expression =  Alignment.M_COMPACT_SPLIT;
+			} catch (ClassCastException e) {
+				this.alignment_for_binary_expression =  Alignment.M_COMPACT_SPLIT;
+			}
+		}
 		final Object alignmentForCompactIfOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_COMPACT_IF);
 		if (alignmentForCompactIfOption != null) {
 			try {
@@ -1360,6 +1362,10 @@ public class DefaultCodeFormatterOptions {
 				this.number_of_empty_lines_to_preserve = 0;
 			}
 		}
+		final Object joinWrappedLinesOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_JOIN_WRAPPED_LINES);
+		if (joinWrappedLinesOption != null) {
+			this.join_wrapped_lines = DefaultCodeFormatterConstants.TRUE.equals(joinWrappedLinesOption);
+		}
 		final Object putEmptyStatementOnNewLineOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_PUT_EMPTY_STATEMENT_ON_NEW_LINE);
 		if (putEmptyStatementOnNewLineOption != null) {
 			this.put_empty_statement_on_new_line = DefaultCodeFormatterConstants.TRUE.equals(putEmptyStatementOnNewLineOption);
@@ -1403,9 +1409,9 @@ public class DefaultCodeFormatterOptions {
 	public void setDefaultSettings() {
 //		this.alignment_for_arguments_in_allocation_expression = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_arguments_in_method_invocation = Alignment.M_COMPACT_SPLIT;
-//		this.alignment_for_assignment = Alignment.M_NO_ALIGNMENT;
-//		this.alignment_for_binary_expression = Alignment.M_COMPACT_SPLIT;
-//		this.alignment_for_compact_if = Alignment.M_COMPACT_SPLIT;
+		this.alignment_for_assignment = Alignment.M_NO_ALIGNMENT;
+		this.alignment_for_binary_expression = Alignment.M_COMPACT_SPLIT;
+		this.alignment_for_compact_if = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_conditional_expression = Alignment.M_NEXT_PER_LINE_SPLIT;
 		this.alignment_for_expressions_in_initializer_list = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_declarator_list = Alignment.M_COMPACT_SPLIT;
@@ -1576,6 +1582,7 @@ public class DefaultCodeFormatterOptions {
 		this.keep_simple_if_on_one_line = false;
 		this.keep_then_statement_on_same_line = false;
 		this.number_of_empty_lines_to_preserve = 1;
+		this.join_wrapped_lines = true;
 		this.put_empty_statement_on_new_line = true;
 		this.tab_size = 4;
 		this.page_width = 80;
@@ -1659,7 +1666,6 @@ public class DefaultCodeFormatterOptions {
 		this.keep_empty_initializer_list_on_one_line = false;
 		this.keep_simple_if_on_one_line = false;
 		this.keep_then_statement_on_same_line = false;
-		this.number_of_empty_lines_to_preserve = 1;
 		this.put_empty_statement_on_new_line = true;
 		this.tab_size = 4;
 		this.page_width = 80;
@@ -1732,7 +1738,6 @@ public class DefaultCodeFormatterOptions {
 		this.keep_empty_initializer_list_on_one_line = false;
 		this.keep_simple_if_on_one_line = false;
 		this.keep_then_statement_on_same_line = false;
-		this.number_of_empty_lines_to_preserve = 1;
 		this.put_empty_statement_on_new_line = true;
 		this.tab_size = 2;
 		this.page_width = 80;
@@ -1799,7 +1804,6 @@ public class DefaultCodeFormatterOptions {
 		this.keep_empty_initializer_list_on_one_line = false;
 		this.keep_simple_if_on_one_line = false;
 		this.keep_then_statement_on_same_line = false;
-		this.number_of_empty_lines_to_preserve = 1;
 		this.put_empty_statement_on_new_line = true;
 		this.tab_size = 8;
 		this.page_width = 80;

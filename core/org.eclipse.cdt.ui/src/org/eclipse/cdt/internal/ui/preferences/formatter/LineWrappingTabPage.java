@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -447,18 +447,18 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	    FormatterMessages.LineWrappingTabPage_conditionals_lowercase
 	);
 
-//	private final Category fBinaryExpressionCategory= new Category(
-//	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BINARY_EXPRESSION,
-//	    "class Example extends AnotherClass {" + //$NON-NLS-1$
-//	    "int foo() {" + //$NON-NLS-1$
-//	    "  int sum= 100 + 200 + 300 + 400 + 500 + 600 + 700 + 800;" + //$NON-NLS-1$
-//	    "  int product= 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10;" + //$NON-NLS-1$
-//	    "  boolean val= true && false && true && false && true;" +  //$NON-NLS-1$
-//	    "  return product / sum;}}", //$NON-NLS-1$
-//	    FormatterMessages.LineWrappingTabPage_binary_exprs,
-//    	FormatterMessages.LineWrappingTabPage_binary_exprs_lowercase
-//	);
-//	
+	private final Category fBinaryExpressionCategory= new Category(
+	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BINARY_EXPRESSION,
+	    "class Example : AnotherClass {" + //$NON-NLS-1$
+	    "int foo() {" + //$NON-NLS-1$
+	    "  int sum= 100 + 200 + 300 + 400 + 500 + 600 + 700 + 800;" + //$NON-NLS-1$
+	    "  int product= 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10;" + //$NON-NLS-1$
+	    "  bool val= true && false && true && false && true;" +  //$NON-NLS-1$
+	    "  return product / sum;}}", //$NON-NLS-1$
+	    FormatterMessages.LineWrappingTabPage_binary_exprs,
+    	FormatterMessages.LineWrappingTabPage_binary_exprs_lowercase
+	);
+	
 //	private final Category fEnumConstArgumentsCategory= new Category(
 //	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ENUM_CONSTANT,
 //	    "enum Example {" + //$NON-NLS-1$
@@ -482,18 +482,18 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	    FormatterMessages.LineWrappingTabPage_enumerator_list,
 	    FormatterMessages.LineWrappingTabPage_enumerator_list_lowercase
 	);
-//	
-//	private final Category fAssignmentCategory= new Category(
-//		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ASSIGNMENT,
-//		    "class Example {" + //$NON-NLS-1$
-//		    "private static final String string = \"TextTextText\";" + //$NON-NLS-1$
-//		    "void foo() {" + //$NON-NLS-1$
-//		    "for (int i = 0; i < 10; i++) {}" + //$NON-NLS-1$
-//		    "String s;" + //$NON-NLS-1$
-//		    "s = \"TextTextText\";}}", //$NON-NLS-1$
-//	        FormatterMessages.LineWrappingTabPage_assignment_alignment,
-//    		FormatterMessages.LineWrappingTabPage_assignment_alignment_lowercase
-//		);
+	
+	private final Category fAssignmentCategory= new Category(
+		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ASSIGNMENT,
+		    "static char* string = \"TextTextText\";" + //$NON-NLS-1$
+		    "class Example {" + //$NON-NLS-1$
+		    "void foo() {" + //$NON-NLS-1$
+		    "for (int i = 0; i < 10; i++) {}" + //$NON-NLS-1$
+		    "char* s;" + //$NON-NLS-1$
+		    "s = \"TextTextText\";}}", //$NON-NLS-1$
+	        FormatterMessages.LineWrappingTabPage_assignment_alignment,
+    		FormatterMessages.LineWrappingTabPage_assignment_alignment_lowercase
+		);
 	
 	/**
 	 * The default preview line width.
@@ -600,10 +600,10 @@ public class LineWrappingTabPage extends FormatterTabPage {
 //		functionCalls.children.add(fQualifiedAllocationExpressionCategory);
 		
 		final Category expressions= new Category(FormatterMessages.LineWrappingTabPage_expressions,FormatterMessages.LineWrappingTabPage_expressions_lowercase); 
-//		expressions.children.add(fBinaryExpressionCategory);
+		expressions.children.add(fBinaryExpressionCategory);
 		expressions.children.add(fConditionalExpressionCategory);
 		expressions.children.add(fInitializerListExpressionsCategory);
-//		expressions.children.add(fAssignmentCategory);
+		expressions.children.add(fAssignmentCategory);
 		
 //		final Category statements= new Category(FormatterMessages.LineWrappingTabPage_statements); 
 //		statements.children.add(fCompactIfCategory);
@@ -631,6 +631,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		createNumberPref(lineWidthGroup, numColumns, FormatterMessages.LineWrappingTabPage_width_indent_option_max_line_width, DefaultCodeFormatterConstants.FORMATTER_LINE_SPLIT, 0, 9999); 
 		createNumberPref(lineWidthGroup, numColumns, FormatterMessages.LineWrappingTabPage_width_indent_option_default_indent_wrapped, DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION, 0, 9999); 
 		createNumberPref(lineWidthGroup, numColumns, FormatterMessages.LineWrappingTabPage_width_indent_option_default_indent_array, DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION_FOR_INITIALIZER_LIST, 0, 9999); 
+		createCheckboxPref(lineWidthGroup, numColumns, FormatterMessages.LineWrappingTabPage_do_not_join_lines, DefaultCodeFormatterConstants.FORMATTER_JOIN_WRAPPED_LINES, TRUE_FALSE);
 
 		fCategoriesViewer= new TreeViewer(composite /*categoryGroup*/, SWT.MULTI | SWT.BORDER | SWT.READ_ONLY | SWT.V_SCROLL );
 		fCategoriesViewer.setContentProvider(new ITreeContentProvider() {

@@ -109,26 +109,28 @@ public class DefaultCodeFormatterConstants {
 	 * @see #createAlignmentValue(boolean, int, int)
 	 */
 	public static final String FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_arguments_in_method_invocation";	 //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option for alignment of assignment
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_assignment"
-//	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
-//	 *     - default:           createAlignmentValue(false, M_NO_ALIGNMENT, INDENT_DEFAULT)
-//	 * </pre>
-//	 * @see #createAlignmentValue(boolean, int, int)
-//	 */
-//	public static final String FORMATTER_ALIGNMENT_FOR_ASSIGNMENT  = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_assignment";	 //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option for alignment of binary expression
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_binary_expression"
-//	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
-//	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
-//	 * </pre>
-//	 * @see #createAlignmentValue(boolean, int, int)
-//	 */
-//	public static final String FORMATTER_ALIGNMENT_FOR_BINARY_EXPRESSION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_binary_expression";	 //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option for alignment of assignment
+	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_assignment"
+	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - default:           createAlignmentValue(false, M_NO_ALIGNMENT, INDENT_DEFAULT)
+	 * </pre>
+	 * @see #createAlignmentValue(boolean, int, int)
+	 * @since 5.3
+	 */
+	public static final String FORMATTER_ALIGNMENT_FOR_ASSIGNMENT  = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_assignment";	 //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option for alignment of binary expression
+	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_binary_expression"
+	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
+	 * </pre>
+	 * @see #createAlignmentValue(boolean, int, int)
+	 * @since 5.3
+	 */
+	public static final String FORMATTER_ALIGNMENT_FOR_BINARY_EXPRESSION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_binary_expression";	 //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option for alignment of compact if
@@ -2037,6 +2039,16 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 */
 	public static final String FORMATTER_NUMBER_OF_EMPTY_LINES_TO_PRESERVE = CCorePlugin.PLUGIN_ID + ".formatter.number_of_empty_lines_to_preserve"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to specify whether the formatter can join wrapped lines or not
+	 *     - option id:         "org.eclipse.cdt.core.formatter.join_wrapped_lines"
+	 *     - possible values:   { TRUE, FALSE }
+	 *     - default:           TRUE
+	 * </pre>
+	 * @since 5.3
+	 */
+	public static final String FORMATTER_JOIN_WRAPPED_LINES = CCorePlugin.PLUGIN_ID + ".formatter.join_wrapped_lines";	//$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to specify whether or not empty statement should be on a new line

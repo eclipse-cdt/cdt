@@ -205,7 +205,7 @@ final class FormatterMessages extends NLS {
 	public static String LineWrappingTabPage_enumerator_list;
 	public static String LineWrappingTabPage_initializer_list;
 	public static String LineWrappingTabPage_conditionals;
-//	public static String LineWrappingTabPage_binary_exprs;
+	public static String LineWrappingTabPage_binary_exprs;
 	public static String LineWrappingTabPage_indentation_default;
 	public static String LineWrappingTabPage_indentation_on_column;
 	public static String LineWrappingTabPage_indentation_by_one;
@@ -214,6 +214,7 @@ final class FormatterMessages extends NLS {
 	public static String LineWrappingTabPage_function_calls;
 	public static String LineWrappingTabPage_expressions;
 //	public static String LineWrappingTabPage_statements;
+	public static String LineWrappingTabPage_do_not_join_lines;
 	
 	public static String LineWrappingTabPage_base_clause_lowercase;
 //	public static String LineWrappingTabPage_compact_if_else_lowercase;
@@ -224,7 +225,7 @@ final class FormatterMessages extends NLS {
 	public static String LineWrappingTabPage_enumerator_list_lowercase;
 	public static String LineWrappingTabPage_initializer_list_lowercase;
 	public static String LineWrappingTabPage_conditionals_lowercase;
-//	public static String LineWrappingTabPage_binary_exprs_lowercase;
+	public static String LineWrappingTabPage_binary_exprs_lowercase;
 	public static String LineWrappingTabPage_indentation_default_lowercase;
 	public static String LineWrappingTabPage_indentation_on_column_lowercase;
 	public static String LineWrappingTabPage_indentation_by_one_lowercase;
@@ -233,7 +234,8 @@ final class FormatterMessages extends NLS {
 	public static String LineWrappingTabPage_function_calls_lowercase;
 	public static String LineWrappingTabPage_expressions_lowercase;
 //	public static String LineWrappingTabPage_statements_lowercase;
-		
+	public static String LineWrappingTabPage_assignment_alignment_lowercase;
+
 	public static String LineWrappingTabPage_wrapping_policy_label_text;
 	public static String LineWrappingTabPage_indentation_policy_label_text;
 	public static String LineWrappingTabPage_force_split_checkbox_text;
@@ -255,7 +257,7 @@ final class FormatterMessages extends NLS {
 	public static String LineWrappingTabPage_width_indent_option_default_indent_wrapped;
 	public static String LineWrappingTabPage_width_indent_option_default_indent_array;
 	public static String LineWrappingTabPage_error_invalid_value;
-//	public static String LineWrappingTabPage_assignment_alignment;
+	public static String LineWrappingTabPage_assignment_alignment;
 	public static String AlreadyExistsDialog_message_profile_already_exists;
 	public static String AlreadyExistsDialog_message_profile_name_empty;
 	public static String AlreadyExistsDialog_dialog_title;

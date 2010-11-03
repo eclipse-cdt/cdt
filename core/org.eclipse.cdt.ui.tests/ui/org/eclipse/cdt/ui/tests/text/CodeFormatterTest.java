@@ -222,6 +222,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//int verylooooooooooooooooooooooooooooooooooongname =
 	//		0000000000000000000000000000000;
 	public void testLineWrappingOfInitializerExpression_Bug200961() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ASSIGNMENT, Integer.toString(Alignment.M_COMPACT_SPLIT));
 		assertFormatterResult();
 	}
 	
@@ -1407,5 +1408,43 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testRangeBasedFor_Bug328472() throws Exception {
 		assertFormatterResult();
 	}
+
+	//int table[][] = {
+	//   {1,2,3,4},
+	//        			{ 1,   2, 3 ,  4},
+	//{ 1,2,     3,4 },
+	//        {1, 2,3, 4}
+	//	};
 	
+	//int table[][] = {
+	//		{ 1, 2, 3, 4 },
+	//		{ 1, 2, 3, 4 },
+	//		{ 1, 2, 3, 4 },
+	//		{ 1, 2, 3, 4 }
+	//};
+	public void testKeepWrappedLines_Bug322776() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_JOIN_WRAPPED_LINES, DefaultCodeFormatterConstants.FALSE);
+		assertFormatterResult();
+	}
+	
+	//void f() {
+	//double confidence = 0.316030 //
+	//- 0.016315 * C_Count //
+	//+ 0.034336 * N_Count //
+	//+ 0.066810 * O_Count //
+	//+ 0.035674 * F_Count;
+	//}
+
+	//void f() {
+	//	double confidence = 0.316030 //
+	//						- 0.016315 * C_Count //
+	//						+ 0.034336 * N_Count //
+	//						+ 0.066810 * O_Count //
+	//						+ 0.035674 * F_Count;
+	//}
+	public void testAlignmentOfBinaryExpression_Bug325787() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BINARY_EXPRESSION,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		assertFormatterResult();
+	}
 }

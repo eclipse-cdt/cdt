@@ -472,7 +472,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					scribe.startNewLine();
 				} else {
 					// preserve newline if not explicitly requested
-					if (scribe.preserveNewLine()) {
+					if (scribe.printCommentPreservingNewLines()) {
 						scribe.space();
 					}
 				}
@@ -1251,7 +1251,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		final List<IASTDeclarator> declarators= Arrays.asList(node.getDeclarators());
 		if (!declarators.isEmpty()) {
 			if (declarators.size() == 1 && declarators.get(0) instanceof IASTFunctionDeclarator) {
-				if (scribe.preserveNewLine()) {
+				if (scribe.printCommentPreservingNewLines()) {
 					scribe.space();
 				}
 			} else {
@@ -1324,7 +1324,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			}
 		} else {
 			// preserve newline if not explicitly requested
-			scribe.preserveNewLine();
+			scribe.printCommentPreservingNewLines();
 		}
 
 		declaration.accept(this);
@@ -1795,8 +1795,11 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTConditionalExpression node) {
 		node.getLogicalConditionExpression().accept(this);
-
-    	Alignment conditionalExpressionAlignment =scribe.createAlignment(
+		scribe.printTrailingComment();
+		if (preferences.insert_space_before_question_in_conditional) {
+			scribe.space();
+		}
+    	Alignment conditionalExpressionAlignment = scribe.createAlignment(
     			"conditionalExpression", //$NON-NLS-1$
     			preferences.alignment_for_conditional_expression,
     			2,
@@ -1807,7 +1810,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
     	do {
     		try {
     			scribe.alignFragment(conditionalExpressionAlignment, 0);
-    			scribe.printNextToken(Token.tQUESTION, preferences.insert_space_before_question_in_conditional);
+    			scribe.printNextToken(Token.tQUESTION, false);
 
     			if (preferences.insert_space_after_question_in_conditional) {
     				scribe.space();
@@ -1961,8 +1964,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			// declaration initializer
 	    	Alignment expressionAlignment= scribe.createAlignment(
 	    			"declarationInitializer", //$NON-NLS-1$
-	    			// need configurable alignment
-	    			Alignment.M_COMPACT_SPLIT,
+	    			preferences.alignment_for_assignment,
 	    			1,
 	    			scribe.scanner.getCurrentPosition());
 	
@@ -2003,7 +2005,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
     	Alignment expressionAlignment= scribe.createAlignment(
     			"designatedInitializer", //$NON-NLS-1$
-    			Alignment.M_COMPACT_SPLIT,
+    			preferences.alignment_for_assignment,
     			1,
     			scribe.scanner.getCurrentPosition());
 
@@ -2141,21 +2143,26 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTBinaryExpression node) {
-		final IASTExpression op1= node.getOperand1();
-		// operand 1
-		op1.accept(this);
-    	Alignment expressionAlignment= scribe.createAlignment(
-    			"binaryExpression", //$NON-NLS-1$
-    			// need configurable alignment
-    			Alignment.M_COMPACT_SPLIT,
-    			1,
-    			scribe.scanner.getCurrentPosition());
+		if (isAssignment(node)) {
+			return formatAssignment(node);
+		}
+		Alignment expressionAlignment= scribe.createAlignment(
+				"binaryExpression", //$NON-NLS-1$
+				preferences.alignment_for_binary_expression,
+				2,
+				scribe.scanner.getCurrentPosition());
 
-    	scribe.enterAlignment(expressionAlignment);
+		scribe.enterAlignment(expressionAlignment);
     	boolean ok = false;
     	do {
     		try {
     			scribe.alignFragment(expressionAlignment, 0);
+    			final IASTExpression op1= node.getOperand1();
+    			// operand 1
+    			op1.accept(this);
+
+    			scribe.printTrailingComment();
+    			scribe.alignFragment(expressionAlignment, 1);
 
     			// operator
     			final int nextToken= peekNextToken();
@@ -2166,22 +2173,6 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				case IASTBinaryExpression.op_pmdot:
 				case IASTBinaryExpression.op_pmarrow:
     				scribe.printNextToken(nextToken, false);
-    				break;
-    			case IASTBinaryExpression.op_assign:
-    			case IASTBinaryExpression.op_binaryAndAssign:
-    			case IASTBinaryExpression.op_binaryOrAssign:
-    			case IASTBinaryExpression.op_binaryXorAssign:
-    			case IASTBinaryExpression.op_divideAssign:
-    			case IASTBinaryExpression.op_minusAssign:
-    			case IASTBinaryExpression.op_moduloAssign:
-    			case IASTBinaryExpression.op_multiplyAssign:
-    			case IASTBinaryExpression.op_plusAssign:
-    			case IASTBinaryExpression.op_shiftLeftAssign:
-    			case IASTBinaryExpression.op_shiftRightAssign:
-    				scribe.printNextToken(nextToken, forceSpace || preferences.insert_space_before_assignment_operator);
-    				if (forceSpace || preferences.insert_space_after_assignment_operator) {
-    					scribe.space();
-    				}
     				break;
     			default:
     				scribe.printNextToken(nextToken, forceSpace || preferences.insert_space_before_binary_operator);
@@ -2201,6 +2192,64 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
     	} while (!ok);
     	scribe.exitAlignment(expressionAlignment, true);
     	return PROCESS_SKIP;
+	}
+
+	private int formatAssignment(IASTBinaryExpression node) {
+		final IASTExpression op1= node.getOperand1();
+		// operand 1
+		op1.accept(this);
+		
+    	Alignment expressionAlignment= scribe.createAlignment(
+    			"assignmentExpression", //$NON-NLS-1$
+    			preferences.alignment_for_assignment,
+    			1,
+    			scribe.scanner.getCurrentPosition());
+
+    	scribe.enterAlignment(expressionAlignment);
+    	boolean ok = false;
+    	do {
+    		try {
+    			scribe.alignFragment(expressionAlignment, 0);
+
+    			// operator
+    			final int nextToken= peekNextToken();
+    			// in case of C++ alternative operators, like 'and', 'not', etc. a space
+    			boolean forceSpace= Character.isJavaIdentifierStart(peekNextChar());
+
+				scribe.printNextToken(nextToken, forceSpace || preferences.insert_space_before_assignment_operator);
+				if (forceSpace || preferences.insert_space_after_assignment_operator) {
+					scribe.space();
+				}
+
+   				// operand 2
+   				final IASTExpression op2= node.getOperand2();
+   				op2.accept(this);
+
+    			ok = true;
+    		} catch (AlignmentException e) {
+    			scribe.redoAlignment(e);
+    		}
+    	} while (!ok);
+    	scribe.exitAlignment(expressionAlignment, true);
+    	return PROCESS_SKIP;
+	}
+
+	private boolean isAssignment(IASTBinaryExpression node) {
+		switch (node.getOperator()) {
+		case IASTBinaryExpression.op_assign:
+		case IASTBinaryExpression.op_binaryAndAssign:
+		case IASTBinaryExpression.op_binaryOrAssign:
+		case IASTBinaryExpression.op_binaryXorAssign:
+		case IASTBinaryExpression.op_divideAssign:
+		case IASTBinaryExpression.op_minusAssign:
+		case IASTBinaryExpression.op_moduloAssign:
+		case IASTBinaryExpression.op_multiplyAssign:
+		case IASTBinaryExpression.op_plusAssign:
+		case IASTBinaryExpression.op_shiftLeftAssign:
+		case IASTBinaryExpression.op_shiftRightAssign:
+			return true;
+		}
+		return false;
 	}
 
 	private int visit(IASTLiteralExpression node) {
@@ -3202,13 +3251,18 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private void formatLeftCurlyBrace(final int line, final String bracePosition) {
-        // deal with (quite unexpected) comments right before lcurly
-        scribe.printComment();
-        if (DefaultCodeFormatterConstants.NEXT_LINE_ON_WRAP.equals(bracePosition)
-                && (scribe.line > line || scribe.column >= preferences.page_width))
-        {
-            scribe.startNewLine();
-        }
+		scribe.formatBrace = true;
+		try {
+	        // deal with (quite unexpected) comments right before lcurly
+	        scribe.printComment();
+	        if (DefaultCodeFormatterConstants.NEXT_LINE_ON_WRAP.equals(bracePosition)
+	                && (scribe.line > line || scribe.column >= preferences.page_width))
+	        {
+	            scribe.startNewLine();
+	        }
+		} finally {
+			scribe.formatBrace = false;
+		}
     }
 
 	private void formatOpeningBrace(String bracePosition, boolean insertSpaceBeforeBrace) {

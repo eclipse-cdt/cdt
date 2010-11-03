@@ -65,10 +65,11 @@ public class Scribe {
 	private boolean preserveNewLines;
 	private boolean checkLineWrapping;
 	public int lastNumberOfNewLines;
+	boolean formatBrace;
 	public int line;
 
-	public boolean needSpace= false;
-	public boolean pendingSpace= false;
+	public boolean needSpace;
+	public boolean pendingSpace;
 
 	public int tabLength;
 	public int tabChar;
@@ -103,6 +104,7 @@ public class Scribe {
 		}
 		lineSeparator= preferences.line_separator;
 		indentationLevel= preferences.initial_indentation_level * indentationSize;
+		preserveNewLines = false;
 		textRegionStart= offset;
 		textRegionEnd= offset + length - 1;
 		reset();
@@ -424,8 +426,7 @@ public class Scribe {
 
 	public String getNewLine() {
 		if (lastNumberOfNewLines >= 1) {
-			column= 1; // ensure that the scribe is at the beginning of a new
-						// line
+			column= 1; // ensure that the scribe is at the beginning of a new line
 			return EMPTY_STRING;
 		}
 		line++;
@@ -458,13 +459,26 @@ public class Scribe {
 	}
 
 	private String getPreserveEmptyLines(int count) {
-		if (count > 0) {
-			if (preferences.number_of_empty_lines_to_preserve != 0) {
-				int linesToPreserve= Math.min(count, preferences.number_of_empty_lines_to_preserve);
-				return getEmptyLines(linesToPreserve);
-			} else {
-				return getNewLine();
+		if (count == 0 && !preserveNewLines) {
+			// preserve line breaks in wrapping if specified
+			if ((!preferences.join_wrapped_lines) && lastNumberOfNewLines == 0) {
+				// Create new line
+				StringBuilder tempBuffer = new StringBuilder();
+				tempBuffer.append(getNewLine());
+
+				if (currentAlignment != null && !formatBrace) {
+					indentationLevel = currentAlignment.breakIndentationLevel;
+				}
+				// Print the computed indentation in the buffer
+				printIndentationIfNecessary(tempBuffer);
+
+				return tempBuffer.toString();
 			}
+			return EMPTY_STRING;
+		}
+		if (preferences.number_of_empty_lines_to_preserve != 0) {
+			int linesToPreserve= Math.min(count, preferences.number_of_empty_lines_to_preserve);
+			return getEmptyLines(linesToPreserve);
 		} else if (preserveNewLines) {
 			return getNewLine();
 		}
@@ -753,9 +767,6 @@ public class Scribe {
 		lastNumberOfNewLines= 0;
 		printIndentationIfNecessary();
 		if (considerSpaceIfAny) {
-			if (currentAlignment != null && currentAlignment.isIndentOnColumn(column)) {
-				needSpace= true;
-			}
 			space();
 		}
 		if (pendingSpace) {
@@ -961,7 +972,7 @@ public class Scribe {
 				} else if (hasLineComment) {
 					preserveEmptyLines(count - 1, scanner.getCurrentTokenStartPosition());
 					addDeleteEdit(scanner.getCurrentTokenStartPosition(), scanner.getCurrentTokenEndPosition());
-				} else if (count != 0 && preferences.number_of_empty_lines_to_preserve != 0) {
+				} else if (count != 0 && (!preferences.join_wrapped_lines || preferences.number_of_empty_lines_to_preserve != 0)) {
 					String preservedEmptyLines= getPreserveEmptyLines(count - 1);
 					addReplaceEdit(scanner.getCurrentTokenStartPosition(), scanner.getCurrentTokenEndPosition(),
 							preservedEmptyLines);
@@ -1230,7 +1241,8 @@ public class Scribe {
 			return;
 		}
 		if (lastNumberOfNewLines >= 1) {
-			column= 1; // ensure that the scribe is at the beginning of a new line
+			// ensure that the scribe is at the beginning of a new line
+			column = 1; 
 			return;
 		}
 		addInsertEdit(insertPosition, lineSeparator);
@@ -1246,21 +1258,31 @@ public class Scribe {
 	}
 
 	public void printNextToken(int expectedTokenType, boolean considerSpaceIfAny) {
-		printComment();
-		if (shouldSkip(scanner.getCurrentPosition())) {
-			return;
+		// Set brace flag, it's useful for the scribe while preserving line breaks
+		switch (expectedTokenType) {
+			case Token.tRBRACE:
+			case Token.tLBRACE:
+				formatBrace = true;
 		}
-		currentToken= scanner.nextToken();
-		if (currentToken == null || expectedTokenType != currentToken.type) {
-			if (pendingSpace) {
-				addInsertEdit(scanner.getCurrentTokenStartPosition(), SPACE);
+		try {
+			printComment();
+			if (shouldSkip(scanner.getCurrentPosition())) {
+				return;
 			}
-			pendingSpace= false;
-			needSpace= true;
-			throw new AbortFormatting(
-					"["	+ (line+1) + "/" + column + "] unexpected token type, expecting:" + expectedTokenType + ", actual:" + currentToken);//$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			currentToken= scanner.nextToken();
+			if (currentToken == null || expectedTokenType != currentToken.type) {
+				if (pendingSpace) {
+					addInsertEdit(scanner.getCurrentTokenStartPosition(), SPACE);
+				}
+				pendingSpace= false;
+				needSpace= true;
+				throw new AbortFormatting(
+						"["	+ (line+1) + "/" + column + "] unexpected token type, expecting:" + expectedTokenType + ", actual:" + currentToken);//$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			}
+			print(currentToken.getLength(), considerSpaceIfAny);
+		} finally {
+			formatBrace = false;
 		}
-		print(currentToken.getLength(), considerSpaceIfAny);
 	}
 
 	public void printNextToken(int[] expectedTokenTypes) {
@@ -1596,16 +1618,6 @@ public class Scribe {
 		return !isFirstModifier;
 	}
 
-	public boolean preserveNewLine() {
-		boolean savedPreserveNewLines= preserveNewLines;
-		try {
-			preserveNewLines= true;
-			return printComment();
-		} finally {
-			preserveNewLines= savedPreserveNewLines;
-		}
-	}
-
 	/**
 	 * Skip to the next occurrence of the given token type.
 	 * If successful, the next token will be the epxected token,
@@ -1672,12 +1684,12 @@ public class Scribe {
 	}
 
 	public boolean printCommentPreservingNewLines() {
-		final boolean savedPreserveNL= this.preserveNewLines;
-		this.preserveNewLines= true;
+		final boolean savedPreserveNL= preserveNewLines;
+		preserveNewLines= true;
 		try {
 			return printComment();
 		} finally {
-			this.preserveNewLines= savedPreserveNL;
+			preserveNewLines= savedPreserveNL;
 		}
 	}
 
@@ -1729,7 +1741,6 @@ public class Scribe {
 				scanner.resetTo(offset, scannerEndPosition - 1);
 			}
 		}
-
 	}
 
 }

@@ -1058,15 +1058,19 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	private int visit(ICPPASTFunctionDeclarator node) {
 		visit((IASTStandardFunctionDeclarator)node);
 
-		skipConstVolatileRestrict();
-
+		boolean needSpace = skipConstVolatileRestrict();
+		
 		final IASTTypeId[] exceptionSpecification= node.getExceptionSpecification();
 		if (exceptionSpecification != null) {
 			if (peekNextToken() == Token.t_throw) {
 				formatExceptionSpecification(exceptionSpecification);
+				needSpace = false;
 			}
 		}
 		// skip the rest (=0)
+		if (needSpace && scribe.printComment()) {
+			scribe.space();
+		}
 		skipNode(node);
 		return PROCESS_SKIP;
 	}
@@ -1507,6 +1511,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 					} finally {
 						endOfNode(declaration);
 					}
+				} else {
+					skipNode(declaration);
 				}
 				if (preferences.indent_body_declarations_compare_to_access_specifier) {
 					scribe.unIndent();

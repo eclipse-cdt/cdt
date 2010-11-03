@@ -1396,4 +1396,23 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		assertFormatterResult();
 	}
+
+	////#define throws /* */
+	//struct Foo {
+	//    void foo() const throws {
+	//    }
+	//    void bar() const throws {
+	//    }
+	//};
+
+	////#define throws /* */
+	//struct Foo {
+	//	void foo() const throws {
+	//	}
+	//	void bar() const throws {
+	//	}
+	//};
+	public void testCodeCorruptionWithIllegalKeyword_Bug329165() throws Exception {
+		assertFormatterResult();
+	}
 }

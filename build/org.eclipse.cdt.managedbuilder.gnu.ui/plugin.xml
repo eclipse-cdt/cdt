@@ -1238,6 +1238,14 @@
 			  id="gnu.c.compiler.option.misc.ansi"
 			  valueType="boolean">
 		  </option>
+		  <option
+			  category="gnu.c.compiler.category.other"
+			  command="-fPIC"
+			  defaultValue="false"
+			  id="gnu.c.compiler.option.misc.pic"
+			  name="%Option.PIC"
+			  valueType="boolean">
+		  </option>
           <inputType
               sourceContentType="org.eclipse.cdt.core.cSource"
 		      sources="c"
@@ -1526,6 +1534,14 @@
 			  category="gnu.cpp.compiler.category.other"
 			  command="-v"
 			  id="gnu.cpp.compiler.option.other.verbose"
+			  valueType="boolean">
+		  </option>
+		  <option
+			  category="gnu.cpp.compiler.category.other"
+			  command="-fPIC"
+			  defaultValue="false"
+			  id="gnu.cpp.compiler.option.other.pic"
+			  name="%Option.PIC"
 			  valueType="boolean">
 		  </option>
           <inputType

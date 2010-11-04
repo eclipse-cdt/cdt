@@ -24,19 +24,22 @@ import java.util.Map;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -271,48 +274,77 @@ public class LookupData {
     public static boolean checkWholeClassScope(IASTName name) {
         if (name == null) 
         	return false;
-        
-        ASTNodeProperty lastProp= name.getPropertyInParent();
-        if (lastProp == CPPSemantics.STRING_LOOKUP_PROPERTY) 
+        if (name.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY)
         	return true;
-
-        boolean inInitializer= false;
-        IASTNode parent = name.getParent();
-        while (parent instanceof IASTName) {
-        	name= (IASTName) parent;
-        	parent= name.getParent();
+        
+        IASTNode node = name.getParent();
+        while (node instanceof IASTName) {
+        	name= (IASTName) node;
+        	node= name.getParent();
         }
         
-        while (parent != null && !(parent instanceof IASTFunctionDefinition)) {
-         	if (parent instanceof IASTInitializer) {
-        		inInitializer= true;
-        	}    		
-        	lastProp= parent.getPropertyInParent();
-            parent = parent.getParent();
-        }
-        if (parent instanceof IASTFunctionDefinition) {
-        	if (lastProp == IASTFunctionDefinition.DECL_SPECIFIER ||
-        			lastProp == IASTFunctionDefinition.DECLARATOR) {
-        		if (!inInitializer)
+    	final ASTNodeProperty nameProp = name.getPropertyInParent();
+    	if (nameProp == IASTIdExpression.ID_NAME ||
+    			nameProp == IASTFieldReference.FIELD_NAME ||
+    			nameProp == ICASTFieldDesignator.FIELD_NAME ||
+    			nameProp == ICPPASTUsingDirective.QUALIFIED_NAME ||
+    			nameProp == ICPPASTUsingDeclaration.NAME ||
+    			nameProp == IASTFunctionCallExpression.FUNCTION_NAME ||
+    			nameProp == IASTNamedTypeSpecifier.NAME ||
+    			nameProp == ICPPASTConstructorChainInitializer.MEMBER_ID) {
+    		// Potentially we need to consider the entire class scope
+    	} else {
+    		return false;
+    	}
+
+        
+        for (; node != null; node= node.getParent()) {
+        	// 3.3.7-5
+        	if (node.getParent() instanceof IASTFunctionDefinition) {
+            	// In a function body
+        		final ASTNodeProperty prop = node.getPropertyInParent();
+        		if (prop == IASTFunctionDefinition.DECL_SPECIFIER ||
+        				prop == IASTFunctionDefinition.DECLARATOR) {
         			return false;
+        		}
+        		IASTNode parent = node.getParent();
+				while (parent != null) {
+					if (parent instanceof ICPPASTCompositeTypeSpecifier)
+						return true;
+					parent= parent.getParent();
+				}
+				// No inline method.
+				return false;
         	} 
-
-        	while (parent.getParent() instanceof ICPPASTTemplateDeclaration)
-        		parent = parent.getParent();
-            if (parent.getPropertyInParent() != IASTCompositeTypeSpecifier.MEMBER_DECLARATION)
-                return false;
-
-            ASTNodeProperty prop = name.getPropertyInParent();
-            if (prop == IASTIdExpression.ID_NAME ||
-					prop == IASTFieldReference.FIELD_NAME ||
-					prop == ICASTFieldDesignator.FIELD_NAME ||
-					prop == ICPPASTUsingDirective.QUALIFIED_NAME ||
-					prop == ICPPASTUsingDeclaration.NAME ||
-					prop == IASTFunctionCallExpression.FUNCTION_NAME ||
-					prop == IASTNamedTypeSpecifier.NAME ||
-					prop == ICPPASTConstructorChainInitializer.MEMBER_ID) {
-                return true;
-            }
+        	if (node instanceof IASTInitializerList || node instanceof IASTEqualsInitializer) {
+        		if (node.getPropertyInParent() == IASTDeclarator.INITIALIZER) {
+        			IASTNode decl= node.getParent();
+        			while (decl instanceof IASTDeclarator) {
+        				decl= decl.getParent();
+        			}
+        			if (decl instanceof IASTParameterDeclaration) {
+        				// Default argument
+        				IASTNode parent = decl.getParent();
+        				while (parent != null) {
+        					if (parent instanceof ICPPASTCompositeTypeSpecifier)
+        						return true;
+        					parent= parent.getParent();
+        				}
+        				// Not within a class definition
+        				return false;
+        			}
+        			
+        			if (decl instanceof IASTSimpleDeclaration && 
+        					decl.getPropertyInParent() == IASTCompositeTypeSpecifier.MEMBER_DECLARATION) {
+        				// Initializer of non-static data member
+        				IASTDeclSpecifier declSpec= ((IASTSimpleDeclaration) decl).getDeclSpecifier();
+        				if (declSpec.getStorageClass() != IASTDeclSpecifier.sc_static) {
+        					return true;
+        				}
+        				// Continue search, we could still be in a method.
+        			}  
+        		}
+        	}
         }
         return false;
     }

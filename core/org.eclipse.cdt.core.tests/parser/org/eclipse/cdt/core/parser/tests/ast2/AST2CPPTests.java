@@ -6422,7 +6422,7 @@ public class AST2CPPTests extends AST2BaseTest {
     //      return b;
 	//	  }
 	//	  struct B {};
-    //    int& x = y; // y is not defined
+    //    static int& x = y; // y is not defined
     //    int y;
 	//	};
     public void testScopeOfClassMember_259460() throws Exception {
@@ -6439,7 +6439,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//    int method(int a = GREEN) {
 	//      return RED;
 	//    }
-    //    int x = GREEN; // GREEN is not defined
+    //    static int x = GREEN; // GREEN is not defined
 	//    enum Color {
 	//      RED, GREEN
 	//    };
@@ -9281,4 +9281,13 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testOverrideUsingDeclaredMethod_328802() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	class A {
+	//		A(int a = f());  // problem on f
+	//		static int f();
+	//	};
+	public void testFwdLookupForDefaultArgument() throws Exception {
+		parseAndCheckBindings();
+	}
+
 }

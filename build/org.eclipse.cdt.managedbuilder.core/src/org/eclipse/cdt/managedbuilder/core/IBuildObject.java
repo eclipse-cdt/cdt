@@ -23,7 +23,12 @@ public interface IBuildObject {
 	
 	public String getId();
 	public String getName();
+
+	/**
+	 * @return id of the object this class was based on during creation or id of the object itself.
+	 */
 	public String getBaseId();
+
 	/** @since 8.0 */
 	public Version getVersion();
 	/** @since 8.0 */

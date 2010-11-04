@@ -33,7 +33,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 
 /**
- * This class sets the Managed Build System Option Values.
+ * This class sets the Managed Build System Option Values. Note that this class
+ * handles both string options and enumerated options.
  * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -118,7 +119,7 @@ public class SetMBSStringOptionValue extends ProcessRunner {
 		String lowerId = id.toLowerCase();
 		int optionType;
 		for (int i = 0; i < options.length; i++) {
-			if (options[i].getId().toLowerCase().matches(lowerId)) {
+			if (options[i].getBaseId().toLowerCase().matches(lowerId)) {
 				optionType = options[i].getValueType();
 				if ((optionType == IOption.STRING) || (optionType == IOption.ENUMERATED)) {
 					IOption setOption = ManagedBuildManager.setOption(resourceConfig, optionHolder, options[i], value);
@@ -137,7 +138,7 @@ public class SetMBSStringOptionValue extends ProcessRunner {
 		String lowerId = id.toLowerCase();
 		int optionType;
 		for (int i = 0; i < options.length; i++) {
-			if (options[i].getId().toLowerCase().matches(lowerId)) {
+			if (options[i].getBaseId().toLowerCase().matches(lowerId)) {
 				optionType = options[i].getValueType();
 				if ((optionType == IOption.STRING) || (optionType == IOption.ENUMERATED)) {
 					IOption setOption = ManagedBuildManager.setOption(config, optionHolder, options[i], value);

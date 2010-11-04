@@ -30,15 +30,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Creates a include Folder to the project.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CreateIncludeFolder extends CreateSourceFolder {
-	
+
 	/**
 	 * This method Creates a include Folder to the project.
-	 * 
+	 *
 	 */
 	@Override
 	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
@@ -49,14 +49,14 @@ public class CreateIncludeFolder extends CreateSourceFolder {
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(projectHandle);
 		try {
 			IConfiguration[] configs = info.getManagedProject().getConfigurations();
-			for(int i=0; i<configs.length; i++) {
+			for (IConfiguration config : configs) {
 				String path = projectHandle.getFolder(targetPath).getLocation().toOSString();
-				IToolChain toolChain = configs[i].getToolChain();
-				setIncludePathOptionForConfig(path, configs[i], toolChain.getOptions(), toolChain);
-				
-				ITool[] tools = configs[i].getTools();
-				for(int j=0; j<tools.length; j++) {
-					setIncludePathOptionForConfig(path, configs[i], tools[j].getOptions(), tools[j]);
+				IToolChain toolChain = config.getToolChain();
+				setIncludePathOptionForConfig(path, config, toolChain.getOptions(), toolChain);
+
+				ITool[] tools = config.getTools();
+				for (ITool tool : tools) {
+					setIncludePathOptionForConfig(path, config, tool.getOptions(), tool);
 				}
 			}
 		} catch (BuildException e) {
@@ -66,8 +66,7 @@ public class CreateIncludeFolder extends CreateSourceFolder {
 	}
 
 	private void setIncludePathOptionForConfig(String path, IConfiguration config, IOption[] options, IHoldsOptions optionHolder) throws BuildException {
-		for (int i = 0; i < options.length; i++) {
-			IOption option = options[i];
+		for (IOption option : options) {
 			if (option.getValueType() == IOption.INCLUDE_PATH) {
 				String[] includePaths = option.getIncludePaths();
 				String[] newPaths = new String[includePaths.length + 1];
@@ -77,5 +76,5 @@ public class CreateIncludeFolder extends CreateSourceFolder {
 			}
 		}
 	}
-	
+
 }

@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
@@ -77,6 +80,7 @@ import org.eclipse.cdt.internal.ui.util.StringMatcher;
  */
 public abstract class AbstractInformationControl extends PopupDialog implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, DisposeListener {
 	private final String COLON_COLON = String.valueOf(Keywords.cpCOLONCOLON);
+	private final Pattern PATTERN_COLON_COLON = Pattern.compile(COLON_COLON);
 
 	/**
 	 * The NamePatternFilter selects the elements which
@@ -716,11 +720,13 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 		if (matcher.match(name))
 			return true;
 		
-		// Check last segment of a qualified name
-		int idx= name.lastIndexOf(COLON_COLON);
-		if (idx >= 0 && matcher.match(name.substring(idx+COLON_COLON.length())))
-			return true;
-		
+		Matcher match = PATTERN_COLON_COLON.matcher(name);
+		while(match.find())	{
+			int idx = match.start();
+			if (matcher.match(name.substring(idx+COLON_COLON.length())))
+				return true;
+		}
+
 		return false;
 	}
 }

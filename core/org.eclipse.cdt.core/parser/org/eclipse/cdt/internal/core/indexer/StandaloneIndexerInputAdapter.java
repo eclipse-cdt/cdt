@@ -33,12 +33,13 @@ import org.eclipse.core.runtime.Path;
  */
 public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	private final HashMap<String, IIndexFileLocation> fIflCache= new HashMap<String, IIndexFileLocation>();
-	private final FileExistsCache fExistsCache = new FileExistsCache();
+	private final FileExistsCache fExistsCache;
 	
 	private final StandaloneIndexer fIndexer;
 
 	public StandaloneIndexerInputAdapter(StandaloneIndexer indexer) {
 		fIndexer= indexer;
+		fExistsCache= new FileExistsCache(isCaseInsensitiveFileSystem());
 	}
 	
 	@Override
@@ -184,4 +185,11 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 			return true;
 		return fIndexer.getValidSourceUnitNames().contains(path.getFileExtension());
 	}
+	
+	@SuppressWarnings("nls")
+	@Override
+	public boolean isCaseInsensitiveFileSystem() {
+		return new File("a").equals(new File("A")); 
+	}
+
 }

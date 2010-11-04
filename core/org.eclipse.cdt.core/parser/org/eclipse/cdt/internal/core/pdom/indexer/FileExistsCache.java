@@ -26,7 +26,6 @@ import java.util.Map;
  */
 public final class FileExistsCache {
 	private static final Content EMPTY_STRING_ARRAY= new Content(new String[0]);
-	private static final boolean CASE_INSENSITIVE = new File("a").equals(new File("A")); //$NON-NLS-1$ //$NON-NLS-2$
 	private static boolean BYPASS_CACHE= Boolean.getBoolean("CDT_INDEXER_BYPASS_FILE_EXISTS_CACHE"); //$NON-NLS-1$
 
 	private static class Content {
@@ -39,10 +38,6 @@ public final class FileExistsCache {
 	}
 	private Reference<Map<String,Content>> fCache= null;
 	private final boolean fCaseInSensitive;
-
-	public FileExistsCache() {
-		this(CASE_INSENSITIVE);
-	}
 
 	public FileExistsCache(boolean caseInsensitive) {
 		fCaseInSensitive= caseInsensitive;

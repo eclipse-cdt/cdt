@@ -10,7 +10,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,16 +32,15 @@ import org.eclipse.core.runtime.Path;
 public class ProjectIndexerIncludeResolutionHeuristics implements IIncludeFileResolutionHeuristics {
 	private static final String TRUE = "true"; //$NON-NLS-1$
 
-	@SuppressWarnings("nls")
-	private static final boolean IGNORE_CASE = new File("a").equals(new File("A"));
-	
 	private IProject fProject;
 	private IProject[] fProjects;
 	private final ASTFilePathResolver fResolver;
+	private final boolean fIgnoreCase;
 
 	public ProjectIndexerIncludeResolutionHeuristics(IProject project, ASTFilePathResolver resolver) {
 		fProject= project;
 		fResolver= resolver;
+		fIgnoreCase= resolver.isCaseInsensitiveFileSystem();
 	}
 
 	public String findInclusion(String include, String currentFile) {
@@ -68,7 +66,7 @@ public class ProjectIndexerIncludeResolutionHeuristics implements IIncludeFileRe
 			}
 		}
 		
-		IFile[] files= ResourceLookup.findFilesByName(new Path(include), fProjects, IGNORE_CASE);
+		IFile[] files= ResourceLookup.findFilesByName(new Path(include), fProjects, fIgnoreCase);
 		if (files.length == 0)
 			return null;
 		

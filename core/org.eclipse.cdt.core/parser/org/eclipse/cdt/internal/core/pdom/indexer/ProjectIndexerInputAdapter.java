@@ -79,7 +79,8 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 		}
 	}
 
-	private boolean isCaseInsensitiveFileSystem() {
+	@Override
+	public boolean isCaseInsensitiveFileSystem() {
 		if (Platform.OS_MACOSX.equals(Platform.getOS()))
 			return true;
 		return CASE_INSENSITIVE_FILE_SYSTEM; 

@@ -49,4 +49,9 @@ public abstract class ASTFilePathResolver {
 	 * Returns the size of the file in bytes, or -1 if it cannot be determined
 	 */
 	public abstract long getFileSize(String astFilePath);
+	
+	/**
+	 * Returns whether the file-system is case insensitive.
+	 */
+	public abstract boolean isCaseInsensitiveFileSystem();
 }

@@ -436,7 +436,7 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 			macro = new CdtVariable(macroName,ICdtVariable.VALUE_TEXT,version);
 		}
 		else if("CDTVersion".equals(macroName)){	//$NON-NLS-1$
-			String version = (String)CCorePlugin.getDefault().getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
+			String version = CCorePlugin.getDefault().getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
 			macro = new CdtVariable(macroName,ICdtVariable.VALUE_TEXT,version);
 		}
 /*		else if("MBSVersion".equals(macroName)){	//$NON-NLS-1$

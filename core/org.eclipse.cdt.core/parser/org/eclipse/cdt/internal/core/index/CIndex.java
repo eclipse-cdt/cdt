@@ -267,14 +267,14 @@ public class CIndex implements IIndex {
 				for (IIndexInclude include : includedBy) {
 					if (handled.add(include.getIncludedByLocation())) {
 						out.add(include);
-						if (depth != 0) {
+						if (nextLevel != null) {
 							nextLevel.add(include.getIncludedBy());
 						}
 					}
 				}
 			}
 		}
-		if (depth == 0 || nextLevel.isEmpty()) {
+		if (nextLevel == null || nextLevel.isEmpty()) {
 			return;
 		}
 		if (depth > 0) {
@@ -304,7 +304,7 @@ public class CIndex implements IIndex {
 				Object key= target != null ? (Object) target : include.getFullName();
 				if (handled.add(key)) {
 					out.add(include);
-					if (depth != 0) {
+					if (nextLevel != null) {
 						IIndexFile includedByFile= resolveInclude(include);
 						if (includedByFile != null) {
 							nextLevel.add(includedByFile);
@@ -313,7 +313,7 @@ public class CIndex implements IIndex {
 				}
 			}
 		}
-		if (depth == 0 || nextLevel.isEmpty()) {
+		if (nextLevel == null || nextLevel.isEmpty()) {
 			return;
 		}
 		if (depth > 0) {

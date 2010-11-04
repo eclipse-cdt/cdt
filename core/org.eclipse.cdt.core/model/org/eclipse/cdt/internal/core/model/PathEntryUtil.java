@@ -393,13 +393,11 @@ public class PathEntryUtil {
 						if (otherPath.isPrefixOf(entryPath) && !otherPath.equals(entryPath)
 								&& !CoreModelUtil.isExcluded(entryPath.append("*"), exclusionPatterns)) { //$NON-NLS-1$
 
-							String exclusionPattern = entryPath.removeFirstSegments(otherPath.segmentCount()).segment(0);
 							if (CoreModelUtil.isExcluded(entryPath, exclusionPatterns)) {
 								StringBuffer errMesg = new StringBuffer(
 										CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
 								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());
 							} else if (otherKind == IPathEntry.CDT_SOURCE) {
-								exclusionPattern += '/';
 								StringBuffer errMesg = new StringBuffer(
 										CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
 								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());

@@ -331,7 +331,7 @@ public final class CompletionProposalComputerRegistry {
 		final String avoidHint;
 		final String culpritName= culprit == null ? null : culprit.getName();
 		if (affectedPlugins.isEmpty()) {
-			if (culpritName.equals(CUIPlugin.PLUGIN_ID)) {
+			if (CUIPlugin.PLUGIN_ID.equals(culpritName)) {
 				// don't warn about internal computers
 				return;
 			}

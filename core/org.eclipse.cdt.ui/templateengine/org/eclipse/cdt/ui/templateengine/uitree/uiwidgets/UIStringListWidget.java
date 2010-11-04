@@ -90,7 +90,7 @@ public class UIStringListWidget extends InputUIElement {
 		if (items != null) {
 			items = items.trim();
 			StringTokenizer st = new StringTokenizer(items, "|"); //$NON-NLS-1$
-			for (int i = 0; st.hasMoreTokens(); i++) {
+			while (st.hasMoreTokens()) {
 				itemsList.add(st.nextToken());
 			}
 		}

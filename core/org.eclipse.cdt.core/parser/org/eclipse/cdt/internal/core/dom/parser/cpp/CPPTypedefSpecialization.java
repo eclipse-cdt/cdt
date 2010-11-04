@@ -35,7 +35,7 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 	}
 	
 	public static final int MAX_RESOLUTION_DEPTH = 5;
-	public static final int MAX_TYPE_NESTING = 100;
+	public static final int MAX_TYPE_NESTING = 60;
 
 	private IType type;
     private int fResolutionDepth;
@@ -53,6 +53,10 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
      * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
      */
     public IType getType() {
+    	return getType(MAX_TYPE_NESTING);
+    }
+    
+    private IType getType(int maxDepth) {
         if (type == null) {
         	try {
 	        	if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
@@ -61,13 +65,8 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 		            type= specializeType(getTypedef().getType());
 		        	// A typedef pointing to itself is a sure recipe for an infinite loop -- replace
 		            // with a problem binding.
-		            IType checkType= type;
-		            for (int i = 0; checkType instanceof ITypeContainer; i++) {
-			            if (this.equals(checkType) || i == MAX_TYPE_NESTING) {
-			        		type = new RecursionResolvingBinding(getDefinition(), getNameCharArray());
-			        		break;
-			            }
-		            	checkType= ((ITypeContainer) checkType).getType();
+		            if (!verifyType(type, maxDepth)) {
+		            	type = new RecursionResolvingBinding(getDefinition(), getNameCharArray());
 		            }
 	        	}
         	} finally {
@@ -76,6 +75,22 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 	    }
 		return type;
     }
+
+	private boolean verifyType(IType type, int maxTypeNesting) {
+		for (;;) {
+			if (--maxTypeNesting < 0)
+				return false;
+			if (equals(type))
+				return false;
+			if (type instanceof CPPTypedefSpecialization) {
+				type= ((CPPTypedefSpecialization) type).getType(maxTypeNesting);
+			} else if (type instanceof ITypeContainer) {
+				type= ((ITypeContainer) type).getType();
+			} else {
+				return true;
+			}
+		}
+	}
 
 	public int incResolutionDepth(int increment) {
 		fResolutionDepth += increment;

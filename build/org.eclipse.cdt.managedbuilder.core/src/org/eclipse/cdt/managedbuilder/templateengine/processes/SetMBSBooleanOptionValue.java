@@ -10,11 +10,11 @@
  *******************************************************************************/
  package org.eclipse.cdt.managedbuilder.templateengine.processes;
 
-import org.eclipse.cdt.core.templateengine.process.processes.Messages;
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.process.ProcessArgument;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.core.templateengine.process.ProcessRunner;
+import org.eclipse.cdt.core.templateengine.process.processes.Messages;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
@@ -34,12 +34,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * This class sets the Managed Build System Option boolean Values.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class SetMBSBooleanOptionValue extends ProcessRunner {
-	
+
 	@Override
 	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
 		String projectName = args[0].getSimpleValue();
@@ -52,11 +52,10 @@ public class SetMBSBooleanOptionValue extends ProcessRunner {
 			workspace.setDescription(workspaceDesc);
 		} catch (CoreException e) {//ignore
 		}
-		
+
 		ProcessArgument[][] resourcePathObjects = args[1].getComplexArrayValue();
 		boolean modified = false;
-		for(int i=0; i<resourcePathObjects.length; i++) {
-			ProcessArgument[] resourcePathObject = resourcePathObjects[i];
+		for (ProcessArgument[] resourcePathObject : resourcePathObjects) {
 			String id = resourcePathObject[0].getSimpleValue();
 			String value = resourcePathObject[1].getSimpleValue();
 			String path = resourcePathObject[2].getSimpleValue();
@@ -76,15 +75,14 @@ public class SetMBSBooleanOptionValue extends ProcessRunner {
 		} catch (CoreException e) {//ignore
 		}
 	}
-	
+
 	private boolean setOptionValue(IProject projectHandle, String id, String value, String path) throws BuildException, ProcessFailureException {
 		IConfiguration[] projectConfigs = ManagedBuildManager.getBuildInfo(projectHandle).getManagedProject().getConfigurations();
-		
+
 		boolean resource = !(path == null || path.equals("") || path.equals("/")); //$NON-NLS-1$ //$NON-NLS-2$
 		boolean modified = false;
-		
-		for(int i=0; i<projectConfigs.length; i++) {
-			IConfiguration config = projectConfigs[i];
+
+		for (IConfiguration config : projectConfigs) {
 			IResourceConfiguration resourceConfig = null;
 			if (resource) {
 				resourceConfig = config.getResourceConfiguration(path);
@@ -96,33 +94,30 @@ public class SetMBSBooleanOptionValue extends ProcessRunner {
 					resourceConfig = config.createResourceConfiguration(file);
 				}
 				ITool[] tools = resourceConfig.getTools();
-				for(int j=0; j<tools.length; j++) {
-					modified |= setOptionForResourceConfig(id, value, resourceConfig, tools[j].getOptions(), tools[j]);
+				for (ITool tool : tools) {
+					modified |= setOptionForResourceConfig(id, value, resourceConfig, tool.getOptions(), tool);
 				}
 			} else {
 				IToolChain toolChain = config.getToolChain();
 				modified |= setOptionForConfig(id, value, config, toolChain.getOptions(), toolChain);
-				
+
 				ITool[] tools = config.getTools();
-				for(int j=0; j<tools.length; j++) {
-					modified |= setOptionForConfig(id, value, config, tools[j].getOptions(), tools[j]);
+				for (ITool tool : tools) {
+					modified |= setOptionForConfig(id, value, config, tool.getOptions(), tool);
 				}
 			}
 		}
-		
+
 		return modified;
 	}
 
 	private boolean setOptionForResourceConfig(String id, String value, IResourceConfiguration resourceConfig, IOption[] options, IHoldsOptions optionHolder) throws BuildException {
 		boolean modified = false;
 		String lowerId = id.toLowerCase();
-		for (int i = 0; i < options.length; i++) {
-			if (options[i].getId().toLowerCase().matches(lowerId)) {
-				if (options[i].getValueType() == IOption.BOOLEAN) {
-					IOption setOption = ManagedBuildManager.setOption(resourceConfig, optionHolder, options[i], Boolean.valueOf(value).booleanValue());
-					if (setOption == null) {
-						setOption = options[i];
-					}
+		for (IOption option : options) {
+			if (option.getBaseId().toLowerCase().matches(lowerId)) {
+				if (option.getValueType() == IOption.BOOLEAN) {
+					ManagedBuildManager.setOption(resourceConfig, optionHolder, option, Boolean.valueOf(value).booleanValue());
 					modified = true;
 				}
 			}
@@ -133,13 +128,10 @@ public class SetMBSBooleanOptionValue extends ProcessRunner {
 	private boolean setOptionForConfig(String id, String value, IConfiguration config, IOption[] options, IHoldsOptions optionHolder) throws BuildException {
 		boolean modified = false;
 		String lowerId = id.toLowerCase();
-		for (int i = 0; i < options.length; i++) {
-			if (options[i].getId().toLowerCase().matches(lowerId)) {
-				if (options[i].getValueType() == IOption.BOOLEAN) {
-					IOption setOption = ManagedBuildManager.setOption(config, optionHolder, options[i], Boolean.valueOf(value).booleanValue());
-					if (setOption == null) {
-						setOption = options[i];
-					}
+		for (IOption option : options) {
+			if (option.getBaseId().toLowerCase().matches(lowerId)) {
+				if (option.getValueType() == IOption.BOOLEAN) {
+					ManagedBuildManager.setOption(config, optionHolder, option, Boolean.valueOf(value).booleanValue());
 					modified = true;
 				}
 			}

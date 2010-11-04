@@ -437,6 +437,12 @@ public class CPPVisitor extends ASTQueries {
         	}
         	if (scope != null) {
         		binding = scope.getBinding(elabType.getName(), false);
+    			if (binding instanceof ICPPUsingDeclaration) {
+    				IBinding[] expanded = ((ICPPUsingDeclaration) binding).getDelegates();
+    				if (expanded.length == 1 && expanded[0] instanceof IType) {
+    					binding= expanded[0];
+    				}
+    			}
         	}
             if (!(binding instanceof ICPPInternalBinding) || !(binding instanceof ICPPClassType) && name.isActive()) {
     			if (elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum) {

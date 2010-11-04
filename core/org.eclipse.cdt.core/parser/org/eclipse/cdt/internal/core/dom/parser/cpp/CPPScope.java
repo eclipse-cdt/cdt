@@ -191,7 +191,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	}
 
 	public IBinding getBindingInAST(IASTName name, boolean forceResolve) {
-		IBinding[] bs= getBindingsInAST(name, forceResolve, false, false, true);
+		IBinding[] bs= getBindingsInAST(name, forceResolve, false, false, false);
 		return CPPSemantics.resolveAmbiguities(name, bs);
 	}
 

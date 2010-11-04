@@ -9263,4 +9263,22 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testRangeBasedForLoop_327223() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct A{};
+	//	struct B : A {};
+	//	struct C {
+	//		 A& get();
+	//	};
+	//	struct D : C {
+	//		  using C::get;
+	//		  B& get();
+	//	};
+	//
+	//	void func(A&) {}
+	//	void test(D& c) {
+	//		  func(c.get()); // error.
+	//	}
+	public void testOverrideUsingDeclaredMethod_328802() throws Exception {
+		parseAndCheckBindings();
+	}
 }

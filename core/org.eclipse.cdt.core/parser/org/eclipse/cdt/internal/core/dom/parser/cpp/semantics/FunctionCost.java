@@ -23,6 +23,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.TypeSelection;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.DeferredUDC;
@@ -146,10 +148,12 @@ class FunctionCost {
 			haveBetter |= (cmp < 0);
 		}
 	
+		final ICPPFunction f1 = getFunction();
+		final ICPPFunction f2 = other.getFunction();
 		if (!haveWorse && !haveBetter) {
 			// If they are both template functions, we can order them that way
-			ICPPFunctionTemplate asTemplate= asTemplate(getFunction());
-			ICPPFunctionTemplate otherAsTemplate= asTemplate(other.getFunction());
+			ICPPFunctionTemplate asTemplate= asTemplate(f1);
+			ICPPFunctionTemplate otherAsTemplate= asTemplate(f2);
 			final boolean isTemplate = asTemplate != null;
 			final boolean otherIsTemplate = otherAsTemplate != null;
 			
@@ -159,7 +163,7 @@ class FunctionCost {
 			} else if (!isTemplate && otherIsTemplate) {
 				haveBetter = true;
 			} else if (isTemplate && otherIsTemplate) {
-				TypeSelection ts= SemanticUtil.isConversionOperator(getFunction()) ? RETURN_TYPE : PARAMETERS;
+				TypeSelection ts= SemanticUtil.isConversionOperator(f1) ? RETURN_TYPE : PARAMETERS;
  				int order = CPPTemplates.orderFunctionTemplates(otherAsTemplate, asTemplate, ts);
 				if (order < 0) {
 					haveBetter= true;	 				
@@ -169,9 +173,14 @@ class FunctionCost {
 			} 
 		}
 		
-		// if we are ambiguous at this point prefer non-index bindings
 		if (haveBetter == haveWorse) {
-			return -CPPSemantics.compareByRelevance(tu, getFunction(), other.getFunction());
+			// 7.3.3-15 Using declarations in classes can be overridden
+			int cmp= overridesUsingDeclaration(f1, f2);
+			if (cmp != 0)
+				return cmp;
+			
+			// At this point prefer non-index bindings
+			return -CPPSemantics.compareByRelevance(tu, f1, f2);
 		}
 		
 		if (haveBetter) 
@@ -180,6 +189,52 @@ class FunctionCost {
 		return 1;
 	}
 	
+	private int overridesUsingDeclaration(ICPPFunction f1, ICPPFunction f2) {
+		if (f1.takesVarArgs() != f2.takesVarArgs())
+			return 0;
+		if (!(f1 instanceof ICPPMethod && f2 instanceof ICPPMethod)) 
+			return 0;
+		
+		final ICPPMethod m1 = (ICPPMethod) f1;
+		final ICPPMethod m2 = (ICPPMethod) f2;
+		ICPPClassType o1= m1.getClassOwner();
+		ICPPClassType o2= m2.getClassOwner();
+		if (o1.isSameType(o2)) 
+			return 0;
+		
+		final ICPPFunctionType ft1 = m1.getType();
+		final ICPPFunctionType ft2 = m2.getType();
+		if (ft1.isConst() != ft2.isConst() || ft2.isVolatile() != ft2.isVolatile())
+			return 0;
+		
+		if (!parameterTypesMatch(ft1, ft2))
+			return 0;
+		
+		int diff= SemanticUtil.calculateInheritanceDepth(o2, o1);
+		if (diff >= 0)
+			return diff;
+		return -SemanticUtil.calculateInheritanceDepth(o1, o2);
+	}
+
+	private boolean parameterTypesMatch(final ICPPFunctionType ft1, final ICPPFunctionType ft2) {
+		IType[] p1= ft1.getParameterTypes();
+		IType[] p2= ft2.getParameterTypes();
+		if (p1.length != p2.length) {
+			if (p1.length == 0) 
+				return p2.length == 1 && SemanticUtil.isVoidType(p2[0]);
+			if (p2.length == 0) 
+				return p1.length == 1 && SemanticUtil.isVoidType(p1[0]);
+			return false;
+		} 
+		
+		for (int i = 0; i < p2.length; i++) {
+			if (!p1[i].isSameType(p2[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public boolean mustBeWorse(FunctionCost other) {
 		if (other == null)
 			return false;

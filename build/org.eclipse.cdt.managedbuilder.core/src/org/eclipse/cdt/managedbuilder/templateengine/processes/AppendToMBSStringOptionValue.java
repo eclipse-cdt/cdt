@@ -119,7 +119,7 @@ public class AppendToMBSStringOptionValue extends ProcessRunner {
 		boolean modified = false;
 		String lowerId = id.toLowerCase();
 		for (IOption option : options) {
-			if (option.getId().toLowerCase().matches(lowerId)) {
+			if (option.getBaseId().toLowerCase().matches(lowerId)) {
 				if (option.getValueType() == IOption.STRING) {
 					String oldValue = option.getStringValue();
 					String newValue = oldValue + value;
@@ -135,7 +135,7 @@ public class AppendToMBSStringOptionValue extends ProcessRunner {
 		boolean modified = false;
 		String lowerId = id.toLowerCase();
 		for (IOption option : options) {
-			if (option.getId().toLowerCase().matches(lowerId)) {
+			if (option.getBaseId().toLowerCase().matches(lowerId)) {
 				if (option.getValueType() == IOption.STRING) {
 					String oldValue = option.getStringValue();
 					String newValue = oldValue + value;

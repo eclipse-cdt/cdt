@@ -342,13 +342,12 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		// Pattern combo
 		patternCombo = new Combo(result, SWT.SINGLE | SWT.BORDER);
 		patternCombo.addVerifyListener(new VerifyListener() {
-			public void verifyText(VerifyEvent e) {
+			public void verifyText(VerifyEvent event) {
 				final String text = patternCombo.getText();
-				boolean relax= text.contains(Keywords.OPERATOR + " "); //$NON-NLS-1$
-				char[] chars= e.text.toCharArray();
-				StringBuilder result= new StringBuilder(chars.length);
-				for (int i = 0; i < chars.length; i++) {
-					final char c = chars[i];
+				final char[] newChars= event.text.toCharArray();
+				final StringBuilder result= new StringBuilder(newChars.length);
+				boolean relax= prefix(text, event.start, result).contains(Keywords.OPERATOR + " "); //$NON-NLS-1$
+				for (final char c : newChars) {
 					switch (c) {
 					case  '_': 
 					case ':': // scope operator
@@ -357,7 +356,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 						result.append(c);
 						break;
 					case ' ':
-						if (prefix(text, e, e.start+i).endsWith(Keywords.OPERATOR)) {
+						if (prefix(text, event.start, result).endsWith(Keywords.OPERATOR)) {
 							relax= true;
 							result.append(c);
 						}
@@ -366,7 +365,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 					case '!': case '=': case '>': case '<':
 					case '%': case '^': case '(': case ')':
 					case '[': case ']': 
-						if (prefix(text, e, e.start+i).endsWith(Keywords.OPERATOR)) {
+						if (prefix(text, event.start, result).endsWith(Keywords.OPERATOR)) {
 							result.append(' ');
 							relax= true;
 						}
@@ -380,14 +379,14 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 						}
 						break;
 					}
-					e.text= result.toString();
+					event.text= result.toString();
 				}
 			}
 
-			private String prefix(String text, VerifyEvent e, int length) {
-				StringBuilder result= new StringBuilder(length);
-				result.append(text, 0, e.start);
-				result.append(e.text, 0, length-e.start);
+			private String prefix(String text, int len, StringBuilder rest) {
+				StringBuilder result= new StringBuilder(len + rest.length());
+				result.append(text, 0, len);
+				result.append(rest);
 				return result.toString();
 			}
 		});

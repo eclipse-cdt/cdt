@@ -58,6 +58,7 @@ public final class CUIMessages extends NLS {
 	public static String CHelpConfigurationPropertyPage_buttonLabels_CheckAll;
 	public static String CHelpConfigurationPropertyPage_buttonLabels_UncheckAll;
 	public static String CHelpConfigurationPropertyPage_HelpBooks;
+	public static String CPluginImages_MissingImage;
 	public static String AsyncTreeContentProvider_JobName;
 	public static String AsyncTreeContentProvider_TaskName;
 	public static String TextEditorDropAdapter_error_title;

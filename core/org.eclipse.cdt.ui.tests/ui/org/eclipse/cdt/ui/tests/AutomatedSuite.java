@@ -19,6 +19,7 @@ import org.eclipse.cdt.ui.tests.buildconsole.BuildConsoleTests;
 import org.eclipse.cdt.ui.tests.callhierarchy.CallHierarchyTestSuite;
 import org.eclipse.cdt.ui.tests.chelp.CHelpTest;
 import org.eclipse.cdt.ui.tests.includebrowser.IncludeBrowserTestSuite;
+import org.eclipse.cdt.ui.tests.misc.MiscTestSuite;
 import org.eclipse.cdt.ui.tests.outline.OutlineTestSuite;
 import org.eclipse.cdt.ui.tests.quickfix.AssistQuickFixTest;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestSuite;
@@ -90,8 +91,11 @@ public class AutomatedSuite extends TestSuite {
 		
 		// tests from package org.eclipse.cdt.ui.tests.chelp
 		addTest(CHelpTest.suite());
-		
+
 		// tests from package org.eclipse.cdt.ui.tests.wizards.settingswizards
 		addTest(SettingsWizardTestSuite.suite());
+
+		// tests from package org.eclipse.cdt.ui.tests.misc
+		addTest(MiscTestSuite.suite());
 	}
 }

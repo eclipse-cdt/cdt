@@ -11,31 +11,26 @@
 package org.eclipse.cdt.ui;
 
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 
 
 /**
- * Bundle of all images used by the C plugin.
+ * Images for {@link org.eclipse.cdt.utils.ui.controls.FileListControl}.
  * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
+ * 
+ * @deprecated as of CDT 8.0. Use {@link CDTSharedImages}.
  */
+@Deprecated
 public class CDTUIImages {
-	
-	// The plugin registry
-	private static ImageRegistry imageRegistry = new ImageRegistry();
-
-	// Subdirectory (under the package containing this class) where 16 color images are
-	private static URL iconBaseURL = null;
-	static {
-		iconBaseURL = Platform.getBundle(CUIPlugin.PLUGIN_ID).getEntry("icons/"); //$NON-NLS-1$
-	}	
+	private static final String ICONS= "icons/"; //$NON-NLS-1$
+	/** Converter from CPluginImages key to CDTSharedImages key */
+	private static Map<String, String> fPathMap = new HashMap<String, String>();
 
 	private static final String NAME_PREFIX= CUIPlugin.PLUGIN_ID + '.';
 	private static final int NAME_PREFIX_LENGTH= NAME_PREFIX.length();
@@ -53,35 +48,33 @@ public class CDTUIImages {
 	public static final String IMG_FILELIST_MOVEDOWN = NAME_PREFIX + "list-movedown.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FILELIST_MOVEDOWN = createManaged(T_LIST, IMG_FILELIST_MOVEDOWN);
 	
+	/**
+	 * Creates an image descriptor which is managed by internal registry in CDTSharedImages.
+	 * {@code name} is assumed to start with "org.eclipse.cdt.ui."
+	 */
 	private static ImageDescriptor createManaged(String prefix, String name) {
-		return createManaged(imageRegistry, prefix, name);
-	}
-	
-	private static ImageDescriptor createManaged(ImageRegistry registry, String prefix, String name) {
-		ImageDescriptor result= ImageDescriptor.createFromURL(makeIconFileURL(prefix, name.substring(NAME_PREFIX_LENGTH)));
-		registry.put(name, result);
-		return result;
-	}
-	
-	public static Image get(String key) {
-		return imageRegistry.get(key);
-	}
-	
-	private static URL makeIconFileURL(String prefix, String name) {
-		StringBuffer buffer= new StringBuffer(prefix);
-		buffer.append(name);
 		try {
-			return new URL(iconBaseURL, buffer.toString());
-		} catch (MalformedURLException e) {
+			String convertedKey = ICONS + prefix + name.substring(NAME_PREFIX_LENGTH);
+			fPathMap.put(name, convertedKey);
+			return CDTSharedImages.getImageDescriptor(convertedKey);
+		} catch (Throwable e) {
 			CUIPlugin.log(e);
-			return null;
 		}
+		return ImageDescriptor.getMissingImageDescriptor();
 	}
 	
 	/**
-	 * Helper method to access the image registry from the JavaPlugin class.
+	 * Get an image from internal image registry. The image is managed by the registry and
+	 * must not be disposed by the caller.
+	 * 
+	 * @param key - one of {@code CDTUIImages.IMG_} constants.
+	 * @return the image corresponding the given key.
+	 * 
+	 * @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImage(String)}.
 	 */
-	static ImageRegistry getImageRegistry() {
-		return imageRegistry;
+	@Deprecated
+	public static Image get(String key) {
+		String pathKey = fPathMap.get(key);
+		return CDTSharedImages.getImage(pathKey);
 	}
 }

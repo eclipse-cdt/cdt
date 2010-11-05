@@ -15,11 +15,12 @@ package org.eclipse.cdt.ui;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
+	/** @since 5.3 */
+	public static String CDTSharedImages_MissingImage;
+
 	public static String CElementGrouping_includeGroupingLabel;
 	
-	/**
-	 * @since 5.2
-	 */
+	/** @since 5.2 */
 	public static String CElementGrouping_macroGroupingLabel;
 	
 	public static String CUIPlugin_jobStartMakeUI;

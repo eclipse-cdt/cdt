@@ -741,6 +741,19 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         // If there is a previous lookup job running, cancel it.
         if (fRunningLookupJob != null) {
             fRunningLookupJob.cancel();
+            if (!eventTriggered && frameData.isIdentical(fRunningLookupJob.fFrameData)) {
+                // identical location - we are done
+                return;
+            }
+            // cancel running lookup job
+            fRunningLookupJob.cancel();
+            // make sure doneStepping() is called even if the job never ran - bug 325394
+    		if (fRunningLookupJob.fEventTriggered) {
+    		    // ... but not if this request is event-triggered for the same context (duplicate suspended event)
+    		    if (!eventTriggered || !fRunningLookupJob.getDmc().equals(frameData.fDmc)) {
+    		        doneStepping(fRunningLookupJob.getDmc());
+    		    }
+    		}
         }
         
         fRunningLookupJob = new LookupJob(frameData, page, eventTriggered);

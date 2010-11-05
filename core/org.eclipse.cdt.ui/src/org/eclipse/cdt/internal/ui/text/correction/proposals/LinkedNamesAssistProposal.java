@@ -28,10 +28,10 @@ import org.eclipse.jface.text.contentassist.ICompletionProposalExtension6;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.link.LinkedModeModel;
 import org.eclipse.jface.text.link.LinkedModeUI;
-import org.eclipse.jface.text.link.LinkedPosition;
-import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.text.link.LinkedModeUI.ExitFlags;
 import org.eclipse.jface.text.link.LinkedModeUI.IExitPolicy;
+import org.eclipse.jface.text.link.LinkedPosition;
+import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -46,12 +46,12 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.EditorHighlightingSynchronizer;
@@ -275,7 +275,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	 * @see ICompletionProposal#getImage()
 	 */
 	public Image getImage() {
-		return CPluginImages.get(CPluginImages.IMG_CORRECTION_LINKED_RENAME);
+		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CORRECTION_LINKED_RENAME);
 	}
 
 	/*

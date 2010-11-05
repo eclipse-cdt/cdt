@@ -43,9 +43,9 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IContainerEntry;
 import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.TypedElementSelectionValidator;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
@@ -111,7 +111,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 
 	@Override
 	public Image getImage() {
-		return CPluginImages.get(CPluginImages.IMG_OBJS_ARCHIVE);
+		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_ARCHIVE);
 	}
 
 	public void init(ICProject cproject) {

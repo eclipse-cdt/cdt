@@ -53,8 +53,8 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExclusionPatternPathEntry;
 import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.ui.CDTSharedImages;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
@@ -64,8 +64,8 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  */
 public abstract class CLocationTab extends AbstractCPropertyTab {
 
-	private final Image IMG_EN = CPluginImages.get(CPluginImages.IMG_OBJS_CFOLDER);
-	private final Image IMG_FI = CPluginImages.get(CPluginImages.IMG_OBJS_EXCLUDSION_FILTER_ATTRIB);
+	private final Image IMG_EN = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CFOLDER);
+	private final Image IMG_FI = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_EXCLUSION_FILTER_ATTRIB);
 	
 	Label label;
 	TreeViewer tree;

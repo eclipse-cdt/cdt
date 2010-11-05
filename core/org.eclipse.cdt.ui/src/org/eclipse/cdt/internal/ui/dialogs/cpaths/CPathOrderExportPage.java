@@ -20,7 +20,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CDTSharedImages;
+
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
@@ -63,7 +64,7 @@ public class CPathOrderExportPage extends CPathBasePage {
 
 	@Override
 	public Image getImage() {
-		return CPluginImages.get(CPluginImages.IMG_OBJS_ORDER);
+		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_ORDER);
 	}
 	/*
 	 * @see BuildPathBasePage#getSelection

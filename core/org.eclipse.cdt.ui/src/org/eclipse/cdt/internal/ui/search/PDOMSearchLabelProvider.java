@@ -28,12 +28,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.search.LineSearchElement.Match;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
@@ -70,7 +70,7 @@ public class PDOMSearchLabelProvider extends LabelProvider implements IStyledLab
 			LineSearchElement lineSearchElement = (LineSearchElement) element;
 			ICElement enclosingElement = lineSearchElement.getMatches()[0].getEnclosingElement();
 			if (!fPage.isShowEnclosingDefinitions() || enclosingElement == null)
-				return CPluginImages.get(CPluginImages.IMG_OBJS_SEARCH_LINE);
+				return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_SEARCH_LINE);
 			element = enclosingElement;
 		}
 		
@@ -78,21 +78,21 @@ public class PDOMSearchLabelProvider extends LabelProvider implements IStyledLab
 			return fTypeInfoLabelProvider.getImage(((TypeInfoSearchElement)element).getTypeInfo());
 
 		if (element instanceof ProblemSearchElement) {
-			return CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_WARNING);
+			return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_REFACTORING_WARNING);
 		}
 		
 		if (element instanceof IIndexFileLocation
 				|| element instanceof URI) {
-			return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDE);
+			return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_INCLUDE);
 		}
 		
 		if (element == IPDOMSearchContentProvider.URI_CONTAINER) {
 			// TODO: perhaps a better icon?
-			return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_CONTAINER);
+			return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_INCLUDES_CONTAINER);
 		}
 
 		if (element instanceof IPath) {
-			return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_FOLDER);
+			return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER);
 		}
 		
 		if (element instanceof IStatus) {

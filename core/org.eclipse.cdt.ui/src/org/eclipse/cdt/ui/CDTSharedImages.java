@@ -110,7 +110,7 @@ public class CDTSharedImages {
 	public static final String IMG_OBJS_INCLUDES_FOLDER_SYSTEM = "icons/obj16/fldr_sys_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INCLUDES_FOLDER_WORKSPACE = "icons/obj16/wsp_includefolder.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ORDER = "icons/obj16/cp_order_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_EXCLUDSION_FILTER_ATTRIB = "icons/obj16/exclusion_filter_attrib.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_EXCLUSION_FILTER_ATTRIB = "icons/obj16/exclusion_filter_attrib.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_SOURCE_ATTACH_ATTRIB = "icons/obj16/source_attach_attrib.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_IMPORT_SETTINGS = "icons/obj16/import_settings_wiz.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_EXPORT_SETTINGS = "icons/obj16/export_settings_wiz.gif"; //$NON-NLS-1$

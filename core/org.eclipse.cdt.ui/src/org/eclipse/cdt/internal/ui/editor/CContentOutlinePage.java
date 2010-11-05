@@ -28,6 +28,7 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 import org.eclipse.cdt.ui.actions.GenerateActionGroup;
@@ -168,8 +169,8 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 			super(ActionMessages.NamespacesGroupingAction_label);
 			setDescription(ActionMessages.NamespacesGroupingAction_description);
 			setToolTipText(ActionMessages.NamespacesGroupingAction_tooltip);
-			this.setImageDescriptor(CPluginImages.DESC_OBJS_NAMESPACE);
-			this.setDisabledImageDescriptor(CPluginImages.DESC_OBJS_NAMESPACE);
+			this.setImageDescriptor(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_NAMESPACE));
+			this.setDisabledImageDescriptor(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_NAMESPACE));
 
 			boolean enabled= isNamspacesGroupingEnabled();
 			setChecked(enabled);

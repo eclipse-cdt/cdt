@@ -41,9 +41,9 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.dialogs.TypedElementSelectionValidator;
 import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
 import org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathEntryMessages;
@@ -246,7 +246,7 @@ public class ExPatternDialog extends StatusDialog {
 		@Override
 		public Image getImage(Object element) {
 			ImageDescriptorRegistry registry= CUIPlugin.getImageDescriptorRegistry();
-			return registry.get(CPluginImages.DESC_OBJS_EXCLUSION_FILTER_ATTRIB);
+			return registry.get(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_EXCLUSION_FILTER_ATTRIB));
 		}
 
 		@Override

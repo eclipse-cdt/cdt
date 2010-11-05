@@ -18,10 +18,10 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.cdt.ui.text.IInvocationContext;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.text.IHtmlTagConstants;
 
 /**
@@ -115,7 +115,7 @@ public class WordCorrectionProposal implements ICCompletionProposal {
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getImage()
 	 */
 	public Image getImage() {
-		return CPluginImages.get(CPluginImages.IMG_CORRECTION_RENAME);
+		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CORRECTION_RENAME);
 	}
 
 	/*

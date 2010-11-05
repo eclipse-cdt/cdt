@@ -16,8 +16,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
-
 /**
  */
 public abstract class CElementGrouping extends WorkbenchAdapter implements IAdaptable {
@@ -65,13 +63,13 @@ public abstract class CElementGrouping extends WorkbenchAdapter implements IAdap
 	public ImageDescriptor getImageDescriptor(Object object) {
 		switch (type) {
 			case INCLUDES_GROUPING:
-				return CPluginImages.DESC_OBJS_INCCONT;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCCONT);
 			case NAMESPACE_GROUPING:
-				return CPluginImages.DESC_OBJS_NAMESPACE;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_NAMESPACE);
 			case CLASS_GROUPING:
-				return CPluginImages.DESC_OBJS_CLASS;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_CLASS);
 			case MACROS_GROUPING:
-				return CPluginImages.DESC_OBJS_MACRO;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_MACRO);
 		}
 		return super.getImageDescriptor(object);
 	}

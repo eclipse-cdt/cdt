@@ -51,10 +51,10 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
 import org.eclipse.cdt.internal.ui.wizards.settingswizards.IProjectSettingsWizardPageStrategy.MessageType;
 
@@ -244,7 +244,7 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 		configViewer.setContentProvider(new ListContentProvider());
 		configViewer.setLabelProvider(new LabelProvider() { 
 			@Override public Image getImage(Object element) {
-				return CPluginImages.get(CPluginImages.IMG_OBJS_CONFIG);
+				return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CONFIG);
 			}
 			@Override public String getText(Object element) {
 				ICConfigurationDescription config = (ICConfigurationDescription)element;

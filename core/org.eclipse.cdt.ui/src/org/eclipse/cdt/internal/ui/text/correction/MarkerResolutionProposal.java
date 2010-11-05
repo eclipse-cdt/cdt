@@ -13,20 +13,16 @@ package org.eclipse.cdt.internal.ui.text.correction;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.IContextInformation;
-
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolution2;
 
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 public class MarkerResolutionProposal implements ICCompletionProposal {
 	private IMarkerResolution fResolution;
@@ -91,7 +87,7 @@ public class MarkerResolutionProposal implements ICCompletionProposal {
 		if (fResolution instanceof ICCompletionProposal) {
 			return ((ICCompletionProposal) fResolution).getImage();
 		}
-		return CPluginImages.get(CPluginImages.IMG_CORRECTION_CHANGE);
+		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CORRECTION_CHANGE);
 	}
 
 	/* (non-Javadoc)

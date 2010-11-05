@@ -11,11 +11,12 @@
 
 package org.eclipse.cdt.internal.ui.cview;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IIncludeReference;
-import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementGrouping;
-import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * @author User
@@ -56,7 +57,7 @@ public class IncludeReferenceProxy extends CElementGrouping {
 	 */
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return CPluginImages.DESC_OBJS_INCLUDES_FOLDER;
+		return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER);
 	}
 
 	/* (non-Javadoc)

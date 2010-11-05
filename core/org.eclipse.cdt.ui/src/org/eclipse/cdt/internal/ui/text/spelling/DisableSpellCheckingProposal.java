@@ -19,10 +19,9 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.cdt.ui.text.IInvocationContext;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 
 /**
@@ -76,7 +75,7 @@ public class DisableSpellCheckingProposal implements ICCompletionProposal {
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getImage()
 	 */
 	public Image getImage() {
-		return CPluginImages.get(CPluginImages.IMG_OBJS_NLS_NEVER_TRANSLATE);
+		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_NLS_NEVER_TRANSLATE);
 	}
 
 	/*

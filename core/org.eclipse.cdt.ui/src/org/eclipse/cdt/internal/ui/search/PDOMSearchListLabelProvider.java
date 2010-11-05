@@ -17,8 +17,8 @@ import org.eclipse.jface.viewers.ViewerCell;
 
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.ui.CDTSharedImages;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
 
@@ -45,7 +45,7 @@ public class PDOMSearchListLabelProvider extends ColoringLabelProvider {
 				String location = IndexLocationFactory.getPath(lineElement.getLocation()).toString();
 				int lineNumber = lineElement.getLineNumber();
 				cell.setText(Messages.format(CSearchMessages.CSearchResultCollector_location, location, lineNumber));
-				cell.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_SEARCH_LINE));
+				cell.setImage(CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_SEARCH_LINE));
 			}
 			break;
 		case PDOMSearchViewPage.DEFINITION_COLUMN_INDEX:

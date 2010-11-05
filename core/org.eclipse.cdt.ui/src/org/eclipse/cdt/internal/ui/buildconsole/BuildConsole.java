@@ -13,15 +13,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IBuildConsoleManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.console.AbstractConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.part.IPageBookViewPage;
+
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IBuildConsoleManager;
 
 public class BuildConsole extends AbstractConsole {
 
@@ -47,7 +48,7 @@ public class BuildConsole extends AbstractConsole {
 	private Color fBackground;
 
 	public BuildConsole(IBuildConsoleManager manager, String name, String id) {
-		super(name, CPluginImages.DESC_BUILD_CONSOLE);
+		super(name, CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_VIEW_BUILD_CONSOLE));
 		fConsoleManager = manager;
 		fConsoleName = name;
 		fConsoleId = id;

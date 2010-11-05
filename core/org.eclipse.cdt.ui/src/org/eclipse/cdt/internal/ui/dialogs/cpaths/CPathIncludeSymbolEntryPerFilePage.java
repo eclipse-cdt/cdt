@@ -54,10 +54,10 @@ import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.TypedElementSelectionValidator;
@@ -268,7 +268,7 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
 
     @Override
 	public Image getImage() {
-        return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_CONTAINER);
+        return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_INCLUDES_CONTAINER);
     }
 
     @Override

@@ -23,12 +23,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.texteditor.spelling.SpellingProblem;
 
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.cdt.ui.text.IInvocationContext;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
 
@@ -150,7 +150,7 @@ public class AddWordProposal implements ICCompletionProposal {
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getImage()
 	 */
 	public Image getImage() {
-		return CPluginImages.get(CPluginImages.IMG_CORRECTION_ADD);
+		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CORRECTION_ADD);
 	}
 
 	/*

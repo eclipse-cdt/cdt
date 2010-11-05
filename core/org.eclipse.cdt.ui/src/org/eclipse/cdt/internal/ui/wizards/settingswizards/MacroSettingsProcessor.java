@@ -25,11 +25,9 @@ import org.xml.sax.SAXException;
 import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 /**
  * A settings processor that imports and exports symbols.
@@ -48,7 +46,7 @@ public class MacroSettingsProcessor extends SettingsProcessor {
 	
 	
 	public Image getIcon() {
-		return CUIPlugin.getImageDescriptorRegistry().get(CPluginImages.DESC_OBJS_MACRO);
+		return CUIPlugin.getImageDescriptorRegistry().get(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_MACRO));
 	}
 
 	public String getDisplayName() {

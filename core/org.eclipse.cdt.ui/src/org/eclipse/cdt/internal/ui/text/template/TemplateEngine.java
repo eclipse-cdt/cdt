@@ -41,13 +41,13 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 
 import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContext;
 import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
 
@@ -160,7 +160,7 @@ public class TemplateEngine {
 
 		Template[] templates= CUIPlugin.getDefault().getTemplateStore().getTemplates();
 
-		Image image= CPluginImages.get(CPluginImages.IMG_OBJS_TEMPLATE);
+		Image image= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TEMPLATE);
 		if (selection.y == 0) {
 			for (int i= 0; i != templates.length; i++)
 				if (context.canEvaluate(templates[i]))

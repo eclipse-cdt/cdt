@@ -11,13 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.core.model.IPathEntryContainer;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -32,6 +25,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.IPathEntryContainer;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 
 /**
  * @deprecated as of CDT 4.0. This class was used for property pages
@@ -59,16 +61,16 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 		fCreateLabel = CPathEntryMessages.CPElementLabelProvider_willbecreated; 
 		fRegistry = CUIPlugin.getImageDescriptorRegistry();
 
-		fLibIcon = CPluginImages.DESC_OBJS_ARCHIVE;
-		fLibWSrcIcon = CPluginImages.DESC_OBJS_ARCHIVE_WSRC;
-		fIncludeIcon = CPluginImages.DESC_OBJS_INCLUDES_FOLDER;
-        fQuoteIncludeIcon = CPluginImages.DESC_OBJS_QUOTE_INCLUDES_FOLDER;
-        fIncludeFileIcon = CPluginImages.DESC_OBJS_TUNIT_HEADER;
-		fMacroIcon = CPluginImages.DESC_OBJS_MACRO;
-        fMacrosFileIcon = CPluginImages.DESC_OBJS_TUNIT_HEADER;
-		fFolderImage = CPluginImages.DESC_OBJS_SOURCE_ROOT;
-		fOutputImage = CPluginImages.DESC_OBJS_CONTAINER;
-		fContainerImage = CPluginImages.DESC_OBJS_LIBRARY;
+		fLibIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_ARCHIVE);
+		fLibWSrcIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_ARCHIVE);
+		fIncludeIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER);
+        fQuoteIncludeIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_QUOTE_INCLUDES_FOLDER);
+        fIncludeFileIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
+		fMacroIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_MACRO);
+        fMacrosFileIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
+		fFolderImage = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_SOURCE_ROOT);
+		fOutputImage = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_CONTAINER);
+		fContainerImage = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_LIBRARY);
 
 		IWorkbench workbench = CUIPlugin.getDefault().getWorkbench();
 
@@ -385,23 +387,23 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 		} else if (element instanceof CPElementAttribute) {
 			String key = ((CPElementAttribute)element).getKey();
 			if (key.equals(CPElement.SOURCEATTACHMENT)) {
-				return fRegistry.get(CPluginImages.DESC_OBJS_SOURCE_ATTACH_ATTRIB);
+				return fRegistry.get(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_SOURCE_ATTACH_ATTRIB));
 			} else if (key.equals(CPElement.EXCLUSION)) {
-				return CPluginImages.get(CPluginImages.IMG_OBJS_EXCLUDSION_FILTER_ATTRIB);
+				return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_EXCLUSION_FILTER_ATTRIB);
 			}
 		} else if (element instanceof IPathEntry) {
 			return getImage(CPElement.createFromExisting((IPathEntry)element, null));
 		} else if (element instanceof CPElementGroup) {
 			switch ( ((CPElementGroup)element).getEntryKind()) {
 				case IPathEntry.CDT_INCLUDE :
-					return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_CONTAINER);
+					return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_INCLUDES_CONTAINER);
 				case IPathEntry.CDT_MACRO :
 					return fRegistry.get(fMacroIcon);
                 case IPathEntry.CDT_INCLUDE_FILE :
                 case IPathEntry.CDT_MACRO_FILE :
-                    return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDE);
+                    return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_INCLUDE);
 				case IPathEntry.CDT_LIBRARY :
-					return CPluginImages.get(CPluginImages.IMG_OBJS_LIBRARY);
+					return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_LIBRARY);
 				case -1 :
 					IResource res = ((CPElementGroup)element).getResource();
 					IWorkbenchAdapter adapter = (IWorkbenchAdapter)res.getAdapter(IWorkbenchAdapter.class);

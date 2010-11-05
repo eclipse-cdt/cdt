@@ -62,9 +62,9 @@ import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
@@ -111,7 +111,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 	}
 	private static final String BL = "["; //$NON-NLS-1$
 	private static final String BR = "]"; //$NON-NLS-1$
-	private static final Image IMG = CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_ERROR);
+	private static final Image IMG = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_REFACTORING_ERROR);
 	private static final int NESTING_CFG = 5;
 	private static final int NESTING_MAX = 16;
 	private static final String NULL = "<NULL>"; //$NON-NLS-1$

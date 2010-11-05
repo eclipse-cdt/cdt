@@ -22,9 +22,8 @@ import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 
 /**
@@ -42,7 +41,7 @@ public class IncludePathsSettingsProcessor extends SettingsProcessor {
 	
 	
 	public Image getIcon() {
-		return CUIPlugin.getImageDescriptorRegistry().get(CPluginImages.DESC_OBJS_INCLUDES_FOLDER);
+		return CUIPlugin.getImageDescriptorRegistry().get(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER));
 	}
 
 	public String getDisplayName() {

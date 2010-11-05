@@ -91,11 +91,11 @@ import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.MultiItemsHolder;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
@@ -152,7 +152,7 @@ implements
 	
 	private Map<URL, Image> loadedIcons = new HashMap<URL, Image>();
 
-	private final Image IMG_WARN = CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_WARNING);
+	private final Image IMG_WARN = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_REFACTORING_WARNING);
 	/*
 	 * Dialog widgets
 	 */

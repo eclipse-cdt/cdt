@@ -24,11 +24,11 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine;
 import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
@@ -77,7 +77,7 @@ public final class WordCompletionProposalComputer implements ICompletionProposal
 								word.setRank(word.getRank() + PREFIX_RANK_SHIFT);
 							
 							result.add(new CCompletionProposal(text, start, candidate.length(),
-									CPluginImages.get(CPluginImages.IMG_CORRECTION_RENAME), text, word.getRank()) {
+									CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CORRECTION_RENAME), text, word.getRank()) {
 								/*
 								 * @see org.eclipse.cdt.internal.ui.text.java.JavaCompletionProposal#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
 								 */

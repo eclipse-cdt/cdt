@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.SortedMap;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyManager;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
@@ -23,6 +22,7 @@ import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 import org.eclipse.jface.wizard.IWizard;
@@ -33,7 +33,7 @@ import org.eclipse.swt.graphics.Image;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ManagedBuildWizard extends AbstractCWizard {
-	private static final Image IMG = CPluginImages.get(CPluginImages.IMG_OBJS_CONTAINER);
+	private static final Image IMG = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CONTAINER);
 	public static final String OTHERS_LABEL = Messages.CNewWizard_0;  
 	
 	/**

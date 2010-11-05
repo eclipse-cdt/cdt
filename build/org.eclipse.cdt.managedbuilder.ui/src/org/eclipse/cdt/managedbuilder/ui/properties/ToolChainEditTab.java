@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.managedbuilder.core.BuildListComparator;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
@@ -38,6 +37,7 @@ import org.eclipse.cdt.managedbuilder.tcmodification.IModificationOperation;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolChainModificationManager;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolListModification;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolModification;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
@@ -70,9 +70,9 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	private static final Color          red = Display.getDefault().getSystemColor(SWT.COLOR_RED);
 	private static final String SPACE = " "; //$NON-NLS-1$
 
-	static private final Image IMG_WARNING = CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_WARNING);
-	static private final Image IMG_ERROR   = CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_ERROR);
-	static private final Image IMG_INFO    = CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_INFO);
+	static private final Image IMG_WARNING = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_REFACTORING_WARNING);
+	static private final Image IMG_ERROR   = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_REFACTORING_ERROR);
+	static private final Image IMG_INFO    = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_REFACTORING_INFO);
 
 	private Text text;
 	private Button b_dispCompatible;

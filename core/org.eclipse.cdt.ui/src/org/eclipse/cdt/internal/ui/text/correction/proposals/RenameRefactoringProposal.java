@@ -11,22 +11,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.correction.proposals;
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-
-import org.eclipse.jface.viewers.StyledCellLabelProvider;
-import org.eclipse.jface.viewers.StyledString;
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension6;
 import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.refactoring.actions.CRenameAction;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 
 import org.eclipse.cdt.internal.corext.util.Messages;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.text.correction.CorrectionCommandHandler;
@@ -101,7 +99,7 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 	 * @see ICompletionProposal#getImage()
 	 */
 	public Image getImage() {
-		return CPluginImages.get(CPluginImages.IMG_CORRECTION_LINKED_RENAME);
+		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CORRECTION_LINKED_RENAME);
 	}
 
 	/*

@@ -77,7 +77,8 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
 
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
-import org.eclipse.cdt.ui.CDTUIImages;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTStatusInfo;
 import org.eclipse.cdt.ui.newui.TypedCDTViewerFilter;
@@ -489,16 +490,11 @@ public class FileListControl {
 	private String[] oldValue;
 
 	//images
-	private final Image IMG_ADD = CDTUIImages
-			.get(CDTUIImages.IMG_FILELIST_ADD);
-	private final Image IMG_DEL = CDTUIImages
-			.get(CDTUIImages.IMG_FILELIST_DEL);
-	private final Image IMG_EDIT = CDTUIImages
-			.get(CDTUIImages.IMG_FILELIST_EDIT);
-	private final Image IMG_MOVEUP = CDTUIImages
-			.get(CDTUIImages.IMG_FILELIST_MOVEUP);
-	private final Image IMG_MOVEDOWN = CDTUIImages
-			.get(CDTUIImages.IMG_FILELIST_MOVEDOWN);
+	private final Image IMG_ADD = CDTSharedImages.getImage(CDTSharedImages.IMG_FILELIST_ADD);
+	private final Image IMG_DEL = CDTSharedImages.getImage(CDTSharedImages.IMG_FILELIST_DEL);
+	private final Image IMG_EDIT = CDTSharedImages.getImage(CDTSharedImages.IMG_FILELIST_EDIT);
+	private final Image IMG_MOVEUP = CDTSharedImages.getImage(CDTSharedImages.IMG_FILELIST_MOVEUP);
+	private final Image IMG_MOVEDOWN = CDTSharedImages.getImage(CDTSharedImages.IMG_FILELIST_MOVEDOWN);
 
 	/**
 	 * Constructor

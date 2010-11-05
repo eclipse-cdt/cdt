@@ -12,17 +12,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -39,22 +30,26 @@ import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
-
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.texteditor.templates.AbstractTemplatesPage;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.corext.template.c.CContextType;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.corext.template.c.CContext;
+import org.eclipse.cdt.internal.corext.template.c.CContextType;
 
 import org.eclipse.cdt.internal.ui.preferences.CSourcePreviewerUpdater;
 import org.eclipse.cdt.internal.ui.preferences.EditTemplateDialog;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;
@@ -217,7 +212,7 @@ public class CTemplatesPage extends AbstractTemplatesPage {
 	 */
 	@Override
 	protected Image getImage(Template template) {
-		return CPluginImages.get(CPluginImages.IMG_OBJS_TEMPLATE);
+		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TEMPLATE);
 	}
 
 	/*

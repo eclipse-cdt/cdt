@@ -21,9 +21,8 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILibraryReference;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementGrouping;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 /**
  * VirtualGrouping
@@ -82,7 +81,7 @@ public class LibraryRefContainer extends CElementGrouping {
 	 */
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return CPluginImages.DESC_OBJS_LIBRARY;
+		return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_LIBRARY);
 	}
 
 	/* (non-Javadoc)

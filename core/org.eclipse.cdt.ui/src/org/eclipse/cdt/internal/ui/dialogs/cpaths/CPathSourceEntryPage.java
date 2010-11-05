@@ -44,9 +44,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
@@ -106,7 +106,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 
 	@Override
 	public Image getImage() {
-		return CPluginImages.get(CPluginImages.IMG_OBJS_SOURCE_ROOT);
+		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_SOURCE_ROOT);
 	}
 
 	public void init(ICProject cproject) {

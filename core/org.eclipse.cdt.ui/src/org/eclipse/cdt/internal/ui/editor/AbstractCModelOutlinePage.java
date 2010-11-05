@@ -60,7 +60,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IncludesGrouping;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -80,6 +80,7 @@ import org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 
@@ -223,8 +224,8 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 			setDescription(ActionMessages.MacroGroupingAction_description);
 			setToolTipText(ActionMessages.MacroGroupingAction_tooltip);
 			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_MACROS);
-			this.setImageDescriptor(CPluginImages.DESC_OBJS_MACRO);
-			this.setDisabledImageDescriptor(CPluginImages.DESC_OBJS_MACRO);
+			this.setImageDescriptor(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_MACRO));
+			this.setDisabledImageDescriptor(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_MACRO));
 			
 
 			boolean enabled= isMacroGroupingEnabled();

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.scannerconfig;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathEntryMessages;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -49,13 +49,13 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 
 	public DiscoveredElementLabelProvider() {
 		fRegistry = CUIPlugin.getImageDescriptorRegistry();
-		fContainerImage = CPluginImages.DESC_OBJS_LIBRARY;
-		fIncludeGroupIcon = CPluginImages.DESC_OBJS_INCLUDES_CONTAINER;
-		fMacroGroupIcon = CPluginImages.DESC_OBJS_MACRO;
-		fIncludeAndMacrosFileGroupIcon = CPluginImages.DESC_OBJS_INCLUDE;
-		fIncludeIcon = CPluginImages.DESC_OBJS_INCLUDES_FOLDER;
-//        fQuoteIncludeIcon = CPluginImages.DESC_OBJS_QUOTE_INCLUDES_FOLDER;
-        fIncludeAndMacrosFileIcon = CPluginImages.DESC_OBJS_TUNIT_HEADER;
+		fContainerImage = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_LIBRARY);
+		fIncludeGroupIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDES_CONTAINER);
+		fMacroGroupIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_MACRO);
+		fIncludeAndMacrosFileGroupIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDE);
+		fIncludeIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER);
+//        fQuoteIncludeIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_QUOTE_INCLUDES_FOLDER);
+        fIncludeAndMacrosFileIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
 		fMacroIcon = fMacroGroupIcon;
 	}
 	
@@ -195,7 +195,7 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 		protected void drawOverlays() {
 			ImageData data = null;
 			if (showRemoved) {
-				data = CPluginImages.DESC_OVR_ERROR.getImageData();
+				data = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OVR_ERROR).getImageData();
 				drawImage(data, 0, 0);
 			}
 		}

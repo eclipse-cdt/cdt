@@ -68,8 +68,8 @@ import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.MultiLanguageSetting;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.ui.CDTSharedImages;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
 public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
@@ -117,12 +117,12 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 
 	private static final Comparator<Object> comp = CDTListComparator.getInstance();
 
-	private final static Image IMG_FOLDER = CPluginImages.get(CPluginImages.IMG_OBJS_FOLDER); 
-	private final static Image IMG_INCLUDES_FOLDER = CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_FOLDER); 
-	private final static Image IMG_BUILTIN_FOLDER = CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_FOLDER_SYSTEM); 
-	private final static Image IMG_WORKSPACE = CPluginImages.get(CPluginImages.IMG_WORKSPACE); 
-	private final static Image IMG_INCLUDES_FOLDER_WORKSPACE = CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_FOLDER_WORKSPACE); 
-	private final static Image IMG_MACRO = CPluginImages.get(CPluginImages.IMG_OBJS_MACRO);
+	private final static Image IMG_FOLDER = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_FOLDER); 
+	private final static Image IMG_INCLUDES_FOLDER = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER); 
+	private final static Image IMG_BUILTIN_FOLDER = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER_SYSTEM); 
+	private final static Image IMG_WORKSPACE = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_WORKSPACE); 
+	private final static Image IMG_INCLUDES_FOLDER_WORKSPACE = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER_WORKSPACE); 
+	private final static Image IMG_MACRO = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_MACRO);
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 10, 30 };
 	
 	@Override

@@ -29,8 +29,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.ui.CDTSharedImages;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
@@ -209,8 +209,8 @@ public class IncludeDialog extends AbstractPropertyDialog {
 	}
 	
 	static private Image getWspImage(boolean isWsp) {
-		final Image IMG_WORKSPACE = CPluginImages.get(CPluginImages.IMG_WORKSPACE); 
-		final Image IMG_FILESYSTEM = CPluginImages.get(CPluginImages.IMG_OBJS_FOLDER); 
+		final Image IMG_WORKSPACE = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_WORKSPACE); 
+		final Image IMG_FILESYSTEM = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_FOLDER); 
 		return isWsp ? IMG_WORKSPACE : IMG_FILESYSTEM;
 	}
 

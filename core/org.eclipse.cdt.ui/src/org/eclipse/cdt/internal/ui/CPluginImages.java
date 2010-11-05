@@ -270,12 +270,11 @@ public class CPluginImages {
 	@Deprecated public static final ImageDescriptor DESC_OBJS_IMPORT_SETTINGS = createManaged(T_OBJ, IMG_OBJS_IMPORT_SETTINGS);
 	/** @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImageDescriptor(String)}. */
 	@Deprecated public static final ImageDescriptor DESC_OBJS_EXPORT_SETTINGS = createManaged(T_OBJ, IMG_OBJS_EXPORT_SETTINGS);
-	/** @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImageDescriptor(String)}. */
-	@Deprecated public static final ImageDescriptor DESC_OVR_PATH_INHERIT= createUnManaged(T_OVR, "path_inherit_co.gif"); //$NON-NLS-1$
 
+	public static final ImageDescriptor DESC_OVR_PATH_INHERIT = createUnManaged(T_OVR, "path_inherit_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_OVERRIDES = createUnManaged(T_OBJ, "over_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_IMPLEMENTS = createUnManaged(T_OBJ, "implm_co.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OBJS_SHADOWS= createUnManaged(T_OBJ, "shad_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_SHADOWS = createUnManaged(T_OBJ, "shad_co.gif"); //$NON-NLS-1$
 
 	/** @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImageDescriptor(String)}. */
 	@Deprecated public static final ImageDescriptor DESC_OBJS_FIXABLE_PROBLEM= createManaged(T_OBJ, IMG_OBJS_FIXABLE_PROBLEM);

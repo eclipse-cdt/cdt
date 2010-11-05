@@ -23,9 +23,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 /**
  * This class is basic implementation for ICWizardHandler interface.
@@ -47,8 +46,8 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
  *
  */
 public class CWizardHandler implements Cloneable {
-	protected static final Image IMG0 = CPluginImages.get(CPluginImages.IMG_EMPTY);
-	protected static final Image IMG1 = CPluginImages.get(CPluginImages.IMG_PREFERRED);
+	protected static final Image IMG0 = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_EMPTY);
+	protected static final Image IMG1 = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_PREFERRED);
 	
 	protected String head;
 	protected String name;

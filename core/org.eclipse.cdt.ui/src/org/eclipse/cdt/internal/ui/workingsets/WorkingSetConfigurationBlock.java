@@ -43,7 +43,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CDTSharedImages;
+
 import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
 
 /**
@@ -388,7 +389,7 @@ public class WorkingSetConfigurationBlock {
 	 */
 	private class WSConfigsLabelProvider extends LabelProvider implements IFontProvider {
 		private WorkbenchLabelProvider wbLabels = new WorkbenchLabelProvider();
-		private Image configImage = CPluginImages.get(CPluginImages.IMG_OBJS_CONFIG);
+		private Image configImage = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CONFIG);
 		private Font defaultFont;
 		private ResourceManager fonts = new LocalResourceManager(JFaceResources.getResources());
 

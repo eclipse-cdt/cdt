@@ -44,12 +44,12 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.viewsupport.ISelectionListenerWithAST;
@@ -87,7 +87,7 @@ public class QuickAssistLightBulbUpdater {
 
 		private Image getImage() {
 			if (fImage == null) {
-				fImage= CPluginImages.get(CPluginImages.IMG_OBJS_QUICK_ASSIST);
+				fImage= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_QUICK_ASSIST);
 			}
 			return fImage;
 		}

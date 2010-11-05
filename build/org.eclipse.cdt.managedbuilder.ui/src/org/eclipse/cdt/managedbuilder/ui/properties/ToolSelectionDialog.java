@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.managedbuilder.core.BuildListComparator;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IModificationStatus;
@@ -28,6 +27,7 @@ import org.eclipse.cdt.managedbuilder.tcmodification.CompatibilityStatus;
 import org.eclipse.cdt.managedbuilder.tcmodification.IModificationOperation;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolListModification;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolModification;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
@@ -54,7 +54,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class ToolSelectionDialog extends Dialog {
 
-	static private final Image IMG_ARROW   = CPluginImages.get(CPluginImages.IMG_PREFERRED);
+	static private final Image IMG_ARROW   = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_PREFERRED);
 	static private final String EMPTY_STR = "";   //$NON-NLS-1$
 	static private final int COL_WIDTH = 300;
 	static private Font boldFont  = JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);

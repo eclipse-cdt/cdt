@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
+
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 
 public final class MethodStubsLabelProvider implements ITableLabelProvider {
@@ -33,7 +35,7 @@ public final class MethodStubsLabelProvider implements ITableLabelProvider {
 		if (descriptor != null) {
 			return CUIPlugin.getImageDescriptorRegistry().get(descriptor);
 		}
-		return CPluginImages.get(CPluginImages.IMG_OBJS_PUBLIC_METHOD);
+		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_PUBLIC_METHOD);
 	}
 
 	/*

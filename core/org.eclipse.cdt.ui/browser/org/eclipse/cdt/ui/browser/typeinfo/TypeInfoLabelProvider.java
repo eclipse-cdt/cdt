@@ -29,10 +29,9 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
+import org.eclipse.cdt.ui.CDTSharedImages;
 
 import org.eclipse.cdt.internal.core.model.FunctionDeclaration;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -46,20 +45,20 @@ public class TypeInfoLabelProvider extends LabelProvider {
 	public static final int SHOW_PARAMETERS= 0x10;
 	public static final int SHOW_RETURN_TYPE= 0x20;
 
-	private static final Image HEADER_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT_HEADER);
-	private static final Image SOURCE_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT);
-	private static final Image NAMESPACE_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_NAMESPACE);
-	private static final Image TEMPLATE_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_TEMPLATE);
-	private static final Image CLASS_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_CLASS);
-	private static final Image STRUCT_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_STRUCT);
-	private static final Image TYPEDEF_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_TYPEDEF);
-	private static final Image UNION_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_UNION);
-	private static final Image ENUM_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_ENUMERATION);
-	private static final Image FUNCTION_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_FUNCTION);
-	private static final Image VARIABLE_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_VARIABLE);
-	private static final Image VARIABLE_LOCAL_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_LOCAL_VARIABLE);
-	private static final Image MACRO_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_MACRO);
-	private static final Image UNKNOWN_TYPE_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_UNKNOWN_TYPE);
+	private static final Image HEADER_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
+	private static final Image SOURCE_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TUNIT);
+	private static final Image NAMESPACE_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_NAMESPACE);
+	private static final Image TEMPLATE_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TEMPLATE);
+	private static final Image CLASS_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CLASS);
+	private static final Image STRUCT_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_STRUCT);
+	private static final Image TYPEDEF_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TYPEDEF);
+	private static final Image UNION_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_UNION);
+	private static final Image ENUM_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_ENUMERATION);
+	private static final Image FUNCTION_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_FUNCTION);
+	private static final Image VARIABLE_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_VARIABLE);
+	private static final Image VARIABLE_LOCAL_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_LOCAL_VARIABLE);
+	private static final Image MACRO_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_MACRO);
+	private static final Image UNKNOWN_TYPE_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_UNKNOWN_TYPE);
 
 	private int fFlags;
 	

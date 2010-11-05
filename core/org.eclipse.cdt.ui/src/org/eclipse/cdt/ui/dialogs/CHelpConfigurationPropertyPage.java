@@ -30,11 +30,11 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
@@ -59,7 +59,7 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 		
 		public CHelpBookListLabelProvider() {
 			fRegistry= CUIPlugin.getImageDescriptorRegistry();
-			fHelpProviderIcon= CPluginImages.DESC_OBJS_LIBRARY;
+			fHelpProviderIcon= CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_LIBRARY);
 		}
 		
 		@Override

@@ -47,12 +47,11 @@ import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.CModelManager;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 
 /**
@@ -129,7 +128,7 @@ public class CElementImageProvider {
 			if (!CCorePlugin.showSourceRootsAtTopOfProject() &&
 				element instanceof ICContainer && isParentOfSourceRoot(element)) {
 				
-				descriptor = CPluginImages.DESC_OBJS_SOURCE2_ROOT;
+				descriptor = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_SOURCE2_ROOT);
 			} else {
 				descriptor= getCImageDescriptor((ICElement) element, flags);
 			}
@@ -141,18 +140,18 @@ public class CElementImageProvider {
 					CoreModel.isValidTranslationUnitName(null, name)) {
 				if (CoreModel.isValidCHeaderUnitName(null, name) ||
 					CoreModel.isValidCXXHeaderUnitName(null, name))
-					descriptor = CPluginImages.DESC_OBJS_TUNIT_RESOURCE_H;
+					descriptor = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_RESOURCE_H);
 				else if (CoreModel.isValidASMSourceUnitName(null, name))
-					descriptor = CPluginImages.DESC_OBJS_TUNIT_RESOURCE_A;
+					descriptor = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_RESOURCE_A);
 				else
-					descriptor = CPluginImages.DESC_OBJS_TUNIT_RESOURCE;
+					descriptor = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_RESOURCE);
 				
 				Point size= useSmallSize(flags) ? SMALL_SIZE : BIG_SIZE;
 				descriptor = new CElementImageDescriptor(descriptor, 0, size);
 			}
 		} else if (!CCorePlugin.showSourceRootsAtTopOfProject() &&
 				element instanceof IFolder && isParentOfSourceRoot(element)) {
-			descriptor = CPluginImages.DESC_OBJS_SOURCE2_ROOT;
+			descriptor = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_SOURCE2_ROOT);
 		}
 		if (descriptor == null && element instanceof IAdaptable) {
 			descriptor= getWorkbenchImageDescriptor((IAdaptable) element, flags);
@@ -194,61 +193,61 @@ public class CElementImageProvider {
 	public static ImageDescriptor getImageDescriptor(int type) {
 		switch (type) {
 			case ICElement.C_VCONTAINER:
-				return CPluginImages.DESC_OBJS_CONTAINER;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_CONTAINER);
 
 			case ICElement.C_BINARY:
-				return CPluginImages.DESC_OBJS_BINARY;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_BINARY);
 	
 			case ICElement.C_ARCHIVE:
-				return CPluginImages.DESC_OBJS_ARCHIVE;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_ARCHIVE);
 
 			case ICElement.C_UNIT:
-				return CPluginImages.DESC_OBJS_TUNIT;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT);
 				
 			case ICElement.C_CCONTAINER:
 				//return DESC_OBJ_FOLDER;
-				return CPluginImages.DESC_OBJS_CFOLDER;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_CFOLDER);
 			
 			case ICElement.C_PROJECT:
 				return DESC_OBJ_PROJECT;
 					
 			case ICElement.C_STRUCT:
 			case ICElement.C_TEMPLATE_STRUCT:
-				return CPluginImages.DESC_OBJS_STRUCT;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_STRUCT);
 				
 			case ICElement.C_CLASS:
 			case ICElement.C_TEMPLATE_CLASS:
-				return CPluginImages.DESC_OBJS_CLASS;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_CLASS);
 
 			case ICElement.C_UNION:
 			case ICElement.C_TEMPLATE_UNION:
-				return CPluginImages.DESC_OBJS_UNION;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_UNION);
 
 			case ICElement.C_TYPEDEF:
-				return CPluginImages.DESC_OBJS_TYPEDEF;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TYPEDEF);
 
 			case ICElement.C_ENUMERATION:
-				return CPluginImages.DESC_OBJS_ENUMERATION;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_ENUMERATION);
 
 			case ICElement.C_ENUMERATOR:
-				return CPluginImages.DESC_OBJS_ENUMERATOR;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_ENUMERATOR);
 
 			case ICElement.C_FIELD:
-				return CPluginImages.DESC_OBJS_PUBLIC_FIELD;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_PUBLIC_FIELD);
 			
 			case ICElement.C_VARIABLE:
 			case ICElement.C_TEMPLATE_VARIABLE:
-				return CPluginImages.DESC_OBJS_VARIABLE;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_VARIABLE);
 
 			case ICElement.C_METHOD:  
 			case ICElement.C_METHOD_DECLARATION:
 			case ICElement.C_TEMPLATE_METHOD:
 			case ICElement.C_TEMPLATE_METHOD_DECLARATION:
-				return CPluginImages.DESC_OBJS_PUBLIC_METHOD;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_PUBLIC_METHOD);
 				
 			case ICElement.C_FUNCTION:
 			case ICElement.C_TEMPLATE_FUNCTION:
-				return CPluginImages.DESC_OBJS_FUNCTION;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_FUNCTION);
 
 			case ICElement.C_STRUCT_DECLARATION:
 			case ICElement.C_CLASS_DECLARATION:
@@ -257,26 +256,26 @@ public class CElementImageProvider {
 			case ICElement.C_TEMPLATE_CLASS_DECLARATION:
 			case ICElement.C_TEMPLATE_STRUCT_DECLARATION:
 			case ICElement.C_TEMPLATE_UNION_DECLARATION:
-				return CPluginImages.DESC_OBJS_VAR_DECLARARION;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_VAR_DECLARATION);
 			
 			case ICElement.C_FUNCTION_DECLARATION:
 			case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
-				return CPluginImages.DESC_OBJS_DECLARARION;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_DECLARATION);
 
 			case ICElement.C_INCLUDE:
-				return CPluginImages.DESC_OBJS_INCLUDE;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDE);
 
 			case ICElement.C_MACRO:
-				return CPluginImages.DESC_OBJS_MACRO;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_MACRO);
 				
 			case ICElement.C_NAMESPACE:
-				return CPluginImages.DESC_OBJS_NAMESPACE;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_NAMESPACE);
 
 			case ICElement.C_USING:
-				return CPluginImages.DESC_OBJS_USING;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_USING);
 
 			case ICElement.ASM_LABEL:
-				return CPluginImages.DESC_OBJS_LABEL;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_LABEL);
 }
 		return null;
 	}
@@ -338,53 +337,53 @@ public class CElementImageProvider {
 		switch (type) {
 			case ICElement.C_VCONTAINER:
 				if (celement instanceof IBinaryModule) {
-					return CPluginImages.DESC_OBJS_BINARY;
+					return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_BINARY);
 				} else if (celement instanceof ILibraryReference) {
-					return CPluginImages.DESC_OBJS_UNKNOWN;
+					return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_UNKNOWN);
 				} else if (celement instanceof IIncludeReference) {
-					return CPluginImages.DESC_OBJS_INCLUDES_FOLDER;
+					return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER);
 				} else if (celement instanceof IArchiveContainer) {
-					return CPluginImages.DESC_OBJS_ARCHIVES_CONTAINER;
+					return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_ARCHIVES_CONTAINER);
 				} else if (celement instanceof IBinaryContainer) {
-					return CPluginImages.DESC_OBJS_BINARIES_CONTAINER;
+					return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_BINARIES_CONTAINER);
 				}
-				return CPluginImages.DESC_OBJS_CONTAINER;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_CONTAINER);
 
 			case ICElement.C_BINARY: {
 				IBinary bin = (IBinary)celement;
 				if (bin.isExecutable()) {
 					if (bin.hasDebug())
-						return CPluginImages.DESC_OBJS_CEXEC_DEBUG;
-					return CPluginImages.DESC_OBJS_CEXEC;
+						return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_CEXEC_DEBUG);
+					return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_CEXEC);
 				} else if (bin.isSharedLib()) {
-					return CPluginImages.DESC_OBJS_SHLIB;
+					return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_SHLIB);
 				} else if (bin.isCore()) {
-					return CPluginImages.DESC_OBJS_CORE;
+					return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_CORE);
 				}
-				return CPluginImages.DESC_OBJS_BINARY;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_BINARY);
 			}
 	
 			case ICElement.C_ARCHIVE:
-				return CPluginImages.DESC_OBJS_ARCHIVE;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_ARCHIVE);
 
 			case ICElement.C_UNIT: {
 				ITranslationUnit unit = (ITranslationUnit)celement;
 				if (unit.isHeaderUnit()) {
-					return CPluginImages.DESC_OBJS_TUNIT_HEADER;
+					return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
 				} else if (unit.isSourceUnit()) {
 					if (unit.isASMLanguage()) {
-						return CPluginImages.DESC_OBJS_TUNIT_ASM;
+						return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_ASM);
 					}
 				}
-				return CPluginImages.DESC_OBJS_TUNIT;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT);
 			}
 				
 			case ICElement.C_CCONTAINER:
 				if (celement instanceof ISourceRoot) {
-					return CPluginImages.DESC_OBJS_SOURCE_ROOT;
+					return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_SOURCE_ROOT);
 				}
 				//return DESC_OBJ_FOLDER;
-				return CPluginImages.DESC_OBJS_CFOLDER;
+				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_CFOLDER);
 			
 			case ICElement.C_PROJECT:
 				ICProject cp= (ICProject)celement;
@@ -549,7 +548,7 @@ public class CElementImageProvider {
 	}
 
 	public static ImageDescriptor getStructImageDescriptor(boolean alt){
-		return alt ? CPluginImages.DESC_OBJS_STRUCT_ALT : CPluginImages.DESC_OBJS_STRUCT;	
+		return alt ? CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_STRUCT_ALT) : CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_STRUCT);	
 	}
 	
 	public static ImageDescriptor getClassImageDescriptor(){
@@ -557,7 +556,7 @@ public class CElementImageProvider {
 	}
 
 	public static ImageDescriptor getClassImageDescriptor(boolean alt){
-		return alt ? CPluginImages.DESC_OBJS_CLASS_ALT : CPluginImages.DESC_OBJS_CLASS;	
+		return alt ? CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_CLASS_ALT) : CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_CLASS);	
 	}
 
 	public static ImageDescriptor getUnionImageDescriptor(){
@@ -565,7 +564,7 @@ public class CElementImageProvider {
 	}
 
 	public static ImageDescriptor getUnionImageDescriptor(boolean alt){
-		return alt ? CPluginImages.DESC_OBJS_UNION_ALT : CPluginImages.DESC_OBJS_UNION;	
+		return alt ? CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_UNION_ALT) : CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_UNION);	
 	}
 
 	public static ImageDescriptor getTypedefImageDescriptor(){
@@ -573,7 +572,7 @@ public class CElementImageProvider {
 	}
 
 	public static ImageDescriptor getTypedefImageDescriptor(boolean alt){
-		return alt ? CPluginImages.DESC_OBJS_TYPEDEF_ALT : CPluginImages.DESC_OBJS_TYPEDEF;	
+		return alt ? CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TYPEDEF_ALT) : CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TYPEDEF);	
 	}
 	
 	public static ImageDescriptor getEnumerationImageDescriptor(){
@@ -581,29 +580,29 @@ public class CElementImageProvider {
 	}
 
 	public static ImageDescriptor getEnumerationImageDescriptor(boolean alt){
-		return alt ? CPluginImages.DESC_OBJS_ENUMERATION_ALT : CPluginImages.DESC_OBJS_ENUMERATION;	
+		return alt ? CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_ENUMERATION_ALT) : CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_ENUMERATION);	
 	}
 	
 	public static ImageDescriptor getEnumeratorImageDescriptor(){
-		return CPluginImages.DESC_OBJS_ENUMERATOR;	
+		return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_ENUMERATOR);	
 	}
 
 	public static ImageDescriptor getFieldImageDescriptor(ASTAccessVisibility visibility) {
 		if (visibility == ASTAccessVisibility.PUBLIC)
-			return CPluginImages.DESC_OBJS_PUBLIC_FIELD;
+			return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_PUBLIC_FIELD);
 		if( visibility == ASTAccessVisibility.PROTECTED)
-			return CPluginImages.DESC_OBJS_PROTECTED_FIELD;
+			return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_PROTECTED_FIELD);
 		
-		return CPluginImages.DESC_OBJS_PRIVATE_FIELD;			
+		return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_PRIVATE_FIELD);			
 	}
 
 	public static ImageDescriptor getMethodImageDescriptor(ASTAccessVisibility visibility) {
 		if( visibility == ASTAccessVisibility.PUBLIC)
-			return CPluginImages.DESC_OBJS_PUBLIC_METHOD;
+			return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_PUBLIC_METHOD);
 		if( visibility == ASTAccessVisibility.PROTECTED)
-			return CPluginImages.DESC_OBJS_PROTECTED_METHOD;
+			return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_PROTECTED_METHOD);
 		
-		return CPluginImages.DESC_OBJS_PRIVATE_METHOD;				
+		return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_PRIVATE_METHOD);				
 	}
 
 	public static ImageDescriptor getVariableImageDescriptor(){
@@ -611,7 +610,7 @@ public class CElementImageProvider {
 	}
 
 	public static ImageDescriptor getLocalVariableImageDescriptor(){
-		return CPluginImages.DESC_OBJS_LOCAL_VARIABLE;	
+		return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_LOCAL_VARIABLE);	
 	}
 	
 	public static ImageDescriptor getFunctionImageDescriptor(){
@@ -643,7 +642,7 @@ public class CElementImageProvider {
 	}
 
 	public static ImageDescriptor getKeywordImageDescriptor(){
-		return CPluginImages.DESC_OBJS_KEYWORD;
+		return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_KEYWORD);
 	}
 
 }

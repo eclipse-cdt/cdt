@@ -40,13 +40,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 /**
@@ -70,14 +70,14 @@ public class IndexLabelProvider extends LabelProvider {
 		}
 		ImageDescriptor desc= null;
 		if (element instanceof ICProject)
-			desc = CPluginImages.DESC_OBJS_SEARCHHIERPROJECT;
+			desc = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_SEARCHPROJECT);
 		else if (element instanceof ICContainer)
-			desc = CPluginImages.DESC_OBJS_SEARCHHIERFODLER;
+			desc = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_SEARCHFOLDER);
 		else if (element instanceof ITranslationUnit) {
 			ITranslationUnit tu = (ITranslationUnit)element;
 			desc = tu.isHeaderUnit()
-				? CPluginImages.DESC_OBJS_TUNIT_HEADER
-				: CPluginImages.DESC_OBJS_TUNIT;
+				? CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_HEADER)
+				: CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT);
 		}
 		
 		if (desc != null)

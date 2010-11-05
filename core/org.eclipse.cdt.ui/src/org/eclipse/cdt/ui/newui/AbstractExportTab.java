@@ -49,9 +49,9 @@ import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
 public abstract class AbstractExportTab extends AbstractCPropertyTab {
@@ -65,9 +65,9 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 //	boolean  savedShowBI  = false;
 //	List incs;
 	
-	public static final Image IMG_FS = CPluginImages.get(CPluginImages.IMG_FILESYSTEM); 
-	public static final Image IMG_WS = CPluginImages.get(CPluginImages.IMG_WORKSPACE); 
-	public static final Image IMG_MK = CPluginImages.get(CPluginImages.IMG_OBJS_MACRO);
+	public static final Image IMG_FS = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_FILESYSTEM); 
+	public static final Image IMG_WS = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_WORKSPACE); 
+	public static final Image IMG_MK = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_MACRO);
 	private static final String ALL = Messages.AbstractExportTab_0; 
 	private static final String LIST = Messages.AbstractExportTab_1; 
 	private static Map<String, String> names_l = new HashMap<String, String>();

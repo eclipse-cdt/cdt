@@ -24,10 +24,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.viewsupport.ImageImageDescriptor;
 
 public class IBLabelProvider extends LabelProvider implements IColorProvider {
@@ -47,7 +47,7 @@ public class IBLabelProvider extends LabelProvider implements IColorProvider {
         if (element instanceof IBNode) {
             IBNode node= (IBNode) element;
             ITranslationUnit tu= node.getRepresentedTranslationUnit();
-            Image image= tu != null ? fCLabelProvider.getImage(tu) : CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT_HEADER);
+            Image image= tu != null ? fCLabelProvider.getImage(tu) : CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
             return decorateImage(image, node);
         }
         return super.getImage(element);

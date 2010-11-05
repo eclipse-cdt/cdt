@@ -18,9 +18,8 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementGrouping;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 /**
  * IncludeRefContainer
@@ -74,7 +73,7 @@ public class IncludeRefContainer extends CElementGrouping {
 	 */
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return CPluginImages.DESC_OBJS_INCLUDES_CONTAINER;
+		return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDES_CONTAINER);
 	}
 
 	/* (non-Javadoc)

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -19,6 +20,7 @@ import org.eclipse.osgi.util.NLS;
 class Messages extends NLS {
 	public static String Breakpoint_attribute_problem;
 	public static String Breakpoint_installation_failed;
+	public static String MIExpressions_NotAvailableBecauseChildOfDynamicVarobj;
 	
 	static {
 		// initialize resource bundle

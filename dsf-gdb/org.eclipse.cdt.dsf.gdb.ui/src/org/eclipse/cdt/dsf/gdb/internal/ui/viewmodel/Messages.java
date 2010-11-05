@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel;
 
@@ -23,4 +24,5 @@ public class Messages extends NLS {
     private Messages() {}
 
     public static String Internal_Error;
+    public static String More_Children;
 }

@@ -11,6 +11,7 @@
  *     Ericsson - Implementation for DSF-GDB
  *     Anna Dushistova (Mentor Graphics) - [318322] Add set solib-absolute-prefix
  *     Vladimir Prus (CodeSourcery) - Support for -data-read-memory-bytes (bug 322658)
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -36,6 +37,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoProgram;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoSharedLibrary;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoThreads;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIJump;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIMaintenance;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIPasscount;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIRecord;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLISource;
@@ -60,6 +62,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataListRegisterValues;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataReadMemory;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataReadMemoryBytes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataWriteMemory;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnablePrettyPrinting;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnvironmentCD;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnvironmentDirectory;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
@@ -133,6 +136,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarInfoPathExpression;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarInfoType;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarListChildren;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarSetFormat;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarSetUpdateRange;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowAttributes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowFormat;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarUpdate;
@@ -227,6 +231,11 @@ public class CommandFactory {
 
 	public ICommand<MIInfo> createCLIJump(IExecutionDMContext ctx, String location) {
 		return new CLIJump(ctx, location);
+	}
+
+	/** @since 4.0 */
+	public ICommand<MIInfo> createCLIMaintenance(ICommandControlDMContext ctx, String subCommand) {
+		return new CLIMaintenance(ctx, subCommand);
 	}
 
 	public ICommand<MIInfo> createCLIPasscount(IBreakpointsTargetDMContext ctx, int breakpoint, int passcount) {
@@ -373,6 +382,11 @@ public class CommandFactory {
 	public ICommand<MIDataWriteMemoryInfo> createMIDataWriteMemory(IDMContext ctx, long offset, String address, 
 			int wordFormat, int wordSize, String value) {
 		return new MIDataWriteMemory(ctx, offset, address, wordFormat, wordSize, value);
+	}
+
+	/** @since 4.0 */
+	public ICommand<MIInfo> createMIEnablePrettyPrinting(ICommandControlDMContext ctx) {
+		return new MIEnablePrettyPrinting(ctx);
 	}
 
 	public ICommand<MIInfo> createMIEnvironmentCD(ICommandControlDMContext ctx, String path) {
@@ -801,8 +815,18 @@ public class CommandFactory {
 		return new MIVarListChildren(ctx, name);
 	}
 
+	/** @since 4.0 */
+	public ICommand<MIVarListChildrenInfo> createMIVarListChildren(ICommandControlDMContext ctx, String name, int from, int to) {
+		return new MIVarListChildren(ctx, name, from, to);
+	}
+
 	public ICommand<MIVarSetFormatInfo> createMIVarSetFormat(ICommandControlDMContext ctx, String name, String fmt) {
 		return new MIVarSetFormat(ctx, name, fmt);
+	}
+
+	/** @since 4.0 */
+	public ICommand<MIInfo> createMIVarSetUpdateRange(ICommandControlDMContext ctx,String name, int from, int to) {
+		return new MIVarSetUpdateRange(ctx, name, from, to);
 	}
 
 	public ICommand<MIVarShowAttributesInfo> createMIVarShowAttributes(ICommandControlDMContext ctx, String name) {

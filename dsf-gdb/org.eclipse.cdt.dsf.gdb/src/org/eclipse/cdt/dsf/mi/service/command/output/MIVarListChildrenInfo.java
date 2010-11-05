@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
@@ -23,7 +24,8 @@ public class MIVarListChildrenInfo extends MIInfo {
 
 	MIVar[] children;
 	int numchild;
-
+	private boolean hasMore = false;
+	
 	public MIVarListChildrenInfo(MIOutput record) {
 		super(record);
         List<MIVar> aList = new ArrayList<MIVar>();
@@ -46,7 +48,14 @@ public class MIVarListChildrenInfo extends MIInfo {
                         }
                     } else if (var.equals("children")) { //$NON-NLS-1$
                         parseChildren(value, aList);
-                    }
+					} else if (var.equals("has_more")) { //$NON-NLS-1$
+						if (value instanceof MIConst) {
+							String str = ((MIConst) value).getString();
+							if (str.trim().equals("1")) { //$NON-NLS-1$
+								hasMore = true;
+							}
+						}
+					}
                 }
             }
         }
@@ -57,6 +66,15 @@ public class MIVarListChildrenInfo extends MIInfo {
 		return children;
 	}
 
+	/**
+	 * @return Whether the are more children to fetch.
+	 * 
+	 * @since 4.0
+	 */
+	public boolean hasMore() {
+		return hasMore;
+	}
+	
 	/*
 	 * Some gdb MacOSX do not return a MITuple so we have
 	 * to check for different format.

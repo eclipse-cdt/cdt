@@ -9,6 +9,7 @@
  *     Ericsson - initial API and implementation          
  *     Nokia - create and use backend service. 
  *     IBM Corporation 
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -27,6 +28,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
@@ -44,6 +46,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
@@ -76,6 +79,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 					"stepInitializeFinalLaunchSequence",   //$NON-NLS-1$
 					"stepSetEnvironmentDirectory",   //$NON-NLS-1$
 					"stepSetBreakpointPending",    //$NON-NLS-1$
+					"stepEnablePrettyPrinting",    //$NON-NLS-1$
 					"stepSourceGDBInitFile",   //$NON-NLS-1$
 					"stepSetEnvironmentVariables",   //$NON-NLS-1$
 					"stepSetExecutable",   //$NON-NLS-1$
@@ -178,6 +182,29 @@ public class FinalLaunchSequence extends ReflectionSequence {
 					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
 		} else {
 			requestMonitor.done();
+		}
+	}
+
+	/**
+	 * Turn on pretty printers for MI variable objects, if enabled in preferences.
+	 * Also, turn off error messages from python, all the time.
+	 * @since 4.0
+	 */
+	@Execute
+	public void stepEnablePrettyPrinting(final RequestMonitor requestMonitor) {
+		if (Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+				IGdbDebugPreferenceConstants.PREF_ENABLE_PRETTY_PRINTING,
+				false, null)) {
+
+			fCommandControl.enablePrettyPrintingForMIVariableObjects(
+					new RequestMonitor(getExecutor(), requestMonitor) {
+						@Override
+						protected void handleCompleted() {
+							fCommandControl.setPrintPythonErrors(false, requestMonitor);
+						}
+					});
+		} else {
+			fCommandControl.setPrintPythonErrors(false, requestMonitor);
 		}
 	}
 

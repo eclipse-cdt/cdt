@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson - initial implementation
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb;
 
@@ -36,7 +37,21 @@ public interface IGdbDebugPreferenceConstants {
 	 */
 	public static final String PREF_USE_INSPECTOR_HOVER = "useInspectorHover"; //$NON-NLS-1$
 
-    /**
+	/**
+	 * Boolean preference whether to enable pretty printers for MI variable
+	 * objects. Default is <code>true</code>.
+	 * @since 4.0
+	 */
+	public static final String PREF_ENABLE_PRETTY_PRINTING = "enablePrettyPrinting"; //$NON-NLS-1$
+
+	/**
+	 * The maximum limit of children to be initially fetched by GDB for
+	 * collections. Default is 100.
+	 * @since 4.0
+	 */
+	public static final String PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS = "initialChildCountLimitForCollections"; //$NON-NLS-1$
+
+	/**
      * Help prefixes.
      */
     public static final String PREFIX = GdbPlugin.PLUGIN_ID + "."; //$NON-NLS-1$

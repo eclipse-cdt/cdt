@@ -459,5 +459,17 @@
          </enablement>
       </consolePageParticipant>
    </extension>
-   
+   <extension point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="org.eclipse.cdt.dsf.gdb.ui.objectContribution.incompleteChildren"
+            objectClass="org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.GdbVariableVMNode$IncompleteChildrenVMC">
+         <action
+               class="org.eclipse.cdt.dsf.gdb.internal.ui.actions.FetchMoreChildrenAction"
+               id="org.eclipse.cdt.dsf.gdb.ui.action.fetchMoreChildren"
+               label="%action.fetchMoreChildren.label"
+               menubarPath="renderGroup">
+         </action>
+      </objectContribution>
+   </extension>   
 </plugin>

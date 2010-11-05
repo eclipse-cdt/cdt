@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.preferences;
 
@@ -23,6 +24,14 @@ class MessagesForPreferences extends NLS {
 	public static String GdbDebugPreferencePage_autoTerminateGdb_label;
 	public static String GdbDebugPreferencePage_hover_label;
 	public static String GdbDebugPreferencePage_useInspectorHover_label;
+	/** @since 3.0 */
+	public static String GdbDebugPreferencePage_prettyPrinting_label;
+	/** @since 3.0 */
+	public static String GdbDebugPreferencePage_enablePrettyPrinting_label1;
+	/** @since 3.0 */
+	public static String GdbDebugPreferencePage_enablePrettyPrinting_label2;
+	/** @since 3.0 */
+	public static String GdbDebugPreferencePage_initialChildCountLimitForCollections_label;
 
 	static {
 		// initialize resource bundle

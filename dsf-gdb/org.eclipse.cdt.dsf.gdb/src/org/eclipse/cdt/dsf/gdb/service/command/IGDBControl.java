@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Vladimir Prus (CodeSourcery) - Support for -data-read-memory-bytes (bug 322658)     
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
@@ -66,4 +67,25 @@ public interface IGDBControl extends IMICommandControl {
 	 * @since 4.0
 	 */
 	List<String> getFeatures();
+	
+	/**
+	 * Enable the pretty printers also for MI variable objects. This basically
+	 * sends -enable-pretty-printing.
+	 * 
+	 * @param rm
+	 * 
+	 * @since 4.0
+	 */
+	void enablePrettyPrintingForMIVariableObjects(RequestMonitor rm);
+
+	/**
+	 * Turns the printing of python errors on or off.
+	 * 
+	 * @param enabled
+	 *            If <code>true</code>, printing errors is turned on.
+	 * @param rm
+	 * 
+	 * @since 4.0
+	 */
+	void setPrintPythonErrors(boolean enabled, RequestMonitor rm);
 }

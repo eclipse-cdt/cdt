@@ -10,6 +10,7 @@
  *     Ericsson 		  - Modified for additional features in DSF Reference implementation
  *     Ericsson           - New version for 7_0
  *     Vladimir Prus (CodeSourcery) - Support for -data-read-memory-bytes (bug 322658)
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
@@ -783,4 +784,27 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
             requestMonitor.done();
         }
     }
+    
+	/**
+	 * @since 4.0
+	 */
+	public void enablePrettyPrintingForMIVariableObjects(
+			final RequestMonitor rm) {
+
+		queueCommand(
+				getCommandFactory().createMIEnablePrettyPrinting(fControlDmc),
+				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+	}
+
+	/**
+	 * @since 4.0
+	 */
+	public void setPrintPythonErrors(boolean enabled, RequestMonitor rm) {
+		
+		String subCommand = "set python print-stack " + (enabled ? "on" : "off");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		
+		queueCommand(
+				getCommandFactory().createCLIMaintenance(fControlDmc, subCommand),
+				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+	}
 }

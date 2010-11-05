@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.preferences;
 
@@ -25,5 +26,7 @@ public class GdbPreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(IGdbDebugPreferenceConstants.PREF_TRACES_ENABLE, true);
 		store.setDefault(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, true);
 		store.setDefault(IGdbDebugPreferenceConstants.PREF_USE_INSPECTOR_HOVER, true);
+		store.setDefault(IGdbDebugPreferenceConstants.PREF_ENABLE_PRETTY_PRINTING, true);
+		store.setDefault(IGdbDebugPreferenceConstants.PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS, 100);
 	}
 }

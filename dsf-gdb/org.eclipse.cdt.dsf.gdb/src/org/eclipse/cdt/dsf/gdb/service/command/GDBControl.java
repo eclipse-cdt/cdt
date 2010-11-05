@@ -10,6 +10,7 @@
  *     Ericsson 		  - Modified for additional features in DSF Reference implementation
  *     Nokia - create and use backend service.
  *     Vladimir Prus (CodeSourcery) - Support for -data-read-memory-bytes (bug 322658)      
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
@@ -608,5 +609,19 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	/** @since 4.0 */
 	public List<String> getFeatures() {
 		return fFeatures;
+	}
+	
+	/**
+	 * @since 4.0
+	 */
+	public void enablePrettyPrintingForMIVariableObjects(RequestMonitor rm) {
+		rm.done();
+	}
+
+	/**
+	 * @since 4.0
+	 */
+	public void setPrintPythonErrors(boolean enabled, RequestMonitor rm) {
+		rm.done();
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Ericsson and others.
+ * Copyright (c) 2009, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ericsson - Initial API and implementation
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
@@ -25,7 +26,9 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarInfoPathExpressionInfo
  *
  *     (gdb) -var-info-path-expression C.Base.public.m_size
  *     ^done,path_expr=((Base)c).m_size)
- * 
+ *
+ *  Cannot be used for dynamic varobjs, or varobjs that have a dynamic varobj
+ *  as ancestor.
  */
 
 public class MIVarInfoPathExpression extends MICommand<MIVarInfoPathExpressionInfo> 

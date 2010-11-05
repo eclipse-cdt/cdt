@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,11 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
+
 
 /**
  * GDB/MI var-create.
@@ -28,7 +30,10 @@ public class MIVarCreateInfo extends MIInfo {
     String type = ""; //$NON-NLS-1$
     MIVar child;
     String value = null;
-
+	private boolean isDynamic = false;
+	private boolean hasMore = false;
+	private MIDisplayHint displayHint = MIDisplayHint.NONE;
+	
     public MIVarCreateInfo(MIOutput record) {
         super(record);
         if (isDone()) {
@@ -55,6 +60,12 @@ public class MIVarCreateInfo extends MIInfo {
                         type = str;
                     } else if (var.equals("value")) { //$NON-NLS-1$
                         value = str;
+					} else if (var.equals("dynamic") && str.trim().equals("1")) { //$NON-NLS-1$ //$NON-NLS-2$
+						isDynamic = true;
+					} else if (var.equals("has_more") && str.trim().equals("1")) { //$NON-NLS-1$ //$NON-NLS-2$
+						hasMore = true;
+                    } else if (var.equals("displayhint")) { //$NON-NLS-1$
+                    	displayHint = new MIDisplayHint(str);
                     }
                 }
             }
@@ -66,11 +77,39 @@ public class MIVarCreateInfo extends MIInfo {
     	return type;
     }
     
+	/**
+	 * @return Whether the created variable's value and children are provided
+	 *         by a pretty printer.
+	 *         
+	 * @since 4.0
+	 */
+	public boolean isDynamic() {
+		return isDynamic;
+	}
+
+	/**
+	 * @return The number of children. If {@link #isDynamic()} returns true,
+	 *         the returned value only reflects the number of children currently
+	 *         fetched by gdb. Check {@link #hasMore()} in order to find out
+	 *         whether the are more children. 
+	 */
     public int getNumChildren()
     {
     	return numChild;
     }
     
+	/**
+	 * @return For dynamic varobjs ({@link #isDynamic() returns true} this
+	 *         method returns whether there are children in addition to the
+	 *         currently fetched, i.e. whether there are more children than
+	 *         {@link #getNumChildren()} returns.
+	 *         
+	 * @since 4.0
+	 */
+	public boolean hasMore() {
+		return hasMore;
+	}
+
     public String getName()
     {
     	return name;
@@ -80,10 +119,20 @@ public class MIVarCreateInfo extends MIInfo {
     {
     	return value;
     }
+    
+	/**
+	 * @return Whether the underlying value conceptually represents a string,
+	 *         array, or map.
+	 *         
+	 * @since 4.0
+	 */
+    public MIDisplayHint getDisplayHint() {
+    	return displayHint;
+    }
 
     public MIVar getMIVar() {
         if (child == null) {
-            child = new MIVar(name, numChild, type);
+			child = new MIVar(name, isDynamic, numChild, hasMore, type, displayHint);
         }
         return child;
     }

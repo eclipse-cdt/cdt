@@ -7,8 +7,9 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Ericsson 		  - Modified for handling of multiple execution contexts
+ *     Ericsson 		  - Modified for handling of multiple execution contexts	
  *     Axel Mueller       - Bug 306555 - Add support for cast to type / view as array (IExpressions2)	
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -26,7 +27,6 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2;
-import org.eclipse.cdt.dsf.debug.service.IExpressions3;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
@@ -68,7 +68,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @since 2.0
  */
-public class MIExpressions extends AbstractDsfService implements IExpressions3, ICachingService {
+public class MIExpressions extends AbstractDsfService implements IMIExpressions, ICachingService {
 
     /**
      * A format that gives more details about an expression and supports pretty-printing
@@ -93,12 +93,28 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 	public static class ExpressionInfo {
         private final String fullExpression;
         private final String relativeExpression;
-        
+        private boolean isDynamic = false;
+    	private ExpressionInfo parent;
+    	private int indexInParent = -1;
+		private int childCountLimit = IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED;
+
         public ExpressionInfo(String full, String relative) {
         	fullExpression = full;
         	relativeExpression = relative;
         }
-        
+
+        /**
+         * @since 4.0
+         */
+		public ExpressionInfo(String full, String relative, boolean isDynamic,
+				ExpressionInfo parent, int indexInParent) {
+			fullExpression = full;
+			relativeExpression = relative;
+			this.isDynamic = isDynamic;
+			this.parent = parent;
+			this.indexInParent = indexInParent;
+		}
+
         public String getFullExpr() { return fullExpression; }
         public String getRelExpr() { return relativeExpression; }
         
@@ -109,6 +125,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
                 	fullExpression.equals(((ExpressionInfo) other).fullExpression)) {
                 	if (relativeExpression == null ? ((ExpressionInfo) other).relativeExpression == null : 
                 		relativeExpression.equals(((ExpressionInfo) other).relativeExpression)) {
+                		// The other members don't play any role for equality.
                 		return true;
                 	}
                 }
@@ -120,13 +137,98 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
         public int hashCode() {
         	return (fullExpression == null ? 0 : fullExpression.hashCode()) ^
         	       (relativeExpression == null ? 0 : relativeExpression.hashCode());
+    		// The other members don't play any role for equality.
         }
         
         @Override
         public String toString() {
-            return "[" + fullExpression +", " + relativeExpression + "]"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+            return "[" + fullExpression +", " + relativeExpression + ", isDynamic=" + isDynamic + "]"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
         }
+        
+		/**
+		 * @return The parent expression info, if existing.
+		 * @since 4.0
+		 */
+		public ExpressionInfo getParent() {
+			return parent;
+		}
+
+		/**
+		 * @return The index in the child array of the parent. Only valid if
+		 *         {@link #getParent()} returns not null.
+		 * @since 4.0
+		 */
+		public int getIndexInParentExpression() {
+			return indexInParent;
+		}
+		
+		/**
+		 * @return Whether the corresponding variable object is dynamic,
+		 *         i.e. it's value and children are provided by a pretty printer.
+		 * @since 4.0
+		 */
+		public boolean isDynamic() {
+			return isDynamic;
+		}
+		
+		/**
+		 * @return Whether the expression info has any ancestor that is dynamic.
+		 * @since 4.0
+		 */
+		public boolean hasDynamicAncestor() {
+			for (ExpressionInfo parent = getParent(); parent != null; parent = parent.getParent()) {
+				if (parent.isDynamic()) {
+					return true;
+				}
+			}
+			
+			return false;
+		}
+
+		/**
+		 * @param isDynamic
+		 *            Whether the value and children of this expression is
+		 *            currently provided by a pretty printer or not.
+		 * @since 4.0
+		 */
+		public void setDynamic(boolean isDynamic) {
+			this.isDynamic = isDynamic;
+		}
+		
+		/**
+		 * @param parent The new parent expression info.
+		 * @since 4.0
+		 */
+		public void setParent(ExpressionInfo parent) {
+			this.parent = parent;
+		}
+		
+		/**
+		 * @param index The index in the children array of the parent.
+		 * @since 4.0
+		 */
+		public void setIndexInParent(int index) {
+			this.indexInParent = index;
+		}
+
+		/**
+		 * @return The current limit on the number of children to be fetched.
+		 * @since 4.0
+		 */
+		public int getChildCountLimit() {
+			return childCountLimit;
+		}
+
+		/**
+		 * @param newLimit
+		 *            The new limit on the number of children to be fetched.
+		 * @since 4.0
+		 */
+		public void setChildCountLimit(int newLimit) {
+			this.childCountLimit = newLimit;
+		}
 	}
+	
     /**
      * This class represents an expression.
      */
@@ -188,8 +290,32 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
         }
 
         private MIExpressionDMC(String sessionId, String expr, String relExpr, IDMContext parent) {
+        	this(sessionId, new ExpressionInfo(expr, relExpr), parent);
+        }
+
+		/**
+		 * ExpressionDMC Constructor for expression to be evaluated in context
+		 * of a stack frame.
+		 * 
+		 * @param sessionId
+		 *            The session ID in which this context is created.
+		 * @param info
+		 *            The expression info that this expression is to use.
+		 * @param frameCtx
+		 *            The parent stack frame context for this ExpressionDMC.
+		 *            
+		 * @since 4.0
+		 */
+        public MIExpressionDMC(String sessionId, ExpressionInfo info, IFrameDMContext frameCtx) {
+            this(sessionId, info, (IDMContext)frameCtx);
+        }
+
+        /**
+		 * @since 4.0
+		 */
+        private MIExpressionDMC(String sessionId, ExpressionInfo info, IDMContext parent) {
             super(sessionId, new IDMContext[] { parent });
-            exprInfo = new ExpressionInfo(expr, relExpr);
+            exprInfo = info;
         }
 
         /**
@@ -232,6 +358,26 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
         public String getRelativeExpression() {
             return exprInfo.getRelExpr();
         }
+
+        /**
+         * @return Get the expression info for this context.
+         * @since 4.0
+         */
+        public ExpressionInfo getExpressionInfo() {
+        	return exprInfo;
+        }
+
+		/**
+		 * @param info
+		 * 
+		 * @since 4.0
+		 */
+		public void setExpressionInfo(ExpressionInfo info) {
+			assert (this.exprInfo.getFullExpr().equals(info.getFullExpr()));
+			assert (this.exprInfo.getRelExpr().equals(info.getRelExpr()));
+
+			this.exprInfo = info;
+		}
     }
     
     protected static class InvalidContextExpressionDMC extends AbstractDMContext 
@@ -313,7 +459,27 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 			return (fAddr == null ? "null" : "(" + fAddr.toHexAddressString()) + ", " + fSize + ")"; //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
 		}
     }
+    
+    /**
+     * If an expressions doesn't have an address, or it cannot be determined,
+     * use this class.
+   	 * @since 4.0
+     */
+    protected class InvalidDMAddress implements IExpressionDMLocation {
 
+		public IAddress getAddress() {
+			return IExpressions.IExpressionDMLocation.INVALID_ADDRESS;
+		}
+
+		public int getSize() {
+			return 0;
+		}
+
+		public String getLocation() {
+			return ""; //$NON-NLS-1$
+		}
+    }
+    
 	/**
 	 * This class represents the static data referenced by an instance of ExpressionDMC,
 	 * such as its type and number of children; it does not contain the value or format
@@ -552,8 +718,6 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 	 * This method shuts down this service. It unregisters the service, stops
 	 * receiving service events, and calls the superclass shutdown() method to
 	 * finish the shutdown process.
-	 * 
-	 * @return void
 	 */
 	@Override
 	public void shutdown(RequestMonitor requestMonitor) {
@@ -582,9 +746,18 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 	 * Create an expression context.
 	 */
 	public IExpressionDMContext createExpression(IDMContext ctx, String expression, String relExpr) {
+		return createExpression(ctx, new ExpressionInfo(expression, relExpr));
+	}
+	
+	/**
+	 * Create an expression context from a given expression info.
+	 * @since 4.0
+	 */
+	private IExpressionDMContext createExpression(IDMContext ctx, ExpressionInfo info) {
+		String expression = info.getFullExpr();
 	    IFrameDMContext frameDmc = DMContexts.getAncestorOfType(ctx, IFrameDMContext.class);
 	    if (frameDmc != null) {
-	        return new MIExpressionDMC(getSession().getId(), expression, relExpr, frameDmc);
+	        return new MIExpressionDMC(getSession().getId(), info, frameDmc);
 	    } 
 	    
 	    IMIExecutionDMContext execCtx = DMContexts.getAncestorOfType(ctx, IMIExecutionDMContext.class);
@@ -595,7 +768,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 	    	MIStack stackService = getServicesTracker().getService(MIStack.class);
 	    	if (stackService != null) {
 	    		frameDmc = stackService.createFrameDMContext(execCtx, 0);
-	            return new MIExpressionDMC(getSession().getId(), expression, relExpr, frameDmc);
+	            return new MIExpressionDMC(getSession().getId(), info, frameDmc);
 	    	}
 
             return new InvalidContextExpressionDMC(getSession().getId(), expression, execCtx);
@@ -603,7 +776,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 	    
         IMemoryDMContext memoryCtx = DMContexts.getAncestorOfType(ctx, IMemoryDMContext.class);
         if (memoryCtx != null) {
-            return new MIExpressionDMC(getSession().getId(), expression, relExpr, memoryCtx);
+            return new MIExpressionDMC(getSession().getId(), info, memoryCtx);
         } 
         
         // Don't care about the relative expression at this point
@@ -662,7 +835,8 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
             fExpressionCache.execute(
                 new ExprMetaGetVar(dmc), 
                 new DataRequestMonitor<ExprMetaGetVarInfo>(getExecutor(), rm) {
-                    @Override
+                	
+					@Override
                     protected void handleSuccess() {
                         IExpressionDMData.BasicType basicType = null;
 
@@ -682,7 +856,10 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
                                 break;
                             case GDBType.GENERIC:
                             default:
-                                if (getData().getNumChildren() > 0) {
+                            	// The interesting question is not hasChildren,
+                            	// but canHaveChildren. E.g. an empty
+                            	// collection still is a composite.
+                            	if (getData().hasChildren() || getData().getCollectionHint()) {
                                     basicType =  IExpressionDMData.BasicType.composite;
                                 } else {
                                     basicType =  IExpressionDMData.BasicType.basic;
@@ -718,6 +895,17 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
     		IExpressionDMContext dmc, 
     		final DataRequestMonitor<IExpressionDMAddress> rm) {
         
+    	if (dmc instanceof MIExpressionDMC) {
+    		MIExpressionDMC miDMC = (MIExpressionDMC) dmc;
+    		if (miDMC.getExpressionInfo().hasDynamicAncestor()) {
+    			// For children of dynamic varobjs, there is no full expression that gdb
+    			// could evaluate in order to provide address and size. 
+				rm.setData(new InvalidDMAddress());
+				rm.done();
+				return;
+    		}
+    	}
+
     	// First create an address expression and a size expression
     	// to be used in back-end calls
     	final IExpressionDMContext addressDmc = 
@@ -778,37 +966,45 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 	{
 		// We need to make sure the FormattedValueDMContext also holds an ExpressionContext,
 		// or else this method cannot do its work.
-		// Note that we look for MIExpressionDMC and not IExpressionDMC, because getting
+		// Note that we look for MIExpressionDMC and not IExpressionDMC, because
 		// looking for IExpressionDMC could yield InvalidContextExpressionDMC which is still
-		// not what we need to have.
+		// not what we need.
 		MIExpressionDMC exprDmc = DMContexts.getAncestorOfType(dmc, MIExpressionDMC.class);
         if (exprDmc == null ) {
         	rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context for evaluating expressions.", null)); //$NON-NLS-1$
         	rm.done();
         } else {
         	if (DETAILS_FORMAT.equals(dmc.getFormatID())) {
-        		// This format is obtained through a different GDB command.
-        		// It yields more details than the variableObject output.
-        		// Starting with GDB 7.0, this format automatically supports pretty-printing, as long as
-        		// GDB has been configured to support it.
-				fExpressionCache.execute(
-						fCommandFactory.createMIDataEvaluateExpression(exprDmc), 
-						new DataRequestMonitor<MIDataEvaluateExpressionInfo>(getExecutor(), rm) {
-							@Override
-							protected void handleSuccess() {
-								rm.setData(new FormattedValueDMData(getData().getValue()));
-	        					rm.done();
-							}
-							@Override
-							protected void handleError() {
-								if (fTraceVisualization) {
-									rm.setData(new FormattedValueDMData("")); //$NON-NLS-1$
-									rm.done();
-								} else {
-									super.handleError();
-								}
-							}
-						});
+        		if (exprDmc.getExpressionInfo().hasDynamicAncestor()) {
+        			// -data-evaluate-expression does not work for children of
+        			// dynamic varobjs, since there is no full expression
+        			// that gdb could evaluate.
+					rm.setData(new FormattedValueDMData(Messages.MIExpressions_NotAvailableBecauseChildOfDynamicVarobj));
+					rm.done();
+        		} else {
+        			// This format is obtained through a different GDB command.
+        			// It yields more details than the variableObject output.
+        			// Starting with GDB 7.0, this format automatically supports pretty-printing, as long as
+        			// GDB has been configured to support it.
+        			fExpressionCache.execute(
+        					fCommandFactory.createMIDataEvaluateExpression(exprDmc), 
+        					new DataRequestMonitor<MIDataEvaluateExpressionInfo>(getExecutor(), rm) {
+        						@Override
+        						protected void handleSuccess() {
+        							rm.setData(new FormattedValueDMData(getData().getValue()));
+        							rm.done();
+        						}
+        						@Override
+        						protected void handleError() {
+        							if (fTraceVisualization) {
+        								rm.setData(new FormattedValueDMData("")); //$NON-NLS-1$
+        								rm.done();
+        							} else {
+        								super.handleError();
+        							}
+        						}
+        					});
+        		}
         	} else {
         		fExpressionCache.execute(
         				new ExprMetaGetValue(dmc),
@@ -838,7 +1034,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 	/**
 	 * Retrieves the children expressions of the specified expression
 	 * 
-	 * @param exprCtx
+	 * @param dmc
 	 *            The context for the expression for which the children
 	 *            should be retrieved.
 	 * @param rm
@@ -857,9 +1053,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 							IExpressionDMContext[] childArray = new IExpressionDMContext[childrenExpr.length];
 							for (int i=0; i<childArray.length; i++) {
 								childArray[i] = createExpression(
-										dmc.getParents()[0], 
-										childrenExpr[i].getFullExpr(),
-										childrenExpr[i].getRelExpr());
+										dmc.getParents()[0], childrenExpr[i]);
 							}
 
 							rm.setData(childArray);
@@ -890,7 +1084,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 	 * @param rm
 	 *            The data request monitor that will contain the requested data
 	 */
-	public void getSubExpressions(IExpressionDMContext exprCtx, final int startIndex,
+	public void getSubExpressions(final IExpressionDMContext exprCtx, final int startIndex,
 			final int length, final DataRequestMonitor<IExpressionDMContext[]> rm) {
 
 		if (startIndex < 0 || length < 0) {
@@ -900,28 +1094,27 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 		}
 		
 		if (exprCtx instanceof MIExpressionDMC) {
-			getSubExpressions(
-					exprCtx,
-					new DataRequestMonitor<IExpressionDMContext[]>(getExecutor(), rm) {
+			fExpressionCache.execute(
+					new ExprMetaGetChildren(exprCtx, startIndex + length),				
+					new DataRequestMonitor<ExprMetaGetChildrenInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
-							IExpressionDMContext[] subExpressions = getData();
+							ExpressionInfo[] childrenExpr = getData().getChildrenExpressions();
 
-							if (startIndex >= subExpressions.length) {
+							if (startIndex >= childrenExpr.length) {
 								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, "Invalid range for evaluating sub expressions.", null)); //$NON-NLS-1$
 								rm.done();
 								return;
 							}
-							
-							int realLength = length;
-							if (startIndex + length > subExpressions.length) {
-								realLength = subExpressions.length - startIndex;
-							}
-							
-							IExpressionDMContext[] subRange = new IExpressionDMContext[realLength];
-							System.arraycopy(subExpressions, startIndex, subRange, 0, realLength);
 
-							rm.setData(subRange);
+							int numChildren = childrenExpr.length - startIndex;
+							numChildren = Math.min(length, numChildren);
+							IExpressionDMContext[] childrenArray = new IExpressionDMContext[numChildren];
+							for (int i=0; i < numChildren; i++) {
+								childrenArray[i] = createExpression(
+										exprCtx.getParents()[0], childrenExpr[startIndex + i]);
+							}
+							rm.setData(childrenArray);
 							rm.done();
 						}
 					});
@@ -935,20 +1128,40 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 	}
 	
 	/**
-	 * Retrieves the count of children expressions of the specified expression
-	 * 
-	 * @param exprCtx
-	 *            The context for the expression for which the children count
-	 *            should be retrieved.
-	 * @param rm
-	 *            The data request monitor that will contain the requested data
+	 * @since 4.0
+	 */
+	public void safeToAskForAllSubExpressions(IExpressionDMContext dmc,
+			final DataRequestMonitor<Boolean> rm) {
+	    if (dmc instanceof MIExpressionDMC) {
+            fExpressionCache.execute(
+                new ExprMetaGetVar(dmc), 
+                new DataRequestMonitor<ExprMetaGetVarInfo>(getExecutor(), rm) {
+                    @Override
+                    protected void handleSuccess() {							
+							boolean safe = getData().isSafeToAskForAllChildren();
+							
+							rm.setData(safe);
+							rm.done();
+                    }
+                });	        
+	    } else if (dmc instanceof InvalidContextExpressionDMC) {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context for evaluating expressions.", null)); //$NON-NLS-1$
+            rm.done();
+	    } else {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid expression context.", null)); //$NON-NLS-1$
+            rm.done();
+	    }
+	}
+
+	/**
+	 * @since 4.0
 	 */
 	public void getSubExpressionCount(IExpressionDMContext dmc,
-			final DataRequestMonitor<Integer> rm) 
-	{
+			final int numChildLimit, final DataRequestMonitor<Integer> rm) {
+
 		if (dmc instanceof MIExpressionDMC) {
 			fExpressionCache.execute(
-					new ExprMetaGetChildCount(dmc),				
+					new ExprMetaGetChildCount(dmc, numChildLimit),				
 					new DataRequestMonitor<ExprMetaGetChildCountInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
@@ -964,13 +1177,28 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 			rm.done();
 		}
 	}
+
+	/**
+	 * Retrieves the count of children expressions of the specified expression
+	 * 
+	 * @param dmc
+	 *            The context for the expression for which the children count
+	 *            should be retrieved.
+	 * @param rm
+	 *            The data request monitor that will contain the requested data
+	 */
+	public void getSubExpressionCount(IExpressionDMContext dmc,
+			final DataRequestMonitor<Integer> rm) 
+	{
+		getSubExpressionCount(dmc, IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED, rm);
+	}
 	
     /**
      * This method indicates if an expression can be written to.
      * 
-     * @param dmc: The data model context representing an expression.
+     * @param dmc The data model context representing an expression.
      *
-     * @param rm: Data Request monitor containing True if this expression's value can be edited.  False otherwise.
+     * @param rm Data Request monitor containing True if this expression's value can be edited.  False otherwise.
      */
 
 	public void canWriteExpression(IExpressionDMContext dmc, final DataRequestMonitor<Boolean> rm) {
@@ -997,7 +1225,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 	/**
 	 * Changes the value of the specified expression based on the new value and format.
 	 * 
-	 * @param expressionContext
+	 * @param dmc
 	 *            The context for the expression for which the value 
 	 *            should be changed.
 	 * @param expressionValue

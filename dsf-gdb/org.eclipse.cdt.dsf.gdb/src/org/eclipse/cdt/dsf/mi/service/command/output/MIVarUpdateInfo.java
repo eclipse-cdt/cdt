@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
@@ -98,7 +99,45 @@ public class MIVarUpdateInfo extends MIInfo {
 					if (change != null) {
 						change.setChanged("true".equals(str)); //$NON-NLS-1$
 					}
-				}				
+				} else if (var.equals("new_num_children")) { //$NON-NLS-1$
+					if (change != null) {
+						try {
+							change.setNewNumChildren(Integer.parseInt(str.trim()));
+						} catch (NumberFormatException e) {
+							change.setNewNumChildren(0);
+						}
+					}
+				} else if (var.equals("dynamic")) { //$NON-NLS-1$
+					if (change != null) {
+						change.setDynamic(str.trim().equals("1")); //$NON-NLS-1$
+					}
+				} else if (var.equals("has_more")) { //$NON-NLS-1$
+					if (change != null) {
+						change.setHasMore(str.trim().equals("1")); //$NON-NLS-1$
+					}
+				} else if (var.equals("new_children")) { //$NON-NLS-1$
+					if (change != null) {
+						List<MIVar> newChildren = new ArrayList<MIVar>();
+						parseNewChildren(value, newChildren);
+						change.setNewChildren(newChildren.toArray(new MIVar[newChildren.size()]));
+					}
+				} else if (var.equals("displayhint")) { //$NON-NLS-1$
+					if (change != null) {
+		            	change.setDisplayHint(new MIDisplayHint(str));
+					}
+				}
+			}
+		}
+	}
+	
+	private void parseNewChildren(MIValue value, List<MIVar> aList) {
+		if (value instanceof MIList) {
+			MIValue[] children = ((MIList)value).getMIValues();
+			
+			for (MIValue child : children) {
+				if (child instanceof MITuple) {
+					aList.add(new MIVar((MITuple)child));
+				}
 			}
 		}
 	}

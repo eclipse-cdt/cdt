@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -14,6 +15,9 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 
 /**
  * GDB/MI var-info-num-children.
+ * 
+ * For dynamic variable objects, only the number children currently fetched
+ * by gdb is returned.
  */
 public class MIVarInfoNumChildrenInfo extends MIInfo {
 

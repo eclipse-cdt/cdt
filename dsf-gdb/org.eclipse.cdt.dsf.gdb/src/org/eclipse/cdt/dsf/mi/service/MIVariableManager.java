@@ -11,6 +11,7 @@
  *     Ericsson    - Major updates for GDB/MI implementation
  *     Ericsson    - Major re-factoring to deal with children
  *     Axel Mueller - Bug 306555 - Add support for cast to type / view as array (IExpressions2)
+ *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -63,6 +64,9 @@ import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetChildCountInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetChildrenInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetValueInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetVarInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIDisplayHint;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIDisplayHint.GdbDisplayHint;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVar;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarAssignInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarChange;
@@ -183,10 +187,127 @@ import org.eclipse.core.runtime.Status;
  *   Note that versions of GDB after 6.7 will allows to issue -var-evaluate-expression
  *   with a specified format, therefore allowing us to never use -var-set-format, and
  *   consequently, to easily keep the display format of all variable objects to natural.
+ *   
+ * Notes on Dynamic Variable Objects (varobj)
+ * ------------------------------------------
+ *   - with version 7.0, gdb support so-called pretty printers.
+ *   
+ *   - pretty printers are registered for certain types
+ *   
+ *   - if there is a pretty printer registered for the type of a variable,
+ *     the pretty printer provides the value and the children of that variable
+ *     
+ *   - a varobj whose value and/or children are provided by a pretty printer,
+ *     are referred to as dynamic variable objects
+ *     
+ *   - dynamic varobjs change the game: it's not wise to ask it about all its
+ *     children, not even the number of children it has. The reason is that
+ *     in order to find out about the number of children the pretty printer
+ *     must fetch all the children from the inferiors memory. If the variable
+ *     is not yet initialized, the set of children are random, and thus might
+ *     be huge. Even worse, there are data structures where fetching all
+ *     children may result in an endless loop. The Eclipse debugger then hangs.
+ *     
+ *   - In order to avoid this, we will always fetch up to a certain maximum
+ *     number of children. Furthermore, it is possible to find out whether there
+ *     are more children available. In the UI, all the currently fetched
+ *     children are available. In addition, if there are more children
+ *     available, a special node will be appended to indicate that there is
+ *     more the user could fetch.
+ *     
+ *   - Dynamic varobjs can change their value, as leaf varobjs can do.
+ *     Especially, children can be added or removed during an update.
+ *     
+ *   - There is no expression for children of dynamic varobjs (at least not
+ *     yet, http://sourceware.org/bugzilla/show_bug.cgi?id=10252 would fix that).
+ *     The reason -var-info-path-expression returns garbage for children of
+ *     dynamic varobjs.
+ *
+ *   - Because of this, the variable of an expression that is a child of
+ *     a dynamic varobj cannot be created again using -var-create, once
+ *     the LRU cache has deleted it. Instead, we track the parent and index
+ *     within this parent for each non-root variable, and later use
+ *       -var-list-children parent indexInParent (indexInParent + 1)
+ *     in order to create the MI variable anew.
+ *     
+ *   - The fetching of children for dynamic varobjs becomes a bit more complicated.
+ *     For the traditional varobjs, once children where requested, all children
+ *     were fetched. For dynamic varobjs, we can no longer fetch all children.
+ *     Instead, the client will provide a maximum number of children that
+ *     is to be fetched. Every time the child count or children are requested,
+ *     we must check whether there are additional children to be fetched,
+ *     because the limit might have extended.
+ *     Fetching additional children can only be done by one request monitor at a time.
+ *     The serialization of the request monitors is done in getChildren by
+ *     ensuring that fetchChildren is called for one request monitor at a time.
+ *     fetchChildren in turn checks whether enough children are fetched, and
+ *     if not, fetches the additional children.
  */
 public class MIVariableManager implements ICommandControl {
 
+	/**
+	 * Stores the information about children of a variable object.
+	 * 
+	 * @since 4.0
+	 */
+	protected static class ChildrenInfo {
+		private final ExpressionInfo[] children;
+		private final boolean hasMore;
+		
+		public ChildrenInfo(ExpressionInfo[] children, boolean hasMore) {
+			this.children = children;
+			this.hasMore = hasMore;
+		}
 
+		/**
+		 * @return The currently fetched children. Ask {@link #hasMore()} in
+		 *         order to find out whether there are more to fetch.
+		 */
+		public ExpressionInfo[] getChildren() {
+			return children;
+		}
+		
+		/**
+		 * @return true, if there are more than just those returned by
+		 *         {@link #getChildren()}.
+		 */
+		public boolean hasMore() {
+			return hasMore;
+		}
+	}
+	
+	/**
+	 * Stores the information about the children count of a variable object.
+	 * 
+	 * @since 4.0
+	 */
+	protected static class ChildrenCountInfo {
+		private final int childrenCount;
+		private final boolean hasMore;
+		
+		public ChildrenCountInfo(int childrenCount, boolean hasMore) {
+			this.childrenCount = childrenCount;
+			this.hasMore = hasMore;
+		}
+
+		/**
+		 * The number of children that we currently know of. Ask
+		 * {@link #hasMore()} in order to find out whether there is at least one
+		 * more.
+		 */
+		public int getChildrenCount() {
+			return childrenCount;
+		}
+
+		/**
+		 * @return <code>true</code> if there are more children than actually
+		 *         returned by {@link #getChildrenCount()}.
+		 */
+		public boolean hasMore() {
+			return hasMore;
+		}
+	}
+	
 	/**
 	 * Utility class to track the progress and information of MI variable objects
 	 */
@@ -195,6 +316,12 @@ public class MIVariableManager implements ICommandControl {
 		// Don't use an enumeration to allow subclasses to extend this
 		protected static final int STATE_READY = 0;
 		protected static final int STATE_UPDATING = 1;
+		/** @since 4.0 */
+		protected static final int STATE_NOT_CREATED = 10;
+		/** @since 4.0 */
+		protected static final int STATE_CREATING = 11;
+		/** @since 4.0 */
+		protected static final int STATE_CREATION_FAILED = 12;
 	    
 		protected int currentState;	
 
@@ -211,7 +338,9 @@ public class MIVariableManager implements ICommandControl {
 		private String format = IFormattedValues.NATURAL_FORMAT;
 
 		// The full expression that can be used to characterize this object
-		private String fullExp = null;
+		// plus some other information that shall live longer than the
+		// MIVariableObject.
+		private ExpressionInfo exprInfo;
 		private String type = null;
 		private GDBType gdbType;
 		// A hint at the number of children.  This value is obtained
@@ -228,11 +357,16 @@ public class MIVariableManager implements ICommandControl {
 		
 		// A queue of request monitors that requested an update
 		protected LinkedList<DataRequestMonitor<Boolean>> updatesPending;
+		
+		/** @since 4.0 */
+		protected LinkedList<DataRequestMonitor<ChildrenInfo>> fetchChildrenPending;
 
-		// The relative expressions of the children of this variable, if any.  
+		// The children of this variable, if any.  
 		// Null means we didn't fetch them yet, while an empty array means no children
         private ExpressionInfo[] children = null; 
-        
+		private boolean hasMore = false;
+		private MIDisplayHint displayHint = MIDisplayHint.NONE;
+		
         // The parent of this variable object within GDB.  Null if this object has no parent
         private MIVariableObject parent = null;
         
@@ -241,12 +375,21 @@ public class MIVariableManager implements ICommandControl {
         private MIRootVariableObject rootToUpdate = null;
                 
 		protected boolean outOfScope = false;
-
+		
+		private boolean fetchingChildren = false;
+		
 		public MIVariableObject(VariableObjectId id, MIVariableObject parentObj) {
-			currentState = STATE_READY;
+			this(id, parentObj, false);
+		}
+		
+		/** @since 4.0 */
+		public MIVariableObject(VariableObjectId id, MIVariableObject parentObj,
+				boolean needsCreation) {
+			currentState = needsCreation ? STATE_NOT_CREATED : STATE_READY; 
 			
 			operationsPending = new LinkedList<RequestMonitor>();
 			updatesPending = new LinkedList<DataRequestMonitor<Boolean>>();
+			fetchChildrenPending = new LinkedList<DataRequestMonitor<ChildrenInfo>>();
 			
 			internalId = id;
 			setParent(parentObj);
@@ -262,8 +405,48 @@ public class MIVariableManager implements ICommandControl {
 		public MIVariableObject getParent() { return parent; }
 		public MIRootVariableObject getRootToUpdate() { return rootToUpdate; }
 		
-		public String getExpression() { return fullExp; }
+		public String getExpression() { return exprInfo.getFullExpr(); }
 		public String getType() { return type; }
+		
+		/**
+		 * @since 4.0
+		 */
+		public ExpressionInfo getExpressionInfo() { return exprInfo; }
+
+		/**
+		 * @return <code>true</code> if value and children of this varobj are
+		 *         currently provided by a pretty printer.
+		 *         
+		 * @since 4.0
+		 */
+		public boolean isDynamic() { return exprInfo.isDynamic(); }
+		
+		/**
+		 * @return For dynamic varobjs ({@link #isDynamic() returns true}) this
+		 *         method returns whether there are children in addition to the
+		 *         currently fetched, i.e. whether there are more children than
+		 *         {@link #getNumChildrenHint()} returns.
+		 *         
+		 * @since 4.0
+		 */
+		public boolean hasMore() { return hasMore; }
+
+		/**
+		 * @since 4.0
+		 */
+		public MIDisplayHint getDisplayHint() { return displayHint; };
+		
+		/**
+		 * @since 4.0
+		 */
+		protected void setDisplayHint(MIDisplayHint displayHint) {
+			this.displayHint = displayHint;
+		};
+		
+		/**
+		 * @since 4.0
+		 */
+		public boolean hasChildren() { return (getNumChildrenHint() != 0 || hasMore()); }
 
 		/** @since 3.0 */
 		public GDBType getGDBType() { return gdbType; }
@@ -275,7 +458,8 @@ public class MIVariableManager implements ICommandControl {
 		 * Use <code>isNumChildrenHintTrustworthy()</code> to know if the
 		 * hint can be trusted.
 		 * 
-		 * Note that a hint of 0 children can always be trusted.
+		 * Note that a hint of 0 children can always be trusted, except for
+		 * <code>{@link #hasMore} == true</code>.
 		 * 
 		 * @since 3.0 */
 		public int getNumChildrenHint() { return numChildrenHint; }
@@ -296,7 +480,7 @@ public class MIVariableManager implements ICommandControl {
 			// -var-info-expression.  Do we have to use -var-info-expression for each
 			// variable object, or can we do it one time only for the whole program?
 			// Right now, we always assume we could be using C++
-			return (getNumChildrenHint() == 0 || isArray());
+			return ((getNumChildrenHint() == 0 && ! hasMore()) || isArray());
 		}
  
 		public String getValue(String format) { return valueMap.get(format); }
@@ -310,16 +494,74 @@ public class MIVariableManager implements ICommandControl {
 		// A complex variable is one with children.  However, it must not be a pointer since a pointer 
 		// does have children, but is still a 'simple' variable, as it can be modifed.  
 		// Note that the numChildrenHint can be trusted when asking if the number of children is 0 or not
-		public boolean isComplex() { return (getGDBType() == null) ? false : getGDBType().getType() != GDBType.POINTER && getNumChildrenHint() > 0; }
+		public boolean isComplex() {
+			return (getGDBType() == null) ? false
+					: getGDBType().getType() != GDBType.POINTER
+							&& (getNumChildrenHint() > 0
+									|| hasMore() || getDisplayHint().isCollectionHint());
+		}
+		
+		/**
+		 * @return Whether this varobj can safely be asked for all its children.
+		 * 
+		 * @since 4.0
+		 */
+		public boolean isSafeToAskForAllChildren() {
+			GdbDisplayHint displayHint = getDisplayHint().getGdbDisplayHint();
+			
+			// Here we balance usability against a slight risk of instability:
+			//
+			// Usability: if you have a class/struct-like pretty printer
+			// all children are fetched, regardless of any limit. This
+			// should be safe from gdb side.
+			//
+			// Risk: If somebody provides a pretty printer for a collection,
+			// but forgets to implement the display_hint method, viewing
+			// the collection while it is uninitiliazed may cause gdb
+			// to never return.
+			//
+			// => The risk seams reasonable, so we require a limit only
+			//    for collections.
+			boolean isDynamicButSafe = (displayHint == GdbDisplayHint.GDB_DISPLAY_HINT_STRING)
+					|| (displayHint == GdbDisplayHint.GDB_DISPLAY_HINT_NONE);
+			
+			return !isDynamic() || isDynamicButSafe;
+		}
 		
 		public void setGdbName(String n) { gdbName = n; }
 		public void setCurrentFormat(String f) { format = f; }
-		
+
+		/**
+		 * @param fullExpression
+		 * @param t
+		 * @param num
+		 * 
+		 * @deprecated Use
+		 *             {@link #setExpressionData(ExpressionInfo, String, int, boolean)}
+		 *             instead.
+		 */
+		@Deprecated
 		public void setExpressionData(String fullExpression, String t, int num) {
-			fullExp = fullExpression;
+			new ExpressionInfo(fullExpression, fullExpression);
+		}
+
+		/**
+		 * @param info
+		 * @param t
+		 * @param num
+		 *            If the correspinding MI variable is dynamic, the number of
+		 *            children currently fetched by gdb.
+		 * @param hasMore
+		 *            Whether their are more children to fetch.
+		 *            
+		 * @since 4.0
+		 */
+		public void setExpressionData(ExpressionInfo info, String t, int num, boolean hasMore) {
+			exprInfo = info;
 			type = t;
 			gdbType = fGDBTypeParser.parse(t);
 			numChildrenHint = num;
+			this.hasMore = hasMore;
 		}
 
 		public void setValue(String format, String val) { valueMap.put(format, val); }
@@ -337,12 +579,106 @@ public class MIVariableManager implements ICommandControl {
 			valueMap.put(IFormattedValues.DECIMAL_FORMAT, null);
 		}
 		
-        public void setChildren(ExpressionInfo[] c) { children = c; }
+		/**
+		 * @param c
+		 *            The new children, or null in order to force fetching
+		 *            children anew.
+		 */
+        public void setChildren(ExpressionInfo[] c) { 
+        	children = c;
+        	if (children != null) {
+        		numChildrenHint = children.length;
+        	}
+
+        	if (children != null) {
+        		for (ExpressionInfo child : children) {
+        			assert (child != null);
+        		}
+        	}
+		}
+        
+        /**
+         * @param newChildren
+         * 
+         * @since 4.0
+         */
+        public void addChildren(ExpressionInfo[] newChildren) {
+        	if (children == null) {
+        		children = new ExpressionInfo[newChildren.length]; 
+        		System.arraycopy(newChildren, 0, children, 0, newChildren.length);
+        	} else {
+        		ExpressionInfo[] oldChildren = children;
+        		
+        		children = new ExpressionInfo[children.length + newChildren.length];
+
+        		System.arraycopy(oldChildren, 0, children, 0, oldChildren.length);
+        		System.arraycopy(newChildren, 0, children, oldChildren.length, newChildren.length);
+        	}
+        	
+        	numChildrenHint = children.length;
+
+			for (ExpressionInfo child : children) {
+				assert (child != null);
+			}
+        }
+
+        /**
+         * @param newChildren
+         * 
+         * @since 4.0
+         */
+        protected void addChildren(ExpressionInfo[][] newChildren) {
+        	int requiredSize = 0;
+        	
+        	for (ExpressionInfo[] subArray : newChildren) {
+        		requiredSize += subArray.length;
+			}
+
+        	ExpressionInfo[] plainChildren = new ExpressionInfo[requiredSize];
+
+        	int i = 0;
+        	for (ExpressionInfo[] subArray : newChildren) {
+        		System.arraycopy(subArray, 0, plainChildren, i, subArray.length);
+        		i += subArray.length;
+			}
+        	
+        	addChildren(plainChildren);
+        }
+        
+        /**
+         * @param newNumChildren
+         * 
+         * @since 4.0
+         */
+        public void shrinkChildrenTo(int newNumChildren) {
+        	if (children != null) {
+        		ExpressionInfo[] oldChildren = children;
+        		for (int i = oldChildren.length - 1; i >= newNumChildren; --i) {
+        			String childFullExpression = children[i].getFullExpr();
+
+        			VariableObjectId childId = new VariableObjectId();
+        			childId.generateId(childFullExpression, getInternalId());
+        			lruVariableList.remove(childId);
+        		}
+
+
+        		children = new ExpressionInfo[newNumChildren];
+        		System.arraycopy(oldChildren, 0, children, 0, newNumChildren);
+        	}
+        	
+        	numChildrenHint = newNumChildren;
+        }
+        
         public void setParent(MIVariableObject p) { 
         	parent = p; 
-        	rootToUpdate = (p == null ? (MIRootVariableObject)this : p.getRootToUpdate());
+        	if (p == null) {
+				rootToUpdate = (this instanceof MIRootVariableObject) ? (MIRootVariableObject) this
+						: null;
+        	} else {
+        		rootToUpdate = p.getRootToUpdate();
+        	}
         }
-	
+        
         public void executeWhenNotUpdating(RequestMonitor rm) {
 			getRootToUpdate().executeWhenNotUpdating(rm);
 		}
@@ -362,6 +698,35 @@ public class MIVariableManager implements ICommandControl {
 		public boolean isOutOfScope() { return outOfScope; }
 
 		/**
+		 * @param success
+		 * 
+		 * @since 4.0
+		 */
+		protected void creationCompleted(boolean success) {
+        	// A creation completed we must be up-to-date, so we
+			// can tell any pending monitors that updates are done
+			if (success) {
+				currentState = STATE_READY;
+				while (updatesPending.size() > 0) {
+					DataRequestMonitor<Boolean> rm = updatesPending.poll();
+					// Nothing to be re-created
+					rm.setData(false);
+					rm.done();
+				}
+			} else {
+				currentState = STATE_CREATION_FAILED;
+
+				// Creation failed, inform anyone waiting.
+				while (updatesPending.size() > 0) {
+					RequestMonitor rm = updatesPending.poll();
+		            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, 
+		            		"Unable to create variable object", null)); //$NON-NLS-1$
+					rm.done();
+				}
+			}
+		}
+
+		/**
 		 * This method updates the variable object.
 		 * Updating a variable object is done by updating its root.
 		 */
@@ -373,7 +738,7 @@ public class MIVariableManager implements ICommandControl {
 			if (isOutOfScope()) {
 				rm.setData(false);
 				rm.done();
-			} else if (currentState == STATE_UPDATING) {
+			} else if (currentState != STATE_READY) {
 				// If we were already updating, we just queue the request monitor
 				// until the on-going update finishes.
 				updatesPending.add(rm);
@@ -413,6 +778,169 @@ public class MIVariableManager implements ICommandControl {
 			}
 		}
 		
+		/**
+         * Process an update on this variable object.
+         *
+         * @param update What has changed.
+         * 
+         * @since 4.0
+         */
+		protected void processChange(final MIVarChange update, final RequestMonitor rm) {
+
+			MIVar[] newChildren = update.getNewChildren();
+
+			// children == null means fetchChildren will happen later, so
+			// don't try to create a sparsely filled children array here.
+			final boolean addNewChildren = (children != null);
+
+			final ExpressionInfo[] addedChildren = (addNewChildren && (newChildren != null)) ? new ExpressionInfo[newChildren.length]
+					: null;
+
+			final CountingRequestMonitor countingRm = new CountingRequestMonitor(fSession.getExecutor(), rm) {
+
+				@Override
+				protected void handleCompleted() {
+					
+					if (! isSuccess()) {
+						rm.setStatus(getStatus());
+					} else {
+						if (update.numChildrenChanged()) {
+							if (children != null) {
+								// Remove those children that don't exist any longer.
+								if (children.length > update.getNewNumChildren()) {
+									shrinkChildrenTo(update.getNewNumChildren());
+								}
+							} else {
+								// Just update the child count.
+								numChildrenHint = update.getNewNumChildren();
+							}
+
+							// Add the new children.
+							if ((addedChildren != null) && (addedChildren.length != 0)) {
+								addChildren(addedChildren);
+							}
+						}
+						
+						assert((children == null) || (children.length == numChildrenHint));
+
+						hasMore = update.hasMore();
+
+						// If there was no -var-list-children yet for a varobj,
+						// the new children will not be reported by -var-update.
+						// Set the children to null such that the next time children
+						// are requested, they will be fetched.
+						if (hasMore() && (numChildrenHint == 0)) {
+							setChildren(null);
+						}	
+
+						resetValues(update.getValue());
+					}
+					rm.done();
+				}
+			};
+			
+			// Process all the child MIVariableObjects.
+			int pendingVariableCreationCount = 0;
+			if (newChildren != null && newChildren.length != 0) {
+				int i = update.getNewNumChildren() - newChildren.length;
+				int arrayPosition = 0;				
+
+				for (final MIVar newChild : newChildren) {
+
+					// As long as http://sourceware.org/bugzilla/show_bug.cgi?id=10252
+					// is not fixed, it doesn't make sense to use
+					// -var-info-path-expression. New children can only
+					// be added during the update, if we are a child of a
+					// dynamic varobj, and in this case -var-info-path-expression
+					// won't work.
+					final String childFullExpression = buildChildExpression(
+							getExpression(), newChild.getExp());
+					
+					// Now try to see if we already have this variable
+					// object in our Map
+					// Since our map names use the expression, and not the
+					// GDB given
+					// name, we must determine the correct map name from the
+					// varName
+					final VariableObjectId childId = new VariableObjectId();
+					childId.generateId(childFullExpression, getInternalId());
+					MIVariableObject childVar = lruVariableList.get(childId);
+
+					if (childVar != null) {
+						if ((childVar.currentState == STATE_CREATING)
+								|| (childVar.currentState == STATE_NOT_CREATED)) {
+
+							// We must wait until the child MIVariableObject is fully created.
+							// This might succeed, or fail. If it succeeds, we can reuse it as
+							// a child, otherwise we create a new MIVariableObject for the
+							// varobj just provided by gdb.
+							
+							++pendingVariableCreationCount;
+							
+							final int insertPosition = arrayPosition;
+							final MIVariableObject monitoredVar = childVar;
+							final int indexInParent = i;
+							
+							// varobj is not fully created so add RequestMonitor to pending queue
+							childVar.updatesPending.add(new DataRequestMonitor<Boolean>(fSession.getExecutor(), countingRm) {
+
+								@Override
+								protected void handleCompleted() {
+									if (isSuccess()) {
+										if (addNewChildren) {
+											addedChildren[insertPosition] = monitoredVar.exprInfo;
+										}
+									} else {
+										// Create a fresh MIVariableObject for this child, using
+										// the new varobj provided by gdb.
+										MIVariableObject newVar = createChild(childId, childFullExpression,
+												indexInParent, newChild);
+										if (addNewChildren) {
+											addedChildren[insertPosition] = newVar.exprInfo;
+										}
+									}
+									
+									countingRm.done();
+								}
+								
+							});
+
+						} else if (childVar.currentState == STATE_CREATION_FAILED) {
+							// There has been an attempt the create a MIRootVariableObject for a full
+							// expression representing a child of a dynamic varobj. Such an attempt
+							// always fails. But here we can now create it (see below).
+							childVar = null;
+						}
+						// Note that we must check the root to know if it is out-of-scope.
+						// We cannot check the child as it has not be updated and its
+						// outOfScope variable is not updated either.
+						else if (childVar.getRootToUpdate().isOutOfScope()) {
+							childVar.deleteInGdb();
+							childVar = null;
+						}
+					}
+
+					// Note: we don't need to check for fake children (public, protected, private) here.
+					// We enter this code only if the children are provided by a pretty printer and
+					// they don't return such children.
+					
+					if (childVar == null) {
+						// Create a fresh MIVariableObject for this child, using
+						// the new varobj provided by -var-update.
+						childVar = createChild(childId, childFullExpression, i, newChild);
+						if (addNewChildren) {
+							addedChildren[arrayPosition] = childVar.exprInfo;
+						}
+					}
+					
+					++i;
+					++arrayPosition;
+				}
+			}
+
+			countingRm.setDoneCount(pendingVariableCreationCount);
+		}
+
 		/**
 		 * Variable objects need not be deleted unless they are root.
 		 * This method is specialized in the MIRootVariableObject class.
@@ -476,7 +1004,7 @@ public class MIVariableManager implements ICommandControl {
 			// If the variable is a complex structure, there is no need to ask the back-end for a value,
 			// we can give it the {...} ourselves
 			// Unless we are dealing with an array, in which case, we want to get the address of it
-			if (isComplex()) {
+			if (isComplex() && ! isDynamic()) {
 				if (isArray()) {
 					// Figure out the address
 					IExpressionDMContext exprCxt = DMContexts.getAncestorOfType(dmc, IExpressionDMContext.class);
@@ -613,29 +1141,108 @@ public class MIVariableManager implements ICommandControl {
 			}			
 		}
 
-		/** 
-		 * This method returns the list of children of the variable object passed as a parameter.
+		/**
+		 * This method returns the list of children of the variable object
+		 * passed as a parameter.
 		 * 
+		 * @param exprDmc
+		 * 
+		 * @param clientNumChildrenLimit
+		 *            If the current limit for the given expression is smaller,
+		 *            this limit will be applied.
 		 * @param rm
-		 *            The data request monitor that will hold the children returned
+		 *            The data request monitor that will hold the children
+		 *            returned
 		 */
-		private void getChildren(final MIExpressionDMC exprDmc, final DataRequestMonitor<ExpressionInfo[]> rm) {
+		private void getChildren(final MIExpressionDMC exprDmc,
+				final int clientNumChildrenLimit, final DataRequestMonitor<ChildrenInfo> rm) {
+			
+			if (fetchingChildren) {
+				// Only one request monitor can fetch children at a time.
+				fetchChildrenPending.add(new DataRequestMonitor<ChildrenInfo>(fSession.getExecutor(), rm) {
+
+					@Override
+					protected void handleSuccess() {
+						ChildrenInfo info = getData();
+						int numChildren = info.getChildren().length;
+						if (! info.hasMore() || numChildren >= clientNumChildrenLimit) {
+							// No need to fetch further children.
+							rm.setData(getData());
+							rm.done();
+						} else {
+							// Need to retry.
+							getChildren(exprDmc, clientNumChildrenLimit, rm);
+						}
+					}
+					
+				});
+			} else {
+			
+				fetchingChildren = true;
+				
+				fetchChildren(exprDmc, clientNumChildrenLimit, new DataRequestMonitor<ChildrenInfo>(fSession.getExecutor(), rm) {
+
+					@Override
+					protected void handleCompleted() {
+						fetchingChildren = false;
+
+						if (isSuccess()) {
+							rm.setData(getData());
+							rm.done();
+							
+							while (fetchChildrenPending.size() > 0) {
+								DataRequestMonitor<ChildrenInfo> pendingRm = fetchChildrenPending.poll();
+								pendingRm.setData(getData());
+								pendingRm.done();
+							}
+						} else {
+							rm.setStatus(getStatus());
+							rm.done();
+
+							while (fetchChildrenPending.size() > 0) {
+								DataRequestMonitor<ChildrenInfo> pendingRm = fetchChildrenPending.poll();
+								pendingRm.setStatus(getStatus());
+								pendingRm.done();
+							}							
+						}
+					}
+				});
+			}
+		}
+
+		/**
+		 * Fetch the out-standing children.
+		 * 
+		 * @param exprDmc
+		 * 
+		 * @param clientNumChildrenLimit
+		 *            If the current limit for the given expression is smaller,
+		 *            this limit will be applied.
+		 * @param rm
+		 *            The data request monitor that will hold the children
+		 *            returned
+		 */
+		private void fetchChildren(final MIExpressionDMC exprDmc,
+				int clientNumChildrenLimit, final DataRequestMonitor<ChildrenInfo> rm) {
+			
+			final int newNumChildrenLimit = clientNumChildrenLimit != IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED ?
+					clientNumChildrenLimit : 1;
+
+			boolean addChildren = requiresAdditionalChildren(newNumChildrenLimit);
 			
 	        // If we already know the children, no need to go to the back-end
 			ExpressionInfo[] childrenArray = getChildren();
-	        if (childrenArray != null) {
-	            rm.setData(childrenArray);
+	        if (childrenArray != null && ! addChildren) {
+	            rm.setData(new ChildrenInfo(childrenArray, hasMore));
 	            rm.done();
 	            return;
 	        }
 	        
 			// If the variable does not have children, we can return an empty list right away
-	        // The numChildrenHint value is trustworthy when wanting to know if there are children
-	        // at all.
-			if (getNumChildrenHint() == 0) {
+			if (! hasChildren()) {
 	        	// First store the empty list, for the next time
 				setChildren(new ExpressionInfo[0]);
-				rm.setData(getChildren());
+				rm.setData(new ChildrenInfo(getChildren(), hasMore));
 				rm.done();
 				return;
 			}
@@ -643,9 +1250,8 @@ public class MIVariableManager implements ICommandControl {
 	        // For arrays (which could be very large), we create the children ourselves.  This is
 	        // to avoid creating an enormous amount of children variable objects that the view may
 	        // never need.  Using -var-list-children will create a variable object for every child
-	        // immediately, that is why won't don't want to use it for arrays.
+	        // immediately, that is why we don't want to use it for arrays.
 	        if (isArray()) {
-	        	// We can trust the numChildrenHint value for arrays.
 	        	ExpressionInfo[] childrenOfArray = new ExpressionInfo[getNumChildrenHint()];
 	        	String exprName = exprDmc.getExpression();
 	        	
@@ -661,12 +1267,13 @@ public class MIVariableManager implements ICommandControl {
 	        		String fullExpr = exprName + "[" + i + "]";//$NON-NLS-1$//$NON-NLS-2$
 	        		String relExpr = exprDmc.getRelativeExpression() + "[" + (castingIndex + i) + "]";//$NON-NLS-1$//$NON-NLS-2$
 
-	        		childrenOfArray[i] = new ExpressionInfo(fullExpr, relExpr);
+	        		childrenOfArray[i] = new ExpressionInfo(fullExpr, relExpr, false, exprInfo, i);
 	        	}
 
 	        	// First store these children, for the next time
 				setChildren(childrenOfArray);
-				rm.setData(getChildren());
+				hasMore = false;
+				rm.setData(new ChildrenInfo(getChildren(), hasMore));
 	        	rm.done();
 	        	return;
 	        }
@@ -675,26 +1282,58 @@ public class MIVariableManager implements ICommandControl {
 	        // at any time, as long as the object is created, which we know it is, since we can only
 	        // be called here with a fully created object.
 	        // Also no need to lock the object, since getting the children won't affect other operations
+
+	        final int from = (addChildren && (children != null)) ? getNumChildrenHint() : 0;
+	        final int to = Math.max(newNumChildrenLimit, exprInfo.getChildCountLimit());
+	        
+	        ICommand<MIVarListChildrenInfo> varListChildren = isSafeToAskForAllChildren() ?
+	        		fCommandFactory.createMIVarListChildren(getRootToUpdate().getControlDMContext(), getGdbName())
+	        		:fCommandFactory.createMIVarListChildren(getRootToUpdate().getControlDMContext(), getGdbName(), from, to);
+					
 	        fCommandControl.queueCommand(
-	        		fCommandFactory.createMIVarListChildren(getRootToUpdate().getControlDMContext(), getGdbName()),
+	        		varListChildren,
 	        		new DataRequestMonitor<MIVarListChildrenInfo>(fSession.getExecutor(), rm) {
 	        			@Override
 	        			protected void handleSuccess() {
 	        				MIVar[] children = getData().getMIVars();
-	        				final List<ExpressionInfo> realChildren = new ArrayList<ExpressionInfo>();
+	        				final boolean localHasMore = getData().hasMore();
+	        				
+	        				// The elements of this array normally are an ExpressionInfo, unless it corresponds to
+	        				// a fake child (public, protected, private). In this case it is an ExpressionInfo[]
+	        				// representing the children of the fake child.
+	        				// This in done in order to preserve the order (the index-in-parent information),
+	        				// when replacing a fake child by its real children.
+	        				final ExpressionInfo[][] realChildren = new ExpressionInfo[children.length][];
 
 	        				final CountingRequestMonitor countingRm = new CountingRequestMonitor(fSession.getExecutor(), rm) {
 	        					@Override
 	        					protected void handleSuccess() {
 	        						// Store the children in our variable object cache
-	        						setChildren(realChildren.toArray(new ExpressionInfo[realChildren.size()]));
-	        						rm.setData(getChildren());
-	        						rm.done();
+	        						addChildren(realChildren);
+	        						hasMore = localHasMore; 
+	        						rm.setData(new ChildrenInfo(getChildren(), hasMore));
+	        						
+	        						int updateLimit = updateLimit(to);
+	        						
+	        						if (! isSafeToAskForAllChildren()) {
+	        							// Make sure the gdb will not hang, if later
+	        							// the varobj is updated, but the underlying
+	        							// data is still uninitialized.
+	        							fCommandControl.queueCommand(
+	        									fCommandFactory.createMIVarSetUpdateRange(getRootToUpdate().getControlDMContext(),
+	        									getGdbName(), 0, updateLimit),	new DataRequestMonitor<MIInfo>(fSession.getExecutor(), rm));
+	        						} else {	        							
+	        							rm.done();
+	        						}
 	        					}
 	        				};
 
 	        				int numSubRequests = 0;
-	        				for (final MIVar child : children) {
+	        				for (int i = 0; i < children.length; ++i) {
+	        					final MIVar child = children[i];
+	        					final int indexInParent = from + i;
+	        					final int arrayPosition = i;
+	        					
 	        					// These children get created automatically as variable objects in GDB, so we should
 	        					// add them to the LRU.
 	        					// Note that if this variable object already exists, we can be in three scenarios:
@@ -717,68 +1356,84 @@ public class MIVariableManager implements ICommandControl {
 	        						new DataRequestMonitor<String>(fSession.getExecutor(), countingRm) {
 	        						@Override
 	        						protected void handleSuccess() {
-	        							String childFullExpression = getData();
-
 	        							// For children that do not map to a real expression (such as f.public)
 	        							// GDB returns an empty string.  In this case, we can use another unique
 	        							// name, such as the variable name
-	        							boolean fakeChild = false;
-	        							if (childFullExpression.length() == 0) {
-	        								fakeChild = true;
-	        								childFullExpression = child.getVarName();
-	        							}
-
+	        							final boolean fakeChild = (getData().length() == 0);
+	        							final String childFullExpression = fakeChild ? child.getVarName() : getData();
+	        							
 	        							// Now try to see if we already have this variable object in our Map
 	        							// Since our map names use the expression, and not the GDB given
 	        							// name, we must determine the correct map name from the varName
-	        							VariableObjectId childId = new VariableObjectId();
+	        							final VariableObjectId childId = new VariableObjectId();
 	        							childId.generateId(childFullExpression, getInternalId());
 	        							MIVariableObject childVar = lruVariableList.get(childId);
 
-	        							// Note that we must check the root to know if it is out-of-scope.
-	        							// We cannot check the child as it has not be updated and its
-	        							// outOfScope variable is not updated either.
-	        							if (childVar != null && childVar.getRootToUpdate().isOutOfScope()) {
-	        								childVar.deleteInGdb();
-	        								childVar = null;
-	        							}
+										if (childVar != null) {
+											
+											if ((childVar.currentState == STATE_CREATING)
+													|| (childVar.currentState == STATE_NOT_CREATED)) {
+
+												// We must wait until the child MIVariableObject is fully created.
+												// This might succeed, or fail. If it succeeds, we can reuse it as
+												// a child, otherwise we create a new MIVariableObject for the
+												// varobj just provided by gdb.
+												
+												final MIVariableObject monitoredVar = childVar;
+												
+												// childVar is not fully created so add a RequestMonitor to the queue
+												childVar.updatesPending.add(new DataRequestMonitor<Boolean>(fSession.getExecutor(), countingRm) {
+
+													@Override
+													protected void handleCompleted() {
+														MIVariableObject var = monitoredVar;
+														
+														if (! isSuccess()) {
+															
+															// Create a fresh MIVariableObject for this child, using
+															// the new varobj provided by gdb.
+															var = createChild(childId, childFullExpression, indexInParent, child);
+														}
+														
+														if (fakeChild) {
+
+															addRealChildrenOfFake(var,	exprDmc, realChildren,
+																	arrayPosition, countingRm);
+														} else {
+															// This is a real child
+															realChildren[arrayPosition] = new ExpressionInfo[] { var.exprInfo };
+															countingRm.done();
+														}														
+													}
+												});
+												
+											} else if (childVar.currentState == STATE_CREATION_FAILED) {
+												// There has been an attempt the create a MIRootVariableObject for a full
+												// expression representing a child of a dynamic varobj. Such an attempt always
+												// fails. But here we can now create it (see below).
+												childVar = null;
+											}
+											// Note that we must check the root to know if it is out-of-scope.
+											// We cannot check the child as it has not be updated and its
+											// outOfScope variable is not updated either.
+											else if (childVar.getRootToUpdate().isOutOfScope()) {
+												childVar.deleteInGdb();
+												childVar = null;
+											}
+										}
 
 	        							if (childVar == null) {
-	        								childVar = createVariableObject(childId, MIVariableObject.this);
-	        								childVar.setGdbName(child.getVarName());
-	        								childVar.setExpressionData(
-	        										childFullExpression,
-	        										child.getType(), 
-	        										child.getNumChild());
-
-	        								// This will replace any existing entry
-	        								lruVariableList.put(childId, childVar);
-
-	        								// Is this new child a modifiable descendant of the root?
-	        								if (childVar.isModifiable()) {
-	        									getRootToUpdate().addModifiableDescendant(child.getVarName(), childVar);
-	        								}
-	        							}
-
-	        							if (fakeChild) {
-	        								// This is just a qualifier level of C++, and we must
-	        								// get the children of this child to get the real children
-	        								childVar.getChildren(
-	        										exprDmc,
-	        										new DataRequestMonitor<ExpressionInfo[]>(fSession.getExecutor(), countingRm) {
-	        											@Override
-	        											protected void handleSuccess() {
-	        												ExpressionInfo[] vars = getData();
-	        												for (ExpressionInfo realChild : vars) {
-	        													realChildren.add(realChild);
-	        												}
-	        												countingRm.done();
-	        											}
-	        										});
-	        							} else {
-	        								// This is a real child
-	        								realChildren.add(new ExpressionInfo(childFullExpression, child.getExp()));
-	        								countingRm.done();
+	        								childVar = createChild(childId, childFullExpression, indexInParent, child);
+											
+											if (fakeChild) {
+												
+												addRealChildrenOfFake(childVar,	exprDmc, realChildren,
+														arrayPosition, countingRm);
+											} else {
+												// This is a real child
+												realChildren[arrayPosition] = new ExpressionInfo[] { childVar.exprInfo };
+												countingRm.done();
+											}
 	        							}
 	        						}
 	        					};
@@ -788,6 +1443,12 @@ public class MIVariableManager implements ICommandControl {
 	        						// This is just a qualifier level of C++, so we don't need
 	        						// to call -var-info-path-expression for real, but just pretend we did.
 	        						childPathRm.setData("");  //$NON-NLS-1$
+	        						childPathRm.done();
+	        					} else if (isDynamic() || exprInfo.hasDynamicAncestor()) {
+	        						// Equivalent to (which can't be implemented): child.hasDynamicAncestor
+	        						// The new child has a dynamic ancestor. Such children don't support
+	        						// var-info-path-expression. Build the expression ourselves.
+    	    						childPathRm.setData(buildChildExpression(exprDmc.getExpression(), child.getExp()));
 	        						childPathRm.done();
 	        					} else {
 	        						// To build the child id, we need the fully qualified expression which we
@@ -817,6 +1478,111 @@ public class MIVariableManager implements ICommandControl {
 		}
 		
 		/**
+		 * Create a child variable of this MIVariableObject and initialize
+		 * it from the given MIVar data.
+		 * 
+		 * @param childId
+		 * @param childFullExpression
+		 * @param indexInParent
+		 * @param childData
+		 * 
+		 * @return The new child.
+		 * 
+		 * @since 4.0
+		 */
+		protected MIVariableObject createChild(final VariableObjectId childId,
+				final String childFullExpression, final int indexInParent,
+				final MIVar childData) {
+			
+			MIVariableObject var = createVariableObject(childId, this);
+			ExpressionInfo childInfo = new ExpressionInfo(childFullExpression,
+					childData.getExp(), childData.isDynamic(), exprInfo,
+					indexInParent);
+
+			var.initFrom(childData, childInfo);
+			return var;
+		}
+		
+		/**
+		 * @param clientLimit
+		 * @return True, if the client specified limit requires to check for
+		 *         further children.
+		 *         
+		 * @since 4.0
+		 */
+		protected boolean requiresAdditionalChildren(int clientLimit) {
+			return !isSafeToAskForAllChildren()
+					&& (exprInfo.getChildCountLimit() < calculateNewLimit(clientLimit));
+		}
+
+		/**
+		 * @param newLimit
+		 *            The new limit on the number of children being asked for or
+		 *            being updated.
+		 * 
+		 * @return The new limit.
+		 * @since 4.0
+		 */
+		protected int updateLimit(int newLimit) {
+			exprInfo.setChildCountLimit(calculateNewLimit(newLimit));
+			return exprInfo.getChildCountLimit();
+		}
+		
+		private int calculateNewLimit(int clientLimit) {
+			int limit = exprInfo.getChildCountLimit();
+			
+			if (!isSafeToAskForAllChildren() && clientLimit != IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED) {
+				if (limit == IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED) {
+					return clientLimit;
+				} else if (limit < clientLimit) {
+					return clientLimit;
+				}
+			}
+			
+			return limit;
+		}
+
+		/**
+		 * Obtain the children of the given fake child (public, protected, or
+		 * private) and insert them into a list of children at a given position.
+		 * 
+		 * @param fakeChild
+		 * @param frameCtxProvider
+		 * @param realChildren
+		 * @param position
+		 * @param rm The request monitor on which to call done upon completion.
+		 */
+		private void addRealChildrenOfFake(MIVariableObject fakeChild,
+				IExpressionDMContext frameCtxProvider,
+				final ExpressionInfo[][] realChildren, final int position,
+				final CountingRequestMonitor rm) {
+
+			MIExpressionDMC fakeExprCtx = createExpressionCtx(frameCtxProvider,
+					fakeChild.exprInfo);
+
+			// This is just a qualifier level of C++, and we must get the
+			// children of this child to get the real children
+			fakeChild.getChildren(fakeExprCtx,
+					IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED,
+					new DataRequestMonitor<ChildrenInfo>(
+							fSession.getExecutor(), rm) {
+
+						@Override
+						protected void handleCompleted() {
+							if (isSuccess()) {
+								realChildren[position] = getData()
+										.getChildren();
+
+								// Fake nodes can never be dynamic varobjs, and because
+								// of this, hasMore is always false.
+								assert (!getData().hasMore());
+							}
+							rm.done();
+						}
+					});
+		}
+
+		/**
 		 * This method builds a child expression based on its parent's expression.
 		 * It is a fallback solution for when GDB doesn't support the var-info-path-expression.
 		 * 
@@ -839,28 +1605,40 @@ public class MIVariableManager implements ICommandControl {
 		    // and don't call this method for them
 		}
 
-		/** 
-		 * This method returns the count of children of the variable object passed as a parameter.
+		/**
+		 * This method returns the count of children of the variable object
+		 * passed as a parameter.
 		 * 
+		 * @param exprDmc
+		 * 
+		 * @param numChildrenLimit
+		 *            No need to check for more than this number of children.
+		 *            However, it is legal to return a higher count if
+		 *            we already new from earlier call that there are more
+		 *            children.
+		 *            
 		 * @param rm
-		 *            The data request monitor that will hold the count of children returned
+		 *            The data request monitor that will hold the count of
+		 *            children returned
 		 */
-		private void getChildrenCount(MIExpressionDMC exprDmc, final DataRequestMonitor<Integer> rm) {
+		private void getChildrenCount(MIExpressionDMC exprDmc, final int numChildrenLimit,
+				final DataRequestMonitor<ChildrenCountInfo> rm) {
 			if (isNumChildrenHintTrustworthy()){
-				rm.setData(getNumChildrenHint());
+				rm.setData(new ChildrenCountInfo(getNumChildrenHint(), hasMore()));
 				rm.done();
 				return;
 			}
 			
-			getChildren(
-					exprDmc, 
-					new DataRequestMonitor<ExpressionInfo[]>(fSession.getExecutor(), rm) {
-						@Override
-						protected void handleSuccess() {
-							rm.setData(getData().length);
-							rm.done();
-						}
-					});
+			getChildren(exprDmc, numChildrenLimit,
+					new DataRequestMonitor<ChildrenInfo>(fSession.getExecutor(), rm) {
+
+				@Override
+				protected void handleSuccess() {
+					rm.setData(new ChildrenCountInfo(getData()
+							.getChildren().length, getData().hasMore()));
+					rm.done();
+				}
+			});
 		}
 		
 
@@ -966,9 +1744,90 @@ public class MIVariableManager implements ICommandControl {
 			return str.equals("private") || str.equals("public") || str.equals("protected");  //$NON-NLS-1$  //$NON-NLS-2$  //$NON-NLS-3$ 
 	    }
 
+		/**
+		 * @return If true, this variable object can be reported as changed in
+		 *         a -var-update MI command.
+		 */
 		public boolean isModifiable() {
-			if (!isComplex()) return true;
+			if (!isComplex() || isDynamic()) return true;
 			return false;
+		}
+
+		/**
+		 * @param exprCtx
+		 * @param rm
+		 * 
+		 * @since 4.0
+		 */
+		public void create(final IExpressionDMContext exprCtx,
+				final RequestMonitor rm) {
+
+			if (currentState == STATE_NOT_CREATED) {
+
+				currentState = STATE_CREATING;
+				
+				final MIExpressionDMC miExprCtx = (MIExpressionDMC) exprCtx;
+				final int indexInParent = miExprCtx.getExpressionInfo().getIndexInParentExpression();
+
+				fCommandControl.queueCommand(fCommandFactory.createMIVarListChildren(getParent().getRootToUpdate().getControlDMContext(),
+								getParent().getGdbName(), indexInParent, indexInParent + 1),
+						new DataRequestMonitor<MIVarListChildrenInfo>(fSession.getExecutor(), rm) {
+
+							@Override
+							protected void handleSuccess() {
+								if (getData().getMIVars().length == 1) {
+									MIVar miVar = getData().getMIVars()[0];
+									
+									ExpressionInfo localExprInfo = miExprCtx.getExpressionInfo();
+									
+									localExprInfo.setDynamic(miVar.isDynamic());
+									
+									initFrom(miVar, localExprInfo);
+
+									if (exprInfo.isDynamic()
+											&& (exprInfo.getChildCountLimit() != IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED)) {
+										// Restore the original update range.
+										fCommandControl.queueCommand(fCommandFactory.createMIVarSetUpdateRange(
+												getRootToUpdate().getControlDMContext(),
+												getGdbName(), 0, exprInfo.getChildCountLimit()),
+												new DataRequestMonitor<MIInfo>(fSession.getExecutor(), rm));
+									} else {
+										rm.done();
+									}
+								} else {
+									rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, 
+											"Unexpected return on -var-list-children", null)); //$NON-NLS-1$
+									rm.done();
+								}
+							}
+						});
+			} else {
+				assert false;
+			}
+		}
+
+		private void initFrom(MIVar miVar, ExpressionInfo newExprInfo) {
+			// Possible Optimization in GDB: In -var-list-children, the has_more
+			// field is missing for the children. As a workaround, we assume that
+			// if numChild is 0 and has_more is omitted, we have more children.
+			boolean newHasMore = miVar.hasMore()
+					|| (miVar.isDynamic() && (miVar.getNumChild() == 0));
+			
+			setGdbName(miVar.getVarName());
+			setDisplayHint(miVar.getDisplayHint());
+			setExpressionData(
+					newExprInfo,
+					miVar.getType(),
+			        miVar.getNumChild(),
+					newHasMore);
+
+			// This will replace any existing entry
+			lruVariableList.put(getInternalId(), this);
+
+			// Is this new child a modifiable descendant of the root?
+			if (isModifiable()) {
+				getRootToUpdate().addModifiableDescendant(miVar.getVarName(), this);
+			}
 		}
 	}
 	
@@ -980,16 +1839,22 @@ public class MIVariableManager implements ICommandControl {
 	protected MIVariableObject createVariableObject(VariableObjectId id, MIVariableObject parentObj) {
 	    return new MIVariableObject(id, parentObj);
 	}
-	
+
+	/**
+	 * Method to allow to override the MIVariableObject creation
+	 * 
+     * @since 4.0
+	 */
+	protected MIVariableObject createVariableObject(VariableObjectId id,
+			MIVariableObject parentObj, boolean needsCreation) {
+		return new MIVariableObject(id, parentObj, needsCreation);
+	}
+
 	/**
      * @since 3.0
      */
 	public class MIRootVariableObject extends MIVariableObject {
 
-		// Only root variables go through the GDB creation process
-		protected static final int STATE_NOT_CREATED = 10;
-		protected static final int STATE_CREATING = 11;
-		
 		// The control context within which this variable object was created
 		// It only needs to be stored in the Root VarObj since any children
 		// will have the same control context
@@ -997,8 +1862,11 @@ public class MIVariableManager implements ICommandControl {
 	    
 		private boolean fOutOfDate = false;
 		
-	    // Modifiable descendants are any variable object that is a descendant or itself for
-	    // which the value can change.
+		/**
+	     * A modifiable descendant is any variable object that is a descendant and
+	     * for which the value (leaf variable objects and dynamic variable objects)
+	     * or number of children (dynamic variable objects) can change.
+		 */
 		private Map<String, MIVariableObject> modifiableDescendants;
 
 		public MIRootVariableObject(VariableObjectId id) {
@@ -1020,14 +1888,29 @@ public class MIVariableManager implements ICommandControl {
 			modifiableDescendants.put(gdbName, descendant);
 		}
 		
-		public void processChanges(MIVarChange[] updates) {
+		/**
+		 * @since 4.0
+		 */
+		public void processChanges(MIVarChange[] updates, RequestMonitor rm) {
+			CountingRequestMonitor countingRm = new CountingRequestMonitor(fSession.getExecutor(), rm);
+			countingRm.setDoneCount(updates.length);
+			
 			for (MIVarChange update : updates) {
 				MIVariableObject descendant = modifiableDescendants.get(update.getVarName());
+				
 				// Descendant should never be null, but just to be safe
-				if (descendant != null) descendant.resetValues(update.getValue());
+				if (descendant != null) {
+					descendant.processChange(update, countingRm);
+				} else {
+					// This can for instance happen if a child MIVariableObject is deleted
+					// from the cache. The corresponding varobj in gdb does still exist,
+					// and if it is changed, gdb reports it as changed in -var-update.
+					countingRm.done();
+				}
 			}
 		}
 		
+		@Override
 		public void create(final IExpressionDMContext exprCtx,
                            final RequestMonitor rm) {
 
@@ -1043,10 +1926,22 @@ public class MIVariableManager implements ICommandControl {
 							protected void handleCompleted() {
 								if (isSuccess()) {
 									setGdbName(getData().getName());
+									setDisplayHint(getData().getDisplayHint());
+									
+									MIExpressionDMC miExprCtx = (MIExpressionDMC) exprCtx;
+									ExpressionInfo localExprInfo = miExprCtx
+											.getExpressionInfo();
+									
+									localExprInfo.setDynamic(getData()
+											.isDynamic());
+									localExprInfo.setParent(null);
+									localExprInfo.setIndexInParent(-1);
+									
 									setExpressionData(
-											exprCtx.getExpression(), 
-											getData().getType(), 
-											getData().getNumChildren());
+											localExprInfo,
+											getData().getType(),
+											getData().getNumChildren(),
+											getData().hasMore());
 									
 									// Store the value returned at create (available in GDB 6.7)
 									// Don't store if it is an array, since we want to show
@@ -1059,11 +1954,22 @@ public class MIVariableManager implements ICommandControl {
 									if (isModifiable()) {
 										addModifiableDescendant(getData().getName(), MIRootVariableObject.this);
 									}
+
+									if (localExprInfo.isDynamic()
+											&& (localExprInfo.getChildCountLimit() != IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED)) {
+										
+										// Restore the original update range.
+										fCommandControl.queueCommand(fCommandFactory.createMIVarSetUpdateRange(
+												getRootToUpdate().getControlDMContext(),getGdbName(),
+												0,localExprInfo.getChildCountLimit()),
+												new DataRequestMonitor<MIInfo>(fSession.getExecutor(), rm));
+									} else {
+										rm.done();
+									}											 	        						
 								} else {
 									rm.setStatus(getStatus());
-								}
-								
-								rm.done();
+									rm.done();
+								}								
 							}
 						});
 			} else {
@@ -1071,30 +1977,6 @@ public class MIVariableManager implements ICommandControl {
 			}
 		}
 		
-		private void creationCompleted(boolean success) {
-			// A creation completed we must be up-to-date, so we
-			// can tell any pending monitors that updates are done
-			if (success) {
-				currentState = STATE_READY;
-				while (updatesPending.size() > 0) {
-					DataRequestMonitor<Boolean> rm = updatesPending.poll();
-					// Nothing to be re-created
-					rm.setData(false);
-					rm.done();
-				}
-			} else {
-				currentState = STATE_NOT_CREATED;
-
-				// Creation failed, inform anyone waiting.
-				while (updatesPending.size() > 0) {
-					RequestMonitor rm = updatesPending.poll();
-		            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, 
-		            		"Unable to create variable object", null)); //$NON-NLS-1$
-					rm.done();
-				}
-			}
-		}
-
 		@Override
 		public void update(final DataRequestMonitor<Boolean> rm) {
 
@@ -1136,7 +2018,32 @@ public class MIVariableManager implements ICommandControl {
 								
 								if (isSuccess()) {
 									setOutOfDate(false);
+									
+									CountingRequestMonitor countingRm = new CountingRequestMonitor(fSession.getExecutor(), rm) {
 
+										@Override
+										protected void handleCompleted() {											
+
+											if (!isSuccess()) {
+												rm.setStatus(getStatus());
+											}
+											rm.done();
+											
+											while (updatesPending.size() > 0) {
+												DataRequestMonitor<Boolean> pendingRm = updatesPending.poll();
+												if (isSuccess()) {
+													pendingRm.setData(false);
+												} else {
+													rm.setStatus(getStatus());
+												}
+												
+												pendingRm.done();
+											}											
+										}
+									};
+
+									int rmCount = 0;
+									
 									MIVarChange[] changes = getData().getMIVarChanges();
 									if (changes.length > 0 && changes[0].isInScope() == false) {
 										// Object is out-of-scope
@@ -1152,10 +2059,10 @@ public class MIVariableManager implements ICommandControl {
 										lruVariableList.remove(getInternalId());
 
 										rm.setData(true);
-										rm.done();
 									} else {
 										// The root object is now up-to-date, we must parse the changes, if any.
-										processChanges(changes);
+										++rmCount;
+										processChanges(changes, new RequestMonitor(fSession.getExecutor(), countingRm));
 
 										// We only mark this root as updated in our list if it is in-scope.
 										// For out-of-scope object, we don't ever need to re-update them so
@@ -1163,14 +2070,10 @@ public class MIVariableManager implements ICommandControl {
 										rootVariableUpdated(MIRootVariableObject.this);
 
 										rm.setData(false);
-										rm.done();
 									}
 
-									while (updatesPending.size() > 0) {
-										DataRequestMonitor<Boolean> pendingRm = updatesPending.poll();
-										pendingRm.setData(false);
-										pendingRm.done();
-									}
+									countingRm.setDoneCount(rmCount);
+									
 								} else {
 									// We were not able to update for some reason
 									rm.setData(false);
@@ -1195,7 +2098,7 @@ public class MIVariableManager implements ICommandControl {
 		 * to be deleted automatically when their root is deleted.
 		 */
 		@Override
-		public void deleteInGdb() {
+		public void deleteInGdb() {			
 		    if (getGdbName() != null) {
 	    		fCommandControl.queueCommand(
 	    				fCommandFactory.createMIVarDelete(getRootToUpdate().getControlDMContext(), getGdbName()),
@@ -1210,6 +2113,8 @@ public class MIVariableManager implements ICommandControl {
 		    } else {
 		        // Variable was never created or was already deleted, no need to do anything.
 		    }
+		    
+			super.deleteInGdb();
 		}
 	}
 	
@@ -1385,7 +2290,9 @@ public class MIVariableManager implements ICommandControl {
 		@Override
 		public MIVariableObject remove(Object key) {
 			MIVariableObject varObj = super.remove(key);
-			varObj.deleteInGdb();
+			if (varObj != null) {
+				varObj.deleteInGdb();
+			}
 			return varObj; 
 		}
 	}
@@ -1542,6 +2449,16 @@ public class MIVariableManager implements ICommandControl {
 						}
 					} else {
 						// The variable object is up-to-date and valid
+
+						MIExpressionDMC miExprCtx = (MIExpressionDMC) exprCtx;
+						ExpressionInfo ctxExprInfo = miExprCtx.getExpressionInfo();
+						ExpressionInfo varExprInfo = varObj.getExpressionInfo();
+						if (ctxExprInfo != varExprInfo) {
+							// exprCtrx could just be created via IExpressions.createExpression,
+							// and thus the parent-child relationship is not yet set.
+							miExprCtx.setExpressionInfo(varExprInfo);
+						}
+						
 						rm.setData(varObj);
 						rm.done();
 					}
@@ -1559,6 +2476,72 @@ public class MIVariableManager implements ICommandControl {
 			                    final IExpressionDMContext exprCtx,
                                 final DataRequestMonitor<MIVariableObject> rm) {
 
+		// If we have a dynamic variable object as ancestor, we cannot use
+		// -var-create, so we must create ourselves creating the root, and
+		// then use -var-list-children for each further ancestor.
+		final MIExpressionDMC miExprCtx =(MIExpressionDMC) exprCtx;
+		final ExpressionInfo parentInfo = miExprCtx.getExpressionInfo().getParent();
+				
+		if ((parentInfo != null) && miExprCtx.getExpressionInfo().hasDynamicAncestor()) {
+			
+			// Need to set parent when it is known.
+			final MIVariableObject newVarObj = createVariableObject(id, null, true);
+
+			// We must put this object in our map right away, in case it is 
+			// requested again, before it completes its creation.
+			// Note that this will replace any old entry with the same id.
+			lruVariableList.put(id, newVarObj);
+
+			MIExpressionDMC parentExprCtx = createExpressionCtx(exprCtx,
+					parentInfo);
+			
+			getVariable(parentExprCtx,
+					new DataRequestMonitor<MIVariableObject>(
+							fSession.getExecutor(), rm) {
+				
+				@Override
+				protected void handleCompleted() {
+					
+					if (isSuccess()) {
+						final MIVariableObject parentObj = getData();
+						newVarObj.setParent(parentObj);
+						
+						newVarObj.create(miExprCtx,	new RequestMonitor(fSession.getExecutor(), rm) {
+
+							@Override
+							protected void handleCompleted() {
+								if (isSuccess()) {									
+									rm.setData(newVarObj);
+									newVarObj.creationCompleted(true);
+								} else {
+									// Object was not created, remove it from our list
+									lruVariableList.remove(id);
+									// We avoid this race condition by sending the notifications _after_ removing 
+									// the object from the LRU, to avoid any new requests being queue.
+									// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=231655
+									newVarObj.creationCompleted(false);
+									rm.setStatus(getStatus());									
+								}
+								rm.done();
+							}
+						});
+					} else {
+						// Object was not created, remove it from our list
+						lruVariableList.remove(id);
+						// We avoid this race condition by sending the notifications _after_ removing 
+						// the object from the LRU, to avoid any new requests being queue.
+						// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=231655
+						newVarObj.creationCompleted(false);
+						
+						rm.setStatus(getStatus());
+						rm.done();
+					}
+				}
+			});
+			
+			return;
+		}
+		
 		// Variable objects that are created directly like this, are considered ROOT variable objects
 		// in comparison to variable objects that are children of other variable objects.
 		final MIRootVariableObject newVarObj = createRootVariableObject(id);
@@ -1602,10 +2585,22 @@ public class MIVariableManager implements ICommandControl {
 		});
 	}
 
+	private MIExpressionDMC createExpressionCtx(
+			final IExpressionDMContext frameCtxProvider,
+			final ExpressionInfo exprInfo) {
+		
+		IFrameDMContext frameCtx = DMContexts.getAncestorOfType(frameCtxProvider, IFrameDMContext.class);
+
+		MIExpressionDMC exprCtx = new MIExpressionDMC(
+				frameCtxProvider.getSessionId(), exprInfo, frameCtx);
+
+		return exprCtx;
+	}
+
 	/** 
 	 * This method requests the back-end to change the value of an expression.
 	 * 
-	 * @param expressionContext  
+	 * @param ctx
 	 *            The context of the expression we want to change
 	 * @param expressionValue
 	 *            The new value of the expression
@@ -1652,18 +2647,52 @@ public class MIVariableManager implements ICommandControl {
             		new DataRequestMonitor<MIVariableObject>(fSession.getExecutor(), drm) {
             			@Override
             			protected void handleSuccess() {
-           					drm.setData(
-        							new ExprMetaGetVarInfo(
-        									exprCtx.getRelativeExpression(),
-        									// We only provide the hint here.  It will be used for hasChildren()
-        									// To obtain the correct number of children, the user should use 
-        									// IExpressions#getSubExpressionCount()
-        									getData().getNumChildrenHint(), 
-        									getData().getType(),
-        									getData().getGDBType(),
-        									!getData().isComplex()));
-        					drm.done();
-        					processCommandDone(token, drm.getData());
+            				final MIVariableObject varObj = getData();
+            				
+							if (varObj.isDynamic() && (varObj.getNumChildrenHint() == 0) && varObj.hasMore()) {
+								// Bug/feature in gdb? MI sometimes reports 0 number of children, and hasMore=1.
+								// This however, is not a safe indicator that there are children,
+								// unless there has been a -var-list-children before.
+								// The following call will
+								// 1) try to fetch at least one child, because isNumChildrenHintTrustworthy()
+								//    returns false for this combination
+								// 2) result in the desired -var-list-children, unless it has happened already
+								// such that the number of children can at least be used to reliably
+								// tell whether there are children or not.
+								varObj.getChildrenCount(
+										exprCtx, 1,
+										new DataRequestMonitor<ChildrenCountInfo>(fSession.getExecutor(), drm) {
+											@Override
+											protected void handleSuccess() {
+												drm.setData(
+														new ExprMetaGetVarInfo(
+																exprCtx.getRelativeExpression(),
+																varObj.isSafeToAskForAllChildren(),
+																getData().getChildrenCount(),
+																varObj.getType(),
+																varObj.getGDBType(),
+																!varObj.isComplex(),
+																varObj.getDisplayHint().isCollectionHint()));
+												drm.done();
+												processCommandDone(token, drm.getData());
+											}
+										});
+							} else {
+								drm.setData(
+										new ExprMetaGetVarInfo(
+												exprCtx.getRelativeExpression(),
+												varObj.isSafeToAskForAllChildren(),
+												// We only provide the hint here.  It will be used for hasChildren()
+												// To obtain the correct number of children, the user should use
+												// IExpressions#getSubExpressionCount()
+												varObj.getNumChildrenHint(),
+												varObj.getType(),
+												varObj.getGDBType(),
+												!varObj.isComplex(),
+												varObj.getDisplayHint().isCollectionHint()));
+								drm.done();
+								processCommandDone(token, drm.getData());
+							}
             			}
             		});
         } else if (command instanceof ExprMetaGetAttributes) {
@@ -1724,14 +2753,14 @@ public class MIVariableManager implements ICommandControl {
     				new DataRequestMonitor<MIVariableObject>(fSession.getExecutor(), drm) {
     					@Override
     					protected void handleSuccess() {
-    						getData().getChildren(
-    								exprCtx,
-    								new DataRequestMonitor<ExpressionInfo[]>(fSession.getExecutor(), drm) {
+    						getData().getChildren(exprCtx, ((ExprMetaGetChildren)command).getNumChildLimit(),
+    								new DataRequestMonitor<ChildrenInfo>(fSession.getExecutor(), drm) {
     									@Override
     									protected void handleSuccess() {
-    										drm.setData(new ExprMetaGetChildrenInfo(getData()));
+    										drm.setData(new ExprMetaGetChildrenInfo(
+    												getData().getChildren()));
     										drm.done();
-    			                            processCommandDone(token, drm.getData());
+    										processCommandDone(token, drm.getData());
     									}
     								});
     					}
@@ -1741,18 +2770,20 @@ public class MIVariableManager implements ICommandControl {
             @SuppressWarnings("unchecked")            
     		final DataRequestMonitor<ExprMetaGetChildCountInfo> drm = (DataRequestMonitor<ExprMetaGetChildCountInfo>)rm;
             final MIExpressionDMC exprCtx = (MIExpressionDMC)(command.getContext());
- 
+
     		getVariable(
     				exprCtx, 
     				new DataRequestMonitor<MIVariableObject>(fSession.getExecutor(), drm) {
     					@Override
     					protected void handleSuccess() {
+    						
     						getData().getChildrenCount(
-    								exprCtx,
-    								new DataRequestMonitor<Integer>(fSession.getExecutor(), drm) {
+    								exprCtx, ((ExprMetaGetChildCount) command).getNumChildLimit(),
+    								new DataRequestMonitor<ChildrenCountInfo>(fSession.getExecutor(), drm) {
     									@Override
     									protected void handleSuccess() {
-    										drm.setData(new ExprMetaGetChildCountInfo(getData()));
+									drm.setData(new ExprMetaGetChildCountInfo(
+											getData().getChildrenCount()));
     										drm.done();
     			                            processCommandDone(token, drm.getData());
     									}

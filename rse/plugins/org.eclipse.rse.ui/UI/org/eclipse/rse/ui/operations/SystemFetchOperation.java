@@ -319,7 +319,6 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 				}
 				catch (Exception e)
 				{
-					e.printStackTrace();
 					showOperationErrorMessage(null, e, ss);
 					return false;
 				}

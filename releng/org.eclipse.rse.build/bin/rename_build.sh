@@ -73,3 +73,7 @@ for x in `ls` ; do
     esac
   fi
 done
+
+echo ""
+echo "Done, dont forget to rename package.count.orig into package.count when verified."
+echo ""

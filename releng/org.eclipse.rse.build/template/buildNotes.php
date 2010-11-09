@@ -36,13 +36,13 @@
 </ul>
 </li>
 -->
-<li>At least 13 bugs were resolved: Use 
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;chfieldto=2010-09-24;chfield=resolution;query_format=advanced;chfieldfrom=2010-06-10;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;value0-0-1=3\.3;type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management">
+<li>At least 24 bugs were resolved: Use 
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;chfieldto=2010-11-10;chfield=resolution;query_format=advanced;chfieldfrom=2010-06-10;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;value0-0-1=3\.2\.1;type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management">
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;component=Core;component=RSE;component=Terminal;target_milestone=3.3;product=Target%20Management"> -->
   this query</a> to show the list of bugs fixed since
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.2-201006071030/">
-  TM 3.2</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.2-201006071030/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.2.1-201009070720/">
+  TM 3.2.1</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.2.1-201009070720/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see
   <a href="http://dsdp.eclipse.org/dsdp/tm/searchcvs.php">TM SearchCVS</a>, the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
@@ -53,7 +53,7 @@
   <a href="http://wiki.eclipse.org/TM_and_RSE_FAQ">TM and RSE FAQ</a>
   as well as the
   <a href="http://wiki.eclipse.org/DSDP/TM/3.2_Known_Issues_and_Workarounds">
-  TM 3.2 Known Issues and Workarounds</a>.</li>
+  TM 3.2 and 3.3 Known Issues and Workarounds</a>.</li>
 </ul>
 </td></tr></tbody></table>
 
@@ -100,7 +100,7 @@ Also, observe the API Tooling tags such as <b>@noextend</b> and
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">API Specification Updates since TM 3.1</font></b></td>
+		<font face="Arial,Helvetica" color="#FFFFFF">API Specification Updates since TM 3.2</font></b></td>
 	</tr>
 </table>
 <table><tbody><tr><td>
@@ -122,12 +122,12 @@ Use
   <!-- 
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&chfieldfrom=2009-06-20&chfieldto=2009-09-25&chfield=resolution&cmdtype=doit">
    -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&target_milestone=3.1.1&cmdtype=doit">
-  this query</a> to show the full list of API related updates since TM 3.1
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&target_milestone=3.3&cmdtype=doit">
+  this query</a> to show the full list of API related updates since TM 3.2
   <!--
   , and
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&cmdtype=doit">
-  this query</a> to show the list of additional API changes proposed for TM 3.1
+  this query</a> to show the list of additional API changes proposed for TM 3.3
   -->
   .
 </td></tr></tbody></table>
@@ -163,7 +163,7 @@ for an up-to-date list of major or critical bugs.</p>
 
 <p>The 
 <a href="http://wiki.eclipse.org/DSDP/TM/3.2_Known_Issues_and_Workarounds">
-TM 3.2 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
+TM 3.2 and 3.3 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
 of the most frequent and obvious problems, and describes workarounds for them.<br/>
 If you have other questions regarding TM or RSE, please check the
 <a href="http://wiki.eclipse.org/TM_and_RSE_FAQ">TM and RSE FAQ</a>

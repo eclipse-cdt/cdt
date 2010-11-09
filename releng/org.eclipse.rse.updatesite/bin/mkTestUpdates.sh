@@ -29,6 +29,7 @@ tgtlauncher=`ls ${HOME}/ws2/eclipse/plugins/org.eclipse.equinox.launcher_* | sor
 # patch site.xml
 cd ..
 SITE=`pwd`
+echo "SITE is ${SITE}"
 if [ -f index.html.new ]; then
   rm -f index.html.new
 fi
@@ -512,7 +513,7 @@ fi
 if [ x${DO_CATEGORIES} = x1 ]; then
   echo "Adding Categories..."
   CMD="java -jar ${tgtlauncher} \
-    -application -application org.eclipse.equinox.p2.publisher.CategoryPublisher \
+    -application org.eclipse.equinox.p2.publisher.CategoryPublisher \
     -metadataRepository file:${SITE} \
     -categoryDefinition file:/${SITE}/category.xml \
     -compress"

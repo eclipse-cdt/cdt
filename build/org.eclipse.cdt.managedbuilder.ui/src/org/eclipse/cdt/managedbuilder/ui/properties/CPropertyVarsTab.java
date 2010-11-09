@@ -28,11 +28,12 @@ import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PrefPage_Abstract;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.ui.newui.StringListModeControl;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
 import org.eclipse.core.runtime.CoreException;
@@ -60,8 +61,6 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -71,7 +70,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -102,8 +103,8 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	
 	private TableViewer tv;
 	private Label fStatusLabel;
-	private Label  lb1, lb2;
-	
+	private StringListModeControl stringListModeControl;
+
 	private static final String[] fEditableTableColumnProps = new String[] {
 		"editable name",	//$NON-NLS-1$
 		"editable type",	//$NON-NLS-1$
@@ -370,32 +371,18 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 			}
 		});
 		
-	    lb1 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
-	    lb1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    lb1.setToolTipText(Messages.EnvironmentTab_15); 
-	    lb1.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-				CDTPrefUtil.spinDMode();
+		stringListModeControl = new StringListModeControl(page, usercomp, 1);
+		stringListModeControl.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
 				updateData();
-			}});
-	    
+			}
+		});
 		
 		fStatusLabel = new Label(usercomp, SWT.LEFT);
 		fStatusLabel.setFont(usercomp.getFont());
 		fStatusLabel.setText(EMPTY_STR);
 		fStatusLabel.setLayoutData(new GridData(GridData.BEGINNING));
 		fStatusLabel.setForeground(JFaceResources.getColorRegistry().get(JFacePreferences.ERROR_COLOR));
-
-	    lb2 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
-	    lb2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    lb2.setToolTipText(Messages.EnvironmentTab_23); 
-	    lb2.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-				CDTPrefUtil.spinWMode();
-				updateLbs(null, lb2);
-			}});
 	}
 	
 	private void createTableControl(){
@@ -518,7 +505,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		ICdtVariable[] _vars = getVariables();
 		if (_vars == null) return;
 
-		updateLbs(lb1, lb2);
+		stringListModeControl.updateStringListModeControl();
 		
 		if (cfgd == null) {
 			chkVars();
@@ -572,9 +559,9 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	}
 	
 	/**
-	 * Checks whether variable is user's
-	 * @param v - variable to check
-	 * @return 
+	 * Checks whether variable is user's.
+	 * @param v - variable to check.
+	 * @return {@code true} if the variable is user's or {@code false} otherwise.
 	 */
 	private boolean isUserVar(ICdtVariable v) {
 		if (cfgd == null)

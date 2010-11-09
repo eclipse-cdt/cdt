@@ -29,8 +29,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -42,7 +40,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -76,8 +76,8 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	private TableViewer tv;
 	private ArrayList<TabData> data = new ArrayList<TabData>();
 	private Button b1, b2;
-	private Label  lb1, lb2;
-	
+	private StringListModeControl stringListModeControl;
+
 	private ICConfigurationDescription cfgd = null;
 	private StorableEnvironment vars = null;
 
@@ -157,7 +157,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(3, true));
 		Label l1 = new Label(usercomp, SWT.LEFT);
-		l1.setText(Messages.EnvironmentTab_0); 
+		l1.setText(Messages.EnvironmentTab_0);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		l1.setLayoutData(gd);
@@ -168,50 +168,59 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			public void widgetSelected(SelectionEvent e) {
 				updateButtons();
 			}
+
 			public void widgetDefaultSelected(SelectionEvent e) {
-	    		if (buttonIsEnabled(2) && table.getSelectionIndex() != -1)
-    				buttonPressed(2);
-			}});
-		
+				if (buttonIsEnabled(2) && table.getSelectionIndex() != -1)
+					buttonPressed(2);
+			}
+		});
+
 		tv = new TableViewer(table);
 		tv.setContentProvider(new IStructuredContentProvider() {
 
 			public Object[] getElements(Object inputElement) {
 				if (inputElement != null && inputElement instanceof ArrayList<?>) {
 					@SuppressWarnings("unchecked")
-					ArrayList<TabData> ar = (ArrayList<TabData>)inputElement;
+					ArrayList<TabData> ar = (ArrayList<TabData>) inputElement;
 					return ar.toArray(new TabData[0]);
 				}
 				return null;
 			}
-			public void dispose() {}
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
-			});
+
+			public void dispose() {
+			}
+
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
+		});
 		tv.setLabelProvider(new EnvironmentLabelProvider(true));
 		// add headers
 		TableColumn tc = new TableColumn(table, SWT.LEFT);
-		tc.setText(Messages.EnvironmentTab_1); 
+		tc.setText(Messages.EnvironmentTab_1);
 		tc.setWidth(150);
 		tc = new TableColumn(table, SWT.LEFT);
-		tc.setText(Messages.EnvironmentTab_2); 
+		tc.setText(Messages.EnvironmentTab_2);
 		tc.setWidth(150);
 		if (this.getResDesc() != null) {
 			tc = new TableColumn(table, SWT.LEFT);
-			tc.setText(Messages.EnvironmentTab_16);  
+			tc.setText(Messages.EnvironmentTab_16);
 			tc.setWidth(100);
 		}
-		                    
+
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 3;
-	    table.setLayoutData(gd);
-	    
-	    b1 = new Button(usercomp, SWT.RADIO);
-	    b1.setText(Messages.EnvironmentTab_3); 
-	    b1.setToolTipText(Messages.EnvironmentTab_3); 
-	    gd = new GridData(GridData.FILL_HORIZONTAL);
-	    gd.horizontalSpan = 3; 
-	    b1.setLayoutData(gd);
-	    b1.addSelectionListener(new SelectionAdapter() {
+		table.setLayoutData(gd);
+
+		b1 = new Button(usercomp, SWT.RADIO);
+		b1.setText(Messages.EnvironmentTab_3);
+		b1.setToolTipText(Messages.EnvironmentTab_3);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		if (page.isForProject())
+			gd.horizontalSpan = 2;
+		else
+			gd.horizontalSpan = 3;
+		b1.setLayoutData(gd);
+		b1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (cfgd != null)
@@ -219,15 +228,25 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				else
 					vars.setAppendContributedEnvironment(true);
 				updateData();
-			}});
+			}
+		});
 
-	    b2 = new Button(usercomp, SWT.RADIO);
-	    b2.setText(Messages.EnvironmentTab_4); 
-	    b2.setToolTipText(Messages.EnvironmentTab_4); 
-	    gd = new GridData(GridData.FILL_HORIZONTAL);
-	    gd.horizontalSpan = 3; 
-	    b2.setLayoutData(gd);
-	    b2.addSelectionListener(new SelectionAdapter() {
+		if (page.isForProject()) {
+			stringListModeControl = new StringListModeControl(page, usercomp, 1);
+			stringListModeControl.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					updateData();
+				}
+			});
+		}
+
+		b2 = new Button(usercomp, SWT.RADIO);
+		b2.setText(Messages.EnvironmentTab_4);
+		b2.setToolTipText(Messages.EnvironmentTab_4);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		b2.setLayoutData(gd);
+		b2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (cfgd != null)
@@ -235,33 +254,16 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				else
 					vars.setAppendContributedEnvironment(false);
 				updateData();
-			}});
+			}
+		});
 
-	    if (!page.isForPrefs()) {
-	    	// dummy placeholder
-	    	new Label(usercomp, SWT.NONE).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    	
-	    	lb1 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
-	    	lb1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    	lb1.setToolTipText(Messages.EnvironmentTab_15); 
-	    	lb1.addMouseListener(new MouseAdapter() {
-	    		@Override
-	    		public void mouseDoubleClick(MouseEvent e) {
-	    			CDTPrefUtil.spinDMode();
-	    			updateData();
-	    		}});
-
-	    	lb2 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
-	    	lb2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    	lb2.setToolTipText(Messages.EnvironmentTab_23); 
-	    	lb2.addMouseListener(new MouseAdapter() {
-	    		@Override
-	    		public void mouseDoubleClick(MouseEvent e) {
-	    			CDTPrefUtil.spinWMode();
-	    			updateLbs(null, lb2);
-	    		}});
-	    }
-	    initButtons(new String[] {Messages.EnvironmentTab_5,Messages.EnvironmentTab_6,Messages.EnvironmentTab_7,Messages.EnvironmentTab_8,Messages.EnvironmentTab_9}); 
+		initButtons(new String[] {
+				Messages.EnvironmentTab_5,
+				Messages.EnvironmentTab_6,
+				Messages.EnvironmentTab_7,
+				Messages.EnvironmentTab_8,
+				Messages.EnvironmentTab_9 
+			});
 	}
 	
 	@Override
@@ -342,7 +344,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		Collections.sort(data);
 		tv.setInput(data);
 		
-		updateLbs(lb1, lb2);
+		stringListModeControl.updateStringListModeControl();
 		updateButtons();
 	}
 

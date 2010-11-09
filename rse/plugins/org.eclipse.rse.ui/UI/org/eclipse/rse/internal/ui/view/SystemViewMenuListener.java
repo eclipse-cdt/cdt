@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * Uwe Stieber      (Wind River) - [319618] [context-menu] Tool tip not shown in status bar for command contributions items
+ * Martin Oberhuber (Wind River) - [323141] [context-menu] Cleanup introspection code for command contribution items
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -167,13 +168,18 @@ implements ISystemViewMenuListener
 		      tip = ((ActionContributionItem)data).getAction().getToolTipText();
 		    else if (data instanceof CommandContributionItem) {
 		    	try {
-		    		Field f = data.getClass().getDeclaredField("widget"); //$NON-NLS-1$
-		    		f.setAccessible(true);
-		    		Widget widget = (Widget)f.get(data);
-					Method m = data.getClass().getDeclaredMethod("getToolTipText", new Class[] { String.class }); //$NON-NLS-1$
-					m.setAccessible(true);
-					tip = (String)m.invoke(data, new Object[] { widget instanceof Item ? ((Item)widget).getText() : (String)null });
-				} catch (Exception e) { /* ignored on purpose */ }
+		    		tip = ((CommandContributionItem) data).getData().tooltip;
+		    	} catch (Exception apiNotYetAvailable) {
+		    		//API was introduced with Eclipse 3.7m3 -- use introspection on older Eclipse
+			    	try {
+			    		Field f = data.getClass().getDeclaredField("widget"); //$NON-NLS-1$
+			    		f.setAccessible(true);
+			    		Widget widget = (Widget)f.get(data);
+						Method m = data.getClass().getDeclaredMethod("getToolTipText", new Class[] { String.class }); //$NON-NLS-1$
+						m.setAccessible(true);
+						tip = (String)m.invoke(data, new Object[] { widget instanceof Item ? ((Item)widget).getText() : (String)null });
+					} catch (Exception e) { /* ignored on purpose */ }
+		    	}
 		    }
 		    else if (data instanceof SystemSubMenuManager)
 		      tip = ((SystemSubMenuManager)data).getToolTipText();

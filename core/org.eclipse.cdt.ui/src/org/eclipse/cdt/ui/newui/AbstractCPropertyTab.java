@@ -67,7 +67,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  * It is a parent for all standard property tabs 
  * in new CDT model.
  * 
- * Although it's enougth for new tabs to implement
+ * Although it's enough for new tabs to implement
  * ICPropertyTab interface only, it would be better 
  * to extend them from this class.
  *
@@ -667,6 +667,14 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		background.setText(s == null ? BACKGROUND_TEXT_DEFAULT : s);
 	}
 	
+	/**
+	 * Used to display double-clickable buttons for multiple configurations
+	 * string list mode (see Multiple Configurations Edit Preference page).
+	 * 
+	 * @deprecated as of CDT 8.0. This functionality is presented as links
+	 *    to the preference page, see {@link AbstractLangsListTab#updateStringListModeControl()}
+	 */
+	@Deprecated
 	protected void updateLbs(Label lb1, Label lb2) {
 		if (page.isMultiCfg()) {
 			if (lb1 != null) {

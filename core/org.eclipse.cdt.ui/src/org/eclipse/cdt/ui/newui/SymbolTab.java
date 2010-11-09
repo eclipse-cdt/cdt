@@ -94,7 +94,7 @@ public class SymbolTab extends AbstractLangsListTab {
 			else if (table.getItemCount() > 0) 
 				table.setSelection(0);
 		}		
-		updateLbs(lb1, lb2);
+		updateStringListModeControl();
 		updateButtons();
 	}
 	

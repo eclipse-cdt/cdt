@@ -15,9 +15,9 @@
 # - Eclipse 3.3Mx installed in $HOME/ws2/eclipse
 # - Java5 in the PATH or in /shared/dsdp/tm/jdk-1.5
 
-curdir=`pwd`
+curdir=`/bin/pwd`
 cd `dirname $0`
-mydir=`pwd`
+mydir=`/bin/pwd`
 
 umask 022
 
@@ -28,7 +28,7 @@ tgtlauncher=`ls ${HOME}/ws2/eclipse/plugins/org.eclipse.equinox.launcher_* | sor
 
 # patch site.xml
 cd ..
-SITE=`pwd`
+SITE=`/bin/pwd`
 echo "SITE is ${SITE}"
 if [ -f index.html.new ]; then
   rm -f index.html.new

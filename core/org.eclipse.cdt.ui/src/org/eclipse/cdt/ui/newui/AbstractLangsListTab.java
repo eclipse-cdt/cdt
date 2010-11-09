@@ -243,6 +243,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 				int result = PreferencesUtil.createPreferenceDialogOn(parent.getShell(), STRING_LIST_MODE_PREFERENCE_PAGE, null, null).open();
 				if (result!=Window.CANCEL) {
 					updateStringListModeControl();
+					update();
 				}
 			}
 		});

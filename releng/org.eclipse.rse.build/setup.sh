@@ -150,7 +150,6 @@ fi
 #CDTREL=7.0.0
 #CDTFEAT=7.0.0
 #CDTVER=201006141710
-http://www.eclipse.org/downloads/download.php?file=/tools/cdt/builds/8.0.0/I.I201011050851/cdt-master-8.0.0-I201011050851.zip
 CDTREL=8.0.0
 CDTFEAT=8.0.0
 CDTVER=201011050851

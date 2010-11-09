@@ -77,9 +77,9 @@ if [ ${TYPE} = test ]; then
         cp -R $DIR/plugins .
       fi
     fi
-    # CHECK VERSION CORRECTNESS for MICRO UPDATES only
-    # Minor/major version updates are not allowed.
-    # Update of "qualifier" requires also updating "micro"
+    # CHECK VERSION CORRECTNESS for MICRO or MINOR UPDATES only
+    # Major version updates are not allowed.
+    # Update of "qualifier" requires also updating "micro" or "minor"
     echo "VERIFYING VERSION CORRECTNESS: Features against ../updates/3.2"
     ls features/*.jar | sed -e 's,^.*features/,,' | sort > f1.$$.txt
     ls ../updates/3.2/features/*.jar | sed -e 's,^.*features/,,' | sort > f2.$$.txt

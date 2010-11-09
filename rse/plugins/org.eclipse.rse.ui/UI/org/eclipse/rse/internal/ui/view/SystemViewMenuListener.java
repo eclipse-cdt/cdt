@@ -169,7 +169,7 @@ implements ISystemViewMenuListener
 		    else if (data instanceof CommandContributionItem) {
 		    	try {
 		    		tip = ((CommandContributionItem) data).getData().tooltip;
-		    	} catch (Exception apiNotYetAvailable) {
+		    	} catch (Throwable apiNotYetAvailable) {
 		    		//API was introduced with Eclipse 3.7m3 -- use introspection on older Eclipse
 			    	try {
 			    		Field f = data.getClass().getDeclaredField("widget"); //$NON-NLS-1$

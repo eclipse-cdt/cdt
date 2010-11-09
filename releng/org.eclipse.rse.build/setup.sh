@@ -48,11 +48,11 @@ esac
 
 # prepare the base Eclipse installation in folder "eclipse"
 ep_rel="S-"
-ep_ver=3.7M2a
-ep_date="-201009211024"
+ep_ver=3.7M3
+ep_date="-201010281441"
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.0.v3707.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.0.v3712b.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -147,13 +147,13 @@ if [ ! -f ${DROPIN}/org.sonatype.tycho.p2.updatesite_0.9.0.201005191712.jar ]; t
 fi
 
 # CDT Runtime
-#CDTREL=6.0.0
-#CDTVER=200902031437
-#CDTNAME=cdt-master-5.0.0.zip
-#CDTLOC=releases/ganymede/dist/${CDTNAME}
-CDTREL=7.0.0
-CDTFEAT=7.0.0
-CDTVER=201006141710
+#CDTREL=7.0.0
+#CDTFEAT=7.0.0
+#CDTVER=201006141710
+http://www.eclipse.org/downloads/download.php?file=/tools/cdt/builds/8.0.0/I.I201011050851/cdt-master-8.0.0-I201011050851.zip
+CDTREL=8.0.0
+CDTFEAT=8.0.0
+CDTVER=201011050851
 CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
 CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
 if [ ! -f eclipse/plugins/org.eclipse.cdt_${CDTFEAT}.${CDTVER}.jar ]; then

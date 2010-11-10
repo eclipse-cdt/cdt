@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,24 @@ public abstract class AbstractDisassemblyAction extends Action implements IUpdat
 		fDisassemblyPart= disassemblyPart;
 		fDisassemblyPart.addPropertyListener(this);
 	}
+
+	/**
+	 * Create a disassembly action.
+	 * 
+	 * @param disassemblyPart
+	 * @param style
+	 *            one of <code>AS_PUSH_BUTTON</code>,
+	 *            <code>AS_CHECK_BOX</code>, <code>AS_DROP_DOWN_MENU</code>,
+	 *            <code>AS_RADIO_BUTTON</code>, and
+	 *            <code>AS_UNSPECIFIED</code>.
+	 */
+	public AbstractDisassemblyAction(IDisassemblyPart disassemblyPart, int style) {
+		super(null, style);
+		Assert.isLegal(disassemblyPart != null);
+		fDisassemblyPart= disassemblyPart;
+		fDisassemblyPart.addPropertyListener(this);
+	}
+
 
 	/**
 	 * @return the disassembly part

@@ -12,9 +12,6 @@
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.preferences.DisassemblyPreferenceConstants;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.contexts.DebugContextEvent;
-import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IActionBars;
@@ -30,8 +27,6 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
  * DisassemblyView
  */
 public class DisassemblyView extends DisassemblyPart implements IViewPart {
-
-    private IDebugContextListener fDebugContextListener;
 
 	/**
 	 * 
@@ -64,22 +59,14 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		setSite(site);
-		if (memento != null) {
-			Boolean trackExpression = memento.getBoolean(DisassemblyPreferenceConstants.TRACK_EXPRESSION);
-			if (trackExpression != null)
-				fTrackExpression = trackExpression;
-			Boolean syncContext = memento.getBoolean(DisassemblyPreferenceConstants.SYNC_ACTIVE_CONTEXT);
-			if (syncContext != null)
-				fSynchWithActiveDebugContext = syncContext;
-		}
-		
-		DebugUITools.getDebugContextManager().addDebugContextListener(fDebugContextListener = new IDebugContextListener() {
-            public void debugContextChanged(DebugContextEvent event) {
-                if ((event.getFlags() & DebugContextEvent.ACTIVATED) != 0) {
-                    updateDebugContext();
-                }
-            }
-        });
+        if (memento != null) {
+            Boolean trackExpression = memento.getBoolean(DisassemblyPreferenceConstants.TRACK_EXPRESSION);
+            if (trackExpression != null)
+                fTrackExpression = trackExpression;
+            Boolean syncContext = memento.getBoolean(DisassemblyPreferenceConstants.SYNC_ACTIVE_CONTEXT);
+            if (syncContext != null)
+                fSynchWithActiveDebugContext = syncContext;
+        }
 	}
 
 	/*
@@ -89,7 +76,7 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 		memento.putBoolean(DisassemblyPreferenceConstants.TRACK_EXPRESSION, isTrackExpression());
 		memento.putBoolean(DisassemblyPreferenceConstants.SYNC_ACTIVE_CONTEXT, isSyncWithActiveDebugContext());
 	}
-	
+
 	@Override
 	protected void contributeToActionBars(IActionBars bars) {
 		super.contributeToActionBars(bars);
@@ -116,14 +103,5 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 	@Override
 	protected void closePart() {
 		getViewSite().getPage().hideView(this);
-	}
-
-	@Override
-	public void dispose() {
-	    if (fDebugContextListener != null) {
-	        DebugUITools.getDebugContextManager().removeDebugContextListener(fDebugContextListener);
-	        fDebugContextListener = null;
-	    }
-		super.dispose();
 	}
 }

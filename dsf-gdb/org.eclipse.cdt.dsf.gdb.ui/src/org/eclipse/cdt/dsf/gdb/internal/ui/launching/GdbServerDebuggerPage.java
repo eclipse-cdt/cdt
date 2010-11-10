@@ -140,9 +140,9 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setInitializing(true);
 		super.initializeFrom(configuration);
-		boolean isTcp = false;
+		boolean isTcp = true;
 		try {
-			isTcp = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, false);
+			isTcp = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
 		}
 		catch(CoreException e) {
 		}
@@ -165,7 +165,7 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		super.setDefaults(configuration);
-		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, false);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
 		fTCPBlock.setDefaults(configuration);
 		fSerialBlock.setDefaults(configuration);
 	}

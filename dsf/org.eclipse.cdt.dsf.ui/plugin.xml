@@ -741,5 +741,16 @@
          <adapter type="org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover"/>
       </factory>
    </extension>
+   
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyEditor"
+            default="false"
+            icon="icons/disassembly.gif"
+            id="org.eclipse.cdt.dsf.ui.disassembly"
+            name="%disassemblyView.name">
+      </editor>
+   </extension>
 
 </plugin>

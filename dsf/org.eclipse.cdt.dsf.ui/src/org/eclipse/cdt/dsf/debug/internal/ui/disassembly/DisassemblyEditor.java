@@ -11,12 +11,17 @@
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 
 /**
@@ -25,6 +30,8 @@ import org.eclipse.ui.PartInitException;
 public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 
 	private IEditorInput fInput;
+	private ToolBarManager fToolBarManager;
+	private Label fContentDescriptionLabel;
 
 	/**
 	 * 
@@ -33,23 +40,55 @@ public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 		super();
 	}
 
+	/*
+	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
+	@Override
+	public void createPartControl(Composite parent) {
+		GridLayout layout = new GridLayout(1, false);
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.verticalSpacing = 0;
+		parent.setLayout(layout);
+		Composite topBar = new Composite(parent, SWT.NONE);
+		topBar.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		GridLayout layout2 = new GridLayout(2, false);
+		layout2.marginTop = 1;
+		layout2.marginLeft = 1;
+		layout2.marginWidth = 0;
+		layout2.marginHeight = 0;
+		topBar.setLayout(layout2);
+		fContentDescriptionLabel = new Label(topBar, SWT.NONE);
+		fContentDescriptionLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false));
+		fToolBarManager = new ToolBarManager();
+		ToolBar toolbar = fToolBarManager.createControl(topBar);
+		toolbar.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
+		Composite inner = new Composite(parent, SWT.NONE);
+		inner.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		super.createPartControl(inner);
+	}
+	
+	/*
+	 * @see org.eclipse.ui.part.WorkbenchPart#setContentDescription(java.lang.String)
+	 */
+	@Override
+	protected void setContentDescription(String description) {
+		fContentDescriptionLabel.setText(description);
+		fContentDescriptionLabel.getParent().layout(true);
+	}
+
 	@Override
 	protected IActionBars getActionBars() {
 		return getEditorSite().getActionBars();
 	}
 
-	/*
-	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
-	protected void fillContextMenu(IMenuManager manager) {
-		super.fillContextMenu(manager);
-		manager.appendToGroup(IWorkbenchActionConstants.GO_TO, fActionGotoPC);
-		manager.appendToGroup(IWorkbenchActionConstants.GO_TO, fActionGotoAddress);
-		manager.appendToGroup("group.bottom", fActionRefreshView); //$NON-NLS-1$
-
+	protected void contributeToActionBars(IActionBars bars) {
+		super.contributeToActionBars(bars);
+		fillLocalToolBar(fToolBarManager);
+		fToolBarManager.update(true);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.IEditorPart#getEditorInput()
 	 */

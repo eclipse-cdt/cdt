@@ -67,6 +67,8 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -226,7 +228,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private Color fLabelColor;
 	private Control fRedrawControl;
 	private RGB fPCAnnotationRGB;
-	private Composite fComposite;
+	protected Composite fComposite;
 
 	private DropTarget fDropTarget;
 	private DragSource fDragSource;
@@ -315,6 +317,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private AddressBarContributionItem fAddressBar = null;
 	private Action fJumpToAddressAction = new JumpToAddressAction(this);
 
+    private IDebugContextListener fDebugContextListener;
+
 	private final class ActionRefreshView extends AbstractDisassemblyAction {
 		public ActionRefreshView() {
 			super(DisassemblyPart.this);
@@ -400,7 +404,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	private final class ActionToggleSource extends AbstractDisassemblyAction {
 		public ActionToggleSource() {
-			super(DisassemblyPart.this);
+			super(DisassemblyPart.this, IAction.AS_CHECK_BOX);
 			setText(DisassemblyMessages.Disassembly_action_ShowSource_label);
 		}
 		@Override
@@ -420,7 +424,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	private final class ActionToggleSymbols extends AbstractDisassemblyAction {
 		public ActionToggleSymbols() {
-			super(DisassemblyPart.this);
+			super(DisassemblyPart.this, IAction.AS_CHECK_BOX);
 			setText(DisassemblyMessages.Disassembly_action_ShowSymbols_label);
 		}
 		@Override
@@ -669,6 +673,13 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	protected void setSite(IWorkbenchPartSite site) {
 		super.setSite(site);
         site.getPage().addPartListener(fPartListener);
+		DebugUITools.getDebugContextManager().addDebugContextListener(fDebugContextListener = new IDebugContextListener() {
+            public void debugContextChanged(DebugContextEvent event) {
+                if ((event.getFlags() & DebugContextEvent.ACTIVATED) != 0) {
+                    updateDebugContext();
+                }
+            }
+        });
 	}
 
 	private DisassemblyDocument createDocument() {
@@ -681,6 +692,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 */
 	@Override
 	public void dispose() {
+	    if (fDebugContextListener != null) {
+	        DebugUITools.getDebugContextManager().removeDebugContextListener(fDebugContextListener);
+	        fDebugContextListener = null;
+	    }
 		IWorkbenchPartSite site = getSite();
 		site.setSelectionProvider(null);
 		site.getPage().removePartListener(fPartListener);
@@ -1807,7 +1822,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		resetViewer();
 		if (fDebugSessionId != null) {
 			fJumpToAddressAction.setEnabled(true);
-			fAddressBar.enableAddressBox(true);
+			if (fAddressBar != null)
+			    fAddressBar.enableAddressBox(true);
 
 			int activeFrame = getActiveStackFrame();
 			if (activeFrame > 0) {
@@ -1825,7 +1841,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			fViewer.addViewportListener(this);
         } else {
         	fJumpToAddressAction.setEnabled(false);
-        	fAddressBar.enableAddressBox(false);
+            if (fAddressBar != null)
+                fAddressBar.enableAddressBox(false);
 			fViewer.removeViewportListener(this);
         	fGotoMarkerPending = null;
         }

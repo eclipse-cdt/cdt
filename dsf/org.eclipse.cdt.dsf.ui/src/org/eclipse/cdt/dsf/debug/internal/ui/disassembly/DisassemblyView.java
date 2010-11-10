@@ -10,16 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 
@@ -27,8 +23,6 @@ import org.eclipse.ui.actions.ActionFactory;
  * DisassemblyView
  */
 public class DisassemblyView extends DisassemblyPart implements IViewPart {
-
-	private ISelectionListener fDebugViewListener;
 
 	/**
 	 * 
@@ -61,10 +55,6 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		setSite(site);
-		site.getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fDebugViewListener= new ISelectionListener() {
-			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-				updateDebugContext();
-			}});
 	}
 
 	/*
@@ -91,11 +81,5 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 	@Override
 	protected void closePart() {
 		getViewSite().getPage().hideView(this);
-	}
-
-	@Override
-	public void dispose() {
-		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fDebugViewListener);
-		super.dispose();
 	}
 }

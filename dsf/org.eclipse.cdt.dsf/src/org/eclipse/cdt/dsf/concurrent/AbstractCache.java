@@ -37,7 +37,7 @@ public abstract class AbstractCache<V> implements ICache<V> {
     
     private class RequestCanceledListener implements RequestMonitor.ICanceledListener {
         public void requestCanceled(final RequestMonitor canceledRm) {
-            fExecutor.execute(new Runnable() {
+            fExecutor.getDsfExecutor().execute(new Runnable() {
                 public void run() {
                     handleCanceledRm(canceledRm);
                 }

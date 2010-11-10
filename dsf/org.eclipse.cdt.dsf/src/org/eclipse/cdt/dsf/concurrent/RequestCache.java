@@ -12,7 +12,6 @@ package org.eclipse.cdt.dsf.concurrent;
  *******************************************************************************/ 
  
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 /** 
  * A general purpose cache, which caches the result of a single request.
@@ -46,24 +45,23 @@ public abstract class RequestCache<V> extends AbstractCache<V> {
         
         fRm = new DataRequestMonitor<V>(getImmediateInDsfExecutor(), null) {
             
-            private IStatus fRawStatus = Status.OK_STATUS;
-            
             @Override 
             protected void handleCompleted() {
                 if (this == fRm) {
                     fRm = null;
-                    IStatus status;
-                    synchronized (this) {
-                        status = fRawStatus;
+					// If the requestor canceled the request, then leave the
+					// cache as is, regardless of how the retrieval completes.
+					// We want the cache to stay in the invalid state so that
+					// it remains functional. The request may have completed
+					// successfully, and it may be tempting to use the result in
+					// that case, but that opens up a can of worms. We'll follow
+					// the behavior in RequestMonitor: when an RM is canceled,
+					// it's canceled; period.
+                    if (!isCanceled()) {
+                    	set(getData(), getStatus());                    	
                     }
-                    set(getData(), status); 
                 }
             } 
-            
-            @Override
-            public synchronized void setStatus(IStatus status) {
-                fRawStatus = status;
-            };
             
             @Override
             public boolean isCanceled() {

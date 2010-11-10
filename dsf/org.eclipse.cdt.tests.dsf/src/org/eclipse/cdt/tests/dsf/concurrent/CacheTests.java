@@ -156,7 +156,7 @@ public class CacheTests {
         Assert.assertFalse(fRetrieveRm.isCanceled());
     }
 
-    private void assertCacheCanceled() {
+    private void assertCacheInvalidAndWithCanceledRM() {
         Assert.assertFalse(fTestCache.isValid());
         try {
             fTestCache.getData();
@@ -435,9 +435,11 @@ public class CacheTests {
             Assert.fail("Expected a cancellation exception");
         } catch (CancellationException e) {} // Expected exception;
         
-        assertCacheCanceled();
+        assertCacheInvalidAndWithCanceledRM();
 
-        // Completed the retrieve RM
+		// Simulate the retrieval completing successfully despite the cancel
+		// request. Perhaps the retrieval logic isn't checking the RM status.
+		// Even if it is checking, it may have gotten passed its last checkpoint
         fExecutor.submit(new DsfRunnable() {
             public void run() {
                 fRetrieveRm.setData(1);
@@ -445,11 +447,79 @@ public class CacheTests {
             }
         }).get();
 
-        // Validate that cache accepts the canceled request data
-        assertCacheValidWithData(1);
+        // Validate that cache didn't accept the result after its RM was canceled  
+        assertCacheInvalidAndWithCanceledRM();
     }
 
     @Test 
+    public void cancelWhilePendingTest2() throws InterruptedException, ExecutionException {
+        // Request data from cache 
+        Query<Integer> q = new TestQuery();
+        fExecutor.execute(q);
+
+        // Wait until the cache starts data retrieval.
+        waitForRetrieveRm();
+
+        // Cancel the client request
+        q.cancel(true);
+        try {
+            q.get();
+            Assert.fail("Expected a cancellation exception");
+        } catch (CancellationException e) {} // Expected exception;
+        
+        assertCacheInvalidAndWithCanceledRM();
+
+		// Simulate retrieval logic that is regularly checking the RM's cancel
+		// status and has discovered that the request has been canceled. It
+		// technically does not need to explicitly set a cancel status object in
+		// the RM, thanks to RequestMonitor.getStatus() automatically returning
+		// Status.CANCEL_STATUS when its in the cancel state. So here we
+		// simulate the retrieval logic just aborting its operations and
+		// completing the RM. Note that it hasn't provided the data to the
+		// cache. 
+        fExecutor.submit(new DsfRunnable() {
+            public void run() {
+                fRetrieveRm.done();
+            }
+        }).get();
+
+        assertCacheInvalidAndWithCanceledRM();
+    }
+
+    @Test 
+    public void cancelWhilePendingTest3() throws InterruptedException, ExecutionException {
+        // Request data from cache 
+        Query<Integer> q = new TestQuery();
+        fExecutor.execute(q);
+
+        // Wait until the cache starts data retrieval.
+        waitForRetrieveRm();
+
+        // Cancel the client request
+        q.cancel(true);
+        try {
+            q.get();
+            Assert.fail("Expected a cancellation exception");
+        } catch (CancellationException e) {} // Expected exception;
+        
+        assertCacheInvalidAndWithCanceledRM();
+
+		// Simulate retrieval logic that is regularly checking the RM's cancel
+		// status and has discovered that the request has been canceled. It
+		// aborts its processing, sets STATUS.CANCEL_STATUS in the RM and
+		// completes it. 
+        fExecutor.submit(new DsfRunnable() {
+            public void run() {
+            	fRetrieveRm.setStatus(Status.CANCEL_STATUS);
+                fRetrieveRm.done();
+            }
+        }).get();
+
+        // Validate that cache didn't accept the result after its RM was canceled
+        assertCacheInvalidAndWithCanceledRM();
+    }
+
+	@Test 
     public void cancelWhilePendingWithoutClientNotificationTest() throws InterruptedException, ExecutionException {
         // Request data from cache 
         Query<Integer> q = new Query<Integer>() { 
@@ -479,7 +549,7 @@ public class CacheTests {
         // Cancel the client request
         q.cancel(true);
         
-        assertCacheCanceled();
+        assertCacheInvalidAndWithCanceledRM();
 
         try {
             q.get();
@@ -494,8 +564,8 @@ public class CacheTests {
             }
         }).get();
 
-        // Validate that cache accepts the canceled request data
-        assertCacheValidWithData(1);
+        // Validate that cache didn't accept the result after its RM was canceled
+        assertCacheInvalidAndWithCanceledRM();
     }
 
     /**
@@ -508,7 +578,6 @@ public class CacheTests {
     public void cancelAfterCompletedRaceCondition() throws InterruptedException, ExecutionException {
 
         // Create a client request with a badly behaved cancel implementation.
-        @SuppressWarnings("unchecked")
         final RequestMonitor[] rmBad = new RequestMonitor[1] ;
         final boolean qBadCanceled[] = new boolean[] { false };
         Query<Integer> qBad = new Query<Integer>() { 
@@ -538,7 +607,8 @@ public class CacheTests {
                         // Avoid clearing cancel listeners list
                     };
                     
-                    protected void handleSuccess() {
+                    @Override
+					protected void handleSuccess() {
                         rm.setData(fTestCache.getData());
                         rm.done();
                     };
@@ -587,13 +657,15 @@ public class CacheTests {
     
     @Test 
     public void cancelWhilePendingWithTwoClientsTest() throws InterruptedException, ExecutionException {
-        // Request data from cache 
+    	
+		// Request data from cache. Use submit/get to ensure both update
+		// requests are initiated before we wait for retrieval to start
         Query<Integer> q1 = new TestQuery();
-        fExecutor.execute(q1);
+        fExecutor.submit(q1).get();   
 
         // Request data from cache again
         Query<Integer> q2 = new TestQuery();
-        fExecutor.execute(q2);
+        fExecutor.submit(q2).get();
         
 
         // Wait until the cache starts data retrieval.
@@ -614,7 +686,7 @@ public class CacheTests {
             Assert.fail("Expected a cancellation exception");
         } catch (CancellationException e) {} // Expected exception;
 
-        assertCacheCanceled();
+        assertCacheInvalidAndWithCanceledRM();
 
         // Completed the retrieve RM
         fExecutor.submit(new DsfRunnable() {
@@ -624,8 +696,8 @@ public class CacheTests {
             }
         }).get();
 
-        // Validate that cache accepts the canceled request data
-        assertCacheValidWithData(1);
+        // Validate that cache didn't accept the result after its RM was canceled
+        assertCacheInvalidAndWithCanceledRM();
     }
 
     @Test 
@@ -634,7 +706,7 @@ public class CacheTests {
         List<Query<Integer>> qList = new ArrayList<Query<Integer>>(); 
         for (int i = 0; i < 10; i++) {
             Query<Integer> q = new TestQuery();
-            fExecutor.execute(q);
+            fExecutor.submit(q).get();
             qList.add(q);
         }
 
@@ -660,7 +732,7 @@ public class CacheTests {
         // Replace canceled requests with new ones
         for (int i = 0; i < toCancel.length; i++) {
             Query<Integer> q = new TestQuery();
-            fExecutor.execute(q);
+            fExecutor.submit(q).get();
             qList.set(toCancel[i], q);
             assertCacheWaiting();
         }
@@ -672,7 +744,7 @@ public class CacheTests {
             qList.get(i).cancel(true);
         }
         qList.get(qList.size() - 1).cancel(true);
-        assertCacheCanceled();
+        assertCacheInvalidAndWithCanceledRM();
 
         // Completed the retrieve RM
         fExecutor.submit(new DsfRunnable() {
@@ -682,8 +754,8 @@ public class CacheTests {
             }
         }).get();
 
-        // Validate that cache accepts the canceled request data
-        assertCacheValidWithData(1);
+        // Validate that cache didn't accept the result after its RM was canceled
+        assertCacheInvalidAndWithCanceledRM();
     }
 
     @Test 

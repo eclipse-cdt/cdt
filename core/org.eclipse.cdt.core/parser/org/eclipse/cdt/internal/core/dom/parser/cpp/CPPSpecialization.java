@@ -54,9 +54,25 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 
 	public IType specializeType(IType type) {
 		if (owner instanceof ICPPClassSpecialization) {
-			return CPPTemplates.instantiateType(type, getTemplateParameterMap(), -1, (ICPPClassSpecialization) owner);
+			ICPPClassSpecialization within = getWithin((ICPPClassSpecialization) owner);
+			return CPPTemplates.instantiateType(type, getTemplateParameterMap(), -1, within);
 		} else {
 			return CPPTemplates.instantiateType(type, getTemplateParameterMap(), -1, null);
+		}
+	}
+
+	private ICPPClassSpecialization getWithin(ICPPClassSpecialization within) {
+		ICPPClassType orig = within.getSpecializedBinding();
+		for(;;) {
+			IBinding o1 = within.getOwner();
+			IBinding o2 = orig.getOwner();
+			if (!(o1 instanceof ICPPClassSpecialization && o2 instanceof ICPPClassType)) 
+				return within;
+			ICPPClassSpecialization nextWithin = (ICPPClassSpecialization) o1;
+			orig= (ICPPClassType) o2;
+			if (orig.isSameType(nextWithin)) 
+				return within;
+			within= nextWithin;
 		}
 	}
 

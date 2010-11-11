@@ -5135,5 +5135,24 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testPartialOrderingForConversions_Bug326900() throws Exception {
 		parseAndCheckBindings();
 	}
-
+	
+	//	struct S { int foo; };
+	//	template<typename T> struct L {
+	//		  typedef T& CR;
+	//		  template<bool> struct _CI {
+	//			    CR m();
+	//		  };
+	//		  typedef _CI<true> CI;
+	//	};
+	//	void test() {
+	//		  L<S>::CI l;
+	//		  l.m().foo = 1;
+	//	}
+	public void testNestedTypedefSpecialization_Bug329795() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPField f1= bh.assertNonProblem("foo;", 3);
+		IBinding f2= bh.assertNonProblem("foo =", 3);
+		assertSame(f1, f2);
+	}
 }

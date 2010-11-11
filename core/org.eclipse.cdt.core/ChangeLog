@@ -1,7 +1,7 @@
 2006-08-17 Thomas Fletcher
 	PR 85264 from James Blackburn
 	* org/eclipse/cdt/internal/errorparsers/GCCErrorParser.java
-
+ 
 2006-08-17 Thomas Fletcher
 	PR 149428 modified from James Blackburn
 	* utils/org/eclipse/cdt/internal/core/model/CModelManager.java

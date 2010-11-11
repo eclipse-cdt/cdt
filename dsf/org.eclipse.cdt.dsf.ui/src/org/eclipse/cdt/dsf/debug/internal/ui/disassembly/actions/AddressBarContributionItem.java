@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Texas Instruments - Initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Bug fix (329682)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions;
 
@@ -46,6 +47,7 @@ public class AddressBarContributionItem extends ContributionItem {
 	private ToolItem item;
 	private int width;
 	private String initialText;
+	private String lastText;
 	private Image warningImage = null;
 	private Label warningLabel = null;
 	private String warningText = null;
@@ -80,6 +82,7 @@ public class AddressBarContributionItem extends ContributionItem {
 			String warningText) {
 		this.width = width;
 		this.initialText = initialText;
+		this.lastText = initialText;
 		this.warningText = warningText;
 		fill(parent, 0);
 
@@ -237,8 +240,10 @@ public class AddressBarContributionItem extends ContributionItem {
 					((JumpToAddressAction)action).deactivateDisassemblyContext();				
 				// end 297387
 				
+				lastText = addressBox.getText();
+				
 				// Erase the guide text when the focus is gained.
-				if (addressBox.getText().trim().equals(initialText))
+				if (lastText.trim().equals(initialText))
 					addressBox.setText(""); //$NON-NLS-1$
 
 				// [nmehregani]: Support Ctrl+C in address bar
@@ -251,10 +256,10 @@ public class AddressBarContributionItem extends ContributionItem {
 					((JumpToAddressAction)action).activateDisassemblyContext();				
 				// end 297387
 				
-				// Re-insert the guide text when the focus is lost and the text
+				// Re-insert the last text when the focus is lost and the text
 				// field is empty.
 				if (addressBox.getText().trim().length() == 0)
-					addressBox.setText(initialText);
+					addressBox.setText(lastText);
 
 				// [nmehregani]: Support Ctrl+C in address bar
 				addressBox.removeKeyListener(keyListener);

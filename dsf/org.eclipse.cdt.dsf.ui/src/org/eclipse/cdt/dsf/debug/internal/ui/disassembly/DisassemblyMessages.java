@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Bug fix (326670)
+ *     Patrick Chuong (Texas Instruments) - Bug fix (329682)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
@@ -46,8 +47,8 @@ public final class DisassemblyMessages extends NLS {
 	public static String Disassembly_action_TrackExpression_label;
 	public static String Disassembly_GotoAddressDialog_title;
 	public static String Disassembly_GotoAddressDialog_label;
-	public static String Disassembly_GotoAddressDialog_error_invalid_address;
 	public static String Disassembly_message_notConnected;
+	public static String Disassembly_log_error_expression_eval;
 	public static String Disassembly_log_error_locateFile;
 	public static String Disassembly_log_error_readFile;
 	public static String DisassemblyPreferencePage_addressFormatTooltip;

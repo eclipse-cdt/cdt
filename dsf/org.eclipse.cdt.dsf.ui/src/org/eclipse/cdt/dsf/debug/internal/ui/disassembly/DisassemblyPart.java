@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Bug fix (326670)
+ *     Patrick Chuong (Texas Instruments) - Bug fix (329682)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
@@ -23,13 +24,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
-import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.ErrorPosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyDocument;
@@ -1481,6 +1480,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 					if (fUpdatePending) {
 						fUpdatePending = false;
 						updateVisibleArea();
+						fPCLastAddress = getTopAddress();
 					}
 				}
 			});
@@ -2122,7 +2122,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (!isSyncWithActiveDebugContext()) {
 			if (isTrackExpression()) {
 				if (!DisassemblyMessages.Disassembly_GotoLocation_initial_text.equals(fPCLastLocationTxt))
-					fPCLastAddress = eval(fPCLastLocationTxt);
+					fPCLastAddress = eval(fPCLastLocationTxt, true);
 			}
 			if (fPCLastAddress != PC_UNKNOWN) {
 				address = fPCLastAddress;
@@ -2130,7 +2130,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			    fPCLastAddress = address;
 			}
 			
-			frame = -2; // clear the annotation
+			// need to get the frame address when the view first started.
+			if (fPCLastAddress != PC_UNKNOWN)
+				frame = -2; // clear the annotation
 		} else {
 			fPCLastAddress = address;
 		}
@@ -2960,19 +2962,13 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		return ""; //$NON-NLS-1$
 	}
 	
-	public BigInteger eval(String expr) {
-		String location = evaluateExpression(expr);
-    	if (location != null) {
-    		StringTokenizer st = new StringTokenizer(location);
-    		if (st.hasMoreTokens()) {
-    			try {
-    				return DisassemblyUtils.decodeAddress(st.nextToken());
-    			} catch (Exception e) {
-    				logWarning("Failed to evaluate expression " + expr, e); //$NON-NLS-1$
-    			}
-    		}
-    	}
-    	return PC_UNKNOWN;
+	public BigInteger eval(String expr, boolean suppressError) {
+		if (fBackend != null) {
+			BigInteger address = fBackend.evaluateSymbolAddress(expr, suppressError);
+			if (address != null)
+				return address;
+		}
+		return PC_UNKNOWN;    	
 	}
 
 	protected boolean isTrackExpression() {

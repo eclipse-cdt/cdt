@@ -8,6 +8,7 @@
  * Contributors:
  *     Texas Instruments[nmehregani] - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Bug fix (326670)
+ *     Patrick Chuong (Texas Instruments) - Bug fix (329682)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions;
@@ -42,10 +43,9 @@ public class JumpToAddressAction extends Action {
         		return;
         	}
 
-        	BigInteger address = fDisassemblyPart.eval(locationTxt);
+        	BigInteger address = fDisassemblyPart.eval(locationTxt, false);
 			if (address.compareTo(BigInteger.ZERO) < 0) {
 				addressBar.setWarningIconVisible(true);
-				fDisassemblyPart.generateErrorDialog(DisassemblyMessages.Disassembly_GotoAddressDialog_error_invalid_address);
 			} else {        				
 				fDisassemblyPart.gotoLocationByUser(address, locationTxt);
 				addressBar.setWarningIconVisible(false);

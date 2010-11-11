@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Freescale Semiconductor - refactoring
+ *     Patrick Chuong (Texas Instruments) - Bug fix (329682)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.internal.ui.disassembly.dsf;
@@ -349,6 +350,20 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyBackend#gotoSymbol(java.lang.String)
 	 */
 	public void gotoSymbol(String symbol) {
+		final BigInteger address = evaluateSymbolAddress(symbol, false);
+		if (address != null) {
+			fCallback.asyncExec(new Runnable() {
+				public void run() {
+					fCallback.gotoAddress(address);
+				}});
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#evaluateSymbolAddress(java.lang.String, boolean)
+	 */
+	public BigInteger evaluateSymbolAddress(String symbol, final boolean suppressError) {
 		if (fTargetFrameContext != null) {
 			try {
 				// This logic was lifted from CMemoryBlockRetrievalExtension.getExtendedMemoryBlock(String, Object)
@@ -368,11 +383,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 							String addressStr = cstackFrame.evaluateExpressionToString(expr);
 							if (addressStr != null) {
 								try {
-									final BigInteger address = (addressStr.startsWith("0x")) ? new BigInteger(addressStr.substring(2), 16) : new BigInteger(addressStr); //$NON-NLS-1$
-									fCallback.asyncExec(new Runnable() {
-										public void run() {
-											fCallback.gotoAddress(address);
-										}});
+									return (addressStr.startsWith("0x")) ? new BigInteger(addressStr.substring(2), 16) : new BigInteger(addressStr); //$NON-NLS-1$
 	
 								} catch (NumberFormatException e) {
 									if (i >= attempts.length) {
@@ -390,24 +401,29 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 				}
 			}
 			catch (final CDIException exc) {
-				fCallback.asyncExec(new Runnable() {
-					public void run() {
-		                ErrorDialog.openError(fCallback.getSite().getShell(), 
-		                		CDebugUIMessages.getString("DisassemblyBackendCdi_Error_Dlg_Title"),  //$NON-NLS-1$
-		                		null, new Status(IStatus.ERROR, CDebugUIPlugin.PLUGIN_ID, exc.getLocalizedMessage()));
-					}});
+				if (!suppressError) {
+					fCallback.asyncExec(new Runnable() {
+						public void run() {
+			                ErrorDialog.openError(fCallback.getSite().getShell(), 
+			                		CDebugUIMessages.getString("DisassemblyBackendCdi_Error_Dlg_Title"),  //$NON-NLS-1$
+			                		null, new Status(IStatus.ERROR, CDebugUIPlugin.PLUGIN_ID, exc.getLocalizedMessage()));
+						}});
+				}
 			}
 			catch (final DebugException exc) {
-				fCallback.asyncExec(new Runnable() {
-					public void run() {
-		                ErrorDialog.openError(fCallback.getSite().getShell(), 
-		                		CDebugUIMessages.getString("DisassemblyBackendCdi_Error_Dlg_Title"), //$NON-NLS-1$
-		                		null, exc.getStatus());
-					}});
+				if (!suppressError) {
+					fCallback.asyncExec(new Runnable() {
+						public void run() {
+			                ErrorDialog.openError(fCallback.getSite().getShell(), 
+			                		CDebugUIMessages.getString("DisassemblyBackendCdi_Error_Dlg_Title"), //$NON-NLS-1$
+			                		null, exc.getStatus());
+						}});
+				}
 			}
 		}
+		return null;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyBackend#retrieveDisassembly(java.lang.String, int, java.math.BigInteger, boolean, boolean, boolean)
 	 */

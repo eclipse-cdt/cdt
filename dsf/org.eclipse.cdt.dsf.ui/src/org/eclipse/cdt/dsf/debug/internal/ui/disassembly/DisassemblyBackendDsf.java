@@ -9,6 +9,7 @@
  *     Wind River Systems - initial API and implementation
  *     Freescale Semiconductor - refactoring
  *     Patrick Chuong (Texas Instruments) - Bug 323279
+ *     Patrick Chuong (Texas Instruments) - Bug fix (329682)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
@@ -29,6 +30,7 @@ import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallbac
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -61,6 +63,7 @@ import org.eclipse.cdt.dsf.service.DsfSession.SessionEndedListener;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Position;
@@ -861,57 +864,102 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#gotoSymbol(java.lang.String)
 	 */
 	public void gotoSymbol(final String symbol) {
-		final DsfExecutor executor= getSession().getExecutor();
-		executor.execute(new DsfRunnable() {
-			public void run() {
-				final IExpressions expressions= getService(IExpressions.class);
-				if (expressions == null) {
-					return;
+		evaluateSymbolAddress(symbol, false, new DataRequestMonitor<BigInteger>(getSession().getExecutor(), null) {			
+			@Override
+			protected void handleSuccess() {
+				final BigInteger address = getData();
+				if (address != null) {
+					fCallback.asyncExec(new Runnable() {
+						public void run() {
+							fCallback.gotoAddress(address);
+						}});
 				}
-				final IExpressionDMContext exprDmc= expressions.createExpression(fTargetContext, symbol);
-				// first, try to get l-value address
-				expressions.getExpressionAddressData(exprDmc, new DataRequestMonitor<IExpressionDMAddress>(executor, null) {
+			}
+		});
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#evaluateSymbolAddress(java.lang.String, boolean)
+	 */
+	public BigInteger evaluateSymbolAddress(final String symbol, final boolean suppressError) {
+		Query<BigInteger> query = new Query<BigInteger>() {
+			@Override
+			protected void execute(DataRequestMonitor<BigInteger> rm) {
+				evaluateSymbolAddress(symbol, suppressError, rm);				
+			}			
+		};
+		getSession().getExecutor().execute(query);
+		try {
+			return query.get();
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	private void evaluateSymbolAddress(final String symbol, final boolean suppressError, final DataRequestMonitor<BigInteger> rm) {		
+		final IExpressions expressions= getService(IExpressions.class);
+		if (expressions == null) {
+			rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
+		
+		final IExpressionDMContext exprDmc= expressions.createExpression(fTargetContext, symbol);
+		// first, try to get l-value address
+		expressions.getExpressionAddressData(exprDmc, new DataRequestMonitor<IExpressionDMAddress>(getSession().getExecutor(), null) {
+			@Override
+			protected void handleSuccess() {
+				IExpressionDMAddress data = getData();
+				IAddress address = data.getAddress();
+				rm.setData(address.getValue());
+				rm.done();
+			}
+			@Override
+			protected void handleError() {
+				// not an l-value, evaluate expression
+				final FormattedValueDMContext valueDmc= expressions.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT);
+				expressions.getFormattedExpressionValue(valueDmc, new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), null) {
 					@Override
 					protected void handleSuccess() {
-						IExpressionDMAddress data = getData();
-						final IAddress address = data.getAddress();
-						if (address != null) {
-							fCallback.asyncExec(new Runnable() {
-								public void run() {
-									fCallback.gotoAddress(address.getValue());
-								}});
+						FormattedValueDMData data= getData();
+						String value= data.getFormattedValue();
+						BigInteger address= null;
+						try {
+							address = DisassemblyUtils.decodeAddress(value);
+						} catch (final Exception e) {
+							// "value" can be empty i.e *fooX, where fooX is a variable.
+							// Not sure if this is a bug or not. So, fail the request instead.
+							rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "", null)); //$NON-NLS-1$
+							
+							if (!suppressError) {
+								fCallback.asyncExec(new Runnable() {
+									public void run() {
+						                ErrorDialog.openError(fCallback.getSite().getShell(), "Error", null,  //$NON-NLS-1$
+						                		new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, 
+						                		DisassemblyMessages.Disassembly_log_error_expression_eval + " (" + e.getMessage() + ")", null)); //$NON-NLS-1$ //$NON-NLS-2$
+									}});
+							}							
 						}
+						rm.setData(address);
+						rm.done();
 					}
 					@Override
 					protected void handleError() {
-						// not an l-value, evaluate expression
-						final FormattedValueDMContext valueDmc= expressions.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT);
-						expressions.getFormattedExpressionValue(valueDmc, new DataRequestMonitor<FormattedValueDMData>(executor, null) {
-							@Override
-							protected void handleSuccess() {
-								FormattedValueDMData data= getData();
-								final String value= data.getFormattedValue();
-								final BigInteger address= DisassemblyUtils.decodeAddress(value);
-								if (address != null) {
-									fCallback.asyncExec(new Runnable() {
-										public void run() {
-											fCallback.gotoAddress(address);
-										}});
-								}
-							}
-							@Override
-							protected void handleError() {
-								fCallback.asyncExec(new Runnable() {
-									public void run() {
-						                ErrorDialog.openError(fCallback.getSite().getShell(), "Error", null, getStatus()); //$NON-NLS-1$
-									}});
-							}
-						});
+						if (!suppressError) {
+							fCallback.asyncExec(new Runnable() {
+								public void run() {
+					                ErrorDialog.openError(fCallback.getSite().getShell(), "Error", null, getStatus()); //$NON-NLS-1$
+								}});
+						}
+						rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "", null)); //$NON-NLS-1$
+						rm.done();
 					}
 				});
-			}});
+			}
+		});
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#retrieveDisassembly(java.lang.String, int, java.math.BigInteger, boolean, boolean, boolean)
 	 */

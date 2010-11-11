@@ -521,6 +521,14 @@ public class CacheTests {
 
 	@Test 
     public void cancelWhilePendingWithoutClientNotificationTest() throws InterruptedException, ExecutionException {
+	    final boolean canceledCalled[] = new boolean[] { false };
+	    
+	    fTestCache = new TestCache() {
+	        protected synchronized void canceled() {
+	            canceledCalled[0] = true;
+	        };
+	    };
+	    
         // Request data from cache 
         Query<Integer> q = new Query<Integer>() { 
             @Override
@@ -550,11 +558,20 @@ public class CacheTests {
         q.cancel(true);
         
         assertCacheInvalidAndWithCanceledRM();
+        
+        // AbstractCache.canceled() should be called after isCanceled() 
+        // discovers that the client has canceled its request.  The canceled() method is 
+        // called in a separate dispatch cycle, so we have to wait one cycle of the executor 
+        // after is canceled is called.
+        fRetrieveRm.isCanceled();
+        fExecutor.submit(new Runnable() { public void run() {} }).get(); 
+        Assert.assertTrue(canceledCalled[0]);        
 
         try {
             q.get();
             Assert.fail("Expected a cancellation exception");
         } catch (CancellationException e) {} // Expected exception;
+
 
         // Completed the retrieve RM
         fExecutor.submit(new DsfRunnable() {

@@ -233,8 +233,15 @@ public class RequestMonitor extends DsfExecutable {
      * A request monitor is considered canceled if either it or its parent was canceled.
      * </p> 
      */
-    public synchronized boolean isCanceled() { 
-        return fCanceled || (fParentRequestMonitor != null && fParentRequestMonitor.isCanceled());
+    public boolean isCanceled() {
+        boolean canceled = false;
+        
+        // Avoid holding onto this lock while calling parent RM, which may 
+        // acquire other locks (bug 329488).
+        synchronized(this) {
+            canceled = fCanceled;
+        }
+        return canceled || (fParentRequestMonitor != null && fParentRequestMonitor.isCanceled());
     }
     
     /**

@@ -195,45 +195,67 @@ public abstract class AbstractCache<V> implements ICache<V> {
         
     }
 
+    /**
+     * Returns true if there are no clients waiting for this cache or if the 
+     * clients that are waiting, have already canceled their requests.  
+     * <p>
+     * Note: Calling this method may cause the client request monitors that were
+     * canceled to be completed with a cancel status.  If all the client request
+     * monitors were canceled, this method will also cause the {@link #canceled()} 
+     * method to be called.  Both of these side effects will only happen 
+     * asynchronously after <code>isCanceled()</code> returns.
+     * </p> 
+     *  
+     * @return <code>true</code> if all clients waiting on this cache have been 
+     * canceled, or if there are no clients waiting at all. 
+     */    
     @ThreadSafe
     protected boolean isCanceled() {
         boolean canceled;
         List<RequestMonitor> canceledRms = null;
         synchronized (this) {
-            if (fWaitingList instanceof RequestMonitor && ((RequestMonitor)fWaitingList).isCanceled()) {
-                canceledRms = new ArrayList<RequestMonitor>(1);
-                canceledRms.add((RequestMonitor)fWaitingList); 
-                fWaitingList = null;
+            if (fWaitingList instanceof RequestMonitor) {
+                if ( ((RequestMonitor)fWaitingList).isCanceled() ) {
+                    canceledRms = new ArrayList<RequestMonitor>(1);
+                    canceledRms.add((RequestMonitor)fWaitingList); 
+                    canceled = true;
+                } else {
+                    canceled = false;
+                }
             } else if(fWaitingList instanceof RequestMonitor[]) {
-                boolean waiting = false;
+                canceled = true;
                 RequestMonitor[] waitingList = (RequestMonitor[])fWaitingList;
                 for (int i = 0; i < waitingList.length; i++) {
-                    if (waitingList[i] != null && waitingList[i].isCanceled()) {
-                        if (canceledRms == null) {
-                            canceledRms = new ArrayList<RequestMonitor>(1);
+                    if (waitingList[i] != null) {
+                        if (waitingList[i].isCanceled()) {
+                            if (canceledRms == null) {
+                                canceledRms = new ArrayList<RequestMonitor>(1);
+                            }
+                            canceledRms.add( waitingList[i] );
+                        } else {
+                            canceled = false;
                         }
-                        canceledRms.add( waitingList[i] );
-                        waitingList[i] = null;
                     }
-                    waiting = waiting || waitingList[i] != null;
                 }
-                if (!waiting) {
-                    fWaitingList = null;
-                }
-            }            
-            canceled = fWaitingList == null;
+            } else {
+                assert fWaitingList == null;
+                canceled = true;
+            }
         }
         if (canceledRms != null) {
-            for (RequestMonitor canceledRm : canceledRms) {
-                canceledRm.setStatus(Status.CANCEL_STATUS);
-                canceledRm.removeCancelListener(fRequestCanceledListener);
-                canceledRm.done();
-            }
+            final List<RequestMonitor> _canceledRms = canceledRms;
+            fExecutor.getDsfExecutor().execute(new DsfRunnable() {
+                public void run() {
+                    for (RequestMonitor canceledRm : _canceledRms) {
+                        handleCanceledRm(canceledRm);
+                    }
+                }
+            });
         }
         
         return canceled;
     }
-
+    
 	/**
 	 * Resets the cache, setting the data to null and the status to
 	 * INVALID_STATUS. When in the invalid state, neither the data nor the

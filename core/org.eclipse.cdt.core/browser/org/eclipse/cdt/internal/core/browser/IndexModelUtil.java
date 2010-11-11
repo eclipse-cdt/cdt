@@ -85,6 +85,10 @@ public class IndexModelUtil {
 				if(binding instanceof IVariable)
 					return true;
 				break;
+			case ICElement.C_ENUMERATOR:
+				if (binding instanceof IEnumerator)
+					return true;
+				break;
 			}
 		}
 		return false;

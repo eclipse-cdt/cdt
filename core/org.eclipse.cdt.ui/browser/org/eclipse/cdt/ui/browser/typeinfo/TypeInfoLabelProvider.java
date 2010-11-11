@@ -57,6 +57,7 @@ public class TypeInfoLabelProvider extends LabelProvider {
 	private static final Image FUNCTION_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_FUNCTION);
 	private static final Image VARIABLE_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_VARIABLE);
 	private static final Image VARIABLE_LOCAL_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_LOCAL_VARIABLE);
+	private static final Image ENUMERATOR_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_ENUMERATOR);
 	private static final Image MACRO_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_MACRO);
 	private static final Image UNKNOWN_TYPE_ICON= CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_UNKNOWN_TYPE);
 
@@ -228,6 +229,9 @@ public class TypeInfoLabelProvider extends LabelProvider {
 		case ICElement.C_VARIABLE:
 			return VARIABLE_ICON;
 		
+		case ICElement.C_ENUMERATOR:
+			return ENUMERATOR_ICON;
+			
 		case ICElement.C_MACRO:
 			return MACRO_ICON;
 			

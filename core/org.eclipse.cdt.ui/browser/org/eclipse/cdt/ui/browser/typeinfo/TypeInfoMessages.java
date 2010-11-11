@@ -36,6 +36,8 @@ public final class TypeInfoMessages extends NLS {
 	public static String TypeSelectionDialog_filterUnions;
 	public static String TypeSelectionDialog_filterFunctions;
 	public static String TypeSelectionDialog_filterVariables;
+	/** @since 5.3 */
+	public static String TypeSelectionDialog_filterEnumerators;
 	public static String TypeSelectionDialog_filterMacros;
 	public static String TypeSelectionDialog_filterLowLevelTypes;
 	public static String TypeInfoLabelProvider_globalScope;

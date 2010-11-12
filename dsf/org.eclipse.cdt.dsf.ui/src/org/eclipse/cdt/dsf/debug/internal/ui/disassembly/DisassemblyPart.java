@@ -666,6 +666,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 
 		initializeViewerFont(fViewer);
+		fDocument = createDocument();
+		fViewer.setDocument(fDocument, new AnnotationModel());
+		JFaceResources.getFontRegistry().addListener(fPropertyChangeListener);
+
 		createActions();
 		hookRulerContextMenu();
 		hookContextMenu();
@@ -676,10 +680,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				updateSelectionDependentActions();
 			}
 		});
-
-		fDocument = createDocument();
-		fViewer.setDocument(fDocument, new AnnotationModel());
-		JFaceResources.getFontRegistry().addListener(fPropertyChangeListener);
 
 		fErrorColor = getSharedColors().getColor(new RGB(96, 0, 0));
 		fInstructionColor = getSharedColors().getColor(new RGB(0, 0, 96));

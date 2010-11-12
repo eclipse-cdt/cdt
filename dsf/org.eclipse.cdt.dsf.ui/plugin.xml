@@ -680,7 +680,7 @@
 	  </factory>
        <factory
             class="org.eclipse.cdt.dsf.debug.internal.ui.actions.RetargettableActionAdapterFactory"
-            adaptableType="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyView">
+            adaptableType="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart">
          <adapter type="org.eclipse.debug.ui.actions.IRunToLineTarget"/>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget"/>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget"/>

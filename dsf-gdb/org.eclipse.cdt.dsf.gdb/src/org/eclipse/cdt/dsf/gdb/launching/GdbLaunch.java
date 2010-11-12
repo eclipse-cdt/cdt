@@ -79,6 +79,11 @@ public class GdbLaunch extends DsfLaunch
         // Create the dispatch queue to be used by debugger control and services 
         // that belong to this launch
         final DefaultDsfExecutor dsfExecutor = new DefaultDsfExecutor(GdbLaunchDelegate.GDB_DEBUG_MODEL_ID);
+        // Bug 293109 comment 14
+        // We can use delayed task on the executor, but once it is shutdown, we don't want to execute them.
+        // For instance, in GDBBackend, we start a 30-second delayed task to check that GDB properly started.
+        dsfExecutor.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
+        
         dsfExecutor.prestartCoreThread();
         fExecutor = dsfExecutor;
         fSession = DsfSession.startSession(fExecutor, GdbLaunchDelegate.GDB_DEBUG_MODEL_ID);

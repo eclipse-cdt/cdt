@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems and others.
+ * Copyright (c) 2007, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ public final class REDFile {
 
 	/**
 	 * File cache object.
-	 * TLETODO Use CharBuffer?
 	 * @invariant fSize <= fcBufSize
 	 * @invariant fSize >= 0
 	 * @invariant fOffset <= fFile.length()
@@ -37,15 +36,6 @@ public final class REDFile {
 		char fData[] = new char[fcBufSize];
 
 		Buffer() {
-		}
-
-		/**
-		 * Check if the file offset is contained in this buffer.
-		 * @param pos
-		 * @return
-		 */
-		boolean containsOffset(int pos) {
-			return fOffset < pos || fOffset + fSize <= pos;
 		}
 
 		/**

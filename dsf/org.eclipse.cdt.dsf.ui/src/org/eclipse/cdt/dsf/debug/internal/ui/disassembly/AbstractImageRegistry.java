@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems and others.
+ * Copyright (c) 2007, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,12 +29,14 @@ import org.osgi.framework.Bundle;
 /**
  * Abstract image registry that allows for defining fallback paths for images.
  */
-public abstract class AbstractImageRegistry extends ImageRegistry {
+public abstract class AbstractImageRegistry {
 	private HashMap<String, String> fPlugins = new HashMap<String, String>();
 	private HashMap<String, String[]> fLocations = new HashMap<String, String[]>();
 	private URL fBaseUrl;
+    private final ImageRegistry fRegistry;
 
 	protected AbstractImageRegistry(Plugin plugin) {
+	    fRegistry = new ImageRegistry();
 		fBaseUrl = plugin.getBundle().getEntry("/"); //$NON-NLS-1$
 	}
 	
@@ -78,33 +80,29 @@ public abstract class AbstractImageRegistry extends ImageRegistry {
     	fLocations.put(key, locations);
 	}
 	
-	// overrider
-	@Override
 	final public Image get(String key) {
-	    Image i = super.get(key);
+	    Image i = fRegistry.get(key);
 	    if (i != null) {
 	        return i;
 	    }
 	    
 	    ImageDescriptor d = createFileImageDescriptor(key);
 	    if (d != null) {
-	        put(key, d);
-	        return super.get(key);
+	        fRegistry.put(key, d);
+	        return fRegistry.get(key);
 	    }
 	    return null;
 	}
 
-	// overrider
-	@Override
 	final public ImageDescriptor getDescriptor(String key) {
-	    ImageDescriptor d = super.getDescriptor(key);
+	    ImageDescriptor d = fRegistry.getDescriptor(key);
 	    if (d != null) {
 	        return d;
 	    }
 	    
 	    d = createFileImageDescriptor(key);
 	    if (d != null) {
-	        put(key, d);
+	        fRegistry.put(key, d);
 	        return d;
 	    }
 	    return null;

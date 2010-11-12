@@ -21,10 +21,10 @@
    <feature url="features/org.eclipse.rse.examples_3.1.100.qualifier.jar" id="org.eclipse.rse.examples" version="3.1.100.qualifier">
       <category name="TM and RSE Optional Add-Ons"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk_3.1.1.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.1.1.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.sdk_3.1.100.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.1.100.qualifier">
       <category name="TM and RSE Main Features"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.1.1.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.1.1.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.1.100.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.1.100.qualifier">
       <category name="TM and RSE Optional Add-Ons"/>
    </feature>
    <category-def name="TM and RSE Main Features" label="TM and RSE Main Features">

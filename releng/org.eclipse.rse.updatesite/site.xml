@@ -730,13 +730,13 @@
    <feature url="features/org.eclipse.tm.discovery_3.0.200.qualifier.jar" id="org.eclipse.tm.discovery" version="3.0.200.qualifier">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk_3.1.1.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.1.1.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.sdk_3.1.100.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.1.100.qualifier">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
    <feature url="features/org.eclipse.tm.terminal.local_0.1.0.qualifier.jar" id="org.eclipse.tm.terminal.local" version="0.1.0.qualifier" os="linux,macosx,solaris">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.1.1.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.1.0.qualifier" os="linux,macosx,solaris">
+   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.1.100.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.1.100.qualifier" os="linux,macosx,solaris">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
    <category-def name="TM and RSE Uncategorized 3.3" label="TM and RSE Uncategorized 3.3">

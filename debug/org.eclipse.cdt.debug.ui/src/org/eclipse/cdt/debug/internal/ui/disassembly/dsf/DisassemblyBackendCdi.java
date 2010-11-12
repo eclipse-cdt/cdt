@@ -57,9 +57,8 @@ import com.ibm.icu.text.MessageFormat;
  * The CDI backend to the DSF disassembly view.
  *
  */
-public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSetListener {
+public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements IDebugEventSetListener {
 
-	private IDisassemblyPartCallback fCallback;
 	private ICThread fTargetContext;
 	private String fCdiSessionId;
 	private ICStackFrame fTargetFrameContext;
@@ -74,8 +73,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#init(org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback)
 	 */
 	public void init(IDisassemblyPartCallback callback) {
-		assert callback != null;
-		fCallback = callback;
+		super.init(callback);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
 	

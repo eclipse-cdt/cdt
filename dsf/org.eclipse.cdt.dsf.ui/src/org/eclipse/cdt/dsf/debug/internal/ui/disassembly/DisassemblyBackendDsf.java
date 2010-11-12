@@ -22,10 +22,10 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AbstractDisassemblyBackend;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.ErrorPosition;
-import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -68,7 +68,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Position;
 
-public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedListener {
+public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements SessionEndedListener {
 
 	private volatile IExecutionDMContext fTargetContext;
 	private DsfServicesTracker fServicesTracker;
@@ -76,8 +76,6 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 	protected IFrameDMData fTargetFrameData;
 
 	private String fDsfSessionId;
-
-	private IDisassemblyPartCallback fCallback;
 
 	/**
 	 * Constructor
@@ -88,9 +86,9 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#init(org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback)
 	 */
+	@Override
 	public void init(IDisassemblyPartCallback callback) {
-		assert callback != null;
-		fCallback = callback;
+		super.init(callback);
 		DsfSession.addSessionEndedListener(this);
 	}
 
@@ -882,6 +880,7 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#evaluateSymbolAddress(java.lang.String, boolean)
 	 */
+	@Override
 	public BigInteger evaluateSymbolAddress(final String symbol, final boolean suppressError) {
 		Query<BigInteger> query = new Query<BigInteger>() {
 			@Override

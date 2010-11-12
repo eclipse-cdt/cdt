@@ -27,8 +27,10 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AbstractDisassemblyBackend;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.ErrorPosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyDocument;
@@ -2964,11 +2966,25 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	
 	public BigInteger eval(String expr, boolean suppressError) {
 		if (fBackend != null) {
-			BigInteger address = fBackend.evaluateSymbolAddress(expr, suppressError);
+			BigInteger address = null;
+			if (fBackend instanceof AbstractDisassemblyBackend) {
+				address = ((AbstractDisassemblyBackend) fBackend).evaluateSymbolAddress(expr, suppressError);
+			} else {
+				String value = fBackend.evaluateExpression(expr);
+				if (value != null) {
+					try {
+						address = DisassemblyUtils.decodeAddress(value);
+					} catch (NumberFormatException e) {
+						if (!suppressError) {
+							generateErrorDialog(DisassemblyMessages.Disassembly_log_error_expression_eval);
+						}
+					}
+				}
+			}
 			if (address != null)
 				return address;
 		}
-		return PC_UNKNOWN;    	
+		return PC_UNKNOWN;
 	}
 
 	protected boolean isTrackExpression() {

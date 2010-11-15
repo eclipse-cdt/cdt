@@ -1555,7 +1555,7 @@ public class MIVariableManager implements ICommandControl {
 		private void addRealChildrenOfFake(MIVariableObject fakeChild,
 				IExpressionDMContext frameCtxProvider,
 				final ExpressionInfo[][] realChildren, final int position,
-				final CountingRequestMonitor rm) {
+				final RequestMonitor rm) {
 
 			MIExpressionDMC fakeExprCtx = createExpressionCtx(frameCtxProvider,
 					fakeChild.exprInfo);
@@ -2019,31 +2019,6 @@ public class MIVariableManager implements ICommandControl {
 								if (isSuccess()) {
 									setOutOfDate(false);
 									
-									CountingRequestMonitor countingRm = new CountingRequestMonitor(fSession.getExecutor(), rm) {
-
-										@Override
-										protected void handleCompleted() {											
-
-											if (!isSuccess()) {
-												rm.setStatus(getStatus());
-											}
-											rm.done();
-											
-											while (updatesPending.size() > 0) {
-												DataRequestMonitor<Boolean> pendingRm = updatesPending.poll();
-												if (isSuccess()) {
-													pendingRm.setData(false);
-												} else {
-													rm.setStatus(getStatus());
-												}
-												
-												pendingRm.done();
-											}											
-										}
-									};
-
-									int rmCount = 0;
-									
 									MIVarChange[] changes = getData().getMIVarChanges();
 									if (changes.length > 0 && changes[0].isInScope() == false) {
 										// Object is out-of-scope
@@ -2059,21 +2034,42 @@ public class MIVariableManager implements ICommandControl {
 										lruVariableList.remove(getInternalId());
 
 										rm.setData(true);
+										rm.done();
+										
+										while (updatesPending.size() > 0) {
+											DataRequestMonitor<Boolean> pendingRm = updatesPending.poll();
+											pendingRm.setData(false);
+											pendingRm.done();
+										}
 									} else {
 										// The root object is now up-to-date, we must parse the changes, if any.
-										++rmCount;
-										processChanges(changes, new RequestMonitor(fSession.getExecutor(), countingRm));
+										processChanges(changes, new RequestMonitor(fSession.getExecutor(), rm) {
+											@Override
+											protected void handleCompleted() {
+												// We only mark this root as updated in our list if it is in-scope.
+												// For out-of-scope object, we don't ever need to re-update them so
+												// we don't need to add them to this list.
+												rootVariableUpdated(MIRootVariableObject.this);
 
-										// We only mark this root as updated in our list if it is in-scope.
-										// For out-of-scope object, we don't ever need to re-update them so
-										// we don't need to add them to this list.
-										rootVariableUpdated(MIRootVariableObject.this);
+												if (isSuccess()) {
+													rm.setData(false);
+												} else {
+													rm.setStatus(getStatus());
+												}
+												rm.done();
 
-										rm.setData(false);
-									}
-
-									countingRm.setDoneCount(rmCount);
-									
+												while (updatesPending.size() > 0) {
+													DataRequestMonitor<Boolean> pendingRm = updatesPending.poll();
+													if (isSuccess()) {
+														pendingRm.setData(false);
+													} else {
+														pendingRm.setStatus(getStatus());
+													}
+													pendingRm.done();
+												}
+											};
+										});
+									}									
 								} else {
 									// We were not able to update for some reason
 									rm.setData(false);

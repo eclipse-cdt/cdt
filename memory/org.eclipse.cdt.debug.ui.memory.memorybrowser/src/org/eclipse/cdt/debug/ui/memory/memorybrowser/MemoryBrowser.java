@@ -1152,17 +1152,20 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	 */
 	private IMemoryBlockExtension createMemoryBlock(IMemoryBlockRetrieval retrieval, String expression, Object context, String memorySpaceID) throws DebugException {
 		IMemoryBlockExtension block = null;
-		if(retrieval instanceof IAdaptable) {
-			IMemoryBlockRetrievalExtension retrievalExtension = (IMemoryBlockRetrievalExtension)((IAdaptable) retrieval).getAdapter(IMemoryBlockRetrievalExtension.class);
-			if (retrievalExtension != null) {
-				if (retrievalExtension instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
-					block = ((IMemorySpaceAwareMemoryBlockRetrieval)retrievalExtension).getMemoryBlock(expression, context, memorySpaceID);
-				}
-				else {
-					block = retrievalExtension.getExtendedMemoryBlock(expression, context);
-				}
-			}
+		IMemoryBlockRetrievalExtension retrievalExtension = null;
+		if (retrieval instanceof IMemoryBlockRetrievalExtension) {
+		    retrievalExtension = (IMemoryBlockRetrievalExtension) retrieval;
+		} else if(retrieval instanceof IAdaptable) {
+			retrievalExtension = (IMemoryBlockRetrievalExtension)((IAdaptable) retrieval).getAdapter(IMemoryBlockRetrievalExtension.class);
 		}
+        if (retrievalExtension != null) {
+            if (retrievalExtension instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
+                block = ((IMemorySpaceAwareMemoryBlockRetrieval)retrievalExtension).getMemoryBlock(expression, context, memorySpaceID);
+            }
+            else {
+                block = retrievalExtension.getExtendedMemoryBlock(expression, context);
+            }
+        }
 		if ( block == null ) {
 			throw new DebugException(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID, "Extended Memory Block could not be obtained")); //$NON-NLS-1$
 		}

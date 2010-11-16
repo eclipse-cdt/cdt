@@ -2968,7 +2968,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (fBackend != null) {
 			BigInteger address = null;
 			if (fBackend instanceof AbstractDisassemblyBackend) {
-				address = ((AbstractDisassemblyBackend) fBackend).evaluateSymbolAddress(expr, suppressError);
+				address = ((AbstractDisassemblyBackend) fBackend).evaluateAddressExpression(expr, suppressError);
 			} else {
 				String value = fBackend.evaluateExpression(expr);
 				if (value != null) {

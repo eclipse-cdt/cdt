@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Freescale Semiconductor - refactoring
+ *     Patrick Chuong (Texas Instruments) - Bug fix (329682)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.disassembly.dsf;
 
@@ -26,12 +27,14 @@ public abstract class AbstractDisassemblyBackend implements IDisassemblyBackend 
 	}
 
 	/**
-	 * Evaluate the symbol address.
+	 * Evaluate the expression to an address. This might be the address of a symbol or
+	 * the value of the numeric evaluation depending on the type of the expression.
 	 * 
-	 * @param symbol the symbol
-	 * @param suppressError true to suppress error dialogs
-	 * @return the address, <code>null</code> if failed to evaluate symbol
+	 * @param expression the expression
+	 * @param suppressError <code>true</code> to suppress error dialogs
+	 * @return the address or <code>null</code> if the expression could not be evaluated
+	 * @since 7.0
 	 */
-	public abstract BigInteger evaluateSymbolAddress(String symbol, boolean suppressError);
+	public abstract BigInteger evaluateAddressExpression(String expression, boolean suppressError);
 
 }

@@ -348,7 +348,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyBackend#gotoSymbol(java.lang.String)
 	 */
 	public void gotoSymbol(String symbol) {
-		final BigInteger address = evaluateSymbolAddress(symbol, false);
+		final BigInteger address = evaluateAddressExpression(symbol, false);
 		if (address != null) {
 			fCallback.asyncExec(new Runnable() {
 				public void run() {
@@ -361,7 +361,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#evaluateSymbolAddress(java.lang.String, boolean)
 	 */
-	public BigInteger evaluateSymbolAddress(String symbol, final boolean suppressError) {
+	public BigInteger evaluateAddressExpression(String symbol, final boolean suppressError) {
 		if (fTargetFrameContext != null) {
 			try {
 				// This logic was lifted from CMemoryBlockRetrievalExtension.getExtendedMemoryBlock(String, Object)

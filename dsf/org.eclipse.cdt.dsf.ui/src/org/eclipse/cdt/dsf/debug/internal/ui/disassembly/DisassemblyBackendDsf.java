@@ -881,7 +881,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#evaluateSymbolAddress(java.lang.String, boolean)
 	 */
 	@Override
-	public BigInteger evaluateSymbolAddress(final String symbol, final boolean suppressError) {
+	public BigInteger evaluateAddressExpression(final String symbol, final boolean suppressError) {
 		Query<BigInteger> query = new Query<BigInteger>() {
 			@Override
 			protected void execute(DataRequestMonitor<BigInteger> rm) {

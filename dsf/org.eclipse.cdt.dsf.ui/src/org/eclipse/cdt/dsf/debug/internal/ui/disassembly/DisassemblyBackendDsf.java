@@ -38,6 +38,7 @@ import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMLocation;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
@@ -875,11 +876,14 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 					protected void handleSuccess() {
 						IExpressionDMAddress data = getData();
 						final IAddress address = data.getAddress();
-						if (address != null) {
+						if (address != null && address != IExpressionDMLocation.INVALID_ADDRESS) {
 							fCallback.asyncExec(new Runnable() {
 								public void run() {
 									fCallback.gotoAddress(address.getValue());
-								}});
+								}
+							});
+						} else {
+							handleError();
 						}
 					}
 					@Override

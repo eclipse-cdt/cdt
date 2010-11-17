@@ -145,7 +145,10 @@ public abstract class AbstractCodanProblemDetailsProvider {
 			return ""; //$NON-NLS-1$
 		IProblem problem = CodanRuntime.getInstance().getCheckersRegistry()
 				.getDefaultProfile().findProblem(id);
-		return escapeForLink(problem.getDescription());
+		String desc = problem.getDescription();
+		if (desc == null)
+			return ""; //$NON-NLS-1$
+		return escapeForLink(desc);
 	}
 
 	/**

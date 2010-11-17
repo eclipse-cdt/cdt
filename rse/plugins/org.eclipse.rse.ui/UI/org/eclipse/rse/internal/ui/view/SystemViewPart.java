@@ -41,6 +41,7 @@
  * Martin Oberhuber (Wind River) - [286122] Avoid NPE when restoring memento
  * David McKnight   (IBM)        - [286670] TVT35:TCT586: CHS: English Strings Found
  * Martin Oberhuber (Wind River) - [326910] RSE looses selection when creating a project
+ * David McKnight   (IBM)        - [330386] RSE SystemView has Focus Problems with Eclipse SDK 4.1M3
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -539,8 +540,6 @@ public class SystemViewPart
 	public void setFocus()
 	{
 		//System.out.println("INSIDE SETFOCUS FOR SYSTEMVIEWPART. SYSTEMVIEW NULL? " + (systemView==null));
-		IWorkbench wb = PlatformUI.getWorkbench();
-		wb.getActiveWorkbenchWindow().getShell().setFocus();
 		systemView.getControl().setFocus();
 		/* the following was an attempt to fix problem with scrollbar needing two clicks to activate. didn't help.
 		if (!SystemPreferencesGlobal.getGlobalSystemPreferences().getRememberState())

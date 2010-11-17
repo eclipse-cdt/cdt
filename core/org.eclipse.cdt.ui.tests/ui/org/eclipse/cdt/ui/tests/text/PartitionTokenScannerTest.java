@@ -29,7 +29,7 @@ import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.IToken;
 
 /**
- * Compares two <code>IParitionTokenScanner</code>s for conformance and performance.
+ * Compares two <code>IParitionTokenScanner</code>s for performance.
  */
 public class PartitionTokenScannerTest extends TestCase {
 	private static boolean PRINT_TIMING = false;
@@ -37,7 +37,7 @@ public class PartitionTokenScannerTest extends TestCase {
 	private IPartitionTokenScanner fTestee;
 
 	public PartitionTokenScannerTest(String name) {
-		super(name);	
+		super(name);
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class PartitionTokenScannerTest extends TestCase {
 		try {
 			InputStream stream= getClass().getResourceAsStream(name);
 			BufferedReader reader= new BufferedReader(new InputStreamReader(stream));
-			
+
 			StringBuilder buffer= new StringBuilder();
 			String line= reader.readLine();
 			while (line != null) {
@@ -60,56 +60,27 @@ public class PartitionTokenScannerTest extends TestCase {
 				line= reader.readLine();
 			}
 			return new Document(buffer.toString());
-		} catch (IOException e) {			
+		} catch (IOException e) {
 		}
-		
+
 		return null;
 	}
-	
+
 	private static IDocument getRandomDocument(int size) {
 		final char[] characters= {'/', '*', '\'', '"', '\r', '\n', '\\'};
 		final StringBuilder buffer= new StringBuilder();
-		
+
 		for (int i= 0; i < size; i++) {
 			final int randomIndex= (int) (Math.random() * characters.length);
 			buffer.append(characters[randomIndex]);
 		}
-		
+
 		return new Document(buffer.toString());
 	}
 
 	public static Test suite() {
 		return new TestSuite(PartitionTokenScannerTest.class);
 	}
-
-	public void testTestCaseLF() {
-		testConformance(getDocument("TestCase.txt", "\n"));
-	}
-
-	public void testTestCaseCRLF() {
-		testConformance(getDocument("TestCase.txt", "\r\n"));
-	}
-
-	public void testTestCaseCR() {
-		testConformance(getDocument("TestCase.txt", "\r"));
-	}
-
-	public void testTestCase2LF() {
-		testConformance(getDocument("TestCase2.txt", "\n"));
-	}
-
-	public void testTestCase2CRLF() {
-		testConformance(getDocument("TestCase2.txt", "\r\n"));
-	}
-
-	public void testTestCase2CR() {
-		testConformance(getDocument("TestCase2.txt", "\r"));
-	}
-
-//	XXX not fully passing because of "\<LF> and '\<LF>
-//	public void testRandom() {
-//		testConformance(getRandomDocument(2048));
-//	}
 
 	/**
 	 * Tests performance of the testee against the reference IPartitionTokenScanner.
@@ -126,11 +97,11 @@ public class PartitionTokenScannerTest extends TestCase {
 			System.out.println("testee time = " + testeeTime / 1000.0f);
 			System.out.println("factor = " + (float) referenceTime / testeeTime);
 		}
-		
+
 		// dangerous: assert no regression in performance
 		// assertTrue(testeeTime <= referenceTime);
 	}
-	
+
 	private long getTime(IPartitionTokenScanner scanner, IDocument document, int count) {
 		final long start= System.currentTimeMillis();
 
@@ -138,48 +109,8 @@ public class PartitionTokenScannerTest extends TestCase {
 			testPerformance(scanner, document);
 
 		final long end= System.currentTimeMillis();
-		
+
 		return end - start;
-	}
-	
-	private void testConformance(final IDocument document) {
-		final StringBuilder message= new StringBuilder();
-		
-		fReference.setRange(document, 0, document.getLength());
-		fTestee.setRange(document, 0, document.getLength());
-		
-		while (true) {
-			
-			message.setLength(0);
-			
-			final IToken referenceToken= fReference.nextToken();
-			final IToken testeeToken= fTestee.nextToken();
-			assertTokenEquals(referenceToken, testeeToken);
-			
-			final int referenceOffset= fReference.getTokenOffset();
-			final int testeeOffset= fTestee.getTokenOffset();
-			message.append(", offset = " + referenceOffset);
-			message.append(", " + extractString(document, referenceOffset));
-			assertEquals(message.toString(), referenceOffset, testeeOffset);
-
-			int referenceLength= fReference.getTokenLength();
-			final int testeeLength= fTestee.getTokenLength();
-			if(referenceLength != testeeLength) {
-				// Special case where the dum scanner creates a token for every character...
-				IToken t;
-				while(referenceLength < testeeLength) {
-					t = fReference.nextToken();
-					referenceLength += fReference.getTokenLength();
-					if(referenceToken != t) 
-						assertEquals(message.toString(), referenceToken, t);
-				}
-			}
-			message.append(", length = " + referenceLength);
-			assertEquals(message.toString(), referenceLength, testeeLength);
-
-			if (referenceToken.isEOF())
-				break;
-		}
 	}
 
 	private static void testPerformance(final IPartitionTokenScanner scanner, final IDocument document) {
@@ -187,43 +118,43 @@ public class PartitionTokenScannerTest extends TestCase {
 
 		IToken token;
 		do {
-			token= scanner.nextToken();			
+			token= scanner.nextToken();
 			scanner.getTokenOffset();
 			scanner.getTokenLength();
 
 		} while (!token.isEOF());
 	}
-	
+
 	private void assertTokenEquals(IToken expected, IToken actual) {
 		assertEquals(expected.isEOF(), actual.isEOF());
 		assertEquals(expected.isOther(), actual.isOther());
 		assertEquals(expected.isUndefined(), actual.isUndefined());
 		assertEquals(expected.isWhitespace(), actual.isWhitespace());
 	}
-		
+
 	private static String extractString(IDocument document, int offset) {
 		final StringBuilder buffer= new StringBuilder();
 
 		try {
 			IRegion region= document.getLineInformationOfOffset(offset);
 			String line= document.get(region.getOffset(), region.getLength());
-			
+
 			int offsetIndex= offset - region.getOffset();
 
 			// XXX kludge
 			if (offsetIndex > line.length())
 				offsetIndex= line.length();
-			
+
 			buffer.append("line = " + document.getLineOfOffset(offset) + ": [");
 			buffer.append(line.substring(0, offsetIndex));
 			buffer.append("<POS>");
 			buffer.append(line.substring(offsetIndex));
 			buffer.append(']');
-			
+
 		} catch (BadLocationException e) {
-		}	
-		
-		return buffer.toString();	
+		}
+
+		return buffer.toString();
 	}
 
 	/**
@@ -231,7 +162,7 @@ public class PartitionTokenScannerTest extends TestCase {
 	 */
 	private static String escape(String string) {
 		final StringBuilder buffer= new StringBuilder();
-		
+
 		final int length= string.length();
 		for (int i= 0; i < length; i++) {
 			final char character= string.charAt(i);
@@ -243,17 +174,17 @@ public class PartitionTokenScannerTest extends TestCase {
 			case '\r':
 				buffer.append("\\r");
 				break;
-				
+
 			case '\n':
 				buffer.append("\\n");
-				break;			
-			
-			default:	
+				break;
+
+			default:
 				buffer.append(character);
 				break;
 			}
 		}
-		
-		return buffer.toString();	
+
+		return buffer.toString();
 	}
 }

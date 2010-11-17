@@ -132,9 +132,18 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 	protected Collection<IMarker> findResourceMarkers(IResource resource,
 			IChecker checker) throws CoreException {
 		Collection<IMarker> res = new ArrayList<IMarker>();
-		IMarker[] markers = resource.findMarkers(
-				GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
-				IResource.DEPTH_INFINITE);
+		IMarker[] markers;
+		if (resource.exists()) {
+			markers = resource.findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE,
+					true, IResource.DEPTH_INFINITE);
+		} else {
+			if (resource.getProject() == null)
+				return res;
+			// non resource markers attached to a project itself
+			markers = resource.getProject().findMarkers(
+					GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
+					IResource.DEPTH_ZERO);
+		}
 		ICheckersRegistry reg = CodanRuntime.getInstance()
 				.getCheckersRegistry();
 		Collection<IProblem> problems = reg.getRefProblems(checker);

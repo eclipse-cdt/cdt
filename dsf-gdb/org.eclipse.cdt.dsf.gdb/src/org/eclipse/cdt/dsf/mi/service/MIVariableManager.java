@@ -2014,14 +2014,14 @@ public class MIVariableManager implements ICommandControl {
 						new DataRequestMonitor<MIVarUpdateInfo>(fSession.getExecutor(), rm) {
 							@Override
 							protected void handleCompleted() {
-								currentState = STATE_READY;
-								
 								if (isSuccess()) {
 									setOutOfDate(false);
 									
 									MIVarChange[] changes = getData().getMIVarChanges();
 									if (changes.length > 0 && changes[0].isInScope() == false) {
 										// Object is out-of-scope
+										currentState = STATE_READY;
+
 										outOfScope = true;
 										
 										// We can delete this root in GDB right away.  This is safe, even
@@ -2046,6 +2046,8 @@ public class MIVariableManager implements ICommandControl {
 										processChanges(changes, new RequestMonitor(fSession.getExecutor(), rm) {
 											@Override
 											protected void handleCompleted() {
+												currentState = STATE_READY;
+
 												// We only mark this root as updated in our list if it is in-scope.
 												// For out-of-scope object, we don't ever need to re-update them so
 												// we don't need to add them to this list.
@@ -2072,6 +2074,8 @@ public class MIVariableManager implements ICommandControl {
 									}									
 								} else {
 									// We were not able to update for some reason
+									currentState = STATE_READY;
+
 									rm.setData(false);
 									rm.done();
 

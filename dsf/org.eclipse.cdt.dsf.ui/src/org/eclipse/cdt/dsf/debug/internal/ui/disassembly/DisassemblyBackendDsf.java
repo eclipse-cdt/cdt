@@ -39,6 +39,7 @@ import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMLocation;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
@@ -862,7 +863,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#gotoSymbol(java.lang.String)
 	 */
 	public void gotoSymbol(final String symbol) {
-		evaluateSymbolAddress(symbol, false, new DataRequestMonitor<BigInteger>(getSession().getExecutor(), null) {			
+		evaluateAddressExpression(symbol, false, new DataRequestMonitor<BigInteger>(getSession().getExecutor(), null) {			
 			@Override
 			protected void handleSuccess() {
 				final BigInteger address = getData();
@@ -878,14 +879,14 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#evaluateSymbolAddress(java.lang.String, boolean)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#evaluateAddressExpression(java.lang.String, boolean)
 	 */
 	@Override
 	public BigInteger evaluateAddressExpression(final String symbol, final boolean suppressError) {
 		Query<BigInteger> query = new Query<BigInteger>() {
 			@Override
 			protected void execute(DataRequestMonitor<BigInteger> rm) {
-				evaluateSymbolAddress(symbol, suppressError, rm);				
+				evaluateAddressExpression(symbol, suppressError, rm);				
 			}			
 		};
 		getSession().getExecutor().execute(query);
@@ -896,7 +897,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		}
 	}
 	
-	private void evaluateSymbolAddress(final String symbol, final boolean suppressError, final DataRequestMonitor<BigInteger> rm) {		
+	private void evaluateAddressExpression(final String symbol, final boolean suppressError, final DataRequestMonitor<BigInteger> rm) {		
 		final IExpressions expressions= getService(IExpressions.class);
 		if (expressions == null) {
 			rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "", null)); //$NON-NLS-1$
@@ -910,9 +911,19 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			@Override
 			protected void handleSuccess() {
 				IExpressionDMAddress data = getData();
-				IAddress address = data.getAddress();
-				rm.setData(address.getValue());
-				rm.done();
+				final IAddress address = data.getAddress();
+                if (address != null && address != IExpressionDMLocation.INVALID_ADDRESS) {
+                    final BigInteger addressValue = address.getValue();
+                    fCallback.asyncExec(new Runnable() {
+                        public void run() {
+                            fCallback.gotoAddress(addressValue);
+                        }
+                    });
+                    rm.setData(addressValue);
+                    rm.done();
+                } else {
+                    handleError();
+                }
 			}
 			@Override
 			protected void handleError() {

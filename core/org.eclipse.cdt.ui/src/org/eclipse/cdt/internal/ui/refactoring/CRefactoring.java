@@ -66,7 +66,7 @@ public abstract class CRefactoring extends Refactoring {
 	protected IFile file;
 	protected Region region;
 	protected RefactoringStatus initStatus;
-	protected IASTTranslationUnit unit;
+	protected IASTTranslationUnit ast;
 	protected ICProject project;
 	private IIndex fIndex;
 
@@ -227,8 +227,8 @@ public abstract class CRefactoring extends Refactoring {
 		if (file != null) {
 			try {
 				subMonitor.subTask(Messages.Refactoring_PM_ParseTU);
-				unit = loadTranslationUnit(file);
-				if (unit == null) {
+				ast = loadTranslationUnit(file);
+				if (ast == null) {
 					subMonitor.done();
 					return false;
 				}
@@ -264,7 +264,7 @@ public abstract class CRefactoring extends Refactoring {
 
 	protected boolean translationUnitHasProblem() {
 		ProblemFinder pf = new ProblemFinder(initStatus);
-		unit.accept(pf);		
+		ast.accept(pf);		
 		return pf.hasProblem();
 	}
 	
@@ -293,13 +293,13 @@ public abstract class CRefactoring extends Refactoring {
 	}
 	
 	public IASTTranslationUnit getUnit() {
-		return unit;
+		return ast;
 	}
 
 	protected ArrayList<IASTName> findAllMarkedNames() {
 		final ArrayList<IASTName> namesVector = new ArrayList<IASTName>();
 
-		unit.accept(new ASTVisitor() {
+		ast.accept(new ASTVisitor() {
 			{
 				shouldVisitNames = true;
 			}

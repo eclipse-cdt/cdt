@@ -109,12 +109,10 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 
 public class ExtractFunctionRefactoring extends CRefactoring {
-	
 	public static final String ID = "org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring"; //$NON-NLS-1$
 
 	static final Integer NULL_INTEGER = Integer.valueOf(0);
 	static final char[] ZERO= "0".toCharArray(); //$NON-NLS-1$
-
 
 	NodeContainer container;
 	final ExtractFunctionInformation info;
@@ -151,7 +149,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 			try {
 				RefactoringStatus status = super.checkInitialConditions(sm.newChild(6));
-				if(status.hasError()) {
+				if (status.hasError()) {
 					return status;
 				}
 
@@ -189,8 +187,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 					info.setInScopeDeclaredVariable(container.getAllDeclaredInScope().get(0));
 				}
 
-				extractedFunctionConstructionHelper = ExtractedFunctionConstructionHelper
-				.createFor(container.getNodesToWrite());
+				extractedFunctionConstructionHelper =
+						ExtractedFunctionConstructionHelper.createFor(container.getNodesToWrite());
 
 				boolean isExtractExpression = container.getNodesToWrite().get(0) instanceof IASTExpression;
 				info.setExtractExpression(isExtractExpression);
@@ -205,14 +203,13 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				for (int i = 0; i < info.getAllUsedNames().size(); i++) {
 					if (!info.getAllUsedNames().get(i).isDeclarationInScope()) {
 						NameInformation name = info.getAllUsedNames().get(i);
-						if(!name.isReturnValue()) {
+						if (!name.isReturnValue()) {
 							name.setUserSetIsReference(name.isReference());
 						}
 					}
 				}
 				sm.done();
-			}
-			finally {
+			} finally {
 				unlockIndex();
 			}
 		} catch (InterruptedException e) {
@@ -225,18 +222,14 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		ArrayList<NameInformation> paras = container.getNames();
 
 		for (NameInformation name : paras) {
-			int flag = CPPVariableReadWriteFlags.getReadWriteFlags(name
-					.getName());
+			int flag = CPPVariableReadWriteFlags.getReadWriteFlags(name.getName());
 			if ((flag & PDOMName.WRITE_ACCESS) != 0) {
 				name.setWriteAccess(true);
 			}
 		}
-
 	}
 
-	private void checkForNonExtractableStatements(NodeContainer cont,
-			RefactoringStatus status) {
-
+	private void checkForNonExtractableStatements(NodeContainer cont, RefactoringStatus status) {
 		NonExtractableStmtFinder vis = new NonExtractableStmtFinder();
 		for (IASTNode node : cont.getNodesToWrite()) {
 			node.accept(vis);
@@ -257,17 +250,14 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				break;
 			}
 		}
-
 	}
 
 	private ICPPASTFunctionDeclarator getDeclaration(IASTNode node) {
-
 		while (node != null && !(node instanceof IASTFunctionDefinition)) {
 			node = node.getParent();
 		}
 		if (node != null) {
-			IASTFunctionDeclarator declarator = ((IASTFunctionDefinition) node)
-					.getDeclarator();
+			IASTFunctionDeclarator declarator = ((IASTFunctionDefinition) node).getDeclarator();
 			if (declarator instanceof ICPPASTFunctionDeclarator) {
 				return (ICPPASTFunctionDeclarator) declarator;
 			}
@@ -318,8 +308,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		try {
 			lockIndex();
 			try {
-				final IASTName astMethodName = new CPPASTName(info.getMethodName()
-						.toCharArray());
+				final IASTName astMethodName = new CPPASTName(info.getMethodName().toCharArray());
 
 				MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
 
@@ -330,27 +319,24 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				// Create Method Definition
 				IASTNode firstNode = container.getNodesToWrite().get(0);
 				IPath implPath = new Path(firstNode.getContainingFilename());
-				final IFile implementationFile = ResourcesPlugin.getWorkspace()
-				.getRoot().getFileForLocation(implPath);
+				final IFile implementationFile =
+						ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(implPath);
 
-				createMethodDefinition(astMethodName, context, firstNode,
-						implementationFile, collector);
+				createMethodDefinition(astMethodName, context, firstNode, implementationFile,
+						collector);
 
 				createMethodCalls(astMethodName, implementationFile, context, collector);
-			}
-			finally {
+			} finally {
 				unlockIndex();
 			}
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
-
 	}
 
 	private void createMethodCalls(final IASTName astMethodName,
 			final IFile implementationFile, MethodContext context,
 			ModificationCollector collector) throws CoreException {
-
 		String title;
 		if (context.getType() == MethodContext.ContextType.METHOD) {
 			title = Messages.ExtractFunctionRefactoring_CreateMethodCall;
@@ -361,11 +347,10 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		IASTNode methodCall = getMethodCall(astMethodName);
 
 		IASTNode firstNodeToWrite = container.getNodesToWrite().get(0);
-		ASTRewrite rewriter = collector
-				.rewriterForTranslationUnit(firstNodeToWrite
-						.getTranslationUnit());
+		ASTRewrite rewriter = collector.rewriterForTranslationUnit(
+				firstNodeToWrite.getTranslationUnit());
 		TextEditGroup editGroup = new TextEditGroup(title);
-		if(methodCall instanceof IASTDeclaration){
+		if (methodCall instanceof IASTDeclaration){
 			CPPASTDeclarationStatement declarationStatement = new CPPASTDeclarationStatement((IASTDeclaration) methodCall);
 			methodCall = declarationStatement;
 		}
@@ -385,7 +370,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	private void insertCallintoTree(IASTNode methodCall, List<IASTNode> list,
 			ASTRewrite rewriter, TextEditGroup editGroup) {
 		IASTNode firstNode = list.get(0);
-		if(list.size() > 1 && firstNode.getParent() instanceof IASTBinaryExpression &&
+		if (list.size() > 1 && firstNode.getParent() instanceof IASTBinaryExpression &&
 				firstNode.getParent().getParent() instanceof IASTBinaryExpression) {
 			IASTBinaryExpression parent = (IASTBinaryExpression) firstNode.getParent();
 			IASTExpression leftSubTree = parent.getOperand1();
@@ -397,7 +382,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			newParentNode.setOperator(op);
 			newParentNode.setOperand2((IASTExpression) methodCall);
 			rewriter.replace(rootBinExp, newParentNode, editGroup);
-		}else {
+		} else {
 			rewriter.replace(firstNode, methodCall, editGroup);
 		}
 	}
@@ -412,7 +397,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	private void createMethodDefinition(final IASTName astMethodName,
 			MethodContext context, IASTNode firstNode,
 			final IFile implementationFile, ModificationCollector collector) {
-
 		IASTFunctionDefinition node = NodeHelper.findFunctionDefinitionInAncestors(firstNode); 
 		if (node != null) { 
 			String title;
@@ -434,14 +418,12 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 		IASTSimpleDeclaration methodDeclaration = getDeclaration(collector, astMethodName);
 
-		AddDeclarationNodeToClassChange.createChange(classDeclaration, info
-				.getVisibility(), methodDeclaration, false, collector);
-
+		AddDeclarationNodeToClassChange.createChange(classDeclaration, info.getVisibility(),
+				methodDeclaration, false, collector);
 	}
 
 	private void replaceSimilar(ModificationCollector collector, final IASTName astMethodName,
-			final IFile implementationFile,
-			final ContextType contextType) {
+			final IFile implementationFile,	final ContextType contextType) {
 		// Find similar code
 		final List<IASTNode> nodesToRewriteWithoutComments = new LinkedList<IASTNode>();
 
@@ -460,14 +442,13 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		}
 
 		if (!hasNameResolvingForSimilarError) {
-			unit.accept(new SimilarFinderVisitor(this, collector, initTrail, implementationFile,
+			ast.accept(new SimilarFinderVisitor(this, collector, initTrail, implementationFile,
 					astMethodName, nodesToRewriteWithoutComments, title));
 		}
 	}
 
 	protected Vector<IASTNode> getTrail(List<IASTNode> stmts) {
 		final Vector<IASTNode> trail = new Vector<IASTNode>();
-
 		nameTrail = new HashMap<String, Integer>();
 		final Container<Integer> trailCounter = new Container<Integer>(NULL_INTEGER);
 
@@ -475,7 +456,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			node.accept(new CPPASTAllVisitor() {
 				@Override
 				public int visitAll(IASTNode node) {
-
 					if (node instanceof IASTComment) {
 						// Visit Comment, but don't add them to the trail
 						return super.visitAll(node);
@@ -489,7 +469,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 							trail.add(node);
 							return super.visitAll(node);
 						} else {
-							// Save Name Sequenz Number
+							// Save Name Sequence Number
 							IASTName name = (IASTName) node;
 							TrailName trailName = new TrailName(name);
 							int actCount = trailCounter.getObject().intValue();
@@ -530,7 +510,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		stmt.accept(new CPPASTAllVisitor() {
 			@Override
 			public int visitAll(IASTNode node) {
-
 				int pos = trailPos.getObject().intValue();
 
 				if (trail.size() <= 0 || pos >= trail.size()) {
@@ -552,7 +531,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 					} else {
 						return super.visitAll(node);
 					}
-
 				} else {
 					same.setObject(new Boolean(false));
 					return PROCESS_ABORT;
@@ -563,15 +541,14 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		return same.getObject().booleanValue();
 	}
 
-	private boolean isMethodAllreadyDefined(
-			IASTSimpleDeclaration methodDeclaration,
+	private boolean isMethodAllreadyDefined(IASTSimpleDeclaration methodDeclaration,
 			ICPPASTCompositeTypeSpecifier classDeclaration, IIndex index) {
 		TrailNodeEqualityChecker equalityChecker = new TrailNodeEqualityChecker(
 				names, namesCounter, index);
 
 		IBinding bind = classDeclaration.getName().resolveBinding();
-		IASTStandardFunctionDeclarator declarator = (IASTStandardFunctionDeclarator) methodDeclaration
-				.getDeclarators()[0];
+		IASTStandardFunctionDeclarator declarator =
+				(IASTStandardFunctionDeclarator) methodDeclaration.getDeclarators()[0];
 		String name = new String(declarator.getName().toCharArray());
 		if (bind instanceof ICPPClassType) {
 			ICPPClassType classBind = (ICPPClassType) bind;
@@ -587,23 +564,16 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 					IParameter[] parameters = method.getParameters();
 					if (parameters.length == declarator.getParameters().length) {
 						for (int i = 0; i < parameters.length; i++) {
-							IASTName[] origParameterName = unit
-									.getDeclarationsInAST(parameters[i]);
-
-							IASTParameterDeclaration origParameter = (IASTParameterDeclaration) origParameterName[0]
-									.getParent().getParent();
-							IASTParameterDeclaration newParameter = declarator
-									.getParameters()[i];
+							IASTName[] origParameterName = ast.getDeclarationsInAST(parameters[i]);
+							IASTParameterDeclaration origParameter =
+									(IASTParameterDeclaration) origParameterName[0].getParent().getParent();
+							IASTParameterDeclaration newParameter = declarator.getParameters()[i];
 
 							// if not the same break;
-							if (!(equalityChecker.isEquals(origParameter
-									.getDeclSpecifier(), newParameter
-									.getDeclSpecifier()) && ASTHelper
-									.samePointers(origParameter
-											.getDeclarator()
-											.getPointerOperators(),
-											newParameter.getDeclarator()
-													.getPointerOperators(),
+							if (!(equalityChecker.isEquals(origParameter.getDeclSpecifier(),
+									newParameter.getDeclSpecifier()) &&
+									ASTHelper.samePointers(origParameter.getDeclarator().getPointerOperators(),
+											newParameter.getDeclarator().getPointerOperators(),
 											equalityChecker))) {
 								break;
 							}
@@ -613,7 +583,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 							}
 						}
 					}
-
 				}
 			}
 			return false;
@@ -623,10 +592,9 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 	private void addMethod(IASTName astMethodName, MethodContext context,
 			ASTRewrite rewriter, IASTNode insertpoint, TextEditGroup group) {
-		
 		ICPPASTQualifiedName qname = new CPPASTQualifiedName();
 		if (context.getType() == ContextType.METHOD) {
-			if(context.getMethodQName() != null) {
+			if (context.getMethodQName() != null) {
 				for (int i = 0; i < (context.getMethodQName().getNames().length - 1); i++) {
 					qname.addName(new CPPASTName(context.getMethodQName().getNames()[i].toCharArray()));
 				}
@@ -635,7 +603,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		qname.addName(astMethodName);
 
 		IASTFunctionDefinition func = new CPPASTFunctionDefinition();
-		func.setParent(unit);
+		func.setParent(ast);
 
 		IASTDeclSpecifier returnType = getReturnType();
 		func.setDeclSpecifier(returnType);
@@ -643,26 +611,24 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		IASTStandardFunctionDeclarator createdFunctionDeclarator = extractedFunctionConstructionHelper
 				.createFunctionDeclarator(qname, info.getDeclarator(), info
 						.getReturnVariable(), container.getNodesToWrite(), info
-						.getAllUsedNames(), unit.getASTNodeFactory());
+						.getAllUsedNames(), ast.getASTNodeFactory());
 		func.setDeclarator(createdFunctionDeclarator);
 
 		IASTCompoundStatement compound = new CPPASTCompoundStatement();
 		func.setBody(compound);
 		
 		ASTRewrite subRW;
-		if(insertpoint.getParent() instanceof ICPPASTTemplateDeclaration) {
-			
+		if (insertpoint.getParent() instanceof ICPPASTTemplateDeclaration) {
 			CPPASTTemplateDeclaration templateDeclaration = new CPPASTTemplateDeclaration();
-			templateDeclaration.setParent(unit);
+			templateDeclaration.setParent(ast);
 			
-			for(ICPPASTTemplateParameter templateParameter : ((ICPPASTTemplateDeclaration) insertpoint.getParent()).getTemplateParameters()) {
+			for (ICPPASTTemplateParameter templateParameter : ((ICPPASTTemplateDeclaration) insertpoint.getParent()).getTemplateParameters()) {
 				templateDeclaration.addTemplateParameter(templateParameter.copy());
 			}
 			
 			templateDeclaration.setDeclaration(func);
-
-			subRW = rewriter.insertBefore(insertpoint.getParent().getParent(), insertpoint.getParent(), templateDeclaration, group);
-
+			subRW = rewriter.insertBefore(insertpoint.getParent().getParent(), insertpoint.getParent(),
+					templateDeclaration, group);
 		} else {
 			
 			subRW = rewriter.insertBefore(insertpoint.getParent(), insertpoint, func, group);
@@ -690,7 +656,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			}
 			subRW.insertBefore(compound, null, returnStmt, group);
 		}
-
 	}
 
 	private IASTName newName(IASTName declaration) {
@@ -698,12 +663,10 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	private IASTDeclSpecifier getReturnType() {
-
 		IASTNode firstNodeToWrite = container.getNodesToWrite().get(0);
 		NameInformation returnVariable = info.getReturnVariable();
 
-		return extractedFunctionConstructionHelper.determineReturnType(
-				firstNodeToWrite, returnVariable);
+		return extractedFunctionConstructionHelper.determineReturnType(firstNodeToWrite, returnVariable);
 	}
 
 	protected IASTNode getMethodCall(IASTName astMethodName,
@@ -721,8 +684,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		boolean theRetName = false;
 
 		for (NameInformation nameInfo : myContainer.getNames()) {
-			Integer trailSeqNumber = trailNameTable.get(nameInfo
-					.getDeclaration().getRawSignature());
+			Integer trailSeqNumber = trailNameTable.get(nameInfo.getDeclaration().getRawSignature());
 			String orgName = null;
 			for (Entry<String, Integer> entry : similarNameTable.entrySet()) {
 				if (entry.getValue().equals(trailSeqNumber)) {
@@ -736,8 +698,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 			if (orgName != null) {
 				boolean found = false;
-				for (NameInformation simNameInfo : mySimilarContainer
-						.getNames()) {
+				for (NameInformation simNameInfo : mySimilarContainer.getNames()) {
 					if (orgName.equals(simNameInfo.getDeclaration()
 							.getRawSignature())) {
 						addAParameterIfPossible(args, declarations,
@@ -746,9 +707,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 						if (theRetName) {
 							theRetName = false;
-							retName = new CPPASTName(simNameInfo
-									.getDeclaration().getRawSignature()
-									.toCharArray());
+							retName = new CPPASTName(
+									simNameInfo.getDeclaration().getRawSignature().toCharArray());
 						}
 					}
 				}
@@ -792,7 +752,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		}
 		IASTName retname = newName(info.getReturnVariable().getName());
 		return getReturnAssignment(stmt, callExpression, retname);
-
 	}
 
 	private IASTNode getReturnAssignment(IASTExpressionStatement stmt,
@@ -808,8 +767,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 			declarator.setName(retname);
 
-			for (IASTPointerOperator pointer : orgDecl.getDeclarators()[0]
-					.getPointerOperators()) {
+			for (IASTPointerOperator pointer : orgDecl.getDeclarators()[0].getPointerOperators()) {
 				declarator.addPointerOperator(pointer.copy());
 			}
 
@@ -834,19 +792,17 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 	private IASTNode getReturnAssignment(IASTExpressionStatement stmt,
 			IASTExpression callExpression) {
-
 		IASTNode node = container.getNodesToWrite().get(0);
 		return extractedFunctionConstructionHelper.createReturnAssignment(node,
 				stmt, callExpression);
-
 	}
 	
 	private IASTSimpleDeclaration getDeclaration(IASTName name) {
 		IASTSimpleDeclaration simpleDecl = new CPPASTSimpleDeclaration();
-		IASTStandardFunctionDeclarator declarator = extractedFunctionConstructionHelper
-				.createFunctionDeclarator(name, info.getDeclarator(), info
-						.getReturnVariable(), container.getNodesToWrite(), info
-						.getAllUsedNames(), unit.getASTNodeFactory());
+		IASTStandardFunctionDeclarator declarator =
+				extractedFunctionConstructionHelper.createFunctionDeclarator(name,
+						info.getDeclarator(), info.getReturnVariable(),
+						container.getNodesToWrite(), info.getAllUsedNames(), ast.getASTNodeFactory());
 		simpleDecl.addDeclarator(declarator);
 		return simpleDecl;
 	}
@@ -854,21 +810,21 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	private IASTSimpleDeclaration getDeclaration(ModificationCollector collector,IASTName name) {
 		IASTDeclSpecifier declSpec = getReturnType();
 		IASTSimpleDeclaration simpleDecl = factory.newSimpleDeclaration(declSpec);
-		if(info.isVirtual() && declSpec instanceof ICPPASTDeclSpecifier) {
+		if (info.isVirtual() && declSpec instanceof ICPPASTDeclSpecifier) {
 			((ICPPASTDeclSpecifier)declSpec).setVirtual(true);
 		}
-		simpleDecl.setParent(unit);
+		simpleDecl.setParent(ast);
 		IASTStandardFunctionDeclarator declarator = extractedFunctionConstructionHelper
 				.createFunctionDeclarator(name, info.getDeclarator(), info
 						.getReturnVariable(), container.getNodesToWrite(), info
-						.getAllUsedNames(), unit.getASTNodeFactory());
+						.getAllUsedNames(), ast.getASTNodeFactory());
 		simpleDecl.addDeclarator(declarator);
 		return simpleDecl;
 	}
 
 	private NodeContainer findExtractableNodes() {
 		final NodeContainer container = new NodeContainer();
-		unit.accept(new ASTVisitor() {
+		ast.accept(new ASTVisitor() {
 			{
 				shouldVisitStatements = true;
 				shouldVisitExpressions = true;
@@ -933,5 +889,4 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		arguments.put(ExtractFunctionRefactoringDescription.REPLACE_DUBLICATES, Boolean.toString(info.isReplaceDuplicates()));
 		return arguments;
 	}
-
 }

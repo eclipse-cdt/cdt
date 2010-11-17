@@ -60,10 +60,8 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
  * Checks conditions, finds insert location and generates the ImplementationNode.
  * 
  * @author Mirko Stocker, Lukas Felber, Emanuel Graf
- * 
  */
 public class ImplementMethodRefactoring extends CRefactoring {
-
 	private InsertLocation insertLocation;
 	private CPPASTFunctionDeclarator createdMethodDeclarator;
 	private ImplementMethodData data;
@@ -78,15 +76,14 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
 		super.checkInitialConditions(sm.newChild(6));
 
-		if(!initStatus.hasFatalError()) {
+		if (!initStatus.hasFatalError()) {
+			data.setMethodDeclarations(findUnimplementedMethodDeclarations(ast));
 
-			data.setMethodDeclarations(findUnimplementedMethodDeclarations(unit));
-
-			if(region.getLength()>0) {
-				IASTSimpleDeclaration methodDeclaration = SelectionHelper.findFirstSelectedDeclaration(region, unit);
+			if (region.getLength() > 0) {
+				IASTSimpleDeclaration methodDeclaration = SelectionHelper.findFirstSelectedDeclaration(region, ast);
 				if (NodeHelper.isMethodDeclaration(methodDeclaration)) {
 					for (MethodToImplementConfig config : data.getMethodDeclarations()) {
-						if(config.getDeclaration() == methodDeclaration) {
+						if (config.getDeclaration() == methodDeclaration) {
 							config.setChecked(true);
 						}
 					}
@@ -96,7 +93,6 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		sm.done();
 		return initStatus;
 	}
-
 
 	private List<IASTSimpleDeclaration> findUnimplementedMethodDeclarations(
 			IASTTranslationUnit unit) {
@@ -111,26 +107,23 @@ public class ImplementMethodRefactoring extends CRefactoring {
 				if (declaration instanceof IASTSimpleDeclaration) {
 					IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
 					try {
-						if(NodeHelper.isMethodDeclaration(simpleDeclaration) && DefinitionFinder.getDefinition(simpleDeclaration, file) == null) {
+						if (NodeHelper.isMethodDeclaration(simpleDeclaration) && DefinitionFinder.getDefinition(simpleDeclaration, file) == null) {
 							list.add(simpleDeclaration);
 						}
 					} catch (CoreException e) {}
 				}
 				return ASTVisitor.PROCESS_CONTINUE;
 			}
-			
-			
-			
 		});
 		return list;
 	}
 
 	@Override
-	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector) throws CoreException,	OperationCanceledException {
-		
+	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
+			throws CoreException,	OperationCanceledException {
 		List<MethodToImplementConfig> methodsToImplement = data.getMethodsToImplement();
 		SubMonitor sm = SubMonitor.convert(pm, 4*methodsToImplement.size());
-		for(MethodToImplementConfig config : methodsToImplement) {
+		for (MethodToImplementConfig config : methodsToImplement) {
 			createDefinition(collector, config, sm.newChild(4));
 		}		
 	}
@@ -154,22 +147,21 @@ public class ImplementMethodRefactoring extends CRefactoring {
 	}
 	
 	private void createParameterModifications(ASTRewrite methodRewrite, ParameterHandler handler) {
-		for(ParameterInfo actParameterInfo : handler.getParameterInfos()) {
+		for (ParameterInfo actParameterInfo : handler.getParameterInfos()) {
 			ASTRewrite parameterRewrite = methodRewrite.insertBefore(createdMethodDeclarator, null, actParameterInfo.getParameter(), null);
 			createNewNameInsertModification(actParameterInfo, parameterRewrite);
 			createRemoveDefaultValueModification(actParameterInfo, parameterRewrite);
 		}
-		
 	}
 
 	private void createRemoveDefaultValueModification(ParameterInfo parameterInfo, ASTRewrite parameterRewrite) {
-		if(parameterInfo.hasDefaultValue()) {
+		if (parameterInfo.hasDefaultValue()) {
 			parameterRewrite.remove(parameterInfo.getDefaultValueNode(), null);
 		}
 	}
 
 	private void createNewNameInsertModification(ParameterInfo parameterInfo, ASTRewrite parameterRewrite) {
-		if(parameterInfo.hasNewName()) {
+		if (parameterInfo.hasNewName()) {
 			IASTNode insertNode = parameterInfo.getNewNameNode();
 			IASTName replaceNode = parameterInfo.getNameNode();
 			parameterRewrite.replace(replaceNode, insertNode, null);
@@ -196,20 +188,19 @@ public class ImplementMethodRefactoring extends CRefactoring {
 
 	private IASTDeclaration createFunctionDefinition(IASTDeclSpecifier declSpecifier, ICPPASTFunctionDeclarator functionDeclarator, 
 			IASTNode declarationParent, IASTTranslationUnit unit) throws CoreException {
-		
 		IASTFunctionDefinition func = new CPPASTFunctionDefinition();
 		func.setParent(unit);
 		
-		if(declSpecifier instanceof ICPPASTDeclSpecifier) {
+		if (declSpecifier instanceof ICPPASTDeclSpecifier) {
 			((ICPPASTDeclSpecifier) declSpecifier).setVirtual(false); 
 		}
 		
 		String currentFileName = declarationParent.getNodeLocations()[0].asFileLocation().getFileName();
-		if(Path.fromOSString(currentFileName).equals(insertLocation.getInsertFile().getLocation())) {
+		if (Path.fromOSString(currentFileName).equals(insertLocation.getInsertFile().getLocation())) {
 			declSpecifier.setInline(true);
 		}
 		
-		if(declSpecifier.getStorageClass() == IASTDeclSpecifier.sc_static) {
+		if (declSpecifier.getStorageClass() == IASTDeclSpecifier.sc_static) {
 			declSpecifier.setStorageClass(IASTDeclSpecifier.sc_unspecified);
 		}
 		
@@ -220,18 +211,18 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		createdMethodDeclarator = new CPPASTFunctionDeclarator();
 		createdMethodDeclarator.setName(qname);
 		createdMethodDeclarator.setConst(functionDeclarator.isConst());
-		for(IASTPointerOperator pop : functionDeclarator.getPointerOperators()) {
+		for (IASTPointerOperator pop : functionDeclarator.getPointerOperators()) {
 			createdMethodDeclarator.addPointerOperator(pop.copy());
 		}
 	
 		func.setDeclarator(createdMethodDeclarator);
 		func.setBody(new CPPASTCompoundStatement());
 		
-		if(NodeHelper.isContainedInTemplateDeclaration(declarationParent)) {
+		if (NodeHelper.isContainedInTemplateDeclaration(declarationParent)) {
 			CPPASTTemplateDeclaration templateDeclaration = new CPPASTTemplateDeclaration();
 			templateDeclaration.setParent(unit);
 			
-			for(ICPPASTTemplateParameter templateParameter : ((ICPPASTTemplateDeclaration) declarationParent.getParent().getParent() ).getTemplateParameters()) {
+			for (ICPPASTTemplateParameter templateParameter : ((ICPPASTTemplateDeclaration) declarationParent.getParent().getParent() ).getTemplateParameters()) {
 				templateDeclaration.addTemplateParameter(templateParameter.copy());
 			}
 			
@@ -241,8 +232,8 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		return func;
 	}
 
-	private ICPPASTQualifiedName createQualifiedNameFor(IASTFunctionDeclarator functionDeclarator, IASTNode declarationParent) 
-		throws CoreException {
+	private ICPPASTQualifiedName createQualifiedNameFor(IASTFunctionDeclarator functionDeclarator,
+			IASTNode declarationParent)	throws CoreException {
 		int insertOffset = insertLocation.getInsertPosition();
 		return NameHelper.createQualifiedNameFor(functionDeclarator.getName(), file, functionDeclarator.getFileLocation().getNodeOffset(), insertLocation.getInsertFile(), insertOffset);
 	}

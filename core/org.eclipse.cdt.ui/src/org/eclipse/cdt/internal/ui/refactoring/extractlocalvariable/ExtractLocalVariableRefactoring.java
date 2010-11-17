@@ -224,7 +224,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	private NodeContainer findAllExpressions() {
 		final NodeContainer container = new NodeContainer();
 
-		unit.accept(new ASTVisitor() {
+		ast.accept(new ASTVisitor() {
 			{
 				shouldVisitExpressions = true;
 			}
@@ -255,7 +255,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 				IASTStatement declInsertPoint = getParentStatement(target);
 				IASTDeclarationStatement declaration = getVariableNodes(variableName);
 				declaration.setParent(declInsertPoint.getParent());
-				ASTRewrite rewriter = collector.rewriterForTranslationUnit(unit);
+				ASTRewrite rewriter = collector.rewriterForTranslationUnit(ast);
 				rewriter.insertBefore(declInsertPoint.getParent(), declInsertPoint, declaration, editGroup);
 
 				// Replace target with reference to temporary variable
@@ -280,7 +280,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	}
 
 	private IASTDeclarationStatement getVariableNodes(String newName) {
-		INodeFactory factory = this.unit.getASTNodeFactory();
+		INodeFactory factory = this.ast.getASTNodeFactory();
 		
 		IASTSimpleDeclaration simple = factory.newSimpleDeclaration(null);
 

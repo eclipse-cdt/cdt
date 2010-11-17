@@ -59,10 +59,8 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 /**
  * @author Guido Zgraggen IFS
- * 
  */
 public class HideMethodRefactoring extends CRefactoring {
-	
 	public static final String ID = "org.eclipse.cdt.internal.ui.refactoring.hidemethod.HideMethodRefactoring"; //$NON-NLS-1$
 
 	private IASTName methodToHide;
@@ -82,11 +80,11 @@ public class HideMethodRefactoring extends CRefactoring {
 			try {
 				super.checkInitialConditions(sm.newChild(6));
 
-				if(initStatus.hasFatalError()){
+				if (initStatus.hasFatalError()) {
 					return initStatus;
 				}
 
-				if(isProgressMonitorCanceld(sm, initStatus)) return initStatus;
+				if (isProgressMonitorCanceld(sm, initStatus)) return initStatus;
 
 				IASTName name;
 				ArrayList<IASTName> names = findAllMarkedNames();
@@ -96,11 +94,11 @@ public class HideMethodRefactoring extends CRefactoring {
 				}
 				name = names.get(names.size()-1);
 				sm.worked(1);
-				if(isProgressMonitorCanceld(sm, initStatus)) return initStatus;
+				if (isProgressMonitorCanceld(sm, initStatus)) return initStatus;
 
 				declData = DeclarationFinder.getDeclaration(name, getIndex());
 
-				if(declData == null || declData.name == null) {
+				if (declData == null || declData.name == null) {
 					initStatus.addFatalError(Messages.HideMethodRefactoring_NoMethodNameSelected); 
 					return initStatus;
 				}
@@ -108,34 +106,34 @@ public class HideMethodRefactoring extends CRefactoring {
 				methodToHide = declData.name;
 				sm.worked(1);
 				methodToHideDecl = NodeHelper.findSimpleDeclarationInParents(methodToHide);
-				if(methodToHideDecl == null) {
+				if (methodToHideDecl == null) {
 					initStatus.addFatalError(Messages.HideMethodRefactoring_CanOnlyHideMethods); 
 					return initStatus;
 				}
-				if(!(methodToHideDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier)) {
+				if (!(methodToHideDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier)) {
 					methodToHideDecl = NodeHelper.findFunctionDefinitionInAncestors(methodToHide);
 				}
 
-				if(isProgressMonitorCanceld(sm, initStatus)) return initStatus;
+				if (isProgressMonitorCanceld(sm, initStatus)) return initStatus;
 				sm.worked(1);
-				if(methodToHideDecl instanceof IASTFunctionDefinition) {
+				if (methodToHideDecl instanceof IASTFunctionDefinition) {
 					IASTDeclarator declarator = ((IASTFunctionDefinition)methodToHideDecl).getDeclarator();
-					if(CPPVisitor.findInnermostDeclarator(declarator).getName().getRawSignature().equals(name.getRawSignature())) {
+					if (CPPVisitor.findInnermostDeclarator(declarator).getName().getRawSignature().equals(name.getRawSignature())) {
 						if (!(declarator instanceof IASTFunctionDeclarator)) {
 							initStatus.addFatalError(Messages.HideMethodRefactoring_CanOnlyHideMethods); 
 							return initStatus;
 						}
 					}
-				}else if (methodToHideDecl instanceof IASTSimpleDeclaration) {
+				} else if (methodToHideDecl instanceof IASTSimpleDeclaration) {
 					for(IASTDeclarator declarator : ((IASTSimpleDeclaration) methodToHideDecl).getDeclarators()) {
-						if(declarator.getName().getRawSignature().equals(name.getRawSignature())) {
+						if (declarator.getName().getRawSignature().equals(name.getRawSignature())) {
 							if (!(declarator instanceof IASTFunctionDeclarator)) {
 								initStatus.addFatalError(Messages.HideMethodRefactoring_CanOnlyHideMethods); 
 								return initStatus;
 							}
 						}
 					}			
-				}else {
+				} else {
 					initStatus.addFatalError(Messages.HideMethodRefactoring_CanOnlyHideMethods); 
 					return initStatus;
 				}
@@ -143,16 +141,15 @@ public class HideMethodRefactoring extends CRefactoring {
 				sm.worked(1);		
 
 				IASTCompositeTypeSpecifier classNode = NodeHelper.findClassInAncestors(methodToHide);
-				if(classNode == null) {
+				if (classNode == null) {
 					initStatus.addError(Messages.HideMethodRefactoring_EnclosingClassNotFound);
 				}
 
-				if(checkIfPrivate(classNode, methodToHideDecl)) {
+				if (checkIfPrivate(classNode, methodToHideDecl)) {
 					initStatus.addError(Messages.HideMethodRefactoring_IsAlreadyPrivate);
 				}
 				sm.done();
-			}
-			finally {
+			} finally {
 				unlockIndex();
 			}
 		} catch (InterruptedException e) {
@@ -163,23 +160,22 @@ public class HideMethodRefactoring extends CRefactoring {
 	
 	private boolean checkIfPrivate(IASTCompositeTypeSpecifier classNode, IASTDeclaration decl) {
 		IASTDeclaration[] members = classNode.getMembers();
-		
 		int currentVisibility = ICPPASTVisibilityLabel.v_private;
-		if(IASTCompositeTypeSpecifier.k_struct == classNode.getKey()) {
+		if (IASTCompositeTypeSpecifier.k_struct == classNode.getKey()) {
 			currentVisibility = ICPPASTVisibilityLabel.v_public;
 		}		
 		for (IASTDeclaration declaration : members) {
-			if(declaration instanceof ICPPASTVisibilityLabel){
+			if (declaration instanceof ICPPASTVisibilityLabel) {
 				currentVisibility =((ICPPASTVisibilityLabel) declaration).getVisibility();
 			}
 			
 			if (declaration != null) {
-				if(decl == declaration) {
+				if (decl == declaration) {
 					break;
 				}
 			}
 		}
-		if(ICPPASTVisibilityLabel.v_private == currentVisibility) {
+		if (ICPPASTVisibilityLabel.v_private == currentVisibility) {
 			return true;
 		}
 		return false;
@@ -196,12 +192,12 @@ public class HideMethodRefactoring extends CRefactoring {
 				for(IIndexName pdomref : declData.allNamesPDom) {
 					declData.filename = pdomref.getFileLocation().getFileName();
 
-					if(pdomref instanceof PDOMName) {
+					if (pdomref instanceof PDOMName) {
 						PDOMName pdomName = (PDOMName)pdomref;
-						if(pdomName.isDeclaration()) {
+						if (pdomName.isDeclaration()) {
 							continue;
 						}
-						if(pdomName.isDefinition()) {
+						if (pdomName.isDefinition()) {
 							continue;
 						}
 					}			
@@ -211,7 +207,7 @@ public class HideMethodRefactoring extends CRefactoring {
 
 					IASTFunctionDeclarator funcDec = findEnclosingFunction(expName);
 					IASTCompositeTypeSpecifier encClass2;
-					if(funcDec == null) {
+					if (funcDec == null) {
 						encClass2 = NodeHelper.findClassInAncestors(expName);
 					}
 					else {
@@ -220,15 +216,14 @@ public class HideMethodRefactoring extends CRefactoring {
 
 					IASTCompositeTypeSpecifier encClass = NodeHelper.findClassInAncestors(methodToHide);
 
-					if(!NodeHelper.isSameNode(encClass, encClass2)) {
+					if (!NodeHelper.isSameNode(encClass, encClass2)) {
 						finalConditions.addWarning(Messages.HideMethodRefactoring_HasExternalReferences);
 						break;
 					}
 				}
 
 				return finalConditions;	
-			}
-			finally {
+			} finally {
 				unlockIndex();
 			}
 		} catch (InterruptedException e) {
@@ -239,26 +234,26 @@ public class HideMethodRefactoring extends CRefactoring {
 
 	private IASTFunctionDeclarator findEnclosingFunction(IASTNode node) throws CoreException {
 		IASTCompoundStatement compStat = NodeHelper.findCompoundStatementInAncestors(node);
-		if(compStat == null) {
+		if (compStat == null) {
 			return null;
 		}
 
 		IASTNode parent = compStat.getParent();
-		if(parent instanceof IASTFunctionDefinition) {
+		if (parent instanceof IASTFunctionDefinition) {
 			IASTDeclarator declarator = ((IASTFunctionDefinition)parent).getDeclarator();
 			IASTName declaratorName = getLastName(CPPVisitor.findInnermostDeclarator(declarator));
 
 			DeclarationFinderDO data = DeclarationFinder.getDeclaration(declaratorName, getIndex());
 
-			if(data == null || data.name == null) {
+			if (data == null || data.name == null) {
 				return null;
 			}
 			
-			if(data.name.getParent() instanceof IASTFunctionDeclarator) {
+			if (data.name.getParent() instanceof IASTFunctionDeclarator) {
 				return (IASTFunctionDeclarator) data.name.getParent();
 			}			
 			return null;
-		}else if(parent instanceof IASTTranslationUnit) {
+		} else if (parent instanceof IASTTranslationUnit) {
 			return null;
 		}
 		return findEnclosingFunction(parent);
@@ -266,8 +261,8 @@ public class HideMethodRefactoring extends CRefactoring {
 
 	private IASTName getLastName(IASTDeclarator declarator) {
 		IASTName declaratorName = declarator.getName();
-		if(declaratorName instanceof ICPPASTQualifiedName) {
-			IASTName[] declaratorNames = ((ICPPASTQualifiedName)declaratorName).getNames();
+		if (declaratorName instanceof ICPPASTQualifiedName) {
+			IASTName[] declaratorNames = ((ICPPASTQualifiedName) declaratorName).getNames();
 			declaratorName = declaratorNames[declaratorNames.length-1];
 		}
 		return declaratorName;
@@ -285,8 +280,7 @@ public class HideMethodRefactoring extends CRefactoring {
 				AddDeclarationNodeToClassChange.createChange(classDefinition, VisibilityEnum.v_private, methodToHideDecl, false, collector);
 
 				rewriter.remove(methodToHideDecl, editGroup);
-			}
-			finally {
+			} finally {
 				unlockIndex();
 			}
 		} catch (InterruptedException e) {

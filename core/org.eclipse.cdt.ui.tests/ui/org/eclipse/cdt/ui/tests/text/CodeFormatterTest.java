@@ -1446,6 +1446,28 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 	
+	//#define X() {  }
+	//void g() {
+	//	X();
+	//		if (1) {
+	//		x();
+	//	}
+	//	z();
+	//}
+
+	//#define X() {  }
+	//void g() {
+	//	X();
+	//		if (1) {
+	//		x();
+	//	}
+	//	z();
+	//}
+	public void testKeepWrappedLines_Bug322776_2() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_JOIN_WRAPPED_LINES, DefaultCodeFormatterConstants.FALSE);
+		assertFormatterResult();
+	}
+	
 	//void f() {
 	//double confidence = 0.316030 //
 	//- 0.016315 * C_Count //

@@ -91,6 +91,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -405,23 +406,24 @@ public class ASTManager {
     }
 
     public static int hasSameSignature(IFunction b1, IFunction b2) throws DOMException {
-        int r1= isSameParameterList(b1.getParameters(), b2.getParameters());
-        if (r1 == FALSE) {
-            return FALSE;
-        }
-        if (b1 instanceof ICPPMethod) {
-            if (b2 instanceof ICPPMethod) {                
-//                ICPPMethod m1= (ICPPMethod) b1;
-//                ICPPMethod m2= (ICPPMethod) b2;
-                // todo check for const, restrict
-                return r1;
-            }
-			return FALSE;
-        }
-        return r1;
+    	if (b1.takesVarArgs() != b2.takesVarArgs())
+    		return FALSE;
+
+        if (b1 instanceof ICPPMethod != b2 instanceof ICPPMethod) 
+        	return FALSE;
+
+        return hasSameSignature(b1.getType(), b2.getType());
     }
 
     public static int hasSameSignature(IFunctionType b1, IFunctionType b2) throws DOMException {
+    	if (b1 instanceof ICPPFunctionType && b2 instanceof ICPPFunctionType) {
+    		ICPPFunctionType cppb1= (ICPPFunctionType) b1;
+    		ICPPFunctionType cppb2= (ICPPFunctionType) b2;
+    		if (cppb1.isConst() != cppb2.isConst())
+    			return FALSE;
+    		if (cppb1.isVolatile() != cppb2.isVolatile())
+    			return FALSE;
+    	}
         return isSameParameterList(b1.getParameterTypes(), b2.getParameterTypes());
     }        
 
@@ -438,31 +440,6 @@ public class ASTManager {
         int retval= TRUE;
         for (int i = 0; i < p2.length; i++) {
             switch (isSameType(p1[i], p2[i])) {
-            case FALSE:
-                return FALSE;
-            case UNKNOWN:
-                retval= UNKNOWN;
-                break;
-            }
-        }
-        
-        return retval;
-    }
-
-    private static int isSameParameterList(IParameter[] p1, 
-            IParameter[] p2) throws DOMException {
-        if (p1 == p2) {
-            return TRUE;
-        }
-        if (p1 == null || p2 == null) {
-            return UNKNOWN;
-        }
-        if (p1.length != p2.length) {
-            return FALSE;
-        }
-        int retval= TRUE;
-        for (int i = 0; i < p2.length; i++) {
-            switch (isSameType(p1[i].getType(), p2[i].getType())) {
             case FALSE:
                 return FALSE;
             case UNKNOWN:

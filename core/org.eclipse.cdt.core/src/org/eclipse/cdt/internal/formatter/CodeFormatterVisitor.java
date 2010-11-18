@@ -239,7 +239,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		scribe.initializeScanner(compilationUnitSource);
 		scribe.setSkipPositions(collectInactiveCodePositions(unit));
 
-		fStatus= new MultiStatus(CCorePlugin.PLUGIN_ID, 0, "Formatting problem(s)", null); //$NON-NLS-1$
+		fStatus= new MultiStatus(CCorePlugin.PLUGIN_ID, 0, "Formatting problem(s) in '"+unit.getFilePath()+"'", null); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			unit.accept(this);
 		} catch (RuntimeException e) {
@@ -1391,6 +1391,11 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (scribe.printModifiers()) {
 			scribe.space();
 		}
+		
+		// consider macro expansion
+		if (withinMacroExpansion(node, scribe.scanner.getCurrentPosition())) {
+			continueNode(node);
+		}
 
 		switch (node.getKey()) {
 		case IASTCompositeTypeSpecifier.k_struct:
@@ -1437,6 +1442,11 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			scribe.space();
 		}
 		final int headerIndent= scribe.numberOfIndentations;
+
+		// consider macro expansion
+		if (withinMacroExpansion(node, scribe.scanner.getCurrentPosition())) {
+			continueNode(node);
+		}
 
 		switch (node.getKey()) {
 		case IASTCompositeTypeSpecifier.k_struct:
@@ -2149,6 +2159,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTBinaryExpression node) {
+		if (enclosedInMacroExpansion(node)) {
+			return PROCESS_SKIP;
+		}
 		if (isAssignment(node)) {
 			return formatAssignment(node);
 		}
@@ -2667,7 +2680,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 
 		if (elseStatement != null) {
-			if (!startsWithMacroExpansion(elseStatement)) {
+			if (peekNextToken() == Token.t_else) {
 				if (thenStatementIsBlock) {
 					scribe.printNextToken(Token.t_else, preferences.insert_space_after_closing_brace_in_block);
 				} else {
@@ -3202,6 +3215,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 		return false;
 	}
+	
 	private static boolean endsWithMacroExpansion(IASTNode node) {
 		IASTNodeLocation[] locations= node.getNodeLocations();
 		if (locations.length == 0) {
@@ -3215,6 +3229,25 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	private static boolean enclosedInMacroExpansion(IASTNode node) {
 		IASTNodeLocation[] locations= node.getNodeLocations();
 		return locations.length == 1 && locations[0] instanceof IASTMacroExpansionLocation;
+	}
+
+	private static boolean withinMacroExpansion(IASTNode node, int offset) {
+		IASTNodeLocation[] locations= node.getNodeLocations();
+		for (IASTNodeLocation location : locations) {
+			if (location instanceof IASTMacroExpansionLocation) {
+				IASTFileLocation fileLocation = location.asFileLocation();
+				if (fileLocation != null) {
+					final int nodeOffset = fileLocation.getNodeOffset();
+					final int endOffset = nodeOffset + fileLocation.getNodeLength();
+					if (offset >= nodeOffset && offset < endOffset) {
+						return true;
+					} else if (offset < nodeOffset) {
+						return false;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	private void formatBlock(IASTCompoundStatement block, String block_brace_position, boolean insertSpaceBeforeOpeningBrace, boolean indentStatements) {
@@ -3301,6 +3334,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				skipToNode(statements.get(1));
 			}
 			final boolean previousStatementIsNullStmt= previousStatement instanceof IASTNullStatement;
+			final int indentLevel= scribe.indentationLevel;
 			for (int i = 1; i < statementsLength - 1; i++) {
 				final IASTStatement statement= statements.get(i);
 				if (!startNode(statement)) {
@@ -3313,11 +3347,18 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				}
 				try {
 					statement.accept(this);
-				} catch (ASTProblemException e) {
+				} catch (RuntimeException e) {
 					if (i < statementsLength - 1) {
-						final IASTStatement nextStatement= statements.get(i + 1);
-						skipToNode(nextStatement);
-					}
+						reportFormattingProblem(e);
+						exitAlignments();
+						skipToNode(statements.get(i + 1));
+						while (scribe.indentationLevel < indentLevel) {
+							scribe.indent();
+						}
+						while (scribe.indentationLevel > indentLevel) {
+							scribe.unIndent();
+						}
+					} else throw e;
 				}
 				previousStatement= statement;
 			}

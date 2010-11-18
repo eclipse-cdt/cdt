@@ -1458,7 +1458,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//#define X() {  }
 	//void g() {
 	//	X();
-	//		if (1) {
+	//	if (1) {
 	//		x();
 	//	}
 	//	z();

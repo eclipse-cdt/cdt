@@ -462,7 +462,7 @@ public class Scribe {
 	private String getPreserveEmptyLines(int count) {
 		if (count == 0 && !preserveNewLines) {
 			// preserve line breaks in wrapping if specified
-			if ((!preferences.join_wrapped_lines) && lastNumberOfNewLines == 0) {
+			if (!preferences.join_wrapped_lines && lastNumberOfNewLines == 0) {
 				// Create new line
 				StringBuilder tempBuffer = new StringBuilder();
 				tempBuffer.append(getNewLine());
@@ -770,7 +770,9 @@ public class Scribe {
 			handleLineTooLong();
 		}
 		lastNumberOfNewLines= 0;
-		printIndentationIfNecessary();
+		if (indentationLevel != 0) {
+			printIndentationIfNecessary();
+		}
 		if (considerSpaceIfAny) {
 			space();
 		}
@@ -1150,7 +1152,6 @@ public class Scribe {
 					if (indentationsAsTab < numberOfLeadingIndents) {
 						buffer.append('\t');
 						indentationsAsTab++;
-						lastNumberOfNewLines= 0;
 						int complement= tabLength - ((column - 1) % tabLength); // amount
 																				// of
 																				// space
@@ -1165,7 +1166,6 @@ public class Scribe {
 			} else {
 				while (column <= indentationLevel) {
 					buffer.append('\t');
-					lastNumberOfNewLines= 0;
 					int complement= tabLength - ((column - 1) % tabLength); // amount
 																			// of
 																			// space

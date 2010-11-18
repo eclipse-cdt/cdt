@@ -15,9 +15,7 @@ import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
@@ -52,21 +50,15 @@ public class HasNatureExpression implements IBooleanExpression {
 		IResource resource = config.getOwner();
 		if (resource == null)
 			return false;
-		
+
 		IProject project = resource.getProject();
 		try {
-			IProjectDescription projDesc = project.getDescription();
-			String[] natures = projDesc.getNatureIds();
-			for (int i = 0; i < natures.length; ++i) {
-				if (natureId.equals(natures[i]))
-					return true;
-			}
-			// Not found
-			return false;
+			if (project.isAccessible())
+				return project.hasNature(natureId);
 		} catch (CoreException e) {
-			ManagedBuilderCorePlugin.log(e);
-			return false;
+			// Project close concurrently => Nature not available.
 		}
+		return false;
 	}
 
 }

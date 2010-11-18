@@ -1415,4 +1415,54 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testCodeCorruptionWithIllegalKeyword_Bug329165() throws Exception {
 		assertFormatterResult();
 	}
+	
+	//#define m() f()
+	//void f() {
+	//if (1) f();
+	//else m();
+	//}
+
+	//#define m() f()
+	//void f() {
+	//	if (1)
+	//		f();
+	//	else
+	//		m();
+	//}
+	public void testMacroAfterElse() throws Exception {
+		assertFormatterResult();
+	}
+
+	//#define M union { double u; void *s; long l; }
+	//typedef M m_t;
+
+	//#define M union { double u; void *s; long l; }
+	//typedef M m_t;
+	public void testMacroWithinTypedef() throws Exception {
+		assertFormatterResult();
+	}
+
+	//#define B() { if (1+2) b(); }
+	//void g() {
+	//	if (1) {
+	//		B();
+	//	} else {
+	//		x();
+	//	}
+	//	z();
+	//}
+
+	//#define B() { if (1+2) b(); }
+	//void g() {
+	//	if (1) {
+	//		B();
+	//	} else {
+	//		x();
+	//	}
+	//	z();
+	//}
+	public void testBinaryExpressionInMacro() throws Exception {
+		assertFormatterResult();
+	}
+
 }

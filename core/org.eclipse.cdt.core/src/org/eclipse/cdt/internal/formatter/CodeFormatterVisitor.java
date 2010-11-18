@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
@@ -89,7 +90,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
@@ -99,6 +99,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
@@ -129,7 +130,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.parser.IToken;
@@ -1386,6 +1386,11 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		if (scribe.printModifiers()) {
 			scribe.space();
 		}
+		
+		// consider macro expansion
+		if (withinMacroExpansion(node, scribe.scanner.getCurrentPosition())) {
+			continueNode(node);
+		}
 
 		switch (node.getKey()) {
 		case IASTCompositeTypeSpecifier.k_struct:
@@ -1432,6 +1437,11 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			scribe.space();
 		}
 		final int headerIndent= scribe.numberOfIndentations;
+
+		// consider macro expansion
+		if (withinMacroExpansion(node, scribe.scanner.getCurrentPosition())) {
+			continueNode(node);
+		}
 
 		switch (node.getKey()) {
 		case IASTCompositeTypeSpecifier.k_struct:
@@ -2142,6 +2152,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private int visit(IASTBinaryExpression node) {
+		if (enclosedInMacroExpansion(node)) {
+			return PROCESS_SKIP;
+		}
 		final IASTExpression op1= node.getOperand1();
 		// operand 1
 		op1.accept(this);
@@ -2585,7 +2598,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 
 		if (elseStatement != null) {
-			if (!startsWithMacroExpansion(elseStatement)) {
+			if (peekNextToken() == Token.t_else) {
 				if (thenStatementIsBlock) {
 					scribe.printNextToken(Token.t_else, preferences.insert_space_after_closing_brace_in_block);
 				} else {
@@ -3120,6 +3133,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 		return false;
 	}
+	
 	private static boolean endsWithMacroExpansion(IASTNode node) {
 		IASTNodeLocation[] locations= node.getNodeLocations();
 		if (locations.length == 0) {
@@ -3133,6 +3147,25 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	private static boolean enclosedInMacroExpansion(IASTNode node) {
 		IASTNodeLocation[] locations= node.getNodeLocations();
 		return locations.length == 1 && locations[0] instanceof IASTMacroExpansionLocation;
+	}
+
+	private static boolean withinMacroExpansion(IASTNode node, int offset) {
+		IASTNodeLocation[] locations= node.getNodeLocations();
+		for (IASTNodeLocation location : locations) {
+			if (location instanceof IASTMacroExpansionLocation) {
+				IASTFileLocation fileLocation = location.asFileLocation();
+				if (fileLocation != null) {
+					final int nodeOffset = fileLocation.getNodeOffset();
+					final int endOffset = nodeOffset + fileLocation.getNodeLength();
+					if (offset >= nodeOffset && offset < endOffset) {
+						return true;
+					} else if (offset < nodeOffset) {
+						return false;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	private void formatBlock(IASTCompoundStatement block, String block_brace_position, boolean insertSpaceBeforeOpeningBrace, boolean indentStatements) {
@@ -3214,6 +3247,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				skipToNode(statements.get(1));
 			}
 			final boolean previousStatementIsNullStmt= previousStatement instanceof IASTNullStatement;
+			final int indentLevel= scribe.indentationLevel;
 			for (int i = 1; i < statementsLength - 1; i++) {
 				final IASTStatement statement= statements.get(i);
 				if (!startNode(statement)) {

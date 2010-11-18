@@ -1226,7 +1226,7 @@ public class Scribe {
 	}
 
 	public void printNewLine(int insertPosition) {
-		if (shouldSkip(insertPosition - 1)) {
+		if (shouldSkip(scanner.getCurrentPosition())) {
 			return;
 		}
 		if (lastNumberOfNewLines >= 1) {

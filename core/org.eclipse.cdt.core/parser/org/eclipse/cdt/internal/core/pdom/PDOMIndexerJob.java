@@ -93,13 +93,13 @@ public class PDOMIndexerJob extends Job {
 			IProgressMonitor npm= new NullProgressMonitor() {
 				@Override
 				public boolean isCanceled() {
-					synchronized(PDOMIndexerJob.this) {
+					synchronized (PDOMIndexerJob.this) {
 						return fMonitor == null || fMonitor.isCanceled();
 					}
 				}
 				@Override
 				public void setCanceled(boolean cancelled) {
-					synchronized(PDOMIndexerJob.this) {
+					synchronized (PDOMIndexerJob.this) {
 						if (fMonitor != null) {
 							fMonitor.setCanceled(cancelled);
 						}
@@ -111,7 +111,7 @@ public class PDOMIndexerJob extends Job {
 				}
 			};
 			do {
-				synchronized(taskMutex) {
+				synchronized (taskMutex) {
 					currentTask= null;
 					taskMutex.notifyAll();
 
@@ -139,18 +139,14 @@ public class PDOMIndexerJob extends Job {
 							time += System.currentTimeMillis();
 							System.out.println("Indexer: completed " + name + "[" + time + "ms]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						}
-					}
-					catch (InterruptedException e) {
+					} catch (InterruptedException e) {
 						Thread.currentThread().interrupt();
-					}
-					catch (OperationCanceledException e) {
+					} catch (OperationCanceledException e) {
 					}
 				}
-			}
-			while (currentTask != null);
+			} while (currentTask != null);
 			return Status.OK_STATUS;
-		}
-		catch (RuntimeException e) {
+		} catch (RuntimeException e) {
 			CCorePlugin.log(e);
 			pdomManager.cancelledIndexerJob(true);
 			synchronized (taskMutex) {
@@ -158,8 +154,7 @@ public class PDOMIndexerJob extends Job {
 				taskMutex.notifyAll();
 			}
 			throw e;
-		}
-		catch (Error e) {
+		} catch (Error e) {
 			CCorePlugin.log(e);
 			pdomManager.cancelledIndexerJob(true);
 			synchronized (taskMutex) {
@@ -167,9 +162,8 @@ public class PDOMIndexerJob extends Job {
 				taskMutex.notifyAll();
 			}
 			throw e;
-		}
-		finally {
-			synchronized(this) {
+		} finally {
+			synchronized (this) {
 				fMonitor= null;
 			}
 			monitorJob.cancel();
@@ -179,15 +173,14 @@ public class PDOMIndexerJob extends Job {
 
 	private String getClassName(Object obj) {
 		String name= obj.getClass().getName();
-		name= name.substring(name.lastIndexOf('.')+1);
+		name= name.substring(name.lastIndexOf('.') + 1);
 		return name;
 	}
 		
 	public void cancelJobs(IPDOMIndexer indexer, boolean waitUntilCancelled) {
 		synchronized (taskMutex) {
-			if (currentTask != null && 
-					(indexer == null || currentTask.getIndexer() == indexer)) {
-				synchronized(this) {
+			if (currentTask != null && (indexer == null || currentTask.getIndexer() == indexer)) {
+				synchronized (this) {
 					if (fMonitor != null) {
 						fMonitor.setCanceled(true);
 					}

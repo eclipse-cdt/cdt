@@ -303,7 +303,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
     }
     
     /**
-     * Searches for a DMC of given type in the tree patch contained in given 
+     * Searches for a DMC of given type in the tree path contained in given 
      * VMC.  Only a DMC in the same session will be returned.
      * @param <V> Type of the DMC that will be returned.
      * @param vmc VMC element to search.

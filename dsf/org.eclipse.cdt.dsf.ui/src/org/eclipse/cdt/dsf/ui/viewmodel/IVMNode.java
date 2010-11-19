@@ -113,7 +113,7 @@ public interface IVMNode extends IElementContentProvider
     public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor);
 
     /**
-     * Retireves the view model elements for the given data model event.  This method 
+     * Retrieves the view model elements for the given data model event.  This method 
      * is optional and it allows the view model provider to optimize event processing
      * by avoiding the need to retrieve all possible elements for the given node.
      * </p>

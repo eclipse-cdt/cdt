@@ -6,15 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *     QNX - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Interface for any element in the PDOM that can have the same name as a
- * sibling, but differ in other ways (i.e. function parameters, template
+ * Interface for any element in the PDOM that can have the same name as
+ * a sibling, but differ in other ways (i.e. function parameters, template
  * arguments).
  * 
  * @author Bryan Wilkinson

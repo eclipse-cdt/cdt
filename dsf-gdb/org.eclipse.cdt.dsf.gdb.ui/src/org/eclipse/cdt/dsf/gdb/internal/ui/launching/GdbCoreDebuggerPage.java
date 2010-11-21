@@ -16,10 +16,13 @@ import java.util.Observer;
 
 import org.eclipse.cdt.debug.ui.AbstractCDebuggerPage;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
+import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -63,10 +66,11 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, 
-				                   IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
-		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, 
-				                   IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);
+		IPreferenceStore preferenceStore = GdbUIPlugin.getDefault().getPreferenceStore();
+		String defaultGdbCommand = preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND);
+		String defaultGdbInit = preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, defaultGdbInit);
 
 		if (fSolibBlock != null)
 			fSolibBlock.setDefaults(configuration);
@@ -88,18 +92,20 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setInitializing(true);
-		String gdbCommand = IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT;
-		String gdbInit = IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT;
-
+		IPreferenceStore preferenceStore = GdbUIPlugin.getDefault().getPreferenceStore();
+		String defaultGdbCommand = preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND);
+		String defaultGdbInit = preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT);
+		
+		String gdbCommand = defaultGdbCommand;
+		String gdbInit = defaultGdbInit;
+		
 		try {
-			gdbCommand = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME,
-					                                IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
+			gdbCommand = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand);
 		}
 		catch(CoreException e) {
 		}
 		try {
-			gdbInit = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, 
-					                             IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);
+			gdbInit = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, defaultGdbInit);
 		}
 		catch(CoreException e) {
 		}

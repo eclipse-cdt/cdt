@@ -50,6 +50,18 @@ public interface IGdbDebugPreferenceConstants {
 	 * @since 4.0
 	 */
 	public static final String PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS = "initialChildCountLimitForCollections"; //$NON-NLS-1$
+	
+	/**
+	 * The default command for gdb
+	 * @since 4.0
+	 */
+	public static final String PREF_DEFAULT_GDB_COMMAND = "defaultGdbCommand"; //$NON-NLS-1$
+	
+	/**
+	 * The default command file for gdb
+	 * @since 4.0
+	 */
+	public static final String PREF_DEFAULT_GDB_INIT = "defaultGdbInit"; //$NON-NLS-1$
 
 	/**
      * Help prefixes.

@@ -17,11 +17,13 @@ import java.util.Observer;
 
 import org.eclipse.cdt.debug.ui.AbstractCDebuggerPage;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -66,10 +68,11 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, 
-				                   IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
-		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, 
-				                   IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);
+		IPreferenceStore preferenceStore = GdbUIPlugin.getDefault().getPreferenceStore();
+		String defaultGdbCommand = preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND);
+		String defaultGdbInit = preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, defaultGdbInit);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
 				                   IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
@@ -116,10 +119,11 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setInitializing(true);
-		String gdbCommand = getStringAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME,
-                				IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
-		String gdbInit = getStringAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, 
-                			IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT); 
+		IPreferenceStore preferenceStore = GdbUIPlugin.getDefault().getPreferenceStore();
+		String defaultGdbCommand = preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND);
+		String defaultGdbInit = preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT);
+		String gdbCommand = getStringAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand);
+		String gdbInit = getStringAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, defaultGdbInit); 
 		boolean nonStopMode = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
                 				IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
 		boolean reverseEnabled = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,

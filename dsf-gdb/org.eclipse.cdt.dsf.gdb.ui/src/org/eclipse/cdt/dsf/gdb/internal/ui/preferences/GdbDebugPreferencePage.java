@@ -11,12 +11,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.preferences;
 
+import java.io.File;
+
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.ui.launching.LaunchUIMessages;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,6 +28,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -77,9 +82,51 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		layout.marginWidth= 0;
 		parent.setLayout(layout);
 		
-		Group group= new Group(parent, SWT.NONE);
+		Group group = new Group(parent, SWT.NONE);
+		group.setText(MessagesForPreferences.GdbDebugPreferencePage_defaults_label);
+		GridLayout groupLayout = new GridLayout(3, false);
+		group.setLayout(groupLayout);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		final StringFieldEditor stringFieldEditorCommand = new StringFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND,
+				LaunchUIMessages.getString("GDBDebuggerPage.gdb_debugger"), //$NON-NLS-1$
+				group);
+
+		stringFieldEditorCommand.fillIntoGrid(group, 2);
+		addField(stringFieldEditorCommand);
+		Button browsebutton = new Button(group, SWT.PUSH);
+		browsebutton.setText(LaunchUIMessages.getString("GDBDebuggerPage.gdb_browse")); //$NON-NLS-1$
+		browsebutton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				handleBrowseButtonSelected(LaunchUIMessages.getString("GDBDebuggerPage.gdb_browse_dlg_title"),  //$NON-NLS-1$
+						stringFieldEditorCommand);
+			}
+		});
+		
+		final StringFieldEditor stringFieldEditorGdbInit = new StringFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT,
+				LaunchUIMessages.getString("GDBDebuggerPage.gdb_command_file"), //$NON-NLS-1$
+				group);
+
+		stringFieldEditorGdbInit.fillIntoGrid(group, 2);
+		addField(stringFieldEditorGdbInit);
+		browsebutton = new Button(group, SWT.PUSH);
+		browsebutton.setText(LaunchUIMessages.getString("GDBDebuggerPage.gdb_browse")); //$NON-NLS-1$
+		browsebutton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				handleBrowseButtonSelected(LaunchUIMessages.getString("GDBDebuggerPage.gdb_cmdfile_dlg_title"), //$NON-NLS-1$
+						stringFieldEditorGdbInit);
+			}
+		});
+		
+		group.setLayout(groupLayout);
+
+		group= new Group(parent, SWT.NONE);
 		group.setText(MessagesForPreferences.GdbDebugPreferencePage_traces_label);
-		GridLayout groupLayout= new GridLayout(3, false);
+		groupLayout= new GridLayout(3, false);
 		group.setLayout(groupLayout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -174,6 +221,21 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		// need to set layouts again
 		indentHelper.setLayout(helperLayout);
 		group.setLayout(groupLayout);
+	}
+	
+	private void handleBrowseButtonSelected(final String dialogTitle, final StringFieldEditor stringFieldEditor) {
+		FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
+		dialog.setText(dialogTitle);
+		String gdbCommand = stringFieldEditor.getStringValue().trim();
+		int lastSeparatorIndex = gdbCommand.lastIndexOf(File.separator);
+		if (lastSeparatorIndex != -1) {
+			dialog.setFilterPath(gdbCommand.substring(0, lastSeparatorIndex));
+		}
+		String res = dialog.open();
+		if (res == null) {
+			return;
+		}
+		stringFieldEditor.setStringValue(res);
 	}
 
 	@Override

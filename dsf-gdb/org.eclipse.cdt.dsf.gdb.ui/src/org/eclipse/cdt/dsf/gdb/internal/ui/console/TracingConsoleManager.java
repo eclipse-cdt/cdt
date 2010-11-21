@@ -43,9 +43,9 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 	 * we need to use <code>this</code>.
 	 */
 	public void startup() {
-		GdbUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
-		
 		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
+		
+		store.addPropertyChangeListener(this);
 		fTracingEnabled = store.getBoolean(IGdbDebugPreferenceConstants.PREF_TRACES_ENABLE);
 		
 		if (fTracingEnabled) {

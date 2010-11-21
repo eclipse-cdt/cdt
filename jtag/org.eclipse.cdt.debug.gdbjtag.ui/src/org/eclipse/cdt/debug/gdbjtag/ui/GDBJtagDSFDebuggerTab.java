@@ -34,7 +34,9 @@ import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.command.factories.CommandFactoryDescriptor;
 import org.eclipse.cdt.debug.mi.core.command.factories.CommandFactoryManager;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
@@ -360,8 +362,9 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			String gdbCommandAttr = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME,
-					IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
+			String defaultGdbCommand = Platform.getPreferencesService().getString("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+					                                                              IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND,"", null);  //$NON-NLS-1$
+			String gdbCommandAttr = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand);
 			gdbCommand.setText(gdbCommandAttr);
 
 			boolean useRemoteAttr = configuration.getAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET,
@@ -450,8 +453,10 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME,
-				IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
+		String defaultGdbCommand = Platform.getPreferencesService().getString("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+                                                                              IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND, "", null);  //$NON-NLS-1$
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand);
+		
 		CommandFactoryManager cfManager = MIPlugin.getDefault().getCommandFactoryManager();
 		CommandFactoryDescriptor defDesc = cfManager.getDefaultDescriptor(IGDBJtagConstants.DEBUGGER_ID);
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_COMMAND_FACTORY, defDesc.getName());

@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
@@ -48,6 +49,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugException;
@@ -208,10 +210,13 @@ public class LaunchUtils {
 	}
 	
     public static IPath getGDBPath(ILaunchConfiguration configuration) {
-        IPath retVal = new Path(IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
+		String defaultGdbCommand = Platform.getPreferencesService().getString("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+                IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND,
+                IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT, null);
+
+        IPath retVal = new Path(defaultGdbCommand);
         try {
-        	String gdb = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, 
-        			IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
+        	String gdb = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand);
         	gdb = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(gdb, false);        	
         	retVal = new Path(gdb);
         } catch (CoreException e) {

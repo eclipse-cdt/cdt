@@ -517,7 +517,32 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		return GdbPlugin.getBundleContext();
 	}
 	
-   public IThreadDMContext createThreadContext(IProcessDMContext processDmc, String threadId) {
+	/** @since 4.0 */
+	protected Map<String, String> getThreadToGroupMap() {
+		return fThreadToGroupMap;
+	}
+	
+	/** @since 4.0 */
+	protected Map<String, String> getGroupToPidMap() {
+		return fGroupToPidMap;
+	}
+
+	/** 
+	 * Returns the groupId that is associated with the provided pId
+	 * @since 4.0 
+	 */
+	protected String getGroupFromPid(String pid) {
+		if (pid == null) return null;
+		
+		for (Map.Entry<String, String> entry : getGroupToPidMap().entrySet()) {
+			if (pid.equals(entry.getValue())) {
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
+	
+    public IThreadDMContext createThreadContext(IProcessDMContext processDmc, String threadId) {
         return new MIThreadDMC(getSession().getId(), processDmc, threadId);
     }
 
@@ -537,16 +562,16 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     }
 
     public IMIContainerDMContext createContainerContextFromThreadId(ICommandControlDMContext controlDmc, String threadId) {
-    	String groupId = fThreadToGroupMap.get(threadId);
+    	String groupId = getThreadToGroupMap().get(threadId);
     	if (groupId == null) {
     		// this can happen if the threadId was 'all'
     		// In such a case, we choose the first process we find
     		// This works when we run a single process
     		// but will break for multi-process!!!
-    		if (fThreadToGroupMap.isEmpty()) {
+    		if (getThreadToGroupMap().isEmpty()) {
     			groupId = MIProcesses.UNIQUE_GROUP_ID;
     		} else {
-    			Collection<String> values = fThreadToGroupMap.values();
+    			Collection<String> values = getThreadToGroupMap().values();
     			for (String value : values) {
     				groupId = value;
     				break;
@@ -559,7 +584,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
     /** @since 4.0 */
     public IMIContainerDMContext createContainerContextFromGroupId(ICommandControlDMContext controlDmc, String groupId) {
-    	String pid = fGroupToPidMap.get(groupId);
+    	String pid = getGroupToPidMap().get(groupId);
     	if (pid == null) {
     		pid = groupId;
     	}
@@ -570,7 +595,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     public IMIExecutionDMContext[] getExecutionContexts(IMIContainerDMContext containerDmc) {
     	String groupId = containerDmc.getGroupId();
     	List<IMIExecutionDMContext> execDmcList = new ArrayList<IMIExecutionDMContext>(); 
-    	Iterator<Map.Entry<String, String>> iterator = fThreadToGroupMap.entrySet().iterator();
+    	Iterator<Map.Entry<String, String>> iterator = getThreadToGroupMap().entrySet().iterator();
     	while (iterator.hasNext()){
     		Map.Entry<String, String> entry = iterator.next();
     		if (entry.getValue().equals(groupId)) {
@@ -650,11 +675,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     public void getDebuggingContext(IThreadDMContext dmc, DataRequestMonitor<IDMContext> rm) {
     	if (dmc instanceof MIProcessDMC) {
     		MIProcessDMC procDmc = (MIProcessDMC)dmc;
-    		rm.setData(createContainerContext(procDmc, procDmc.getProcId()));
+			IMIContainerDMContext containerDmc = createContainerContext(procDmc, getGroupFromPid(procDmc.getProcId()));
+    		rm.setData(containerDmc);
     	} else if (dmc instanceof MIThreadDMC) {
     		MIThreadDMC threadDmc = (MIThreadDMC)dmc;
     		IMIProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc, IMIProcessDMContext.class);
-    		IMIContainerDMContext containerDmc = createContainerContext(procDmc, procDmc.getProcId()); 
+			IMIContainerDMContext containerDmc = createContainerContext(procDmc, getGroupFromPid(procDmc.getProcId()));
     		rm.setData(createExecutionContext(containerDmc, threadDmc, threadDmc.getId()));
     	} else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid thread context.", null)); //$NON-NLS-1$
@@ -690,9 +716,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
-							IMIContainerDMContext containerDmc = createContainerContext(procCtx,
-									                                                    ((IMIProcessDMContext)procCtx).getProcId());
-			                rm.setData(containerDmc);
+							// By now, GDB has reported the groupId that was attached to this process
+			                rm.setData(createContainerContext(procCtx, getGroupFromPid(((IMIProcessDMContext)procCtx).getProcId())));
 							rm.done();
 						}
 					});
@@ -779,9 +804,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 						@Override
 						protected void handleFailure() {
 							// If the target is not available, generate the list ourselves
-							IMIContainerDMContext[] containerDmcs = new IMIContainerDMContext[fGroupToPidMap.size()];
+							IMIContainerDMContext[] containerDmcs = new IMIContainerDMContext[getGroupToPidMap().size()];
 							int i = 0;
-							for (String groupId : fGroupToPidMap.keySet()) {
+							for (String groupId : getGroupToPidMap().keySet()) {
 								containerDmcs[i++] = createContainerContextFromGroupId(controlDmc, groupId);
 							}
 							rm.setData(containerDmcs);
@@ -1051,13 +1076,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
     		    	if ("thread-created".equals(miEvent)) { //$NON-NLS-1$
     		    		// Update the thread to groupId map with the new groupId
-    		    		fThreadToGroupMap.put(threadId, groupId);
+    		    		getThreadToGroupMap().put(threadId, groupId);
     		    	} else {
-    		    		fThreadToGroupMap.remove(threadId);
+    		    		getThreadToGroupMap().remove(threadId);
     		    	}
-    			} else if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent) ||  //$NON-NLS-1$ //$NON-NLS-2$
-    					   "thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
-    				
+    		    	// "thread-group-created" was used before GDB 7.2, while "thread-group-started" is used with GDB 7.2
+    			} else if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent)) {  //$NON-NLS-1$ //$NON-NLS-2$
     				String groupId = null;
     				String pId = null;
 
@@ -1083,9 +1107,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     				}
 
     				if (groupId != null) {
-    					if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
-    						
-    						fGroupToPidMap.put(groupId, pId);
+    						getGroupToPidMap().put(groupId, pId);
     						
     						fDebuggedProcessesAndNames.put(pId, ""); //$NON-NLS-1$
     					
@@ -1136,22 +1158,35 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     										}
     									}
     								});
-    					} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
-    						
-    						fGroupToPidMap.remove(groupId);
+    					}
+    			} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
+    				String groupId = null;
 
-    						// GDB is no longer debugging this process.  Remove it from our list.
-    						fDebuggedProcessesAndNames.remove(pId);
+    				MIResult[] results = exec.getMIResults();
+    				for (int i = 0; i < results.length; i++) {
+    					String var = results[i].getVariable();
+    					MIValue val = results[i].getMIValue();
+    					if (var.equals("id")) { //$NON-NLS-1$
+    						if (val instanceof MIConst) {
+    							groupId = ((MIConst) val).getString().trim();
+    						}
+    					}
+    				}
     						
-    						// Remove any entries for that group from our thread to group map
-    						// When detaching from a group, we won't have received any thread-exited event
-    						// but we don't want to keep those entries.
-    						if (fThreadToGroupMap.containsValue(groupId)) {
-    							Iterator<Map.Entry<String, String>> iterator = fThreadToGroupMap.entrySet().iterator();
-    							while (iterator.hasNext()){
-    								if (iterator.next().getValue().equals(groupId)) {
-    									iterator.remove();
-    								}
+    				if (groupId != null) {
+    					String pId = getGroupToPidMap().remove(groupId);
+
+    					// GDB is no longer debugging this process.  Remove it from our list.
+    					fDebuggedProcessesAndNames.remove(pId);
+
+    					// Remove any entries for that group from our thread to group map
+    					// When detaching from a group, we won't have received any thread-exited event
+    					// but we don't want to keep those entries.
+    					if (getThreadToGroupMap().containsValue(groupId)) {
+    						Iterator<Map.Entry<String, String>> iterator = getThreadToGroupMap().entrySet().iterator();
+    						while (iterator.hasNext()){
+    							if (iterator.next().getValue().equals(groupId)) {
+    								iterator.remove();
     							}
     						}
     					}

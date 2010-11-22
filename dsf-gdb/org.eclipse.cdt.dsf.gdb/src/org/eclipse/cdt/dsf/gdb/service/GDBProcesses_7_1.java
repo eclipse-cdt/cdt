@@ -131,7 +131,8 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 					final IThreadDMData firstLevelData = getData();
 					
 					ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-					final String groupId = ((IMIProcessDMContext)dmc).getProcId();
+					final String groupId = getGroupFromPid(((IMIProcessDMContext)dmc).getProcId());
+
 					fCommandForCoresCache.execute(
 							fCommandFactory.createMIListThreadGroups(controlDmc),
 							new DataRequestMonitor<MIListThreadGroupsInfo>(ImmediateExecutor.getInstance(), rm) {

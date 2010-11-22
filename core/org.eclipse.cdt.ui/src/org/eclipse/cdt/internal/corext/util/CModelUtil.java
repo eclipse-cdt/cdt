@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,12 @@ package org.eclipse.cdt.internal.corext.util;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -114,4 +117,18 @@ public class CModelUtil {
 		}
 		return null;
 	}
+	
+	/*
+     * Don't log not-exists exceptions
+	 */
+	public static boolean isExceptionToBeLogged(CoreException exception) {
+		if (!(exception instanceof CModelException))
+			return true;
+		CModelException ce= (CModelException)exception;
+		ICModelStatus status = ce.getCModelStatus();
+		if (status == null || !status.doesNotExist())
+			return true;
+		return false;
+	}
+
 }

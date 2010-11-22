@@ -890,7 +890,9 @@ public abstract class AbstractMIControl extends AbstractDsfService
         		final MIOOBRecord oob = fMiParser.parseMIOOBRecord(line);
 
         		fAccumulatedOOBRecords.add(oob);
-        		if (fAccumulatedOOBRecords.size() > 20) { // limit growth; see bug 302927
+        		// limit growth, but only if these are not responses to CLI commands
+        		// Bug 302927 & 330608
+        		if (fRxCommands.isEmpty() && fAccumulatedOOBRecords.size() > 20) {
         			fAccumulatedOOBRecords.remove(0);
         		}
 

@@ -116,7 +116,7 @@ public class CDTPrefUtil {
 	}
 	
 	/**
-	 * @deprecated Use {@link StringListModeControl} to display string list modes.
+	 * @deprecated as of CDT 8.0. Use {@link StringListModeControl} to display string list modes.
 	 */
 	@SuppressWarnings("fallthrough")
 	@Deprecated
@@ -137,7 +137,7 @@ public class CDTPrefUtil {
 	}
 	
 	/**
-	 * @deprecated Use {@link StringListModeControl} to display string list modes.
+	 * @deprecated as of CDT 8.0. Use {@link StringListModeControl} to display string list modes.
 	 */
 	@SuppressWarnings("fallthrough")
 	@Deprecated

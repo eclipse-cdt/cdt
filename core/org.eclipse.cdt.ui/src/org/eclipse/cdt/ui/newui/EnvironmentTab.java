@@ -344,7 +344,9 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		Collections.sort(data);
 		tv.setInput(data);
 		
-		stringListModeControl.updateStringListModeControl();
+		if (stringListModeControl!=null) {
+			stringListModeControl.updateStringListModeControl();
+		}
 		updateButtons();
 	}
 

@@ -115,7 +115,11 @@ public class CDTPrefUtil {
 		setStr(KEY_PREFTC, b.toString().trim());
 	}
 	
+	/**
+	 * @deprecated Use {@link StringListModeControl} to display string list modes.
+	 */
 	@SuppressWarnings("fallthrough")
+	@Deprecated
 	public static String getDMode() {
 		String s = null;
 		switch(getInt(KEY_DMODE)) {
@@ -132,7 +136,11 @@ public class CDTPrefUtil {
 		return Messages.EnvironmentTab_19 + s;  
 	}
 	
+	/**
+	 * @deprecated Use {@link StringListModeControl} to display string list modes.
+	 */
 	@SuppressWarnings("fallthrough")
+	@Deprecated
 	public static String getWMode() {
 		String s = null;
 		switch(getInt(KEY_WMODE)) {

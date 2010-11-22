@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
@@ -506,7 +508,7 @@ public class MIStack extends AbstractDsfService
             fCachedStoppedEvent.getFrame().getArgs() != null) 
         {
             rm.setData(makeVariableDMCs(
-                frameDmc, MIVariableDMC.Type.ARGUMENT, fCachedStoppedEvent.getFrame().getArgs().length)); 
+                frameDmc, MIVariableDMC.Type.ARGUMENT, fCachedStoppedEvent.getFrame().getArgs())); 
             rm.done();
             return;
         }
@@ -545,7 +547,7 @@ public class MIStack extends AbstractDsfService
                     // Create the variable array out of MIArg array.
                     MIArg[] args = getData().getMIFrames()[idx].getArgs();
                     if (args == null) args = new MIArg[0]; 
-                    rm.setData(makeVariableDMCs(frameDmc, MIVariableDMC.Type.ARGUMENT, args.length));
+                    rm.setData(makeVariableDMCs(frameDmc, MIVariableDMC.Type.ARGUMENT, args));
                     rm.done();
                 }
                 @Override
@@ -572,7 +574,7 @@ public class MIStack extends AbstractDsfService
                                     // Create the variable array out of MIArg array.
                                     MIArg[] args = getData().getMIFrames()[idx].getArgs();
                                     if (args == null) args = new MIArg[0]; 
-                                    rm.setData(makeVariableDMCs(frameDmc, MIVariableDMC.Type.ARGUMENT, args.length));
+                                    rm.setData(makeVariableDMCs(frameDmc, MIVariableDMC.Type.ARGUMENT, args));
                                     rm.done();
                                 }
                             }); 
@@ -609,7 +611,7 @@ public class MIStack extends AbstractDsfService
             					// Create the variable array out of MIArg array.
             					MIArg[] args = getData().getMIFrames()[idx].getArgs();
             					if (args == null) args = new MIArg[0]; 
-            					rm.setData(makeVariableDMCs(frameDmc, MIVariableDMC.Type.ARGUMENT, args.length));
+            					rm.setData(makeVariableDMCs(frameDmc, MIVariableDMC.Type.ARGUMENT, args));
             					rm.done();
             				}
             			});
@@ -813,12 +815,23 @@ public class MIStack extends AbstractDsfService
         });
 	}
 
-    private MIVariableDMC[] makeVariableDMCs(IFrameDMContext frame, MIVariableDMC.Type type, int count) {
-        MIVariableDMC[] variables = new MIVariableDMC[count];
-        for (int i = 0; i < count; i++) {
-            variables[i]= new MIVariableDMC(this, frame, type, i);
-        }
-        return variables;
+    private MIVariableDMC[] makeVariableDMCs(IFrameDMContext frame, MIVariableDMC.Type type, MIArg[] miArgs) {
+    	// Use LinkedHashMap in order to keep the original ordering.
+    	// We don't currently support variables with the same name in the same frame,
+    	// so we only keep the first one.
+    	// Bug 327621 and 328573
+    	Map<String, MIVariableDMC> variableNames = new LinkedHashMap<String, MIVariableDMC>();
+    	
+    	for (int i = 0; i < miArgs.length; i++) {
+    		String name = miArgs[i].getName();
+    		MIVariableDMC var = variableNames.get(name);
+    		
+    		if (var == null) {
+    			variableNames.put(name, new MIVariableDMC(this, frame, type, i));
+    		}
+    	}
+
+    	return variableNames.values().toArray(new MIVariableDMC[0]);
     }
 
     private int findFrameIndex(MIFrame[] frames, int level) {
@@ -866,7 +879,7 @@ public class MIStack extends AbstractDsfService
                     @Override
                     protected void handleSuccess() {
                         localsList.addAll( Arrays.asList(
-                            makeVariableDMCs(frameDmc, MIVariableDMC.Type.LOCAL, getData().getLocals().length)) );
+                            makeVariableDMCs(frameDmc, MIVariableDMC.Type.LOCAL, getData().getLocals())) );
                         countingRm.done();
                     }
                     @Override
@@ -881,7 +894,7 @@ public class MIStack extends AbstractDsfService
                                     @Override
                                     protected void handleSuccess() {
                                         localsList.addAll( Arrays.asList(
-                                            makeVariableDMCs(frameDmc, MIVariableDMC.Type.LOCAL, getData().getLocals().length)) );
+                                            makeVariableDMCs(frameDmc, MIVariableDMC.Type.LOCAL, getData().getLocals())) );
                                         countingRm.done();
                                     }
                                 }); 

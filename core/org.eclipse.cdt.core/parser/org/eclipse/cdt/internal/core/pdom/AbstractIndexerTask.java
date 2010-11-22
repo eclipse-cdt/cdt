@@ -194,24 +194,31 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	public final void setIndexHeadersWithoutContext(UnusedHeaderStrategy mode) {
 		fIndexHeadersWithoutContext= mode;
 	}
+
 	public final void setIndexFilesWithoutBuildConfiguration(boolean val) {
 		fIndexFilesWithoutConfiguration= val;
 	}
+
 	public UnusedHeaderStrategy getIndexHeadersWithoutContext() {
 		return fIndexHeadersWithoutContext;
 	}
+
 	public boolean indexFilesWithoutConfiguration() {
 		return fIndexFilesWithoutConfiguration;
 	}
+
 	public final void setUpdateFlags(int flags) {
 		fUpdateFlags= flags;
 	}
+
 	public final void setParseUpFront(String[] astFilePaths) {
 		fFilesUpFront.addAll(Arrays.asList(astFilePaths));
 	}
+
 	public final void setForceFirstFiles(int number) {
 		fForceNumberFiles= number;
 	}
+
 	public final void setFileSizeLimit(long limit) {
 		fFileSizeLimit= limit;
 	}
@@ -695,7 +702,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 	}
 
-	private static Object NO_CONTEXT= new Object();
+	private static final Object NO_CONTEXT= new Object();
+	
 	private Object findContext(int linkageID, IIndexFragmentFile ifile, HashMap<IIndexFragmentFile, Object> contextMap) {
 		Object cachedContext= contextMap.get(ifile);
 		if (cachedContext != null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix [168591] LocalHostFile missing equals()
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+ * David McKnight   (IBM)        - [294521] Local "hidden" files and folders are always shown
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -73,9 +74,9 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	}
 	
 	public boolean isHidden()
-	{
+	{	
 		String name = getName();
-		return name.charAt(0) == '.';
+		return name.charAt(0) == '.' || _file.isHidden();
 				
 	}
 

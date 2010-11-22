@@ -500,6 +500,20 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		return GdbPlugin.getBundleContext();
 	}
 	
+	/**
+	 * Returns the groupId that is associated with the provided pId
+	 */
+	private String getGroupFromPid(String pid) {
+		if (pid == null) return null;
+
+		for (Map.Entry<String, String> entry : fGroupToPidMap.entrySet()) {
+			if (pid.equals(entry.getValue())) {
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
+
    public IThreadDMContext createThreadContext(IProcessDMContext processDmc, String threadId) {
         return new MIThreadDMC(getSession().getId(), processDmc, threadId);
     }
@@ -632,11 +646,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     public void getDebuggingContext(IThreadDMContext dmc, DataRequestMonitor<IDMContext> rm) {
     	if (dmc instanceof MIProcessDMC) {
     		MIProcessDMC procDmc = (MIProcessDMC)dmc;
-    		rm.setData(createContainerContext(procDmc, procDmc.getProcId()));
+    		IMIContainerDMContext containerDmc = createContainerContext(procDmc, getGroupFromPid(procDmc.getProcId()));
+    		rm.setData(containerDmc);
     	} else if (dmc instanceof MIThreadDMC) {
     		MIThreadDMC threadDmc = (MIThreadDMC)dmc;
     		IMIProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc, IMIProcessDMContext.class);
-    		IMIContainerDMContext containerDmc = createContainerContext(procDmc, procDmc.getProcId()); 
+    		IMIContainerDMContext containerDmc = createContainerContext(procDmc, getGroupFromPid(procDmc.getProcId()));
     		rm.setData(createExecutionContext(containerDmc, threadDmc, threadDmc.getId()));
     	} else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid thread context.", null)); //$NON-NLS-1$
@@ -673,7 +688,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 						@Override
 						protected void handleSuccess() {
 							IMIContainerDMContext containerDmc = createContainerContext(procCtx,
-									                                                    ((IMIProcessDMContext)procCtx).getProcId());
+									                                                    getGroupFromPid(((IMIProcessDMContext)procCtx).getProcId()));
 			                rm.setData(containerDmc);
 							rm.done();
 						}
@@ -1025,8 +1040,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     		    	} else {
     		    		fThreadToGroupMap.remove(threadId);
     		    	}
-    			} else if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent) ||  //$NON-NLS-1$ //$NON-NLS-2$
-    					   "thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
+    		    // "thread-group-created" was used before GDB 7.2, while "thread-group-started" is used with GDB 7.2
+    			} else if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent)) {  //$NON-NLS-1$ //$NON-NLS-2$
     				
     				String groupId = null;
     				String pId = null;
@@ -1053,8 +1068,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     				}
 
     				if (groupId != null) {
-    					if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
-    						
     						fGroupToPidMap.put(groupId, pId);
     						
     						fDebuggedProcessesAndNames.put(pId, ""); //$NON-NLS-1$
@@ -1106,9 +1119,23 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     										}
     									}
     								});
-    					} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
-    						
-    						fGroupToPidMap.remove(groupId);
+    					}
+    			} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
+    				String groupId = null;
+
+    				MIResult[] results = exec.getMIResults();
+    				for (int i = 0; i < results.length; i++) {
+    					String var = results[i].getVariable();
+    					MIValue val = results[i].getMIValue();
+    					if (var.equals("id")) { //$NON-NLS-1$
+    						if (val instanceof MIConst) {
+    							groupId = ((MIConst) val).getString().trim();
+    						}
+    					}
+    				}
+
+    				if (groupId != null) {
+    					String pId = fGroupToPidMap.remove(groupId);
 
     						// GDB is no longer debugging this process.  Remove it from our list.
     						fDebuggedProcessesAndNames.remove(pId);
@@ -1125,9 +1152,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     							}
     						}
     					}
-    				}
     			}
-    		}
-    	}	
-	}
+			}
+    	}
+	}	
 }

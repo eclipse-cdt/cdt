@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.language.LanguageMappingStore;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 import org.eclipse.cdt.internal.ui.util.Messages;
 
@@ -45,6 +47,12 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 		fMappingWidget = new WorkspaceLanguageMappingWidget();
 	}
 	
+	@Override
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.LANGUAGE_MAPPING_PREFERENCE_PAGE);
+	}
+
 	@Override
 	protected Control createContents(Composite parent) {
 		try {

@@ -44,13 +44,6 @@
             plugin="org.eclipse.cdt.ui">
       </contexts>
       <contexts
-            file="contexts_CDT.xml"
-            plugin="org.eclipse.ui">
-      </contexts>
-    </extension>
-   <extension
-         point="org.eclipse.help.contexts">
-      <contexts
             file="contexts_CDT_DEBUGGER.xml"
             plugin="org.eclipse.cdt.debug.ui">
       </contexts>
@@ -62,30 +55,18 @@
       		file="contexts_CDT_DEBUGGER.xml" 
       		plugin="org.eclipse.ui.console"> 
       </contexts>
-   </extension>
-   <extension
-         point="org.eclipse.help.contexts">
       <contexts
             file="contexts_CDT_DEBUGGER_MI.xml"
             plugin="org.eclipse.cdt.debug.mi.ui">
       </contexts>
-   </extension>
-   <extension
-         point="org.eclipse.help.contexts">
       <contexts
             file="contexts_CDT_make.xml"
             plugin="org.eclipse.cdt.make.ui">
       </contexts>
-   </extension>
-   <extension
-         point="org.eclipse.help.contexts">
       <contexts
             file="contexts_CDT_LAUNCH.xml"
             plugin="org.eclipse.cdt.launch">
       </contexts>
-   </extension>
-   <extension
-         point="org.eclipse.help.contexts">
       <contexts
             file="contexts_CDT_DEBUGGER_DSFGDB.xml"
             plugin="org.eclipse.cdt.dsf.gdb.ui">

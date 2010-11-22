@@ -12,6 +12,9 @@
 package org.eclipse.cdt.internal.ui.preferences;
 
 import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -25,6 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 public class BuildConsolePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
@@ -49,6 +53,12 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	public BuildConsolePreferencePage() {
 		super(GRID);
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
+	}
+
+	@Override
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.BUILD_CONSOLE_PREFERENCE_PAGE);
 	}
 
 	@Override

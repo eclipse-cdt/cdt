@@ -103,5 +103,20 @@
    <topic href="reference/cdt_u_newproj_parser_binary.htm"
    	label="Binary Parser"/>
 </context>
+<context id ="make_editor_pref">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_makefile_settings_pref.htm"
+   	label="Makefile Editor preferences"/>
+</context>
+<context id ="make_targets_pref">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_make_pref.htm"
+   	label="Make Targets preferences"/>
+</context>
+<context id ="make_settings_pref">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_make_settings_pref.htm"
+   label="Make Settings preferences"/>
+</context>
 
 </contexts>

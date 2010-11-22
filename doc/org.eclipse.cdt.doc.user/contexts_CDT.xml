@@ -5,7 +5,6 @@
 <!-- 
 	PLUGINS LINKED TO THESE HELP CONTEXT IDs
 	plugin="org.eclipse.cdt.ui"
-	plugin="org.eclipse.ui"
 -->
 
 <context id ="projects_view">
@@ -370,6 +369,10 @@
 <context id="toggle_mark_occurrences_action_context">
     <description>Allows you to switch mark occurrences on and off.</description>
 </context>
+<context id="format_all_action">
+    <description>This command formats selected C/C++ source files.</description>
+</context>
+
 <context id="appearance_preference_page_context">
     <description>Customize the appearance of C/C++ elements in viewers.</description>
     <topic label="Appearance Preferences" href="reference/cdt_u_appearance_pref.htm"/>
@@ -546,17 +549,21 @@
    <description>The Project Explorer displays project information.</description>
    <topic href="reference/cdt_u_project_explorer_view.htm" label="Project Explorer view"/>
 </context>
-<!-- this contributes to platform's outline view context, see bug 317992
 <context id="content_outline_context" title="Outline">
    <topic href="reference/cdt_u_outline_view.htm" label="Outline view"/>
 </context>
--->
-<!-- USING ECLIPSE HELP CONTEXT IDs -->
-<context id="preference_dialog_context" title="Outline">
-   <topic href="reference/cdt_u_console_pref.htm" label="C/C++ Console preferences"/>
+
+<context id="indexer_preference_page" title="Indexer">
+   <description>Configure the C/C++ Indexer.</description>
    <topic href="reference/cdt_u_indexer_preference.html" label="C/C++ Indexer preferences"/>
-   <topic href="reference/cdt_u_language_mapping_pref.htm" label="C/C++ Language Mapping preferences"/>
-   <topic href="reference/cdt_u_make_pref.htm" label="C/C++ Make Targets preferences"/>
-   <topic href="reference/cdt_u_make_settings_pref.htm" label="C/C++ Make Settings preferences"/>
 </context>
+<context id="language_mapping_preference_page" title="Language Mappings">
+   <description>Customize the use of C/C++ language associations for the workspace.</description>
+   <topic href="reference/cdt_u_language_mapping_pref.htm" label="C/C++ Language Mapping preferences"/>
+</context>
+<context id="build_console_preference_page" title="Build Console">
+   <description>Customize the appearance of messages that appear in the Build Console.</description>
+   <topic href="reference/cdt_u_console_pref.htm" label="C/C++ Console preferences"/>
+</context>
+
 </contexts>

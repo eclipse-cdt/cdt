@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,13 +41,11 @@ public interface ICHelpContextIds {
 	public static final String FILTER_STATIC_ACTION= PREFIX + "filter_static_action"; //$NON-NLS-1$
 	public static final String FILTER_LOCALTYPES_ACTION= PREFIX + "filter_localtypes_action"; //$NON-NLS-1$
 
-	public static final String NEXT_CHANGE_ACTION=	 PREFIX + "next_change_action";	//$NON-NLS-1$
-	public static final String PREVIOUS_CHANGE_ACTION=PREFIX + "previous_change_action"; //$NON-NLS-1$
-	public static final String NEXT_PROBLEM_ACTION=	 PREFIX + "next_problem_action"; //$NON-NLS-1$
-	public static final String PREVIOUS_PROBLEM_ACTION= PREFIX + "previous_problem_action";	//$NON-NLS-1$
 	public static final String GOTO_NEXT_ERROR_ACTION= PREFIX + "goto_next_error_action"; 	 //$NON-NLS-1$	
 	public static final String GOTO_PREVIOUS_ERROR_ACTION=	PREFIX + "goto_previous_error_action"; 	 //$NON-NLS-1$	
 	public static final String TOGGLE_MARK_OCCURRENCES_ACTION= PREFIX + "toggle_mark_occurrences_action_context"; //$NON-NLS-1$
+	public static final String FORMAT_ALL= PREFIX + "format_all_action"; 	 //$NON-NLS-1$
+	public static final String GOTO_MATCHING_BRACKET_ACTION= PREFIX + "goto_matching_bracket_action"; 	 //$NON-NLS-1$
 
 	// Preference/property pages
 	public static final String C_PREF_PAGE = PREFIX + "c_pref"; //$NON-NLS-1$
@@ -64,7 +62,9 @@ public interface ICHelpContextIds {
 	public static final String LAUNCH_PROPERTY_PAGE = PREFIX + "new_launch_property_page_context"; //$NON-NLS-1$
 	public static final String PROJECT_PROPERTY_PAGE = PREFIX + "new_project_property_page_context"; //$NON-NLS-1$
 	public static final String CODEFORMATTER_PREFERENCE_PAGE = PREFIX + "codeformatter_preference_page_context"; //$NON-NLS-1$
-	public static final String GOTO_MATCHING_BRACKET_ACTION= PREFIX + "goto_matching_bracket_action"; 	 //$NON-NLS-1$Object[] FORMAT_ALL= null;
+	public static final String INDEXER_PREFERENCE_PAGE = PREFIX + "indexer_preference_page"; //$NON-NLS-1$
+	public static final String LANGUAGE_MAPPING_PREFERENCE_PAGE = PREFIX + "language_mapping_preference_page"; //$NON-NLS-1$
+	public static final String BUILD_CONSOLE_PREFERENCE_PAGE = PREFIX + "build_console_preference_page"; //$NON-NLS-1$
 
 	public static final String PROJ_CONF_BLOCK = PREFIX + "new_proj_conf_block_context"; //$NON-NLS-1$
 
@@ -118,10 +118,6 @@ public interface ICHelpContextIds {
 	public static final String RENAME_TYPE_WIZARD_PAGE= 	PREFIX + "rename_type_wizard_page_context"; //$NON-NLS-1$
 	public static final String RENAME_FIELD_WIZARD_PAGE=	PREFIX + "rename_field_wizard_page_context"; //$NON-NLS-1$
 	public static final String RENAME_RESOURCE_WIZARD_PAGE=	PREFIX + "rename_resource_wizard_page_context"; //$NON-NLS-1$
-
-	public static final String EDIT_WORKING_SET_ACTION= PREFIX + "edit_working_set_action"; //$NON-NLS-1$
-	public static final String CLEAR_WORKING_SET_ACTION= PREFIX + "clear_working_set_action"; //$NON-NLS-1$
-	public static final String SELECT_WORKING_SET_ACTION= PREFIX + "select_working_set_action"; //$NON-NLS-1$	
 
 	// Dialogs
 	public static final String EDIT_TEMPLATE_DIALOG = PREFIX + "edit_template_dialog_context"; //$NON-NLS-1$

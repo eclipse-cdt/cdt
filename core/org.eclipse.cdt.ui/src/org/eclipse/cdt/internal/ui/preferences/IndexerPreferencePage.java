@@ -31,6 +31,8 @@ import org.eclipse.cdt.ui.dialogs.CacheSizeBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.IndexerBlock;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+
 public class IndexerPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage, ICOptionContainer {
 	// bug 217860, allow to hide build configuration
@@ -47,6 +49,12 @@ public class IndexerPreferencePage extends PreferencePage implements
 		fCacheBlock= new CacheSizeBlock(this);
 	}
 	
+	@Override
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.INDEXER_PREFERENCE_PAGE);
+	}
+
 	@Override
 	protected Control createContents(Composite parent) {
 		GridLayout gl;

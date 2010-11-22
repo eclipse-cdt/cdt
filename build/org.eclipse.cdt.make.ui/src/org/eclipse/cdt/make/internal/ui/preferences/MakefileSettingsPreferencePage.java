@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 package org.eclipse.cdt.make.internal.ui.preferences;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -21,6 +22,7 @@ import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 /**
@@ -37,6 +39,12 @@ public class MakefileSettingsPreferencePage extends FieldEditorPreferencePage im
 		super(GRID);
 		IPreferenceStore store = new ScopedPreferenceStore(new InstanceScope(), MakeCorePlugin.PLUGIN_ID);
 		setPreferenceStore(store);
+	}
+
+	@Override
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IMakeHelpContextIds.MAKE_SETTINGS_PREFERENCE_PAGE);
 	}
 
 	/**

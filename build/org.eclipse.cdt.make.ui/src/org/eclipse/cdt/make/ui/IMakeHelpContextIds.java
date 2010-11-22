@@ -39,5 +39,13 @@ public interface IMakeHelpContextIds {
 	public static final String MAKE_PREF_BINARY_PARSER = PREFIX + "newproj_parser_binary"; //$NON-NLS-1$
 
 	public static final String MAKE_EDITOR_PREFERENCE_PAGE = PREFIX + "make_editor_pref"; //$NON-NLS-1$
+	/**
+	 * @since 7.1
+	 */
+	public static final String MAKE_TARGETS_PREFERENCE_PAGE = PREFIX + "make_targets_pref"; //$NON-NLS-1$
+	/**
+	 * @since 7.1
+	 */
+	public static final String MAKE_SETTINGS_PREFERENCE_PAGE = PREFIX + "make_settings_pref"; //$NON-NLS-1$
 
 }

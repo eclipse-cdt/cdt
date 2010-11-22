@@ -12,6 +12,7 @@
 package org.eclipse.cdt.make.internal.ui.preferences;
 
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -19,6 +20,7 @@ import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 public class MakePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
@@ -35,6 +37,12 @@ public class MakePreferencePage extends FieldEditorPreferencePage implements IWo
 	public MakePreferencePage() {
 		super(GRID);
 		setPreferenceStore(MakeUIPlugin.getDefault().getPreferenceStore());
+	}
+
+	@Override
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IMakeHelpContextIds.MAKE_TARGETS_PREFERENCE_PAGE);
 	}
 
 	/**

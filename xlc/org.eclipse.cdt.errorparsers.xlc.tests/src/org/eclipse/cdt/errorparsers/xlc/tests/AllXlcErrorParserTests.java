@@ -32,7 +32,7 @@ public class AllXlcErrorParserTests {
 		suite.addTestSuite(TestNoFuncProto.class);
 		suite.addTestSuite(TestCompatibility.class);
 		suite.addTestSuite(TestUnrecoverableError.class);
-		suite.addTestSuite(TestMacroRedefinition.class);
+		suite.addTestSuite(TestRedefinition.class);
 		suite.addTestSuite(TestRedeclaration.class);
 		suite.addTestSuite(TestLinkerUndefinedSymbol.class);
 		suite.addTestSuite(TestLinkerDuplicateSymbol.class);

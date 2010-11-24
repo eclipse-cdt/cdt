@@ -11,6 +11,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *     Andrew Ferguson (Symbian)
+ *     Kirk Beitz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -46,23 +47,22 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorPreferencePage_ContentAssistPage_insertSingleProposalAutomatically;
 	public static String CEditorPreferencePage_ContentAssistPage_insertCommonProposalAutomatically;
 	public static String CEditorPreferencePage_ContentAssistPage_showProposalsInAlphabeticalOrder;
-//	public static String CEditorPreferencePage_ContentAssistPage_timeoutDelay;
 	public static String CEditorPreferencePage_ContentAssistPage_autoActivationGroupTitle;
 	public static String CEditorPreferencePage_ContentAssistPage_autoActivationEnableDot;
 	public static String CEditorPreferencePage_ContentAssistPage_autoActivationEnableArrow;
+	public static String CEditorPreferencePage_ContentAssistPage_autoActivationEnableDoubleColon;
+	public static String CEditorPreferencePage_ContentAssistPage_autoActivationEnableReplaceDotWithArrow;
 	public static String CEditorPreferencePage_ContentAssistPage_autoActivationDelay;
 	public static String CEditorPreferencePage_ContentAssistPage_proposalFilterSelect;
 	public static String CEditorPreferencePage_ContentAssistPage_completionProposalBackgroundColor;
 	public static String CEditorPreferencePage_ContentAssistPage_completionProposalForegroundColor;
 	public static String CEditorPreferencePage_ContentAssistPage_parameterBackgroundColor;
 	public static String CEditorPreferencePage_ContentAssistPage_parameterForegroundColor;
-	public static String CEditorPreferencePage_ContentAssistPage_autoActivationEnableDoubleColon;
 	public static String CEditorPreferencePage_ContentAssistPage_sortingSection_title;
 	public static String CEditorPreferencePage_sourceHoverBackgroundColor;
 	public static String CEditorColoringConfigurationBlock_MultiLine;
 	public static String CEditorColoringConfigurationBlock_singleLine;
 	public static String CEditorColoringConfigurationBlock_keywords;
-//	public static String CEditorColoringConfigurationBlock_returnKeyword;
 	public static String CEditorColoringConfigurationBlock_builtInTypes;
 	public static String CEditorColoringConfigurationBlock_strings;
 	public static String CEditorColoringConfigurationBlock_operators;

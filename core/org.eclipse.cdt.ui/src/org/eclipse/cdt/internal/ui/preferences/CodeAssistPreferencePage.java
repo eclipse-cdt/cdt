@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     IBM Corporation
+ *     Kirk Beitz (Nokia)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences;
@@ -52,6 +53,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW));
 //		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.SHOW_DOCUMENTED_PROPOSALS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ORDER_PROPOSALS));
 //		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ADD_INCLUDE));
@@ -109,10 +111,6 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_insertCommonProposalAutomatically; 
 		addCheckBox(insertionGroup, label, ContentAssistPreference.PREFIX_COMPLETION, 0);
-		
-		// parsing timeout (no longer supported)
-//		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_timeoutDelay; 
-//		addTextField(insertionGroup, label, ContentAssistPreference.TIMEOUT_DELAY, 6, 0, true);
 
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// sorting and filtering
@@ -138,7 +136,10 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_autoActivationEnableDoubleColon; 
 		addCheckBox(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON, 0);
-		
+
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_autoActivationEnableReplaceDotWithArrow;
+		addCheckBox(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW, 0);
+
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_autoActivationDelay; 
 		addTextField(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_DELAY, 4, 0, true);
 
@@ -159,17 +160,15 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		store.setDefault(ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE, true);
 		store.setDefault(ContentAssistPreference.PROJECT_SEARCH_SCOPE, false);
 
-//		store.setDefault(ContentAssistPreference.TIMEOUT_DELAY, 3000);
-		
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT, true);
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW, true);
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON, true);
+		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW, true);
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_DELAY, 500);
-		
+
 		store.setDefault(ContentAssistPreference.AUTOINSERT, true);
 		store.setDefault(ContentAssistPreference.PREFIX_COMPLETION, true);
 		store.setDefault(ContentAssistPreference.ORDER_PROPOSALS, false);
-//		store.setDefault(ContentAssistPreference.ADD_INCLUDE, true);
 		store.setDefault(ContentAssistPreference.PROPOSALS_FILTER, ProposalFilterPreferencesUtil.getProposalFilternamesAsString());  // $NON_NLS 1$
 
 	}

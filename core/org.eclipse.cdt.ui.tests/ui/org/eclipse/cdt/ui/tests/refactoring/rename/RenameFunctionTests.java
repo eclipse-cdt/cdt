@@ -812,4 +812,25 @@ public class RenameFunctionTests extends RenameTests {
         Change changes = getRefactorChanges(cpp, offset, "z"); //$NON-NLS-1$
         assertTotalChanges( 2, changes );
     }
+    
+    public void testBug330123() throws Exception {
+        StringWriter writer = new StringWriter();
+        writer.write("class Foo{                    \n"); //$NON-NLS-1$
+        writer.write("    void bar(const int param);\n"); //$NON-NLS-1$
+        writer.write("};                            \n"); //$NON-NLS-1$
+        String header = writer.toString();
+        IFile h = importFile("Foo.h", header); //$NON-NLS-1$
+        writer = new StringWriter();
+        writer.write("#include \"Foo.h\"              \n"); //$NON-NLS-1$
+        writer.write("void Foo::bar(const int param) {\n"); //$NON-NLS-1$
+        writer.write("}                               \n"); //$NON-NLS-1$
+        String source = writer.toString();
+        IFile cpp = importFile("Foo.cpp", source); //$NON-NLS-1$
+        int offset =  header.indexOf("bar") ; //$NON-NLS-1$
+        Change changes = getRefactorChanges(h, offset, "ooga"); //$NON-NLS-1$
+        
+        assertTotalChanges(2, changes);
+        assertChange(changes, h, header.indexOf("bar"), 3, "ooga");  //$NON-NLS-1$//$NON-NLS-2$
+        assertChange(changes, cpp, source.indexOf("bar"), 3, "ooga");  //$NON-NLS-1$//$NON-NLS-2$
+    }
 }

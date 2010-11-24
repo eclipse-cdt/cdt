@@ -408,7 +408,7 @@ public class ExpressionEvaluator {
 		case 'v': return 0xb;
 		
 		case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7':
-			return getNumber(tokenImage, i+1, tokenImage.length-1, 8, IProblem.SCANNER_BAD_OCTAL_FORMAT);
+			return getNumber(tokenImage, i, tokenImage.length-1, 8, IProblem.SCANNER_BAD_OCTAL_FORMAT);
 		
 		case 'x': case 'u': case 'U':
 			return getNumber(tokenImage, i+1, tokenImage.length-1, 16, IProblem.SCANNER_BAD_HEX_FORMAT);

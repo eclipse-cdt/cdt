@@ -308,4 +308,23 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateString("unsignedint f();");
 		validateEOF();
 	}
+	
+	// #if '\0'
+	// no
+	// #else
+	// yes
+	// #endif
+	// #if '\1'
+	// yes
+	// #else
+	// no
+	// #endif
+	public void testOcatalCharConstant_Bug330747() throws Exception {
+		initializeScanner();
+		validateIdentifier("yes");
+		validateIdentifier("yes");
+		validateEOF();
+		validateProblemCount(0);
+	}
+
 }

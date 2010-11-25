@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -182,7 +182,9 @@ public class PathUtil {
      * Similar to IPath.equals(Object obj), but takes case sensitivity of the file system
      * into account.
      * @since 5.1
+     * @deprecated Use {@link #equalPath(IPath, IPath)} instead.
      */
+	@Deprecated
 	public boolean equal(IPath path1, IPath path2) {
 		// Check leading separators
 		if (path1.isAbsolute() != path2.isAbsolute() || path1.isUNC() != path2.isUNC()) {
@@ -196,6 +198,40 @@ public class PathUtil {
 		while (--i >= 0) {
 			if (!path1.segment(i).equals(path2.segment(i)))
 				return false;
+		}
+		// Check device last (least likely to differ)
+		if (path1.getDevice() == null) {
+			return path2.getDevice() == null;
+		} else {
+			return path1.getDevice().equalsIgnoreCase(path2.getDevice());
+		}
+	}
+
+    /**
+	 * Checks whether path1 is the same as path2.
+	 * @return <code>true</code> if path1 is the same as path2, and <code>false</code> otherwise
+     * 
+     * Similar to IPath.equals(Object obj), but takes case sensitivity of the file system
+     * into account.
+     * @since 5.3
+     */
+	public static boolean equalPath(IPath path1, IPath path2) {
+		// Check leading separators
+		if (path1.isAbsolute() != path2.isAbsolute() || path1.isUNC() != path2.isUNC()) {
+			return false;
+		}
+		int i = path1.segmentCount();
+		// Check segment count
+		if (i != path2.segmentCount())
+			return false;
+		// Check segments in reverse order - later segments more likely to differ
+		boolean caseSensitive = !isWindowsFileSystem();
+		while (--i >= 0) {
+			if (!(caseSensitive ?
+					path1.segment(i).equals(path2.segment(i)) :
+					path1.segment(i).equalsIgnoreCase(path2.segment(i)))) {
+				return false;
+			}
 		}
 		// Check device last (least likely to differ)
 		if (path1.getDevice() == null) {

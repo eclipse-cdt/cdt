@@ -697,7 +697,7 @@
    <feature url="features/org.eclipse.rse.ftp_3.0.200.qualifier.jar" id="org.eclipse.rse.ftp" version="3.0.200.qualifier">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.rse.local_2.1.201.qualifier.jar" id="org.eclipse.rse.local" version="2.1.201.qualifier">
+   <feature url="features/org.eclipse.rse.local_2.1.300.qualifier.jar" id="org.eclipse.rse.local" version="2.1.300.qualifier">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
    <feature url="features/org.eclipse.rse_3.3.0.qualifier.jar" id="org.eclipse.rse" version="3.3.0.qualifier">

@@ -36,13 +36,13 @@
 </ul>
 </li>
 -->
-<li>At least 18 bugs were resolved: Use 
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;value0-0-2=backport;chfieldto=2010-11-10;chfield=resolution;query_format=advanced;chfieldfrom=2010-06-10;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;field0-0-2=short_desc;value0-0-1=3\.2\.1;type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring">
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;component=Core;component=RSE;component=Terminal;target_milestone=3.3;product=Target%20Management"> -->
+<li>At least 5 bugs were resolved: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;value0-0-2=backport;chfieldto=2010-12-20;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.3%20M[3];chfieldfrom=2010-11-01;field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.3%20M4;product=Target%20Management">
   this query</a> to show the list of bugs fixed since
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.2.1-201009070720/">
-  TM 3.2.1</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.2.1-201009070720/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.3M3-201011090901/">
+  TM 3.3M3</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.3M3-201011090901/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see
   <a href="http://dsdp.eclipse.org/dsdp/tm/searchcvs.php">TM SearchCVS</a>, the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">

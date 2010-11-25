@@ -69,6 +69,7 @@
  * David McKnight   (IBM)        - [317541] Show blank as the last modified for a file with no last modified
  * David McKnight   (IBM)        - [323299] [files] remote file view adapter needs to use the latest version of IRemoteFile
  * David McKnight   (IBM)        - [324192] Cannot open a renamed file
+ * David McKnight     (IBM)      - [228743] [usability][dnd] Paste into read-only folder fails silently
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -1554,9 +1555,13 @@ public class SystemViewRemoteFileAdapter
 		if (element instanceof IRemoteFile)
 		{
 			IRemoteFile file = (IRemoteFile) element;
-	    	boolean offline = file.getParentRemoteFileSubSystem().isOffline();
-			boolean supportsArchiveManagement = file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
-			return !offline && file.canRead() && file.canWrite() && (file.isDirectory() || file.isRoot() || (file.isArchive() && supportsArchiveManagement));
+			IRemoteFileSubSystem ss = file.getParentRemoteFileSubSystem();
+			IRemoteFileSubSystemConfiguration config = ss.getParentRemoteFileSubSystemConfiguration();
+	    	boolean offline = ss.isOffline();
+	    	boolean isWindows = !config.isUnixStyle(); // windows check for bug 228743
+			boolean supportsArchiveManagement = config.supportsArchiveManagement();
+								
+			return !offline && file.canRead() && (file.canWrite() || isWindows) && (file.isDirectory() || file.isRoot() || (file.isArchive() && supportsArchiveManagement));
 		}
 
 		return false;
@@ -1574,10 +1579,12 @@ public class SystemViewRemoteFileAdapter
 		if (target instanceof IRemoteFile)
 		{
 			IRemoteFile targetFile = (IRemoteFile) target;
-			boolean supportsArchiveManagement = targetFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
+			IRemoteFileSubSystemConfiguration config = targetFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration();
+			boolean supportsArchiveManagement = config.supportsArchiveManagement();
 			if (!targetFile.isFile() || (targetFile.isArchive() && supportsArchiveManagement))
 			{
-				targetFile.canWrite();
+				boolean isWindows = !config.isUnixStyle();
+				return targetFile.canWrite() || isWindows; // windows check for bug 228743
 			}
 			// all objects are of same type, so we only need to use first to validate
 			Object first = srcSet.get(0);
@@ -1615,7 +1622,8 @@ public class SystemViewRemoteFileAdapter
 		if (target instanceof IRemoteFile)
 		{
 			IRemoteFile targetFile = (IRemoteFile) target;
-			boolean supportsArchiveManagement = targetFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
+			IRemoteFileSubSystemConfiguration config = targetFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration();
+			boolean supportsArchiveManagement = config.supportsArchiveManagement();
 			if (!targetFile.isFile() || (targetFile.isArchive() && supportsArchiveManagement))
 			{
 				// get properties
@@ -2028,6 +2036,7 @@ public class SystemViewRemoteFileAdapter
 		{
 			IRemoteFile targetFolder = (IRemoteFile) target;
 			IRemoteFileSubSystem targetFS = targetFolder.getParentRemoteFileSubSystem();
+			boolean isWindows = !targetFS.getParentRemoteFileSubSystemConfiguration().isUnixStyle();
 
 			// make sure properties are uptodate
 			try
@@ -2039,7 +2048,7 @@ public class SystemViewRemoteFileAdapter
 			{
 			}
 
-			if (!targetFolder.canWrite())
+			if (!targetFolder.canWrite() && !isWindows)  // windows check for bug 228743
 			{
 				String msgTxt = FileResources.FILEMSG_SECURITY_ERROR;
 				String msgDetails = NLS.bind(FileResources.FILEMSG_SECURITY_ERROR_DETAILS, targetFS.getHostAliasName());

@@ -61,6 +61,7 @@
  * David McKnight   (IBM)        - [299140] Local Readonly file can't be copied/pasted twice
  * David McKnight     (IBM)      - [298440] jar files in a directory can't be pasted to another system properly
  * David McKnight     (IBM)      - [311218] Content conflict dialog pops up when it should not
+ * David McKnight     (IBM)      - [228743] [usability][dnd] Paste into read-only folder fails silently
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1537,7 +1538,7 @@ public class UniversalFileTransferUtility {
 
 
 		IRemoteFileSubSystem targetFS = targetFolder.getParentRemoteFileSubSystem();
-
+		boolean isWindows = !targetFS.getParentRemoteFileSubSystemConfiguration().isUnixStyle();
 		boolean doSuperTransferPreference = doSuperTransfer(targetFS);
 		SystemRemoteResourceSet resultSet = new SystemRemoteResourceSet(targetFS);
 
@@ -1552,7 +1553,7 @@ public class UniversalFileTransferUtility {
 			}
 		}
 
-		if (!targetFolder.canWrite())
+		if (!targetFolder.canWrite() && !isWindows) // windows check for bug 228743
 		{
 			String msgTxt = FileResources.FILEMSG_SECURITY_ERROR;
 			String msgDetails = NLS.bind(FileResources.FILEMSG_SECURITY_ERROR_DETAILS, targetFS.getHostAliasName());

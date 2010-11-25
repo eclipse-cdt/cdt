@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2009, 2010 Mentor Graphics Corporation and others.
+All rights reserved. This program and the accompanying materials 
+are made available under the terms of the Eclipse Public License v1.0 
+which accompanies this distribution, and is available at 
+http://www.eclipse.org/legal/epl-v10.html 
+
+Contributors: 
+Nikita Shulga - initial API and implementation
+-->
+
+<?eclipse version="3.1"?>
+
+<plugin>
+   <extension
+         point="org.eclipse.rse.core.subsystemConfigurations">
+      <configuration
+            category="files"
+            class="org.eclipse.rse.subsystems.files.scp.ScpFileSubSystemConfiguration"
+            description="%ScpFileSubsystemName"
+            icon="icons/full/obj16/systemfiles_obj.gif"
+            iconlive="icons/full/obj16/systemfileslive_obj.gif"
+            id="scp.files"
+            name="%ScpFileSubsystemName"
+            priority="80"
+            serviceType="_scp-ssh._tcp"
+            systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.aix;org.eclipse.rse.systemtype.ssh"
+            vendor="%providerName">
+      </configuration>
+   </extension>
+</plugin>

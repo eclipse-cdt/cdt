@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@
  * Xuan Chen (IBM) - [191370] [dstore] Supertransfer zip not deleted when canceling copy
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" tags
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
+ * Krzysztof Kosmatka  - [331005] Error opening file from ZIP with \ separators
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -2451,6 +2452,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	{
 		ZipEntry entry = _zipfile.getEntry(name);
 		if (entry == null) entry = _zipfile.getEntry("/" + name); //$NON-NLS-1$
+		if (entry == null) entry = _zipfile.getEntry(name.replace('/', '\\')); // fixing bug 331005
 		if (entry == null) throw new IOException("SystemZipHandler.safeGetEntry(): The ZipEntry " + name + " cannot be found in " + _file.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 		return entry;
 	}

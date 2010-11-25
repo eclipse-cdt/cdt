@@ -66,6 +66,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Position;
 
+@SuppressWarnings("restriction")
 public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedListener {
 
 	private volatile IExecutionDMContext fTargetContext;
@@ -595,7 +596,7 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 	}
 
 	private boolean insertDisassembly(BigInteger startAddress, BigInteger endAddress, IInstruction[] instructions, boolean showSymbols, boolean showDisassembly) {
-		if (!fCallback.hasViewer() || fDsfSessionId == null) {
+		if (!fCallback.hasViewer() || fDsfSessionId == null || fTargetContext == null) {
 			// return true to avoid a retry
 			return true;
 		}
@@ -708,7 +709,7 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 	 * @return whether [startAddress] was inserted
 	 */
 	private boolean insertDisassembly(BigInteger startAddress, BigInteger endAddress, IMixedInstruction[] mixedInstructions, boolean showSymbols, boolean showDisassembly) {
-		if (!fCallback.hasViewer() || fDsfSessionId == null) {
+		if (!fCallback.hasViewer() || fDsfSessionId == null || fTargetContext == null) {
 			// return true to avoid a retry
 			return true;
 		}

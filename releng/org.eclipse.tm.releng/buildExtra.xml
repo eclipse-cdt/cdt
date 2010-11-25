@@ -46,7 +46,7 @@
 			<zipfileset src="${buildDirectory}/${buildLabel}/${allZip}"
 			            dirmode="775"
 			            filemode="664"
-			            excludes="**/org.eclipse.*.all*, **/org.eclipse.*.all*/**, **/org.eclipse.*.examples*, **/org.eclipse.*.examples*/**, **/org.eclipse.tm*, **/org.eclipse.tm*/**, **/org.eclipse.rse.wince*, **/org.eclipse.rse.wince*/**, **/org.eclipse.rse.useractions*, **/org.eclipse.rse.useractions*/**, **/org.eclipse.rse.tests*, **/org.eclipse.rse.tests*/**, **/org.eclipse.rse.discovery*, **/org.eclipse.rse.discovery*/** "
+			            excludes="**/org.eclipse.*.all*, **/org.eclipse.*.all*/**, **/org.eclipse.*.examples*, **/org.eclipse.*.examples*/**, **/org.eclipse.tm*, **/org.eclipse.tm*/**, **/org.eclipse.rse.wince*, **/org.eclipse.rse.wince*/**, **/org.eclipse.rse.scp*, **/org.eclipse.rse.scp*/**, **/org.eclipse.rse.subsystems.files.scp*, **/org.eclipse.rse.subsystems.files.scp*/**, **/org.eclipse.rse.useractions*, **/org.eclipse.rse.useractions*/**, **/org.eclipse.rse.tests*, **/org.eclipse.rse.tests*/**, **/org.eclipse.rse.discovery*, **/org.eclipse.rse.discovery*/** "
 			>
 				<include name="**/org.eclipse.rse*" />
 				<include name="**/org.eclipse.rse*/**" />
@@ -79,7 +79,7 @@
 			<zipfileset src="${buildDirectory}/${buildLabel}/${allZip}"
 			            dirmode="775"
 			            filemode="664"
-			            excludes="**/org.eclipse.*.all*, **/org.eclipse.*.all*/**, **/org.eclipse.*.examples*, **/org.eclipse.*.examples*/**, **/org.eclipse.*.sdk*, **/org.eclipse.*.sdk*/**,**/org.eclipse.*.doc*, **/org.eclipse.*.doc*/*, **/org.eclipse.*.source*, **/org.eclipse.*.source*/**, **/org.apache.*.source*, **/org.apache.*.source*/**, **/*src.zip, **/org.eclipse.tm*, **/org.eclipse.tm*/**, **/org.eclipse.rse.wince*, **/org.eclipse.rse.wince*/**, **/org.eclipse.rse.useractions*, **/org.eclipse.rse.useractions*/**, **/org.eclipse.rse.tests*, **/org.eclipse.rse.tests*/**, **/org.eclipse.rse.discovery*, **/org.eclipse.rse.discovery*/** "
+			            excludes="**/org.eclipse.*.all*, **/org.eclipse.*.all*/**, **/org.eclipse.*.examples*, **/org.eclipse.*.examples*/**, **/org.eclipse.*.sdk*, **/org.eclipse.*.sdk*/**,**/org.eclipse.*.doc*, **/org.eclipse.*.doc*/*, **/org.eclipse.*.source*, **/org.eclipse.*.source*/**, **/org.apache.*.source*, **/org.apache.*.source*/**, **/*src.zip, **/org.eclipse.tm*, **/org.eclipse.tm*/**, **/org.eclipse.rse.wince*, **/org.eclipse.rse.wince*/**, **/org.eclipse.rse.scp*, **/org.eclipse.rse.scp*/**, **/org.eclipse.rse.subsystems.files.scp*, **/org.eclipse.rse.subsystems.files.scp*/** **/org.eclipse.rse.useractions*, **/org.eclipse.rse.useractions*/**, **/org.eclipse.rse.tests*, **/org.eclipse.rse.tests*/**, **/org.eclipse.rse.discovery*, **/org.eclipse.rse.discovery*/** "
 			>
 				<include name="**/org.eclipse.rse*" />
 				<include name="**/org.eclipse.rse*/**" />
@@ -176,6 +176,20 @@
 			<zipfileset refid="rootfiles" />
 		</zip>
 
+		<!-- build SCP plugins -->
+		<zip destfile="${buildDirectory}/${buildLabel}/RSE-files-scp-incubation-${buildAlias}.zip" update="true">
+			<zipfileset src="${buildDirectory}/${buildLabel}/${allZip}" dirmode="775" filemode="664" excludes="**/org.eclipse.*.test*, **/org.eclipse.*.test*/**">
+				<include name="**/org.eclipse.rse.scp*" />
+				<include name="**/org.eclipse.rse.scp*/**" />
+				<include name="**/org.eclipse.rse.scp*/**/**" />
+				<include name="**/org.eclipse.rse.subsystems.files.scp*" />
+				<include name="**/org.eclipse.rse.subsystems.files.scp*/**" />
+				<include name="**/org.eclipse.rse.subsystems.files.scp*/**/**" />
+			</zipfileset>
+			<zipfileset refid="rootfiles" />
+		</zip>
+
+		
 		<!-- build TCF -->
 		<zip destfile="${buildDirectory}/${buildLabel}/TCF-SDK-incubation-${buildAlias}.zip" update="true">
 			<zipfileset src="${buildDirectory}/${buildLabel}/${allZip}" dirmode="775" filemode="664" excludes="**/org.eclipse.*.test*, **/org.eclipse.*.test*/**">

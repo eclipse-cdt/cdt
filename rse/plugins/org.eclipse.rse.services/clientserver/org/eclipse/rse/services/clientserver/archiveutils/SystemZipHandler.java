@@ -24,7 +24,7 @@
  * Xuan Chen (IBM) - [191370] [dstore] Supertransfer zip not deleted when canceling copy
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" tags
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
- * Krzysztof Kosmatka  - [331005] Error opening file from ZIP with \ separators
+ * Krzysztof Kosmatka, Atrem S.A. - [331005] Error opening file from ZIP with \ separators
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;

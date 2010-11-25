@@ -1070,7 +1070,20 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		Channel channel = null;
 		try {
 			channel=fSessionProvider.getSession().openChannel("exec"); //$NON-NLS-1$
-			((ChannelExec)channel).setCommand(command);
+			try {
+				// ChannelExec#setCommand(byte[]) was added in JSch-0.1.38 only
+				((ChannelExec) channel).setCommand(command.getBytes(fJSchChannelEncoding));
+			} catch (NoSuchMethodError nsm) {
+				// Fallback for JSch-0.1.37 and below: always decodes in
+				// Platform Default Encoding!
+				byte[] bytesDesired = command.getBytes(fJSchChannelEncoding);
+				String stringToSend = new String(bytesDesired);
+				byte[] bytesSent = stringToSend.getBytes();
+				if (!bytesDesired.equals(bytesSent)) {
+					throw new UnsupportedEncodingException("Cannot encode for JSch as \"" + fJSchChannelEncoding + "\": " + command);
+				}
+				((ChannelExec) channel).setCommand(new String(bytesDesired));
+			}
 
 			//No user input
 			channel.setInputStream(null);

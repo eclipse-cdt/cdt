@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Markus Schorn (Wind River Systems)
+ *     Kirk Beitz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -212,7 +213,9 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 		monitor.beginTask(ContentAssistMessages.ContentAssistProcessor_computing_proposals, fCategories.size() + 1);
 
 		ContentAssistInvocationContext context= createContext(viewer, offset, true);
-		
+		if (context == null)
+			return null;
+
 		try {
 			long setup= DEBUG ? System.currentTimeMillis() : 0;
 			
@@ -345,7 +348,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 
 	/**
 	 * Sets this processor's set of characters triggering the activation of the
-	 * completion proposal computation.
+	 * completion proposal computation (including auto-correction auto-activation)
 	 *
 	 * @param activationSet the activation set
 	 */
@@ -406,6 +409,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	 * @param viewer the viewer that content assist is invoked on
 	 * @param offset the content assist offset
 	 * @return the context to be passed to the computers
+	 *         or <code>null</code> if no completion is possible
 	 */
 	protected ContentAssistInvocationContext createContext(ITextViewer viewer, int offset, boolean isCompletion) {
 		return new ContentAssistInvocationContext(viewer, offset);

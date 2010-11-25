@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Kirk Beitz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -54,7 +55,7 @@ public class ContentAssistPreference {
 	public final static String AUTOACTIVATION_TRIGGERS_DOT= "content_assist_autoactivation_trigger_dot"; //$NON-NLS-1$
 	public final static String AUTOACTIVATION_TRIGGERS_ARROW= "content_assist_autoactivation_trigger_arrow"; //$NON-NLS-1$
 	public final static String AUTOACTIVATION_TRIGGERS_DOUBLECOLON= "content_assist_autoactivation_trigger_doublecolon"; //$NON-NLS-1$
-	
+	public final static String AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW= "content_assist_autoactivation_trigger_replace_dot_with_arrow"; //$NON-NLS-1$
 //	/** Preference key for visibility of proposals (unused) */
 //	public final static String SHOW_DOCUMENTED_PROPOSALS= "content_assist_show_visible_proposals"; //$NON-NLS-1$
 	/** Preference key for alphabetic ordering of proposals */
@@ -91,19 +92,8 @@ public class ContentAssistPreference {
 		CContentAssistProcessor ccp= getCProcessor(assistant);
 		if (ccp == null)
 			return;
+		configureActivationCharacters(store, ccp);
 
-		String triggers = ""; //$NON-NLS-1$
-		boolean useDotAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
-		if(useDotAsTrigger)
-			triggers = "."; //$NON-NLS-1$
-		boolean useArrowAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
-		if(useArrowAsTrigger)
-			triggers += ">"; //$NON-NLS-1$
-		boolean useDoubleColonAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
-		if(useDoubleColonAsTrigger)
-			triggers += ":"; //$NON-NLS-1$
-		ccp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
-					
 //		boolean enabled;
 //		enabled= store.getBoolean(SHOW_DOCUMENTED_PROPOSALS);
 //		ccp.restrictProposalsToVisibility(enabled);
@@ -118,6 +108,36 @@ public class ContentAssistPreference {
 //		ccp.allowAddingIncludes(enabled);
 	}
 
+	private static void configureActivationCharacters(IPreferenceStore store, CContentAssistProcessor ccp) {
+		String triggers = ""; //$NON-NLS-1$
+		boolean useDotAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
+		boolean useArrowAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
+		boolean useDoubleColonAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
+
+		if (useDotAsTrigger)
+			triggers = ".";	//$NON-NLS-1$
+		if (useArrowAsTrigger)
+			triggers += ">"; //$NON-NLS-1$
+		if (useDoubleColonAsTrigger)
+			triggers += ":"; //$NON-NLS-1$
+		ccp.setCContentAutoActivationCharacters(triggers);
+
+		boolean dotTriggersAutoReplace = store.getBoolean(AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW);
+
+		// quick and dirty, since we only have one thing to replace
+		// if other replacement auto-activate triggers are added,
+		// triggers will have to be cleared and characters that share
+		// such as "." will have to be ||ed together.
+		if (!useDotAsTrigger && dotTriggersAutoReplace)
+			triggers += "."; //$NON-NLS-1$
+		ccp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
+
+		triggers = "";	//$NON-NLS-1$
+		if (dotTriggersAutoReplace)
+			triggers = ".";	//$NON-NLS-1$
+		ccp.setReplacementAutoActivationCharacters(triggers);
+	}
+
 	
 	/**
 	 * Configure the given content assistant from the given store.
@@ -130,7 +150,12 @@ public class ContentAssistPreference {
 		boolean enabledDot= store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
 		boolean enabledArrow= store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
 		boolean enabledDoubleColon= store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
-		boolean enabled =  ((enabledDot) || ( enabledArrow ) || (enabledDoubleColon ));
+		boolean enabledReplaceDotWithArrow
+			= store.getBoolean(AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW);
+
+		boolean enabled
+			=  (enabledDot || enabledArrow || enabledDoubleColon
+					|| enabledReplaceDotWithArrow);
 		assistant.enableAutoActivation(enabled);
 		
 		int delay= store.getInt(AUTOACTIVATION_DELAY);
@@ -167,21 +192,9 @@ public class ContentAssistPreference {
 			
 		if ( (AUTOACTIVATION_TRIGGERS_DOT.equals(key))
 		     || (AUTOACTIVATION_TRIGGERS_ARROW.equals(key))
-			 || (AUTOACTIVATION_TRIGGERS_DOUBLECOLON.equals(key)) ){
-			boolean useDotAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
-			boolean useArrowAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
-			boolean useDoubleColonAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
-			String triggers = ""; //$NON-NLS-1$
-			if (useDotAsTrigger){
-				triggers += "."; //$NON-NLS-1$
-			}
-			if (useArrowAsTrigger){
-				triggers += ">"; //$NON-NLS-1$
-			}
-			if (useDoubleColonAsTrigger){
-				triggers += ":"; //$NON-NLS-1$
-			}
-			ccp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
+			 || (AUTOACTIVATION_TRIGGERS_DOUBLECOLON.equals(key)) 
+			 || (AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW.equals(key))){
+			configureActivationCharacters(store, ccp);
 		}
 //		else if (SHOW_DOCUMENTED_PROPOSALS.equals(key)) {
 //			boolean enabled= store.getBoolean(SHOW_DOCUMENTED_PROPOSALS);
@@ -210,12 +223,15 @@ public class ContentAssistPreference {
 		
 		if ((AUTOACTIVATION_TRIGGERS_DOT.equals(p))
 			|| (AUTOACTIVATION_TRIGGERS_ARROW.equals(p))
-			|| (AUTOACTIVATION_TRIGGERS_DOUBLECOLON.equals(p))){
+			|| (AUTOACTIVATION_TRIGGERS_DOUBLECOLON.equals(p))
+			|| (AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW.equals(p))){
 			boolean enabledDot= store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
 			boolean enabledArrow= store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
 			boolean enabledDoubleColon= store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
-			boolean enabled =  ((enabledDot) || ( enabledArrow ) || (enabledDoubleColon ));
+			boolean enabledReplaceDotWithArrow= store.getBoolean(AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW);
+			boolean enabled =  ((enabledDot) || ( enabledArrow ) || (enabledDoubleColon ) || (enabledReplaceDotWithArrow ));
 			assistant.enableAutoActivation(enabled);
+
 		} else if (AUTOACTIVATION_DELAY.equals(p)) {
 			int delay= store.getInt(AUTOACTIVATION_DELAY);
 			assistant.setAutoActivationDelay(delay);

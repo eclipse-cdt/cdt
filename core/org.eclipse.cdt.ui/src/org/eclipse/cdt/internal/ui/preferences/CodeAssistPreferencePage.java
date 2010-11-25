@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     IBM Corporation
+ *     Kirk Beitz (Nokia)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences;
@@ -164,6 +165,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT, true);
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW, true);
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON, true);
+		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW, false);
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_DELAY, 500);
 		
 		store.setDefault(ContentAssistPreference.AUTOINSERT, true);

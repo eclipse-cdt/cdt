@@ -24,6 +24,7 @@
  * David McKnight  (IBM)  - [261644] [dstore] remote search improvements
  * David McKnight  (IBM)  - [243495] [api] New: Allow file name search in Remote Search to not be case sensitive
  * David McKnight  (IBM)  - [299568] Remote search only shows result in the symbolic linked file
+ * David McKnight  (IBM]  - [330989] [dstore] OutOfMemoryError occurs when searching for a text in a large remote file
  ********************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -391,17 +392,28 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 
 			// test for unreadable binary
 			if (isUnreadableBinary(bufReader) || fileLength > MAX_FILE){
-				// search some other way?
-				long size = theFile.length();
-				if (simpleSearch(inputStream, size, _stringMatcher)){			
+				boolean matched = false;
+				try {
+					long MAX_READ = MAX_FILE / 10; // read no more than a tenth of max file at a time
+					int offset = 0;
+					
+					while (offset < fileLength && !matched){
+						long readSize = MAX_READ;
+						if (offset +  MAX_READ > fileLength){
+							readSize = fileLength - offset;
+						}
+						matched = simpleSearch(inputStream, offset,readSize, _stringMatcher);
+						offset+=readSize;
+					}				
+				}
+				catch (Exception e){					
+					return false;
+				}
+				finally {
 					bufReader.close();
 					reader.close();
-					return true;
 				}
-				
-				bufReader.close();
-				reader.close();
-				return false;
+				return matched;
 			}
 			else 
 			{
@@ -431,11 +443,11 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 		}
 	}
 	
-	private boolean simpleSearch(FileInputStream stream, long size, SystemSearchStringMatcher matcher)
+	private boolean simpleSearch(FileInputStream stream, int offset, long size, SystemSearchStringMatcher matcher)
 	{
 		byte[] bytes = new byte[(int)size];
 		try {
-			stream.read(bytes, 0, (int)size);
+			stream.read(bytes, offset, (int)size);
 		}
 		catch (Exception e){			
 		}

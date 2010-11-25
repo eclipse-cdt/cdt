@@ -596,7 +596,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	}
 
 	private boolean insertDisassembly(BigInteger startAddress, BigInteger endAddress, IInstruction[] instructions, boolean showSymbols, boolean showDisassembly) {
-		if (!fCallback.hasViewer() || fDsfSessionId == null) {
+        if (!fCallback.hasViewer() || fDsfSessionId == null || fTargetContext == null) {
 			// return true to avoid a retry
 			return true;
 		}
@@ -709,7 +709,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	 * @return whether [startAddress] was inserted
 	 */
 	private boolean insertDisassembly(BigInteger startAddress, BigInteger endAddress, IMixedInstruction[] mixedInstructions, boolean showSymbols, boolean showDisassembly) {
-		if (!fCallback.hasViewer() || fDsfSessionId == null) {
+        if (!fCallback.hasViewer() || fDsfSessionId == null || fTargetContext == null) {
 			// return true to avoid a retry
 			return true;
 		}

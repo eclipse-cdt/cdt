@@ -66,6 +66,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -118,6 +119,7 @@ import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -251,6 +253,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private int fAddressSize= 32;
 
 	private volatile boolean fUpdatePending;
+    private volatile int fUpdateCount;
 	private BigInteger fPCAddress;
 	private BigInteger fGotoAddressPending= PC_UNKNOWN;
 	private BigInteger fFocusAddress= PC_UNKNOWN;
@@ -1481,16 +1484,18 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	public void viewportChanged(int verticalOffset) {
 		if (fDebugSessionId != null && fGotoAddressPending == PC_UNKNOWN && fScrollPos == null && !fUpdatePending && !fRefreshViewPending) {
 			fUpdatePending = true;
-			invokeLater(new Runnable() {
-				public void run() {
-					assert fUpdatePending;
-					if (fUpdatePending) {
-						fUpdatePending = false;
-						updateVisibleArea();
-						fPCLastAddress = getTopAddress();
-					}
-				}
-			});
+            final int updateCount = fUpdateCount;
+            invokeLater(new Runnable() {
+                public void run() {
+                    if (updateCount == fUpdateCount) {
+                        assert fUpdatePending;
+                        if (fUpdatePending) {
+                            fUpdatePending = false;
+                            updateVisibleArea();
+                        }
+                    }
+                }
+            });
 		}
 	}
 
@@ -1677,15 +1682,12 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (fDebugSessionId == null) {
 			return;
 		}
-		if (fUpdatePending) {
-			invokeLater(new Runnable() {
-				public void run() {
-					retrieveDisassembly(file, lines, mixed);
-				}});
-			return;
-		}
-		if (DEBUG) System.out.println("retrieveDisassembly "+file); //$NON-NLS-1$
-		fBackend.retrieveDisassembly(file, lines, fEndAddress, mixed, fShowSymbols, fShowDisassembly);
+        startUpdate(new Runnable() {
+            public void run() {
+                if (DEBUG) System.out.println("retrieveDisassembly "+file); //$NON-NLS-1$
+                fBackend.retrieveDisassembly(file, lines, fEndAddress, mixed, fShowSymbols, fShowDisassembly);
+            }
+        });
 	}
 
 	private void retrieveDisassembly(BigInteger startAddress, BigInteger endAddress, int lines) {
@@ -1872,7 +1874,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 						if (result != null) {
 							fDebugSessionId = result.sessionId;
 					        if (result.contextChanged && fViewer != null) {
-								debugContextChanged();
+		                        startUpdate(new Runnable() {
+		                            public void run() {
+		                                debugContextChanged();              
+		                            }
+		                        });
 								if (prevBackend != null && fBackend != prevBackend) {
 									prevBackend.clearDebugContext();
 								}
@@ -1884,8 +1890,35 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 
+	private void startUpdate(final Runnable update) {
+	    final int updateCount = fUpdateCount;
+	    final SafeRunnable safeUpdate = new SafeRunnable() {
+	        public void run() {
+	            if (updateCount == fUpdateCount) {
+	                update.run();
+	            }
+	        }
+	        @Override
+	        public void handleException(Throwable e) {
+	            internalError(e);
+	        }
+	    };
+	    if (fUpdatePending) {
+	        invokeLater(new Runnable() {
+	            public void run() {
+	                if (updateCount == fUpdateCount) {
+	                    SafeRunner.run(safeUpdate);
+	                }
+	            }
+	        });
+	    } else {
+	        SafeRunner.run(safeUpdate);
+	    }
+	}
+
 	private void debugContextChanged() {
 		if (DEBUG) System.out.println("DisassemblyPart.debugContextChanged()"); //$NON-NLS-1$
+        fUpdateCount++;
 		fRunnableQueue.clear();
 		fUpdatePending = false;
 		resetViewer();
@@ -1920,8 +1953,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		firePropertyChange(PROP_CONNECTED);
 		firePropertyChange(PROP_SUSPENDED);
 	}
-
-
 
 	private void attachBreakpointsAnnotationModel() {
 		IAnnotationModel annotationModel = fViewer.getAnnotationModel();
@@ -2478,35 +2509,41 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (doit != null) {
 			fRunnableQueue.add(doit);
 		}
-		if (fUpdatePending) {
-			if (fRunnableQueue.size() == 1) {
-				Runnable doitlater = new Runnable() {
-					public void run() {
-						doScrollLocked(null);
-					}};
-				invokeLater(doitlater);
-			}
-		} else {
-			fUpdatePending = true;
-			lockScroller();
-			try {
-				ArrayList<Runnable> copy = new ArrayList<Runnable>(fRunnableQueue);
-				fRunnableQueue.clear();
-				for (Iterator<Runnable> iter = copy.iterator(); iter.hasNext();) {
-					Runnable doitnow = iter.next();
-					try {
-						doitnow.run();
-					} catch(Exception e) {
-						internalError(e);
-					}
-				}
-			} finally {
-				fUpdatePending = false;
-				unlockScroller();
-				doPending();
-				updateVisibleArea();
-			}
-		}
+        final int updateCount = fUpdateCount;
+        if (fUpdatePending) {
+            if (fRunnableQueue.size() == 1) {
+                Runnable doitlater = new Runnable() {
+                    public void run() {
+                        if (updateCount == fUpdateCount) {
+                            doScrollLocked(null);
+                        }
+                    }};
+                invokeLater(doitlater);
+            }
+        } else {
+            fUpdatePending = true;
+            lockScroller();
+            try {
+                ArrayList<Runnable> copy = new ArrayList<Runnable>(fRunnableQueue);
+                fRunnableQueue.clear();
+                for (Iterator<Runnable> iter = copy.iterator(); iter.hasNext();) {
+                    if (updateCount != fUpdateCount) {
+                        return;
+                    }
+                    Runnable doitnow = iter.next();
+                    try {
+                        doitnow.run();
+                    } catch(Exception e) {
+                        internalError(e);
+                    }
+                }
+            } finally {
+                fUpdatePending = false;
+                unlockScroller();
+                doPending();
+                updateVisibleArea();
+            }
+        }
 	}
 
 	/* (non-Javadoc)
@@ -2920,7 +2957,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		asyncExec(new Runnable() {
 			public void run() {
 				fDebugSessionId = null;
-				debugContextChanged();
+                startUpdate(new Runnable() {
+                    public void run() {
+                        debugContextChanged();              
+                    }
+                });
 			}
 		});
 	}

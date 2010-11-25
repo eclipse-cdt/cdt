@@ -73,6 +73,7 @@
  * David McKnight   (IBM)        - [277328] Unhandled Event Loop Exception When Right-Clicking on "Pending..." Message
  * David McKnight   (IBM)        - [283793] [dstore] Expansion indicator(+) does not reset after no connect
  * Uwe Stieber      (Wind River) - [238519] [usability][api] Adapt RSE view(s) to follow decoration style of the Eclipse platform common navigator
+ * David McKnight   (IBM)        - [330973] Drag/drop a local file generates an error message in the Remote system view
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -2695,7 +2696,7 @@ public class SystemView extends SafeTreeViewer
 						createChildren(selectedItem);
 						selectedItem.setExpanded(true);
 					}
-					if (adapter.supportsDeferredQueries(ss))
+					if (adapter.supportsDeferredQueries(ss) && allowExpand) // should not be waiting for a non-query - bug 330973
 					{
 						final List names = remoteResourceNames;
 						final String name = remoteResourceName;
@@ -3669,9 +3670,13 @@ public class SystemView extends SafeTreeViewer
 			return false;
 		}
 
-		if ((parentItem != null) && !getExpanded(parentItem))
-		//setExpanded(parentItem, true);
-			setExpandedState(parentItem.getData(), true);
+		if ((parentItem != null) && !getExpanded(parentItem)){
+			// don't expand objects that don't have children - bug 330973
+			Object parentData = parentItem.getData();
+			boolean expandable = getViewAdapter(parentData).hasChildren((IAdaptable)parentData);
+			if (expandable)
+				setExpandedState(parentItem.getData(), true);				
+		}
 
 		//System.out.println("SELECT_REMOTE: PARENT = " + parent + ", PARENTITEM = " + parentItem);
 		if (src instanceof List) {

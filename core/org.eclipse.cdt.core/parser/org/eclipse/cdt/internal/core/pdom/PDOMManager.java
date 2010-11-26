@@ -538,7 +538,6 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		if (fTraceIndexerSetup) 
 			System.out.println("Indexer: Creation for project " + name); //$NON-NLS-1$
 		
-		
 		assert !Thread.holdsLock(fProjectToPDOM);
 		try {
 			synchronized (fUpdatePolicies) {
@@ -665,7 +664,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			getReferencingProjects(indexer.getProject().getProject(), referencing);
 		}
     	synchronized (fTaskQueue) {
-    		int i=0;
+    		int i= 0;
     		for (IPDOMIndexerTask task : fTaskQueue) {
 				final IPDOMIndexer ti = task.getIndexer();
 				if (ti != null && referencing.contains(ti.getProject().getProject())) {
@@ -864,8 +863,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
         					}
         				} catch (CoreException e) {
         					CCorePlugin.log(e);
-        				}
-        				finally {
+        				} finally {
         					finalpdom.releaseWriteLock();
         				}
         			} catch (InterruptedException e) {
@@ -1101,12 +1099,11 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			try {
 				Job.getJobManager().join(this, monitor);
 				return true;
-			} catch (OperationCanceledException e1) {
-			} catch (InterruptedException e1) {
+			} catch (OperationCanceledException e) {
+			} catch (InterruptedException e) {
 			}
 			return Job.getJobManager().find(this).length == 0;
-		}
-		finally {
+		} finally {
 			if (th != null) {
 				th.interrupt();
 			}
@@ -1134,7 +1131,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			if (fCurrentTask != null) {
 				final IndexerProgress info= fCurrentTask.getProgressInformation();
 				sourceCount+= info.fCompletedSources;
-				sourceEstimate+= info.fRequestedFilesCount-info.fPrimaryHeaderCount;
+				sourceEstimate+= info.fRequestedFilesCount - info.fPrimaryHeaderCount;
 				headerCount+= info.fCompletedHeaders;
 				// for the ticks we don't consider additional headers
 				tickCount+= info.fCompletedSources + info.fPrimaryHeaderCount;
@@ -1147,7 +1144,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					new Integer(sourceCount), new Integer(sourceEstimate), 
 					new Integer(headerCount)}); 
 		if (detail != null) {
-			msg= msg+ ": " + detail;  //$NON-NLS-1$
+			msg += ": " + detail;  //$NON-NLS-1$
 		}
 		
 		job.subTask(msg);
@@ -1160,7 +1157,6 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 		return currentTicks;
 	}
-
 
 	public IWritableIndex getWritableIndex(ICProject project) throws CoreException {
 		return fIndexFactory.getWritableIndex(project);
@@ -1193,9 +1189,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * @throws IllegalArgumentException if a file exists at targetLocation
 	 */
 	public void exportProjectPDOM(ICProject cproject, File targetLocation, final IIndexLocationConverter newConverter) throws CoreException {
-		if(targetLocation.exists()) {
+		if (targetLocation.exists()) {
 			boolean deleted= targetLocation.delete();
-			if(!deleted) {
+			if (!deleted) {
 				throw new IllegalArgumentException(
 						MessageFormat.format(Messages.PDOMManager_ExistingFileCollides,
 								new Object[] {targetLocation})
@@ -1268,8 +1264,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			while ((read= stream.read(buffer)) >= 0) {
 				out.write(buffer, 0, read);
 			}
-		}
-		finally {
+		} finally {
 			out.close();
 		}
 		
@@ -1283,8 +1278,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			pdom.reloadFromFile(newFile);
 			storeDatabaseName(project.getProject(), newName);
 			writeProjectPDOMProperties(pdom, project.getProject());
-		}
-		finally {
+		} finally {
 			pdom.releaseWriteLock();
 		}
 	}
@@ -1483,7 +1477,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					IResource resource= tu.getResource();
 					if (resource instanceof IFile && isSubjectToIndexing(tu.getLanguage())) {
 						IIndexFileLocation location= IndexLocationFactory.getWorkspaceIFL((IFile)resource);
-						if(!areSynchronized(new HashSet<IIndexFileLocation>(), index, resource, location)) {
+						if (!areSynchronized(new HashSet<IIndexFileLocation>(), index, resource, location)) {
 							return false;
 						}
 					}
@@ -1517,16 +1511,16 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * @throws CoreException
 	 */
 	private static boolean areSynchronized(Set<IIndexFileLocation> trail, IIndex index, IResource resource, IIndexFileLocation location) throws CoreException {
-		if(!trail.contains(location)) {
+		if (!trail.contains(location)) {
 			trail.add(location);
 			
 			IIndexFile[] file= index.getFiles(location);
 
 			// pre-includes may be listed twice (191989)
-			if(file.length < 1 || file.length > 2)
+			if (file.length < 1 || file.length > 2)
 				return false;
 
-			if(resource.getLocalTimeStamp() != file[0].getTimestamp())
+			if (resource.getLocalTimeStamp() != file[0].getTimestamp())
 				return false;
 
 			// if it is up-to-date, the includes have not changed and may
@@ -1534,11 +1528,11 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			IIndexInclude[] includes= index.findIncludes(file[0]);
 			for(IIndexInclude inc : includes) {
 				IIndexFileLocation newLocation= inc.getIncludesLocation();
-				if(newLocation != null) {
+				if (newLocation != null) {
 					String path= newLocation.getFullPath();
-					if(path != null) {
+					if (path != null) {
 						IResource newResource= ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
-						if(!areSynchronized(trail, index, newResource, newLocation)) {
+						if (!areSynchronized(trail, index, newResource, newLocation)) {
 							return false;
 						}
 					}

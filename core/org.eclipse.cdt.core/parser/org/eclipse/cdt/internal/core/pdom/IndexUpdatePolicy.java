@@ -137,8 +137,7 @@ public class IndexUpdatePolicy {
 		IPDOMIndexerTask task= null;
 		if (fKind == MANUAL || isNullIndexer()) {
 			clearTUs();
-		}
-		else if (fIndexer != null) {
+		} else if (fIndexer != null) {
 			if (oldPolicy == MANUAL) {
 				task= new PDOMUpdateTask(fIndexer,
 						IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONTENTS_HASH);

@@ -33,7 +33,7 @@ public class ScpFileUtils {
 	 * name.
 	 * 
 	 * This method was cloned from
-	 * {@link org.eclipse.rse.internal.services.ssh.files.SftpFileService#concat}
+	 * org.eclipse.rse.services.ssh / SftpFileService#concat()
 	 */
 	protected static String concat(String parentDir, String fileName) {
 		// See also {@link SftpHostFile#getAbsolutePath()}

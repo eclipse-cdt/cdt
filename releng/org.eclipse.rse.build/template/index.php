@@ -200,6 +200,16 @@
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
         <td>All <img src="egg.gif" width=20 height=20></td>
+        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-scp-incubation-@buildId@.zip">RSE-scp-incubation-@buildId@.zip</a></td>
+        <td><small>&nbsp;</small><br/>
+			A File Subsystem for SSH connections that do not provide the Sftp service,
+			such as embedded targets running Dropbear. Allows choosing between scp or sftp
+			connection when using the "SSH Only" System Type.
+			Includes Source.
+        </td>
+    </tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+        <td>All <img src="egg.gif" width=20 height=20></td>
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-wince-incubation-@buildId@.zip">RSE-wince-incubation-@buildId@.zip</a></td>
         <td><small>&nbsp;</small><br/>
 			RSE Services for accessing Windows CE devices via Microsoft RAPI2.

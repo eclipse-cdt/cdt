@@ -28,14 +28,19 @@
   RSE runs on Java 1.4.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF.</li>
-<!--
-<li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.2-201006071030/index.php">TM 3.2</a>:
+
+<li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.3M3-201011090901/index.php">TM 3.3M3</a>:
 <ul>
-  <li>TBD
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=311447">311447</a>].</li>
+  <li>An SCP File Subsystem has been made available, in order to support remote systems
+    that provide SSH access, but not the sftp service (such as Dropbear on embedded
+    targets). The new subsystem is currently available as a separate 
+    download in incubation state, and installable from the 
+    <a href="http://download.eclipse.org/dsdp/tm/updates/3.3milestones/">TM 3.3 Milestone Update Site</a>. 
+    Please use and test the new plugin, and provide feedback on the
+    <a href="https://dev.eclipse.org/mailman/listinfo/dsdp-tm-dev">dsdp-tm-dev</a> mailing list
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=213438">213438</a>].</li>
 </ul>
 </li>
--->
 <li>At least 5 bugs were resolved: Use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;value0-0-2=backport;chfieldto=2010-12-20;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.3%20M[3];chfieldfrom=2010-11-01;field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.3%20M4;product=Target%20Management">

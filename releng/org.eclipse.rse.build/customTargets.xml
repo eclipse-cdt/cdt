@@ -33,6 +33,10 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
+			<property name="id" value="org.eclipse.rse.scp" />
+		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.rse.examples" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
@@ -89,6 +93,12 @@
 
 	<target name="assemble.org.eclipse.rse.wince">
 		<property name="archiveName" value="RSE-wince-incubation-${buildId}.zip"/>
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="unpackUpdateJarsForPackaging" />
+	</target>
+
+	<target name="assemble.org.eclipse.rse.scp">
+		<property name="archiveName" value="RSE-scp-incubation-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>

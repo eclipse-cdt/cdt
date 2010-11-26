@@ -724,6 +724,9 @@
    <feature url="features/org.eclipse.rse.useractions_1.1.200.qualifier.jar" id="org.eclipse.rse.useractions" version="1.1.200.qualifier">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
+   <feature url="features/org.eclipse.rse.scp_0.1.0.qualifier.jar" id="org.eclipse.rse.scp" version="0.1.0.qualifier">
+      <category name="TM and RSE Uncategorized 3.3"/>
+   </feature>
    <feature url="features/org.eclipse.rse.wince_0.2.100.qualifier.jar" id="org.eclipse.rse.wince" version="0.2.100.qualifier" os="win32" arch="x86">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>

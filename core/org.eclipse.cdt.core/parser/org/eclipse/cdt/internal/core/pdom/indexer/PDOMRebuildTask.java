@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
@@ -94,8 +95,7 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 			if (wf instanceof WritablePDOM) {
 				PDOMManager.writeProjectPDOMProperties((WritablePDOM) wf, project.getProject());
 			}
-		}
-		finally {
+		} finally {
 			index.releaseWriteLock(0);
 		}
 	}
@@ -123,5 +123,9 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 
 	public synchronized IndexerProgress getProgressInformation() {
 		return fDelegate != null ? fDelegate.getProgressInformation() : fProgress;
+	}
+
+	public synchronized boolean acceptUrgentTask(IPDOMIndexerTask task) {
+		return fDelegate != null && fDelegate.acceptUrgentTask(task);
 	}
 }

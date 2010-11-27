@@ -664,8 +664,14 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			getReferencingProjects(indexer.getProject().getProject(), referencing);
 		}
     	synchronized (fTaskQueue) {
+    		if (fCurrentTask != null && fCurrentTask.acceptUrgentTask(subjob)) {
+    			return;
+    		}
     		int i= 0;
     		for (IPDOMIndexerTask task : fTaskQueue) {
+				if (task.acceptUrgentTask(subjob)) {
+					return;
+				}
 				final IPDOMIndexer ti = task.getIndexer();
 				if (ti != null && referencing.contains(ti.getProject().getProject())) {
 					fTaskQueue.add(i, subjob);

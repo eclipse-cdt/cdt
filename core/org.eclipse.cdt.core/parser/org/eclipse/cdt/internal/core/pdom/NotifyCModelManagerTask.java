@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,13 +23,12 @@ import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEve
 
 /**
  * Task to notify the CModel manager of changes to the content types.
- *
  */
 public class NotifyCModelManagerTask implements IPDOMIndexerTask {
 	private final IProject fProject;
 
-	public NotifyCModelManagerTask(IProject prj) {
-		fProject= prj;
+	public NotifyCModelManagerTask(IProject project) {
+		fProject= project;
 	}
 
 	public IPDOMIndexer getIndexer() {
@@ -50,5 +49,9 @@ public class NotifyCModelManagerTask implements IPDOMIndexerTask {
 					new ContentTypeChangeEvent(ct2, scope)
 			});
 		}
+	}
+
+	public boolean acceptUrgentTask(IPDOMIndexerTask task) {
+		return false;
 	}
 }

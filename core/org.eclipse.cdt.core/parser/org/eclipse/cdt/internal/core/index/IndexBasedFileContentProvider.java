@@ -129,8 +129,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 				} catch (NeedToParseException e) {
 				}
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
 		
@@ -224,8 +223,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 				fIncludedFiles.add(file.getLocation());
 			}
 			return new InternalFileContent(GAP, macros, directives, new ArrayList<IIndexFile>(filesIncluded));
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
 		return null;
@@ -249,7 +247,6 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 	private boolean collectFileContentForGap(IIndexFile from, IIndexFileLocation to,
 			Set<IIndexFile> filesIncluded, List<IIndexMacro> macros,
 			List<ICPPUsingDirective> directives) throws CoreException {
-
 		final IIndexFileLocation ifl= from.getLocation();
 		if (ifl.equals(to)) {
 			return true;

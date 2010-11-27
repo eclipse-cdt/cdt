@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *	   Markus Schorn - initial API and implementation
+ *	   Sergey Prigogin (Google)
+******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.ArrayList;
@@ -92,8 +93,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 		boolean haveProject= false;
 		if (fFilesAndFolders == null) {
 			project.accept(collector);
-		}
-		else {
+		} else {
 			for (ICElement elem : fFilesAndFolders) {
 				if (elem.getElementType() == ICElement.C_PROJECT) {
 					haveProject= true;
@@ -145,6 +145,10 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 
 	public synchronized IndexerProgress getProgressInformation() {
 		return fDelegate != null ? fDelegate.getProgressInformation() : fProgress;
+	}
+
+	public synchronized boolean acceptUrgentTask(IPDOMIndexerTask task) {
+		return fDelegate != null && fDelegate.acceptUrgentTask(task);
 	}
 
 	public void setTranslationUnitSelection(List<ICElement> filesAndFolders) {

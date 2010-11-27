@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems
+ * Copyright (c) 2005, 2010 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Doug Schaefer (QNX Software Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom;
 
@@ -42,4 +43,15 @@ public interface IPDOMIndexerTask {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public IndexerProgress getProgressInformation();
+
+	/**
+	 * Takes files from another task and adds them to this task in front of all not yet processed
+	 * files. The urgent work my be rejected if this task is not capable of accepting it, or if
+	 * the amount of urgent work is too large compared to the work already assigned to this task.
+	 * @param task the task to add the work from.
+	 * @return {@code true} if the work was accepted, {@code false} if it was rejected.
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=319330"
+	 * @since 5.3
+	 */
+	public boolean acceptUrgentTask(IPDOMIndexerTask task);
 }

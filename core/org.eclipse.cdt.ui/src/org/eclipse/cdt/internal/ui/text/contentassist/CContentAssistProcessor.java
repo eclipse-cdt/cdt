@@ -56,6 +56,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 
 	private static class ActivationSet {
 		private final String theSet;
+
 		ActivationSet(String s) {
 			theSet = s;
 		}
@@ -64,14 +65,11 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 			return -1 != theSet.indexOf(c);
 		}
 	}
-	private ActivationSet fReplacementAutoActivationCharacters;
-	private ActivationSet fCContentAutoActivationCharacters;
 	
 	/**
 	 * A wrapper for {@link ICompetionProposal}s.
 	 */
 	private static class CCompletionProposalWrapper implements ICCompletionProposal {
-
 		private ICompletionProposal fWrappedProposal;
 
 		public CCompletionProposalWrapper(ICompletionProposal proposal) {
@@ -140,10 +138,10 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		public ICompletionProposal unwrap() {
 			return fWrappedProposal;
 		}
-
 	}
 
-
+	private ActivationSet fReplacementAutoActivationCharacters;
+	private ActivationSet fCContentAutoActivationCharacters;
 	private IContextInformationValidator fValidator;
 	private final IEditorPart fEditor;
 
@@ -164,15 +162,16 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 	}
 
 	/*
-	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistProcessor#filterAndSort(java.util.List, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistProcessor#filterAndSort(List, IProgressMonitor)
 	 */
 	@Override
-	protected List<ICompletionProposal> filterAndSortProposals(List<ICompletionProposal> proposals, IProgressMonitor monitor, ContentAssistInvocationContext context) {
+	protected List<ICompletionProposal> filterAndSortProposals(List<ICompletionProposal> proposals,
+			IProgressMonitor monitor, ContentAssistInvocationContext context) {
 		IProposalFilter filter = getCompletionFilter();
 		ICCompletionProposal[] proposalsInput= new ICCompletionProposal[proposals.size()];
 		// wrap proposals which are no ICCompletionProposals
 		boolean wrapped= false;
-		int i=0;
+		int i= 0;
 		for (ICompletionProposal proposal : proposals) {
 			if (proposal instanceof ICCompletionProposal) {
 				proposalsInput[i++]= (ICCompletionProposal)proposal;
@@ -218,8 +217,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		try {
 			IConfigurationElement filterElement = ProposalFilterPreferencesUtil.getPreferredFilterElement();
 			if (null != filterElement) {
-				Object contribObject = filterElement
-						.createExecutableExtension("class"); //$NON-NLS-1$
+				Object contribObject = filterElement.createExecutableExtension("class"); //$NON-NLS-1$
 				if ((contribObject instanceof IProposalFilter)) {
 					filter = (IProposalFilter) contribObject;
 				}
@@ -232,7 +230,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 			CUIPlugin.log(e);
 		}
 
-		if (null == filter) {
+		if (filter == null) {
 			// fail-safe default implementation
 			filter = new DefaultProposalFilter();
 		}
@@ -287,9 +285,10 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 	@Override
 	protected ContentAssistInvocationContext createContext(ITextViewer viewer, int offset, boolean isCompletion) {
 		char activationChar = getActivationChar(viewer, offset);
-		CContentAssistInvocationContext context
-		  = new CContentAssistInvocationContext(viewer, offset, fEditor, isCompletion, isAutoActivated());
-		if (isCompletion && activationChar == '.' && fReplacementAutoActivationCharacters.contains('.')) {
+		CContentAssistInvocationContext context =
+		  		new CContentAssistInvocationContext(viewer, offset, fEditor, isCompletion, isAutoActivated());
+		if (isCompletion && activationChar == '.' && fReplacementAutoActivationCharacters != null &&
+				fReplacementAutoActivationCharacters.contains('.')) {
 			IASTCompletionNode node = context.getCompletionNode();
 			if (node != null) {
 				IASTName[] names = node.getNames();
@@ -310,16 +309,17 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 			boolean isCompletion, CContentAssistInvocationContext context, char activationChar) {
 		IDocument doc = viewer.getDocument();
 		try {
-			doc.replace(offset-1, 1, "->"); //$NON-NLS-1$
+			doc.replace(offset - 1, 1, "->"); //$NON-NLS-1$
 			context.dispose();
 			// if user turned on activation only for replacement characters,
 			// setting the context to null will skip the proposals popup later
-			if (!isAutoActivated() || fCContentAutoActivationCharacters.contains(activationChar))
-				context = new CContentAssistInvocationContext(viewer, offset+1, fEditor,
-															  isCompletion, isAutoActivated());
-			else
+			if (!isAutoActivated() || fCContentAutoActivationCharacters.contains(activationChar)) {
+				context = new CContentAssistInvocationContext(viewer, offset + 1, fEditor,
+						isCompletion, isAutoActivated());
+			} else {
 				context = null;
-		} catch (BadLocationException exc) {
+			}
+		} catch (BadLocationException e) {
 			if (isAutoActivated() && !fCContentAutoActivationCharacters.contains(activationChar)) {
 				if (context != null) {
 					context.dispose(); // XXX dang false positives null deref warnings
@@ -345,8 +345,8 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 			return 0;
 		}
 		try {
-			return doc.getChar(offset-1);
-		} catch (BadLocationException exc) {
+			return doc.getChar(offset - 1);
+		} catch (BadLocationException e) {
 		}
 		return 0;
 	}
@@ -381,9 +381,8 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 				}
 				return true;
 			}
-		} catch (BadLocationException exc) {
+		} catch (BadLocationException e) {
 		}
 		return false;
 	}
-
 }

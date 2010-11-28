@@ -79,7 +79,6 @@ public class LaunchMessages extends NLS {
 	public static String CMainTab_Choose_program_to_run;
 	public static String CMainTab_Choose_program_to_run_from_NAME;
 	public static String CMainTab_UseTerminal;
-	public static String CMainTab_Program_is_not_a_recongnized_executable;
 	public static String CMainTab_Program_invalid_proj_path;
 	public static String CMainTab_Build_Config;
 	public static String CMainTab_Use_Active;
@@ -93,7 +92,6 @@ public class LaunchMessages extends NLS {
 	public static String CMainTab_Workspace_settings_button_label;
 	public static String CMainTab_Workspace_settings_button_tooltip;
 	public static String CMainTab_Workspace_settings_link_label;
-	public static String CMainTab_Workspace_settings_page_id;
 	public static String CDebuggerTab_Advanced_Options_Dialog_Title;
 	public static String CDebuggerTab_Stop_at_main_on_startup;
 	public static String CDebuggerTab_Automatically_track_values_of;

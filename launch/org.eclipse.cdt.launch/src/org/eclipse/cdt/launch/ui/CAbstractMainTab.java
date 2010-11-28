@@ -63,6 +63,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
  * @since 6.1
  */
 public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
+	private static final String LAUNCHING_PREFERENCE_PAGE_ID = "org.eclipse.debug.ui.LaunchingPreferencePage"; //$NON-NLS-1$
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	protected String filterPlatform = EMPTY_STRING;
 
@@ -246,7 +247,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 
 			ICProject cProject = getCProject();
 			if (cProject != null) {
-				dialog.setInitialSelections(new Object[]{cProject});
+				dialog.setInitialSelections(new Object[] { cProject });
 			}
 			if (dialog.open() == Window.OK) {
 				return (ICProject)dialog.getFirstResult();
@@ -394,7 +395,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 			public void widgetSelected(SelectionEvent e) {
 				PreferencesUtil.createPreferenceDialogOn(
 						parent.getShell(), 
-						LaunchMessages.CMainTab_Workspace_settings_page_id, 
+						LAUNCHING_PREFERENCE_PAGE_ID,
 						null, 
 						null).open();
 			}

@@ -72,9 +72,11 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	protected Combo fBuildConfigCombo;
 	/** @since 7.0*/
 	protected Button fBuildConfigAuto;
-	/** Indicates whether the user has clicked on the build config auto button
+	/**
+	 * Indicates whether the user has clicked on the build config auto button
 	 * Prevents causing a delta to the underlying launch configuration if the user hasn't touched this setting.
-	 * @since 7.0*/
+	 * @since 7.0
+	 */
 	protected boolean fBuildConfigAutoChanged;
 	/** @since 6.1 */
 	protected Button fDisableBuildButton;
@@ -150,8 +152,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 			public void modifyText(ModifyEvent evt) {
 				// if project changes, invalidate program name cache
 				fPreviouslyCheckedProgram = null;
-				
-				updateBuildConfigCombo(""); //$NON-NLS-1$
+				updateBuildConfigCombo(EMPTY_STRING);
 				updateLaunchConfigurationDialog();
 			}
 		});
@@ -192,14 +193,12 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 
 		String projectName = project.getElementName();
 		fProjText.setText(projectName);
-		if (currentProjectName.length() == 0)
-		{
+		if (currentProjectName.length() == 0) {
 			// New project selected for the first time, set the program name default too.
 			IBinary[] bins = getBinaryFiles(project);
 			if (bins != null && bins.length == 1) {				
 				fProgText.setText(bins[0].getResource().getProjectRelativePath().toOSString());
 			}
-		
 		}
 	}
 
@@ -262,12 +261,11 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	 * @since 6.0
 	 */
 	protected void updateBuildConfigCombo(String selectedConfigID) {
-		if (fBuildConfigCombo != null)
-		{
+		if (fBuildConfigCombo != null) {
 			fBuildConfigCombo.setEnabled(!fBuildConfigAuto.getSelection());
 			fBuildConfigCombo.removeAll();
 			fBuildConfigCombo.add(LaunchMessages.CMainTab_Use_Active); 
-			fBuildConfigCombo.setData("0", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			fBuildConfigCombo.setData("0", EMPTY_STRING); //$NON-NLS-1$
 			fBuildConfigCombo.select(0);
 			ICProject cproject = getCProject();
 			if (cproject != null) {
@@ -332,13 +330,13 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		    public void widgetSelected(SelectionEvent e) {
 		    	fBuildConfigAutoChanged = true;
 		    	fBuildConfigCombo.setEnabled(false);
-		    	updateBuildConfigCombo(""); //$NON-NLS-1$
+		    	updateBuildConfigCombo(EMPTY_STRING);
 		    	updateLaunchConfigurationDialog();
 		    }
 		    public void widgetDefaultSelected(SelectionEvent e) {
 		    	fBuildConfigAutoChanged = true;
 		    	fBuildConfigCombo.setEnabled(true);
-				updateBuildConfigCombo(""); //$NON-NLS-1$
+				updateBuildConfigCombo(EMPTY_STRING);
 		    	updateLaunchConfigurationDialog();
 		    }
 		});
@@ -417,7 +415,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		if (fBuildConfigAuto != null) {
 			fBuildConfigAuto.setSelection(configAuto);
 			if (configAuto)
-				updateBuildConfigCombo(""); //$NON-NLS-1$
+				updateBuildConfigCombo(EMPTY_STRING);
 		}
 		if (fDisableBuildButton != null)
 			fDisableBuildButton.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_DISABLED);
@@ -582,7 +580,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	@Override
 	protected void updateLaunchConfigurationDialog() {
 		if (fBuildConfigAuto.getSelection())
-			updateBuildConfigCombo(""); //$NON-NLS-1$
+			updateBuildConfigCombo(EMPTY_STRING);
 		super.updateLaunchConfigurationDialog();
 	}
 }

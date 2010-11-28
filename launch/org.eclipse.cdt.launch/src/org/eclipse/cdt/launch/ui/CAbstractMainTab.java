@@ -443,16 +443,18 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	}
 
 	/**
+	 * This method is deprecated since LaunchUtils#getBinary(IProject, IPath) is too slow to be
+	 * called on the UI thread. See "https://bugs.eclipse.org/bugs/show_bug.cgi?id=328012".
 	 * @param project
 	 * @param exePath
 	 * @return
 	 * @throws CoreException
 	 */
+	@Deprecated
 	protected boolean isBinary(IProject project, IPath exePath) throws CoreException {
 		try {
 			Boolean binValue = fBinaryExeCache.get(exePath);
-			if (binValue == null)
-			{
+			if (binValue == null) {
 				IBinaryObject exe = LaunchUtils.getBinary(project, exePath);
 				binValue = exe != null;
 				fBinaryExeCache.put(exePath, binValue);				

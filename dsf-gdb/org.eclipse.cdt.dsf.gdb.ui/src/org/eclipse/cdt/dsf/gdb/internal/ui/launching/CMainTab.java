@@ -474,16 +474,9 @@ public class CMainTab extends CAbstractMainTab {
 					return false;
 				}
 			}
-			try {
-				if (!isBinary(project, exePath)) {
-					setErrorMessage(LaunchMessages.getString("CMainTab.Program_is_not_a_recongnized_executable")); //$NON-NLS-1$
-					return false;
-				}
-			} catch (CoreException e) {
-				GdbUIPlugin.log(e);
-				setErrorMessage(e.getLocalizedMessage());
-				return false;
-			}
+			// Notice that we don't check if exePath points to a valid executable since such
+			// check is too expensive to be done on the UI thread.
+			// See "https://bugs.eclipse.org/bugs/show_bug.cgi?id=328012".
 		}
 		
 		if (fCoreText != null) {

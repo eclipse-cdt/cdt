@@ -61,7 +61,6 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
  * 
  * @since 2.0
  */
-
 public class CMainTab extends CAbstractMainTab {
 
     /**
@@ -483,16 +482,9 @@ public class CMainTab extends CAbstractMainTab {
 					setErrorMessage(fPreviouslyCheckedProgramErrorMsg = LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
 					return (fPreviouslyCheckedProgramIsValid = false);
 				}
-				try {
-					if (!isBinary(project, exePath)) {
-						setErrorMessage(fPreviouslyCheckedProgramErrorMsg = LaunchMessages.getString("CMainTab.Program_is_not_a_recongnized_executable")); //$NON-NLS-1$
-						return (fPreviouslyCheckedProgramIsValid = false);
-					}
-				} catch (CoreException e) {
-					LaunchUIPlugin.log(e);
-					setErrorMessage(fPreviouslyCheckedProgramErrorMsg = e.getLocalizedMessage());
-					return (fPreviouslyCheckedProgramIsValid = false);
-				}
+				// Notice that we don't check if exePath points to a valid executable since such
+				// check is too expensive to be done on the UI thread.
+				// See "https://bugs.eclipse.org/bugs/show_bug.cgi?id=328012".
 			}
 		}
 		

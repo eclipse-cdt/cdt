@@ -88,7 +88,7 @@ public abstract class AbstractLaunchConfigChange extends Change {
 			((CompositeChange) change).add(toAppend);
 			return change;
 		} else {
-			return new CompositeChange(LaunchMessages.getString("AbstractChange.compositeName0"), //$NON-NLS-1$
+			return new CompositeChange(LaunchMessages.AbstractChange_compositeName0, 
 					new Change[] { change, toAppend });
 		}
 	}

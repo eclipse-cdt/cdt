@@ -77,7 +77,7 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 				ICDebuggerPage tab = CDebugUIPlugin.getDefault().getDebuggerPage(id);
 				tab.setDefaults(config);
 			} catch (CoreException e) {
-				LaunchUIPlugin.errorDialog(LaunchMessages.getString("AbstractCDebuggerTab.ErrorLoadingDebuggerPage"), e.getStatus()); //$NON-NLS-1$
+				LaunchUIPlugin.errorDialog(LaunchMessages.AbstractCDebuggerTab_ErrorLoadingDebuggerPage, e.getStatus()); 
 			}
 		}
 	}
@@ -146,11 +146,11 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 	protected boolean validateDebuggerConfig(ILaunchConfiguration config) {
 		ICDebugConfiguration debugConfig = getDebugConfig();
 		if (debugConfig == null) {
-			setErrorMessage(LaunchMessages.getString("CoreFileDebuggerTab.No_debugger_available")); //$NON-NLS-1$
+			setErrorMessage(LaunchMessages.CoreFileDebuggerTab_No_debugger_available); 
 			return false;
 		}
 		if (!validatePlatform(config, debugConfig)) {
-			setErrorMessage(LaunchMessages.getString("CoreFileDebuggerTab.platform_is_not_supported")); //$NON-NLS-1$
+			setErrorMessage(LaunchMessages.CoreFileDebuggerTab_platform_is_not_supported); 
 			return false;
 		}
 		return true;

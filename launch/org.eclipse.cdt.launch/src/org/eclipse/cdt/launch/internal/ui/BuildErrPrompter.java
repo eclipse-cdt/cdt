@@ -95,22 +95,22 @@ public class BuildErrPrompter implements IStatusHandler {
 		if (status.getCode() == STATUS_CODE_ERR_IN_MAIN_PROJ) {
 			if (buildConfigName.length() > 0) {
 				message = MessageFormat.format(
-						LaunchMessages.getString("BuildErrPrompter.error_in_specific_config"), projectName, buildConfigName);  //$NON-NLS-1$
+						LaunchMessages.BuildErrPrompter_error_in_specific_config, projectName, buildConfigName);  
 			}
 			else {
 				message = MessageFormat.format(
-						LaunchMessages.getString("BuildErrPrompter.error_in_active_config"), projectName);  //$NON-NLS-1$
+						LaunchMessages.BuildErrPrompter_error_in_active_config, projectName);  
 			}
 		}
 		else if (status.getCode() == STATUS_CODE_ERR_IN_REFERENCED_PROJS) {
 			if (buildConfigName.length() > 0) {
 				message = MessageFormat.format(
-						LaunchMessages.getString("BuildErrPrompter.error_in_referenced_project_specific"), //$NON-NLS-1$ 
+						LaunchMessages.BuildErrPrompter_error_in_referenced_project_specific,  
 						projectName, buildConfigName);  
 			}
 			else {
 				message = MessageFormat.format(
-						LaunchMessages.getString("BuildErrPrompter.error_in_referenced_project_active"), //$NON-NLS-1$						
+						LaunchMessages.BuildErrPrompter_error_in_referenced_project_active, 						
 						projectName);  
 			}
 		}

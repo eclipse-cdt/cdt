@@ -38,6 +38,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.osgi.util.NLS;
 
 public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 
@@ -55,7 +56,7 @@ public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 			monitor = new NullProgressMonitor();
 		}
 
-		monitor.beginTask(LaunchMessages.getString("LocalAttachLaunchDelegate.Attaching_to_Local_C_Application"), 10); //$NON-NLS-1$
+		monitor.beginTask(LaunchMessages.LocalAttachLaunchDelegate_Attaching_to_Local_C_Application, 10); 
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;
@@ -70,9 +71,10 @@ public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 					exePath = wsProgramPath.getLocation();
 				}
 				if (!exePath.toFile().exists()) {
-					abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
-							new FileNotFoundException(LaunchMessages.getFormattedString(
-									"AbstractCLaunchDelegate.PROGRAM_PATH_not_found", exePath.toOSString())), //$NON-NLS-1$
+					abort(LaunchMessages.AbstractCLaunchDelegate_Program_file_does_not_exist,
+							new FileNotFoundException(
+									NLS.bind(LaunchMessages.AbstractCLaunchDelegate_PROGRAM_PATH_not_found,
+											exePath.toOSString())),
 							ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 				}
 				exeFile = verifyBinary(cproject, exePath);
@@ -89,7 +91,7 @@ public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 					if (config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, -1) == -1) {
 						int pid = promptForProcessID(config);
 						if (pid == -1) {
-							cancel(LaunchMessages.getString("LocalAttachLaunchDelegate.No_Process_ID_selected"), //$NON-NLS-1$
+							cancel(LaunchMessages.LocalAttachLaunchDelegate_No_Process_ID_selected, 
 									ICDTLaunchConfigurationConstants.ERR_NO_PROCESSID);
 						}
 						ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();

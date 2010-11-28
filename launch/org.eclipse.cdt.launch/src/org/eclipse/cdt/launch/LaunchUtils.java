@@ -159,7 +159,7 @@ public class LaunchUtils {
 	 * @param projectDesc The description for the project in which to search for the configuration.
 	 * @param programPath The path to the program to search the build configurations for
 	 * @return The build configuration that builds programName; or null if none or more than one were found.
-	 * @since 6.2
+	 * @since 7.0
 	 */
 	public static ICConfigurationDescription getBuildConfigByProgramPath(IProject project, String programPath) {
 		if (project == null || programPath == null)

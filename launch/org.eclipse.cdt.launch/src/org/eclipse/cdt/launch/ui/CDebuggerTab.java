@@ -68,7 +68,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
      *   
      * @since 6.0
      */
-    public static final String TAB_ID = "org.eclipse.cdt.cdi.launch.debuggerTab";
+    public static final String TAB_ID = "org.eclipse.cdt.cdi.launch.debuggerTab"; //$NON-NLS-1$
     
 	public class AdvancedDebuggerOptionsDialog extends Dialog {
 
@@ -91,14 +91,14 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		protected Control createDialogArea(Composite parent) {
 			Composite composite = (Composite)super.createDialogArea(parent);
 			Group group = new Group(composite, SWT.NONE);
-			group.setText(LaunchMessages.getString("CDebuggerTab.Automatically_track_values_of")); //$NON-NLS-1$
+			group.setText(LaunchMessages.CDebuggerTab_Automatically_track_values_of); 
 			GridLayout layout = new GridLayout();
 			group.setLayout(layout);
 			group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			fVarBookKeeping = new Button(group, SWT.CHECK);
-			fVarBookKeeping.setText(LaunchMessages.getString("CDebuggerTab.Variables")); //$NON-NLS-1$
+			fVarBookKeeping.setText(LaunchMessages.CDebuggerTab_Variables); 
 			fRegBookKeeping = new Button(group, SWT.CHECK);
-			fRegBookKeeping.setText(LaunchMessages.getString("CDebuggerTab.Registers")); //$NON-NLS-1$
+			fRegBookKeeping.setText(LaunchMessages.CDebuggerTab_Registers); 
 			initialize();
 			return composite;
 		}
@@ -111,16 +111,16 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		private void initialize() {
 			Map attr = getAdvancedAttributes();
 			Object varBookkeeping = attr.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING);
-			fVarBookKeeping.setSelection( (varBookkeeping instanceof Boolean) ? !((Boolean)varBookkeeping).booleanValue() : true);
+			fVarBookKeeping.setSelection((varBookkeeping instanceof Boolean) ? !((Boolean)varBookkeeping).booleanValue() : true);
 			Object regBookkeeping = attr.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING);
-			fRegBookKeeping.setSelection( (regBookkeeping instanceof Boolean) ? !((Boolean)regBookkeeping).booleanValue() : true);
+			fRegBookKeeping.setSelection((regBookkeeping instanceof Boolean) ? !((Boolean)regBookkeeping).booleanValue() : true);
 		}
 
 		private void saveValues() {
 			Map attr = getAdvancedAttributes();
-			Boolean varBookkeeping = Boolean.valueOf( !fVarBookKeeping.getSelection() );
+			Boolean varBookkeeping = Boolean.valueOf(!fVarBookKeeping.getSelection());
 			attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, varBookkeeping);
-			Boolean regBookkeeping = Boolean.valueOf( !fRegBookKeeping.getSelection() );
+			Boolean regBookkeeping = Boolean.valueOf(!fRegBookKeeping.getSelection());
 			attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING, regBookkeeping);
 			update();
 		}
@@ -132,7 +132,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		 */
 		protected void configureShell(Shell newShell) {
 			super.configureShell(newShell);
-			newShell.setText(LaunchMessages.getString("CDebuggerTab.Advanced_Options_Dialog_Title")); //$NON-NLS-1$
+			newShell.setText(LaunchMessages.CDebuggerTab_Advanced_Options_Dialog_Title); 
 		}
 	}
 
@@ -165,27 +165,27 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	}
 	
 	public void createControl(Composite parent) {
-		fContainer = new ScrolledComposite( parent, SWT.V_SCROLL | SWT.H_SCROLL );
+		fContainer = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 		fContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fContainer.setLayout( new FillLayout() );
+		fContainer.setLayout(new FillLayout());
 		fContainer.setExpandHorizontal(true);
 		fContainer.setExpandVertical(true);
 		
-		fContents = new Composite( fContainer, SWT.NONE );
+		fContents = new Composite(fContainer, SWT.NONE);
 		setControl(fContainer);
 		LaunchUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
 				ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_DEBBUGER_TAB);
-		int numberOfColumns = ( fAttachMode ) ? 2 : 1;
+		int numberOfColumns = (fAttachMode) ? 2 : 1;
 		GridLayout layout = new GridLayout(numberOfColumns, false);
 		fContents.setLayout(layout);
-		GridData gd = new GridData( GridData.BEGINNING, GridData.CENTER, true, false );
+		GridData gd = new GridData(GridData.BEGINNING, GridData.CENTER, true, false);
 		fContents.setLayoutData(gd);
 
-		createDebuggerCombo(fContents, ( fAttachMode ) ? 1 : 2 );
+		createDebuggerCombo(fContents, (fAttachMode) ? 1 : 2);
 		createOptionsComposite(fContents);
 		createDebuggerGroup(fContents, 2);
 		
-		fContainer.setContent( fContents );
+		fContainer.setContent(fContents);
 	}
 
 	protected void loadDebuggerComboBox(ILaunchConfiguration config, String selection) {
@@ -221,7 +221,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 					list.add(debugConfigs[i]);
 					// select first exact matching debugger for platform or
 					// requested selection
-					if ( (defaultSelection.equals("") && debuggerPlatform.equalsIgnoreCase(configPlatform))) { //$NON-NLS-1$
+					if ((defaultSelection.equals("") && debuggerPlatform.equalsIgnoreCase(configPlatform))) { //$NON-NLS-1$
 						defaultSelection = debugConfigs[i].getID();
 					}
 				}
@@ -322,14 +322,14 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 				? ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH
 				: ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN;
 		if (!debugConfig.supportsMode(mode)) {
-			setErrorMessage(MessageFormat.format(LaunchMessages.getString("CDebuggerTab.Mode_not_supported"), new String[]{mode})); //$NON-NLS-1$
+			setErrorMessage(MessageFormat.format(LaunchMessages.CDebuggerTab_Mode_not_supported, new String[]{mode})); 
 			return false;
 		}
-		if ( fStopInMain != null && fStopInMainSymbol != null ) {
+		if (fStopInMain != null && fStopInMainSymbol != null) {
 			// The "Stop on startup at" field must not be empty
 			String mainSymbol = fStopInMainSymbol.getText().trim();
 			if (fStopInMain.getSelection() && mainSymbol.length() == 0) {
-				setErrorMessage( LaunchMessages.getString("CDebuggerTab.Stop_on_startup_at_can_not_be_empty")); //$NON-NLS-1$
+				setErrorMessage(LaunchMessages.CDebuggerTab_Stop_on_startup_at_can_not_be_empty); 
 				return false;
 			}
 		}
@@ -367,7 +367,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			programName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String)null);
 		} catch (CoreException e) {
 		}
-		if (programName != null ) {
+		if (programName != null) {
 			return LaunchUtils.getBinary(programName, projectName);
 		}
 		return null;
@@ -376,7 +376,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	protected boolean validateDebuggerConfig(ILaunchConfiguration config) {
 		ICDebugConfiguration debugConfig = getDebugConfig();
 		if (debugConfig == null) {
-			setErrorMessage(LaunchMessages.getString("CDebuggerTab.No_debugger_available")); //$NON-NLS-1$
+			setErrorMessage(LaunchMessages.CDebuggerTab_No_debugger_available); 
 			return false;
 		}
 		// We do not validate platform and CPU compatibility to avoid accidentally disabling
@@ -397,13 +397,12 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	protected void createOptionsComposite(Composite parent) {
 		Composite optionsComp = new Composite(parent, SWT.NONE);
 		int numberOfColumns = (fAttachMode) ? 1 : 3;
-		GridLayout layout = new GridLayout( numberOfColumns, false );
-		optionsComp.setLayout( layout );
-		optionsComp.setLayoutData( new GridData( GridData.BEGINNING, GridData.CENTER, true, false, 1, 1 ) );
+		GridLayout layout = new GridLayout(numberOfColumns, false);
+		optionsComp.setLayout(layout);
+		optionsComp.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, true, false, 1, 1));
 		if (fAttachMode == false) {
-			fStopInMain = createCheckButton( optionsComp, LaunchMessages.getString( "CDebuggerTab.Stop_at_main_on_startup" ) ); //$NON-NLS-1$
+			fStopInMain = createCheckButton(optionsComp, LaunchMessages.CDebuggerTab_Stop_at_main_on_startup);
 			fStopInMain.addSelectionListener(new SelectionAdapter() {
-
 				public void widgetSelected(SelectionEvent e) {
 					fStopInMainSymbol.setEnabled(fStopInMain.getSelection());
 					update();
@@ -421,15 +420,14 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			fStopInMainSymbol.getAccessible().addAccessibleListener(
 				new AccessibleAdapter() {                       
 					public void getName(AccessibleEvent e) {
-                            e.result = LaunchMessages.getString( "CDebuggerTab.Stop_at_main_on_startup"); //$NON-NLS-1$
+						e.result = LaunchMessages.CDebuggerTab_Stop_at_main_on_startup;
 					}
 				}
 			);
 		}
-		fAdvancedButton = createPushButton(optionsComp, LaunchMessages.getString("CDebuggerTab.Advanced"), null); //$NON-NLS-1$
+		fAdvancedButton = createPushButton(optionsComp, LaunchMessages.CDebuggerTab_Advanced, null); 
 		((GridData)fAdvancedButton.getLayoutData()).horizontalAlignment = GridData.END;
 		fAdvancedButton.addSelectionListener(new SelectionAdapter() {
-
 			public void widgetSelected(SelectionEvent e) {
 				Dialog dialog = new AdvancedDebuggerOptionsDialog(getShell());
 				dialog.open();
@@ -485,7 +483,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	public void dispose() {
 		getAdvancedAttributes().clear();
 		ICDebuggerPage debuggerPage = getDynamicTab();
-		if ( debuggerPage != null )
+		if (debuggerPage != null)
 			debuggerPage.dispose();
 		super.dispose();
 	}

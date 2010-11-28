@@ -158,7 +158,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 		log(status);
 		Shell shell = getActiveWorkbenchShell();
 		if (shell != null) {
-			ErrorDialog.openError(shell, LaunchMessages.getString("LaunchUIPlugin.Error"), message, status); //$NON-NLS-1$
+			ErrorDialog.openError(shell, LaunchMessages.LaunchUIPlugin_Error, message, status); 
 		}
 	}
 
@@ -167,7 +167,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 		Shell shell = getActiveWorkbenchShell();
 		if (shell != null) {
 			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), 1, t.getMessage(), null);
-			ErrorDialog.openError(shell, LaunchMessages.getString("LaunchUIPlugin.Error"), message, status); //$NON-NLS-1$
+			ErrorDialog.openError(shell, LaunchMessages.LaunchUIPlugin_Error, message, status); 
 		}
 	}
 
@@ -179,8 +179,8 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 	@Override
     public void start(BundleContext context) throws Exception {
 		super.start(context);
-		LaunchUIPlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_FILTERED_DEBUGGERS );
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener( this );
+		LaunchUIPlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_FILTERED_DEBUGGERS);
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
 
 	/*
@@ -190,34 +190,34 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 	 */
 	@Override
     public void stop(BundleContext context) throws Exception {
-        DebugPlugin.getDefault().getLaunchManager().removeLaunchListener( this );
+        DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		super.stop(context);
 	}
 
 	/* (non-Javadoc)
      * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
      */
-    public void launchesAdded( ILaunch[] launches ) {
+    public void launchesAdded(ILaunch[] launches) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
      */
-    public void launchesChanged( ILaunch[] launches ) {
+    public void launchesChanged(ILaunch[] launches) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
      */
-    public void launchesRemoved( ILaunch[] launches ) {
+    public void launchesRemoved(ILaunch[] launches) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
      */
-    public void launchesTerminated( ILaunch[] launches ) {
-        for ( ILaunch l : launches ) {
-            if ( l instanceof CLaunch ) {
+    public void launchesTerminated(ILaunch[] launches) {
+        for (ILaunch l : launches) {
+            if (l instanceof CLaunch) {
                 ((CLaunch)l).refresh();
             }
         }

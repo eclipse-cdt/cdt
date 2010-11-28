@@ -42,6 +42,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -67,9 +68,7 @@ import org.eclipse.swt.widgets.Text;
  * @deprecated
  */
 public class CEnvironmentTab extends CLaunchConfigurationTab {
-
 	protected Properties fElements;
-
 	protected TableViewer fVariableList;
 	protected Button fBtnNew;
 	protected Button fBtnEdit;
@@ -134,7 +133,8 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 
 		protected void configureShell(Shell shell) {
 			super.configureShell(shell);
-			String title = (fEdit) ? LaunchMessages.getString("CEnvironmentTab.Edit_Variable") : LaunchMessages.getString("CEnvironmentTab.New_Variable"); //$NON-NLS-1$ //$NON-NLS-2$
+			String title = (fEdit) ?
+					LaunchMessages.CEnvironmentTab_Edit_Variable : LaunchMessages.CEnvironmentTab_New_Variable;
 			shell.setText(title);
 		}
 
@@ -152,14 +152,14 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 			int fieldWidthHint = convertWidthInCharsToPixels(metrics, 50);
 
 			Label label = new Label(composite, SWT.NONE);
-			label.setText(LaunchMessages.getString("CEnvironmentTab.NameColon")); //$NON-NLS-1$
+			label.setText(LaunchMessages.CEnvironmentTab_NameColon); 
 			fTextName = new Text(composite, SWT.SINGLE | SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.grabExcessHorizontalSpace = true;
 			gd.widthHint = fieldWidthHint;
 			fTextName.setLayoutData(gd);
 			label = new Label(composite, SWT.NONE);
-			label.setText(LaunchMessages.getString("CEnvironmentTab.ValueColon")); //$NON-NLS-1$
+			label.setText(LaunchMessages.CEnvironmentTab_ValueColon); 
 			fTextValue = new Text(composite, SWT.SINGLE | SWT.BORDER);
 			gd = new GridData(GridData.FILL_BOTH);
 			gd.grabExcessHorizontalSpace = true;
@@ -212,7 +212,8 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		Composite control = new Composite(parent, SWT.NONE);
 		setControl(control);
 
-		LaunchUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB);
+		LaunchUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
+				ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB);
 
 		GridLayout gl = new GridLayout(2, false);
 
@@ -275,11 +276,11 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		table.setLinesVisible(true);
 
 		TableColumn column1 = new TableColumn(table, SWT.NULL);
-		column1.setText(LaunchMessages.getString("CEnvironmentTab.Name")); //$NON-NLS-1$
+		column1.setText(LaunchMessages.CEnvironmentTab_Name); 
 		tableLayout.addColumnData(new ColumnWeightData(30));
 
 		TableColumn column2 = new TableColumn(table, SWT.NULL);
-		column2.setText(LaunchMessages.getString("CEnvironmentTab.Value")); //$NON-NLS-1$
+		column2.setText(LaunchMessages.CEnvironmentTab_Value); 
 		tableLayout.addColumnData(new ColumnWeightData(30));
 
 		fVariableList.addDoubleClickListener(new IDoubleClickListener() {
@@ -299,7 +300,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		composite.setLayout(new GridLayout(1, true));
 		fBtnNew = new Button(composite, SWT.NONE);
-		fBtnNew.setText(LaunchMessages.getString("CEnvironmentTab.New...")); //$NON-NLS-1$
+		fBtnNew.setText(LaunchMessages.CEnvironmentTab_New); 
 		fBtnNew.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fBtnNew.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -307,7 +308,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 			}
 		});
 		fBtnImport = new Button(composite, SWT.NONE);
-		fBtnImport.setText(LaunchMessages.getString("CEnvironmentTab.Import...")); //$NON-NLS-1$
+		fBtnImport.setText(LaunchMessages.CEnvironmentTab_Import); 
 		fBtnImport.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fBtnImport.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -315,7 +316,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 			}
 		});
 		fBtnEdit = new Button(composite, SWT.NONE);
-		fBtnEdit.setText(LaunchMessages.getString("CEnvironmentTab.Edit...")); //$NON-NLS-1$
+		fBtnEdit.setText(LaunchMessages.CEnvironmentTab_Edit); 
 		fBtnEdit.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fBtnEdit.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -323,7 +324,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 			}
 		});
 		fBtnRemove = new Button(composite, SWT.NONE);
-		fBtnRemove.setText(LaunchMessages.getString("CEnvironmentTab.Remove")); //$NON-NLS-1$
+		fBtnRemove.setText(LaunchMessages.CEnvironmentTab_Remove); 
 		fBtnRemove.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fBtnRemove.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -357,7 +358,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 	protected void importEntries() {
 		FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
 		final String filename = fileDialog.open();
-		if(filename == null) {
+		if (filename == null) {
 			return;
 		}
 
@@ -369,7 +370,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 	
 	protected void parseImportFile(String filename) {
 		File file = new File(filename);
-		if(!file.exists()) {
+		if (!file.exists()) {
 			return;
 		}
 
@@ -380,12 +381,12 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 			String line, key, value;
 			while((line = reader.readLine()) != null) {
 				line = line.trim();
-				if(line.length() == 0) {
+				if (line.length() == 0) {
 					continue;
 				}
 				
 				int demarcation = line.indexOf("="); //$NON-NLS-1$
-				if(demarcation == -1) {
+				if (demarcation == -1) {
 					key = line;
 					value = ""; //$NON-NLS-1$
 				} else {
@@ -393,10 +394,12 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 					value = line.substring(demarcation + 1, line.length());
 				}
 
-				if(fElements.getProperty(key) != null) {
+				if (fElements.getProperty(key) != null) {
 					boolean overwrite;
-					overwrite = MessageDialog.openQuestion(getShell(), LaunchMessages.getString("CEnvironmentTab.Existing_Environment_Variable"), LaunchMessages.getFormattedString("CEnvironmentTab.Environment_variable_NAME_exists", key)); //$NON-NLS-1$ //$NON-NLS-2$
-					if(!overwrite) {
+					overwrite = MessageDialog.openQuestion(getShell(),
+							LaunchMessages.CEnvironmentTab_Existing_Environment_Variable,
+							NLS.bind(LaunchMessages.CEnvironmentTab_Environment_variable_NAME_exists, key));
+					if (!overwrite) {
 						continue;
 					}
 				}
@@ -464,7 +467,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LaunchMessages.getString("CEnvironmentTab.Environment"); //$NON-NLS-1$
+		return LaunchMessages.CEnvironmentTab_Environment; 
 	}
 
 	/* (non-Javadoc)
@@ -473,5 +476,4 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 	public Image getImage() {
 		return LaunchImages.get(LaunchImages.IMG_VIEW_ENVIRONMENT_TAB);
 	}
-
 }

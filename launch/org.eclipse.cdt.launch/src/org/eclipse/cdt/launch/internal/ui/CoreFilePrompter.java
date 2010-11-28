@@ -39,11 +39,11 @@ public class CoreFilePrompter implements IStatusHandler {
 		if (shell == null) {
 			IStatus error = new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(),
 					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR,
-					LaunchMessages.getString("CoreFileLaunchDelegate.No_Shell_available_in_Launch"), null); //$NON-NLS-1$
+					LaunchMessages.CoreFileLaunchDelegate_No_Shell_available_in_Launch, null); 
 			throw new CoreException(error);
 		}
 		FileDialog dialog = new FileDialog(shell);
-		dialog.setText(LaunchMessages.getString("CoreFileLaunchDelegate.Select_Corefile")); //$NON-NLS-1$
+		dialog.setText(LaunchMessages.CoreFileLaunchDelegate_Select_Corefile); 
 		Object[] args = (Object[])source;
 		IProject project = (IProject)args[0];
 		ICDebugConfiguration debugConfig = (ICDebugConfiguration)args[1];
@@ -61,11 +61,11 @@ public class CoreFilePrompter implements IStatusHandler {
 		if (res != null) {
 			File file = new File(res);
 			if (!file.exists() || !file.canRead()) {
-				ErrorDialog.openError(shell, LaunchMessages.getString("CoreFileLaunchDelegate.postmortem_debugging_failed"), //$NON-NLS-1$
-						LaunchMessages.getString("CoreFileLaunchDelegate.Corefile_not_accessible"), //$NON-NLS-1$
+				ErrorDialog.openError(shell, LaunchMessages.CoreFileLaunchDelegate_postmortem_debugging_failed, 
+						LaunchMessages.CoreFileLaunchDelegate_Corefile_not_accessible, 
 						new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(),
 								ICDTLaunchConfigurationConstants.ERR_NO_COREFILE,
-								LaunchMessages.getString("CoreFileLaunchDelegate.Corefile_not_readable"), null)); //$NON-NLS-1$
+								LaunchMessages.CoreFileLaunchDelegate_Corefile_not_readable, null)); 
 			}
 			return new Path(res);
 		}

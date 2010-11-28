@@ -41,6 +41,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -136,11 +137,11 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				case NONE:
 					return ""; //$NON-NLS-1$
 				case WAIT_FOR_TERMINATION:
-					return LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.WaitUntilTerminated"); //$NON-NLS-1$
+					return LaunchMessages.MultiLaunchConfigurationDelegate_Action_WaitUntilTerminated;
 				case DELAY:
 					final Object actionParam = el.actionParam;
-					return LaunchMessages.getFormattedString("MultiLaunchConfigurationTabGroup.13", //$NON-NLS-1$
-							actionParam instanceof Integer ? Integer.toString((Integer)actionParam) : "?"); //$NON-NLS-1$
+					return NLS.bind(LaunchMessages.MultiLaunchConfigurationTabGroup_13,
+							actionParam instanceof Integer ? Integer.toString((Integer) actionParam) : "?"); //$NON-NLS-1$
 				default:
 					assert false : "new post launch action missing logic here"; //$NON-NLS-1$
 					return ""; //$NON-NLS-1$
@@ -179,11 +180,11 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		public ButtonComposite(Composite parent, int style) {
 			super(parent, style);
 			setLayout(new GridLayout());
-			upButton = createPushButton(this, LaunchMessages.getString("MultiLaunchConfigurationTabGroup.1")); //$NON-NLS-1$
-			downButton = createPushButton(this, LaunchMessages.getString("MultiLaunchConfigurationTabGroup.2")); //$NON-NLS-1$
-			editButton = createPushButton(this, LaunchMessages.getString("MultiLaunchConfigurationTabGroup.3")); //$NON-NLS-1$
-			addButton = createPushButton(this, LaunchMessages.getString("MultiLaunchConfigurationTabGroup.4")); //$NON-NLS-1$
-			deleteButton = createPushButton(this, LaunchMessages.getString("MultiLaunchConfigurationTabGroup.5")); //$NON-NLS-1$
+			upButton = createPushButton(this, LaunchMessages.MultiLaunchConfigurationTabGroup_1); 
+			downButton = createPushButton(this, LaunchMessages.MultiLaunchConfigurationTabGroup_2); 
+			editButton = createPushButton(this, LaunchMessages.MultiLaunchConfigurationTabGroup_3); 
+			addButton = createPushButton(this, LaunchMessages.MultiLaunchConfigurationTabGroup_4); 
+			deleteButton = createPushButton(this, LaunchMessages.MultiLaunchConfigurationTabGroup_5); 
 		
 		}
 
@@ -261,13 +262,13 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			table.setHeaderVisible(true);
 			table.setLayoutData(new GridData(GridData.FILL_BOTH));
 			TreeColumn col1 = new TreeColumn(table, SWT.NONE);
-			col1.setText(LaunchMessages.getString("MultiLaunchConfigurationTabGroup.6")); //$NON-NLS-1$
+			col1.setText(LaunchMessages.MultiLaunchConfigurationTabGroup_6); 
 			col1.setWidth(300);
 			TreeColumn col2 = new TreeColumn(table, SWT.NONE);
-			col2.setText(LaunchMessages.getString("MultiLaunchConfigurationTabGroup.7")); //$NON-NLS-1$
+			col2.setText(LaunchMessages.MultiLaunchConfigurationTabGroup_7); 
 			col2.setWidth(100);
 			TreeColumn col3 = new TreeColumn(table, SWT.NONE);
-			col3.setText(LaunchMessages.getString("MultiLaunchConfigurationTabGroup.12")); //$NON-NLS-1$
+			col3.setText(LaunchMessages.MultiLaunchConfigurationTabGroup_12); 
 			col3.setWidth(100);
 		
 			treeViewer.setInput(input);
@@ -443,7 +444,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		}
 
 		public String getName() {
-			return LaunchMessages.getString("MultiLaunchConfigurationTabGroup.10"); //$NON-NLS-1$
+			return LaunchMessages.MultiLaunchConfigurationTabGroup_10; 
 		}
 
 		public void initializeFrom(ILaunchConfiguration configuration) {
@@ -474,12 +475,12 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				if (element.enabled) { 
 					if ( element.data == null) {
 						// error referencing invalid launch
-						setErrorMessage(MessageFormat.format(LaunchMessages.getString("MultiLaunchConfigurationTabGroup.14"), //$NON-NLS-1$
+						setErrorMessage(MessageFormat.format(LaunchMessages.MultiLaunchConfigurationTabGroup_14, 
 								element.name));
 						return false;
 					} else if (!MultiLaunchConfigurationDelegate.isValidLaunchReference(element.data)) {
 						// error referencing invalid launch
-						setErrorMessage(MessageFormat.format(LaunchMessages.getString("MultiLaunchConfigurationTabGroup.15"), //$NON-NLS-1$
+						setErrorMessage(MessageFormat.format(LaunchMessages.MultiLaunchConfigurationTabGroup_15, 
 								element.name));
 						return false;
 					}
@@ -488,7 +489,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			}
 			if (validLaunches < 1) {
 				// must have at least one valid and enabled launch
-				setErrorMessage(LaunchMessages.getString("MultiLaunchConfigurationTabGroup.16")); //$NON-NLS-1$
+				setErrorMessage(LaunchMessages.MultiLaunchConfigurationTabGroup_16); 
 				return false;				
 			}
 			return true;

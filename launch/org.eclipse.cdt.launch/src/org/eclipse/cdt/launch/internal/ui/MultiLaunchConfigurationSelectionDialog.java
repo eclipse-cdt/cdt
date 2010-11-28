@@ -120,10 +120,14 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		Composite comp = (Composite) super.createDialogArea(parent2);
 		
 		// title bar 
-		getShell().setText(fForEditing ? LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.13") : LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.12")); //$NON-NLS-1$ //$NON-NLS-2$
+		getShell().setText(fForEditing ?
+				LaunchMessages.MultiLaunchConfigurationSelectionDialog_13 :
+				LaunchMessages.MultiLaunchConfigurationSelectionDialog_12);
 		
 		// dialog message area (not title bar)
-		setTitle(fForEditing ? LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.15") : LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.14")); //$NON-NLS-1$ //$NON-NLS-2$
+		setTitle(fForEditing ?
+				LaunchMessages.MultiLaunchConfigurationSelectionDialog_15 :
+				LaunchMessages.MultiLaunchConfigurationSelectionDialog_14);
 		
 		fStackComposite = new ComboControlledStackComposite(comp, SWT.NONE);
 		HashMap<String, ILaunchGroup> modes = new HashMap<String, ILaunchGroup>();
@@ -173,7 +177,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 				fTree.getViewer().setSelection(fInitialSelection, true);
 			}
 		}
-		fStackComposite.setLabelText(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.4")); //$NON-NLS-1$
+		fStackComposite.setLabelText(LaunchMessages.MultiLaunchConfigurationSelectionDialog_4); 
 		fStackComposite.pack();
 		Rectangle bounds = fStackComposite.getBounds();
 		// adjust size
@@ -194,7 +198,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		checkboxComp.setLayout(new GridLayout(1, false));
 		checkboxComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Button checkBox = new Button(checkboxComp, SWT.CHECK);
-		checkBox.setText(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.5")); //$NON-NLS-1$
+		checkBox.setText(LaunchMessages.MultiLaunchConfigurationSelectionDialog_5); 
 		checkBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				isDefaultMode = ((Button) e.widget).getSelection();
@@ -211,7 +215,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		comp.setLayout(new GridLayout(4, false));
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Label label = new Label(comp, SWT.NONE);
-		label.setText(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.8")); //$NON-NLS-1$
+		label.setText(LaunchMessages.MultiLaunchConfigurationSelectionDialog_8); 
 		Combo combo = new Combo(comp, SWT.READ_ONLY);
 		combo.add(LaunchElement.actionEnumToStr(EPostLaunchAction.NONE));
 		combo.add(LaunchElement.actionEnumToStr(EPostLaunchAction.WAIT_FOR_TERMINATION));
@@ -227,7 +231,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		combo.setText(MultiLaunchConfigurationDelegate.LaunchElement.actionEnumToStr(action));
 		
 		fDelayAmountLabel = new Label(comp, SWT.NONE);
-		fDelayAmountLabel.setText(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.9")); //$NON-NLS-1$
+		fDelayAmountLabel.setText(LaunchMessages.MultiLaunchConfigurationSelectionDialog_9); 
 		
 		fDelayAmountWidget = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		GridData gridData = new GridData();
@@ -333,7 +337,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		Button ok_button = getButton(IDialogConstants.OK_ID);
 		boolean isValid = true;
 		if (getSelectedLaunchConfigurations().length < 1) {
-			setErrorMessage(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.7")); //$NON-NLS-1$
+			setErrorMessage(LaunchMessages.MultiLaunchConfigurationSelectionDialog_7); 
 			isValid = false;
 		} else {
 			setErrorMessage(null);
@@ -343,7 +347,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 			if (fForEditing) {
 				// must have only one selection
 				if (getSelectedLaunchConfigurations().length > 1) {
-					setErrorMessage(LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.11")); //$NON-NLS-1$
+					setErrorMessage(LaunchMessages.MultiLaunchConfigurationSelectionDialog_11); 
 					isValid = false;
 				}
 			}
@@ -352,7 +356,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		if (isValid) {
 			if (action == EPostLaunchAction.DELAY) {
 				isValid = (actionParam instanceof Integer) && ((Integer)actionParam > 0);
-				setErrorMessage(isValid ? null : LaunchMessages.getString("MultiLaunchConfigurationSelectionDialog.10")); //$NON-NLS-1$
+				setErrorMessage(isValid ? null : LaunchMessages.MultiLaunchConfigurationSelectionDialog_10); 
 			}
 		}
 		

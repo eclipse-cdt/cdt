@@ -49,6 +49,7 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * AbstractCLaunchDelegate2 is used by most DSF based debuggers. It replaces AbstractCLaunchDelegate
@@ -453,7 +454,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	@Override
 	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		try {
-			SubMonitor localMonitor = SubMonitor.convert(monitor, LaunchMessages.getString("AbstractCLaunchDelegate.BuildBeforeLaunch"), 10); //$NON-NLS-1$
+			SubMonitor localMonitor = SubMonitor.convert(monitor, LaunchMessages.AbstractCLaunchDelegate_BuildBeforeLaunch, 10); 
 	
 			if (!workspaceBuildBeforeLaunch) {
 				// buildForLaunch was not called which means that the workspace pref is disabled.  see if the user enabled the
@@ -461,9 +462,9 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 				if (ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_ENABLED == configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH,
 						ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING)) {
 					
-					localMonitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.PerformingBuild")); //$NON-NLS-1$
+					localMonitor.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingBuild); 
 					if (buildForLaunch(configuration, mode, localMonitor.newChild(7))) {
-						localMonitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.PerformingIncrementalBuild")); //$NON-NLS-1$
+						localMonitor.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingIncrementalBuild); 
 						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, localMonitor.newChild(3));				
 					}
 				}
@@ -527,33 +528,31 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 			// future additions to the platform's logic.
 			
 			return continueLaunch;
-		}
-		finally {
+		} finally {
 			workspaceBuildBeforeLaunch = false;	// reset for future run
 			if (monitor != null) {
 				monitor.done();
 			}
 		}
-}
+	}
 
 	protected ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
 		String name = CDebugUtils.getProjectName(config);
 		if (name == null && requireCProject) {
-			abort(LaunchMessages.getString("AbstractCLaunchDelegate.C_Project_not_specified"), null, //$NON-NLS-1$
+			abort(LaunchMessages.AbstractCLaunchDelegate_C_Project_not_specified, null, 
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
 		}
 		ICProject cproject = CDebugUtils.getCProject(config);
 		if (cproject == null && requireCProject) {
 			IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			if (!proj.exists()) {
-				abort(
-						LaunchMessages.getFormattedString("AbstractCLaunchDelegate.Project_NAME_does_not_exist", name), null, //$NON-NLS-1$
+				abort(NLS.bind(LaunchMessages.AbstractCLaunchDelegate_Project_NAME_does_not_exist, name), null,
 						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 			} else if (!proj.isOpen()) {
-				abort(LaunchMessages.getFormattedString("AbstractCLaunchDelegate.Project_NAME_is_closed", name), null, //$NON-NLS-1$
+				abort(NLS.bind(LaunchMessages.AbstractCLaunchDelegate_Project_NAME_is_closed, name), null,
 						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 			}
-			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Not_a_C_CPP_project"), null, //$NON-NLS-1$
+			abort(LaunchMessages.AbstractCLaunchDelegate_Not_a_C_CPP_project, null, 
 					ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 		}
 		return cproject;

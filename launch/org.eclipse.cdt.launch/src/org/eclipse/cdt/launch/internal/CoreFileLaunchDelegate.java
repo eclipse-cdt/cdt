@@ -46,7 +46,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask(LaunchMessages.getString("CoreFileLaunchDelegate.Launching_postmortem_debugger"), 10); //$NON-NLS-1$
+		monitor.beginTask(LaunchMessages.CoreFileLaunchDelegate_Launching_postmortem_debugger, 10); 
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;
@@ -65,12 +65,12 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			if (path == null) {
 				IPath corefile = promptForCoreFilePath((IProject)cproject.getResource(), debugConfig);
 				if (corefile == null) {
-					cancel(LaunchMessages.getString("CoreFileLaunchDelegate.No_Corefile_selected"), //$NON-NLS-1$
+					cancel(LaunchMessages.CoreFileLaunchDelegate_No_Corefile_selected, 
 							ICDTLaunchConfigurationConstants.ERR_NO_COREFILE);
 				}
 				File file = new File(corefile.toString());
 				if (!file.exists() || !file.canRead()) {
-					cancel(LaunchMessages.getString("CoreFileLaunchDelegate.Corefile_not_readable"), //$NON-NLS-1$
+					cancel(LaunchMessages.CoreFileLaunchDelegate_Corefile_not_readable, 
 							ICDTLaunchConfigurationConstants.ERR_NO_COREFILE);
 				}
 				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
@@ -81,7 +81,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			} else {
 				File file = new File(path);
 				if (!file.exists() || !file.canRead()) {
-					abort(LaunchMessages.getString("CoreFileLaunchDelegate.Corefile_not_readable"), null,  //$NON-NLS-1$
+					abort(LaunchMessages.CoreFileLaunchDelegate_Corefile_not_readable, null,  
 							ICDTLaunchConfigurationConstants.ERR_NO_COREFILE);
 				}
 				dsession = debugConfig.createDebugger().createDebuggerSession(launch, exeFile, new SubProgressMonitor(monitor, 8));

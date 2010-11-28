@@ -81,7 +81,7 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 	@Override
 	public String getName() {
 		if (changeName == null) {
-			changeName = NLS.bind(LaunchMessages.getString("ProjectRenameChange.name"), //$NON-NLS-1$
+			changeName = NLS.bind(LaunchMessages.ProjectRenameChange_name, 
 					getLaunchConfiguration().getName());
 		}
 
@@ -131,7 +131,7 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 		} catch (CoreException e) {
 			LaunchUIPlugin.log(new MultiStatus(LaunchUIPlugin.PLUGIN_ID, 0,
 					new IStatus[] { e.getStatus() }, NLS.bind(
-							LaunchMessages.getString("ProjectRenameChange.saveFailed"), //$NON-NLS-1$
+							LaunchMessages.ProjectRenameChange_saveFailed, 
 							launchConfig.getName()), null));
 			return null; // not undoable, as we didn't effect our change
 		}

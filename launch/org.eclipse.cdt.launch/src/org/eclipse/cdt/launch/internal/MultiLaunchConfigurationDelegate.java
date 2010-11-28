@@ -43,6 +43,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
@@ -71,27 +72,27 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		public static String actionEnumToStr(EPostLaunchAction action) {
 			switch (action) {
 			case NONE:
-				return LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.None"); //$NON-NLS-1$
+				return LaunchMessages.MultiLaunchConfigurationDelegate_Action_None; 
 			case WAIT_FOR_TERMINATION:
-				return LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.WaitUntilTerminated"); //$NON-NLS-1$
+				return LaunchMessages.MultiLaunchConfigurationDelegate_Action_WaitUntilTerminated; 
 			case DELAY:
-				return LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.Delay"); //$NON-NLS-1$
+				return LaunchMessages.MultiLaunchConfigurationDelegate_Action_Delay; 
 			default:
 				assert false : "new post launch action type is missing logic"; //$NON-NLS-1$
-				return LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.None"); //$NON-NLS-1$
+				return LaunchMessages.MultiLaunchConfigurationDelegate_Action_None; 
 			}
 		}
 		/**
 		 * Allows us decouple the enum identifier in the code from its textual representation in the GUI
 		 */
 		public static EPostLaunchAction strToActionEnum(String str) {
-			if (str.equals(LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.None"))) { //$NON-NLS-1$
+			if (str.equals(LaunchMessages.MultiLaunchConfigurationDelegate_Action_None)) { 
 				return EPostLaunchAction.NONE;
 			}
-			else if (str.equals(LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.WaitUntilTerminated"))) { //$NON-NLS-1$
+			else if (str.equals(LaunchMessages.MultiLaunchConfigurationDelegate_Action_WaitUntilTerminated)) { 
 				return EPostLaunchAction.WAIT_FOR_TERMINATION;
 			}
-			else if (str.equals(LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.Delay"))) { //$NON-NLS-1$
+			else if (str.equals(LaunchMessages.MultiLaunchConfigurationDelegate_Action_Delay)) { 
 				return EPostLaunchAction.DELAY;
 			}
 			else {
@@ -348,7 +349,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		boolean dstore = prefStore.getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES);
 
 		try {
-			monitor.beginTask(LaunchMessages.getString("MultiLaunchConfigurationDelegate.0") + configuration.getName(), 1000); //$NON-NLS-1$
+			monitor.beginTask(LaunchMessages.MultiLaunchConfigurationDelegate_0 + configuration.getName(), 1000); 
 			
 			prefStore.setValue(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES,	false);
 			
@@ -371,9 +372,9 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-									LaunchMessages.getString("LaunchUIPlugin.Error"), //$NON-NLS-1$ 
-									LaunchMessages.getFormattedString("MultiLaunchConfigurationDelegate.Cannot", //$NON-NLS-1$ 
-											new String[] { conf.toString(), localMode }));
+									LaunchMessages.LaunchUIPlugin_Error,  
+									NLS.bind(LaunchMessages.MultiLaunchConfigurationDelegate_Cannot, 
+											conf.toString(), localMode));
 						}
 					});
 
@@ -398,8 +399,8 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-									LaunchMessages.getString("LaunchUIPlugin.Error"), //$NON-NLS-1$ 
-									LaunchMessages.getFormattedString("MultiLaunchConfigurationDelegate.Loop", //$NON-NLS-1$ 
+									LaunchMessages.LaunchUIPlugin_Error, 
+									NLS.bind(LaunchMessages.MultiLaunchConfigurationDelegate_Loop, 
 											conf.toString()));
 						}
 					});
@@ -419,8 +420,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		case NONE:
 			return;
 		case WAIT_FOR_TERMINATION:
-			
-			monitor.subTask(LaunchMessages.getString("MultiLaunchConfigurationDelegate.Action.WaitingForTermination") + " " + subLaunch.getLaunchConfiguration().getName()); //$NON-NLS-1$ //$NON-NLS-2$
+			monitor.subTask(LaunchMessages.MultiLaunchConfigurationDelegate_Action_WaitingForTermination + " " + subLaunch.getLaunchConfiguration().getName()); //$NON-NLS-1$
 			while (!subLaunch.isTerminated() && !monitor.isCanceled()) {
 				try {
 					Thread.sleep(1000);
@@ -433,7 +433,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		case DELAY:
 			Integer waitSecs = (Integer)actionParam;
 			if (waitSecs != null) {
-				monitor.subTask(LaunchMessages.getFormattedString("MultiLaunchConfigurationDelegate.Action.Delaying", //$NON-NLS-1$ 
+				monitor.subTask(NLS.bind(LaunchMessages.MultiLaunchConfigurationDelegate_Action_Delaying, 
 						waitSecs.toString()));			
 				try {
 					Thread.sleep(waitSecs * 1000);	// param is milliseconds

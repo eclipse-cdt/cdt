@@ -41,7 +41,7 @@ public class ProcessPrompter implements IStatusHandler {
 		if (shell == null) {
 			IStatus error = new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(),
 					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR,
-					LaunchMessages.getString("CoreFileLaunchDelegate.No_Shell_available_in_Launch"), null); //$NON-NLS-1$
+					LaunchMessages.CoreFileLaunchDelegate_No_Shell_available_in_Launch, null); 
 			throw new CoreException(error);
 		}
 
@@ -82,18 +82,18 @@ public class ProcessPrompter implements IStatusHandler {
 			}
 		};
 		TwoPaneElementSelector dialog = new TwoPaneElementSelector(shell, provider, qprovider);
-		dialog.setTitle(LaunchMessages.getString("LocalAttachLaunchDelegate.Select_Process")); //$NON-NLS-1$
-		dialog.setMessage(LaunchMessages.getString("LocalAttachLaunchDelegate.Select_Process_to_attach_debugger_to")); //$NON-NLS-1$
+		dialog.setTitle(LaunchMessages.LocalAttachLaunchDelegate_Select_Process); 
+		dialog.setMessage(LaunchMessages.LocalAttachLaunchDelegate_Select_Process_to_attach_debugger_to); 
 		IProcessList plist = null;
 		try {
 			plist = CCorePlugin.getDefault().getProcessList();
 		} catch (CoreException e) {
-			LaunchUIPlugin.errorDialog(LaunchMessages.getString("LocalAttachLaunchDelegate.CDT_Launch_Error"), e.getStatus()); //$NON-NLS-1$
+			LaunchUIPlugin.errorDialog(LaunchMessages.LocalAttachLaunchDelegate_CDT_Launch_Error, e.getStatus()); 
 		}
 		if (plist == null) {
-			MessageDialog.openError(
-									shell,
-									LaunchMessages.getString("LocalAttachLaunchDelegate.CDT_Launch_Error"), LaunchMessages.getString("LocalAttachLaunchDelegate.Platform_cannot_list_processes")); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openError(shell,
+					LaunchMessages.LocalAttachLaunchDelegate_CDT_Launch_Error,
+					LaunchMessages.LocalAttachLaunchDelegate_Platform_cannot_list_processes);
 			return null;
 		}
 		dialog.setElements(plist.getProcessList());

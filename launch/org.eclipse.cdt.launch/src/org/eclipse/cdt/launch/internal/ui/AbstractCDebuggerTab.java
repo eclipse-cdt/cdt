@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
-
 	protected ILaunchConfiguration fLaunchConfiguration;
 	protected ILaunchConfigurationWorkingCopy fWorkingCopy;
 	protected ICDebugConfiguration fCurrentDebugConfig;
@@ -135,7 +134,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 				}
 			}
 			if (wc != null) {
-				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP, (Map)null);
+				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP, (Map<String, String>) null);
 			}
 		} else {
 			if (wc == null) {
@@ -179,7 +178,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 			try {
 				tab = CDebugUIPlugin.getDefault().getDebuggerPage(debugConfig.getID());
 			} catch (CoreException e) {
-				LaunchUIPlugin.errorDialog(LaunchMessages.getString("AbstractCDebuggerTab.ErrorLoadingDebuggerPage"), e.getStatus()); //$NON-NLS-1$
+				LaunchUIPlugin.errorDialog(LaunchMessages.AbstractCDebuggerTab_ErrorLoadingDebuggerPage, e.getStatus()); 
 			}
 			setDynamicTab(tab);
 		}
@@ -226,7 +225,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, getDebugConfig().getID());
 			ICDebuggerPage dynamicTab = getDynamicTab();
 			if (dynamicTab == null) {
-				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP, (Map)null);
+				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP, (Map<String, String>) null);
 			} else {
 				dynamicTab.performApply(config);
 			}
@@ -246,7 +245,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 		if (getDebugConfig() == null) {
-			setErrorMessage(LaunchMessages.getString("AbstractCDebuggerTab.No_debugger_available")); //$NON-NLS-1$
+			setErrorMessage(LaunchMessages.AbstractCDebuggerTab_No_debugger_available); 
 			return false;
 		}
 
@@ -270,7 +269,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 	}
 
 	public String getName() {
-		return LaunchMessages.getString("AbstractCDebuggerTab.Debugger"); //$NON-NLS-1$
+		return LaunchMessages.AbstractCDebuggerTab_Debugger; 
 	}
 
 	protected void createDebuggerCombo(Composite parent, int colspan) {
@@ -281,7 +280,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		gd.horizontalSpan = colspan;
 		comboComp.setLayoutData(gd);
 		Label dlabel = new Label(comboComp, SWT.NONE);
-		dlabel.setText(LaunchMessages.getString("Launch.common.DebuggerColon")); //$NON-NLS-1$
+		dlabel.setText(LaunchMessages.Launch_common_DebuggerColon); 
 		fDCombo = new Combo(comboComp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		fDCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fDCombo.addSelectionListener(new SelectionListener() {
@@ -325,7 +324,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 
 	protected void createDebuggerGroup(Composite parent, int colspan) {
 		Group debuggerGroup = new Group(parent, SWT.SHADOW_ETCHED_IN);
-		debuggerGroup.setText(LaunchMessages.getString("CDebuggerTab.Debugger_Options")); //$NON-NLS-1$
+		debuggerGroup.setText(LaunchMessages.CDebuggerTab_Debugger_Options); 
 		setDynamicTabHolder(debuggerGroup);
 		GridLayout tabHolderLayout = new GridLayout();
 		tabHolderLayout.marginHeight = 0;
@@ -360,5 +359,4 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		int selectedIndex = fDCombo.getSelectionIndex();
 		return (ICDebugConfiguration)fDCombo.getData(Integer.toString(selectedIndex));
 	}
-
 }

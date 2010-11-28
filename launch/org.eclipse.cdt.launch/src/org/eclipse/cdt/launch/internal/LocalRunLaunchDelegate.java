@@ -51,7 +51,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask(LaunchMessages.getString("LocalRunLaunchDelegate.Launching_Local_C_Application"), 10); //$NON-NLS-1$
+		monitor.beginTask(LaunchMessages.LocalRunLaunchDelegate_Launching_Local_C_Application, 10); 
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;
@@ -89,17 +89,16 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 								opt.setEnvironment(getEnvironmentAsProperty(config));
 							}
 						} catch (CDIException e) {
-							abort(
-									LaunchMessages
-											.getString("LocalRunLaunchDelegate.Failed_setting_runtime_option_though_debugger"), e, //$NON-NLS-1$
+							abort(LaunchMessages.LocalRunLaunchDelegate_Failed_setting_runtime_option_though_debugger, e,
 									ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 						}
 						monitor.worked(1);
-						boolean stopInMain = config
-								.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
+						boolean stopInMain = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
 						String stopSymbol = null;
-						if ( stopInMain )
-							stopSymbol = launch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
+						if (stopInMain)
+							stopSymbol = launch.getLaunchConfiguration().getAttribute(
+									ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
+									ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
 
 						ICDITarget[] targets = dsession.getTargets();
 						for (int i = 0; i < targets.length; i++) {
@@ -125,11 +124,12 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 				if (wd == null) {
 					wd = new File(System.getProperty("user.home", ".")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				ArrayList command = new ArrayList(1 + arguments.length);
+				ArrayList<String> command = new ArrayList<String>(1 + arguments.length);
 				command.add(exePath.toOSString());
 				command.addAll(Arrays.asList(arguments));
-				String[] commandArray = (String[]) command.toArray(new String[command.size()]);
-				boolean usePty = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, ICDTLaunchConfigurationConstants.USE_TERMINAL_DEFAULT);
+				String[] commandArray = command.toArray(new String[command.size()]);
+				boolean usePty = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL,
+						ICDTLaunchConfigurationConstants.USE_TERMINAL_DEFAULT);
 				monitor.worked(5);
 				Process process = exec(commandArray, getEnvironment(config), wd, usePty);
 				monitor.worked(3);
@@ -172,15 +172,15 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 			if (p != null) {
 				p.destroy();
 			}
-			abort(LaunchMessages.getString("LocalRunLaunchDelegate.Error_starting_process"), e, //$NON-NLS-1$
+			abort(LaunchMessages.LocalRunLaunchDelegate_Error_starting_process, e, 
 					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		} catch (NoSuchMethodError e) {
 			//attempting launches on 1.2.* - no ability to set working
 			// directory
 
 			IStatus status = new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(),
-					ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_NOT_SUPPORTED, LaunchMessages
-							.getString("LocalRunLaunchDelegate.Does_not_support_working_dir"), //$NON-NLS-1$
+					ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_NOT_SUPPORTED,
+					LaunchMessages.LocalRunLaunchDelegate_Does_not_support_working_dir,
 					e);
 			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 

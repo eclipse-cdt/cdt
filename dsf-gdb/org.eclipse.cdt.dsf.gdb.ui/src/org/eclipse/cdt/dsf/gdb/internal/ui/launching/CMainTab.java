@@ -356,7 +356,6 @@ public class CMainTab extends CAbstractMainTab {
 	 */
 	@Override
 	protected void handleSearchButtonSelected() {
-
 		if (getCProject() == null) {
 			MessageDialog.openInformation(getShell(), LaunchMessages.getString("CMainTab.Project_required"), //$NON-NLS-1$
 					LaunchMessages.getString("CMainTab.Enter_project_before_searching_for_program")); //$NON-NLS-1$
@@ -364,7 +363,6 @@ public class CMainTab extends CAbstractMainTab {
 		}
 
 		ILabelProvider programLabelProvider = new CElementLabelProvider() {
-
 			@Override
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
@@ -395,7 +393,6 @@ public class CMainTab extends CAbstractMainTab {
 		};
 
 		ILabelProvider qualifierLabelProvider = new CElementLabelProvider() {
-
 			@Override
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
@@ -422,7 +419,6 @@ public class CMainTab extends CAbstractMainTab {
 			IBinary binary = (IBinary)dialog.getFirstResult();
 			fProgText.setText(binary.getResource().getProjectRelativePath().toString());
 		}
-
 	}
 
 	/*
@@ -432,7 +428,6 @@ public class CMainTab extends CAbstractMainTab {
 	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration config) {
-
 		setErrorMessage(null);
 		setMessage(null);
 
@@ -474,16 +469,9 @@ public class CMainTab extends CAbstractMainTab {
 					return false;
 				}
 			}
-			try {
-				if (!isBinary(project, exePath)) {
-					setErrorMessage(LaunchMessages.getString("CMainTab.Program_is_not_a_recongnized_executable")); //$NON-NLS-1$
-					return false;
-				}
-			} catch (CoreException e) {
-				GdbUIPlugin.log(e);
-				setErrorMessage(e.getLocalizedMessage());
-				return false;
-			}
+			// Notice that we don't check if exePath points to a valid executable since such
+			// check is too expensive to be done on the UI thread.
+			// See "https://bugs.eclipse.org/bugs/show_bug.cgi?id=328012".
 		}
 		
 		if (fCoreText != null) {
@@ -541,16 +529,13 @@ public class CMainTab extends CAbstractMainTab {
 	 * Set the program name attributes on the working copy based on the ICElement
 	 */
 	protected void initializeProgramName(ICElement cElement, ILaunchConfigurationWorkingCopy config) {
-
 		boolean renamed = false;
 
-		if (!(cElement instanceof IBinary))
-		{
+		if (!(cElement instanceof IBinary))	{
 			cElement = cElement.getCProject();
 		}
 		
 		if (cElement instanceof ICProject) {
-
 			IProject project = cElement.getCProject().getProject();
 			String name = project.getName();
 			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(project);
@@ -590,8 +575,7 @@ public class CMainTab extends CAbstractMainTab {
 			}
 		}
 		
-		if (!renamed)
-		{
+		if (!renamed) {
 			String name = getLaunchConfigurationDialog().generateName(cElement.getCProject().getElementName());
 			config.rename(name);
 		}
@@ -620,5 +604,4 @@ public class CMainTab extends CAbstractMainTab {
 	public Image getImage() {
 		return LaunchImages.get(LaunchImages.IMG_VIEW_MAIN_TAB);
 	}
-
 }

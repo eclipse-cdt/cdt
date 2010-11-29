@@ -60,7 +60,6 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
  * <p>
  * This class may be instantiated. This class is not intended to be subclassed.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  * @since 2.0
  */
 public class CMainTab extends CAbstractMainTab {

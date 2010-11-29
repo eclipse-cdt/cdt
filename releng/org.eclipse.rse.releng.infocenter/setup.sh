@@ -22,9 +22,8 @@ fi
 # prepare the base Eclipse installation in folder "eclipse"
 ECL_DIR=$IHOME/eclipse
 ep_rel=S
-ep_ver=3.5M4
-ep_date=200812111908
-
+ep_ver=3.7M3
+ep_date=201010281441
 uname_s=`uname -s`
 uname_m=`uname -m`
 case ${uname_s}${uname_m} in
@@ -40,7 +39,7 @@ case ${uname_s}${uname_m} in
 esac
 
 P2_no_dropins=false
-if [ ! -f ${ECL_DIR}/eclipse/plugins/org.eclipse.swt_3.5.0.v3525.jar ]; then
+if [ ! -f ${ECL_DIR}/eclipse/plugins/org.eclipse.swt_3.7.0.v3712b.jar ]; then
   if [ ! -d ${ECL_DIR} ]; then
     mkdir -p ${ECL_DIR}
   else

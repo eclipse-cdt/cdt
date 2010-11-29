@@ -119,7 +119,9 @@ if [ "$NEED_RESTART" != "0" ]; then
   
   #TODO: not sure if we need to delete the old index to force re-indexing
   echo "Deleting old index..."
-  rm -rf $IHOME/config/org.eclipse.help.base
+  #rm -rf $IHOME/config/org.eclipse.help.base
+  rm -rf $IHOME/eclipse/eclipse/configuration/org.eclipse.help.base
+  rm -rf $IHOME/workspace
 
   cd $IHOME
   echo "Restarting infocenter..."

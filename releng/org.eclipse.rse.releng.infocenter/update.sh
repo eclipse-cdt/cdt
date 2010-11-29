@@ -65,10 +65,11 @@ if [ -e TM-terminal-latest.zip ]; then
   fi
   mkdir plugins.tmp
   mv eclipse/plugins/org.eclipse.tm.terminal.view_*.jar plugins.tmp
+  mv eclipse/plugins/org.eclipse.tm.terminal_*.jar plugins.tmp
   rm -rf eclipse
   NUM=`ls plugins.tmp/*.jar | wc -l`
   echo "TM-terminal plugins.tmp: NUM=$NUM"
-  if [ "$NUM" = "1" ]; then
+  if [ "$NUM" = "2" ]; then
     echo "Doc plugins got successfully, installing from plugins.tmp into plugins..."
     if [ -e plugins ]; then 
       rm -rf plugins

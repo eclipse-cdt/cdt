@@ -21,16 +21,16 @@ if [ "$IHOME" = "" ]; then
 fi
 # prepare the base Eclipse installation in folder "eclipse"
 ECL_DIR=$IHOME/eclipse
-#ep_rel=S
-#ep_ver=3.7M3
-#ep_date=201010281441
-#ep_swtver=3.7.0.v3712b
+ep_rel=S
+ep_ver=3.7M3
+ep_date=201010281441
+ep_swtver=3.7.0.v3712b
 
 #Use 3.6.1 base for now because 3.7M3 seems unreliable with long delay over network
-ep_rel=R
-ep_ver=3.6.1
-ep_date=201009090800
-ep_swtver=3.6.1.v3655c
+#ep_rel=R
+#ep_ver=3.6.1
+#ep_date=201009090800
+#ep_swtver=3.6.1.v3655c
 
 uname_s=`uname -s`
 uname_m=`uname -m`

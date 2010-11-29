@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Nikita Shulga - initial API and implementation 
+ * Nikita Shulga (Mentor Graphics) - [331109] Added long-iso time format support
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.scp;
@@ -144,6 +145,13 @@ public class ScpFileAttr {
 	final static DateFormat moreThanSixMonthOldFormat = new SimpleDateFormat(
 			"MMM dd yyyy"); //$NON-NLS-1$
 
+	/*
+	 * ls ISO date format 
+	 */
+	final static DateFormat isoDateFormat = new SimpleDateFormat(
+	"yyyy-MM-dd HH:mm"); //$NON-NLS-1$
+
+	
 	/**
 	 * Parses date time string returned by ls command
 	 * 
@@ -166,6 +174,12 @@ public class ScpFileAttr {
 			return d.getTime() / 1000;
 		} catch (Exception e) {
 		}
+		try {
+			Date d = isoDateFormat.parse(date);
+			return d.getTime() / 1000;
+		} catch (Exception e) {
+		}
+
 		return 0;
 	}
 
@@ -209,17 +223,21 @@ public class ScpFileAttr {
 			fields.pop();
 		}
 
-		/* Date always takes three fields */
+		/* Short date formats always take three fields, long(iso) date format takes only two */
 		if (fields.empty())
 			return;
 		String dateField = fields.pop();
 		if (fields.empty())
 			return;
 		dateField = dateField + " " + fields.pop(); //$NON-NLS-1$
-		if (fields.empty())
-			return;
-		dateField = dateField + " " + fields.pop(); //$NON-NLS-1$
-
+		
+		/*Long date format contains two dashes and colon*/
+		/*If that's not the case - parse last chunk of short date format*/
+		if (dateField.lastIndexOf('-')==dateField.indexOf('-') || dateField.indexOf(':') == -1) { 
+			if (fields.empty())
+				return;
+			dateField = dateField + " " + fields.pop(); //$NON-NLS-1$
+		}
 		mTime = parseDateTime(dateField);
 		/* The rest of the entry is name ( and may be symlink ) */
 		String[] namesplit = Pattern.compile(

@@ -402,6 +402,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 							fFilesToUpdate = urgentTask.fFilesToUpdate;
 							fForceNumberFiles = urgentTask.fForceNumberFiles;
 							fFilesToRemove = urgentTask.fFilesToRemove;
+							updateRequestedFiles(fFilesToUpdate.length + fFilesToRemove.size());
 							extractFiles(files, indexFilesToRemove, monitor);
 							removeFilesInIndex(fFilesToRemove, indexFilesToRemove, monitor);
 						}

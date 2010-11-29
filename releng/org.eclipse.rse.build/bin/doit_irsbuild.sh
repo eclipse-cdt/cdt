@@ -125,7 +125,13 @@ if [ -f package.count -a "$FILES" != "" ]; then
     rm -f ../N.latest/RSE-*.zip
     rm -f ../N.latest/TM-*.zip
     cp -f RSE-SDK-*.zip ../N.latest/RSE-SDK-latest.zip
-    cp -f TM-discovery-*.zip ../N.latest/TM-discovery-latest.zip
+    TERM=`ls TM-terminal-*.zip | grep -v local`
+    if [ x${TERM} != x ]; then
+      cp -f ${TERM} ../N.latest/TM-terminal-latest.zip
+    else
+      echo "ERROR: missing TM-terminal-*.zip"
+    fi
+    #cp -f TM-discovery-*.zip ../N.latest/TM-discovery-latest.zip
     chgrp dsdp-tmadmin ../N.latest/*.zip
     chmod g+w ../N.latest/*.zip
     if [ -d /shared/dsdp/public_html/tm/downloads/drops/N.latest ]; then

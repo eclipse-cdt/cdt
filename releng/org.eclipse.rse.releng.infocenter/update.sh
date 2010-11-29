@@ -25,8 +25,8 @@ fi
 cd $IHOME/deploy/rse
 rm *.zip
 echo "Downloading RSE-SDK-latest.zip..."
-wget -q "http://build.eclipse.org/dsdp/tm/downloads/drops/N.latest/RSE-SDK-latest.zip"
-#wget -q "http://download.eclipse.org/dsdp/tm/downloads/drops/N.latest/RSE-SDK-latest.zip"
+#wget -q "http://build.eclipse.org/dsdp/tm/downloads/drops/N.latest/RSE-SDK-latest.zip"
+wget -q "http://download.eclipse.org/dsdp/tm/downloads/drops/N.latest/RSE-SDK-latest.zip"
 if [ -e RSE-SDK-latest.zip ]; then
   echo "Unzipping..."
   unzip -q RSE-SDK-latest.zip
@@ -49,27 +49,26 @@ else
   echo "Error downloading RSE-SDK-latest.zip"
 fi
 
-#update MTJ into deployment directory
-if [ ! -d $IHOME/deploy/mtj ]; then
-  mkdir -p $IHOME/deploy/mtj
+#update TM-terminal into deployment directory
+if [ ! -d $IHOME/deploy/terminal ]; then
+  mkdir -p $IHOME/deploy/terminal
 fi
-cd $IHOME/deploy/mtj
+cd $IHOME/deploy/terminal
 rm *.zip
-echo "Downloading dsdp-mtj-SDK-incubation-latest.zip..."
-#wget -q "http://build.eclipse.org/dsdp/mtj/downloads/drops/N.latest/dsdp-mtj-SDK-incubation-latest.zip"
-wget -q "http://download.eclipse.org/dsdp/mtj/downloads/drops/N.latest/dsdp-mtj-SDK-incubation-latest.zip"
-if [ -e dsdp-mtj-SDK-incubation-latest.zip ]; then
+echo "Downloading TM-terminal-latest.zip..."
+wget -q "http://download.eclipse.org/dsdp/tm/downloads/drops/N.latest/TM-terminal-latest.zip"
+if [ -e TM-terminal-latest.zip ]; then
   echo "Unzipping..."
-  unzip -q dsdp-mtj-SDK-incubation-latest.zip
+  unzip -q TM-terminal-latest.zip
   if [ -e plugins.tmp ]; then
     rm -rf plugins.tmp
   fi
   mkdir plugins.tmp
-  mv eclipse/plugins/*doc* plugins.tmp
+  mv eclipse/plugins/org.eclipse.tm.terminal.view_*.jar plugins.tmp
   rm -rf eclipse
   NUM=`ls plugins.tmp/*.jar | wc -l`
-  echo "MTJ plugins.tmp: NUM=$NUM"
-  if [ "$NUM" = "2" -o "$NUM" = "1" ]; then
+  echo "TM-terminal plugins.tmp: NUM=$NUM"
+  if [ "$NUM" = "1" ]; then
     echo "Doc plugins got successfully, installing from plugins.tmp into plugins..."
     if [ -e plugins ]; then 
       rm -rf plugins
@@ -77,13 +76,13 @@ if [ -e dsdp-mtj-SDK-incubation-latest.zip ]; then
     mv plugins.tmp plugins
   fi
 else
-  echo "Error downloading dsdp-mtj-SDK-incubation-latest.zip"
+  echo "Error downloading TM-terminal-latest.zip"
 fi
 
 ######################### Deploy all #############################
 echo "Deploying new plug-ins..."
 NEED_RESTART=0
-for COMP in rse dd.dsf nab ercp mtj ; do
+for COMP in rse terminal ; do
   if [ -d "${IHOME}/deploy/${COMP}/plugins" ]; then
     if [ -d "$ECL_DIR/eclipse/dropins/${COMP}/eclipse/plugins" ]; then
       diff -r "${IHOME}/deploy/${COMP}/plugins" "$ECL_DIR/eclipse/dropins/${COMP}/eclipse/plugins" >/dev/null
@@ -107,7 +106,7 @@ if [ "$NEED_RESTART" != "0" ]; then
   echo "Shutting down infocenter..."
   $IHOME/bin/infocenter.sh shutdown
 
-  for COMP in rse dd.dsf nab ercp mtj ; do
+  for COMP in rse terminal ; do
     if [ -d "${IHOME}/deploy/${COMP}/plugins" ]; then
       if [ -d "$ECL_DIR/eclipse/dropins/${COMP}/eclipse/plugins" ]; then
         rm -rf "$ECL_DIR/eclipse/dropins/${COMP}"

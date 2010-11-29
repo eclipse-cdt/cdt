@@ -68,7 +68,13 @@ if [ -d N.latest ]; then
     rm N.latest/RSE-SDK-N*.zip 2>/dev/null
     cd `dirname ${FILES}`
     cp -f RSE-SDK-N*.zip ../N.latest/RSE-SDK-latest.zip
-    cp -f TM-discovery-*.zip ../N.latest/TM-discovery-latest.zip
+    TERM=`ls TM-terminal-*.zip | grep -v local`
+    if [ x${TERM} != x ]; then
+      cp -f ${TERM} ../N.latest/TM-terminal-latest.zip
+    else
+      echo "ERROR: missing TM-terminal-*.zip"
+    fi
+    #cp -f TM-discovery-*.zip ../N.latest/TM-discovery-latest.zip
     cd ../N.latest
     chgrp dsdp-tmadmin *.zip
     chmod g+w *.zip

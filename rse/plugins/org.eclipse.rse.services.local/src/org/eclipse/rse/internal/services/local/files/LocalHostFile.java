@@ -76,8 +76,7 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	public boolean isHidden()
 	{	
 		String name = getName();
-		return name.charAt(0) == '.' || _file.isHidden();
-				
+		return name.charAt(0) == '.' || (!_isRoot && _file.isHidden());				
 	}
 
 	public String getParentPath() 

@@ -40,7 +40,7 @@ public class MIGDBSetArgs extends MIGDBSet {
     }
 
     /**
-     * This ctor is deprecated. Use MIGDBSetArgs(ICommandControlDMContext, String[]) instead.
+     * @deprecated Use MIGDBSetArgs(ICommandControlDMContext, String[]) instead.
      */
     @Deprecated
     public MIGDBSetArgs(ICommandControlDMContext dmc, String arguments) {

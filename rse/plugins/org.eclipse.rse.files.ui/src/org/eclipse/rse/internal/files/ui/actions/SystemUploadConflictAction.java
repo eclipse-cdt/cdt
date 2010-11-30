@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@
  * David McKnight   (IBM)        - [249544] Save conflict dialog appears when saving files in the editor
  * Kevin Doyle		(IBM)		 - [242389] [usability] RSE Save Conflict dialog should indicate which file is in conflict
  * David McKnight   (IBM)        - [267247] Wrong encoding
+ * David McKnight   (IBM)        - [330804] Change the default selection of Save Conflict dialog
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -354,7 +355,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             _overwriteLocalButton = new Button(options, SWT.RADIO);
             _overwriteLocalButton.setText(FileResources.RESID_CONFLICT_SAVE_REPLACELOCAL);
             _overwriteLocalButton.addSelectionListener(this);
-            _overwriteLocalButton.setSelection(true);
+            
 
             _overwriteRemoteButton = new Button(options, SWT.RADIO);
             _overwriteRemoteButton.setText(FileResources.RESID_CONFLICT_SAVE_OVERWRITEREMOTE);
@@ -363,6 +364,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             _saveasButton = new Button(options, SWT.RADIO);
             _saveasButton.setText(FileResources.RESID_CONFLICT_SAVE_SAVETODIFFERENT);
             _saveasButton.addSelectionListener(this);
+            _saveasButton.setSelection(true);
 
             Composite s = new Composite(options, SWT.NONE);
             GridLayout slayout = new GridLayout();
@@ -371,18 +373,28 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             s.setLayoutData(new GridData(GridData.FILL_BOTH));
 
             _saveasFileEntry = new Text(s, SWT.BORDER);
-            _saveasFileEntry.setEnabled(false);
+            _saveasFileEntry.setEnabled(true);
 
             GridData fileEntryData = new GridData(GridData.FILL_BOTH);
             fileEntryData.widthHint = 100;
             _saveasFileEntry.setLayoutData(fileEntryData);
-            _saveasFileEntry.setEditable(false);
+            _saveasFileEntry.setEditable(true);
 
             _browseButton = new Button(s, SWT.PUSH);
             _browseButton.setText(SystemResources.BUTTON_BROWSE);
             _browseButton.addSelectionListener(this);
-            _browseButton.setEnabled(false);
+            _browseButton.setEnabled(true);
 
+            // since saveas is the new default, need to prompt dialog with error message
+            enableOkButton(false);
+            _errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,                     		
+            		ISystemFileConstants.MSG_VALIDATE_PATH_EMPTY,
+            		IStatus.ERROR,
+            		FileResources.MSG_VALIDATE_PATH_EMPTY, 
+            		FileResources.MSG_VALIDATE_PATH_EMPTY_DETAILS);
+
+            setErrorMessage(_errorMessage);
+            
             setHelp();
 
             return c;

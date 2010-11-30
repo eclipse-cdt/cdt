@@ -560,11 +560,11 @@ public class FormattedValueRetriever {
             if (update.getProperties().contains(PROP_ACTIVE_FORMAT_VALUE) &&
                 format.equals(activeFormat)) 
             {
-                PropertiesUpdateStatus.makePropertiesStatus(update.getStatus()).setStatus(
+                PropertiesUpdateStatus.getPropertiesStatus(update).setStatus(
                     new String[] { PROP_ACTIVE_FORMAT_VALUE, formatProperty },
                     staleDataStatus);
             } else {
-                PropertiesUpdateStatus.makePropertiesStatus(update.getStatus()).setStatus(formatProperty, staleDataStatus);                
+                PropertiesUpdateStatus.getPropertiesStatus(update).setStatus(formatProperty, staleDataStatus);                
             }
         }
     }

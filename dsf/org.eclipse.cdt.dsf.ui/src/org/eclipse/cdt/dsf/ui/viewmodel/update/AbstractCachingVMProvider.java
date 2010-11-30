@@ -1177,13 +1177,13 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                                 String missingProperty = itr.next();
                                 if ( !updatePolicyExt.canUpdateDirtyProperty(entry, missingProperty) ) {
                                     itr.remove();
-                                    PropertiesUpdateStatus.makePropertiesStatus(update.getStatus()).setStatus(
+                                    PropertiesUpdateStatus.getPropertiesStatus(update).setStatus(
                                         missingProperty, 
                                         DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_STATE, "Cache contains stale data.  Refresh view.", null ));//$NON-NLS-1$                                    
                                 }
                             }
                         } else {
-                            PropertiesUpdateStatus.makePropertiesStatus(update.getStatus()).setStatus(
+                            PropertiesUpdateStatus.getPropertiesStatus(update).setStatus(
                                 missingProperties.toArray(new String[missingProperties.size()]), 
                                 DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_STATE, "Cache contains stale data.  Refresh view.", null ));//$NON-NLS-1$                                    
                             missingProperties.clear();

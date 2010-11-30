@@ -117,7 +117,7 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
         } else if ((getStatus() instanceof PropertiesUpdateStatus)) {
             ((PropertiesUpdateStatus)getStatus()).add(status);
         } else {
-            assert false : "VMPropertiesUpdate status should always be a PropertiesUpdateStatus";  //$NON-NLS-1$
+            assert getStatus().getSeverity() == IStatus.CANCEL : "VMPropertiesUpdate status should always be a PropertiesUpdateStatus unless update is canceled.";  //$NON-NLS-1$
         }
     }    
     

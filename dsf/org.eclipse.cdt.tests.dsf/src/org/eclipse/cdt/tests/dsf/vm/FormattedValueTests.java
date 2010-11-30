@@ -233,7 +233,10 @@ abstract public class FormattedValueTests extends TestCase implements IViewerUpd
         while (!fViewerListener.isFinished(ALL_UPDATES_COMPLETE | PROPERTY_UPDATES) || !fVMListener.isFinished(CONTENT_UPDATES | PROPERTY_UPDATES)) 
             if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
 
-        validateModel(IFormattedValues.HEX_FORMAT, " (" + FormattedValueVMUtil.getFormatLabel(IFormattedValues.HEX_FORMAT) + ")");        
+        validateModel(IFormattedValues.HEX_FORMAT, 
+                      " (" + FormattedValueVMUtil.getFormatLabel(IFormattedValues.HEX_FORMAT) + ")", 
+                      DummyFormattedValueService.DUMMY_FORMAT, 
+                      " (" + DummyFormattedValueService.DUMMY_FORMAT + ")");        
     }
 
     /**
@@ -345,6 +348,10 @@ abstract public class FormattedValueTests extends TestCase implements IViewerUpd
     }
 
     private void validateModel(final String formatId, final String suffix) {
+        validateModel(formatId, suffix, formatId, suffix);
+    }
+    
+    private void validateModel(final String formatId, final String suffix, final String dummyFormatId, final String dummySuffix) {
         fModel.validateData(
             fViewer, TreePath.EMPTY, 
             new TestElementValidator() {
@@ -356,7 +363,7 @@ abstract public class FormattedValueTests extends TestCase implements IViewerUpd
                     assertEquals(fModel.getFormattedValueText(modelElement, formatId) + suffix, label.getText());
 
                     label = fViewer.getElementLabel(viewerPath, TestModelCachingVMProvider.COLUMN_DUMMY_VALUE);
-                    assertEquals(formatId, label.getText());
+                    assertEquals(dummyFormatId + dummySuffix, label.getText());
                 }
             });
     }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ericsson - Initial API and implementation
+ *	   Sergey Prigogin (Google)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
@@ -14,30 +15,35 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 
 /**
- * 
  *      -gdb-set args ARGS
  *
  * Set the inferior program arguments, to be used in the next `-exec-run'.
  * @since 1.1
- * 
  */
-public class MIGDBSetArgs extends MIGDBSet 
-{
+public class MIGDBSetArgs extends MIGDBSet {
     public MIGDBSetArgs(ICommandControlDMContext dmc) {
-        super(dmc, new String[] {"args"}); //$NON-NLS-1$
+        this(dmc, new String[0]);
     }
-    
-    public MIGDBSetArgs(ICommandControlDMContext dmc, String arguments) {
+
+    /**
+	 * @since 4.0
+	 */
+    public MIGDBSetArgs(ICommandControlDMContext dmc, String[] arguments) {
         super(dmc, null);
 
-    	// We do not want to quote the arguments of this command so we must
-    	// split them into individual strings
-    	String[] argArray = arguments.split(" "); //$NON-NLS-1$
-    	String[] cmdArray = new String[argArray.length + 1];
+    	String[] cmdArray = new String[arguments.length + 1];
     	cmdArray[0] = "args"; //$NON-NLS-1$
-    	for (int i=0; i<argArray.length; i++) {
-    		cmdArray[i+1] = argArray[i];
+    	for (int i = 0; i < arguments.length; i++) {
+    		cmdArray[i + 1] = arguments[i];
     	}
     	setParameters(cmdArray);
+    }
+
+    /**
+     * This ctor is deprecated. Use MIGDBSetArgs(ICommandControlDMContext, String[]) instead.
+     */
+    @Deprecated
+    public MIGDBSetArgs(ICommandControlDMContext dmc, String arguments) {
+        this(dmc, arguments.replaceAll("\n", " ").split(" ")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 }

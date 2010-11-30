@@ -7,19 +7,18 @@
  *
  * Contributors:
  *     Ericsson - Initial API and implementation
- *******************************************************************************/
+ *	   Sergey Prigogin (Google)
+******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 
 /**
- * 
  *      -gdb-set args ARGS
  *
  * Set the inferior program arguments, to be used in the next `-exec-run'.
  * @since 1.1
- * 
  */
 public class MIGDBSetArgs extends MIGDBSet 
 {
@@ -31,12 +30,12 @@ public class MIGDBSetArgs extends MIGDBSet
         super(dmc, null);
 
     	// We do not want to quote the arguments of this command so we must
-    	// split them into individual strings
-    	String[] argArray = arguments.split(" "); //$NON-NLS-1$
+    	// split them into individual strings.
+    	String[] argArray = arguments.replaceAll("\n", " ").split(" "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     	String[] cmdArray = new String[argArray.length + 1];
     	cmdArray[0] = "args"; //$NON-NLS-1$
-    	for (int i=0; i<argArray.length; i++) {
-    		cmdArray[i+1] = argArray[i];
+    	for (int i = 0; i < argArray.length; i++) {
+    		cmdArray[i + 1] = argArray[i];
     	}
     	setParameters(cmdArray);
     }

@@ -565,6 +565,11 @@ public class CommandFactory {
 		return new MIGDBSetArgs(dmc, arguments);
 	}
 
+	/** @since 4.0 */
+	public ICommand<MIInfo> createMIGDBSetArgs(ICommandControlDMContext dmc, String[] arguments) {
+		return new MIGDBSetArgs(dmc, arguments);
+	}
+	
 	public ICommand<MIInfo> createMIGDBSetAutoSolib(ICommandControlDMContext ctx, boolean isSet) {
 		return new MIGDBSetAutoSolib(ctx, isSet);
 	}

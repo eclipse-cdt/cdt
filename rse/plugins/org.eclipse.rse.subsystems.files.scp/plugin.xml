@@ -7,7 +7,8 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/epl-v10.html 
 
 Contributors: 
-Nikita Shulga - initial API and implementation
+Nikita Shulga                   - initial API and implementation
+Anna Dushistova(Mentor Graphics)- [331217] When creating an "SSH Only" connection, scp should not be selected by default
 -->
 
 <?eclipse version="3.1"?>
@@ -23,7 +24,7 @@ Nikita Shulga - initial API and implementation
             iconlive="icons/full/obj16/systemfileslive_obj.gif"
             id="scp.files"
             name="%ScpFileSubsystemName"
-            priority="80"
+            priority="120"
             serviceType="_scp-ssh._tcp"
             systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.aix;org.eclipse.rse.systemtype.ssh"
             vendor="%providerName">

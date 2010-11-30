@@ -221,6 +221,7 @@ public class GdbAdapterFactory
             DsfSession session = fLaunch.getSession();
             
             fViewModelAdapter.dispose();
+            session.unregisterModelAdapter(IViewerInputProvider.class);
 
             session.unregisterModelAdapter(ISourceDisplay.class);
             if (fSourceDisplayAdapter != null) fSourceDisplayAdapter.dispose();
@@ -251,6 +252,9 @@ public class GdbAdapterFactory
             session.unregisterModelAdapter(ISaveTraceDataHandler.class);
             session.unregisterModelAdapter(ISelectNextTraceRecordHandler.class);
             session.unregisterModelAdapter(ISelectPrevTraceRecordHandler.class);
+
+            session.unregisterModelAdapter(IDebugModelProvider.class);
+            session.unregisterModelAdapter(ILaunch.class);
 
             session.unregisterModelAdapter(ICEditorTextHover.class);
 

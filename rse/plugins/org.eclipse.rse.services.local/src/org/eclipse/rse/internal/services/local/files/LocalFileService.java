@@ -47,6 +47,7 @@
  * David McKnight   (IBM)        - [299140] Local Readonly file can't be copied/pasted twice
  * Martin Oberhuber (Wind River) - [314461] NPE deleting a folder w/o permission
  * David McKnight   (IBM)        - [279829] [local] Save conflict dialog keeps popping up on mounted drive
+ * David McKnight   (IBM)        - [331247] Local file paste failed on Vista and Windows 7
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -178,6 +179,9 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			else if (_isWin95)
 			{
 				_osCmdShell = "start /B "; //$NON-NLS-1$
+			}
+			else if (_isWindows){ // newer version of windows (i.e. vista or 7)
+				_osCmdShell = "cmd /C "; //$NON-NLS-1$
 			}
 			_checkedOS = true;
 		}

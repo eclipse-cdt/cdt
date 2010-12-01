@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,13 +27,20 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author Alena
- * 
+ *
  */
 public class CheckerTestCase extends CodanTestCase {
 	protected IMarker[] markers;
 
 	public IMarker checkErrorLine(int i) {
 		return checkErrorLine(currentFile, i);
+	}
+
+	public void checkErrorLines( Object... args ) {
+		for( Object i : args ) {
+			checkErrorLine((Integer) i);
+		}
+		assertEquals(args.length, markers.length);
 	}
 
 	public IMarker checkErrorLine(int i, String problemId) {
@@ -95,7 +102,7 @@ public class CheckerTestCase extends CodanTestCase {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void runOnProject() {
 		try {
@@ -117,7 +124,7 @@ public class CheckerTestCase extends CodanTestCase {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected void runCodan() {
 		CodanRuntime

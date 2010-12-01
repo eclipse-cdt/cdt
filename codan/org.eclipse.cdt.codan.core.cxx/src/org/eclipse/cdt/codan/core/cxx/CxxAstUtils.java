@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -407,5 +409,31 @@ public final class CxxAstUtils {
 
 		});
 		return returnSpecifier[0];
+	}
+	
+	/**
+	 * @param body
+	 * @return
+	 */
+	public boolean isThrowStatement(IASTNode body) {
+		if (!(body instanceof IASTExpressionStatement))
+			return false;
+		IASTExpression expression = ((IASTExpressionStatement) body)
+				.getExpression();
+		if (!(expression instanceof IASTUnaryExpression))
+			return false;
+		return ((IASTUnaryExpression) expression).getOperator() == IASTUnaryExpression.op_throw;
+	}
+
+	public boolean isExitStatement(IASTNode body) {
+		if (!(body instanceof IASTExpressionStatement))
+			return false;
+		IASTExpression expression = ((IASTExpressionStatement) body)
+				.getExpression();
+		if (!(expression instanceof IASTFunctionCallExpression))
+			return false;
+		IASTExpression functionNameExpression = ((IASTFunctionCallExpression) expression)
+				.getFunctionNameExpression();
+		return functionNameExpression.getRawSignature().equals("exit"); //$NON-NLS-1$
 	}
 }

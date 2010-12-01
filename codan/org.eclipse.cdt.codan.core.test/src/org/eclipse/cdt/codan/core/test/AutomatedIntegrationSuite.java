@@ -16,6 +16,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.codan.core.internal.checkers.AssignmentInConditionCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.AssignmentToItselfCheckerTest;
+import org.eclipse.cdt.codan.core.internal.checkers.CaseBreakCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.CatchByReferenceTest;
 import org.eclipse.cdt.codan.core.internal.checkers.ReturnCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.ReturnStyleCheckerTest;
@@ -51,6 +52,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(AssignmentToItselfCheckerTest.class);
 		suite.addTestSuite(ReturnStyleCheckerTest.class);
 		suite.addTestSuite(SuspiciousSemicolonCheckerTest.class);
+		suite.addTestSuite(CaseBreakCheckerTest.class);
 		// framework
 		suite.addTest(CodanFastTestSuite.suite());
 		// quick fixes

@@ -306,5 +306,19 @@
                       name="%problem.name.SuspiciousSemicolon">
                 </problem>
              </checker>
+             <checker
+                   class="org.eclipse.cdt.codan.internal.checkers.CaseBreakChecker"
+                   id="org.eclipse.cdt.codan.internal.checkers.CaseBreak"
+                   name="%checker.name.CaseBreak">
+                <problem
+                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      defaultEnabled="true"
+                      defaultSeverity="Warning"
+                      description="%problem.description.CaseBreak"
+                      id="org.eclipse.cdt.codan.internal.checkers.CaseBreakProblem"
+                      messagePattern="%problem.messagePattern.CaseBreak"
+                      name="%checker.name.CaseBreak">
+                </problem>
+             </checker>
    </extension>
 </plugin>

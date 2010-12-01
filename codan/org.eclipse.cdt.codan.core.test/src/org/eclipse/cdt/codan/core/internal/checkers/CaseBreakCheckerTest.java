@@ -426,4 +426,17 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 				CaseBreakChecker.PARAM_EMPTY_CASE);
 		pref.setValue(val);
 	}
+
+	// void foo(int a) {
+	//   switch( a ) {
+	//   case 1:
+	//     while (a--)
+	//       break;
+	//   }
+	// }
+	public void testEmptyLastCaseWithLoopBreak() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors(); // FALSE NEGATIVE
+		//checkErrorLine(3);
+	}
 }

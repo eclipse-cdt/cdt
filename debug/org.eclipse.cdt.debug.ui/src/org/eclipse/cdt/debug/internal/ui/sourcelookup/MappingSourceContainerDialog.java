@@ -65,23 +65,22 @@ import org.eclipse.ui.PlatformUI;
 public class MappingSourceContainerDialog extends TitleAreaDialog {
 
     class EntryCellModifier implements ICellModifier {
-
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
          */
-        public boolean canModify( Object element, String property ) {
-            return ( CP_COMPILATION_PATH.equals( property ) || CP_FILE_SYSTEM_PATH.equals( property ) );
+        public boolean canModify(Object element, String property) {
+            return (CP_COMPILATION_PATH.equals(property) || CP_FILE_SYSTEM_PATH.equals(property));
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object, java.lang.String)
          */
-        public Object getValue( Object element, String property ) {
-            if ( element instanceof MapEntrySourceContainer ) {
+        public Object getValue(Object element, String property) {
+            if (element instanceof MapEntrySourceContainer) {
                 MapEntrySourceContainer entry = (MapEntrySourceContainer)element;
-                if ( CP_COMPILATION_PATH.equals( property ) )
+                if (CP_COMPILATION_PATH.equals(property))
                     return entry.getBackendPath().toOSString();
-                if ( CP_FILE_SYSTEM_PATH.equals( property ) )
+                if (CP_FILE_SYSTEM_PATH.equals(property))
                     return entry.getLocalPath().toOSString();
             }
             return null;
@@ -90,39 +89,39 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object, java.lang.String, java.lang.Object)
          */
-        public void modify( Object element, String property, Object value ) {
+        public void modify(Object element, String property, Object value) {
             MapEntrySourceContainer entry = 
-                    ( element instanceof Item ) ? 
+                    (element instanceof Item) ? 
                         (MapEntrySourceContainer)((Item)element).getData() 
                         : (MapEntrySourceContainer)element;
             boolean isDirty = false;
-            if ( CP_COMPILATION_PATH.equals( property ) ) {
-                entry.setBackendPath( new Path( (String)value) );
+            if (CP_COMPILATION_PATH.equals(property)) {
+                entry.setBackendPath(new Path((String)value));
                 isDirty = true;
             }
-            else if ( CP_FILE_SYSTEM_PATH.equals( property ) ) {
-                entry.setLocalPath( new Path( (String)value) );
+            else if (CP_FILE_SYSTEM_PATH.equals(property)) {
+                entry.setLocalPath(new Path((String)value));
                 isDirty = true;
             }
-            if ( isDirty )
+            if (isDirty)
                 refresh();
         }
     }
 
     class DirectoryCellEditor extends DialogCellEditor {
 
-        DirectoryCellEditor( Composite parent ) {
-            super( parent );
+        DirectoryCellEditor(Composite parent) {
+            super(parent);
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.DialogCellEditor#openDialogBox(org.eclipse.swt.widgets.Control)
          */
         @Override
-        protected Object openDialogBox( Control cellEditorWindow ) {
+        protected Object openDialogBox(Control cellEditorWindow) {
             TableItem[] selection = ((Table)cellEditorWindow.getParent()).getSelection();
-            DirectoryDialog dialog = new DirectoryDialog( cellEditorWindow.getShell() );
-            dialog.setFilterPath( selection[0].getText( 1 ) );
+            DirectoryDialog dialog = new DirectoryDialog(cellEditorWindow.getShell());
+            dialog.setFilterPath(selection[0].getText(1));
             return dialog.open();
         }
     }
@@ -132,9 +131,9 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
          */
-        public Image getColumnImage( Object element, int columnIndex ) {
-            if ( element instanceof MapEntrySourceContainer && columnIndex == 0 ) {
-                return CDebugImages.get( CDebugImages.IMG_OBJS_PATH_MAP_ENTRY );
+        public Image getColumnImage(Object element, int columnIndex) {
+            if (element instanceof MapEntrySourceContainer && columnIndex == 0) {
+                return CDebugImages.get(CDebugImages.IMG_OBJS_PATH_MAP_ENTRY);
             }
             return null;
         }
@@ -142,12 +141,12 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
          */
-        public String getColumnText( Object element, int columnIndex ) {
-            if ( element instanceof MapEntrySourceContainer ) {
+        public String getColumnText(Object element, int columnIndex) {
+            if (element instanceof MapEntrySourceContainer) {
                 MapEntrySourceContainer entry = (MapEntrySourceContainer)element;
-                if ( columnIndex == 0 )
+                if (columnIndex == 0)
                     return entry.getBackendPath().toOSString();
-                if ( columnIndex == 1 )
+                if (columnIndex == 1)
                     return entry.getLocalPath().toOSString();
             }
             return null;
@@ -172,24 +171,23 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
     
     private boolean fIsValid = true;
 
-    public MappingSourceContainerDialog( Shell shell, MappingSourceContainer container ) {
-        super( shell );
+    public MappingSourceContainerDialog(Shell shell, MappingSourceContainer container) {
+        super(shell);
         fOriginalContainer = container;
         fContainer = container.copy();
         fTableListener = new ControlListener() {
-
             /* (non-Javadoc)
              * @see org.eclipse.swt.events.ControlListener#controlMoved(org.eclipse.swt.events.ControlEvent)
              */
-            public void controlMoved( ControlEvent e ) {
-                MappingSourceContainerDialog.this.controlMoved( e );
+            public void controlMoved(ControlEvent e) {
+                MappingSourceContainerDialog.this.controlMoved(e);
             }
 
             /* (non-Javadoc)
              * @see org.eclipse.swt.events.ControlListener#controlResized(org.eclipse.swt.events.ControlEvent)
              */
-            public void controlResized( ControlEvent e ) {
-                MappingSourceContainerDialog.this.controlResized( e );
+            public void controlResized(ControlEvent e) {
+                MappingSourceContainerDialog.this.controlResized(e);
             }            
         };
     }
@@ -199,7 +197,7 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
      */
     @Override
     public boolean close() {
-        fViewer.getTable().removeControlListener( fTableListener );
+        fViewer.getTable().removeControlListener(fTableListener);
         fContainer.dispose();
         return super.close();
     }
@@ -216,19 +214,19 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
      * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
      */
     @Override
-    protected void configureShell( Shell newShell ) {
-        super.configureShell( newShell );
-        newShell.setText( SourceLookupUIMessages.getString( "PathMappingDialog.16" ) ); //$NON-NLS-1$
-        newShell.setToolTipText( SourceLookupUIMessages.getString( "MappingSourceContainerDialog.0" ) ); //$NON-NLS-1$
-        newShell.setImage( CDebugImages.get(  CDebugImages.IMG_OBJS_PATH_MAPPING ) );
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setText(SourceLookupUIMessages.PathMappingDialog_16);
+        newShell.setToolTipText(SourceLookupUIMessages.MappingSourceContainerDialog_0);
+        newShell.setImage(CDebugImages.get( CDebugImages.IMG_OBJS_PATH_MAPPING));
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
      */
     @Override
-    protected Control createContents( Composite parent ) {
-        Control control = super.createContents( parent );
+    protected Control createContents(Composite parent) {
+        Control control = super.createContents(parent);
         initialize();
         return control;
     }
@@ -237,24 +235,20 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     @Override
-    protected Control createDialogArea( Composite parent ) {
-        Composite control = (Composite)super.createDialogArea( parent );
+    protected Control createDialogArea(Composite parent) {
+        Composite control = (Composite)super.createDialogArea(parent);
+        setTitle(SourceLookupUIMessages.PathMappingDialog_0);
+        setTitleImage(CDebugImages.get(CDebugImages.IMG_WIZBAN_PATH_MAPPING));
 
-        setTitle( SourceLookupUIMessages.getString( "PathMappingDialog.0" ) ); //$NON-NLS-1$
-        setTitleImage( CDebugImages.get( CDebugImages.IMG_WIZBAN_PATH_MAPPING ) );
+        Composite composite = new Composite(control, SWT.None);
+        composite.setLayout(new GridLayout(2, false));
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        Composite composite = new Composite( control, SWT.None );
-        composite.setLayout( new GridLayout( 2, false ) );
-        composite.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
+        createNameArea(composite);
+        createViewer(composite);
+        createViewerButtonBar(composite);
 
-        createNameArea( composite );
-
-        createViewer( composite );
-
-        createViewerButtonBar( composite );
-
-        PlatformUI.getWorkbench().getHelpSystem().setHelp( getShell(), ICDebugHelpContextIds.SOURCE_PATH_MAP_ENTRY_DIALOG );
-
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(), ICDebugHelpContextIds.SOURCE_PATH_MAP_ENTRY_DIALOG);
         return control;
     }
 
@@ -264,11 +258,10 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
     @Override
     protected void okPressed() {
         fOriginalContainer.clear();
-        fOriginalContainer.setName( fNameText.getText().trim() );
+        fOriginalContainer.setName(fNameText.getText().trim());
         try {
-            fOriginalContainer.addMapEntries( (MapEntrySourceContainer[])fContainer.getSourceContainers() );
-        }
-        catch( CoreException e ) {
+            fOriginalContainer.addMapEntries((MapEntrySourceContainer[])fContainer.getSourceContainers());
+        } catch (CoreException e) {
         }
         super.okPressed();
     }
@@ -277,79 +270,76 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
      * @see org.eclipse.jface.dialogs.TitleAreaDialog#setErrorMessage(java.lang.String)
      */
     @Override
-    public void setErrorMessage( String newErrorMessage ) {
-        fIsValid = ( newErrorMessage == null );
-        super.setErrorMessage( newErrorMessage );
+    public void setErrorMessage(String newErrorMessage) {
+        fIsValid = (newErrorMessage == null);
+        super.setErrorMessage(newErrorMessage);
     }
 
     public MappingSourceContainer getContainer() {
         return fOriginalContainer;
     }
 
-    private void createNameArea( Composite parent ) {
-        Composite composite = new Composite( parent, SWT.None );
-        composite.setLayout( new GridLayout( 2, false ) );
-        composite.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false, 2, 1 ) );
+    private void createNameArea(Composite parent) {
+        Composite composite = new Composite(parent, SWT.None);
+        composite.setLayout(new GridLayout(2, false));
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));
 
-        Label label = new Label( composite, SWT.NONE );
-        label.setText( SourceLookupUIMessages.getString( "PathMappingDialog.12" ) ); //$NON-NLS-1$
-        fNameText = new Text( composite, SWT.BORDER | SWT.SINGLE );
-        GridData data = new GridData( SWT.FILL, SWT.CENTER, false, false );
+        Label label = new Label(composite, SWT.NONE);
+        label.setText(SourceLookupUIMessages.PathMappingDialog_12);
+        fNameText = new Text(composite, SWT.BORDER | SWT.SINGLE);
+        GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         data.widthHint = 200;
-        fNameText.setLayoutData( data );
-        fNameText.addModifyListener( new ModifyListener() {
-
+        fNameText.setLayoutData(data);
+        fNameText.addModifyListener(new ModifyListener() {
             /* (non-Javadoc)
              * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
              */
-            public void modifyText( ModifyEvent e ) {
+            public void modifyText(ModifyEvent e) {
             }
-        } );
+        });
     }
 
-    private void createViewer( Composite parent ) {
-        Composite tableComp = new Composite( parent, SWT.NONE );
-        tableComp.setLayout( new GridLayout() );
-        tableComp.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
+    private void createViewer(Composite parent) {
+        Composite tableComp = new Composite(parent, SWT.NONE);
+        tableComp.setLayout(new GridLayout());
+        tableComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         
-        fViewer = new TableViewer( tableComp, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION );
+        fViewer = new TableViewer(tableComp, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
         Table table = fViewer.getTable();
-        table.setLinesVisible( true );
-        table.setHeaderVisible( true );     
-        GridData data = new GridData( SWT.FILL, SWT.FILL, true, true );
+        table.setLinesVisible(true);
+        table.setHeaderVisible(true);     
+        GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
         data.widthHint = 500;
         data.heightHint = 200;
-        table.setLayoutData( data );
+        table.setLayoutData(data);
 
-        table.addControlListener( fTableListener );
+        table.addControlListener(fTableListener);
 
-        TableColumn nameColumn = new TableColumn( table, SWT.NULL );
-        nameColumn.setResizable( true );
-        nameColumn.setText( SourceLookupUIMessages.getString( "PathMappingDialog.1" ) ); //$NON-NLS-1$
-        nameColumn.setToolTipText( SourceLookupUIMessages.getString( "MappingSourceContainerDialog.1" ) ); //$NON-NLS-1$
+        TableColumn nameColumn = new TableColumn(table, SWT.NULL);
+        nameColumn.setResizable(true);
+        nameColumn.setText(SourceLookupUIMessages.PathMappingDialog_1);
+        nameColumn.setToolTipText(SourceLookupUIMessages.MappingSourceContainerDialog_1);
         
-        TableColumn valueColumn = new TableColumn( table, SWT.NULL );
-        valueColumn.setResizable( true );
-        valueColumn.setText( SourceLookupUIMessages.getString( "PathMappingDialog.2" ) ); //$NON-NLS-1$
-        valueColumn.setToolTipText( SourceLookupUIMessages.getString( "MappingSourceContainerDialog.2" ) ); //$NON-NLS-1$
+        TableColumn valueColumn = new TableColumn(table, SWT.NULL);
+        valueColumn.setResizable(true);
+        valueColumn.setText(SourceLookupUIMessages.PathMappingDialog_2);
+        valueColumn.setToolTipText(SourceLookupUIMessages.MappingSourceContainerDialog_2);
 
-        fViewer.setColumnProperties( 
+        fViewer.setColumnProperties(
                 new String[] {
                     CP_COMPILATION_PATH,
                     CP_FILE_SYSTEM_PATH,
-                } );
+                });
 
-        fViewer.setContentProvider( new IStructuredContentProvider() {
-
+        fViewer.setContentProvider(new IStructuredContentProvider() {
             /* (non-Javadoc)
              * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
              */
-            public Object[] getElements( Object inputElement ) {
-                if ( inputElement instanceof MappingSourceContainer ) {
+            public Object[] getElements(Object inputElement) {
+                if (inputElement instanceof MappingSourceContainer) {
                     try {
                         return ((MappingSourceContainer)inputElement).getSourceContainers();
-                    }
-                    catch( CoreException e ) {
+                    } catch (CoreException e) {
                     }
                 }
                 return new Object[0];
@@ -364,137 +354,136 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
             /* (non-Javadoc)
              * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
              */
-            public void inputChanged( Viewer viewer, Object oldInput, Object newInput ) {
+            public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
             }
-        } );
+        });
 
-        fViewer.setCellEditors( new CellEditor[] {
-                new TextCellEditor( table ),
-                new DirectoryCellEditor( table ),
-        } );
+        fViewer.setCellEditors(new CellEditor[] {
+                new TextCellEditor(table),
+                new DirectoryCellEditor(table),
+        });
 
-        fViewer.setCellModifier( new EntryCellModifier() );
+        fViewer.setCellModifier(new EntryCellModifier());
 
-        fViewer.setLabelProvider( new EntryLabelProvider() );
+        fViewer.setLabelProvider(new EntryLabelProvider());
         
-        fViewer.addSelectionChangedListener( new ISelectionChangedListener() {
+        fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             /* (non-Javadoc)
              * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
              */
-            public void selectionChanged( SelectionChangedEvent event ) {
+            public void selectionChanged(SelectionChangedEvent event) {
                 updateViewerButtons();
             }
-        } );
+        });
     }
 
-    private void createViewerButtonBar( Composite parent ) {
-        Composite buttonComp = new Composite( parent, SWT.NONE );
-        buttonComp.setLayout( new GridLayout() );
-        buttonComp.setLayoutData( new GridData( SWT.RIGHT, SWT.FILL, false, false ) );
+    private void createViewerButtonBar(Composite parent) {
+        Composite buttonComp = new Composite(parent, SWT.NONE);
+        buttonComp.setLayout(new GridLayout());
+        buttonComp.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));
 
-        fAddButton = createPushButton( buttonComp, SourceLookupUIMessages.getString( "MappingSourceContainerDialog.3" ) ); //$NON-NLS-1$
-        fAddButton.addSelectionListener( new SelectionAdapter() {
+        fAddButton = createPushButton(buttonComp, SourceLookupUIMessages.MappingSourceContainerDialog_3);
+        fAddButton.addSelectionListener(new SelectionAdapter() {
             /* (non-Javadoc)
              * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
              */
             @Override
-            public void widgetSelected( SelectionEvent event ) {
+            public void widgetSelected(SelectionEvent event) {
                 addPathEntry();
             }
-        } );
+        });
 
-        fRemoveButton = createPushButton( buttonComp, SourceLookupUIMessages.getString( "PathMappingDialog.15" ) ); //$NON-NLS-1$
-        fRemoveButton.addSelectionListener( new SelectionAdapter() {
+        fRemoveButton = createPushButton(buttonComp, SourceLookupUIMessages.PathMappingDialog_15);
+        fRemoveButton.addSelectionListener(new SelectionAdapter() {
             /* (non-Javadoc)
              * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
              */
             @Override
-            public void widgetSelected( SelectionEvent event ) {
+            public void widgetSelected(SelectionEvent event) {
                 removePathEntries();
             }
-        } );
+        });
 
-        fUpButton = createPushButton( buttonComp, SourceLookupUIMessages.getString( "MappingSourceContainerDialog.4" ) ); //$NON-NLS-1$
-        fUpButton.addSelectionListener( new SelectionAdapter() {
+        fUpButton = createPushButton(buttonComp, SourceLookupUIMessages.MappingSourceContainerDialog_4);
+        fUpButton.addSelectionListener(new SelectionAdapter() {
             /* (non-Javadoc)
              * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
              */
             @Override
-            public void widgetSelected( SelectionEvent event ) {
-                move( true );
+            public void widgetSelected(SelectionEvent event) {
+                move(true);
             }
-        } );
+        });
 
-        fDownButton = createPushButton( buttonComp, SourceLookupUIMessages.getString( "MappingSourceContainerDialog.5" ) ); //$NON-NLS-1$
-        fDownButton.addSelectionListener( new SelectionAdapter() {
+        fDownButton = createPushButton(buttonComp, SourceLookupUIMessages.MappingSourceContainerDialog_5);
+        fDownButton.addSelectionListener(new SelectionAdapter() {
             /* (non-Javadoc)
              * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
              */
             @Override
-            public void widgetSelected( SelectionEvent event ) {
-                move( false );
+            public void widgetSelected(SelectionEvent event) {
+                move(false);
             }
-        } );
+        });
     }
 
     private void initialize() {
-        fNameText.setText( fContainer.getName() );
+        fNameText.setText(fContainer.getName());
         fNameText.selectAll();
-        fViewer.setInput( fContainer );
+        fViewer.setInput(fContainer);
         updateViewerButtons();
     }
 
-    private Button createPushButton( Composite parent, String label ) {
-        Button button = new Button( parent, SWT.PUSH );
-        button.setText( label );
-        GridData gd = new GridData( SWT.FILL, SWT.BEGINNING, true, false );
-        gd.widthHint = SWTUtil.getButtonWidthHint( button );
-        button.setLayoutData( gd );
+    private Button createPushButton(Composite parent, String label) {
+        Button button = new Button(parent, SWT.PUSH);
+        button.setText(label);
+        GridData gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+        gd.widthHint = SWTUtil.getButtonWidthHint(button);
+        button.setLayoutData(gd);
         return button;
     }
 
     private MapEntrySourceContainer[] getSelectedEntries() {
         List<?> list = ((IStructuredSelection)fViewer.getSelection()).toList();
-        return list.toArray( new MapEntrySourceContainer[list.size()] );
+        return list.toArray(new MapEntrySourceContainer[list.size()]);
     }
 
     private void updateErrorMessage() {
-        setErrorMessage( null );
+        setErrorMessage(null);
         try {
             ISourceContainer[] containers = fContainer.getSourceContainers();
-            if ( containers.length == 0 )
+            if (containers.length == 0)
                 return;
-            for ( ISourceContainer c : containers ) {
+            for (ISourceContainer c : containers) {
                 MapEntrySourceContainer entry = (MapEntrySourceContainer)c;
                 IPath backendPath = entry.getBackendPath();
-                if ( backendPath.isEmpty() ) {
-                    setErrorMessage( SourceLookupUIMessages.getString( "PathMappingDialog.5" ) ); //$NON-NLS-1$
+                if (backendPath.isEmpty()) {
+                    setErrorMessage(SourceLookupUIMessages.PathMappingDialog_5);
                     break;
                 }
-                if ( !backendPath.isValidPath( backendPath.toString() ) ) {
-                    setErrorMessage( SourceLookupUIMessages.getString( "PathMappingDialog.6" ) ); //$NON-NLS-1$
+                if (!backendPath.isValidPath(backendPath.toString())) {
+                    setErrorMessage(SourceLookupUIMessages.PathMappingDialog_6);
                     break;
                 }
                 IPath localPath = entry.getLocalPath();
-                if ( localPath.isEmpty() ) {
-                    setErrorMessage( SourceLookupUIMessages.getString( "PathMappingDialog.7" ) ); //$NON-NLS-1$
+                if (localPath.isEmpty()) {
+                    setErrorMessage(SourceLookupUIMessages.PathMappingDialog_7);
                     break;
                 }
-                if ( !localPath.toFile().exists() ) {
-                    setErrorMessage( SourceLookupUIMessages.getString( "PathMappingDialog.8" ) ); //$NON-NLS-1$
+                if (!localPath.toFile().exists()) {
+                    setErrorMessage(SourceLookupUIMessages.PathMappingDialog_8);
                     break;
                 }
-                if ( !localPath.toFile().isDirectory() ) {
-                    setErrorMessage( SourceLookupUIMessages.getString( "PathMappingDialog.9" ) ); //$NON-NLS-1$
+                if (!localPath.toFile().isDirectory()) {
+                    setErrorMessage(SourceLookupUIMessages.PathMappingDialog_9);
                     break;
                 }
-                if ( !localPath.toFile().isAbsolute() ) {
-                    setErrorMessage( SourceLookupUIMessages.getString( "PathMappingDialog.10" ) ); //$NON-NLS-1$
+                if (!localPath.toFile().isAbsolute()) {
+                    setErrorMessage(SourceLookupUIMessages.PathMappingDialog_10);
                     break;
                 }
             }
-        }
-        catch( CoreException e ) {
+        } catch (CoreException e) {
             // ignore
         }
     }
@@ -508,51 +497,49 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
         try {
             ISourceContainer[] allEntries = fContainer.getSourceContainers();
             MapEntrySourceContainer[] entries = getSelectedEntries();
-            if ( entries.length == 0 ) {
+            if (entries.length == 0) {
                 remove = false;
             }
 
-            if ( entries.length != 1 ) {
+            if (entries.length != 1) {
                 up = false;
                 down = false;
-            }
-            else {
-                up = ( !entries[0].equals( allEntries[0] ) );
-                down = ( !entries[0].equals( allEntries[allEntries.length - 1] ) );
+            } else {
+                up = (!entries[0].equals(allEntries[0]));
+                down = (!entries[0].equals(allEntries[allEntries.length - 1]));
             }
             
-            ok = ( allEntries.length != 0 && fIsValid );
-        }
-        catch( CoreException e ) {
+            ok = (allEntries.length != 0 && fIsValid);
+        } catch (CoreException e) {
             // ignore, shouldn't happen
         }
-        getButton( IDialogConstants.OK_ID ).setEnabled( ok );
-        fRemoveButton.setEnabled( remove );
-        fUpButton.setEnabled( up );
-        fDownButton.setEnabled( down );
+        getButton(IDialogConstants.OK_ID).setEnabled(ok);
+        fRemoveButton.setEnabled(remove);
+        fUpButton.setEnabled(up);
+        fDownButton.setEnabled(down);
     }
 
     private void refresh() {
         ISelection s = fViewer.getSelection();
         fViewer.refresh();
-        fViewer.setSelection( s );
+        fViewer.setSelection(s);
         updateErrorMessage();
         updateViewerButtons();
     }
 
-    void controlMoved( ControlEvent e ) {
+    void controlMoved(ControlEvent e) {
     }
 
-    void controlResized( ControlEvent e ) {
+    void controlResized(ControlEvent e) {
         // resize columns
         Table table = fViewer.getTable();
         int width = table.getSize().x;
-        if ( width > 0 ) {
+        if (width > 0) {
             TableColumn[] columns = table.getColumns();
             int colWidth = width / columns.length; 
-            for ( TableColumn col : columns ) {
-                if ( col.getWidth() == 0 ) {
-                    col.setWidth( colWidth );
+            for (TableColumn col : columns) {
+                if (col.getWidth() == 0) {
+                    col.setWidth(colWidth);
                 }
             }
         }
@@ -560,41 +547,39 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
 
     void addPathEntry() {
         MapEntrySourceContainer entry = new MapEntrySourceContainer();
-        fContainer.addMapEntry( entry );
+        fContainer.addMapEntry(entry);
         fViewer.refresh();
-        fViewer.setSelection( new StructuredSelection( entry ), true );
+        fViewer.setSelection(new StructuredSelection(entry), true);
         updateViewerButtons();
-        fViewer.editElement( entry, 0 );
+        fViewer.editElement(entry, 0);
     }
 
     void removePathEntries() {
         MapEntrySourceContainer[] entries = getSelectedEntries();
-        fContainer.removeMapEntries( entries );
+        fContainer.removeMapEntries(entries);
         refresh();
     }
 
-    void move( boolean up ) {
+    void move(boolean up) {
         MapEntrySourceContainer[] selEntries = getSelectedEntries();
-        if ( selEntries.length != 1 )
+        if (selEntries.length != 1)
             return;
         MapEntrySourceContainer entry = selEntries[0];
         try {
             ISourceContainer[] containers = fContainer.getSourceContainers();
-            List<MapEntrySourceContainer> list = new ArrayList<MapEntrySourceContainer>( containers.length );
-            for ( ISourceContainer container : containers ) {
-                list.add( ((MapEntrySourceContainer)container).copy() );
+            List<MapEntrySourceContainer> list = new ArrayList<MapEntrySourceContainer>(containers.length);
+            for (ISourceContainer container : containers) {
+                list.add(((MapEntrySourceContainer)container).copy());
             }
-            int index = list.indexOf( entry );
-            list.remove( index );
-            index = ( up ) ? index - 1 : index + 1;
-            list.add( index, entry );
+            int index = list.indexOf(entry);
+            list.remove(index);
+            index = (up) ? index - 1 : index + 1;
+            list.add(index, entry);
             fContainer.clear();
-            fContainer.addMapEntries( list.toArray( new MapEntrySourceContainer[list.size()] ) );
+            fContainer.addMapEntries(list.toArray(new MapEntrySourceContainer[list.size()]));
             refresh();
-        }
-        catch( CoreException e ) {
-        }
-        catch( IndexOutOfBoundsException e ) {
+        } catch (CoreException e) {
+        } catch (IndexOutOfBoundsException e) {
         }
     }
 }

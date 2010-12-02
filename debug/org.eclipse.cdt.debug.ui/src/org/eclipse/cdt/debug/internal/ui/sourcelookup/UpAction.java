@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.sourcelookup; 
  
-import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
@@ -21,28 +21,27 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 public class UpAction extends SourceContainerAction {
 	
 	public UpAction() {
-		super(SourceLookupUIMessages.getString( "UpAction.0" )); //$NON-NLS-1$
+		super(SourceLookupUIMessages.UpAction_0);
 	}
+
 	/**
 	 * Moves all selected entries up one position (if possible).
 	 * 
 	 * @see IAction#run()
 	 */
 	public void run() {
-		List targets = getOrderedSelection();
+		List<ISourceContainer> targets = getOrderedSelection();
 		if (targets.isEmpty()) {
 			return;
 		}
 		int top = 0;
 		int index = 0;
-		List list = getEntriesAsList();
-		Iterator entries = targets.iterator();
-		while (entries.hasNext()) {
-			Object target = entries.next();
+		List<ISourceContainer> list = getEntriesAsList();
+		for (ISourceContainer target : targets) {
 			index = list.indexOf(target);
 			if (index > top) {
 				top = index - 1;
-				Object temp = list.get(top);
+				ISourceContainer temp = list.get(top);
 				list.set(top, target);
 				list.set(index, temp);
 			}
@@ -58,5 +57,4 @@ public class UpAction extends SourceContainerAction {
 		//check that something is selected, it's not first in the list, and it is a root tree node.
 		return !selection.isEmpty() && !isIndexSelected(selection, 0) && getViewer().getTree().getSelection()[0].getParentItem()==null;
 	}
-	
 }

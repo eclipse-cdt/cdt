@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.sourcelookup; 
  
@@ -19,11 +19,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * and the EditSourceLookupPathDialog.
  */
 public class AddContainerAction extends SourceContainerAction {
-	
 	private ISourceLookupDirector fDirector;
 	
 	public AddContainerAction() {
-		super(SourceLookupUIMessages.getString( "AddContainerAction.0" )); //$NON-NLS-1$
+		super(SourceLookupUIMessages.AddContainerAction_0);
 	}
 	
 	/**
@@ -44,9 +43,9 @@ public class AddContainerAction extends SourceContainerAction {
 	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
-		if(selection == null || selection.isEmpty()) {
+		if (selection == null || selection.isEmpty()) {
 			return true;
 		} 
-		return getViewer().getTree().getSelection()[0].getParentItem()==null;
+		return getViewer().getTree().getSelection()[0].getParentItem() == null;
 	}
 }

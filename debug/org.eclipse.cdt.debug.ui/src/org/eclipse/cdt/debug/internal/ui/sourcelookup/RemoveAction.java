@@ -12,24 +12,25 @@ package org.eclipse.cdt.debug.internal.ui.sourcelookup;
  
 import java.util.List;
 
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
  * The action used to remove source containers in the source location dialog/tab.
- * 
  */
 public class RemoveAction extends SourceContainerAction {
 	public RemoveAction() {
-		super(SourceLookupUIMessages.getString( "RemoveAction.0" )); //$NON-NLS-1$
+		super(SourceLookupUIMessages.RemoveAction_0);
 	}
+
 	/**
 	 * Removes all selected entries.
 	 * 
 	 * @see IAction#run()
 	 */
 	public void run() {
-		List targets = getOrderedSelection();
-		List list = getEntriesAsList();
+		List<ISourceContainer> targets = getOrderedSelection();
+		List<ISourceContainer> list = getEntriesAsList();
 		list.removeAll(targets);
 		setEntries(list);
 	}
@@ -39,7 +40,6 @@ public class RemoveAction extends SourceContainerAction {
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
 		//check that something is selected and it is a root tree node.
-		return !selection.isEmpty() && getViewer().getTree().getSelection()[0].getParentItem()==null;
+		return !selection.isEmpty() && getViewer().getTree().getSelection()[0].getParentItem() == null;
 	}
-	
 }

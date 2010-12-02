@@ -22,13 +22,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * Action used to edit source containers on a source lookup path
  */
 public class EditContainerAction extends SourceContainerAction {
-	
 	private ISourceLookupDirector fDirector;
 	private ISourceContainer[] fContainers;
 	private ISourceContainerBrowser fBrowser;
 	
 	public EditContainerAction() {
-		super(SourceLookupUIMessages.getString( "EditContainerAction.0" )); //$NON-NLS-1$
+		super(SourceLookupUIMessages.EditContainerAction_0);
 	}
 	
 	/**
@@ -59,13 +58,13 @@ public class EditContainerAction extends SourceContainerAction {
 	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
-		if(selection == null || selection.isEmpty()) {
+		if (selection == null || selection.isEmpty()) {
 			return false;
 		}
 		if (getViewer().getTree().getSelection()[0].getParentItem()==null) {
 			// can only edit top level items of same type
 			fContainers = new ISourceContainer[selection.size()];
-			Iterator iterator = selection.iterator();
+			Iterator<?> iterator = selection.iterator();
 			ISourceContainer container = (ISourceContainer) iterator.next();
 			ISourceContainerType type = container.getType();
 			fContainers[0] = container;

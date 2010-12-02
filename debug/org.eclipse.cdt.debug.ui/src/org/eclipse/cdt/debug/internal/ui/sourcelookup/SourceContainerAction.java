@@ -71,10 +71,9 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 	 * 
 	 * @return targets for an action
 	 */
-	protected List getOrderedSelection() {
-		List targets = new ArrayList();
-		List selection =
-			((IStructuredSelection) getViewer().getSelection()).toList();
+	protected List<ISourceContainer> getOrderedSelection() {
+		List<ISourceContainer> targets = new ArrayList<ISourceContainer>();
+		List<?> selection = ((IStructuredSelection) getViewer().getSelection()).toList();
 		ISourceContainer[] entries = getViewer().getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			ISourceContainer target = entries[i];
@@ -88,9 +87,9 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 	/**
 	 * Returns a list (copy) of the entries in the viewer
 	 */
-	protected List getEntriesAsList() {
+	protected List<ISourceContainer> getEntriesAsList() {
 		ISourceContainer[] entries = getViewer().getEntries();
-		List list = new ArrayList(entries.length);
+		List<ISourceContainer> list = new ArrayList<ISourceContainer>(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			list.add(entries[i]);
 		}
@@ -100,9 +99,8 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 	/**
 	 * Updates the entries to the entries in the given list
 	 */
-	protected void setEntries(List list) {
-		getViewer().setEntries(
-				(ISourceContainer[]) list.toArray(new ISourceContainer[list.size()]));
+	protected void setEntries(List<ISourceContainer> list) {
+		getViewer().setEntries(list.toArray(new ISourceContainer[list.size()]));
 		// update all selection listeners
 		getViewer().setSelection(getViewer().getSelection());
 	}
@@ -111,14 +109,12 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 	 * Returns whether the item at the given index in the list
 	 * (visually) is selected.
 	 */
-	protected boolean isIndexSelected(
-			IStructuredSelection selection,
-			int index) {
+	protected boolean isIndexSelected(IStructuredSelection selection, int index) {
 		if (selection.isEmpty()) {
 			return false;
 		}
-		Iterator entries = selection.iterator();
-		List list = getEntriesAsList();
+		Iterator<?> entries = selection.iterator();
+		List<?> list = getEntriesAsList();
 		while (entries.hasNext()) {
 			Object next = entries.next();
 			if (list.indexOf(next) == index) {

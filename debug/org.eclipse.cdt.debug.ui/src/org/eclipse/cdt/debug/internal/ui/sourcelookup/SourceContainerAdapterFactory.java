@@ -21,8 +21,8 @@ public class SourceContainerAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
-	public Object getAdapter( Object adaptableObject, Class adapterType ) {
-		if ( adapterType.equals( IWorkbenchAdapter.class ) ) {
+	public Object getAdapter(Object adaptableObject, @SuppressWarnings("rawtypes") Class adapterType) {
+		if (adapterType.equals(IWorkbenchAdapter.class)) {
 			return new SourceContainerWorkbenchAdapter();
 		}
 		return null;
@@ -31,7 +31,7 @@ public class SourceContainerAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[]{ IWorkbenchAdapter.class };
 	}
 }

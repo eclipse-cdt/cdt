@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.sourcelookup; 
 
@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Composite;
  * It is a tree viewer since the containers are represented in tree form.
  */
 public class SourceContainerViewer extends TreeViewer {
-	
 	/**
 	 * Whether enabled/editable.
 	 */
@@ -34,10 +33,9 @@ public class SourceContainerViewer extends TreeViewer {
 	/**
 	 * The source container entries displayed in this viewer
 	 */
-	protected List fEntries = new ArrayList();
+	protected List<ISourceContainer> fEntries = new ArrayList<ISourceContainer>();
 	
 	class ContentProvider implements ITreeContentProvider {
-		
 		/**
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
@@ -81,7 +79,6 @@ public class SourceContainerViewer extends TreeViewer {
 		public boolean hasChildren(Object element) {
 			return ((ISourceContainer)element).isComposite();				
 		}
-		
 	}
 	
 	/**
@@ -105,13 +102,13 @@ public class SourceContainerViewer extends TreeViewer {
 	public void setEntries(ISourceContainer[] entries) {
 		fEntries.clear();
 		for (int i = 0; i < entries.length; i++) {
-			if(entries[i] != null)
+			if (entries[i] != null)
 				fEntries.add(entries[i]);
 		}
 		if (getInput() == null) {
 			setInput(fEntries);
 			//select first item in list
-			if(!fEntries.isEmpty() && fEntries.get(0)!=null)
+			if (!fEntries.isEmpty() && fEntries.get(0)!=null)
 				setSelection(new StructuredSelection(fEntries.get(0)));			
 		} else {
 			refresh();
@@ -124,7 +121,7 @@ public class SourceContainerViewer extends TreeViewer {
 	 * @return the entries in this viewer
 	 */
 	public ISourceContainer[] getEntries() {
-		return (ISourceContainer[])fEntries.toArray(new ISourceContainer[fEntries.size()]);
+		return fEntries.toArray(new ISourceContainer[fEntries.size()]);
 	}
 	
 	/**
@@ -143,8 +140,7 @@ public class SourceContainerViewer extends TreeViewer {
 					fEntries.add(entries[i]);
 				}
 			}
-		} 
-		else { 
+		}  else { 
 			int index = fEntries.indexOf(sel.getFirstElement());
 			for (int i = 0; i < entries.length; i++) {
 				if (!fEntries.contains(entries[i])) {
@@ -154,7 +150,7 @@ public class SourceContainerViewer extends TreeViewer {
 			}
 		}		
 		
-		if(!fEntries.isEmpty() && fEntries.get(0)!=null)
+		if (!fEntries.isEmpty() && fEntries.get(0)!=null)
 			setSelection(new StructuredSelection(fEntries.get(0)));
 		refresh();
 	}	
@@ -166,7 +162,7 @@ public class SourceContainerViewer extends TreeViewer {
 	 */
 	public void setEnabled(boolean enabled) {
 		fEnabled = enabled;
-		// fire selection change to upate actions
+		// fire selection change to update actions
 		setSelection(getSelection());
 	}	
 	

@@ -14,7 +14,6 @@ package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -43,6 +42,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor;
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -55,15 +55,11 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
-import com.ibm.icu.text.MessageFormat;
-
 /**
  * Editor that lets you select a replacement for the missing source file
  * and modifies the source locator accordingly.
- *
  */
 public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
-
 	public final String foundMappingsContainerName = "Found Mappings"; //$NON-NLS-1$
 	private static final String UID_KEY = ".uid"; //$NON-NLS-1$
 	private static final String UID_CLASS_NAME = CSourceNotFoundEditor.class.getName();
@@ -110,8 +106,9 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				IPath tuPath = tunit.getLocation();
 				if (tuPath != null)
 					missingFile = tuPath.toOSString();
-			} else
+			} else {
 				missingFile = ""; //$NON-NLS-1$
+			}
 		}
 		super.setInput(input);
 		syncButtons();
@@ -126,9 +123,8 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 
 	protected String getText() {
 		if (missingFile.length() > 0) {
-			return MessageFormat.format(SourceLookupUIMessages.getString( "CSourceNotFoundEditor.0" ), new String[] { missingFile });  //$NON-NLS-1$
-		}
-		else {
+			return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_0, missingFile);
+		} else {
 			if (context == null)
 				return super.getText();
 			String contextDescription;
@@ -137,21 +133,19 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				contextDescription = description.getDescription();
 			else
 				contextDescription = context.toString();
-			return MessageFormat.format(SourceLookupUIMessages.getString( "CSourceNotFoundEditor.3" ), new String[] { contextDescription });  //$NON-NLS-1$		
+			return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_3, contextDescription);		
 		}
 	}
 
 	protected void createButtons(Composite parent) {
-		
-		if (isDebugElement)
-		{
+		if (isDebugElement) {
 			GridData data;
 			disassemblyButton = new Button(parent, SWT.PUSH);
 			data = new GridData();
 			data.grabExcessHorizontalSpace = false;
 			data.grabExcessVerticalSpace = false;
 			disassemblyButton.setLayoutData(data);
-			disassemblyButton.setText(SourceLookupUIMessages.getString( "CSourceNotFoundEditor.4" )); //$NON-NLS-1$
+			disassemblyButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_4);
 			disassemblyButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
 					viewDisassembly();
@@ -167,7 +161,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			data.grabExcessHorizontalSpace = false;
 			data.grabExcessVerticalSpace = false;
 			locateFileButton.setLayoutData(data);
-			locateFileButton.setText(SourceLookupUIMessages.getString( "CSourceNotFoundEditor.1" )); //$NON-NLS-1$
+			locateFileButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_1);
 			locateFileButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
 					locateFile();
@@ -176,25 +170,22 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			locateFileButton.setData(UID_KEY, UID_LOCATE_FILE_BUTTON);
 		}
 		
-		if (isDebugElement)
-		{
+		if (isDebugElement) {
 			GridData data;
 			editLookupButton = new Button(parent, SWT.PUSH);
 			data = new GridData();
 			data.grabExcessHorizontalSpace = false;
 			data.grabExcessVerticalSpace = false;
 			editLookupButton.setLayoutData(data);
-			editLookupButton.setText(SourceLookupUIMessages.getString( "CSourceNotFoundEditor.5" ));  //$NON-NLS-1$
+			editLookupButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_5);
 			editLookupButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
 					editSourceLookupPath();
 				}
 			});
 			editLookupButton.setData(UID_KEY, UID_EDIT_LOOKUP_BUTTON);
-			
 		}
 		syncButtons();
-
 	}
 
 	protected void viewDisassembly() {		
@@ -202,36 +193,31 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		if (page != null) {		
 			try {
 				page.showView("org.eclipse.cdt.dsf.debug.ui.disassembly.view"); //$NON-NLS-1$
-			} catch (PartInitException e) {}
+			} catch (PartInitException e) {
+			}
 		}
 	}
 
 	private void addSourceMappingToDirector(IPath missingPath, IPath newSourcePath, AbstractSourceLookupDirector director) throws CoreException {
-
-		ArrayList containerList = new ArrayList(Arrays.asList(director.getSourceContainers()));
-
-		boolean hasFoundMappings = false;
-
+		ArrayList<ISourceContainer> containerList = new ArrayList<ISourceContainer>(Arrays.asList(director.getSourceContainers()));
 		MappingSourceContainer foundMappings = null;
-		
-		for (Iterator iter = containerList.iterator(); iter.hasNext() && !hasFoundMappings;) {
-			ISourceContainer container = (ISourceContainer) iter.next();
-			if (container instanceof MappingSourceContainer)
-			{
-				hasFoundMappings = container.getName().equals(foundMappingsContainerName);
-				if (hasFoundMappings)
+		for (ISourceContainer container : containerList) {
+			if (container instanceof MappingSourceContainer) {
+				if (container.getName().equals(foundMappingsContainerName)) {
 					foundMappings = (MappingSourceContainer) container;
+					break;
+				}
 			}
 		}
 
-		if (!hasFoundMappings) {
+		if (foundMappings == null) {
 			foundMappings = new MappingSourceContainer(foundMappingsContainerName);
 			foundMappings.init(director);
 			containerList.add(foundMappings);
 		}
 		
 		foundMappings.addMapEntry(new MapEntrySourceContainer(missingPath, newSourcePath));
-		director.setSourceContainers((ISourceContainer[]) containerList.toArray(new ISourceContainer[containerList.size()]));
+		director.setSourceContainers(containerList.toArray(new ISourceContainer[containerList.size()]));
 	}
 
 	/**
@@ -271,25 +257,22 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			}
 
 			addSourceMappingToDirector(missingPath, newSourcePath, director);
-			
 			configuration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, director.getMemento());
 			configuration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, director.getId());
 			configuration.doSave();
-
 		}
 	}
 	
 	protected void locateFile() {
 		FileDialog dialog = new FileDialog(getEditorSite().getShell(), SWT.NONE);
 		Path missingPath = new Path(missingFile);
-		dialog.setFilterNames(new String[] {SourceLookupUIMessages.getString("CSourceNotFoundEditor.2")}); //$NON-NLS-1$
+		dialog.setFilterNames(new String[] {SourceLookupUIMessages.CSourceNotFoundEditor_2});
 		dialog.setFilterExtensions(new String[] {"*." + missingPath.getFileExtension()}); //$NON-NLS-1$
 		String res = dialog.open();
 		if (res != null) {
 			Path newPath = new Path(res);
 			
 			if (newPath.lastSegment().equalsIgnoreCase(missingPath.lastSegment())) {
-				
 				if (missingPath.segmentCount() > 1) {
 					IPath compPath = missingPath.removeLastSegments(1);
 					IPath newSourcePath = newPath.removeLastSegments(1);
@@ -298,22 +281,18 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 							addSourceMappingToLaunch(compPath, newSourcePath);
 						else
 							addSourceMappingToCommon(compPath, newSourcePath);							
-					} catch (CoreException e) {}					
-					
+					} catch (CoreException e) {
+					}					
 				}
 				
 				IWorkbenchPage page = getEditorSite().getPage();
 				
-				if (isDebugElement)
-				{
+				if (isDebugElement) {
 					ISourceDisplay adapter = (ISourceDisplay)context.getAdapter(ISourceDisplay.class);
 					if (adapter != null) {						
 						adapter.displaySource(context, page, true);
 					}					
-				}
-				else
-				if (isTranslationUnit)
-				{
+				} else if (isTranslationUnit) {
 					reopenTranslationUnit(tunit);
 				}
 				closeEditor();
@@ -321,41 +300,34 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		}
 	}
 
-	private boolean reopenTranslationUnit(ITranslationUnit tu)
-	{
-		if (tu != null)
-		{
+	private boolean reopenTranslationUnit(ITranslationUnit tu){
+		if (tu != null){
 			IPath tuPath = tu.getLocation();
-			if (tuPath != null)
-			{
+			if (tuPath != null){
 				String filePath = tuPath.toOSString();
 				try {
 					Object[] foundElements = CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().findSourceElements(filePath);
-					if (foundElements.length == 1 && foundElements[0] instanceof IFile)
-					{
+					if (foundElements.length == 1 && foundElements[0] instanceof IFile){
 						EditorUtility.openInEditor(foundElements[0]);
 						return true;						
-					}
-					else
-					if (foundElements.length == 1 && foundElements[0] instanceof LocalFileStorage)
-					{
+					} else if (foundElements.length == 1 && foundElements[0] instanceof LocalFileStorage) {
 						LocalFileStorage newLocation = (LocalFileStorage) foundElements[0];
-						if (newLocation.getFullPath().toFile().exists())
-						{
+						if (newLocation.getFullPath().toFile().exists()) {
 							ITranslationUnit remappedTU = tu;
 							if (tu instanceof ExternalTranslationUnit)
-								
 								// TODO:  source lookup needs to be modified to use URIs
 								remappedTU = new ExternalTranslationUnit(tu.getParent(), URIUtil.toURI(newLocation.getFullPath()), tu.getContentTypeId());										
 							EditorUtility.openInEditor(remappedTU);
 							return true;
 						}
 					}
-				} catch (CoreException e) {}
+				} catch (CoreException e) {
+				}
 			}
 		}
 		return false;
 	}
+
 	/**
 	 * @Override
 	 * @see org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor#getArtifact()

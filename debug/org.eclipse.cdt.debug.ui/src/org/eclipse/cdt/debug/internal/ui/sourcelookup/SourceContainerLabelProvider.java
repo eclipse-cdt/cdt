@@ -22,7 +22,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * Label provider for source containers and source container types.
  */
 public class SourceContainerLabelProvider extends LabelProvider {
-	
 	private ILabelProvider fLabelProvider = null;
 	
 	/* (non-Javadoc)
@@ -33,7 +32,7 @@ public class SourceContainerLabelProvider extends LabelProvider {
 		if (image == null) {
 			ISourceContainerType type = null;
 			if (element instanceof ISourceContainer) {
-				type = ((ISourceContainer)element).getType();
+				type = ((ISourceContainer) element).getType();
 			} else if (element instanceof ISourceContainerType) {
 				type = (ISourceContainerType) element;
 			}
@@ -58,7 +57,7 @@ public class SourceContainerLabelProvider extends LabelProvider {
 			if (element instanceof ISourceContainer) {
 				return ((ISourceContainer) element).getName(); 
 			} else if (element instanceof ISourceContainerType) {
-				return ((ISourceContainerType)element).getName();
+				return ((ISourceContainerType) element).getName();
 			}
 		} else {
 			return label;

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.sourcelookup; 
 
@@ -31,33 +31,33 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 	 */
-	public Object[] getChildren( Object o ) {
+	public Object[] getChildren(Object o) {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
 	 */
-	public ImageDescriptor getImageDescriptor( Object o ) {
-		if ( o instanceof MappingSourceContainer ) {
+	public ImageDescriptor getImageDescriptor(Object o) {
+		if (o instanceof MappingSourceContainer) {
 			return CDebugImages.DESC_OBJS_PATH_MAPPING;
 		}
-		if ( o instanceof MapEntrySourceContainer ) {
+		if (o instanceof MapEntrySourceContainer) {
 			return CDebugImages.DESC_OBJS_PATH_MAP_ENTRY;
 		}
-		if ( o instanceof ProjectSourceContainer ) {
+		if (o instanceof ProjectSourceContainer) {
 			IProject project = ((ProjectSourceContainer)o).getProject();
-			ICProject cProject = CCorePlugin.getDefault().getCoreModel().create( project );
-			if ( cProject != null )
-				return getImageDescriptor( cProject );
+			ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(project);
+			if (cProject != null)
+				return getImageDescriptor(cProject);
 		}
 		return null;
 	}
 
-	protected ImageDescriptor getImageDescriptor( ICElement element ) {
-		IWorkbenchAdapter adapter = (IWorkbenchAdapter)element.getAdapter( IWorkbenchAdapter.class );
-		if ( adapter != null ) {
-			return adapter.getImageDescriptor( element );
+	protected ImageDescriptor getImageDescriptor(ICElement element) {
+		IWorkbenchAdapter adapter = (IWorkbenchAdapter)element.getAdapter(IWorkbenchAdapter.class);
+		if (adapter != null) {
+			return adapter.getImageDescriptor(element);
 		}
 		return null;
 	}
@@ -65,11 +65,11 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 	 */
-	public String getLabel( Object o ) {
-		if ( o instanceof MappingSourceContainer ) {
-			return SourceLookupUIMessages.getString( "SourceContainerWorkbenchAdapter.0" ) + ((MappingSourceContainer)o).getName(); //$NON-NLS-1$
+	public String getLabel(Object o) {
+		if (o instanceof MappingSourceContainer) {
+			return SourceLookupUIMessages.SourceContainerWorkbenchAdapter_0 + ((MappingSourceContainer)o).getName();
 		}
-		if ( o instanceof MapEntrySourceContainer ) {
+		if (o instanceof MapEntrySourceContainer) {
 			return ((MapEntrySourceContainer)o).getName();
 		}
 		return null;
@@ -78,23 +78,23 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
 	 */
-	public Object getParent( Object o ) {
+	public Object getParent(Object o) {
 		return null;
 	}
 
-	public String getQualifiedName( IPath path ) {
+	public String getQualifiedName(IPath path) {
 		StringBuffer buffer = new StringBuffer();
 		String[] segments = path.segments();
-		if ( segments.length > 0 ) {
-			buffer.append( path.lastSegment() );
-			if ( segments.length > 1 ) {
-				buffer.append( " - " ); //$NON-NLS-1$
-				if ( path.getDevice() != null ) {
-					buffer.append( path.getDevice() );
+		if (segments.length > 0) {
+			buffer.append(path.lastSegment());
+			if (segments.length > 1) {
+				buffer.append(" - "); //$NON-NLS-1$
+				if (path.getDevice() != null) {
+					buffer.append(path.getDevice());
 				}
-				for( int i = 0; i < segments.length - 1; i++ ) {
-					buffer.append( File.separatorChar );
-					buffer.append( segments[i] );
+				for(int i = 0; i < segments.length - 1; i++) {
+					buffer.append(File.separatorChar);
+					buffer.append(segments[i]);
 				}
 			}
 			return buffer.toString();

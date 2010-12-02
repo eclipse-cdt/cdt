@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
@@ -25,5 +25,4 @@ public class AbsolutePathSourceContainerBrowser extends AbstractSourceContainerB
 		AbsolutePathSourceContainer absolutePathSourceContainer = new AbsolutePathSourceContainer();
 		return new ISourceContainer[] { absolutePathSourceContainer };
 	}
-
 }

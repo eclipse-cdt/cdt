@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * ARM Limited - Initial API and implementation
+ *     ARM Limited - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
@@ -34,10 +33,9 @@ import org.eclipse.ui.progress.UIJob;
 public class SourceDisplayAdapter implements ISourceDisplay {
 
     class DelegatingStackFrame implements IStackFrame {
-
         private ICStackFrame fDelegate;
 
-        DelegatingStackFrame( ICStackFrame delegate ) {
+        DelegatingStackFrame(ICStackFrame delegate) {
             super();
             fDelegate = delegate;
         }
@@ -129,11 +127,10 @@ public class SourceDisplayAdapter implements ISourceDisplay {
         /* (non-Javadoc)
          * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
          */
-        @SuppressWarnings("unchecked")
-        public Object getAdapter( Class adapter ) {
-            if ( ICStackFrame.class.equals( adapter ) )
+        public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+            if (ICStackFrame.class.equals(adapter))
                 return fDelegate;
-            return fDelegate.getAdapter( adapter );
+            return fDelegate.getAdapter(adapter);
         }
 
         /* (non-Javadoc)
@@ -240,56 +237,53 @@ public class SourceDisplayAdapter implements ISourceDisplay {
         public void terminate() throws DebugException {
             fDelegate.terminate();
         }
-
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.sourcelookup.ISourceDisplay#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
      */
-    public void displaySource( Object element, IWorkbenchPage page, boolean forceSourceLookup ) {
-        if ( element instanceof ICStackFrame ) {
+    public void displaySource(Object element, IWorkbenchPage page, boolean forceSourceLookup) {
+        if (element instanceof ICStackFrame) {
             ICStackFrame frame = (ICStackFrame)element; 
-            if ( isDisplayDisassembly( frame, page ) ) {
-                displayDisassembly( page, frame );
-            }
-            else {
-                DelegatingStackFrame delegatingFrame = new DelegatingStackFrame( (ICStackFrame)element );
-                ISourceDisplay sd = (ISourceDisplay)Platform.getAdapterManager().getAdapter( delegatingFrame, ISourceDisplay.class );
-                if ( sd != null )
-                    sd.displaySource( element, page, forceSourceLookup );
+            if (isDisplayDisassembly(frame, page)) {
+                displayDisassembly(page, frame);
+            } else {
+                DelegatingStackFrame delegatingFrame = new DelegatingStackFrame((ICStackFrame)element);
+                ISourceDisplay sd = (ISourceDisplay)Platform.getAdapterManager().getAdapter(delegatingFrame, ISourceDisplay.class);
+                if (sd != null)
+                    sd.displaySource(element, page, forceSourceLookup);
             }
         }
     }
 
-    private boolean isDisplayDisassembly( ICStackFrame frame, IWorkbenchPage page ) {
+    private boolean isDisplayDisassembly(ICStackFrame frame, IWorkbenchPage page) {
         // always go to the disassembly window if it is already open
-        IEditorPart editor = getDisassemblyEditorManager().findEditor( page, frame );
-        return ( editor != null );
+        IEditorPart editor = getDisassemblyEditorManager().findEditor(page, frame);
+        return (editor != null);
     }
 
     protected DisassemblyEditorManager getDisassemblyEditorManager() {
         return CDebugUIPlugin.getDefault().getDisassemblyEditorManager();
     }
 
-    private void displayDisassembly( final IWorkbenchPage page, final Object debugContext ) {
-        Job uijob = new UIJob( "Display Disassembly Job" ) { //$NON-NLS-1$
-
+    private void displayDisassembly(final IWorkbenchPage page, final Object debugContext) {
+        Job uijob = new UIJob("Display Disassembly Job") { //$NON-NLS-1$
             /* (non-Javadoc)
              * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
              */
             @Override
-            public IStatus runInUIThread( IProgressMonitor monitor ) {
+            public IStatus runInUIThread(IProgressMonitor monitor) {
                 try {
-                    getDisassemblyEditorManager().openEditor( page, debugContext );
+                    getDisassemblyEditorManager().openEditor(page, debugContext);
                 }
-                catch( DebugException e ) {
+                catch(DebugException e) {
                     return e.getStatus();
                 }
                 return Status.OK_STATUS;
             }
 
         };
-        uijob.setSystem( true );
+        uijob.setSystem(true);
         uijob.schedule();
     }
 }

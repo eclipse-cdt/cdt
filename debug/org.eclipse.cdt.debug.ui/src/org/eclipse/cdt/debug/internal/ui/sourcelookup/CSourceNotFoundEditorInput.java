@@ -8,7 +8,6 @@
  * Contributors:
  *     Nokia - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceNotFoundElement;
@@ -34,11 +33,9 @@ public class CSourceNotFoundEditorInput extends CommonSourceNotFoundEditorInput 
 
 	@Override
 	public boolean equals(Object other) {
-		if (other instanceof CSourceNotFoundEditorInput)
-		{
+		if (other instanceof CSourceNotFoundEditorInput) {
 			return super.equals(other) || (this.getName().equals(((CSourceNotFoundEditorInput) other).getName()));
 		}
 		return super.equals(other);
 	}
-
 }

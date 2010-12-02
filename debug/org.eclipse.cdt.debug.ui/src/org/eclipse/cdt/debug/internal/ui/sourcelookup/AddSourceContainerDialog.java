@@ -46,7 +46,6 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.0
  */
 public class AddSourceContainerDialog extends TitleAreaDialog {
-	
 	private TableViewer fViewer;
 	private SourceContainerViewer fSourceContainerViewer;
 	private boolean fDoubleClickSelects = true;
@@ -66,9 +65,8 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	 * Creates the dialog area to display source container types that are "browseable"
 	 */
 	protected Control createDialogArea(Composite ancestor) {			
-		
-		getShell().setText(SourceLookupUIMessages.getString( "AddSourceContainerDialog.0" )); //$NON-NLS-1$
-		setTitle(SourceLookupUIMessages.getString( "AddSourceContainerDialog.1" )); //$NON-NLS-1$
+		getShell().setText(SourceLookupUIMessages.AddSourceContainerDialog_0);
+		setTitle(SourceLookupUIMessages.AddSourceContainerDialog_1);
 		
 		Composite parent = new Composite(ancestor, SWT.NULL);
 		GridData gd= new GridData(GridData.FILL_BOTH);
@@ -107,7 +105,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 				setMessage(desc);
 			}
 		});
-		if(types.length != 0) {	
+		if (types.length != 0) {	
 			fViewer.setInput(types);
 		}
 		Dialog.applyDialogFont(parent);
@@ -121,18 +119,17 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	 * @return the list of source container types that have browsers
 	 */
 	private ISourceContainerType[] filterTypes(ISourceContainerType[] types){
-		ArrayList validTypes = new ArrayList();
-		for (int i=0; i< types.length; i++) {
+		ArrayList<ISourceContainerType> validTypes = new ArrayList<ISourceContainerType>();
+		for (int i=0; i < types.length; i++) {
 			ISourceContainerType type = types[i];
 			if (fDirector.supportsSourceContainerType(type)) {
 				ISourceContainerBrowser sourceContainerBrowser = DebugUITools.getSourceContainerBrowser(type.getId());
-				if(sourceContainerBrowser != null && sourceContainerBrowser.canAddSourceContainers(fDirector)) {
+				if (sourceContainerBrowser != null && sourceContainerBrowser.canAddSourceContainers(fDirector)) {
 					validTypes.add(type);
 				}
 			}
 		}	
-		return (ISourceContainerType[]) validTypes.toArray(new ISourceContainerType[validTypes.size()]);
-		
+		return validTypes.toArray(new ISourceContainerType[validTypes.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -145,11 +142,10 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		ISourceContainerBrowser browser = DebugUITools.getSourceContainerBrowser(type.getId());
 		if (browser != null) {
 			ISourceContainer[] results = browser.addSourceContainers(getShell(), fDirector);
-			if(results != null) {
+			if (results != null) {
 				fSourceContainerViewer.addEntries(results);
 			}
 		}
 		super.okPressed();
 	}
-	
 }

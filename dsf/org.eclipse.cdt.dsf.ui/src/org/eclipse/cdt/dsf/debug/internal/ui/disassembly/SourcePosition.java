@@ -20,39 +20,21 @@ import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourceFileInfo;
  */
 public class SourcePosition extends AddressRangePosition {
 
-	public SourceFileInfo fFileInfo;
+	public final SourceFileInfo fFileInfo;
 	public int fLine;
+	public int fLast = -1;
 
-	/**
-	 * 
-	 * @param offset
-	 * @param length
-	 * @param addressOffset
-	 * @param fileInfo
-	 * @param line
-	 */
-	public SourcePosition(int offset, int length, BigInteger addressOffset, SourceFileInfo fileInfo, int line) {
-		this(offset, length, addressOffset, fileInfo, line, true);
+	public SourcePosition(int offset, int length, BigInteger addressOffset, SourceFileInfo fileInfo, int line, int last) {
+		this(offset, length, addressOffset, fileInfo, line, last, true);
 	}
 
-	/**
-	 * 
-	 * @param offset
-	 * @param length
-	 * @param addressOffset
-	 * @param fileInfo
-	 * @param line
-	 * @param valid
-	 */
-	public SourcePosition(int offset, int length, BigInteger addressOffset, SourceFileInfo fileInfo, int line, boolean valid) {
+	public SourcePosition(int offset, int length, BigInteger addressOffset, SourceFileInfo fileInfo, int line, int last, boolean valid) {
 		super(offset, length, addressOffset, BigInteger.ZERO, valid);
 		fFileInfo = fileInfo;
 		fLine = line;
+		fLast = last;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.AddressRangePosition#toString()
-	 */
 	@Override
 	public String toString() {
 		return super.toString() + "->["+fFileInfo.fFileKey + ':' + fLine + ']';  //$NON-NLS-1$

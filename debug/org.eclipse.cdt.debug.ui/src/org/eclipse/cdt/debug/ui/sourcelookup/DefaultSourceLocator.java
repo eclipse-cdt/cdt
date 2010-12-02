@@ -6,14 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui.sourcelookup; 
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
@@ -37,39 +36,37 @@ public class DefaultSourceLocator extends CSourceLookupDirector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector#initializeFromMemento(java.lang.String, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public void initializeFromMemento( String memento, ILaunchConfiguration configuration ) throws CoreException {
-		Element rootElement = DebugPlugin.parseDocument( memento );
-		if ( rootElement.getNodeName().equalsIgnoreCase( OldDefaultSourceLocator.ELEMENT_NAME ) ) {
-			initializeFromOldMemento( memento, configuration );
-		}
-		else {
-			super.initializeFromMemento( memento, configuration );
+	public void initializeFromMemento(String memento, ILaunchConfiguration configuration) throws CoreException {
+		Element rootElement = DebugPlugin.parseDocument(memento);
+		if (rootElement.getNodeName().equalsIgnoreCase(OldDefaultSourceLocator.ELEMENT_NAME)) {
+			initializeFromOldMemento(memento, configuration);
+		} else {
+			super.initializeFromMemento(memento, configuration);
 		}
 	}
 
-	private void initializeFromOldMemento( String memento, ILaunchConfiguration configuration ) throws CoreException {
+	private void initializeFromOldMemento(String memento, ILaunchConfiguration configuration) throws CoreException {
 		dispose();
-		setLaunchConfiguration( configuration );
+		setLaunchConfiguration(configuration);
 		OldDefaultSourceLocator old = new OldDefaultSourceLocator();
-		old.initializeFromMemento( memento );
-		ICSourceLocator csl = (ICSourceLocator)old.getAdapter( ICSourceLocator.class );
-		setFindDuplicates( csl.searchForDuplicateFiles() );
+		old.initializeFromMemento(memento);
+		ICSourceLocator csl = (ICSourceLocator)old.getAdapter(ICSourceLocator.class);
+		setFindDuplicates(csl.searchForDuplicateFiles());
 		ICSourceLocation[] locations = csl.getSourceLocations();
 		
 		// Check if the old source locator includes all referenced projects.
 		// If so, DefaultSpourceContainer should be used.
 		IProject project = csl.getProject();
-		List list = CDebugUtils.getReferencedProjects( project );
-		HashSet names = new HashSet( list.size() + 1 );
-		names.add( project.getName() );
-		Iterator it = list.iterator();
-		while( it.hasNext() ) {
-			names.add( ((IProject)it.next()).getName() );
+		List<IProject> list = CDebugUtils.getReferencedProjects(project);
+		HashSet<String> names = new HashSet<String>(list.size() + 1);
+		names.add(project.getName());
+		for (IProject proj : list) {
+			names.add(proj.getName());
 		}
 		boolean includesDefault = true;
-		for( int i = 0; i < locations.length; ++i ) {
-			if ( locations[i] instanceof IProjectSourceLocation && ((IProjectSourceLocation)locations[i]).isGeneric() ) {
-				if ( !names.contains( ((IProjectSourceLocation)locations[i]).getProject().getName() ) ) {
+		for (int i = 0; i < locations.length; ++i) {
+			if (locations[i] instanceof IProjectSourceLocation && ((IProjectSourceLocation)locations[i]).isGeneric()) {
+				if (!names.contains(((IProjectSourceLocation)locations[i]).getProject().getName())) {
 					includesDefault = false;
 					break;
 				}
@@ -77,20 +74,22 @@ public class DefaultSourceLocator extends CSourceLookupDirector {
 		}
 		
 		// Generate an array of new source containers including DefaultSourceContainer
-		ArrayList locs = new ArrayList( locations.length );
-		for ( int i = 0; i < locations.length; ++i ) {
-			if ( !includesDefault || !( locations[i] instanceof IProjectSourceLocation && names.contains( ((IProjectSourceLocation)locations[i]).getProject().getName() ) ) )
-				locs.add( locations[i] );
+		ArrayList<ICSourceLocation> locs = new ArrayList<ICSourceLocation>(locations.length);
+		for (int i = 0; i < locations.length; ++i) {
+			if (!includesDefault || !(locations[i] instanceof IProjectSourceLocation &&
+					names.contains(((IProjectSourceLocation)locations[i]).getProject().getName()))) {
+				locs.add(locations[i]);
+			}
 		}
 		
-		ISourceContainer[] containers = SourceUtils.convertSourceLocations( (ICSourceLocation[])locs.toArray( new ICSourceLocation[locs.size()] ) );
-		ArrayList cons = new ArrayList( Arrays.asList( containers ) );
-		if ( includesDefault ) {
+		ISourceContainer[] containers = SourceUtils.convertSourceLocations(locs.toArray(new ICSourceLocation[locs.size()]));
+		ArrayList<ISourceContainer> cons = new ArrayList<ISourceContainer>(Arrays.asList(containers));
+		if (includesDefault) {
 			DefaultSourceContainer defaultContainer = new DefaultSourceContainer();
-			defaultContainer.init( this );
-			cons.add( 0, defaultContainer );
+			defaultContainer.init(this);
+			cons.add(0, defaultContainer);
 		}
-		setSourceContainers( (ISourceContainer[])cons.toArray( new ISourceContainer[cons.size()] ) );
+		setSourceContainers(cons.toArray(new ISourceContainer[cons.size()]));
 		initializeParticipants();
 	}
 }

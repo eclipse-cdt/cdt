@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 
 /**
  * The context that determines access to private and protected class members.
@@ -128,6 +129,10 @@ public class AccessContext {
 			if (bases != null) {
 				for (ICPPBase base : bases) {
 					IBinding baseBinding = base.getBaseClass();
+					if (baseBinding instanceof ICPPDeferredClassInstance) {
+						// Support content assist for members of deferred instances.
+						baseBinding= ((ICPPDeferredClassInstance) baseBinding).getTemplateDefinition();
+					}
 					if (!(baseBinding instanceof ICPPClassType)) {
 						continue;
 					}

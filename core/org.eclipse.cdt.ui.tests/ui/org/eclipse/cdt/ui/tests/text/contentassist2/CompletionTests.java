@@ -1340,4 +1340,17 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= { "Reference" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
 	}
+	
+	//	template<class T> struct BaseClass {
+	//	    void BaseMethod();
+	//	};
+	//	template<class T> struct DerivedClass : BaseClass<T> {
+	//	    void DerivedMethod() {
+	//	        this->BaseM/*cursor*/
+	//	    }
+	//	};
+	public void testDeferredBaseClass_Bug330762() throws Exception {
+		final String[] expected= { "BaseMethod(void)" };
+		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
+	}
 }

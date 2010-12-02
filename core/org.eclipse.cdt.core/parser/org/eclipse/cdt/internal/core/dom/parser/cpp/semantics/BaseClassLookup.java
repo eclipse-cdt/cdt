@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 
@@ -203,7 +204,11 @@ class BaseClassLookup {
 						continue;
 					}
 
-					final ICPPClassType grandBaseClass = (ICPPClassType) grandBaseBinding;
+					ICPPClassType grandBaseClass = (ICPPClassType) grandBaseBinding;
+					if (data.contentAssist && grandBaseClass instanceof ICPPDeferredClassInstance) {
+						// Support content assist for members of deferred instances.
+						grandBaseClass= ((ICPPDeferredClassInstance) grandBaseClass).getClassTemplate();
+					}
 					if (grandBaseBindings != null && !grandBaseBindings.add(grandBaseClass))
 						continue;
 

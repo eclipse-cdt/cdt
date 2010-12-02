@@ -26,6 +26,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 
 	final private IWritableIndexFragment fWritableFragment;
 	private boolean fIsWriteLocked= false;
+	private Object fThread;
 
 	public WritableCIndex(IWritableIndexFragment writable, IIndexFragment[] readonly) {
 		super (concat(writable, readonly));
@@ -106,18 +107,23 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 	}
 
 	@Override
-	public synchronized void acquireReadLock() throws InterruptedException {
+	public void acquireReadLock() throws InterruptedException {
+		checkThread();
 		assert !fIsWriteLocked: "Read locks are not allowed while write-locked."; //$NON-NLS-1$
 		super.acquireReadLock();
 	}
 
 	@Override
-	public synchronized void releaseReadLock() {
+	public void releaseReadLock() {
+		checkThread();
 		assert !fIsWriteLocked: "Read locks are not allowed while write-locked."; //$NON-NLS-1$
 		super.releaseReadLock();
+		if (getReadLockCount() == 0)
+			fThread= null;
 	}
 
-	public synchronized void acquireWriteLock(int giveupReadlockCount) throws InterruptedException {
+	public void acquireWriteLock(int giveupReadlockCount) throws InterruptedException {
+		checkThread();
 		assert !fIsWriteLocked: "Multiple write locks is not allowed"; //$NON-NLS-1$
 		assert giveupReadlockCount == getReadLockCount(): "Unexpected read lock is not allowed"; //$NON-NLS-1$
 		
@@ -125,11 +131,12 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		fIsWriteLocked= true;
 	}
 
-	public synchronized void releaseWriteLock(int establishReadlockCount) {
+	public void releaseWriteLock(int establishReadlockCount) {
 		releaseWriteLock(establishReadlockCount, true);
 	}
 
-	public synchronized void releaseWriteLock(int establishReadlockCount, boolean flush) {
+	public void releaseWriteLock(int establishReadlockCount, boolean flush) {
+		checkThread();
 		assert fIsWriteLocked: "No write lock to be released"; //$NON-NLS-1$
 		assert establishReadlockCount == getReadLockCount(): "Unexpected read lock is not allowed"; //$NON-NLS-1$
 
@@ -140,8 +147,20 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 
 		fIsWriteLocked= false;
 		fWritableFragment.releaseWriteLock(establishReadlockCount, flush);
+		
+		if (establishReadlockCount == 0) {
+			fThread= null;
+		}
 	}
 
+	private void checkThread() {
+		if (fThread == null) {
+			fThread= Thread.currentThread();
+		} else if (fThread != Thread.currentThread()) {
+			throw new IllegalArgumentException("A writable index must not be used from multiple threads."); //$NON-NLS-1$
+		}
+	}
+	
 	@Override
 	public void clearResultCache() {
 		assert fIsWriteLocked: "Need to hold a write lock to clear result caches"; //$NON-NLS-1$

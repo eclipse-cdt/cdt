@@ -25,7 +25,8 @@ import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Interface used by the indexer to write to the index. 
+ * Interface used by the indexer to write to the index. A writable index is not thread-safe,
+ * each instance must not be used within more than one thread.
  *
  * @since 4.0
  */

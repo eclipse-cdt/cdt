@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
@@ -36,12 +36,11 @@ import com.ibm.icu.text.MessageFormat;
  * The source container that maps a backend path to the local filesystem path.
  */
 public class MapEntrySourceContainer extends AbstractSourceContainer {
-
 	/**
 	 * Unique identifier for the map entry source container type
 	 * (value <code>org.eclipse.cdt.debug.core.containerType.mapEntry</code>).
 	 */
-	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.mapEntry";	 //$NON-NLS-1$
+	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.mapEntry"; //$NON-NLS-1$
 
 	private IPath fLocalPath;
 
@@ -58,7 +57,7 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	/** 
 	 * Constructor for MapEntrySourceContainer. 
 	 */
-	public MapEntrySourceContainer( IPath backend, IPath local ) {
+	public MapEntrySourceContainer(IPath backend, IPath local) {
 		fBackendPath = backend;
 		fLocalPath = local;
 	}
@@ -73,7 +72,8 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	 * @return converted string
 	 */
 	public static IPath createPath(String path) {
-		if (path == null) return null;
+		if (path == null)
+			return null;
 		if (path.contains("\\")) { //$NON-NLS-1$
 			// handle Windows slashes and canonicalize
 			path = path.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -88,8 +88,7 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 			String device = path.substring(0, idx + 1);
 			path = path.substring(idx + 1);
 			return new Path(path).setDevice(device);
-		} 
-		else {
+		} else {
 			// Cygwin or UNC path
 			if (path.startsWith("//")) { //$NON-NLS-1$
 				String network;
@@ -112,51 +111,50 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
-	public Object[] findSourceElements( String name ) throws CoreException {
+	public Object[] findSourceElements(String name) throws CoreException {
 		IPath path = createPath(name);
-		if ( getBackendPath().isPrefixOf( path ) ) {
-			path = path.removeFirstSegments( getBackendPath().segmentCount() );
-			path = getLocalPath().append( path );
+		if (getBackendPath().isPrefixOf(path)) {
+			path = path.removeFirstSegments(getBackendPath().segmentCount());
+			path = getLocalPath().append(path);
 
-			IFile[] wsFiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( path );
-			ArrayList list = new ArrayList();
-			for( int j = 0; j < wsFiles.length; ++j ) {
-				if ( wsFiles[j].exists() ) {
-					list.add( wsFiles[j] );
-					if ( !isFindDuplicates() )
+			IFile[] wsFiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+			ArrayList<IFile> list = new ArrayList<IFile>();
+			for (int j = 0; j < wsFiles.length; ++j) {
+				if (wsFiles[j].exists()) {
+					list.add(wsFiles[j]);
+					if (!isFindDuplicates())
 						break;
 				}
 			}
-			if ( list.size() > 0 ) 
+			if (list.size() > 0) 
 				return list.toArray();
 
 			File file = path.toFile();
 
 			// The file is not already in the workspace so try to create an external translation unit for it.
 			ISourceLookupDirector director = getDirector();
-			if (director != null && file.exists() && file.isFile() )
-			{
+			if (director != null && file.exists() && file.isFile()) {
 				ILaunchConfiguration launchConfiguration = director.getLaunchConfiguration();
-				if (launchConfiguration != null)
-				{
+				if (launchConfiguration != null) {
 					String projectName = launchConfiguration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 					if (projectName.length() > 0) {
 						ICProject project = CoreModel.getDefault().getCModel().getCProject(projectName);
-						if (project != null)
-						{
+						if (project != null) {
 							String id;
 							try {
 								final IPath location= Path.fromOSString(file.getCanonicalPath());
 								id = CoreModel.getRegistedContentTypeId(project.getProject(), location.lastSegment());
 								return new ExternalTranslationUnit[] { new ExternalTranslationUnit(project, location, id) };
-							} catch (IOException e) { e.printStackTrace(); }
+							} catch (IOException e) {
+								CDebugCorePlugin.log(e);
+							}
 						}
 					}									
 				}
 			}
 
-			if ( file.exists() && file.isFile() ) {
-				return new Object[] { new LocalFileStorage( file ) };
+			if (file.exists() && file.isFile()) {
+				return new Object[] { new LocalFileStorage(file) };
 			}
 		}
 		return EMPTY;
@@ -166,14 +164,14 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
 	public String getName() {
-		return MessageFormat.format( "{0} - {1}", new String[] { getBackendPath().toOSString(), getLocalPath().toOSString() } ); //$NON-NLS-1$
+		return MessageFormat.format("{0} - {1}", new String[] { getBackendPath().toOSString(), getLocalPath().toOSString() }); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return getSourceContainerType( TYPE_ID );
+		return getSourceContainerType(TYPE_ID);
 	}
 	
 	public IPath getLocalPath() {
@@ -184,11 +182,11 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 		return fBackendPath;
 	}
 
-	public void setLocalPath( IPath local ) {
+	public void setLocalPath(IPath local) {
 		fLocalPath = local;
 	}
 	
-	public void setBackendPath( IPath backend ) {
+	public void setBackendPath(IPath backend) {
 		fBackendPath = backend;
 	}
 
@@ -196,14 +194,14 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals( Object o ) {
-		if ( !(o instanceof MapEntrySourceContainer ) )
+	public boolean equals(Object o) {
+		if (!(o instanceof MapEntrySourceContainer))
 			return false;
 		MapEntrySourceContainer entry = (MapEntrySourceContainer)o;
-		return ( entry.getBackendPath().equals( getBackendPath() ) && entry.getLocalPath().equals( getLocalPath() ) );
+		return (entry.getBackendPath().equals(getBackendPath()) && entry.getLocalPath().equals(getLocalPath()));
 	}
 
 	public MapEntrySourceContainer copy() {
-		return new MapEntrySourceContainer( fBackendPath, fLocalPath );
+		return new MapEntrySourceContainer(fBackendPath, fLocalPath);
 	}
 }

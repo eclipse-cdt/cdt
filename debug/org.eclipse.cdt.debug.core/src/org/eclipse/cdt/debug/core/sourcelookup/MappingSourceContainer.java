@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.sourcelookup; 
 
@@ -31,12 +31,11 @@ import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer;
  * The source container for path mappings.
  */
 public class MappingSourceContainer extends AbstractSourceContainer {
-
 	/**
 	 * Unique identifier for the mapping source container type
 	 * (value <code>org.eclipse.cdt.debug.core.containerType.mapping</code>).
 	 */
-	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.mapping";	 //$NON-NLS-1$
+	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.mapping";	//$NON-NLS-1$
 
 	private String fName;
 	private ArrayList<MapEntrySourceContainer> fContainers;
@@ -44,7 +43,7 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 	/** 
 	 * Constructor for MappingSourceContainer. 
 	 */
-	public MappingSourceContainer( String name ) {
+	public MappingSourceContainer(String name) {
 		fName = name;
 		fContainers = new ArrayList<MapEntrySourceContainer>();
 	}
@@ -60,7 +59,7 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return getSourceContainerType( TYPE_ID );
+		return getSourceContainerType(TYPE_ID);
 	}
 
 	/* (non-Javadoc)
@@ -73,54 +72,49 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
-	public Object[] findSourceElements( String name ) throws CoreException {
-		return findSourceElements( name, getSourceContainers() );
+	public Object[] findSourceElements(String name) throws CoreException {
+		return findSourceElements(name, getSourceContainers());
 	}
 
-	protected Object[] findSourceElements( String name, ISourceContainer[] containers ) throws CoreException {
+	protected Object[] findSourceElements(String name, ISourceContainer[] containers) throws CoreException {
 		List<Object> results = null;
 		CoreException single = null;
 		MultiStatus multiStatus = null;
-		if ( isFindDuplicates() ) {
+		if (isFindDuplicates()) {
 			results = new ArrayList<Object>();
 		}
-		for( int i = 0; i < containers.length; i++ ) {
+		for (int i = 0; i < containers.length; i++) {
 			ISourceContainer container = containers[i];
 			try {
 				container.init(this.getDirector());
-				Object[] objects = container.findSourceElements( name );
-				if ( objects.length > 0 ) {
-					if ( isFindDuplicates() && results != null ) {
-						for( int j = 0; j < objects.length; j++ ) {
-							results.add( objects[j] );
+				Object[] objects = container.findSourceElements(name);
+				if (objects.length > 0) {
+					if (isFindDuplicates() && results != null) {
+						for (int j = 0; j < objects.length; j++) {
+							results.add(objects[j]);
 						}
-					}
-					else {
-						if ( objects.length == 1 ) {
+					} else {
+						if (objects.length == 1) {
 							return objects;
 						}
 						return new Object[]{ objects[0] };
 					}
 				}
-			}
-			catch( CoreException e ) {
-				if ( single == null ) {
+			} catch (CoreException e) {
+				if (single == null) {
 					single = e;
-				}
-				else if ( multiStatus == null ) {
-					multiStatus = new MultiStatus( DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{ single.getStatus() }, SourceLookupMessages.getString( "MappingSourceContainer.0" ), null ); //$NON-NLS-1$
-					multiStatus.add( e.getStatus() );
-				}
-				else {
-					multiStatus.add( e.getStatus() );
+				} else if (multiStatus == null) {
+					multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{ single.getStatus() }, SourceLookupMessages.getString("MappingSourceContainer.0"), null); //$NON-NLS-1$
+					multiStatus.add(e.getStatus());
+				} else {
+					multiStatus.add(e.getStatus());
 				}
 			}
 		}
-		if ( results == null ) {
-			if ( multiStatus != null ) {
-				throw new CoreException( multiStatus );
-			}
-			else if ( single != null ) {
+		if (results == null) {
+			if (multiStatus != null) {
+				throw new CoreException(multiStatus);
+			} else if (single != null) {
 				throw single;
 			}
 			return EMPTY;
@@ -132,29 +126,29 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 	 * @see org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer#getSourceContainers()
 	 */
 	public ISourceContainer[] getSourceContainers() throws CoreException {
-		return fContainers.toArray( new MapEntrySourceContainer[fContainers.size()] );
+		return fContainers.toArray(new MapEntrySourceContainer[fContainers.size()]);
 	}
 
-	public void addMapEntry( MapEntrySourceContainer entry ) {
-		fContainers.add( entry );
+	public void addMapEntry(MapEntrySourceContainer entry) {
+		fContainers.add(entry);
 	}
 
-	public void addMapEntries( MapEntrySourceContainer[] entries ) {
-		fContainers.addAll( Arrays.asList( entries ) );
+	public void addMapEntries(MapEntrySourceContainer[] entries) {
+		fContainers.addAll(Arrays.asList(entries));
 	}
 
-	public void removeMapEntry( MapEntrySourceContainer entry ) {
-		fContainers.remove( entry );
+	public void removeMapEntry(MapEntrySourceContainer entry) {
+		fContainers.remove(entry);
 	}
 
-	public void removeMapEntries( MapEntrySourceContainer[] entries ) {
-		fContainers.removeAll( Arrays.asList( entries ) );
+	public void removeMapEntries(MapEntrySourceContainer[] entries) {
+		fContainers.removeAll(Arrays.asList(entries));
 	}
 
 	public void clear() {
 		Iterator<MapEntrySourceContainer> it = fContainers.iterator();
-		while( it.hasNext() ) {
-			((ISourceContainer)it.next()).dispose();
+		while (it.hasNext()) {
+			((ISourceContainer) it.next()).dispose();
 		}
 		fContainers.clear();
 	}
@@ -165,40 +159,40 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 	public void dispose() {
 		super.dispose();
 		Iterator<MapEntrySourceContainer> it = fContainers.iterator();
-		while( it.hasNext() ) {
-			((ISourceContainer)it.next()).dispose();
+		while (it.hasNext()) {
+			((ISourceContainer) it.next()).dispose();
 		}
 		fContainers.clear();
 	}
 
 	public MappingSourceContainer copy() {
-		MappingSourceContainer copy = new MappingSourceContainer( fName );
+		MappingSourceContainer copy = new MappingSourceContainer(fName);
 		MapEntrySourceContainer[] entries = new MapEntrySourceContainer[fContainers.size()];
-		for ( int i = 0; i < entries.length; ++i ) {
-			copy.addMapEntry( fContainers.get( i ).copy() );
+		for (int i = 0; i < entries.length; ++i) {
+			copy.addMapEntry(fContainers.get(i).copy());
 		}
 		return copy;
 	}
 	
-	public void setName( String name ) {
+	public void setName(String name) {
 		fName = name;
-	}	
+	}
 
-	public IPath getCompilationPath( String sourceName ) {
-		IPath path = new Path( sourceName );
+	public IPath getCompilationPath(String sourceName) {
+		IPath path = new Path(sourceName);
 		IPath result = null;
 		try {
 			ISourceContainer[] containers = getSourceContainers();
-			for ( int i = 0; i < containers.length; ++i ) {
-				MapEntrySourceContainer entry = (MapEntrySourceContainer)containers[i];
+			for (int i = 0; i < containers.length; ++i) {
+				MapEntrySourceContainer entry = (MapEntrySourceContainer) containers[i];
 				IPath local = entry.getLocalPath();
-				if ( local.isPrefixOf( path ) ) {
-					result = entry.getBackendPath().append( path.removeFirstSegments( local.segmentCount() ) );
+				if (local.isPrefixOf(path)) {
+					result = entry.getBackendPath().append(path.removeFirstSegments(local.segmentCount()));
 					break;
 				}
 			}
-		}
-		catch( CoreException e ) {
+		} catch (CoreException e) {
+			CDebugCorePlugin.log(e);
 		}
 		return result;
 	}

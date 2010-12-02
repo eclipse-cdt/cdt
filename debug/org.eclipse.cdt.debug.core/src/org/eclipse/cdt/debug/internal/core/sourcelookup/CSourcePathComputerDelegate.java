@@ -47,7 +47,7 @@ public class CSourcePathComputerDelegate implements ISourcePathComputerDelegate 
 		// First, get all the the containers in the global preferences (but add them last)
 		ISourceContainer[] common = CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().getSourceContainers();
 
-		List<ISourceContainer> containers = new ArrayList<ISourceContainer>(common.length + 2);
+		List<ISourceContainer> containers = new ArrayList<ISourceContainer>(common.length + 3);
 		
 		// Add a container that fetches files that are specified with an absolute path
 		containers.add(new AbsolutePathSourceContainer());
@@ -68,7 +68,7 @@ public class CSourcePathComputerDelegate implements ISourcePathComputerDelegate 
 		for (ISourceContainer sc : common) {
 			// If the container is a path-mapper, use a copy (why?)
 			if (sc.getType().getId().equals(MappingSourceContainer.TYPE_ID))
-				sc = ((MappingSourceContainer)sc).copy();
+				sc = ((MappingSourceContainer) sc).copy();
 			containers.add(sc);
 		}
 		

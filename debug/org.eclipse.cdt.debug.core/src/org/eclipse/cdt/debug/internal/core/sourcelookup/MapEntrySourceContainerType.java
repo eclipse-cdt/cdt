@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
@@ -38,18 +38,18 @@ public class MapEntrySourceContainerType extends AbstractSourceContainerTypeDele
 				String path = element.getAttribute(BACKEND_PATH);
 				IPath backend = new Path(path);
 				if (!backend.isValidPath(path)) {
-					abort(InternalSourceLookupMessages.getString("MapEntrySourceContainerType.0"), null); //$NON-NLS-1$
+					abort(InternalSourceLookupMessages.MapEntrySourceContainerType_0, null);
 				}
 				path = element.getAttribute(LOCAL_PATH);
 				IPath local = new Path(path);
 				if (!local.isValidPath(path)) {
-					abort(InternalSourceLookupMessages.getString("MapEntrySourceContainerType.1"), null); //$NON-NLS-1$
+					abort(InternalSourceLookupMessages.MapEntrySourceContainerType_1, null);
 				}
 				return new MapEntrySourceContainer(backend, local);
 			}
-			abort(InternalSourceLookupMessages.getString("MapEntrySourceContainerType.2"), null); //$NON-NLS-1$
+			abort(InternalSourceLookupMessages.MapEntrySourceContainerType_2, null);
 		}
-		abort(InternalSourceLookupMessages.getString("MapEntrySourceContainerType.3"), null); //$NON-NLS-1$
+		abort(InternalSourceLookupMessages.MapEntrySourceContainerType_3, null);
 		return null;
 	}
 

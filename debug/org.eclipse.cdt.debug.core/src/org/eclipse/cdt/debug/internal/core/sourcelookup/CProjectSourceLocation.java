@@ -49,8 +49,7 @@ import org.xml.sax.SAXException;
  * 
  * @since Sep 23, 2002
  */
-public class CProjectSourceLocation implements IProjectSourceLocation
-{
+public class CProjectSourceLocation implements IProjectSourceLocation {
 	private static final String ELEMENT_NAME = "cProjectSourceLocation"; //$NON-NLS-1$
 	private static final String ATTR_PROJECT = "project"; //$NON-NLS-1$
 	private static final String ATTR_GENERIC = "generic"; //$NON-NLS-1$
@@ -59,38 +58,21 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	 * The project associated with this source location
 	 */
 	private IProject fProject;
-
 	private IResource[] fFolders;
-
 	private HashMap fCache = new HashMap( 20 );
-	
 	private HashSet fNotFoundCache = new HashSet( 20 );
-
 	private boolean fGenerated = true;
-	
 	private boolean fSearchForDuplicateFiles = false;
 
-	/**
-	 * Constructor for CProjectSourceLocation.
-	 */
-	public CProjectSourceLocation()
-	{
+	public CProjectSourceLocation() {
 	}
 
-	/**
-	 * Constructor for CProjectSourceLocation.
-	 */
-	public CProjectSourceLocation( IProject project )
-	{
+	public CProjectSourceLocation( IProject project ) {
 		setProject( project );
 		fGenerated = true;
 	}
 
-	/**
-	 * Constructor for CProjectSourceLocation.
-	 */
-	public CProjectSourceLocation( IProject project, boolean generated )
-	{
+	public CProjectSourceLocation( IProject project, boolean generated ) {
 		setProject( project );
 		fGenerated = generated;
 	}
@@ -101,19 +83,15 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	public Object findSourceElement( String name ) throws CoreException
 	{
 		Object result = null;
-		if ( !isEmpty( name ) && getProject() != null && !notFoundCacheLookup( name ) )
-		{
+		if ( !isEmpty( name ) && getProject() != null && !notFoundCacheLookup( name ) ) {
 			result = cacheLookup( name );
-			if ( result == null )
-			{ 
+			if ( result == null ) { 
 				result = doFindSourceElement( name );
-				if ( result != null )
-				{
+				if ( result != null ) {
 					cacheSourceElement( name, result );
 				}
 			}
-			if ( result == null )
-			{
+			if ( result == null ) {
 				cacheNotFound( name );
 			}
 		}
@@ -123,8 +101,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
-	public Object getAdapter( Class adapter )
-	{
+	public Object getAdapter( Class adapter ) {
 		if ( adapter.equals( ICSourceLocation.class ) )
 			return this;
 		if ( adapter.equals( CProjectSourceLocation.class ) )
@@ -139,8 +116,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	 * 
 	 * @param project the project
 	 */
-	private void setProject( IProject project )
-	{
+	private void setProject( IProject project ) {
 		fProject = project;
 	}
 
@@ -149,27 +125,22 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	 * 
 	 * @return project
 	 */
-	public IProject getProject()
-	{
+	public IProject getProject() {
 		return fProject;
 	}
 
-	private Object doFindSourceElement( String name )
-	{
+	private Object doFindSourceElement( String name ) {
 		File file = new File( name );
 		return ( file.isAbsolute() ) ? findFileByAbsolutePath( file ) : findFileByRelativePath( name );
 	}
 
-	private Object findFileByAbsolutePath( File file )
-	{
+	private Object findFileByAbsolutePath( File file ) {
 		LinkedList list = new LinkedList();
-		if ( file.exists() )
-		{
+		if ( file.exists() ) {
 			IPath path = new Path( file.getAbsolutePath() );
 			IFile[] wsFiles = CDebugCorePlugin.getWorkspace().getRoot().findFilesForLocation( path );
 			for ( int i = 0; i < wsFiles.length; ++i )
-				if ( wsFiles[i].getProject().equals( getProject() ) && wsFiles[i].exists() )
-				{
+				if ( wsFiles[i].getProject().equals( getProject() ) && wsFiles[i].exists() ) {
 					if ( !searchForDuplicateFiles() )
 						return wsFiles[i];
 					list.add( wsFiles[i] );
@@ -178,24 +149,20 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		return ( list.size() > 0 ) ? ( ( list.size() == 1 ) ? list.getFirst() : list ) : null;
 	}
 
-	private Object findFileByRelativePath( String fileName )
-	{
+	private Object findFileByRelativePath( String fileName ) {
 		IResource[] folders = getFolders();
 		LinkedList list = new LinkedList();
-		for ( int i = 0; i < folders.length; ++i )
-		{
+		for ( int i = 0; i < folders.length; ++i ) {
 			if ( list.size() > 0 && !searchForDuplicateFiles() )
 				break;
 			IPath path = folders[i].getLocation();
 			if ( path != null ) {
 				path = path.append( fileName );
 				File file = new File( path.toOSString() );
-				if ( file.exists() )
-				{
+				if ( file.exists() ) {
 					IFile[] wsFiles = CDebugCorePlugin.getWorkspace().getRoot().findFilesForLocation( path );
 					for ( int j = 0; j < wsFiles.length; ++j )
-						if ( wsFiles[j].exists() )
-						{
+						if ( wsFiles[j].exists() ) {
 							if ( !searchForDuplicateFiles() )
 								return wsFiles[j];
 							list.add( wsFiles[j] );
@@ -206,28 +173,23 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		return ( list.size() > 0 ) ? ( ( list.size() == 1 ) ? list.getFirst() : list ) : null;
 	}
 
-	private Object cacheLookup( String name )
-	{
+	private Object cacheLookup( String name ) {
 		return fCache.get( name );
 	}
 	
-	private boolean notFoundCacheLookup( String name )
-	{
+	private boolean notFoundCacheLookup( String name ) {
 		return fNotFoundCache.contains( name );
 	}
 	
-	private void cacheSourceElement( String name, Object element )
-	{
+	private void cacheSourceElement( String name, Object element ) {
 		fCache.put( name, element );
 	}
 
-	private void cacheNotFound( String name )
-	{
+	private void cacheNotFound( String name ) {
 		fNotFoundCache.add( name );
 	}
 
-	public void dispose()
-	{
+	public void dispose() {
 		fCache.clear();
 		fNotFoundCache.clear();
 	}
@@ -247,20 +209,15 @@ public class CProjectSourceLocation implements IProjectSourceLocation
     		node.setAttribute( ATTR_PROJECT, getProject().getName() );
     		node.setAttribute( ATTR_GENERIC, Boolean.valueOf( isGeneric() ).toString() );
 			return CDebugUtils.serializeDocument( document );
-        }
-        catch( ParserConfigurationException e ) 
+        } catch( ParserConfigurationException e ) 
 		{
         	ex = e;
-        }
-		catch( IOException e )
-		{
+        } catch( IOException e ) {
+			ex = e;
+		} catch( TransformerException e ) {
 			ex = e;
 		}
-		catch( TransformerException e )
-		{
-			ex = e;
-		}
-		abort( MessageFormat.format( InternalSourceLookupMessages.getString( "CProjectSourceLocation.0" ), new String[] { getProject().getName() } ), ex ); //$NON-NLS-1$
+		abort( MessageFormat.format( InternalSourceLookupMessages.CProjectSourceLocation_0, new String[] { getProject().getName() } ), ex ); //$NON-NLS-1$
 		// execution will not reach here
 		return null;
 	}
@@ -280,9 +237,8 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 			root = parser.parse( source ).getDocumentElement();
 
 			String name = root.getAttribute( ATTR_PROJECT );
-			if ( isEmpty( name ) )
-			{
-				abort( InternalSourceLookupMessages.getString( "CProjectSourceLocation.1" ), null ); //$NON-NLS-1$
+			if ( isEmpty( name ) ) {
+				abort( InternalSourceLookupMessages.CProjectSourceLocation_1, null ); //$NON-NLS-1$
 			}
 			else
 			{
@@ -294,20 +250,14 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 				isGeneric = Boolean.FALSE.toString();
 			setGenerated( isGeneric.equals( Boolean.TRUE.toString() ) );
 			return;
-		}
-		catch( ParserConfigurationException e )
-		{
+		} catch( ParserConfigurationException e ) {
+			ex = e;
+		} catch( SAXException e ) {
+			ex = e;
+		} catch( IOException e ) {
 			ex = e;
 		}
-		catch( SAXException e )
-		{
-			ex = e;
-		}
-		catch( IOException e )
-		{
-			ex = e;
-		}
-		abort( InternalSourceLookupMessages.getString( "CProjectSourceLocation.2" ), ex ); //$NON-NLS-1$
+		abort( InternalSourceLookupMessages.CProjectSourceLocation_2, ex ); //$NON-NLS-1$
 	}
 
 	/**
@@ -323,49 +273,40 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		throw new CoreException( s );
 	}
 
-	private boolean isEmpty( String string )
-	{
+	private boolean isEmpty( String string ) {
 		return string == null || string.length() == 0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation#isGenerated()
 	 */
-	public boolean isGeneric()
-	{
+	public boolean isGeneric() {
 		return fGenerated;
 	}
 
-	public void setGenerated( boolean b )
-	{
+	public void setGenerated( boolean b ) {
 		fGenerated = b;
 	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	public boolean equals( Object obj )
-	{
+	public boolean equals( Object obj ) {
 		if ( obj instanceof IProjectSourceLocation && getProject() != null )
 			return getProject().equals( ((IProjectSourceLocation)obj).getProject() );
 		return false;
 	}
 
-	private void initializeFolders()
-	{
+	private void initializeFolders() {
 		final LinkedList list = new LinkedList();
-		if ( getProject() != null && getProject().exists() )
-		{
+		if ( getProject() != null && getProject().exists() ) {
 			list.add( getProject() );
-			try
-			{
+			try {
 				getProject().accept( 
-						new IResourceProxyVisitor()
-							{
+						new IResourceProxyVisitor() {
 								public boolean visit( IResourceProxy proxy ) throws CoreException
 								{
-									switch( proxy.getType() )
-									{
+									switch( proxy.getType() ) {
 										case IResource.FILE:
 											return false;
 										case IResource.FOLDER:
@@ -377,13 +318,10 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	
 							}, 
 						IResource.NONE );
-			}
-			catch( CoreException e )
-			{
+			} catch( CoreException e ) {
 			}
 		}
-		synchronized( this ) 
-		{
+		synchronized( this ) {
 			if ( fFolders == null ) 
 			{
 				fFolders = (IResource[])list.toArray( new IResource[list.size()] );
@@ -391,8 +329,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		}
 	}
 
-	protected IResource[] getFolders()
-	{
+	protected IResource[] getFolders() {
 		if ( fFolders == null )
 			initializeFolders();
 		return fFolders;
@@ -401,23 +338,20 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#searchForDuplicateFiles()
 	 */
-	public boolean searchForDuplicateFiles()
-	{
+	public boolean searchForDuplicateFiles() {
 		return fSearchForDuplicateFiles;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#setSearchForDuplicateFiles(boolean)
 	 */
-	public void setSearchForDuplicateFiles( boolean search )
-	{
+	public void setSearchForDuplicateFiles( boolean search ) {
 		fCache.clear();
 		fNotFoundCache.clear();
 		fSearchForDuplicateFiles = search;
 	}
 
-	public String toString()
-	{
+	public String toString() {
 		return ( getProject() != null ) ? fProject.toString() : ""; //$NON-NLS-1$
 	}
 }

@@ -6,28 +6,43 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-public class InternalSourceLookupMessages {
+public class InternalSourceLookupMessages extends NLS {
+	public static String CDirectorySourceLocation_0;
+	public static String CDirectorySourceLocation_1;
+	public static String CDirectorySourceLocation_2;
+	public static String CDirectorySourceLocation_3;
+	public static String CDirectorySourceContainerType_0;
+	public static String CDirectorySourceContainerType_1;
+	public static String CDirectorySourceContainerType_2;
+	public static String CProjectSourceLocation_0;
+	public static String CProjectSourceLocation_1;
+	public static String CProjectSourceLocation_2;
+	public static String CSourceLocator_0;
+	public static String CSourceLocator_1;
+	public static String CSourceLocator_2;
+	public static String CSourceLocator_3;
+	public static String MapEntrySourceContainerType_0;
+	public static String MapEntrySourceContainerType_1;
+	public static String MapEntrySourceContainerType_2;
+	public static String MapEntrySourceContainerType_3;
+	public static String MappingSourceContainerType_0;
+	public static String MappingSourceContainerType_1;
+	public static String MappingSourceContainerType_2;
+	public static String SourceUtils_0;
+	public static String ProgramRelativePathSourceContainerType_1;
 
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.internal.core.sourcelookup.InternalSourceLookupMessages";//$NON-NLS-1$
-
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle( BUNDLE_NAME );
-
-	private InternalSourceLookupMessages() {
+	static {
+		NLS.initializeMessages(InternalSourceLookupMessages.class.getName(), InternalSourceLookupMessages.class);
 	}
 
-	public static String getString( String key ) {
-		try {
-			return RESOURCE_BUNDLE.getString( key );
-		}
-		catch( MissingResourceException e ) {
-			return '!' + key + '!';
-		}
+	private InternalSourceLookupMessages() {
+		// Do not instantiate
 	}
 }

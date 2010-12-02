@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
@@ -27,39 +27,39 @@ public class CDirectorySourceContainerType extends AbstractSourceContainerTypeDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#createSourceContainer(java.lang.String)
 	 */
-	public ISourceContainer createSourceContainer( String memento ) throws CoreException {
-		Node node = parseDocument( memento );
-		if ( node.getNodeType() == Node.ELEMENT_NODE ) {
-			Element element = (Element)node;
-			if ( "directory".equals( element.getNodeName() ) ) { //$NON-NLS-1$
-				String string = element.getAttribute( "path" ); //$NON-NLS-1$
-				if ( string == null || string.length() == 0 ) {
-					abort( InternalSourceLookupMessages.getString( "CDirectorySourceContainerType.0" ), null ); //$NON-NLS-1$
+	public ISourceContainer createSourceContainer(String memento) throws CoreException {
+		Node node = parseDocument(memento);
+		if (node.getNodeType() == Node.ELEMENT_NODE) {
+			Element element = (Element) node;
+			if ("directory".equals(element.getNodeName())) { //$NON-NLS-1$
+				String string = element.getAttribute("path"); //$NON-NLS-1$
+				if (string == null || string.length() == 0) {
+					abort(InternalSourceLookupMessages.CDirectorySourceContainerType_0, null);
 				}
-				String nest = element.getAttribute( "nest" ); //$NON-NLS-1$
-				boolean nested = "true".equals( nest ); //$NON-NLS-1$
-				return new DirectorySourceContainer( new Path( string ), nested );
+				String nest = element.getAttribute("nest"); //$NON-NLS-1$
+				boolean nested = "true".equals(nest); //$NON-NLS-1$
+				return new DirectorySourceContainer(new Path(string), nested);
 			}
-			abort( InternalSourceLookupMessages.getString( "CDirectorySourceContainerType.1" ), null ); //$NON-NLS-1$
+			abort(InternalSourceLookupMessages.CDirectorySourceContainerType_1, null);
 		}
-		abort( InternalSourceLookupMessages.getString( "CDirectorySourceContainerType.2" ), null ); //$NON-NLS-1$
+		abort(InternalSourceLookupMessages.CDirectorySourceContainerType_2, null);
 		return null;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
 	 */
-	public String getMemento( ISourceContainer container ) throws CoreException {
+	public String getMemento(ISourceContainer container) throws CoreException {
 		DirectorySourceContainer folder = (DirectorySourceContainer)container;
 		Document document = newDocument();
-		Element element = document.createElement( "directory" ); //$NON-NLS-1$
-		element.setAttribute( "path", folder.getDirectory().getAbsolutePath() ); //$NON-NLS-1$
+		Element element = document.createElement("directory"); //$NON-NLS-1$
+		element.setAttribute("path", folder.getDirectory().getAbsolutePath()); //$NON-NLS-1$
 		String nest = "false"; //$NON-NLS-1$
-		if ( folder.isComposite() ) {
+		if (folder.isComposite()) {
 			nest = "true"; //$NON-NLS-1$
 		}
-		element.setAttribute( "nest", nest ); //$NON-NLS-1$
-		document.appendChild( element );
-		return serializeDocument( document );
+		element.setAttribute("nest", nest); //$NON-NLS-1$
+		document.appendChild(element);
+		return serializeDocument(document);
 	}
 }

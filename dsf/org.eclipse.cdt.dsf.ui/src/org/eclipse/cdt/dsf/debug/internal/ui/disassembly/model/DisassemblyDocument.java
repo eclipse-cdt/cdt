@@ -1203,7 +1203,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 				if (pos.length > 0) {
 					SourcePosition oldPos = getSourcePosition(pos.offset+pos.length);
 					if (oldPos == null || oldPos.fAddressOffset.compareTo(pos.fAddressOffset) != 0) {
-						pos = new SourcePosition(pos.offset+pos.length, 0, pos.fAddressOffset, pos.fFileInfo, line, false);
+						pos = new SourcePosition(pos.offset+pos.length, 0, pos.fAddressOffset, pos.fFileInfo, line, pos.fLast, false);
 						addSourcePosition(pos);
 						addModelPosition(pos);
 						addInvalidSourcePositions(pos);
@@ -1223,17 +1223,18 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * @param pos
 	 * @param address
 	 * @param fi
-	 * @param lineNr
+	 * @param firstLine
+     * @param lastLine 
 	 * @return
 	 */
-	public AddressRangePosition insertInvalidSource(AddressRangePosition pos, BigInteger address, SourceFileInfo fi, int lineNr) {
+	public AddressRangePosition insertInvalidSource(AddressRangePosition pos, BigInteger address, SourceFileInfo fi, int firstLine, int lastLine) {
 		assert isGuiThread();
 		SourcePosition sourcePos = getSourcePosition(address);
 		if (sourcePos != null) {
 			return pos;
 		}
 		String sourceLine = ""; //$NON-NLS-1$
-		sourcePos = new SourcePosition(0, sourceLine.length(), address, fi, lineNr, false);
+		sourcePos = new SourcePosition(0, sourceLine.length(), address, fi, firstLine, lastLine, false);
 		try {
 			pos = insertAddressRange(pos, sourcePos, sourceLine, true);
 			addSourcePosition(sourcePos);

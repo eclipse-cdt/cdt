@@ -30,6 +30,9 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * DisassemblyPart all along. Documentation for those methods were sparse, and
  * thus this interface is likewise. See the DisassemblyPart for any available
  * documentation.
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IDisassemblyPartCallback {
 	void gotoFrame(int frame);
@@ -49,6 +52,7 @@ public interface IDisassemblyPartCallback {
 	void unlockScroller();
 	void insertSource(AddressRangePosition pos);
 	AddressRangePosition insertSource(AddressRangePosition pos, BigInteger address, final String file, int lineNumber);
+	AddressRangePosition insertSource(AddressRangePosition pos, BigInteger address, final String file, int firstLine, int lastLine);
 	void setUpdatePending(boolean pending); 
 	boolean getUpdatePending();
 	void setGotoAddressPending(BigInteger address);

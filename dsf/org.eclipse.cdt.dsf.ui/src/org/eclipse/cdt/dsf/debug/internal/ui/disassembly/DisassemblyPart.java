@@ -2665,11 +2665,12 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			if (fi.fSource != null && lineNr >= 0 && lineNr < fi.fSource.getNumberOfLines()) {
 				fi.fStartAddress = fi.fStartAddress.min(pos.fAddressOffset);
 				fi.fEndAddress = fi.fEndAddress.max(pos.fAddressOffset.add(pos.fAddressLength));
+		    	int last = pos.fLast > lineNr ? pos.fLast : lineNr;
 				final BigInteger lineAddr = fi.fLine2Addr[lineNr];
 				if (lineAddr == null) {
 					fi.fLine2Addr[lineNr] = pos.fAddressOffset;
-					String sourceLine = fi.getLine(lineNr);
-					fDocument.insertSource(pos, sourceLine, lineNr, true);
+					String source = fi.getLines(lineNr, last);
+					fDocument.insertSource(pos, source, lineNr, true);
 				} else {
 					final int comparison = lineAddr.compareTo(pos.fAddressOffset);
 					if (comparison > 0) {
@@ -2693,11 +2694,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 							}
 						}
 						fi.fLine2Addr[lineNr] = pos.fAddressOffset;
-						String sourceLine = fi.getLine(lineNr);
-						fDocument.insertSource(pos, sourceLine, lineNr, true);
+						String source = fi.getLines(lineNr, last);
+						fDocument.insertSource(pos, source, lineNr, true);
 					} else if (comparison == 0) {
-						String sourceLine = fi.getLine(lineNr);
-						fDocument.insertSource(pos, sourceLine, lineNr, true);
+						String source = fi.getLines(lineNr, last);
+						fDocument.insertSource(pos, source, lineNr, true);
 					} else {
 						// new source position is after old position
 						try {
@@ -2709,12 +2710,12 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 									fDocument.insertSource(pos, "", lineNr, true); //$NON-NLS-1$
 									fDocument.removeSourcePosition(pos);
 								} else {
-									String sourceLine = fi.getLine(lineNr);
-									fDocument.insertSource(pos, sourceLine, lineNr, true);
+									String source = fi.getLines(lineNr, last);
+									fDocument.insertSource(pos, source, lineNr, true);
 								}
 							} else {
-								String sourceLine = fi.getLine(lineNr);
-								fDocument.insertSource(pos, sourceLine, lineNr, true);
+								String source = fi.getLines(lineNr, last);
+								fDocument.insertSource(pos, source, lineNr, true);
 							}
 						} catch (BadPositionCategoryException e) {
 							internalError(e);
@@ -2846,16 +2847,16 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#insertSource(org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition, java.math.BigInteger, java.lang.String, int)
-	 */
 	public AddressRangePosition insertSource(AddressRangePosition pos, BigInteger address, final String file, int lineNumber) {
+		return insertSource(pos, address, file, lineNumber, lineNumber);
+	}
+	public AddressRangePosition insertSource(AddressRangePosition pos, BigInteger address, final String file, int firstLine, int lastLine) {
 		assert isGuiThread();
 		Object sourceElement = null;
 		if (fFile2Storage.containsKey(file)) {
 			sourceElement = fFile2Storage.get(file);
 		} else {
-			sourceElement = fBackend.insertSource(pos, address, file, lineNumber);
+			sourceElement = fBackend.insertSource(pos, address, file, firstLine);
 		}
 		if (sourceElement instanceof File) {
 			sourceElement = new LocalFileStorage((File)sourceElement);
@@ -2898,7 +2899,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				}
 				fi.fReadingJob.schedule();
 			}
-			pos = fDocument.insertInvalidSource(pos, address, fi, lineNumber);
+			pos = fDocument.insertInvalidSource(pos, address, fi, firstLine, lastLine);
 		}
 		
 		return pos;

@@ -191,7 +191,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	}
 
 	public IBinding getBindingInAST(IASTName name, boolean forceResolve) {
-		IBinding[] bs= getBindingsInAST(name, forceResolve, false, false, false);
+		IBinding[] bs= getBindingsInAST(name, forceResolve, false, false);
 		return CPPSemantics.resolveAmbiguities(name, bs);
 	}
 
@@ -201,7 +201,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet,
 			boolean checkPointOfDecl) {
-		IBinding[] result = getBindingsInAST(name, resolve, prefixLookup, checkPointOfDecl, true);
+		IBinding[] result = getBindingsInAST(name, resolve, prefixLookup, checkPointOfDecl);
 		final IASTTranslationUnit tu = name.getTranslationUnit();
 		if (tu != null) {
 			IIndex index = tu.getIndex();
@@ -242,8 +242,9 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
 
+
 	public IBinding[] getBindingsInAST(IASTName name, boolean forceResolve, boolean prefixLookup, 
-			boolean checkPointOfDecl, boolean expandUsingDirectives) {
+			boolean checkPointOfDecl) {
 		populateCache();
 	    final char[] c = name.getLookupKey();
 	    IBinding[] result = null;
@@ -272,17 +273,17 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	        if (obj instanceof ObjectSet<?>) {
 	        	ObjectSet<?> os= (ObjectSet<?>) obj;
         		for (int j = 0; j < os.size(); j++) {
-        			result= addCandidate(os.keyAt(j), name, forceResolve, checkPointOfDecl, expandUsingDirectives, result);
+        			result= addCandidate(os.keyAt(j), name, forceResolve, checkPointOfDecl, result);
         		}
 	        } else {
-	        	result = addCandidate(obj, name, forceResolve, checkPointOfDecl, expandUsingDirectives, result);
+	        	result = addCandidate(obj, name, forceResolve, checkPointOfDecl, result);
 	        }
 	    }
 	    return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
 
 	private IBinding[] addCandidate(Object candidate, IASTName name, boolean forceResolve, 
-			boolean checkPointOfDecl, boolean expandUsingDirectives, IBinding[] result) {
+			boolean checkPointOfDecl, IBinding[] result) {
 		if (checkPointOfDecl) {
 			IASTTranslationUnit tu= name.getTranslationUnit();
 			if (!CPPSemantics.declaredBefore(candidate, name, tu != null && tu.getIndex() != null)) {
@@ -308,13 +309,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 			binding= (IBinding) candidate;
 		}
 
-		if (expandUsingDirectives && binding instanceof ICPPUsingDeclaration) {
-			IBinding[] delegates = ((ICPPUsingDeclaration) binding).getDelegates();
-			result= (IBinding[]) ArrayUtil.addAll(IBinding.class, result, delegates);
-		} else {
-			result = (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
-		}
-		return result;
+		return (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
 	}
 	
 	public final void populateCache() {

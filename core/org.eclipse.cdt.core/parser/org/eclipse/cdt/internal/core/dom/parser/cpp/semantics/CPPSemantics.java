@@ -1195,41 +1195,46 @@ public class CPPSemantics {
 			// For index scopes the point of declaration is ignored.
 			bindings= scope.getBindings(data.astName, true, data.prefixLookup, fileSet);
 		}
+		return expandUsingDeclarationsAndRemoveObjects(bindings, data.typesOnly);
+	}
+
+	private static IBinding[] expandUsingDeclarationsAndRemoveObjects(final IBinding[] bindings, boolean removeObjects) {
+		if (bindings == null || bindings.length == 0)
+			return IBinding.EMPTY_BINDING_ARRAY;
 		
-		if (data.typesOnly) {
-			return removeObjects(bindings);
+		for (IBinding b : bindings) {
+			if (b == null) 
+				break;
+				
+			if (b instanceof ICPPUsingDeclaration || (removeObjects && isObject(b))) {
+				List<IBinding> result= new ArrayList<IBinding>(bindings.length);
+				expandUsingDeclarations(bindings, removeObjects, result);
+				return result.toArray(new IBinding[result.size()]);
+			}
 		}
 		return bindings;
 	}
 
-	private static IBinding[] removeObjects(final IBinding[] bindings) {
-		final int length = bindings.length;
-		IBinding[] copy= null;
-		int pos= 0;
-		for (int i = 0; i < length; i++) {
-			final IBinding binding= bindings[i];
-			IBinding check= binding;
-			if (binding instanceof ICPPUsingDeclaration) {
-				IBinding[] delegates= ((ICPPUsingDeclaration) binding).getDelegates();
-				if (delegates.length > 0)
-					check= delegates[0];
-			}
-			if (check instanceof IType || check instanceof ICPPNamespace) {
-				if (copy != null) {
-					copy[pos]= binding;
-				} 
-				pos++;
-			} else {
-				if (copy == null) {
-					copy= new IBinding[length-1];
-					System.arraycopy(bindings, 0, copy, 0, pos);
+	private static boolean isObject(IBinding b) {
+		return !(b instanceof IType || b instanceof ICPPNamespace);
+	}
+
+	private static void expandUsingDeclarations(IBinding[] bindings, boolean removeObjects, List<IBinding> result) {
+		if (bindings != null) {
+			for (IBinding b : bindings) {
+				if (b == null)
+					return;
+				if (b instanceof ICPPUsingDeclaration) {
+					for (IBinding d : ((ICPPUsingDeclaration) b).getDelegates()) {
+						if (d != null && !(removeObjects && isObject(d))) {
+							result.add(d);
+						}
+					}
+				} else if (!(removeObjects && isObject(b))) {
+					result.add(b);
 				}
-			} 
+			}
 		}
-		if (pos == 0)
-			return IBinding.EMPTY_BINDING_ARRAY;
-		
-		return copy == null ? bindings : copy;
 	}
 
 	private static ICPPTemplateScope enclosingTemplateScope(IASTNode node) {

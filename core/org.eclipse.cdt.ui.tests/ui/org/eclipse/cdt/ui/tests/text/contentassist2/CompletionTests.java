@@ -46,128 +46,135 @@ public class CompletionTests extends AbstractContentAssistTest {
 	private IProject fProject;
 	
 	
-	//{DisturbWith.cpp}
-	// int gTemp;
-	// void gFunc();
-	// typedef struct {
-	//    int mem;
-	// } gStruct;
-	// class gClass {};
-	// namespace gns {
-	//    int gnsTemp;
-	//    void gnsFunc();
-	//    typedef struct {
-	//      int mem;
-	//    } gnsStruct;
-	//    class gnsClass {};
-	// };
+	//	{DisturbWith.cpp}
+	//	int gTemp;
+	//	void gFunc();
+	//	typedef struct {
+	//		int mem;
+	//	} gStruct;
+	//	class gClass {};
+	//	namespace gns {
+	//		int gnsTemp;
+	//		void gnsFunc();
+	//		typedef struct {
+	//			int mem;
+	//		} gnsStruct;
+	//		class gnsClass {};
+	//	};
 
-	//{CompletionTest.h}
-	//class C1;
-	//class C2;
-	//class C3;
+	//	{CompletionTest.h}
+	//	class C1;
+	//	class C2;
+	//	class C3;
 	//
-	//extern C1* gC1;
-	//C2* gC2 = 0;
+	//	extern C1* gC1;
+	//	C2* gC2 = 0;
 	//
-	//extern C1* gfC1();
-	//C2* gfC2();
+	//	extern C1* gfC1();
+	//	C2* gfC2();
 	//
-	//enum E1 {e11, e12};
+	//	enum E1 {e11, e12};
 	//
-	//class C1 {
-	//public:
-	//		enum E2 {e21, e22};
+	//	class C1 {
+	//		public:
+	//			enum E2 {e21, e22};
 	//
-	//		C1* fMySelf;
-	//		void iam1();
+	//			C1* fMySelf;
+	//			void iam1();
 	//
-	//		C1* m123();
-	//		C1* m12();
-	//		C1* m13();
+	//			C1* m123();
+	//			C1* m12();
+	//			C1* m13();
 	//
-	//protected:
-	//		void m1protected();
-	//private:
-	//		void m1private();
-	//};
-	//typedef C1 T1;
+	//			protected:
+	//				void m1protected();
+	//			private:
+	//				void m1private();
+	//	};
+	//	typedef C1 T1;
 	//
 	//
-	//class C2 : public T1 {
-	//public:
-	//		C2* fMySelf;
-	//		void iam2();
+	//	class C2 : public T1 {
+	//		public:
+	//			C2* fMySelf;
+	//	void iam2();
 	//
-	//		C2* m123();
-	//		C2* m12();
-	//		C2* m23();
-	//      C1* operator()(int x);
+	//	C2* m123();
+	//	C2* m12();
+	//	C2* m23();
+	//	C1* operator()(int x);
 	//
-	//protected:
+	//	protected:
 	//		void m2protected();
-	//private:
+	//	private:
 	//		void m2private();
-	//      friend void _friend_function(C3* x);
-	//      friend class _friend_class;
-	//};
-	//typedef C2 T2;
+	//	friend void _friend_function(C3* x);
+	//	friend class _friend_class;
+	//	};
+	//	typedef C2 T2;
 	//
 	//
-	//class C3 : public C2 {
-	//public:
-	//		C3* fMySelf;
-	//		void iam3();
+	//	class C3 : public C2 {
+	//		public:
+	//			C3* fMySelf;
+	//	void iam3();
 	//
-	//		C3* m123();
-	//		C3* m13();
+	//	C3* m123();
+	//	C3* m13();
 	//
-	//  	template<typename T> T tConvert();
-	//protected:
+	//	template<typename T> T tConvert();
+	//	protected:
 	//		void m3protected();
-	//private:
+	//	private:
 	//		void m3private();
-	//};
-	//typedef C3 T3;
+	//	};
+	//	typedef C3 T3;
 	//
-	//namespace ns {
-	//   const int NSCONST= 1;
-	//   class CNS {
-	//	      void mcns();
-	//   };
-	//};
-	//template <class T> class TClass {
-	//	T fTField;
-	//public:
-	//	TClass(T tArg) : fTField(tArg) {
-	//	}
-	//	T add(T tOther) {
-	//		return fTField + tOther;
-	//	}
-	//};
-	//// bug 109480
-	//class Printer
-	//{
-	//public:
-	//	static void InitPrinter(unsigned char port);
-	//private:
-	//	//Storage for port printer is on
-	//	static unsigned char port;
-	//protected:
-	//};
-	//struct Struct1;
-	//struct Struct2;
-	//union Union1;
-	//union Union2;
+	//	namespace ns {
+	//		const int NSCONST= 1;
+	//		class CNS {
+	//			void mcns();
+	//		};
+	//	};
+	//	template <class T> class TClass {
+	//		T fTField;
+	//		public:
+	//			TClass(T tArg) : fTField(tArg) {
+	//			}
+	//			T add(T tOther) {
+	//				return fTField + tOther;
+	//			}
+	//	};
+	//	// bug 109480
+	//	class Printer
+	//	{
+	//		public:
+	//			static void InitPrinter(unsigned char port);
+	//	private:
+	//		//Storage for port printer is on
+	//		static unsigned char port;
+	//	protected:
+	//	};
+	//	struct Struct1;
+	//	struct Struct2;
+	//	union Union1;
+	//	union Union2;
 	//	struct s206450 {
 	//		struct {int a1; int a2;};
 	//		union {int u1; char u2;};
 	//		struct {int a3;} a4;
 	//		int b;
 	//	};
-	// typedef enum {__nix} _e204758;
-	// void _f204758(_e204758 x);
-
+	//	typedef enum {__nix} _e204758;
+	//	void _f204758(_e204758 x);
+	//
+	// // Bug 331056
+	//	namespace _A_331056 {
+	//		class Reference {};
+	//	}
+	//	namespace _B_331056 {
+	//		using ::_A_331056::Reference;
+	//	}
 
 	public CompletionTests(String name) {
 		super(name, true);
@@ -747,7 +754,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 	}
 	
-	//using namespace /*cursor*/
+	//using namespace n/*cursor*/
 	public void testAutoColons2() throws Exception {
 		final String[] expected= {
 				"ns"
@@ -1233,7 +1240,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	public void testConstructorInitializerList_EmptyInput_Bug266586() throws Exception {
 		final String[] expected= {"mOne", "Base",
 				"Base(int)", "Base(const Base<Helper> &)", "Helper",
-				"Helper(void)", "Helper(const Helper &)",
+				"Helper(void)", "Helper(const Helper &)", "_A_331056", "_B_331056",
 				// Namespaces must be offered as well. In order for this code
 				// to compile with gcc (e.g. 4.1.2), you need to write
 				// ::ns::Base<Helper>() instead of just Base<Helper>().
@@ -1325,5 +1332,12 @@ public class CompletionTests extends AbstractContentAssistTest {
 	public void testTypedefSpecialization_Bug307818() throws Exception {
 		final String[] expected= { "push_back(const int & value) : void" };
 		assertParameterHint(expected);
+	}
+	
+	//	using namespace ::_B_331056;
+	//	Ref/*cursor*/
+	public void testUsingDeclaration_Bug331056() throws Exception {
+		final String[] expected= { "Reference" };
+		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
 	}
 }

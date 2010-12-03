@@ -19,7 +19,6 @@ import java.util.Set;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.sourcelookup.AbsolutePathSourceContainer;
-import org.eclipse.cdt.debug.core.sourcelookup.IMappingSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.ProgramRelativePathSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.core.resources.IContainer;
@@ -183,8 +182,8 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	}
 
 	private IPath getCompilationPath(ISourceContainer container, String sourceName) {
-		if (container instanceof IMappingSourceContainer) {
-			return ((IMappingSourceContainer) container).getCompilationPath(sourceName);
+		if (container instanceof MappingSourceContainer) {
+			return ((MappingSourceContainer) container).getCompilationPath(sourceName);
 		}
 
 		try {

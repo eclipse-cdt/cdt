@@ -26,7 +26,7 @@ cd `dirname $0`
 mkdir -p tools
 cd tools
 cvs -d /cvsroot/eclipse	co -r R36_RC4 org.eclipse.releng.basebuilder
-cp /home/data/httpd/download.eclipse.org/technology/subversive/0.7/pde-update-site/plugins/org.eclipse.team.svn.pde.build_0.7.8.I20090525-1500.jar \
+cp /home/data/httpd/download.eclipse.org/technology/subversive/0.7/pde-update-site/plugins/org.eclipse.team.svn.pde.build_0.7.9.I20101203-1700.jar \
 	org.eclipse.releng.basebuilder/plugins
 cd ..
 

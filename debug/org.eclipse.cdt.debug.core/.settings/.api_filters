@@ -1,11 +1,49 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.cdt.debug.core" version="2">
-<resource path="src/org/eclipse/cdt/debug/internal/core/srcfinder/CSourceFinder.java" type="org.eclipse.cdt.debug.internal.core.srcfinder.CSourceFinder">
-<filter id="574619656">
-<message_arguments>
-<message_argument value="ISourceFinder"/>
-<message_argument value="CSourceFinder"/>
-</message_arguments>
-</filter>
-</resource>
+    <resource path="src/org/eclipse/cdt/debug/core/sourcelookup/MappingSourceContainer.java" type="org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer">
+        <filter id="643846161">
+            <message_arguments>
+                <message_argument value="MapEntrySourceContainer"/>
+                <message_argument value="MappingSourceContainer"/>
+                <message_argument value="addMapEntries(MapEntrySourceContainer[])"/>
+            </message_arguments>
+        </filter>
+        <filter id="643846161">
+            <message_arguments>
+                <message_argument value="MapEntrySourceContainer"/>
+                <message_argument value="MappingSourceContainer"/>
+                <message_argument value="addMapEntry(MapEntrySourceContainer)"/>
+            </message_arguments>
+        </filter>
+        <filter id="643846161">
+            <message_arguments>
+                <message_argument value="MapEntrySourceContainer"/>
+                <message_argument value="MappingSourceContainer"/>
+                <message_argument value="removeMapEntries(MapEntrySourceContainer[])"/>
+            </message_arguments>
+        </filter>
+        <filter id="643846161">
+            <message_arguments>
+                <message_argument value="MapEntrySourceContainer"/>
+                <message_argument value="MappingSourceContainer"/>
+                <message_argument value="removeMapEntry(MapEntrySourceContainer)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/debug/core/sourcelookup/SourceLookupMessages.java" type="org.eclipse.cdt.debug.core.sourcelookup.SourceLookupMessages">
+        <filter comment="SourceLookupMessages class is no longer public." id="305365105">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.debug.core.sourcelookup.SourceLookupMessages"/>
+                <message_argument value="org.eclipse.cdt.debug.core_7.1.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/debug/internal/core/srcfinder/CSourceFinder.java" type="org.eclipse.cdt.debug.internal.core.srcfinder.CSourceFinder">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="ISourceFinder"/>
+                <message_argument value="CSourceFinder"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

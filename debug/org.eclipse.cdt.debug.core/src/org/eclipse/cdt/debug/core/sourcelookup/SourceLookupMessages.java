@@ -6,29 +6,23 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.sourcelookup;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-public class SourceLookupMessages {
+class SourceLookupMessages extends NLS {
+	public static String MappingSourceContainer_0;
+	public static String AbsolutePathSourceContainer_0;
+	public static String ProgramRelativePathSourceContainer_0;
 
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.core.sourcelookup.SourceLookupMessages"; //$NON-NLS-1$
-
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle( BUNDLE_NAME );
-
-	private SourceLookupMessages() {
+	static {
+		NLS.initializeMessages(SourceLookupMessages.class.getName(), SourceLookupMessages.class);
 	}
 
-	public static String getString( String key ) {
-		// TODO Auto-generated method stub
-		try {
-			return RESOURCE_BUNDLE.getString( key );
-		}
-		catch( MissingResourceException e ) {
-			return '!' + key + '!';
-		}
+	private SourceLookupMessages() {
+		// Do not instantiate
 	}
 }

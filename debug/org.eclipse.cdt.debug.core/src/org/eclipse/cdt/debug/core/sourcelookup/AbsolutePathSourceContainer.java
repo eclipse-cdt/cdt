@@ -9,7 +9,6 @@
  *     Nokia - Initial implementation (159833)
  *     Broadcom - http://bugs.eclipse.org/247853
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.core.sourcelookup;
 
 import java.io.File;
@@ -58,16 +57,13 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 			
 			// The file is not already in the workspace so try to create an external translation unit for it.
 			ISourceLookupDirector director = getDirector();
-			if (director != null)
-			{
+			if (director != null) {
 				ILaunchConfiguration launchConfiguration = director.getLaunchConfiguration();
-				if (launchConfiguration != null)
-				{
+				if (launchConfiguration != null) {
 					String projectName = launchConfiguration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 					if (projectName.length() > 0) {
 						ICProject project = CoreModel.getDefault().getCModel().getCProject(projectName);
-						if (project != null)
-						{
+						if (project != null) {
 							IPath path = Path.fromOSString(file.getCanonicalPath());
 							String id = CoreModel.getRegistedContentTypeId(project.getProject(), path.lastSegment());
 							return new ExternalTranslationUnit[] { new ExternalTranslationUnit(project, path, id) };
@@ -89,8 +85,7 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 	 */
 	private IProject getProject() {
 		ISourceLookupDirector director = getDirector();
-		if (director != null)
-		{
+		if (director != null) {
 			ILaunchConfiguration config = director.getLaunchConfiguration();
 			if (config != null) {
 				try {
@@ -105,35 +100,33 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 		return null;
 	}
 
-	public boolean isValidAbsoluteFilePath( String name )
-	{
-		return isValidAbsoluteFilePath( new File(name) );	
+	public boolean isValidAbsoluteFilePath(String name) {
+		return isValidAbsoluteFilePath(new File(name));	
 	}
 
-	public boolean isValidAbsoluteFilePath( File file )
-	{
+	public boolean isValidAbsoluteFilePath(File file) {
 		return file.isAbsolute() && file.exists() && file.isFile();	
 	}
 	
-	public Object[] findSourceElements( String name ) throws CoreException {
-		if ( name != null ) {
-			File file = new File( name );
-			if ( isValidAbsoluteFilePath(file) ) {
-				return findSourceElementByFile( file );
+	public Object[] findSourceElements(String name) throws CoreException {
+		if (name != null) {
+			File file = new File(name);
+			if (isValidAbsoluteFilePath(file)) {
+				return findSourceElementByFile(file);
 			}
 		}
 		return new Object[0];
 	}
 
 	public String getName() {
-		return SourceLookupMessages.getString( "AbsolutePathSourceContainer.0" ); //$NON-NLS-1$
+		return SourceLookupMessages.AbsolutePathSourceContainer_0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return getSourceContainerType( TYPE_ID );
+		return getSourceContainerType(TYPE_ID);
 	}
 
 	@Override

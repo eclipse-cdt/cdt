@@ -104,7 +104,9 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 				if (single == null) {
 					single = e;
 				} else if (multiStatus == null) {
-					multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{ single.getStatus() }, SourceLookupMessages.getString("MappingSourceContainer.0"), null); //$NON-NLS-1$
+					multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(),
+							DebugPlugin.INTERNAL_ERROR, new IStatus[] { single.getStatus() },
+							SourceLookupMessages.MappingSourceContainer_0, null);
 					multiStatus.add(e.getStatus());
 				} else {
 					multiStatus.add(e.getStatus());

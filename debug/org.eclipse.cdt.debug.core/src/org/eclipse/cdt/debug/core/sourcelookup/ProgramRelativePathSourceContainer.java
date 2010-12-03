@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Freescale - Initial implementation
+ *     Freescale - Initial implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.core.sourcelookup;
 
 import java.io.File;
@@ -35,7 +34,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * @since 7.0
  */
 public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
-
 	/**
 	 * Unique identifier for the relative path source container type
 	 * (value <code>org.eclipse.cdt.debug.core.containerType.programRelativePath</code>).
@@ -83,21 +81,20 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 	 * 
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
-	public Object[] findSourceElements( String sourceName ) throws CoreException {
-		
-		if (sourceName == null){
+	public Object[] findSourceElements(String sourceName) throws CoreException {
+		if (sourceName == null) {
 			return new Object[0];
 		}
 		
 		// check if source path is a relative path
 		IPath sourcePath = new Path(sourceName);
-		if (sourcePath.isAbsolute()){
+		if (sourcePath.isAbsolute()) {
 			return new Object[0];
 		}
 		
 		// get program (executable) absolute path
 		IPath programPath = getProgramLocation();
-		if (programPath == Path.EMPTY){
+		if (programPath == Path.EMPTY) {
 			return new Object[0];
 		}
 
@@ -108,8 +105,8 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 
 		// check if source file exists and is valid
 		File sourceFile = sourcePath.toFile();
-		if ( sourceFile.exists() && sourceFile.isFile() ) {
-			return new Object[] { new LocalFileStorage( sourceFile ) };
+		if (sourceFile.exists() && sourceFile.isFile()) {
+			return new Object[] { new LocalFileStorage(sourceFile) };
 		}
 
 		return new Object[0];
@@ -119,20 +116,19 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
 	public String getName() {
-		return SourceLookupMessages.getString("ProgramRelativePathSourceContainer.0"); //$NON-NLS-1$
+		return SourceLookupMessages.ProgramRelativePathSourceContainer_0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return getSourceContainerType( TYPE_ID );
+		return getSourceContainerType(TYPE_ID);
 	}
 
 	private synchronized IPath getProgramLocation() throws CoreException {
-
 		// compute fProgramPath only if doesn't exist already
-		if (fProgramPath.isEmpty()){
+		if (fProgramPath.isEmpty()) {
 			// get launch configuration
 			ISourceLookupDirector director = getDirector();
 			if (director == null) {
@@ -147,7 +143,7 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 			// executables that are not in an Eclipse project, so this may be
 			// null for a DSF session. See bugzilla 304433.
 			ICProject project = null;
-			String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
+			String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
 			if (projectName != null) {
 				project = CoreModel.getDefault().getCModel().getCProject(projectName);
 				if (project == null || !project.exists()) {
@@ -157,7 +153,7 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 	
 			// get program name
 			String programName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String)null);
-			if (programName == null){
+			if (programName == null) {
 				return fProgramPath; // return empty path
 			}
 
@@ -166,8 +162,7 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 			try {
 				if (project != null) {
 					exeFile = project.getProject().getFile(new Path(programName));
-				}
-				else {
+				} else {
 					// A DSF launch config need not reference a project. Try
 					// treating program name as either an absolute path or a
 					// path relative to the working directory
@@ -175,18 +170,15 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 					if (path.toFile().exists()) {
 						fProgramPath = path;
 						return fProgramPath;
-					}
-					else {
+					} else {
 						return fProgramPath; // return empty path
 					}
 				}
-				
-			}
-			catch (IllegalArgumentException e){
+			} catch (IllegalArgumentException e) {
 				return fProgramPath; // return empty path
 			}
 
-			if (!exeFile.exists()){
+			if (!exeFile.exists()) {
 				return fProgramPath; // return empty path
 			}
 

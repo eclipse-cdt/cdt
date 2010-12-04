@@ -50,7 +50,7 @@ public class CDirectorySourceContainerType extends AbstractSourceContainerTypeDe
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
 	 */
 	public String getMemento(ISourceContainer container) throws CoreException {
-		DirectorySourceContainer folder = (DirectorySourceContainer)container;
+		DirectorySourceContainer folder = (DirectorySourceContainer) container;
 		Document document = newDocument();
 		Element element = document.createElement("directory"); //$NON-NLS-1$
 		element.setAttribute("path", folder.getDirectory().getAbsolutePath()); //$NON-NLS-1$

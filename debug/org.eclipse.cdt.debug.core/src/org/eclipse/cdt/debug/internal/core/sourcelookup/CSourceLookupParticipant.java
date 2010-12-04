@@ -7,10 +7,10 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- * Ken Ryall (Nokia) - Added support for AbsoluteSourceContainer( 159833 ) 
- * Ken Ryall (Nokia) - Added support for CSourceNotFoundElement ( 167305 )
- * Ken Ryall (Nokia) - Option to open disassembly view when no source ( 81353 )
- * James Blackburn (Broadcom Corp.) - Linked Resources / Nested Projects ( 247948 )
+ * Ken Ryall (Nokia) - Added support for AbsoluteSourceContainer(159833) 
+ * Ken Ryall (Nokia) - Added support for CSourceNotFoundElement (167305)
+ * Ken Ryall (Nokia) - Option to open disassembly view when no source (81353)
+ * James Blackburn (Broadcom Corp.) - Linked Resources / Nested Projects (247948)
 *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
@@ -53,21 +53,21 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 	 */
 	public CSourceLookupParticipant() {
 		super();
-		fListeners = new ListenerList( 1 );
+		fListeners = new ListenerList(1);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#getSourceName(java.lang.Object)
 	 */
-	public String getSourceName( Object object ) throws CoreException {
-		if ( object instanceof String ) {
+	public String getSourceName(Object object) throws CoreException {
+		if (object instanceof String) {
 			return (String)object;
 		}
-		if ( object instanceof IAdaptable ) {
-			ICStackFrame frame = (ICStackFrame)((IAdaptable)object).getAdapter( ICStackFrame.class );
-			if ( frame != null ) {
+		if (object instanceof IAdaptable) {
+			ICStackFrame frame = (ICStackFrame)((IAdaptable)object).getAdapter(ICStackFrame.class);
+			if (frame != null) {
 				String name = frame.getFile();
-				return ( name != null && name.trim().length() > 0 ) ? name : null;
+				return (name != null && name.trim().length() > 0) ? name : null;
 			}
 		}
 		return null;
@@ -77,8 +77,7 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant#findSourceElements(java.lang.Object)
 	 */
 	@Override
-	public Object[] findSourceElements( Object object ) throws CoreException {
-		
+	public Object[] findSourceElements(Object object) throws CoreException {
 		// Check the cache
 		Object[] results = fCachedResults.get(object);
 		if (results != null)
@@ -87,11 +86,11 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 		// Workaround for cases when the stack frame doesn't contain the source file name 
 		String name = null;
 		IBreakpoint breakpoint = null;
-		if ( object instanceof IAdaptable ) {
-			ICStackFrame frame = (ICStackFrame)((IAdaptable)object).getAdapter( ICStackFrame.class );
-			if ( frame != null ) {
+		if (object instanceof IAdaptable) {
+			ICStackFrame frame = (ICStackFrame)((IAdaptable)object).getAdapter(ICStackFrame.class);
+			if (frame != null) {
 				name = frame.getFile().trim();
-				if ( name == null || name.length() == 0 )
+				if (name == null || name.length() == 0)
 				{
 					if (object instanceof IDebugElement)
 						results = new Object[] { new CSourceNotFoundElement((IDebugElement) object, ((IDebugElement) object).getLaunch().getLaunchConfiguration(), name) };
@@ -102,7 +101,7 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 				}
 			}
 			// See if findSourceElements(...) is the result of a Breakpoint Hit Event
-			ICDebugTarget target =  (ICDebugTarget)((IAdaptable)object).getAdapter( ICDebugTarget.class );
+			ICDebugTarget target =  (ICDebugTarget)((IAdaptable)object).getAdapter(ICDebugTarget.class);
 			if (target != null) {
 				CBreakpointManager bmanager = (CBreakpointManager)target.getAdapter(CBreakpointManager.class);
 				Object stateInfo = target.getCurrentStateInfo();
@@ -110,7 +109,7 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 					breakpoint = bmanager.getBreakpoint(((ICDIBreakpointHit)stateInfo).getBreakpoint());
 				}
 			}
-		} else if ( object instanceof String ) {
+		} else if (object instanceof String) {
 			name = (String)object;
 		}
 
@@ -154,26 +153,25 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 		super.dispose();
 	}
 
-	public void addSourceLookupChangeListener( ISourceLookupChangeListener listener ) {
-		fListeners.add( listener );
+	public void addSourceLookupChangeListener(ISourceLookupChangeListener listener) {
+		fListeners.add(listener);
 	}
 
-	public void removeSourceLookupChangeListener( ISourceLookupChangeListener listener ) {
-		fListeners.remove( listener );
+	public void removeSourceLookupChangeListener(ISourceLookupChangeListener listener) {
+		fListeners.remove(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant#sourceContainersChanged(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
 	 */
 	@Override
-	public void sourceContainersChanged( ISourceLookupDirector director ) {
+	public void sourceContainersChanged(ISourceLookupDirector director) {
 		// clear the cache
 		fCachedResults.clear();
 		
 		Object[] listeners = fListeners.getListeners();
-		for ( int i = 0; i < listeners.length; ++i )
-			((ISourceLookupChangeListener)listeners[i]).sourceContainersChanged( director );
-		super.sourceContainersChanged( director );
+		for (int i = 0; i < listeners.length; ++i)
+			((ISourceLookupChangeListener)listeners[i]).sourceContainersChanged(director);
+		super.sourceContainersChanged(director);
 	}
-
 }

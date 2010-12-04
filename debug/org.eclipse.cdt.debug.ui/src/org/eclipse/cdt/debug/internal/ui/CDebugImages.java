@@ -23,7 +23,6 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * 
  * Bundle of most images used by the C/C++ debug plug-in.
  * 
  * @since Aug 30, 2002
@@ -34,16 +33,12 @@ public class CDebugImages {
 
 	private static URL fgIconBaseURL = null;
 
-	static 
-	{
+	static {
 		String pathSuffix = "icons/"; //$NON-NLS-1$
-		try
-		{
-			fgIconBaseURL = new URL( CDebugUIPlugin.getDefault().getBundle().getEntry( "/" ), pathSuffix ); //$NON-NLS-1$
-		}
-		catch( MalformedURLException e )
-		{
-			CDebugUIPlugin.log( e );
+		try {
+			fgIconBaseURL = new URL(CDebugUIPlugin.getDefault().getBundle().getEntry("/"), pathSuffix); //$NON-NLS-1$
+		} catch (MalformedURLException e) {
+			CDebugUIPlugin.log(e);
 		}
 	}
 
@@ -142,71 +137,71 @@ public class CDebugImages {
 //	private static final String T_DTOOL = "dtool16"; //$NON-NLS-1$
 //	private static final String T_ETOOL = "etool16"; //$NON-NLS-1$
 
-	public static final ImageDescriptor DESC_OVRS_ERROR = createManaged( T_OVR, IMG_OVRS_ERROR );
-	public static final ImageDescriptor DESC_OVRS_WARNING = createManaged( T_OVR, IMG_OVRS_WARNING );
-	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_INSTALLED = createManaged( T_OVR, IMG_OVRS_BREAKPOINT_INSTALLED );
-	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_INSTALLED_DISABLED = createManaged( T_OVR, IMG_OVRS_BREAKPOINT_INSTALLED_DISABLED );
-	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_CONDITIONAL = createManaged( T_OVR, IMG_OVRS_BREAKPOINT_CONDITIONAL );
-	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_CONDITIONAL_DISABLED = createManaged( T_OVR, IMG_OVRS_BREAKPOINT_CONDITIONAL_DISABLED );
-	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_WITH_ACTIONS = createManaged( T_OVR, IMG_OVRS_BREAKPOINT_WITH_ACTIONS );
-	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_WITH_ACTIONS_DISABLED = createManaged( T_OVR, IMG_OVRS_BREAKPOINT_WITH_ACTIONS_DISABLED );
-	public static final ImageDescriptor DESC_OVRS_ADDRESS_BREAKPOINT = createManaged( T_OVR, IMG_OVRS_ADDRESS_BREAKPOINT );
-	public static final ImageDescriptor DESC_OVRS_ADDRESS_BREAKPOINT_DISABLED = createManaged( T_OVR, IMG_OVRS_ADDRESS_BREAKPOINT_DISABLED );
-	public static final ImageDescriptor DESC_OVRS_FUNCTION_BREAKPOINT = createManaged( T_OVR, IMG_OVRS_FUNCTION_BREAKPOINT );
-	public static final ImageDescriptor DESC_OVRS_FUNCTION_BREAKPOINT_DISABLED = createManaged( T_OVR, IMG_OVRS_FUNCTION_BREAKPOINT_DISABLED );
-	public static final ImageDescriptor DESC_OVRS_VARIABLE_CASTED = createManaged( T_OVR, IMG_OVRS_VARIABLE_CASTED );
-	public static final ImageDescriptor DESC_OVRS_ARGUMENT = createManaged( T_OVR, IMG_OVRS_ARGUMENT );
-	public static final ImageDescriptor DESC_OVRS_GLOBAL = createManaged( T_OVR, IMG_OVRS_GLOBAL );
-	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_BREAKPOINT_ENABLED );
-	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_BREAKPOINT_DISABLED );
-	public static final ImageDescriptor DESC_OBJS_TRACEPOINT_ENABLED = createManaged( T_ELCL, IMG_OBJS_TRACEPOINT_ENABLED );
-	public static final ImageDescriptor DESC_OBJS_TRACEPOINT_DISABLED = createManaged( T_DLCL, IMG_OBJS_TRACEPOINT_DISABLED );
-	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_WATCHPOINT_ENABLED );
-	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_WATCHPOINT_DISABLED );
-	public static final ImageDescriptor DESC_OBJS_EVENTBREAKPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_EVENTBREAKPOINT_ENABLED );
-	public static final ImageDescriptor DESC_OBJS_EVENTBREAKPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_EVENTBREAKPOINT_DISABLED );
-	public static final ImageDescriptor DESC_OBJS_READ_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_READ_WATCHPOINT_ENABLED );
-	public static final ImageDescriptor DESC_OBJS_READ_WATCHPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_READ_WATCHPOINT_DISABLED );
-	public static final ImageDescriptor DESC_OBJS_WRITE_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_WRITE_WATCHPOINT_ENABLED );
-	public static final ImageDescriptor DESC_OBJS_WRITE_WATCHPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_WRITE_WATCHPOINT_DISABLED );
-	public static final ImageDescriptor DESC_OBJS_VARIABLE_SIMPLE = createManaged( T_OBJ, IMG_OBJS_VARIABLE_SIMPLE );
-	public static final ImageDescriptor DESC_OBJS_VARIABLE_SIMPLE_DISABLED = createManaged( T_OBJ, IMG_OBJS_VARIABLE_SIMPLE_DISABLED );
-	public static final ImageDescriptor DESC_OBJS_VARIABLE_AGGREGATE = createManaged( T_OBJ, IMG_OBJS_VARIABLE_AGGREGATE );
-	public static final ImageDescriptor DESC_OBJS_VARIABLE_AGGREGATE_DISABLED = createManaged( T_OBJ, IMG_OBJS_VARIABLE_AGGREGATE_DISABLED );
-	public static final ImageDescriptor DESC_OBJS_VARIABLE_POINTER = createManaged( T_OBJ, IMG_OBJS_VARIABLE_POINTER );
-	public static final ImageDescriptor DESC_OBJS_VARIABLE_POINTER_DISABLED = createManaged( T_OBJ, IMG_OBJS_VARIABLE_POINTER_DISABLED );
-	public static final ImageDescriptor DESC_OBJS_VARIABLE_STRING = createManaged( T_OBJ, IMG_OBJS_VARIABLE_STRING );
-	public static final ImageDescriptor DESC_OBJS_REGISTER_GROUP = createManaged( T_OBJ, IMG_OBJS_REGISTER_GROUP );
-	public static final ImageDescriptor DESC_OBJS_REGISTER_GROUP_DISABLED = createManaged( T_OBJ, IMG_OBJS_REGISTER_GROUP_DISABLED );
-	public static final ImageDescriptor DESC_OBJS_REGISTER = createManaged( T_OBJ, IMG_OBJS_REGISTER );
-	public static final ImageDescriptor DESC_OBJS_REGISTER_DISABLED = createManaged( T_OBJ, IMG_OBJS_REGISTER_DISABLED );
-	public static final ImageDescriptor DESC_OBJS_DISASSEMBLY = createManaged( T_OBJ, IMG_OBJS_DISASSEMBLY );
-	public static final ImageDescriptor DESC_OBJS_PROJECT = createManaged( T_OBJ, IMG_OBJS_PROJECT );
-	public static final ImageDescriptor DESC_OBJS_CLOSED_PROJECT = createManaged( T_OBJ, IMG_OBJS_CLOSED_PROJECT );
-	public static final ImageDescriptor DESC_OBJS_FOLDER = createManaged( T_OBJ, IMG_OBJS_FOLDER );
-	public static final ImageDescriptor DESC_OBJS_EXECUTABLE_WITH_SYMBOLS = createManaged( T_OBJ, IMG_OBJS_EXECUTABLE_WITH_SYMBOLS );
-	public static final ImageDescriptor DESC_OBJS_EXECUTABLE = createManaged( T_OBJ, IMG_OBJS_EXECUTABLE );
-	public static final ImageDescriptor DESC_OBJS_SHARED_LIBRARY_WITH_SYMBOLS = createManaged( T_OBJ, IMG_OBJS_SHARED_LIBRARY_WITH_SYMBOLS );
-	public static final ImageDescriptor DESC_OBJS_SHARED_LIBRARY = createManaged( T_OBJ, IMG_OBJS_SHARED_LIBRARY );
-	public static final ImageDescriptor DESC_OBJS_SIGNAL = createManaged( T_OBJ, IMG_OBJS_SIGNAL );
-	public static final ImageDescriptor DESC_OBJS_WORKSPACE_SOURCE_FILE = createManaged( T_OBJ, IMG_OBJS_WORKSPACE_SOURCE_FILE );
-	public static final ImageDescriptor DESC_OBJS_EXTERNAL_SOURCE_FILE = createManaged( T_OBJ, IMG_OBJS_EXTERNAL_SOURCE_FILE );
-	public static final ImageDescriptor DESC_OBJS_PATH_MAPPING = createManaged( T_OBJ, IMG_OBJS_PATH_MAPPING );
-    public static final ImageDescriptor DESC_OBJS_PATH_MAP_ENTRY = createManaged( T_OBJ, IMG_OBJS_PATH_MAP_ENTRY );
-    public static final ImageDescriptor DESC_OBJS_COMMON_TAB = createManaged( T_OBJ, IMG_OBJS_COMMON_TAB );
-	public static final ImageDescriptor DESC_WIZBAN_ADD_SOURCE = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_SOURCE );
-	public static final ImageDescriptor DESC_WIZBAN_PATH_MAPPING = createManaged( T_WIZBAN, IMG_WIZBAN_PATH_MAPPING );
-	public static final ImageDescriptor DESC_WIZBAN_PATH_MAP_ENTRY = createManaged( T_WIZBAN, IMG_WIZBAN_PATH_MAP_ENTRY );
-	public static final ImageDescriptor DESC_LCL_CAST_TO_TYPE = createManaged( T_ELCL, IMG_LCL_CAST_TO_TYPE );
-	public static final ImageDescriptor DESC_LCL_DISPLAY_AS_ARRAY = createManaged( T_ELCL, IMG_LCL_DISPLAY_AS_ARRAY );
-	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_UNDER = createManaged( T_ELCL, IMG_LCL_DETAIL_PANE_UNDER );
-	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_UNDER_DISABLED = createManaged( T_DLCL, IMG_LCL_DETAIL_PANE_UNDER );
-	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_RIGHT = createManaged( T_ELCL, IMG_LCL_DETAIL_PANE_RIGHT );
-	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_RIGHT_DISABLED = createManaged( T_DLCL, IMG_LCL_DETAIL_PANE_RIGHT );
-	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_HIDE = createManaged( T_ELCL, IMG_LCL_DETAIL_PANE_HIDE );
-	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_HIDE_DISABLED = createManaged( T_DLCL, IMG_LCL_DETAIL_PANE_HIDE );
-	public static final ImageDescriptor DESC_LCL_COLLAPSE_ALL = createManaged( T_ELCL, IMG_LCL_COLLAPSE_ALL );
-	public static final ImageDescriptor DESC_LCL_COLLAPSE_ALL_DISABLED = createManaged( T_DLCL, IMG_LCL_COLLAPSE_ALL );
+	public static final ImageDescriptor DESC_OVRS_ERROR = createManaged(T_OVR, IMG_OVRS_ERROR);
+	public static final ImageDescriptor DESC_OVRS_WARNING = createManaged(T_OVR, IMG_OVRS_WARNING);
+	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_INSTALLED = createManaged(T_OVR, IMG_OVRS_BREAKPOINT_INSTALLED);
+	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_INSTALLED_DISABLED = createManaged(T_OVR, IMG_OVRS_BREAKPOINT_INSTALLED_DISABLED);
+	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_CONDITIONAL = createManaged(T_OVR, IMG_OVRS_BREAKPOINT_CONDITIONAL);
+	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_CONDITIONAL_DISABLED = createManaged(T_OVR, IMG_OVRS_BREAKPOINT_CONDITIONAL_DISABLED);
+	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_WITH_ACTIONS = createManaged(T_OVR, IMG_OVRS_BREAKPOINT_WITH_ACTIONS);
+	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_WITH_ACTIONS_DISABLED = createManaged(T_OVR, IMG_OVRS_BREAKPOINT_WITH_ACTIONS_DISABLED);
+	public static final ImageDescriptor DESC_OVRS_ADDRESS_BREAKPOINT = createManaged(T_OVR, IMG_OVRS_ADDRESS_BREAKPOINT);
+	public static final ImageDescriptor DESC_OVRS_ADDRESS_BREAKPOINT_DISABLED = createManaged(T_OVR, IMG_OVRS_ADDRESS_BREAKPOINT_DISABLED);
+	public static final ImageDescriptor DESC_OVRS_FUNCTION_BREAKPOINT = createManaged(T_OVR, IMG_OVRS_FUNCTION_BREAKPOINT);
+	public static final ImageDescriptor DESC_OVRS_FUNCTION_BREAKPOINT_DISABLED = createManaged(T_OVR, IMG_OVRS_FUNCTION_BREAKPOINT_DISABLED);
+	public static final ImageDescriptor DESC_OVRS_VARIABLE_CASTED = createManaged(T_OVR, IMG_OVRS_VARIABLE_CASTED);
+	public static final ImageDescriptor DESC_OVRS_ARGUMENT = createManaged(T_OVR, IMG_OVRS_ARGUMENT);
+	public static final ImageDescriptor DESC_OVRS_GLOBAL = createManaged(T_OVR, IMG_OVRS_GLOBAL);
+	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_ENABLED = createManaged(T_OBJ, IMG_OBJS_BREAKPOINT_ENABLED);
+	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_DISABLED = createManaged(T_OBJ, IMG_OBJS_BREAKPOINT_DISABLED);
+	public static final ImageDescriptor DESC_OBJS_TRACEPOINT_ENABLED = createManaged(T_ELCL, IMG_OBJS_TRACEPOINT_ENABLED);
+	public static final ImageDescriptor DESC_OBJS_TRACEPOINT_DISABLED = createManaged(T_DLCL, IMG_OBJS_TRACEPOINT_DISABLED);
+	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_ENABLED = createManaged(T_OBJ, IMG_OBJS_WATCHPOINT_ENABLED);
+	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_DISABLED = createManaged(T_OBJ, IMG_OBJS_WATCHPOINT_DISABLED);
+	public static final ImageDescriptor DESC_OBJS_EVENTBREAKPOINT_ENABLED = createManaged(T_OBJ, IMG_OBJS_EVENTBREAKPOINT_ENABLED);
+	public static final ImageDescriptor DESC_OBJS_EVENTBREAKPOINT_DISABLED = createManaged(T_OBJ, IMG_OBJS_EVENTBREAKPOINT_DISABLED);
+	public static final ImageDescriptor DESC_OBJS_READ_WATCHPOINT_ENABLED = createManaged(T_OBJ, IMG_OBJS_READ_WATCHPOINT_ENABLED);
+	public static final ImageDescriptor DESC_OBJS_READ_WATCHPOINT_DISABLED = createManaged(T_OBJ, IMG_OBJS_READ_WATCHPOINT_DISABLED);
+	public static final ImageDescriptor DESC_OBJS_WRITE_WATCHPOINT_ENABLED = createManaged(T_OBJ, IMG_OBJS_WRITE_WATCHPOINT_ENABLED);
+	public static final ImageDescriptor DESC_OBJS_WRITE_WATCHPOINT_DISABLED = createManaged(T_OBJ, IMG_OBJS_WRITE_WATCHPOINT_DISABLED);
+	public static final ImageDescriptor DESC_OBJS_VARIABLE_SIMPLE = createManaged(T_OBJ, IMG_OBJS_VARIABLE_SIMPLE);
+	public static final ImageDescriptor DESC_OBJS_VARIABLE_SIMPLE_DISABLED = createManaged(T_OBJ, IMG_OBJS_VARIABLE_SIMPLE_DISABLED);
+	public static final ImageDescriptor DESC_OBJS_VARIABLE_AGGREGATE = createManaged(T_OBJ, IMG_OBJS_VARIABLE_AGGREGATE);
+	public static final ImageDescriptor DESC_OBJS_VARIABLE_AGGREGATE_DISABLED = createManaged(T_OBJ, IMG_OBJS_VARIABLE_AGGREGATE_DISABLED);
+	public static final ImageDescriptor DESC_OBJS_VARIABLE_POINTER = createManaged(T_OBJ, IMG_OBJS_VARIABLE_POINTER);
+	public static final ImageDescriptor DESC_OBJS_VARIABLE_POINTER_DISABLED = createManaged(T_OBJ, IMG_OBJS_VARIABLE_POINTER_DISABLED);
+	public static final ImageDescriptor DESC_OBJS_VARIABLE_STRING = createManaged(T_OBJ, IMG_OBJS_VARIABLE_STRING);
+	public static final ImageDescriptor DESC_OBJS_REGISTER_GROUP = createManaged(T_OBJ, IMG_OBJS_REGISTER_GROUP);
+	public static final ImageDescriptor DESC_OBJS_REGISTER_GROUP_DISABLED = createManaged(T_OBJ, IMG_OBJS_REGISTER_GROUP_DISABLED);
+	public static final ImageDescriptor DESC_OBJS_REGISTER = createManaged(T_OBJ, IMG_OBJS_REGISTER);
+	public static final ImageDescriptor DESC_OBJS_REGISTER_DISABLED = createManaged(T_OBJ, IMG_OBJS_REGISTER_DISABLED);
+	public static final ImageDescriptor DESC_OBJS_DISASSEMBLY = createManaged(T_OBJ, IMG_OBJS_DISASSEMBLY);
+	public static final ImageDescriptor DESC_OBJS_PROJECT = createManaged(T_OBJ, IMG_OBJS_PROJECT);
+	public static final ImageDescriptor DESC_OBJS_CLOSED_PROJECT = createManaged(T_OBJ, IMG_OBJS_CLOSED_PROJECT);
+	public static final ImageDescriptor DESC_OBJS_FOLDER = createManaged(T_OBJ, IMG_OBJS_FOLDER);
+	public static final ImageDescriptor DESC_OBJS_EXECUTABLE_WITH_SYMBOLS = createManaged(T_OBJ, IMG_OBJS_EXECUTABLE_WITH_SYMBOLS);
+	public static final ImageDescriptor DESC_OBJS_EXECUTABLE = createManaged(T_OBJ, IMG_OBJS_EXECUTABLE);
+	public static final ImageDescriptor DESC_OBJS_SHARED_LIBRARY_WITH_SYMBOLS = createManaged(T_OBJ, IMG_OBJS_SHARED_LIBRARY_WITH_SYMBOLS);
+	public static final ImageDescriptor DESC_OBJS_SHARED_LIBRARY = createManaged(T_OBJ, IMG_OBJS_SHARED_LIBRARY);
+	public static final ImageDescriptor DESC_OBJS_SIGNAL = createManaged(T_OBJ, IMG_OBJS_SIGNAL);
+	public static final ImageDescriptor DESC_OBJS_WORKSPACE_SOURCE_FILE = createManaged(T_OBJ, IMG_OBJS_WORKSPACE_SOURCE_FILE);
+	public static final ImageDescriptor DESC_OBJS_EXTERNAL_SOURCE_FILE = createManaged(T_OBJ, IMG_OBJS_EXTERNAL_SOURCE_FILE);
+	public static final ImageDescriptor DESC_OBJS_PATH_MAPPING = createManaged(T_OBJ, IMG_OBJS_PATH_MAPPING);
+    public static final ImageDescriptor DESC_OBJS_PATH_MAP_ENTRY = createManaged(T_OBJ, IMG_OBJS_PATH_MAP_ENTRY);
+    public static final ImageDescriptor DESC_OBJS_COMMON_TAB = createManaged(T_OBJ, IMG_OBJS_COMMON_TAB);
+	public static final ImageDescriptor DESC_WIZBAN_ADD_SOURCE = createManaged(T_WIZBAN, IMG_WIZBAN_ADD_SOURCE);
+	public static final ImageDescriptor DESC_WIZBAN_PATH_MAPPING = createManaged(T_WIZBAN, IMG_WIZBAN_PATH_MAPPING);
+	public static final ImageDescriptor DESC_WIZBAN_PATH_MAP_ENTRY = createManaged(T_WIZBAN, IMG_WIZBAN_PATH_MAP_ENTRY);
+	public static final ImageDescriptor DESC_LCL_CAST_TO_TYPE = createManaged(T_ELCL, IMG_LCL_CAST_TO_TYPE);
+	public static final ImageDescriptor DESC_LCL_DISPLAY_AS_ARRAY = createManaged(T_ELCL, IMG_LCL_DISPLAY_AS_ARRAY);
+	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_UNDER = createManaged(T_ELCL, IMG_LCL_DETAIL_PANE_UNDER);
+	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_UNDER_DISABLED = createManaged(T_DLCL, IMG_LCL_DETAIL_PANE_UNDER);
+	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_RIGHT = createManaged(T_ELCL, IMG_LCL_DETAIL_PANE_RIGHT);
+	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_RIGHT_DISABLED = createManaged(T_DLCL, IMG_LCL_DETAIL_PANE_RIGHT);
+	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_HIDE = createManaged(T_ELCL, IMG_LCL_DETAIL_PANE_HIDE);
+	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_HIDE_DISABLED = createManaged(T_DLCL, IMG_LCL_DETAIL_PANE_HIDE);
+	public static final ImageDescriptor DESC_LCL_COLLAPSE_ALL = createManaged(T_ELCL, IMG_LCL_COLLAPSE_ALL);
+	public static final ImageDescriptor DESC_LCL_COLLAPSE_ALL_DISABLED = createManaged(T_DLCL, IMG_LCL_COLLAPSE_ALL);
 
 	/**
 	 * Returns the image managed under the given key in this registry.
@@ -214,41 +209,35 @@ public class CDebugImages {
 	 * @param key the image's key
 	 * @return the image managed under the given key
 	 */ 
-	public static Image get( String key )
-	{
-		return getImageRegistry().get( key );
+	public static Image get(String key) {
+		return getImageRegistry().get(key);
 	}
 
 	/**
 	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
 	 * are retrieved from the *tool16 folders.
 	 */
-	public static void setToolImageDescriptors( IAction action, String iconName )
-	{
-		setImageDescriptors( action, "tool16", iconName ); //$NON-NLS-1$
+	public static void setToolImageDescriptors(IAction action, String iconName) {
+		setImageDescriptors(action, "tool16", iconName); //$NON-NLS-1$
 	}
 
 	/**
 	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
 	 * are retrieved from the *lcl16 folders.
 	 */
-	public static void setLocalImageDescriptors( IAction action, String iconName )
-	{
-		setImageDescriptors( action, T_LCL, iconName );
+	public static void setLocalImageDescriptors(IAction action, String iconName) {
+		setImageDescriptors(action, T_LCL, iconName);
 	}
 
 	/*
 	 * Helper method to access the image registry from the JDIDebugUIPlugin class.
 	 */
-	/* package */ static ImageRegistry getImageRegistry()
-	{
-		if ( fgImageRegistry == null )
-		{
+	/* package */ static ImageRegistry getImageRegistry() {
+		if (fgImageRegistry == null) {
 			fgImageRegistry = new ImageRegistry();
-			for ( Iterator<String> iter = fgAvoidSWTErrorMap.keySet().iterator(); iter.hasNext(); )
-			{
+			for (Iterator<String> iter = fgAvoidSWTErrorMap.keySet().iterator(); iter.hasNext();) {
 				String key = iter.next();
-				fgImageRegistry.put( key, fgAvoidSWTErrorMap.get( key ) );
+				fgImageRegistry.put(key, fgAvoidSWTErrorMap.get(key));
 			}
 			fgAvoidSWTErrorMap = null;
 		}
@@ -257,78 +246,60 @@ public class CDebugImages {
 
 	//---- Helper methods to access icons on the file system --------------------------------------
 
-	private static void setImageDescriptors( IAction action, String type, String path )
-	{
-		String relPath = path.substring( NAME_PREFIX_LENGTH );
-		try
-		{
-			ImageDescriptor id = ImageDescriptor.createFromURL( makeIconFileURL( "d" + type, relPath ) ); //$NON-NLS-1$
-			if ( id != null )
-				action.setDisabledImageDescriptor( id );
-		}
-		catch( MalformedURLException e )
-		{
-			CDebugUIPlugin.log( e );
+	private static void setImageDescriptors(IAction action, String type, String path) {
+		String relPath = path.substring(NAME_PREFIX_LENGTH);
+		try {
+			ImageDescriptor id = ImageDescriptor.createFromURL(makeIconFileURL("d" + type, relPath)); //$NON-NLS-1$
+			if (id != null)
+				action.setDisabledImageDescriptor(id);
+		} catch (MalformedURLException e) {
+			CDebugUIPlugin.log(e);
 		}
 
-		try
-		{
-			ImageDescriptor id = ImageDescriptor.createFromURL( makeIconFileURL( "c" + type, relPath ) ); //$NON-NLS-1$
-			if ( id != null )
-				action.setHoverImageDescriptor( id );
-		}
-		catch( MalformedURLException e )
-		{
-			CDebugUIPlugin.log( e );
+		try {
+			ImageDescriptor id = ImageDescriptor.createFromURL(makeIconFileURL("c" + type, relPath)); //$NON-NLS-1$
+			if (id != null)
+				action.setHoverImageDescriptor(id);
+		} catch (MalformedURLException e) {
+			CDebugUIPlugin.log(e);
 		}
 
-		action.setImageDescriptor( create( "e" + type, relPath ) ); //$NON-NLS-1$
+		action.setImageDescriptor(create("e" + type, relPath)); //$NON-NLS-1$
 	}
 
-	private static ImageDescriptor createManaged( String prefix, String name )
-	{
-		try
-		{
-			ImageDescriptor result = ImageDescriptor.createFromURL( makeIconFileURL( prefix, name.substring( NAME_PREFIX_LENGTH ) ) );
-			if ( fgAvoidSWTErrorMap == null )
-			{
+	private static ImageDescriptor createManaged(String prefix, String name) {
+		try {
+			ImageDescriptor result = ImageDescriptor.createFromURL(makeIconFileURL(prefix, name.substring(NAME_PREFIX_LENGTH)));
+			if (fgAvoidSWTErrorMap == null) {
 				fgAvoidSWTErrorMap = new HashMap<String, ImageDescriptor>();
 			}
-			fgAvoidSWTErrorMap.put( name, result );
-			if ( fgImageRegistry != null )
-			{
-				CDebugUIPlugin.logErrorMessage( "Internal Error: Image registry already defined" ); //$NON-NLS-1$
+			fgAvoidSWTErrorMap.put(name, result);
+			if (fgImageRegistry != null) {
+				CDebugUIPlugin.logErrorMessage("Internal Error: Image registry already defined"); //$NON-NLS-1$
 			}
 			return result;
-		}
-		catch( MalformedURLException e )
-		{
-			CDebugUIPlugin.log( e );
+		} catch (MalformedURLException e) {
+			CDebugUIPlugin.log(e);
 			return ImageDescriptor.getMissingImageDescriptor();
 		}
 	}
 
-	private static ImageDescriptor create( String prefix, String name )
-	{
-		try
-		{
-			return ImageDescriptor.createFromURL( makeIconFileURL( prefix, name ) );
-		}
-		catch( MalformedURLException e )
-		{
-			CDebugUIPlugin.log( e );
+	private static ImageDescriptor create(String prefix, String name) {
+		try {
+			return ImageDescriptor.createFromURL(makeIconFileURL(prefix, name));
+		} catch (MalformedURLException e) {
+			CDebugUIPlugin.log(e);
 			return ImageDescriptor.getMissingImageDescriptor();
 		}
 	}
 
-	private static URL makeIconFileURL( String prefix, String name ) throws MalformedURLException
-	{
-		if ( fgIconBaseURL == null )
+	private static URL makeIconFileURL(String prefix, String name) throws MalformedURLException {
+		if (fgIconBaseURL == null)
 			throw new MalformedURLException();
 
-		StringBuffer buffer = new StringBuffer( prefix );
-		buffer.append( '/' );
-		buffer.append( name );
-		return new URL( fgIconBaseURL, buffer.toString() );
+		StringBuffer buffer = new StringBuffer(prefix);
+		buffer.append('/');
+		buffer.append(name);
+		return new URL(fgIconBaseURL, buffer.toString());
 	}
 }

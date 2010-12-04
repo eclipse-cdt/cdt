@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui;
 
@@ -23,16 +23,14 @@ import org.eclipse.swt.widgets.Display;
  * A registry that maps <code>ImageDescriptors</code> to <code>Image</code>.
  */
 public class CDebugImageDescriptorRegistry {
-
-	private HashMap fRegistry = new HashMap( 10 );
-
+	private HashMap<ImageDescriptor, Image> fRegistry = new HashMap<ImageDescriptor, Image>(10);
 	private Display fDisplay;
 
 	/**
 	 * Creates a new image descriptor registry for the current or default display, respectively.
 	 */
 	public CDebugImageDescriptorRegistry() {
-		this( CDebugUIPlugin.getStandardDisplay() );
+		this(CDebugUIPlugin.getStandardDisplay());
 	}
 
 	/**
@@ -41,9 +39,9 @@ public class CDebugImageDescriptorRegistry {
 	 * @param diaplay
 	 *            the display the images managed by this registry are allocated for
 	 */
-	public CDebugImageDescriptorRegistry( Display display ) {
+	public CDebugImageDescriptorRegistry(Display display) {
 		fDisplay = display;
-		Assert.isNotNull( fDisplay );
+		Assert.isNotNull(fDisplay);
 		hookDisplay();
 	}
 
@@ -54,16 +52,16 @@ public class CDebugImageDescriptorRegistry {
 	 *            the image descriptor for which the registry manages an image
 	 * @return the image associated with the image descriptor or <code>null</code> if the image descriptor can't create the requested image.
 	 */
-	public Image get( ImageDescriptor descriptor ) {
-		if ( descriptor == null )
+	public Image get(ImageDescriptor descriptor) {
+		if (descriptor == null)
 			descriptor = ImageDescriptor.getMissingImageDescriptor();
-		Image result = (Image)fRegistry.get( descriptor );
-		if ( result != null )
+		Image result = fRegistry.get(descriptor);
+		if (result != null)
 			return result;
-		Assert.isTrue( fDisplay == CDebugUIPlugin.getStandardDisplay(), CDebugUIMessages.getString( "CDebugImageDescriptorRegistry.0" ) ); //$NON-NLS-1$
+		Assert.isTrue(fDisplay == CDebugUIPlugin.getStandardDisplay(), CDebugUIMessages.getString("CDebugImageDescriptorRegistry.0")); //$NON-NLS-1$
 		result = descriptor.createImage();
-		if ( result != null )
-			fRegistry.put( descriptor, result );
+		if (result != null)
+			fRegistry.put(descriptor, result);
 		return result;
 	}
 
@@ -71,25 +69,23 @@ public class CDebugImageDescriptorRegistry {
 	 * Disposes all images managed by this registry.
 	 */
 	public void dispose() {
-		for( Iterator iter = fRegistry.values().iterator(); iter.hasNext(); ) {
-			Image image = (Image)iter.next();
+		for (Iterator<Image> iter = fRegistry.values().iterator(); iter.hasNext();) {
+			Image image = iter.next();
 			image.dispose();
 		}
 		fRegistry.clear();
 	}
 
 	private void hookDisplay() {
-		fDisplay.asyncExec( new Runnable() {
-
+		fDisplay.asyncExec(new Runnable() {
 			public void run() {
-				getDisplay().disposeExec( new Runnable() {
-
+				getDisplay().disposeExec(new Runnable() {
 					public void run() {
 						dispose();
 					}
-				} );
+				});
 			}
-		} );
+		});
 	}
 
 	protected Display getDisplay() {

@@ -47,8 +47,8 @@ import org.osgi.framework.BundleContext;
  * ISourceLookup service implementation based on the CDT CSourceLookupDirector.
  */
 public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
-
-    private Map<ISourceLookupDMContext,CSourceLookupDirector> fDirectors = new HashMap<ISourceLookupDMContext,CSourceLookupDirector>(); 
+    private Map<ISourceLookupDMContext, CSourceLookupDirector> fDirectors =
+    		new HashMap<ISourceLookupDMContext, CSourceLookupDirector>(); 
     
     ICommandControl fConnection;
     private CommandFactory fCommandFactory;
@@ -62,7 +62,6 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
         return GdbPlugin.getBundleContext();
     }
 
-    
     public void setSourceLookupDirector(ISourceLookupDMContext ctx, CSourceLookupDirector director) {
         fDirectors.put(ctx, director);
     }
@@ -115,8 +114,7 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
 		
 		return list;
 	}
-	
-    
+
     @Override
     public void initialize(final RequestMonitor requestMonitor) {
         super.initialize(
@@ -129,12 +127,9 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
 
     private void doInitialize(final RequestMonitor requestMonitor) {
     	fConnection = getServicesTracker().getService(ICommandControl.class);
-    	
     	fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
-
     	// Register this service
         register(new String[] { CSourceLookup.class.getName(), ISourceLookup.class.getName() }, new Hashtable<String, String>());
-        
         requestMonitor.done();
     }
 
@@ -144,8 +139,7 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
         super.shutdown(requestMonitor);
     }
 
-    public void getDebuggerPath(ISourceLookupDMContext sourceLookupCtx, Object source, final DataRequestMonitor<String> rm) 
-    {
+    public void getDebuggerPath(ISourceLookupDMContext sourceLookupCtx, Object source, final DataRequestMonitor<String> rm) {
         if (! (source instanceof String)) {
             // In future if needed other elements such as URIs could be supported.
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Only string source element is supported", null)); //$NON-NLS-1$);
@@ -175,13 +169,12 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
                 return Status.OK_STATUS;
             }
         }.schedule();       
-        
     }
 
-    public void getSource(ISourceLookupDMContext sourceLookupCtx, final String debuggerPath, final DataRequestMonitor<Object> rm) 
-    {
+    public void getSource(ISourceLookupDMContext sourceLookupCtx, final String debuggerPath, final DataRequestMonitor<Object> rm) {
         if (!fDirectors.containsKey(sourceLookupCtx) ){
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, "No source director configured for given context", null)); //$NON-NLS-1$);
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+            		IDsfStatusConstants.INVALID_HANDLE, "No source director configured for given context", null)); //$NON-NLS-1$);
             rm.done();
             return;
         } 
@@ -203,7 +196,6 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
                 } finally {
                     rm.done();
                 }
-
                 return Status.OK_STATUS;
             }
         }.schedule();       

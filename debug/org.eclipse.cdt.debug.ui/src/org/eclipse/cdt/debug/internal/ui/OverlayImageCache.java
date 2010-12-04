@@ -8,11 +8,9 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.internal.ui;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.swt.graphics.Image;
@@ -23,8 +21,7 @@ import org.eclipse.swt.graphics.Image;
  * @since May 30, 2003
  */
 public class OverlayImageCache {
-
-	private Map fCache = new HashMap();
+	private Map<OverlayImageDescriptor, Image> fCache = new HashMap<OverlayImageDescriptor, Image>();
 
 	/**
 	 * Returns and caches an image corresponding to the specified image
@@ -34,11 +31,11 @@ public class OverlayImageCache {
 	 *            the image descriptor
 	 * @return the image
 	 */
-	public Image getImageFor( OverlayImageDescriptor imageDescriptor ) {
-		Image image = (Image)getCache().get( imageDescriptor );
-		if ( image == null ) {
+	public Image getImageFor(OverlayImageDescriptor imageDescriptor) {
+		Image image = fCache.get(imageDescriptor);
+		if (image == null) {
 			image = imageDescriptor.createImage();
-			getCache().put( imageDescriptor, image );
+			fCache.put(imageDescriptor, image);
 		}
 		return image;
 	}
@@ -47,14 +44,9 @@ public class OverlayImageCache {
 	 * Disposes of all images in the cache.
 	 */
 	public void disposeAll() {
-		for ( Iterator it = getCache().values().iterator(); it.hasNext(); ) {
-			Image image = (Image)it.next();
+		for (Image image : fCache.values()) {
 			image.dispose();
 		}
-		getCache().clear();
-	}
-
-	private Map getCache() {
-		return this.fCache;
+		fCache.clear();
 	}
 }

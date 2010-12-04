@@ -19,43 +19,37 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * 
  * Color manager for C/C++ Debug UI.
  * 
  * @since Jul 23, 2002
  */
 public class ColorManager {
-
 	private static ColorManager gfColorManager;
 
 	private ColorManager() {
 	}
 
 	public static ColorManager getDefault() {
-		if ( gfColorManager == null ) {
+		if (gfColorManager == null) {
 			gfColorManager = new ColorManager();
 		}
 		return gfColorManager;
 	}
 
-	protected Map fColorTable = new HashMap( 10 );
+	protected Map<RGB, Color> fColorTable = new HashMap<RGB, Color>(10);
 
-	public Color getColor( RGB rgb ) {
-		Color color = (Color)getColorTable().get(rgb);
-		if ( color == null ) {
-			color = new Color( Display.getCurrent(), rgb );
-			getColorTable().put( rgb, color );
+	public Color getColor(RGB rgb) {
+		Color color = fColorTable.get(rgb);
+		if (color == null) {
+			color = new Color(Display.getCurrent(), rgb);
+			fColorTable.put(rgb, color);
 		}
 		return color;
 	}
 
 	public void dispose() {
-		Iterator e = getColorTable().values().iterator();
-		while( e.hasNext() )
-			 ((Color)e.next()).dispose();
-	}
-
-	private Map getColorTable() {
-		return this.fColorTable;
+		Iterator<Color> e = fColorTable.values().iterator();
+		while (e.hasNext())
+			 e.next().dispose();
 	}
 }

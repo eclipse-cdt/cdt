@@ -11,7 +11,6 @@
 package org.eclipse.cdt.debug.internal.ui;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.Assert;
@@ -50,7 +49,8 @@ public class CDebugImageDescriptorRegistry {
 	 * 
 	 * @param descriptor
 	 *            the image descriptor for which the registry manages an image
-	 * @return the image associated with the image descriptor or <code>null</code> if the image descriptor can't create the requested image.
+	 * @return the image associated with the image descriptor or <code>null</code> if the image
+	 * 		descriptor can't create the requested image.
 	 */
 	public Image get(ImageDescriptor descriptor) {
 		if (descriptor == null)
@@ -69,8 +69,7 @@ public class CDebugImageDescriptorRegistry {
 	 * Disposes all images managed by this registry.
 	 */
 	public void dispose() {
-		for (Iterator<Image> iter = fRegistry.values().iterator(); iter.hasNext();) {
-			Image image = iter.next();
+		for (Image image : fRegistry.values()) {
 			image.dispose();
 		}
 		fRegistry.clear();

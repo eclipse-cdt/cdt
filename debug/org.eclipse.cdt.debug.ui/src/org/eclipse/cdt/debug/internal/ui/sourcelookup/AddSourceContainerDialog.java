@@ -118,9 +118,9 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	 * @param types the complete list of source container types
 	 * @return the list of source container types that have browsers
 	 */
-	private ISourceContainerType[] filterTypes(ISourceContainerType[] types){
+	private ISourceContainerType[] filterTypes(ISourceContainerType[] types) {
 		ArrayList<ISourceContainerType> validTypes = new ArrayList<ISourceContainerType>();
-		for (int i=0; i < types.length; i++) {
+		for (int i = 0; i < types.length; i++) {
 			ISourceContainerType type = types[i];
 			if (fDirector.supportsSourceContainerType(type)) {
 				ISourceContainerBrowser sourceContainerBrowser = DebugUITools.getSourceContainerBrowser(type.getId());
@@ -136,8 +136,8 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
-		//single selection dialog, so take first item in array
-		//there will always be a selected item since we set it with viewer.setSelection
+		// Single selection dialog, so take first item in array
+		// there will always be a selected item since we set it with viewer.setSelection
 		ISourceContainerType type = (ISourceContainerType) ((StructuredSelection) fViewer.getSelection()).getFirstElement();
 		ISourceContainerBrowser browser = DebugUITools.getSourceContainerBrowser(type.getId());
 		if (browser != null) {

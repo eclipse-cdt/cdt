@@ -60,6 +60,7 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	public void initializeParticipants() {
 		addParticipants(new ISourceLookupParticipant[]{ new CSourceLookupParticipant() });
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#supportsSourceContainerType(org.eclipse.debug.core.sourcelookup.ISourceContainerType)
 	 */
@@ -69,9 +70,8 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	}
 
 	public boolean contains(String source) {
-		ISourceContainer[] containers = getSourceContainers();
-		for (int i = 0; i < containers.length; ++i) {
-			if (contains(containers[i], source))
+		for (ISourceContainer cont : getSourceContainers()) {
+			if (contains(cont, source))
 				return true;
 		}
 		return false;
@@ -80,9 +80,8 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	public boolean contains(ICBreakpoint breakpoint) {
 		try {
 			String handle = breakpoint.getSourceHandle();
-			ISourceContainer[] containers = getSourceContainers();
-			for (int i = 0; i < containers.length; ++i) {
-				if (contains(containers[i], handle))
+			for (ISourceContainer cont : getSourceContainers()) {
+				if (contains(cont, handle))
 					return true;
 			}
 		} catch (CoreException e) {
@@ -91,9 +90,8 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	}
 
 	public boolean contains(IProject project) {
-		ISourceContainer[] containers = getSourceContainers();
-		for (int i = 0; i < containers.length; ++i) {
-			if (contains(containers[i], project))
+		for (ISourceContainer cont : getSourceContainers()) {
+			if (contains(cont, project))
 				return true;
 		}
 		return false;
@@ -104,10 +102,8 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 			return true;
 		}
 		try {
-			ISourceContainer[] containers;
-			containers = container.getSourceContainers();
-			for (int i = 0; i < containers.length; ++i) {
-				if (contains(containers[i], project))
+			for (ISourceContainer cont : container.getSourceContainers()) {
+				if (contains(cont, project))
 					return true;
 			}
 		} catch (CoreException e) {
@@ -120,47 +116,45 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		if (!path.isValidPath(sourceName))
 			return false;
 		if (container instanceof ProjectSourceContainer) {
-			IProject project = ((ProjectSourceContainer)container).getProject();
+			IProject project = ((ProjectSourceContainer) container).getProject();
 			IPath projPath = project.getLocation();
 			if (projPath != null && projPath.isPrefixOf(path)) {
-				IFile file = ((ProjectSourceContainer)container).getProject().getFile(path.removeFirstSegments(projPath.segmentCount()));
+				IFile file = ((ProjectSourceContainer) container).getProject().getFile(path.removeFirstSegments(projPath.segmentCount()));
 				return (file != null && file.exists());
 			}
 		}
 		if (container instanceof FolderSourceContainer) {
-			IContainer folder = ((FolderSourceContainer)container).getContainer();
+			IContainer folder = ((FolderSourceContainer) container).getContainer();
 			IPath folderPath = folder.getLocation();
 			if (folderPath != null && folderPath.isPrefixOf(path)) {
-				IFile file = ((FolderSourceContainer)container).getContainer().getFile(path.removeFirstSegments(folderPath.segmentCount()));
+				IFile file = ((FolderSourceContainer) container).getContainer().getFile(path.removeFirstSegments(folderPath.segmentCount()));
 				return (file != null && file.exists());
 			}
 		}
 		if (container instanceof DirectorySourceContainer) {
-			File dir = ((DirectorySourceContainer)container).getDirectory();
-			boolean searchSubfolders = ((DirectorySourceContainer)container).isComposite();
+			File dir = ((DirectorySourceContainer) container).getDirectory();
+			boolean searchSubfolders = ((DirectorySourceContainer) container).isComposite();
 			IPath dirPath = new Path(dir.getAbsolutePath());
 			if (searchSubfolders || dirPath.segmentCount() + 1 == path.segmentCount())
 				return dirPath.isPrefixOf(path);
 		}
 		if (container instanceof MappingSourceContainer) {
-			return (((MappingSourceContainer)container).getCompilationPath(sourceName) != null); 
+			return (((MappingSourceContainer) container).getCompilationPath(sourceName) != null); 
 		}
 		if (container instanceof AbsolutePathSourceContainer) {
-			return (((AbsolutePathSourceContainer)container).isValidAbsoluteFilePath(sourceName)); 
+			return (((AbsolutePathSourceContainer) container).isValidAbsoluteFilePath(sourceName)); 
 		}
 		if (container instanceof ProgramRelativePathSourceContainer) {
 			try {
-				Object[] elements = ((ProgramRelativePathSourceContainer)container).findSourceElements(sourceName);
+				Object[] elements = ((ProgramRelativePathSourceContainer) container).findSourceElements(sourceName);
 				return elements.length > 0;	
 			} catch (CoreException e) {
 				return false;
 			}
 		}
 		try {
-			ISourceContainer[] containers;
-			containers = container.getSourceContainers();
-			for (int i = 0; i < containers.length; ++i) {
-				if (contains(containers[i], sourceName))
+			for (ISourceContainer cont : container.getSourceContainers()) {
+				if (contains(cont, sourceName))
 					return true;
 			}
 		} catch (CoreException e) {
@@ -169,16 +163,13 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	}
 
 	public IPath getCompilationPath(String sourceName) {
-		IPath path = null;
-		ISourceContainer[] containers = getSourceContainers();
-		for (int i = 0; i < containers.length; ++i) {
-			IPath cp = getCompilationPath(containers[i], sourceName);
-			if (cp != null) {
-				path = cp;
-				break;
+		for (ISourceContainer cont : getSourceContainers()) {
+			IPath path = getCompilationPath(cont, sourceName);
+			if (path != null) {
+				return path;
 			}
 		}
-		return path;
+		return null;
 	}
 
 	private IPath getCompilationPath(ISourceContainer container, String sourceName) {
@@ -187,10 +178,8 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		}
 
 		try {
-			ISourceContainer[] containers;
-			containers = container.getSourceContainers();
-			for (int i = 0; i < containers.length; ++i) {
-				IPath path = getCompilationPath(containers[i], sourceName);
+			for (ISourceContainer cont : container.getSourceContainers()) {
+				IPath path = getCompilationPath(cont, sourceName);
 				if (path != null)
 					return path;
 			}

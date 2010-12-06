@@ -120,18 +120,16 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 			IPath projPath = project.getLocation();
 			if (projPath != null && projPath.isPrefixOf(path)) {
 				IFile file = ((ProjectSourceContainer) container).getProject().getFile(path.removeFirstSegments(projPath.segmentCount()));
-				return (file != null && file.exists());
+				return file != null && file.exists();
 			}
-		}
-		if (container instanceof FolderSourceContainer) {
+		} else if (container instanceof FolderSourceContainer) {
 			IContainer folder = ((FolderSourceContainer) container).getContainer();
 			IPath folderPath = folder.getLocation();
 			if (folderPath != null && folderPath.isPrefixOf(path)) {
 				IFile file = ((FolderSourceContainer) container).getContainer().getFile(path.removeFirstSegments(folderPath.segmentCount()));
-				return (file != null && file.exists());
+				return file != null && file.exists();
 			}
-		}
-		if (container instanceof DirectorySourceContainer) {
+		} else if (container instanceof DirectorySourceContainer) {
 			File dir = ((DirectorySourceContainer) container).getDirectory();
 			boolean searchSubfolders = ((DirectorySourceContainer) container).isComposite();
 			IPath dirPath = new Path(dir.getAbsolutePath());
@@ -142,9 +140,8 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 			return (((MappingSourceContainer) container).getCompilationPath(sourceName) != null); 
 		}
 		if (container instanceof AbsolutePathSourceContainer) {
-			return (((AbsolutePathSourceContainer) container).isValidAbsoluteFilePath(sourceName)); 
-		}
-		if (container instanceof ProgramRelativePathSourceContainer) {
+			return ((AbsolutePathSourceContainer) container).isValidAbsoluteFilePath(sourceName); 
+		} else if (container instanceof ProgramRelativePathSourceContainer) {
 			try {
 				Object[] elements = ((ProgramRelativePathSourceContainer) container).findSourceElements(sourceName);
 				return elements.length > 0;	

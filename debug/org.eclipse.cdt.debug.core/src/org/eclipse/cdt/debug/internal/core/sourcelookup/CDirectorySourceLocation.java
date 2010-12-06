@@ -29,9 +29,9 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.IDirectorySourceLocation;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -196,7 +196,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 		}
 
 		// Try for a file in another workspace project
-		IFile[] wsFiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(filePath);
+		IFile[] wsFiles = ResourceLookup.findFilesForLocation(filePath);
 		LinkedList<IFile> list = new LinkedList<IFile>();
 		for (int j = 0; j < wsFiles.length; ++j)
 			if (wsFiles[j].exists()) {
@@ -247,7 +247,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 		File file = path.toFile();
 		if (file.exists() && file.isFile()) {
 			path = new Path(file.getAbsolutePath());
-			IFile[] wsFiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+			IFile[] wsFiles = ResourceLookup.findFilesForLocation(path);
 			LinkedList<IFile> list = new LinkedList<IFile>();
 			for (int j = 0; j < wsFiles.length; ++j)
 				if (wsFiles[j].exists()) {

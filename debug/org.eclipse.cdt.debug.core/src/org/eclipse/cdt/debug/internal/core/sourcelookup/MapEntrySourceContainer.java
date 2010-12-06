@@ -19,8 +19,8 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -117,7 +117,7 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 			path = path.removeFirstSegments(getBackendPath().segmentCount());
 			path = getLocalPath().append(path);
 
-			IFile[] wsFiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+			IFile[] wsFiles = ResourceLookup.findFilesForLocation(path);
 			ArrayList<IFile> list = new ArrayList<IFile>();
 			for (int j = 0; j < wsFiles.length; ++j) {
 				if (wsFiles[j].exists()) {

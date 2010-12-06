@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@
  * David McKnight   (IBM) - [287457] [dstore] problems with disconnect when readonly trace file
  * David McKnight   (IBM) - [289891] [dstore] StringIndexOutOfBoundsException in getUserPreferencesDirectory when DSTORE_LOG_DIRECTORY is ""
  * David McKnight   (IBM) - [294933] [dstore] RSE goes into loop
+ * David McKnight   (IBM) - [331922] [dstore] enable DataElement recycling
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -145,6 +146,7 @@ public final class DataStore
 
 	private Random _random;
 	private int _initialSize;
+	private int _MAX_FREE = 10000;
 
 	private File _traceFileHandle;
 	private RandomAccessFile _traceFile;
@@ -190,7 +192,7 @@ public final class DataStore
 		_isConnected = false;
 		_logTimes = false;
 		setSpiritModeOnState();
-		_initialSize = _spiritModeOn && !isVirtual() ? SPIRIT_ON_INITIAL_SIZE : 100000;
+		_initialSize = _spiritModeOn && !isVirtual() ? SPIRIT_ON_INITIAL_SIZE : 10000;
 		initialize();
 	}
 
@@ -2706,7 +2708,10 @@ public final class DataStore
 
 	public void addToRecycled(DataElement toRecycle)
 	{
-		if (!_recycled.contains(toRecycle)) _recycled.add(0, toRecycle);
+		synchronized (_recycled){
+			if (!_recycled.contains(toRecycle)) 
+				_recycled.add(0, toRecycle);
+		}
 	}
 
 	/**
@@ -3870,9 +3875,11 @@ public final class DataStore
 	 */
 	private void initElements(int size)
 	{
-		for (int i = 0; i < size; i++)
-		{
-			_recycled.add(new DataElement(this));
+		synchronized (_recycled){
+			for (int i = 0; i < size; i++)
+			{
+				_recycled.add(new DataElement(this));
+			}
 		}
 	}
 
@@ -3891,20 +3898,15 @@ public final class DataStore
 		if (numRecycled > 1)
 		{
 			synchronized (_recycled)
-			{
-
-				/*
+			{				
 				if (numRecycled > _MAX_FREE)
 				    {
 					int numRemoved = numRecycled - _MAX_FREE;
 					for (int i = 1; i <= numRemoved; i++)
-					    {
-						DataElement toRemove = (DataElement)_recycled.remove(numRemoved - i);
-						toRemove = null;
-					    }
-				    }
-				*/
-
+					 {
+						_recycled.remove(numRemoved - i);						
+					 }
+				  }			
 				newObject = (DataElement) _recycled.remove((_recycled.size() - 1));
 			}
 		}
@@ -3974,6 +3976,7 @@ public final class DataStore
 			synchronized (_hashMap)
 			{
 				_hashMap.remove(id);
+				addToRecycled(toDelete);
 			}
 
 			if (!isConnected() && from != null)

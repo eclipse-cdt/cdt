@@ -705,7 +705,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 *       entries are preserved.
 	 */
 	protected boolean isWModifyMode() {
-		int wmode = CDTPrefUtil.getInt(CDTPrefUtil.KEY_WMODE);
+		int wmode = CDTPrefUtil.getMultiCfgStringListWriteMode();
 		return (wmode == CDTPrefUtil.WMODE_MODIFY);
 	}
 

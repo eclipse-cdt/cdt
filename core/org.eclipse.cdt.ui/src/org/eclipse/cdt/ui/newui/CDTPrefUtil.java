@@ -58,12 +58,18 @@ public class CDTPrefUtil {
 		public static final int DISC_NAMING_ALWAYS_IDS = 3;
 		public static final int DISC_NAMING_DEFAULT = DISC_NAMING_UNIQUE_OR_BOTH;
 	
+	/** Property key used for string list display mode for multi-configuration edits (conjunction/disjunction) */
 	public static final String KEY_DMODE = "properties.multi.displ.mode"; //$NON-NLS-1$
+		/** Conjunction implies showing only common elements (intersection) */
 		public static final int DMODE_CONJUNCTION = 1;
+		/** Disjunction implies showing all elements (union) */
 		public static final int DMODE_DISJUNCTION = 2;
 		
+	/** Property key used for string list write mode for multi-configuration edits (modify/replace) */
 	public static final String KEY_WMODE = "properties.multi.write.mode"; //$NON-NLS-1$
+		/** Modify implies changing only given elements and not changing any others */
 		public static final int WMODE_MODIFY  = 4;
+		/** Replace implies replacing the whole list with the given one, overwriting old entries */
 		public static final int WMODE_REPLACE = 8;
 		
 	public static final String NULL = "NULL"; //$NON-NLS-1$
@@ -116,16 +122,68 @@ public class CDTPrefUtil {
 	}
 	
 	/**
+	 * Returns string list display mode for multi-configuration edits (conjunction/disjunction).
+	 * 
+	 * @return the mode which can be either {@link CDTPrefUtil#DMODE_CONJUNCTION} (default value)
+	 *    or else {@link CDTPrefUtil#DMODE_DISJUNCTION}.
+	 * 
+	 * @since 5.3
+	 */
+	public static int getMultiCfgStringListDisplayMode() {
+		int mode = getInt(KEY_DMODE);
+		if (mode!=DMODE_CONJUNCTION && mode!=DMODE_DISJUNCTION) {
+			mode = DMODE_CONJUNCTION;
+		}
+		return mode;
+	}
+	
+	/**
+	 * Sets string list display mode for multi-configuration edits (conjunction/disjunction).
+	 * 
+	 * @param mode must be either {@link CDTPrefUtil#DMODE_CONJUNCTION}
+	 *    or {@link CDTPrefUtil#DMODE_DISJUNCTION}.
+	 * 
+	 * @since 5.3
+	 */
+	public static void setMultiCfgStringListDisplayMode(int mode) {
+		setInt(KEY_DMODE, mode);
+	}
+	
+	/**
+	 * Returns string list write mode for multi-configuration edits (modify/replace).
+	 * 
+	 * @return the mode which can be either {@link CDTPrefUtil#WMODE_MODIFY} (default value)
+	 *    or else {@link CDTPrefUtil#WMODE_REPLACE}.
+	 * 
+	 * @since 5.3
+	 */
+	public static int getMultiCfgStringListWriteMode() {
+		int mode = getInt(KEY_WMODE);
+		if (mode!=WMODE_MODIFY && mode!=WMODE_REPLACE) {
+			mode = WMODE_MODIFY;
+		}
+		return mode;
+	}
+	
+	/**
+	 * Sets string list write mode for multi-configuration edits (modify/replace).
+	 * 
+	 * @param mode must be either {@link CDTPrefUtil#WMODE_MODIFY}
+	 *    or {@link CDTPrefUtil#WMODE_REPLACE}.
+	 * 
+	 * @since 5.3
+	 */
+	public static void setMultiCfgStringListWriteMode(int mode) {
+		setInt(KEY_WMODE, mode);
+	}
+	
+	/**
 	 * @deprecated as of CDT 8.0. Use {@link StringListModeControl} to display string list modes.
 	 */
-	@SuppressWarnings("fallthrough")
 	@Deprecated
 	public static String getDMode() {
 		String s = null;
-		switch(getInt(KEY_DMODE)) {
-		default:
-			setInt(KEY_DMODE, DMODE_CONJUNCTION);
-			// fallthrough
+		switch(getMultiCfgStringListDisplayMode()) {
 		case DMODE_CONJUNCTION:
 			s = Messages.EnvironmentTab_17;  
 			break;
@@ -139,14 +197,10 @@ public class CDTPrefUtil {
 	/**
 	 * @deprecated as of CDT 8.0. Use {@link StringListModeControl} to display string list modes.
 	 */
-	@SuppressWarnings("fallthrough")
 	@Deprecated
 	public static String getWMode() {
 		String s = null;
-		switch(getInt(KEY_WMODE)) {
-		default:
-			setInt(KEY_WMODE, WMODE_MODIFY);
-			// fallthrough
+		switch(getMultiCfgStringListWriteMode()) {
 		case WMODE_MODIFY:
 			s = Messages.EnvironmentTab_24;  
 			break;
@@ -157,33 +211,45 @@ public class CDTPrefUtil {
 		return Messages.EnvironmentTab_22 + s;  
 	}
 	
+	/**
+	 * Toggle string list display mode: conjunction <-> disjunction.
+	 */
 	public static void spinDMode() {
-		setInt(KEY_DMODE, 
-				((getInt(KEY_DMODE) == DMODE_CONJUNCTION) ?
-						DMODE_DISJUNCTION :
-						DMODE_CONJUNCTION));
+		int mode = getMultiCfgStringListDisplayMode();
+		if (mode==DMODE_CONJUNCTION) {
+			mode = DMODE_DISJUNCTION;
+		} else {
+			mode = DMODE_CONJUNCTION;
+		}
+		setMultiCfgStringListDisplayMode(mode);
 	}
 
+	/**
+	 * Toggle string list display mode: modify <-> replace.
+	 */
 	public static void spinWMode() {
-		setInt(KEY_WMODE, 
-				((getInt(KEY_WMODE) == WMODE_MODIFY) ? 
-						WMODE_REPLACE : 
-						WMODE_MODIFY));
+		int mode = getMultiCfgStringListWriteMode();
+		if (mode==WMODE_MODIFY) {
+			mode = WMODE_REPLACE;
+		} else {
+			mode = WMODE_MODIFY;
+		}
+		setMultiCfgStringListWriteMode(mode);
 	}
 
 	public static final String[] getStrListForDisplay(String[][] input) {
-		return getStrListForDisplay(input, getInt(KEY_DMODE));
+		return getStrListForDisplay(input, getMultiCfgStringListDisplayMode());
 	}
 	
 	private static final String[] getStrListForDisplay(String[][] input, int mode) {
-		Object[] ob = getListForDisplay(input, getInt(KEY_DMODE), null);
+		Object[] ob = getListForDisplay(input, getMultiCfgStringListDisplayMode(), null);
 		String[] ss = new String[ob.length];
 		System.arraycopy(ob, 0, ss, 0, ob.length);
 		return ss;
 	}
 	
 	public static final Object[] getListForDisplay(Object[][] input, Comparator<Object> cmp) {
-		return getListForDisplay(input, getInt(KEY_DMODE), cmp);
+		return getListForDisplay(input, getMultiCfgStringListDisplayMode(), cmp);
 	}
 	/**
 	 * Utility method forms string list
@@ -205,7 +271,7 @@ public class CDTPrefUtil {
 		if (s1 == null || 
 			s1.length == 0)
 			return EMPTY_ARRAY;
-		if (getInt(KEY_DMODE) == DMODE_CONJUNCTION) 
+		if (getMultiCfgStringListDisplayMode() == DMODE_CONJUNCTION) 
 		{ 
 			ArrayList<Object> lst = new ArrayList<Object>();
 			for (int i=0; i<s1.length; i++) {

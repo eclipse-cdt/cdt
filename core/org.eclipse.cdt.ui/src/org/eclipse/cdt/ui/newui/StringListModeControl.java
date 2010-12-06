@@ -106,7 +106,7 @@ public class StringListModeControl {
 		if (isMultiCfg) {
 			String modeUnknown = Messages.AbstractLangsListTab_UnknownMode;
 			String modeDisplay = modeUnknown;
-			switch (CDTPrefUtil.getInt(CDTPrefUtil.KEY_DMODE)) {
+			switch (CDTPrefUtil.getMultiCfgStringListDisplayMode()) {
 			case CDTPrefUtil.DMODE_CONJUNCTION:
 				modeDisplay = Messages.AbstractLangsListTab_Conjunction;
 				break;
@@ -116,7 +116,7 @@ public class StringListModeControl {
 			}
 
 			String modeWrite = modeUnknown;
-			switch (CDTPrefUtil.getInt(CDTPrefUtil.KEY_WMODE)) {
+			switch (CDTPrefUtil.getMultiCfgStringListWriteMode()) {
 			case CDTPrefUtil.WMODE_MODIFY:
 				modeWrite = Messages.AbstractLangsListTab_Modify;
 				break;

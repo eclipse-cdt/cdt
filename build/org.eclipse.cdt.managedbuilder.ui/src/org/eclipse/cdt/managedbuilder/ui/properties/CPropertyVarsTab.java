@@ -233,7 +233,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	private void replaceMacros() {
 		if (!page.isMultiCfg() || 
 				cfgd == null ||
-				CDTPrefUtil.getInt(CDTPrefUtil.KEY_WMODE) != CDTPrefUtil.WMODE_REPLACE)
+				CDTPrefUtil.getMultiCfgStringListWriteMode() != CDTPrefUtil.WMODE_REPLACE)
 			return;
 		ICdtVariable[] vars = getVariables();
 		for (int i=0; i<vars.length; i++)

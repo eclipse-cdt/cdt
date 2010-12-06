@@ -82,16 +82,14 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 		w_1 = new Button(wGrp, SWT.RADIO);
 		w_1.setText(Messages.PropertyMultiCfgTab_11); 
 
-		switch (CDTPrefUtil.getInt(CDTPrefUtil.KEY_DMODE)) {
+		switch (CDTPrefUtil.getMultiCfgStringListDisplayMode()) {
 			case CDTPrefUtil.DMODE_CONJUNCTION: d_1.setSelection(true); break;
 			case CDTPrefUtil.DMODE_DISJUNCTION: d_2.setSelection(true); break;
-			default:                            d_1.setSelection(true); break;
 		}
 
-		switch (CDTPrefUtil.getInt(CDTPrefUtil.KEY_WMODE)) {
+		switch (CDTPrefUtil.getMultiCfgStringListWriteMode()) {
 			case CDTPrefUtil.WMODE_MODIFY:  w_0.setSelection(true); break;
 			case CDTPrefUtil.WMODE_REPLACE: w_1.setSelection(true); break;
-			default: w_0.setSelection(true); break;
 		}
 	}
 
@@ -102,13 +100,13 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 			x = CDTPrefUtil.DMODE_CONJUNCTION;
 		else if (d_2.getSelection()) 
 			x = CDTPrefUtil.DMODE_DISJUNCTION;
-		CDTPrefUtil.setInt(CDTPrefUtil.KEY_DMODE, x);
+		CDTPrefUtil.setMultiCfgStringListDisplayMode(x);
 
 		if (w_0.getSelection())      
 			x = CDTPrefUtil.WMODE_MODIFY;
 		else if (w_1.getSelection()) 
 			x = CDTPrefUtil.WMODE_REPLACE;
-		CDTPrefUtil.setInt(CDTPrefUtil.KEY_WMODE, x);
+		CDTPrefUtil.setMultiCfgStringListWriteMode(x);
 	}
 	
 	@Override

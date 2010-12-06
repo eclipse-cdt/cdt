@@ -164,12 +164,12 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 	
 	private int getDispMode(ICConfigurationDescription des) {
 		if (isMulti && des instanceof MultiItemsHolder)
-			return CDTPrefUtil.getInt(CDTPrefUtil.KEY_DMODE);
+			return CDTPrefUtil.getMultiCfgStringListDisplayMode();
 		return 0;	
 	}
 	
 	private boolean isModifyMode() {
-		int wmode = CDTPrefUtil.getInt(CDTPrefUtil.KEY_WMODE);
+		int wmode = CDTPrefUtil.getMultiCfgStringListWriteMode();
 		return (wmode == CDTPrefUtil.WMODE_MODIFY);
 	}
 

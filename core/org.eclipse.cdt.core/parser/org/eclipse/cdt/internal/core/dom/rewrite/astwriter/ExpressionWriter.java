@@ -30,9 +30,11 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
@@ -112,6 +114,9 @@ public class ExpressionWriter extends NodeWriter{
 	private static final String MODULO_OP = " % "; //$NON-NLS-1$
 	private static final String DIVIDE_OP = " / "; //$NON-NLS-1$
 	private static final String MULTIPLY_OP = " * "; //$NON-NLS-1$
+	private static final String OPENING_SQUARE_BRACKET = "["; //$NON-NLS-1$
+	private static final String CLOSING_SQUARE_BRACKET = "]"; //$NON-NLS-1$
+	private static final String THIS = "this"; //$NON-NLS-1$
 	private final MacroExpansionHandler macroHandler;
 	
 	public ExpressionWriter(Scribe scribe, CPPASTVisitor visitor, MacroExpansionHandler macroHandler, NodeCommentMap commentMap) {
@@ -150,6 +155,8 @@ public class ExpressionWriter extends NodeWriter{
 			writeDeleteExpression((ICPPASTDeleteExpression) expression);
 		}else if (expression instanceof ICPPASTSimpleTypeConstructorExpression) {
 			writeSimpleTypeConstructorExpression((ICPPASTSimpleTypeConstructorExpression) expression);
+		} else if (expression instanceof ICPPASTLambdaExpression) {
+			writeLambdaExpression((ICPPASTLambdaExpression) expression);
 		}
 	}
 
@@ -525,5 +532,45 @@ public class ExpressionWriter extends NodeWriter{
 		simpTypeCtorExp.getDeclSpecifier().accept(visitor);
 		visitNodeIfNotNull(simpTypeCtorExp.getInitializer());
 	}
+	
+	private void writeLambdaExpression(ICPPASTLambdaExpression lambdaExpression) {
+		writeLambdaIntroducer(lambdaExpression);
+		if (lambdaExpression.getDeclarator() != null) {
+			lambdaExpression.getDeclarator().accept(visitor);
+		}
+		scribe.printSpace();
+		lambdaExpression.getBody().accept(visitor);
+	}
+
+	private void writeLambdaIntroducer(ICPPASTLambdaExpression lambdaExpression) {
+		scribe.print(OPENING_SQUARE_BRACKET);
+		ICPPASTLambdaExpression.CaptureDefault captureDefault = lambdaExpression.getCaptureDefault();
+		if (captureDefault.equals(ICPPASTLambdaExpression.CaptureDefault.BY_COPY)) {
+			scribe.print('=');
+		} else if (captureDefault.equals(ICPPASTLambdaExpression.CaptureDefault.BY_REFERENCE)) {
+			scribe.print('&');
+		}
+		for (ICPPASTCapture capture : lambdaExpression.getCaptures()) {
+			boolean isNotFirst = capture != lambdaExpression.getCaptures()[0];
+			boolean hasDefaultCapture = captureDefault != ICPPASTLambdaExpression.CaptureDefault.UNSPECIFIED;
+			if (isNotFirst || hasDefaultCapture) {
+				scribe.print(COMMA_SPACE);
+			}
+			writeCapture(capture);
+		}
+		scribe.print(CLOSING_SQUARE_BRACKET);
+	}
+
+	private void writeCapture(ICPPASTCapture capture) {
+		if (capture.capturesThisPointer()) {
+			scribe.print(THIS);
+		} else {
+			if (capture.isByReference()) {
+				scribe.print(AMPERSAND_OP);
+			}
+			capture.getIdentifier().accept(visitor);
+		}
+	}
+
 }
 

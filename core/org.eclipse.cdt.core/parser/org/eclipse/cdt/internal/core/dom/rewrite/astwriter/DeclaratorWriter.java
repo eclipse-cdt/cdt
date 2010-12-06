@@ -49,6 +49,8 @@ public class DeclaratorWriter extends NodeWriter {
 	private static final String AMPERSAND__AMPERSAND_SPACE = "&& "; //$NON-NLS-1$
 	private static final String STAR_SPACE = "* "; //$NON-NLS-1$
 	private static final String PURE_VIRTUAL = " =0"; //$NON-NLS-1$
+	private static final String MUTABLE = "mutable"; //$NON-NLS-1$
+	private static final String ARROW_OPERATOR = "->"; //$NON-NLS-1$
 	
 	public DeclaratorWriter(Scribe scribe, ASTVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
@@ -93,7 +95,10 @@ public class DeclaratorWriter extends NodeWriter {
 	private void writeFunctionDeclarator(IASTStandardFunctionDeclarator funcDec) {
 		IASTPointerOperator[] pointOps = funcDec.getPointerOperators();
 		writePointerOperators(funcDec, pointOps);
-		funcDec.getName().accept(visitor);
+		// XXX: Lambda declarators happen to have null names rather than empty ones when parsed
+		if (funcDec.getName() != null) {
+			funcDec.getName().accept(visitor);
+		}
 		writeNestedDeclarator(funcDec);
 		writeParameters(funcDec);
 		writeInitializer(funcDec);
@@ -134,10 +139,20 @@ public class DeclaratorWriter extends NodeWriter {
 			scribe.printSpace();
 			scribe.print(VOLATILE);
 		}
+		if (funcDec.isMutable()) {
+			scribe.printSpace();
+			scribe.print(MUTABLE);
+		}
 		if(funcDec.isPureVirtual()) {
 			scribe.print(PURE_VIRTUAL);
 		}
 		writeExceptionSpecification(funcDec, funcDec.getExceptionSpecification());
+		if (funcDec.getTrailingReturnType() != null) {
+			scribe.printSpace();
+			scribe.print(ARROW_OPERATOR);
+			scribe.printSpace();
+			funcDec.getTrailingReturnType().accept(visitor);
+		}
 	}
 
 	protected void writeExceptionSpecification(ICPPASTFunctionDeclarator funcDec, IASTTypeId[] exceptions) {

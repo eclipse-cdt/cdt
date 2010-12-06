@@ -48,6 +48,7 @@ public class AstWriterTestSuite{
 		
 		suite.addTest(SourceRewriteTester.suite("CommentTests", "resources/rewrite/ASTWriterCommentedTestSource.awts"));
 		suite.addTest(SourceRewriteTester.suite("NewCommentTests", "resources/rewrite/ASTWriterCommentedTestSource2.awts"));
+		suite.addTestSuite(ExpressionWriterTest.class);
 		return suite;
 	}
 }

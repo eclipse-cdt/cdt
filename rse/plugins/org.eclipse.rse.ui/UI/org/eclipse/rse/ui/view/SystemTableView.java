@@ -26,6 +26,7 @@
  * Martin Oberhuber (Wind River) - [289533] NPE on "Show in Table"
  * Noriaki Takatsu  (IBM)        - [288894] CANCEL has to be pressed 3 times in Userid/Password prompt window in Remote System Details view
  * David McKnight   (IBM)        - [329170] Show in table does not work after showing empty folder in table
+ * David McKnight   (IBM)        - [308783] Value in Properties view remains "Pending..."
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -972,6 +973,14 @@ public class SystemTableView
 						{
 							updateItem(w, child);
 						}
+						
+						ISelection selection = getSelection();
+						if (selection instanceof IStructuredSelection){
+							Object first = ((IStructuredSelection)selection).getFirstElement();
+							if (first.equals(child)){
+								updatePropertySheet(true);
+							}
+						}
 					}
 					catch (Exception e)
 					{
@@ -1080,6 +1089,36 @@ public class SystemTableView
 		}
 	}
 
+	private void updatePropertySheet(boolean force) {
+		ISelection selection = getSelection();
+		if (selection == null) return;
+
+		// only fire this event if the view actually has focus
+		if (force || getControl().isFocusControl())
+		{
+			IStructuredSelection parentSelection = null;
+			// create events in order to update the property sheet
+			if (selection instanceof IStructuredSelection){
+				Object first = ((IStructuredSelection)selection).getFirstElement();
+				ISystemViewElementAdapter adapter = getViewAdapter(first);
+				
+				Object parent = adapter.getParent(first);
+				if (parent != null){
+					parentSelection = new StructuredSelection(parent);
+				}
+			}
+			
+			SelectionChangedEvent dummyEvent = new SelectionChangedEvent(this, parentSelection);
+			SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
+
+			// first change the selection, then change it back (otherwise the property sheet ignores the event)
+			fireSelectionChanged(dummyEvent);
+			
+			// fire the event
+			fireSelectionChanged(event);
+		}
+	}
+	
 	/**
 	 * This is the method in your class that will be called when a remote resource
 	 * changes. You will be called after the resource is changed.

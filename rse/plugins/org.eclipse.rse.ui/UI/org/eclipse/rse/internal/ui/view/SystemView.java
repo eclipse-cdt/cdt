@@ -74,6 +74,7 @@
  * David McKnight   (IBM)        - [283793] [dstore] Expansion indicator(+) does not reset after no connect
  * Uwe Stieber      (Wind River) - [238519] [usability][api] Adapt RSE view(s) to follow decoration style of the Eclipse platform common navigator
  * David McKnight   (IBM)        - [330973] Drag/drop a local file generates an error message in the Remote system view
+ * David McKnight   (IBM)        - [308783] Value in Properties view remains "Pending..."
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -3259,7 +3260,13 @@ public class SystemView extends SafeTreeViewer
 		}
 
 		// STEP 4: update the property sheet in case we changed properties of first selected item
-		updatePropertySheet();
+		ISelection selection = getSelection();
+		if (selection instanceof IStructuredSelection){
+			Object sel = ((IStructuredSelection)selection).getFirstElement();
+			if (remoteObject.equals(sel)){
+				updatePropertySheet(true);
+			}
+		}
 		return;
 	}
 
@@ -5926,20 +5933,40 @@ public class SystemView extends SafeTreeViewer
 		item.setExpanded(true);
 	}
 
+	public void updatePropertySheet(){
+		updatePropertySheet(false);
+	}
+	
 	/**
 	 * Called when a property is updated and we need to inform the Property Sheet viewer.
 	 * There is no formal mechanism for this so we simulate a selection changed event as
 	 *  this is the only event the property sheet listens for.
 	 */
-	public void updatePropertySheet() {
+	private void updatePropertySheet(boolean force) {
 		ISelection selection = getSelection();
 		if (selection == null) return;
 
 		// only fire this event if the view actually has focus
-		if (getControl().isFocusControl())
+		if (force || getControl().isFocusControl())
 		{
-			// create an event
-			SelectionChangedEvent event = new SelectionChangedEvent(this, getSelection());
+			IStructuredSelection parentSelection = null;
+			// create events in order to update the property sheet
+			if (selection instanceof IStructuredSelection){
+				Object first = ((IStructuredSelection)selection).getFirstElement();
+				ISystemViewElementAdapter adapter = getViewAdapter(first);
+				
+				Object parent = adapter.getParent(first);
+				if (parent != null){
+					parentSelection = new StructuredSelection(parent);
+				}
+			}
+			
+			SelectionChangedEvent dummyEvent = new SelectionChangedEvent(this, parentSelection);
+			SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
+
+			// first change the selection, then change it back (otherwise the property sheet ignores the event)
+			fireSelectionChanged(dummyEvent);
+			
 			// fire the event
 			fireSelectionChanged(event);
 		}

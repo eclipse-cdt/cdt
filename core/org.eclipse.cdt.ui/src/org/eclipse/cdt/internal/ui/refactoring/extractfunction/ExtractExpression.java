@@ -26,10 +26,11 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -188,7 +189,7 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 			if(ret != null) return ret;
 		}else {
 			if(node.getOperand1() instanceof CPPASTIdExpression) {
-				return getBinaryExpressionType(((CPPASTIdExpression) node.getOperand1()).getExpressionType());
+				return getBinaryExpressionType((CPPASTIdExpression) node.getOperand1());
 			}
 		}
 
@@ -197,24 +198,38 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 			if(ret != null) return ret;
 		}else {
 			if(node.getOperand2() instanceof CPPASTIdExpression) {
-				return getBinaryExpressionType(((CPPASTIdExpression) node.getOperand2()).getExpressionType());
+				return getBinaryExpressionType((CPPASTIdExpression) node.getOperand2());
 			}
 		}
 		return null;
 	}
 
-	private IASTDeclSpecifier getBinaryExpressionType(IType expressionType) {		
+	private IASTDeclSpecifier getBinaryExpressionType(CPPASTIdExpression expression) {
+		IType expressionType = ((IVariable) expression.getName().resolveBinding()).getType();
+		if (expressionType instanceof ITypedef) {
+			ITypedef typdef = (ITypedef) expressionType;
+			IType expandedType = expression.getExpressionType();
+			if(typdef.getType().isSameType(expandedType)) {
+				return getDeclSpecifierForType(typdef);
+			}else{
+				return getDeclSpecifierForType(expandedType);
+			}
+			
+		}
+		return getDeclSpecifierForType(expressionType);
+
+	}
+
+	private IASTDeclSpecifier getDeclSpecifierForType(IType expressionType) {
+
 		if (expressionType instanceof CPPBasicType) {
 			
 			CPPBasicType basicType = (CPPBasicType) expressionType;
 			return createSimpleDeclSpecifier(basicType.getKind());
 			
 		} else if (expressionType instanceof ITypedef) {
-			
-			return getDeclSpecForType(((ITypedef)expressionType));
-			
+			return getDeclSpecForType((ITypedef) expressionType);
 		} else if (expressionType instanceof ICPPClassType) {
-
 			return getDeclSpecForType((ICPPClassType)expressionType);
 		}
 		return null;

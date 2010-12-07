@@ -944,3 +944,31 @@ void Test::test()
     bool b = invalid();
 }
 
+//!Extract expresion with typdef Bug 331985
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+
+//@.config
+filename=test.cpp
+methodname=bar
+
+//@test.cpp
+typedef int& foo;
+int test(foo s) {
+   int a= /*$*/s + 1/*$$*/;  // type of id-expression 's' is int, not 'foo' or 'int&'
+   return a;
+}
+
+
+//=
+typedef int& foo;
+int bar(foo s)
+{
+    return s + 1;
+}
+
+int test(foo s) {
+   int a= bar(s);  // type of id-expression 's' is int, not 'foo' or 'int&'
+   return a;
+}
+
+

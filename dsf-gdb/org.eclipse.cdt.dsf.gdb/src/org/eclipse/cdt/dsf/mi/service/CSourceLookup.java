@@ -77,36 +77,34 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
 
 	private List<String> getSourceLookupPath(ISourceContainer[] containers) {
 		ArrayList<String> list = new ArrayList<String>(containers.length);
-		
-		for (int i = 0; i < containers.length; ++i) {
-			if (containers[i] instanceof ProjectSourceContainer) {
-				IProject project = ((ProjectSourceContainer)containers[i]).getProject();
+
+		for (ISourceContainer container : containers) {
+			if (container instanceof ProjectSourceContainer) {
+				IProject project = ((ProjectSourceContainer) container).getProject();
 				if (project != null && project.exists()) {
 					IPath location = project.getLocation();
 					if (location != null) {
 						list.add(location.toPortableString());
 					}
 				}
-			}
-			if (containers[i] instanceof FolderSourceContainer) {
-				IContainer container = ((FolderSourceContainer)containers[i]).getContainer();
-				if (container != null && container.exists()) {
-					IPath location = container.getLocation();
+			} else if (container instanceof FolderSourceContainer) {
+				IContainer folder = ((FolderSourceContainer) container).getContainer();
+				if (folder != null && folder.exists()) {
+					IPath location = folder.getLocation();
 					if (location != null) {
 						list.add(location.toPortableString());
 					}
 				}
-			}
-			if (containers[i] instanceof DirectorySourceContainer) {
-				File dir = ((DirectorySourceContainer)containers[i]).getDirectory();
+			} else if (container instanceof DirectorySourceContainer) {
+				File dir = ((DirectorySourceContainer) container).getDirectory();
 				if (dir != null && dir.exists()) {
-					IPath path = new Path( dir.getAbsolutePath());
+					IPath path = new Path(dir.getAbsolutePath());
 					list.add(path.toPortableString());
 				}
 			}
-			if (containers[i].isComposite()) {
+			if (container.isComposite()) {
 				try {
-    				list.addAll(getSourceLookupPath(containers[i].getSourceContainers()));
+    				list.addAll(getSourceLookupPath(container.getSourceContainers()));
 				} catch (CoreException e) {
 				}
 			}
@@ -118,11 +116,12 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
     @Override
     public void initialize(final RequestMonitor requestMonitor) {
         super.initialize(
-            new RequestMonitor(getExecutor(), requestMonitor) { 
-                @Override
-                protected void handleSuccess() {
-                    doInitialize(requestMonitor);
-                }});
+        		new RequestMonitor(getExecutor(), requestMonitor) { 
+        			@Override
+        			protected void handleSuccess() {
+        				doInitialize(requestMonitor);
+        			}
+                });
     }
 
     private void doInitialize(final RequestMonitor requestMonitor) {
@@ -140,7 +139,7 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
     }
 
     public void getDebuggerPath(ISourceLookupDMContext sourceLookupCtx, Object source, final DataRequestMonitor<String> rm) {
-        if (! (source instanceof String)) {
+        if (!(source instanceof String)) {
             // In future if needed other elements such as URIs could be supported.
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Only string source element is supported", null)); //$NON-NLS-1$);
             rm.done();
@@ -165,14 +164,13 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
                     rm.setData(sourceString);
                 }
                 rm.done();
-
                 return Status.OK_STATUS;
             }
         }.schedule();       
     }
 
     public void getSource(ISourceLookupDMContext sourceLookupCtx, final String debuggerPath, final DataRequestMonitor<Object> rm) {
-        if (!fDirectors.containsKey(sourceLookupCtx) ){
+        if (!fDirectors.containsKey(sourceLookupCtx)) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
             		IDsfStatusConstants.INVALID_HANDLE, "No source director configured for given context", null)); //$NON-NLS-1$);
             rm.done();

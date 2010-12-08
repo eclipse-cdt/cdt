@@ -25,11 +25,12 @@
          </builder>
       <tool
             command="cl /c"
+            commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
             errorParsers="org.eclipse.cdt.core.VCErrorParser"
             id="org.eclipse.cdt.msvc.cl"
             name="%compiler.name"
             natureFilter="both"
-            outputFlag="/Fo">
+            outputFlag="/Fo:">
          <supportedProperties>
             <property
                   id="org.eclipse.cdt.build.core.buildType">
@@ -314,12 +315,12 @@
       </tool>
       <tool
             command="link"
+            commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
             errorParsers="org.eclipse.cdt.core.VCErrorParser"
             id="org.eclipse.cdt.msvc.link"
             name="%linker.name"
             natureFilter="both"
-            outputFlag="/OUT:"
-            >
+            outputFlag="/OUT:">
          <supportedProperties>
             <property
                   id="org.eclipse.cdt.build.core.buildArtefactType">

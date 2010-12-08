@@ -152,17 +152,17 @@ public class SourceUtils {
 	}
 
 	private static boolean isEmpty(String string) {
-		return (string == null || string.trim().length() == 0);
+		return string == null || string.trim().length() == 0;
 	}
 
 	static public ISourceContainer[] convertSourceLocations(ICSourceLocation[] locations) {
 		ArrayList<ISourceContainer> containers = new ArrayList<ISourceContainer>(locations.length);
 		int mappingCount = 0;
-		for (int i = 0; i < locations.length; ++i) {
-			if (locations[i] instanceof IProjectSourceLocation) {
-				containers.add(new ProjectSourceContainer(((IProjectSourceLocation)locations[i]).getProject(), false));
-			} else if (locations[i] instanceof IDirectorySourceLocation) {
-				IDirectorySourceLocation d = (IDirectorySourceLocation)locations[i];
+		for (ICSourceLocation location : locations) {
+			if (location instanceof IProjectSourceLocation) {
+				containers.add(new ProjectSourceContainer(((IProjectSourceLocation) location).getProject(), false));
+			} else if (location instanceof IDirectorySourceLocation) {
+				IDirectorySourceLocation d = (IDirectorySourceLocation) location;
 				IPath a = d.getAssociation();
 				if (a != null) {
 					MappingSourceContainer mapping = new MappingSourceContainer(InternalSourceLookupMessages.SourceUtils_0 + (++mappingCount));

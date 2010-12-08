@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ * 	   QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
@@ -23,14 +23,13 @@ public class CommonSourceLookupDirector extends CSourceLookupDirector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector#setSourceContainers(org.eclipse.debug.core.sourcelookup.ISourceContainer[])
 	 */
-	public void setSourceContainers( ISourceContainer[] containers ) {
+	public void setSourceContainers(ISourceContainer[] containers) {
 		try {
-			super.setSourceContainers( containers );
-			CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugInternalConstants.PREF_COMMON_SOURCE_CONTAINERS, getMemento() );
+			super.setSourceContainers(containers);
+			CDebugCorePlugin.getDefault().getPluginPreferences().setValue(ICDebugInternalConstants.PREF_COMMON_SOURCE_CONTAINERS, getMemento());
 			CDebugCorePlugin.getDefault().savePluginPreferences();
-		}
-		catch( CoreException e ) {
-			CDebugCorePlugin.log( e.getStatus() );
+		} catch (CoreException e) {
+			CDebugCorePlugin.log(e.getStatus());
 		}
 	}
 }

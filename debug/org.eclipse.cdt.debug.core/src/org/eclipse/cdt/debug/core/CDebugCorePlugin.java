@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
- * Ken Ryall (Nokia) - Support for breakpoint actions (bug 118308)
+ *     QNX Software Systems - Initial API and implementation
+ *     Ken Ryall (Nokia) - Support for breakpoint actions (bug 118308)
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -51,7 +51,6 @@ import org.osgi.framework.BundleContext;
  * The plugin class for C/C++ debug core.
  */
 public class CDebugCorePlugin extends Plugin {
-
 	/**
 	 * The plug-in identifier (value <code>"org.eclipse.cdt.debug.core"</code>).
 	 */
@@ -140,18 +139,18 @@ public class CDebugCorePlugin extends Plugin {
 	 * 
 	 * @param t throwable to log 
 	 */
-	public static void log( Throwable t ) {
+	public static void log(Throwable t) {
 		Throwable top = t;
-		if ( t instanceof DebugException ) {
+		if (t instanceof DebugException) {
 			DebugException de = (DebugException)t;
 			IStatus status = de.getStatus();
-			if ( status.getException() != null ) {
+			if (status.getException() != null) {
 				top = status.getException();
 			}
 		}
 		// this message is intentionally not internationalized, as an exception may
 		// be due to the resource bundle itself
-		log( new Status( IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Internal error logged from CDI Debug: ", top ) ); //$NON-NLS-1$		
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Internal error logged from CDI Debug: ", top)); //$NON-NLS-1$		
 	}
 
 	/**
@@ -159,8 +158,8 @@ public class CDebugCorePlugin extends Plugin {
 	 * 
 	 * @param status status to log
 	 */
-	public static void log( IStatus status ) {
-		getDefault().getLog().log( status );
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
 	}
 
 	/**
@@ -168,81 +167,80 @@ public class CDebugCorePlugin extends Plugin {
 	 * 
 	 * @param status status to log
 	 */
-	public static void log( String message ) {
-		getDefault().getLog().log( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), INTERNAL_ERROR, message, null ) );
+	public static void log(String message) {
+		getDefault().getLog().log(new Status(IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), INTERNAL_ERROR, message, null));
 	}
 
 	private void initializeDebugConfiguration() {
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint( getUniqueIdentifier(), CDEBUGGER_EXTENSION_POINT_ID );
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(getUniqueIdentifier(), CDEBUGGER_EXTENSION_POINT_ID);
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
-		fDebugConfigurations = new HashMap<String, DebugConfiguration>( infos.length );
-		for( int i = 0; i < infos.length; i++ ) {
+		fDebugConfigurations = new HashMap<String, DebugConfiguration>(infos.length);
+		for(int i = 0; i < infos.length; i++) {
 			IConfigurationElement configurationElement = infos[i];
 			if (configurationElement.getName().equals(DEBUGGER_ELEMENT)) {
-				DebugConfiguration configType = new DebugConfiguration( configurationElement );
-				fDebugConfigurations.put( configType.getID(), configType );
+				DebugConfiguration configType = new DebugConfiguration(configurationElement);
+				fDebugConfigurations.put(configType.getID(), configType);
 			}
 		}
 	}
 
 	private void initializeActiveDebugConfigurations() {
-		fActiveDebugConfigurations = new HashSet<String>( getDebugConfigurations().length );
-		fActiveDebugConfigurations.addAll( fDebugConfigurations.keySet() );
-		String[] filteredTypes = CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_FILTERED_DEBUGGERS ).split( "\\," ); //$NON-NLS-1$
-		fActiveDebugConfigurations.removeAll( Arrays.asList( filteredTypes ) );
+		fActiveDebugConfigurations = new HashSet<String>(getDebugConfigurations().length);
+		fActiveDebugConfigurations.addAll(fDebugConfigurations.keySet());
+		String[] filteredTypes = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_FILTERED_DEBUGGERS).split("\\,"); //$NON-NLS-1$
+		fActiveDebugConfigurations.removeAll(Arrays.asList(filteredTypes));
 	}
 
 	public ICDebugConfiguration[] getDebugConfigurations() {
-		if ( fDebugConfigurations == null ) {
+		if (fDebugConfigurations == null) {
 			initializeDebugConfiguration();
 		}
-		return fDebugConfigurations.values().toArray( new ICDebugConfiguration[fDebugConfigurations.size()] );
+		return fDebugConfigurations.values().toArray(new ICDebugConfiguration[fDebugConfigurations.size()]);
 	}
 
 	public ICDebugConfiguration[] getActiveDebugConfigurations() {
-		if ( fDebugConfigurations == null ) {
+		if (fDebugConfigurations == null) {
 			initializeDebugConfiguration();
 		}
-		if ( fActiveDebugConfigurations == null ) {
+		if (fActiveDebugConfigurations == null) {
 			initializeActiveDebugConfigurations();
 		}
-		ArrayList<DebugConfiguration> list = new ArrayList<DebugConfiguration>( fActiveDebugConfigurations.size() );
+		ArrayList<DebugConfiguration> list = new ArrayList<DebugConfiguration>(fActiveDebugConfigurations.size());
 
-		for ( String id : fActiveDebugConfigurations ) {
-			DebugConfiguration dc = fDebugConfigurations.get( id );
-			if ( dc != null )
-				list.add( dc );
+		for (String id : fActiveDebugConfigurations) {
+			DebugConfiguration dc = fDebugConfigurations.get(id);
+			if (dc != null)
+				list.add(dc);
 		}
-		return list.toArray( new ICDebugConfiguration[list.size()] );
+		return list.toArray(new ICDebugConfiguration[list.size()]);
 	}
 
 	public ICDebugConfiguration[] getDefaultActiveDebugConfigurations() {
-		List<String> filtered = Arrays.asList( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultString( ICDebugConstants.PREF_FILTERED_DEBUGGERS ).split( "\\," ) ); //$NON-NLS-1$
-		HashMap<String, DebugConfiguration> all = new HashMap<String, DebugConfiguration>( fDebugConfigurations );
-		all.keySet().removeAll( filtered );
-		return all.values().toArray( new ICDebugConfiguration[all.size()] ); 
+		List<String> filtered = Arrays.asList(CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultString(ICDebugConstants.PREF_FILTERED_DEBUGGERS).split("\\,")); //$NON-NLS-1$
+		HashMap<String, DebugConfiguration> all = new HashMap<String, DebugConfiguration>(fDebugConfigurations);
+		all.keySet().removeAll(filtered);
+		return all.values().toArray(new ICDebugConfiguration[all.size()]); 
 	}
 
-	public void saveFilteredDebugConfigurations( ICDebugConfiguration[] configurations ) {
+	public void saveFilteredDebugConfigurations(ICDebugConfiguration[] configurations) {
 		disposeActiveDebugConfigurations();
 		StringBuffer sb = new StringBuffer();
-		for ( int i = 0; i < configurations.length; ++i ) {
-			sb.append( configurations[i].getID() ).append( ',' );
+		for (int i = 0; i < configurations.length; ++i) {
+			sb.append(configurations[i].getID()).append(',');
 		}
-		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_FILTERED_DEBUGGERS, sb.toString() );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue(ICDebugConstants.PREF_FILTERED_DEBUGGERS, sb.toString());
 		CDebugCorePlugin.getDefault().savePluginPreferences();
 	}
 
-	public void saveDefaultDebugConfiguration( String id ) {
-		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE, ( id != null ) ? id : "" ); //$NON-NLS-1$
+	public void saveDefaultDebugConfiguration(String id) {
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue(ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE, (id != null) ? id : ""); //$NON-NLS-1$
 	}
 
 	public ICDebugConfiguration getDefaultDebugConfiguration() {
 		ICDebugConfiguration result = null;
 		try {
-			result = getDebugConfiguration( CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE ) );
-		}
-		catch( CoreException e ) {
+			result = getDebugConfiguration(CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE));
+		} catch (CoreException e) {
 		}
 		return result;
 	}
@@ -250,27 +248,26 @@ public class CDebugCorePlugin extends Plugin {
 	public ICDebugConfiguration getDefaultDefaultDebugConfiguration() {
 		ICDebugConfiguration result = null;
 		try {
-			result = getDebugConfiguration( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultString( ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE ) );
+			result = getDebugConfiguration(CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultString(ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE));
+		} catch (CoreException e) {
 		}
-		catch( CoreException e ) {
-		}
-		if ( result == null ) {
+		if (result == null) {
 		}
 		return result;
 	}
 
-	public boolean isDefaultDebugConfiguration( String id ) {
-		return id.compareTo( CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE ) ) == 0;
+	public boolean isDefaultDebugConfiguration(String id) {
+		return id.compareTo(CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE)) == 0;
 	}
 
-	public ICDebugConfiguration getDebugConfiguration( String id ) throws CoreException {
-		if ( fDebugConfigurations == null ) {
+	public ICDebugConfiguration getDebugConfiguration(String id) throws CoreException {
+		if (fDebugConfigurations == null) {
 			initializeDebugConfiguration();
 		}
-		ICDebugConfiguration dbgCfg = fDebugConfigurations.get( id );
-		if ( dbgCfg == null ) {
-			IStatus status = new Status( IStatus.ERROR, getUniqueIdentifier(), 100, DebugCoreMessages.getString( "CDebugCorePlugin.0" ), null ); //$NON-NLS-1$
-			throw new CoreException( status );
+		ICDebugConfiguration dbgCfg = fDebugConfigurations.get(id);
+		if (dbgCfg == null) {
+			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), 100, DebugCoreMessages.getString("CDebugCorePlugin.0"), null); //$NON-NLS-1$
+			throw new CoreException(status);
 		}
 		return dbgCfg;
 	}
@@ -279,18 +276,18 @@ public class CDebugCorePlugin extends Plugin {
 		return fSessionManager;
 	}
 
-	protected void setSessionManager( SessionManager sm ) {
-		if ( fSessionManager != null )
+	protected void setSessionManager(SessionManager sm) {
+		if (fSessionManager != null)
 			fSessionManager.dispose();
 		fSessionManager = sm;
 	}
 
-	public void saveCommonSourceLocations( ICSourceLocation[] locations ) {
-		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_SOURCE_LOCATIONS, SourceUtils.getCommonSourceLocationsMemento( locations ) );
+	public void saveCommonSourceLocations(ICSourceLocation[] locations) {
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue(ICDebugConstants.PREF_SOURCE_LOCATIONS, SourceUtils.getCommonSourceLocationsMemento(locations));
 	}
 
 	public ICSourceLocation[] getCommonSourceLocations() {
-		return SourceUtils.getCommonSourceLocationsFromMemento( CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_SOURCE_LOCATIONS ) );
+		return SourceUtils.getCommonSourceLocationsFromMemento(CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_SOURCE_LOCATIONS));
 	}
 
 	/**
@@ -298,8 +295,8 @@ public class CDebugCorePlugin extends Plugin {
 	 * 
 	 * @param listener breakpoint listener
 	 */
-	public void addCBreakpointListener( ICBreakpointListener listener ) {
-		fBreakpointListeners.add( listener );
+	public void addCBreakpointListener(ICBreakpointListener listener) {
+		fBreakpointListeners.add(listener);
 	}
 
 	/**
@@ -307,8 +304,8 @@ public class CDebugCorePlugin extends Plugin {
 	 * 
 	 * @param listener breakpoint listener
 	 */
-	public void removeCBreakpointListener( ICBreakpointListener listener ) {
-		fBreakpointListeners.remove( listener );
+	public void removeCBreakpointListener(ICBreakpointListener listener) {
+		fBreakpointListeners.remove(listener);
 	}
 
 	/**
@@ -323,7 +320,7 @@ public class CDebugCorePlugin extends Plugin {
 	}
 
 	private void createBreakpointListenersList() {
-		fBreakpointListeners = new ListenerList( 1 );
+		fBreakpointListeners = new ListenerList(1);
 	}
 
 	private void disposeBreakpointListenersList() {
@@ -335,13 +332,13 @@ public class CDebugCorePlugin extends Plugin {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void start( BundleContext context ) throws Exception {
-		super.start( context );
+    public void start(BundleContext context) throws Exception {
+		super.start(context);
 		initializeCommonSourceLookupDirector();
 		createCommandAdapterFactory();
 		createBreakpointListenersList();
 		createDisassemblyContextService();
-		setSessionManager( new SessionManager() );
+		setSessionManager(new SessionManager());
 		setDefaultLaunchDelegates();
 	}
 
@@ -349,13 +346,13 @@ public class CDebugCorePlugin extends Plugin {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
-    public void stop( BundleContext context ) throws Exception {
-		setSessionManager( null );
+    public void stop(BundleContext context) throws Exception {
+		setSessionManager(null);
 		disposeDisassemblyContextService();
 		disposeBreakpointListenersList();
 		disposeCommonSourceLookupDirector();
 		disposeDebugConfigurations();
-		super.stop( context );
+		super.stop(context);
 	}
 
 	private void createCommandAdapterFactory() {
@@ -365,31 +362,29 @@ public class CDebugCorePlugin extends Plugin {
 	}
 	
 	private void initializeCommonSourceLookupDirector() {
-		if ( fCommonSourceLookupDirector == null ) {
+		if (fCommonSourceLookupDirector == null) {
 			fCommonSourceLookupDirector = new CommonSourceLookupDirector();
-			String newMemento = CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugInternalConstants.PREF_COMMON_SOURCE_CONTAINERS );
-			if ( newMemento.length() == 0 ) {
+			String newMemento = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugInternalConstants.PREF_COMMON_SOURCE_CONTAINERS);
+			if (newMemento.length() == 0) {
 				// Add the participant(s). This happens as part of
 				// initializeFromMemento(), but since we're not calling it, we
 				// need to do this explicitly. See 299583.
 				fCommonSourceLookupDirector.initializeParticipants();
 				
 				// Convert source locations to source containers
-				convertSourceLocations( fCommonSourceLookupDirector );
-			}
-			else {
+				convertSourceLocations(fCommonSourceLookupDirector);
+			} else {
 				try {
-					fCommonSourceLookupDirector.initializeFromMemento( newMemento );
-				}
-				catch( CoreException e ) {
-					log( e.getStatus() );
+					fCommonSourceLookupDirector.initializeFromMemento(newMemento);
+				} catch (CoreException e) {
+					log(e.getStatus());
 				}
 			}
 		}
 	}
 
 	private void disposeCommonSourceLookupDirector() {
-		if ( fCommonSourceLookupDirector != null )
+		if (fCommonSourceLookupDirector != null)
 			fCommonSourceLookupDirector.dispose();
 	}
 
@@ -397,12 +392,12 @@ public class CDebugCorePlugin extends Plugin {
 		return fCommonSourceLookupDirector;
 	}
 
-	private void convertSourceLocations( CommonSourceLookupDirector director ) {
-		director.setSourceContainers( SourceUtils.convertSourceLocations( getCommonSourceLocations() ) );
+	private void convertSourceLocations(CommonSourceLookupDirector director) {
+		director.setSourceContainers(SourceUtils.convertSourceLocations(getCommonSourceLocations()));
 	}
 
 	private void disposeActiveDebugConfigurations() {
-		if ( fActiveDebugConfigurations != null ) {
+		if (fActiveDebugConfigurations != null) {
 			fActiveDebugConfigurations.clear();
 			fActiveDebugConfigurations = null;
 		}
@@ -410,7 +405,7 @@ public class CDebugCorePlugin extends Plugin {
 
 	private void disposeDebugConfigurations() {
 		disposeActiveDebugConfigurations();
-		if ( fDebugConfigurations != null ) {
+		if (fDebugConfigurations != null) {
 			fDebugConfigurations.clear();
 			fDebugConfigurations = null;
 		}
@@ -431,7 +426,7 @@ public class CDebugCorePlugin extends Plugin {
     }
 
     private void disposeDisassemblyContextService() {
-        if ( fDisassemblyContextService != null )
+        if (fDisassemblyContextService != null)
             fDisassemblyContextService.dispose();
     }
     
@@ -453,7 +448,8 @@ public class CDebugCorePlugin extends Plugin {
 					}
 				}
 			}
-		} catch (CoreException e) {}
+		} catch (CoreException e) {
+		}
 
 		ILaunchConfigurationType remoteCfg = launchMgr.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_REMOTE_APP);
 		try {
@@ -466,7 +462,8 @@ public class CDebugCorePlugin extends Plugin {
 					}
 				}
 			}
-		} catch (CoreException e) {}
+		} catch (CoreException e) {
+		}
 		
 		ILaunchConfigurationType attachCfg = launchMgr.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_ATTACH);
 		try {
@@ -479,7 +476,8 @@ public class CDebugCorePlugin extends Plugin {
 					}
 				}
 			}
-		} catch (CoreException e) {}
+		} catch (CoreException e) {
+		}
 
 		ILaunchConfigurationType postMortemCfg = launchMgr.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_POST_MORTEM);
 		try {
@@ -492,7 +490,8 @@ public class CDebugCorePlugin extends Plugin {
 					}
 				}
 			}
-		} catch (CoreException e) {}
+		} catch (CoreException e) {
+		}
 
 		HashSet<String> runSet = new HashSet<String>();
 		runSet.add(ILaunchManager.RUN_MODE);
@@ -507,7 +506,7 @@ public class CDebugCorePlugin extends Plugin {
 					}
 				}
 			}
-		} catch (CoreException e) {}
+		} catch (CoreException e) {
+		}
 	}
-	
 }

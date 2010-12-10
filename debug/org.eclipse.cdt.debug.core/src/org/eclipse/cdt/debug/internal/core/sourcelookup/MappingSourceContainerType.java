@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;

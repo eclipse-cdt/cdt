@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Shell;
 public class AbsolutePathSourceContainerBrowser extends AbstractSourceContainerBrowser {
 
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
-		AbsolutePathSourceContainer absolutePathSourceContainer = new AbsolutePathSourceContainer();
-		return new ISourceContainer[] { absolutePathSourceContainer };
+		return new ISourceContainer[] { new AbsolutePathSourceContainer() };
 	}
 }

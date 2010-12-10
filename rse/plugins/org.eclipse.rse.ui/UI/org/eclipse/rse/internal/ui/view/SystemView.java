@@ -5954,10 +5954,11 @@ public class SystemView extends SafeTreeViewer
 			if (selection instanceof IStructuredSelection){
 				Object first = ((IStructuredSelection)selection).getFirstElement();
 				ISystemViewElementAdapter adapter = getViewAdapter(first);
-				
-				Object parent = adapter.getParent(first);
-				if (parent != null){
-					parentSelection = new StructuredSelection(parent);
+				if (adapter != null){
+					Object parent = adapter.getParent(first);
+					if (parent != null){
+						parentSelection = new StructuredSelection(parent);
+					}
 				}
 			}
 			

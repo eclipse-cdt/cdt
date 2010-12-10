@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.File;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.debug.core.sourcelookup.CProjectSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
@@ -45,8 +46,15 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 		if (o instanceof MapEntrySourceContainer) {
 			return CDebugImages.DESC_OBJS_PATH_MAP_ENTRY;
 		}
-		if (o instanceof ProjectSourceContainer) {
-			IProject project = ((ProjectSourceContainer)o).getProject();
+		if (o instanceof CProjectSourceContainer) {
+			IProject project = ((CProjectSourceContainer) o).getProject();
+			if (project != null) {
+				ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(project);
+				if (cProject != null)
+					return getImageDescriptor(cProject);
+			}
+		} else if (o instanceof ProjectSourceContainer) {
+			IProject project = ((ProjectSourceContainer) o).getProject();
 			ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(project);
 			if (cProject != null)
 				return getImageDescriptor(cProject);

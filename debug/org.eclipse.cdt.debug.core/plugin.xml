@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-
      <extension-point id="CDebugger" name="%CDebugger.name" schema="schema/CDebugger.exsd"/>
      <extension-point id="BreakpointActionType" name="%BreakpointAction" schema="schema/BreakpointAction.exsd"/>
      <extension-point id="BreakpointExtension" name="%BreakpointAction" schema="schema/BreakpointExtension.exsd"/>
@@ -283,6 +282,11 @@
    <extension
          point="org.eclipse.debug.core.sourceContainerTypes">
       <sourceContainerType
+            class="org.eclipse.cdt.debug.internal.core.sourcelookup.CProjectSourceContainerType"
+            description="%containerDescription.project"
+            id="org.eclipse.cdt.debug.core.containerType.project"
+            name="%containerName.project"/>
+      <sourceContainerType
             class="org.eclipse.cdt.debug.internal.core.sourcelookup.MappingSourceContainerType"
             description="%containerDescription.mapping"
             id="org.eclipse.cdt.debug.core.containerType.mapping"
@@ -297,6 +301,16 @@
             description="%containerDescription.directory"
             id="org.eclipse.cdt.debug.core.containerType.directory"
             name="%containerName.directory"/>
+      <sourceContainerType
+            class="org.eclipse.cdt.debug.internal.core.sourcelookup.CompilationDirectorySourceContainerType"
+            description="%containerDescription.compilationDirectory"
+            id="org.eclipse.cdt.debug.core.containerType.compilationDirectory"
+            name="%containerName.compilationDirectory"/>
+      <sourceContainerType
+            class="org.eclipse.cdt.debug.internal.core.sourcelookup.SourceFoldersRelativePathSourceContainerType"
+            description="%containerDescription.sourceFoldersRelativePath"
+            id="org.eclipse.cdt.debug.core.containerType.sourceFoldersRelativePath"
+            name="%containerName.sourceFoldersRelativePath"/>
       <sourceContainerType
             class="org.eclipse.cdt.debug.internal.core.sourcelookup.AbsolutePathSourceContainerType"
             description="%containerDescription.absolutePath"
@@ -342,13 +356,17 @@
       <sourceContainer
             id="org.eclipse.cdt.debug.core.containerType.mapping"/>
       <sourceContainer
+            id="org.eclipse.cdt.debug.core.containerType.compilationDirectory"/>
+      <sourceContainer
+      		id="org.eclipse.cdt.debug.core.containerType.project"/>
+      <sourceContainer
+            id="org.eclipse.cdt.debug.core.containerType.sourceFoldersRelativePath"/>
+      <sourceContainer
             id="org.eclipse.debug.core.containerType.folder"/>
       <sourceContainer
             id="org.eclipse.debug.core.containerType.workspace"/>
       <sourceContainer
             id="org.eclipse.debug.core.containerType.directory"/>
-      <sourceContainer
-      		id="org.eclipse.debug.core.containerType.project"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">

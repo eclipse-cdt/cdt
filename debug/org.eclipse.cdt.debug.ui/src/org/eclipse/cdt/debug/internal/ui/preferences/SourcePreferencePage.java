@@ -41,7 +41,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 /**
- * The "Common Source Lookup Path" preference page.
+ * The "Source Lookup Path" preference page.
  */
 public class SourcePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private SourceContainerViewer fPathViewer;

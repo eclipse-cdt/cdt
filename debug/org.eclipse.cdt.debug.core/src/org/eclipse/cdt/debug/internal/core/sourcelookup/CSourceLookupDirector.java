@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Nokia - Added support for AbsoluteSourceContainer(159833)
  *     Texas Instruments - added extension point for source container type (279473) 
+ *     Sergey Prigogin (Google)
 *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
@@ -19,8 +20,9 @@ import java.util.Set;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.sourcelookup.AbsolutePathSourceContainer;
+import org.eclipse.cdt.debug.core.sourcelookup.CProjectSourceContainer;
+import org.eclipse.cdt.debug.core.sourcelookup.IMappingSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.ProgramRelativePathSourceContainer;
-import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -58,7 +60,7 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#initializeParticipants()
 	 */
 	public void initializeParticipants() {
-		addParticipants(new ISourceLookupParticipant[]{ new CSourceLookupParticipant() });
+		addParticipants(new ISourceLookupParticipant[] { new CSourceLookupParticipant() });
 	}
 
 	/* (non-Javadoc)
@@ -98,7 +100,10 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	}
 
 	private boolean contains(ISourceContainer container, IProject project) {
-		if (container instanceof ProjectSourceContainer && ((ProjectSourceContainer) container).getProject().equals(project)) {
+		if (container instanceof CProjectSourceContainer && project.equals(((CProjectSourceContainer) container).getProject())) {
+			return true;
+		}
+		if (container instanceof ProjectSourceContainer && project.equals(((CProjectSourceContainer) container).getProject())) {
 			return true;
 		}
 		try {
@@ -115,7 +120,19 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		IPath path = new Path(sourceName);
 		if (!path.isValidPath(sourceName))
 			return false;
-		if (container instanceof ProjectSourceContainer) {
+		if (container instanceof IMappingSourceContainer) {
+			return ((IMappingSourceContainer) container).getCompilationPath(sourceName) != null; 
+		}
+		if (container instanceof CProjectSourceContainer) {
+			IProject project = ((CProjectSourceContainer) container).getProject();
+			if (project != null) {
+				IPath projPath = project.getLocation();
+				if (projPath != null && projPath.isPrefixOf(path)) {
+					IFile file = ((CProjectSourceContainer) container).getProject().getFile(path.removeFirstSegments(projPath.segmentCount()));
+					return file != null && file.exists();
+				}
+			}
+		} else if (container instanceof ProjectSourceContainer) {
 			IProject project = ((ProjectSourceContainer) container).getProject();
 			IPath projPath = project.getLocation();
 			if (projPath != null && projPath.isPrefixOf(path)) {
@@ -135,11 +152,7 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 			IPath dirPath = new Path(dir.getAbsolutePath());
 			if (searchSubfolders || dirPath.segmentCount() + 1 == path.segmentCount())
 				return dirPath.isPrefixOf(path);
-		}
-		if (container instanceof MappingSourceContainer) {
-			return (((MappingSourceContainer) container).getCompilationPath(sourceName) != null); 
-		}
-		if (container instanceof AbsolutePathSourceContainer) {
+		} else if (container instanceof AbsolutePathSourceContainer) {
 			return ((AbsolutePathSourceContainer) container).isValidAbsoluteFilePath(sourceName); 
 		} else if (container instanceof ProgramRelativePathSourceContainer) {
 			try {
@@ -160,8 +173,8 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	}
 
 	public IPath getCompilationPath(String sourceName) {
-		for (ISourceContainer cont : getSourceContainers()) {
-			IPath path = getCompilationPath(cont, sourceName);
+		for (ISourceContainer container : getSourceContainers()) {
+			IPath path = SourceUtils.getCompilationPath(container, sourceName);
 			if (path != null) {
 				return path;
 			}
@@ -169,22 +182,6 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		return null;
 	}
 
-	private IPath getCompilationPath(ISourceContainer container, String sourceName) {
-		if (container instanceof MappingSourceContainer) {
-			return ((MappingSourceContainer) container).getCompilationPath(sourceName);
-		}
-
-		try {
-			for (ISourceContainer cont : container.getSourceContainers()) {
-				IPath path = getCompilationPath(cont, sourceName);
-				if (path != null)
-					return path;
-			}
-		} catch (CoreException e) {
-		}
-		return null;
-	}
-	
 	// >> Bugzilla 279473
 	private void readSupportedContainerTypes() {
 		synchronized (fSupportedTypesLock) {

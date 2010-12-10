@@ -85,6 +85,7 @@ import org.eclipse.cdt.debug.core.model.IGlobalVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.core.model.IPersistableRegisterGroup;
 import org.eclipse.cdt.debug.core.model.IRegisterDescriptor;
+import org.eclipse.cdt.debug.core.sourcelookup.CProjectSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceLookupChangeListener;
 import org.eclipse.cdt.debug.internal.core.CBreakpointManager;
@@ -1830,7 +1831,11 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		for (ISourceContainer container : containers) {
 			String pathToAdd = null;
 			
-			if (container instanceof ProjectSourceContainer) {
+			if (container instanceof CProjectSourceContainer) {
+				IProject project = ((CProjectSourceContainer) container).getProject();
+				if (project != null && project.exists())
+					pathToAdd = project.getLocation().toPortableString();
+			} else if (container instanceof ProjectSourceContainer) { // For backward compatibility
 				IProject project = ((ProjectSourceContainer) container).getProject();
 				if (project != null && project.exists())
 					pathToAdd = project.getLocation().toPortableString();

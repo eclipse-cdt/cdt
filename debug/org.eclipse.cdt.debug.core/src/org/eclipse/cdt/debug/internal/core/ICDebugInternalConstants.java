@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core;
 
@@ -26,8 +27,15 @@ public class ICDebugInternalConstants {
 
 	/**
 	 * String preference for the common source containers.
+	 * This preference is superseded by PREF_DEFAULT_SOURCE_CONTAINERS. Kept for backward
+	 * compatibility only.
 	 */
 	public static final String PREF_COMMON_SOURCE_CONTAINERS = CDebugCorePlugin.getUniqueIdentifier() + ".cDebug.common_source_containers"; //$NON-NLS-1$
+
+	/**
+	 * String preference for the default source containers.
+	 */
+	public static final String PREF_DEFAULT_SOURCE_CONTAINERS = CDebugCorePlugin.getUniqueIdentifier() + ".cDebug.default_source_containers"; //$NON-NLS-1$
 
 	/**
 	 * Boolean preference indicating the on/off state of the Show Full Paths

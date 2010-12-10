@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.sourcelookup; 
 
@@ -30,7 +31,7 @@ import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer;
 /**
  * The source container for path mappings.
  */
-public class MappingSourceContainer extends AbstractSourceContainer {
+public class MappingSourceContainer extends AbstractSourceContainer implements IMappingSourceContainer {
 	/**
 	 * Unique identifier for the mapping source container type
 	 * (value <code>org.eclipse.cdt.debug.core.containerType.mapping</code>).
@@ -180,6 +181,9 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 		fName = name;
 	}
 
+	/* (non-Javadoc)
+	 * @see IMappingSourceContainer#getCompilationPath(String)
+	 */
 	public IPath getCompilationPath(String sourceName) {
 		IPath path = new Path(sourceName);
 		IPath result = null;

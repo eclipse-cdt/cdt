@@ -17,6 +17,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.debug.core.sourcelookup.CProjectSourceContainer;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
@@ -79,7 +80,15 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
 		ArrayList<String> list = new ArrayList<String>(containers.length);
 
 		for (ISourceContainer container : containers) {
-			if (container instanceof ProjectSourceContainer) {
+			if (container instanceof CProjectSourceContainer) {
+				IProject project = ((CProjectSourceContainer) container).getProject();
+				if (project != null && project.exists()) {
+					IPath location = project.getLocation();
+					if (location != null) {
+						list.add(location.toPortableString());
+					}
+				}
+			} else if (container instanceof ProjectSourceContainer) { // For backward compatibility
 				IProject project = ((ProjectSourceContainer) container).getProject();
 				if (project != null && project.exists()) {
 					IPath location = project.getLocation();

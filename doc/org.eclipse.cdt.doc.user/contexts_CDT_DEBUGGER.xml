@@ -121,9 +121,9 @@
    <topic href="reference/cdt_u_dbg_brkpt_actions.htm" label="Breakpoint Actions preferences"/>
    <topic href="tasks/cdt_t_addrmv_brk_action.htm" label="Attaching and Removing Breakpoint Actions"/>
 </context>
-<context id="source_preference_page_context" title="Common Source Lookup Path">
+<context id="source_preference_page_context" title="Source Lookup Path">
    <description>Manage common source paths.</description>
-   <topic href="reference/cdt_u_dbg_src.htm" label="Common Source Lookup Path"/>
+   <topic href="reference/cdt_u_dbg_src.htm" label="Source Lookup Path"/>
 </context>
 
 </contexts>

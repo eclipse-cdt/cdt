@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,19 @@ public class SourceLookupUIMessages extends NLS {
 	public static String CSourceNotFoundEditor_3;
 	public static String CSourceNotFoundEditor_4;
 	public static String CSourceNotFoundEditor_5;
+	public static String CompilationDirectorySourceContainerDialog_0;
+	public static String CompilationDirectorySourceContainerDialog_1;
+	public static String CompilationDirectorySourceContainerDialog_2;
+	public static String CompilationDirectorySourceContainerDialog_3;
+	public static String CompilationDirectorySourceContainerDialog_4;
+	public static String CompilationDirectorySourceContainerDialog_5;
+	public static String CompilationDirectorySourceContainerDialog_6;
+	public static String CompilationDirectorySourceContainerDialog_7;
+	public static String CompilationDirectorySourceContainerDialog_8;
+	public static String TargetProjectSourceContainerDialog_title;
+	public static String TargetProjectSourceContainerDialog_description;
+	public static String TargetProjectSourceContainerDialog_referencedLabel;
+	public static String projectSelection_chooseLabel;
 
 	static {
 		NLS.initializeMessages(SourceLookupUIMessages.class.getName(), SourceLookupUIMessages.class);

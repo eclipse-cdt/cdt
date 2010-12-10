@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,12 @@ public class InternalSourceLookupMessages extends NLS {
 	public static String CDirectorySourceContainerType_0;
 	public static String CDirectorySourceContainerType_1;
 	public static String CDirectorySourceContainerType_2;
+	public static String CompilationDirectorySourceContainerType_0;
+	public static String CompilationDirectorySourceContainerType_1;
+	public static String CompilationDirectorySourceContainerType_2;
+	public static String CProjectSourceContainer_0;
+	public static String CProjectSourceContainerType_1;
+	public static String CProjectSourceContainerType_2;
 	public static String CProjectSourceLocation_0;
 	public static String CProjectSourceLocation_1;
 	public static String CProjectSourceLocation_2;
@@ -35,8 +41,12 @@ public class InternalSourceLookupMessages extends NLS {
 	public static String MappingSourceContainerType_0;
 	public static String MappingSourceContainerType_1;
 	public static String MappingSourceContainerType_2;
-	public static String SourceUtils_0;
 	public static String ProgramRelativePathSourceContainerType_1;
+	public static String SourceFoldersRelativePathSourceContainer_0;
+	public static String SourceFoldersRelativePathSourceContainer_1;
+	public static String SourceFoldersRelativePathSourceContainerType_1;
+	public static String SourceFoldersRelativePathSourceContainerType_2;
+	public static String SourceUtils_0;
 
 	static {
 		NLS.initializeMessages(InternalSourceLookupMessages.class.getName(), InternalSourceLookupMessages.class);

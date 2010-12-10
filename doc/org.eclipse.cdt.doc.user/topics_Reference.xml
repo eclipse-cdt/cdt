@@ -72,11 +72,10 @@
 		
 		<topic label="Debug preferences" href="reference/cdt_u_debug.htm">
 			<topic label="Breakpoint Actions" href="reference/cdt_u_dbg_brkpt_actions.htm"/>
-			<topic label="Common Source Lookup Path" href="reference/cdt_u_dbg_src.htm"/>
+			<topic label="Source Lookup Path" href="reference/cdt_u_dbg_src.htm"/>
 			<topic label="GDB MI" href="reference/cdt_u_gdb_mi.htm"/>
 			<topic label="GDB" href="reference/cdt_u_dsfgdb.htm"/>
 		</topic>
-		
 		
 		<topic label="Editor preferences" href="reference/cdt_u_c_editor_gen.htm">
 			<topic label="Content Assist" href="reference/cdt_u_c_editor_con_assist.htm" >

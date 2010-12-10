@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Ken Ryall (Nokia) - Support for breakpoint actions (bug 118308)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -21,7 +22,10 @@ import org.eclipse.cdt.debug.core.breakpointactions.BreakpointActionManager;
 import org.eclipse.cdt.debug.core.command.CCommandAdapterFactory;
 import org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextService;
 import org.eclipse.cdt.debug.core.model.IRestart;
+import org.eclipse.cdt.debug.core.sourcelookup.AbsolutePathSourceContainer;
+import org.eclipse.cdt.debug.core.sourcelookup.CProjectSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.ProgramRelativePathSourceContainer;
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.ListenerList;
@@ -45,6 +49,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -364,7 +369,12 @@ public class CDebugCorePlugin extends Plugin {
 	private void initializeCommonSourceLookupDirector() {
 		if (fCommonSourceLookupDirector == null) {
 			fCommonSourceLookupDirector = new CommonSourceLookupDirector();
-			String newMemento = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugInternalConstants.PREF_COMMON_SOURCE_CONTAINERS);
+			boolean convertingFromLegacyFormat = false;
+			String newMemento = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugInternalConstants.PREF_DEFAULT_SOURCE_CONTAINERS);
+			if (newMemento.length() == 0) {
+				newMemento = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugInternalConstants.PREF_COMMON_SOURCE_CONTAINERS);
+				convertingFromLegacyFormat = true;
+			}
 			if (newMemento.length() == 0) {
 				// Add the participant(s). This happens as part of
 				// initializeFromMemento(), but since we're not calling it, we
@@ -379,6 +389,17 @@ public class CDebugCorePlugin extends Plugin {
 				} catch (CoreException e) {
 					log(e.getStatus());
 				}
+			}
+			if (convertingFromLegacyFormat) {
+				// Add three source containers that used to be present implicitly. 
+				ISourceContainer[] oldContainers = fCommonSourceLookupDirector.getSourceContainers();
+				ISourceContainer[] containers = new ISourceContainer[oldContainers.length + 3];
+				int i = 0;
+				containers[i++] = new AbsolutePathSourceContainer();
+				containers[i++] = new ProgramRelativePathSourceContainer();
+				containers[i++] = new CProjectSourceContainer(null, true);
+				System.arraycopy(oldContainers, 0, containers, i, oldContainers.length);
+				fCommonSourceLookupDirector.setSourceContainers(containers);
 			}
 		}
 	}

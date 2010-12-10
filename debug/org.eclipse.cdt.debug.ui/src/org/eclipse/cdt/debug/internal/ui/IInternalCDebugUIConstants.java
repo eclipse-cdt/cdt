@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui;
 
@@ -43,7 +44,7 @@ public interface IInternalCDebugUIConstants {
 	
 	public static final RGB DEFAULT_DISASSEMBLY_SOURCE_LINE_RGB = Display.getDefault().getSystemColor( SWT.COLOR_DARK_BLUE ).getRGB();
 
-	//Current stack frame instruction pointer
+	// Current stack frame instruction pointer
 	public static final String DISASM_INSTRUCTION_POINTER = PREFIX + "disassemblyInstructionPointer"; //$NON-NLS-1$
 
 	// marker types for instruction pointer annotations - top stack frame, and secondary
@@ -74,10 +75,12 @@ public interface IInternalCDebugUIConstants {
 	 */
 	public static final int INTERNAL_ERROR = 150;
 
-	// new disassembly (start)
+	// new disassembly
 
     public static final String DISASM_DISPLAY_MODE_INSTRUCTIONS = "instructions";  //$NON-NLS-1$
     public static final String DISASM_DISPLAY_MODE_SOURCE = "source";  //$NON-NLS-1$
-	
-	// new disassembly (end)
+
+    // wizard images
+    public static final String IMG_ADD_COMP_DIR_WIZ = "IMG_ADD_SRC_DIRECTORY"; //$NON-NLS-1$
+    public static final String IMG_EDIT_COMP_DIR_WIZ = "IMG_EDIT_SRC_DIRECTORY"; //$NON-NLS-1$
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
@@ -14,25 +15,34 @@ import java.io.IOException;
 import java.io.StringReader;
 import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.debug.core.sourcelookup.CProjectSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.IDirectorySourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.IMappingSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
-import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -160,7 +170,7 @@ public class SourceUtils {
 		int mappingCount = 0;
 		for (ICSourceLocation location : locations) {
 			if (location instanceof IProjectSourceLocation) {
-				containers.add(new ProjectSourceContainer(((IProjectSourceLocation) location).getProject(), false));
+				containers.add(new CProjectSourceContainer(((IProjectSourceLocation) location).getProject(), false));
 			} else if (location instanceof IDirectorySourceLocation) {
 				IDirectorySourceLocation d = (IDirectorySourceLocation) location;
 				IPath a = d.getAssociation();
@@ -174,5 +184,50 @@ public class SourceUtils {
 			}
 		}
 		return containers.toArray(new ISourceContainer[containers.size()]);
+	}
+
+	static IPath getCompilationPath(ISourceContainer container, String sourceName) {
+		if (container instanceof IMappingSourceContainer) {
+			return ((IMappingSourceContainer) container).getCompilationPath(sourceName);
+		}
+	
+		try {
+			for (ISourceContainer cont : container.getSourceContainers()) {
+				IPath path = getCompilationPath(cont, sourceName);
+				if (path != null)
+					return path;
+			}
+		} catch (CoreException e) {
+		}
+		return null;
+	}
+
+	public static IProject[] getAllReferencedProjects(IProject project) throws CoreException {
+		Set<IProject> all = new HashSet<IProject>();
+		getAllReferencedProjects(all, project);
+		return all.toArray(new IProject[all.size()]);
+	}
+
+	private static void getAllReferencedProjects(Set<IProject> all, IProject project) throws CoreException {
+		for (IProject ref : project.getReferencedProjects()) {
+			if (!all.contains(ref) && ref.exists() && ref.isOpen()) {
+				all.add(ref);
+				getAllReferencedProjects(all, ref);
+			}
+		}
+	}
+
+	public static IProject getLaunchConfigurationProject(ISourceLookupDirector director) {
+		ILaunchConfiguration config = director.getLaunchConfiguration();
+		if (config != null) {
+			try {
+				String name = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
+				if (name.length() > 0)
+					return ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+			} catch (CoreException e) {
+				CDebugCorePlugin.log(e);
+			}
+		}
+		return null;
 	}
 }

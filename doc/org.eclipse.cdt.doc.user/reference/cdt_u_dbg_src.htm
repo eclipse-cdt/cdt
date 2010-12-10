@@ -4,21 +4,21 @@
 <head>
 	<meta http-equiv="Content-Language" content="en-us">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Common Source Lookup Path preferences</title>
+	<title>Source Lookup Path preferences</title>
 	<link rel="stylesheet" type="text/css" href="../help.css">
 	<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
 </head>
 <body>
 
-<h1>Common Source Lookup Path preference</h1>
+<h1>Source Lookup Path preference</h1>
 
-<p>Use the <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.debug.ui.SourcePreferencePage)")'>Common Source Lookup Path</a> preference page to add or remove source containers.</p>
+<p>Use the <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.debug.ui.SourcePreferencePage)")'>Source Lookup Path</a> preference page to add or remove source containers.</p>
 
-<p><img src="../images/debug_src_pref.png"  alt="Debug Source Code Locations Preferences" ></p>
+<p><img src="../images/debug_src_pref.png" alt="Debug Source Code Locations Preferences" ></p>
 
   <table width="600px" cellpadding="5" cellspacing="0" border="1" >
     <caption>
-      <strong>Common Source Lookup Path Options </strong>
+      <strong>Default Source Lookup Path Options</strong>
     </caption>
     <colgroup>
       <col width="30%" valign="top" >
@@ -33,9 +33,13 @@
         <td width="99" valign="top"><strong>Add...</strong></td>
         <td width="475">Opens the <strong>Add Source</strong> dialog to insert a new source container of one of the following types:<br><br>
           <ul>
+		  <li>Absolute File Path</li>
+		  <li>Compilation Directory</li>
 		  <li>File System Directory</li>
 		  <li>Path Mapping</li>
           <li>Project</li>
+          <li>Project - Path Relative to Source Folders</li>
+          <li>Program Relative File Path</li>
           <li>Workspace</li>
           <li>Workspace Folder  </li>
           </ul>
@@ -43,7 +47,7 @@
       </tr>
       <tr>
         <td valign="top"><strong>Edit...</strong></td>
-        <td>Opens the <strong>Edit File System Director</strong>y dialog to modify the currently selected source container.</td>
+        <td>Opens the <strong>Edit File System Directory</strong> dialog to modify the currently selected source container.</td>
       </tr>
       <tr>
         <td valign="top"><strong>Remove</strong></td>

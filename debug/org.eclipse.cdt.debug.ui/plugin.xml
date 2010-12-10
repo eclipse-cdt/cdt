@@ -1286,7 +1286,12 @@
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
       </factory>
       <factory
-            adaptableType="org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer"
+            adaptableType="org.eclipse.cdt.debug.core.sourcelookup.containers.CProjectSourceContainer"
+            class="org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory">
+         <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.core.sourcelookup.containers.SourceFoldersRelativePathSourceContainer"
             class="org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory">
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
       </factory>
@@ -1477,6 +1482,11 @@
    <extension
          point="org.eclipse.debug.ui.sourceContainerPresentations">
       <sourceContainerPresentation
+            browserClass="org.eclipse.cdt.debug.internal.ui.sourcelookup.CProjectSourceContainerBrowser"
+            containerTypeID="org.eclipse.cdt.debug.core.containerType.project"
+            icon="icons/obj16/project_obj.gif"
+            id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.project"/>
+      <sourceContainerPresentation
             browserClass="org.eclipse.cdt.debug.internal.ui.sourcelookup.NewMappingSourceContainerBrowser"
             containerTypeID="org.eclipse.cdt.debug.core.containerType.mapping"
             icon="icons/obj16/mapping_obj.gif"
@@ -1491,9 +1501,20 @@
             icon="icons/obj16/abspath_obj.gif"
             id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.absolutePath"/>
       <sourceContainerPresentation
+            browserClass="org.eclipse.cdt.debug.internal.ui.sourcelookup.ProgramRelativePathSourceContainerBrowser"
             containerTypeID="org.eclipse.cdt.debug.core.containerType.programRelativePath"
             icon="icons/obj16/program_rel_path_obj.gif"
             id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.programRelativePath"/>
+      <sourceContainerPresentation
+            browserClass="org.eclipse.cdt.debug.internal.ui.sourcelookup.CompilationDirectorySourceContainerBrowser"
+            containerTypeID="org.eclipse.cdt.debug.core.containerType.compilationDirectory"
+            icon="icons/obj16/dir_anchor_obj.gif"
+            id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.compilationDirectory"/>
+      <sourceContainerPresentation
+            browserClass="org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceFoldersRelativePathSourceContainerBrowser"
+            containerTypeID="org.eclipse.cdt.debug.core.containerType.sourceFoldersRelativePath"
+            icon="icons/obj16/proj_anchor_obj.gif"
+            id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.sourceFoldersRelativePath"/>
    </extension>
    <extension
          point="org.eclipse.core.filebuffers.annotationModelCreation">

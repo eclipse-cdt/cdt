@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,13 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.internal.ui;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
- * 
  * Help context ids for the C/C++ debug ui.
  * <p>
  * This interface contains constants only; it is not intended to be implemented
@@ -80,9 +79,10 @@ public interface ICDebugHelpContextIds {
 	public static final String ADD_DIRECTORY_CONTAINER_DIALOG = PREFIX + "add_directory_container_dialog"; //$NON-NLS-1$
 	public static final String REGISTER_GROUP = PREFIX + "register_group_dialog"; //$NON-NLS-1$
     public static final String CONFIGURE_COLUMNS_DIALOG = PREFIX + "configure_columns_dialog_context"; //$NON-NLS-1$;
+	public static final String COMPILATION_DIRECTORY_SOURCE_CONTAINER_DIALOG = PREFIX + "compilation_directory_source_container_dialog_context"; //$NON-NLS-1$;;
+	public static final String ADD_TARGET_PROJECT_CONTAINER_DIALOG = PREFIX + "target_project_source_container_dialog";//$NON-NLS-1$
 
 	// Wizards
 	public static final String IMPORT_EXECUTABLE_PAGE_ONE = PREFIX + "import_executable_page_one"; //$NON-NLS-1$
 	public static final String IMPORT_EXECUTABLE_PAGE_TWO = PREFIX + "import_executable_page_two"; //$NON-NLS-1$
-
 }

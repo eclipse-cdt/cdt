@@ -5962,11 +5962,13 @@ public class SystemView extends SafeTreeViewer
 				}
 			}
 			
-			SelectionChangedEvent dummyEvent = new SelectionChangedEvent(this, parentSelection);
+			
+			if (parentSelection != null){
+				SelectionChangedEvent dummyEvent = new SelectionChangedEvent(this, parentSelection);
+				// first change the selection, then change it back (otherwise the property sheet ignores the event)
+				fireSelectionChanged(dummyEvent);
+			}
 			SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
-
-			// first change the selection, then change it back (otherwise the property sheet ignores the event)
-			fireSelectionChanged(dummyEvent);
 			
 			// fire the event
 			fireSelectionChanged(event);

@@ -3247,7 +3247,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				skipToNode(statements.get(1));
 			}
 			final boolean previousStatementIsNullStmt= previousStatement instanceof IASTNullStatement;
-			final int indentLevel= scribe.indentationLevel;
 			for (int i = 1; i < statementsLength - 1; i++) {
 				final IASTStatement statement= statements.get(i);
 				if (!startNode(statement)) {
@@ -3432,7 +3431,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 					}
 					inInactiveCode = wasInInactiveCode;
 				}
-		 		catch( EmptyStackException e) {}
+		 		catch (EmptyStackException e) {}
 			}
 		}
 		if (inInactiveCode) {

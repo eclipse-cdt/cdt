@@ -266,7 +266,7 @@ if [ ! -h setup.sh ]; then
 fi
 chmod a+x doit_irsbuild.sh doit_nightly.sh
 cd org.eclipse.rse.build
-chmod a+x build.pl build.rb go.sh nightly.sh setup.sh
+chmod a+x go.sh nightly.sh setup.sh
 cd ..
 
 echo "Your build environment is now created."

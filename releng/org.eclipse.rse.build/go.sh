@@ -22,11 +22,12 @@ curdir=`pwd`
 cd `dirname $0`
 mydir=`pwd`
 
-# pathes: see build.rb for reference
+# make pathes absolute
 cd "$mydir/../eclipse" ; eclipse=`pwd`
 cd "$mydir/../org.eclipse.releng.basebuilder" ; basebuilder=`pwd`
 cd "$mydir/../working" ; working=`pwd`
 cd "$mydir/../publish" ; publishDirectory=`pwd`
+cd "$mydir/../org.eclipse.tm.releng" ; mapRoot=`pwd`
 cd "$mydir" ; builder=`pwd`
 
 # Find the base build scripts: genericTargets.xml and build.xml
@@ -57,6 +58,7 @@ command="$command -DbuildDirectory=${buildDirectory} "
 command="$command -DpackageDirectory=${packageDirectory} "
 command="$command -DpublishDirectory=${publishDirectory} "
 command="$command -Dbuilder=${builder} "
+command="$command -DmapRoot=${mapRoot} "
 command="$command -DbaseLocation=${eclipse} "
 command="$command -DbuildType=${buildType} "
 command="$command -DbuildId=${buildId} "

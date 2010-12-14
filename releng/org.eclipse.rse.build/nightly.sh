@@ -27,7 +27,7 @@ curdir=`pwd`
 cd `dirname $0`
 mydir=`pwd`
 
-# pathes: see build.rb for reference
+# make pathes absolute
 cd "$mydir/../eclipse" ; eclipse=`pwd`
 cd "$mydir/../org.eclipse.releng.basebuilder" ; basebuilder=`pwd`
 cd "$mydir/../working" ; working=`pwd`

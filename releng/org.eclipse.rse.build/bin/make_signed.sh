@@ -22,7 +22,7 @@ tmpdir=/tmp/${USER}.$$
 
 # Accept environment variables set outside the script
 if [ "${UPDATE_SITE}" = "" ]; then
-  UPDATE_SITE=$HOME/downloads-tm/updates/3.2milestones
+  UPDATE_SITE=$HOME/downloads-tm/updates/3.3milestones
 fi
 if [ "${SIGNED_JAR_SOURCE}" = "" ]; then
   SIGNED_JAR_SOURCE=${tmpdir}/eclipse_ext/tm

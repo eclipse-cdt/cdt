@@ -149,7 +149,8 @@
         </td>
     </tr>
 </table>
-<b>Note:</b> As of TM 3.1 (Eclipse Galileo / June 2009), the <b>RSE-remotecdt</b> integration for remote launch and debug through gdbserver has moved into CDT 6.0.
+<b>Note:</b> As of TM 3.3 (Eclipse Indigo / June 2011), the <b>TM-discovery</b> component is discontinued. See
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=330337">bug 330337</a> for details.
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr><td colspan="2">&nbsp;</td></tr>

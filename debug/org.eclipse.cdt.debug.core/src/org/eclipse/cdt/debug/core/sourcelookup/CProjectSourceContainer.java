@@ -102,6 +102,9 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
 	public Object[] findSourceElements(String name) throws CoreException {
+		if (fProject == null)
+			return EMPTY;
+
 		ArrayList<Object> sources = new ArrayList<Object>();
 
 		// An IllegalArgumentException is thrown from the "getFile" method 

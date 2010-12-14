@@ -33,15 +33,18 @@ if [ -d working/package ]; then
 fi
 
 #Do the main job
-echo "Updating builder from CVS..."
-cd org.eclipse.rse.build
 stamp=`date +'%Y%m%d-%H%M'`
 log=$HOME/ws2/log-N$stamp.txt
 touch $log
+
+echo "Updating builder from CVS..."
+cd org.eclipse.tm.releng
 cvs -q update -RPd >> $log 2>&1
-daystamp=`date +'%Y%m%d-%H'`
+cd ../org.eclipse.rse.build
+cvs -q update -RPd >> $log 2>&1
 
 echo "Running the builder..."
+daystamp=`date +'%Y%m%d-%H'`
 ./nightly.sh >> $log 2>&1
 tail -30 $log
 

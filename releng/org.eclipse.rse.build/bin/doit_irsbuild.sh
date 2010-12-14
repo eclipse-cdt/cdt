@@ -66,22 +66,29 @@ if [ -d working/package ]; then
 fi
 
 #Do the main job
-echo "Updating builder from CVS..."
-cd org.eclipse.rse.build
 stamp=`date +'%Y%m%d-%H%M'`
+
+echo "Updating builder from CVS..."
+cd org.eclipse.tm.releng
+CHANGEMAPS=`cvs -nq update -r ${mapTag} | head -1`
+cd ../org.eclipse.rse.build
 CHANGES=`cvs -nq update -r ${mapTag} | head -1`
-if [ "${CHANGES}" = "" ]; then
+if [ "${CHANGEMAPS}" = "" -a "${CHANGES}" = "" ]; then
   echo "Build ${buildType}${buildId} : ${mapTag} : ${stamp}"
-  echo "Build canceled, no mapfile or config changed in org.eclipse.rse.build."
+  echo "Build canceled, no mapfile or config changed"
+  echo "in org.eclipse.rse.build and org.eclipse.tm.releng."
   exit 0
 fi
+
 log=$HOME/ws2/log-${buildType}$stamp.txt
 touch $log
-#cvs -q update -RPd >> $log 2>&1
+cd ../org.eclipse.tm.releng
 cvs -q update -r ${mapTag} -RPd >> $log 2>&1
-daystamp=`date +'%Y%m%d*%H'`
+cd ../org.eclipse.rse.build
+cvs -q update -r ${mapTag} -RPd >> $log 2>&1
 
 echo "Running the builder..."
+daystamp=`date +'%Y%m%d*%H'`
 ./nightly.sh ${mapTag} ${buildType} ${buildId} >> $log 2>&1
 tail -30 $log
 

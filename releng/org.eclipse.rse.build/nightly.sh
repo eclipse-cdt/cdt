@@ -32,6 +32,7 @@ cd "$mydir/../eclipse" ; eclipse=`pwd`
 cd "$mydir/../org.eclipse.releng.basebuilder" ; basebuilder=`pwd`
 cd "$mydir/../working" ; working=`pwd`
 cd "$mydir/../publish" ; publishDirectory=`pwd`
+cd "$mydir/../org.eclipse.tm.releng" ; mapRoot=`pwd`
 cd "$mydir" ; builder=`pwd`
 
 # SPECIAL 3.2m6: Build with target platform 3.5m6 rather than basebuilder
@@ -83,6 +84,7 @@ command="$command -DbuildDirectory=${buildDirectory} "
 command="$command -DpackageDirectory=${packageDirectory} "
 command="$command -DpublishDirectory=${publishDirectory} "
 command="$command -Dbuilder=${builder} "
+command="$command -DmapRoot=${mapRoot} "
 command="$command -DbaseLocation=${eclipse} "
 command="$command -DbuildType=${buildType} "
 command="$command -DbuildId=${buildId} "

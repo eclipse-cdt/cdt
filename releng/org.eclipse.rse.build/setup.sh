@@ -48,11 +48,11 @@ esac
 
 # prepare the base Eclipse installation in folder "eclipse"
 ep_rel="S-"
-ep_ver=3.7M3
-ep_date="-201010281441"
+ep_ver=3.7M4
+ep_date="-201012081300"
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.0.v3712b.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.0.v3716.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -210,6 +210,22 @@ else
     echo "Getting org.eclipse.rse.build from CVS"
   fi
   cvs -q -d :pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp co -Rd org.eclipse.rse.build org.eclipse.tm.rse/releng/org.eclipse.rse.build
+fi
+
+# checkout the Mapfiles
+if [ -f org.eclipse.tm.releng/CVS/Entries ]; then
+  echo "Updating org.eclipse.tm.releng from CVS"
+  cd org.eclipse.tm.releng
+  cvs -q update -A -dPR
+  cd ..
+else
+  if [ -d org.eclipse.tm.releng ]; then
+    echo "Re-getting org.eclipse.tm.releng from CVS"
+    rm -rf org.eclipse.tm.releng
+  else
+    echo "Getting org.eclipse.tm.releng from CVS"
+  fi
+  cvs -q -d :pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp co -Rd org.eclipse.tm.releng org.eclipse.tm.rse/releng/org.eclipse.tm.releng
 fi
 
 # prepare directories for the build

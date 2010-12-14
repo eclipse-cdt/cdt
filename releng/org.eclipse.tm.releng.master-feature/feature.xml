@@ -46,10 +46,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.tm.discovery"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.rse.examples"
          version="0.0.0"/>
 

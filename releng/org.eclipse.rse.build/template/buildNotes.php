@@ -27,7 +27,7 @@
   <b>Import/Export, Telnet and FTP require Java 1.5</b>, the rest of
   RSE runs on Java 1.4.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
-  Discovery needs EMF.</li>
+  Local Terminal needs CDT Core.</li>
 
 <li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.3M3-201011090901/index.php">TM 3.3M3</a>:
 <ul>

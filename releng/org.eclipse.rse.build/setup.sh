@@ -102,20 +102,6 @@ else
   DROPUP=../..
 fi
 
-# EMF 2.5.0
-EMFBRANCH=2.5.0
-EMFREL=R
-EMFDATE=200906151043
-EMFVER=2.5.0
-if [ ! -f ${DROPIN}/eclipse/plugins/org.eclipse.emf.doc_${EMFBRANCH}.v${EMFDATE}.jar ]; then
-  # Need EMF 2.4 SDK for Service Discovery ISV Docs Backlinks
-  echo "Getting EMF SDK..."
-  cd ${DROPIN}
-  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/${EMFBRANCH}/${EMFREL}${EMFDATE}/emf-xsd-SDK-${EMFVER}.zip"
-  unzip -o emf-xsd-SDK-${EMFVER}.zip
-  rm emf-xsd-SDK-${EMFVER}.zip
-  cd ${DROPUP}
-fi
 if [ ! -f eclipse/plugins/org.junit_3.8.2.v3_8_2_v20100427-1100/junit.jar ]; then
   # Eclipse Test Framework
   echo "Getting Eclipse Test Framework..."

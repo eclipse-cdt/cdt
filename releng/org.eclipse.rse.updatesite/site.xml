@@ -730,9 +730,6 @@
    <feature url="features/org.eclipse.rse.wince_0.2.100.qualifier.jar" id="org.eclipse.rse.wince" version="0.2.100.qualifier" os="win32" arch="x86">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.tm.discovery_3.0.200.qualifier.jar" id="org.eclipse.tm.discovery" version="3.0.200.qualifier">
-      <category name="TM and RSE Uncategorized 3.3"/>
-   </feature>
    <feature url="features/org.eclipse.tm.terminal.sdk_3.1.100.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.1.100.qualifier">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>

@@ -148,17 +148,6 @@
         	Includes Source.
         </td>
     </tr>
-	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>All</td>
-        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/TM-discovery-@buildId@.zip">TM-discovery-@buildId@.zip</a></td>
-        <td><small>&nbsp;</small><br/>
-	    	An API and DNS-SD / Zeroconf based 
-			implementation for remote network service discovery. 
-			Runs stand-alone or integrated with RSE.
-			Requires EMF 2.2.0 or later. Includes Source.<br/>
-			<i>Note: This component is no longer actively developed and may be discontinued.</i>
-        </td>
-    </tr>
 </table>
 <b>Note:</b> As of TM 3.1 (Eclipse Galileo / June 2009), the <b>RSE-remotecdt</b> integration for remote launch and debug through gdbserver has moved into CDT 6.0.
 

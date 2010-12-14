@@ -9,9 +9,6 @@
    <feature url="features/org.eclipse.rse.useractions_1.1.200.qualifier.jar" id="org.eclipse.rse.useractions" version="1.1.200.qualifier">
       <category name="TM and RSE Main Features"/>
    </feature>
-   <feature url="features/org.eclipse.tm.discovery_3.0.200.qualifier.jar" id="org.eclipse.tm.discovery" version="3.0.200.qualifier">
-      <category name="TM and RSE Optional Add-Ons"/>
-   </feature>
    <feature url="features/org.eclipse.rse.scp_0.1.0.qualifier.jar" id="org.eclipse.rse.scp" version="0.1.0.qualifier">
       <category name="TM and RSE Optional Add-Ons"/>
    </feature>

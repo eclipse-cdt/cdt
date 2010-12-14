@@ -45,10 +45,6 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.tm.discovery" />
-		</ant>
-		<ant antfile="${genericTargets}" target="${target}">
-			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.tm.terminal.sdk" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
@@ -105,12 +101,6 @@
 
 	<target name="assemble.org.eclipse.rse.tests">
 		<property name="archiveName" value="RSE-tests-${buildId}.zip"/>
-		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
-		<antcall target="unpackUpdateJarsForPackaging" />
-	</target>
-
-	<target name="assemble.org.eclipse.tm.discovery">
-		<property name="archiveName" value="TM-discovery-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>

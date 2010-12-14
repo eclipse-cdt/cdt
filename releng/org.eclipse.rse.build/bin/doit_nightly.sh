@@ -74,7 +74,6 @@ if [ -d N.latest ]; then
     else
       echo "ERROR: missing TM-terminal-*.zip"
     fi
-    #cp -f TM-discovery-*.zip ../N.latest/TM-discovery-latest.zip
     cd ../N.latest
     chgrp dsdp-tmadmin *.zip
     chmod g+w *.zip

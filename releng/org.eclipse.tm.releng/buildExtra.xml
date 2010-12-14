@@ -119,16 +119,6 @@
 			<zipfileset refid="rootfiles" />
 		</zip>
 		
-		<!-- build discovery -->
-		<zip destfile="${buildDirectory}/${buildLabel}/TM-discovery-${buildAlias}.zip" update="true">
-			<zipfileset src="${buildDirectory}/${buildLabel}/${allZip}" dirmode="775" filemode="664">
-				<include name="**/org.eclipse.*.discovery*" />
-				<include name="**/org.eclipse.*.discovery*/**" />
-				<include name="**/org.eclipse.*.discovery*/**/**" />
-			</zipfileset>
-			<zipfileset refid="rootfiles" />
-		</zip>
-
 		<!-- build terminal -->
 		<zip destfile="${buildDirectory}/${buildLabel}/TM-terminal-${buildAlias}.zip" update="true">
 			<zipfileset src="${buildDirectory}/${buildLabel}/${allZip}" dirmode="775" filemode="664" excludes="**/org.eclipse.*.test*, **/org.eclipse.*.test*/**, **/org.eclipse.tm.terminal.local*, **/org.eclipse.tm.terminal.local*/**">

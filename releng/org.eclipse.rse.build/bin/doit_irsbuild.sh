@@ -131,7 +131,6 @@ if [ -f package.count -a "$FILES" != "" ]; then
     else
       echo "ERROR: missing TM-terminal-*.zip"
     fi
-    #cp -f TM-discovery-*.zip ../N.latest/TM-discovery-latest.zip
     chgrp dsdp-tmadmin ../N.latest/*.zip
     chmod g+w ../N.latest/*.zip
     if [ -d /shared/dsdp/public_html/tm/downloads/drops/N.latest ]; then

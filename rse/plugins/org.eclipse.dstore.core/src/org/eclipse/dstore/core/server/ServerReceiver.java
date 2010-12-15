@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  * Noriaki Takatsu  (IBM) - [257666] [multithread] TCP/IP socket connection is not closed
  * David McKnight   (IBM) - [257666] modified original patch to simplify
  * Noriaki Takatsu  (IBM) - [283656] [dstore][multithread] Serviceability issue
+ * Noriaki Takatsu  (IBM) - [289234][multithread][api] Reset and Restart KeepAliveRequestThread
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -117,6 +118,18 @@ public class ServerReceiver extends Receiver
 	    catch (IOException IOe){
 	    	System.out.println(IOe);
 	    }
+	}
+	
+	/**
+	 * Interrupt the current KeepAliveRequest thread and restart 
+	 * the KeepAliveRequest thread with the specified timeout
+	 *
+	 * @param timeout when the KeepAliveRequest thread is expired
+	 * @since 3.3
+	 */
+	public void resetKeepAliveRequest(long timeout) 
+	{
+		xmlParser().resetKeepAliveRequest(timeout, socket());
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
+ * Noriaki Takatsu  (IBM) - [289234][multithread][api] Reset and Restart KeepAliveRequestThread
  *******************************************************************************/
 
 package org.eclipse.dstore.core.util;
@@ -183,6 +184,16 @@ public abstract class Receiver extends SecuredThread implements IDataStorePrefer
 	public Socket socket()
 	{
 		return _socket;
+	}
+	
+	/**
+	 * Returns the associated xml parser
+	 * @return the xml parser
+	 * @since 3.3
+	 */
+	public XMLparser xmlParser()
+	{
+		return _xmlParser;
 	}
 
 	/**

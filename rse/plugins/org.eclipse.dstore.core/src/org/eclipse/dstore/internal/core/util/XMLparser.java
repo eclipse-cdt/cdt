@@ -20,6 +20,7 @@
  * David McKnight  (IBM)   [305218][dstore] problem reading double-byte characters through data socket layer
  * David McKnight  (IBM)   [307541][dstore] fix for Bug 305218 breaks RDz connections
  * David McKnight  (IBM)   [322407][dstore] Connection dropped automatically when idle
+ * Noriaki Takatsu  (IBM) - [289234][multithread][api] Reset and Restart KeepAliveRequestThread
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -1118,4 +1119,20 @@ public class XMLparser
 		}
 	}
 
+	/**
+	 * Interrupt the current KeepAliveRequest thread and restart 
+	 * the KeepAliveRequest thread with the specified timeout
+	 *
+	 * @param timeout when the KeepAliveRequest thread is expired
+	 * @param socket to wait for
+	 * 
+	 * @since 3.3
+	 */
+	public void resetKeepAliveRequest(long timeout, Socket socket) {
+		if (_kart != null && _kart.isAlive()){
+			_kart.interrupt();
+		}						
+		_kart = new KeepAliveRequestThread(timeout, socket);
+		_kart.start();
+	}
 }

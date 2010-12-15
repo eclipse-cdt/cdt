@@ -134,17 +134,6 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 				return path.makeRelativeTo(root.getResource().getLocation());
 			}
 		}
-
-// XXX		
-//		try {
-//			for (ISourceContainer container : getSourceContainers()) {
-//				path = SourceUtils.getCompilationPath(container, sourceName);
-//				if (path != null) {
-//					return path;
-//				}
-//			}
-//		} catch (CoreException e) {
-//		}
 		return null;
 	}
 

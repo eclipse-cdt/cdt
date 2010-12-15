@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import com.ibm.icu.text.MessageFormat;
@@ -24,6 +25,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -33,16 +37,21 @@ import org.eclipse.cdt.debug.core.sourcelookup.IDirectorySourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.IMappingSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
+import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -217,17 +226,71 @@ public class SourceUtils {
 		}
 	}
 
+	/**
+	 * Returns the project from the launch configuration, or {@code null} if it's not available.
+	 */
 	public static IProject getLaunchConfigurationProject(ISourceLookupDirector director) {
+		String name = getLaunchConfigurationProjectName(director);
+		return name != null ? ResourcesPlugin.getWorkspace().getRoot().getProject(name) : null;
+	}
+
+	/**
+	 * Returns the project name from the launch configuration, or {@code null} if it's not available.
+	 */
+	public static String getLaunchConfigurationProjectName(ISourceLookupDirector director) {
 		ILaunchConfiguration config = director.getLaunchConfiguration();
 		if (config != null) {
 			try {
 				String name = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 				if (name.length() > 0)
-					return ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+					return name;
 			} catch (CoreException e) {
 				CDebugCorePlugin.log(e);
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Returns source elements corresponding to a file.
+	 * @param file A source or header file.
+	 * @param director A source lookup director.
+	 * @return An array of source elements sorted in relevance order. The elements of the array can
+	 * 		be either instances of IFile or LocalFileStorage. The returned array can be empty if
+	 * 		no source elements match the given file.
+	 */
+	public static Object[] findSourceElements(File file, ISourceLookupDirector director) {
+		IFile[] wfiles = ResourceLookup.findFilesForLocation(new Path(file.getAbsolutePath()));
+		if (wfiles.length > 0) {
+			ResourceLookup.sortFilesByRelevance(wfiles, getLaunchConfigurationProject(director));
+			return wfiles;
+		}
+
+		try {
+			// Check the canonical path as well to support case insensitive file
+			// systems like Windows.
+			wfiles = ResourceLookup.findFilesForLocation(new Path(file.getCanonicalPath()));
+			if (wfiles.length > 0) {
+				ResourceLookup.sortFilesByRelevance(wfiles, getLaunchConfigurationProject(director));
+				return wfiles;
+			}
+			
+			// The file is not already in the workspace so try to create an external translation unit for it.
+			if (director != null) {
+				String projectName = getLaunchConfigurationProjectName(director);
+				if (projectName != null) {
+					ICProject project = CoreModel.getDefault().getCModel().getCProject(projectName);
+					if (project != null) {
+						IPath path = Path.fromOSString(file.getCanonicalPath());
+						String id = CoreModel.getRegistedContentTypeId(project.getProject(), path.lastSegment());
+						return new ExternalTranslationUnit[] { new ExternalTranslationUnit(project, path, id) };
+					}
+				}
+			}
+		} catch (IOException e) { // ignore if getCanonicalPath throws
+		}
+
+		// If we can't create an ETU then fall back on LocalFileStorage.
+		return new LocalFileStorage[] { new LocalFileStorage(file) };
 	}
 }

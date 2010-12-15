@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -22,7 +23,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer;
-import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 
 /**
  * A directory in the local file system that is used for running the C/C++ compiler. This container
@@ -33,7 +33,7 @@ import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
  * the source container list.
  * 
  * Source elements returned from <code>findSourceElements(...)</code> are instances of
- * <code>LocalFileStorage</code>.
+ * <code>IFile</code> or <code>LocalFileStorage</code>.
  * <p>
  * Clients may instantiate this class. 
  * </p>
@@ -104,30 +104,30 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 	}
 
 	/**
-	 * Source elements returned from this method are instances of <code>LocalFileStorage</code>.
+	 * Source elements returned from this method are instances of <code>IFile</code> or <code>LocalFileStorage</code>.
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(String)
 	 */
 	public Object[] findSourceElements(String name) throws CoreException {
-		ArrayList<Object> sources = new ArrayList<Object>();
-		File directory = getDirectory();
-		File file = new File(directory, name);
+		File file = new File(fDirectory, name);
+		List<Object> sources;
 		if (file.exists() && file.isFile()) {
-			sources.add(new LocalFileStorage(file));
+			sources = Arrays.asList(SourceUtils.findSourceElements(file, getDirector()));
+		} else {
+			sources = new ArrayList<Object>();
 		}
 		
 		// Check sub-folders		
-		if ((isFindDuplicates() && fSubfolders) || (sources.isEmpty() && fSubfolders)) {
-			ISourceContainer[] containers = getSourceContainers();
-			for (int i = 0; i < containers.length; i++) {
-				Object[] objects = containers[i].findSourceElements(name);
-				if (objects == null || objects.length == 0) {
+		if (fSubfolders && (isFindDuplicates() || sources.isEmpty())) {
+			for (ISourceContainer container : getSourceContainers()) {
+				Object[] elements = container.findSourceElements(name);
+				if (elements == null || elements.length == 0) {
 					continue;
 				}
 				if (isFindDuplicates()) {
-					for (int j = 0; j < objects.length; j++)
-						sources.add(objects[j]);
+					for (Object element : elements)
+						sources.add(element);
 				} else {
-					sources.add(objects[0]);
+					sources.add(elements[0]);
 					break;
 				}
 			}

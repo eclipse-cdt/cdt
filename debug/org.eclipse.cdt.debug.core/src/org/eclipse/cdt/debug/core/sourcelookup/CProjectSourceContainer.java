@@ -56,10 +56,10 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 	 */
 	public static final String TYPE_ID =
 			CDebugCorePlugin.getUniqueIdentifier() + ".containerType.project"; //$NON-NLS-1$
+	private final IProject fOwnProject;  // Project assigned to this container at construction time.
 	private IProject fProject;
 	private boolean fSearchReferencedProjects;
 	private URI fRootURI;
-	private boolean fInitializedRootURI;
 	private IFileStore fRootFile;
 	private IWorkspaceRoot fRoot;
 
@@ -70,6 +70,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 	 * @param referenced whether referenced projects should be considered
 	 */
 	public CProjectSourceContainer(IProject project, boolean referenced) {
+		fOwnProject = project;
 		fProject = project;
 		fSearchReferencedProjects = referenced;
 	}
@@ -83,19 +84,28 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 		return fProject;
 	}
 
-	/**
-	 * Returns the project associated with this source container either directly or through
-	 * the current launch configuration.
-	 * @return an IProject instance or {@code null}.
-	 */
-	private IProject getResolvedProject() {
-		if (fProject != null)
-			return fProject;
-		ISourceLookupDirector director = getDirector();
+	@Override
+	public void init(ISourceLookupDirector director) {
+		super.init(director);
 		if (director != null) {
-			return SourceUtils.getLaunchConfigurationProject(director);
+			fProject = SourceUtils.getLaunchConfigurationProject(director);
+			if (fProject != null) {
+				fRootURI = fProject.getLocationURI();
+				if (fRootURI == null)
+					return;
+				try {
+					fRootFile = EFS.getStore(fRootURI);
+				} catch (CoreException e) {
+				}
+				fRoot = ResourcesPlugin.getWorkspace().getRoot();
+			}
 		}
-		return null;
+	}
+
+	@Override
+	public void dispose() {
+		fProject = fOwnProject;
+		super.dispose();
 	}
 
 	/* (non-Javadoc)
@@ -117,9 +127,6 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 			if (file.exists()) {
 				sources.add(file);
 			} else {
-				if (!fInitializedRootURI) {
-					initializeRootURI();
-				}
 				// See bug 82627 - perform case insensitive source lookup
 				if (fRootURI == null) {
 					return EMPTY;
@@ -168,8 +175,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
 	 */
 	public String getName() {		
-		IProject project = getResolvedProject();
-		return project != null ? project.getName() : InternalSourceLookupMessages.CProjectSourceContainer_0;
+		return fProject != null ? fProject.getName() : InternalSourceLookupMessages.CProjectSourceContainer_0;
 	}
 
 	/* (non-Javadoc)
@@ -198,11 +204,10 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
-		IProject project = getResolvedProject();
-		if (project != null && project.isOpen()) {
+		if (fProject != null && fProject.isOpen()) {
 			if (isSearchReferencedProjects()) {
-				IProject[] projects = SourceUtils.getAllReferencedProjects(project);
-				ISourceContainer[] folders = createFolderSourceContainers(project);
+				IProject[] projects = SourceUtils.getAllReferencedProjects(fProject);
+				ISourceContainer[] folders = createFolderSourceContainers(fProject);
 				List<ISourceContainer> containers = new ArrayList<ISourceContainer>(folders.length + projects.length);
 				for (ISourceContainer folder : folders) {
 					containers.add(folder);
@@ -216,7 +221,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 				}
 				return containers.toArray(new ISourceContainer[containers.size()]);
 			} 
-			return createFolderSourceContainers(project);
+			return createFolderSourceContainers(fProject);
 		}
 		return new ISourceContainer[0];
 	}
@@ -242,29 +247,13 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 	 * @param name path name
 	 */
 	private boolean validateFile(String name) {
-		IProject project = getResolvedProject();
-		if (project == null) {
+		if (fProject == null) {
 			return false;
 		}
-		IPath path = project.getFullPath().append(name);
+		IPath path = fProject.getFullPath().append(name);
 		return ResourcesPlugin.getWorkspace().validatePath(path.toOSString(), IResource.FILE).isOK();
 	}
 
-	private void initializeRootURI() {
-		fInitializedRootURI = true;
-		IProject project = getResolvedProject();
-		if (project == null)
-			return;
-		fRootURI = project.getLocationURI();
-		if (fRootURI == null)
-			return;
-		try {
-			fRootFile = EFS.getStore(fRootURI);
-		} catch (CoreException e) {
-		}
-		fRoot = ResourcesPlugin.getWorkspace().getRoot();
-	}
-	
 	/**
 	 * Returns whether referenced projects are considered.
 	 * 

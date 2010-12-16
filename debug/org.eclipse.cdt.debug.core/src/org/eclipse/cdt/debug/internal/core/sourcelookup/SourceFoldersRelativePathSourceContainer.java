@@ -53,7 +53,8 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 	public static final String TYPE_ID =
 			CDebugCorePlugin.getUniqueIdentifier() + ".containerType.sourceFoldersRelativePath"; //$NON-NLS-1$
 
-	private final IProject fProject;
+	private final IProject fOwnProject;  // Project assigned to this container at construction time.
+	private IProject fProject;
 	private boolean fSearchReferencedProjects;
 
 	/**
@@ -64,10 +65,26 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 	 * @param referenced whether referenced projects should be considered
 	 */
 	public SourceFoldersRelativePathSourceContainer(IProject project, boolean referenced) {
+		fOwnProject = project;
 		fProject = project;
 		fSearchReferencedProjects = referenced;
 	}
-	
+
+	@Override
+	public void init(ISourceLookupDirector director) {
+		super.init(director);
+		if (director != null) {
+			fProject = SourceUtils.getLaunchConfigurationProject(director);
+		}
+	}
+
+	@Override
+	public void dispose() {
+		fProject = fOwnProject;
+		super.dispose();
+	}
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#isComposite()
 	 */
@@ -88,10 +105,9 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
 	 */
 	public String getName() {
-		IProject project = getResolvedProject();
-		return project == null ?
+		return fProject == null ?
 				InternalSourceLookupMessages.SourceFoldersRelativePathSourceContainer_0 :
-				NLS.bind(InternalSourceLookupMessages.SourceFoldersRelativePathSourceContainer_1, project.getName());
+				NLS.bind(InternalSourceLookupMessages.SourceFoldersRelativePathSourceContainer_1, fProject.getName());
 	}
 
 	/* (non-Javadoc)
@@ -123,10 +139,9 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.IMappingSourceContainer#getCompilationPath(java.lang.String)
 	 */
 	public IPath getCompilationPath(String sourceName) {
-		IProject project = getResolvedProject();
-		if (project == null)
+		if (fProject == null)
 			return null;
-		ICProject cProject = CModelManager.getDefault().create(project);
+		ICProject cProject = CModelManager.getDefault().create(fProject);
 		IPath path = new Path(sourceName);
 		for (IFile file : ResourceLookup.findFilesForLocation(path)) {
 			ISourceRoot root = cProject.findSourceRoot(file);
@@ -141,28 +156,12 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 		return fProject;
 	}
 
-	/**
-	 * Returns the project associated with this source container either directly or through
-	 * the current launch configuration.
-	 * @return an IProject instance or {@code null}.
-	 */
-	private IProject getResolvedProject() {
-		if (fProject != null)
-			return fProject;
-		ISourceLookupDirector director = getDirector();
-		if (director != null) {
-			return SourceUtils.getLaunchConfigurationProject(director);
-		}
-		return null;
-	}
-
 	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
-		IProject project = getResolvedProject();
-		if (project != null && project.isOpen()) {
+		if (fProject != null && fProject.isOpen()) {
 			if (isSearchReferencedProjects()) {
-				IProject[] projects = SourceUtils.getAllReferencedProjects(project);
-				ISourceContainer[] folders = createCompilationDirectoryContainers(project);
+				IProject[] projects = SourceUtils.getAllReferencedProjects(fProject);
+				ISourceContainer[] folders = createCompilationDirectoryContainers(fProject);
 				List<ISourceContainer> containers = new ArrayList<ISourceContainer>(folders.length + projects.length);
 				for (ISourceContainer folder : folders) {
 					containers.add(folder);
@@ -177,7 +176,7 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 				}
 				return containers.toArray(new ISourceContainer[containers.size()]);
 			} 
-			return createCompilationDirectoryContainers(project);
+			return createCompilationDirectoryContainers(fProject);
 		}
 		return new ISourceContainer[0];
 	}

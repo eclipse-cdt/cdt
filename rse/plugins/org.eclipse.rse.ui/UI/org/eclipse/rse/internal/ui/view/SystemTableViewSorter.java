@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [331986] Sort in Remote System Details view shows wrong results
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -86,9 +86,6 @@ public class SystemTableViewSorter extends ViewerSorter
 		{
 			Object n1 = name1;
 			Object n2 = name2;
-
-			if (n1.toString().length() == 0)
-				return 1;
 
 			if (isReversed())
 			{

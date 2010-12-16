@@ -20,6 +20,7 @@
 package org.eclipse.rse.internal.subsystems.files.scp;
 
 import org.eclipse.rse.internal.services.ssh.files.SftpHostFile;
+import org.eclipse.rse.internal.services.ssh.files.scp.ScpFileUtils;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.AbstractRemoteFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;

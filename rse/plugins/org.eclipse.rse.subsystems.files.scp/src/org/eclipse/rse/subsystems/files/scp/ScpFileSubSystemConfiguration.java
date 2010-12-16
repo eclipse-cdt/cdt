@@ -18,8 +18,8 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.connectorservice.ssh.SshConnectorService;
 import org.eclipse.rse.internal.connectorservice.ssh.SshConnectorServiceManager;
 import org.eclipse.rse.internal.services.ssh.ISshService;
+import org.eclipse.rse.internal.services.ssh.files.scp.ScpFileService;
 import org.eclipse.rse.internal.subsystems.files.scp.ScpFileAdapter;
-import org.eclipse.rse.internal.subsystems.files.scp.ScpFileService;
 
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.files.IFileService;

@@ -6,9 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html 
  * 
  * Contributors: 
- * Nikita Shulga  - initial API and implementation 
+ * Nikita Shulga                     - initial API and implementation 
+ * Anna Dushistova (Mentor Graphics) - [331213][scp] Provide UI-less scp IFileService in org.eclipse.rse.services.ssh
  *******************************************************************************/
-package org.eclipse.rse.internal.subsystems.files.scp;
+package org.eclipse.rse.internal.services.ssh.files.scp;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,6 +22,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.rse.internal.services.ssh.Activator;
 import org.eclipse.rse.internal.services.ssh.ISshSessionProvider;
 import org.eclipse.rse.internal.services.ssh.files.SftpHostFile;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
@@ -38,7 +41,6 @@ import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.Session;
 
-@SuppressWarnings("restriction")
 public class ScpFileService extends AbstractFileService implements
 		IFilePermissionsService {
 
@@ -73,13 +75,12 @@ public class ScpFileService extends AbstractFileService implements
 				Activator.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
 	}
 
-	@Override
 	protected IHostFile[] internalFetch(String parentPath, String fileFilter,
 			int fileType, IProgressMonitor monitor)
 			throws SystemMessageException {
 
 		if (fileFilter == null)
-			fileFilter = "*";
+			fileFilter = "*"; //$NON-NLS-1$
 		IMatcher filematcher = null;
 		if (fileFilter.endsWith(",")) { //$NON-NLS-1$
 			String[] types = fileFilter.split(","); //$NON-NLS-1$
@@ -88,19 +89,19 @@ public class ScpFileService extends AbstractFileService implements
 			filematcher = new NamePatternMatcher(fileFilter, true, true);
 		}
 
-		List<IHostFile> results = new ArrayList<IHostFile>();
+		List results = new ArrayList();
 		Session sess = getSession();
 		String cmd = "ls -lAn " + ScpFileUtils.escapePath(parentPath); //$NON-NLS-1$
 
 		String rc = ScpFileUtils.execCommandSafe(sess, cmd);
-
-		for (String lsString : rc.split(ScpFileUtils.EOL_STRING)) {
-			if (lsString.length() == 0 || lsString.startsWith("total")) //$NON-NLS-1$
+		String[] lsStrings = rc.split(ScpFileUtils.EOL_STRING);
+		for (int i=0;i<lsStrings.length;i++){
+			if (lsStrings[i].length() == 0 || lsStrings[i].startsWith("total")) //$NON-NLS-1$
 				continue;
-			ScpFileAttr attr = new ScpFileAttr(lsString);
+			ScpFileAttr attr = new ScpFileAttr(lsStrings[i]);
 			if (attr == null || attr.getName() == null) {
 				Activator.warn("internalFetch(parentPath='" + parentPath
-						+ "'): Can't get name of " + lsString, null);
+						+ "'): Can't get name of " + lsStrings[i], null);
 				continue;
 			}
 			if (!filematcher.matches(attr.getName()))
@@ -509,12 +510,10 @@ public class ScpFileService extends AbstractFileService implements
 		return node;
 	}
 
-	@Override
 	public String getDescription() {
 		return "SSH/SCP File Service can be used to connect to embedded sshd implementations, which often lacks sftp service";
 	}
 
-	@Override
 	public String getName() {
 		return "SCP File Service";
 	}

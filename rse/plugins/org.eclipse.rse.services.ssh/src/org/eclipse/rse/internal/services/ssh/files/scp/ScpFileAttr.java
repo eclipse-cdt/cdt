@@ -7,10 +7,11 @@
  * 
  * Contributors: 
  * Nikita Shulga - initial API and implementation 
- * Nikita Shulga (Mentor Graphics) - [331109] Added long-iso time format support
+ * Nikita Shulga   (Mentor Graphics) - [331109] Added long-iso time format support
+ * Anna Dushistova (Mentor Graphics) - [331213][scp] Provide UI-less scp IFileService in org.eclipse.rse.services.ssh
  *******************************************************************************/
 
-package org.eclipse.rse.internal.subsystems.files.scp;
+package org.eclipse.rse.internal.services.ssh.files.scp;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -19,6 +20,7 @@ import java.util.Date;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
+import org.eclipse.rse.internal.services.ssh.Activator;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.HostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissions;
@@ -186,33 +188,34 @@ public class ScpFileAttr {
 	private static Pattern lsPattern = Pattern.compile("\\s+"); //$NON-NLS-1$
 
 	public void SplitAux() throws Exception {
-		Stack<String> fields = new Stack<String>();
-		for (String s : lsPattern.split(lsString))
-			fields.insertElementAt(s, 0);
+		Stack fields = new Stack();
+		String[] lsPatterns = lsPattern.split(lsString);
+		for (int i=0;i<lsPatterns.length;i++)
+			fields.insertElementAt(lsPatterns[i], 0);
 
 		/* store file attributes */
 		if (fields.empty())
 			return;
-		attrString = fields.pop();
+		attrString = (String) fields.pop();
 
 		/* store link number */
 		if (fields.empty())
 			return;
-		linkNo = Integer.parseInt(fields.pop());
+		linkNo = Integer.parseInt((String) fields.pop());
 
 		/* store uid and gid */
 		if (fields.empty())
 			return;
-		user = fields.pop();
+		user = (String) fields.pop();
 		if (fields.empty())
 			return;
-		group = fields.pop();
+		group = (String) fields.pop();
 
 		/* store file size */
 		if (fields.empty())
 			return;
 		if (!isCharDevice() && !isBlockDevice())
-			size = Long.parseLong(fields.pop());
+			size = Long.parseLong((String) fields.pop());
 		else {
 			/* Size is undefined for character and block devices */
 			size = 0;
@@ -226,7 +229,7 @@ public class ScpFileAttr {
 		/* Short date formats always take three fields, long(iso) date format takes only two */
 		if (fields.empty())
 			return;
-		String dateField = fields.pop();
+		String dateField = (String) fields.pop();
 		if (fields.empty())
 			return;
 		dateField = dateField + " " + fields.pop(); //$NON-NLS-1$

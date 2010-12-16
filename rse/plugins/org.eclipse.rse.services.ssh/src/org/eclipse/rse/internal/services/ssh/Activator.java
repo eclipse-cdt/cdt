@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Martin Oberhuber (Wind River) - initial API and implementation
+ * Martin Oberhuber     (Wind River) - initial API and implementation
+ * Anna Dushistova (Mentor Graphics) - [331213][scp] Provide UI-less scp IFileService in org.eclipse.rse.services.ssh
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh;
@@ -115,5 +116,22 @@ public class Activator extends Plugin {
 	}
 
 	//</tracing code>---------------------------------------------------
+
+	public static void log(String msg) {
+		log(msg, null);
+	}
+
+	public static void log(String msg, Exception e) {
+		log(IStatus.INFO, msg, e);
+	}
+
+	public static void warn(String msg, Exception e) {
+		log(IStatus.WARNING, msg, e);
+	}
+
+	public static void log(int sev, String msg, Exception e) {
+		Platform.getLog(getDefault().getBundle()).log(
+				new Status(sev, PLUGIN_ID, msg, e));
+	}
 
 }

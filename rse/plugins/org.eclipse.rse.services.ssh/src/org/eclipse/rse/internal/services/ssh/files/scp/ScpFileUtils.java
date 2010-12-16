@@ -6,10 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html 
  * 
  * Contributors: 
- * Nikita Shulga - initial API and implementation 
+ * Nikita Shulga                     - initial API and implementation 
+ * Anna Dushistova (Mentor Graphics) - [331213][scp] Provide UI-less scp IFileService in org.eclipse.rse.services.ssh
  *******************************************************************************/
 
-package org.eclipse.rse.internal.subsystems.files.scp;
+package org.eclipse.rse.internal.services.ssh.files.scp;
 
 import java.io.IOException;
 import java.io.InputStream;

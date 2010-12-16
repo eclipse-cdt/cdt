@@ -89,16 +89,16 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 		super.init(director);
 		if (fProject == null && director != null) {
 			fProject = SourceUtils.getLaunchConfigurationProject(director);
-			if (fProject != null) {
-				fRootURI = fProject.getLocationURI();
-				if (fRootURI == null)
-					return;
-				try {
-					fRootFile = EFS.getStore(fRootURI);
-				} catch (CoreException e) {
-				}
-				fRoot = ResourcesPlugin.getWorkspace().getRoot();
+		}
+		if (fProject != null) {
+			fRootURI = fProject.getLocationURI();
+			if (fRootURI == null)
+				return;
+			try {
+				fRootFile = EFS.getStore(fRootURI);
+			} catch (CoreException e) {
 			}
+			fRoot = ResourcesPlugin.getWorkspace().getRoot();
 		}
 	}
 

@@ -73,7 +73,7 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 	@Override
 	public void init(ISourceLookupDirector director) {
 		super.init(director);
-		if (director != null) {
+		if (fProject == null && director != null) {
 			fProject = SourceUtils.getLaunchConfigurationProject(director);
 		}
 	}

@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [226574] don't show encoding if no subsystem supports it
  * David McKnight   (IBM)        - [252708] Saving Profile Job happens when not changing Property Values on Connections
+ * Noriaki Takatsu  (IBM)        - [332393] Default encoding is removed in System Connection property page
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.propertypages;
@@ -145,7 +146,7 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 			  conn.setDefaultEncoding(encoding, false);
 		  }
 		  // remote default encoding
-		  else if (currentEncoding != null){
+		  else if (currentEncoding != null && !encoding.equals(currentEncoding)){
 			  // remove user encoding from host property first
 			  conn.setDefaultEncoding(null, false);
 			  // remove default remote encoding to indicate to get from remote system

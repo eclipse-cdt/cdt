@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - Initial API and implementation
  *     Wind River Systems - refactored to match pattern in package
+ *     John Dallaway - GDB 7.x getOsId() pattern match too restrictive (Bug 325552)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 

@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Nokia - create and use backend service. 
+ *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -27,6 +28,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.service.command.CommandFactory_6_8;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_0;
+import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_2;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
@@ -100,6 +102,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	}
 	
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
+		if (GDB_7_2_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBControl_7_2(session, config, new CommandFactory_6_8());
+		}
 		if (GDB_7_0_VERSION.compareTo(fVersion) <= 0) {
 			return new GDBControl_7_0(session, config, new CommandFactory_6_8());
 		}
@@ -139,6 +144,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		
 	@Override
 	protected IProcesses createProcessesService(DsfSession session) {
+		if (GDB_7_2_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBProcesses_7_2(session);
+		}
 		if (GDB_7_1_VERSION.compareTo(fVersion) <= 0) {
 			return new GDBProcesses_7_1(session);
 		}

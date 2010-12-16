@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *     Ericsson 		  	- Modified for additional features in DSF Reference implementation and bug 219920
+ *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
@@ -141,16 +142,27 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
      * @since 1.1
      */
     public String constructCommand(String threadId, int frameId) {
+    	return constructCommand(null, threadId, frameId);
+    }
+
+    /**
+     * With GDB 7.1 the --thread-group option is used to support multiple processes.
+     * @since 4.0
+     */
+    public String constructCommand(String groupId, String threadId, int frameId) {
         StringBuffer command = new StringBuffer(getOperation());
         
         // Add the --thread option
-        if (threadId != null) {
+        if (supportsThreadAndFrameOptions() && threadId != null) {
         	command.append(" --thread " + threadId); //$NON-NLS-1$
 
         	// Add the --frame option, but only if we are using the --thread option
         	if (frameId >= 0) {
         		command.append(" --frame " + frameId); //$NON-NLS-1$
         	}
+        } else if (supportsThreadGroupOption() && groupId != null) {
+        	// The --thread-group option is only allowed if we are not using the --thread option
+        	command.append(" --thread-group " + groupId); //$NON-NLS-1$
         }
 
         String opt = optionsToString();
@@ -241,6 +253,11 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
      * @since 1.1
      */
     public boolean supportsThreadAndFrameOptions() { return true; }
+
+    /**
+     * @since 4.0
+     */
+    public boolean supportsThreadGroupOption() { return false; }
     
     /**
      * Compare commands based on the MI command string that they generate, 

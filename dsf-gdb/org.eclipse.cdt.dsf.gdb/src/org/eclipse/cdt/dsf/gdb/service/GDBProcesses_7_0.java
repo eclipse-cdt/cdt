@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -689,7 +690,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     	rm.done();
     }
     
-    private boolean doIsDebuggerAttachSupported() {
+    /** @since 4.0 */
+    protected boolean doIsDebuggerAttachSupported() {
     	IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
     	if (backend != null) {
     		return backend.getIsAttachSession();
@@ -728,7 +730,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	    }
 	}
 
-    private boolean doCanDetachDebuggerFromProcess() {
+    /** @since 4.0 */
+    protected boolean doCanDetachDebuggerFromProcess() {
     	IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
     	if (backend != null) {
     		return backend.getIsAttachSession() && fCommandControl.isConnected();

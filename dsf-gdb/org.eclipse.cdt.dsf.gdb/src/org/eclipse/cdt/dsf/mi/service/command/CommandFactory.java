@@ -12,6 +12,7 @@
  *     Anna Dushistova (Mentor Graphics) - [318322] Add set solib-absolute-prefix
  *     Vladimir Prus (CodeSourcery) - Support for -data-read-memory-bytes (bug 322658)
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
+ *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -28,6 +29,7 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
+import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIAttach;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICatch;
@@ -525,14 +527,26 @@ public class CommandFactory {
 		return new MIExecUntil(dmc, loc);
 	}
 
+	@Deprecated
 	public ICommand<MIInfo> createMIFileExecAndSymbols(ICommandControlDMContext dmc, String file) {
 		return new MIFileExecAndSymbols(dmc, file);
 	}
 
+	@Deprecated
 	public ICommand<MIInfo> createMIFileExecAndSymbols(ICommandControlDMContext dmc) {
 		return new MIFileExecAndSymbols(dmc);
 	}
 
+	/**  @since 4.0 */
+	public ICommand<MIInfo> createMIFileExecAndSymbols(IMIContainerDMContext dmc, String file) {
+		return new MIFileExecAndSymbols(dmc, file);
+	}
+
+	/** @since 4.0 */
+	public ICommand<MIInfo> createMIFileExecAndSymbols(IMIContainerDMContext dmc) {
+		return new MIFileExecAndSymbols(dmc);
+	}
+	
 	public ICommand<MIInfo> createMIFileExecFile(ICommandControlDMContext dmc, String file) {
 		return new MIFileExecFile(dmc, file);
 	}
@@ -682,12 +696,23 @@ public class CommandFactory {
 		return new MIStackSelectFrame(ctx, frameNum);
 	}
 
+	@Deprecated
 	public ICommand<MIInfo> createMITargetAttach(ICommandControlDMContext ctx, String groupId) {
+		return new MITargetAttach(ctx, groupId);
+	}
+
+	/** @since 4.0 */
+	public ICommand<MIInfo> createMITargetAttach(IMIContainerDMContext ctx, String groupId) {
 		return new MITargetAttach(ctx, groupId);
 	}
 
 	public ICommand<MIInfo> createMITargetDetach(ICommandControlDMContext ctx, String groupId) {
 		return new MITargetDetach(ctx, groupId);
+	}
+
+	/** @since 4.0 */
+	public ICommand<MIInfo> createMITargetDetach(IMIContainerDMContext ctx) {
+		return new MITargetDetach(ctx);
 	}
 
     public ICommand<MIInfo> createMITargetSelect(IDMContext ctx, String[] params) {

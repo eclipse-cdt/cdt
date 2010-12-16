@@ -8,7 +8,8 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson 		  - Modified for handling of multiple stacks and threads
- *     Nokia - create and use backend service. 
+ *     Nokia - create and use backend service.
+ *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command;
 
@@ -40,6 +41,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
+import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.RawCommand;
@@ -86,6 +88,9 @@ public abstract class AbstractMIControl extends AbstractDsfService
     private int fCurrentStackLevel  = -1;
     private String fCurrentThreadId = null;
     
+    // boolean for --thread-group option which helps to handle multiple inferior behavior.
+    // Since GDB.7.1
+    private boolean fUseThreadGroupOption;
     
     private final BlockingQueue<CommandHandle> fTxCommands = new LinkedBlockingQueue<CommandHandle>();
     private final Map<Integer, CommandHandle>  fRxCommands = Collections.synchronizedMap(new HashMap<Integer, CommandHandle>());
@@ -124,17 +129,32 @@ public abstract class AbstractMIControl extends AbstractDsfService
     private CommandFactory fCommandFactory;
     
     public AbstractMIControl(DsfSession session) {
-        super(session);
-        fUseThreadAndFrameOptions = false;
-        fCommandFactory = new CommandFactory();
+    	this(session, false, false, new CommandFactory());
     }
 
     /**
      * @since 3.0
      */
     public AbstractMIControl(DsfSession session, boolean useThreadAndFrameOptions, CommandFactory factory) {
+    	this(session, false, useThreadAndFrameOptions, factory);
+    }
+
+    /**
+	 * @since 4.0
+	 */
+    public AbstractMIControl(DsfSession session, boolean useThreadGroupOption, boolean useThreadAndFrameOptions, CommandFactory factory) {
         super(session);
+        
+        // If we use the --thread-group option, we should automatically use the --thread/--frame option
+        // since the --thread-group was added to GDB later than the --thread/--frame option
+        assert useThreadGroupOption ? useThreadAndFrameOptions : true;
+        
+        fUseThreadGroupOption     = useThreadGroupOption;
         fUseThreadAndFrameOptions = useThreadAndFrameOptions;
+        if (fUseThreadGroupOption) {
+        	// If we use --thread-group option, we should automatically use the --thread option
+        	fUseThreadAndFrameOptions = true;
+        }
         fCommandFactory = factory;
     }
 
@@ -162,6 +182,16 @@ public abstract class AbstractMIControl extends AbstractDsfService
 	 */
     protected void setUseThreadAndFrameOptions(boolean shouldUse) {
     	fUseThreadAndFrameOptions = shouldUse;
+    }
+    
+    /**
+	 * @since 4.0
+	 */
+    protected void setUseThreadGroupOptions(boolean shouldUse) {
+    	fUseThreadGroupOption = shouldUse;
+    	if (shouldUse) {
+    		fUseThreadAndFrameOptions = true;
+    	}
     }
     
     /**
@@ -510,6 +540,13 @@ public abstract class AbstractMIControl extends AbstractDsfService
         	return null;
         } 
         
+        public String getGroupId() {
+        	IMIContainerDMContext containerCtx = DMContexts.getAncestorOfType(fCommand.getContext(), IMIContainerDMContext.class);
+        	if(containerCtx != null)
+        		return containerCtx.getGroupId();
+        	return null;
+        } 
+        
         @Override
         public String toString() {
             return Integer.toString(fTokenId) + fCommand;
@@ -567,13 +604,17 @@ public abstract class AbstractMIControl extends AbstractDsfService
                  */
 
                 final String str;
-				// Not all commands support the --thread/--frame options (e.g., CLI commands)
-                if (fUseThreadAndFrameOptions && commandHandle.getCommand().supportsThreadAndFrameOptions()) {
-                	str = commandHandle.getTokenId() + commandHandle.getCommand().constructCommand(commandHandle.getThreadId(),
-                			                                                                       commandHandle.getStackFrameId());
-                } else if (commandHandle.getCommand() instanceof RawCommand) {
+                if (commandHandle.getCommand() instanceof RawCommand) {
                 	// RawCommands CANNOT have a token id: GDB would read it as part of the RawCommand!
                 	str = commandHandle.getCommand().constructCommand();
+                } else if (fUseThreadGroupOption) {
+                	// Implies that fUseThreadAndFrameOptions == true
+                	str = commandHandle.getTokenId() + commandHandle.getCommand().constructCommand(commandHandle.getGroupId(),
+							   																	   commandHandle.getThreadId(),
+							   																	   commandHandle.getStackFrameId());                	
+                } else if (fUseThreadAndFrameOptions) {
+                	str = commandHandle.getTokenId() + commandHandle.getCommand().constructCommand(commandHandle.getThreadId(),
+							   																	   commandHandle.getStackFrameId());
                 } else {
                 	str = commandHandle.getTokenId() + commandHandle.getCommand().constructCommand();
                 }

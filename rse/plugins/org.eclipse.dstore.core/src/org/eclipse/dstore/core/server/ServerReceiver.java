@@ -119,17 +119,4 @@ public class ServerReceiver extends Receiver
 	    	System.out.println(IOe);
 	    }
 	}
-	
-	/**
-	 * Interrupt the current KeepAliveRequest thread and restart 
-	 * the KeepAliveRequest thread with the specified timeout
-	 *
-	 * @param timeout when the KeepAliveRequest thread is expired
-	 * @since 3.3
-	 */
-	public void resetKeepAliveRequest(long timeout) 
-	{
-		xmlParser().resetKeepAliveRequest(timeout, socket());
-	}
-
 }

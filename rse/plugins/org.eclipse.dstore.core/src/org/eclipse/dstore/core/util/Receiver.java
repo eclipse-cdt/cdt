@@ -186,15 +186,6 @@ public abstract class Receiver extends SecuredThread implements IDataStorePrefer
 		return _socket;
 	}
 	
-	/**
-	 * Returns the associated xml parser
-	 * @return the xml parser
-	 * @since 3.3
-	 */
-	public XMLparser xmlParser()
-	{
-		return _xmlParser;
-	}
 
 	/**
 	 * Implemented to provide a means of handling received input
@@ -228,4 +219,16 @@ public abstract class Receiver extends SecuredThread implements IDataStorePrefer
 		}
 	}
 
+	
+	/**
+	 * Interrupt the current KeepAliveRequest thread and restart 
+	 * the KeepAliveRequest thread with the specified timeout
+	 *
+	 * @param timeout when the KeepAliveRequest thread is expired
+	 * @since 3.3
+	 */
+	public void resetKeepAliveRequest(long timeout) 
+	{
+		_xmlParser.resetKeepAliveRequest(timeout, socket());
+	}
 }

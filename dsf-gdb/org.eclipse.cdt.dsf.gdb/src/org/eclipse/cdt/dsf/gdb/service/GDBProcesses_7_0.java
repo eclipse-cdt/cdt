@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     John Dallaway - GDB 7.x MI thread details field ignored (Bug 325556)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Ericsson and others.
+ * Copyright (c) 2008, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - Initial API and implementation
  *     Wind River Systems - refactored to match pattern in package
+ *     John Dallaway - GDB 7.x getOsId() pattern match too restrictive (Bug 325552)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 

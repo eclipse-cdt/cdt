@@ -87,7 +87,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 	@Override
 	public void init(ISourceLookupDirector director) {
 		super.init(director);
-		if (director != null) {
+		if (fProject == null && director != null) {
 			fProject = SourceUtils.getLaunchConfigurationProject(director);
 			if (fProject != null) {
 				fRootURI = fProject.getLocationURI();

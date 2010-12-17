@@ -28,11 +28,12 @@
 		</ant>
 		<delete dir="${dropins-home}/cdt/eclipse/plugins/org.eclipse.test_3.2.0"/>
 		<delete file="${dropins-home}/cdt/eclipse/site.xml"/>
-		<ant target="getTestDependency"
+<!--		<ant target="getTestDependency"
 		     antfile="${relengCommonBuilderDir}/tools/scripts/getDependencies.xml">
 			<property name="url" value="${modeling.emf.runtime.url}" />
 			<property name="file" value="${modeling.emf.runtime.file}" />
 			<property name="unpackDest" value="${dropins-home}/emf" />
 		</ant>
+-->		
 	</target>
 </project>

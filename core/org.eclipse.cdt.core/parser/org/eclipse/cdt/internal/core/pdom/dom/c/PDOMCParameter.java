@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,14 +141,22 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 		return getNodeType();
 	}
 	
+	
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
-		long rec = getNextPtr();
-		if (rec != 0) {
-			new PDOMCParameter(linkage, rec, null).delete(linkage);
+		PDOMCParameter p= this;
+		for (;;) {
+			long rec = p.getNextPtr();
+			p.flatDelete(linkage);
+			if (rec == 0) 
+				return;
+			p= new PDOMCParameter(linkage, rec, null);
 		}
-		super.delete(linkage);
 	}
+
+	private void flatDelete(PDOMLinkage linkage) throws CoreException {
+		super.delete(linkage);
+	}	
 	
 	public long getNextPtr() throws CoreException {
 		long rec = getDB().getRecPtr(record + NEXT_PARAM);

@@ -2110,7 +2110,10 @@ public class CPPSemantics {
 				
 			// the index is optimized to provide the function type, try not to use the parameters
 			// as long as possible.
-			final IType[] parameterTypes = function.getType().getParameterTypes();
+			final ICPPFunctionType ft = function.getType();
+			if (ft == null)
+				continue;
+			final IType[] parameterTypes = ft.getParameterTypes();
 			int numPars = parameterTypes.length;
 			if (numPars == 1 && SemanticUtil.isVoidType(parameterTypes[0]))
 				numPars= 0;
@@ -2494,11 +2497,16 @@ public class CPPSemantics {
 				IASTDeclarator dtor = (IASTDeclarator) node.getParent();
 				return CPPVisitor.createType(dtor);
 			} else if (prop == IASTEqualsInitializer.INITIALIZER) {
-				IASTEqualsInitializer initExp = (IASTEqualsInitializer) node.getParent();
-                if (initExp.getParent() instanceof IASTDeclarator) {
-	                IASTDeclarator dtor = (IASTDeclarator) initExp.getParent();
-	                return CPPVisitor.createType(dtor);
-                }
+	    		final IASTNode grandpa = node.getParent().getParent();
+				if (grandpa instanceof IASTDeclarator) {
+	    			IASTDeclarator dtor = ASTQueries.findInnermostDeclarator((IASTDeclarator) grandpa);
+	    			IBinding var= dtor.getName().resolvePreBinding();
+	    			if (var instanceof IVariable)
+						try {
+							return ((IVariable) var).getType();
+						} catch (DOMException e) {
+						}
+	    		}
                 return null;
             } else if (prop == IASTBinaryExpression.OPERAND_TWO && 
                      ((IASTBinaryExpression) node.getParent()).getOperator() == IASTBinaryExpression.op_assign) {

@@ -15,12 +15,15 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier.*;
 
+import java.util.HashSet;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -28,7 +31,6 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -550,11 +552,14 @@ public class SemanticUtil {
 	 * @throws DOMException
 	 */
 	public static final int calculateInheritanceDepth(IType type, IType baseClass) throws DOMException {
-		return calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, type, baseClass);
+		return calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, new HashSet<Object>(), type, baseClass);
 	}
 	
-	private static final int calculateInheritanceDepth(int maxdepth, IType type, IType baseClass)
+	private static final int calculateInheritanceDepth(int maxdepth, HashSet<Object> hashSet, IType type, IType baseClass)
 			throws DOMException {
+		if (type == null || baseClass == null)
+			return -1;
+		
 		if (type == baseClass || type.isSameType(baseClass)) {
 			return 0;
 		}
@@ -567,7 +572,7 @@ public class SemanticUtil {
 			
 			for (ICPPBase cppBase : clazz.getBases()) {
 				IBinding base= cppBase.getBaseClass();
-				if (base instanceof IType) {
+				if (base instanceof IType && hashSet.add(base)) {
 					IType tbase= (IType) base;
 					if (tbase.isSameType(baseClass) || 
 							(baseClass instanceof ICPPSpecialization &&  // allow some flexibility with templates 
@@ -576,7 +581,7 @@ public class SemanticUtil {
 					}
 	
 					if (tbase instanceof ICPPClassType) {
-						int n= calculateInheritanceDepth(maxdepth - 1, tbase, baseClass);
+						int n= calculateInheritanceDepth(maxdepth - 1, hashSet, tbase, baseClass);
 						if (n > 0)
 							return n + 1;
 					}

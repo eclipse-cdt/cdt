@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 QNX Software Systems and others.
+ * Copyright (c) 2007, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,10 +65,12 @@ public class IndexCPPSignatureUtil {
 		}
 		if (binding instanceof ICPPMethod && !(binding instanceof ICPPConstructor)) {
 			ICPPFunctionType ft = ((ICPPMethod) binding).getType();
-			if (ft.isConst())
-				buffer.append('c');
-			if (ft.isVolatile())
-				buffer.append('v');
+			if (ft != null) {
+				if (ft.isConst())
+					buffer.append('c');
+				if (ft.isVolatile())
+					buffer.append('v');
+			}
 		}
 		
 		return buffer.toString();
@@ -88,6 +90,9 @@ public class IndexCPPSignatureUtil {
 	 *   (paramName1,paramName2,...)
 	 */
 	private static String getFunctionParameterString(IFunctionType functionType) throws DOMException {
+		if (functionType == null)
+			return "(?)"; //$NON-NLS-1$
+		
 		IType[] types = functionType.getParameterTypes();
 		if (types.length == 1 && SemanticUtil.isVoidType(types[0])) {
 			types = new IType[0];

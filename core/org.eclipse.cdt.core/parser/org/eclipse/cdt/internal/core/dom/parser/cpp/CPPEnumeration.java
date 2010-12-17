@@ -80,8 +80,6 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 
     private class FindDefinitionAction extends CPPASTVisitor {
 		private char[] nameArray = CPPEnumeration.this.getNameCharArray();
-		public IASTName result = null;
-
 		{
 			shouldVisitNames          = true;
 			shouldVisitDeclarations   = true;
@@ -94,10 +92,12 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 			if (name instanceof ICPPASTTemplateId || name instanceof ICPPASTQualifiedName)
 				return PROCESS_SKIP;
 			char[] c = name.getLookupKey();
-			if (name.getParent() instanceof ICPPASTEnumerationSpecifier && CharArrayUtils.equals(c, nameArray)) {
+			final IASTNode parent = name.getParent();
+			if (parent instanceof ICPPASTEnumerationSpecifier &&
+					!((ICPPASTEnumerationSpecifier) parent).isOpaque() && 
+					CharArrayUtils.equals(c, nameArray)) {
 				IBinding binding = name.resolveBinding();
-				if (binding == CPPEnumeration.this) {
-					result= name;
+				if (binding == CPPEnumeration.this && getDefinition() == name) {
 					return PROCESS_ABORT;
 				}
 			}
@@ -121,12 +121,8 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 	}
 
     public IASTName getDefinition() {
-    	if (fDefinition == NOT_INITIALIZED) {
-    		FindDefinitionAction action = new FindDefinitionAction();
-    		IASTNode node = CPPVisitor.getContainingBlockItem(getADeclaration()).getParent();
-    		node.accept(action);
-    		fDefinition = action.result;
-    	}
+    	if (fDefinition == NOT_INITIALIZED)
+    		return null;
         return fDefinition;
     }
 
@@ -259,6 +255,7 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 	}
 
     public IEnumerator[] getEnumerators() {
+    	findDefinition();
     	final IASTName definition = getDefinition();
 		if (definition == null) {
 			ICPPEnumeration typeInIndex= getIndexBinding();
@@ -291,6 +288,7 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 	}
 
 	public ICPPScope asScope() {
+		findDefinition();
 		IASTName def = getDefinition();
 		if (def == null) {
 			ICPPEnumeration indexBinding= getIndexBinding();
@@ -300,5 +298,13 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 			def= getADeclaration();
 		}
 		return ((ICPPASTEnumerationSpecifier) def.getParent()).getScope();
+	}
+
+	private void findDefinition() {
+    	if (fDefinition == NOT_INITIALIZED) {
+    		FindDefinitionAction action = new FindDefinitionAction();
+    		IASTNode node = CPPVisitor.getContainingBlockItem(getADeclaration()).getParent();
+    		node.accept(action);
+    	}
 	}
 }

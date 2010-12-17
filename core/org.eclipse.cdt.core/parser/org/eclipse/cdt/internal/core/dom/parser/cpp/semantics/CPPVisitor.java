@@ -348,9 +348,9 @@ public class CPPVisitor extends ASTQueries {
 					IType ft2= e.getFixedType();
 					if (fixedType == ft2 || (fixedType != null && fixedType.isSameType(ft2))) {
 						if (specifier.isOpaque()) {
-							e.addDeclaration(specifier);
+							e.addDeclaration(name);
 						} else if (e.getDefinition() == null) {
-							e.addDefinition(specifier);
+							e.addDefinition(name);
 						} else {
 							return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDEFINITION);
 						}
@@ -1805,10 +1805,12 @@ public class CPPVisitor extends ASTQueries {
 			parent = parent.getParent();
 			if (parent instanceof ICPPASTNewExpression) {
 				IASTInitializer initializer = ((ICPPASTNewExpression) parent).getInitializer();
-				IASTInitializerClause[] arguments = ((ICPPASTConstructorInitializer) initializer).getArguments();
-				if (arguments.length == 1) {
-					initClause = arguments[0];
-				} 
+				if (initializer != null) {
+					IASTInitializerClause[] arguments = ((ICPPASTConstructorInitializer) initializer).getArguments();
+					if (arguments.length == 1) {
+						initClause = arguments[0];
+					} 
+				}
 			} else if (parent instanceof IASTCompositeTypeSpecifier &&
 					declSpec.getStorageClass() != IASTDeclSpecifier.sc_static) {
 				// Non-static auto-typed class members are not allowed.

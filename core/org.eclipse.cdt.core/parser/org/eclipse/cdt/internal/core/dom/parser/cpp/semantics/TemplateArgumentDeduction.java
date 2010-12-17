@@ -270,7 +270,7 @@ public class TemplateArgumentDeduction {
 					}
 					if (checkExactMatch) {
 						IType instantiated= CPPTemplates.instantiateType(par, deduct.fDeducedArgs, deduct.fPackOffset, null);
-						if (!instantiated.isSameType(arg))
+						if (instantiated == null || !instantiated.isSameType(arg))
 							return false;
 					}
 				}

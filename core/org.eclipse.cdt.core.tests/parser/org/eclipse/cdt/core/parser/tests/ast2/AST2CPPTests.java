@@ -124,6 +124,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 public class AST2CPPTests extends AST2BaseTest {
@@ -8643,4 +8644,18 @@ public class AST2CPPTests extends AST2BaseTest {
 		bh.assertProblem("begin(); //ref", 5);
 	}
 
+	//  auto f2 ();		// missing late return type.
+	public void testBug332114a() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		IBinding b= bh.assertNonProblem("f2", 0);
+		// Must not throw a NPE
+		IndexCPPSignatureUtil.getSignature(b);
+	}
+	
+	//	enum E: short;
+	//	enum E: short;
+	//	enum E: short {e1, e2};
+	public void testBug332114b() throws Exception {
+		parseAndCheckBindings(getAboveComment());
+	}
 }

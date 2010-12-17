@@ -54,6 +54,7 @@ public class CPPASTAmbiguousParameterDeclaration extends ASTAmbiguousNode implem
 		
 		// Setup the ast to use the alternative
 		owner.replace(this, fParameterDecl);
+		fParameterDecl.accept(resolver);
 		
 		IType t= CPPVisitor.createType(fParameterDecl, true);
 		if (!(t instanceof ICPPParameterPackType) || 

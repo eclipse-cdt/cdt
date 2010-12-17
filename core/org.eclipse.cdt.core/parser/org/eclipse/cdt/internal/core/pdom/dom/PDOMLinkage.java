@@ -476,6 +476,8 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			data= new byte[len];
 			db.getBytes(ptr+2, data);
 			break;
+		case TypeMarshalBuffer.UNSTORABLE_TYPE:
+			return TypeMarshalBuffer.UNSTORABLE_TYPE_PROBLEM;
 		case TypeMarshalBuffer.NULL_TYPE:
 			return null;
 		default:

@@ -16,6 +16,9 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -540,10 +543,10 @@ public class SemanticUtil {
 	 * no inheritance relation
 	 */
 	public static final int calculateInheritanceDepth(IType type, IType baseClass) {
-		return calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, type, baseClass);
+		return calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, new HashSet<Object>(), type, baseClass);
 	}
 	
-	private static final int calculateInheritanceDepth(int maxdepth, IType type, IType baseClass) {
+	private static final int calculateInheritanceDepth(int maxdepth, Set<Object> hashSet, IType type, IType baseClass) {
 		if (type == baseClass || type.isSameType(baseClass)) {
 			return 0;
 		}
@@ -556,7 +559,7 @@ public class SemanticUtil {
 			
 			for (ICPPBase cppBase : clazz.getBases()) {
 				IBinding base= cppBase.getBaseClass();
-				if (base instanceof IType) {
+				if (base instanceof IType && hashSet.add(base)) {
 					IType tbase= (IType) base;
 					if (tbase.isSameType(baseClass) || 
 							(baseClass instanceof ICPPSpecialization &&  // allow some flexibility with templates 
@@ -565,7 +568,7 @@ public class SemanticUtil {
 					}
 	
 					if (tbase instanceof ICPPClassType) {
-						int n= calculateInheritanceDepth(maxdepth - 1, tbase, baseClass);
+						int n= calculateInheritanceDepth(maxdepth - 1, hashSet, tbase, baseClass);
 						if (n > 0)
 							return n + 1;
 					}

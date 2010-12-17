@@ -220,6 +220,8 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 			return CPPVisitor.get_type_info(this);
 		case op_bracketedPrimary:
 			return getOperand().getExpressionType();
+		case op_throw:
+			return CPPSemantics.VOID_TYPE;
 		}
 		
 		final IASTExpression operand = getOperand();

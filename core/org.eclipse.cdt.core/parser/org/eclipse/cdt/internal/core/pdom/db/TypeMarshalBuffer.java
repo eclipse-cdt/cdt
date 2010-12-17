@@ -13,10 +13,12 @@ package org.eclipse.cdt.internal.core.pdom.db;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -30,6 +32,9 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	public final static byte NULL_TYPE= 0;
 	public final static byte INDIRECT_TYPE= (byte) -1;
 	public final static byte BINDING_TYPE= (byte) -2;
+	public final static byte UNSTORABLE_TYPE= (byte) -3;
+	
+	public final static IType UNSTORABLE_TYPE_PROBLEM = new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED);
 
 	static {
 		assert EMPTY.length == Database.TYPE_SIZE;
@@ -65,10 +70,12 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	public void marshalBinding(IBinding binding) throws CoreException {
 		if (binding instanceof ISerializableType) {
 			((ISerializableType) binding).marshal(this);
+		} else if (binding == null) {
+			putByte(NULL_TYPE);
 		} else {
 			PDOMBinding pb= fLinkage.addTypeBinding(binding);
 			if (pb == null) {
-				putByte(NULL_TYPE);
+				putByte(UNSTORABLE_TYPE);
 			} else {
 				putByte(BINDING_TYPE);
 				putByte((byte) 0);
@@ -86,10 +93,10 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			fPos+= 2;
 			long rec= getRecordPointer();
 			return (IBinding) fLinkage.getNode(rec);
-		} else if (firstByte == 0) {
+		} else if (firstByte == NULL_TYPE || firstByte == UNSTORABLE_TYPE) {
 			fPos++;
 			return null;
-		}
+		} 
 		
 		IType type= fLinkage.unmarshalType(this);
 		if (type == null || type instanceof IBinding)
@@ -103,9 +110,11 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			marshalBinding((IBinding) type);
 		} else if (type instanceof ISerializableType) {
 			((ISerializableType) type).marshal(this);
-		} else {
-			assert type == null : "Cannot serialize " + ASTTypeUtil.getType(type) + "(" + type.getClass().getName() + ")";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		} else if (type == null) {
 			putByte(NULL_TYPE);
+		} else {
+			assert false : "Cannot serialize " + ASTTypeUtil.getType(type) + "(" + type.getClass().getName() + ")";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			putByte(UNSTORABLE_TYPE);
 		}
 	}
 
@@ -118,9 +127,12 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			fPos+= 2;
 			long rec= getRecordPointer();
 			return (IType) fLinkage.getNode(rec);
-		} else if (firstByte == 0) {
+		} else if (firstByte == NULL_TYPE) {
 			fPos++;
 			return null;
+		} else if (firstByte == UNSTORABLE_TYPE) {
+			fPos++;
+			return UNSTORABLE_TYPE_PROBLEM;
 		}
 		
 		return fLinkage.unmarshalType(this);

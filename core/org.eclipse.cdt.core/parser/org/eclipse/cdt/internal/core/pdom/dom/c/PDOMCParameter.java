@@ -127,14 +127,22 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 		return getNodeType();
 	}
 	
+	
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
-		long rec = getNextPtr();
-		if (rec != 0) {
-			new PDOMCParameter(linkage, rec, null).delete(linkage);
+		PDOMCParameter p= this;
+		for (;;) {
+			long rec = p.getNextPtr();
+			p.flatDelete(linkage);
+			if (rec == 0) 
+				return;
+			p= new PDOMCParameter(linkage, rec, null);
 		}
-		super.delete(linkage);
 	}
+
+	private void flatDelete(PDOMLinkage linkage) throws CoreException {
+		super.delete(linkage);
+	}	
 	
 	public long getNextPtr() throws CoreException {
 		long rec = getDB().getRecPtr(record + NEXT_PARAM);

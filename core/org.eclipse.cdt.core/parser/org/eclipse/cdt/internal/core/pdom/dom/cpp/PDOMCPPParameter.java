@@ -204,10 +204,17 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
-		long rec = getNextPtr();
-		if (rec != 0) {
-			new PDOMCPPParameter(linkage, rec, null).delete(linkage);
+		PDOMCPPParameter p= this;
+		for (;;) {
+			long rec = p.getNextPtr();
+			p.flatDelete(linkage);
+			if (rec == 0) 
+				return;
+			p= new PDOMCPPParameter(linkage, rec, null);
 		}
+	}
+
+	private void flatDelete(PDOMLinkage linkage) throws CoreException {
 		super.delete(linkage);
 	}
 

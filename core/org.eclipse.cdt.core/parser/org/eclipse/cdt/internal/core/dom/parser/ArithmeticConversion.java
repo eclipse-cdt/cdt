@@ -84,8 +84,16 @@ public abstract class ArithmeticConversion {
 	}
 	
 	private boolean isArithmeticOrUnscopedEnum(IType op1) {
-		if  (op1 instanceof IBasicType) 
-			return true;
+		if (op1 instanceof IBasicType)  {
+			final Kind kind = ((IBasicType)op1).getKind();
+			switch (kind) {
+			case eUnspecified:
+			case eVoid:
+				return false;
+			default:
+				return true;
+			}
+		}
 		if (op1 instanceof IEnumeration) {
 			if (op1 instanceof ICPPEnumeration && ((ICPPEnumeration) op1).isScoped())
 				return false;

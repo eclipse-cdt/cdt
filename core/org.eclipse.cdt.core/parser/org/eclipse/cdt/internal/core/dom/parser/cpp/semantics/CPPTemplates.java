@@ -921,6 +921,7 @@ public class CPPTemplates {
 	public static IType[] instantiateTypes(IType[] types, ICPPTemplateParameterMap tpMap, int packOffset, ICPPClassSpecialization within) {
 		// Don't create a new array until it's really needed.
 		IType[] result = types;
+		int j= 0;
 		for (int i = 0; i < types.length; i++) {
 			IType origType = types[i];
 			IType newType;
@@ -932,25 +933,24 @@ public class CPPTemplates {
 				} else if (packSize == PACK_SIZE_DEFER) {
 					newType= origType;
 				} else {
-					IType[] packResult= new IType[types.length+packSize-1];
-					System.arraycopy(result, 0, packResult, 0, types.length-1);
-					for(int j=0; j<packSize; j++) {
-						packResult[i+j]= CPPTemplates.instantiateType(origType, tpMap, j, within);
+					IType[] newResult= new IType[result.length+packSize-1];
+					System.arraycopy(result, 0, newResult, 0, j);
+					result= newResult;
+					for(int k=0; k<packSize; k++) {
+						result[j++]= CPPTemplates.instantiateType(origType, tpMap, k, within);
 					}
-					result= packResult;
 					continue;
 				}
 			} else {
 				newType = CPPTemplates.instantiateType(origType, tpMap, packOffset, within);
 			}
 			if (result != types) {
-				result[i]= newType;
+				result[j++]= newType;
 			} else if (newType != origType) {
 				result = new IType[types.length];
-				if (i > 0) {
-					System.arraycopy(types, 0, result, 0, i);
-				}
-				result[i]= newType;
+				j= i;
+				System.arraycopy(types, 0, result, 0, i);
+				result[j++]= newType;
 			}
 		}
 		return result;

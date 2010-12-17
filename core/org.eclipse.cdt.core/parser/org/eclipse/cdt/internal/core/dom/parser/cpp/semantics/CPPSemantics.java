@@ -2702,10 +2702,12 @@ public class CPPSemantics {
     		IASTDeclarator dtor = (IASTDeclarator) parent;
     		targetType= CPPVisitor.createType(dtor);
     	} else if (prop == IASTEqualsInitializer.INITIALIZER) {
-    		IASTEqualsInitializer initExp = (IASTEqualsInitializer) parent;
-    		if (initExp.getParent() instanceof IASTDeclarator) {
-    			IASTDeclarator dtor = (IASTDeclarator) initExp.getParent();
-    			targetType= CPPVisitor.createType(dtor);
+    		final IASTNode grandpa = parent.getParent();
+			if (grandpa instanceof IASTDeclarator) {
+    			IASTDeclarator dtor = ASTQueries.findInnermostDeclarator((IASTDeclarator) grandpa);
+    			IBinding var= dtor.getName().resolvePreBinding();
+    			if (var instanceof IVariable)
+    				targetType= ((IVariable) var).getType();
     		}
     	} else if (prop == ICPPASTConstructorInitializer.ARGUMENT) {
     		ICPPASTConstructorInitializer init = (ICPPASTConstructorInitializer) parent;

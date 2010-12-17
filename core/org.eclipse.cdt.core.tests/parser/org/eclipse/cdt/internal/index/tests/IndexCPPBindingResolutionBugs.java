@@ -26,8 +26,8 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -1208,7 +1208,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
     	ITypedef td= getBindingFromASTName("MBR_PTR", 0, ITypedef.class);
     	ICPPPointerToMemberType ptrMbr= (ICPPPointerToMemberType) td.getType();
     	IType t= ptrMbr.getMemberOfClass();
-    	assertInstance(t, IProblemBinding.class);
+    	assertInstance(t, ISemanticProblem.class);
 	}
 
 	//	void f255(

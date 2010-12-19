@@ -108,7 +108,10 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(String)
 	 */
 	public Object[] findSourceElements(String name) throws CoreException {
-		File file = new File(fDirectory, name);
+		File file = new File(name);
+		if (!file.isAbsolute()) {
+			file = new File(fDirectory, name);
+		}
 		List<Object> sources;
 		if (file.exists() && file.isFile()) {
 			sources = Arrays.asList(SourceUtils.findSourceElements(file, getDirector()));

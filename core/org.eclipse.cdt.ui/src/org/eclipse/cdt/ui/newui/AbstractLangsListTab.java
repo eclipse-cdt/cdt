@@ -160,22 +160,15 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 
 		sashForm.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				if (event.detail == SWT.DRAG) return;
+				if (event.detail == SWT.DRAG)
+					return;
+
 				int shift = event.x - sashForm.getBounds().x;
 				GridData data = (GridData) langTree.getLayoutData();
-				if ((data.widthHint + shift) < 20) return;
-				Point computedSize = usercomp.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				Point currentSize = usercomp.getShell().getSize();
-				boolean customSize = !computedSize.equals(currentSize);
-				data.widthHint = data.widthHint;
-				sashForm.layout(true);
-				computedSize = usercomp.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				if (customSize)
-					computedSize.x = Math.max(computedSize.x, currentSize.x);
-				computedSize.y = Math.max(computedSize.y, currentSize.y);
-				if (computedSize.equals(currentSize)) {
+				if ((data.widthHint + shift) < 20)
 					return;
-				}
+
+				sashForm.layout(true);
 			}
 		});
 
@@ -199,8 +192,8 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				if (buttonIsEnabled(1) && table.getSelectionIndex() != -1)
-					buttonPressed(1);
+				if (buttonIsEnabled(BUTTON_EDIT) && table.getSelectionIndex() != -1)
+					buttonPressed(BUTTON_EDIT);
 			}
 		});
 

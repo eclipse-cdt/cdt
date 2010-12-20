@@ -212,59 +212,62 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 		super.dispose();
 	}
 
-	protected void updateContent() {
-		asyncExec(new Runnable() {
-			public void run() {
-				String content = ""; //$NON-NLS-1$
-				String status = retrieveStatus();
-				if (status != null && status.length() > 0) {
-					Calendar cal = Calendar.getInstance();
-					SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
+	protected void updateContent() {			
+		if (fDebugSessionId != null && getSession() != null) {
+			final ITraceTargetDMContext ctx = DMContexts.getAncestorOfType(fTargetContext, ITraceTargetDMContext.class);
+			if (ctx != null) {
+				getSession().getExecutor().execute(
+						new DsfRunnable() {	
+							public void run() {
+								final IGDBTraceControl traceControl = getService(IGDBTraceControl.class);
+								if (traceControl != null) {
+									traceControl.getTraceStatus(
+											ctx, new DataRequestMonitor<ITraceStatusDMData>(getSession().getExecutor(), null) {
+												@Override
+												protected void handleCompleted() {
+													String traceStatus = EMPTY_STRING;
+													if (isSuccess() && getData() != null) {
+														fTracingSupported = getData().isTracingSupported();
+														if (fTracingSupported) {
+															traceStatus = getData().toString();
+															if (traceStatus.length() > 0) {
+																Calendar cal = Calendar.getInstance();
+																SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
 
-					content = TracepointsMessages.TraceControlView_trace_view_content_updated_label +
-					          sdf.format(cal.getTime()) + "\n" + status;  //$NON-NLS-1$
-				}
-				fStatusText.setText(content);
-				updateActionEnablement();
-			}});
-	}
-		
-	protected String retrieveStatus() {
-		if (fDebugSessionId == null || getSession() == null) {
-			return EMPTY_STRING;
-		}
-		
-		final ITraceTargetDMContext ctx = DMContexts.getAncestorOfType(fTargetContext, ITraceTargetDMContext.class);
-		if (ctx == null) {
-			return EMPTY_STRING;
-		}
-		
-		Query<ITraceStatusDMData> query = new Query<ITraceStatusDMData>() {
-			@Override
-			protected void execute(DataRequestMonitor<ITraceStatusDMData> rm) {
-				final IGDBTraceControl traceControl = getService(IGDBTraceControl.class);
-				if (traceControl != null) {
-					traceControl.getTraceStatus(ctx, rm);
-				} else {
-					rm.setData(null);
-					rm.done();
-				}
-			}
-		};
-		try {
-			getSession().getExecutor().execute(query);
-			ITraceStatusDMData data = query.get();
-			if (data != null) {
-				fTracingSupported = data.isTracingSupported();
-				if (fTracingSupported) return data.toString();
-			} else {
-				fTracingSupported = false;
-			}
-		} catch (InterruptedException exc) {
-		} catch (ExecutionException exc) {
-		}
+																traceStatus = TracepointsMessages.TraceControlView_trace_view_content_updated_label +
+																sdf.format(cal.getTime()) + "\n" + traceStatus;  //$NON-NLS-1$
+															}
+														}
+													} else {
+														fTracingSupported = false;
+													}
+													
+													final String finalStatus = traceStatus;
+													asyncExec(new Runnable() {
+														public void run() {
+															fStatusText.setText(finalStatus);
+															updateActionEnablement();
+														}});
+												}
+											});
+								} else {
+									fTracingSupported = false;
 
-		return EMPTY_STRING;
+									asyncExec(new Runnable() {
+										public void run() {
+											fStatusText.setText(EMPTY_STRING);
+											updateActionEnablement();
+										}});
+								}
+
+							}
+						});
+				return;
+			}
+		}
+		
+		fStatusText.setText(EMPTY_STRING);
+		updateActionEnablement();
 	}
 		
 	protected void exitVisualizationMode() {

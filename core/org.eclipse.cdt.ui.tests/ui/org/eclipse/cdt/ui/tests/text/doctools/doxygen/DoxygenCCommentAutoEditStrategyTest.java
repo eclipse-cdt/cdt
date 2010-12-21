@@ -10,7 +10,6 @@
  *     Sergey Prigogin, Google
  *     Andrew Ferguson (Symbian)
  *******************************************************************************/
-
 package org.eclipse.cdt.ui.tests.text.doctools.doxygen;
 
 import junit.framework.Test;
@@ -614,6 +613,58 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 	//	void foo(int x);
 	//	}
 	public void testAutoDocCommentExternC3() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+
+	// class Test {
+	// public:
+	// /**X
+	// Test();
+	// };
+	
+	// class Test {
+	// public:
+	// /**
+	//  * X
+	//  */
+	// Test();
+	// };
+	public void testAutoDocCommentConstructor1() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+	
+	// class Test {
+	// public:
+	// /**X
+	// Test(int x);
+	// };
+	
+	// class Test {
+	// public:
+	// /**
+	//  * X
+	//  * @param x
+	//  */
+	// Test(int x);
+	// };
+	public void testAutoDocCommentConstructor2() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+
+	// class Test {
+	// public:
+	// /**X
+	// ~Test();
+	// };
+	
+	// class Test {
+	// public:
+	// /**
+	//  * X
+	//  */
+	// ~Test();
+	// };
+	public void testAutoDocCommentDestructor() throws CoreException {
 		assertAutoEditBehaviour();
 	}
 

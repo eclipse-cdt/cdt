@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -33,7 +34,6 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
@@ -70,7 +70,8 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 		boolean hasReturn= true;
 		if(ds instanceof IASTSimpleDeclSpecifier) {
 			IASTSimpleDeclSpecifier sds= (IASTSimpleDeclSpecifier) ds;
-			if(sds.getType()==IASTSimpleDeclSpecifier.t_void) {
+			if(sds.getType() == IASTSimpleDeclSpecifier.t_void ||
+					sds.getType() == IASTSimpleDeclSpecifier.t_unspecified) {
 				hasReturn= false;
 			}
 		}

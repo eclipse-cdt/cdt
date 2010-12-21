@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *     Sergey Prigogin, Google
  *     Andrew Ferguson (Symbian)
  *******************************************************************************/
-
 package org.eclipse.cdt.ui.tests.text.doctools.doxygen;
 
 import junit.framework.Test;
@@ -572,6 +571,58 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 		assertAutoEditBehaviour();
 	}
 	
+	// class Test {
+	// public:
+	// /**X
+	// Test();
+	// };
+	
+	// class Test {
+	// public:
+	// /**
+	//  * X
+	//  */
+	// Test();
+	// };
+	public void testAutoDocCommentConstructor1() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+	
+	// class Test {
+	// public:
+	// /**X
+	// Test(int x);
+	// };
+	
+	// class Test {
+	// public:
+	// /**
+	//  * X
+	//  * @param x
+	//  */
+	// Test(int x);
+	// };
+	public void testAutoDocCommentConstructor2() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+
+	// class Test {
+	// public:
+	// /**X
+	// ~Test();
+	// };
+	
+	// class Test {
+	// public:
+	// /**
+	//  * X
+	//  */
+	// ~Test();
+	// };
+	public void testAutoDocCommentDestructor() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+
 	protected void assertAutoEditBehaviour() throws CoreException {
 		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
 		final IDocument doc = new Document();

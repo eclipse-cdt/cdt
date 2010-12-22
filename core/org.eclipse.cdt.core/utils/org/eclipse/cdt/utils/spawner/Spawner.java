@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Wind River Systems, Inc. - bug 248071
+ *     Wind River Systems   - bug 248071, bug 286162
  *******************************************************************************/
 package org.eclipse.cdt.utils.spawner;
 
@@ -66,6 +66,7 @@ public class Spawner extends Process {
 	OutputStream out;
 	InputStream in;
 	InputStream err;
+	private PTY fPty;
 
 	public Spawner(String command, boolean bNoRedirect) throws IOException {
 		StringTokenizer tokenizer = new StringTokenizer(command);
@@ -92,6 +93,7 @@ public class Spawner extends Process {
 		String dirpath = "."; //$NON-NLS-1$
 		if (dir != null)
 			dirpath = dir.getAbsolutePath();
+		fPty = pty;
 		exec_pty(cmdarray, envp, dirpath, pty);
 	}
 	/**
@@ -144,8 +146,13 @@ public class Spawner extends Process {
 	 **/
 	@Override
 	public InputStream getInputStream() {
-		if(null == in)
-			in = new SpawnerInputStream(fChannels[1]);
+		if(null == in) {
+			if (fPty != null) {
+				in = fPty.getInputStream();
+			} else {
+				in = new SpawnerInputStream(fChannels[1]);
+			}
+		}
 		return in;
 	}
 
@@ -154,8 +161,13 @@ public class Spawner extends Process {
 	 **/
 	@Override
 	public OutputStream getOutputStream() {
-		if(null == out)
-			out = new SpawnerOutputStream(fChannels[0]);
+		if(null == out) {
+			if (fPty != null) {
+				out = fPty.getOutputStream();
+			} else {
+				out = new SpawnerOutputStream(fChannels[0]);
+			}
+		}
 		return out;
 	}
 
@@ -164,8 +176,21 @@ public class Spawner extends Process {
 	 **/
 	@Override
 	public InputStream getErrorStream() {
-		if(null == err)
-			err = new SpawnerInputStream(fChannels[2]);
+		if(null == err) {
+			if (fPty != null && !fPty.isConsole()) {
+				// If PTY is used and it's not in "Console" mode, then stderr is
+				// redirected to the PTY's output stream.  Therefore, return a 
+				// dummy stream for error stream.
+				err = new InputStream() {
+					@Override
+					public int read() throws IOException {
+						return -1;
+					}
+				};
+			} else {
+				err = new SpawnerInputStream(fChannels[2]);
+			}
+		}
 		return err;
 	}
 
@@ -179,12 +204,11 @@ public class Spawner extends Process {
 		}
 		try {
 			if(null == err)
-				((SpawnerInputStream)getErrorStream()).close();
+				getErrorStream().close();
 			if(null == in)
-				((SpawnerInputStream)getInputStream()).close();
+				getInputStream().close();
 			if(null == out)
-				((SpawnerOutputStream)getOutputStream()).close();
-			
+				getOutputStream().close();
 		} catch (IOException e) {
 		}
 		return status;
@@ -211,11 +235,11 @@ public class Spawner extends Process {
 		// Close the streams on this side.
 		try {
 			if(null == err)
-				((SpawnerInputStream)getErrorStream()).close();
+				getErrorStream().close();
 			if(null == in)
-				((SpawnerInputStream)getInputStream()).close();
+				getInputStream().close();
 			if(null == out)
-				((SpawnerOutputStream)getOutputStream()).close();
+				getOutputStream().close();
 		} catch (IOException e) {
 		}
 		// Grace before using the heavy gone.

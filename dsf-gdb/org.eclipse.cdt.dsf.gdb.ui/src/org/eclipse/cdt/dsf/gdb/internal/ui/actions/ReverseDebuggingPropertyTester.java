@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Ericsson and others.
+ * Copyright (c) 2009, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,18 +15,10 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.expressions.PropertyTester;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.contexts.IDebugContextService;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Property tester for reverse debugging information available through the given 
- * object.  The object being tested could either be a {@link IWorkbenchPart} or
- * a {@link IDMVMContext}.
+ * object.  The object being tested is an {@link IDMVMContext}.
  * <p>
  * One property is supported:
  * <ul>
@@ -41,12 +33,7 @@ public class ReverseDebuggingPropertyTester extends PropertyTester {
 
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
     	if (ENABLED.equals(property)) {
-    		if (receiver instanceof IWorkbenchPart) {
-    			Object selection = getContextSelectionForPart((IWorkbenchPart)receiver);
-    			if (selection instanceof IDMVMContext) {
-    				return test((IDMVMContext)selection);
-    			}
-    		} else if (receiver instanceof IDMVMContext) {
+    		if (receiver instanceof IDMVMContext) {
 				return test((IDMVMContext)receiver);
     		}
     	}
@@ -64,29 +51,4 @@ public class ReverseDebuggingPropertyTester extends PropertyTester {
 		}
 		return result;
     }
-
-    private static Object getContextSelectionForPart(IWorkbenchPart part) {
-    	IDebugContextService contextService = 
-    		DebugUITools.getDebugContextManager().getContextService(part.getSite().getWorkbenchWindow());
-
-    	ISelection debugContext = contextService.getActiveContext(getPartId(part));
-    	if (debugContext == null) {
-    		debugContext = contextService.getActiveContext();
-    	}
-
-    	if (debugContext instanceof IStructuredSelection) {
-    		return ((IStructuredSelection)debugContext).getFirstElement();
-    	}
-    	
-    	return null;
-    }
-    private static String getPartId(IWorkbenchPart part) {
-        if (part instanceof IViewPart) {
-            IViewSite site = (IViewSite)part.getSite();
-            return site.getId() + (site.getSecondaryId() != null ? (":" + site.getSecondaryId()) : "");  //$NON-NLS-1$ //$NON-NLS-2$
-        } else {
-            return part.getSite().getId();
-        }
-    }
-
 }

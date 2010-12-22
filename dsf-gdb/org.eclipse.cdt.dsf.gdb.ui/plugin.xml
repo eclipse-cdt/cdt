@@ -281,13 +281,6 @@
             properties="isReverseDebuggingEnabled"
             type="org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext">
       </propertyTester>
-      <propertyTester
-            class="org.eclipse.cdt.dsf.gdb.internal.ui.actions.ReverseDebuggingPropertyTester"
-            id="org.eclipse.cdt.dsf.gdb.ui.partReverseDebuggingTester"
-            namespace="org.eclipse.cdt.debug.ui"
-            properties="isReverseDebuggingEnabled"
-            type="org.eclipse.ui.IWorkbenchPart">
-      </propertyTester>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

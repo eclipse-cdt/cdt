@@ -15,7 +15,11 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.model.IReverseToggleHandler;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.DebugCommandHandler;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
@@ -28,6 +32,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.menus.UIElement;
+import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * Command handler to toggle reverse debugging mode
@@ -35,10 +41,10 @@ import org.eclipse.ui.menus.UIElement;
  * @since 7.0
  */
 public class ReverseToggleCommandHandler extends DebugCommandHandler implements IDebugContextListener, IElementUpdater {
-    @Override
-   protected Class<?> getCommandType() {
-        return IReverseToggleHandler.class;
-    }
+	@Override
+	protected Class<?> getCommandType() {
+		return IReverseToggleHandler.class;
+	}
 
     //
     // The below logic allows us to keep the checked state of the toggle button
@@ -71,15 +77,15 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
     }
 
     @Override
-   public void dispose() {
-       // Must use the stored context service.  If we try to fetch the service
-       // again with the workbenchWindow, it may fail if the window is
-       // already closed.
+    public void dispose() {
+    	// Must use the stored context service.  If we try to fetch the service
+    	// again with the workbenchWindow, it may fail if the window is
+    	// already closed.
     	if (fContextService != null) {
     		fContextService.removePostDebugContextListener(this);
     	}
-       fTargetAdapter = null;
-        super.dispose();
+    	fTargetAdapter = null;
+    	super.dispose();
     }
 
     public void debugContextChanged(DebugContextEvent event) {
@@ -115,8 +121,24 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
         return adapter;
     }
 
-   public void updateElement(UIElement element,
-                             @SuppressWarnings("unchecked") Map parameters) {
+    @Override
+    protected void postExecute(IRequest request, Object[] targets) {
+    	super.postExecute(request, targets);
+    	// request re-evaluation of property "org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled"
+    	new WorkbenchJob("") { //$NON-NLS-1$
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+		        IEvaluationService exprService = (IEvaluationService) PlatformUI.getWorkbench().getService(IEvaluationService.class);
+		        if (exprService != null) { 
+		        	exprService.requestEvaluation("org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled"); //$NON-NLS-1$
+		        }
+				return Status.OK_STATUS;
+			}
+		}.schedule();
+    }
+
+    public void updateElement(UIElement element,
+                              @SuppressWarnings("rawtypes") Map parameters) {
        // Make sure the toggle state reflects the actual state
        // We must check this, in case we have multiple launches
        // or if we re-launch (restart)

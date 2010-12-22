@@ -1931,20 +1931,16 @@
                   <reference
                         definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingActionSetActive">
                   </reference>
-                  <or>
                      <with
-                           variable="activePart">
-                        <test
-                              property="org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled">
-                        </test>
+                           variable="debugContext">
+                        <iterate
+                              ifEmpty="false"
+                              operator="and">
+                           <test
+                                 property="org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled">
+                           </test>
+                        </iterate>
                      </with>
-                     <with
-                           variable="selection">
-                        <test
-                              property="org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled">
-                        </test>
-                     </with>
-                  </or>
                </and>
             </definition>
       <definition id="org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive">

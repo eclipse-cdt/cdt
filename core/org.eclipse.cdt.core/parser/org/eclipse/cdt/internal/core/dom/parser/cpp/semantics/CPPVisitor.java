@@ -1748,7 +1748,7 @@ public class CPPVisitor extends ASTQueries {
 			if (declarator instanceof ICPPASTFunctionDeclarator) {
 				return createAutoFunctionType(declSpec, (ICPPASTFunctionDeclarator) declarator);
 			}
-
+			boolean rangeBasedFor= false;
 			parent = parent.getParent();
 			if (parent instanceof ICPPASTNewExpression) {
 				IASTInitializer initializer = ((ICPPASTNewExpression) parent).getInitializer();
@@ -1758,12 +1758,16 @@ public class CPPVisitor extends ASTQueries {
 						initClause = arguments[0];
 					} 
 				}
+			} else if (parent instanceof ICPPASTRangeBasedForStatement) {
+				ICPPASTRangeBasedForStatement forStmt= (ICPPASTRangeBasedForStatement) parent;
+				initClause= forStmt.getInitializerClause();
+				rangeBasedFor= true;
 			} else if (parent instanceof IASTCompositeTypeSpecifier &&
 					declSpec.getStorageClass() != IASTDeclSpecifier.sc_static) {
 				// Non-static auto-typed class members are not allowed.
 				return new ProblemType(ISemanticProblem.TYPE_AUTO_FOR_NON_STATIC_FIELD);
 			}
-			return createAutoType(initClause, declSpec, declarator);
+			return createAutoType(initClause, declSpec, declarator, rangeBasedFor);
 		}
 		
 		IType type = createType(declSpec);
@@ -1786,7 +1790,8 @@ public class CPPVisitor extends ASTQueries {
 		return type;
 	}
 
-	private static IType createAutoType(IASTNode initClause, IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
+	private static IType createAutoType(IASTNode initClause, IASTDeclSpecifier declSpec, IASTDeclarator declarator, 
+			boolean rangeBasedFor) {
 		//  C++0x: 7.1.6.4
 		if (!autoTypeDeclSpecs.get().add(declSpec)) {
 			// Detected a self referring auto type, e.g.: auto x = x;
@@ -1836,6 +1841,14 @@ public class CPPVisitor extends ASTQueries {
 		if (initClause instanceof ICPPASTInitializerList) {
 			type = (IType) CPPTemplates.instantiate(initializer_list_template,
 					new ICPPTemplateArgument[] { new CPPTemplateArgument(type) }, true);
+		}
+		if (rangeBasedFor) {
+			if (type instanceof IArrayType) {
+				type= ((IArrayType) type).getType();
+			} else {
+				// todo: handle non-array types in for based range loops
+				// (c++-spec 6.5.4): 'typeof (* begin(type &&))'
+			}
 		}
 		return decorateType(type, declSpec, declarator);
 	}

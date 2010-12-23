@@ -121,7 +121,7 @@
 		<available file="${java.home}/../bin/javadoc.exe" property="javadoc" value="${java.home}/../bin/javadoc.exe" />
 		<available file="${java.home}/../bin/javadoc" property="javadoc" value="${java.home}/../bin/javadoc" />
 		<available file="/usr/bin/javadoc" property="javadoc" value="/usr/bin/javadoc" />
-		<available file="/shared/dsdp/tm/ibm-java2-ppc64-50/bin/javadoc" property="javadoc" value="/shared/dsdp/tm/ibm-java2-ppc64-50/bin/javadoc" />
+		<available file="/shared/tools/tm/ibm-java2-ppc64-50/bin/javadoc" property="javadoc" value="/shared/tools/tm/ibm-java2-ppc64-50/bin/javadoc" />
 	</target>
 
 	<target name="generateJavadoc" depends="getJavadocPath,extractLinks,computeClasspath" if="javadoc">

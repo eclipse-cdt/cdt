@@ -25,8 +25,8 @@ fi
 cd $IHOME/deploy/rse
 rm *.zip
 echo "Downloading RSE-SDK-latest.zip..."
-#wget -q "http://build.eclipse.org/dsdp/tm/downloads/drops/N.latest/RSE-SDK-latest.zip"
-wget -q "http://download.eclipse.org/dsdp/tm/downloads/drops/N.latest/RSE-SDK-latest.zip"
+#wget -q "http://build.eclipse.org/tm/downloads/drops/N.latest/RSE-SDK-latest.zip"
+wget -q "http://download.eclipse.org/tm/downloads/drops/N.latest/RSE-SDK-latest.zip"
 if [ -e RSE-SDK-latest.zip ]; then
   echo "Unzipping..."
   unzip -q RSE-SDK-latest.zip
@@ -56,7 +56,7 @@ fi
 cd $IHOME/deploy/terminal
 rm *.zip
 echo "Downloading TM-terminal-latest.zip..."
-wget -q "http://download.eclipse.org/dsdp/tm/downloads/drops/N.latest/TM-terminal-latest.zip"
+wget -q "http://download.eclipse.org/tm/downloads/drops/N.latest/TM-terminal-latest.zip"
 if [ -e TM-terminal-latest.zip ]; then
   echo "Unzipping..."
   unzip -q TM-terminal-latest.zip

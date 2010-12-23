@@ -197,7 +197,7 @@
 			<format property="dateLong" pattern="MMM d, yyyy"/>
 		</tstamp>
 		<property name="messagefile" value="message.in"/>
-		<property name="xxmailto" value="dsdp-tm-cvs-commit@eclipse.org"/>
+		<property name="xxmailto" value="tm-cvs-commit@eclipse.org"/>
 		<property name="mailto" value="martin.oberhuber@windriver.com"/>
 		<property name="remotedir" value="moberhuber@dev.eclipse.org:downloads-tm/downloads/drops"/>
 		<condition property="doNBuild">

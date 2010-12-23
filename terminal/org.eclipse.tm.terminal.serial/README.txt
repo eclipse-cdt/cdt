@@ -3,7 +3,7 @@ Important note:
 This README is for terminal.serial version 1.0.0 and later, corresponding
 to RSE downloads after 2.0M4. Instructions for previous versions (using
 Sun javacomm / javax.comm package instead of gnu.io) are still available from
-http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?root=DSDP_Project&view=markup&pathrev=R1_0_1
+http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?root=Tools_Project&view=markup&pathrev=R1_0_1
 
 
 Prerequisites:

@@ -16,7 +16,7 @@
 #
 # Prerequisites: 
 # - Eclipse 3.3Mx installed in $HOME/ws2/eclipse
-# - Java5 in the PATH or in /shared/dsdp/tm/jdk-1.5
+# - Java5 in the PATH or in /shared/tools/tm/jdk-1.5
 
 curdir=`pwd`
 cd `dirname $0`
@@ -25,7 +25,7 @@ mydir=`pwd`
 umask 022
 
 #Use Java5 on build.eclipse.org - need JRE for pack200
-export PATH=/shared/dsdp/tm/jdk-1.5/jre/bin:/shared/dsdp/tm/jdk-1.5/bin:$PATH
+export PATH=/shared/tools/tm/jdk-1.5/jre/bin:/shared/tools/tm/jdk-1.5/bin:$PATH
 basebuilder=${HOME}/ws2/org.eclipse.releng.basebuilder
 
 FILES=$*

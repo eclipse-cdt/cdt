@@ -7,7 +7,7 @@
   <tr> 
     <td align=left width="72%"> <font class=indextop>Target Management project<br/>RSE downloads</font> 
       <br>
-      <font class=indexsub>latest downloads from the dsdp-tm project</font><br>
+      <font class=indexsub>latest downloads from the TM project</font><br>
 </td>
     <td width="28%"><img src="http://www.eclipse.org/images/Idea.jpg" height=86 width=120></td>
   </tr>
@@ -23,7 +23,7 @@
 page you can find the latest 
 <a href="build_types.html">builds</a> for the Remote System Explorer (RSE),
 provided by the 
-<a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> project.
+<a href="http://www.eclipse.org/tm/">Target Management</a> project.
 <!--
 To get started run the program and go through the
 user and developer documentation provided in the online help system.
@@ -31,7 +31,7 @@ user and developer documentation provided in the online help system.
 To get started, see the build notes provided with each drop, run the
 program and go through the online user and developer documentation,
 or take a look at the project's online
-<a href="http://www.eclipse.org/dsdp/tm/tutorial/index.php">getting started</a>
+<a href="http://www.eclipse.org/tm/tutorial/index.php">getting started</a>
 pages.
 
 If you have problems downloading the drops, contact the 
@@ -40,8 +40,7 @@ If you have problems installing or getting the workbench to run,
 check out the 
 <a href="http://wiki.eclipse.org/TM_and_RSE_FAQ">Target Management FAQ</a>,
 or try posting a question to the 
-<a href="http://www.eclipse.org/newsgroups">newsgroup</a>,
-<a href="news://news.eclipse.org/eclipse.dsdp.tm">eclipse.dsdp.tm</a>.
+<a href="http://www.eclipse.org/forums/eclipse.tm">eclipse.tm Forum</a>.
 All downloads are provided under the terms and conditions of the 
 <a href="http://www.eclipse.org/legal/epl/notice.php">Eclipse.org
 Software User Agreement</a> unless otherwise specified. </p>
@@ -50,8 +49,8 @@ Software User Agreement</a> unless otherwise specified. </p>
 <b>Other eclipse.org project</b> downloads are available
 <a href="http://www.eclipse.org/downloads/index.php">here</a>.<br/>
 If you just want the latest drops (no dstore server), you can also get them from the 
-<a href="http://download.eclipse.org/dsdp/tm/updates/3.2">TM 3.2 update site</a> (latest release), or the
-<a href="http://download.eclipse.org/dsdp/tm/updates/3.2milestones">TM 3.2.x milestone site</a> (stable milestones).</p>
+<a href="http://download.eclipse.org/tm/updates/3.2">TM 3.2 update site</a> (latest release), or the
+<a href="http://download.eclipse.org/tm/updates/3.3milestones">TM 3.3.x milestone site</a> (stable milestones).</p>
 
 <p>
 For information about different kinds of builds look
@@ -59,13 +58,13 @@ For information about different kinds of builds look
 
 <img src="http://www.eclipse.org/images/new.gif">
 For access to archived builds, look 
-<a href="http://archive.eclipse.org/dsdp/tm/downloads/index.php" target="_top">here</a>.
+<a href="http://archive.eclipse.org/tm/downloads/index.php" target="_top">here</a>.
 </p>
 
 <p/>
 <!--
 <p>Builds can also be installed via Update Manager, from an existing installation of Eclipse, by following these  
-<a href="http://download.eclipse.org/dsdp/tm/downloads/updates/index.php" target="_self">steps</a>.
+<a href="http://download.eclipse.org/tm/downloads/updates/index.php" target="_self">steps</a>.
 </p>
 -->
 </td></tr>

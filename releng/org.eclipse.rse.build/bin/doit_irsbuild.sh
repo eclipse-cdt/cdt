@@ -29,8 +29,8 @@ mydir=`pwd`
 echo ${mydir}
 
 #Use Java5 on build.eclipse.org
-#export PATH=/shared/dsdp/tm/jdk-1.5/bin:$PATH
-export PATH=/shared/dsdp/tm/jdk-1.5/jre/bin:/shared/dsdp/tm/jdk-1.5/bin:$PATH
+#export PATH=/shared/tools/tm/jdk-1.5/bin:$PATH
+export PATH=/shared/tools/tm/jdk-1.5/jre/bin:/shared/tools/tm/jdk-1.5/bin:$PATH
 #export PATH=${HOME}/ws2/IBMJava2-ppc-142/bin:$PATH
 
 
@@ -93,11 +93,11 @@ daystamp=`date +'%Y%m%d*%H'`
 tail -30 $log
 
 #update the main download and archive pages: build.eclipse.org only
-if [ -d /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads ]; then
-  cd /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads
+if [ -d /home/data/httpd/archive.eclipse.org/tm/downloads ]; then
+  cd /home/data/httpd/archive.eclipse.org/tm/downloads
   cvs -q update -RPd >> $log 2>&1
   chgrp dsdp-tmadmin * CVS/* 2>/dev/null
-  cd /home/data/httpd/download.eclipse.org/dsdp/tm/downloads
+  cd /home/data/httpd/download.eclipse.org/tm/downloads
   cvs -q update -RPd >> $log 2>&1
   chgrp dsdp-tmadmin * CVS/*
 
@@ -140,10 +140,6 @@ if [ -f package.count -a "$FILES" != "" ]; then
     fi
     chgrp dsdp-tmadmin ../N.latest/*.zip
     chmod g+w ../N.latest/*.zip
-    if [ -d /shared/dsdp/public_html/tm/downloads/drops/N.latest ]; then
-      cp -f ../N.latest/* /shared/dsdp/public_html/tm/downloads/drops/N.latest/
-      chmod -R g+w /shared/dsdp/public_html/tm/downloads/drops
-    fi
   fi
 
   if [ ${buildType} != N ]; then

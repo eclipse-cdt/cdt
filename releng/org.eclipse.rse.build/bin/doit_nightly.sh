@@ -15,8 +15,8 @@
 umask 22
 
 #Use Java5 on build.eclipse.org
-#export PATH=/shared/dsdp/tm/jdk-1.5/bin:$PATH
-export PATH=/shared/dsdp/tm/jdk-1.5/jre/bin:/shared/dsdp/tm/jdk-1.5/bin:$PATH
+#export PATH=/shared/tools/tm/jdk-1.5/bin:$PATH
+export PATH=/shared/tools/tm/jdk-1.5/jre/bin:/shared/tools/tm/jdk-1.5/bin:$PATH
 #export PATH=${HOME}/ws2/IBMJava2-ppc-142/bin:$PATH
 
 curdir=`pwd`
@@ -49,11 +49,11 @@ daystamp=`date +'%Y%m%d-%H'`
 tail -30 $log
 
 #update the main download and archive pages: build.eclipse.org only
-if [ -d /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads ]; then
-  cd /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads
+if [ -d /home/data/httpd/archive.eclipse.org/tm/downloads ]; then
+  cd /home/data/httpd/archive.eclipse.org/tm/downloads
   cvs -q update -RPd >> $log 2>&1
   chgrp dsdp-tmadmin * CVS/* 2>/dev/null
-  cd /home/data/httpd/download.eclipse.org/dsdp/tm/downloads
+  cd /home/data/httpd/download.eclipse.org/tm/downloads
   cvs -q update -RPd >> $log 2>&1
   chgrp dsdp-tmadmin * CVS/* 2>/dev/null
 
@@ -80,10 +80,6 @@ if [ -d N.latest ]; then
     cd ../N.latest
     chgrp dsdp-tmadmin *.zip
     chmod g+w *.zip
-    if [ -d /shared/dsdp/public_html/tm/downloads/drops/N.latest ]; then
-      cp -f * /shared/dsdp/public_html/tm/downloads/drops/N.latest/
-      chmod -R g+w /shared/dsdp/public_html/tm/downloads/drops
-    fi
   fi
 fi
 

@@ -24,7 +24,7 @@
 #
 # - OR -
 #
-# wget -O setup.sh "http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.rse/releng/org.eclipse.rse.build/setup.sh?rev=HEAD&cvsroot=DSDP_Project&content-type=text/plain"
+# wget -O setup.sh "http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.rse/releng/org.eclipse.rse.build/setup.sh?rev=HEAD&cvsroot=Tools_Project&content-type=text/plain"
 # sh setup.sh
 # ./doit_ibuild.sh
 # cd testUpdates/bin
@@ -237,15 +237,15 @@ if [ ! -d working/build ]; then
   mkdir -p working/build
 fi
 if [ ! -d publish ]; then
-  D=/home/data/httpd/download.eclipse.org/dsdp/tm/downloads/drops
+  D=/home/data/httpd/download.eclipse.org/tm/downloads/drops
   if [ -d ${D} ]; then ln -s ${D} publish; else mkdir publish; fi
 fi
 if [ ! -d testUpdates ]; then
-  D=/home/data/httpd/download.eclipse.org/dsdp/tm/testUpdates
+  D=/home/data/httpd/download.eclipse.org/tm/testUpdates
   if [ -d ${D} ]; then ln -s ${D} testUpdates; else mkdir testUpdates; fi
 fi
 if [ ! -d updates ]; then
-  D=/home/data/httpd/download.eclipse.org/dsdp/tm/updates
+  D=/home/data/httpd/download.eclipse.org/tm/updates
   if [ -d ${D} ]; then ln -s ${D} updates; else mkdir updates; fi
 fi
 if [ ! -d staging ]; then

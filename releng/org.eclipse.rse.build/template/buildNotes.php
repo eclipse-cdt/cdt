@@ -29,15 +29,15 @@
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Local Terminal needs CDT Core.</li>
 
-<li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.3M3-201011090901/index.php">TM 3.3M3</a>:
+<li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M3-201011090901/index.php">TM 3.3M3</a>:
 <ul>
   <li>An SCP File Subsystem has been made available, in order to support remote systems
     that provide SSH access, but not the sftp service (such as Dropbear on embedded
     targets). The new subsystem is currently available as a separate 
     download in incubation state, and installable from the 
-    <a href="http://download.eclipse.org/dsdp/tm/updates/3.3milestones/">TM 3.3 Milestone Update Site</a>. 
+    <a href="http://download.eclipse.org/tm/updates/3.3milestones/">TM 3.3 Milestone Update Site</a>. 
     Please use and test the new plugin, and provide feedback on the
-    <a href="https://dev.eclipse.org/mailman/listinfo/dsdp-tm-dev">dsdp-tm-dev</a> mailing list
+    <a href="https://dev.eclipse.org/mailman/listinfo/tm-dev">tm-dev</a> mailing list
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=213438">213438</a>].</li>
   <li>The TM Discovery component has been discontinued
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=330337">330337</a>].</li>
@@ -47,19 +47,19 @@
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;value0-0-2=backport;chfieldto=2010-12-20;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.3%20M[3];chfieldfrom=2010-11-01;field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.3%20M4;product=Target%20Management">
   this query</a> to show the list of bugs fixed since
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.3M3-201011090901/">
+  <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M3-201011090901/">
   TM 3.3M3</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.3M3-201011090901/buildNotes.php">build notes</a>].</li>
+  [<a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M3-201011090901/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see
   <a href="http://dsdp.eclipse.org/dsdp/tm/searchcvs.php">TM SearchCVS</a>, the
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
+  <a href="http://download.eclipse.org/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/core/index.html">
+  <a href="http://download.eclipse.org/tm/downloads/drops/N-changelog/core/index.html">
   TM Core CVS changelog</a>.</li>
 <li>For other questions, please check the
   <a href="http://wiki.eclipse.org/TM_and_RSE_FAQ">TM and RSE FAQ</a>
   as well as the
-  <a href="http://wiki.eclipse.org/DSDP/TM/3.2_Known_Issues_and_Workarounds">
+  <a href="http://wiki.eclipse.org/TM/3.2_Known_Issues_and_Workarounds">
   TM 3.2 and 3.3 Known Issues and Workarounds</a>.</li>
 </ul>
 </td></tr></tbody></table>
@@ -79,7 +79,7 @@ connection setup and important tasks.</p>
 If you want to know more about future directions of the Target Management
 Project, developer documents, architecture or how to get involved,
 the online
-<a href="http://www.eclipse.org/dsdp/tm/tutorial/index.php">Getting Started page</a>
+<a href="http://www.eclipse.org/tm/tutorial/index.php">Getting Started page</a>
 as well as the
 <a href="http://wiki.eclipse.org/TM_and_RSE_FAQ">TM and RSE FAQ</a>
 are the best places for you to get started.
@@ -127,12 +127,12 @@ More information can be found in the associated bugzilla items.
 
 Use 
   <!-- 
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&chfieldfrom=2009-06-20&chfieldto=2009-09-25&chfield=resolution&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&chfieldfrom=2009-06-20&chfieldto=2009-09-25&chfield=resolution&cmdtype=doit">
    -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&classification=DSDP&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&target_milestone=3.3&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&target_milestone=3.3&cmdtype=doit">
   this query</a> to show the full list of API related updates since TM 3.2
   , and
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&product=Target+Management&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&cmdtype=doit">
   this query</a> to show the list of additional API changes proposed for TM 3.3 or later
   .
 </td></tr></tbody></table>
@@ -163,11 +163,11 @@ We'll strive to fix these as soon as possible.
 <p>No major or critical bugs are known at the time of release.
 -->
 Use 
-<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&cmdtype=doit">this query</a>
+<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&product=Target+Management&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&cmdtype=doit">this query</a>
 for an up-to-date list of major or critical bugs.</p>
 
 <p>The 
-<a href="http://wiki.eclipse.org/DSDP/TM/3.2_Known_Issues_and_Workarounds">
+<a href="http://wiki.eclipse.org/TM/3.2_Known_Issues_and_Workarounds">
 TM 3.2 and 3.3 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
 of the most frequent and obvious problems, and describes workarounds for them.<br/>
 If you have other questions regarding TM or RSE, please check the
@@ -175,9 +175,9 @@ If you have other questions regarding TM or RSE, please check the
 </p>
 
 <p>Click 
-<a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=Target+Management&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&format=table&action=wrap">here</a>
+<a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&product=Target+Management&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&format=table&action=wrap">here</a>
 for a complete up-to-date bugzilla status report, or
-<a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&format=table&action=wrap">here</a>
+<a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&format=table&action=wrap">here</a>
 for a report on bugs fixed so far.
 </p>
 </td></tr></tbody></table>

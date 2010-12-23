@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import java.util.ArrayList;
-
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -45,9 +42,8 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization 
 		implements ICPPClassTemplate, ICPPInstanceCache {
 
-	private static final int FIRST_PARTIAL = PDOMCPPClassSpecialization.RECORD_SIZE;
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPClassSpecialization.RECORD_SIZE+4;
+	protected static final int RECORD_SIZE = PDOMCPPClassSpecialization.RECORD_SIZE;
 
 	public PDOMCPPClassTemplateSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPClassTemplate template, PDOMBinding specialized)
 			throws CoreException {
@@ -161,32 +157,14 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 		}
 	}
 	
-	private PDOMCPPClassTemplatePartialSpecializationSpecialization getFirstPartial() throws CoreException {
-		long value = getDB().getRecPtr(record + FIRST_PARTIAL);
-		return value != 0 ? new PDOMCPPClassTemplatePartialSpecializationSpecialization(getLinkage(), value) : null;
-	}
-	
-	public void addPartial(PDOMCPPClassTemplatePartialSpecializationSpecialization pspecspec) throws CoreException {
-		PDOMCPPClassTemplatePartialSpecializationSpecialization first = getFirstPartial();
-		pspecspec.setNextPartial(first);
-		getDB().putRecPtr(record + FIRST_PARTIAL, pspecspec.getRecord());
-	}
-		
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
-		try {
-			ArrayList<PDOMCPPClassTemplatePartialSpecializationSpecialization> partials =
-					new ArrayList<PDOMCPPClassTemplatePartialSpecializationSpecialization>();
-			for (PDOMCPPClassTemplatePartialSpecializationSpecialization partial = getFirstPartial();
-					partial != null;
-					partial = partial.getNextPartial()) {
-				partials.add(partial);
-			}
-			
-			return partials.toArray(new PDOMCPPClassTemplatePartialSpecializationSpecialization[partials.size()]);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return new PDOMCPPClassTemplatePartialSpecializationSpecialization[0];
+		ICPPClassTemplate origTemplate= (ICPPClassTemplate) getSpecializedBinding();
+		ICPPClassTemplatePartialSpecialization[] orig = origTemplate.getPartialSpecializations();
+		ICPPClassTemplatePartialSpecialization[] spec = new ICPPClassTemplatePartialSpecialization[orig.length];
+		for (int i = 0; i < orig.length; i++) {
+			spec[i]= (ICPPClassTemplatePartialSpecialization) specializeMember(orig[i]);
 		}
+		return spec;
 	}
 	
 	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException  {

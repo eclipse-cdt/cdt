@@ -1795,4 +1795,42 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertTrue(reference instanceof ICPPSpecialization);
 	}
 
+	//	template <typename T = int> class enclosing {
+	//	    template <typename P1, typename P2, bool P1_matches, bool P2_matches>
+	//	    struct sort_out_types_impl;
+	//	    template <typename P1, typename P2> struct sort_out_types_impl<P1, P2, true, false> {
+	//	        typedef P1 matching_type;
+	//	    };
+	//	    template <typename P1, typename P2> struct sort_out_types_impl<P1, P2, false, true> {
+	//	        typedef P2 matching_type;
+	//	    };
+	//	};
+
+	//	template <typename P1, typename P2, template <typename> class Predicate>
+	//	struct sort_out_types {
+	//	    static const bool P1_matches = Predicate<P1>::value;
+	//	    static const bool P2_matches = Predicate<P2>::value;
+	//	    typedef typename enclosing<>::sort_out_types_impl<P1, P2, P1_matches, P2_matches>::matching_type matching_type;
+	//	};
+	//	template <typename T> struct type_predicate {
+	//	    static const bool value = false;
+	//	};
+	//	template <> struct type_predicate<int> {
+	//	    static const bool value = true;
+	//	};
+	//	template <typename P1, typename P2> struct A {
+	//	    typedef typename sort_out_types<P1, P2, type_predicate>::matching_type arg_type;
+	//	    void f(arg_type);
+	//	};
+	//	int main() {
+	//	    A<float, int> a;
+	//	    a.f(0);  
+	//	    return 0;
+	//	}
+	public void testPartialSpecializationsOfClassTemplateSpecializations_332884() throws Exception {
+		final IBinding reference = getBindingFromASTName("f(0)", 1);
+		assertTrue(reference instanceof ICPPSpecialization);
+	}
+
+
 }

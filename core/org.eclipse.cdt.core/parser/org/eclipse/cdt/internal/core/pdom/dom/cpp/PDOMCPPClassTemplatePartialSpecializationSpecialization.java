@@ -47,7 +47,6 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 		super(linkage, parent, partial, specialized);		
 
 		getDB().putRecPtr(record + PRIMARY_TEMPLATE, primary.getRecord());
-		primary.addPartial(this);
 		
 		linkage.new ConfigurePartialSpecialization(this, partial);
 	

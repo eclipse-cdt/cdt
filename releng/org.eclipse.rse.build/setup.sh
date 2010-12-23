@@ -18,7 +18,7 @@
 # script to find the published packages
 #
 # Bootstrapping: Get this script by
-# export CVSROOT=:pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp
+# export CVSROOT=:pserver:anonymous@dev.eclipse.org:/cvsroot/tools
 # cvs co -r HEAD org.eclipse.tm.rse/releng/org.eclipse.rse.build
 # sh org.eclipse.tm.rse/releng/org.eclipse.rse.build/setup.sh
 #
@@ -209,7 +209,7 @@ else
   else
     echo "Getting org.eclipse.rse.build from CVS"
   fi
-  cvs -q -d :pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp co -Rd org.eclipse.rse.build org.eclipse.tm.rse/releng/org.eclipse.rse.build
+  cvs -q -d :pserver:anonymous@dev.eclipse.org:/cvsroot/tools co -Rd org.eclipse.rse.build org.eclipse.tm.rse/releng/org.eclipse.rse.build
 fi
 
 # checkout the Mapfiles
@@ -225,7 +225,7 @@ else
   else
     echo "Getting org.eclipse.tm.releng from CVS"
   fi
-  cvs -q -d :pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp co -Rd org.eclipse.tm.releng org.eclipse.tm.rse/releng/org.eclipse.tm.releng
+  cvs -q -d :pserver:anonymous@dev.eclipse.org:/cvsroot/tools co -Rd org.eclipse.tm.releng org.eclipse.tm.rse/releng/org.eclipse.tm.releng
 fi
 
 # prepare directories for the build

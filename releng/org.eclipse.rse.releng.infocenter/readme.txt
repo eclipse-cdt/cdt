@@ -7,7 +7,7 @@ application, serving latest online help from dsdp.eclipse.org.
 The scripts are written to run by cron job, as user "infocenter", on dsdp.eclipse.org.
 
 This project can be checked out with
-  cvs -d :pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp \
+  cvs -d :pserver:anonymous@dev.eclipse.org:/cvsroot/tools \
     co -d bin org.eclipse.tm.rse/releng/org.eclipse.tm.rse.releng.infocenter
 
 Apache Installation:

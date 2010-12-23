@@ -18,7 +18,7 @@ chomp($answer);
 $tag = $answer ? $answer : "HEAD";
 
 $incantation = "cvs ";
-$incantation .= '-d :pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp ';
+$incantation .= '-d :pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools ';
 $incantation .= "checkout ";
 $incantation .= "-r ${tag} ";
 $incantation .= "-d builder ";

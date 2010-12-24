@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Image;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
@@ -33,11 +34,11 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * @since 5.1
  * 
  */
-public class IncludePathsSettingsProcessor extends SettingsProcessor {
+public class IncludePathsSettingsProcessor extends SettingsProcessor {	
 
 	private static final String SECTION_NAME = "org.eclipse.cdt.internal.ui.wizards.settingswizards.IncludePaths"; //$NON-NLS-1$
-	
 	private static final String INCLUDE_PATH_ELEMENT = "includepath"; //$NON-NLS-1$
+	private static final String WORKSPACE_PATH_ATTR = "workspace_path"; //$NON-NLS-1$
 	
 	
 	public Image getIcon() {
@@ -62,7 +63,12 @@ public class IncludePathsSettingsProcessor extends SettingsProcessor {
 		char[] value = setting.getValue().toCharArray();
 		
 		try {
-			content.startElement(NONE, NONE, INCLUDE_PATH_ELEMENT, null);
+			AttributesImpl attrib = null;
+			if( (setting.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) > 0 ) {
+				attrib = new AttributesImpl();
+				attrib.addAttribute(NONE, NONE, WORKSPACE_PATH_ATTR, NONE, Boolean.TRUE.toString());
+			}
+			content.startElement(NONE, NONE, INCLUDE_PATH_ELEMENT, attrib);
 			content.characters(value, 0, value.length);
 			content.endElement(NONE, NONE, INCLUDE_PATH_ELEMENT);
 			newline(content);
@@ -80,8 +86,12 @@ public class IncludePathsSettingsProcessor extends SettingsProcessor {
 		List<Element> includeNodes = XMLUtils.extractChildElements(language, INCLUDE_PATH_ELEMENT);
 		for(Element includeElement : includeNodes) {
 			String include = includeElement.getTextContent();
-			if(include != null && include.length() > 0)
-				includes.add(new CIncludePathEntry(include, 0));
+			int flags = 0;
+			if(include != null && include.length() > 0) {
+				if( includeElement.getAttribute(WORKSPACE_PATH_ATTR).equalsIgnoreCase(Boolean.TRUE.toString()) )
+					flags |= ICSettingEntry.VALUE_WORKSPACE_PATH;
+				includes.add(new CIncludePathEntry(include, flags));
+			}
 		}
 
 		if(includes.isEmpty())

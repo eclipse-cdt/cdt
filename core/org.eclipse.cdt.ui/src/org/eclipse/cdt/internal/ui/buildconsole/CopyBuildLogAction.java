@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.resources.ResourcesUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IBuildConsoleManager;
 
@@ -103,7 +104,7 @@ public class CopyBuildLogAction extends Action {
 					MessageDialog.openError(shell, ConsoleMessages.CopyLog_ErrorCopyingFile,
 							ConsoleMessages.CopyLog_ErrorWhileCopyingLog+e.getLocalizedMessage());
 				} finally {
-					BuildConsoleManager.refreshWorkspaceFiles(destURI);
+					ResourcesUtil.refreshWorkspaceFiles(destURI);
 				}
 			}
 		}

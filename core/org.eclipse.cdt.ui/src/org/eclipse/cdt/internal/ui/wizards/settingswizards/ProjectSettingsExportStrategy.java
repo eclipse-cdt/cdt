@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.wizards.settingswizards;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URI;
 import java.util.List;
 
 import javax.xml.transform.OutputKeys;
@@ -23,12 +24,14 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import org.eclipse.cdt.core.resources.ResourcesUtil;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -123,6 +126,7 @@ public class ProjectSettingsExportStrategy implements IProjectSettingsWizardPage
 		ICConfigurationDescription config = page.getSelectedConfiguration();
 		ICFolderDescription projectRoot = config.getRootFolderDescription();
 		
+		boolean result = false;
 		try {
 			AttributesImpl attributes = new AttributesImpl();
 			
@@ -149,19 +153,23 @@ public class ProjectSettingsExportStrategy implements IProjectSettingsWizardPage
 			handler.endDocument();
 			newline(handler);
 			
+			result = true;
 		} catch (SAXException e) {
 			CUIPlugin.log(e);
 			page.showErrorDialog(Messages.ProjectSettingsExportStrategy_exportError, 
 					             Messages.ProjectSettingsExportStrategy_xmlError);
-			return false;
+			result = false;
 		} catch(SettingsImportExportException e) {
 			CUIPlugin.log(e);
 			page.showErrorDialog(Messages.ProjectSettingsExportStrategy_fileOpenError, 
 					             Messages.ProjectSettingsExportStrategy_couldNotOpen);
-			return false;
+			result = false;
 		}
 		
-		return true;
+		URI uri = URIUtil.toURI(page.getDestinationFilePath());
+		ResourcesUtil.refreshWorkspaceFiles(uri);
+		
+		return result;
 	}
 	
 	

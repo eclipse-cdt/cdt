@@ -506,23 +506,4 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		return defaultLogLocation.toOSString();
 	}
 
-	/**
-	 * Refresh output file when it happens to belong to Workspace. There could
-	 * be multiple workspace {@link IFile} associated with one URI.
-	 *
-	 * @param uri - URI of the file.
-	 */
-	static void refreshWorkspaceFiles(URI uri) {
-		if (uri!=null) {
-			IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(uri);
-			for (IFile file : files) {
-				try {
-					file.refreshLocal(IResource.DEPTH_ZERO, null);
-				} catch (CoreException e) {
-					CUIPlugin.log(e);
-				}
-			}
-		}
-	}
-
 }

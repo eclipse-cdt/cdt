@@ -46,6 +46,7 @@ import org.osgi.service.prefs.Preferences;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.resources.ResourcesUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
@@ -320,7 +321,7 @@ public class BuildConsolePartitioner
 					} catch (CoreException e) {
 						CUIPlugin.log(e);
 					} finally {
-						BuildConsoleManager.refreshWorkspaceFiles(fLogURI);
+						ResourcesUtil.refreshWorkspaceFiles(fLogURI);
 					}
 				}
 			}
@@ -335,7 +336,7 @@ public class BuildConsolePartitioner
 					} catch (IOException e) {
 						CUIPlugin.log(e);
 					} finally {
-						BuildConsoleManager.refreshWorkspaceFiles(fLogURI);
+						ResourcesUtil.refreshWorkspaceFiles(fLogURI);
 					}
 				}
 			}
@@ -347,7 +348,7 @@ public class BuildConsolePartitioner
 					} catch (IOException e) {
 						CUIPlugin.log(e);
 					} finally {
-						BuildConsoleManager.refreshWorkspaceFiles(fLogURI);
+						ResourcesUtil.refreshWorkspaceFiles(fLogURI);
 					}
 					fLogStream = null;
 				}

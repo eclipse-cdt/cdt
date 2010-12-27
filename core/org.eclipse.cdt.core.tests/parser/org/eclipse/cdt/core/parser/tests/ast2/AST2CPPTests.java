@@ -8658,4 +8658,13 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testBug332114b() throws Exception {
 		parseAndCheckBindings(getAboveComment());
 	}
+	
+	//	typedef int T;
+	//	struct B {
+	//	    int a, b;
+	//	    B(T) : a(0), b(0) {}
+	//	};
+	public void testMemberInitializer_333200() throws Exception {
+		parseAndCheckBindings(getAboveComment());
+	}
 }

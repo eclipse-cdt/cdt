@@ -3436,7 +3436,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         		break loop;
         		
         	case IToken.tCOLON:
-        		if (!option.fAllowBitField)
+        		if (!option.fAllowBitField || nestedDeclarator != null)
         			break loop;	// no backtrack because typeid can be followed by colon
         		
         		result= bitFieldDeclarator();

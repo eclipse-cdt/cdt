@@ -403,10 +403,17 @@ public class RegexErrorParserTests extends TestCase {
 			assertEquals(firstName, retrieved2.getName());
 			assertTrue(retrieved2 instanceof ErrorParserNamedWrapper);
 			assertEquals(dummy2, ((ErrorParserNamedWrapper)retrieved2).getErrorParser());
+			
+			IErrorParserNamed retrieved2_ext = ErrorParserManager.getErrorParserExtensionCopy(firstId);
+			assertNotNull(retrieved2_ext);
+			assertEquals(firstName, retrieved2_ext.getName());
+			assertEquals(firstErrorParser, retrieved2_ext);
 		}
 		// reset available parsers
 		{
 			ErrorParserManager.setUserDefinedErrorParsers(null);
+			String[] userDefinedIds = ErrorParserManager.getUserDefinedErrorParserIds();
+			assertNull(userDefinedIds);
 
 			String all = ErrorParserManager.toDelimitedString(ErrorParserManager.getErrorParserAvailableIds());
 			assertEquals(false, all.contains(TESTING_ID));
@@ -431,6 +438,9 @@ public class RegexErrorParserTests extends TestCase {
 		// reset parsers
 		{
 			ErrorParserManager.setUserDefinedErrorParsers(null);
+			String[] userDefinedIds = ErrorParserManager.getUserDefinedErrorParserIds();
+			assertNull(userDefinedIds);
+
 			String all = ErrorParserManager.toDelimitedString(ErrorParserManager.getErrorParserAvailableIds());
 			String extensions = ErrorParserManager.toDelimitedString(ErrorParserManager.getErrorParserExtensionIds());
 			assertEquals(all, extensions);
@@ -439,6 +449,9 @@ public class RegexErrorParserTests extends TestCase {
 			ErrorParserManager.setUserDefinedErrorParsers(new IErrorParserNamed[] {
 					new ErrorParserNamedWrapper(TESTING_ID, TESTING_NAME, new DummyErrorParser()),
 			});
+			String userDefinedIds = ErrorParserManager.toDelimitedString(ErrorParserManager.getUserDefinedErrorParserIds());
+			assertEquals(TESTING_ID, userDefinedIds);
+
 			String all = ErrorParserManager.toDelimitedString(ErrorParserManager.getErrorParserAvailableIds());
 			String extensions = ErrorParserManager.toDelimitedString(ErrorParserManager.getErrorParserExtensionIds());
 			assertFalse(all.equals(extensions));

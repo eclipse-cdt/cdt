@@ -143,6 +143,7 @@ public class Messages extends NLS {
 	public static String ErrorParsTab_label_DefaultRegexErrorParserName;
 	public static String ErrorParsTab_label_EnterName;
 	public static String ErrorParsTab_message_ConfirmReset;
+	public static String ErrorParsTab_Reset;
 	public static String ErrorParsTab_title_Add;
 	public static String ErrorParsTab_title_ConfirmReset;
 	public static String ErrorParsTab_title_Edit;

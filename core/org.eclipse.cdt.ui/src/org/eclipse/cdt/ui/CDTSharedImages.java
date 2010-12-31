@@ -39,6 +39,10 @@ import org.eclipse.swt.graphics.Image;
  * <br>
  * and {@link org.eclipse.ui.ide.IDE.SharedImages}.
  * </p>
+ * <p>
+ * Note that org.eclipse.cdt.ui.tests.misc.CDTSharedImagesTests will verify
+ * existence of the images defined here.
+ * </p>
  *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -115,6 +119,10 @@ public class CDTSharedImages {
 	public static final String IMG_OBJS_IMPORT_SETTINGS = "icons/obj16/import_settings_wiz.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_EXPORT_SETTINGS = "icons/obj16/export_settings_wiz.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INCCONT = "icons/obj16/incc_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_EXTENSION = "icons/obj16/extension_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_USER = "icons/obj16/person-me.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_CDT_TESTING = "icons/obj16/flask.png"; //$NON-NLS-1$
+
 	public static final String IMG_OBJS_NLS_NEVER_TRANSLATE = "icons/obj16/never_translate.gif"; //$NON-NLS-1$
 
 	// Breakpoint images
@@ -169,6 +177,8 @@ public class CDTSharedImages {
 	// overlays
 	public static final String IMG_OVR_WARNING = "icons/ovr16/warning_co.gif"; //$NON-NLS-1$
 	public static final String IMG_OVR_ERROR = "icons/ovr16/error_co.gif"; //$NON-NLS-1$
+	public static final String IMG_OVR_SETTING = "icons/ovr16/setting_nav.gif"; //$NON-NLS-1$
+	public static final String IMG_OVR_INACTIVE = "icons/ovr16/inactive_co.gif"; //$NON-NLS-1$
 
 	/**
 	 * The method finds URL of the image corresponding to the key which could be project-relative path

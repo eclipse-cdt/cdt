@@ -11,6 +11,9 @@
 
 package org.eclipse.cdt.ui.dialogs;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -89,6 +92,8 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 
 	private RegexErrorParser fErrorParser;
 	private boolean fEditable;
+
+	private List<Listener> fListeners = new ArrayList<Listener>();
 
 	/**
 	 * Provides generic implementation for overridden methods.
@@ -245,6 +250,7 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 					fErrorParser = null;
 
 				initializeTable();
+				fireEvent();
 			}
 		});
 
@@ -673,9 +679,11 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 			moveItem(false);
 			break;
 		default:
-			break;
+			return;
 		}
+		applyPatterns();
 		updateButtons();
+		fireEvent();
 	}
 
 	private void addErrorPattern() {
@@ -714,13 +722,8 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 		fTableViewer.insert(item, newPos);
 		fTable.setSelection(newPos);
 	}
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
-	public void performApply(IProgressMonitor monitor) throws CoreException {
+	
+	private void applyPatterns() {
 		if (fErrorParser!=null && fEditable) {
 			fErrorParser.clearPatterns();
 			for (TableItem tableItem : fTable.getItems()) {
@@ -735,10 +738,40 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 	/*
 	 * (non-Javadoc)
 	 *
+	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	@Override
+	public void performApply(IProgressMonitor monitor) throws CoreException {
+		applyPatterns();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	@Override
 	public void performDefaults() {
 		// ErrorParsTas.performDefaults() will do all the work
+	}
+
+	/**
+	 * @since 5.3
+	 */
+	public void addListener(Listener listener){
+		fListeners.add(listener);
+	}
+
+	/**
+	 * @since 5.3
+	 */
+	public void removeListener(Listener listener){
+		fListeners.remove(listener);
+	}
+	
+	private void fireEvent() {
+		for (Listener listener : fListeners) {
+			listener.handleEvent(new Event());
+		}
 	}
 }

@@ -20,11 +20,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -44,7 +43,9 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.errorparsers.ErrorParserNamedWrapper;
 import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
+import org.eclipse.cdt.core.resources.ResourcesUtil;
 import org.eclipse.cdt.internal.core.XmlUtil;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -101,6 +102,34 @@ public class ErrorParserExtensionManager {
 	private static LinkedHashMap<String, IErrorParserNamed> fUserDefinedErrorParsers = null;
 	private static List<String> fDefaultErrorParserIds = null;
 
+	private static class ErrorParserComparator implements Comparator<IErrorParserNamed> {
+		// For the error parsers taken from platform extensions following sorting order applies:
+		// - first regular error parsers
+		// - then deprecated ones
+		// - then contributed by test plugin
+		// inside the same category sort by parser name
+		public int compare(IErrorParserNamed errorParser1, IErrorParserNamed errorParser2) {
+			final String TEST_PLUGIN_ID="org.eclipse.cdt.core.tests"; //$NON-NLS-1$
+			final String DEPRECATED=CCorePlugin.getResourceString("CCorePlugin.Deprecated"); //$NON-NLS-1$
+			
+			boolean isTestPlugin1 = errorParser1.getId().startsWith(TEST_PLUGIN_ID);
+			boolean isTestPlugin2 = errorParser2.getId().startsWith(TEST_PLUGIN_ID);
+			if (isTestPlugin1==true && isTestPlugin2==false)
+				return 1;
+			if (isTestPlugin1==false && isTestPlugin2==true)
+				return -1;
+			
+			boolean isDeprecated1 = errorParser1.getName().contains(DEPRECATED);
+			boolean isDeprecated2 = errorParser2.getName().contains(DEPRECATED);
+			if (isDeprecated1==true && isDeprecated2==false)
+				return 1;
+			if (isDeprecated1==false && isDeprecated2==true)
+				return -1;
+			
+			return errorParser1.getName().compareTo(errorParser2.getName());
+		}
+	}
+
 	static {
 		loadUserDefinedErrorParsers();
 		loadDefaultErrorParserIds();
@@ -122,12 +151,12 @@ public class ErrorParserExtensionManager {
 		}
 
 		if (doc!=null) {
-			Set<IErrorParserNamed> errorParsers = new LinkedHashSet<IErrorParserNamed>();
-			loadErrorParserExtensions(doc, errorParsers);
+			Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<IErrorParserNamed>(new ErrorParserComparator());
+			loadErrorParserExtensions(doc, sortedErrorParsers);
 
-			if (errorParsers.size()>0) {
+			if (sortedErrorParsers.size()>0) {
 				fUserDefinedErrorParsers = new LinkedHashMap<String, IErrorParserNamed>();
-				for (IErrorParserNamed errorParser : errorParsers) {
+				for (IErrorParserNamed errorParser : sortedErrorParsers) {
 					fUserDefinedErrorParsers.put(errorParser.getId(), errorParser);
 				}
 			}
@@ -212,34 +241,7 @@ public class ErrorParserExtensionManager {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	synchronized public static void loadErrorParserExtensions() {
-		Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<IErrorParserNamed>(new Comparator<IErrorParserNamed>() {
-			// For the error parsers taken from platform extensions following sorting order applies:
-			// - first regular error parsers
-			// - then deprecated ones
-			// - then contributed by test plugin
-			// inside the same category sort by parser name
-			public int compare(IErrorParserNamed errorParser1, IErrorParserNamed errorParser2) {
-				final String TEST_PLUGIN_ID="org.eclipse.cdt.core.tests"; //$NON-NLS-1$
-				final String DEPRECATED=CCorePlugin.getResourceString("CCorePlugin.Deprecated"); //$NON-NLS-1$
-				
-				boolean isTestPlugin1 = errorParser1.getId().startsWith(TEST_PLUGIN_ID);
-				boolean isTestPlugin2 = errorParser2.getId().startsWith(TEST_PLUGIN_ID);
-				if (isTestPlugin1==true && isTestPlugin2==false)
-					return 1;
-				if (isTestPlugin1==false && isTestPlugin2==true)
-					return -1;
-				
-				boolean isDeprecated1 = errorParser1.getName().contains(DEPRECATED);
-				boolean isDeprecated2 = errorParser2.getName().contains(DEPRECATED);
-				if (isDeprecated1==true && isDeprecated2==false)
-					return 1;
-				if (isDeprecated1==false && isDeprecated2==true)
-					return -1;
-				
-				return errorParser1.getName().compareTo(errorParser2.getName());
-			}
-		});
-
+		Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<IErrorParserNamed>(new ErrorParserComparator());
 		loadErrorParserExtensions(Platform.getExtensionRegistry(), sortedErrorParsers);
 
 		fExtensionErrorParsers.clear();
@@ -287,14 +289,43 @@ public class ErrorParserExtensionManager {
 	 */
 	private static void recalculateAvailableErrorParsers() {
 		fAvailableErrorParsers.clear();
-		if (fUserDefinedErrorParsers!=null) {
-			fAvailableErrorParsers.putAll(fUserDefinedErrorParsers);
-		}
-		for (IErrorParserNamed errorParser : fExtensionErrorParsers.values()) {
-			String id = errorParser.getId();
-			if (!fAvailableErrorParsers.containsKey(id)) {
-				fAvailableErrorParsers.put(id, errorParser);
+		// put default parsers on top of the list
+		List<String> ids = new ArrayList<String>();
+		if (fDefaultErrorParserIds!=null) {
+			for (String id : fDefaultErrorParserIds) {
+				IErrorParserNamed errorParser = null;
+				if (fUserDefinedErrorParsers!=null) {
+					errorParser = fUserDefinedErrorParsers.get(id);
+				}
+				if (errorParser==null) {
+					errorParser = fExtensionErrorParsers.get(id);
+				}
+				if (errorParser!=null) {
+					fAvailableErrorParsers.put(id, errorParser);
+					ids.add(id);
+				}
 			}
+		}
+		// then the rest in the order defined by comparator
+		Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<IErrorParserNamed>(new ErrorParserComparator());
+
+		if (fUserDefinedErrorParsers!=null) {
+			for (String id : fUserDefinedErrorParsers.keySet()) {
+				if (!ids.contains(id)) {
+					IErrorParserNamed errorParser = fUserDefinedErrorParsers.get(id);
+					sortedErrorParsers.add(errorParser);
+				}
+			}
+		}
+		for (String id : fExtensionErrorParsers.keySet()) {
+			if (!ids.contains(id)) {
+				IErrorParserNamed errorParser = fExtensionErrorParsers.get(id);
+				sortedErrorParsers.add(errorParser);
+			}
+		}
+
+		for (IErrorParserNamed errorParser : sortedErrorParsers) {
+			fAvailableErrorParsers.put(errorParser.getId(), errorParser);
 		}
 	}
 
@@ -456,6 +487,7 @@ public class ErrorParserExtensionManager {
 		transformer.transform(source, result);
 
 		fileStream.close();
+		ResourcesUtil.refreshWorkspaceFiles(URIUtil.toURI(location));
 	}
 
 	/**
@@ -627,7 +659,7 @@ public class ErrorParserExtensionManager {
 	 * Return error parser as stored in internal list.
 	 *
 	 * @noreference This method is not intended to be referenced by clients.
-	 * Use {@link #getErrorParserCopy(String)} instead.
+	 * Use {@link #getErrorParserCopy(String, boolean)} instead.
 	 *
 	 * @param id - ID of error parser
 	 * @return internal instance of error parser
@@ -662,9 +694,11 @@ public class ErrorParserExtensionManager {
 		if (errorParsers==null) {
 			fUserDefinedErrorParsers = null;
 		} else {
+			Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<IErrorParserNamed>(new ErrorParserComparator());
+			sortedErrorParsers.addAll(Arrays.asList(errorParsers));
 			fUserDefinedErrorParsers= new LinkedHashMap<String, IErrorParserNamed>();
 			// set customized list
-			for (IErrorParserNamed errorParser : errorParsers) {
+			for (IErrorParserNamed errorParser : sortedErrorParsers) {
 				fUserDefinedErrorParsers.put(errorParser.getId(), errorParser);
 			}
 		}
@@ -684,6 +718,15 @@ public class ErrorParserExtensionManager {
 	 */
 	public static String[] getErrorParserExtensionIds() {
 		return fExtensionErrorParsers.keySet().toArray(new String[0]);
+	}
+
+	/**
+	 * @return default error parsers IDs to be used if error parser list is empty.
+	 */
+	public static String[] getUserDefinedErrorParserIds() {
+		if (fUserDefinedErrorParsers!=null)
+			return fUserDefinedErrorParsers.keySet().toArray(new String[0]);
+		return null;
 	}
 
 	/**
@@ -711,6 +754,7 @@ public class ErrorParserExtensionManager {
 		} else {
 			fDefaultErrorParserIds = new ArrayList<String>(Arrays.asList(ids));
 		}
+		recalculateAvailableErrorParsers();
 	}
 
 	/**
@@ -725,11 +769,12 @@ public class ErrorParserExtensionManager {
 
 	/**
 	 * @param id - ID of error parser
+	 * @param isExtension - if {@code true} get unmodified copy of error parser defined as extension
 	 * @return cloned copy of error parser. Note that {@link ErrorParserNamedWrapper} returns
 	 * shallow copy with the same instance of underlying error parser.
 	 */
-	public static IErrorParserNamed getErrorParserCopy(String id) {
-		IErrorParserNamed errorParser = fAvailableErrorParsers.get(id);
+	public static IErrorParserNamed getErrorParserCopy(String id, boolean isExtension) {
+		IErrorParserNamed errorParser = isExtension ? fExtensionErrorParsers.get(id) : fAvailableErrorParsers.get(id);
 
 		try {
 			if (errorParser instanceof RegexErrorParser) {
@@ -742,6 +787,5 @@ public class ErrorParserExtensionManager {
 		}
 		return errorParser;
 	}
-
 
 }

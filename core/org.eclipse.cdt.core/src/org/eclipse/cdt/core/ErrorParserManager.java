@@ -164,7 +164,7 @@ public class ErrorParserManager extends OutputStream {
 		}
 		fErrorParsers = new LinkedHashMap<String, IErrorParser[]>(parsersIDs.length);
 		for (String parsersID : parsersIDs) {
-			IErrorParser errorParser = ErrorParserExtensionManager.getErrorParserCopy(parsersID);
+			IErrorParser errorParser = getErrorParserCopy(parsersID);
 			if (errorParser!=null) {
 				fErrorParsers.put(parsersID, new IErrorParser[] {errorParser} );
 			}
@@ -749,6 +749,14 @@ outer:
 	}
 
 	/**
+	 * @return default error parsers IDs to be used if error parser list is empty.
+	 * @since 5.3
+	 */
+	public static String[] getUserDefinedErrorParserIds() {
+		return ErrorParserExtensionManager.getUserDefinedErrorParserIds();
+	}
+
+	/**
 	 * Set and store in workspace area user defined error parsers.
 	 *
 	 * @param errorParsers - array of user defined error parsers
@@ -797,14 +805,24 @@ outer:
 
 	/**
 	 * @param id - ID of error parser
-	 * @return cloned copy of error parser. Note that {@link ErrorParserNamedWrapper} returns
-	 * shallow copy with the same instance of underlying error parser.
+	 * @return cloned copy of error parser or {@code null}.
+	 * Note that {@link ErrorParserNamedWrapper} returns shallow copy with the same instance
+	 * of underlying error parser.
 	 * @since 5.2
 	 */
 	public static IErrorParserNamed getErrorParserCopy(String id) {
-		return ErrorParserExtensionManager.getErrorParserCopy(id);
+		return ErrorParserExtensionManager.getErrorParserCopy(id, false);
 	}
 
+	/**
+	 * @param id - ID of error parser
+	 * @return cloned copy of error parser as defined by its extension point or {@code null}.
+	 * @since 5.3
+	 */
+	public static IErrorParserNamed getErrorParserExtensionCopy(String id) {
+		return ErrorParserExtensionManager.getErrorParserCopy(id, true);
+	}
+	
 	/**
 	 * @param ids - array of error parser IDs
 	 * @return error parser IDs delimited with error parser delimiter ";"

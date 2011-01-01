@@ -49,6 +49,8 @@ public class Messages extends NLS {
 	public static String convention_enum_leadingUnderscore;
 	public static String convention_enum_lowercaseName;
 	public static String convention_enum_invalidName;
+	public static String XmlUtil_InternalErrorLoading;
+	public static String XmlUtil_InternalErrorSerializing;
 
 	static {
 		// initialize resource bundle

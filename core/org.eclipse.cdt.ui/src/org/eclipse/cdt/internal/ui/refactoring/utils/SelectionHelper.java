@@ -70,7 +70,7 @@ public class SelectionHelper {
 		Region exprPos = createExpressionPosition(expression);
 		int selStart = textSelection.getOffset();
 		int selEnd = textSelection.getLength() + selStart;
-		return exprPos.getOffset()+exprPos.getLength() >= selStart && exprPos.getOffset() <= selEnd;
+		return exprPos.getOffset() + exprPos.getLength() >= selStart && exprPos.getOffset() <= selEnd;
 	}
 	
 	public static boolean isExpressionWhollyInSelection(Region textSelection, IASTNode expression) {

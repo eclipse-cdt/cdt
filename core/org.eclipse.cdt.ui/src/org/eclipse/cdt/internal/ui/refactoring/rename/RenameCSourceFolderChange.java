@@ -105,7 +105,7 @@ public class RenameCSourceFolderChange extends Change {
 				for (IPath filter : se.getExclusionPatterns()) {
 					IPath oldSegments = oldName.removeFirstSegments(oldName.segmentCount() -1);
 					if (filter.equals(oldSegments)) {
-						exPatters.add(newName.removeFirstSegments(newName.segmentCount() -1));
+						exPatters.add(newName.removeFirstSegments(newName.segmentCount() - 1));
 					} else {
 						exPatters.add(filter);
 					}

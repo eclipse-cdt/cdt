@@ -55,7 +55,8 @@ public class SelectionHelper {
 			}
 			@Override
 			public int visit(IASTDeclaration declaration) {
-				if (declaration instanceof IASTSimpleDeclaration && isSelectionOnExpression(textSelection, declaration)) {
+				if (declaration instanceof IASTSimpleDeclaration &&
+						isSelectionOnExpression(textSelection, declaration)) {
 					container.setObject((IASTSimpleDeclaration) declaration);
 				}
 				return super.visit(declaration);
@@ -78,7 +79,7 @@ public class SelectionHelper {
 		int selStart = textSelection.getOffset();
 		int selEnd = textSelection.getLength() + selStart;
 
-		return exprPos.getOffset() >= selStart && exprPos.getOffset()+exprPos.getLength() <= selEnd;
+		return exprPos.getOffset() >= selStart && exprPos.getOffset() + exprPos.getLength() <= selEnd;
 	}
 	
 	public static boolean isInSameFile(IASTNode node, IFile file) {

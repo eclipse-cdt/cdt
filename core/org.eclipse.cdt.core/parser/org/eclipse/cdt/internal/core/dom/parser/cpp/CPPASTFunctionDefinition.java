@@ -30,8 +30,8 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * Models a function definition without a try-block. If used for a constructor definition it may contain
  * member initializers.
  */
-public class CPPASTFunctionDefinition extends ASTNode implements
-        ICPPASTFunctionDefinition, IASTAmbiguityParent {
+public class CPPASTFunctionDefinition extends ASTNode
+		implements ICPPASTFunctionDefinition, IASTAmbiguityParent {
 
     private IASTDeclSpecifier declSpecifier;
     private IASTFunctionDeclarator declarator;
@@ -40,7 +40,6 @@ public class CPPASTFunctionDefinition extends ASTNode implements
     private int memInitPos= -1;
     private boolean fDeleted= false;
     private boolean fDefaulted= false;
-
 
     public CPPASTFunctionDefinition() {
 	}
@@ -56,7 +55,7 @@ public class CPPASTFunctionDefinition extends ASTNode implements
 		CPPASTFunctionDefinition copy = new CPPASTFunctionDefinition();
 		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy());
 		
-		if(declarator != null) {
+		if (declarator != null) {
 			IASTDeclarator outer = ASTQueries.findOutermostDeclarator(declarator);
 			outer = outer.copy();
 			copy.setDeclarator((IASTFunctionDeclarator)ASTQueries.findTypeRelevantDeclarator(outer));
@@ -64,7 +63,7 @@ public class CPPASTFunctionDefinition extends ASTNode implements
 		
 		copy.setBody(bodyStatement == null ? null : bodyStatement.copy());
 		
-		for(ICPPASTConstructorChainInitializer initializer : getMemberInitializers())
+		for (ICPPASTConstructorChainInitializer initializer : getMemberInitializers())
 			copy.addMemberInitializer(initializer == null ? null : initializer.copy());
 		
 		copy.fDefaulted= fDefaulted;
@@ -199,10 +198,9 @@ public class CPPASTFunctionDefinition extends ASTNode implements
 	}
 
 	public void replace(IASTNode child, IASTNode other) {
-        if( bodyStatement == child ) 
-        {
-            other.setPropertyInParent( bodyStatement.getPropertyInParent() );
-            other.setParent( bodyStatement.getParent() );
+        if (bodyStatement == child) {
+            other.setPropertyInParent(bodyStatement.getPropertyInParent());
+            other.setParent(bodyStatement.getParent());
             bodyStatement = (IASTStatement) other;
         }
     }

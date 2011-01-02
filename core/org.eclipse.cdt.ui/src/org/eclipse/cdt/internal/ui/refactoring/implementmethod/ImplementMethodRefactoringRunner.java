@@ -25,11 +25,11 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 
 /**
  * @author Lukas Felber
- * 
  */
 public class ImplementMethodRefactoringRunner extends RefactoringRunner {
 
-	public ImplementMethodRefactoringRunner(IFile file, ISelection selection, ICElement element, IShellProvider shellProvider, ICProject cProject) {
+	public ImplementMethodRefactoringRunner(IFile file, ISelection selection, ICElement element,
+			IShellProvider shellProvider, ICProject cProject) {
 		super(file, selection, element, shellProvider, cProject);
 	}
 
@@ -43,8 +43,7 @@ public class ImplementMethodRefactoringRunner extends RefactoringRunner {
 			refactoring.lockIndex();
 			try {
 				operator.run(shellProvider.getShell(), refactoring.getName());
-			}
-			finally {
+			} finally {
 				refactoring.unlockIndex();
 			}
 		} catch (InterruptedException e) {

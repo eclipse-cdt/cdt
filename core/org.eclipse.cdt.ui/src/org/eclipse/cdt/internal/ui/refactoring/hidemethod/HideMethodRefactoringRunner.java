@@ -24,11 +24,11 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 
 /**
  * @author Guido Zgraggen IFS
- *
  */
 public class HideMethodRefactoringRunner extends RefactoringRunner {
 
-	public HideMethodRefactoringRunner(IFile file, ISelection selection, ICElement element, IShellProvider shellProvider, ICProject cProject) {
+	public HideMethodRefactoringRunner(IFile file, ISelection selection, ICElement element,
+			IShellProvider shellProvider, ICProject cProject) {
 		super(file, selection, element, shellProvider, cProject);
 	}
 

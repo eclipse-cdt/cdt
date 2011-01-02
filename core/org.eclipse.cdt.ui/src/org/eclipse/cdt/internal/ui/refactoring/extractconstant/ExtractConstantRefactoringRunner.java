@@ -23,11 +23,11 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 
 /**
  * @author Emanuel Graf
- *
  */
 public class ExtractConstantRefactoringRunner extends RefactoringRunner  {
 
-	public ExtractConstantRefactoringRunner(IFile file, ISelection selection, IShellProvider shellProvider, ICProject cProject) {
+	public ExtractConstantRefactoringRunner(IFile file, ISelection selection,
+			IShellProvider shellProvider, ICProject cProject) {
 		super(file, selection, null, shellProvider, cProject);
 	}
 
@@ -40,7 +40,6 @@ public class ExtractConstantRefactoringRunner extends RefactoringRunner  {
 
 		try {
 			operator.run(shellProvider.getShell(), refactoring.getName());
-
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		} 

@@ -23,11 +23,11 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 
 /**
  * @author Emanuel Graf
- *
  */
 public class ExtractFunctionRefactoringRunner extends RefactoringRunner  {
 
-	public ExtractFunctionRefactoringRunner(IFile file, ISelection selection, IShellProvider shellProvider, ICProject cProject) {
+	public ExtractFunctionRefactoringRunner(IFile file, ISelection selection,
+			IShellProvider shellProvider, ICProject cProject) {
 		super(file, selection, null, shellProvider, cProject);
 	}
 

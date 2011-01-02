@@ -29,7 +29,8 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
  */
 public class GenerateGettersAndSettersRefactoringRunner extends RefactoringRunner {
 
-	public GenerateGettersAndSettersRefactoringRunner(IFile file, ISelection selection, ICElement elem, IShellProvider shellProvider, ICProject cProject) {
+	public GenerateGettersAndSettersRefactoringRunner(IFile file, ISelection selection,
+			ICElement elem, IShellProvider shellProvider, ICProject cProject) {
 		super(file, selection, elem, shellProvider, cProject);
 	}
 

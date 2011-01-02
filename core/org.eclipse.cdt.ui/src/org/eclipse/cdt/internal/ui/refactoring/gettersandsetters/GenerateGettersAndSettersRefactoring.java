@@ -88,12 +88,14 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 	private final GetterAndSetterContext context = new GetterAndSetterContext();
 	private InsertLocation definitionInsertLocation;	
 	
-	public GenerateGettersAndSettersRefactoring(IFile file, ISelection selection, ICElement element, ICProject project) {
+	public GenerateGettersAndSettersRefactoring(IFile file, ISelection selection, ICElement element,
+			ICProject project) {
 		super(file, selection, element, project);
 	}
 	
 	@Override
-	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
+	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
+			throws CoreException, OperationCanceledException {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
 
 		RefactoringStatus status = super.checkInitialConditions(sm.newChild(6));
@@ -111,8 +113,8 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 	}
 
 	@Override
-	public RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException,
-	OperationCanceledException {
+	public RefactoringStatus checkFinalConditions(IProgressMonitor pm)
+			throws CoreException, OperationCanceledException {
 		RefactoringStatus finalStatus = null;
 		try {
 			lockIndex();

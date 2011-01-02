@@ -34,7 +34,7 @@ FILES=$*
 cd ..
 SITE=`pwd`
 
-STAGING=/home/data/httpd/download-staging.priv/dsdp/tm
+STAGING=/home/data/httpd/download-staging.priv/tools/tm
 stamp=`date +'%Y%m%d-%H%M'`
 WORKDIR=${STAGING}/${stamp}
 mkdir -p ${WORKDIR}
@@ -113,7 +113,7 @@ java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -siteXML=$SITE/site.xml
 
 cd $SITE
-chgrp -R dsdp-tmadmin .
+chgrp -R tools.tm .
 chmod -R g+w .
 chmod -R a+r .
 cd $curdir

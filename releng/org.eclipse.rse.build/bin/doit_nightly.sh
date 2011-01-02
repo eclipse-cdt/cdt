@@ -52,13 +52,13 @@ tail -30 $log
 if [ -d /home/data/httpd/archive.eclipse.org/tm/downloads ]; then
   cd /home/data/httpd/archive.eclipse.org/tm/downloads
   cvs -q update -RPd >> $log 2>&1
-  chgrp dsdp-tmadmin * CVS/* 2>/dev/null
+  chgrp tools.tm * CVS/* 2>/dev/null
   cd /home/data/httpd/download.eclipse.org/tm/downloads
   cvs -q update -RPd >> $log 2>&1
-  chgrp dsdp-tmadmin * CVS/* 2>/dev/null
+  chgrp tools.tm * CVS/* 2>/dev/null
 
   #Fixup permissions and group id on download.eclpse.org (just to be safe)
-  chgrp -R dsdp-tmadmin drops/${buildType}*${daystamp}* 2>/dev/null
+  chgrp -R tools.tm drops/${buildType}*${daystamp}* 2>/dev/null
   chmod -R g+w drops/${buildType}*${daystamp}* 2>/dev/null
 fi
 
@@ -78,7 +78,7 @@ if [ -d N.latest ]; then
       echo "ERROR: missing TM-terminal-*.zip"
     fi
     cd ../N.latest
-    chgrp dsdp-tmadmin *.zip
+    chgrp tools.tm *.zip
     chmod g+w *.zip
   fi
 fi

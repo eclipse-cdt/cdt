@@ -160,7 +160,7 @@ elif [ ${TYPE} = testSigned ]; then
     TPVERSION="${TPVERSION} ${TPTYPE}"
     echo "Working on ${TPVERSION} update site"
     echo "Signing jars from ${SITE}/../testUpdates (expecting conditioned jars)..."
-    STAGING=/home/data/httpd/download-staging.priv/dsdp/tm
+    STAGING=/home/data/httpd/download-staging.priv/tools/tm
     stamp=`date +'%Y%m%d-%H%M'`
     if [ -d ${STAGING} -a -d ${SITE}/../testUpdates ]; then
       #get jars from testUpdates, sign them and put them here
@@ -538,7 +538,7 @@ if [ x${DO_CATEGORIES} = x1 ]; then
 fi
 
 cd $SITE
-chgrp -R dsdp-tmadmin .
+chgrp -R tools.tm .
 chmod -R g+w .
 chmod -R a+r .
 cd $curdir

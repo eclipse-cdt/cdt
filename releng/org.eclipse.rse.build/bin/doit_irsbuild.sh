@@ -96,14 +96,14 @@ tail -30 $log
 if [ -d /home/data/httpd/archive.eclipse.org/tm/downloads ]; then
   cd /home/data/httpd/archive.eclipse.org/tm/downloads
   cvs -q update -RPd >> $log 2>&1
-  chgrp dsdp-tmadmin * CVS/* 2>/dev/null
+  chgrp tools.tm * CVS/* 2>/dev/null
   cd /home/data/httpd/download.eclipse.org/tm/downloads
   cvs -q update -RPd >> $log 2>&1
-  chgrp dsdp-tmadmin * CVS/*
+  chgrp tools.tm * CVS/*
 
   #Fixup permissions and group id on download.eclpse.org (just to be safe)
-  echo "Fixup: chgrp -R dsdp-tmadmin drops/${buildType}*${daystamp}*"
-  chgrp -R dsdp-tmadmin drops/${buildType}*${daystamp}*
+  echo "Fixup: chgrp -R tools.tm drops/${buildType}*${daystamp}*"
+  chgrp -R tools.tm drops/${buildType}*${daystamp}*
   chmod -R g+w drops/${buildType}*${daystamp}*
 fi
 
@@ -138,7 +138,7 @@ if [ -f package.count -a "$FILES" != "" ]; then
     else
       echo "ERROR: missing TM-terminal-*.zip"
     fi
-    chgrp dsdp-tmadmin ../N.latest/*.zip
+    chgrp tools.tm ../N.latest/*.zip
     chmod g+w ../N.latest/*.zip
   fi
 
@@ -159,4 +159,4 @@ if [ -f package.count -a "$FILES" != "" ]; then
 else
   echo "package.count missing, release seems failed"
 fi
-chgrp dsdp-tm-rse $log
+chgrp tools.tm $log

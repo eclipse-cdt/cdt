@@ -249,7 +249,7 @@ if [ ! -d updates ]; then
   if [ -d ${D} ]; then ln -s ${D} updates; else mkdir updates; fi
 fi
 if [ ! -d staging ]; then
-  D=/home/data/httpd/download-staging.priv/dsdp/tm
+  D=/home/data/httpd/download-staging.priv/tools/tm
   if [ -d ${D} ]; then ln -s ${D} staging; else mkdir staging; fi
 fi
 

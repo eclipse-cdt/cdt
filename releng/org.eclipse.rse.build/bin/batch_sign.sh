@@ -46,7 +46,7 @@ RDIR=`pwd`
 mkdir -p signed
 nameToSign=`basename $RDIR`
 ZIPS=`ls *.zip *.jar`
-STAGING=/home/data/httpd/download-staging.priv/dsdp/tm
+STAGING=/home/data/httpd/download-staging.priv/tools/tm
 STDIR=${STAGING}/${nameToSign}
 mkdir -p ${STDIR}
 cp ${ZIPS} ${STDIR}

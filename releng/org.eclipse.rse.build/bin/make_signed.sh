@@ -100,10 +100,10 @@ if [ "${have_server}" = "" ]; then
       rm -rf ${tmpdir}
       exit 1
     fi
-    if [ ! -d /home/data/httpd/download-staging.priv/dsdp/tm ]; then
+    if [ ! -d /home/data/httpd/download-staging.priv/tools/tm ]; then
       echo "Error: Must run on build.eclipse.org to sign"
     fi
-    cd /home/data/httpd/download-staging.priv/dsdp/tm
+    cd /home/data/httpd/download-staging.priv/tools/tm
     SIGN_TMP=tmp.$$
     mkdir ${SIGN_TMP}
     cd ${SIGN_TMP}

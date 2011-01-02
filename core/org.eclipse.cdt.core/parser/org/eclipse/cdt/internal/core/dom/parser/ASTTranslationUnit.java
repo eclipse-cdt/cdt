@@ -413,7 +413,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		copy.setLocationResolver(fLocationResolver);
 		copy.setIsForContentAssist(fForContentAssist);
 		
-		for(IASTDeclaration declaration : getDeclarations())
+		for (IASTDeclaration declaration : getDeclarations())
 			copy.addDeclaration(declaration == null ? null : declaration.copy());
 		
 		copy.setOffsetAndLength(this);

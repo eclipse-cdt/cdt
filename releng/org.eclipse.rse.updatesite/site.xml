@@ -11,10 +11,10 @@
  -->
 
 <site pack200="true" 
-	mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/updates/2.0/site.xml&amp;format=xml&amp;protocol=http"
-	digestURL="http://download.eclipse.org/dsdp/tm/updates/2.0/">
-<!-- was disabled due to bug 163406 digestURL="http://download.eclipse.org/dsdp/tm/updates/2.0/" -->
-   <description url="http://download.eclipse.org/dsdp/tm/updates/2.0/">
+	mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/tm/updates/2.0/site.xml&amp;format=xml&amp;protocol=http"
+	digestURL="http://download.eclipse.org/tm/updates/2.0/">
+<!-- was disabled due to bug 163406 digestURL="http://download.eclipse.org/tm/updates/2.0/" -->
+   <description url="http://download.eclipse.org/tm/updates/2.0/">
       This is the Target Management Project 2.0 Update Site.
    </description>
 <!-- BEGIN_2_0 -->

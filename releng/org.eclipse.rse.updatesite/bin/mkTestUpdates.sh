@@ -131,11 +131,11 @@ if [ ${TYPE} = test ]; then
     ## rm f1.$$.txt f2.$$.txt p1.$$.txt p2.$$.txt    
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/${SITEDIR},g" \
+    sed -e "s,/tm/updates/2.0,/tm/${SITEDIR},g" \
     	-e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	index.html > index.html.new
     mv -f index.html.new index.html
-    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/${SITEDIR},g" \
+    sed -e "s,/tm/updates/2.0,/tm/${SITEDIR},g" \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
     	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_2 -->/d' \
@@ -265,11 +265,11 @@ elif [ ${TYPE} = testSigned ]; then
     fi
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/${SITEDIR},g" \
+    sed -e "s,/tm/updates/2.0,/tm/${SITEDIR},g" \
     	-e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	index.html > index.html.new
     mv -f index.html.new index.html
-    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/${SITEDIR},g" \
+    sed -e "s,/tm/updates/2.0,/tm/${SITEDIR},g" \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
     	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_2 -->/d' \
@@ -286,16 +286,16 @@ elif [ ${TYPE} = milestone ]; then
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+    sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
     	-e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '\,</h1>,a\
 This site contains Target Management Milestones (I-, S- and M- builds) which are \
-being contributed to the Galileo coordinated release train (Eclipse 3.5.x).' \
+being contributed to the Eclipse Indigo coordinated release train (Eclipse 3.7.x).' \
     	index.html > index.html.new
     mv -f index.html.new index.html
     ## keep 3.0.x features in site.xml
     ##	-e '/<!-- BEGIN_2_0_1 -->/,/<!-- END_2_0_4 -->/d' \
-    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+    sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
     	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_2 -->/d' \
@@ -312,7 +312,7 @@ elif [ ${TYPE} = interim ]; then
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+    sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
     	-e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '\,</h1>,a\
 This site contains Target Management Interim Maintenance builds (I-, S-, and M-builds) in order \
@@ -321,7 +321,7 @@ to test them before going live.' \
     mv -f index.html.new index.html
     ## keep 2.0.x features in site.xml
     ##	-e '/<!-- BEGIN_2_0_1 -->/,/<!-- END_2_0_4 -->/d' \
-    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+    sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
     	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_2 -->/d' \
@@ -339,7 +339,7 @@ elif [ `basename $SITE` = 3.0 ]; then
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+    sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
     	-e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '\,</h1>,a\
 This site contains Target Management 3.0 Releases and Updates (R- builds) which are \
@@ -347,7 +347,7 @@ being contributed to the Ganymede coordinated release train (Eclipse 3.4).' \
     	index.html > index.html.new
     mv -f index.html.new index.html
     ## dont keep 2.0.x features in site.xml
-    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+    sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
     	-e '/<!-- BEGIN_3_0_4 -->/,/<!-- END_3_0_4 -->/d' \
@@ -366,7 +366,7 @@ elif [ `basename $SITE` = 3.1 ]; then
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+    sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
     	-e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '\,</h1>,a\
 This site contains Target Management 3.1 Releases and Updates (R- builds) which are \
@@ -374,7 +374,7 @@ being contributed to the Galileo coordinated release train (Eclipse 3.5).' \
     	index.html > index.html.new
     mv -f index.html.new index.html
     ## dont keep 2.0.x features in site.xml
-    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+    sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
         -e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_0_3 -->/d' \
@@ -393,15 +393,15 @@ elif [ `basename $SITE` = 3.2 ]; then
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+    sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
     	-e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '\,</h1>,a\
 This site contains Target Management 3.2 Releases and Updates (R- builds) which are \
-being contributed to the Helios coordinated release train (Eclipse 3.6).' \
+being contributed to the Eclipse Helios coordinated release train (Eclipse 3.6.x).' \
     	index.html > index.html.new
     mv -f index.html.new index.html
     ## dont keep 2.0.x features in site.xml
-    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+    sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- BEGIN_3_2 -->/d' \
         site.xml > site.xml.new
@@ -499,7 +499,7 @@ if [ x${DO_STATS} = x1 ]; then
     -metadataRepository file:${SITE} \
     -artifactRepository file:${SITE} \
     -compress \
-    -p2.statsURI http://download.eclipse.org/stats/dsdp/tm \
+    -p2.statsURI http://download.eclipse.org/stats/tm \
     -p2.statsTrackedFeatures org.eclipse.rse.sdk,org.eclipse.rse.dstore,org.eclipse.rse.core,org.eclipse.rse.useractions,org.eclipse.rse.examples,org.eclipse.rse.tests,org.eclipse.rse.wince,org.eclipse.tm.terminal.view,org.eclipse.tm.terminal.local \
     -p2.statsTrackedBundles org.eclipse.rse.core,org.eclipse.rse.core.source,org.eclipse.tm.terminal \
     -p2.statsSuffix _tm330

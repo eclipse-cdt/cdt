@@ -20,8 +20,8 @@
                 %license
         </license>
         <url>
-                <update url="http://download.eclipse.org/dsdp/tm/updates/3.2" label="%tmUpdateSiteName"/>
-                <discovery url="http://download.eclipse.org/dsdp/tm/updates/3.2" label="%tmUpdateSiteName"/>
+                <update url="http://download.eclipse.org/tm/updates/3.2" label="%tmUpdateSiteName"/>
+                <discovery url="http://download.eclipse.org/tm/updates/3.2" label="%tmUpdateSiteName"/>
         </url>
         <plugin id="org.apache.commons.net.source" version="0.0.0" download-size="189" install-size="325" unpack="false" />
         <plugin id="org.eclipse.rse.services.files.ftp.source" version="0.0.0" download-size="0" install-size="0" unpack="false"/>

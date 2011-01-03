@@ -91,7 +91,7 @@
    </extension>
    
    <extension point="org.eclipse.help.toc">
-      <toc primary="true" file="toc.xml" category="DSDP.TM"/>
+      <toc primary="true" file="toc.xml" category="Eclipse.TM"/>
    </extension>
    <!--
    <extension

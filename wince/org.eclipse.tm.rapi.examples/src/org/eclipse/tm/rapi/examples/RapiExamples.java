@@ -233,7 +233,7 @@ public class RapiExamples {
 			statFile("\\foo.txt");
 			System.out.println(">>> printDeviceTree()");
 			printDeviceTree("\\", 0);
-			openUrl("www.eclipse.org/dsdp/tm");
+			openUrl("www.eclipse.org/tm");
 			session.uninit();
 		} catch (RapiException e) {
 			e.printStackTrace();

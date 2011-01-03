@@ -16,7 +16,7 @@ Contributors:
 -->
 <plugin>
 	<extension point="org.eclipse.help.toc">
-		<toc file="toc.xml" primary="true" category="DSDP.TM"/>
+		<toc file="toc.xml" primary="true" category="Eclipse.TM"/>
 	</extension>
 </plugin>
 

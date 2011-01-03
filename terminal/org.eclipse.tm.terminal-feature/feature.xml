@@ -29,8 +29,8 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.2"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.2"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.2"/>
+      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.2"/>
    </url>
 
    <requires>

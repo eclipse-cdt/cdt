@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Preferences;
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
  * of a work in progress. There is no guarantee that this API will work or that
  * it will remain the same. Please do not use this API without consulting with
- * the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
+ * the <a href="http://www.eclipse.org/tm/">Target Management</a> team.
  * </p>
  */
 public class PreferenceSettingStore implements ISettingsStore {

@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -213,17 +214,22 @@ public class PropertyManager {
 			storeData(cfg, map);
 	}
 
-	protected Properties mapToProps(Map<String, Properties> map){
+	protected Properties mapToProps(Map map){
 		Properties props = null;
 		if(map != null){
 			synchronized(map){
 				if(map.size() > 0){
 					props = new Properties();
-					for (Entry<String, Properties> entry : map.entrySet()) {
-						String key = entry.getKey();
+					for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
+						Map.Entry entry = (Map.Entry)iter.next();
+						String key = (String)entry.getKey();
 						String value = null;
-						Properties oVal = entry.getValue();
-						value = propsToString(oVal);
+						Object oVal = entry.getValue();
+						if(oVal instanceof Properties){
+							value = propsToString((Properties)oVal);
+						} else if (oVal instanceof String){
+							value = (String)oVal;
+						}
 						
 						if(key != null && value != null)
 							props.setProperty(key, value);

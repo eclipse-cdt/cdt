@@ -22,9 +22,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 public class ModificationStatus extends Status implements IModificationStatus {
-	private HashMap fUnsupportedProperties = new HashMap();
-	private HashMap fUnsupportedRequiredProperties = new HashMap();
-	private HashSet fUndefinedProperties = new HashSet();
+	private HashMap<String, String> fUnsupportedProperties = new HashMap<String, String>();
+	private HashMap<String, String> fUnsupportedRequiredProperties = new HashMap<String, String>();
+	private HashSet<String> fUndefinedProperties = new HashSet<String>();
 	private ITool[][] fToolConflicts;
 	private ITool[] fNonManagedBuildTools;
 
@@ -44,9 +44,9 @@ public class ModificationStatus extends Status implements IModificationStatus {
 		fNonManagedBuildTools = new ITool[0];
 	}
 
-	ModificationStatus(Map unsupportedRequiredProps,
-			Map unsupportedProps,
-			Set undefinedProps,
+	ModificationStatus(Map<String, String> unsupportedRequiredProps,
+			Map<String, String> unsupportedProps,
+			Set<String> undefinedProps,
 			ITool[][] conflicts,
 			ITool nonMbsTools[]){
 		super(IStatus.OK, ManagedBuilderCorePlugin.getUniqueIdentifier(), ""); //$NON-NLS-1$
@@ -104,16 +104,19 @@ public class ModificationStatus extends Status implements IModificationStatus {
 			
 	}
 	
-	public Map getUnsupportedProperties(){
-		return (HashMap)fUnsupportedProperties.clone();
+	@SuppressWarnings("unchecked")
+	public Map<String, String> getUnsupportedProperties(){
+		return (HashMap<String, String>)fUnsupportedProperties.clone();
 	}
 
-	public Map getUnsupportedRequiredProperties(){
-		return (HashMap)fUnsupportedRequiredProperties.clone();
+	@SuppressWarnings("unchecked")
+	public Map<String, String> getUnsupportedRequiredProperties(){
+		return (HashMap<String, String>)fUnsupportedRequiredProperties.clone();
 	}
 
-	public Set getUndefinedProperties(){
-		return (HashSet)fUndefinedProperties.clone();
+	@SuppressWarnings("unchecked")
+	public Set<String> getUndefinedProperties(){
+		return (HashSet<String>)fUndefinedProperties.clone();
 	}
 
 	public ITool[][] getToolsConflicts(){

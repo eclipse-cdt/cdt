@@ -57,10 +57,10 @@ public class ManagedCProjectNature implements IProjectNature {
 			ICommand command = commands[i];
 			if (command.getBuilderName().equals("org.eclipse.cdt.core.cbuilder")) { //$NON-NLS-1$
 				// Remove the command
-				Vector vec = new Vector(Arrays.asList(commands));
+				Vector<ICommand> vec = new Vector<ICommand>(Arrays.asList(commands));
 				vec.removeElementAt(i);
 				vec.trimToSize();
-				ICommand[] tempCommands = (ICommand[]) vec.toArray(new ICommand[commands.length-1]); 
+				ICommand[] tempCommands = vec.toArray(new ICommand[commands.length-1]); 
 				description.setBuildSpec(tempCommands);
 				break;
 			}
@@ -206,9 +206,9 @@ public class ManagedCProjectNature implements IProjectNature {
 	public static void removeNature(IProject project, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = project.getDescription();
 		String[] prevNatures = description.getNatureIds();
-		List newNatures = new ArrayList(Arrays.asList(prevNatures));
+		List<String> newNatures = new ArrayList<String>(Arrays.asList(prevNatures));
 		newNatures.remove(natureId);
-		description.setNatureIds((String[])newNatures.toArray(new String[newNatures.size()]));
+		description.setNatureIds(newNatures.toArray(new String[newNatures.size()]));
 		project.setDescription(description, monitor);
 	}
 

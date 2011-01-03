@@ -45,7 +45,7 @@ public interface IModificationStatus extends IStatus {
 	 * If value is not null then the given value is not supported
 	 * If Value is not null then the fiven property is not supported
 	 */
-	Map getUnsupportedProperties();
+	Map<String, String> getUnsupportedProperties();
 
 	/**
 	 * 
@@ -53,13 +53,13 @@ public interface IModificationStatus extends IStatus {
 	 * If value is not null then the given value is not supported
 	 * If Value is not null then the fiven property is not supported
 	 */
-	Map getUnsupportedRequiredProperties();
+	Map<String, String> getUnsupportedRequiredProperties();
 
 	/**
 	 * 
 	 * @return Set containing undefined property IDs
 	 */
-	Set getUndefinedProperties();
+	Set<String> getUndefinedProperties();
 
 	ITool[][] getToolsConflicts();
 	

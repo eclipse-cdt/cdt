@@ -12,7 +12,6 @@ package org.eclipse.cdt.managedbuilder.core;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCProjectNature;
@@ -105,9 +104,9 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 	}
 
 	private static class Visitor implements IResourceDeltaVisitor {
-		private Set fProjSet;
+		private Set<IProject> fProjSet;
 		
-		Visitor(Set projSet){
+		Visitor(Set<IProject> projSet){
 			fProjSet = projSet;
 		}
 
@@ -129,7 +128,7 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 							String cachedIds[] = ConfigurationDataProvider.getNaturesIdsUsedOnCache(cfgs[i]);
 							if(checkNaturesNeedUpdate(cachedIds, natureIds)){
 								if(fProjSet == null)
-									fProjSet = new HashSet();
+									fProjSet = new HashSet<IProject>();
 								
 								fProjSet.add(project);
 								break;
@@ -143,7 +142,7 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 			}
 		}
 		
-		Set getProjSet(){
+		Set<IProject> getProjSet(){
 			return fProjSet;
 		}
 		
@@ -153,9 +152,9 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 		if(oldIds == null)
 			return true;
 		
-		Set oldSet = new HashSet(Arrays.asList(oldIds));
-		Set oldSetCopy = new HashSet(oldSet);
-		Set newSet = new HashSet(Arrays.asList(newIds));
+		Set<String> oldSet = new HashSet<String>(Arrays.asList(oldIds));
+		Set<String> oldSetCopy = new HashSet<String>(oldSet);
+		Set<String> newSet = new HashSet<String>(Arrays.asList(newIds));
 		oldSet.removeAll(newSet);
 		newSet.removeAll(oldSetCopy);
 		if(oldSet.contains(CProjectNature.C_NATURE_ID)
@@ -186,7 +185,7 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 		}
 	}
 
-	private void postProcess(final Set projSet){
+	private void postProcess(final Set<IProject> projSet){
 		if(projSet == null || projSet.size() == 0)
 			return;
 
@@ -197,8 +196,7 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				for(Iterator iter = projSet.iterator(); iter.hasNext();){
-					IProject project = (IProject)iter.next();
+				for (IProject project : projSet) {
 					try {
 						ManagedBuildManager.updateCoreSettings(project);
 					} catch (CoreException e) {

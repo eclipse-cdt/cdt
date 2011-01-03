@@ -108,9 +108,9 @@ public class ToolListModificationInfo {
 		ToolInfo[][] conflictInfos = calculateConflictingTools(fResultingTools);
 		ITool[][] conflicting = toToolArray(conflictInfos, true);
 		
-		Map unspecifiedRequiredProps = new HashMap();
-		Map unspecifiedProps = new HashMap();
-		Set undefinedSet = new HashSet();
+		Map<String, String> unspecifiedRequiredProps = new HashMap<String, String>();
+		Map<String, String> unspecifiedProps = new HashMap<String, String>();
+		Set<String> undefinedSet = new HashSet<String>();
 		IConfiguration cfg = fRcInfo.getParent();
 		ITool[] nonManagedTools = null;
 		if(cfg.isManagedBuildOn() && cfg.supportsBuild(true)){

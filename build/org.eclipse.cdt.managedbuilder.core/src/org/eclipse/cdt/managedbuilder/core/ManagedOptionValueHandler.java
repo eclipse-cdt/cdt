@@ -95,16 +95,15 @@ public class ManagedOptionValueHandler implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler#isDefaultValue(IConfiguration,IToolChain,IOption,String)
 	 */
-	public boolean isDefaultValue(IBuildObject configuration, 
-                      IHoldsOptions holder, 
-                      IOption option, String extraArgument) {
+	public boolean isDefaultValue(IBuildObject configuration, IHoldsOptions holder, IOption option, String extraArgument) {
 		// Get the default Value
-	   Object defaultValue = option.getDefaultValue();
-	   if(defaultValue instanceof List){
-		   List list = (List)defaultValue;
-		   defaultValue = list.toArray(new String[list.size()]);
-	   }
-	   
+		Object defaultValue = option.getDefaultValue();
+		if (defaultValue instanceof List) {
+			@SuppressWarnings("unchecked")
+			List<String> list = (List<String>) defaultValue;
+			defaultValue = list.toArray(new String[list.size()]);
+		}
+
 		try {
 			// Figure out which type the option is and implement default behaviour for it.
 			switch (option.getValueType()) {

@@ -931,7 +931,7 @@ public class ToolReference implements IToolReference {
 	public void setErrorParserIds(String ids) {
 	}
 	
-	public List getInterfaceExtensions() {
+	public List<String> getInterfaceExtensions() {
 		return null;
 	}
 	

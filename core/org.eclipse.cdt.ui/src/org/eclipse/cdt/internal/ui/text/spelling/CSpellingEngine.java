@@ -83,9 +83,9 @@ public class CSpellingEngine extends SpellingEngine {
 			IDocCommentOwner owner= null;
 			if (document instanceof IDocumentExtension3) {
 				IDocumentPartitioner partitioner= ((IDocumentExtension3)document).getDocumentPartitioner(ICPartitions.C_PARTITIONING);
-					if (partitioner instanceof FastCPartitioner) {
-						owner= ((FastCPartitioner)partitioner).getDocCommentOwner();
-					}
+				if (partitioner instanceof FastCPartitioner) {
+					owner= ((FastCPartitioner)partitioner).getDocCommentOwner();
+				}
 			}
 			
 			try {

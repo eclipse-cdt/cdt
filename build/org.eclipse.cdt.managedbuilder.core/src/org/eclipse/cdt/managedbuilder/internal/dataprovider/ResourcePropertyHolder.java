@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 
 class ResourcePropertyHolder extends ResourceChangeHandlerBase {
-	private Map fRcMap = new HashMap();
+	private Map<String, Map<String, Boolean>> fRcMap = new HashMap<String, Map<String, Boolean>>();
 	private boolean fProjectOnly;
 	
 	public ResourcePropertyHolder(boolean projectOnly){
@@ -63,26 +63,26 @@ class ResourcePropertyHolder extends ResourceChangeHandlerBase {
 		return new ResourceMoveHandler();
 	}
 	
-	protected Object keyForResource(IResource rc){
+	protected String keyForResource(IResource rc){
 		return rc.getFullPath().toString();
 	}
 
-	public synchronized Object getProperty(IResource rc, Object propKey) throws IllegalArgumentException {
+	public synchronized Boolean getProperty(IResource rc, String propKey) throws IllegalArgumentException {
 		if(!isValidResource(rc))
 			throw new IllegalArgumentException();
 
-		Map map = getResourcePropertyMap(rc, false);
+		Map<String, Boolean> map = getResourcePropertyMap(rc, false);
 		if(map == null)
 			return null;
 		
 		return map.get(propKey);
 	}
 	
-	private Map getResourcePropertyMap(IResource rc, boolean create){
-		Object key = keyForResource(rc);
-		Map map = (Map)fRcMap.get(key);
+	private Map<String, Boolean> getResourcePropertyMap(IResource rc, boolean create){
+		String key = keyForResource(rc);
+		Map<String, Boolean> map = fRcMap.get(key);
 		if(map == null && create){
-			map = new HashMap();
+			map = new HashMap<String, Boolean>();
 			fRcMap.put(key, map);
 		}
 		
@@ -90,15 +90,15 @@ class ResourcePropertyHolder extends ResourceChangeHandlerBase {
 	}
 
 	private synchronized void removeResourcePropertyMap(IResource rc){
-		Object key = keyForResource(rc);
+		String key = keyForResource(rc);
 		fRcMap.remove(key);
 	}
 
 	private synchronized void moveResourcePropertyMap(IResource fromRc, IResource toRc){
-		Object fromKey = keyForResource(fromRc);
-		Object toKey = keyForResource(toRc);
+		String fromKey = keyForResource(fromRc);
+		String toKey = keyForResource(toRc);
 
-		Map fromMap = (Map)fRcMap.remove(fromKey);
+		Map<String, Boolean> fromMap = fRcMap.remove(fromKey);
 		if(fromMap != null){
 			fRcMap.put(toKey, fromMap);
 		} else {
@@ -106,24 +106,24 @@ class ResourcePropertyHolder extends ResourceChangeHandlerBase {
 		}
 	}
 
-	public synchronized Object setProperty(IResource rc, Object propKey, Object value) throws IllegalArgumentException {
+	public synchronized Boolean setProperty(IResource rc, String propKey, Boolean value) throws IllegalArgumentException {
 		if(!isValidResource(rc))
 			throw new IllegalArgumentException();
 		
 		if(value == null)
 			return removeProperty(rc, propKey);
 		
-		Map map = getResourcePropertyMap(rc, true);
+		Map<String, Boolean> map = getResourcePropertyMap(rc, true);
 		return map.put(propKey, value);
 	}
 
-	private synchronized Object removeProperty(IResource rc, Object propKey){
-		Map map = getResourcePropertyMap(rc, false);
+	private synchronized Boolean removeProperty(IResource rc, String propKey){
+		Map<String, Boolean> map = getResourcePropertyMap(rc, false);
 		
 		if(map == null)
 			return null;
 		
-		Object old = map.remove(propKey);
+		Boolean old = map.remove(propKey);
 		
 		if(map.size() == 0)
 			removeResourcePropertyMap(rc);

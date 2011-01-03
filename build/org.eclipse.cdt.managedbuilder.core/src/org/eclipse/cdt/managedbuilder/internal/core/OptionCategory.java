@@ -40,7 +40,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 
 	//  Parent and children
 	private IHoldsOptions holder;
-	private List children;			// Note: These are logical Option Category children, not "model" children
+	private List<OptionCategory> children;			// Note: These are logical Option Category children, not "model" children
 	//  Managed Build model attributes
 	private IOptionCategory owner;	// The logical Option Category parent
 	private String ownerId;
@@ -213,14 +213,14 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	 */
 	public IOptionCategory[] getChildCategories() {
 		if (children != null)
-			return (IOptionCategory[])children.toArray(new IOptionCategory[children.size()]);
+			return children.toArray(new IOptionCategory[children.size()]);
 		else
 			return emtpyCategories;
 	}
 
 	public void addChildCategory(OptionCategory category) {
 		if (children == null)
-			children = new ArrayList();
+			children = new ArrayList<OptionCategory>();
 		children.add(category);
 	}
 	

@@ -11,9 +11,9 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -27,11 +27,11 @@ public class SupportedProperties implements IBuildPropertiesRestriction {
 	public static final String ID = "id";				//$NON-NLS-1$
 	public static final String REQUIRED = "required";				//$NON-NLS-1$
 
-	private HashMap fSupportedProperties = new HashMap();
+	private HashMap<String, SupportedProperty> fSupportedProperties = new HashMap<String, SupportedProperty>();
 	
 	private class SupportedProperty {
 		private boolean fIsRequired;
-		private Set fValues = new HashSet();
+		private Set<String> fValues = new HashSet<String>();
 		private String fId;
 		
 		SupportedProperty(String id){
@@ -74,15 +74,15 @@ public class SupportedProperties implements IBuildPropertiesRestriction {
 			}
 		}
 */		
-		public boolean isValid(){
-			return fId != null && fValues.size() != 0;
-		}
+//		public boolean isValid(){
+//			return fId != null && fValues.size() != 0;
+//		}
 		
 		public boolean isRequired(){
 			return fIsRequired;
 		}
 		
-		public void addValueIds(Set ids){
+		public void addValueIds(Set<String> ids){
 			fValues.addAll(ids);
 		}
 		
@@ -91,7 +91,7 @@ public class SupportedProperties implements IBuildPropertiesRestriction {
 		}
 		
 		public String[] getSupportedValues(){
-			return (String[])fValues.toArray(new String[fValues.size()]);
+			return fValues.toArray(new String[fValues.size()]);
 		}
 		
 	}
@@ -113,7 +113,7 @@ public class SupportedProperties implements IBuildPropertiesRestriction {
 //				if(type == null)
 //					continue;
 				
-				Set set = new HashSet();
+				Set<String> set = new HashSet<String>();
 				
 				IManagedConfigElement values[] = child.getChildren();
 				for(int k = 0; k < values.length; k++){
@@ -132,7 +132,7 @@ public class SupportedProperties implements IBuildPropertiesRestriction {
 				}
 				
 				if(set.size() != 0){
-					SupportedProperty stored = (SupportedProperty)fSupportedProperties.get(id);
+					SupportedProperty stored = fSupportedProperties.get(id);
 					if(stored == null){
 						stored = new SupportedProperty(id);
 						fSupportedProperties.put(id, stored);
@@ -155,7 +155,7 @@ public class SupportedProperties implements IBuildPropertiesRestriction {
 	
 	public boolean supportsValue(String type, String value){
 		boolean suports = false;
-		SupportedProperty prop = (SupportedProperty)fSupportedProperties.get(type);
+		SupportedProperty prop = fSupportedProperties.get(type);
 		if(prop != null){
 			suports = prop.supportsValue(value);
 		}
@@ -168,13 +168,13 @@ public class SupportedProperties implements IBuildPropertiesRestriction {
 //	}
 
 	public String[] getRequiredTypeIds() {
-		List list = new ArrayList(fSupportedProperties.size());
-		for(Iterator iter = fSupportedProperties.values().iterator(); iter.hasNext();){
-			SupportedProperty prop = (SupportedProperty)iter.next();
+		List<String> list = new ArrayList<String>(fSupportedProperties.size());
+		Collection<SupportedProperty> values = fSupportedProperties.values();
+		for (SupportedProperty prop : values) {
 			if(prop.isRequired())
 				list.add(prop.getId());
 		}
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
 	public String[] getSupportedTypeIds() {
@@ -184,14 +184,14 @@ public class SupportedProperties implements IBuildPropertiesRestriction {
 	}
 
 	public String[] getSupportedValueIds(String typeId) {
-		SupportedProperty prop = (SupportedProperty)fSupportedProperties.get(typeId);
+		SupportedProperty prop = fSupportedProperties.get(typeId);
 		if(prop != null)
 			return prop.getSupportedValues();
 		return new String[0];
 	}
 
 	public boolean requiresType(String typeId) {
-		SupportedProperty prop = (SupportedProperty)fSupportedProperties.get(typeId);
+		SupportedProperty prop = fSupportedProperties.get(typeId);
 		if(prop != null)
 			return prop.isRequired();
 		return false;

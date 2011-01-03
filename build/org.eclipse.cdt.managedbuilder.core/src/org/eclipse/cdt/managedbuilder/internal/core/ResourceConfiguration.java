@@ -13,7 +13,6 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +25,6 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
-import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
@@ -49,8 +47,8 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	private static final String REBUILD_STATE = "rebuildState";  //$NON-NLS-1$
 
 	//  Parent and children
-	private List toolList;
-	private Map toolMap;
+	private List<ITool> toolList;
+	private Map<String, ITool> toolMap;
 	//  Managed Build model attributes
 	private Integer rcbsApplicability;
 	private String toolsToInvoke;
@@ -173,7 +171,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	 * @param cloneConfig The <code>ResourceConfiguration</code> to copy the settings from.
 	 * @param id A unique ID for the new resource configuration.
 	 */
-	public ResourceConfiguration(IConfiguration cfg, ResourceConfiguration cloneConfig, String id, Map superClassIdMap, boolean cloneChildren) {
+	public ResourceConfiguration(IConfiguration cfg, ResourceConfiguration cloneConfig, String id, Map<IPath, Map<String, String>> superClassIdMap, boolean cloneChildren) {
 		super(cfg, cloneConfig, id);
 		
 		isExtensionResourceConfig = cfg.isExtensionElement();
@@ -196,17 +194,15 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		boolean copyIds = cloneChildren && id.equals(cloneConfig.id);
 		// Clone the resource configuration's tool children
 		if (cloneConfig.toolList != null) {
-			Iterator iter = cloneConfig.getToolList().listIterator();
-			while (iter.hasNext()) {
-				Tool toolChild = (Tool) iter.next();
+			for (ITool toolChild : cloneConfig.getToolList()) {
 				String subId = null;
 				String subName;
 				
-				Map curIdMap = (Map)superClassIdMap.get(cloneConfig.getPath());
+				Map<String, String> curIdMap = superClassIdMap.get(cloneConfig.getPath());
 				ITool extTool = ManagedBuildManager.getExtensionTool(toolChild);
 				if(curIdMap != null){
 					if(extTool != null){
-						subId = (String)curIdMap.get(extTool.getId());
+						subId = curIdMap.get(extTool.getId());
 					}
 				}
 				
@@ -253,9 +249,9 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 								}
 							} else {
 								superId = copyIds ? otherSuperTool.getId() : ManagedBuildManager.calculateChildId(otherExtTool.getId(), null);
-								Map idMap = (Map)superClassIdMap.get(otherRcInfo.getPath());
+								Map<String, String> idMap = superClassIdMap.get(otherRcInfo.getPath());
 								if(idMap == null){
-									idMap = new HashMap();
+									idMap = new HashMap<String, String>();
 									superClassIdMap.put(otherRcInfo.getPath(), idMap);
 								}
 								idMap.put(otherExtTool.getId(), superId);
@@ -290,12 +286,11 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 
 				Tool newTool = null;
 				if(toolSuperClass != null)
-					newTool = new Tool(this, toolSuperClass, subId, subName, toolChild);
+					newTool = new Tool(this, toolSuperClass, subId, subName, (Tool)toolChild);
 				else 
-					newTool = new Tool(this, superId, subId, subName, toolChild);
+					newTool = new Tool(this, superId, subId, subName, (Tool)toolChild);
 
-				if(newTool != null)
-					addTool(newTool);
+				addTool(newTool);
 			}
 		}
 		
@@ -323,15 +318,13 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				
 		// Clone the resource configuration's tool children
 		if (baseInfo.toolList != null) {
-			Iterator iter = baseInfo.getToolList().listIterator();
-			while (iter.hasNext()) {
-				Tool toolChild = (Tool) iter.next();
+			for (ITool toolChild : baseInfo.getToolList()) {
 				ITool superTool = toolChild.getSuperClass();
 				String baseId = superTool != null ? superTool.getId() : toolChild.getId();
 				String subId = ManagedBuildManager.calculateChildId(baseId, null);
 				String subName = toolChild.getName();
 
-				Tool newTool = new Tool(this, superTool, subId, subName, toolChild);
+				Tool newTool = new Tool(this, superTool, subId, subName, (Tool)toolChild);
 				addTool(newTool);
 			}
 		}
@@ -429,12 +422,10 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		}
 		
 		// Serialize my children
-		List toolElements = getToolList();
-		Iterator iter = toolElements.listIterator();
-		while (iter.hasNext()) {
-			Tool tool = (Tool) iter.next();
+		List<ITool> toolElements = getToolList();
+		for (ITool tool : toolElements) {
 			ICStorageElement toolElement = element.createChild(ITool.TOOL_ELEMENT_NAME);
-			tool.serialize(toolElement);
+			((Tool)tool).serialize(toolElement);
 		}
 		
 		// I am clean now
@@ -450,11 +441,10 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IResourceConfiguration#getTools()
 	 */
 	public ITool[] getTools() {
-		Tool[] tools = new Tool[getToolList().size()];
-		Iterator iter = getToolList().listIterator();
+		List<ITool> toolList = getToolList();
+		ITool[] tools = new ITool[toolList.size()];
 		int i = 0;
-		while (iter.hasNext()) {
-			Tool tool = (Tool)iter.next();
+		for (ITool tool : toolList) {
 			tools[i++] = tool; 
 		}
 		return tools;
@@ -473,9 +463,9 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	 * 
 	 * @return List containing the tools
 	 */
-	private List getToolList() {
+	private List<ITool> getToolList() {
 		if (toolList == null) {
-			toolList = new ArrayList();
+			toolList = new ArrayList<ITool>();
 		}
 		return toolList;
 	}
@@ -485,9 +475,9 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	 * 
 	 * @return
 	 */
-	private Map getToolMap() {
+	private Map<String, ITool> getToolMap() {
 		if (toolMap == null) {
-			toolMap = new HashMap();
+			toolMap = new HashMap<String, ITool>();
 		}
 		return toolMap;
 	}
@@ -735,9 +725,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			return true;
 		
 		// Otherwise see if any tools need saving
-		Iterator iter = getToolList().listIterator();
-		while (iter.hasNext()) {
-			Tool toolChild = (Tool) iter.next();
+		for (ITool toolChild : getToolList()) {
 			if (toolChild.isDirty()) return true;
 		}
 		
@@ -755,11 +743,9 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 
  		// Propagate "false" to the children
 		if (!isDirty) {
-			Iterator iter = getToolList().listIterator();
-			while (iter.hasNext()) {
-				Tool toolChild = (Tool) iter.next();
+			for (ITool toolChild : getToolList()) {
 				toolChild.setDirty(false);
-			}		    
+			}
 		}
 	}
 	
@@ -772,10 +758,8 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			resolved = true;
 
 			//  Call resolveReferences on our children
-			Iterator iter = getToolList().listIterator();
-			while (iter.hasNext()) {
-				Tool toolChild = (Tool) iter.next();
-				toolChild.resolveReferences();
+			for (ITool toolChild : getToolList()) {
+				((Tool)toolChild).resolveReferences();
 			}
 		}
 	}
@@ -811,15 +795,15 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			tool.setToolCommand(command);
 	}
 	
-	private IBuildObject getHoldersParent(IOption option) {
-		IHoldsOptions holder = option.getOptionHolder();
-		if (holder instanceof ITool) {
-			return ((ITool)holder).getParent();
-		} else if (holder instanceof IToolChain) {
-			return ((IToolChain)holder).getParent();
-		}
-		return null;
-	}
+//	private IBuildObject getHoldersParent(IOption option) {
+//		IHoldsOptions holder = option.getOptionHolder();
+//		if (holder instanceof ITool) {
+//			return ((ITool)holder).getParent();
+//		} else if (holder instanceof IToolChain) {
+//			return ((IToolChain)holder).getParent();
+//		}
+//		return null;
+//	}
 	
 	public IResource getOwner() {
 		return getParent().getOwner();
@@ -850,8 +834,8 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	public void updateManagedBuildRevision(String revision){
 		super.updateManagedBuildRevision(revision);
 		
-		for(Iterator iter = getToolList().iterator(); iter.hasNext();){
-			((Tool)iter.next()).updateManagedBuildRevision(revision);
+		for (ITool tool :  getToolList()) {
+			((Tool)tool).updateManagedBuildRevision(revision);
 		}
 	}
 	
@@ -908,14 +892,14 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	
 	public CLanguageData[] getCLanguageDatas() {
 		ITool tools[] = getTools/*ToInvoke*/();
-		List list = new ArrayList();
-		for(int i = 0; i < tools.length; i++){
-			CLanguageData datas[] = tools[i].getCLanguageDatas();
+		List<CLanguageData> list = new ArrayList<CLanguageData>();
+		for (ITool tool : tools) {
+			CLanguageData datas[] = tool.getCLanguageDatas();
 			for(int j = 0; j < datas.length; j++){
 				list.add(datas[j]);
 			}
 		}
-		return (BuildLanguageData[])list.toArray(new BuildLanguageData[list.size()]);
+		return list.toArray(new BuildLanguageData[list.size()]);
 	}
 
 	public IToolChain getBaseToolChain() {
@@ -961,7 +945,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	}
 
 	@Override
-	public Set contributeErrorParsers(Set set) {
+	public Set<String> contributeErrorParsers(Set<String> set) {
 		return contributeErrorParsers(getToolsToInvoke(), set);
 	}
 
@@ -971,15 +955,14 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	}
 
 	@Override
-	void removeErrorParsers(Set set) {
+	void removeErrorParsers(Set<String> set) {
 		removeErrorParsers(getToolsToInvoke(), set);
 	}
 
 	@Override
 	void resolveProjectReferences(boolean onLoad){
-		for(Iterator iter = getToolList().iterator(); iter.hasNext();){
-			Tool tool = (Tool)iter.next();
-			tool.resolveProjectReferences(onLoad);
+		for (ITool tool : getToolList()) {
+			((Tool)tool).resolveProjectReferences(onLoad);
 		}
 	}
 
@@ -1027,10 +1010,9 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	}
 
 	@Override
-	void applyToolsInternal(ITool[] resultingTools,
-			ToolListModificationInfo info) {
-		List list = getToolList();
-		Map map = getToolMap();
+	void applyToolsInternal(ITool[] resultingTools, ToolListModificationInfo info) {
+		List<ITool> list = getToolList();
+		Map<String, ITool> map = getToolMap();
 		
 		list.clear();
 		map.clear();

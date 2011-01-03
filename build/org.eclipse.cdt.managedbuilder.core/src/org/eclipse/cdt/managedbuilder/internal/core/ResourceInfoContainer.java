@@ -50,7 +50,7 @@ public class ResourceInfoContainer {
 		return null;
 	}
 
-	public IResourceInfo[] getResourceInfos(Class clazz) {
+	public IResourceInfo[] getResourceInfos(Class<? extends IResourceInfo> clazz) {
 		return getResourceInfos(ICSettingBase.SETTING_FILE | ICSettingBase.SETTING_FOLDER, clazz);
 	}
 
@@ -62,7 +62,7 @@ public class ResourceInfoContainer {
 		return getResourceInfos(kind, IResourceInfo.class);
 	}
 	
-	public IResourceInfo[] getResourceInfos(int kind, Class clazz){
+	public IResourceInfo[] getResourceInfos(int kind, Class<? extends IResourceInfo> clazz){
 		List<IResourceInfo> list = getRcInfoList(kind);
 
 		IResourceInfo datas[] = (IResourceInfo[])Array.newInstance(clazz, list.size());

@@ -39,9 +39,9 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	private String unusedChildren;
 	private String errorParserIds;
 	private Boolean isAbstract;
-	private List osList;
-	private List archList;
-	private List binaryParserList;
+	private List<String> osList;
+	private List<String> archList;
+	private List<String> binaryParserList;
 	//  Miscellaneous
 	private boolean isExtensionTargetPlatform = false;
 	private boolean isDirty = false;
@@ -144,8 +144,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		isExtensionTargetPlatform = false;
 		fTargetPlatformData = new BuildTargetPlatformData(this);
 			
-		if ( targetPlatform != null)
-			setManagedBuildRevision(targetPlatform.getManagedBuildRevision());
+		setManagedBuildRevision(targetPlatform.getManagedBuildRevision());
 		
 		//  Copy the remaining attributes
 		if (targetPlatform.unusedChildren != null) {
@@ -158,13 +157,13 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 			isAbstract = new Boolean(targetPlatform.isAbstract.booleanValue());
 		}
 		if (targetPlatform.osList != null) {
-			osList = new ArrayList(targetPlatform.osList);
+			osList = new ArrayList<String>(targetPlatform.osList);
 		}
 		if (targetPlatform.archList != null) {
-			archList = new ArrayList(targetPlatform.archList);
+			archList = new ArrayList<String>(targetPlatform.archList);
 		}
 		if (targetPlatform.binaryParserList != null) {
-			binaryParserList = new ArrayList(targetPlatform.binaryParserList);
+			binaryParserList = new ArrayList<String>(targetPlatform.binaryParserList);
 		}
 		
 		setDirty(true);
@@ -204,7 +203,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		// Get the comma-separated list of valid OS
 		String os = element.getAttribute(OS_LIST);
 		if (os != null) {
-			osList = new ArrayList();
+			osList = new ArrayList<String>();
 			String[] osTokens = os.split(","); //$NON-NLS-1$
 			for (int i = 0; i < osTokens.length; ++i) {
 				osList.add(osTokens[i].trim());
@@ -214,7 +213,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		// Get the comma-separated list of valid Architectures
 		String arch = element.getAttribute(ARCH_LIST);
 		if (arch != null) {
-			archList = new ArrayList();
+			archList = new ArrayList<String>();
 			String[] archTokens = arch.split(","); //$NON-NLS-1$
 			for (int j = 0; j < archTokens.length; ++j) {
 				archList.add(archTokens[j].trim());
@@ -224,7 +223,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		// Get the IDs of the binary parsers from a semi-colon-separated list.
 		String bpars = element.getAttribute(BINARY_PARSER); 
 		if (bpars != null) {
-			binaryParserList = new ArrayList();
+			binaryParserList = new ArrayList<String>();
 			String[] bparsTokens = CDataUtil.stringToArray(bpars, ";"); //$NON-NLS-1$
 			for (int j = 0; j < bparsTokens.length; ++j) {
 				binaryParserList.add(bparsTokens[j].trim());
@@ -274,7 +273,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		if (element.getAttribute(OS_LIST) != null) {
 			String os = element.getAttribute(OS_LIST);
 			if (os != null) {
-				osList = new ArrayList();
+				osList = new ArrayList<String>();
 				String[] osTokens = os.split(","); //$NON-NLS-1$
 				for (int i = 0; i < osTokens.length; ++i) {
 					osList.add(osTokens[i].trim());
@@ -286,7 +285,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		if (element.getAttribute(ARCH_LIST) != null) {
 			String arch = element.getAttribute(ARCH_LIST);
 			if (arch != null) {
-				archList = new ArrayList();
+				archList = new ArrayList<String>();
 				String[] archTokens = arch.split(","); //$NON-NLS-1$
 				for (int j = 0; j < archTokens.length; ++j) {
 					archList.add(archTokens[j].trim());
@@ -298,7 +297,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		if (element.getAttribute(BINARY_PARSER) != null) {
 			String bpars = element.getAttribute(BINARY_PARSER);
 			if (bpars != null) {
-				binaryParserList = new ArrayList();
+				binaryParserList = new ArrayList<String>();
 				String[] bparsTokens = CDataUtil.stringToArray(bpars, ";"); //$NON-NLS-1$
 				for (int j = 0; j < bparsTokens.length; ++j) {
 					binaryParserList.add(bparsTokens[j].trim());
@@ -330,10 +329,10 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		}
 
 		if (binaryParserList != null) {
-			Iterator bparsIter = binaryParserList.listIterator();
+			Iterator<String> bparsIter = binaryParserList.listIterator();
 			String listValue = EMPTY_STRING;
 			while (bparsIter.hasNext()) {
-				String current = (String) bparsIter.next();
+				String current = bparsIter.next();
 				listValue += current;
 				if ((bparsIter.hasNext())) {
 					listValue += ";"; //$NON-NLS-1$
@@ -343,10 +342,10 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		}
 
 		if (osList != null) {
-			Iterator osIter = osList.listIterator();
+			Iterator<String> osIter = osList.listIterator();
 			String listValue = EMPTY_STRING;
 			while (osIter.hasNext()) {
-				String current = (String) osIter.next();
+				String current = osIter.next();
 				listValue += current;
 				if ((osIter.hasNext())) {
 					listValue += ","; //$NON-NLS-1$
@@ -356,10 +355,10 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		}
 
 		if (archList != null) {
-			Iterator archIter = archList.listIterator();
+			Iterator<String> archIter = archList.listIterator();
 			String listValue = EMPTY_STRING;
 			while (archIter.hasNext()) {
-				String current = (String) archIter.next();
+				String current = archIter.next();
 				listValue += current;
 				if ((archIter.hasNext())) {
 					listValue += ","; //$NON-NLS-1$
@@ -445,7 +444,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 				return new String[0];
 			}
 		}
-		return (String[]) binaryParserList.toArray(new String[binaryParserList.size()]);
+		return binaryParserList.toArray(new String[binaryParserList.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -461,7 +460,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 				return new String[] {"all"}; //$NON-NLS-1$
 			}
 		}
-		return (String[]) archList.toArray(new String[archList.size()]);
+		return archList.toArray(new String[archList.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -477,7 +476,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 				return new String[] {"all"};	//$NON-NLS-1$
 			}
 		}
-		return (String[]) osList.toArray(new String[osList.size()]);
+		return osList.toArray(new String[osList.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -498,7 +497,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	public void setBinaryParserList(String[] ids) {
 		if(ids != null){
 			if (binaryParserList == null) {
-				binaryParserList = new ArrayList();
+				binaryParserList = new ArrayList<String>();
 			} else {
 				binaryParserList.clear();
 			}
@@ -526,7 +525,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	 */
 	public void setOSList(String[] OSs) {
 		if (osList == null) {
-			osList = new ArrayList();
+			osList = new ArrayList<String>();
 		} else {
 			osList.clear();
 		}
@@ -543,7 +542,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	 */
 	public void setArchList(String[] archs) {
 		if (archList == null) {
-			archList = new ArrayList();
+			archList = new ArrayList<String>();
 		} else {
 			archList.clear();
 		}

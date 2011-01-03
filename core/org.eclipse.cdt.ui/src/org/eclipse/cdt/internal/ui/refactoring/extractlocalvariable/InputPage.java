@@ -62,6 +62,7 @@ public class InputPage extends UserInputWizardPage {
 			}
 		});
 
+		nameText.selectAll();
 		checkName();
 		setControl(control);
 	}

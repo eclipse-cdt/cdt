@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.subsystems.wince;singleton:=true
-Bundle-Version: 0.1.100.qualifier
+Bundle-Version: 0.1.300.qualifier
 Bundle-Activator: org.eclipse.rse.internal.subsystems.files.wince.Activator
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin

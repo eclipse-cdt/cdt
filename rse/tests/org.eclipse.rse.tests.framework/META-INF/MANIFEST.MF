@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.tests.framework;singleton:=true
-Bundle-Version: 2.0.200.qualifier
+Bundle-Version: 2.1.0.qualifier
 Bundle-Activator: org.eclipse.rse.internal.tests.framework.TestFrameworkPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin

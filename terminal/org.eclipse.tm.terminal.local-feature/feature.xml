@@ -41,7 +41,7 @@
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.jface"/>
-      <import plugin="org.eclipse.tm.terminal" version="3.0.0" match="equivalent"/>
+      <import plugin="org.eclipse.tm.terminal" version="3.1.0" match="equivalent"/>
       <import plugin="org.eclipse.tm.terminal.view" version="2.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.externaltools"/>

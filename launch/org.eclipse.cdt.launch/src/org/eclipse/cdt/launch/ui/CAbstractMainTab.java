@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010  Nokia Corporation and others.
+ * Copyright (c) 2010, 2011  Nokia Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,8 @@
  * Contributors:
  *     Ken Ryall (Nokia) - initial API and implementation
  *     IBM Corporation
- *     Alex Collins (Broadcom Corp.) - choose build config automatically
+ *     Alex Collins     (Broadcom Corp.)  - choose build config automatically
+ *     Anna Dushistova  (Mentor Graphics) - [333504] [remote launch] NPE after switching to "Standard Launcher" in Remote Application debug configuration 
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui;
 
@@ -583,7 +584,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	 */
 	@Override
 	protected void updateLaunchConfigurationDialog() {
-		if (fBuildConfigAuto.getSelection())
+		if (fBuildConfigAuto != null && fBuildConfigAuto.getSelection())
 			updateBuildConfigCombo(EMPTY_STRING);
 		super.updateLaunchConfigurationDialog();
 	}

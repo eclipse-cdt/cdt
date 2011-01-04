@@ -21,7 +21,6 @@ import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlockRetrieval;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMData;
@@ -44,6 +43,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
+import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
@@ -87,10 +87,8 @@ public class DsfViewMemoryHandler extends AbstractHandler {
 
 		// This method was mostly lifted from the platform's AddMemoryBlockAction
 
-		IMemoryRenderingType primaryType = DebugUITools.getMemoryRenderingManager().getPrimaryRenderingType(
-				memoryBlock);
-		IMemoryRenderingType renderingTypes[] = DebugUITools.getMemoryRenderingManager().getDefaultRenderingTypes(
-				memoryBlock);
+		IMemoryRenderingType primaryType = DebugUITools.getMemoryRenderingManager().getPrimaryRenderingType(memoryBlock);
+		IMemoryRenderingType renderingTypes[] = DebugUITools.getMemoryRenderingManager().getDefaultRenderingTypes(memoryBlock);
 
 		try {
 			if (primaryType != null) {
@@ -156,9 +154,9 @@ public class DsfViewMemoryHandler extends AbstractHandler {
 			IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval) context.getAdapter(IMemoryBlockRetrieval.class);
 			if (retrieval == null && context instanceof IDebugElement)
 				retrieval = ((IDebugElement)context).getDebugTarget();
-			if (retrieval == null || !(retrieval instanceof DsfMemoryBlockRetrieval))
+			if (retrieval == null || !(retrieval instanceof IMemoryBlockRetrievalExtension))
 				return Status.OK_STATUS;
-			DsfMemoryBlockRetrieval dsfRetrieval = (DsfMemoryBlockRetrieval) retrieval;
+			IMemoryBlockRetrievalExtension dsfRetrieval = (IMemoryBlockRetrievalExtension) retrieval;
 			IMemoryBlockExtension memBlock = dsfRetrieval.getExtendedMemoryBlock(exprString, dmc);
 			renderMemoryBlock(memBlock, memRendSite);
 			return Status.OK_STATUS;

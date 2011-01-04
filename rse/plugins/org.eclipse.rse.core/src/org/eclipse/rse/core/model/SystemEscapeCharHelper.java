@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,11 +14,16 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  * David McKnight   (IBM)        - [276194] cannot open file with '...' in pathname
+ * David McKnight   (IBM)        - [332275] "#" in local file name is changed to "#035" after copy
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
 
 import java.io.File;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * This is a utility class used in the construction of file names.
@@ -53,6 +58,12 @@ public class SystemEscapeCharHelper {
 
 	public String getStringForFileName(String name)
 	{
+		// first do a validation before escaping
+		IStatus status = ResourcesPlugin.getWorkspace().validatePath(name,IResource.FILE);
+		if (status.getCode() == IStatus.OK){ // if it's valid, don't bother escaping
+			return name;
+		}
+		
 		String fileName = name;
 
 		int i = 0;

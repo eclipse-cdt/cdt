@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -40,9 +41,12 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -98,6 +102,9 @@ public class DeclarationGeneratorImpl{
 			IASTSimpleDeclSpecifier declSpec = factory.newSimpleDeclSpecifier();
 			declSpec.setType(kind);
 			returnedDeclSpec = declSpec;
+		}  else if (type instanceof ICPPTemplateInstance) {
+			returnedDeclSpec = getDeclSpecForTemplate((ICPPTemplateInstance) type);
+
 		} else if (type instanceof IBinding) { /* ITypedef, ICompositeType... */ 
 			// BTW - we need to distinguish (and fail explicitly) on literal composites like:
 			// struct {  } aSingleInstance;
@@ -274,25 +281,44 @@ public class DeclarationGeneratorImpl{
 	private boolean typeNeedsNontrivialDeclarator(IType type) {
 		return isPtrOrRefType(type) || type instanceof IArrayType || type instanceof IFunctionType;
 	}
+	
+	private IASTDeclSpecifier getDeclSpecForTemplate(ICPPTemplateInstance type) {
+		IASTName name = getName(type);
+		if (factory instanceof ICPPNodeFactory) {
+			ICPPNodeFactory cppFactory = (ICPPNodeFactory) factory;
+			ICPPASTTemplateId tempId = cppFactory.newTemplateId(name);
+			for (ICPPTemplateArgument arg : type.getTemplateArguments()) {
+				IASTDeclSpecifier argDeclSpec = createDeclSpecFromType(arg.isTypeValue() ? arg
+						.getTypeValue() : arg.getTypeOfNonTypeValue());
+				IASTTypeId typeId = cppFactory.newTypeId(argDeclSpec, null);
+				tempId.addTemplateArgument(typeId);
+			}
+			return factory.newTypedefNameSpecifier(tempId);
+		}
+		return factory.newTypedefNameSpecifier(name);
+	}
 
 	private IASTNamedTypeSpecifier getDeclSpecForBinding(IBinding binding) {
-	
+		IASTName name = getName(binding);
+		return factory.newTypedefNameSpecifier(name);
+	}
+
+	private IASTName getName(IBinding binding) {
 		char[][] qualifiedNameCharArray = CPPVisitor.getQualifiedNameCharArray(binding);
+		IASTName name;
 		if (qualifiedNameCharArray.length > 1) {
-			
-			ICPPASTQualifiedName name = ((ICPPNodeFactory)factory).newQualifiedName();
+
+			name = ((ICPPNodeFactory) factory).newQualifiedName();
 			for (char[] cs : qualifiedNameCharArray) {
-				name.addName(factory.newName(cs));
+				((ICPPASTQualifiedName) name).addName(factory.newName(cs));
 			}
-			return factory.newTypedefNameSpecifier(name);
-			
+
 		} else if (qualifiedNameCharArray.length == 1) {
-			IASTName name = factory.newName(qualifiedNameCharArray[0]);
-			return factory.newTypedefNameSpecifier(name);
+			name = factory.newName(qualifiedNameCharArray[0]);
 		} else {
-			IASTName name = factory.newName(binding.getName().toCharArray());
-			return factory.newTypedefNameSpecifier(name);
+			name = factory.newName(binding.getName().toCharArray());
 		}
+		return name;
 	}
 
 }

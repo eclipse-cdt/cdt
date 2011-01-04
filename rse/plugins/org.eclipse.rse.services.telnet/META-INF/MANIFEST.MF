@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.services.telnet
-Bundle-Version: 2.0.0.qualifier
+Bundle-Version: 2.0.200.qualifier
 Bundle-Activator: org.eclipse.rse.internal.services.telnet.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,

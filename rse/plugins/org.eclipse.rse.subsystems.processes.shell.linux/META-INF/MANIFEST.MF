@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.subsystems.processes.shell.linux;singleton:=true
-Bundle-Version: 1.1.100.qualifier
+Bundle-Version: 1.1.300.qualifier
 Bundle-Activator: org.eclipse.rse.internal.subsystems.processes.shell.linux.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,

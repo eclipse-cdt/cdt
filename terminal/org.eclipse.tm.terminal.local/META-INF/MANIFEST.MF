@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.terminal.local;singleton:=true
-Bundle-Version: 0.1.0.qualifier
+Bundle-Version: 0.2.0.qualifier
 Bundle-Activator: org.eclipse.tm.internal.terminal.local.LocalTerminalActivator
 Bundle-Localization: plugin
 Bundle-Vendor: %providerName
-Require-Bundle: org.eclipse.tm.terminal;bundle-version="[3.0.0,3.1.0)",
+Require-Bundle: org.eclipse.tm.terminal;bundle-version="[3.1.0,3.2.0)",
  org.eclipse.cdt.core;bundle-version="5.2.0",
  org.eclipse.core.runtime,
  org.eclipse.debug.core,

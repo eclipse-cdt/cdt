@@ -317,10 +317,24 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 
 	public String guessTempName() {
 		String[] proposals= guessTempNames();
-		if (proposals.length == 0)
+		if (proposals.length == 0) {
 			return info.getName();
-		else
-			return proposals[0];
+		} else {
+			String name = getLastCamelCasePart(proposals[proposals.length - 1]);
+			return name;
+		}
+	}
+
+	private String getLastCamelCasePart(String string) {
+		if (string.length() == 0) {
+			return string;
+		}
+		int index = string.length() - 1;
+		while (index > 0
+				&& (Character.isLowerCase(string.charAt(index)) || Character.isDigit(string.charAt(index)))) {
+			--index;
+		}
+		return string.substring(index).toLowerCase();
 	}
 
 	/**
@@ -394,7 +408,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 							tmpName[len++] = c;
 						}
 					}
-					name = new String(tmpName, 0, len);
+					name = getLastCamelCasePart(new String(tmpName, 0, len));
 					if (name.length() > 0) {
 						if (nameAvailable(name, guessedTempNames, scope)) {
 							guessedTempNames.add(name);

@@ -506,8 +506,8 @@ class Foo {
 Foo<int> getFoo();
 
 int main() {
-    Foo<int> getFoo0 = getFoo();
-    getFoo0;
+    Foo<int> foo = getFoo();
+    foo;
 
     return 0;
 }
@@ -540,8 +540,8 @@ class Foo {
 bar::Foo<int> getFoo();
 
 int main() {
-    bar::Foo<int> getFoo0 = getFoo();
-    getFoo0;
+    bar::Foo<int> foo = getFoo();
+    foo;
 
     return 0;
 }

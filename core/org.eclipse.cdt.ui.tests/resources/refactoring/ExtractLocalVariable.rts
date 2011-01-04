@@ -480,3 +480,69 @@ void func() {
     a0;
 }
 
+//!Bug 331963 Extract local variable doesn't put template type parameters
+//#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
+//@A.cpp
+
+template<class T>
+class Foo {
+};
+
+Foo<int> getFoo();
+
+int main() {
+
+    /*$*/getFoo()/*$$*/;
+
+    return 0;
+}
+
+//=
+
+template<class T>
+class Foo {
+};
+
+Foo<int> getFoo();
+
+int main() {
+    Foo<int> getFoo0 = getFoo();
+    getFoo0;
+
+    return 0;
+}
+
+//!Bug 331963 Extract local variable doesn't put template type parameters Namespace
+//#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
+//@A.cpp
+namespace bar{
+template<class T>
+class Foo {
+};
+}
+
+bar::Foo<int> getFoo();
+
+int main() {
+
+    /*$*/getFoo()/*$$*/;
+
+    return 0;
+}
+
+//=
+namespace bar{
+template<class T>
+class Foo {
+};
+}
+
+bar::Foo<int> getFoo();
+
+int main() {
+    bar::Foo<int> getFoo0 = getFoo();
+    getFoo0;
+
+    return 0;
+}
+

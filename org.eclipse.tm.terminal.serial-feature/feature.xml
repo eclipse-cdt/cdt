@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.tm.terminal.serial"
       label="%featureName"
-      version="2.0.300.qualifier"
+      version="2.1.0.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -28,8 +28,8 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.2"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.2"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.3"/>
+      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.3"/>
    </url>
 
    <requires>

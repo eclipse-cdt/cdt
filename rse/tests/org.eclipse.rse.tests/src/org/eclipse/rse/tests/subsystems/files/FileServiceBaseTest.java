@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,10 @@
  *
  * Contributors:
  * Xuan Chen (IBM) - initial API and implementation
- *   - <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (Copyright IBM)>
- *   - <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
- *   - <copied code from org.eclipse.core.tests.resources/ResourceTest (Copyright IBM)>
- *   - <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
+ *   - <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (C) IBM>
+ *   - <copied code from org.eclipse.core.tests.harness/CoreTest (C) IBM>
+ *   - <copied code from org.eclipse.core.tests.resources/ResourceTest (C) IBM>
+ *   - <copied code from org.eclipse.core.tests.harness/CoreTest (C) IBM>
  * Martin Oberhuber (Wind River) - [195402] Add constructor with test name
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  *******************************************************************************/
@@ -246,7 +246,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	}
 
 	//----------------------------------------------------------------------
-	// <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (Copyright IBM)>
+	// <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (C) IBM>
 	//----------------------------------------------------------------------
 	protected IFileStore createDir(IFileStore store, boolean clear) throws CoreException {
 		if (clear && store.fetchInfo().exists())
@@ -259,7 +259,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	}
 
 	//----------------------------------------------------------------------
-	// <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (Copyright IBM)>
+	// <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (C) IBM>
 	//----------------------------------------------------------------------
 	protected IFileStore createDir(String string, boolean clear) throws CoreException {
 		return createDir(EFS.getFileSystem(EFS.SCHEME_FILE).getStore(new Path(string)), clear);
@@ -268,7 +268,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	/**
 	 * Create a file with random content. If a resource exists in the same path,
 	 * the resource is deleted.
-	 * <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (Copyright IBM)>
+	 * <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (C) IBM>
 	 *
 	 * @param target the file to create
 	 * @param content content of the new file
@@ -283,7 +283,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	}
 
 	/**
-	 * <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
+	 * <copied code from org.eclipse.core.tests.harness/CoreTest (C) IBM>
 	 * Asserts that a stream closes successfully. Null streams
 	 * are ignored, but failure to close the stream is reported as
 	 * an assertion failure.
@@ -300,7 +300,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	}
 
 	/**
-	 * <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
+	 * <copied code from org.eclipse.core.tests.harness/CoreTest (C) IBM>
 	 * Return an input stream with some the specified text to use
 	 * as contents for a file resource.
 	 * @param text the input text
@@ -311,7 +311,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	}
 
 	/**
-	 * <copied code from org.eclipse.core.tests.resources/ResourceTest.java (Copyright IBM) >
+	 * <copied code from org.eclipse.core.tests.resources/ResourceTest.java (C) IBM>
 	 *
 	 * Returns a boolean value indicating whether or not the contents
 	 * of the given streams are considered to be equal. Closes both input streams.
@@ -341,7 +341,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	/**
 	 * Copy the data from the input stream to the output stream.
 	 * Close both streams when finished.
-	 * <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
+	 * <copied code from org.eclipse.core.tests.harness/CoreTest (C) IBM>
 	 *
 	 * @param input input stream
 	 * @param output output stream
@@ -365,7 +365,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	/**
 	 * Return String with some random text to use
 	 * as contents for a file resource.
-	 * <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
+	 * <copied code from org.eclipse.core.tests.harness/CoreTest (C) IBM>
 	 *
 	 * @return the result random string
 	 */

@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.rewrite.commenthandler;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -29,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatement;
 
 /**
  * A visitor for the comments. Calls the NodeCommenter to assign the comments.
@@ -175,7 +175,7 @@ public class ASTCommenterVisitor extends CPPASTVisitor {
 	}
 	@Override
 	public int leave(IASTStatement statement) {
-		if(statement instanceof CPPASTCompoundStatement) {
+		if(statement instanceof IASTCompoundStatement) {
 			return nodeCommenter.appendFreestandingComments((ASTNode)statement);
 		}
 		nodeCommenter.appendComments((ASTNode)statement);

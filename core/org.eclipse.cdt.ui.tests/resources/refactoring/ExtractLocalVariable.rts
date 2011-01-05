@@ -546,3 +546,53 @@ int main() {
     return 0;
 }
 
+//!Bug 330693 Improve suggested variable name in Extract Local Variable
+//#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
+//@A.cpp
+
+struct Foo{
+	int getVarWithLongName();
+};
+
+void bar(){
+	Foo f;
+	/*$*/f.getVarWithLongName()/*$$*/;
+}
+
+//=
+
+struct Foo{
+	int getVarWithLongName();
+};
+
+void bar(){
+	Foo f;
+    int varWithLongName = f.getVarWithLongName();
+    varWithLongName;
+}
+
+//!Bug 330693 Improve suggested variable name in Extract Local Variable: name == prefix
+//#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
+//@A.cpp
+
+struct Foo{
+	int get();
+};
+
+void bar(){
+	Foo f;
+	/*$*/f.get()/*$$*/;
+}
+
+//=
+
+struct Foo{
+	int get();
+};
+
+void bar(){
+	Foo f;
+    int get = f.get();
+    get;
+}
+

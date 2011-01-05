@@ -76,6 +76,7 @@
  * David McKnight   (IBM)        - [330973] Drag/drop a local file generates an error message in the Remote system view
  * David McKnight   (IBM)        - [308783] Value in Properties view remains "Pending..."
  * David McKnight   (IBM)        - [241726] Move doesn't select the moved items
+ * David McKnight   (IBM)        - [333196] New member filter dialogue keep popping up when creating a shared member filter.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -4275,8 +4276,6 @@ public class SystemView extends SafeTreeViewer
 		Widget item = findItem(ss);
 
 		if (item == null) {
-			refresh();
-
 			if (debug) logDebugMsg("...Did not find ss " + ss.getName()); //$NON-NLS-1$
 			return;
 		}

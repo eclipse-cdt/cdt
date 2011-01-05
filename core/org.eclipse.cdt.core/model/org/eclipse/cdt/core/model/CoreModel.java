@@ -75,7 +75,7 @@ public class CoreModel {
 	public final static String CORE_MODEL_ID = CCorePlugin.PLUGIN_ID + ".coremodel"; //$NON-NLS-1$
 
 	/**
-	 * Creates an ICElement form and IPath. Returns null if not found.
+	 * Creates an ICElement for an IPath. Returns null if not found.
 	 */
 	public ICElement create(IPath path) {
 		return manager.create(path);
@@ -115,21 +115,21 @@ public class CoreModel {
 	}
 
 	/**
-	 * Creates an ICElement form and IFile. Returns null if not found.
+	 * Creates an ICElement for an IFile. Returns null if not found.
 	 */
 	public ICElement create(IFile file) {
 		return manager.create(file, null);
 	}
 
 	/**
-	 * Creates an ICElement form and IFolder. Returns null if not found.
+	 * Creates an ICElement for an IFolder. Returns null if not found.
 	 */
 	public ICContainer create(IFolder folder) {
 		return manager.create(folder, null);
 	}
 
 	/**
-	 * Creates an ICElement form and IProject. Returns null if not found.
+	 * Creates an ICElement for an IProject. Returns null if not found.
 	 */
 	public ICProject create(IProject project) {
 		if (project == null) {
@@ -140,7 +140,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Creates an ICElement form and IResource. Returns null if not found.
+	 * Creates an ICElement for an IResource. Returns null if not found.
 	 */
 	public ICElement create(IResource resource) {
 		return manager.create(resource, null);

@@ -89,7 +89,6 @@ import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEve
 import org.eclipse.core.runtime.content.IContentTypeManager.IContentTypeChangeListener;
 
 public class CModelManager implements IResourceChangeListener, IContentTypeChangeListener, ICProjectDescriptionListener {
-
 	public static boolean VERBOSE = false;
 
 	/**
@@ -250,15 +249,15 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 
 		int type = resource.getType();
 		switch (type) {
-			case IResource.PROJECT :
+			case IResource.PROJECT:
 				return create((IProject)resource);
-			case IResource.FILE :
+			case IResource.FILE:
 				return create((IFile)resource, cproject);
-			case IResource.FOLDER :
+			case IResource.FOLDER:
 				return create((IFolder)resource, cproject);
-			case IResource.ROOT :
+			case IResource.ROOT:
 				return getCModel((IWorkspaceRoot)resource);
-			default :
+			default:
 				return null;
 		}
 	}
@@ -403,7 +402,7 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 		final String contentTypeId = CoreModel.getRegistedContentTypeId(project, path.lastSegment());
 
 		if (path.isAbsolute()) {
-			if (! Util.isNonZeroLengthFile(path)) {
+			if (!Util.isNonZeroLengthFile(path)) {
 				return null;
 			}
 			
@@ -478,16 +477,13 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 		}
 		
 		final String contentTypeId = CoreModel.getRegistedContentTypeId(project, fileStore.getName());
-	
-			if (! Util.isNonZeroLengthFile(locationURI)) {
+			if (!Util.isNonZeroLengthFile(locationURI)) {
 				return null;
 			}
 			
 			try {
 				IIncludeReference[] includeReferences = cproject.getIncludeReferences();
 				for (IIncludeReference includeReference : includeReferences) {
-					
-					
 					// crecoskie
 					// TODO FIXME:  include entries don't handle URIs yet
 					IPath path = URIUtil.toPath(locationURI);
@@ -515,7 +511,6 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 	}
 
 	public void releaseCElement(ICElement celement) {
-
 		// Guard.
 		if (celement == null)
 			return;
@@ -670,7 +665,7 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 		
 		URI fileUri = file.getLocationURI();
 		//Avoid name special devices, empty files and the like
-		if (! Util.isNonZeroLengthFile(fileUri)) {
+		if (!Util.isNonZeroLengthFile(fileUri)) {
 			// PR:xxx the EFS does not seem to work for newly created file
 			// so before bailing out give another try?
 			//Avoid name special devices, empty files and the like
@@ -682,7 +677,6 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 			}
 			//return null;
 		}
-
 		
 		int hints = 0;
 		
@@ -817,6 +811,7 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 		}
 		return mapper;
 	}
+
 	/**
 	 * addElementChangedListener method comment.
 	 */
@@ -860,47 +855,46 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 	 * @see IResource
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
-
 		if (event.getSource() instanceof IWorkspace) {
 			IResourceDelta delta = event.getDelta();
 			IResource resource = event.getResource();
 			switch (event.getType()) {
-				case IResourceChangeEvent.PRE_DELETE :
-					try {
-						if (resource.getType() == IResource.PROJECT && 	
-								( ((IProject)resource).hasNature(CProjectNature.C_NATURE_ID) ||
-										((IProject)resource).hasNature(CCProjectNature.CC_NATURE_ID) )){
-							this.preDeleteProject((IProject) resource);}
-					} catch (CoreException e) {
-					}
-					break;
+			case IResourceChangeEvent.PRE_DELETE:
+				try {
+					if (resource.getType() == IResource.PROJECT && 	
+							( ((IProject)resource).hasNature(CProjectNature.C_NATURE_ID) ||
+									((IProject)resource).hasNature(CCProjectNature.CC_NATURE_ID) )){
+						this.preDeleteProject((IProject) resource);}
+				} catch (CoreException e) {
+				}
+				break;
 
-				case IResourceChangeEvent.PRE_CLOSE :
-					try {
-						if (resource.getType() == IResource.PROJECT && 	
-						    ( ((IProject)resource).hasNature(CProjectNature.C_NATURE_ID) ||
-						      ((IProject)resource).hasNature(CCProjectNature.CC_NATURE_ID) )){
-							this.preCloseProject((IProject) resource);}
-					} catch (CoreException e) {
-					}
-					break;
+			case IResourceChangeEvent.PRE_CLOSE:
+				try {
+					if (resource.getType() == IResource.PROJECT && 	
+					    ( ((IProject)resource).hasNature(CProjectNature.C_NATURE_ID) ||
+					      ((IProject)resource).hasNature(CCProjectNature.CC_NATURE_ID) )){
+						this.preCloseProject((IProject) resource);}
+				} catch (CoreException e) {
+				}
+				break;
 
-				case IResourceChangeEvent.POST_CHANGE :
-					try {
-						if (delta != null) {
-							checkForProjectRename(delta);
-							ICElementDelta[] translatedDeltas = fDeltaProcessor.processResourceDelta(delta);
-							if (translatedDeltas.length > 0) {
-								for (ICElementDelta translatedDelta : translatedDeltas) {
-									registerCModelDelta(translatedDelta);
-								}
+			case IResourceChangeEvent.POST_CHANGE:
+				try {
+					if (delta != null) {
+						checkForProjectRename(delta);
+						ICElementDelta[] translatedDeltas = fDeltaProcessor.processResourceDelta(delta);
+						if (translatedDeltas.length > 0) {
+							for (ICElementDelta translatedDelta : translatedDeltas) {
+								registerCModelDelta(translatedDelta);
 							}
-							fire(ElementChangedEvent.POST_CHANGE);
 						}
-					} catch (Exception e) {
-						CCorePlugin.log(e);
+						fire(ElementChangedEvent.POST_CHANGE);
 					}
-					break;
+				} catch (Exception e) {
+					CCorePlugin.log(e);
+				}
+				break;
 			}
 		}
 	}
@@ -1010,32 +1004,31 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 			}
 
 			switch (eventType) {
-				case DEFAULT_CHANGE_EVENT :
-					firePreAutoBuildDelta(deltaToNotify, listeners, listenerMask, listenerCount);
-					firePostChangeDelta(deltaToNotify, listeners, listenerMask, listenerCount);
-					fireReconcileDelta(listeners, listenerMask, listenerCount);
-					break;
-				case ElementChangedEvent.PRE_AUTO_BUILD :
-					firePreAutoBuildDelta(deltaToNotify, listeners, listenerMask, listenerCount);
-					break;
-				case ElementChangedEvent.POST_CHANGE :
-					firePostChangeDelta(deltaToNotify, listeners, listenerMask, listenerCount);
-					fireReconcileDelta(listeners, listenerMask, listenerCount);
-					break;
-				case ElementChangedEvent.POST_RECONCILE :
-					fireReconcileDelta(listeners, listenerMask, listenerCount);
-					break;
-				case ElementChangedEvent.POST_SHIFT:
-					fireShiftEvent(deltaToNotify, listeners, listenerMask, listenerCount);
-					return;
+			case DEFAULT_CHANGE_EVENT:
+				firePreAutoBuildDelta(deltaToNotify, listeners, listenerMask, listenerCount);
+				firePostChangeDelta(deltaToNotify, listeners, listenerMask, listenerCount);
+				fireReconcileDelta(listeners, listenerMask, listenerCount);
+				break;
+			case ElementChangedEvent.PRE_AUTO_BUILD:
+				firePreAutoBuildDelta(deltaToNotify, listeners, listenerMask, listenerCount);
+				break;
+			case ElementChangedEvent.POST_CHANGE:
+				firePostChangeDelta(deltaToNotify, listeners, listenerMask, listenerCount);
+				fireReconcileDelta(listeners, listenerMask, listenerCount);
+				break;
+			case ElementChangedEvent.POST_RECONCILE:
+				fireReconcileDelta(listeners, listenerMask, listenerCount);
+				break;
+			case ElementChangedEvent.POST_SHIFT:
+				fireShiftEvent(deltaToNotify, listeners, listenerMask, listenerCount);
+				return;
 			}
 		}
 	}
 
 	@SuppressWarnings("deprecation")
 	private void firePreAutoBuildDelta(ICElementDelta deltaToNotify,
-		IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
-
+			IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
 		if (Util.VERBOSE_DELTA) {
 			System.out.println("FIRING PRE_AUTO_BUILD Delta [" + Thread.currentThread() + "]:"); //$NON-NLS-1$//$NON-NLS-2$
 			System.out.println(deltaToNotify == null ? "<NONE>" : deltaToNotify.toString()); //$NON-NLS-1$
@@ -1045,8 +1038,8 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 		}
 	}
 
-	private void firePostChangeDelta(ICElementDelta deltaToNotify, IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
-
+	private void firePostChangeDelta(ICElementDelta deltaToNotify, IElementChangedListener[] listeners,
+			int[] listenerMask, int listenerCount) {
 		// post change deltas
 		if (Util.VERBOSE_DELTA) {
 			System.out.println("FIRING POST_CHANGE Delta [" + Thread.currentThread() + "]:"); //$NON-NLS-1$//$NON-NLS-2$
@@ -1072,8 +1065,8 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 		}
 	}
 
-	private void fireShiftEvent(ICElementDelta deltaToNotify, IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
-
+	private void fireShiftEvent(ICElementDelta deltaToNotify, IElementChangedListener[] listeners,
+			int[] listenerMask, int listenerCount) {
 		// post change deltas
 		if (Util.VERBOSE_DELTA) {
 			System.out.println("FIRING POST_SHIFT event [" + Thread.currentThread() + "]:"); //$NON-NLS-1$//$NON-NLS-2$
@@ -1123,7 +1116,6 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 	}
 
 	private ICElementDelta mergeDeltas(Collection<ICElementDelta> deltas) {
-
 		synchronized (deltas) {
 			if (deltas.size() == 0)
 				return null;
@@ -1277,16 +1269,10 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 		this.temporaryCache.set(null);
 	}
 
-	/**
-	 * 
-	 */
 	public void startup() {
 		// Initialization is performed on the first getDefault()...
 	}
 
-	/**
-	 *  
-	 */
 	public void shutdown() {
 		// Remove ourself from the DescriptorManager.
 		CProjectDescriptionManager.getInstance().removeCProjectDescriptionListener(this);
@@ -1364,7 +1350,6 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 
 	public IWorkingCopy getSharedWorkingCopy(IBufferFactory factory, ITranslationUnit tu, IProblemRequestor requestor,
 			IProgressMonitor monitor) throws CModelException {
-
 		// if factory is null, default factory must be used
 		if (factory == null)
 			factory = BufferManager.getDefaultBufferManager();

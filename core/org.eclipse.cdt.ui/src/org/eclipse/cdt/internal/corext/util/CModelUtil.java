@@ -28,9 +28,9 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 public class CModelUtil {
 	/**
-	 * Returns the working copy CU of the given CU. If the CU is already a
-	 * working copy or the CU has no working copy the input CU is returned.
-	 */	
+	 * Returns the working copy TU of the given TU. If the TU is already a
+	 * working copy or the TU has no working copy the input TU is returned.
+	 */
 	public static ITranslationUnit toWorkingCopy(ITranslationUnit unit) {
 		if (!unit.isWorkingCopy()) {
 			ITranslationUnit workingCopy= EditorUtility.getWorkingCopy(unit);

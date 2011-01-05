@@ -16,7 +16,6 @@ import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.utils.PathUtil;
-import org.eclipse.cdt.utils.WindowsRegistry;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -63,66 +62,61 @@ public class MingwEnvironmentVariableSupplier implements
 	private IBuildEnvironmentVariable path;
 	
 	public static IPath getBinDir() {
-		if (!checked) 
-			findBinDir();
+		if (!checked) {
+			binDir = findBinDir();
+			checked = true;
+		}
 		return binDir;
 	}
 
-	private static void findBinDir() {
-		// 1. Try the mingw directory in the platform install directory
+	private static IPath findBinDir() {
+		// Try in MinGW home
+		String mingwHome = System.getenv("MINGW_HOME"); //$NON-NLS-1$
+		IPath mingwBinDir = new Path(mingwHome + "\\bin"); //$NON-NLS-1$
+		if (mingwBinDir.toFile().isDirectory())
+			return mingwBinDir;
+
+		// Try the mingw directory in the platform install directory
 		// CDT distributions like Wascana may distribute MinGW like that
-		IPath subPath = new Path("mingw\\bin"); //$NON-NLS-1$
 		IPath installPath = new Path(Platform.getInstallLocation().getURL().getFile());
-		IPath binPathTemp = installPath.append(subPath);
-		if (binPathTemp.toFile().isDirectory())
-			binDir = binPathTemp;
+		mingwBinDir = installPath.append("mingw\\bin"); //$NON-NLS-1$
+		if (mingwBinDir.toFile().isDirectory())
+			return mingwBinDir;
+
+		// Look in PATH values. Look for mingw32-gcc.exe
+		// TODO: Since this dir is already in the PATH, why are we adding it here?
+		// This is really only to support isToolchainAvail. Must be a better way.
+		IPath gccLoc = PathUtil.findProgramLocation("mingw32-gcc.exe"); //$NON-NLS-1$
+		if (gccLoc != null) 
+			return gccLoc.removeLastSegments(1);
 		
-		// 2. Try the directory above the install dir (another possible distribution)
-		if (binDir == null) {
-			binPathTemp = installPath.removeLastSegments(1).append(subPath);
-			if (binPathTemp.toFile().isDirectory()) {
-				binDir = binPathTemp;
-			}
-		}
+		// Try the default MinGW install dir 
+		mingwBinDir = new Path("C:\\MinGW\\bin"); //$NON-NLS-1$
+		if (mingwBinDir.toFile().isDirectory())
+			return mingwBinDir;
 		
-		// 3. Look in PATH values. Look for mingw32-gcc.exe
-		if (binDir == null) {
-			IPath location = PathUtil.findProgramLocation("mingw32-gcc.exe"); //$NON-NLS-1$
-			if (location!=null) {
-				binDir = location.removeLastSegments(1);
-			}
-		}
-		
-		// 4. Try looking if the mingw installer ran
-		if (binDir == null) {
-			WindowsRegistry registry = WindowsRegistry.getRegistry();
-			if (registry != null) {
-				String mingwPath = registry.getLocalMachineValue(
-						"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MinGW", //$NON-NLS-1$
-						"InstallLocation"); //$NON-NLS-1$
-				if (mingwPath != null) {
-					binPathTemp = new Path(mingwPath).append("bin"); //$NON-NLS-1$
-					if (binPathTemp.toFile().isDirectory())
-						binDir = binPathTemp;
-				}
-			}
-		}
-		
-		// 5. Try the default MinGW install dir
-		if (binDir == null) {
-			binPathTemp = new Path("C:\\MinGW\\bin"); //$NON-NLS-1$
-			if (binPathTemp.toFile().isDirectory())
-				binDir = binPathTemp;
-		}
-		
-		checked = true;
+		return null;
 	}
 	
 	public static IPath getMsysBinDir() {
 		// Just look in the install location parent dir
 		IPath installPath = new Path(Platform.getInstallLocation().getURL().getFile());
 		IPath msysBinPath = installPath.append("msys\\bin"); //$NON-NLS-1$
-		return msysBinPath.toFile().isDirectory() ? msysBinPath : null;
+		if (msysBinPath.toFile().isDirectory())
+			return msysBinPath;
+		
+		String mingwHome = System.getenv("MINGW_HOME"); //$NON-NLS-1$
+		if (mingwHome != null) {
+			msysBinPath = new Path(mingwHome + "\\msys\\1.0\\bin"); //$NON-NLS-1$
+			if (msysBinPath.toFile().isDirectory())
+				return msysBinPath;
+		}
+		
+		// Try the new MinGW msys bin dir
+		msysBinPath = new Path("C:\\MinGW\\msys\\1.0\\bin"); //$NON-NLS-1$
+		if (msysBinPath.toFile().isDirectory())
+			return msysBinPath;
+		return null;
 	}
 	
 	public MingwEnvironmentVariableSupplier() {

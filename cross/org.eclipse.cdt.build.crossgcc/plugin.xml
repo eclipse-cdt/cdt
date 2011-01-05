@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
+<!--
+# Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors:
+# Doug Schaefer   (Wind River)     - initial API and implementation 
+# Anna Dushistova (Mentor Graphics)- [329531][crossgcc] crossgcc fails to build a project
+-->
 <plugin>
 
    <extension
@@ -13,6 +24,7 @@
             id="cdt.managedbuild.toolchain.gnu.cross.base"
             isAbstract="false"
             name="Cross GCC"
+            targetTool="cdt.managedbuild.tool.gnu.cross.c.linker;cdt.managedbuild.tool.gnu.cross.cpp.linker;cdt.managedbuild.tool.gnu.archiver"
             osList="all">
          <targetPlatform
                archList="all"
@@ -23,9 +35,7 @@
          </targetPlatform>
          <builder
                id="cdt.managedbuild.builder.gnu.cross"
-               isAbstract="false"
-               isVariableCaseSensitive="false"
-               superClass="org.eclipse.cdt.build.core.internal.builder">
+               superClass="cdt.managedbuild.target.gnu.builder">
          </builder>
          <optionCategory
                id="cdt.managedbuild.optionCategory.gnu.cross.settings"
@@ -61,6 +71,13 @@
                isAbstract="false"
                name="Cross G++ Compiler"
                superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+         </tool>
+         <tool
+               commandLineGenerator="org.eclipse.cdt.internal.build.crossgcc.CrossCommandLineGenerator"
+               id="cdt.managedbuild.tool.gnu.cross.c.linker"
+               isAbstract="false"
+               name="Cross GCC Linker"
+               superClass="cdt.managedbuild.tool.gnu.c.linker">
          </tool>
          <tool
                commandLineGenerator="org.eclipse.cdt.internal.build.crossgcc.CrossCommandLineGenerator"

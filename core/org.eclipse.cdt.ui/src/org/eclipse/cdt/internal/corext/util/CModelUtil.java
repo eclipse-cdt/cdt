@@ -41,7 +41,7 @@ public class CModelUtil {
 		return unit;
 	}
 	
-	public static ITranslationUnit toOriginal(ITranslationUnit unit){
+	public static ITranslationUnit toOriginal(ITranslationUnit unit) {
 		if (unit.isWorkingCopy()) {
 			return (((IWorkingCopy) unit).getOriginalElement());
 		}

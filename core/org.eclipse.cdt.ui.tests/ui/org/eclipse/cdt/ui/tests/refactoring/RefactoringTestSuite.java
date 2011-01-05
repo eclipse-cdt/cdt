@@ -26,7 +26,6 @@ import org.eclipse.cdt.ui.tests.refactoring.utils.UtilTestSuite;
 
 /**
  * @author Emanuel Graf
- *
  */
 public class RefactoringTestSuite extends TestSuite {
 

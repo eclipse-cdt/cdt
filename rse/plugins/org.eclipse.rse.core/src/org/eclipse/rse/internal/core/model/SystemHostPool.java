@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -21,6 +21,7 @@
  * David Dykstal (IBM) - [176577] wrong enablement of "Move up/down" in connection context menu
  * Martin Oberhuber (Wind River) - [206742] Make SystemHostPool thread-safe
  * David Dykstal (IBM) - [210537] removed exception signaling from this class to match the interface
+ * Tom Hochstein (freescale)     - [325923] Host copy doesn't copy contained property sets
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -37,6 +38,8 @@ import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.Host;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IProperty;
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemHostPool;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -395,6 +398,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     }
 
 
+
     /*
      * (non-Javadoc)
      * @see org.eclipse.rse.core.model.ISystemHostPool#cloneHost(org.eclipse.rse.core.model.ISystemHostPool, org.eclipse.rse.core.model.IHost, java.lang.String)
@@ -404,8 +408,35 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
         IHost copy =
             targetPool.createHost(conn.getSystemType(), aliasName,
                  conn.getHostName(), conn.getDescription(), conn.getLocalDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_HOST);
+        
+        // Copy all properties as well.
+		clonePropertySets(copy, conn.getPropertySets());
         return copy;
     }
+
+    /**
+     * Make copies of a list of property sets and add them to the specified host.
+     * Each property set may contain its own list of property sets, so the
+     * method is recursive.
+     * @param copy
+     * @param fromSets
+     */
+	private static void clonePropertySets(IHost copy, IPropertySet[] fromSets) {
+		if (fromSets == null) {
+			return;
+		}
+		for (int i = 0, n = fromSets.length; i < n; ++i) {
+			IPropertySet fromSet = fromSets[i];
+			IPropertySet copySet = copy.createPropertySet(fromSet.getName(), fromSet.getDescription());
+			String[] fromKeys = fromSet.getPropertyKeys();
+			for (int i2 = 0, n2 = fromKeys.length; i2 < n2; ++i2) {
+				IProperty fromProperty = fromSet.getProperty(fromKeys[i2]);
+				copySet.addProperty(fromProperty.getKey(), fromProperty.getValue(), fromProperty.getType());
+			}
+			clonePropertySets(copy, fromSet.getPropertySets());
+		}
+	}
+
 
     /*
      * (non-Javadoc)

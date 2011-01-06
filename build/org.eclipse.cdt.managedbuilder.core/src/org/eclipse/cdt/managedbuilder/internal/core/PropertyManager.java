@@ -15,10 +15,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
@@ -55,9 +55,10 @@ public class PropertyManager {
 	private static class LoaddedInfo {
 		private final IProject fProject;
 		private final String fCfgId;
-		private final Map<String, Properties> fCfgPropertyMap;
+		// one of Map<String, String> or Map<String, Map<String, Properties>>
+		private final Map<String, Object> fCfgPropertyMap;
 		
-		LoaddedInfo(IProject project, String cfgId, Map<String, Properties> cfgPropertyMap){
+		LoaddedInfo(IProject project, String cfgId, Map<String, Object> cfgPropertyMap){
 			fProject = project;
 			fCfgId = cfgId;
 			fCfgPropertyMap = cfgPropertyMap;
@@ -75,7 +76,7 @@ public class PropertyManager {
 			return fCfgId;
 		}
 
-		public Map<String, Properties> getProperties(){
+		public Map<String, Object> getProperties(){
 			return fCfgPropertyMap;
 		}
 		
@@ -131,7 +132,7 @@ public class PropertyManager {
 	private synchronized void setLoaddedInfo(LoaddedInfo info){
 		fLoaddedInfo = info;
 	}
-	protected Map<String, Properties> getLoaddedData(IConfiguration cfg){
+	protected Map<String, Object> getLoaddedData(IConfiguration cfg){
 		LoaddedInfo info = getLoaddedInfo();
 		if(info == null)
 			return null;
@@ -182,11 +183,12 @@ public class PropertyManager {
 	}
 
 	protected Properties loadProperties(IConfiguration cfg, IBuildObject bo){
-		Map<String, Properties> map = getData(cfg);
+		Map<String, Object> map = getData(cfg);
+		
 		return getPropsFromData(map, bo);
 	}
 	
-	protected Properties getPropsFromData(Map<String, Properties> data, IBuildObject bo){
+	protected Properties getPropsFromData(Map<String, Object> data, IBuildObject bo){
 		synchronized (data) {
 			Object oVal = data.get(bo.getId());
 			Properties props = null;
@@ -208,21 +210,21 @@ public class PropertyManager {
 
 
 	protected void storeData(IConfiguration cfg){
-		Map<String, Properties> map = getLoaddedData(cfg);
+		Map<String, Object> map = getLoaddedData(cfg);
 
 		if(map != null)
 			storeData(cfg, map);
 	}
 
-	protected Properties mapToProps(Map map){
+	protected Properties mapToProps(Map<String, Object> map){
 		Properties props = null;
 		if(map != null){
 			synchronized(map){
 				if(map.size() > 0){
 					props = new Properties();
-					for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
-						Map.Entry entry = (Map.Entry)iter.next();
-						String key = (String)entry.getKey();
+					Set<Entry<String, Object>> entrySet = map.entrySet();
+					for (Entry<String, Object> entry : entrySet) {
+						String key = entry.getKey();
 						String value = null;
 						Object oVal = entry.getValue();
 						if(oVal instanceof Properties){
@@ -283,7 +285,7 @@ public class PropertyManager {
 		return props;
 	}
 	
-	protected void storeData(IConfiguration cfg, Map<String, Properties> map){
+	protected void storeData(IConfiguration cfg, Map<String, Object> map){
 		String str = null;
 		Properties props = mapToProps(map);
 
@@ -341,8 +343,8 @@ public class PropertyManager {
 	}
 
 	
-	protected Map<String, Properties> getData(IConfiguration cfg){
-		Map<String, Properties> map = getLoaddedData(cfg);
+	protected Map<String, Object> getData(IConfiguration cfg){
+		Map<String, Object> map = getLoaddedData(cfg);
 		
 		if(map == null){
 			map = loadData(cfg);
@@ -353,8 +355,8 @@ public class PropertyManager {
 		return map;
 	}
 	
-	protected Map<String, Properties> loadData(IConfiguration cfg){
-		Map<String, Properties> map = null;
+	protected Map<String, Object> loadData(IConfiguration cfg){
+		Map<String, Object> map = null;
 		String str = loadString(cfg);
 
 		Properties props = stringToProps(str);
@@ -362,14 +364,17 @@ public class PropertyManager {
 		map = propsToMap(props);
 
 		if(map == null)
-			map = new HashMap<String, Properties>();
+			map = new HashMap<String, Object>();
 		
 		return map;
 	}
 	
-	protected Map<String, Properties> propsToMap(Properties props){
-		if(props != null)
-			return new HashMap(props);
+	protected Map<String, Object> propsToMap(Properties props){
+		if(props != null) {
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			HashMap<String, Object> map = new HashMap(props);
+			return map;
+		}
 		return null;
 	}
 
@@ -388,7 +393,7 @@ public class PropertyManager {
 		return cfg;
 	}
 	
-	protected void setLoaddedData(IConfiguration cfg, Map<String, Properties> data){
+	protected void setLoaddedData(IConfiguration cfg, Map<String, Object> data){
 		if(cfg.getOwner() == null)
 			return;
 

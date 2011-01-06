@@ -9,7 +9,6 @@
  * Contributors: 
  * Institute for Software - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
 import java.util.TreeMap;
@@ -39,11 +38,11 @@ import org.eclipse.cdt.internal.ui.refactoring.Container;
  * Helper class to find definitions.
  * 
  * @author Lukas Felber
- *
  */
 public class DefinitionFinder {
 
-	public static IASTName getDefinition(IASTSimpleDeclaration simpleDeclaration, IFile file) throws CoreException{
+	public static IASTName getDefinition(IASTSimpleDeclaration simpleDeclaration, IFile file)
+			throws CoreException{
 		IASTDeclarator declarator = simpleDeclaration.getDeclarators()[0];
 		IBinding resolveBinding = declarator.getName().resolveBinding();
 		return DefinitionFinder.getDefinition(declarator.getName(), resolveBinding, file);
@@ -65,12 +64,11 @@ public class DefinitionFinder {
 		} 
 		try {
 			pdomref= index.findDefinitions(bind);
-		}
-		finally {
+		} finally {
 			index.releaseReadLock();
 		}
 
-		if (pdomref==null || pdomref.length < 1) {
+		if (pdomref == null || pdomref.length < 1) {
 			return null;
 		}
 
@@ -84,7 +82,8 @@ public class DefinitionFinder {
 		return findDefinitionInTranslationUnit(transUnit, pdomref[0]);
 	}
 
-	private static IASTName findDefinitionInTranslationUnit(IASTTranslationUnit transUnit, final IIndexName indexName) {
+	private static IASTName findDefinitionInTranslationUnit(IASTTranslationUnit transUnit,
+			final IIndexName indexName) {
 		final Container<IASTName> defName = new Container<IASTName>();
 		transUnit.accept(new ASTVisitor() {
 			{

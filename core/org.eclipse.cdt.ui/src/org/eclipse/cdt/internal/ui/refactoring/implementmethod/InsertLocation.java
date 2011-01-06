@@ -39,7 +39,7 @@ public class InsertLocation {
 		return nodeToInsertBefore;
 	}
 	
-	public IASTNode getPartenOfNodeToInsertBefore() throws CoreException{
+	public IASTNode getPartenOfNodeToInsertBefore() throws CoreException {
 		IASTNode affectedNode = getAffectedNode();
 		return (affectedNode != null) ? affectedNode.getParent() : getTargetTranslationUnit();
 	}
@@ -84,7 +84,7 @@ public class InsertLocation {
 			targetTranslationUnit = TranslationUnitHelper.loadTranslationUnit(insertFile, true);
 		}
 	}
-	
+
 	public int getInsertPosition() {
 		if (nodeToInsertBefore != null) {
 			return nodeToInsertBefore.getFileLocation().getNodeOffset();

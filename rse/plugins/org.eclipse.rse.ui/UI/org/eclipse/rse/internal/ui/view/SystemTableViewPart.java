@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -41,6 +41,7 @@
  * David Dykstal (IBM) - [233678] title string is constructed by concatenation, should be substituted
  * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
  * David McKnight   (IBM)        - [260346] RSE view for jobs does not remember resized columns
+ * David McKnight   (IBM)        - [333702] Remote Systems details view does not maintain column width settings across sessions
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -723,8 +724,8 @@ public class SystemTableViewPart extends ViewPart
 						}
 						
 						cachedColumnWidths.put(key, widths);
-						_viewer.setCachedColumnWidths(cachedColumnWidths);
-					}													
+					}										
+					_viewer.setCachedColumnWidths(cachedColumnWidths);
 				}
 			}
 			

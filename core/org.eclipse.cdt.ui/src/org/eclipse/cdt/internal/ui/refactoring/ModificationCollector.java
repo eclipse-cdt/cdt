@@ -9,7 +9,6 @@
  * Contributors: 
  * Institute for Software - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.refactoring;
 
 import java.util.ArrayList;
@@ -29,23 +28,23 @@ import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
  * @author Mirko Stocker
  */
 public class ModificationCollector {
-	
-	// Each Translationunit can have only one ASTRewrite
-	private final Map<IASTTranslationUnit, ASTRewrite> rewriters = new HashMap<IASTTranslationUnit, ASTRewrite>();
+	// Each translation unit can have only one ASTRewrite
+	private final Map<IASTTranslationUnit, ASTRewrite> rewriters =
+		new HashMap<IASTTranslationUnit, ASTRewrite>();
 	
 	private Collection<CreateFileChange> changes;
 	
-	public ASTRewrite rewriterForTranslationUnit(IASTTranslationUnit unit) {
-		if(! rewriters.containsKey(unit)) {
-			rewriters.put(unit, ASTRewrite.create(unit));
+	public ASTRewrite rewriterForTranslationUnit(IASTTranslationUnit ast) {
+		if (!rewriters.containsKey(ast)) {
+			rewriters.put(ast, ASTRewrite.create(ast));
 		}
 		
-		return rewriters.get(unit);
+		return rewriters.get(ast);
 	}
 		
 	// Creating new files doesn't concern the rewriter, the refactorings can add them here as needed.
 	public void addFileChange(CreateFileChange change) {
-		if(changes == null) {
+		if (changes == null) {
 			changes = new ArrayList<CreateFileChange>();
 		}
 		changes.add(change);
@@ -56,11 +55,10 @@ public class ModificationCollector {
 		CCompositeChange result = new CCompositeChange(""); //$NON-NLS-1$
 		result.markAsSynthetic();
 		
-		if(changes != null)
+		if (changes != null)
 			result.addAll(changes.toArray(new Change[changes.size()]));
 		
 		for (ASTRewrite each : rewriters.values()) {
-			
 			result.add(each.rewriteAST());
 		}
 		

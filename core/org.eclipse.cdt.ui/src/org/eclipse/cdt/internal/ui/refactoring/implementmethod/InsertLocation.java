@@ -9,7 +9,6 @@
  * Contributors: 
  * Institute for Software - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
 import org.eclipse.core.resources.IFile;
@@ -25,7 +24,6 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.TranslationUnitHelper;
  * Contains all the infos needet to insert at the correct position.
  * 
  * @author Lukas Felber
- *
  */
 public class InsertLocation {
 	private IFile insertFile;
@@ -72,24 +70,23 @@ public class InsertLocation {
 	}
 	
 	public IASTTranslationUnit getTargetTranslationUnit() throws CoreException{
-		if(targetTranslationUnit == null) {
+		if (targetTranslationUnit == null) {
 			loadTargetTranslationUnit();
 		}
 		return targetTranslationUnit;
-		
 	}
 
 	private void loadTargetTranslationUnit() throws CoreException{
 		IASTNode affectedNode = getAffectedNode();
-		if(affectedNode != null) {
+		if (affectedNode != null) {
 			targetTranslationUnit = affectedNode.getTranslationUnit();
-		} else if(hasFile()) {
+		} else if (hasFile()) {
 			targetTranslationUnit = TranslationUnitHelper.loadTranslationUnit(insertFile, true);
 		}
 	}
 	
 	public int getInsertPosition() {
-		if(nodeToInsertBefore != null) {
+		if (nodeToInsertBefore != null) {
 			return nodeToInsertBefore.getFileLocation().getNodeOffset();
 		} else if (nodeToInsertAfter != null) {
 			return nodeToInsertAfter.getFileLocation().getNodeOffset() + nodeToInsertAfter.getFileLocation().getNodeLength();

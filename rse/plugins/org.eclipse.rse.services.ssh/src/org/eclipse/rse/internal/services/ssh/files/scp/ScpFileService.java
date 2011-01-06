@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Mentor Graphics Corporation and others.
+ * Copyright (c) 2009, 2011 Mentor Graphics Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -8,6 +8,7 @@
  * Contributors: 
  * Nikita Shulga                     - initial API and implementation 
  * Anna Dushistova (Mentor Graphics) - [331213][scp] Provide UI-less scp IFileService in org.eclipse.rse.services.ssh
+ * Anna Dushistova (Mentor Graphics) - [331249][scp] incorrect home while logging in as root
  *******************************************************************************/
 package org.eclipse.rse.internal.services.ssh.files.scp;
 
@@ -99,7 +100,7 @@ public class ScpFileService extends AbstractFileService implements
 			if (lsStrings[i].length() == 0 || lsStrings[i].startsWith("total")) //$NON-NLS-1$
 				continue;
 			ScpFileAttr attr = new ScpFileAttr(lsStrings[i]);
-			if (attr == null || attr.getName() == null) {
+			if (attr.getName() == null) {
 				Activator.warn("internalFetch(parentPath='" + parentPath
 						+ "'): Can't get name of " + lsStrings[i], null);
 				continue;
@@ -259,7 +260,7 @@ public class ScpFileService extends AbstractFileService implements
 		if (fUserHome == null) {
 			try {
 				Session sess = getSession();
-				fUserHome = ScpFileUtils.execCommand(sess, "pwd").split( //$NON-NLS-1$
+				fUserHome = ScpFileUtils.execCommand(sess, "cd ;pwd").split( //$NON-NLS-1$
 						ScpFileUtils.EOL_STRING)[0];
 			} catch (Exception e) {
 				Activator.warn("Failed to execute pwd", e);
@@ -271,7 +272,7 @@ public class ScpFileService extends AbstractFileService implements
 		int lastSlash = fUserHome
 				.lastIndexOf(ScpFileUtils.TARGET_SEPARATOR_CHAR);
 		String name = fUserHome.substring(lastSlash + 1);
-		String parent = fUserHome.substring(0, lastSlash);
+		String parent = fUserHome.substring(0, lastSlash+1);
 		IHostFile rc = null;
 		try {
 			rc = getFile(parent, name, null);

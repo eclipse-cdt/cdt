@@ -2381,7 +2381,7 @@ int main() {
 //=
 #include "testString.h"
 
-wchar_t endTag(test::string name)
+const char endTag(test::string name)
 {
     return "</" + name + ">";
 }
@@ -2437,7 +2437,7 @@ int main() {
 //=
 #include "testString.h"
 
-wchar_t exp()
+const char exp()
 {
     return ">" + "</";
 }
@@ -2493,7 +2493,7 @@ int main() {
 //=
 #include "testString.h"
 
-wchar_t endTag(test::string name)
+const char endTag(test::string name)
 {
     return "</" + name + ">";
 }
@@ -2549,7 +2549,7 @@ int main() {
 //=
 #include "testString.h"
 
-wchar_t exp()
+const char exp()
 {
     return ">" + "</";
 }

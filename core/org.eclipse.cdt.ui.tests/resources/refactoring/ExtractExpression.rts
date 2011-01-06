@@ -446,7 +446,7 @@ class Test
 class Test
 {
   void test();
-    wchar_t greeting();
+    const char greeting();
 };
 
 
@@ -461,7 +461,7 @@ void Test::test()
 //=
 #include "test.h"
 
-wchar_t Test::greeting()
+const char Test::greeting()
 {
     return "hello";
 }
@@ -541,7 +541,7 @@ class Test
 
 void Test::test()
 {
-    float f = /*$*/0.42/*$$*/;
+    float f = /*$*/0.42f/*$$*/;
 }
 
 //=
@@ -549,7 +549,7 @@ void Test::test()
 
 float Test::certainty()
 {
-    return 0.42;
+    return 0.42f;
 }
 
 void Test::test()
@@ -686,49 +686,6 @@ void Test::test()
     bool b = invalid();
 }
 
-//!Extract string constant
-//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
-
-//@.config
-filename=test.cpp
-methodname=greeting
-
-//@test.h
-class Test
-{
-  void test();
-};
-
-
-//=
-class Test
-{
-  void test();
-    wchar_t greeting();
-};
-
-
-//@test.cpp
-#include "test.h"
-
-void Test::test()
-{
-    char* hi = /*$*/"hello"/*$$*/;
-}
-
-//=
-#include "test.h"
-
-wchar_t Test::greeting()
-{
-    return "hello";
-}
-
-void Test::test()
-{
-    char* hi = greeting();
-}
-
 //!Extract int constant
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 
@@ -770,49 +727,6 @@ int Test::size()
 void Test::test()
 {
     int i = size();
-}
-
-//!Extract float constant
-//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
-
-//@.config
-filename=test.cpp
-methodname=certainty
-
-//@test.h
-class Test
-{
-  void test();
-};
-
-
-//=
-class Test
-{
-  void test();
-    float certainty();
-};
-
-
-//@test.cpp
-#include "test.h"
-
-void Test::test()
-{
-    float f = /*$*/0.42/*$$*/;
-}
-
-//=
-#include "test.h"
-
-float Test::certainty()
-{
-    return 0.42;
-}
-
-void Test::test()
-{
-    float f = certainty();
 }
 
 //!Extract char constant

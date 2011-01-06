@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -11,29 +11,32 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.text.edits.TextEditGroup;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
@@ -41,15 +44,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamedTypeSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.rewrite.DeclarationGeneratorImpl;
 
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
 
@@ -92,156 +91,54 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 
 	@Override
 	public IASTDeclSpecifier determineReturnType(IASTNode extractedNode, NameInformation _) {
-		IASTDeclSpecifier declSpecifier = null;
-		
-		if (extractedNode instanceof ICPPASTBinaryExpression) {
-			declSpecifier = handleBinaryExpression((ICPPASTBinaryExpression) extractedNode);
-		}
-		
-		if (extractedNode instanceof ICPPASTNewExpression) {
-			declSpecifier = handleNewExpression((ICPPASTNewExpression) extractedNode);
-		}
-
-		if (extractedNode instanceof IASTFunctionCallExpression) {
-			declSpecifier = handleFunctionCallExpression((IASTFunctionCallExpression) extractedNode);
-		}
-		
-		if (extractedNode instanceof IASTLiteralExpression) {
-		    declSpecifier = handleLiteralExpression((IASTLiteralExpression) extractedNode);
-		}
-		
-		if(declSpecifier == null) {
-			if(extractedNode instanceof IASTExpression) {
-				IType type = ((IASTExpression)extractedNode).getExpressionType();
-				if(type instanceof IBasicType) {
-					return createSimpleDeclSpecifier(((IBasicType)type).getKind());
+		List<ITypedef> typdefs = getTypdefs(extractedNode);
+		if (extractedNode instanceof IASTExpression) {
+			IASTExpression exp = (IASTExpression) extractedNode;
+			INodeFactory factory = extractedNode.getTranslationUnit().getASTNodeFactory();
+			DeclarationGeneratorImpl generator = new DeclarationGeneratorImpl(factory);
+			IType expressionType = exp.getExpressionType();
+			for (ITypedef typedef : typdefs) {
+				if (typedef.getType().isSameType(expressionType)) {
+					return generator.createDeclSpecFromType(typedef);
 				}
 			}
+			return generator.createDeclSpecFromType(expressionType);
+		} else {// Fallback
 			return createSimpleDeclSpecifier(Kind.eVoid);
 		}
-		if(declSpecifier.isFrozen()) {
-			return declSpecifier.copy();
-		}else {
-			return declSpecifier;
-		}
 	}
 
-	private IASTDeclSpecifier handleLiteralExpression(IASTLiteralExpression extractedNode) {
-        switch(extractedNode.getKind()){
-          case IASTLiteralExpression.lk_char_constant:
-              return createSimpleDeclSpecifier(Kind.eChar);
-          case IASTLiteralExpression.lk_float_constant:
-              return createSimpleDeclSpecifier(Kind.eFloat);
-          case IASTLiteralExpression.lk_integer_constant:
-              return createSimpleDeclSpecifier(Kind.eInt);
-          case IASTLiteralExpression.lk_string_literal:
-              return createSimpleDeclSpecifier(Kind.eWChar);
-          case IASTLiteralExpression.lk_false: 
-              //Like lk_true a boolean type
-          case IASTLiteralExpression.lk_true:
-              return createSimpleDeclSpecifier(Kind.eBoolean);
-          default:
-              return null;
-          }
-    }
-
-    private IASTDeclSpecifier handleNewExpression(ICPPASTNewExpression expression) {
-		return expression.getTypeId().getDeclSpecifier();
-	}
-
-	private IASTDeclSpecifier handleBinaryExpression(ICPPASTBinaryExpression node) {
-		
-		switch (node.getOperator()) {
-		case IASTBinaryExpression.op_equals:
-		case IASTBinaryExpression.op_notequals:
-		case IASTBinaryExpression.op_logicalOr:
-		case IASTBinaryExpression.op_logicalAnd:
-		case IASTBinaryExpression.op_greaterEqual:
-		case IASTBinaryExpression.op_greaterThan:
-		case IASTBinaryExpression.op_lessEqual:
-		case IASTBinaryExpression.op_lessThan:
-		
-			/* We assume that these operations evaluate to bool and don't 
-			 * consider overriden operators from custom types for now.*/
-			return createSimpleDeclSpecifier(Kind.eBoolean);
-			
-		case IASTBinaryExpression.op_plus:
-		case IASTBinaryExpression.op_plusAssign:
-		case IASTBinaryExpression.op_minus:
-		case IASTBinaryExpression.op_minusAssign:
-		case IASTBinaryExpression.op_multiply:
-		case IASTBinaryExpression.op_multiplyAssign:
-		case IASTBinaryExpression.op_divide:
-		case IASTBinaryExpression.op_divideAssign:
-		case IASTBinaryExpression.op_assign:
-
-			
-			return getTypeFromBinaryExp(node);
-		}
-		
-		return null /* not yet handled */;
-	}
-
-	private IASTDeclSpecifier getTypeFromBinaryExp(ICPPASTBinaryExpression node) {
-		if(node.getOperand1() instanceof ICPPASTBinaryExpression) {
-			IASTDeclSpecifier ret = getTypeFromBinaryExp(((CPPASTBinaryExpression)node.getOperand1()));
-			if(ret != null) return ret;
-		}else {
-			if(node.getOperand1() instanceof CPPASTIdExpression) {
-				return getBinaryExpressionType(((CPPASTIdExpression) node.getOperand1()).getExpressionType());
+	private List<ITypedef> getTypdefs(IASTNode extractedNode) {
+		final ArrayList<ITypedef> typeDefs = new ArrayList<ITypedef>();
+		extractedNode.accept(new ASTVisitor() {
+			{
+				shouldVisitExpressions = true;
 			}
-		}
-
-		if(node.getOperand2() instanceof ICPPASTBinaryExpression) {
-			IASTDeclSpecifier ret = getTypeFromBinaryExp(((CPPASTBinaryExpression)node.getOperand2()));
-			if(ret != null) return ret;
-		}else {
-			if(node.getOperand2() instanceof CPPASTIdExpression) {
-				return getBinaryExpressionType(((CPPASTIdExpression) node.getOperand2()).getExpressionType());
+			
+			@Override
+			public int visit(IASTExpression expression) {
+				if (expression instanceof IASTIdExpression) {
+					IASTIdExpression id = (IASTIdExpression) expression;
+					IBinding binding = id.getName().resolveBinding();
+					IType expressionType = null;
+					if (binding instanceof IVariable) {
+						try {
+							expressionType = ((IVariable) binding).getType();
+						} catch (DOMException e) {// Do nothing, no Exception is thrown here in 8.0
+						}
+					}
+					if (binding instanceof IType) {
+						expressionType = (IType) binding;
+					}
+					if (expressionType != null && expressionType instanceof ITypedef) {
+						ITypedef typdef = (ITypedef) expressionType;
+						typeDefs.add(typdef);
+					}
+				}
+				return PROCESS_CONTINUE;
 			}
-		}
-		return null;
-	}
-
-	private IASTDeclSpecifier getBinaryExpressionType(IType expressionType) {		
-		if (expressionType instanceof CPPBasicType) {
-			
-			CPPBasicType basicType = (CPPBasicType) expressionType;
-			return createSimpleDeclSpecifier(basicType.getKind());
-			
-		} else if (expressionType instanceof ITypedef) {
-			
-			return getDeclSpecForType(((ITypedef)expressionType));
-			
-		} else if (expressionType instanceof ICPPClassType) {
-
-			return getDeclSpecForType((ICPPClassType)expressionType);
-		}
-		return null;
-	}
-
-	private IASTDeclSpecifier getDeclSpecForType(ICPPClassType expressionType) {
-		IASTName name = null;
-
-		char[][] qualifiedNameCharArray = CPPVisitor.getQualifiedNameCharArray(expressionType);
-		name = new CPPASTQualifiedName();
-		for (char[] cs : qualifiedNameCharArray) {
-			((ICPPASTQualifiedName) name).addName(new CPPASTName(cs));
-		}
-
-		return new CPPASTNamedTypeSpecifier(name);
-	}
-
-	private CPPASTNamedTypeSpecifier getDeclSpecForType(ITypedef classType) {
-
-		IASTName name = null;
-		char[][] qualifiedNameCharArray = CPPVisitor.getQualifiedNameCharArray(classType);
-		name = new CPPASTQualifiedName();
-		for (char[] cs : qualifiedNameCharArray) {
-			((ICPPASTQualifiedName) name).addName(new CPPASTName(cs));
-		}
-
-		return new CPPASTNamedTypeSpecifier(name);
+		});
+		return typeDefs;
 	}
 
 	private static IASTDeclSpecifier createSimpleDeclSpecifier(IBasicType.Kind type) {
@@ -262,34 +159,6 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 			functionName = fieldReference.getFieldName();
 		}		
 		return functionName;
-	}
-	
-	private static IASTDeclSpecifier handleFunctionCallExpression(IASTFunctionCallExpression callExpression) {
-		IASTName functionName = findCalledFunctionName(callExpression);
-		if(functionName != null) {
-			IBinding binding = functionName.resolveBinding();
-			if (binding instanceof CPPFunction) {
-				CPPFunction function =  (CPPFunction) binding;
-				if(function.getDefinition() != null) {
-					IASTNode parent = function.getDefinition().getParent();
-					if(parent instanceof CPPASTFunctionDefinition) {
-						CPPASTFunctionDefinition definition = (CPPASTFunctionDefinition) parent;
-						return definition.getDeclSpecifier();
-					}
-				} else if(hasDeclaration(function)) {
-					IASTNode parent = function.getDeclarations()[0].getParent();
-					if (parent instanceof CPPASTSimpleDeclaration) {
-						CPPASTSimpleDeclaration declaration = (CPPASTSimpleDeclaration) parent;
-						return declaration.getDeclSpecifier();
-					}
-				}
-			}else if(binding instanceof ITypedef) {
-				ITypedef typedef = (ITypedef) binding;
-				return new CPPASTNamedTypeSpecifier(new CPPASTName(typedef.getNameCharArray()));
-			}
-
-		}			
-		return null;
 	}
 
 	@Override

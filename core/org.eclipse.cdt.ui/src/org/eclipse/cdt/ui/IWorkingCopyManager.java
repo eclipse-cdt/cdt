@@ -6,7 +6,7 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *     IBM Corporation - initial API and implementation
+ *      IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -63,8 +63,8 @@ public interface IWorkingCopyManager {
 	void disconnect(IEditorInput input);
 	
 	/**
-	 * Returns the working copy remembered for the translation unit encoded in the
-	 * given editor input.
+	 * Returns the working copy remembered for the translation unit encoded in
+	 * the given editor input.
 	 *
 	 * @param input the editor input
 	 * @return the working copy of the translation unit, or <code>null</code> if the
@@ -75,7 +75,7 @@ public interface IWorkingCopyManager {
 	
 	/**
 	 * Shuts down this working copy manager. All working copies still remembered
-	 * by this manager are destroyed.
+	 * by this manager is destroyed.
 	 */
 	void shutdown();
 

@@ -9,7 +9,6 @@
  * Contributors: 
  * Institute for Software - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
 import java.util.ArrayList;
@@ -37,15 +36,14 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
  * Findes the information that are needed to tell where a MethodDefinition of a certain method declaration should be inserted.
  * 
  * @author Mirko Stocker, Lukas Felber
- *
  */
 public class MethodDefinitionInsertLocationFinder {
 	
 	private static IASTNode findFunctionDefinitionInParents(IASTNode node) {
-		if(node == null) {
+		if (node == null) {
 			return null;
-		} else if(node instanceof IASTFunctionDefinition) {
-			if(node.getParent() instanceof ICPPASTTemplateDeclaration) {
+		} else if (node instanceof IASTFunctionDefinition) {
+			if (node.getParent() instanceof ICPPASTTemplateDeclaration) {
 				node = node.getParent();
 			}
 			return node;
@@ -55,7 +53,7 @@ public class MethodDefinitionInsertLocationFinder {
 	
 	private static IASTNode findFirstSurroundingParentFunctionNode(IASTNode definition) {
 		IASTNode functionDefinitionInParents = findFunctionDefinitionInParents(definition);
-		if(functionDefinitionInParents == null || functionDefinitionInParents.getNodeLocations().length == 0) {
+		if (functionDefinitionInParents == null || functionDefinitionInParents.getNodeLocations().length == 0) {
 			return null;
 		}
 		return functionDefinitionInParents;
@@ -86,16 +84,14 @@ public class MethodDefinitionInsertLocationFinder {
 			}
 		}
 		
-		
 		IPath path = file.getLocation().removeFileExtension().addFileExtension("cpp");  //$NON-NLS-1$
 		IFile fileForLocation = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
 		
-		if(fileForLocation != null && fileForLocation.exists()) {
+		if (fileForLocation != null && fileForLocation.exists()) {
 			result.setInsertFile(fileForLocation);
 		}
 		return result;
 	}
-
 
 	/**
 	 * Search the given class for all IASTSimpleDeclarations occuring before 'method' and return them in reverse order.

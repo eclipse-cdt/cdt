@@ -5155,4 +5155,22 @@ public class AST2TemplateTests extends AST2BaseTest {
 		IBinding f2= bh.assertNonProblem("foo =", 3);
 		assertSame(f1, f2);
 	}
+	
+	//	template <class T> struct TestTmpl {
+	//	  struct Inner1;
+	//	  struct Inner2{
+	//	    Inner1* ptr1;
+	//	  };
+	//	  struct Inner1{
+	//	    Inner2* ptr2;
+	//	  };
+	//	};
+	//	struct TestImpl:TestTmpl<int>{};
+	//	void func(TestImpl::Inner1* ptr1) {
+	//	  TestImpl::Inner2* ptr2=ptr1->ptr2;
+	//	  func(ptr2->ptr1);
+	//	}
+	public void testSpecializationViaNotDirectlyEnclosingTemplate_Bug333186() throws Exception {
+		parseAndCheckBindings();
+	}
 }

@@ -876,31 +876,18 @@ public class CPPVisitor extends ASTQueries {
 						node= node.getParent();
 					}
 					continue;
+				} else if (prop == ICPPASTFunctionDeclarator.TRAILING_RETURN_TYPE) {
+					IScope result = scopeViaFunctionDtor((ICPPASTFunctionDeclarator) node.getParent());
+					if (result != null)
+						return result;
+
 				}
 			} else if (node instanceof IASTParameterDeclaration) {
 			    IASTNode parent = node.getParent();
 			    if (parent instanceof ICPPASTFunctionDeclarator) {
-					ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parent;
-					if (ASTQueries.findTypeRelevantDeclarator(dtor) == dtor) {
-						while (parent.getParent() instanceof IASTDeclarator)
-						    parent = parent.getParent();
-						ASTNodeProperty prop = parent.getPropertyInParent();
-						if (prop == IASTSimpleDeclaration.DECLARATOR) {
-						    return dtor.getFunctionScope();
-						}
-						if (prop == IASTFunctionDefinition.DECLARATOR) {
-						    final IASTCompoundStatement body = (IASTCompoundStatement) ((IASTFunctionDefinition) parent.getParent()).getBody();
-						    if (body != null)
-						    	return body.getScope();
-						    return dtor.getFunctionScope();
-						} 
-						if (prop == ICPPASTLambdaExpression.DECLARATOR) {
-						    final IASTCompoundStatement body = ((ICPPASTLambdaExpression) parent.getParent()).getBody();
-						    if (body != null)
-						    	return body.getScope();
-						    return dtor.getFunctionScope();
-						}							
-					}
+					IScope result = scopeViaFunctionDtor((ICPPASTFunctionDeclarator) parent);
+					if (result != null)
+						return result;
 			    } else if (parent instanceof ICPPASTTemplateDeclaration) {
 			    	return CPPTemplates.getContainingScope(node);
 			    }
@@ -1000,6 +987,29 @@ public class CPPVisitor extends ASTQueries {
 		}
 	    return new CPPScope.CPPScopeProblem(inputNode, IProblemBinding.SEMANTIC_BAD_SCOPE, 
 	    		inputNode.getRawSignature().toCharArray());
+	}
+
+	private static IScope scopeViaFunctionDtor(ICPPASTFunctionDeclarator dtor) {
+		if (ASTQueries.findTypeRelevantDeclarator(dtor) == dtor) {
+			IASTDeclarator outerDtor = ASTQueries.findOutermostDeclarator(dtor);
+			ASTNodeProperty prop = outerDtor.getPropertyInParent();
+			if (prop == IASTSimpleDeclaration.DECLARATOR) {
+			    return dtor.getFunctionScope();
+			}
+			if (prop == IASTFunctionDefinition.DECLARATOR) {
+			    final IASTCompoundStatement body = (IASTCompoundStatement) ((IASTFunctionDefinition) outerDtor.getParent()).getBody();
+			    if (body != null)
+			    	return body.getScope();
+			    return dtor.getFunctionScope();
+			} 
+			if (prop == ICPPASTLambdaExpression.DECLARATOR) {
+			    final IASTCompoundStatement body = ((ICPPASTLambdaExpression) outerDtor.getParent()).getBody();
+			    if (body != null)
+			    	return body.getScope();
+			    return dtor.getFunctionScope();
+			}							
+		}
+		return null;
 	}
 	
 	/**

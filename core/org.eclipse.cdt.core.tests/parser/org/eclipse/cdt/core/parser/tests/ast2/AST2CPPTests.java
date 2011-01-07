@@ -9326,4 +9326,12 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testMemberInitializer_333200() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T, typename U> auto add(T t, U u) -> decltype(t + u);
+	//	template <typename T, typename U> auto add(T t, U u) -> decltype(t + u) {
+	//	    return t + u;
+	//	}
+	public void testResolutionInTrailingReturnType_333256() throws Exception {
+		parseAndCheckBindings();
+	}
 }

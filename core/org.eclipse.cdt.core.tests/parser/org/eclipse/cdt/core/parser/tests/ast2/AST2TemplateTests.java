@@ -5193,4 +5193,12 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testDefaultTmplArgumentOfFunctionTemplate_Bug333325() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <void (*Func)()> class X {};
+	//	template <typename T> void Y();
+	//	X< Y<int> > x;  // Problem on X< Y<int> >
+	public void testFunctionInstanceAsTemplateArg_Bug333529() throws Exception {
+		parseAndCheckBindings();
+	}
+
 }

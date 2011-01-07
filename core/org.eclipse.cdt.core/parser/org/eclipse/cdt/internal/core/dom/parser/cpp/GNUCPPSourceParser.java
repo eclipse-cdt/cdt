@@ -564,35 +564,30 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				final IASTNamedTypeSpecifier namedDeclspec = (IASTNamedTypeSpecifier) declspec;
 				IASTName name= namedDeclspec.getName();
 				if (name.contains(typeId)) {
-					// A template-id cannot be used in an id-expression as a template argument
-					// 5.1-11 A template-id shall be used as an unqualified-id only as specified in
-					// 14.7.2, 14.7, and 14.5.4.
-					if (!(name.getLastName() instanceof ICPPASTTemplateId)) {
-			    		IToken typeIdEnd= mark();
-						IASTIdExpression idExpr= setRange(nodeFactory.newIdExpression(name), name);
-			    		try {
-    						IASTExpression expression = expression(ExprKind.eAssignment, exprCtx, idExpr);
-    						boolean isAmbiguous= (expression == idExpr);
-    						if (LT(1) == IToken.tELLIPSIS) {
-    							IToken ellipsis= consume();
-    							if (isAmbiguous) {
-    								addPackExpansion(typeId, ellipsis);
-    							}
-    							expression= addPackExpansion(expression, ellipsis);
-    						}
-    						if (isAmbiguous) {
-    							ICPPASTAmbiguousTemplateArgument ambiguity= createAmbiguousTemplateArgument();
-    							ambiguity.addTypeId(typeId);
-    							ambiguity.addIdExpression(expression);
-    							return ambiguity;
-    						}
-    						return expression;
-			    		} catch (BacktrackException e) {
-			    			// Use the typeId
-			    		}
-			    		backup(typeIdEnd);
-			    		namedDeclspec.setName(name);
+					IToken typeIdEnd= mark();
+					IASTIdExpression idExpr= setRange(nodeFactory.newIdExpression(name), name);
+					try {
+						IASTExpression expression = expression(ExprKind.eAssignment, exprCtx, idExpr);
+						boolean isAmbiguous= (expression == idExpr);
+						if (LT(1) == IToken.tELLIPSIS) {
+							IToken ellipsis= consume();
+							if (isAmbiguous) {
+								addPackExpansion(typeId, ellipsis);
+							}
+							expression= addPackExpansion(expression, ellipsis);
+						}
+						if (isAmbiguous) {
+							ICPPASTAmbiguousTemplateArgument ambiguity= createAmbiguousTemplateArgument();
+							ambiguity.addTypeId(typeId);
+							ambiguity.addIdExpression(expression);
+							return ambiguity;
+						}
+						return expression;
+					} catch (BacktrackException e) {
+						// Use the typeId
 					}
+					backup(typeIdEnd);
+					namedDeclspec.setName(name);
 				}
 			}
 			// There is no ambiguity, use the type-id

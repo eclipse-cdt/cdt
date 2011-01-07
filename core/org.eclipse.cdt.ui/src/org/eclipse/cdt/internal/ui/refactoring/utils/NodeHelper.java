@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
@@ -42,7 +42,6 @@ import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
  * General class for common Node operations.
  * 
  * @author Lukas Felber & Guido Zgraggen
- *
  */
 public class NodeHelper {
 
@@ -56,18 +55,17 @@ public class NodeHelper {
 		}
 		return new IASTDeclaration[0]; 
 	}
-
 	
 	public static IASTNode findFollowingNode(IASTNode currentNode) {
-		if(currentNode == null || currentNode.getParent() == null) {
+		if (currentNode == null || currentNode.getParent() == null) {
 			return null;
 		}
 		boolean match = false;
-		for(IASTNode actNode : getDeclarations(currentNode.getParent())) {
-			if(match) {
+		for (IASTNode actNode : getDeclarations(currentNode.getParent())) {
+			if (match) {
 				return actNode;
 			}
-			if(actNode.equals(currentNode)) {
+			if (actNode.equals(currentNode)) {
 				match = true;
 			}
 		}
@@ -75,14 +73,14 @@ public class NodeHelper {
 	}
 	
 	public static IASTNode findTopLevelParent(IASTNode currentNode) {
-		while(currentNode != null && currentNode.getParent() != null && currentNode.getParent().getParent() != null) {
+		while (currentNode != null && currentNode.getParent() != null && currentNode.getParent().getParent() != null) {
 			return findTopLevelParent(currentNode.getParent());
 		}
 		return currentNode;
 	}
 	
 	public static boolean isSameNode(IASTNode node1, IASTNode node2) {
-		if(node1 == null || node2 == null) {
+		if (node1 == null || node2 == null) {
 			return false;
 		}
 		return node1.getNodeLocations()[0].getNodeOffset() == node2.getNodeLocations()[0].getNodeOffset() 
@@ -91,7 +89,7 @@ public class NodeHelper {
 	}
 	
 	public static IASTSimpleDeclaration findSimpleDeclarationInParents(IASTNode node) {
-		while(node != null){
+		while (node != null){
 			if (node instanceof IASTSimpleDeclaration) {
 				return (IASTSimpleDeclaration) node;
 			}
@@ -106,9 +104,9 @@ public class NodeHelper {
 		MethodContext context = new MethodContext();
 		context.setType(MethodContext.ContextType.NONE);
 		IASTName name = null;
-		while(node != null && !found){
+		while (node != null && !found){
 			node = node.getParent();
-			if(node instanceof IASTFunctionDeclarator){
+			if (node instanceof IASTFunctionDeclarator){
 				name=((IASTFunctionDeclarator)node).getName();
 				found = true;
 				context.setType(MethodContext.ContextType.FUNCTION);
@@ -118,18 +116,17 @@ public class NodeHelper {
 				context.setType(MethodContext.ContextType.FUNCTION);
 			} 
 		}
-		if(index != null) {
+		if (index != null) {
 			getMethodContexWithIndex(index, translationUnit, context, name);
-		}else {
+		} else {
 			getMethodContex(translationUnit, context, name);
 		}
 		return context;
 	}
 
-
-	private static void getMethodContex(IASTTranslationUnit translationUnit,
-			MethodContext context, IASTName name) {
-		if(name instanceof ICPPASTQualifiedName){
+	private static void getMethodContex(IASTTranslationUnit translationUnit, MethodContext context,
+			IASTName name) {
+		if (name instanceof ICPPASTQualifiedName){
 			 ICPPASTQualifiedName qname =( ICPPASTQualifiedName )name;
 			 context.setMethodQName(qname);
 			 IBinding bind = qname.resolveBinding();
@@ -141,30 +138,27 @@ public class NodeHelper {
 					 context.setType(MethodContext.ContextType.METHOD);
 				 }
 			 }
-
 		 }
 	}
 
-
-	private static void getMethodContexWithIndex(IIndex index,
-			IASTTranslationUnit translationUnit, MethodContext context,
-			IASTName name) throws CoreException {
+	private static void getMethodContexWithIndex(IIndex index, IASTTranslationUnit translationUnit,
+			MethodContext context, IASTName name) throws CoreException {
 		IBinding bind = name.resolveBinding();
 		if (bind instanceof ICPPMethod) {
 			context.setType(MethodContext.ContextType.METHOD);
 			IIndexName[] decl;
 			decl = index.findDeclarations(bind);
 			String tuFileLoc = translationUnit.getFileLocation().getFileName(); 
-			if(decl.length == 0) {
+			if (decl.length == 0) {
 				context.setMethodDeclarationName(name);
 			}
 			for (IIndexName tmpname : decl) {
 				IASTTranslationUnit locTu = translationUnit;
-				if(!tuFileLoc.equals(tmpname.getFileLocation().getFileName())) {
+				if (!tuFileLoc.equals(tmpname.getFileLocation().getFileName())) {
 					locTu = TranslationUnitHelper.loadTranslationUnit(tmpname.getFileLocation().getFileName(), false);
 				}
 				IASTName declName = DeclarationFinder.findDeclarationInTranslationUnit(locTu, tmpname);
-				if(declName != null) {
+				if (declName != null) {
 					IASTNode methoddefinition = declName.getParent().getParent();
 					if (methoddefinition instanceof IASTSimpleDeclaration || methoddefinition instanceof IASTFunctionDefinition) {
 						context.setMethodDeclarationName(declName);
@@ -172,14 +166,14 @@ public class NodeHelper {
 				}
 			}
 		}
-		if(name instanceof ICPPASTQualifiedName){
+		if (name instanceof ICPPASTQualifiedName){
 			ICPPASTQualifiedName qname =( ICPPASTQualifiedName )name;
 			context.setMethodQName(qname);
 		}
 	}
 	
 	public static IASTCompoundStatement findCompoundStatementInAncestors(IASTNode node) {
-		while(node != null){
+		while (node != null){
 			if (node instanceof IASTCompoundStatement) {
 				return (IASTCompoundStatement) node;
 			}
@@ -189,8 +183,8 @@ public class NodeHelper {
 	}
 	
 	public static IASTCompositeTypeSpecifier findClassInAncestors(IASTNode node) {
-		while(!(node instanceof IASTCompositeTypeSpecifier)){
-			if(node instanceof IASTTranslationUnit) {
+		while (!(node instanceof IASTCompositeTypeSpecifier)){
+			if (node instanceof IASTTranslationUnit) {
 				return null;
 			}
 			node = node.getParent();
@@ -199,7 +193,7 @@ public class NodeHelper {
 	}
 
 	public static IASTFunctionDefinition findFunctionDefinitionInAncestors(IASTNode node) {
-		while(node != null){
+		while (node != null){
 			if (node instanceof IASTFunctionDefinition) {
 				return (IASTFunctionDefinition) node;
 			}
@@ -209,14 +203,14 @@ public class NodeHelper {
 	}
 
 	public static boolean isMethodDeclaration(IASTSimpleDeclaration simpleDeclaration) {
-		if(simpleDeclaration == null) {
+		if (simpleDeclaration == null) {
 			return false;
 		}
 		return simpleDeclaration.getDeclarators().length == 1 && simpleDeclaration.getDeclarators()[0] instanceof ICPPASTFunctionDeclarator;
 	}
 
 	public static boolean isContainedInTemplateDeclaration(IASTNode node) {
-		if(node == null) {
+		if (node == null) {
 			return false;
 		} else if (node instanceof ICPPASTTemplateDeclaration) {
 			return true;

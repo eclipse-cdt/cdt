@@ -1756,102 +1756,120 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      *             request for a backtrack
      */
     protected List<ICPPASTTemplateParameter> templateParameterList() throws BacktrackException, EndOfFileException {
-        // if we have gotten this far then we have a true template-declaration
-        // iterate through the template parameter list
-        List<ICPPASTTemplateParameter> returnValue = new ArrayList<ICPPASTTemplateParameter>(DEFAULT_PARM_LIST_SIZE);
-
+        List<ICPPASTTemplateParameter> result = new ArrayList<ICPPASTTemplateParameter>(DEFAULT_PARM_LIST_SIZE);
+        boolean needComma= false;
         for (;;) {
         	final int lt1= LT(1);
             if (lt1 == IToken.tGT || lt1 == IToken.tEOC || lt1 == IToken.tGT_in_SHIFTR)
-                return returnValue;
+                return result;
             
-            final int offset = LA(1).getOffset();
-            if (lt1 == IToken.t_class || lt1 == IToken.t_typename) {
-                int type = (lt1 == IToken.t_class ? ICPPASTSimpleTypeTemplateParameter.st_class
-                        : ICPPASTSimpleTypeTemplateParameter.st_typename);
-                boolean parameterPack= false;
-                IASTName identifierName = null;
-                IASTTypeId defaultValue = null;
-                int endOffset = consume().getEndOffset();
-                
-                if (LT(1) == IToken.tELLIPSIS) {
-                	parameterPack= true;
-                	endOffset= consume().getOffset();
-                }
-                if (LT(1) == IToken.tIDENTIFIER) { // optional identifier
-                    identifierName = identifier();
-                    endOffset = calculateEndOffset(identifierName);
-                    if (LT(1) == IToken.tASSIGN) { // optional = type-id
-                    	if (parameterPack)
-                    		throw backtrack;
-                        consume();
-                        defaultValue = typeId(DeclarationOptions.TYPEID); // type-id
-                        endOffset = calculateEndOffset(defaultValue);
-                    }
-                } else {
-                    identifierName = nodeFactory.newName();
-                }
-
-                ICPPASTSimpleTypeTemplateParameter tpar = nodeFactory.newSimpleTypeTemplateParameter(type, identifierName, defaultValue);
-                tpar.setIsParameterPack(parameterPack);
-                setRange(tpar, offset, endOffset);
-                returnValue.add(tpar);
-
-            } else if (lt1 == IToken.t_template) {
-                boolean parameterPack= false;
-                IASTName identifierName = null;
-                IASTExpression defaultValue = null;
-
-                consume();
-                consume(IToken.tLT);
-                List<ICPPASTTemplateParameter> tparList = templateParameterList();
-                consume(IToken.tGT, IToken.tGT_in_SHIFTR);
-                int endOffset = consume(IToken.t_class).getEndOffset();
-
-                if (LT(1) == IToken.tELLIPSIS) {
-                	parameterPack= true;
-                	endOffset= consume().getOffset();
-                }
-
-                if (LT(1) == IToken.tIDENTIFIER) { // optional identifier
-                    identifierName = identifier();
-                    endOffset = calculateEndOffset(identifierName);
-                    if (LT(1) == IToken.tASSIGN) { // optional = type-id
-                    	if (parameterPack)
-                    		throw backtrack;
-                    	
-                        consume();
-                        defaultValue = primaryExpression(CastExprCtx.eNotBExpr);
-                        endOffset = calculateEndOffset(defaultValue);
-                    }
-                } else {
-                    identifierName = nodeFactory.newName();
-                }
-                
-                ICPPASTTemplatedTypeTemplateParameter tpar = nodeFactory.newTemplatedTypeTemplateParameter(identifierName, defaultValue);
-                tpar.setIsParameterPack(parameterPack);
-                setRange(tpar, offset, endOffset);
-
-                for (int i = 0; i < tparList.size(); ++i) {
-                    ICPPASTTemplateParameter p = tparList.get(i);
-                    tpar.addTemplateParameter(p);
-                }
-                returnValue.add(tpar);
-            } else if (lt1 == IToken.tCOMMA) {
-                consume();
-                continue;
+            if (needComma) {
+            	consume(IToken.tCOMMA);
             } else {
-            	boolean inTParList= fInTemplateParameterList;
-            	try {
-            		fInTemplateParameterList= true;
-            		ICPPASTParameterDeclaration parm = parameterDeclaration();
-            		returnValue.add(parm);
-            	} finally {
-            		fInTemplateParameterList= inTParList;
-            	}
+            	needComma= true;
             }
+            
+            ICPPASTTemplateParameter tpar= templateParameter();
+            result.add(tpar);
         }
     }
+
+	private ICPPASTTemplateParameter templateParameter() throws EndOfFileException, BacktrackException {
+    	final int lt1= LT(1);
+		final IToken start= mark();
+		if (lt1 == IToken.t_class || lt1 == IToken.t_typename) {
+			try {
+				int type = (lt1 == IToken.t_class ? ICPPASTSimpleTypeTemplateParameter.st_class
+						: ICPPASTSimpleTypeTemplateParameter.st_typename);
+				boolean parameterPack= false;
+				IASTName identifierName = null;
+				IASTTypeId defaultValue = null;
+				int endOffset = consume().getEndOffset();
+
+				if (LT(1) == IToken.tELLIPSIS) {
+					parameterPack= true;
+					endOffset= consume().getOffset();
+				}
+				if (LT(1) == IToken.tIDENTIFIER) { // optional identifier
+					identifierName = identifier();
+					endOffset = calculateEndOffset(identifierName);
+					if (LT(1) == IToken.tASSIGN) { // optional = type-id
+						if (parameterPack)
+							throw backtrack;
+						consume();
+						defaultValue = typeId(DeclarationOptions.TYPEID); // type-id
+						endOffset = calculateEndOffset(defaultValue);
+					}
+				} else {
+					identifierName = nodeFactory.newName();
+				}
+				
+				// Check if followed by comma
+				switch (LT(1)) {
+				case IToken.tGT:
+				case IToken.tEOC:
+				case IToken.tGT_in_SHIFTR:
+				case IToken.tCOMMA:
+					ICPPASTSimpleTypeTemplateParameter tpar = nodeFactory.newSimpleTypeTemplateParameter(type, identifierName, defaultValue);
+					tpar.setIsParameterPack(parameterPack);
+					setRange(tpar, start.getOffset(), endOffset);
+					return tpar;
+				}
+			} catch (BacktrackException bt) {
+			}
+			// Can be a non-type template parameter, see bug 333285
+			backup(start);
+		} else if (lt1 == IToken.t_template) {
+		    boolean parameterPack= false;
+		    IASTName identifierName = null;
+		    IASTExpression defaultValue = null;
+
+		    consume();
+		    consume(IToken.tLT);
+		    List<ICPPASTTemplateParameter> tparList = templateParameterList();
+		    consume(IToken.tGT, IToken.tGT_in_SHIFTR);
+		    int endOffset = consume(IToken.t_class).getEndOffset();
+
+		    if (LT(1) == IToken.tELLIPSIS) {
+		    	parameterPack= true;
+		    	endOffset= consume().getOffset();
+		    }
+
+		    if (LT(1) == IToken.tIDENTIFIER) { // optional identifier
+		        identifierName = identifier();
+		        endOffset = calculateEndOffset(identifierName);
+		        if (LT(1) == IToken.tASSIGN) { // optional = type-id
+		        	if (parameterPack)
+		        		throw backtrack;
+		        	
+		            consume();
+		            defaultValue = primaryExpression(CastExprCtx.eNotBExpr);
+		            endOffset = calculateEndOffset(defaultValue);
+		        }
+		    } else {
+		        identifierName = nodeFactory.newName();
+		    }
+		    
+		    ICPPASTTemplatedTypeTemplateParameter tpar = nodeFactory.newTemplatedTypeTemplateParameter(identifierName, defaultValue);
+		    tpar.setIsParameterPack(parameterPack);
+		    setRange(tpar, start.getOffset(), endOffset);
+
+		    for (int i = 0; i < tparList.size(); ++i) {
+		        ICPPASTTemplateParameter p = tparList.get(i);
+		        tpar.addTemplateParameter(p);
+		    }
+		    return tpar;
+		} 
+		
+		// Try non-type template parameter
+		boolean inTParList= fInTemplateParameterList;
+		try {
+			fInTemplateParameterList= true;
+			return parameterDeclaration();
+		} finally {
+			fInTemplateParameterList= inTParList;
+		}
+	}
 
 
     /**

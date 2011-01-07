@@ -5173,4 +5173,17 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testSpecializationViaNotDirectlyEnclosingTemplate_Bug333186() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T> struct A {
+	//	    typedef T type;
+	//	};
+	//	template <typename T> struct X {
+	//	    template <typename A<T>::type x> struct Y {};
+	//	};
+	//
+	//	struct C {};
+	//	template <class C& c> class Z{};
+	public void testNonTypeTemplateParameterWithTypenameKeyword_Bug333186() throws Exception {
+		parseAndCheckBindings();
+	}
 }

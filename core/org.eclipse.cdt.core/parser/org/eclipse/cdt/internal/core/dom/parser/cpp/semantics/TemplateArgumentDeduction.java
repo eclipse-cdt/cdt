@@ -111,9 +111,11 @@ public class TemplateArgumentDeduction {
 				result.addAll(Arrays.asList(deducedArgs));
 			} else {
 				ICPPTemplateArgument deducedArg= map.getArgument(tpar);
-				if (deducedArg == null) 
-					return null;
-			
+				if (deducedArg == null) {
+					deducedArg= tpar.getDefaultValue();
+					if (deducedArg == null)
+						return null;
+				}			
 				result.add(deducedArg);
 			}
 		}
@@ -192,8 +194,11 @@ public class TemplateArgumentDeduction {
 					result.addAll(Arrays.asList(deducedArgs));
 				} else {
 					ICPPTemplateArgument deducedArg= map.getArgument(tpar);
-					if (deducedArg == null) 
-						return null;
+					if (deducedArg == null) {
+						deducedArg= tpar.getDefaultValue();
+						if (deducedArg == null)
+							return null;
+					}			
 
 					result.add(deducedArg);
 				}
@@ -224,9 +229,13 @@ public class TemplateArgumentDeduction {
 		
 		for (int i = 0; i < length; i++) {
 			if (result[i] == null) {
-				ICPPTemplateArgument deducedArg= map.getArgument(tmplParams[i]);
-				if (deducedArg == null)
-					return null;
+				final ICPPTemplateParameter tpar = tmplParams[i];
+				ICPPTemplateArgument deducedArg= map.getArgument(tpar);
+				if (deducedArg == null) {
+					deducedArg= tpar.getDefaultValue();
+					if (deducedArg == null)
+						return null;
+				}			
 				result[i]= deducedArg;
 			}
 		}

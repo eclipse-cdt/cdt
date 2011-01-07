@@ -5186,4 +5186,11 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testNonTypeTemplateParameterWithTypenameKeyword_Bug333186() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T, typename U = int> void f() {
+	//	    f<int>(); 
+	//	}
+	public void testDefaultTmplArgumentOfFunctionTemplate_Bug333325() throws Exception {
+		parseAndCheckBindings();
+	}
 }

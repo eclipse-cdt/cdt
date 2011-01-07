@@ -33,7 +33,8 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.FileHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 
 /**
- * Findes the information that are needed to tell where a MethodDefinition of a certain method declaration should be inserted.
+ * Finds the information that are needed to tell where a MethodDefinition of a certain
+ * method declaration should be inserted.
  * 
  * @author Mirko Stocker, Lukas Felber
  */
@@ -53,40 +54,40 @@ public class MethodDefinitionInsertLocationFinder {
 	
 	private static IASTNode findFirstSurroundingParentFunctionNode(IASTNode definition) {
 		IASTNode functionDefinitionInParents = findFunctionDefinitionInParents(definition);
-		if (functionDefinitionInParents == null || functionDefinitionInParents.getNodeLocations().length == 0) {
+		if (functionDefinitionInParents == null ||
+				functionDefinitionInParents.getNodeLocations().length == 0) {
 			return null;
 		}
 		return functionDefinitionInParents;
 	}
 
-	public static InsertLocation find(IASTFileLocation methodDeclarationLocation, IASTNode parent, IFile file) throws CoreException {
+	public static InsertLocation find(IASTFileLocation methodDeclarationLocation, IASTNode parent,
+			IFile file) throws CoreException {
 		IASTName definition = null;
 		IASTDeclaration[] declarations = NodeHelper.getDeclarations(parent);
 		InsertLocation result = new InsertLocation();
 
-		for (IASTSimpleDeclaration simpleDeclaration : getAllPreviousIASTSimpleDeclarationsFromClassInReverseOrder(declarations, methodDeclarationLocation)) {
+		for (IASTSimpleDeclaration simpleDeclaration : getAllPreviousSimpleDeclarationsFromClassInReverseOrder(declarations, methodDeclarationLocation)) {
 			definition = DefinitionFinder.getDefinition(simpleDeclaration, file);
-			
+
 			if (definition != null) {
 				result.setNodeToInsertAfter(findFirstSurroundingParentFunctionNode(definition));
-				
 				result.setInsertFile(FileHelper.getIFilefromIASTNode(definition));
 			}
 		}
 
-		for (IASTSimpleDeclaration simpleDeclaration : getAllFollowingIASTSimpleDeclarationsFromClass(declarations, methodDeclarationLocation)) {
+		for (IASTSimpleDeclaration simpleDeclaration : getAllFollowingSimpleDeclarationsFromClass(declarations, methodDeclarationLocation)) {
 			definition = DefinitionFinder.getDefinition(simpleDeclaration, file);
 
 			if (definition != null) {
 				result.setNodeToInsertBefore(findFirstSurroundingParentFunctionNode(definition));
-				
 				result.setInsertFile(FileHelper.getIFilefromIASTNode(definition));
 			}
 		}
-		
+
 		IPath path = file.getLocation().removeFileExtension().addFileExtension("cpp");  //$NON-NLS-1$
 		IFile fileForLocation = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-		
+
 		if (fileForLocation != null && fileForLocation.exists()) {
 			result.setInsertFile(fileForLocation);
 		}
@@ -94,13 +95,15 @@ public class MethodDefinitionInsertLocationFinder {
 	}
 
 	/**
-	 * Search the given class for all IASTSimpleDeclarations occuring before 'method' and return them in reverse order.
+	 * Searches the given class for all IASTSimpleDeclarations occurring before 'method'
+	 * and returns them in reverse order.
 	 * 
 	 * @param declarations to be searched
 	 * @param methodPosition on which the search aborts
 	 * @return all declarations, sorted in reverse order
 	 */
-	private static Collection<IASTSimpleDeclaration> getAllPreviousIASTSimpleDeclarationsFromClassInReverseOrder(IASTDeclaration[] declarations, IASTFileLocation methodPosition) {
+	private static Collection<IASTSimpleDeclaration> getAllPreviousSimpleDeclarationsFromClassInReverseOrder(
+			IASTDeclaration[] declarations, IASTFileLocation methodPosition) {
 		ArrayList<IASTSimpleDeclaration> allIASTSimpleDeclarations = new ArrayList<IASTSimpleDeclaration>();
 		for (IASTDeclaration decl : declarations) {
 			if (decl.getFileLocation().getStartingLineNumber() >= methodPosition.getStartingLineNumber()) {
@@ -113,11 +116,13 @@ public class MethodDefinitionInsertLocationFinder {
 		return allIASTSimpleDeclarations;
 	}
 
-	private static Collection<IASTSimpleDeclaration> getAllFollowingIASTSimpleDeclarationsFromClass(IASTDeclaration[] declarations, IASTFileLocation methodPosition) {
+	private static Collection<IASTSimpleDeclaration> getAllFollowingSimpleDeclarationsFromClass(
+			IASTDeclaration[] declarations, IASTFileLocation methodPosition) {
 		ArrayList<IASTSimpleDeclaration> allIASTSimpleDeclarations = new ArrayList<IASTSimpleDeclaration>();
 
 		for (IASTDeclaration decl : declarations) {
-			if (isMemberFunctionDeclaration(decl) && decl.getFileLocation().getStartingLineNumber() > methodPosition.getStartingLineNumber() ) {
+			if (isMemberFunctionDeclaration(decl) &&
+					decl.getFileLocation().getStartingLineNumber() > methodPosition.getStartingLineNumber() ) {
 				allIASTSimpleDeclarations.add((IASTSimpleDeclaration) decl);
 			}
 		}
@@ -125,6 +130,8 @@ public class MethodDefinitionInsertLocationFinder {
 	}
 	
 	private static boolean isMemberFunctionDeclaration(IASTDeclaration decl) {
-		return decl instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration) decl).getDeclarators().length > 0 && ((IASTSimpleDeclaration) decl).getDeclarators()[0] instanceof IASTFunctionDeclarator;
+		return decl instanceof IASTSimpleDeclaration &&
+				((IASTSimpleDeclaration) decl).getDeclarators().length > 0 &&
+				((IASTSimpleDeclaration) decl).getDeclarators()[0] instanceof IASTFunctionDeclarator;
 	}
 }

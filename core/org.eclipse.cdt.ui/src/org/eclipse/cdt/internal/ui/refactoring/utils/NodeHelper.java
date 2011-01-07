@@ -132,8 +132,8 @@ public class NodeHelper {
 			 IBinding bind = qname.resolveBinding();
 			 IASTName[] decl = translationUnit.getDeclarationsInAST(bind);
 			 for (IASTName tmpname : decl) {
-				 IASTNode methoddefinition = tmpname.getParent().getParent();
-				 if (methoddefinition instanceof IASTSimpleDeclaration) {
+				 IASTNode methodDefinition = tmpname.getParent().getParent();
+				 if (methodDefinition instanceof IASTSimpleDeclaration) {
 					 context.setMethodDeclarationName(tmpname);
 					 context.setType(MethodContext.ContextType.METHOD);
 				 }

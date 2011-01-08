@@ -103,7 +103,7 @@ public class ImportMemoryDialog extends SelectionDialog
 		}
 	}
 	
-	protected void scrollRenderings(final BigInteger address)
+	public void scrollRenderings(final BigInteger address)
 	{
 		UIJob job = new UIJob("repositionRenderings"){ //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {

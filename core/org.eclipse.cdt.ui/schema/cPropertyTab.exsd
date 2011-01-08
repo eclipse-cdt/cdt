@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.managedbuilder.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
-         <meta.schema plugin="org.eclipse.cdt.managedbuilder.ui" id="cPropertyTab" name="cPropertyTab"/>
-      </appinfo>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.ui" id="cPropertyTab" name="cPropertyTab"/>
+      </appInfo>
       <documentation>
          Implementation of property/preference UI element.
 
@@ -28,6 +28,11 @@ their weights.
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="tab" minOccurs="1" maxOccurs="unbounded"/>
@@ -51,9 +56,9 @@ their weights.
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -67,19 +72,19 @@ their weights.
                   Icon to be displayed for corresponding tab in tabfolder.
 Ignored for single-tab pages
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Class implementing org.eclipse.cdt.managedbuilder.ui.newproperties.ICPropertyTab
+                  Class implementing org.eclipse.cdt.ui.newui.ICPropertyTab
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.ui.newproperties.ICPropertyTab"/>
-               </appinfo>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.ui.newui.ICPropertyTab"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -126,18 +131,18 @@ Ignored for single-tab page.
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          4.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          &lt;extension
            point=&quot;org.eclipse.cdt.ui.cPropertyTab&quot;&gt;
@@ -152,20 +157,19 @@ Ignored for single-tab page.
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Tabs must implement interface:
 org.eclipse.cdt.managedbuilder.ui.newproperties.ICPropertyTab
       </documentation>
    </annotation>
 
-
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Implementors in org.eclipse.cdt.ui.newui:
 BinaryParsTab      
@@ -200,9 +204,9 @@ ToolSettingsTab
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          /*******************************************************************************
  * Copyright (c) 2007 Intel Corporation and others.

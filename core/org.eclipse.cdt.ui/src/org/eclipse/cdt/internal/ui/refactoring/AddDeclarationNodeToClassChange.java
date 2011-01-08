@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2007, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,11 +7,12 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- *    Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.text.edits.TextEditGroup;
@@ -39,7 +40,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 public class AddDeclarationNodeToClassChange {
 	private final ICPPASTCompositeTypeSpecifier nodeClass;
 	private final VisibilityEnum visibility;
-	private ArrayList<IASTNode> fieldNodes = new ArrayList<IASTNode>();
+	private List<IASTNode> fieldNodes = new ArrayList<IASTNode>();
 	private final ModificationCollector collector;
 	
 	public static void createChange(ICPPASTCompositeTypeSpecifier nodeClass,
@@ -47,14 +48,15 @@ public class AddDeclarationNodeToClassChange {
 			ModificationCollector collector) {
 		new AddDeclarationNodeToClassChange(nodeClass, visibility, fieldNodes, collector, isField);
 	}
+
 	public static void createChange(ICPPASTCompositeTypeSpecifier nodeClass,
-			VisibilityEnum visibility, ArrayList<IASTNode> fieldNodes, boolean isField,
+			VisibilityEnum visibility, List<IASTNode> fieldNodes, boolean isField,
 			ModificationCollector collector) {
 		new AddDeclarationNodeToClassChange(nodeClass, visibility, fieldNodes, collector, isField);
 	}	
 
 	private AddDeclarationNodeToClassChange(ICPPASTCompositeTypeSpecifier nodeClass,
-			VisibilityEnum visibility, ArrayList<IASTNode> fieldNodes,
+			VisibilityEnum visibility, List<IASTNode> fieldNodes,
 			ModificationCollector collector, boolean isField) {
 		this.fieldNodes = fieldNodes;
 		this.nodeClass = nodeClass;		
@@ -110,7 +112,7 @@ public class AddDeclarationNodeToClassChange {
 
 		IASTDeclaration nextFunctionDeclaration = null;
 		if (lastFunctionDeclaration < members.length - 1 && lastFunctionDeclaration >= 0)
-			nextFunctionDeclaration = members[lastFunctionDeclaration+1];
+			nextFunctionDeclaration = members[lastFunctionDeclaration + 1];
 
 		IASTDeclaration nextFieldDeclaration = null;
 		if (lastFieldDeclaration < members.length - 1 && lastFieldDeclaration >= 0)

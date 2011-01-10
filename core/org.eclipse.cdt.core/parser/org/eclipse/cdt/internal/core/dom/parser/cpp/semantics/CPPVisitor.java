@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,6 +75,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
@@ -1409,10 +1410,24 @@ public class CPPVisitor extends ASTQueries {
 					if (nameBinding.equals(binding)) {
 						return true;
 					}
-					// a using declaration is a declaration for the references of its delegates
+					// A using declaration is a declaration for the references of its delegates
 					if (nameBinding instanceof ICPPUsingDeclaration) {
 						if (ArrayUtil.contains(((ICPPUsingDeclaration) nameBinding).getDelegates(), binding)) {
 							return true;
+						}
+					}
+					// Handle the case when one of the bindings is from the index and another
+					// one is from an AST.
+					if ((nameBinding instanceof IIndexBinding) != (binding instanceof IIndexBinding) &&
+							SemanticUtil.isSameOwner(nameBinding.getOwner(), binding.getOwner())) {
+						if (nameBinding instanceof IFunction && binding instanceof IFunction) {
+							if (((IFunction) nameBinding).getType().isSameType(((IFunction) binding).getType())) {
+								return true;
+							}
+						} else if (nameBinding instanceof IField && binding instanceof IField) {
+							if (((IField) nameBinding).getType().isSameType(((IField) binding).getType())) {
+								return true;
+							}
 						}
 					}
 				}

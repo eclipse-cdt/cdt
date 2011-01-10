@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring;
 
@@ -24,16 +25,17 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
+
 /**
  * @author Emanuel Graf
- * 
  */
 public abstract class RefactoringTest extends RefactoringBaseTest {
-
 	private static final String CONFIG_FILE_NAME = ".config"; //$NON-NLS-1$
 
 	protected String fileName;
-	
+	protected RefactoringASTCache astCache;
+
 	public RefactoringTest(String name, Vector<TestSourceFile> files) {
 		super(name, files);
 		initializeConfiguration(files);
@@ -52,6 +54,13 @@ public abstract class RefactoringTest extends RefactoringBaseTest {
 		CCorePlugin.getIndexManager().reindex(cproject);
 		boolean joined = CCorePlugin.getIndexManager().joinIndexer(IIndexManager.FOREVER, NULL_PROGRESS_MONITOR);
 		assertTrue(joined);
+		astCache = new RefactoringASTCache();
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		astCache.dispose();
+		super.tearDown();
 	}
 
 	private void initializeConfiguration(Vector<TestSourceFile> files) {
@@ -76,7 +85,6 @@ public abstract class RefactoringTest extends RefactoringBaseTest {
 		initCommonFields(refactoringProperties);
 		configureRefactoring(refactoringProperties);
 		files.remove(configFile);
-
 	}
 
 	private void initCommonFields(Properties refactoringProperties) {
@@ -84,8 +92,8 @@ public abstract class RefactoringTest extends RefactoringBaseTest {
 	}
 
 	protected void assertConditionsOk(RefactoringStatus conditions) {
-		assertTrue(conditions.isOK() ? "OK" : "Error or Warning in Conditions: " + conditions.getEntries()[0].getMessage() //$NON-NLS-1$ //$NON-NLS-2$
-		, conditions.isOK());
+		assertTrue(conditions.isOK() ? "OK" : "Error or Warning in Conditions: " + conditions.getEntries()[0].getMessage(), //$NON-NLS-1$ //$NON-NLS-2$
+		conditions.isOK());
 	}
 
 	protected void assertConditionsWarning(RefactoringStatus conditions, int number) {

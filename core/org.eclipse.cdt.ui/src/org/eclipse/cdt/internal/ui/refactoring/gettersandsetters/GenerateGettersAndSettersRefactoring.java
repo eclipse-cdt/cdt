@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,18 +7,18 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ * 	   Institute for Software - initial API and implementation
+ * 	   Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -43,20 +43,20 @@ import org.eclipse.cdt.core.model.ICProject;
 
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ContainerNode;
 
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
 import org.eclipse.cdt.internal.ui.refactoring.AddDeclarationNodeToClassChange;
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
-import org.eclipse.cdt.internal.ui.refactoring.implementmethod.InsertLocation;
-import org.eclipse.cdt.internal.ui.refactoring.implementmethod.MethodDefinitionInsertLocationFinder;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
+import org.eclipse.cdt.internal.ui.refactoring.implementmethod.InsertLocation2;
+import org.eclipse.cdt.internal.ui.refactoring.implementmethod.MethodDefinitionInsertLocationFinder2;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
-import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 /**
  * @author Thomas Corbat
  */
-public class GenerateGettersAndSettersRefactoring extends CRefactoring {
+public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 
 	private final class CompositeTypeSpecFinder extends ASTVisitor {
 		private final int start;
@@ -74,7 +74,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 		public int visit(IASTDeclSpecifier declSpec) {
 			if (declSpec instanceof IASTCompositeTypeSpecifier) {
 				IASTFileLocation loc = declSpec.getFileLocation();
-				if (start > loc.getNodeOffset() && start < loc.getNodeOffset()+ loc.getNodeLength()) {
+				if (start > loc.getNodeOffset() && start < loc.getNodeOffset() + loc.getNodeLength()) {
 					container.setObject((IASTCompositeTypeSpecifier) declSpec);
 					return ASTVisitor.PROCESS_ABORT;
 				}
@@ -85,12 +85,13 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 	}
 
 	private static final String MEMBER_DECLARATION = "MEMBER_DECLARATION"; //$NON-NLS-1$
-	private final GetterAndSetterContext context = new GetterAndSetterContext();
-	private InsertLocation definitionInsertLocation;	
+	private final GetterAndSetterContext context;
+	private InsertLocation2 definitionInsertLocation;	
 	
-	public GenerateGettersAndSettersRefactoring(IFile file, ISelection selection, ICElement element,
-			ICProject project) {
-		super(file, selection, element, project);
+	public GenerateGettersAndSettersRefactoring(ICElement element, ISelection selection,
+			ICProject project, RefactoringASTCache astCache) {
+		super(element, selection, project, astCache);
+		context = new GetterAndSetterContext();
 	}
 	
 	@Override
@@ -105,7 +106,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 
 		if (!initStatus.hasFatalError()) {
 			initRefactoring(pm);		
-			if (context.existingFields.size() == 0) {
+			if (context.existingFields.isEmpty()) {
 				initStatus.addFatalError(Messages.GenerateGettersAndSettersRefactoring_NoFields);
 			}
 		}		
@@ -116,30 +117,24 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
 		RefactoringStatus finalStatus = null;
-		try {
-			lockIndex();
-			finalStatus = super.checkFinalConditions(pm);
-			if (!context.isImplementationInHeader()) {
-				definitionInsertLocation = findInsertLocation();
-				if (file.equals(definitionInsertLocation.getInsertFile())) {
-					finalStatus.addInfo(Messages.GenerateGettersAndSettersRefactoring_NoImplFile);
-				}
+		finalStatus = super.checkFinalConditions(pm);
+		if (!context.isImplementationInHeader()) {
+			definitionInsertLocation = findInsertLocation();
+			if (definitionInsertLocation == null || tu.equals(definitionInsertLocation.getTranslationUnit())) {
+				finalStatus.addInfo(Messages.GenerateGettersAndSettersRefactoring_NoImplFile);
 			}
-		} catch (InterruptedException e) {
-		} finally {
-			unlockIndex();
 		}
 		return finalStatus;
 	}
 
-	private void initRefactoring(IProgressMonitor pm) {
-		loadTranslationUnit(initStatus, pm);
-		context.selectedName = getSelectedName();
+	private void initRefactoring(IProgressMonitor pm) throws OperationCanceledException, CoreException {
+		IASTTranslationUnit ast = astCache.getAST(tu, null);
+		context.selectedName = getSelectedName(ast);
 		IASTCompositeTypeSpecifier compositeTypeSpecifier = null;
 		if (context.selectedName != null) {
 			compositeTypeSpecifier = getCompositeTypeSpecifier(context.selectedName);
 		} else {
-			compositeTypeSpecifier = findCurrentCompositeTypeSpecifier();
+			compositeTypeSpecifier = findCurrentCompositeTypeSpecifier(ast);
 		}
 		if (compositeTypeSpecifier != null) {
 			findDeclarations(compositeTypeSpecifier);
@@ -148,8 +143,9 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 		}
 	}
 	
-	private IASTCompositeTypeSpecifier findCurrentCompositeTypeSpecifier() {
-		final int start = region.getOffset();
+	private IASTCompositeTypeSpecifier findCurrentCompositeTypeSpecifier(IASTTranslationUnit ast)
+			throws OperationCanceledException, CoreException {
+		final int start = selectedRegion.getOffset();
 		Container<IASTCompositeTypeSpecifier> container = new Container<IASTCompositeTypeSpecifier>();
 		ast.accept(new CompositeTypeSpecFinder(start, container));
 		return container.getObject();
@@ -163,12 +159,12 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 		return (IASTCompositeTypeSpecifier) node;
 	}
 
-	private IASTName getSelectedName() {
-		ArrayList<IASTName> names = findAllMarkedNames();
+	private IASTName getSelectedName(IASTTranslationUnit ast) {
+		List<IASTName> names = findAllMarkedNames(ast);
 		if (names.size() < 1) {
 			return null;
 		}
-		return names.get(names.size()-1);
+		return names.get(names.size() - 1);
 	}
 
 	protected void findDeclarations(IASTCompositeTypeSpecifier compositeTypeSpecifier) {
@@ -191,10 +187,8 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 							}
 							if ((innermostDeclarator instanceof IASTFunctionDeclarator)) {
 								context.existingFunctionDeclarations.add(fieldDeclaration);
-							} else {
-								if (SelectionHelper.isInSameFile(fieldDeclaration, file)) {
-									context.existingFields.add(fieldDeclaration);
-								}
+							} else if (fieldDeclaration.isPartOfTranslationUnitFile()) {
+								context.existingFields.add(fieldDeclaration);
 							}
 						}
 					}
@@ -214,38 +208,32 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 	@Override
 	protected void collectModifications(IProgressMonitor pm,ModificationCollector collector)
 			throws CoreException, OperationCanceledException {
-		try {
-			lockIndex();
-			ArrayList<IASTNode> getterAndSetters = new ArrayList<IASTNode>();
-			ArrayList<IASTFunctionDefinition> definitions = new ArrayList<IASTFunctionDefinition>();
-			for (GetterSetterInsertEditProvider currentProvider : context.selectedFunctions) {
-				if (context.isImplementationInHeader()) {
-					getterAndSetters.add(currentProvider.getFunctionDefinition(false));
-				} else {
-					getterAndSetters.add(currentProvider.getFunctionDeclaration());
-					definitions.add(currentProvider.getFunctionDefinition(true));
-				}
+		List<IASTNode> getterAndSetters = new ArrayList<IASTNode>();
+		List<IASTFunctionDefinition> definitions = new ArrayList<IASTFunctionDefinition>();
+		for (GetterSetterInsertEditProvider currentProvider : context.selectedFunctions) {
+			if (context.isImplementationInHeader()) {
+				getterAndSetters.add(currentProvider.getFunctionDefinition(false));
+			} else {
+				getterAndSetters.add(currentProvider.getFunctionDeclaration());
+				definitions.add(currentProvider.getFunctionDefinition(true));
 			}
-			if (!context.isImplementationInHeader()) {
-				addDefinition(collector, definitions);
-			}
-			ICPPASTCompositeTypeSpecifier classDefinition =
-					(ICPPASTCompositeTypeSpecifier) context.existingFields.get(context.existingFields.size() - 1).getParent();
-
-			AddDeclarationNodeToClassChange.createChange(classDefinition, VisibilityEnum.v_public,
-					getterAndSetters, false, collector);
-		} catch (InterruptedException e) {
-		} finally {
-			unlockIndex();
 		}
+		if (!context.isImplementationInHeader()) {
+			addDefinition(collector, definitions);
+		}
+		ICPPASTCompositeTypeSpecifier classDefinition =
+				(ICPPASTCompositeTypeSpecifier) context.existingFields.get(context.existingFields.size() - 1).getParent();
+
+		AddDeclarationNodeToClassChange.createChange(classDefinition, VisibilityEnum.v_public,
+				getterAndSetters, false, collector);
 	}
 
-	private void addDefinition(ModificationCollector collector, ArrayList<IASTFunctionDefinition> definitions)
+	private void addDefinition(ModificationCollector collector, List<IASTFunctionDefinition> definitions)
 			throws CoreException {
-		InsertLocation location = findInsertLocation();
-		IASTTranslationUnit targetUnit = location.getTargetTranslationUnit();
-		IASTNode parent = location.getPartenOfNodeToInsertBefore();
-		ASTRewrite rewrite = collector.rewriterForTranslationUnit(targetUnit);
+		InsertLocation2 location = findInsertLocation();
+		IASTNode parent = location.getParentOfNodeToInsertBefore();
+		IASTTranslationUnit ast = parent.getTranslationUnit();
+		ASTRewrite rewrite = collector.rewriterForTranslationUnit(ast);
 		IASTNode nodeToInsertBefore = location.getNodeToInsertBefore();
 		ContainerNode cont = new ContainerNode();
 		for (IASTFunctionDefinition functionDefinition : definitions) {
@@ -258,20 +246,15 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 		return context;
 	}
 	
-	public Region getRegion() {
-		return region;
-	}
-	
-	private InsertLocation findInsertLocation() throws CoreException {
-		IASTSimpleDeclaration decl = context.existingFields.get(0);		
-		InsertLocation insertLocation = MethodDefinitionInsertLocationFinder.find(decl.getFileLocation(),
-				decl.getParent(), file);
+	private InsertLocation2 findInsertLocation() throws CoreException {
+		IASTSimpleDeclaration decl = context.existingFields.get(0);
+		InsertLocation2 insertLocation = MethodDefinitionInsertLocationFinder2.find(
+				decl.getFileLocation(), decl.getParent(), astCache);
 
-		if (!insertLocation.hasFile() || NodeHelper.isContainedInTemplateDeclaration(decl)) {
-			insertLocation.setInsertFile(file);
-			insertLocation.setNodeToInsertAfter(NodeHelper.findTopLevelParent(decl));
+		if (insertLocation.getFile() == null || NodeHelper.isContainedInTemplateDeclaration(decl)) {
+			insertLocation.setNodeToInsertAfter(NodeHelper.findTopLevelParent(decl), tu);
 		}
-		
+
 		return insertLocation;
 	}
 

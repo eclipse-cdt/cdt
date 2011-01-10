@@ -1,0 +1,82 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Rapperswil, University of applied sciences and others
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0 
+ * which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html  
+ *  
+ * Contributors: 
+ *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
+ *******************************************************************************/
+package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+
+/**
+ * Is returned when using the find method of the MethodDefinitionInsertLocationFinder.
+ * Contains all the information needed to insert at the correct position.
+ * This class is intended as a replacement for InsertLocation. 
+ * 
+ * @author Lukas Felber
+ */
+public class InsertLocation2 {
+	private IASTNode nodeToInsertAfter;
+	private IASTNode nodeToInsertBefore;
+	private IASTNode parentNode;
+	private ITranslationUnit tu;
+
+	public InsertLocation2() {
+	}
+
+	public boolean hasAnyNode() {
+		return nodeToInsertAfter != null || nodeToInsertBefore != null;
+	}
+
+	public IASTNode getNodeToInsertBefore() {
+		return nodeToInsertBefore;
+	}
+
+	public IASTNode getParentOfNodeToInsertBefore() throws CoreException {
+		IASTNode node = nodeToInsertBefore != null ? nodeToInsertBefore : nodeToInsertAfter;
+		return node != null ? node.getParent() : parentNode;
+	}
+
+	public ITranslationUnit getTranslationUnit() {
+		return tu;
+	}
+	
+	public IFile getFile() {
+		return tu != null ? (IFile) tu.getResource() : null;
+	}
+
+	public int getInsertPosition() {
+		if (nodeToInsertBefore != null) {
+			return nodeToInsertBefore.getFileLocation().getNodeOffset();
+		} else if (nodeToInsertAfter != null) {
+			return nodeToInsertAfter.getFileLocation().getNodeOffset() +
+					nodeToInsertAfter.getFileLocation().getNodeLength();
+		}
+		return 0;
+	}
+
+	public void setNodeToInsertAfter(IASTNode nodeToInsertAfter, ITranslationUnit tu) {
+		this.nodeToInsertAfter = nodeToInsertAfter;
+		this.tu = tu;
+	}
+
+	public void setNodeToInsertBefore(IASTNode nodeToInsertBefore, ITranslationUnit tu) {
+		this.nodeToInsertBefore = nodeToInsertBefore;
+		this.tu = tu;
+	}
+
+	public void setParentNode(IASTNode parentNode, ITranslationUnit tu) {
+		this.parentNode = parentNode;
+		this.tu = tu;
+	}
+}

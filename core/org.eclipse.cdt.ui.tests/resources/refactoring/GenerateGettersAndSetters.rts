@@ -914,31 +914,34 @@ getters=name
 //@C.cpp
 #include "C.h"
 
-int Person::SocSecNo(){
+namespace Personal {
+
+int Person::SocSecNo() {
 	return socSecNo;
 }
 
+} // namespace Personal
+
 int main(int argc, char **argv) {
-	
 }
 
 //=
 #include "C.h"
 
-int Person::SocSecNo(){
+namespace Personal {
+    char *Person::getName() const
+    {
+        return name;
+    }
+
+    int Person::SocSecNo() {
 	return socSecNo;
 }
 
+} // namespace Personal
+
 int main(int argc, char **argv) {
-	
 }
-
-char *Person::getName() const
-{
-    return name;
-}
-
-
 
 //@C.h
 #ifndef C_H_

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@
  * David McKnight  (IBM)   [307541][dstore] fix for Bug 305218 breaks RDz connections
  * David McKnight  (IBM)   [322407][dstore] Connection dropped automatically when idle
  * Noriaki Takatsu  (IBM) - [289234][multithread][api] Reset and Restart KeepAliveRequestThread
+ * David McKnight   (IBM) - [282364] [dstore][multithread] timer-threads stay active after disconnect
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -516,6 +517,16 @@ public class XMLparser
 	 */
 	public DataElement parseDocument(BufferedInputStream reader, Socket socket) throws IOException
 	{
+		if (!_dataStore.isConnected()){
+			if (_kart != null && _kart.isAlive()){
+				_kart.interrupt();
+			}
+			if (_initialKart != null && _initialKart.isAlive()){
+				_initialKart.interrupt();
+			}
+			return null;
+		}
+
 		_tagStack.clear();
 		_objStack.clear();
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  *  David McKnight   (IBM) - [278341] [dstore] Disconnect on idle causes the client hang
  *  Noriaki Takatsu  (IBM) - [283656] [dstore][multithread] Serviceability issue
  *  David McKnight   (IBM) - [294933] [dstore] RSE goes into loop
+ *  David McKnight   (IBM) - [282364] [dstore][multithread] timer-threads stay active after disconnect
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -200,6 +201,11 @@ public class ServerCommandHandler extends CommandHandler
 	 */
 	public void finish()
 	{
+		if (_serverIdleThread != null && _serverIdleThread.isAlive()){
+			_serverIdleThread._serverTimedOut=true; // ensures that the wait loop won't continue after the interrupt
+			_serverIdleThread.interrupt();
+		}
+
 		if (_minerLoader != null)
 			_minerLoader.finishMiners();
 		super.finish();

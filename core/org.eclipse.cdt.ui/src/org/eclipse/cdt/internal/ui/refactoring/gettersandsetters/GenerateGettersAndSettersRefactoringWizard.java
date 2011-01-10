@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
@@ -16,10 +16,8 @@ import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 
 /**
  * @author Thomas Corbat
- * 
  */
 public class GenerateGettersAndSettersRefactoringWizard extends	RefactoringWizard {
-
 	private final GenerateGettersAndSettersRefactoring refactoring;
 
 	public GenerateGettersAndSettersRefactoringWizard(

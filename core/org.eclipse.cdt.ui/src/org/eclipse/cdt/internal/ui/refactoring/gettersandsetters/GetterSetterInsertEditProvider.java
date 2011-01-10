@@ -20,23 +20,19 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 
-
 public class GetterSetterInsertEditProvider implements Comparable<GetterSetterInsertEditProvider>{
-	public enum Type{
+	public enum Type {
 		getter,
 		setter;
 	}
-	
-	
 	
 	private IASTSimpleDeclaration functionDeclaration;
 	private Type type;
 	private String name;
 	private IASTSimpleDeclaration fieldDeclaration;
 	
-	
-	public GetterSetterInsertEditProvider(String name, IASTSimpleDeclaration fieldDeclaration, Type type){
-		switch(type) {
+	public GetterSetterInsertEditProvider(String name, IASTSimpleDeclaration fieldDeclaration, Type type) {
+		switch (type) {
 		case getter:
 		
 			this.functionDeclaration = FunctionFactory.createGetterDeclaration(name, fieldDeclaration);
@@ -52,7 +48,7 @@ public class GetterSetterInsertEditProvider implements Comparable<GetterSetterIn
 	}
 	
 	@Override
-	public String toString(){
+	public String toString() {
 		IASTDeclarator declarator = functionDeclaration.getDeclarators()[0];
 		while (declarator.getNestedDeclarator() != null) {
 			declarator = declarator.getNestedDeclarator();
@@ -65,11 +61,11 @@ public class GetterSetterInsertEditProvider implements Comparable<GetterSetterIn
 		ICPPASTQualifiedName qname;
 		if(qualifedName) {
 			qname = getClassname();
-		}else {
+		} else {
 			qname = null;
 		}
 		
-		switch(type) {
+		switch (type) {
 		case getter:
 			definition = FunctionFactory.createGetterDefinition(name, fieldDeclaration, qname);
 			break;
@@ -103,6 +99,4 @@ public class GetterSetterInsertEditProvider implements Comparable<GetterSetterIn
 	public int compareTo(GetterSetterInsertEditProvider o) {
 		return toString().compareTo(o.toString());
 	}
-	
-	
 }

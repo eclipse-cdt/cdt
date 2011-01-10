@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software (IFS)- initial API and implementation 
+ *     Institute for Software (IFS)- initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
@@ -20,16 +20,13 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 /**
  * @author Emanuel Graf IFS
- *
  */
 public class GetterSetterLabelProvider extends LabelProvider {
 
 	@Override
 	public Image getImage(Object element) {
-		if(element != null) {
-			if (element instanceof GetterSetterInsertEditProvider) {
-				return CElementImageProvider.getMethodImageDescriptor(ASTAccessVisibility.PUBLIC).createImage();
-			}
+		if (element instanceof GetterSetterInsertEditProvider) {
+			return CElementImageProvider.getMethodImageDescriptor(ASTAccessVisibility.PUBLIC).createImage();
 		}
 		return null;
 	}

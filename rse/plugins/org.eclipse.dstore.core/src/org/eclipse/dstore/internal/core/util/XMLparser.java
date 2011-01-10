@@ -90,7 +90,8 @@ public class XMLparser
 	private Throwable _panicException = null;
 	
 	private boolean _isKeepAliveCompatible = false;
-	private boolean _isKeepAliveEnabled = true;
+	private boolean _isKeepAliveEnabled = false; // initial setting should be false so that keepalive doesn't start before getting preferences // let it get enabled after connect
+	
 	private boolean _firstTime = true;
 	
 	private KeepAliveRequestThread _kart = null;
@@ -328,6 +329,7 @@ public class XMLparser
 						_initialKart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT, socket);
 						_firstTime = false;
 						if (VERBOSE_KEEPALIVE) System.out.println("Starting initial KeepAlive thread."); //$NON-NLS-1$
+						_dataStore.trace("Starting initial KeepAlive thread."); //$NON-NLS-1$
 						_initialKart.start();
 						continue;
 					}
@@ -346,15 +348,22 @@ public class XMLparser
 							{
 								_isKeepAliveCompatible = true;
 								if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive compatible."); //$NON-NLS-1$
+								_dataStore.trace("KeepAlive compatible."); //$NON-NLS-1$
 								_initialKart = null;
 							}			
 							else
 							{
 								_isKeepAliveCompatible = false;
 								if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive incompatible."); //$NON-NLS-1$
+								_dataStore.trace("KeepAlive incompatible."); //$NON-NLS-1$
 								_initialKart = null;
 							}
 						}				
+					}
+					else { // initial kart is null so we've already waited	
+						if (!_isKeepAliveCompatible){
+							_isKeepAliveEnabled = false;
+						}
 					}
 				}
 				
@@ -389,7 +398,8 @@ public class XMLparser
 						{
 							if (_kart == null || !_kart.isAlive()){
 								_kart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT, socket);
-								if (VERBOSE_KEEPALIVE) System.out.println("No activity on socket. KeepAlive thread started."); //$NON-NLS-1$
+								if (VERBOSE_KEEPALIVE) System.out.println("No activity on socket. KeepAlive thread started.");  //$NON-NLS-1$
+								_dataStore.trace("No activity on socket. KeepAlive thread started.");  //$NON-NLS-1$								
 								_kart.start();
 								continue;
 							}							
@@ -398,7 +408,14 @@ public class XMLparser
 				}
 				else // no keepalive
 				{
-					in = reader.read();
+					try {
+						in = reader.read();
+					}
+					catch (InterruptedIOException e){
+						_dataStore.trace("read timeout - continuing");  //$NON-NLS-1$
+						// no keepalive, so just try reading again
+						continue;
+					}
 				}
 
 				if (in == -1)
@@ -730,12 +747,14 @@ public class XMLparser
 								else if (_isKeepAlive)
 								{
 									if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive request received, sending confirmation."); //$NON-NLS-1$									
+									_dataStore.trace("KeepAlive request received, sending confirmation."); //$NON-NLS-1$	
 									result.getDataStore().sendKeepAliveConfirmation();
 									_isKeepAlive = false;
 								}
 								else if (_isKeepAliveConfirm )
 								{
 									if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive confirmation received."); //$NON-NLS-1$
+									_dataStore.trace("KeepAlive confirmation received."); //$NON-NLS-1$
 									if (_initialKart != null) _initialKart.interrupt();
 									_isKeepAliveConfirm = false;
 								}
@@ -1118,9 +1137,11 @@ public class XMLparser
 			catch (InterruptedException e)
 			{
 				if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive thread interrupted."); //$NON-NLS-1$
+				_dataStore.trace("KeepAlive thread interrupted."); //$NON-NLS-1$
 				return;
 			}
 			if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive thread failed to be interrupted."); //$NON-NLS-1$
+			_dataStore.trace("KeepAlive thread failed to be interrupted."); //$NON-NLS-1$
 			_failed = true;			
 		}
 		

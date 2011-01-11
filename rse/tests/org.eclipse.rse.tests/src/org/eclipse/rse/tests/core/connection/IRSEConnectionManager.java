@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Uwe Stieber (Wind River) - initial API and implementation
+ * Tom Hochstein (Freescale)     - [301075] Host copy doesn't copy contained property sets
  *******************************************************************************/
 package org.eclipse.rse.tests.core.connection;
 
@@ -60,6 +61,26 @@ public interface IRSEConnectionManager {
 	 */
 	public IRSEConnectionProperties loadConnectionProperties(Properties properties, boolean allowDefaults);
 	
+	/**
+	 * Finds the connection given by the specified name/label from the specified
+	 * system profile. The method will do nothing if either the system profile or
+	 * the connection does not exist.
+	 * 
+	 * @param profileName The system profile to look for the connection. Must be not <code>null</code>.
+	 * @param name The name of the connection to find. Must be not <code>null</code>.
+	 * @return The found connection, or null if failed.
+	 */
+	public IHost findConnection(String profileName, String name);
+
+	/**
+	 * Copies the connection.
+	 * 
+	 * @param connection The connection to copy. Must be not <code>null</code>.
+	 * @param copyName The name of the new connection. Must be not <code>null</code>.
+	 * @return The copied connection, or null if failed.
+	 */
+	public IHost copyConnection(IHost connection, String copyName);
+
 	/**
 	 * Removes the connection given by the specified name/label from the specified
 	 * system profile. The method will do nothing if either the system profile or

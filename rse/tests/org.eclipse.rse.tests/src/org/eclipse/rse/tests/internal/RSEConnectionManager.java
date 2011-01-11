@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [219086] flush event queue to shield tests from each other
  * David Dykstal (IBM) - [210474] Deny save password function missing
  * Martin Oberhuber (Wind River) - Support REXEC launch type for dstore
+ * Tom Hochstein (Freescale)     - [301075] Host copy doesn't copy contained property sets
  *******************************************************************************/
 package org.eclipse.rse.tests.internal;
 
@@ -166,6 +167,40 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 		}
 
 		return resultProperties != null ? new RSEConnectionProperties(resultProperties) : (IRSEConnectionProperties)null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.tests.core.connection.IRSEConnectionManager#copyConnection(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public IHost findConnection(String profileName, String name) {
+		assert profileName != null && name != null;
+
+		ISystemRegistry systemRegistry = RSECorePlugin.getTheSystemRegistry();
+		Assert.assertNotNull("FAILED(findConnection): RSE system registry unavailable!", systemRegistry); //$NON-NLS-1$
+
+		ISystemProfile profile = systemRegistry.getSystemProfile(profileName);
+		if (profile != null) {
+			return systemRegistry.getHost(profile, name);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.tests.core.connection.IRSEConnectionManager#copyConnection(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public IHost copyConnection(IHost connection, String copyName) {
+		assert connection != null;
+
+		ISystemRegistry systemRegistry = RSECorePlugin.getTheSystemRegistry();
+		Assert.assertNotNull("FAILED(copyConnection): RSE system registry unavailable!", systemRegistry); //$NON-NLS-1$
+
+		try {
+			return systemRegistry.copyHost(connection, connection.getSystemProfile(), copyName, null);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**

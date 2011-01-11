@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Bug 315443
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional;
 
@@ -16,6 +17,7 @@ import java.net.URI;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.LabelPosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.SourcePosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyDocument;
 import org.eclipse.cdt.utils.Addr64;
@@ -26,6 +28,7 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.Position;
 
 /**
  * Default implementation of {@link IDisassemblySelection}.
@@ -39,6 +42,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	private IStorage fSourceFile;
 	private int fSourceLine;
 	private IAddress fStartAddress;
+	private String fLabel;
 
 	/**
 	 * Create a disassembly selection from a normal text selection and a disassembly part.
@@ -79,6 +83,17 @@ public class DisassemblySelection implements IDisassemblySelection {
 				// not a valid address
 				fStartAddress = null;
 			}
+		}
+		
+		try {
+			Position labelPosition = document.getPosition(DisassemblyDocument.CATEGORY_LABELS, offset, true);
+			if (labelPosition != null) {
+				if (labelPosition instanceof LabelPosition) {
+					fLabel = ((LabelPosition) labelPosition).fLabel;
+				}
+			}
+		} catch (Exception e) {
+			fLabel = null;
 		}
 	}
 	
@@ -171,5 +186,12 @@ public class DisassemblySelection implements IDisassemblySelection {
 	public IAddress getStartAddress() {
 		return fStartAddress;
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblySelection#getLabel()
+	 */
+	public String getLabel() {
+		return fLabel;
+	}
 }

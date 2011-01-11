@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Bug 315443
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional;
 
@@ -46,4 +47,9 @@ public interface IDisassemblySelection extends ITextSelection {
 	 * @return the 0-based line number of the source file associated with the selection, -1 if not available
 	 */
 	int getSourceLine();
+	
+	/**
+	 * @return the label, may be <code>null</code> 
+	 */
+	String getLabel();
 }

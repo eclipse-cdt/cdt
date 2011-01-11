@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Bug 315443
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model;
 
@@ -1169,7 +1170,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 			}
 			return pos;
 		}
-		labelPos = new LabelPosition(0, labelLine.length(), address, null);
+		labelPos = new LabelPosition(0, labelLine.length(), address, label);
 		pos = insertAddressRange(pos, labelPos, labelLine, true);
 		addLabelPosition(labelPos);
 		return pos;

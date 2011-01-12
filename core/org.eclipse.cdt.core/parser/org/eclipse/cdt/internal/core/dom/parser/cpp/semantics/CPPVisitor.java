@@ -75,7 +75,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
-import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
@@ -1414,20 +1413,6 @@ public class CPPVisitor extends ASTQueries {
 					if (nameBinding instanceof ICPPUsingDeclaration) {
 						if (ArrayUtil.contains(((ICPPUsingDeclaration) nameBinding).getDelegates(), binding)) {
 							return true;
-						}
-					}
-					// Handle the case when one of the bindings is from the index and another
-					// one is from an AST.
-					if ((nameBinding instanceof IIndexBinding) != (binding instanceof IIndexBinding) &&
-							SemanticUtil.isSameOwner(nameBinding.getOwner(), binding.getOwner())) {
-						if (nameBinding instanceof IFunction && binding instanceof IFunction) {
-							if (((IFunction) nameBinding).getType().isSameType(((IFunction) binding).getType())) {
-								return true;
-							}
-						} else if (nameBinding instanceof IField && binding instanceof IField) {
-							if (((IField) nameBinding).getType().isSameType(((IField) binding).getType())) {
-								return true;
-							}
 						}
 					}
 				}

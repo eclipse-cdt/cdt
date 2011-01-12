@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -72,9 +73,20 @@ public class NamespaceHelper {
 	}
 	
 	private static boolean checkFileNameAndLocation(final IFile insertFile, final int offset, IASTNode namespace) {
-		return namespace.getFileLocation().getFileName().endsWith(insertFile.getFullPath().toOSString())
-		&& offset >= namespace.getNodeLocations()[0].getNodeOffset()
-		&& offset < namespace.getNodeLocations()[0].getNodeOffset() + namespace.getNodeLocations()[0].getNodeLength();
+		boolean fileNameOk = namespace.getFileLocation().getFileName().endsWith(insertFile.getFullPath().toOSString());
+		if(!fileNameOk) {
+			return false;
+		}
+		
+		for(IASTNodeLocation nodeLocation : namespace.getNodeLocations()) {
+			int nodeOffset = nodeLocation.getNodeOffset();
+			boolean locationOk = offset >= nodeOffset && offset < nodeOffset + nodeLocation.getNodeLength();
+			if(locationOk) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	private static IASTName createNameWithTemplates(IASTNode declarationParent) {

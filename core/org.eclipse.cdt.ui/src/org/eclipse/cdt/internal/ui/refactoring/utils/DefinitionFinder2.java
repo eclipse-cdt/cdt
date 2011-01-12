@@ -24,7 +24,8 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -40,12 +41,16 @@ public class DefinitionFinder2 {
 	public static ASTNameInContext getDefinition(IASTSimpleDeclaration simpleDeclaration,
 			RefactoringASTCache astCache) throws CoreException {
 		IASTDeclarator declarator = simpleDeclaration.getDeclarators()[0];
-		IBinding binding = declarator.getName().resolveBinding();
-		return getDefinition(binding, astCache);
+		IIndex index = astCache.getIndex();
+		if (index == null) {
+			return null;
+		}
+		IIndexBinding binding = index.adaptBinding(declarator.getName().resolveBinding());
+		return getDefinition(binding, astCache, index);
 	}
 
-	private static ASTNameInContext getDefinition(IBinding binding, RefactoringASTCache astCache)
-			throws CoreException {
+	private static ASTNameInContext getDefinition(IIndexBinding binding,
+			RefactoringASTCache astCache, IIndex index) throws CoreException {
 		Set<String> searchedFiles = new HashSet<String>();
 		ITranslationUnit[] workingCopies = CUIPlugin.getSharedWorkingCopies();
 		List<ASTNameInContext> definitions = new ArrayList<ASTNameInContext>();
@@ -54,7 +59,7 @@ public class DefinitionFinder2 {
 			searchedFiles.add(tu.getLocation().toOSString());
 		}
 
-		IIndexName[] definitionsFromIndex = astCache.getIndex().findDefinitions(binding);
+		IIndexName[] definitionsFromIndex = index.findDefinitions(binding);
 
 		if (definitionsFromIndex.length > 0) {
 			for (IIndexName name : definitionsFromIndex) {
@@ -71,14 +76,14 @@ public class DefinitionFinder2 {
 		return definitions.get(0);
 	}
 
-	private static void findDefinitionsInTranslationUnit(IBinding binding, ITranslationUnit tu,
+	private static void findDefinitionsInTranslationUnit(IIndexBinding binding, ITranslationUnit tu,
 			RefactoringASTCache astCache, List<ASTNameInContext> definitions, IProgressMonitor pm)
 			throws OperationCanceledException, CoreException {
 		IASTTranslationUnit ast = astCache.getAST(tu, pm);
 		findDefinitionsInAST(binding, ast, tu, definitions);
 	}
 
-	private static void findDefinitionsInAST(IBinding binding, IASTTranslationUnit ast,
+	private static void findDefinitionsInAST(IIndexBinding binding, IASTTranslationUnit ast,
 			ITranslationUnit tu, List<ASTNameInContext> definitions) {
 		for (IName definition : ast.getDefinitions(binding)) {
 			if (definition instanceof IASTName) {

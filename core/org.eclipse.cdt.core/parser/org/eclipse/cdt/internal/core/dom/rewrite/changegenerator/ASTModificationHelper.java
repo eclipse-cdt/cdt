@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -35,26 +35,6 @@ public class ASTModificationHelper {
 	
 	public <T extends IASTNode> T[] createModifiedChildArray(IASTNode parent, T[] unmodifiedChildren, Class<T> clazz){
 		ArrayList<T> modifiedChildren = new ArrayList<T>(Arrays.asList(unmodifiedChildren));
-		for(T currentChild : unmodifiedChildren){
-			for(ASTModification childModification : modificationsForNode(currentChild)){
-				try{
-					final T newNode = cast(childModification.getNewNode(), clazz);
-					switch(childModification.getKind()){
-					case REPLACE:
-						if (newNode != null) {
-							modifiedChildren.add(modifiedChildren.indexOf(childModification.getTargetNode()), newNode);
-						}
-						modifiedChildren.remove(childModification.getTargetNode());
-						break;
-					case INSERT_BEFORE:
-					case APPEND_CHILD:
-						throw new UnhandledASTModificationException(childModification);
-					}
-				}catch(ClassCastException e){
-					throw new UnhandledASTModificationException(childModification);
-				}
-			} 
-		}
 
 		for(ASTModification parentModification : modificationsForNode(parent)){
 			switch(parentModification.getKind()){
@@ -91,6 +71,28 @@ public class ASTModificationHelper {
 			}
 		}
 		
+		for (T currentChild : unmodifiedChildren) {
+			for (ASTModification childModification : modificationsForNode(currentChild)) {
+				try {
+					final T newNode = cast(childModification.getNewNode(), clazz);
+					switch (childModification.getKind()) {
+					case REPLACE:
+						if (newNode != null) {
+							modifiedChildren.add(
+									modifiedChildren.indexOf(childModification.getTargetNode()),
+									newNode);
+						}
+						modifiedChildren.remove(childModification.getTargetNode());
+						break;
+					case INSERT_BEFORE:
+					case APPEND_CHILD:
+						throw new UnhandledASTModificationException(childModification);
+					}
+				} catch (ClassCastException e) {
+					throw new UnhandledASTModificationException(childModification);
+				}
+			}
+		}
 		return modifiedChildren.toArray(newArrayInstance(clazz, modifiedChildren.size()));
 	}
 

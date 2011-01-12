@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -36,6 +36,7 @@ public class ReplaceTestSuite{
 		suite.addTest(ArraySizeExpressionTest.suite());
 		suite.addTest(NewInitializerExpressionTest.suite());
 		suite.addTest(StatementTest.suite());
+		suite.addTest(ReplaceInsertStatementTest.suite());
 		return suite;
 	}
 }

@@ -17,8 +17,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
@@ -27,6 +29,9 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringChangeDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.ltk.core.refactoring.participants.ResourceChangeChecker;
+import org.eclipse.ltk.core.refactoring.participants.ValidateEditChecker;
 import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -162,8 +167,26 @@ public abstract class CRefactoring2 extends Refactoring {
 	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
-		return new RefactoringStatus();
+		if (pm == null)
+			pm = new NullProgressMonitor();
+		pm.beginTask(Messages.CRefactoring_checking_final_conditions, 6);
+
+		CheckConditionsContext context = createCheckConditionsContext();
+		RefactoringStatus result = checkFinalConditions(new SubProgressMonitor(pm, 5), context);
+		if (result.hasFatalError()) {
+			pm.done();
+			return result;
+		}
+		if (pm.isCanceled())
+			throw new OperationCanceledException();
+
+		result.merge(context.check(new SubProgressMonitor(pm, 1)));
+		pm.done();
+		return result;
 	}
+
+	protected abstract RefactoringStatus checkFinalConditions(IProgressMonitor subProgressMonitor,
+			CheckConditionsContext checkContext) throws CoreException, OperationCanceledException;
 
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
@@ -246,5 +269,12 @@ public abstract class CRefactoring2 extends Refactoring {
 			}
 		});
 		return names;
+	}
+
+	private CheckConditionsContext createCheckConditionsContext() throws CoreException {
+		CheckConditionsContext result= new CheckConditionsContext();
+		result.add(new ValidateEditChecker(getValidationContext()));
+		result.add(new ResourceChangeChecker());
+		return result;
 	}
 }

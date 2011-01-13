@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.refactoring.utils;
@@ -15,12 +16,7 @@ package org.eclipse.cdt.internal.ui.refactoring.utils;
 import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
-
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.refactoring.utils.messages";//$NON-NLS-1$
-
-	private Messages() {
-		// Do not instantiate
-	}
 
 	public static String IdentifierHelper_isKeyword;
 	public static String IdentifierHelper_isValid;
@@ -31,6 +27,11 @@ public final class Messages extends NLS {
 	public static String VisibilityEnum_public;
 	public static String VisibilityEnum_protected;
 	public static String VisibilityEnum_private;
+	public static String Checks_validateEdit;
+
+	private Messages() {
+		// Do not instantiate
+	}
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

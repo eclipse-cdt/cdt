@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -22,6 +23,7 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -50,6 +52,7 @@ import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
 import org.eclipse.cdt.internal.ui.refactoring.implementmethod.InsertLocation2;
 import org.eclipse.cdt.internal.ui.refactoring.implementmethod.MethodDefinitionInsertLocationFinder2;
+import org.eclipse.cdt.internal.ui.refactoring.utils.Checks;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
@@ -114,17 +117,32 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 	}
 
 	@Override
-	public RefactoringStatus checkFinalConditions(IProgressMonitor pm)
-			throws CoreException, OperationCanceledException {
-		RefactoringStatus finalStatus = null;
-		finalStatus = super.checkFinalConditions(pm);
+	public RefactoringStatus checkFinalConditions(IProgressMonitor pm,
+			CheckConditionsContext checkContext) throws CoreException, OperationCanceledException {
+		RefactoringStatus result = new RefactoringStatus();
 		if (!context.isImplementationInHeader()) {
 			definitionInsertLocation = findInsertLocation();
 			if (definitionInsertLocation == null || tu.equals(definitionInsertLocation.getTranslationUnit())) {
-				finalStatus.addInfo(Messages.GenerateGettersAndSettersRefactoring_NoImplFile);
+				result.addInfo(Messages.GenerateGettersAndSettersRefactoring_NoImplFile);
 			}
 		}
-		return finalStatus;
+		Checks.addModifiedFilesToChecker(getAllFilesToModify(), checkContext);
+		return result;
+	}
+
+	private IFile[] getAllFilesToModify() {
+		List<IFile> files = new ArrayList<IFile>(2);
+		IFile file = (IFile) tu.getResource();
+		if (file != null) {
+			files.add(file);
+		}
+		if (definitionInsertLocation != null) {
+			file = definitionInsertLocation.getFile();
+			if (file != null) {
+				files.add(file);
+			}
+		}
+		return files.toArray(new IFile[files.size()]);
 	}
 
 	private void initRefactoring(IProgressMonitor pm) throws OperationCanceledException, CoreException {

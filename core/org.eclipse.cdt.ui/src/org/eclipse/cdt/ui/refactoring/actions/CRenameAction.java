@@ -24,7 +24,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.ui.actions.ActionUtil;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactory;
 import org.eclipse.cdt.internal.ui.refactoring.rename.RenameLinkedMode;
 
@@ -42,19 +41,19 @@ public class CRenameAction extends RefactoringAction {
     
 	@Override
 	public void run(IShellProvider shellProvider, ICElement elem) {
-		if (!ActionUtil.isEditable((CEditor) fEditor, shellProvider.getShell(), elem))
+		if (!ActionUtil.isEditable(fEditor, shellProvider.getShell(), elem))
 			return;
 		CRefactory.getInstance().rename(shellProvider.getShell(), elem);
 	}
 
 	@Override
 	public void run(IShellProvider shellProvider, IWorkingCopy workingCopy, ITextSelection selection) {
-		if (!ActionUtil.isEditable((CEditor) fEditor))
+		if (!ActionUtil.isEditable(fEditor))
 			return;
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
 		boolean lightweight= store.getBoolean(PreferenceConstants.REFACTOR_LIGHTWEIGHT);
 		if (lightweight) {
-			new RenameLinkedMode((CEditor) fEditor).start();
+			new RenameLinkedMode(fEditor).start();
 		} else {
 			CRefactory.getInstance().rename(shellProvider.getShell(), workingCopy, selection);
 		}

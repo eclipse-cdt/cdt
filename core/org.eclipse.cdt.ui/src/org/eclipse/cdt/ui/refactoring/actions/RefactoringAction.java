@@ -17,12 +17,12 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchSite;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.refactoring.utils.EclipseObjects;
 
 /**
@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.EclipseObjects;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class RefactoringAction extends Action {
-    protected ITextEditor fEditor;
+    protected CEditor fEditor;
     private IWorkbenchSite fSite;
 	private ICElement fElement;
 	private boolean saveRequired;
@@ -53,8 +53,8 @@ public abstract class RefactoringAction extends Action {
     public void setEditor(IEditorPart editor) {
         fEditor= null;
         fSite= null;
-        if (editor instanceof ITextEditor) {
-            fEditor= (ITextEditor) editor;
+        if (editor instanceof CEditor) {
+            fEditor= (CEditor) editor;
         }
         setEnabled(fEditor != null);
     }

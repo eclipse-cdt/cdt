@@ -1,7 +1,9 @@
 package org.eclipse.cdt.msw.build;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -91,14 +93,16 @@ public class WinEnvironmentVariableSupplier
 	
 	public static IPath[] getIncludePath() {
 		// Include paths
+		List<IPath> includePaths = new ArrayList<IPath>();
 		if (sdkDir != null) {
-			return new IPath[] {
-				new Path(vcDir.concat("Include")),
-				new Path(sdkDir.concat("Include")),
-				new Path(sdkDir.concat("Include\\gl"))
-			};
-		} else
-			return new IPath[0];
+			includePaths.add(new Path(sdkDir.concat("Include")));
+			includePaths.add(new Path(sdkDir.concat("Include\\gl")));
+		}
+		
+		if (vcDir != null) {
+			includePaths.add(new Path(vcDir.concat("Include")));
+		}
+		return includePaths.toArray(new IPath[0]);
 	}
 	
 	private static void addvar(IBuildEnvironmentVariable var) {
@@ -112,10 +116,11 @@ public class WinEnvironmentVariableSupplier
 		
 		// The SDK Location
 		sdkDir = getSDKDir();
-		if (sdkDir == null)
-			return;
-		
 		vcDir = getVCDir();
+		
+		if (sdkDir == null && vcDir == null) {
+			return;
+		}
 		
 		// INCLUDE
 		StringBuffer buff = new StringBuffer();
@@ -127,16 +132,23 @@ public class WinEnvironmentVariableSupplier
 
 		// LIB
 		buff = new StringBuffer();
-		buff.append(vcDir).append("Lib;");
-		buff.append(sdkDir).append("Lib;");
+		if (vcDir != null)
+			buff.append(vcDir).append("Lib;");
+		if (sdkDir != null)
+			buff.append(sdkDir).append("Lib;");
+		
 		addvar(new WindowsBuildEnvironmentVariable("LIB", buff.toString(), IBuildEnvironmentVariable.ENVVAR_PREPEND));
 		
 		// PATH
 		buff = new StringBuffer();
-		buff.append(vcDir).append("Bin;");
-		buff.append(vcDir).append("vcpackages;");
-		buff.append(vcDir).append("..\\Common7\\IDE;");
-		buff.append(sdkDir).append("Bin;");
+		if (vcDir != null) {
+			buff.append(vcDir).append("Bin;");
+			buff.append(vcDir).append("vcpackages;");
+			buff.append(vcDir).append("..\\Common7\\IDE;");
+		}
+		if (sdkDir != null) {
+			buff.append(sdkDir).append("Bin;");
+		}
 		addvar(new WindowsBuildEnvironmentVariable("PATH", buff.toString(), IBuildEnvironmentVariable.ENVVAR_PREPEND));
 	}
 

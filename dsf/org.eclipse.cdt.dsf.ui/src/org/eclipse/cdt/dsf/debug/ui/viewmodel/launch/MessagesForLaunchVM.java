@@ -19,9 +19,12 @@ import org.eclipse.osgi.util.NLS;
 public class MessagesForLaunchVM extends NLS {
     public static String StackFramesVMNode_No_columns__Incomplete_stack_marker__text_format;
     public static String StackFramesVMNode_No_columns__text_format;
+    public static String StackFramesVMNode_No_columns__add_parens__text_format;
     public static String StackFramesVMNode_No_columns__No_line__text_format;
+	public static String StackFramesVMNode_No_columns__No_line__add_parens__text_format;
     public static String StackFramesVMNode_No_columns__No_function__text_format;
     public static String StackFramesVMNode_No_columns__No_module__text_format;
+	public static String StackFramesVMNode_No_columns__No_module__add_parens__text_format;
     public static String StackFramesVMNode_No_columns__Address_only__text_format;
     
     public static String AbstractContainerVMNode_No_columns__text_format;

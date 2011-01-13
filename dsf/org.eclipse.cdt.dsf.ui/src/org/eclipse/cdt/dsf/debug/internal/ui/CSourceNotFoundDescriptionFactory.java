@@ -100,7 +100,10 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 		String module = (String)properties.get(ILaunchVMConstants.PROP_FRAME_MODULE);
 		if (line != null && line >= 0 && file != null && file.length() > 0)
 		{
-			formatString = MessagesForLaunchVM.StackFramesVMNode_No_columns__text_format;
+			if (function != null && function.contains(")")) //$NON-NLS-1$
+				formatString = MessagesForLaunchVM.StackFramesVMNode_No_columns__text_format;
+			else
+				formatString = MessagesForLaunchVM.StackFramesVMNode_No_columns__add_parens__text_format;
 			propertyNames = new String[] { 
                     ILaunchVMConstants.PROP_FRAME_ADDRESS, 
                     ILaunchVMConstants.PROP_FRAME_FUNCTION, 
@@ -111,7 +114,10 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 		}
 		else if (function != null && function.length() > 0 && module != null && module.length() > 0)
 		{
-			formatString = MessagesForLaunchVM.StackFramesVMNode_No_columns__No_line__text_format;
+			if (function.contains(")")) //$NON-NLS-1$
+				formatString = MessagesForLaunchVM.StackFramesVMNode_No_columns__No_line__text_format;
+			else
+				formatString = MessagesForLaunchVM.StackFramesVMNode_No_columns__add_parens__text_format;
 			propertyNames = new String[] { 
                     ILaunchVMConstants.PROP_FRAME_ADDRESS, 
                     ILaunchVMConstants.PROP_FRAME_FUNCTION, 
@@ -126,7 +132,10 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 		}
 		else if (function != null && function.length() > 0)
 		{
-			formatString = MessagesForLaunchVM.StackFramesVMNode_No_columns__No_module__text_format;
+			if (function.contains(")")) //$NON-NLS-1$
+				formatString = MessagesForLaunchVM.StackFramesVMNode_No_columns__No_module__text_format;
+			else
+				formatString = MessagesForLaunchVM.StackFramesVMNode_No_columns__No_module__add_parens__text_format;
 			propertyNames = new String[] { 
                     ILaunchVMConstants.PROP_FRAME_ADDRESS, 
                     ILaunchVMConstants.PROP_FRAME_FUNCTION};

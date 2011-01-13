@@ -172,9 +172,30 @@ public class StackFramesVMNode extends AbstractDMVMNode
                     public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
                         Integer line = (Integer)properties.get(ILaunchVMConstants.PROP_FRAME_LINE);
                         String file = (String)properties.get(ILaunchVMConstants.PROP_FRAME_FILE);
-                        return line != null && line >= 0 && file != null && file.length() > 0;
+                		String function = (String)properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
+                        return line != null && line >= 0 && file != null && file.length() > 0 &&
+                        	   function != null && function.contains(")"); //$NON-NLS-1$
                     };
                 },
+                new LabelText(
+                        MessagesForLaunchVM.StackFramesVMNode_No_columns__add_parens__text_format, 
+                        new String[] { 
+                            ILaunchVMConstants.PROP_FRAME_ADDRESS, 
+                            ILaunchVMConstants.PROP_FRAME_FUNCTION, 
+                            ILaunchVMConstants.PROP_FRAME_FILE, 
+                            ILaunchVMConstants.PROP_FRAME_LINE, 
+                            ILaunchVMConstants.PROP_FRAME_COLUMN, 
+                            ILaunchVMConstants.PROP_FRAME_MODULE})
+                    {
+                        @Override
+                        public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+                            Integer line = (Integer)properties.get(ILaunchVMConstants.PROP_FRAME_LINE);
+                            String file = (String)properties.get(ILaunchVMConstants.PROP_FRAME_FILE);
+                    		String function = (String)properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
+                            return line != null && line >= 0 && file != null && file.length() > 0 &&
+                            	   (function == null || !function.contains(")")); //$NON-NLS-1$
+                        };
+                    },
                 new LabelText(
                     MessagesForLaunchVM.StackFramesVMNode_No_columns__No_line__text_format, 
                     new String[] { 
@@ -186,9 +207,25 @@ public class StackFramesVMNode extends AbstractDMVMNode
                     public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
                         String function = (String)properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
                         String module = (String)properties.get(ILaunchVMConstants.PROP_FRAME_MODULE);
-                        return function != null && function.length() > 0 && module != null && module.length() > 0;
+                        return function != null && function.length() > 0 && function.contains(")") && //$NON-NLS-1$
+                        	   module != null && module.length() > 0;
                     };
                 },
+                new LabelText(
+                        MessagesForLaunchVM.StackFramesVMNode_No_columns__No_line__add_parens__text_format, 
+                        new String[] { 
+                            ILaunchVMConstants.PROP_FRAME_ADDRESS, 
+                            ILaunchVMConstants.PROP_FRAME_FUNCTION, 
+                            ILaunchVMConstants.PROP_FRAME_MODULE})
+                    {
+                        @Override
+                        public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+                            String function = (String)properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
+                            String module = (String)properties.get(ILaunchVMConstants.PROP_FRAME_MODULE);
+                            return function != null && function.length() > 0 && !function.contains(")") && //$NON-NLS-1$
+                            	   module != null && module.length() > 0;
+                        };
+                    },
                 new LabelText(
                     MessagesForLaunchVM.StackFramesVMNode_No_columns__No_function__text_format, 
                     new String[] { 
@@ -210,7 +247,19 @@ public class StackFramesVMNode extends AbstractDMVMNode
                     @Override
                     public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
                         String function = (String)properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
-                        return function != null && function.length() > 0;
+                        return function != null && function.length() > 0 && function.contains(")"); //$NON-NLS-1$
+                    };
+                },
+                new LabelText(
+                    MessagesForLaunchVM.StackFramesVMNode_No_columns__No_module__add_parens__text_format, 
+                    new String[] { 
+                        ILaunchVMConstants.PROP_FRAME_ADDRESS, 
+                        ILaunchVMConstants.PROP_FRAME_FUNCTION})
+                {
+                    @Override
+                    public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+                        String function = (String)properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
+                        return function != null && function.length() > 0 && !function.contains(")"); //$NON-NLS-1$
                     };
                 },
                 new LabelText(

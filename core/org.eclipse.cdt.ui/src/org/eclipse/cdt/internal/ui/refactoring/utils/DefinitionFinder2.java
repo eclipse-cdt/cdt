@@ -46,6 +46,9 @@ public class DefinitionFinder2 {
 			return null;
 		}
 		IIndexBinding binding = index.adaptBinding(declarator.getName().resolveBinding());
+		if (binding == null) {
+			return null;
+		}
 		return getDefinition(binding, astCache, index);
 	}
 

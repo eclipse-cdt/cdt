@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -203,6 +203,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	private boolean fExpectSemicolonAfterDeclaration= true;
 
 	private MultiStatus fStatus;
+	private int fOpenAngleBrackets;
 
 
 	public CodeFormatterVisitor(DefaultCodeFormatterOptions preferences, int offset, int length) {
@@ -936,7 +937,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_template_parameters;
 			formatList(Arrays.asList(templateParameters), align, false, false);
 		}
-		scribe.printNextToken(Token.tGT, preferences.insert_space_before_closing_angle_bracket_in_template_parameters);
+		scribe.printNextToken(new int[] { Token.tGT, Token.tSHIFTR }, preferences.insert_space_before_closing_angle_bracket_in_template_parameters);
 		if (preferences.insert_space_after_closing_angle_bracket_in_template_parameters) {
 			scribe.space();
 		}
@@ -1309,7 +1310,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_template_parameters;
 			formatList(Arrays.asList(templateParameters), align, false, false);
 		}
-		scribe.printNextToken(Token.tGT, preferences.insert_space_before_closing_angle_bracket_in_template_parameters);
+		scribe.printNextToken(new int[] { Token.tGT, Token.tSHIFTR }, preferences.insert_space_before_closing_angle_bracket_in_template_parameters);
 		if (preferences.insert_space_after_closing_angle_bracket_in_template_parameters) {
 			scribe.space();
 		}
@@ -2654,6 +2655,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		if (preferences.insert_space_after_opening_angle_bracket_in_template_arguments) {
 			scribe.space();
 		}
+		int angleBrackets = fOpenAngleBrackets++;
 		final IASTNode[] templateArguments= node.getTemplateArguments();
 		if (templateArguments.length > 0) {
 			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
@@ -2661,7 +2663,21 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_template_arguments;
 			formatList(Arrays.asList(templateArguments), align, false, false);
 		}
-		scribe.printNextToken(Token.tGT, preferences.insert_space_before_closing_angle_bracket_in_template_arguments);
+		if (peekNextToken() == Token.tSHIFTR) {
+			if (fOpenAngleBrackets == angleBrackets + 2) {
+				fOpenAngleBrackets -= 2;
+				scribe.printNextToken(Token.tSHIFTR, preferences.insert_space_before_closing_angle_bracket_in_template_arguments);
+			} else {
+				scribe.printComment();
+				if (preferences.insert_space_before_closing_angle_bracket_in_template_arguments) {
+					scribe.space();
+				}
+				return PROCESS_SKIP;
+			}
+		} else {
+			--fOpenAngleBrackets;
+			scribe.printNextToken(Token.tGT, preferences.insert_space_before_closing_angle_bracket_in_template_arguments);
+		}
 		int nextToken= peekNextToken();
 		if (node.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME || nextToken == Token.tGT) {
 			if (preferences.insert_space_after_closing_angle_bracket_in_template_arguments) {

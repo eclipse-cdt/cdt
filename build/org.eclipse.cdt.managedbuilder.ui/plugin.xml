@@ -50,12 +50,12 @@
             class="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"
             id="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard"/>
       <page
-            category="org.eclipse.cdt.make.ui.preferences.BuildSettings"
+            category="org.eclipse.cdt.ui.preferences.BuildSettings"
             class="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_Env"
             id="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_Env"
             name="%envPrefName"/>
       <page
-            category="org.eclipse.cdt.make.ui.preferences.BuildSettings"
+            category="org.eclipse.cdt.ui.preferences.BuildSettings"
             class="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_Vars"
             id="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_Vars"
             name="%varsPrefName"/>

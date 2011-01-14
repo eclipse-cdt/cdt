@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Sergey Prigogin (Google)
  *     Andrew Ferguson (Symbian)
  *     Kirk Beitz (Nokia)
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -305,6 +306,8 @@ public final class PreferencesMessages extends NLS {
 	public static String FileLanguagesPropertyPage_defaultMapping;
 	public static String FileLanguagesPropertyPage_missingLanguage;
 	public static String FileLanguagesPropertyPage_mappingTableTitle;
+
+	public static String CBuildPreferencePage_description;
 
 	public static String CPluginPreferencePage_outline_view;
 	public static String CPluginPreferencePage_build_scope;

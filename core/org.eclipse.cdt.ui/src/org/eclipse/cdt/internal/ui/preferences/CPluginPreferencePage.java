@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -37,7 +38,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
@@ -52,10 +52,8 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 	public static final String C_BASE_PREF_PAGE_ID= "org.eclipse.cdt.ui.preferences.CPluginPreferencePage"; //$NON-NLS-1$
 	
 	private static final int GROUP_VINDENT = 5;
-	private static final int GROUP_HINDENT = 20;
 	private ArrayList<Button> fCheckBoxes;
-	private Button b1, b2, b3;
-	
+
 	public CPluginPreferencePage() {
 		super();
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
@@ -87,43 +85,7 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 				PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE);
 		
 		addNote(outlineViewGroup, PreferencesMessages.CPluginPreferencePage_performanceHint);
-		
-		// Build either default configuration or all. 
-		Group gr = addGroup(container, PreferencesMessages.CPluginPreferencePage_build_scope);
-		Label l1 = new Label(gr, SWT.NONE);
-		l1.setText(PreferencesMessages.CPluginPreferencePage_1);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.verticalIndent = GROUP_VINDENT;
-		l1.setLayoutData(gd);
 
-		boolean needAllConfigBuild = ACBuilder.needAllConfigBuild();
-
-		b1 = new Button(gr, SWT.RADIO);
-		b1.setText(PreferencesMessages.CPluginPreferencePage_2);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.verticalIndent = GROUP_VINDENT;
-		gd.horizontalIndent = GROUP_HINDENT;
-		b1.setLayoutData(gd);
-		b1.setSelection(!needAllConfigBuild);
-
-		b2 = new Button(gr, SWT.RADIO);
-		b2.setText(PreferencesMessages.CPluginPreferencePage_3);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalIndent = GROUP_HINDENT;
-		b2.setLayoutData(gd);
-		b2.setSelection(needAllConfigBuild);
-		
-		addNote(gr, PreferencesMessages.CPluginPreferencePage_4);
-
-		// Building project dependencies.
-		Group gr2 = addGroup(container, PreferencesMessages.CPluginPreferencePage_building_configurations);
-		b3 = new Button(gr2, SWT.CHECK);
-		b3.setText(PreferencesMessages.CPluginPreferencePage_7);
-		GridData gd2 = new GridData(GridData.FILL_HORIZONTAL);
-		gd2.verticalIndent = GROUP_VINDENT;
-		b3.setLayoutData(gd2);
-		b3.setSelection(ACBuilder.buildConfigResourceChanges());
-		
 		// Refactoring.
 		Group refactoringGroup = addGroup(container, PreferencesMessages.CPluginPreferencePage_refactoring_title);
 		addCheckBox(refactoringGroup,
@@ -222,10 +184,7 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 	public static boolean useStructuralParseMode() {
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE);
 	}
-	
-	public static void setBuildAllMode3(boolean enable) {
-	}
-	
+
 	/**
 	 * @see IWorkbenchPreferencePage#init
 	 */
@@ -255,8 +214,6 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 		// tell the Core Plugin about this preference
 		CCorePlugin.getDefault().setStructuralParseMode(useStructuralParseMode());
-		ACBuilder.setAllConfigBuild(b2.getSelection());
-		ACBuilder.setBuildConfigResourceChanges(b3.getSelection());
 		return true;
 	}
 
@@ -269,10 +226,5 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 			String key= (String) button.getData();
 			button.setSelection(store.getDefaultBoolean(key));
 		}
-		ACBuilder.setAllConfigBuild(false);
-		ACBuilder.setBuildConfigResourceChanges(false);
-		b1.setSelection(true);
-		b2.setSelection(false);
-		b3.setSelection(false);
     }
 }

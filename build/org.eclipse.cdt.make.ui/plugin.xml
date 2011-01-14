@@ -158,19 +158,19 @@
          point="org.eclipse.ui.preferencePages">
       <page
             name="%PreferenceBuildSettings.name"
-            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            category="org.eclipse.cdt.ui.preferences.BuildSettings"
             class="org.eclipse.cdt.make.internal.ui.preferences.BuildSettingsPreferencePage"
-            id="org.eclipse.cdt.make.ui.preferences.BuildSettings">
+            id="org.eclipse.cdt.ui.preferences.BuildSettingProperties">
       </page>
       <page
             name="%PreferenceMake.name"
-            category="org.eclipse.cdt.make.ui.preferences.BuildSettings"
+            category="org.eclipse.cdt.ui.preferences.BuildSettings"
             class="org.eclipse.cdt.make.internal.ui.preferences.MakePreferencePage"
             id="org.eclipse.cdt.make.ui.preferences.MakePreferencePage">
       </page>
       <page
             name="%PreferenceMakefileEditor.name"
-            category="org.eclipse.cdt.make.ui.preferences.BuildSettings"
+            category="org.eclipse.cdt.ui.preferences.BuildSettings"
             class="org.eclipse.cdt.make.internal.ui.preferences.MakefileEditorPreferencePage"
             id="org.eclipse.cdt.make.ui.preferences.MakeFileEditorPreferencePage">
       </page>

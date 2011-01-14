@@ -676,17 +676,25 @@
           <keywordReference id="org.eclipse.cdt.ui.codestyle"/>
           <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
+      <!-- Build Preference page category provided by CDT UI -->
+      <page
+            name="%CPluginBuildPreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.ui.build.BuildPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.BuildSettings">
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
       <!-- Note that build console should be eventually moved to build plugin -->
       <page
             name="%CPluginBuildConsolePreferencePage.name"
-            category="org.eclipse.cdt.make.ui.preferences.BuildSettings"
+            category="org.eclipse.cdt.ui.preferences.BuildSettings"
             class="org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage"
-            id="org.eclipse.cdt.ui.preferneces.CBuildConsolePreferernces">
+            id="org.eclipse.cdt.ui.preferences.CBuildConsolePreferernces">
           <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
             name="%CPluginGlobalBuildLogPreferencePage.name"
-            category="org.eclipse.cdt.make.ui.preferences.BuildSettings"
+            category="org.eclipse.cdt.ui.preferences.BuildSettings"
             class="org.eclipse.cdt.internal.ui.preferences.GlobalBuildLogPreferencePage"
             id="org.eclipse.cdt.ui.preferences.CGlobalBuildLogPreferences">
           <keywordReference id="org.eclipse.cdt.ui.common"/>

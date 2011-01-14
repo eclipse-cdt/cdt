@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 PalmSource, Inc. and others.
+ * Copyright (c) 2006, 2011 PalmSource, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@
  * Anna Dushistova  (Mentor Graphics) - [314659] move remote launch/debug to DSF 
  * Anna Dushistova  (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.tabs
  * Anna Dushistova  (Mentor Graphics) - [318052] [remote launch] Properties are not saved/used
+ * Anna Dushistova  (Mentor Graphics) - [333453] adapted the fix from RemoteCDSFMainTab.java
  *******************************************************************************/
 
 package org.eclipse.cdt.launch.remote.tabs;
@@ -86,6 +87,8 @@ public class RemoteCMainTab extends CMainTab {
 	SystemNewConnectionAction action = null;
 	private Text preRunText;
 	private Label preRunLabel;
+
+	private boolean isInitializing = false;
 
 	public RemoteCMainTab() {
 		this(true);
@@ -332,6 +335,8 @@ public class RemoteCMainTab extends CMainTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
+		isInitializing = true;
+		
 		String remoteConnection = null;
 		try {
 			remoteConnection = config
@@ -361,6 +366,7 @@ public class RemoteCMainTab extends CMainTab {
 		updateTargetProgFromConfig(config);
 		updateSkipDownloadFromConfig(config);
 		updatePropertiesButton();
+		isInitializing = false;
 	}
 
 	protected void handleNewRemoteConnectionSelected() {
@@ -597,6 +603,11 @@ public class RemoteCMainTab extends CMainTab {
 	}
 
 	private void useDefaultsFromConnection() {
+		// During initialization, we don't want to use the default
+		// values of the connection, but we want to use the ones
+		// that are part of the configuration
+		if (isInitializing) return;
+
 		if ((remoteProgText != null) && !remoteProgText.isDisposed()) {
 			String remoteName = remoteProgText.getText().trim();
 			String remoteWsRoot = getRemoteWSRoot();

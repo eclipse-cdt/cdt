@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 PalmSource, Inc. and others.
+ * Copyright (c) 2006, 2011 PalmSource, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,6 +86,8 @@ public class RemoteCDSFMainTab extends CMainTab {
 	private Text preRunText;
 	private Label preRunLabel;
 
+	private boolean isInitializing = false;
+	
 	public RemoteCDSFMainTab() {
 		super(CMainTab.INCLUDE_BUILD_SETTINGS);
 	}
@@ -519,6 +521,11 @@ public class RemoteCDSFMainTab extends CMainTab {
 	}
 
 	private void useDefaultsFromConnection() {
+		// During initialization, we don't want to use the default
+		// values of the connection, but we want to use the ones
+		// that are part of the configuration
+		if (isInitializing) return;
+		
 		if ((remoteProgText != null) && !remoteProgText.isDisposed()) {
 			String remoteName = remoteProgText.getText().trim();
 			String remoteWsRoot = getRemoteWSRoot();
@@ -600,6 +607,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 
 	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
+		isInitializing = true;
 		String remoteConnection = null;
 		try {
 			remoteConnection = config
@@ -629,6 +637,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 		updateTargetProgFromConfig(config);
 		updateSkipDownloadFromConfig(config);
 		updatePropertiesButton();
+		isInitializing = false;
 	}
 
 	/*

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultLineTracker;
@@ -135,6 +136,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
@@ -1444,7 +1446,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 						null,
 						CEditorMessages.Scalability_message,  
 						MessageDialog.INFORMATION,
-						new String[] {IDialogConstants.OK_LABEL}, 0,
+						new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0,
 						CEditorMessages.Scalability_reappear,  
 						false) {
 					{
@@ -1454,6 +1456,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					protected void buttonPressed(int buttonId) {
 						PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.SCALABILITY_ALERT, !getToggleState());
 						super.buttonPressed(buttonId);
+						if (buttonId == IDialogConstants.YES_ID) {
+							PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(Display.getCurrent().getActiveShell(),
+									"org.eclipse.cdt.ui.preferences.CScalabilityPreferences", null, null); //$NON-NLS-1$
+							dialog.open();
+						}
 					}
 				};
 				dialog.setBlockOnOpen(false);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,15 +96,20 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 						}
 					}
 				}
-				if (linkLocation != null) {
-					hyperlinkRegion[0] = new Region(linkLocation.getNodeOffset(), linkLocation.getNodeLength());
+				if (linkLocation == null) {
+					// Consider a fallback way of finding the hyperlink
+					// (see http://bugs.eclipse.org/bugs/show_bug.cgi?id=333050).
+					return Status.CANCEL_STATUS;
 				}
+
+				hyperlinkRegion[0] = new Region(linkLocation.getNodeOffset(), linkLocation.getNodeLength());
 				return Status.OK_STATUS;
 			}
 		});
 
 		if (status == Status.CANCEL_STATUS) {
-			// AST is not available yet, try to compute the hyperlink without it.  
+			// AST was not available yet or didn't help us to find the hyperlink, try to compute
+			// the hyperlink without it.  
 			try {
 				// Check partition type.
 				String partitionType= TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING, region.getOffset(), false);

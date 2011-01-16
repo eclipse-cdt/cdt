@@ -5196,9 +5196,34 @@ public class AST2TemplateTests extends AST2BaseTest {
 	
 	//	template <void (*Func)()> class X {};
 	//	template <typename T> void Y();
-	//	X< Y<int> > x;  // Problem on X< Y<int> >
+	//	X< Y<int> > x;
 	public void testFunctionInstanceAsTemplateArg_Bug333529() throws Exception {
 		parseAndCheckBindings();
 	}
 
+	//	template <typename T>
+	//	class M {};
+	//
+	//	template<typename U>
+	//	U F();
+	//
+	//	template <M<int> (*Func)()>
+	//	struct G {
+	//	  M<int> operator()();
+	//	};
+	//
+	//	template <typename U>
+	//	struct H : public G<F<U> > {};
+	//
+	//	H<M<int> > C;
+	//
+	//	template <typename T>
+	//	void P(M<T> a);
+	//
+	//	void test() {
+	//	  P(C());
+	//	}
+	public void _testFunctionInstanceAsTemplateArg_Bug334472() throws Exception {
+		parseAndCheckBindings();
+	}
 }

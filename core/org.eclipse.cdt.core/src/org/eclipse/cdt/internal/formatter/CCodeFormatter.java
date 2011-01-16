@@ -36,7 +36,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.text.edits.TextEdit;
 
 public class CCodeFormatter extends CodeFormatter {
-
 	private DefaultCodeFormatterOptions preferences;
 	private Map<String, ?> options;
 
@@ -78,8 +77,7 @@ public class CCodeFormatter extends CodeFormatter {
 
 		case DefaultCodeFormatterOptions.MIXED:
 			int tabSize= preferences.tab_size;
-			int spaceEquivalents= indentationLevel
-					* preferences.indentation_size;
+			int spaceEquivalents= indentationLevel * preferences.indentation_size;
 			tabs= spaceEquivalents / tabSize;
 			spaces= spaceEquivalents % tabSize;
 			break;

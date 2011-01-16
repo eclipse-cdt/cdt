@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class ASTInternal {
 	public static IASTNode[] getDeclarationsOfBinding(IBinding binding) {
-		if(binding instanceof ICPPInternalBinding) {
+		if (binding instanceof ICPPInternalBinding) {
 			return ((ICPPInternalBinding)binding).getDeclarations();
 		}
 		assert false;

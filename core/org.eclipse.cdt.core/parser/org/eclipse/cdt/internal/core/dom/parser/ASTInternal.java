@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.CoreException;
 public class ASTInternal {
 	public static IASTNode[] getDeclarationsOfBinding(IBinding binding) {
 		if (binding instanceof ICPPInternalBinding) {
-			return ((ICPPInternalBinding)binding).getDeclarations();
+			return ((ICPPInternalBinding) binding).getDeclarations();
 		}
 		assert false;
 		return IASTNode.EMPTY_NODE_ARRAY;
@@ -57,7 +57,7 @@ public class ASTInternal {
 	
 	public static boolean isStatic(IFunction func, boolean resolveAll) {
 		if (func instanceof ICPPInternalFunction) {
-			return ((ICPPInternalFunction)func).isStatic(resolveAll);
+			return ((ICPPInternalFunction) func).isStatic(resolveAll);
 		}
 		if (func instanceof ICInternalFunction) {
 			return ((ICInternalFunction) func).isStatic(resolveAll);

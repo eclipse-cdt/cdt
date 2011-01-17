@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2010 IBM Corporation and others.
+ *  Copyright (c) 2003, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *  IBM Rational Software - Initial API and implementation
  *  ARM Ltd. - Minor changes to echo commands
  *  IBM Corporation
+ *  Anna Dushistova  (Mentor Graphics) - [307244] extend visibility of fields in GnuMakefileGenerator 
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
@@ -24,9 +25,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
-import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
@@ -4388,6 +4389,36 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Returns the current build configuration.
+	 *
+	 * @return String
+	 * @since 8.0
+	 */
+	protected IConfiguration getConfig() {
+		return config;
+	}
+
+	/**
+	 * Returns the build target extension.
+	 *
+	 * @return String
+	 * @since 8.0
+	 */
+	protected String getBuildTargetExt() {
+		return buildTargetExt;
+	}
+
+	/**
+	 * Returns the build target name.
+	 *
+	 * @return String
+	 * @since 8.0
+	 */	
+	protected String getBuildTargetName() {
+		return buildTargetName;
 	}
 
 	/**

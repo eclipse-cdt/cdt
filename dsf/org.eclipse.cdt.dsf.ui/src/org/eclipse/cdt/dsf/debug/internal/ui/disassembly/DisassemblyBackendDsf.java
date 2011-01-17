@@ -161,15 +161,16 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		IDMContext dmContext = vmContext.getDMContext();
 		
 		SetDebugContextResult result = new SetDebugContextResult();
-		result.sessionId = fDsfSessionId;	// initial value; may change
 		
 		String dsfSessionId = dmContext.getSessionId();
-		
 		
 		if (!dsfSessionId.equals(fDsfSessionId)) {
 			// switch to different session or initiate session
 			if (DEBUG) System.out.println("DisassemblyBackendDsf() " + dsfSessionId); //$NON-NLS-1$
 			fTargetContext= null;
+			fTargetFrameContext = null;
+			result.contextChanged = true;
+
 			if (dmContext instanceof IFrameDMContext) {
 				IFrameDMContext frame= (IFrameDMContext) dmContext;
 				IExecutionDMContext executionContext= DMContexts.getAncestorOfType(frame, IExecutionDMContext.class);
@@ -201,7 +202,6 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 					fServicesTracker.dispose();
 				}
 		        fServicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), fDsfSessionId);
-		        result.contextChanged = true;
 		        
 				// add ourselves as a listener with the new session (context)
 	    		final DsfSession newSession = DsfSession.getSession(dsfSessionId);
@@ -218,6 +218,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 				}
 			}
 		} else if (dmContext instanceof IFrameDMContext) {
+			result.sessionId = fDsfSessionId;
 			// switch to different frame
 			IFrameDMContext frame= (IFrameDMContext) dmContext;
 			IExecutionDMContext newExeDmc = DMContexts.getAncestorOfType(frame, IExecutionDMContext.class);
@@ -230,7 +231,15 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 				if (!result.contextChanged) {
 					fCallback.gotoFrameIfActive(frame.getLevel());
 				}
+			} else {			
+				fTargetContext = null;
+				fTargetFrameContext = null;
+				result.contextChanged = true;
 			}
+		} else {			
+			fTargetContext = null;
+			fTargetFrameContext = null;
+			result.contextChanged = true;
 		}
 		
 		return result;

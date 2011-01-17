@@ -9,6 +9,7 @@
  *     Wind River Systems - initial API and implementation
  *     Freescale Semiconductor - refactoring
  *     Patrick Chuong (Texas Instruments) - Bug fix (329682)
+ *     Patrick Chuong (Texas Instruments) - Bug fix (304108)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.internal.ui.disassembly.dsf;
@@ -72,7 +73,8 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#init(org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback)
 	 */
-	public void init(IDisassemblyPartCallback callback) {
+	@Override
+    public void init(IDisassemblyPartCallback callback) {
 		super.init(callback);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
@@ -103,7 +105,6 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 		assert supportsDebugContext(context) : "caller should not have invoked us"; //$NON-NLS-1$
 		
 		SetDebugContextResult result = new SetDebugContextResult();
-		result.sessionId = fCdiSessionId;	// initial value; may change
 
 		ICDebugTarget cdiDebugTarget = (ICDebugTarget)((ICDebugElement)context).getDebugTarget();
 		String cdiSessionId = getSessionId(cdiDebugTarget);
@@ -112,9 +113,10 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 		
 		if (!cdiSessionId.equals(fCdiSessionId)) {
 			fTargetContext = null;
+			fTargetFrameContext = null;
+			result.contextChanged = true;
 			
 			if (context instanceof ICStackFrame) {
-				fTargetFrameContext = null;		
 				fFrameLevel = 0;
 				fTargetContext = (ICThread)((ICStackFrame)context).getThread();
 				try {
@@ -136,16 +138,18 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 			
 			if (fTargetContext != null) {
 				result.sessionId = fCdiSessionId = cdiSessionId;
-				result.contextChanged = true;
 			}
 		}
 		else if (context instanceof ICStackFrame) {
+			result.sessionId = fCdiSessionId;
 			fTargetFrameContext = null;
 			fFrameLevel = 0;
 			ICThread newTargetContext = (ICThread)((ICStackFrame)context).getThread();
 			ICThread oldTargetContext = fTargetContext;
 			fTargetContext = newTargetContext;
-			if (oldTargetContext != null && newTargetContext != null) {
+			if (oldTargetContext == null) {
+				result.contextChanged = true;
+			} else if (/*oldTargetContext != null && */newTargetContext != null) {
 				result.contextChanged = !oldTargetContext.getDebugTarget().equals(newTargetContext.getDebugTarget());
 			}
 			try {
@@ -166,6 +170,10 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 			if (!result.contextChanged) {
 				fCallback.gotoFrame(fFrameLevel);
 			}
+		} else {
+		    fTargetContext = null;
+		    fTargetFrameContext = null;
+		    result.contextChanged = true;
 		}
 
 		return result;
@@ -361,7 +369,8 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#evaluateSymbolAddress(java.lang.String, boolean)
 	 */
-	public BigInteger evaluateAddressExpression(String symbol, final boolean suppressError) {
+	@Override
+    public BigInteger evaluateAddressExpression(String symbol, final boolean suppressError) {
 		if (fTargetFrameContext != null) {
 			try {
 				// This logic was lifted from CMemoryBlockRetrievalExtension.getExtendedMemoryBlock(String, Object)

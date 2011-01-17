@@ -120,9 +120,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -1847,45 +1845,44 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		return -1;
 	}
 
-	protected void updateDebugContext() {		
-		IDebugContextService contextService = DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow());
-		ISelection activeContext = contextService.getActiveContext();
-		if (activeContext instanceof IStructuredSelection) {
-			Object selectedElement = ((IStructuredSelection) activeContext).getFirstElement();		
-			if (selectedElement instanceof IAdaptable) {
-				IAdaptable context = (IAdaptable) selectedElement;
-				
-				final IDisassemblyBackend prevBackend = fBackend;
-				fDebugSessionId = null;
-				if (context != null) {
-					if (fBackend == null || !fBackend.supportsDebugContext(context)) {
-						if (fBackend != null) {
-							fBackend.clearDebugContext();
-							fBackend.dispose();
-						}
-						fBackend = (IDisassemblyBackend)context.getAdapter(IDisassemblyBackend.class);
-						if (fBackend != null) {
-							fBackend.init(this);
-						}
-					}
-					
-					if (fBackend != null) {
-						IDisassemblyBackend.SetDebugContextResult result = fBackend.setDebugContext(context);
-						if (result != null) {
-							fDebugSessionId = result.sessionId;
-					        if (result.contextChanged && fViewer != null) {
-		                        startUpdate(new Runnable() {
-		                            public void run() {
-		                                debugContextChanged();              
-		                            }
-		                        });
-								if (prevBackend != null && fBackend != prevBackend) {
-									prevBackend.clearDebugContext();
-								}
-							}
-						}
+	protected void updateDebugContext() {
+		IAdaptable context = DebugUITools.getDebugContext();
+		final IDisassemblyBackend prevBackend = fBackend;
+		fDebugSessionId = null;
+		if (context != null) {
+			boolean needUpdate = false;
+			if (prevBackend == null || !prevBackend.supportsDebugContext(context)) {
+				needUpdate = true;
+				fBackend = (IDisassemblyBackend)context.getAdapter(IDisassemblyBackend.class);
+				if (fBackend != null) {
+					if (fBackend.supportsDebugContext(context)) {
+						fBackend.init(this);
+					} else {
+						fBackend = null;
 					}
 				}
+			}
+
+			if (fBackend != null) {
+				IDisassemblyBackend.SetDebugContextResult result = fBackend.setDebugContext(context);
+				if (result != null) {
+					fDebugSessionId = result.sessionId;
+					if (result.contextChanged) {
+						needUpdate = true;
+					}
+				}
+			}
+			if (prevBackend != null && fBackend != prevBackend) {
+				needUpdate = true;
+				prevBackend.clearDebugContext();
+				prevBackend.dispose();
+			}
+			if (needUpdate && fViewer != null) {
+				startUpdate(new Runnable() {
+					public void run() {
+						debugContextChanged();
+					}
+				});
 			}
 		}
 	}

@@ -63,6 +63,26 @@
                toolbarPath="additions">
          </action>
       </viewContribution>
+      <viewContribution
+            id="org.eclipse.cdt.debug.ui.disassembly.toolbar"
+            targetID="org.eclipse.cdt.dsf.debug.ui.disassembly.view">
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
+               icon="icons/pin.gif"
+               id="org.eclipse.pinclone.disassembly.pinDebugContext"
+               label="%PinView.name "
+               style="toggle"
+               toolbarPath="pinGroup">
+         </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewActionDelegate"
+               icon="icons/open_new.gif"
+               id="org.eclipse.pinclone.disassembly.clone"
+               label="%OpenNewView.name"
+               style="push"
+               toolbarPath="pinGroup">
+         </action>
+      </viewContribution>
    </extension>
 
    <extension 

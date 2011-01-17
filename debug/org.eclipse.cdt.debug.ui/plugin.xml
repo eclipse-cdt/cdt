@@ -1044,6 +1044,66 @@
             </enablement>
          </action>
       </viewContribution>
+      <viewContribution
+            id="org.eclipse.cdt.debug.ui.expression.toolbar"
+            targetID="org.eclipse.debug.ui.ExpressionView">
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
+               icon="icons/elcl16/pin.gif"
+               id="org.eclipse.pinclone.expression.pinDebugContext"
+               label="%PinView.name "
+               style="toggle"
+               toolbarPath="pinGroup">
+         </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewActionDelegate"
+               icon="icons/elcl16/open_new.gif"
+               id="org.eclipse.pinclone.expression.clone"
+               label="%OpenNewView.name"
+               style="push"
+               toolbarPath="pinGroup">
+         </action>
+      </viewContribution>
+      <viewContribution
+            id="org.eclipse.cdt.debug.ui.variable.toolbar"
+            targetID="org.eclipse.debug.ui.VariableView">
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
+               icon="icons/elcl16/pin.gif"
+               id="org.eclipse.pinclone.variable.pinDebugContext"
+               label="%PinView.name "
+               style="toggle"
+               toolbarPath="pinGroup">
+         </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewActionDelegate"
+               icon="icons/elcl16/open_new.gif"
+               id="org.eclipse.pinclone.variable.clone"
+               label="%OpenNewView.name"
+               style="push"
+               toolbarPath="pinGroup">
+         </action>
+      </viewContribution>
+      <viewContribution
+            id="org.eclipse.cdt.debug.ui.register.toolbar"
+            targetID="org.eclipse.debug.ui.RegisterView">
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
+               icon="icons/elcl16/pin.gif"
+               id="org.eclipse.pinclone.register.pinDebugContext"
+               label="%PinView.name "
+               style="toggle"
+               toolbarPath="pinGroup">
+         </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewActionDelegate"
+               icon="icons/elcl16/open_new.gif"
+               id="org.eclipse.pinclone.register.clone"
+               label="%OpenNewView.name"
+               style="push"
+               toolbarPath="pinGroup">
+         </action>
+      </viewContribution>   
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">

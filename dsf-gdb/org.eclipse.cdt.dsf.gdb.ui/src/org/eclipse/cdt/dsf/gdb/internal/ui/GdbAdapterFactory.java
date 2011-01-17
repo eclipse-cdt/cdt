@@ -27,6 +27,7 @@ import org.eclipse.cdt.debug.core.model.IStartTracingHandler;
 import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
 import org.eclipse.cdt.debug.core.model.IStopTracingHandler;
 import org.eclipse.cdt.debug.core.model.IUncallHandler;
+import org.eclipse.cdt.debug.ui.IPinProvider;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfResumeCommand;
@@ -127,6 +128,7 @@ public class GdbAdapterFactory
         final GdbSelectNextTraceRecordCommand fSelectNextRecordTarget;
         final GdbSelectPrevTraceRecordCommand fSelectPrevRecordTarget;
         final GdbDebugTextHover fDebugTextHover;
+        final GdbPinProvider fPinProvider;
         
         SessionAdapterSet(GdbLaunch launch) {
             fLaunch = launch;
@@ -170,6 +172,7 @@ public class GdbAdapterFactory
             fSaveTraceDataTarget = new GdbSaveTraceDataCommand(session);
             fSelectNextRecordTarget = new GdbSelectNextTraceRecordCommand(session);
             fSelectPrevRecordTarget = new GdbSelectPrevTraceRecordCommand(session);
+            fPinProvider = new GdbPinProvider();
 
             session.registerModelAdapter(ISteppingModeTarget.class, fSteppingModeTarget);
             session.registerModelAdapter(IStepIntoHandler.class, fStepIntoCommand);
@@ -194,6 +197,7 @@ public class GdbAdapterFactory
             session.registerModelAdapter(ISaveTraceDataHandler.class, fSaveTraceDataTarget);
             session.registerModelAdapter(ISelectNextTraceRecordHandler.class, fSelectNextRecordTarget);
             session.registerModelAdapter(ISelectPrevTraceRecordHandler.class, fSelectPrevRecordTarget);
+            session.registerModelAdapter(IPinProvider.class, fPinProvider);
 
             fDebugModelProvider = new IDebugModelProvider() {
                 // @see org.eclipse.debug.core.model.IDebugModelProvider#getModelIdentifiers()
@@ -252,7 +256,8 @@ public class GdbAdapterFactory
             session.unregisterModelAdapter(ISaveTraceDataHandler.class);
             session.unregisterModelAdapter(ISelectNextTraceRecordHandler.class);
             session.unregisterModelAdapter(ISelectPrevTraceRecordHandler.class);
-
+            session.unregisterModelAdapter(IPinProvider.class);
+            
             session.unregisterModelAdapter(IDebugModelProvider.class);
             session.unregisterModelAdapter(ILaunch.class);
 
@@ -364,7 +369,7 @@ public class GdbAdapterFactory
     public Class[] getAdapterList() {
         return new Class[] {
             IElementContentProvider.class, IModelProxyFactory.class, ISuspendTrigger.class,
-            IColumnPresentationFactory.class
+            IColumnPresentationFactory.class,
             };
     }
 

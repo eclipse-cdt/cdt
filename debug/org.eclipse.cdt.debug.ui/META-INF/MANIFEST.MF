@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.debug.ui; singleton:=true
-Bundle-Version: 7.0.0.qualifier
+Bundle-Version: 7.1.0.qualifier
 Bundle-Activator: org.eclipse.cdt.debug.ui.CDebugUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: 
  org.eclipse.cdt.debug.internal.ui;x-internal:=true,
- org.eclipse.cdt.debug.internal.ui.actions;x-friends:="org.eclipse.cdt.dsf.ui",
+ org.eclipse.cdt.debug.internal.ui.actions;x-friends:="org.eclipse.cdt.dsf.ui,org.eclipse.cdt.debug.ui.memory.memorybrowser",
  org.eclipse.cdt.debug.internal.ui.commands;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.dialogfields;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.dialogs;x-internal:=true,

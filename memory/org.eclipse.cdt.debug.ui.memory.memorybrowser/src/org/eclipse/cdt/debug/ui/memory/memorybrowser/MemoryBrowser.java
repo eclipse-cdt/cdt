@@ -8,6 +8,7 @@
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *     Ted R Williams (Mentor Graphics, Inc.) - address space enhancements
+ *     Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.memory.memorybrowser;
@@ -296,8 +297,8 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
             contextService.addDebugContextListener(this, presentationContextId); 
             selection = contextService.getActiveContext(presentationContextId);
 		} else {
-		    contextService.addDebugContextListener(this); 
-            selection = contextService.getActiveContext();
+			DebugUITools.addPartDebugContextListener(getSite(), this);
+			selection = contextService.getActiveContext(getSite().getId(), ((IViewSite)getSite()).getSecondaryId());
 		}
 		
 		DebugPlugin.getDefault().addDebugEventListener(this);
@@ -339,7 +340,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
             String presentationContextId = getPresentationContextId();
             contextService.removeDebugContextListener(this, presentationContextId); 
         } else {
-            contextService.removeDebugContextListener(this); 
+        	DebugUITools.removePartDebugContextListener(getSite(), this); 
         }
 		super.dispose();
 	}

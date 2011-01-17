@@ -27,6 +27,7 @@ import org.eclipse.cdt.debug.internal.ui.EvaluationContextManager;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyBackendCdiFactory;
 import org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditorManager;
+import org.eclipse.cdt.debug.internal.ui.pinclone.ViewIDCounterManager;
 import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
 import org.eclipse.cdt.debug.ui.sourcelookup.OldDefaultSourceLocator;
 import org.eclipse.core.resources.IWorkspace;
@@ -288,6 +289,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	@Override
     public void start( BundleContext context ) throws Exception {
 		super.start( context );
+		ViewIDCounterManager.getInstance().init();
         fDisassemblyEditorManager = new DisassemblyEditorManager();
 		EvaluationContextManager.startup();
 		CDebugCorePlugin.getDefault().addCBreakpointListener( CBreakpointUpdater.getInstance() );

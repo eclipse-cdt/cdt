@@ -9,17 +9,19 @@
 #
 # Contributors:
 # Ted R Williams (Wind River) - initial implementation 
+# Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
 -->
 <plugin>
 
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="%view.name.0"
-            icon="icons/memorybrowser_view.gif"
+            allowMultiple="true"
             category="org.eclipse.debug.ui"
             class="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"
-            id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser">
+            icon="icons/memorybrowser_view.gif"
+            id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"
+            name="%view.name.0">
       </view>
    </extension>
    <extension point="org.eclipse.ui.perspectiveExtensions">
@@ -33,5 +35,28 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowserPreferenceInitializer"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="org.eclipse.cdt.debug.ui.memoryBrowser.toolbar"
+            targetID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser">
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
+               icon="icons/pin.gif"
+               id="org.eclipse.pinclone.memoryBrowser.pinDebugContext"
+               label="%PinView.name "
+               style="toggle"
+               toolbarPath="pinGroup">
+         </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewActionDelegate"
+               icon="icons/open_new.gif"
+               id="org.eclipse.pinclone.memoryBrowser.clone"
+               label="%OpenNewView.name"
+               style="push"
+               toolbarPath="pinGroup">
+         </action>
+      </viewContribution>
    </extension>
 </plugin>

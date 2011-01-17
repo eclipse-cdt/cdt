@@ -10,6 +10,7 @@
  *     Patrick Chuong (Texas Instruments) - Bug fix (326670)
  *     Patrick Chuong (Texas Instruments) - Bug fix (329682)
  *     Patrick Chuong (Texas Instruments) - bug fix (330259)
+ *     Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
@@ -75,7 +76,6 @@ import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
-import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -718,14 +718,14 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	protected void setSite(IWorkbenchPartSite site) {
 		super.setSite(site);
         site.getPage().addPartListener(fPartListener);
-        IDebugContextService contextService = DebugUITools.getDebugContextManager().getContextService(site.getWorkbenchWindow());
-        contextService.addDebugContextListener(fDebugContextListener = new IDebugContextListener() {
+        fDebugContextListener = new IDebugContextListener() {
             public void debugContextChanged(DebugContextEvent event) {
                 if ((event.getFlags() & DebugContextEvent.ACTIVATED) != 0) {
                     updateDebugContext();
                 }
             }
-        });
+        };
+        DebugUITools.addPartDebugContextListener(site, fDebugContextListener);
 	}
 
 	private DisassemblyDocument createDocument() {
@@ -738,13 +738,13 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 */
 	@Override
 	public void dispose() {
-	    if (fDebugContextListener != null) {
-	        DebugUITools.getDebugContextManager().removeDebugContextListener(fDebugContextListener);
-	        fDebugContextListener = null;
-	    }
 		IWorkbenchPartSite site = getSite();
 		site.setSelectionProvider(null);
 		site.getPage().removePartListener(fPartListener);
+	    if (fDebugContextListener != null) {
+	        DebugUITools.removePartDebugContextListener(site, fDebugContextListener);
+	        fDebugContextListener = null;
+	    }
 		if (fHandlerActivations != null) {
 			IHandlerService handlerService = (IHandlerService)site.getService(IHandlerService.class);
 			handlerService.deactivateHandlers(fHandlerActivations);
@@ -1846,10 +1846,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	}
 
 	protected void updateDebugContext() {
-		IAdaptable context = DebugUITools.getDebugContext();
-		final IDisassemblyBackend prevBackend = fBackend;
-		fDebugSessionId = null;
+		IAdaptable context = DebugUITools.getPartDebugContext(getSite());
 		if (context != null) {
+			final IDisassemblyBackend prevBackend = fBackend;
+			fDebugSessionId = null;
 			boolean needUpdate = false;
 			if (prevBackend == null || !prevBackend.supportsDebugContext(context)) {
 				needUpdate = true;

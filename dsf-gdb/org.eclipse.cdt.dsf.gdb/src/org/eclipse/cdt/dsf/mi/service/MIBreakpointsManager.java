@@ -30,6 +30,7 @@ import org.eclipse.cdt.debug.core.breakpointactions.BreakpointActionManager;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointExtension;
+import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICTracepoint;
@@ -1741,6 +1742,17 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             	// A tracepoint is a LineBreakpoint, but needs its own type
                 properties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
                 properties.put(MIBreakpoints.PASS_COUNT, attributes.get(ICTracepoint.PASS_COUNT));
+            }
+            
+            // checks for the breakpoint type, and adds the hardware/temporary flags 
+            Object breakpointType = attributes.get(ICBreakpointType.TYPE);
+            if(breakpointType != null) {
+            	if(breakpointType instanceof Integer) {
+		            boolean isHardware = ((Integer) breakpointType & ICBreakpointType.HARDWARE) == ICBreakpointType.HARDWARE;
+		            boolean isTemporary = ((Integer) breakpointType & ICBreakpointType.TEMPORARY) == ICBreakpointType.TEMPORARY;
+		            properties.put(MIBreakpointDMData.IS_HARDWARE, isHardware);
+		            properties.put(MIBreakpointDMData.IS_TEMPORARY, isTemporary);
+            	}
             }
         }
         else if (breakpoint instanceof ICEventBreakpoint) {

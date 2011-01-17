@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.formatter;
 
@@ -32,7 +33,6 @@ import org.eclipse.text.edits.TextEdit;
  * @since 4.0
  */
 public class Scribe {
-
 	private static final String EMPTY_STRING= ""; //$NON-NLS-1$
 	private static final String SPACE= " "; //$NON-NLS-1$
 
@@ -119,7 +119,7 @@ public class Scribe {
 		addOptimizedReplaceEdit(start, end - start + 1, EMPTY_STRING);
 	}
 
-	public final void addInsertEdit(int insertPosition, String insertedString) {
+	public final void addInsertEdit(int insertPosition, CharSequence insertedString) {
 		if (edits.length == editsIndex) {
 			// resize
 			resize();
@@ -127,7 +127,7 @@ public class Scribe {
 		addOptimizedReplaceEdit(insertPosition, 0, insertedString);
 	}
 
-	private final void addOptimizedReplaceEdit(int offset, int length, String replacement) {
+	private final void addOptimizedReplaceEdit(int offset, int length, CharSequence replacement) {
 		if (editsIndex > 0) {
 			// try to merge last two edits
 			final OptimizedReplaceEdit previous= edits[editsIndex - 1];
@@ -1337,6 +1337,19 @@ public class Scribe {
 		for (int i= 0; i < (pageWidth / tabLength); i++) {
 			stringBuffer.append(i);
 			stringBuffer.append('\t');
+		}
+	}
+
+	public void printSpaces(int numSpaces) {
+		if (numSpaces > 0) {
+			int currentPosition= scanner.getCurrentPosition();
+			StringBuilder spaces = new StringBuilder(numSpaces);
+			for (int i = 0; i < numSpaces; i++) {
+				spaces.append(' ');
+			}
+			addInsertEdit(currentPosition, spaces);
+			pendingSpace= false;
+			needSpace= false;
 		}
 	}
 

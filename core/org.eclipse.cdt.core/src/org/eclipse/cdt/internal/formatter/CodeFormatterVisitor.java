@@ -8,6 +8,7 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.formatter;
 
@@ -156,7 +157,6 @@ import org.eclipse.text.edits.TextEdit;
  * @since 4.0
  */
 public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, ICASTVisitor {
-
 	private static boolean DEBUG = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.core/debug/formatter")); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static class ASTProblemException extends RuntimeException {
@@ -1513,7 +1513,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				if (startNode(declaration)) {
 					try {
 						scribe.startNewLine();
-						visit((ICPPASTVisibilityLabel)declaration);
+						visit((ICPPASTVisibilityLabel) declaration);
 						scribe.startNewLine();
 					} finally {
 						endOfNode(declaration);
@@ -1557,6 +1557,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (node.getNodeLocations()[0] instanceof IASTMacroExpansionLocation) {
 			skipNode(node);
 		} else {
+			scribe.printSpaces(preferences.indent_access_specifier_extra_spaces);
+
 			switch (node.getVisibility()) {
 			case ICPPASTVisibilityLabel.v_private:
 				scribe.printNextToken(Token.t_private, false);

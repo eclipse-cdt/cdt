@@ -138,4 +138,23 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
+
+	//	void f()
+	//	{
+	//	    [](int r){return r;}(5);
+	//	}
+	public void testLambda_Bug332285() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
+	//	void g()
+	//	{
+	//		int r;
+	//	    ({return r;});
+	//	}
+	public void testGccExtensions() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkErrorLine(4);
+	}
 }

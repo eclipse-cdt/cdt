@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
@@ -37,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 
 /**
  * The checker suppose to find issue related to mismatched return value/function
@@ -87,6 +89,14 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 					}
 				}
 
+				return PROCESS_SKIP;
+			}
+			if (stmt instanceof IASTExpressionStatement) {
+				// do not process expression they may contain nasty stuff
+				IASTExpressionStatement stmt1 = (IASTExpressionStatement) stmt;
+				if (stmt1.getExpression() instanceof IGNUASTCompoundStatementExpression) {
+					return PROCESS_CONTINUE;
+				}
 				return PROCESS_SKIP;
 			}
 			return PROCESS_CONTINUE;

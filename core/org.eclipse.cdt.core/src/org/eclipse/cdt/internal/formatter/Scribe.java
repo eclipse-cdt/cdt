@@ -515,7 +515,8 @@ public class Scribe {
 	public void handleLineTooLong() {
 		// search for closest breakable alignment, using tiebreak rules
 		// look for outermost breakable one
-		int relativeDepth= 0, outerMostDepth= -1;
+		int relativeDepth= 0;
+		int outerMostDepth= -1;
 		Alignment targetAlignment= currentAlignment;
 		while (targetAlignment != null) {
 			if (targetAlignment.tieBreakRule == Alignment.R_OUTERMOST && targetAlignment.couldBreak()) {
@@ -1324,7 +1325,7 @@ public class Scribe {
 		print(currentToken.getLength(), considerSpaceIfAny);
 	}
 
-	private void printRule(StringBuilder stringBuffer) {
+	private void printRuler(StringBuilder stringBuffer) {
 		for (int i= 0; i < pageWidth; i++) {
 			if ((i % tabLength) == 0) {
 				stringBuffer.append('+');
@@ -1520,15 +1521,13 @@ public class Scribe {
 		buffer
 			.append(") - (tabSize = " + tabLength + ")")//$NON-NLS-1$//$NON-NLS-2$
 			.append(lineSeparator)
-			.append(
-					"(line = " + line + ") - (column = " + column + ") - (identationLevel = " + indentationLevel + ")") //$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$	//$NON-NLS-4$
+			.append("(line = " + line + ") - (column = " + column + ") - (identationLevel = " + indentationLevel + ")") //$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$	//$NON-NLS-4$
 			.append(lineSeparator)
-			.append(
-					"(needSpace = " + needSpace + ") - (lastNumberOfNewLines = " + lastNumberOfNewLines + ") - (checkLineWrapping = " + checkLineWrapping + ")") //$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$	//$NON-NLS-4$
+			.append("(needSpace = " + needSpace + ") - (lastNumberOfNewLines = " + lastNumberOfNewLines + ") - (checkLineWrapping = " + checkLineWrapping + ")") //$NON-NLS-1$	//$NON-NLS-2$	//$NON-NLS-3$	//$NON-NLS-4$
 			.append(lineSeparator).append(
 					"==================================================================================") //$NON-NLS-1$
 			.append(lineSeparator);
-		printRule(buffer);
+		printRuler(buffer);
 		return buffer.toString();
 	}
 

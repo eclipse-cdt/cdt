@@ -3313,8 +3313,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	        // deal with (quite unexpected) comments right before lcurly
 	        scribe.printComment();
 	        if (DefaultCodeFormatterConstants.NEXT_LINE_ON_WRAP.equals(bracePosition)
-	                && (scribe.line > line || scribe.column >= preferences.page_width))
-	        {
+	                && (scribe.line > line || scribe.column >= preferences.page_width)) {
 	            scribe.startNewLine();
 	        }
 		} finally {

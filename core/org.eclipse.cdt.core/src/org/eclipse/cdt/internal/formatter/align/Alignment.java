@@ -13,14 +13,12 @@ package org.eclipse.cdt.internal.formatter.align;
 import org.eclipse.cdt.internal.formatter.Location;
 import org.eclipse.cdt.internal.formatter.Scribe;
 
-
 /**
  * Alignment management
  * 
  * @since 4.0
  */
 public class Alignment {
-
 	// name of alignment
 	public String name;
 	
@@ -78,7 +76,7 @@ public class Alignment {
 	 * <li>     #fragment4,  </li>
 	 * </ul>
 	 */
-	public static final int M_ONE_PER_LINE_SPLIT = 32+16; // one fragment per line
+	public static final int M_ONE_PER_LINE_SPLIT = 32 + 16; // one fragment per line
 
 	/**
 	 * foobar(<ul>
@@ -96,7 +94,7 @@ public class Alignment {
 	 * <li>      #fragment4,  </li>
 	 * </ul>
 	 */
-	public static final int M_NEXT_PER_LINE_SPLIT = 64+16; // one per line, except first fragment (if possible)
+	public static final int M_NEXT_PER_LINE_SPLIT = 64 + 16; // one per line, except first fragment (if possible)
 
 	//64+32
 	//64+32+16
@@ -133,8 +131,7 @@ public class Alignment {
 	public static final int CHUNK_ENUM = 4;
 
 	// location to align and break on.
-	public Alignment(String name, int mode, int tieBreakRule, Scribe scribe, int fragmentCount, int sourceRestart, int continuationIndent){
-		
+	public Alignment(String name, int mode, int tieBreakRule, Scribe scribe, int fragmentCount, int sourceRestart, int continuationIndent) {
 		this.name = name;
 		this.location = new Location(scribe, sourceRestart);
 		this.mode = mode;
@@ -196,7 +193,7 @@ public class Alignment {
 			if (currentIndentation > fragmentIndentation) {
 				this.fragmentIndentations[this.fragmentIndex] =  currentIndentation;
 				if (fragmentIndentation != 0) {
-					for (int i = this.fragmentIndex+1; i < this.fragmentCount; i++) {
+					for (int i = this.fragmentIndex + 1; i < this.fragmentCount; i++) {
 						this.fragmentIndentations[i] = 0;
 					}
 					this.needRedoColumnAlignment = true;
@@ -204,16 +201,15 @@ public class Alignment {
 			}
 			// backtrack only once all fragments got checked
 			if (this.needRedoColumnAlignment && this.fragmentIndex == this.fragmentCount-1) { // alignment too small
-
-//				if (CodeFormatterVisitor.DEBUG){
+//				if (CodeFormatterVisitor.DEBUG) {
 //					System.out.println("ALIGNMENT TOO SMALL");
 //					System.out.println(this);
 //				}
 				this.needRedoColumnAlignment = false;
 				int relativeDepth = 0;
 				Alignment targetAlignment = this.scribe.memberAlignment;
-				while (targetAlignment != null){
-					if (targetAlignment == this){
+				while (targetAlignment != null) {
+					if (targetAlignment == this) {
 						throw new AlignmentException(AlignmentException.ALIGN_TOO_SMALL, relativeDepth);
 					}
 					targetAlignment = targetAlignment.enclosing;
@@ -223,16 +219,16 @@ public class Alignment {
 		}
 	}
 		
-	public boolean couldBreak(){
+	public boolean couldBreak() {
 		int i;
-		switch(mode & SPLIT_MASK){
+		switch (mode & SPLIT_MASK) {
 
 			/*  # aligned fragment
 			 *  foo(
 			 *     #AAAAA, #BBBBB,
 			 *     #CCCC);
 			 */
-			case M_COMPACT_FIRST_BREAK_SPLIT :
+			case M_COMPACT_FIRST_BREAK_SPLIT:
 				if (this.fragmentBreaks[0] == NONE) {
 					this.fragmentBreaks[0] = BREAK;
 					this.fragmentIndentations[0] = this.breakIndentationLevel;
@@ -251,7 +247,7 @@ public class Alignment {
 			 *  foo(#AAAAA, #BBBBB,
 			 *     #CCCC);
 			 */
-			case M_COMPACT_SPLIT :
+			case M_COMPACT_SPLIT:
 				i = this.fragmentIndex;
 				do {
 					if (this.fragmentBreaks[i] == NONE) {
@@ -268,11 +264,11 @@ public class Alignment {
 			 *          #BBBBB,
 			 *          #CCCC);
 			 */
-			case M_NEXT_SHIFTED_SPLIT :
+			case M_NEXT_SHIFTED_SPLIT:
 				if (this.fragmentBreaks[0] == NONE) {
 					this.fragmentBreaks[0] = BREAK;
 					this.fragmentIndentations[0] = this.breakIndentationLevel;
-					for (i = 1; i < this.fragmentCount; i++){
+					for (i = 1; i < this.fragmentCount; i++) {
 						this.fragmentBreaks[i] = BREAK;
 						this.fragmentIndentations[i] = this.shiftBreakIndentationLevel;
 					}
@@ -286,9 +282,9 @@ public class Alignment {
 			 *      #BBBBB,
 			 *      #CCCC);
 			 */
-			case M_ONE_PER_LINE_SPLIT :
+			case M_ONE_PER_LINE_SPLIT:
 				if (this.fragmentBreaks[0] == NONE) {
-					for (i = 0; i < this.fragmentCount; i++){
+					for (i = 0; i < this.fragmentCount; i++) {
 						this.fragmentBreaks[i] = BREAK;
 						this.fragmentIndentations[i] = this.breakIndentationLevel;
 					}
@@ -300,7 +296,7 @@ public class Alignment {
 			 *      #BBBBB,
 			 *      #CCCC);
 			 */
-			case M_NEXT_PER_LINE_SPLIT :
+			case M_NEXT_PER_LINE_SPLIT:
 				if (this.fragmentBreaks[0] == NONE) {
 					if (this.fragmentCount > 1
 							&& this.fragmentBreaks[1] == NONE) {
@@ -320,7 +316,6 @@ public class Alignment {
 	}
 	
 	public Alignment getAlignment(String targetName) {
-
 		if (targetName.equals(this.name)) return this;
 		if (this.enclosing == null) return null;
 		
@@ -328,14 +323,14 @@ public class Alignment {
 	}
 		
 	// perform alignment effect for current fragment
-	public void performFragmentEffect(){
+	public void performFragmentEffect() {
 		if ((this.mode & M_MULTICOLUMN) == 0) {
-			switch(this.mode & SPLIT_MASK) {
-				case Alignment.M_COMPACT_SPLIT :
-				case Alignment.M_COMPACT_FIRST_BREAK_SPLIT :
-				case Alignment.M_NEXT_PER_LINE_SPLIT :
-				case Alignment.M_NEXT_SHIFTED_SPLIT :
-				case Alignment.M_ONE_PER_LINE_SPLIT :
+			switch (this.mode & SPLIT_MASK) {
+				case Alignment.M_COMPACT_SPLIT:
+				case Alignment.M_COMPACT_FIRST_BREAK_SPLIT:
+				case Alignment.M_NEXT_PER_LINE_SPLIT:
+				case Alignment.M_NEXT_SHIFTED_SPLIT:
+				case Alignment.M_ONE_PER_LINE_SPLIT:
 					break;
 				default:
 					return;
@@ -357,8 +352,7 @@ public class Alignment {
 
 	// reset fragment indentation/break status
 	public void reset() {
-
-		if (fragmentCount > 0){
+		if (fragmentCount > 0) {
 			this.fragmentIndentations = new int[this.fragmentCount];
 			this.fragmentBreaks = new int[this.fragmentCount];
 		}
@@ -369,7 +363,7 @@ public class Alignment {
 		}
 	}
 
-	public void toFragmentsString(StringBuffer buffer){
+	public void toFragmentsString(StringBuffer buffer) {
 		// default implementation
 	}
 	
@@ -390,7 +384,7 @@ public class Alignment {
 		}
 		buffer.append('\n');
 
-		for (int i = 0; i < this.fragmentCount; i++){
+		for (int i = 0; i < this.fragmentCount; i++) {
 			buffer
 				.append(" - fragment ")	//$NON-NLS-1$
 				.append(i)
@@ -407,7 +401,7 @@ public class Alignment {
 	}
 	
 	public void update() {
-		for (int i = 1; i < this.fragmentCount; i++){
+		for (int i = 1; i < this.fragmentCount; i++) {
 		    if (this.fragmentBreaks[i] == BREAK) {
 		        this.fragmentIndentations[i] = this.breakIndentationLevel;
 		    }

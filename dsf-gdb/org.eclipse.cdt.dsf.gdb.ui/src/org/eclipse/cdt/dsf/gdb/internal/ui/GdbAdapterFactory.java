@@ -352,6 +352,17 @@ public class GdbAdapterFactory
             }
             adapterSet = fgLaunchAdapterSets.get(launch);
             if (adapterSet == null) {
+            	// If the first time we attempt to create an adapterSet is once the session is
+            	// already inactive, we should not create it and return null.
+            	// This can happen, for example, when we run JUnit tests and we don't actually
+            	// have a need for any adapters until the launch is actually being removed.
+            	// Note that we must do this here because fgDisposedLaunchAdapterSets
+            	// may not already know that the launch has been removed because of a race
+            	// condition with the caller which is also processing a launchRemoved method.
+            	// Bug 334687 
+            	if (session.isActive() == false) {
+            		return null;
+            	}
                 adapterSet = new SessionAdapterSet(launch);
                 fgLaunchAdapterSets.put(launch, adapterSet);
             }

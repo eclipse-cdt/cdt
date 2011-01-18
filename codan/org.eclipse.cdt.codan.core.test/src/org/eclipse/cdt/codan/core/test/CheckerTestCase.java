@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author Alena
- *
+ * 
  */
 public class CheckerTestCase extends CodanTestCase {
 	protected IMarker[] markers;
@@ -36,8 +36,8 @@ public class CheckerTestCase extends CodanTestCase {
 		return checkErrorLine(currentFile, i);
 	}
 
-	public void checkErrorLines( Object... args ) {
-		for( Object i : args ) {
+	public void checkErrorLines(Object... args) {
+		for (Object i : args) {
 			checkErrorLine((Integer) i);
 		}
 		assertEquals(args.length, markers.length);
@@ -65,18 +65,7 @@ public class CheckerTestCase extends CodanTestCase {
 		IMarker m = null;
 		for (int j = 0; j < markers.length; j++) {
 			m = markers[j];
-			Object pos;
-			try {
-				line = (Integer) m.getAttribute(IMarker.LINE_NUMBER);
-				if (line == null || line.equals(-1)) {
-					pos = m.getAttribute(IMarker.CHAR_START);
-					line = new Integer(pos2line(((Integer) pos).intValue()));
-				}
-			} catch (CoreException e) {
-				fail(e.getMessage());
-			} catch (IOException e) {
-				fail(e.getMessage());
-			}
+			line = getLine(m);
 			mfile = m.getResource().getName();
 			if (line.equals(expectedLine)
 					&& (problemId == null || problemId
@@ -96,9 +85,36 @@ public class CheckerTestCase extends CodanTestCase {
 		return m;
 	}
 
+	/**
+	 * @param line
+	 * @param m
+	 * @return
+	 */
+	public Integer getLine(IMarker m) {
+		Integer line = null;
+		try {
+			line = (Integer) m.getAttribute(IMarker.LINE_NUMBER);
+			if (line == null || line.equals(-1)) {
+				Object pos = m.getAttribute(IMarker.CHAR_START);
+				line = new Integer(pos2line(((Integer) pos).intValue()));
+			}
+		} catch (CoreException e) {
+			fail(e.getMessage());
+		} catch (IOException e) {
+			fail(e.getMessage());
+		}
+		return line;
+	}
+
 	public void checkNoErrors() {
-		assertTrue("Found errors but should not", markers == null
-				|| markers.length == 0);
+		if (markers == null || markers.length == 0) {
+			// all good
+		} else {
+			IMarker m = markers[0];
+			fail("Found " + markers.length + " errors but should not. First "
+					+ CodanProblemMarker.getProblemId(m) + " at line "
+					+ getLine(m));
+		}
 	}
 
 	/**

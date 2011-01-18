@@ -130,60 +130,70 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements
 	 * "switch"s
 	 */
 	class SwitchVisitor extends SwitchFindingVisitor {
-		private IASTStatement _last_case_stmnt;
+		private IASTStatement _prev_case_stmnt;
 		private boolean _first_case_statement;
-		private int _last_break_stmnt_offset;
-		private int _last_normal_stmnt_offset;
-		private int _last_case_stmnt_offset;
+		private int _prev_break_stmnt_offset;
+		private int _prev_normal_stmnt_offset;
+		private int _prev_case_stmnt_offset;
 
 		SwitchVisitor(IASTStatement switch_statement) {
 			shouldVisitStatements = true;
 			_first_case_statement = true;
 			_switchStatement = switch_statement;
-			_last_break_stmnt_offset = 0;
-			_last_normal_stmnt_offset = 0;
-			_last_case_stmnt_offset = 0;
-			_last_case_stmnt = null;
+			_prev_break_stmnt_offset = 0;
+			_prev_normal_stmnt_offset = 0;
+			_prev_case_stmnt_offset = 0;
+			_prev_case_stmnt = null;
 		}
 
 		/**
 		 * @return Is this an "empty" case (i.e. with no statements in it)
 		 */
 		private boolean isEmptyCase() {
-			return _last_case_stmnt_offset > _last_normal_stmnt_offset;
+			return _prev_case_stmnt_offset > _prev_normal_stmnt_offset;
 		}
 
 		/**
 		 * @return Was a "break" statement the last statement in this case
 		 */
-		private boolean breakFoundLast() {
-			return _last_normal_stmnt_offset < _last_break_stmnt_offset
-					&& _last_case_stmnt_offset < _last_break_stmnt_offset;
+		private boolean breakFoundPrevious() {
+			return _prev_normal_stmnt_offset < _prev_break_stmnt_offset
+					&& _prev_case_stmnt_offset < _prev_break_stmnt_offset;
 		}
 
 		/**
 		 * Check the last case we've visited
 		 * 
 		 * @param comment The comment ending this case (may be NULL)
+		 * @param lastOne true if it am actual Last statement
 		 */
-		private void checkLastCase(IASTComment comment) {
+		private void checkPreviousCase(IASTComment comment, boolean lastOne) {
 			if (comment != null) {
-				String str = new String(comment.getComment());
-				if (comment.isBlockComment())
-					str = str.substring(2, str.length() - 2);
-				else
-					str = str.substring(2);
-				str = str.trim();
+				String str = getTrimmedComment(comment);
 				if (str.equalsIgnoreCase(_noBreakComment))
 					return;
 			}
-			if (_last_case_stmnt == null)
+			if (_prev_case_stmnt == null)
 				return; // This is an empty switch
-			if (breakFoundLast())
+			if (breakFoundPrevious())
 				return; // There was a "break" before the current statement 
-			if (!isEmptyCase() || _checkEmptyCase) {
-				reportProblem(ER_ID, _last_case_stmnt, (Object) null);
+			if (lastOne == true || !isEmptyCase() || _checkEmptyCase) {
+				reportProblem(ER_ID, _prev_case_stmnt, (Object) null);
 			}
+		}
+
+		/**
+		 * @param comment
+		 * @return
+		 */
+		public String getTrimmedComment(IASTComment comment) {
+			String str = new String(comment.getComment());
+			if (comment.isBlockComment())
+				str = str.substring(2, str.length() - 2);
+			else
+				str = str.substring(2);
+			str = str.trim();
+			return str;
 		}
 
 		@Override
@@ -213,17 +223,17 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements
 					 * 'comment' is the last comment found in this case (after
 					 * the last statement in this "case"
 					 */
-					checkLastCase(comment);
+					checkPreviousCase(comment, false);
 				}
 				/* Update variables with the new opened "case" */
-				_last_case_stmnt_offset = statement.getFileLocation()
+				_prev_case_stmnt_offset = statement.getFileLocation()
 						.getNodeOffset();
-				_last_case_stmnt = statement;
+				_prev_case_stmnt = statement;
 			} else if (isBreakOrExitStatement(statement)) { // A "break" statement
-				_last_break_stmnt_offset = statement.getFileLocation()
+				_prev_break_stmnt_offset = statement.getFileLocation()
 						.getNodeOffset();
 			} else { // a non-switch related statement
-				_last_normal_stmnt_offset = statement.getFileLocation()
+				_prev_normal_stmnt_offset = statement.getFileLocation()
 						.getNodeOffset();
 			}
 			/* advance comments we already passed */
@@ -252,7 +262,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements
 				 * 'comment' is the last comment found in this case (after the
 				 * last statement in this "case"
 				 */
-				checkLastCase(comment);
+				checkPreviousCase(comment, true);
 			}
 			return super.leave(statement);
 		}
@@ -284,12 +294,13 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements
 				PARAM_NO_BREAK_COMMENT,
 				CheckersMessages.CaseBreakChecker_DefaultNoBreakCommentDescription,
 				DEFAULT_NO_BREAK_COMMENT);
-		addPreference(problem, PARAM_EMPTY_CASE,
-				CheckersMessages.CaseBreakChecker_EmptyCaseDescription,
-				Boolean.TRUE);
 		addPreference(problem, PARAM_LAST_CASE,
 				CheckersMessages.CaseBreakChecker_LastCaseDescription,
 				Boolean.TRUE);
+		addPreference(problem, PARAM_EMPTY_CASE,
+				CheckersMessages.CaseBreakChecker_EmptyCaseDescription,
+				Boolean.FALSE);
+
 	}
 
 	public void processAst(IASTTranslationUnit ast) {

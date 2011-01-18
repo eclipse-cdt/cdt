@@ -18,6 +18,19 @@ import org.eclipse.cdt.codan.internal.checkers.CaseBreakChecker;
  * Test for {@link#CaseBreakChecker} class
  */
 public class CaseBreakCheckerTest extends CheckerTestCase {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.codan.core.test.CodanTestCase#setUp()
+	 */
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+		// set default prefs
+		setEmpty(false);
+		setLast(true);
+	}
+
 	// void foo(void) {
 	//  int a;
 	//  switch( a ) {
@@ -62,6 +75,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//  }
 	// }
 	public void testEmptyCaseBad() {
+		setEmpty(true);
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(4);
 	}
@@ -293,6 +307,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//  }
 	// }
 	public void testGeneral1() {
+		setEmpty(true);
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(4, 6, 7, 11, 14, 16, 19, 20, 24, 27, 32, 37, 41, 46,
 				49, 51);
@@ -394,7 +409,6 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		setEmpty(false);
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
-		setEmpty(true);
 	}
 
 	// void foo(void) {
@@ -411,8 +425,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		setLast(true);
 		setEmpty(false);
 		loadCodeAndRun(code);
-		checkNoErrors();
-		setEmpty(true);
+		checkErrorLine(4);
 	}
 
 	private void setLast(boolean val) {
@@ -438,5 +451,24 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors(); // FALSE NEGATIVE
 		//checkErrorLine(3);
+	}
+
+	// void foo(void) {
+	//  int a;
+	//  switch( a ) {
+	//  case 2:
+	//     break;
+	//  case 1:
+	//  }
+	// }
+	public void testEmptyLastCaseError() {
+		String code = getAboveComment();
+		setLast(true);
+		setEmpty(false);
+		loadCodeAndRun(code);
+		checkErrorLine(6);
+		setLast(false);
+		loadCodeAndRun(code);
+		checkNoErrors();
 	}
 }

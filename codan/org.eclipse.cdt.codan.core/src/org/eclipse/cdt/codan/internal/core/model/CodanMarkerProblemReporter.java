@@ -137,7 +137,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 			markers = resource.findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE,
 					true, IResource.DEPTH_INFINITE);
 		} else {
-			if (resource.getProject() == null)
+			if (resource.getProject() == null || !resource.getProject().isAccessible())
 				return res;
 			// non resource markers attached to a project itself
 			markers = resource.getProject().findMarkers(

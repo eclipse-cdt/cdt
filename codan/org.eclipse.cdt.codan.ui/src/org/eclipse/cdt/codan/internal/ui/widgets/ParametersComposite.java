@@ -66,7 +66,7 @@ public class ParametersComposite extends Composite {
 				noDefaultAndApplyButton();
 				((GridLayout) getFieldEditorParent().getLayout()).numColumns = 2;
 				addField(new BooleanFieldEditor(PREF_ENABLED,
-						"This problem is enabled", getFieldEditorParent()));
+						CodanUIMessages.ParametersComposite_IsEnabled, getFieldEditorParent()));
 				String[][] entries = {
 						{ CodanSeverity.Error.toString(),
 								CodanSeverity.Error.toString() }, //
@@ -75,9 +75,9 @@ public class ParametersComposite extends Composite {
 						{ CodanSeverity.Info.toString(),
 								CodanSeverity.Info.toString() }, //
 				};
-				addField(new ComboFieldEditor(PREF_SEVERITY, "Severity",
+				addField(new ComboFieldEditor(PREF_SEVERITY, CodanUIMessages.ParametersComposite_Severity,
 						entries, getFieldEditorParent()));
-				addField(new StringFieldEditor(PREF_MESSAGE, "Message Pattern",
+				addField(new StringFieldEditor(PREF_MESSAGE, CodanUIMessages.ParametersComposite_MessagePattern,
 						getFieldEditorParent()));
 				IProblemPreference pref = problem.getPreference();
 				createFieldEditorsForParameters(pref);

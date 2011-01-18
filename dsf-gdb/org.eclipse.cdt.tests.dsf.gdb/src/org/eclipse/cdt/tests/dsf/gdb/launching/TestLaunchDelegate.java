@@ -44,6 +44,11 @@ public class TestLaunchDelegate extends GdbLaunchDelegate
     }
 
     @Override
+    public boolean preLaunchCheck(ILaunchConfiguration config, String mode, IProgressMonitor monitor) throws CoreException {
+    	return true;
+    }
+    
+    @Override
 	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
         return true;
     }

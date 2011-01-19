@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -64,6 +65,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -137,6 +139,19 @@ public class CSourceHover extends AbstractCEditorTextHover {
 					if (name != null) {
 						IBinding binding= name.resolveBinding();
 						if (binding != null) {
+							
+							// Check for implicit names first, could be an implicit constructor call
+							if(name.getParent() instanceof IASTImplicitNameOwner) {
+								IASTImplicitNameOwner iastImplicitNameOwner = (IASTImplicitNameOwner) name.getParent();
+								IASTName [] implicitNames = iastImplicitNameOwner.getImplicitNames();
+								if(implicitNames.length == 1) {
+									IBinding implicitNameBinding = implicitNames[0].resolveBinding();
+									if(implicitNameBinding instanceof ICPPConstructor) {
+										binding = implicitNameBinding;
+									}
+								}
+							}
+							
 							if (binding instanceof IProblemBinding) {
 								// report problem as source comment
 								if (DEBUG) {

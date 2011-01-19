@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@
  * David McKnight   (IBM)        - [260777] [ssh] Deadlock when changing selection after multiple hibernate/resume cycles
  * David McKnight   (IBM)        - [283793] [dstore] Expansion indicator(+) does not reset after no connect
  * David McKnight   (IBM)        - [316565] Failed to resolve the filter for a non-connected subsystem
- * David McKnight   (IBM)        - [325923] [dstore] Cancel message not suitable in "Import Host Certificate" window
+ * David McKnight   (IBM)        - [325923] SystemFetchOperation Cancel message not suitable
  *******************************************************************************/
 
 package org.eclipse.rse.ui.operations;
@@ -318,8 +318,11 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 					return false;
 				}
 				catch (Exception e)
-				{
-					showOperationErrorMessage(null, e, ss);
+				{					
+					// bug 325923 - it's inappropriate to display such messages on cancel
+					if (!(e instanceof InterruptedException) && !(e instanceof OperationCanceledException)){
+						showOperationErrorMessage(null, e, ss);
+					}
 					return false;
 				}
 				finally {

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
-import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
@@ -31,7 +31,7 @@ public class BackgroundRunner extends BlockJUnit4ClassRunner {
 		super(klass);
 	}
 
-	final static QualifiedName BACKGROUND_TEST_EXECUTION_FINISHED = new QualifiedName(TestsPlugin.getDefault().getBundle().getSymbolicName(), "background_test_execution_finished"); //$NON-NLS-1$
+	final static QualifiedName BACKGROUND_TEST_EXECUTION_FINISHED = new QualifiedName(GdbPlugin.getDefault().getBundle().getSymbolicName(), "background_test_execution_finished"); //$NON-NLS-1$
 	
 	void invokeSuperRunImpl(RunNotifier notifier) {
 		super.run(notifier);

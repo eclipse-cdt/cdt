@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GDB/MI reference application tests
 Bundle-SymbolicName: org.eclipse.cdt.tests.dsf.gdb;singleton:=true
 Bundle-Version: 2.1.0.qualifier
-Bundle-Activator: org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin
 Bundle-Vendor: Ericsson
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.dsf,
@@ -12,9 +11,10 @@ Require-Bundle: org.eclipse.core.runtime,
  org.junit4,
  org.eclipse.debug.core,
  org.eclipse.swt,
- org.eclipse.cdt.dsf.gdb,
  org.eclipse.cdt.launch;bundle-version="6.1.0",
  org.eclipse.cdt.gdb;bundle-version="7.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ClassPath: .
+Fragment-Host: org.eclipse.cdt.dsf.gdb
+

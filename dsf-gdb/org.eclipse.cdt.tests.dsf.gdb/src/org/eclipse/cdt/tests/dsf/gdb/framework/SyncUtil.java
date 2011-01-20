@@ -34,6 +34,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
@@ -504,12 +505,12 @@ public class SyncUtil {
 	    		try {
 	    			value = Integer.valueOf(value);
 	    			if (value < 0) {
-	    				TestsPlugin.log(new Status(IStatus.ERROR, TestsPlugin.getUniqueIdentifier(), "\"" + propname + "\" property incorrectly specified. Should be an integer value or not specified at all.")); //$NON-NLS-1$
+	    				TestsPlugin.log(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "\"" + propname + "\" property incorrectly specified. Should be an integer value or not specified at all.")); //$NON-NLS-1$
 	    				value = -1;
 	    			}
 	    		}
 	    		catch (NumberFormatException exc) {
-	    			TestsPlugin.log(new Status(IStatus.ERROR, TestsPlugin.getUniqueIdentifier(), "\"" + propname + "\" property incorrectly specified. Should be an integer value or not specified at all.")); //$NON-NLS-1$
+	    			TestsPlugin.log(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "\"" + propname + "\" property incorrectly specified. Should be an integer value or not specified at all.")); //$NON-NLS-1$
 	    			value = -1;
 	    		}
     		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * David Dykstal (IBM) [235284] Cancel password change causes problem
  * David McKnight   (IBM) - [257321] [dstore] "Error binding socket" should include port of the failed socket
+ * David McKnight   (IBM) - [284950] [dstore] Error binding socket on relaunch
  *******************************************************************************/
 
 package org.eclipse.dstore.core.client;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
@@ -512,12 +514,23 @@ public class ClientConnection
 				catch (SSLHandshakeException e)
 				{
 					result = new ConnectionStatus(false, e, true, mgr.getUntrustedCerts());
+					// reset port
+					setPort(_clientAttributes.getAttribute(DataStoreAttributes.A_HOST_PORT));
+					return result;
+				}
+				catch (SSLException e)
+				{
+					_theSocket.close();
+					// reset port
+					setPort(_clientAttributes.getAttribute(DataStoreAttributes.A_HOST_PORT));
+					result = new ConnectionStatus(false, e, true, null);
 					return result;
 				}
 				catch (Exception e)
 				{
-					e.printStackTrace();
 					_theSocket.close();
+					// reset port
+					setPort(_clientAttributes.getAttribute(DataStoreAttributes.A_HOST_PORT));
 					result = new ConnectionStatus(false, e);
 					return result;
 				}
@@ -589,22 +602,32 @@ public class ClientConnection
 			{
 				result = new ConnectionStatus(false, msg);
 				_isConnected = false;
+				
+				// reset port
+				setPort(_clientAttributes.getAttribute(DataStoreAttributes.A_HOST_PORT));
 				_theSocket.close();
 			}
 		}
 		catch (java.net.ConnectException e)
 		{
 			String msg = "Connection Refused."; //$NON-NLS-1$
+			
+			// reset port
+			setPort(_clientAttributes.getAttribute(DataStoreAttributes.A_HOST_PORT));
 			msg += "\nMake sure that the DataStore server is running on " + _host + " under port " + _port + "."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			result = new ConnectionStatus(false, msg);
 		}
 		catch (UnknownHostException uhe)
 		{
+			// reset port
+			setPort(_clientAttributes.getAttribute(DataStoreAttributes.A_HOST_PORT));
 			_isConnected = false;
 			result = new ConnectionStatus(_isConnected, uhe);
 		}
 		catch (IOException ioe)
 		{
+			// reset port
+			setPort(_clientAttributes.getAttribute(DataStoreAttributes.A_HOST_PORT));
 			_isConnected = false;
 			result = new ConnectionStatus(_isConnected, ioe);
 		}
@@ -909,7 +932,6 @@ public class ClientConnection
 		{
 			return IDataStoreCompatibilityHandler.HANDSHAKE_UNEXPECTED;
 		}
-
 	}
 
 	public boolean isKnownStatus(String status)

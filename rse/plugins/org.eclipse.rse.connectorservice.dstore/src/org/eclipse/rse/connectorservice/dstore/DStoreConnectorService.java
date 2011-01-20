@@ -40,6 +40,7 @@
  * David McKnight   (IBM)        - [258529] Unable to display connection failure error message
  * David McKnight   (IBM)        - [306989] [dstore] workspace in strange condition if expanding projects during  logon
  * David McKnight   (IBM)        - [313653] [dstore] Not Secured using SSL message appears twice per connect
+ * David McKnight   (IBM) 		 - [284950] [dstore] Error binding socket on relaunch
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -770,12 +771,13 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 						}
 					}
 				}
-				
-				// relaunching the server via the daemon so that we can connect again to the launched server with toggled useSSL settings
-				launchStatus = launchServer(clientConnection, info, daemonPort, monitor);
-				if (launchStatus.isConnected()) {
-					if (setSSLProperties(!usedSSL)){
-						connectStatus = clientConnection.connect(launchStatus.getTicket(), timeout);
+				if (usedSSL && connectStatus.isSLLProblem()){
+					// relaunching the server via the daemon so that we can connect again to the launched server with toggled useSSL settings
+					launchStatus = launchServer(clientConnection, info, daemonPort, monitor);
+					if (launchStatus.isConnected()) {
+						if (setSSLProperties(!usedSSL)){
+							connectStatus = clientConnection.connect(launchStatus.getTicket(), timeout);
+						}					
 					}
 				}
 			}

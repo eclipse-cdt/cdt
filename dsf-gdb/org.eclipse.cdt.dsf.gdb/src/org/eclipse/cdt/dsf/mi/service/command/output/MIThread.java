@@ -120,7 +120,7 @@ public class MIThread {
     private static Pattern fgOsIdPattern2 = Pattern.compile("[Tt][Hh][Rr][Ee][Aa][Dd]\\s*\\d+\\.(\\d+)", 0); //$NON-NLS-1$
     private static Pattern fgOsIdPattern3 = Pattern.compile("[Tt][Hh][Rr][Ee][Aa][Dd]\\s*(\\S+)", 0); //$NON-NLS-1$
 
-    private static String parseOsId(String str) {
+    static String parseOsId(String str) {
         // General format:
         //      "Thread 0xb7c8ab90 (LWP 7010)"
     	//                              ^^^^
@@ -128,6 +128,7 @@ public class MIThread {
     	//                  ^^^^^
         //      "thread abc123"
     	//              ^^^^^^
+    	// PLEASE UPDATE MIThreadTests.java IF YOU TWEAK THIS CODE
 
         Matcher matcher = fgOsIdPattern1.matcher(str);
         if (matcher.find()) {
@@ -153,6 +154,7 @@ public class MIThread {
         // General format:
         //      "Thread 162.32942"
     	//              ^^^
+    	// PLEASE UPDATE MIThreadTests.java IF YOU TWEAK THIS CODE    	
 
         Matcher matcher = fgIdPattern.matcher(str);
         if (matcher.find()) {

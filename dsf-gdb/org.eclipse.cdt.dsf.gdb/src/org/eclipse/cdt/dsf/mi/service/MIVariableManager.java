@@ -1596,7 +1596,7 @@ public class MIVariableManager implements ICommandControl {
 			// For pointers, the child expression is already contained in the parent,
 			// so we must simply prefix with *
 		    //  See Bug219179 for more information.
-			if (isPointer()) {
+			if (!isDynamic() && !exprInfo.hasDynamicAncestor() && isPointer()) {
 				return "*("+parentExp+")"; //$NON-NLS-1$//$NON-NLS-2$
 			}
 

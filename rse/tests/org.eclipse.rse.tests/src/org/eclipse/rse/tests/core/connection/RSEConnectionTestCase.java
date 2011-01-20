@@ -12,7 +12,6 @@
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
  * Martin Oberhuber (Wind River) - organize, enable and tag test cases
  * Martin Oberhuber (Wind River) - [247908] extract testBug255023
- * Tom Hochstein (Freescale)     - [301075] Host copy doesn't copy contained property sets
  ********************************************************************************/
 package org.eclipse.rse.tests.core.connection;
 
@@ -21,8 +20,6 @@ import java.util.Properties;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.model.IProperty;
-import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -104,55 +101,6 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 		connection = getConnectionManager().findOrCreateConnection(props);
 		assertNotNull("Failed to create connection " + props.getProperty(IRSEConnectionProperties.ATTR_NAME), connection); //$NON-NLS-1$
 
-	}
-
-	/**
-	 * Test copy of connections
-	 */
-	public void testConnectionCopy() {
-		//-test-author-:DavidDykstal
-		if (isTestDisabled())
-			return;
-
-		String profileName = "TestProfile"; //$NON-NLS-1$
-
-		String name = "TestHost1"; //$NON-NLS-1$
-		String copyName = "TestHost1Copy"; //$NON-NLS-1$
-		IHost connection = getConnectionManager().findConnection(profileName, name);
-		assertNotNull("Failed to find source connection " + name, connection); //$NON-NLS-1$
-		
-		String setName = "Test Property Set Level 1"; //$NON-NLS-1$
-		String propertyName = "Test Property Level 1"; //$NON-NLS-1$
-		String propertyValue = "Level 1"; //$NON-NLS-1$
-		IPropertySet ps = connection.createPropertySet(setName);
-		assertNotNull("Failed to create property set " + setName, ps); //$NON-NLS-1$
-		IProperty p = ps.addProperty(propertyName, propertyValue);
-		assertNotNull("Failed to create property " + propertyName, p); //$NON-NLS-1$
-		assertEquals("Failed to set value for property " + propertyName, propertyValue, p.getValue()); //$NON-NLS-1$
-		
-		String setName2 = "Test Property Set Level 2"; //$NON-NLS-1$
-		String propertyName2 = "Test Property Level 2"; //$NON-NLS-1$
-		String propertyValue2 = "Level 2"; //$NON-NLS-1$
-		ps = ps.createPropertySet(setName2);
-		assertNotNull("Failed to create property set " + setName2, ps); //$NON-NLS-1$
-		p = ps.addProperty(propertyName2, propertyValue2);
-		assertNotNull("Failed to create property " + propertyName2, p); //$NON-NLS-1$
-		assertEquals("Failed to set value for property " + propertyName2, propertyValue2, p.getValue()); //$NON-NLS-1$
-
-		IHost copy = getConnectionManager().copyConnection(connection, copyName);
-		assertNotNull("Failed to copy connection " + name, copy); //$NON-NLS-1$
-		
-		ps = copy.getPropertySet(setName);
-		assertNotNull("Failed to copy property set " + setName, ps); //$NON-NLS-1$
-		p = ps.getProperty(propertyName);
-		assertNotNull("Failed to copy property " + propertyName, p); //$NON-NLS-1$
-		assertEquals("Failed to copy value for property " + propertyName, propertyValue, p.getValue()); //$NON-NLS-1$
-
-		ps = ps.getPropertySet(setName2);
-		assertNotNull("Failed to copy property set " + setName2, ps); //$NON-NLS-1$
-		p = ps.getProperty(propertyName2);
-		assertNotNull("Failed to copy property " + propertyName2, p); //$NON-NLS-1$
-		assertEquals("Failed to copy value for property " + propertyName2, propertyValue2, p.getValue()); //$NON-NLS-1$
 	}
 
 	/**

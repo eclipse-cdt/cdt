@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation
+ * Tom Hochstein (Freescale)     - [301075] Host copy doesn't copy contained property sets
  *******************************************************************************/
 
 package org.eclipse.rse.tests.core;
@@ -31,6 +32,7 @@ public class AllTests extends DelegatingTestSuiteHolder {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
 		// add the single test suites to the overall one here.
 		suite.addTestSuite(HostMoveTest.class);
+		suite.addTestSuite(HostCopyTest.class);
 		
 		return suite;
 	}

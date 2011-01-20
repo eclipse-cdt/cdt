@@ -91,7 +91,14 @@ public class GdbPlugin extends Plugin {
      * is shut down will result in exceptions. 
      */
     private void shutdownActiveLaunches() {
-        for (ILaunch launch : DebugPlugin.getDefault().getLaunchManager().getLaunches()) {
+    	
+    	DebugPlugin debugPlugin = DebugPlugin.getDefault();
+    	if (debugPlugin == null) {
+			// Simple junit tests don't cause the platform debug plugins to load
+    		return;
+    	}
+
+        for (ILaunch launch : debugPlugin.getLaunchManager().getLaunches()) {
             if (launch instanceof GdbLaunch && ((GdbLaunch)launch).getSession().isActive()) {
                 final GdbLaunch gdbLaunch = (GdbLaunch)launch;
                 

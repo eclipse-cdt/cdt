@@ -20,7 +20,7 @@
 #include <termios.h>
 
 /* from pfind.c */
-extern char *pfind(const char *name);
+extern char *pfind(const char *name, char *const envp[]);
 
 pid_t
 exec_pty(const char *path, char *const argv[], char *const envp[],
@@ -34,7 +34,7 @@ exec_pty(const char *path, char *const argv[], char *const envp[],
 	 * We use pfind() to check that the program exists and is an executable.
 	 * If not pass the error up.  Also execve() wants a full path.
 	 */ 
-	full_path = pfind(path);
+	full_path = pfind(path, envp);
 	if (full_path == NULL) {
 		fprintf(stderr, "Unable to find full path for \"%s\"\n", (path) ? path : "");
 		return -1;

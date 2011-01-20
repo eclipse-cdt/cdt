@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,9 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Wind River Systems, Inc.
+ *     Mikhail Sennikovsky - bug 145737
+ *     Everton Rufino Constantino (IBM) - bug 237611
  *******************************************************************************/
 /*
  * pfind.c - Search for a binary in $PATH.
@@ -22,8 +25,26 @@
 #define PATH_MAX 1024
 #endif
 
+#define PATH_DEF "PATH="
+const int path_def_len = 5; /* strlen(PATH_DEF); */
 
-char * pfind(const char *name)
+char * path_val(char * const envp[])
+{
+	int i;
+	if (envp == NULL || envp[0] == NULL)
+		return getenv("PATH" );
+
+	for(i = 0; envp[i] != NULL; i++){
+		char* p = envp[i];
+		if(!strncmp(PATH_DEF, p, path_def_len)){
+			return p + path_def_len;
+		}
+	}
+
+	return NULL;
+}
+
+char * pfind(const char *name, char * const envp[])
 {
 	char *tok;
 	char *sp;
@@ -45,7 +66,7 @@ char * pfind(const char *name)
 	}
 
 	/* Search in the PATH environment.  */
-	path = getenv("PATH" );
+	path = path_val( envp );
 
 	if (path == NULL || strlen(path) <= 0) {
 		fprintf(stderr, "Unable to get $PATH.\n");
@@ -78,7 +99,7 @@ int main(int argc, char **argv)
    char *fullpath;
 
    for (i=1; i<argc; i++) {
-      fullpath = pfind(argv[i]);
+      fullpath = pfind(argv[i], NULL);
       if (fullpath == NULL)
         printf("Unable to find %s in $PATH.\n", argv[i]);
       else 

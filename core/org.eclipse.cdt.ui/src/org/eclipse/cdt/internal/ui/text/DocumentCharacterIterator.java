@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -216,5 +216,18 @@ public class DocumentCharacterIterator implements CharacterIterator, CharSequenc
 		if (end > length())
 			throw new IndexOutOfBoundsException();
 		return new DocumentCharacterIterator(fDocument, getBeginIndex() + start, getBeginIndex() + end);
+	}
+	
+	/*
+	 * @see java.lang.CharSequence#toString()
+	 */
+	@Override
+	public String toString() {
+		int length = length();
+		char[] chs = new char[length];
+		for (int i=0; i<length; ++i) {
+			chs[i] = charAt(i);
+		}
+		return new String(chs);
 	}
 }

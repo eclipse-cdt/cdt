@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -966,6 +966,17 @@ public class CIndenterTest extends BaseUITestCase {
 	//	b
 	//}
 	public void testIndentationAfterEnumValueAssignment_Bug324031() throws Exception {
+		assertIndenterResult();
+	}
+
+	//int * f()
+	//{
+	//}
+
+	//int * f()
+	//{
+	//}
+	public void testIndentationAfterFunctionHeaderWithPointerReturnType_Bug334805() throws Exception {
 		assertIndenterResult();
 	}
 }

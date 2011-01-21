@@ -541,8 +541,8 @@ public class PDOMFile implements IIndexFragmentFile {
 			final PDOMFile targetFile= (PDOMFile) info.fTargetFile;
 			
 			PDOMInclude pdomInclude = new PDOMInclude(fLinkage, info.fStatement, this, targetFile);
+			assert targetFile == null || targetFile.getIndexFragment() instanceof IWritableIndexFragment;
 			if (targetFile != null) {
-				assert targetFile.getIndexFragment() instanceof IWritableIndexFragment;
 				targetFile.addIncludedBy(pdomInclude, info.fIsContext);
 			}
 			if (lastInclude == null) {

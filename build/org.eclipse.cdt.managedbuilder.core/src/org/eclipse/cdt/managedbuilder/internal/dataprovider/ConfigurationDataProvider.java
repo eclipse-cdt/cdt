@@ -22,6 +22,7 @@ import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigInfoFa
 import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.IModificationContext;
@@ -238,13 +239,11 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		Configuration cfg = (Configuration)((BuildConfigurationData)base).getConfiguration();
 		Configuration newCfg = copyCfg(cfg, des);
 
-//		IManagedBuildInfo info = getBuildInfo(des);
-//		ManagedProject mProj = (ManagedProject)info.getManagedProject();
-//
-//		Configuration newCfg = new Configuration(mProj, cfg, des.getId(), true, true, false);
-//		newCfg.setConfigurationDescription(des);
-//		newCfg.setName(des.getName());
-		if(!newCfg.getId().equals(cfg.getId())){
+		if(!newCfg.getId().equals(cfg.getId()) && newCfg.canExportedArtifactInfo()){
+			// Bug 335001: Remove existing exported settings as they point at this configuration
+			for (ICExternalSetting extSetting : newCfg.getConfigurationDescription().getExternalSettings())
+				newCfg.getConfigurationDescription().removeExternalSetting(extSetting);
+			// Now export the new settings
 			newCfg.exportArtifactInfo();
 		}
 		

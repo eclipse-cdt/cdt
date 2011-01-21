@@ -2673,7 +2673,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/**
 	 * @return whether this Configuration exports settings to other referenced configurations
 	 */
-	private boolean canExportedArtifactInfo() {
+	public boolean canExportedArtifactInfo() {
 		if (isExtensionConfig)
 			return false;
 

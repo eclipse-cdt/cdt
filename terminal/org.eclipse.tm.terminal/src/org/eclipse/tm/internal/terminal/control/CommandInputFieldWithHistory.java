@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  * Michael Scharf (Wing River) - [196447] The optional terminal input line should be resizeable
  * Martin Oberhuber (Wind River) - [168197] Fix Terminal for CDC-1.1/Foundation-1.1
  * Michael Scharf (Wing River) - [236458] Fix 168197 lost the last entry
+ * Anton Leherbauer (Wind River) - [220971] The optional terminal input line has redraw problems when resizing
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control;
 import java.util.ArrayList;
@@ -222,6 +223,10 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		fSash.setLayoutData(gd_sash);
 		fSash.addListener (SWT.Selection, new Listener () {
 			public void handleEvent (Event e) {
+				if (e.detail == SWT.DRAG) {
+					// don't redraw during drag, it causes paint errors - bug 220971
+					return;
+				}
 				// no idea why this is needed
 				GridData gdata = (GridData) fInputField.getLayoutData();
 				Rectangle sashRect = fSash.getBounds ();

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.core" version="2">
+    <resource path="parser/org/eclipse/cdt/core/dom/ast/IProblemBinding.java" type="org.eclipse.cdt.core.dom.ast.IProblemBinding">
+        <filter comment="API tooling bug: https://bugs.eclipse.org/bugs/show_bug.cgi?id=332840" id="403984517">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.dom.ast.IProblemBinding"/>
+                <message_argument value="org.eclipse.cdt.core.dom.ast.ISemanticProblem"/>
+                <message_argument value="getID()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

@@ -3208,7 +3208,7 @@ public class CPPSemantics {
     	dummy.setParent(first);
     	
     	IASTExpression[] args = new IASTExpression[] { dummy , second };
-    	return findOverloadedOperator(dummy, args, lookupType, OverloadableOperator.COMMA, LookupMode.LIMITED_GLOBALS);
+    	return findOverloadedOperator(dummy, args, op1type, OverloadableOperator.COMMA, LookupMode.LIMITED_GLOBALS);
     }
 
     private static enum LookupMode {NO_GLOBALS, LIMITED_GLOBALS, ALL_GLOBALS}

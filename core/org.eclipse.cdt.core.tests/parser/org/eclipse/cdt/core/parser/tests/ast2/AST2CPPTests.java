@@ -9334,4 +9334,15 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testResolutionInTrailingReturnType_333256() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct CHAINER {
+	//	    CHAINER const & operator,(int x) const;
+	//	};
+	//	void test(const CHAINER& x) {
+	//	    CHAINER c;
+	//	    test((c,0,1));
+	//	}
+	public void testOverloadedCommaOpWithConstClassRef_334955() throws Exception {
+		parseAndCheckBindings();
+	}
 }

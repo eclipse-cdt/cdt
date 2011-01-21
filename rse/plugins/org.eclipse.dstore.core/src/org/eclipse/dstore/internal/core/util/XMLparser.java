@@ -134,7 +134,10 @@ public class XMLparser
 		_objStack = new Stack();
 		_maxBuffer = 100000;
 		_byteBuffer = new byte[_maxBuffer];
-				
+					
+		if (!_dataStore.isVirtual()){
+			setEnableKeepalive(true);
+		}
 	}
 
 	/**
@@ -746,11 +749,16 @@ public class XMLparser
 								}
 								else if (_isKeepAlive)
 								{
-									if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive request received, sending confirmation."); //$NON-NLS-1$									
-									_dataStore.trace("KeepAlive request received, sending confirmation."); //$NON-NLS-1$	
-									result.getDataStore().sendKeepAliveConfirmation();
-									_isKeepAlive = false;
-								}
+									if (_isKeepAliveEnabled){
+										if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive request received, sending confirmation."); //$NON-NLS-1$									
+										_dataStore.trace("KeepAlive request received, sending confirmation.");	//$NON-NLS-1$	 							
+										result.getDataStore().sendKeepAliveConfirmation();
+										_isKeepAlive = false;
+									}
+									else {
+										_dataStore.trace("KeepAlive disabled so not responding to keepalive request"); //$NON-NLS-1$
+									}
+								}								
 								else if (_isKeepAliveConfirm )
 								{
 									if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive confirmation received."); //$NON-NLS-1$

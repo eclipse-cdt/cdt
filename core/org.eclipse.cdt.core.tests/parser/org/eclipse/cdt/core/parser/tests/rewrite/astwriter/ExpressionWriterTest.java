@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
@@ -43,7 +44,7 @@ public class ExpressionWriterTest extends TestCase {
 	private ASTVisitor visitor;
 
     static {
-        INT.setType(CPPASTSimpleDeclSpecifier.t_int);
+        INT.setType(IASTSimpleDeclSpecifier.t_int); 
     }
 
 	@Override

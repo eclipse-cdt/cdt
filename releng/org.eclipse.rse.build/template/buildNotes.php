@@ -35,7 +35,7 @@
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=330337">330337</a>].</li>
 </ul>
 </li>
-<li>At least 6 bugs were resolved: Use 
+<li>At least 17 bugs were resolved: Use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;value0-0-2=backport;chfieldto=2011-02-09;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.3%20M[34];chfieldfrom=2010-12-12;field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.3%20M5;product=Target%20Management">
   this query</a> to show the list of bugs fixed since

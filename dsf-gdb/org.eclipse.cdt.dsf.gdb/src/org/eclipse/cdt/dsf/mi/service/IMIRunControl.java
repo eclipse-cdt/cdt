@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Ericsson and others.
+ * Copyright (c) 2009, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,5 +36,27 @@ public interface IMIRunControl extends IRunControl2
 	 */
 	public void executeWithTargetAvailable(IDMContext ctx, Sequence.Step[] stepsToExecute, RequestMonitor rm);
 
+	/**
+	 * Generic interface for different possible Run modes such as Non-Stop or All-Stop.
+	 * Using this interface allows to extend the list of RunModes.
+	 *  
+	 * @since 4.0 
+	 */
+	public interface IRunMode {};
+	
+	/** 
+	 * The run-modes supported by GDB.
+	 * 
+	 * @since 4.0
+	 */
+	public enum MIRunMode implements IRunMode { ALL_STOP, NON_STOP };
+	
+	/**
+	 * Returns the RunMode that is currently being used by this RunControl service.
+	 * @returns The current RunMode used by this service.
+	 * 
+	 * @since 4.0
+	 */
+	public IRunMode getRunMode();
 }
 

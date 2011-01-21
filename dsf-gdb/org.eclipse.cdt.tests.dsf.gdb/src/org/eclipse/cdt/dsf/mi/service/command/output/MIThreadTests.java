@@ -16,6 +16,6 @@ public class MIThreadTests {
 	
 	@Test
 	public void testParentIdParsing() {
-		assertEquals("32942", MIThread.parseOsId("Thread 162.32942"));
+		assertEquals("162", MIThread.parseParentId("Thread 162.32942"));
 	}
 }

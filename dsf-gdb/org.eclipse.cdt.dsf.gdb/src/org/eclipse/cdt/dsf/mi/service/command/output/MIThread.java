@@ -150,7 +150,12 @@ public class MIThread {
     
     private static Pattern fgIdPattern = Pattern.compile("[Tt][Hh][Rr][Ee][Aa][Dd]\\s*(\\d+)\\.\\d+", 0); //$NON-NLS-1$ 
 
-    private static String parseParentId(String str) {
+	/**
+	 * This is used to parse the same ID fed to {@link #parseOsId(String)}. The
+	 * difference is that we return the first portion when the ID is in format
+	 * "Thread pppp.tttt". If the ID is not in that format, we return null.
+	 */
+    static String parseParentId(String str) {
         // General format:
         //      "Thread 162.32942"
     	//              ^^^

@@ -18,6 +18,8 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -29,9 +31,12 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
+
+import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * Helper class to find definitions. This class is intended as a replacement for DefinitionFinder.
@@ -55,28 +60,28 @@ public class DefinitionFinder2 {
 	private static ASTNameInContext getDefinition(IIndexBinding binding,
 			RefactoringASTCache astCache, IIndex index) throws CoreException {
 		Set<String> searchedFiles = new HashSet<String>();
-		ITranslationUnit[] workingCopies = CUIPlugin.getSharedWorkingCopies();
 		List<ASTNameInContext> definitions = new ArrayList<ASTNameInContext>();
-		for (ITranslationUnit tu : workingCopies) {
-			findDefinitionsInTranslationUnit(binding, tu, astCache, definitions, null);
-			searchedFiles.add(tu.getLocation().toOSString());
-		}
-
-		IIndexName[] definitionsFromIndex = index.findDefinitions(binding);
-
-		if (definitionsFromIndex.length > 0) {
-			for (IIndexName name : definitionsFromIndex) {
-				ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(
-						name.getFile().getLocation(), null);
-				if (searchedFiles.add(tu.getLocation().toOSString())) {
-					findDefinitionsInTranslationUnit(binding, tu, astCache, definitions, null);
-				}
+		IEditorPart[] dirtyEditors = EditorUtility.getDirtyEditors(true);
+		for (IEditorPart editor : dirtyEditors) {
+			IEditorInput editorInput = editor.getEditorInput();
+			if (editorInput instanceof ITranslationUnitEditorInput) {
+				ITranslationUnit tu =
+						CModelUtil.toWorkingCopy(((ITranslationUnitEditorInput) editorInput).getTranslationUnit());
+				findDefinitionsInTranslationUnit(binding, tu, astCache, definitions, null);
+				searchedFiles.add(tu.getLocation().toOSString());
 			}
 		}
-		if (definitions.size() != 1) {
-			return null;
+		
+		IIndexName[] definitionsFromIndex = index.findDefinitions(binding);
+		for (IIndexName name : definitionsFromIndex) {
+			ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(
+					name.getFile().getLocation(), null);
+			if (searchedFiles.add(tu.getLocation().toOSString())) {
+				findDefinitionsInTranslationUnit(binding, tu, astCache, definitions, null);
+			}
 		}
-		return definitions.get(0);
+
+		return definitions.size() == 1 ? definitions.get(0) : null;
 	}
 
 	private static void findDefinitionsInTranslationUnit(IIndexBinding binding, ITranslationUnit tu,

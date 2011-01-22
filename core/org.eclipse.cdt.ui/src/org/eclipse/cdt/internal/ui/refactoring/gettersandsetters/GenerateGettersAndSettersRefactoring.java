@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
- * Rapperswil, University of applied sciences and others
+ * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -9,6 +9,7 @@
  * Contributors: 
  * 	   Institute for Software - initial API and implementation
  * 	   Sergey Prigogin (Google)
+ * 	   Marc-Andre Laperle - do not search for definition insert location twice. 
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
@@ -121,7 +122,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 			CheckConditionsContext checkContext) throws CoreException, OperationCanceledException {
 		RefactoringStatus result = new RefactoringStatus();
 		if (!context.isImplementationInHeader()) {
-			definitionInsertLocation = findInsertLocation();
+			findDefinitionInsertLocation();
 			if (definitionInsertLocation == null || tu.equals(definitionInsertLocation.getTranslationUnit())) {
 				result.addInfo(Messages.GenerateGettersAndSettersRefactoring_NoImplFile);
 			}
@@ -248,11 +249,11 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 
 	private void addDefinition(ModificationCollector collector, List<IASTFunctionDefinition> definitions)
 			throws CoreException {
-		InsertLocation2 location = findInsertLocation();
-		IASTNode parent = location.getParentOfNodeToInsertBefore();
+		findDefinitionInsertLocation();
+		IASTNode parent = definitionInsertLocation.getParentOfNodeToInsertBefore();
 		IASTTranslationUnit ast = parent.getTranslationUnit();
 		ASTRewrite rewrite = collector.rewriterForTranslationUnit(ast);
-		IASTNode nodeToInsertBefore = location.getNodeToInsertBefore();
+		IASTNode nodeToInsertBefore = definitionInsertLocation.getNodeToInsertBefore();
 		ContainerNode cont = new ContainerNode();
 		for (IASTFunctionDefinition functionDefinition : definitions) {
 			cont.addNode(functionDefinition);
@@ -264,16 +265,20 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 		return context;
 	}
 	
-	private InsertLocation2 findInsertLocation() throws CoreException {
+	private void findDefinitionInsertLocation() throws CoreException {
+		if (definitionInsertLocation != null) {
+			return;
+		}
+		
 		IASTSimpleDeclaration decl = context.existingFields.get(0);
-		InsertLocation2 insertLocation = MethodDefinitionInsertLocationFinder2.find(
+		InsertLocation2 location = MethodDefinitionInsertLocationFinder2.find(
 				decl.getFileLocation(), decl.getParent(), astCache);
 
-		if (insertLocation.getFile() == null || NodeHelper.isContainedInTemplateDeclaration(decl)) {
-			insertLocation.setNodeToInsertAfter(NodeHelper.findTopLevelParent(decl), tu);
+		if (location.getFile() == null || NodeHelper.isContainedInTemplateDeclaration(decl)) {
+			location.setNodeToInsertAfter(NodeHelper.findTopLevelParent(decl), tu);
 		}
-
-		return insertLocation;
+		
+		definitionInsertLocation = location;
 	}
 
 	@Override

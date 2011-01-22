@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,9 @@ public class RawCommand extends MICommand<MIInfo> {
     @Override
 	public boolean supportsThreadAndFrameOptions() { return false; }
 
+    @Override
+    public boolean supportsThreadGroupOption() { return false; }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.mi.core.command.Command#getMIOutput()
      */

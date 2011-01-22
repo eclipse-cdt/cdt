@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Ericsson and others.
+ * Copyright (c) 2008, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,10 +55,5 @@ public class MIFileExecAndSymbols extends MICommand<MIInfo>
     /** @since 4.0 */
     public MIFileExecAndSymbols(IMIContainerDMContext dmc, String file) {
         super(dmc, "-file-exec-and-symbols", null, file == null ? null : new String[] {file}); //$NON-NLS-1$
-    }
-
-    @Override
-    public boolean supportsThreadGroupOption() {
-    	return true;
     }
 }

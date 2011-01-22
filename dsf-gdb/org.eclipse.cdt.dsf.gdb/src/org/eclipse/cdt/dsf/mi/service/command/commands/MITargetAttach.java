@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Ericsson and others.
+ * Copyright (c) 2008, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,9 +45,4 @@ public class MITargetAttach extends MICommand<MIInfo> {
 	public MITargetAttach(IMIContainerDMContext ctx, String pid) {
 		super(ctx, "-target-attach", new String[] { pid }); //$NON-NLS-1$
 	}
-	
-    @Override
-    public boolean supportsThreadGroupOption() {
-    	return true;
-    }
 }

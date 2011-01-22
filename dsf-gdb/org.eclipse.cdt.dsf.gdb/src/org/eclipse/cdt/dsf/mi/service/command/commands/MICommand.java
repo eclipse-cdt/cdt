@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -153,14 +153,14 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
         StringBuffer command = new StringBuffer(getOperation());
         
         // Add the --thread option
-        if (supportsThreadAndFrameOptions() && threadId != null) {
+        if (supportsThreadAndFrameOptions() && threadId != null && threadId.trim().length() > 0) {
         	command.append(" --thread " + threadId); //$NON-NLS-1$
 
         	// Add the --frame option, but only if we are using the --thread option
         	if (frameId >= 0) {
         		command.append(" --frame " + frameId); //$NON-NLS-1$
         	}
-        } else if (supportsThreadGroupOption() && groupId != null) {
+        } else if (supportsThreadGroupOption() && groupId != null && groupId.trim().length() > 0) {
         	// The --thread-group option is only allowed if we are not using the --thread option
         	command.append(" --thread-group " + groupId); //$NON-NLS-1$
         }
@@ -257,7 +257,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
     /**
      * @since 4.0
      */
-    public boolean supportsThreadGroupOption() { return false; }
+    public boolean supportsThreadGroupOption() { return true; }
     
     /**
      * Compare commands based on the MI command string that they generate, 

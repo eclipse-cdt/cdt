@@ -18,5 +18,4 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 public interface ITranslationUnitEditorInput {
 
 	ITranslationUnit getTranslationUnit();
-
 }

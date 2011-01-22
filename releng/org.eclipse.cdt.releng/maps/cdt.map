@@ -44,6 +44,7 @@ fragment@org.eclipse.cdt.core.aix=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/o
 fragment@org.eclipse.cdt.core.linux=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.core.linux
 fragment@org.eclipse.cdt.core.linux.ia64=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.core.linux.ia64
 fragment@org.eclipse.cdt.core.linux.ppc=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.core.linux.ppc
+fragment@org.eclipse.cdt.core.linux.ppc64=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.core.linux.ppc64
 fragment@org.eclipse.cdt.core.linux.x86=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.core.linux.x86
 fragment@org.eclipse.cdt.core.linux.x86_64=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.core.linux.x86_64
 fragment@org.eclipse.cdt.core.macosx=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.core.macosx

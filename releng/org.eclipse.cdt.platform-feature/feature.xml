@@ -74,6 +74,16 @@
          unpack="false"/>
 
    <plugin
+         id="org.eclipse.cdt.core.linux.ppc64"
+         os="linux"
+         arch="ppc64"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
          id="org.eclipse.cdt.core.linux.x86"
          os="linux"
          arch="x86"

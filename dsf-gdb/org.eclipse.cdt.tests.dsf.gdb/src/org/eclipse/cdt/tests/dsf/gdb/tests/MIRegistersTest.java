@@ -65,13 +65,18 @@ import org.junit.runner.RunWith;
 @RunWith(BackgroundRunner.class)
 
 public class MIRegistersTest extends BaseTestCase {
-
-	static final List<String> X86_REGS = new LinkedList<String>(Arrays.asList("eax","ecx","edx","ebx","esp","ebp","esi","edi","eip","eflags","cs","ss","ds","es","fs","gs","st0","st1","st2","st3","st4","st5","st6","st7","fctrl","fstat","ftag","fiseg","fioff","foseg","fooff","fop","xmm0","xmm1","xmm2","xmm3","xmm4","xmm5","xmm6","xmm7","mxcsr","orig_eax","mm0","mm1","mm2","mm3","mm4","mm5","mm6","mm7"));
-	static {
+	
+	protected List<String> get_X86_REGS() {
+		List<String>  list = new LinkedList<String>(Arrays.asList("eax","ecx","edx","ebx","esp","ebp","esi","edi","eip","eflags",
+																  "cs","ss","ds","es","fs","gs","st0","st1","st2","st3",
+																  "st4","st5","st6","st7","fctrl","fstat","ftag","fiseg","fioff","foseg",
+																  "fooff","fop","xmm0","xmm1","xmm2","xmm3","xmm4","xmm5","xmm6","xmm7",
+																  "mxcsr","orig_eax","mm0","mm1","mm2","mm3","mm4","mm5","mm6","mm7"));
 		// On Windows, gdb doesn't report "orig_eax" as a register. Apparently it does on Linux
-	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
-    		X86_REGS.remove("orig_eax");
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+    		list.remove("orig_eax");
 	    }
+		return list;
 	}
 	
 	/*
@@ -195,7 +200,7 @@ public class MIRegistersTest extends BaseTestCase {
             
         fWait.waitReset();
 
-        assertEquals("Wrong number of registers", X86_REGS.size(), regContexts.length); 
+        assertEquals("Wrong number of registers", get_X86_REGS().size(), regContexts.length); 
 
         return(regContexts);
     }
@@ -230,7 +235,7 @@ public class MIRegistersTest extends BaseTestCase {
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	final IRegisterDMContext[] regDMCs = getRegisters(frameDmc);
-    	assertEquals("Wrong number of registers", X86_REGS.size(), regDMCs.length);
+    	assertEquals("Wrong number of registers", get_X86_REGS().size(), regDMCs.length);
     }
     
     @Test
@@ -238,7 +243,7 @@ public class MIRegistersTest extends BaseTestCase {
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	final IRegisterDMContext[] regDMCs = getRegisters(frameDmc);
-    	List<String> regNames = X86_REGS; 
+    	List<String> regNames = get_X86_REGS(); 
     	
         Query<IRegisterDMData[]> query = new Query<IRegisterDMData[]>() {
             @Override

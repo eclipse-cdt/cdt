@@ -11,8 +11,8 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -28,10 +28,10 @@ import org.eclipse.cdt.dsf.datamodel.CompositeDMContext;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
-import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
@@ -95,18 +95,23 @@ public class MIRegistersTest extends BaseTestCase {
 	@Before
 	public void init() throws Exception {
 	    fSession = getGDBLaunch().getSession();
-		// We obtain the services we need after the new
-		// launch has been performed
-		fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+	    
+        Runnable runnable = new Runnable() {
+            public void run() {
+	    		// We obtain the services we need after the new
+	    		// launch has been performed
+	    		fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 
-		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
-		IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-   		IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
-   		fContainerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
-
-		
-		fRegService = fServicesTracker.getService(IRegisters.class);
-		fRunControl = fServicesTracker.getService(IRunControl.class);
+	    		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
+	    		IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+	       		IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
+	       		fContainerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+	    		
+	    		fRegService = fServicesTracker.getService(IRegisters.class);
+	    		fRunControl = fServicesTracker.getService(IRunControl.class);
+            }
+	    };
+	    fSession.getExecutor().submit(runnable).get();
 	}
 	
 	@BeforeClass

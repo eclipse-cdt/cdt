@@ -96,6 +96,7 @@ public class MIBreakpointsTest extends BaseTestCase {
     protected DsfServicesTracker  fServicesTracker;
     protected MIRunControl        fRunControl;
     protected IBreakpoints        fBreakpointService;
+    protected IExpressions        fExpressionService;
 
     // Event Management
     protected static Boolean lock = true;
@@ -176,34 +177,47 @@ public class MIBreakpointsTest extends BaseTestCase {
     }
 
     @Before
-    public void testCaseInitialization() {
+    public void testCaseInitialization() throws Exception {
 
         // Get a reference to the breakpoint service
         fSession = getGDBLaunch().getSession();
-        fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-        assert(fServicesTracker != null);
+        Runnable runnable = new Runnable() {
+            public void run() {
+                fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+                assert(fServicesTracker != null);
 
-		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
-   		fBreakpointsDmc = (IBreakpointsTargetDMContext)commandControl.getContext();
-        assert(fBreakpointsDmc != null);
-		    
-        fRunControl = fServicesTracker.getService(MIRunControl.class);
-        assert(fRunControl != null);
+        		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
+           		fBreakpointsDmc = (IBreakpointsTargetDMContext)commandControl.getContext();
+                assert(fBreakpointsDmc != null);
+        		    
+                fRunControl = fServicesTracker.getService(MIRunControl.class);
+                assert(fRunControl != null);
 
-        fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
-        assert(fBreakpointService != null);
+                fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
+                assert(fBreakpointService != null);
 
-        // Register to breakpoint events
-        fRunControl.getSession().addServiceEventListener(MIBreakpointsTest.this, null);
+                fExpressionService = fServicesTracker.getService(IExpressions.class);
+                assert(fExpressionService != null);
 
-        clearEventCounters();
+                // Register to breakpoint events
+                fRunControl.getSession().addServiceEventListener(MIBreakpointsTest.this, null);
+
+                clearEventCounters();
+            }
+        };
+        fSession.getExecutor().submit(runnable).get();
     }
 
     @After
-    public void testCaseCleanup() {
+    public void testCaseCleanup() throws Exception {
 
 		// Clear the references (not strictly necessary)
-        fRunControl.getSession().removeServiceEventListener(MIBreakpointsTest.this);
+        Runnable runnable = new Runnable() {
+            public void run() {
+            	fRunControl.getSession().removeServiceEventListener(MIBreakpointsTest.this);
+            }
+        };
+        fSession.getExecutor().submit(runnable).get();
         fBreakpointService = null;
         fRunControl = null;
         fServicesTracker.dispose();
@@ -360,9 +374,6 @@ public class MIBreakpointsTest extends BaseTestCase {
      * ------------------------------------------------------------------------
      */
     private BigInteger evaluateExpression(IDMContext ctx, String expression) throws Throwable {
-
-        final IExpressions fExpressionService = fServicesTracker.getService(IExpressions.class);
-        assert (fExpressionService != null);
 
         // Get a stack context (temporary - should be an MIcontainerDMC)
 		final IExpressionDMContext expressionDMC = SyncUtil.createExpression(ctx, expression);

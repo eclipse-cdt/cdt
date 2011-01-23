@@ -65,11 +65,13 @@ public class GDBProcessesTest extends BaseTestCase {
 	@Before
 	public void init() throws Exception {
 	    fSession = getGDBLaunch().getSession();
-		fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-        /*
-         *  Get the GDBProcesses & MIRunControl service.
-         */
-		fProcService = fServicesTracker.getService(IMIProcesses.class);
+        Runnable runnable = new Runnable() {
+            public void run() {
+            	fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+            	fProcService = fServicesTracker.getService(IMIProcesses.class);
+            }
+        };
+        fSession.getExecutor().submit(runnable).get();
 	}
 
 	@After

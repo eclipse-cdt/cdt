@@ -94,33 +94,43 @@ public class MIMemoryTest extends BaseTestCase {
 	@Before
 	public void testCaseInitialization() throws Throwable {
 	    fSession = getGDBLaunch().getSession();
+	    fMemoryDmc = (IMemoryDMContext)SyncUtil.getContainerContext();
+	    assert(fMemoryDmc != null);
 
-	    // Get a reference to the memory service
-		fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-		assert(fServicesTracker != null);
+	    Runnable runnable = new Runnable() {
+            public void run() {
+       	    // Get a reference to the memory service
+        		fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+        		assert(fServicesTracker != null);
 
-   		fMemoryDmc = (IMemoryDMContext)SyncUtil.getContainerContext();
-        assert(fMemoryDmc != null);
-		    
-		fRunControl = fServicesTracker.getService(MIRunControl.class);
-		assert(fRunControl != null);
+        		fRunControl = fServicesTracker.getService(MIRunControl.class);
+        		assert(fRunControl != null);
 
-		fMemoryService = fServicesTracker.getService(IMemory.class);
-		assert(fMemoryService != null);
+        		fMemoryService = fServicesTracker.getService(IMemory.class);
+        		assert(fMemoryService != null);
 
-		fExpressionService = fServicesTracker.getService(IExpressions.class);
-		assert(fExpressionService != null);
+        		fExpressionService = fServicesTracker.getService(IExpressions.class);
+        		assert(fExpressionService != null);
 
-		fSession.addServiceEventListener(MIMemoryTest.this, null);
-		fBaseAddress = null;
-		clearEventCounters();
+        		fSession.addServiceEventListener(MIMemoryTest.this, null);
+        		fBaseAddress = null;
+        		clearEventCounters();
+            }
+        };
+        fSession.getExecutor().submit(runnable).get();
 	}
 
 	@After
-	public void testCaseCleanup() {
+	public void testCaseCleanup() throws Exception {
 		// Clear the references (not strictly necessary)
-		fBaseAddress = null;
-		fSession.removeServiceEventListener(MIMemoryTest.this);
+        Runnable runnable = new Runnable() {
+            public void run() {
+            	fSession.removeServiceEventListener(MIMemoryTest.this);
+            }
+        };
+        fSession.getExecutor().submit(runnable).get();
+        
+        fBaseAddress = null;
 		fExpressionService = null;
 		fMemoryService = null;
 		fRunControl = null;

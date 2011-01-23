@@ -43,6 +43,7 @@ import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
@@ -99,18 +100,25 @@ public class MIRunControlTest extends BaseTestCase {
 	
 	@Before
 	public void init() throws Exception {
-		fServicesTracker = 
-			new DsfServicesTracker(TestsPlugin.getBundleContext(), 
-                     			   getGDBLaunch().getSession().getId());
-		fGDBCtrl = fServicesTracker.getService(IGDBControl.class);
-
-		IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-   		IProcessDMContext procDmc = procService.createProcessContext(fGDBCtrl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
-   		fContainerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
-   		IThreadDMContext threadDmc = procService.createThreadContext(procDmc, "1");
-   		fThreadExecDmc = procService.createExecutionContext(fContainerDmc, threadDmc, "1");
-
-		fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
+		final DsfSession session = getGDBLaunch().getSession();
+		
+        Runnable runnable = new Runnable() {
+            public void run() {
+           	fServicesTracker = 
+            		new DsfServicesTracker(TestsPlugin.getBundleContext(), 
+            				session.getId());
+            	fGDBCtrl = fServicesTracker.getService(IGDBControl.class);
+            	
+            	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+            	IProcessDMContext procDmc = procService.createProcessContext(fGDBCtrl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
+            	fContainerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+            	IThreadDMContext threadDmc = procService.createThreadContext(procDmc, "1");
+            	fThreadExecDmc = procService.createExecutionContext(fContainerDmc, threadDmc, "1");
+            	
+            	fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
+            }
+        };
+        session.getExecutor().submit(runnable).get();
 	}
 
 

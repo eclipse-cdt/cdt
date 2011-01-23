@@ -21,6 +21,7 @@ import junit.framework.Assert;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
@@ -28,7 +29,8 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.IFormattedDataDMContext;
-import org.eclipse.cdt.dsf.debug.service.IProcesses;
+import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
+import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
@@ -37,7 +39,8 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
-import org.eclipse.cdt.dsf.mi.service.MIRunControl;
+import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIRunningEvent;
@@ -59,7 +62,7 @@ import org.eclipse.core.runtime.Status;
 public class SyncUtil {
     
     private static ICommandControlService fCommandControl;
-    private static MIRunControl fRunControl;
+    private static IMIRunControl fRunControl;
     private static MIStack fStack;
     private static IExpressions fExpressions;
     private static DsfSession fSession;
@@ -67,30 +70,31 @@ public class SyncUtil {
     private static CommandFactory fCommandFactory;
 
     private static IBreakpointsTargetDMContext fBreakpointsDmc;
-	private static IProcesses fProcessesService;
-    
-    public static final int WAIT_FOREVER = ServiceEventWaitor.WAIT_FOREVER;
+	private static IMIProcesses fProcessesService;
     
     // Initialize some common things, once the session has been established
-    public static void initialize(DsfSession session) {
+    public static void initialize(DsfSession session) throws Exception {
     	fSession = session;
     	
-    	DsfServicesTracker tracker = 
-    		new DsfServicesTracker(TestsPlugin.getBundleContext(), 
-    				fSession.getId());
-    	
-    	fCommandControl = tracker.getService(ICommandControlService.class);
-
-   		fBreakpointsDmc = (IBreakpointsTargetDMContext)fCommandControl.getContext();
-   		
-		fRunControl = tracker.getService(MIRunControl.class);
-		fStack = tracker.getService(MIStack.class);
-		fExpressions = tracker.getService(IExpressions.class);
-		fProcessesService = tracker.getService(IProcesses.class);
-		
-		fCommandFactory = tracker.getService(IMICommandControl.class).getCommandFactory();
-
-		tracker.dispose();
+        Runnable runnable = new Runnable() {
+            public void run() {
+	        	DsfServicesTracker tracker = 
+	        		new DsfServicesTracker(TestsPlugin.getBundleContext(), 
+	        				fSession.getId());
+	        	
+	        	fCommandControl = tracker.getService(ICommandControlService.class);		   		
+	        	fRunControl = tracker.getService(IMIRunControl.class);
+	        	fStack = tracker.getService(MIStack.class);
+	        	fExpressions = tracker.getService(IExpressions.class);
+	        	fProcessesService = tracker.getService(IMIProcesses.class);
+	        	fCommandFactory = tracker.getService(IMICommandControl.class).getCommandFactory();
+	        	
+	        	fBreakpointsDmc = (IBreakpointsTargetDMContext)fCommandControl.getContext();
+	        	
+	        	tracker.dispose();
+            }
+	    };
+	    fSession.getExecutor().submit(runnable).get();
 	}
 
 	public static MIStoppedEvent step(int numSteps, final StepType stepType) throws Throwable {
@@ -429,7 +433,10 @@ public class SyncUtil {
     public static IMIExecutionDMContext createExecutionContext(final IContainerDMContext parentCtx, final int threadId) throws Throwable {
 	    Callable<IMIExecutionDMContext> callable = new Callable<IMIExecutionDMContext>() {
 	        public IMIExecutionDMContext call() throws Exception {
-	            return fRunControl.createMIExecutionContext(parentCtx, threadId);
+	        	String threadIdStr = Integer.toString(threadId);
+	        	IProcessDMContext processDmc = DMContexts.getAncestorOfType(parentCtx, IProcessDMContext.class);
+	        	IThreadDMContext threadDmc = fProcessesService.createThreadContext(processDmc, threadIdStr);
+	            return fProcessesService.createExecutionContext(parentCtx, threadDmc, threadIdStr);
 	        }
 	    };
 	    return fSession.getExecutor().submit(callable).get();

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
+import java.util.concurrent.ExecutionException;
+
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
@@ -58,13 +60,31 @@ public class ServiceEventWaitor<V> {
 		fSession = session;
 		fEventTypeClass = eventClass;
 		fEvent = null;
-		fSession.addServiceEventListener(this, null);
+        Runnable runnable = new Runnable() {
+            public void run() {
+            	fSession.addServiceEventListener(ServiceEventWaitor.this, null);
+            }
+        };
+        try {
+			fSession.getExecutor().submit(runnable).get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
-		if (fEventTypeClass != null) fSession.removeServiceEventListener(this);
+		if (fEventTypeClass != null) {
+			Runnable runnable = new Runnable() {
+				public void run() {
+					fSession.removeServiceEventListener(ServiceEventWaitor.this);
+				}
+			};
+			fSession.getExecutor().submit(runnable).get();
+		}
 	}
 
 	/*

@@ -77,18 +77,28 @@ public class MIExpressionsTest extends BaseTestCase {
     }
 
     @Before
-    public void init() {
+    public void init() throws Exception {
         fSession = getGDBLaunch().getSession();
-        fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-
-        fExpService = fServicesTracker.getService(IExpressions.class);
-        fSession.addServiceEventListener(this, null);
-        clearExprChangedData();
+        Runnable runnable = new Runnable() {
+            public void run() {
+           	fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+            	
+            	fExpService = fServicesTracker.getService(IExpressions.class);
+            	fSession.addServiceEventListener(MIExpressionsTest.this, null);
+            	clearExprChangedData();
+            }
+        };
+        fSession.getExecutor().submit(runnable).get();
     }
 
     @After
-    public void shutdown() {
-        fSession.removeServiceEventListener(this);
+    public void shutdown() throws Exception {
+        Runnable runnable = new Runnable() {
+            public void run() {
+            	fSession.removeServiceEventListener(MIExpressionsTest.this);
+            }
+        };
+        fSession.getExecutor().submit(runnable).get();
         fExpService = null;
         fServicesTracker.dispose();
     }

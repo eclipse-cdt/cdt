@@ -119,30 +119,40 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 //	}
 
 	 @Before
-	 public void initialTest() throws Throwable {
+	 public void initialTest() throws Exception {
 		fSession = getGDBLaunch().getSession();
-		fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+        Runnable runnable = new Runnable() {
+            public void run() {
+        		fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 
-		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
-   		fBreakpointsDmc = (IBreakpointsTargetDMContext)commandControl.getContext();
-        assert(fBreakpointsDmc != null);
+        		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
+           		fBreakpointsDmc = (IBreakpointsTargetDMContext)commandControl.getContext();
+                assert(fBreakpointsDmc != null);
 
-//        fTraceTargetDmc = (ITraceTargetDMContext)commandControl.getContext();
-        
-		fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
-//		fTraceService = fServicesTracker.getService(ITraceControl.class);
-		fSession.addServiceEventListener(this, null);
-		
-		// Create a large array to make sure we don't run out
-		fTracepoints = new IBreakpointDMContext[100];
-		
-		// Run an initial test to check that everything is ok with GDB
-		checkTraceInitialStatus();
+//                fTraceTargetDmc = (ITraceTargetDMContext)commandControl.getContext();
+                
+        		fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
+//        		fTraceService = fServicesTracker.getService(ITraceControl.class);
+        		fSession.addServiceEventListener(GDBRemoteTracepointsTest_7_0.this, null);
+        		
+        		// Create a large array to make sure we don't run out
+        		fTracepoints = new IBreakpointDMContext[100];
+        		
+        		// Run an initial test to check that everything is ok with GDB
+        		checkTraceInitialStatus();
+            }
+        };
+        fSession.getExecutor().submit(runnable).get();
 	}
 	
 	@After
-	public void shutdown() {
-		fSession.removeServiceEventListener(this);
+	public void shutdown() throws Exception {
+        Runnable runnable = new Runnable() {
+            public void run() {
+            	fSession.removeServiceEventListener(GDBRemoteTracepointsTest_7_0.this);
+            }
+        };
+        fSession.getExecutor().submit(runnable).get();
 		fBreakpointService = null;
 		fServicesTracker.dispose();
 	}
@@ -604,7 +614,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 	 * by the @Before method; this allows to verify every launch of GDB. 
 	 */
 	@Test
-	public void checkTraceInitialStatus() throws Throwable {
+	public void checkTraceInitialStatus() {
 //		checkTraceStatus(true, false, 0);
 	}
 	

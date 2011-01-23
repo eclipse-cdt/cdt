@@ -70,7 +70,7 @@ import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
  */
 public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 
-	private static final String WORKSPACE_PREFERENCE_PAGE = "org.eclipse.cdt.make.ui.preferences.BuildSettings"; //$NON-NLS-1$
+	private static final String WORKSPACE_PREFERENCE_PAGE = "org.eclipse.cdt.ui.preferences.BuildSettingProperties"; //$NON-NLS-1$
 
 	private static final int BUTTON_ADD = 0;
 	private static final int BUTTON_DELETE = 1;

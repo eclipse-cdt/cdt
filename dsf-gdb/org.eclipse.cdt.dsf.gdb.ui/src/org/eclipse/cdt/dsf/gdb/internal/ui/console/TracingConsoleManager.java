@@ -146,13 +146,17 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 	}
 	
 	private TracingConsole getConsole(ILaunch launch) {
-		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager(); 
-		IConsole[] consoles = manager.getConsoles();
-		for (IConsole console : consoles) {
-			if (console instanceof TracingConsole) {
-				TracingConsole tracingConsole = (TracingConsole)console;
-				if (tracingConsole.getLaunch().equals(launch)) {
-					return tracingConsole;
+		ConsolePlugin plugin = ConsolePlugin.getDefault();
+		if (plugin != null) {
+			// I've seen the plugin be null when running headless JUnit tests
+			IConsoleManager manager = plugin.getConsoleManager(); 
+			IConsole[] consoles = manager.getConsoles();
+			for (IConsole console : consoles) {
+				if (console instanceof TracingConsole) {
+					TracingConsole tracingConsole = (TracingConsole)console;
+					if (tracingConsole.getLaunch().equals(launch)) {
+						return tracingConsole;
+					}
 				}
 			}
 		}

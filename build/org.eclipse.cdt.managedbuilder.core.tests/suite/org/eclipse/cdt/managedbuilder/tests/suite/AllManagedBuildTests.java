@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.cdt.build.core.scannerconfig.tests.CfgScannerConfigProfileMan
 import org.eclipse.cdt.build.core.scannerconfig.tests.GCCSpecsConsoleParserTest;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.managedbuilder.core.regressions.RegressionTests;
 import org.eclipse.cdt.managedbuilder.core.tests.BuildDescriptionModelTests;
 import org.eclipse.cdt.managedbuilder.core.tests.BuildSystem40Tests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests;
@@ -85,6 +86,10 @@ public class AllManagedBuildTests {
 		suite.addTest(CProjectDescriptionSerializationTests.suite());
 		suite.addTest(OptionStringListValueTests.suite());
 		suite.addTest(ProjectModelTests.suite());
+
+		// regression tests
+		suite.addTest(RegressionTests.suite());
+
 		//$JUnit-END$
 		return suite;
 	}

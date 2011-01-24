@@ -10,6 +10,7 @@
  *  ARM Ltd. - Minor changes to echo commands
  *  IBM Corporation
  *  Anna Dushistova  (Mentor Graphics) - [307244] extend visibility of fields in GnuMakefileGenerator 
+ *  James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
@@ -20,10 +21,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -308,7 +311,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	private static final String BUILD_TARGETS = COMMENT + ".build.toptargets";	//$NON-NLS-1$
 	private static final String SRC_LISTS = COMMENT + ".source.list";	//$NON-NLS-1$
 
-	private static final String EMPTY_STRING = new String();
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 	private static final String OBJS_MACRO = "OBJS";	//$NON-NLS-1$
@@ -349,14 +352,16 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 //	private IManagedBuildInfo info;
 //	private IConfiguration cfg
 	private Vector<IResource> invalidDirList;
-	private Vector<IResource> modifiedList;
+	/** Collection of Folders in which sources files have been modified */
+	private Collection<IContainer> modifiedList;
 	private IProgressMonitor monitor;
 	private IProject project;
 	private IResource[] projectResources;
 	private Vector<String> ruleList;
 	private Vector<String> depLineList;				//  String's of additional dependency lines
 	private Vector<String> depRuleList;				//  String's of rules for generating dependency files
-	private Vector<IResource> subdirList;
+	/** Collection of Containers which contribute source files to the build */
+	private Collection<IContainer> subdirList;
 	private IPath topBuildDir;				//  Build directory - relative to the workspace
 //	private Set outputExtensionsSet;
 	//=== Maps of macro names (String) to values (List)
@@ -625,6 +630,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		ResourceProxyVisitor resourceVisitor = new ResourceProxyVisitor(this, config);
 		project.accept(resourceVisitor, IResource.NONE);
 		checkCancel();
+
+		// Bug 303953: Ensure that if all resources have been removed from a folder, than the folder still
+		// appears in the subdir list so it's subdir.mk is correctly regenerated
+		getSubdirList().addAll(getModifiedList());
 
 		// Make sure there is something to build
 		if (getSubdirList().isEmpty()) {
@@ -4151,10 +4160,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 */
 	protected void appendBuildSubdirectory(IResource resource) {
 		IContainer container = resource.getParent();
-			// Only add the container once
-			if (!getSubdirList().contains(container)) {
-				getSubdirList().add(container);
-			}
+		// Only add the container once
+		if (!getSubdirList().contains(container))
+			getSubdirList().add(container);
 	}
 
 	/**
@@ -4475,25 +4483,20 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	}
 
 	/**
-	 *
-	 * @return Vector
+	 * @return Collection of Containers which contain modified source files
 	 */
-	private Vector<IResource> getModifiedList() {
-		if (modifiedList == null) {
-			modifiedList = new Vector<IResource>();
-		}
+	private Collection<IContainer> getModifiedList() {
+		if (modifiedList == null)
+			modifiedList = new LinkedHashSet<IContainer>();
 		return modifiedList;
 	}
 
 	/**
-	 * Answers the list of subdirectories (IContainer's) contributing source code to the build
-	 *
-	 * @return List
+	 * @return Collection of subdirectories (IContainers) contributing source code to the build
 	 */
-	private Vector<IResource> getSubdirList() {
-		if (subdirList == null) {
-			subdirList = new Vector<IResource>();
-		}
+	private Collection<IContainer> getSubdirList() {
+		if (subdirList == null)
+			subdirList = new LinkedHashSet<IContainer>();
 		return subdirList;
 	}
 

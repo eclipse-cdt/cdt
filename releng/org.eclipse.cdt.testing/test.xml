@@ -8,7 +8,7 @@
 	<property name="cdt-lr-parser-loc" value="${eclipse-home}/cdt_lr_parser_folder"/>
 	<property name="cdt-upc-parser-loc" value="${eclipse-home}/cdt_upc_parser_folder"/>
 	<property name="cdt-lr-parser-xlc-loc" value="${eclipse-home}/cdt_lr_parser_xlc_folder"/>
-	<property name="cdt-vmargs" value=" -Xms40m -Xmx1024m"/>
+	<property name="cdt-vmargs" value=" -ea -Xms40m -Xmx1024m"/>
 	<property name="cdt-common-vmargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
 	
 	<target name="init">

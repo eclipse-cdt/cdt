@@ -42,6 +42,12 @@
 	</ant>
 </target>
 
+<target name="assemble.org.eclipse.cdt.linux.gtk.ppc64">
+	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+		<property name="archiveName" value="cdt-${branchVersion}-${buildId}-linux.ppc64.tar.gz"/>
+	</ant>
+</target>
+
 <target name="assemble.org.eclipse.cdt.linux.gtk.ia64">
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
 		<property name="archiveName" value="cdt-${branchVersion}-${buildId}-linux.ia64.tar.gz"/>

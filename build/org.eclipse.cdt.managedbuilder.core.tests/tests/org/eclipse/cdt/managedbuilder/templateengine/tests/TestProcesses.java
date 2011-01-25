@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2011 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class TestProcesses extends TestCase {	
-	private static final String workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getRawLocation().toOSString();
 	private static final String INCLUDE_FOLDER = "Include"; //$NON-NLS-1$
 	private static final String APPEND = "Append"; //$NON-NLS-1$
 	private static final String MBS_GNU_CPP_LINK_OPTION_ID = ".*gnu.cpp.link.option.*"; //$NON-NLS-1$
@@ -68,7 +67,7 @@ public class TestProcesses extends TestCase {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*CreateIncludeFolder"); //$NON-NLS-1$
 		template.getTemplateInfo().setConfigurations(getConfigurations());
 
-		Map valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", projectName); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -92,7 +91,7 @@ public class TestProcesses extends TestCase {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*NewManagedProject"); //$NON-NLS-1$
 		template.getTemplateInfo().setConfigurations(getConfigurations());
 
-		Map valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", projectName); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -109,7 +108,7 @@ public class TestProcesses extends TestCase {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*SetMBSBooleanOptionValue"); //$NON-NLS-1$
 		template.getTemplateInfo().setConfigurations(getConfigurations());
 
-		Map valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", projectName); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -134,7 +133,7 @@ public class TestProcesses extends TestCase {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*SetMBSStringOptionValue"); //$NON-NLS-1$
 		template.getTemplateInfo().setConfigurations(getConfigurations());
 
-		Map valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", projectName); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -159,7 +158,7 @@ public class TestProcesses extends TestCase {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*SetMBSStringListOptionValues"); //$NON-NLS-1$
 		template.getTemplateInfo().setConfigurations(getConfigurations());
 
-		Map valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", projectName); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -187,7 +186,7 @@ public class TestProcesses extends TestCase {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*AppendToMBSStringOptionValue"); //$NON-NLS-1$
 		template.getTemplateInfo().setConfigurations(getConfigurations());
 
-		Map valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", projectName); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -213,7 +212,7 @@ public class TestProcesses extends TestCase {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*AppendToMBSStringListOptionValues"); //$NON-NLS-1$
 		template.getTemplateInfo().setConfigurations(getConfigurations());
 
-		Map valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", projectName); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -246,7 +245,7 @@ public class TestProcesses extends TestCase {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*ExcludeResources"); //$NON-NLS-1$
 		template.getTemplateInfo().setConfigurations(getConfigurations());
 
-		Map valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", projectName); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -325,8 +324,9 @@ public class TestProcesses extends TestCase {
 						break;
 					default:
 						if(option.getValue() instanceof List) {
-							List list= (List) option.getValue();
-							String[] optionValues= (String[]) list.toArray(new String[list.size()]); 
+							@SuppressWarnings("unchecked")
+							List<String> list= (List<String>) option.getValue();
+							String[] optionValues= list.toArray(new String[list.size()]); 
 							if (append) {
 								assertTrue(optionValues.length == 2 * MBS_STRING_LIST_OPTION_VALUES.length);
 								int j=0;
@@ -355,7 +355,7 @@ public class TestProcesses extends TestCase {
 	/**
 	 * @return the gnu mingw exe debug configuration
 	 */
-	private List/*<IConfiguration>*/ getConfigurations() {
+	private List<IConfiguration> getConfigurations() {
 		IConfiguration config= ManagedBuildManager.getExtensionConfiguration("cdt.managedbuild.config.gnu.mingw.exe.debug");
 		return Collections.singletonList(config);
 	}

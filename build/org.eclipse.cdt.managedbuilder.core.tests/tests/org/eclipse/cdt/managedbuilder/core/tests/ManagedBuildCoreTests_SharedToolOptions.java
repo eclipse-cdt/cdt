@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Symbian Ltd and others.
+ * Copyright (c) 2005, 2011 Symbian Ltd and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -295,7 +295,6 @@ public class ManagedBuildCoreTests_SharedToolOptions extends TestCase {
 			fail("Test failed on project creation: " + e.getLocalizedMessage());
 		}
 		// Find the base project type definition
-		IProjectType[] projTypes = ManagedBuildManager.getDefinedProjectTypes();
 		IProjectType projType = ManagedBuildManager.getProjectType(projectID);
 		assertNotNull(projType);
 		// Create a managed project		
@@ -319,8 +318,8 @@ public class ManagedBuildCoreTests_SharedToolOptions extends TestCase {
 		
 		// Test ID's
 		//
-		String configID        = "test30_sto.dummy.config";
-		String configName      = "Configuration for test30_sto";
+//		String configID        = "test30_sto.dummy.config";
+//		String configName      = "Configuration for test30_sto";
 		String toolChainID     = "test30_sto.dummy.toolchain";
 		String toolChainName   = "Toolchain for test30_sto";
 		// Toolchain Info
@@ -328,7 +327,7 @@ public class ManagedBuildCoreTests_SharedToolOptions extends TestCase {
 		String toolIDs         = "test30_sto.dummy.tool.";
 		int firstToolID        = 1;
 		// Top level option categories and groups 
-		int numTopCategories   = 3;
+//		int numTopCategories   = 3;
 		String topCategoryIDs  = "test30_sto.dummy.category.";
 		int firstTopCategoryID = 5;
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public class OptionStringListValueTests extends TestCase {
 		IFolderInfo fInfo = cfg.getRootFolderInfo();
 		
 		ICLanguageSetting ls = fDes.getLanguageSettingForFile("a.c");
-		List list = new ArrayList();
+		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
 		list.add(new CIncludePathEntry("a", 0));
 		list.add(new CIncludePathEntry("b", 0));
 		list.addAll(ls.getSettingEntriesList(ICSettingEntry.INCLUDE_PATH));
@@ -119,10 +119,9 @@ public class OptionStringListValueTests extends TestCase {
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDes);
 		
 		ICFolderDescription fDes = cfgDes.getRootFolderDescription();
-		IFolderInfo fInfo = cfg.getRootFolderInfo();
 		
 		ICLanguageSetting ls = fDes.getLanguageSettingForFile("a.c");
-		List list = new ArrayList();
+		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
 		list.add(new CLibraryFileEntry("usr_a", 0, new Path("ap"), new Path("arp"), new Path("apx")));
 		list.add(new CLibraryFileEntry("usr_b", 0, new Path("bp"), null, null));
 		list.add(new CLibraryFileEntry("usr_c", 0, new Path("cp"), new Path("crp"), null));
@@ -141,7 +140,7 @@ public class OptionStringListValueTests extends TestCase {
 			assertEquals(other.getSourceAttachmentPrefixMapping(), r.getSourceAttachmentPrefixMapping());
 		}
 		
-		List returned = ls.getSettingEntriesList(ICSettingEntry.LIBRARY_FILE);
+		List<ICLanguageSettingEntry> returned = ls.getSettingEntriesList(ICSettingEntry.LIBRARY_FILE);
 		assertEquals(list.size(), returned.size());
 		assertTrue(Arrays.equals(list.toArray(), returned.toArray()));
 		
@@ -170,8 +169,8 @@ public class OptionStringListValueTests extends TestCase {
 		assertTrue(Arrays.equals(list.toArray(), returned.toArray()));
 	}
 	
-	private Set[] diff(List list1, List list2){
-		Set set1 = new LinkedHashSet(list1);
+	private Set[] diff(List<ICLanguageSettingEntry> list1, List list2){
+		Set<ICLanguageSettingEntry> set1 = new LinkedHashSet<ICLanguageSettingEntry>(list1);
 		set1.removeAll(list2);
 		Set set2 = new LinkedHashSet(list2);
 		set2.removeAll(list1);
@@ -180,7 +179,7 @@ public class OptionStringListValueTests extends TestCase {
 		return new Set[]{set1, set2};
 	}
 	
-	private void checkEntriesMatch(List list1, List list2){
+	private void checkEntriesMatch(List<ICLanguageSettingEntry> list1, List list2){
 		Set[] diff = diff(list1, list2);
 		if(diff != null){
 			fail("entries diff");
@@ -227,17 +226,17 @@ public class OptionStringListValueTests extends TestCase {
 		
 		checkOptionValues(option);
 		
-		List list = new ArrayList();
+		List<Object> list = new ArrayList<Object>();
 		list.add("usr_1");
 		list.add("usr_2");
 		list.addAll(Arrays.asList(option.getBasicStringListValue()));
-		String[] updated = (String[])list.toArray(new String[0]);
+		String[] updated = list.toArray(new String[0]);
 		option = ManagedBuildManager.setOption(fInfo, tool, option, updated);
 		
 		assertTrue(Arrays.equals(updated, option.getBasicStringListValue()));
 		checkOptionValues(option);
 
-		list = new ArrayList();
+		list = new ArrayList<Object>();
 		list.add(new OptionStringValue("usr_3", false, "ap", "arp", "apx"));
 		list.add(new OptionStringValue("usr_4", false, null, null, null));
 		list.add(new OptionStringValue("usr_5", false, "cp", null, null));
@@ -245,7 +244,7 @@ public class OptionStringListValueTests extends TestCase {
 		list.add(new OptionStringValue("usr_6", false, null, null, "epx"));
 		list.addAll(Arrays.asList(option.getBasicStringListValueElements()));
 		
-		OptionStringValue updatedves[] = (OptionStringValue[])list.toArray(new OptionStringValue[0]);
+		OptionStringValue updatedves[] = list.toArray(new OptionStringValue[0]);
 		IOption updatedOption = ManagedBuildManager.setOption(fInfo, tool, option, updatedves); 
 		assertTrue(option == updatedOption);
 		OptionStringValue[] ves = option.getBasicStringListValueElements();

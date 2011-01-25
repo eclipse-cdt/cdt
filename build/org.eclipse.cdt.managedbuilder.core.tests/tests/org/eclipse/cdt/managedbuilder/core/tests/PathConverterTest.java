@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2006 Siemens AG.
+ * Copyright (C) 2006, 2011 Siemens AG.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -71,7 +70,7 @@ public class PathConverterTest extends TestCase {
 	 * - An inherited converter overrides any toolchain converters <br>
 	 * - A converter set directly on the toolchain overrides an inherited toolchain converter <br>
 	 */
-	protected Class getExpectedToolConverterClass(String configId)  {
+	protected Class<? extends IOptionPathConverter> getExpectedToolConverterClass(String configId)  {
 		// Conservative defaults
 		boolean hasToolConverter = false ;
 		boolean hasToolInheritedConverter = false ;
@@ -81,7 +80,7 @@ public class PathConverterTest extends TestCase {
 		hasToolConverter = (toolinfo.charAt(0)=='y');
 		hasToolInheritedConverter = (toolinfo.charAt(1)=='y');
 		// Assume no converter
-		Class toolConverterClass = getExpectedToolchainConverterClass(configId) ;
+		Class<? extends IOptionPathConverter> toolConverterClass = getExpectedToolchainConverterClass(configId) ;
 		// Modify converter as appropriate
 		if (hasToolInheritedConverter)  toolConverterClass = TestPathConverter2.class ;
 		if (hasToolConverter)  toolConverterClass = TestPathConverter4.class ;
@@ -90,9 +89,9 @@ public class PathConverterTest extends TestCase {
 	}
 	
 	/**
-	 * @see getExpectedToolConverterClass()
+	 * @see #getExpectedToolConverterClass(String)
 	 */
-	protected Class getExpectedToolchainConverterClass(String configId)  {
+	protected Class<? extends IOptionPathConverter> getExpectedToolchainConverterClass(String configId)  {
 		// Conservative defaults
 		boolean hasToolchainConverter = false ;
 		boolean hasToolchainInheritedConverter = false ;
@@ -102,7 +101,7 @@ public class PathConverterTest extends TestCase {
 		hasToolchainConverter = (toolchaininfo.charAt(0)=='y');
 		hasToolchainInheritedConverter = (toolchaininfo.charAt(1)=='y');
 		// Assume no converter
-		Class toolConverterClass = null ;
+		Class<? extends IOptionPathConverter> toolConverterClass = null ;
 		// Modify converter as appropriate
 		if (hasToolchainInheritedConverter)  toolConverterClass = TestPathConverter1.class ;
 		if (hasToolchainConverter)  toolConverterClass = TestPathConverter3.class ;
@@ -127,7 +126,7 @@ public class PathConverterTest extends TestCase {
 			IConfiguration configuration = configurations[i];
 			IToolChain toolchain = configuration.getToolChain();
 
-			Class expectedToolchainConverterClass = getExpectedToolchainConverterClass(configuration.getId());
+			Class<? extends IOptionPathConverter> expectedToolchainConverterClass = getExpectedToolchainConverterClass(configuration.getId());
 			IOptionPathConverter toolchainPathConverter = toolchain.getOptionPathConverter();
 			if (null==expectedToolchainConverterClass)  {
 				assertNull("null pathConverter expected for toolchain!", toolchainPathConverter);
@@ -137,7 +136,7 @@ public class PathConverterTest extends TestCase {
 			
 			
 			ITool tool = toolchain.getTools()[0]; // We have only one tool in the test setup
-			Class expectedToolConverterClass = getExpectedToolConverterClass(configuration.getId());
+			Class<? extends IOptionPathConverter> expectedToolConverterClass = getExpectedToolConverterClass(configuration.getId());
 			IOptionPathConverter toolPathConverter = tool.getOptionPathConverter();
 			if (null==expectedToolConverterClass)  {
 				assertNull("null pathConverter expected for tool!", toolPathConverter);
@@ -152,7 +151,6 @@ public class PathConverterTest extends TestCase {
 	 */
 	public void testPathConversionInProject() throws Exception {
 		IProjectType type = ManagedBuildManager.getProjectType("pathconvertertest.projecttype");
-		IWorkspaceRoot root = null ;
 		IProject project = ManagedBuildTestHelper.createProject("pathconverter01", type.getId());
 		IManagedBuildInfo iinfo = ManagedBuildManager.getBuildInfo(project);
 		assertNotNull("build info could not be obtained", iinfo);

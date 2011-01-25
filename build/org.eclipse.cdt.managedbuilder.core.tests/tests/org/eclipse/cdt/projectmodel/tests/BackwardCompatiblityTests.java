@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ import org.eclipse.core.resources.IProject;
 public class BackwardCompatiblityTests extends TestCase {
 	private static final String TEST_3X_STD_MAKE_PROJECTS = "test3xStdMakeProjects";
 	
-	private List projList = new LinkedList();
+	private List<IProject> projList = new LinkedList<IProject>();
 	
 	public static Test suite() {
 		return new TestSuite(BackwardCompatiblityTests.class);
@@ -36,19 +36,19 @@ public class BackwardCompatiblityTests extends TestCase {
 	public void test3xStdMakeProject(){
 		String PROJ_NAME = "std_cpp_1";
 		
-		String[] BIN_PARSERS = new String[]{
-				"org.eclipse.cdt.core.ELF",
-				"org.eclipse.cdt.core.PE",
-				"org.eclipse.cdt.core.GNU_ELF",
-				"org.eclipse.cdt.core.MachO"
-		};
-		
-		String[] ERR_PARSERS = new String[]{
-				"org.eclipse.cdt.core.CWDLocator",
-				"org.eclipse.cdt.core.GASErrorParser",
-				"org.eclipse.cdt.core.VCErrorParser",
-				"org.eclipse.cdt.core.GmakeErrorParser",
-		};
+//		String[] BIN_PARSERS = new String[]{
+//				"org.eclipse.cdt.core.ELF",
+//				"org.eclipse.cdt.core.PE",
+//				"org.eclipse.cdt.core.GNU_ELF",
+//				"org.eclipse.cdt.core.MachO"
+//		};
+//		
+//		String[] ERR_PARSERS = new String[]{
+//				"org.eclipse.cdt.core.CWDLocator",
+//				"org.eclipse.cdt.core.GASErrorParser",
+//				"org.eclipse.cdt.core.VCErrorParser",
+//				"org.eclipse.cdt.core.GmakeErrorParser",
+//		};
 		
 		IProject project = loadStdProject(PROJ_NAME);
 		projList.add(project);
@@ -83,8 +83,8 @@ public class BackwardCompatiblityTests extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		for(Iterator iter = projList.iterator(); iter.hasNext();){
-			IProject proj = (IProject)iter.next();
+		for(Iterator<IProject> iter = projList.iterator(); iter.hasNext();){
+			IProject proj = iter.next();
 			try {
 				proj.delete(true, null);
 			} catch (Exception e){

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import junit.framework.Test;
@@ -29,6 +28,7 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -69,7 +69,7 @@ public class ToolChainModificationTests extends TestCase {
 		assertTrue(cfgM.isBuilderCompatible());
 		
 		IToolChain[] ctcs = cfgM.getCompatibleToolChains();
-		HashSet set = new HashSet();
+		HashSet<IHoldsOptions> set = new HashSet<IHoldsOptions>();
 		FolderInfo foInfo = (FolderInfo)cfg.getRootFolderInfo();
 		ToolChain tc = (ToolChain)foInfo.getToolChain();
 		IToolChain[] allSys = ManagedBuildManager.getRealToolChains();
@@ -80,12 +80,12 @@ public class ToolChainModificationTests extends TestCase {
 		set.remove(incompatibleTc);
 		compare(Arrays.asList(ctcs), set);
 		
-		HashSet incomp = new HashSet(Arrays.asList(allSys));
+		HashSet<IToolChain> incomp = new HashSet<IToolChain>(Arrays.asList(allSys));
 		incomp.removeAll(Arrays.asList(ctcs));
 		assertTrue(incomp.contains(incompatibleTc));
 		
 		IBuilder[] cbs = cfgM.getCompatibleBuilders();
-		Set bSet = new HashSet();
+		Set<IHoldsOptions> bSet = new HashSet<IHoldsOptions>();
 		IBuilder[] allSysB = ManagedBuildManager.getRealBuilders();
 		filterPropsSupported(cfg, allSysB, bSet);
 		IBuilder incompatibleB = ManagedBuildManager.getExtensionBuilder("tcm.tc4.b1");
@@ -94,7 +94,7 @@ public class ToolChainModificationTests extends TestCase {
 		bSet.remove(incompatibleB);
 		compare(Arrays.asList(cbs), bSet);
 		
-		HashSet incompB = new HashSet(Arrays.asList(allSysB));
+		HashSet<IBuilder> incompB = new HashSet<IBuilder>(Arrays.asList(allSysB));
 		incompB.removeAll(Arrays.asList(cbs));
 		assertTrue(incompB.contains(incompatibleB));
 		
@@ -111,12 +111,8 @@ public class ToolChainModificationTests extends TestCase {
 		project.delete(true, null);
 	}
 	
-	private boolean contains(Object[] array, Object obj){
-		return new HashSet(Arrays.asList(array)).contains(obj);
-	}
-	
-	private HashSet filterSupportedToolChains(IFolderInfo foInfo, IToolChain tc){
-		HashSet set = new HashSet();
+	private HashSet<IHoldsOptions> filterSupportedToolChains(IFolderInfo foInfo, IToolChain tc){
+		HashSet<IHoldsOptions> set = new HashSet<IHoldsOptions>();
 		IToolChain[] allSys = ManagedBuildManager.getRealToolChains();
 		filterPropsSupported((FolderInfo)foInfo, (ToolChain)tc, allSys, set);
 		set.remove(ManagedBuildManager.getRealToolChain(tc));
@@ -152,7 +148,7 @@ public class ToolChainModificationTests extends TestCase {
 		assertTrue(cfgM.isToolChainCompatible());
 		assertTrue(cfgM.isBuilderCompatible());
 
-		HashSet set = filterSupportedToolChains(cfg.getRootFolderInfo(), cfg.getToolChain());
+		HashSet<IHoldsOptions> set = filterSupportedToolChains(cfg.getRootFolderInfo(), cfg.getToolChain());
 		IToolChain[] tcs = cfgM.getCompatibleToolChains();
 		compare(Arrays.asList(tcs), set);
 
@@ -203,7 +199,7 @@ public class ToolChainModificationTests extends TestCase {
 		assertTrue(cfgM.isToolChainCompatible());
 		assertTrue(cfgM.isBuilderCompatible());
 
-		HashSet set = filterSupportedToolChains(cfg.getRootFolderInfo(), cfg.getToolChain());
+		HashSet<IHoldsOptions> set = filterSupportedToolChains(cfg.getRootFolderInfo(), cfg.getToolChain());
 		IToolChain[] tcs = cfgM.getCompatibleToolChains();
 		compare(Arrays.asList(tcs), set);
 
@@ -231,7 +227,7 @@ public class ToolChainModificationTests extends TestCase {
 		project.delete(true, null);
 	}
 	
-	private void rmToolChains(Set set, String[] ids){
+	private void rmToolChains(Set<IHoldsOptions> set, String[] ids){
 		for(int i = 0; i < ids.length; i++){
 			IToolChain incompatibleTc = ManagedBuildManager.getExtensionToolChain(ids[i]);
 			assertNotNull("no tool-chain of id " + ids[i], incompatibleTc);
@@ -241,16 +237,11 @@ public class ToolChainModificationTests extends TestCase {
 		}
 	}
 	
-	private IToolChain getRealToolChain(String id){
-		IToolChain tc = ManagedBuildManager.getExtensionToolChain(id);
-		return ManagedBuildManager.getRealToolChain(tc);
-	}
+	private void compare(Collection<? extends IHoldsOptions> c1, Collection<IHoldsOptions> c2){
+		HashSet<? extends IHoldsOptions> s1 = new HashSet<IHoldsOptions>(c1);
+		HashSet<? extends IHoldsOptions> s1c = new HashSet<IHoldsOptions>(s1);
 
-	private void compare(Collection c1, Collection c2){
-		HashSet s1 = new HashSet(c1);
-		HashSet s1c = (HashSet)s1.clone();
-		
-		HashSet s2 = new HashSet(c2);
+		HashSet<IHoldsOptions> s2 = new HashSet<IHoldsOptions>(c2);
 
 		s1.removeAll(s2);
 		s2.removeAll(s1c);
@@ -264,21 +255,20 @@ public class ToolChainModificationTests extends TestCase {
 			fail(buf.toString());
 	}
 	
-	private boolean checkEmpty(Collection c, StringBuffer buf){
+	private boolean checkEmpty(Collection<? extends IBuildObject> c, StringBuffer buf){
 		if(c.size() != 0){
 			buf.append("non-empty dump:\n");
-			for(Iterator iter = c.iterator(); iter.hasNext(); ){
-				buf.append("\t ").append((((IBuildObject)iter.next()).getId())).append('\n');
-			}
+			for (IBuildObject bo : c) 
+				buf.append("\t ").append(bo.getId()).append('\n');
 			buf.append("end\n");
 			return true; 
 		}
 		return false;
 	}
 	
-	private Collection filterPropsSupported(FolderInfo foInfo, ToolChain tc, IToolChain[] tcs, Collection c){
+	private Collection<IHoldsOptions> filterPropsSupported(FolderInfo foInfo, ToolChain tc, IToolChain[] tcs, Collection<IHoldsOptions> c){
 		if(c == null)
-			c = new ArrayList(); 
+			c = new ArrayList<IHoldsOptions>(); 
 		for(int i = 0; i < tcs.length; i++){
 			if(foInfo.isToolChainCompatible(tc, tcs[i]))
 				c.add(tcs[i]);
@@ -287,9 +277,9 @@ public class ToolChainModificationTests extends TestCase {
 		return c;
 	}
 	
-	private Collection filterPropsSupported(IConfiguration cfg, IBuilder[] bs, Collection c){
+	private Collection<IHoldsOptions> filterPropsSupported(IConfiguration cfg, IBuilder[] bs, Collection<IHoldsOptions> c){
 		if(c == null)
-			c = new ArrayList(); 
+			c = new ArrayList<IHoldsOptions>(); 
 		for(int i = 0; i < bs.length; i++){
 			if(cfg.isBuilderCompatible(bs[i]))
 				c.add(bs[i]);
@@ -298,7 +288,7 @@ public class ToolChainModificationTests extends TestCase {
 		return c;
 	}
 
-	private boolean getReplacementToolInfo(IModificationOperation[] ops, Set set){
+	private boolean getReplacementToolInfo(IModificationOperation[] ops, Set<ITool> set){
 		boolean removable = false;
 		for(int i = 0; i < ops.length; i++){
 			ITool tool = ops[i].getReplacementTool();
@@ -350,7 +340,7 @@ public class ToolChainModificationTests extends TestCase {
 		
 		IModificationOperation[] ops = tm.getSupportedOperations();
 		ITool tool31 = ManagedBuildManager.getExtensionTool("tcm.tc3.t1");
-		Set replacement = new HashSet();
+		Set<ITool> replacement = new HashSet<ITool>();
 		boolean removable = getReplacementToolInfo(ops, replacement);
 		
 		assertFalse(removable);
@@ -360,14 +350,12 @@ public class ToolChainModificationTests extends TestCase {
 		assertTrue(tm.isProjectTool());
 		
 		ops = tm.getSupportedOperations();
-		replacement = new HashSet();
+		replacement = new HashSet<ITool>();
 		removable = getReplacementToolInfo(ops, replacement);
 		
 		assertFalse(removable);
 		assertFalse(replacement.contains(tool31));
 
-		int tmp = IToolChainModificationManager.OBJECT_CONFIGURATION;
-		
 		project.delete(true, null);
 	}
 }

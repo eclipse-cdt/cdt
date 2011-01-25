@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.managedbuilder.core.tests;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IConfigurationNameProvider;
-import org.eclipse.core.runtime.Platform;
 
 
 public class TestConfigurationNameProvider implements
@@ -34,10 +33,6 @@ public class TestConfigurationNameProvider implements
 			String[] usedConfigurationNames) {
 
 		String configName = configuration.getName();
-
-		// Get the current OS & architecture
-		String os = Platform.getOS();
-		String arch = Platform.getOSArch();
 
 		if (isArrayContains(usedConfigurationNames, configName) == false)
 			return configName;

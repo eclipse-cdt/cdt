@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2008 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,18 +10,25 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.tests;
 
-import java.io.*;
-import java.lang.String;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StreamTokenizer;
 import java.util.ArrayList;
 
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -39,7 +46,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 	 * Return a list of the names of all modules used by a file
 	 */
 	private String[] findUsedModuleNames(File file) {
-		ArrayList names = new ArrayList();
+		ArrayList<String> names = new ArrayList<String>();
 		InputStream in = null;
 		try {
 			in = new BufferedInputStream(new FileInputStream(file));
@@ -72,14 +79,14 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 					in.close();
 				} catch (IOException e) {/*don't care */}
 		}
-		return (String[]) names.toArray(new String[names.size()]);
+		return names.toArray(new String[names.size()]);
 	}
 	
 	/*
 	 * Return a list of the names of all modules defined in a file
 	 */
 	private String[] findModuleNames(File file) {
-		ArrayList names = new ArrayList();
+		ArrayList<String> names = new ArrayList<String>();
 		InputStream in = null;
 		try {
 			in = new BufferedInputStream(new FileInputStream(file));
@@ -112,7 +119,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 					in.close();
 				} catch (IOException e) {/*don't care */}
 		}
-		return (String[]) names.toArray(new String[names.size()]);
+		return names.toArray(new String[names.size()]);
 	}
 
 	/*
@@ -135,7 +142,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 	 */
 	private IResource[] FindModulesInResources(IProject project, ITool tool, IResource resource, IResource[] resourcesToSearch, 
 							String topBuildDir, String[] usedNames) {
-		ArrayList modRes = new ArrayList();
+		ArrayList<IResource> modRes = new ArrayList<IResource>();
 		for (int ir = 0; ir < resourcesToSearch.length; ir++) {
 			if (resourcesToSearch[ir].equals(resource)) continue;
 			if (resourcesToSearch[ir].getType() == IResource.FILE) {
@@ -173,14 +180,14 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 				} catch(Exception e) {}
 			}
 		}		
-		return (IResource[]) modRes.toArray(new IResource[modRes.size()]);
+		return modRes.toArray(new IResource[modRes.size()]);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#findDependencies(org.eclipse.core.resources.IResource)
 	 */
 	public IResource[] findDependencies(IResource resource, IProject project) {
-		ArrayList dependencies = new ArrayList();
+		ArrayList<IResource> dependencies = new ArrayList<IResource>();
 
 		//  TODO:  This method should be passed the ITool and the relative path of the top build directory
 		//         For now we'll figure this out from the project.
@@ -218,7 +225,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 			return null;
 		}
 		
-		return (IResource[]) dependencies.toArray(new IResource[dependencies.size()]);
+		return dependencies.toArray(new IResource[dependencies.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -245,7 +252,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 	 */
 	public IPath[] getOutputNames(ITool tool, IPath[] primaryInputNames) {
 		//  TODO:  This method should be passed the relative path of the top build directory?
-		ArrayList outs = new ArrayList();
+		ArrayList<IPath> outs = new ArrayList<IPath>();
 		if (primaryInputNames.length > 0) {
 			// Get the names of modules created by this source file
 			String[] modules = findModuleNames(primaryInputNames[0].toFile());
@@ -267,7 +274,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 				}
 			}
 		}
-		return (IPath[]) outs.toArray(new IPath[outs.size()]);
+		return outs.toArray(new IPath[outs.size()]);
 	}
 
 }

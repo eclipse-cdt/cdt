@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.CoreModel;
@@ -44,7 +45,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-public class ToolChainModificationTests extends BasicTestCase {
+public class ToolChainModificationTests extends TestCase {
 	private static final String PROJ_NAME_PREFIX="TCM_";
 	
 	public static Test suite() {

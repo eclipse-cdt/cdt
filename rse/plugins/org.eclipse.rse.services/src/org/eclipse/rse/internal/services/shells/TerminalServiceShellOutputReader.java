@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - Added vt100 escape sequence ignoring. 
  * Anna Dushistova  (MontaVista) - adapted from SshShellOutputReader
  * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
+ * Rob Stryker (JBoss) - [335059] TerminalServiceShellOutputReader logs error when hostShell.exit() is called
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.shells;
@@ -35,6 +36,8 @@ import org.eclipse.rse.services.shells.SimpleHostOutput;
 public class TerminalServiceShellOutputReader extends
 		AbstractHostShellOutputReader {
 	protected BufferedReader fReader;
+	private volatile Thread fReaderThread = null;
+	private volatile boolean isCanceled = false;
 	private String fPromptChars = ">$%#]"; //Characters we accept as the end of a prompt //$NON-NLS-1$;
 
 	public TerminalServiceShellOutputReader(IHostShell hostShell,
@@ -50,12 +53,21 @@ public class TerminalServiceShellOutputReader extends
 			//TODO Check if ssh supports some method of having separate stdout and stderr streams
 			return null;
 		}
+		fReaderThread = Thread.currentThread();
+		try {
+			return interruptableReadLine();
+		} finally {
+			fReaderThread = null;
+		}
+	}
+
+	private IHostOutput interruptableReadLine() {
 		StringBuffer theLine = new StringBuffer();
 		StringBuffer theDebugLine = null;
 		theDebugLine = new StringBuffer();
 		int ch;
 		boolean done = false;
-		while (!done && !isFinished()) {
+		while (!done && !isFinished() && !isCanceled) {
 			try {
 				ch = fReader.read();
 				switch (ch) {
@@ -125,9 +137,10 @@ public class TerminalServiceShellOutputReader extends
 					if (len>=0 && fPromptChars.indexOf(theLine.charAt(len))>=0) {
 						waitIncrement = 5; //wait only 5 msec if we think it's a prompt
 					}
-					try {
-						Thread.sleep(waitIncrement);
-					} catch (InterruptedException e) {
+					if (!isCanceled) {
+						try {
+							Thread.sleep(waitIncrement);
+						} catch (InterruptedException e) { /*ignore*/ }
 					}
 					if (!fReader.ready()) {
 						done = true;
@@ -137,7 +150,10 @@ public class TerminalServiceShellOutputReader extends
 				//FIXME it's dangerous to return null here since this will end
 				//our reader thread completely... the exception could just be
 				//temporary, and we should keep running!
-				Activator.getDefault().logException(e);
+				if( !this.isCanceled ) {
+					/* 335059: Don't log IOException on close due to cancellation */
+					Activator.getDefault().logException(e);
+				}
 				return null;
 			}
 		}
@@ -146,5 +162,16 @@ public class TerminalServiceShellOutputReader extends
 			debugLine.compareTo(""); //$NON-NLS-1$
 		}
 		return new SimpleHostOutput(theLine.toString());
+	}
+	
+	/**
+	 * Stop the reader Thread, forcing internalReadLine() to return.
+	 * Does not close the Stream.
+	 */
+	public void stopThread() {
+		this.isCanceled = true;
+		if (fReaderThread != null) {
+			fReaderThread.interrupt();
+		}
 	}
 }

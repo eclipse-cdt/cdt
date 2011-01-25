@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@
  * Anna Dushistova  (MontaVista) - adapted from SshHostShell
  * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
  * Anna Dushistova  (MontaVista) - [258720] SshHostShell fails to run command if initialWorkingDirectory supplied
+ * Rob Stryker (JBoss) - [335059] TerminalServiceShellOutputReader logs error when hostShell.exit() is called
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.shells;
@@ -118,6 +119,12 @@ public class TerminalServiceHostShell extends AbstractHostShell {
 	public void exit() {
 		if (fShellWriter != null) {
 			fShellWriter.stopThread();
+		}
+		if( fStderrHandler != null ) {
+			fStderrHandler.stopThread();
+		}
+		if( fStdoutHandler!= null ) {
+			fStdoutHandler.stopThread();
 		}
 		fTerminalShell.exit();
 	}

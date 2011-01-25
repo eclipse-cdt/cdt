@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,13 +9,14 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Michael Scharf (Wind River) - [240097] Allow paste with the middle mouse button
  * Michael Scharf (Wind River) - [262996] get rid of TerminalState.OPENED
+ * Anton Leherbauer (Wind River) - [335021] Middle mouse button copy/paste does not work with the terminal
  *******************************************************************************/
-/**
- *
- */
 package org.eclipse.tm.internal.terminal.view;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.tm.internal.terminal.control.CommandInputFieldWithHistory;
@@ -46,11 +47,20 @@ class TerminalViewConnection implements ITerminalViewConnection {
 	public TerminalViewConnection(ITerminalViewControl ctl) {
 		fCtlTerminal = ctl;
 		fCtlTerminal.getControl().addMouseListener(new MouseAdapter(){
-			public void mouseUp(MouseEvent e) {
+			public void mouseDown(MouseEvent e) {
 				// paste when the middle button is clicked
-				if(e.button==2) // middle button
-					fCtlTerminal.paste();
-			}});
+				if (e.button == 2) { // middle button
+					int clipboardType = DND.SELECTION_CLIPBOARD;
+					Clipboard clipboard = fCtlTerminal.getClipboard();
+					if (clipboard.getAvailableTypes(clipboardType).length == 0)
+						// use normal clipboard if selection clipboard is not available
+						clipboardType = DND.CLIPBOARD;
+					String text = (String) clipboard.getContents(TextTransfer.getInstance(), clipboardType);
+					if (text != null && text.length() > 0)
+						fCtlTerminal.pasteString(text);
+				}
+			}
+		});
 	}
 
 	/* (non-Javadoc)

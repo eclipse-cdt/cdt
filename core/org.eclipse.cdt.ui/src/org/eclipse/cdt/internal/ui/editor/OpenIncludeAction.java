@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -201,7 +201,7 @@ public class OpenIncludeAction extends Action {
 		// in case it is an absolute path
 		IPath includeFile= new Path(name);		
 		if (includeFile.isAbsolute()) {
-			includeFile = PathUtil.getCanonicalPath(includeFile);
+			includeFile = PathUtil.getCanonicalPathWindows(includeFile);
 			if (includeFile.toFile().exists()) {
 				list.add(includeFile);
 				return;
@@ -209,7 +209,7 @@ public class OpenIncludeAction extends Action {
 		}
 		HashSet<IPath> foundSet = new HashSet<IPath>();
 		for (String includePath : includePaths) {
-			IPath path = PathUtil.getCanonicalPath(new Path(includePath).append(includeFile));
+			IPath path = PathUtil.getCanonicalPathWindows(new Path(includePath).append(includeFile));
 			File file = path.toFile();
 			if (file.exists()) {
 				IPath[] paths = resolveIncludeLink(path);

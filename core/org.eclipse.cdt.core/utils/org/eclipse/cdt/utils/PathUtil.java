@@ -51,14 +51,12 @@ public class PathUtil {
 	}
 
 	/**
-	 * On Windows discover the {@link java.io.File#getCanonicalPath()} for
-	 * a given absolute path.
-	 * On other platforms, and for relative paths returns the passed in fullPath
+	 * Return the canonical path (or the passed in path, if one couldn't be found).
 	 * @param fullPath
 	 * @return canonicalized IPath or passed in fullPath.
 	 */
 	public static IPath getCanonicalPath(IPath fullPath) {
-		if (!WINDOWS || !fullPath.isAbsolute())
+		if (!fullPath.isAbsolute())
 			return fullPath;
 		
 	    File file = fullPath.toFile();
@@ -71,6 +69,20 @@ public class PathUtil {
 		} catch (IOException ex) {
 		}
 		return fullPath;
+	}
+
+	/**
+	 * On Windows discover the {@link java.io.File#getCanonicalPath()} for
+	 * a given absolute path.
+	 * On other platforms, and for relative paths returns the passed in fullPath
+	 * @param fullPath
+	 * @return canonicalized IPath or passed in fullPath.
+	 * @since 5.3
+	 */
+	public static IPath getCanonicalPathWindows(IPath fullPath) {
+		if (!WINDOWS)
+			return fullPath;
+		return getCanonicalPath(fullPath);
 	}
 
 	public static IPath getWorkspaceRelativePath(IPath fullPath) {

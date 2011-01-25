@@ -711,6 +711,8 @@ public class PathEntryTranslator {
 
 							result[0][i] = new Path(projName);
 							result[1][i] = valuePath;
+						} else if(pathVarPath.isRoot()){
+							result[1][i] = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 						}
 					}
 				} else {

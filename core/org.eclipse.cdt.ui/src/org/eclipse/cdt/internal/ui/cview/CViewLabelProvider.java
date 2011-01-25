@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.cdt.core.model.ICElement;
@@ -27,6 +28,8 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.corext.util.Strings;
 
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
@@ -62,7 +65,9 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 						}
 					}
 				}
-				return containers[0].getFullPath().makeRelative().toString();
+				IPath p = containers[0].getFullPath();
+				p = (p.isRoot()) ? uriPathLocation : p.makeRelative();
+				return decorateText(p.toString(), element);
 			}
 		} else if (element instanceof IIncludeReference) {
 			IIncludeReference ref = (IIncludeReference)element;
@@ -74,7 +79,7 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 					p = p.setDevice(null);
 					p = p.removeFirstSegments(parentLocation.segmentCount());
 				}
-				return p.toString();
+				return decorateText(p.toString(), element);
 			}
 		} else if (element instanceof ITranslationUnit) {
 			ITranslationUnit unit = (ITranslationUnit)element;
@@ -86,10 +91,15 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 					p = p.setDevice(null);
 					p = p.removeFirstSegments(parentLocation.segmentCount());
 				}
-				return p.toString();
+				return decorateText(p.toString(), element);
 			}			
 		}
 		return super.getText(element);
+	}
+	
+	@Override
+	public StyledString getStyledText(Object element) {
+		return Strings.markLTR(new StyledString(getText(element)));								
 	}
 
 	/* (non-Javadoc)

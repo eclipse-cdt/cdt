@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     James Blackbrun (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
@@ -17,9 +18,9 @@ import org.eclipse.cdt.internal.ui.wizards.ICDTCommonProjectWizard;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIImages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -211,7 +212,13 @@ public class CDTConfigWizardPage extends WizardPage {
 			if (cfgs == null) return null;
 
 			for (int j=0; j<cfgs.length; j++) {
-				if (cfgs[j].isSystem() || (handler.supportedOnly() && !cfgs[j].isSupported())) continue;
+				if (cfgs[j].isSystem() || (handler.supportedOnly() && !cfgs[j].isSupported())
+						// Bug 335338 don't include project type configurations if we're not creating a project-typed project
+						//            Project types are non-default if their nameAttribute != "" (see: ManagedBuildWizard: "old style project types")  
+						|| (pt == null && cfgs[j].getConfiguration() != null && 
+								          cfgs[j].getConfiguration().getProjectType() != null && 
+										  cfgs[j].getConfiguration().getProjectType().getNameAttribute().length() > 0)) 
+					continue;
 				out.add(cfgs[j]);
 			}
 		}

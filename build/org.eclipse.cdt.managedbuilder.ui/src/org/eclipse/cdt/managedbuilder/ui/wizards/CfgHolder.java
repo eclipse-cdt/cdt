@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
@@ -67,10 +68,9 @@ public class CfgHolder {
 	/**
 	 * Checks whether names are unique
 	 * 
-	 * @param its
-	 * @return
+	 * @param its array of CfgHolders
+	 * @return boolean if CfgHolder name appears more than once
 	 */
-	
     public static boolean hasDoubles(CfgHolder[] its) {
    		for (int i=0; i<its.length; i++) {
        		String s = its[i].name;
@@ -84,11 +84,11 @@ public class CfgHolder {
     }
 
     /**
-     * Creates array of holders on a basis
-     * of configurations array.
+     * Creates array of {@link CfgHolder}s based on the passed in
+     * {@link IConfiguration}s
      * 
-     * @param cfgs
-     * @return
+     * @param cfgs {@link IConfiguration}s to turn to CfgHolders
+     * @return CfgHolder[]
      */
     public static CfgHolder[] cfgs2items(IConfiguration[] cfgs) {
     	CfgHolder[] its = new CfgHolder[cfgs.length];
@@ -216,9 +216,16 @@ public class CfgHolder {
     		return tc.getParent();
     	return null;
     }
-    
-    
-	public Object getConfiguration() { return cfg; }
+
+	/**
+	 * @return the IConfiguration stored in this holder.
+	 * @since 8.0
+	 */
+	public IConfiguration getConfiguration() { return cfg; }
 	public String getName() { return name; }
-	public Object getToolChain() { return tc; }
+	/**
+	 * @return the IToolchain stored in this holder
+	 * @since 8.0
+	 */
+	public IToolChain getToolChain() { return tc; }
 }

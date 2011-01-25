@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Ed Swartz (Nokia)
  *     Sergey Prigogin (Google)
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
@@ -34,12 +35,13 @@ import org.eclipse.core.runtime.Platform;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class PathUtil {
-	
+	/** Detect whether we're running on Windows (as IPath does) */
+	private static final boolean WINDOWS = java.io.File.separatorChar == '\\';
+
 	public static boolean isWindowsFileSystem() {
-		String os = System.getProperty("os.name"); //$NON-NLS-1$
-		return (os != null && os.startsWith("Win")); //$NON-NLS-1$
+		return WINDOWS;
 	}
-	
+
 	public static IWorkspaceRoot getWorkspaceRoot() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		if (workspace != null) {
@@ -47,9 +49,16 @@ public class PathUtil {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * On Windows discover the {@link java.io.File#getCanonicalPath()} for
+	 * a given absolute path.
+	 * On other platforms, and for relative paths returns the passed in fullPath
+	 * @param fullPath
+	 * @return canonicalized IPath or passed in fullPath.
+	 */
 	public static IPath getCanonicalPath(IPath fullPath) {
-		if (!fullPath.isAbsolute())
+		if (!WINDOWS || !fullPath.isAbsolute())
 			return fullPath;
 		
 	    File file = fullPath.toFile();

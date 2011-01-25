@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 QNX Software Systems and others.
+ * Copyright (c) 2005, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,12 +9,13 @@
  *     Doug Schaefer (QNX) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.internal.core.index.composite.CompositeIndexBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
@@ -25,7 +26,6 @@ import org.eclipse.core.runtime.CoreException;
  * This class managed the parent pointer.
  */
 public abstract class PDOMNode implements IInternalPDOMNode {
-
 	private static final int TYPE = 0;
 	private static final int PARENT = 4;
 	
@@ -58,7 +58,7 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 		record = db.malloc(getRecordSize());
 		db.putInt(record + TYPE, getNodeType());
 		
-		cachedParentRecord= parentRec;
+		cachedParentRecord = parentRec;
 		db.putRecPtr(record + PARENT, parentRec);
 	}
 
@@ -75,9 +75,9 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	}
 
 	protected abstract int getRecordSize();
+
 	public abstract int getNodeType();
-	
-	
+
 	public final long getRecord() {
 		return record;
 	}
@@ -103,8 +103,12 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	public final boolean equals(Object obj) {
 		if (obj == this)
 			return true;
+		// For symmetry with CompositeIndexBinding.equals(Object)
+		if (obj instanceof CompositeIndexBinding) {
+			obj = ((CompositeIndexBinding) obj).getRawBinding();
+		}
 		if (obj instanceof PDOMNode) {
-			PDOMNode other = (PDOMNode)obj;
+			PDOMNode other = (PDOMNode) obj;
 			return getPDOM() == other.getPDOM() && record == other.record;
 		}
 		
@@ -113,7 +117,7 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 
 	@Override
 	public final int hashCode() {
-		return System.identityHashCode(getPDOM()) + (int)(41*record);
+		return System.identityHashCode(getPDOM()) + (int) (41 * record);
 	}
 
 	public void accept(IPDOMVisitor visitor) throws CoreException {
@@ -148,8 +152,7 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	protected byte getByte(long offset) {
 		try {
 			return getDB().getByte(offset);
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return 0;
 		}
@@ -161,9 +164,9 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	 * @param offset The position of the desired bit.
 	 * @return the bit at the specified offset.
 	 */
-	protected boolean getBit(int bitVector, int offset) {
+	protected static boolean getBit(int bitVector, int offset) {
 		int mask = 1 << offset;
-		return (bitVector & mask) == mask;
+		return (bitVector & mask) != 0;
 	}
 
 	/**

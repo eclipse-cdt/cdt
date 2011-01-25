@@ -28,28 +28,28 @@ import org.eclipse.core.resources.IWorkspace;
  * 
  * */
 public class ManagedBuildEnvironmentTests extends TestCase {
-	final private String REQUIRED_TYPE = "cdt.managedbuild.target.testgnu.exe"; //$NON-NLS-1$
+//	final private String REQUIRED_TYPE = "cdt.managedbuild.target.testgnu.exe"; //$NON-NLS-1$
     // test variable names
 	final private String NAME_CWD  = "CWD";    //$NON-NLS-1$
 	final private String NAME_PWD  = "PWD";    //$NON-NLS-1$
-	final private String NAME_CMN  = "COMMON"; //$NON-NLS-1$
-	final private String NAME_WSP  = "WSP";    //$NON-NLS-1$
-	final private String NAME_PRJI = "PRJI";   //$NON-NLS-1$
-	final private String NAME_PRJL = "PRJL";   //$NON-NLS-1$
-	final private String NAME_CFGI = "CFGI";   //$NON-NLS-1$
-	final private String NAME_CFGL = "CFGL";   //$NON-NLS-1$
-	final private String NAME_CFGX = "CFGX";   //$NON-NLS-1$
-	final private String NAME_CFG  = "CFG";    //$NON-NLS-1$
-	final private String NAME_REM1 = "REMTST1";//$NON-NLS-1$
-	final private String NAME_REM2 = "REMTST2";//$NON-NLS-1$
+//	final private String NAME_CMN  = "COMMON"; //$NON-NLS-1$
+//	final private String NAME_WSP  = "WSP";    //$NON-NLS-1$
+//	final private String NAME_PRJI = "PRJI";   //$NON-NLS-1$
+//	final private String NAME_PRJL = "PRJL";   //$NON-NLS-1$
+//	final private String NAME_CFGI = "CFGI";   //$NON-NLS-1$
+//	final private String NAME_CFGL = "CFGL";   //$NON-NLS-1$
+//	final private String NAME_CFGX = "CFGX";   //$NON-NLS-1$
+//	final private String NAME_CFG  = "CFG";    //$NON-NLS-1$
+//	final private String NAME_REM1 = "REMTST1";//$NON-NLS-1$
+//	final private String NAME_REM2 = "REMTST2";//$NON-NLS-1$
     // test variable values
 	final private String VAL_CWDPWD = "CWD_&_PWD_should not be changed";    //$NON-NLS-1$
-	final private String VAL_DUMMY1  = "/a/b/c";         //$NON-NLS-1$
-	final private String VAL_DUMMY2  = "/d/e/f";         //$NON-NLS-1$  
+//	final private String VAL_DUMMY1  = "/a/b/c";         //$NON-NLS-1$
+//	final private String VAL_DUMMY2  = "/d/e/f";         //$NON-NLS-1$  
 	final private String VAL_PRO_INC = "/project/inc";   //$NON-NLS-1$
 	final private String VAL_PRO_LIB = "/project/lib";   //$NON-NLS-1$
 	
-	final private String LISTENER_DATA = "O1T1O1O2T2T1O1T1O2T2"; //$NON-NLS-1$
+//	final private String LISTENER_DATA = "O1T1O1O2T2T1O1T1O2T2"; //$NON-NLS-1$
 	
 	// delimiters
 	final private String DEL_WIN  = ";"; //$NON-NLS-1$
@@ -534,41 +534,41 @@ public class ManagedBuildEnvironmentTests extends TestCase {
 	/*
 	 * Print contents of env.var array, with given header.
 	 */
-	private void printVar(String head, IBuildEnvironmentVariable[] vars) {
-		if (vars != null) {
-			if (vars.length > 0) {
-				for (int i=0; i < vars.length; i++) {
-					System.out.println(head + "[" + i + "] " +  //$NON-NLS-1$ //$NON-NLS-2$ 
-							vars[i].getName() + " = " +         //$NON-NLS-1$
-							vars[i].getValue() + " / " +        //$NON-NLS-1$
-							vars[i].getOperation() + vars[i].getDelimiter());
-				}
-			} else { System.out.println(head + ": array is empty");	} //$NON-NLS-1$
-		} else { System.out.println(head + ": array is null"); } //$NON-NLS-1$
-	}
+//	private void printVar(String head, IBuildEnvironmentVariable[] vars) {
+//		if (vars != null) {
+//			if (vars.length > 0) {
+//				for (int i=0; i < vars.length; i++) {
+//					System.out.println(head + "[" + i + "] " +  //$NON-NLS-1$ //$NON-NLS-2$ 
+//							vars[i].getName() + " = " +         //$NON-NLS-1$
+//							vars[i].getValue() + " / " +        //$NON-NLS-1$
+//							vars[i].getOperation() + vars[i].getDelimiter());
+//				}
+//			} else { System.out.println(head + ": array is empty");	} //$NON-NLS-1$
+//		} else { System.out.println(head + ": array is null"); } //$NON-NLS-1$
+//	}
 
 	/*
 	 * check that ALL variables from list "a" have correspondence 
 	 * in list "b"
 	 * empty list or null are treated as corresponding to anything
 	 */
-	private boolean varListContainNames(IBuildEnvironmentVariable[] a, IBuildEnvironmentVariable[] b) {
-		if (a == null) return true;
-		else if (a.length == 0) return true;
-		else if (b == null) return false;
-		
-		for (int i=0; i<a.length; i++) {
-			boolean found = false;
-			for (int j=0; j<b.length; j++) {
-				if (a[i].getName().equals(b[j].getName())) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) return false;
-		}	
-		return true;
-	}
+//	private boolean varListContainNames(IBuildEnvironmentVariable[] a, IBuildEnvironmentVariable[] b) {
+//		if (a == null) return true;
+//		else if (a.length == 0) return true;
+//		else if (b == null) return false;
+//		
+//		for (int i=0; i<a.length; i++) {
+//			boolean found = false;
+//			for (int j=0; j<b.length; j++) {
+//				if (a[i].getName().equals(b[j].getName())) {
+//					found = true;
+//					break;
+//				}
+//			}
+//			if (!found) return false;
+//		}	
+//		return true;
+//	}
 	
 	/**
 	 * 

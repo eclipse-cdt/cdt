@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import junit.framework.Assert;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -76,7 +75,7 @@ public class BuildSystemTestHelper {
 			Configuration config = new Configuration(mProj, (Configuration)cfgs[i], id, false, true, false);
 			CConfigurationData data = config.getConfigurationData();
 			Assert.assertNotNull("data is null for created configuration", data);
-			ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+			des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 		}
 		coreModel.setProjectDescription(project, des);
 		return project;
@@ -123,9 +122,9 @@ public class BuildSystemTestHelper {
 	}
 	
 	static public void checkDiff(Object[] arr1, Object[] arr2){
-		LinkedHashSet set1 = new LinkedHashSet(Arrays.asList(arr1));
-		LinkedHashSet set2 = new LinkedHashSet(Arrays.asList(arr2));
-		LinkedHashSet set1Copy = new LinkedHashSet(set1);
+		LinkedHashSet<? extends Object> set1 = new LinkedHashSet<Object>(Arrays.asList(arr1));
+		LinkedHashSet<? extends Object> set2 = new LinkedHashSet<Object>(Arrays.asList(arr2));
+		LinkedHashSet<? extends Object> set1Copy = new LinkedHashSet<Object>(set1);
 		set1.removeAll(set2);
 		set2.removeAll(set1Copy);
 
@@ -141,7 +140,7 @@ public class BuildSystemTestHelper {
 		}
 	}
 
-	static public String collectionToString(Collection c){
+	static public String collectionToString(Collection<? extends Object> c){
 		return arrayToString(c.toArray());
 	}
 

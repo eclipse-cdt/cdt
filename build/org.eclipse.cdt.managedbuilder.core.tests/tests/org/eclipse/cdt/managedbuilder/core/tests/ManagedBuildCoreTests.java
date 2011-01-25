@@ -107,7 +107,6 @@ public class ManagedBuildCoreTests extends TestCase {
 		int expecectedNumTools = 5;
 		int numOrderCCompilerTool = 0;
 		int expecectedCNature = ITool.FILTER_C;
-		int expecectedCCNature = ITool.FILTER_CC;
 				
 		// Check project attributes
 		//
@@ -207,7 +206,6 @@ public class ManagedBuildCoreTests extends TestCase {
 		     String optionEnumCmd1 = option.getEnumCommand(optionDefaultValue);
 		     assertEquals(optionEnumCmd1, (expectedOptionEnumCmd1arr[iconfig]));		     
 		     List<String> expectedEnumList1arr = new ArrayList<String>();
-		     String enumValues[] = option.getApplicableValues();
 		     String[] expectedEnumList1Tokens = expectedEnumList1.split(","); //$NON-NLS-1$
 			 for (i = 0; i < expectedEnumList1Tokens.length; ++i) {
 			 	expectedEnumList1arr.add(expectedEnumList1Tokens[i].trim());
@@ -286,7 +284,6 @@ public class ManagedBuildCoreTests extends TestCase {
 		int expecectedNumTools = 5;
 		int numOrderCLinkerTool = 2;
 		int expecectedCNature = ITool.FILTER_C;
-		int expecectedCCNature = ITool.FILTER_CC;
 				
 		// Check project attributes
 		//
@@ -378,7 +375,6 @@ public class ManagedBuildCoreTests extends TestCase {
 		     //
 		     option = tool.getOptionById(OptionId1A);		     		     
 		     assertTrue(option.isExtensionElement());
-		     String optionDefaultValue = (String)option.getDefaultValue();		     
 		     assertEquals(option.getValueType(), (IOption.LIBRARIES));		     	   
 		     assertEquals(option.getCommand(), (expectedOptionCmd1Aarr));
 		     assertEquals(option.getBrowseType(), (IOption.BROWSE_FILE));
@@ -387,7 +383,6 @@ public class ManagedBuildCoreTests extends TestCase {
 		     //
 		     option = tool.getOptionById(OptionId1B);		     		     
 		     assertTrue(option.isExtensionElement());
-		     optionDefaultValue = (String)option.getDefaultValue();		     
 		     assertEquals(option.getValueType(), (IOption.STRING_LIST));		     	   
 		     assertEquals(option.getCommand(), (expectedOptionCmd1Barr));
 		     assertEquals(option.getBrowseType(), (IOption.BROWSE_DIR));
@@ -396,7 +391,6 @@ public class ManagedBuildCoreTests extends TestCase {
 		     //
 		     option = tool.getOptionById(OptionId1C);		     		     
 		     assertTrue(option.isExtensionElement());
-		     optionDefaultValue = (String)option.getDefaultValue();		     
 		     assertEquals(option.getValueType(), (IOption.OBJECTS));		     	   
 		     assertEquals(option.getBrowseType(), (IOption.BROWSE_FILE));
 	
@@ -480,7 +474,6 @@ public class ManagedBuildCoreTests extends TestCase {
 	    boolean expectedOptionIdValue3 = false;	    
 		int expecectedNumTools = 4;
 		int numOrderCppCompilerTool = 1;		
-		int expecectedCNature = ITool.FILTER_C;
 		int expecectedCCNature = ITool.FILTER_CC;
 				
 		// Check project attributes
@@ -580,7 +573,6 @@ public class ManagedBuildCoreTests extends TestCase {
 		     assertEquals(optionEnumCmd1, (expectedOptionEnumCmd1arr[iconfig]));
 		     
 		     List<String> expectedEnumList1arr = new ArrayList<String>();
-		     String enumValues[] = option.getApplicableValues();
 		     String[] expectedEnumList1Tokens = expectedEnumList1.split(","); //$NON-NLS-1$
 			 for (i = 0; i < expectedEnumList1Tokens.length; ++i) {
 			 	expectedEnumList1arr.add(expectedEnumList1Tokens[i].trim());

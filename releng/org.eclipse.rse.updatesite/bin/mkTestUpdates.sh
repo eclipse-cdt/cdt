@@ -528,8 +528,8 @@ if [ x${DO_CATEGORIES} = x1 ]; then
   echo "Adding Categories..."
   CMD="java -jar ${tgtlauncher} \
     -application org.eclipse.equinox.p2.publisher.CategoryPublisher \
-    -metadataRepository file:${SITE} \
-    -categoryDefinition file:/${SITE}/category.xml \
+    -metadataRepository file:${SITE}/ \
+    -categoryDefinition file:${SITE}/category.xml \
     -compress"
   echo $CMD
   $CMD

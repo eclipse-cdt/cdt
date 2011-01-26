@@ -130,10 +130,6 @@ public class Conversions {
 					// ... and "cv1 T1" is reference-compatible with "cv2 T2" 
 					Cost cost= isReferenceCompatible(cv1T1, cv2T2, isImpliedObject);
 					if (cost != null) {
-						// [13.3.3.1.4-1] direct binding has either identity or conversion rank.					
-						if (cost.getInheritanceDistance() > 0) {
-							cost.setRank(Rank.CONVERSION);
-						} 
 						cost.setReferenceBinding(refBindingType);
 						return cost;
 					} 
@@ -237,7 +233,7 @@ public class Conversions {
 			// 13.3.3.1.7 no temporary object when converting the implicit object parameter
 			if (!isImpliedObject && ctx != Context.REQUIRE_DIRECT_BINDING) {
 				if (isReferenceRelated(T1, T2) < 0 || compareQualifications(cv1T1, cv2T2) >= 0) {
-					Cost cost= nonReferenceConversion(valueCat, cv2T2, T1, udc, false);
+					Cost cost= nonReferenceConversion(valueCat, cv2T2, T1, udc);
 					if (cost.converts()) {
 						cost.setReferenceBinding(refBindingType);
 					}
@@ -248,7 +244,7 @@ public class Conversions {
 		} 
 		
 		// Non-reference binding
-		return nonReferenceConversion(valueCat, exprType, T1, udc, isImpliedObject);
+		return nonReferenceConversion(valueCat, exprType, T1, udc);
 	}
 
 	/**
@@ -301,7 +297,7 @@ public class Conversions {
 	/**
 	 * 8.5-16
 	 */
-	private static Cost nonReferenceConversion(ValueCategory valueCat, IType source, IType target, UDCMode udc, boolean isImpliedObject) throws DOMException {
+	private static Cost nonReferenceConversion(ValueCategory valueCat, IType source, IType target, UDCMode udc) throws DOMException {
 		if (source instanceof InitializerListType) {
 			return listInitializationSequence(((InitializerListType) source), target, udc, false);
 		}
@@ -334,7 +330,7 @@ public class Conversions {
 			return initializationByConversion(valueCat, source, (ICPPClassType) uqSource, target, udc == UDCMode.DEFER);
 		}
 
-		return checkStandardConversionSequence(uqSource, target, isImpliedObject);
+		return checkStandardConversionSequence(uqSource, target);
 	}
 
 	/**
@@ -496,25 +492,24 @@ public class Conversions {
 		if (cmp < 0)
 			return null;
 		
-		// 7.3.3.13 for overload resolution the implicit this pointer is treated as if 
-		// it were a pointer to the derived class
-		if (isImpliedObject) 
-			inheritanceDist= 0;
-
 		Cost cost= new Cost(cv2Source, cv1Target, Rank.IDENTITY);
 		cost.setQualificationAdjustment(cmp);
-		cost.setInheritanceDistance(inheritanceDist);
+		if (inheritanceDist > 0) {
+			cost.setInheritanceDistance(inheritanceDist);
+			cost.setRank(Rank.CONVERSION);
+		}
+
+		if (isImpliedObject) {
+			cost.setImpliedObject();
+		}
 		return cost;
 	}
 	
 	/**
 	 * [4] Standard Conversions
 	 * Computes the cost of using the standard conversion sequence from source to target.
-	 * @param isImplicitThis handles the special case when members of different
-	 *    classes are nominated via using-declarations. In such a situation the derived to
-	 *    base conversion does not cause any costs.
 	 */
-	private static final Cost checkStandardConversionSequence(IType source, IType target, boolean isImplicitThis) {
+	private static final Cost checkStandardConversionSequence(IType source, IType target) {
 		final Cost cost= new Cost(source, target, Rank.IDENTITY);
 		if (lvalue_to_rvalue(cost))
 			return cost;
@@ -522,7 +517,7 @@ public class Conversions {
 		if (promotion(cost))
 			return cost;
 		
-		if (conversion(cost, isImplicitThis)) 
+		if (conversion(cost)) 
 			return cost;
 
 		if (qualificationConversion(cost))
@@ -1016,7 +1011,7 @@ public class Conversions {
 	 * [4.10] Pointer conversions
 	 * [4.11] Pointer to member conversions
 	 */
-	private static final boolean conversion(Cost cost, boolean forImplicitThis){
+	private static final boolean conversion(Cost cost){
 		final IType s = cost.source;
 		final IType t = cost.target;
 
@@ -1084,10 +1079,8 @@ public class Conversions {
 							return true;
 						}
 						if (depth > 0) {
-							if (!forImplicitThis) {
-								cost.setRank(Rank.CONVERSION);
-								cost.setInheritanceDistance(depth);
-							}
+							cost.setRank(Rank.CONVERSION);
+							cost.setInheritanceDistance(depth);
 							CVQualifier cv= getCVQualifier(srcPtr.getType());
 							cost.source= new CPPPointerType(addQualifiers(tgtPtrTgt, cv.isConst(), cv.isVolatile(), cv.isRestrict()));
 						}

@@ -2560,13 +2560,17 @@ public class CPPSemantics {
 					(((ICPPMethod) fn).isDestructor() || ASTInternal.isStatic(fn, false))) {
 			    // 13.3.1-4 for static member functions, the implicit object parameter always matches, no cost
 			    cost = new Cost(impliedObjectType, implicitParameterType, Rank.IDENTITY);
+			    cost.setImpliedObject();
 			} else if (impliedObjectType == null) {
 				return null;
 			} else if (impliedObjectType.isSameType(implicitParameterType)) {
 				cost = new Cost(impliedObjectType, implicitParameterType, Rank.IDENTITY);
+				cost.setImpliedObject();
 			} else {
 				cost = Conversions.checkImplicitConversionSequence(implicitParameterType, impliedObjectType, sourceIsLValue, UDCMode.FORBIDDEN, Context.IMPLICIT_OBJECT);
-			    if (!cost.converts()) {
+				if (cost.converts()) {
+					cost.setImpliedObject();
+				} else {
 				    if (CPPTemplates.isDependentType(implicitParameterType) || CPPTemplates.isDependentType(impliedObjectType)) {
 				    	IType s= getNestedType(impliedObjectType, TDEF|REF|CVTYPE);
 				    	IType t= getNestedType(implicitParameterType, TDEF|REF|CVTYPE);

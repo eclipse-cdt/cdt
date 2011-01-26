@@ -89,6 +89,7 @@ public class Cost {
 	private DeferredUDC fDeferredUDC= DeferredUDC.NONE;
 	private int fQualificationAdjustments;
 	private int fInheritanceDistance;
+	private boolean fImpliedObject;
 	private ICPPFunction fUserDefinedConversion;
 	private ReferenceBinding fReferenceBinding;
 
@@ -175,12 +176,25 @@ public class Cost {
 		// cannot compare costs with deferred user defined conversions
 		assert fDeferredUDC == DeferredUDC.NONE && other.fDeferredUDC == DeferredUDC.NONE;
 
-		int cmp= fRank.compareTo(other.fRank);
+		// 7.3.3.13 (using declarations in classes):
+		// for overload resolution the implicit this pointer 
+		// is treated as if it were a pointer to the derived class
+		final boolean ignoreInheritanceDist= fImpliedObject && other.fImpliedObject;
+		Rank rank = fRank;
+		Rank otherRank = other.fRank;
+		if (ignoreInheritanceDist) {
+			if (rank == Rank.CONVERSION)
+				rank= Rank.IDENTITY;
+			if (otherRank == Rank.CONVERSION)
+				otherRank= Rank.IDENTITY;
+		}
+
+		int cmp= rank.compareTo(otherRank);
 		if (cmp != 0) 
 			return cmp;
 		
 		// rank is equal
-		if (fRank == Rank.USER_DEFINED_CONVERSION) {
+		if (rank == Rank.USER_DEFINED_CONVERSION) {
 			// 13.3.3.1.10
 			if (isAmbiguousUDC() || other.isAmbiguousUDC())
 				return 0;
@@ -195,9 +209,11 @@ public class Cost {
 				return cmp;
 		}
 		
-		cmp= fInheritanceDistance - other.fInheritanceDistance;
-		if (cmp != 0)
-			return cmp;
+		if (!ignoreInheritanceDist) {
+			cmp= fInheritanceDistance - other.fInheritanceDistance;
+			if (cmp != 0)
+				return cmp;
+		}
 
 		if (fReferenceBinding == ReferenceBinding.LVALUE_REF) {
 			if (other.fReferenceBinding == ReferenceBinding.RVALUE_REF_BINDS_RVALUE)
@@ -290,5 +306,9 @@ public class Cost {
 	
 	public ICPPFunction getSelectedFunction() {
 		return fSelectedFunction;
+	}
+
+	public void setImpliedObject() {
+		fImpliedObject= true;
 	}
 }

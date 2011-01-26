@@ -9345,4 +9345,21 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testOverloadedCommaOpWithConstClassRef_334955() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct OK {int ok;};
+	//	struct NOK {};
+	//
+	//	template<typename T> struct bos {
+	//	  NOK operator<<(const void*);
+	//	};
+	//	template <typename T> struct os : bos<T> {};
+	//	OK operator<<(bos<char>&, const char*);
+	//
+	//	void test() {
+	//	  os<char> ss;
+	//	  (ss << "").ok;
+	//	}
+	public void testOverloadedOperatorWithInheritanceDistance_335387() throws Exception {
+		parseAndCheckBindings();
+	}
 }

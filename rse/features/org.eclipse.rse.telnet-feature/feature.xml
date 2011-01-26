@@ -46,8 +46,8 @@
 
    <plugin
          id="org.apache.commons.net"
-         download-size="73"
-         install-size="208"
+         download-size="82"
+         install-size="228"
          version="0.0.0"
          unpack="false"/>
 

@@ -510,6 +510,19 @@ if [ x${DO_STATS} = x1 ]; then
   echo "result: ${result}"
 fi
 
+if [ x${DO_CATEGORIES} = x1 ]; then
+  echo "Adding Categories..."
+  CMD="java -jar ${tgtlauncher} \
+    -application org.eclipse.equinox.p2.publisher.CategoryPublisher \
+    -metadataRepository file:${SITE} \
+    -categoryDefinition file:${SITE}/category.xml \
+    -compress"
+  echo $CMD
+  $CMD
+  result=$?
+  echo "result: ${result}"
+fi
+
 echo "Creating P2 metadata (no download stats)..."
 java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -application org.eclipse.equinox.p2.metadata.generator.EclipseGenerator \
@@ -523,19 +536,6 @@ java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -reusePack200Files \
     -noDefaultIUs \
     -vmargs -Xmx256M
-
-if [ x${DO_CATEGORIES} = x1 ]; then
-  echo "Adding Categories..."
-  CMD="java -jar ${tgtlauncher} \
-    -application org.eclipse.equinox.p2.publisher.CategoryPublisher \
-    -metadataRepository file:${SITE} \
-    -categoryDefinition file:${SITE}/category.xml \
-    -compress"
-  echo $CMD
-  $CMD
-  result=$?
-  echo "result: ${result}"
-fi
 
 cd $SITE
 chgrp -R tools.tm .

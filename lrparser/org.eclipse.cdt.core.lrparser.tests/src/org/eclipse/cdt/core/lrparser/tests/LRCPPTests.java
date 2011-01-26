@@ -70,6 +70,9 @@ public class LRCPPTests extends AST2CPPTests {
 	@Override
 	public void testScopedEnums_305975g() throws Exception {}
 	
+	@Override
+	public void testBug332114a() throws Exception {}
+	
 	//unicode character type
 	@Override
 	public void testNewCharacterTypes_305976() throws Exception {}
@@ -83,6 +86,9 @@ public class LRCPPTests extends AST2CPPTests {
 	public void testAutoType_305987() throws Exception {}
 	@Override
 	public void testNewFunctionDeclaratorSyntax_305972() throws Exception {}
+	
+	@Override
+	public void testBug332114b() throws Exception {}
 	
 	//DeclType
 	@Override

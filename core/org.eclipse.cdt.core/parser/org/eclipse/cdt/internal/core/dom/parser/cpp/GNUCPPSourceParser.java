@@ -2142,7 +2142,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 
         if (insertSemi) {
-    		IASTProblem problem= createProblem(IProblem.SYNTAX_ERROR, endOffset, 0);
+    		IASTProblem problem= createProblem(IProblem.MISSING_SEMICOLON, endOffset-1, 1);
     		throwBacktrack(problem, simpleDeclaration);
         }
         return simpleDeclaration;

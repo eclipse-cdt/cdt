@@ -184,6 +184,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected IToken declarationMark;
     protected IToken nextToken;
+    protected IToken lastToken;
     protected IToken lastTokenFromScanner;
 
     protected boolean isCancelled = false;
@@ -1866,7 +1867,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         	if (foundSemicolon)
         		return expressionStatement;
         	
-        	throwBacktrack(createProblem(IProblem.SYNTAX_ERROR, calculateEndOffset(expressionStatement), 0), expressionStatement);
+        	throwBacktrack(createProblem(IProblem.MISSING_SEMICOLON, calculateEndOffset(expressionStatement)-1, 1), expressionStatement);
         	return null; // Hint for java-compiler
         }
 

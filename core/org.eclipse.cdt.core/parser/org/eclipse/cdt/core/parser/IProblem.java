@@ -327,6 +327,13 @@ public interface IProblem
 	 * Syntax error, detected by the parser.
 	 */
 	public final static int SYNTAX_ERROR = SYNTAX_RELATED | 0x001;
+	
+	/**
+	 * Missing semicolon.
+	 * @since 5.3
+	 */
+	public final static int MISSING_SEMICOLON = SYNTAX_RELATED | 0x002;
+	
 
 	
 	@Deprecated

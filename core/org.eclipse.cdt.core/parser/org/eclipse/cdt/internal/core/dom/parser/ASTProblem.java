@@ -168,6 +168,8 @@ public class ASTProblem extends ASTNode implements IASTProblem {
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badCharacter")); //$NON-NLS-1$
     	errorMessages.put(new Integer(SYNTAX_ERROR), 
     			ParserMessages.getString("ParserProblemFactory.error.syntax.syntaxError")); //$NON-NLS-1$
+    	errorMessages.put(new Integer(MISSING_SEMICOLON), 
+    			ParserMessages.getString("ParserProblemFactory.error.syntax.missingSemicolon")); //$NON-NLS-1$
 	}
 
     /*

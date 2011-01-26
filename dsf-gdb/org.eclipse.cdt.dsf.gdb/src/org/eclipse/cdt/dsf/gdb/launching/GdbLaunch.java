@@ -293,7 +293,14 @@ public class GdbLaunch extends DsfLaunch
                     // 283586
                     DebugPlugin.getDefault().fireDebugEventSet( new DebugEvent[] { new DebugEvent(fMemRetrieval, DebugEvent.TERMINATE) });
 
-                    fireTerminate();
+                    // 'fireTerminate()' removes this launch from the list of 'DebugEvent' 
+                    // listeners. The launch may not be terminated at this point: the inferior 
+                    // and gdb processes are monitored in separate threads. This will prevent
+                    // updating of some of the Debug view actions.
+                    // 'DebugEvent.TERMINATE' will be fired when each of the corresponding processes 
+                    // exits and handled by 'handleDebugEvents()' method.
+                    if (isTerminated())
+                        fireTerminate();
                     
                     rm.setStatus(getStatus());
                     rm.done();

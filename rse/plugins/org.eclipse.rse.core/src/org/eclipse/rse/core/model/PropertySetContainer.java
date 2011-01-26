@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2011 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,13 +13,14 @@
  * Contributors:
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * David McKnight   (IBM)        - [334837] Ordering of Library list entries incorrect after migration
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public abstract class PropertySetContainer extends RSEPersistableObject implemen
 	private Map _propertySets;
 
 	public PropertySetContainer() {
-		_propertySets = new HashMap();
+		_propertySets = new LinkedHashMap();
 	}
 
 	public IPropertySet[] getPropertySets() {

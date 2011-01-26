@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,19 +15,21 @@
  * Martin Oberhuber (Wind River) - Added Javadoc.
  * David McKnight   (IBM)        - [217715] [api] RSE property sets should support nested property sets
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * David McKnight   (IBM)        - [334837] Ordering of Library list entries incorrect after migration
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
 
-import java.util.HashMap;
+
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
 /**
- * A Hashmap based implementation of the {@link IPropertySet} interface.
+ * A LinkedHashmap based implementation of the {@link IPropertySet} interface.
  * 
  * Not thread-safe since the underlying {@link java.util.HashMap} is 
  * not thread-safe.
@@ -51,7 +53,7 @@ public class PropertySet extends RSEModelObject implements IPropertySet, IRSEMod
 	public PropertySet(IPropertySet propertySet) {
 		_name = propertySet.getName();
 		_description = propertySet.getDescription();
-		_properties = new HashMap();
+		_properties = new LinkedHashMap();
 		if (propertySet instanceof ILabeledObject) {
 			ILabeledObject p = (ILabeledObject) propertySet;
 			_label = p.getLabel();
@@ -72,7 +74,7 @@ public class PropertySet extends RSEModelObject implements IPropertySet, IRSEMod
 	 */
 	public PropertySet(String name) {
 		_name = name;
-		_properties = new HashMap();
+		_properties = new LinkedHashMap();
 		setDirty(true);
 	}
 
@@ -110,7 +112,7 @@ public class PropertySet extends RSEModelObject implements IPropertySet, IRSEMod
 	}
 
 	public void setProperties(Map map) {
-		_properties = new HashMap(map.size());
+		_properties = new LinkedHashMap(map.size());
 		for (Iterator z = map.keySet().iterator(); z.hasNext();) {
 			String key = (String) z.next();
 			Object value = map.get(key);

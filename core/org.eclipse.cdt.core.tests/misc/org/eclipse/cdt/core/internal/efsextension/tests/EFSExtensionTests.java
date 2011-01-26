@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -128,6 +128,44 @@ public class EFSExtensionTests extends TestCase {
 		
 		assertEquals(expected, uri);
 	}
+	
+	public void testReplaceURIWithAuthority() {
+		URI originalURI = null;
+		URI expected = null;
+		try {
+			originalURI = new URI("rse", "recoskie@dbgaix3.torolab.ibm.com:1000", "/home/recoskie", null, null);
+			expected = new URI("rse", "recoskie@dbgaix3.torolab.ibm.com:1000", "/home/recoskie/subdirectory", null, null);
+		} catch (URISyntaxException e) {
+			fail(e.getMessage());
+		}
+		String workingDirPath = EFSExtensionManager.getDefault()
+				.getPathFromURI(originalURI);
+		IPath path = new Path("subdirectory");
+		IPath newPath = new Path(workingDirPath).append(path).makeAbsolute();
+		URI uri = EFSExtensionManager.getDefault()
+				.createNewURIFromPath(originalURI, newPath.toString());
+		
+		assertEquals(expected, uri);
+	}
+	
+	public void testReplaceURIWithAuthority2() {
+		URI originalURI = null;
+		URI expected = null;
+		try {
+			originalURI = new URI("rse", "recoskie@dbgaix3.torolab.ibm.com:1000", "/home/recoskie", null, null);
+			expected = new URI("rse", "recoskie", "dbgaix3.torolab.ibm.com", 1000, "/home/recoskie/subdirectory", null, null);
+		} catch (URISyntaxException e) {
+			fail(e.getMessage());
+		}
+		String workingDirPath = EFSExtensionManager.getDefault()
+				.getPathFromURI(originalURI);
+		IPath path = new Path("subdirectory");
+		IPath newPath = new Path(workingDirPath).append(path).makeAbsolute();
+		URI uri = EFSExtensionManager.getDefault()
+				.createNewURIFromPath(originalURI, newPath.toString());
+		
+		assertEquals(expected, uri);
+	}	
 	
 	public void testAppendinRSEURI() {
 		URI originalURI = null;

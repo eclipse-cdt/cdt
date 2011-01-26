@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,7 +101,8 @@ public abstract class EFSExtensionProvider {
 		pathBuf.append(pathString);
 		
 		try {
-			return new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), pathBuf.toString(), // replaced!
+			//Bug 326957 - EFSExtensionProvider does not handle URI's correctly 
+			return new URI(uri.getScheme(), uri.getAuthority(), pathBuf.toString(), // replaced!
 					uri.getQuery(), uri.getFragment());
 		} catch (URISyntaxException e) {
 			CCorePlugin.log(e);

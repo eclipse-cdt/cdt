@@ -37,6 +37,24 @@ public class LRCPPSpecTest extends AST2CPPSpecTest {
 	public void test8_2s7a() throws Exception {}
 	@Override
 	public void test8_2s7b() throws Exception {}
+	@Override
+	public void test14_8_2s8a() throws Exception {}
+	@Override
+	public void test14_8_2_1s1a() throws Exception {}
+	@Override
+	public void test14_8_2_1s1b() throws Exception {}
+	@Override
+	public void test14_8_2_1s3() throws Exception {}
+	@Override
+	public void test14_8_2_4s12() throws Exception {}
+	@Override
+	public void test14_8_2_5s5() throws Exception {}
+	@Override
+	public void test14_8_2_5s10() throws Exception {}
+	@Override
+	public void test14_8_2_4s21() throws Exception {}
+	@Override
+	public void test14_8_2_5s22() throws Exception {}
 	
 	
 	

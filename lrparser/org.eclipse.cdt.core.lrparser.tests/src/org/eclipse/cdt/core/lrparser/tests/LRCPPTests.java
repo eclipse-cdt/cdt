@@ -69,6 +69,9 @@ public class LRCPPTests extends AST2CPPTests {
 	public void testScopedEnums_305975e() throws Exception {}
 	@Override
 	public void testScopedEnums_305975g() throws Exception {}
+	@Override
+	public void testBug332114b() throws Exception {}
+
 	
 	//unicode character type
 	@Override
@@ -83,12 +86,48 @@ public class LRCPPTests extends AST2CPPTests {
 	public void testAutoType_305987() throws Exception {}
 	@Override
 	public void testNewFunctionDeclaratorSyntax_305972() throws Exception {}
+	@Override
+	public void testBug332114a() throws Exception {}
+	@Override
+	public void testAutoTypeInRangeBasedFor_332883() throws Exception {}
+	@Override
+	public void testResolutionInTrailingReturnType_333256() throws Exception {}
 	
 	//DeclType
 	@Override
 	public void testDeclType_294730() throws Exception {}
 	
+	//Defaulted and deleted functions 
+	public void testDefaultedAndDeletedFunctions_305978() throws Exception {}
+	public void testDefaultedAndDeletedFunctions_305978b() throws Exception {}
 	
+	//Inline namespaces
+	@Override
+	public void testInlineNamespace_305980a() throws Exception {}
+	@Override
+	public void testInlineNamespace_305980b() throws Exception {}
+	@Override
+	public void testInlineNamespace_305980c() throws Exception {}
+	@Override
+	public void testInlineNamespace_305980d() throws Exception {}
+	
+	//New wording for C++0x lambdas 
+	@Override
+	public void testLambdaExpression_316307a() throws Exception {}
+	@Override
+	public void testLambdaExpression_316307b() throws Exception {}
+	
+	//xvalue
+	@Override
+	public void testXValueCategories() throws Exception {}
+	@Override
+	public void testRankingOfReferenceBindings() throws Exception {}
+	@Override
+	public void testInlineNamespaceLookup_324096() throws Exception {}
+	@Override
+	public void testCtorForAutomaticVariables_156668() throws Exception {}
+	@Override
+	public void testRangeBasedForLoop_327223() throws Exception {}
 	
 	//TODO ??? overwrite some failed test cases
 	@Override

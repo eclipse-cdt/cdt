@@ -86,6 +86,12 @@ public class LRTemplateTests extends AST2TemplateTests {
 	public void testVariadicTemplateExamples_280909s() throws Exception {}
 	@Override
 	public void testExtendingVariadicTemplateTemplateParameters_302282() throws Exception {}
+	@Override
+	public void testVariadicTemplateExamples_280909h() throws Exception {}
+	@Override
+	public void testInlineNamespaces_305980() throws Exception {}
+	@Override
+	public void testFunctionParameterPacksInNonFinalPosition_324096() throws Exception {}
 	
 	
 	

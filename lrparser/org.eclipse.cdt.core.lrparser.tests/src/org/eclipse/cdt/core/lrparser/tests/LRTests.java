@@ -75,8 +75,8 @@ public class LRTests extends AST2Tests {
 	public void testAttributeSyntax_298841() throws Exception {}
 	@Override
 	public void testEmptyTrailingMacro_303152() throws Exception {}
-	
-	
+	@Override // not applicable to lr parser memory usage.
+	public void testLargeTrivialAggregateInitializer_Bug253690() throws Exception{}
 	 
     @Override
 	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {

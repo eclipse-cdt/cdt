@@ -220,8 +220,7 @@ public class FaultToleranceTests extends AST2BaseTest {
 
     		sdecl= getDeclaration(tu, 4);
     		assertEquals("extern void foo2()", sdecl.getRawSignature());
-    		pd= getDeclaration(tu, 5);
-    		assertEquals("", pd.getRawSignature()); // the missing semicolon
+    		pd= getDeclaration(tu, 5); // the missing semicolon
     		
     		if (lang == ParserLanguage.CPP) {
     			pd= getDeclaration(tu, 6);

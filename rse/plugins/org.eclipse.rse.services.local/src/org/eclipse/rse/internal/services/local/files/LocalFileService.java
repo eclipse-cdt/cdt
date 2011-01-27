@@ -48,6 +48,7 @@
  * Martin Oberhuber (Wind River) - [314461] NPE deleting a folder w/o permission
  * David McKnight   (IBM)        - [279829] [local] Save conflict dialog keeps popping up on mounted drive
  * David McKnight   (IBM)        - [331247] Local file paste failed on Vista and Windows 7
+ * Xuan Chen        (IBM)        - [222544] [testing] FileServiceArchiveTest leaves temporary files and folders behind in TEMP dir
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -1467,8 +1468,9 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		{
 			checkArchiveOperationStatusThread.start();
 		}
-
-		src = child.getExtractedFile(sourceEncoding, isText, archiveOperationMonitor).getAbsolutePath();
+		
+		//Don't think we need this call.
+		//src = child.getExtractedFile(sourceEncoding, isText, archiveOperationMonitor).getAbsolutePath();
 		if (monitor != null && monitor.isCanceled())
 		{
 			//This operation has been cancelled by the user.
@@ -1513,6 +1515,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		{
 			File source = new File(src);
 			boolean returnValue = copyToArchive(source, targetFolder, newName, monitor, SystemEncodingUtil.ENCODING_UTF_8, targetEncoding, isText);
+			deleteContents(source, monitor);
 			if (!returnValue)
 			{
 				if (monitor != null && monitor.isCanceled())

@@ -15,6 +15,9 @@ import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.managedbuilder.testplugin.AbstractBuilderTest;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -29,7 +32,10 @@ import org.eclipse.core.runtime.Path;
  */
 public class Bug_335476 extends AbstractBuilderTest {
 
+	private final String VAR_NAME = "INC";
 	IProject app;
+	IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+	ICdtVariableManager buildMacroManager = CCorePlugin.getDefault().getCdtVariableManager();
 
 	@Override
 	protected void setUp() throws Exception {
@@ -55,6 +61,8 @@ public class Bug_335476 extends AbstractBuilderTest {
 
 		IFile current = foo;
 		for (int i = 0; i < 5; i++) {
+			// Actual expected value
+			final String expected = current == foo ? "foo" : "lala";
 			// Update the environment to reflect the new value.
 			env.setContents(current.getContents(), IResource.NONE, null);
 
@@ -66,18 +74,27 @@ public class Bug_335476 extends AbstractBuilderTest {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(makefile.getContents()));
 			try {
 				Pattern p = Pattern.compile(".*?-I.*?\"(.*?)\".*");
+				boolean found = false;
 				while (reader.ready()) {
 					String line = reader.readLine();
 					if (!line.contains("gcc"))
 						continue;
 					Matcher m = p.matcher(line);
 					assertTrue(m.matches());
-					String variable = m.group(1);
-					if (current == foo)
-						assertTrue("foo exepected, but was: " + variable ,variable.equals("foo"));
-					else
-						assertTrue("foo exepected, but was: " + variable, variable.equals("lala"));
+					String buildVar = m.group(1);
+
+					// Check that the Environment manager + the build manager have the variable
+					//  (which tells us how far the variable has got through the system...)
+					String value = envManager.getVariable(VAR_NAME, CCorePlugin.getDefault().getProjectDescription(app, false).getActiveConfiguration(), false).getValue();
+					String value2 = buildMacroManager.resolveValue("${" + VAR_NAME + "}", "", ";", CCorePlugin.getDefault().getProjectDescription(app, false).getActiveConfiguration());
+
+					assertTrue(i + " EnvManager " 	+ expected + " exepected, but was: " + value,    expected.equals(value));
+					assertTrue(i + " CdtVarManager " + expected + " exepected, but was: " + value2,   expected.equals(value2));
+					assertTrue(i + " Makefile: " 	+ expected + " exepected, but was: " + buildVar, expected.equals(buildVar));
+					found = true;
 				}
+				// Check that we at least matched
+				assertTrue(found);
 			} finally {
 				reader.close();
 			}

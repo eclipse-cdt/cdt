@@ -13,6 +13,7 @@
  *   - <copied code from org.eclipse.core.tests.harness/CoreTest (C) IBM>
  * Martin Oberhuber (Wind River) - [195402] Add constructor with test name
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
+ * Xuan Chen (IBM) [333874] - Added more logging code to track junit failure
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -338,6 +339,44 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 		}
 	}
 
+	/**
+	 * <copied code from org.eclipse.core.tests.resources/ResourceTest.java (C) IBM>
+	 *
+	 * Returns a boolean value indicating whether or not the contents
+	 * of the given streams are considered to be equal. Closes both input streams.
+	 * @param a input stream a
+	 * @param b input stream b
+	 * @return if both stream are consider to be equal
+	 */
+	public boolean compareContent1(InputStream a, InputStream b) {
+		int c, d;
+		if (a == null && b == null)
+			return true;
+		try {
+			if (a == null || b == null)
+			{
+				fail("only one of the input stream is null");
+				return false;
+			}
+			while ((c = a.read()) == (d = b.read()) && (c != -1 && d != -1)) {
+				//body not needed
+			}
+			if (c == -1 && d == -1)
+			{
+				return true;
+			}
+			String msg = "difference: c is " + c + " but d is " + d;
+			fail(msg);
+			return false;	
+		} catch (IOException e) {
+			fail("IOException: " + e.getMessage());
+			return false;
+		} finally {
+			assertClose(a);
+			assertClose(b);
+		}
+	}
+	
 	/**
 	 * Copy the data from the input stream to the output stream.
 	 * Close both streams when finished.

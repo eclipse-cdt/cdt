@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Johnson Ma (Wind River) - [195402] Extracted from FileServiceArchiveTest
+ * Xuan Chen (IBM) [333874] - Added more logging code to track junit failure
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -17,6 +18,7 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.model.ISystemResourceSet;
 import org.eclipse.rse.core.model.SystemRemoteResourceSet;
 import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
@@ -920,8 +922,10 @@ public abstract class FileServiceArchiveBaseTest extends FileServiceBaseTest {
 
 		//now, verify the content of the local file
 		IFileStore localFile = temp.getChild(fileContentToVerifyName1);
+		File actualFile = localFile.toLocalFile(EFS.NONE, new NullProgressMonitor());
+		assertTrue("The file does not exist", actualFile.exists());
 		//Check the content of the download file:
-		boolean sameContent = compareContent(getContents(fileContentString1), localFile.openInputStream(EFS.NONE, null));
+		boolean sameContent = compareContent1(getContents(fileContentString1), localFile.openInputStream(EFS.NONE, null));
 		assertTrue(sameContent);
 
 

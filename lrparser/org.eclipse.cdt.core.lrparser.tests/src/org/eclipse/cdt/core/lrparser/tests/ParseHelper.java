@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2BaseTest;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -59,8 +60,12 @@ public class ParseHelper {
 		public int visit(IASTName name) {
 			nameList.add(name);
 			IBinding binding = name.resolveBinding();
-			if (binding instanceof IProblemBinding)
+			if (binding instanceof IProblemBinding) {
+				// Suppress assertion that would be thrown for computing string representation
+				// of template-ids. The flag will be reset by BaseTestCase.setUp().
+				CPPASTNameBase.sAllowNameComputation= true;
 				problemBindings.add(name.toString());
+			}
 			if (binding == null)
 				numNullBindings++;
 			return PROCESS_CONTINUE;

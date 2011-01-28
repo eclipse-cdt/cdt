@@ -1445,8 +1445,7 @@ public class Scribe {
 
 	void redoAlignment(AlignmentException e) {
 		if (e.relativeDepth > 0) { // if exception targets a distinct context
-			e.relativeDepth--; // record fact that current context got
-								// traversed
+			e.relativeDepth--; // record fact that current context got traversed
 			currentAlignment= currentAlignment.enclosing; // pop currentLocation
 			throw e; // rethrow
 		}
@@ -1764,5 +1763,4 @@ public class Scribe {
 			}
 		}
 	}
-
 }

@@ -222,7 +222,6 @@ public class Alignment {
 	public boolean couldBreak() {
 		int i;
 		switch (mode & SPLIT_MASK) {
-
 			/*  # aligned fragment
 			 *  foo(
 			 *     #AAAAA, #BBBBB,

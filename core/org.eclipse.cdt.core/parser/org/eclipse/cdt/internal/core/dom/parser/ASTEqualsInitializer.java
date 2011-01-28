@@ -46,12 +46,12 @@ public abstract class ASTEqualsInitializer extends ASTNode implements IASTEquals
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitInitializers ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitInitializers) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         

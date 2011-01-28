@@ -329,7 +329,7 @@ public class XMLparser
 				{
 					if (_firstTime)
 					{
-						_initialKart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT, socket);
+						_initialKart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT, socket, true);
 						_firstTime = false;
 						if (VERBOSE_KEEPALIVE) System.out.println("Starting initial KeepAlive thread."); //$NON-NLS-1$
 						_dataStore.trace("Starting initial KeepAlive thread."); //$NON-NLS-1$
@@ -1124,16 +1124,31 @@ public class XMLparser
 		private long _timeout;
 		private boolean _failed;
 		private Socket _socket;
+		private boolean _initial;
 		
 		public KeepAliveRequestThread(long timeout, Socket socket)
+		{
+			this(timeout, socket, false);
+		}
+		
+		public KeepAliveRequestThread(long timeout, Socket socket, boolean initial)
 		{
 			_timeout = timeout;
 			_failed = false;
 			_socket = socket;
+			_initial = initial;
 		}
 		
 		public void run()
 		{
+			if (_initial && !_dataStore.isVirtual()){
+				// give the client setup time before requesting
+				try {
+					sleep(5000);
+				}
+				catch (InterruptedException e){					
+				}
+			}
 			_dataStore.sendKeepAliveRequest();			
 			try
 			{

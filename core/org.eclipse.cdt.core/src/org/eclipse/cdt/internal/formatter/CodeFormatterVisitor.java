@@ -1736,7 +1736,6 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				} catch (AlignmentException e) {
 					scribe.redoAlignment(e);
 				} catch (ASTProblemException e) {
-					
 				}
 			} while (!ok);
 			scribe.exitAlignment(listAlignment, true);
@@ -2519,48 +2518,96 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	    final int line = scribe.line;
 	    scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_for);
 		fInsideFor= true;
-		try {
-			if (preferences.insert_space_after_opening_paren_in_for) {
-				scribe.space();
-			}
-			IASTStatement initializerStmt= node.getInitializerStatement();
-			initializerStmt.accept(this);
-			if (peekNextToken() == Token.tSEMI) {
-				scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon_in_for);
-			}
-			final IASTExpression condition = node.getConditionExpression();
-			if (condition != null) {
-				if (preferences.insert_space_after_semicolon_in_for) {
-					scribe.space();
-				}
-				condition.accept(this);
-			} else if (node instanceof ICPPASTForStatement) {
-				final IASTDeclaration conditionDecl = ((ICPPASTForStatement) node).getConditionDeclaration();
-				if (conditionDecl != null) {
-					if (preferences.insert_space_after_semicolon_in_for) {
+		Alignment alignment = scribe.createAlignment(
+				"for", //$NON-NLS-1$
+				Alignment.M_COMPACT_SPLIT,
+				Alignment.R_OUTERMOST,
+				2,
+				scribe.scanner.getCurrentPosition(),
+				preferences.continuation_indentation,
+				false);
+		scribe.enterAlignment(alignment);
+		
+    	boolean ok = false;
+    	do {
+    		try {
+				try {
+					if (preferences.insert_space_after_opening_paren_in_for) {
 						scribe.space();
 					}
-					conditionDecl.accept(this);
-				}
-			}
-			if (peekNextToken() == Token.tSEMI) {
-				scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon_in_for);
-			}
-			IASTExpression iterationExpr= node.getIterationExpression();
-			if (iterationExpr != null) {
-				if (preferences.insert_space_after_semicolon_in_for) {
-					scribe.space();
-				}
-				iterationExpr.accept(this);
-			}
-		} finally {
-			fInsideFor= false;
-		}
-		if (peekNextToken() == Token.tRPAREN) {
-			scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_for);
-		}
+					IASTStatement initializerStmt= node.getInitializerStatement();
+					initializerStmt.accept(this);
+					if (peekNextToken() == Token.tSEMI) {
+						scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon_in_for);
+					}
 
-		formatAction(line, node.getBody(), preferences.brace_position_for_block);
+	    			scribe.alignFragment(alignment, 0);
+					final IASTExpression condition = node.getConditionExpression();
+					if (condition != null) {
+						if (preferences.insert_space_after_semicolon_in_for) {
+							scribe.space();
+						}
+						condition.accept(this);
+					} else if (node instanceof ICPPASTForStatement) {
+						final IASTDeclaration conditionDecl = ((ICPPASTForStatement) node).getConditionDeclaration();
+						if (conditionDecl != null) {
+							if (preferences.insert_space_after_semicolon_in_for) {
+								scribe.space();
+							}
+							conditionDecl.accept(this);
+						}
+					}
+					if (peekNextToken() == Token.tSEMI) {
+						scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon_in_for);
+					}
+
+					scribe.alignFragment(alignment, 1);
+					IASTExpression iterationExpr= node.getIterationExpression();
+					if (iterationExpr != null) {
+						if (preferences.insert_space_after_semicolon_in_for) {
+							scribe.space();
+						}
+						iterationExpr.accept(this);
+					}
+				} finally {
+					fInsideFor= false;
+				}
+				if (peekNextToken() == Token.tRPAREN) {
+					scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_for);
+				}
+				IASTStatement body = node.getBody();
+				if (body instanceof IASTCompoundStatement && !startsWithMacroExpansion(body)) {
+					formatLeftCurlyBrace(line, preferences.brace_position_for_block);
+					if (startNode(body)) {
+						try {
+							formatBlockOpening((IASTCompoundStatement) body,
+									preferences.brace_position_for_block,
+									preferences.insert_space_before_opening_brace_in_block);
+							ok = true;
+							scribe.exitAlignment(alignment, true);
+							formatOpenedBlock((IASTCompoundStatement) body,
+									preferences.brace_position_for_block,
+									preferences.indent_statements_compare_to_block);
+						} finally {
+							endOfNode(body);
+						}
+					} else {
+						ok = true;
+						scribe.exitAlignment(alignment, true);
+					}
+				} else {
+					ok = true;
+					scribe.exitAlignment(alignment, true);
+					formatAction(line, body, preferences.brace_position_for_block);
+				}
+			} catch (AlignmentException e) {
+				if (ok) {
+					throw e;
+				}
+				scribe.redoAlignment(e);
+    		}
+    	} while (!ok);
+
 		return PROCESS_SKIP;
 	}
 	
@@ -3200,7 +3247,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				formatLeftCurlyBrace(line, brace_position);
 				if (startNode(stmt)) {
 					try {
-						formatBlock((IASTCompoundStatement)stmt, brace_position, preferences.insert_space_before_opening_brace_in_block, preferences.indent_statements_compare_to_block);
+						formatBlock((IASTCompoundStatement) stmt, brace_position,
+								preferences.insert_space_before_opening_brace_in_block,
+								preferences.indent_statements_compare_to_block);
 					} finally {
 						endOfNode(stmt);
 					}
@@ -3268,14 +3317,24 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		return false;
 	}
 
-	private void formatBlock(IASTCompoundStatement block, String block_brace_position, boolean insertSpaceBeforeOpeningBrace, boolean indentStatements) {
-		final boolean startsWithMacroExpansion= startsWithMacroExpansion(block);
-		if (!startsWithMacroExpansion) {
+	private void formatBlock(IASTCompoundStatement block, String block_brace_position,
+			boolean insertSpaceBeforeOpeningBrace, boolean indentStatements) {
+		formatBlockOpening(block, block_brace_position, insertSpaceBeforeOpeningBrace);
+		formatOpenedBlock(block, block_brace_position, indentStatements);
+	}
+
+	private void formatBlockOpening(IASTCompoundStatement block, String block_brace_position,
+			boolean insertSpaceBeforeOpeningBrace) {
+		if (!startsWithMacroExpansion(block)) {
 			formatOpeningBrace(block_brace_position, insertSpaceBeforeOpeningBrace);
 		} else {
 			scribe.startNewLine();
 			scribe.printComment();
 		}
+	}
+
+	private void formatOpenedBlock(IASTCompoundStatement block, String block_brace_position,
+			boolean indentStatements) {
 		final boolean endsWithMacroExpansion= endsWithMacroExpansion(block);
 		IASTStatement[] statements = block.getStatements();
 		final int statementsLength = statements.length;
@@ -3300,7 +3359,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 		if (!endsWithMacroExpansion) {
 			formatClosingBrace(block_brace_position);
-		} else if (!startsWithMacroExpansion) {
+		} else if (!startsWithMacroExpansion(block)) {
 			if (DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED.equals(block_brace_position)) {
 				scribe.unIndent();
 			}
@@ -3359,7 +3418,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				}
 				final boolean statementIsNullStmt= statement instanceof IASTNullStatement;
 				if ((previousStatementIsNullStmt && !statementIsNullStmt)
-					|| (!previousStatementIsNullStmt && !statementIsNullStmt)) {
+						|| (!previousStatementIsNullStmt && !statementIsNullStmt)) {
 					scribe.startNewLine();
 				}
 				try {

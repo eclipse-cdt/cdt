@@ -199,6 +199,45 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//class ClassWithALongName {
+	//public:
+	//class Iterator {
+	//bool isDone();
+	//void next();
+	//};
+	//
+	//Iterator getIterator();
+	//};
+	//
+	//void test() {
+	//ClassWithALongName* variable_with_a_long_name;
+	//for (ClassWithALongName::Iterator iter_for_class_with_a_long_name = variable_with_a_long_name->getIterator(); !iter_for_class_with_a_long_name.isDone(); iter_for_class_with_a_long_name.next()) {
+	//}
+	//}
+
+	//class ClassWithALongName {
+	//public:
+	//    class Iterator {
+	//        bool isDone();
+	//        void next();
+	//    };
+	//
+	//    Iterator getIterator();
+	//};
+	//
+	//void test() {
+	//    ClassWithALongName* variable_with_a_long_name;
+	//    for (ClassWithALongName::Iterator
+	//            iter_for_class_with_a_long_name = variable_with_a_long_name->getIterator();
+	//            !iter_for_class_with_a_long_name.isDone();
+	//            iter_for_class_with_a_long_name.next()) {
+	//    }
+	//}
+	public void testForWithEmptyExpression_Bug280989() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
 	//#define MY private:
 	//
 	//class ClassA

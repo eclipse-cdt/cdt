@@ -33,10 +33,8 @@ import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory;
 
 /**
  * Concrete ILanguage implementation for the DOM C++ parser.
- *
  */
 public class GPPLanguage extends AbstractCLikeLanguage {
-
 	protected static final GPPScannerExtensionConfiguration CPP_GNU_SCANNER_EXTENSION= GPPScannerExtensionConfiguration.getInstance();
 	protected static final GPPParserExtensionConfiguration CPP_GNU_PARSER_EXTENSION= GPPParserExtensionConfiguration.getInstance();
 	public static final String ID = CCorePlugin.PLUGIN_ID + ".g++"; //$NON-NLS-1$
@@ -46,7 +44,6 @@ public class GPPLanguage extends AbstractCLikeLanguage {
 	public static GPPLanguage getDefault() {
 		return DEFAULT_INSTANCE;
 	}
-	
 	
 	@Override
 	@SuppressWarnings("rawtypes")
@@ -60,7 +57,6 @@ public class GPPLanguage extends AbstractCLikeLanguage {
 	public String getId() {
 		return ID;
 	}
-	
 	
 	public int getLinkageID() {
 		return ILinkage.CPP_LINKAGE_ID;
@@ -88,5 +84,4 @@ public class GPPLanguage extends AbstractCLikeLanguage {
 	protected ParserLanguage getParserLanguage() {
 		return ParserLanguage.CPP;
 	}
-
 }

@@ -33,10 +33,8 @@ import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
 
 /**
  * Concrete ILanguage implementation for the DOM C parser.
- * 
  */
 public class GCCLanguage extends AbstractCLikeLanguage {
-
 	protected static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION= GCCScannerExtensionConfiguration.getInstance();
 	protected static final GCCParserExtensionConfiguration C_GNU_PARSER_EXTENSION= GCCParserExtensionConfiguration.getInstance();
 	// Must match the id in the extension
@@ -48,7 +46,6 @@ public class GCCLanguage extends AbstractCLikeLanguage {
 		return DEFAULT_INSTANCE;
 	}
 	
-	
 	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
@@ -58,7 +55,6 @@ public class GCCLanguage extends AbstractCLikeLanguage {
 		return super.getAdapter(adapter);
 	}
 	
-	
 	public String getId() {
 		return ID; 
 	}
@@ -66,7 +62,6 @@ public class GCCLanguage extends AbstractCLikeLanguage {
 	public int getLinkageID() {
 		return ILinkage.C_LINKAGE_ID;
 	}
-
 
 	@Override
 	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
@@ -90,9 +85,4 @@ public class GCCLanguage extends AbstractCLikeLanguage {
 	protected ParserLanguage getParserLanguage() {
 		return ParserLanguage.C;
 	}
-
-
-	
-
-
 }

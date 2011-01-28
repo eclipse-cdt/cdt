@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_1;
 
+import org.eclipse.cdt.dsf.mi.service.command.commands.Suite_Sessionless_Tests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -32,7 +33,8 @@ import org.junit.runners.Suite;
 	MIBreakpointsTest_7_1.class,
 	MICatchpointsTest_7_1.class,
 	MIDisassemblyTest_7_1.class,
-	GDBProcessesTest_7_1.class
+	GDBProcessesTest_7_1.class,
+	Suite_Sessionless_Tests.class
 	/* Add your test class here */
 })
 

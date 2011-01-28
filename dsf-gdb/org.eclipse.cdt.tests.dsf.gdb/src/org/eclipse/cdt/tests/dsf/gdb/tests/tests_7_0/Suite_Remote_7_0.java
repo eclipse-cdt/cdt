@@ -12,6 +12,7 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_0;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.mi.service.command.commands.Suite_Sessionless_Tests;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -37,7 +38,8 @@ import org.junit.runners.Suite;
 	MIBreakpointsTest_7_0.class,
 	MICatchpointsTest_7_0.class,
 	MIDisassemblyTest_7_0.class,
-	GDBProcessesTest_7_0.class
+	GDBProcessesTest_7_0.class,
+	Suite_Sessionless_Tests.class	
 	/* Add your test class here */
 })
 

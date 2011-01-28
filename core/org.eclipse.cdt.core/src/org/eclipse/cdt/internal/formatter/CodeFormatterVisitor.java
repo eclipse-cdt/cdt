@@ -1664,12 +1664,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 * @param encloseInParen
 	 * @param addEllipsis
 	 */
-	private void formatList(List<? extends IASTNode> elements, ListAlignment align, boolean encloseInParen, boolean addEllipsis) {
+	private void formatList(List<? extends IASTNode> elements, ListAlignment align,
+			boolean encloseInParen, boolean addEllipsis) {
 		if (encloseInParen)
 			scribe.printNextToken(Token.tLPAREN, align.fSpaceBeforeOpeningParen);
 
 		final int elementsLength = elements.size();
-		if (elementsLength != 0 || addEllipsis) {
+		if (!elements.isEmpty() || addEllipsis) {
 			if (align.fSpaceAfterOpeningParen) {
 				scribe.space();
 			}
@@ -1678,7 +1679,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					? align.fContinuationIndentation
 					: preferences.continuation_indentation;
 			Alignment listAlignment = scribe.createAlignment(
-					"listElements_"+align, //$NON-NLS-1$
+					"listElements_" + (elements.isEmpty() ? "ellipsis" : elements.get(0).getClass().getSimpleName()), //$NON-NLS-1$ //$NON-NLS-2$
 					align.fMode,
 					align.fTieBreakRule,
 					elementsLength + (addEllipsis ? 1 : 0),

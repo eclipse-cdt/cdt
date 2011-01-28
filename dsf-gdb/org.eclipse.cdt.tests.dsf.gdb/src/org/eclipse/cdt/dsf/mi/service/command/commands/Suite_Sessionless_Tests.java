@@ -11,7 +11,8 @@
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadTests;
-import org.eclipse.cdt.tests.dsf.gdb.tests.OnceOnlySuite;
+import org.eclipse.cdt.tests.dsf.gdb.framework.OnceOnlySuite;
+import org.eclipse.cdt.tests.dsf.gdb.tests.LaunchUtilsTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -25,7 +26,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         TestMIBreakInsertCommand.class,
         TestMICommandConstructCommand.class,
-        MIThreadTests.class
+        MIThreadTests.class,
+        LaunchUtilsTest.class
         /* Add your test class here */
         })
 public class Suite_Sessionless_Tests {

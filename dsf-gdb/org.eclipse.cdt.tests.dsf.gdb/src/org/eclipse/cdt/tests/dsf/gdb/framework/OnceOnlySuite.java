@@ -1,4 +1,4 @@
-package org.eclipse.cdt.tests.dsf.gdb.tests;
+package org.eclipse.cdt.tests.dsf.gdb.framework;
 
 import java.util.HashSet;
 import java.util.Set;

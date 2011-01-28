@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.cdt.make.xlc.core.scannerconfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -180,7 +179,7 @@ public class XLCPerFileBuildOutputParser extends AbstractXLCBuildOutputParser {
 		}
 	}
 
-	private String getAutoMakeSourcePath(String string) {
+	protected String getAutoMakeSourcePath(String string) {
 		// path may be enclosed in single quotes
 		int firstQuoteIndex = string.indexOf('\'');
 		int lastQuoteIndex = string.lastIndexOf('\'');
@@ -196,7 +195,7 @@ public class XLCPerFileBuildOutputParser extends AbstractXLCBuildOutputParser {
 		return null;
 	}
 
-	private int findAutoMakeSourceIndex(String[] tokens) {
+	protected int findAutoMakeSourceIndex(String[] tokens) {
 		for (int i = 0; i < tokens.length; i++) {
 			final String token = tokens[i].toLowerCase();
 			if(token.indexOf("source=") != -1) //$NON-NLS-1$

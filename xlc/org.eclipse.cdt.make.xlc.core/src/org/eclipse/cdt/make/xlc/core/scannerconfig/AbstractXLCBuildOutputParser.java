@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,7 +132,11 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 			fSMultiline = ""; //$NON-NLS-1$
 		}
 		line = line.trim();
-		TraceUtil.outputTrace("XLCBuildOutputParser parsing line: [", line, "]"); //$NON-NLS-1$ //$NON-NLS-2$
+		try{
+			TraceUtil.outputTrace("XLCBuildOutputParser parsing line: [", line, "]"); //$NON-NLS-1$ //$NON-NLS-2$
+		}catch(NoClassDefFoundError e){
+			//no problem, as this may be called from a standalone indexer
+		}
 		// make\[[0-9]*\]: error_desc
 		int firstColon = line.indexOf(':');
 		String make = line.substring(0, firstColon + 1);

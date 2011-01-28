@@ -2221,6 +2221,16 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		// operand 1
 		op1.accept(this);
 		
+		// operator
+		final int nextToken= peekNextToken();
+		// in case of C++ alternative operators, like 'and', 'not', etc. a space
+		boolean forceSpace= Character.isJavaIdentifierStart(peekNextChar());
+
+		scribe.printNextToken(nextToken, forceSpace || preferences.insert_space_before_assignment_operator);
+		if (forceSpace || preferences.insert_space_after_assignment_operator) {
+			scribe.space();
+		}
+
     	Alignment expressionAlignment= scribe.createAlignment(
     			"assignmentExpression", //$NON-NLS-1$
     			preferences.alignment_for_assignment,
@@ -2232,16 +2242,6 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
     	do {
     		try {
     			scribe.alignFragment(expressionAlignment, 0);
-
-    			// operator
-    			final int nextToken= peekNextToken();
-    			// in case of C++ alternative operators, like 'and', 'not', etc. a space
-    			boolean forceSpace= Character.isJavaIdentifierStart(peekNextChar());
-
-				scribe.printNextToken(nextToken, forceSpace || preferences.insert_space_before_assignment_operator);
-				if (forceSpace || preferences.insert_space_after_assignment_operator) {
-					scribe.space();
-				}
 
    				// operand 2
    				final IASTExpression op2= node.getOperand2();

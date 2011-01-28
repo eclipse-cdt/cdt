@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 Intel Corporation and others.
+ * Copyright (c) 2004, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.testplugin;
 
@@ -65,6 +66,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
+import org.eclipse.ui.internal.ide.filesystem.FileSystemStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 
@@ -228,59 +231,84 @@ public class ManagedBuildTestHelper {
 			}
 		}
 	}
-	
-	public static IProject loadProject(String name, String path){
+
+	/**
+	 * Import a test project into the test workspace.
+	 * Project template must be located under:
+	 * <ul>
+	 * <li>resources/{path}/{name}/{name}.zip</li>
+	 * <li>resources/{path}/{name}.zip</li>
+	 * <li>resources/{path}/{name}</li>
+	 * </ul>
+	 * Where name is either an expanded or zip compressed project.
+	 * @param name - name of the project to import
+	 * @param path - path relative to /resources
+	 * @return IProject or throws AssertionFailedError on failure
+	 */
+	public static IProject loadProject(String name, String path) {
 		IPath zipPath = new Path("resources").append(path).append(name).append(name).addFileExtension("zip");
 		File zipFile = CTestPlugin.getFileInPlugin(zipPath);
-		if(zipFile == null){
+		if (zipFile == null) {
 			zipPath = new Path("resources").append(path).append(name).addFileExtension("zip");
 			zipFile = CTestPlugin.getFileInPlugin(zipPath);
 		}
-		if(zipFile == null) {
+		// Try loading as a project directory
+		if (zipFile == null) {
+			zipPath = new Path("resources").append(path).append(name);
+			zipFile = CTestPlugin.getFileInPlugin(zipPath);
+		}
+
+		if (zipFile == null) {
 			Assert.fail("zip file " + zipPath.toString() + " is missing.");
+			/* never get here */
 			return null;
 		}
 
-		
-		try{
+		try {
 			return createProject(name, zipFile, null, null);
-		}
-		catch(Exception e){
+		} catch(Exception e){
 			Assert.fail("fail to create the project: " + e.getLocalizedMessage());
 		}
-		
+		/* never get here */
 		return null;
 	}
-	
-	static public IProject createProject(String projectName, File zip, IPath location, String projectTypeId) throws CoreException, InvocationTargetException, IOException {
+
+	static public IProject createProject(String projectName, File importFrom, IPath location, String projectTypeId) throws CoreException, InvocationTargetException, IOException {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IProject project= root.getProject(projectName);
 		if (project.exists()) 
 			removeProject(projectName);
-		
+
 		IPath destPath = (location != null) ?
 				location :
 				project.getFullPath();
-		if (zip != null) {
-			importFilesFromZip(new ZipFile(zip), destPath, null);
+
+		if (importFrom != null) {
+			IImportStructureProvider importStructure;
+			Object importRoot;
+			if (importFrom.isFile()) {
+				importStructure = new ZipFileStructureProvider(new ZipFile(importFrom));
+				importRoot = ((ZipFileStructureProvider)importStructure).getRoot();
+			} else {
+				importStructure = new FileSystemStructureProvider();
+				importRoot = importFrom;
+			}
+
+			try {
+				ImportOperation op= new ImportOperation(destPath, importRoot, importStructure, new IOverwriteQuery() {
+					public String queryOverwrite(String file) {
+						return ALL;
+					}
+				});
+				op.setCreateContainerStructure(false);
+				op.run(null);
+			} catch (InterruptedException e) {
+				// should not happen
+				Assert.assertTrue(false);
+			}
 		}
-		
+
 		return createProject(projectName, location, ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID, projectTypeId);
-	}
-	
-	static public void importFilesFromZip(ZipFile srcZipFile, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException {		
-		ZipFileStructureProvider structureProvider=	new ZipFileStructureProvider(srcZipFile);
-		try {
-			ImportOperation op= new ImportOperation(destPath, structureProvider.getRoot(), structureProvider, new IOverwriteQuery() {
-						public String queryOverwrite(String file) {
-							return ALL;
-						}
-			});
-			op.run(monitor);
-		} catch (InterruptedException e) {
-			// should not happen
-			Assert.assertTrue(false);
-		}
 	}
 
 	static public IProject createNewManagedProject(IProject newProjectHandle, 

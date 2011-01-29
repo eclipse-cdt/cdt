@@ -30,7 +30,7 @@ public class LaunchMessages extends NLS {
 	public static String AbstractCLaunchDelegate_searching_for_errors;
 	public static String AbstractCLaunchDelegate_searching_for_errors_in;
 	public static String AbstractCLaunchDelegate_20;
-	public static String AbstractCLaunchDelegate_Program_is_not_a_recongnized_executable;
+	public static String AbstractCLaunchDelegate_Program_is_not_a_recognized_executable;
 	public static String AbstractCLaunchDelegate_BuildBeforeLaunch;
 	public static String AbstractCLaunchDelegate_PerformingBuild;
 	public static String AbstractCLaunchDelegate_PerformingIncrementalBuild;

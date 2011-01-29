@@ -832,7 +832,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		}
 		Status status = new Status(IStatus.ERROR,getPluginID(), 
 				ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_BINARY, 
-				LaunchMessages.AbstractCLaunchDelegate_Program_is_not_a_recongnized_executable + " " + exePath.toOSString(),  
+				LaunchMessages.AbstractCLaunchDelegate_Program_is_not_a_recognized_executable + " " + exePath.toOSString(),  
 				exception); 
 		throw new CoreException(status);
 	}

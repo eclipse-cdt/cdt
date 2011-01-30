@@ -346,8 +346,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	    FormatterMessages.LineWrappingTabPage_indentation_on_column, 
 	    FormatterMessages.LineWrappingTabPage_indentation_by_one
 	};
-	
-	
+
 	protected static final String[] WRAPPING_NAMES = { 
 	    FormatterMessages.LineWrappingTabPage_splitting_do_not_split, 
 	    FormatterMessages.LineWrappingTabPage_splitting_wrap_when_necessary, // COMPACT_SPLIT 
@@ -355,134 +354,131 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	    FormatterMessages.LineWrappingTabPage_splitting_wrap_always, // ONE_PER_LINE_SPLIT  
 	    FormatterMessages.LineWrappingTabPage_splitting_wrap_always_indent_all_but_first, // NEXT_SHIFTED_SPLIT  
 	    FormatterMessages.LineWrappingTabPage_splitting_wrap_always_except_first_only_if_necessary
-	};
-	
+	};	
 
 //	private final Category fCompactIfCategory= new Category(
-//	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_COMPACT_IF,
-//	    "int foo(int argument) {" + //$NON-NLS-1$
-//	    "  if (argument==0) return 0;" + //$NON-NLS-1$
-//	    "  if (argument==1) return 42; else return 43;" + //$NON-NLS-1$	
-//	    "}", //$NON-NLS-1$
-//	    FormatterMessages.LineWrappingTabPage_compact_if_else,
-//		FormatterMessages.LineWrappingTabPage_compact_if_else_lowercase
-//	);
-	
+//		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_COMPACT_IF,
+//		    "int foo(int argument) {" + //$NON-NLS-1$
+//		    "  if (argument==0) return 0;" + //$NON-NLS-1$
+//		    "  if (argument==1) return 42; else return 43;" + //$NON-NLS-1$	
+//		    "}", //$NON-NLS-1$
+//		    FormatterMessages.LineWrappingTabPage_compact_if_else,
+//			FormatterMessages.LineWrappingTabPage_compact_if_else_lowercase
+//		);
 
 	private final Category fTypeDeclarationBaseClauseCategory= new Category(
-	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BASE_CLAUSE_IN_TYPE_DECLARATION,
-	    "class Example : public FooClass, virtual protected BarClass {};", //$NON-NLS-1$
-	    FormatterMessages.LineWrappingTabPage_base_clause, 
-	    FormatterMessages.LineWrappingTabPage_base_clause_lowercase
-	);
-	
+		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BASE_CLAUSE_IN_TYPE_DECLARATION,
+		    "class Example : public FooClass, virtual protected BarClass {};", //$NON-NLS-1$
+		    FormatterMessages.LineWrappingTabPage_base_clause, 
+		    FormatterMessages.LineWrappingTabPage_base_clause_lowercase
+		);	
 
 //	private final Category fConstructorDeclarationsParametersCategory= new Category(
-//	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_CONSTRUCTOR_DECLARATION,
-//	    "class Example {Example(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6) { this();}" + //$NON-NLS-1$
-//	    "Example() {}}", //$NON-NLS-1$
-//	    FormatterMessages.LineWrappingTabPage_parameters,
-//		FormatterMessages.LineWrappingTabPage_parameters_lowercase
-//	); 
+//	    	DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_CONSTRUCTOR_DECLARATION,
+//	    	"class Example {Example(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6) { this();}" + //$NON-NLS-1$
+//	    	"Example() {}}", //$NON-NLS-1$
+//	    	FormatterMessages.LineWrappingTabPage_parameters,
+//			FormatterMessages.LineWrappingTabPage_parameters_lowercase
+//		);
 
 	private final Category fMethodDeclarationsParametersCategory= new Category(
-	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
-	    "class Example {void foo(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6) {}};", //$NON-NLS-1$
-	    FormatterMessages.LineWrappingTabPage_parameters,
-	    FormatterMessages.LineWrappingTabPage_parameters_lowercase
-	); 
+		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
+		    "class Example {void foo(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6) {}};", //$NON-NLS-1$
+		    FormatterMessages.LineWrappingTabPage_parameters,
+		    FormatterMessages.LineWrappingTabPage_parameters_lowercase
+		); 
 	
 	private final Category fMessageSendArgumentsCategory= new Category(
-	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
-	    "class Other {static void bar(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9) {}};"+ //$NON-NLS-1$
-	    "void foo() {Other::bar(100, 200, 300, 400, 500, 600, 700, 800, 900);}", //$NON-NLS-1$
-	    FormatterMessages.LineWrappingTabPage_arguments,
-	    FormatterMessages.LineWrappingTabPage_arguments_lowercase
-	); 
+		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
+		    "class Other {static void bar(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9) {}};"+ //$NON-NLS-1$
+		    "void foo() {Other::bar(100, 200, 300, 400, 500, 600, 700, 800, 900);}", //$NON-NLS-1$
+		    FormatterMessages.LineWrappingTabPage_arguments,
+		    FormatterMessages.LineWrappingTabPage_arguments_lowercase
+		); 
 
 	private final Category fMethodThrowsClauseCategory= new Category(
-	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION, 
-	    "class Example {" + //$NON-NLS-1$
-	    "int foo() throw(FirstException, SecondException, ThirdException) {" + //$NON-NLS-1$
-	    "  return Other::doSomething();}};", //$NON-NLS-1$
-	    FormatterMessages.LineWrappingTabPage_throws_clause, 
-	    FormatterMessages.LineWrappingTabPage_throws_clause_lowercase
-	);
+		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION, 
+		    "class Example {" + //$NON-NLS-1$
+		    "int foo() throw(FirstException, SecondException, ThirdException) {" + //$NON-NLS-1$
+		    "  return Other::doSomething();}};", //$NON-NLS-1$
+		    FormatterMessages.LineWrappingTabPage_throws_clause, 
+		    FormatterMessages.LineWrappingTabPage_throws_clause_lowercase
+		);
 
 //	private final Category fConstructorThrowsClauseCategory= new Category(
-//	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_CONSTRUCTOR_DECLARATION, 
-//	    "class Example {" + //$NON-NLS-1$
-//	    "Example() throws FirstException, SecondException, ThirdException {" + //$NON-NLS-1$
-//	    "  return Other.doSomething();}}", //$NON-NLS-1$
-//	    FormatterMessages.LineWrappingTabPage_throws_clause
-//		FormatterMessages.LineWrappingTabPage_throws_clause_lowercase
-//	);
+//	    	DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_CONSTRUCTOR_DECLARATION, 
+//	    	"class Example {" + //$NON-NLS-1$
+//	    	"Example() throws FirstException, SecondException, ThirdException {" + //$NON-NLS-1$
+//	    	"  return Other.doSomething();}}", //$NON-NLS-1$
+//	    	FormatterMessages.LineWrappingTabPage_throws_clause
+//			FormatterMessages.LineWrappingTabPage_throws_clause_lowercase
+//		);
 //
 //	
 //	private final Category fAllocationExpressionArgumentsCategory= new Category(
-//	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ALLOCATION_EXPRESSION,
-//	    "class Example {SomeClass foo() {return new SomeClass(100, 200, 300, 400, 500, 600, 700, 800, 900 );}}", //$NON-NLS-1$
-//	    FormatterMessages.LineWrappingTabPage_object_allocation
-//   	FormatterMessages.LineWrappingTabPage_object_allocation_lowercase
-//	);
+//	    	DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ALLOCATION_EXPRESSION,
+//	    	"class Example {SomeClass foo() {return new SomeClass(100, 200, 300, 400, 500, 600, 700, 800, 900 );}}", //$NON-NLS-1$
+//	    	FormatterMessages.LineWrappingTabPage_object_allocation
+//   		FormatterMessages.LineWrappingTabPage_object_allocation_lowercase
+//		);
 	
 	private final Category fInitializerListExpressionsCategory= new Category(
-	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_INITIALIZER_LIST,
-	    "int array[]= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};", //$NON-NLS-1$
-	    FormatterMessages.LineWrappingTabPage_initializer_list,
-	    FormatterMessages.LineWrappingTabPage_initializer_list_lowercase
-	);
+		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_INITIALIZER_LIST,
+		    "int array[]= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};", //$NON-NLS-1$
+		    FormatterMessages.LineWrappingTabPage_initializer_list,
+		    FormatterMessages.LineWrappingTabPage_initializer_list_lowercase
+		);
 	
 //	private final Category fExplicitConstructorArgumentsCategory= new Category(
-//	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_EXPLICIT_CONSTRUCTOR_CALL,
-//	    "class Example extends AnotherClass {Example() {super(100, 200, 300, 400, 500, 600, 700);}}", //$NON-NLS-1$
-//	    FormatterMessages.LineWrappingTabPage_explicit_constructor_invocations
-//    	FormatterMessages.LineWrappingTabPage_explicit_constructor_invocations_lowercase
-//	);
+//	    	DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_EXPLICIT_CONSTRUCTOR_CALL,
+//	    	"class Example extends AnotherClass {Example() {super(100, 200, 300, 400, 500, 600, 700);}}", //$NON-NLS-1$
+//	    	FormatterMessages.LineWrappingTabPage_explicit_constructor_invocations
+//    		FormatterMessages.LineWrappingTabPage_explicit_constructor_invocations_lowercase
+//		);
 
 	private final Category fConditionalExpressionCategory= new Category(
-	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION,
-	    "int compare(int argument, int argument2) {return argument > argument2 ? 100000 : 200000;}", //$NON-NLS-1$
-	    FormatterMessages.LineWrappingTabPage_conditionals,
-	    FormatterMessages.LineWrappingTabPage_conditionals_lowercase
-	);
+		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION,
+		    "int compare(int argument, int argument2) {return argument > argument2 ? 100000 : 200000;}", //$NON-NLS-1$
+		    FormatterMessages.LineWrappingTabPage_conditionals,
+		    FormatterMessages.LineWrappingTabPage_conditionals_lowercase
+		);
 
 	private final Category fBinaryExpressionCategory= new Category(
-	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BINARY_EXPRESSION,
-	    "class Example : AnotherClass {" + //$NON-NLS-1$
-	    "int foo() {" + //$NON-NLS-1$
-	    "  int sum= 100 + 200 + 300 + 400 + 500 + 600 + 700 + 800;" + //$NON-NLS-1$
-	    "  int product= 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10;" + //$NON-NLS-1$
-	    "  bool val= true && false && true && false && true;" +  //$NON-NLS-1$
-	    "  return product / sum;}}", //$NON-NLS-1$
-	    FormatterMessages.LineWrappingTabPage_binary_exprs,
-    	FormatterMessages.LineWrappingTabPage_binary_exprs_lowercase
-	);
-	
+		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BINARY_EXPRESSION,
+		    "class Example : AnotherClass {" + //$NON-NLS-1$
+		    "int foo() {" + //$NON-NLS-1$
+		    "  int sum= 100 + 200 + 300 + 400 + 500 + 600 + 700 + 800;" + //$NON-NLS-1$
+		    "  int product= 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10;" + //$NON-NLS-1$
+		    "  bool val= true && false && true && false && true;" +  //$NON-NLS-1$
+		    "  return product / sum;}}", //$NON-NLS-1$
+		    FormatterMessages.LineWrappingTabPage_binary_exprs,
+	    	FormatterMessages.LineWrappingTabPage_binary_exprs_lowercase
+		);
+
 //	private final Category fEnumConstArgumentsCategory= new Category(
-//	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ENUM_CONSTANT,
-//	    "enum Example {" + //$NON-NLS-1$
-//	    "GREEN(0, 255, 0), RED(255, 0, 0)  }", //$NON-NLS-1$
-//	    FormatterMessages.LineWrappingTabPage_enum_constant_arguments,
-//    	FormatterMessages.LineWrappingTabPage_enum_constant_arguments_lowercase
-//	);
+//	    	DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ENUM_CONSTANT,
+//	    	"enum Example {" + //$NON-NLS-1$
+//	    	"GREEN(0, 255, 0), RED(255, 0, 0)  }", //$NON-NLS-1$
+//	    	FormatterMessages.LineWrappingTabPage_enum_constant_arguments,
+//    		FormatterMessages.LineWrappingTabPage_enum_constant_arguments_lowercase
+//		);
 //	
 //	private final Category fEnumDeclInterfacesCategory= new Category(
-//	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_SUPERINTERFACES_IN_ENUM_DECLARATION,
-//	    "enum Example implements A, B, C {" + //$NON-NLS-1$
-//	    "}", //$NON-NLS-1$
-//	    FormatterMessages.LineWrappingTabPage_enum_superinterfaces,
-//    	FormatterMessages.LineWrappingTabPage_enum_superinterfaces_lowercase
-//	);
+//	    	DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_SUPERINTERFACES_IN_ENUM_DECLARATION,
+//	    	"enum Example implements A, B, C {" + //$NON-NLS-1$
+//	    	"}", //$NON-NLS-1$
+//	    	FormatterMessages.LineWrappingTabPage_enum_superinterfaces,
+//    		FormatterMessages.LineWrappingTabPage_enum_superinterfaces_lowercase
+//		);
 //	
 	private final Category fEnumeratorsCategory= new Category(
-	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ENUMERATOR_LIST,
-	    "enum Example {" + //$NON-NLS-1$
-	    "CANCELLED, RUNNING, WAITING, FINISHED };", //$NON-NLS-1$
-	    FormatterMessages.LineWrappingTabPage_enumerator_list,
-	    FormatterMessages.LineWrappingTabPage_enumerator_list_lowercase
-	);
-	
+		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ENUMERATOR_LIST,
+		    "enum Example {" + //$NON-NLS-1$
+		    "CANCELLED, RUNNING, WAITING, FINISHED };", //$NON-NLS-1$
+		    FormatterMessages.LineWrappingTabPage_enumerator_list,
+		    FormatterMessages.LineWrappingTabPage_enumerator_list_lowercase
+		);
+
 	private final Category fAssignmentCategory= new Category(
 		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ASSIGNMENT,
 		    "static char* string = \"TextTextText\";" + //$NON-NLS-1$
@@ -494,7 +490,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	        FormatterMessages.LineWrappingTabPage_assignment_alignment,
     		FormatterMessages.LineWrappingTabPage_assignment_alignment_lowercase
 		);
-	
+
 	/**
 	 * The default preview line width.
 	 */

@@ -608,6 +608,38 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//class ClassWithALongName {
+	//public:
+	//ClassWithALongName* methodWithALongName();
+	//ClassWithALongName* anotherMethodWithALongName();
+	//};
+	//
+	//void test() {
+	//ClassWithALongName* variable_with_a_long_name;
+	//ClassWithALongName* another_variable = variable_with_a_long_name->methodWithALongName()->anotherMethodWithALongName();
+	//}
+
+	//class ClassWithALongName {
+	//public:
+	//    ClassWithALongName* methodWithALongName();
+	//    ClassWithALongName* anotherMethodWithALongName();
+	//};
+	//
+	//void test() {
+	//    ClassWithALongName* variable_with_a_long_name;
+	//    ClassWithALongName* another_variable =
+	//            variable_with_a_long_name->methodWithALongName()
+	//                    ->anotherMethodWithALongName();
+	//}
+	public void testMemberAccess() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ASSIGNMENT,
+				Integer.toString(Alignment.M_COMPACT_SPLIT));
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_MEMBER_ACCESS,
+				Integer.toString(Alignment.M_COMPACT_SPLIT));
+		assertFormatterResult();
+	}
+
 	//int foo(){try{}catch(...){}}
 	//float* bar();
 	//template<typename _CharT, typename _Traits>class basic_ios : public ios_base{public:

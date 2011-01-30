@@ -49,7 +49,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.corext.util.Messages;
 
-
 /**
  * The line wrapping tab page.
  */
@@ -64,7 +63,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		public final String previewText;
 		public final String description; //bug 235453: for categories' labels
 		public final List<Category> children;
-		
+
 		public int index;
 
 		public Category(String _key, String _previewText, String _name, String _description) {
@@ -455,6 +454,20 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	    	FormatterMessages.LineWrappingTabPage_binary_exprs_lowercase
 		);
 
+	private final Category fMemberAccessExpressionCategory= new Category(
+		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_MEMBER_ACCESS,
+		    "class TreeNode {" + //$NON-NLS-1$
+		    "public:" + //$NON-NLS-1$
+		    "TreeNode* getParent();" + //$NON-NLS-1$
+		    "TreeNode* getFirstChild();" + //$NON-NLS-1$
+		    "};\n\n" + //$NON-NLS-1$
+		    "TreeNode* firstUncle(TreeNode& node) {" + //$NON-NLS-1$
+		    "return node.getParent()->getParent()->getFirstChild();" + //$NON-NLS-1$
+		    "}", //$NON-NLS-1$
+		    FormatterMessages.LineWrappingTabPage_member_access,
+	    	FormatterMessages.LineWrappingTabPage_member_access_lowercase
+		);
+
 //	private final Category fEnumConstArgumentsCategory= new Category(
 //	    	DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ENUM_CONSTANT,
 //	    	"enum Example {" + //$NON-NLS-1$
@@ -481,12 +494,12 @@ public class LineWrappingTabPage extends FormatterTabPage {
 
 	private final Category fAssignmentCategory= new Category(
 		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ASSIGNMENT,
-		    "static char* string = \"TextTextText\";" + //$NON-NLS-1$
+		    "static char* string = \"text text text text\";" + //$NON-NLS-1$
 		    "class Example {" + //$NON-NLS-1$
 		    "void foo() {" + //$NON-NLS-1$
 		    "for (int i = 0; i < 10; i++) {}" + //$NON-NLS-1$
-		    "char* s;" + //$NON-NLS-1$
-		    "s = \"TextTextText\";}}", //$NON-NLS-1$
+		    "const char* character_string;" + //$NON-NLS-1$
+		    "character_string = \"text text text text\";}}", //$NON-NLS-1$
 	        FormatterMessages.LineWrappingTabPage_assignment_alignment,
     		FormatterMessages.LineWrappingTabPage_assignment_alignment_lowercase
 		);
@@ -600,6 +613,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		expressions.children.add(fConditionalExpressionCategory);
 		expressions.children.add(fInitializerListExpressionsCategory);
 		expressions.children.add(fAssignmentCategory);
+		expressions.children.add(fMemberAccessExpressionCategory);
 		
 //		final Category statements= new Category(FormatterMessages.LineWrappingTabPage_statements); 
 //		statements.children.add(fCompactIfCategory);

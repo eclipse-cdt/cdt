@@ -1984,6 +1984,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	    	Alignment expressionAlignment= scribe.createAlignment(
 	    			"declarationInitializer", //$NON-NLS-1$
 	    			preferences.alignment_for_assignment,
+	    			Alignment.R_OUTERMOST,
 	    			1,
 	    			scribe.scanner.getCurrentPosition());
 	
@@ -2234,6 +2235,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
     	Alignment expressionAlignment= scribe.createAlignment(
     			"assignmentExpression", //$NON-NLS-1$
     			preferences.alignment_for_assignment,
+    			Alignment.R_OUTERMOST,
     			1,
     			scribe.scanner.getCurrentPosition());
 
@@ -2314,18 +2316,36 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 		final IASTName fieldName= node.getFieldName();
 		if (fieldName != null) {
-			final int operatorToken= node.isPointerDereference() ? Token.tARROW : Token.tDOT;
-			scribe.printNextToken(operatorToken, scribe.printComment());
-			if (scribe.printComment()) {
-				scribe.space();
-			}
-			if (node instanceof ICPPASTFieldReference) {
-				if (((ICPPASTFieldReference) node).isTemplate()) {
-					scribe.printNextToken(Token.t_template);
-					scribe.space();
-				}
-			}
-			fieldName.accept(this);
+	    	Alignment alignment= scribe.createAlignment(
+	    			"fieldReference", //$NON-NLS-1$
+	    			preferences.alignment_for_member_access,
+	    			Alignment.R_OUTERMOST,
+	    			1,
+	    			scribe.scanner.getCurrentPosition());
+
+	    	scribe.enterAlignment(alignment);
+	    	boolean ok = false;
+	    	do {
+	    		try {
+	    			scribe.alignFragment(alignment, 0);
+
+					final int operatorToken= node.isPointerDereference() ? Token.tARROW : Token.tDOT;
+					scribe.printComment();
+					scribe.printNextToken(operatorToken, false);
+					scribe.printComment();
+					if (node instanceof ICPPASTFieldReference) {
+						if (((ICPPASTFieldReference) node).isTemplate()) {
+							scribe.printNextToken(Token.t_template);
+							scribe.space();
+						}
+					}
+					fieldName.accept(this);
+					ok = true;
+	    		} catch (AlignmentException e) {
+	    			scribe.redoAlignment(e);
+	    		}
+	    	} while (!ok);
+	    	scribe.exitAlignment(alignment, true);
 		}
     	return PROCESS_SKIP;
 	}
@@ -2524,9 +2544,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				Alignment.M_COMPACT_SPLIT,
 				Alignment.R_OUTERMOST,
 				2,
-				scribe.scanner.getCurrentPosition(),
-				preferences.continuation_indentation,
-				false);
+				scribe.scanner.getCurrentPosition());
 		scribe.enterAlignment(alignment);
 		
     	boolean ok = false;

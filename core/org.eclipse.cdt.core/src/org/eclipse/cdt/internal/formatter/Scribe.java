@@ -917,6 +917,11 @@ public class Scribe {
 		}
 	}
 
+	/**
+	 * Prints comment at the current position.
+	 * 
+	 * @return {@code true} if a writespace character was encountered preceding the next token,
+	 */
 	public boolean printComment() {
 		// if we have a space between two tokens we ensure it will be dumped in
 		// the formatted string

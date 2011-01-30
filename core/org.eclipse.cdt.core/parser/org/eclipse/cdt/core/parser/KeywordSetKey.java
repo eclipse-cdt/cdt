@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
-
-
 public enum KeywordSetKey {
 	EMPTY,
 	DECL_SPECIFIER_SEQUENCE,

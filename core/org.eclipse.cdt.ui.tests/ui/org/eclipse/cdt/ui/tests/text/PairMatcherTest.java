@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -234,4 +234,24 @@ public class PairMatcherTest extends TestCase {
 		otherIdx= fDocument.get().indexOf('>', idx + 1);
 		assertEquals(otherIdx, match.getOffset() + match.getLength() - 1);
 	}	
+
+	public void testDoubleClosingAngleBrackets_Bug335702() {
+		fDocument.set("list<list<int>> a;");
+		int idx= fDocument.get().indexOf('<', 0);
+		IRegion match= fPairMatcher.match(fDocument, idx + 1);
+		assertNotNull(match);
+		int otherIdx= fDocument.get().lastIndexOf('>');
+		assertEquals(otherIdx, match.getOffset() + match.getLength() - 1);
+
+		match= fPairMatcher.match(fDocument, otherIdx + 1);
+		assertNotNull(match);
+		assertEquals(idx, match.getOffset());
+
+		idx= fDocument.get().indexOf('<', idx+1);
+		match= fPairMatcher.match(fDocument, idx + 1);
+		assertNotNull(match);
+		otherIdx= fDocument.get().indexOf('>', idx + 1);
+		assertEquals(otherIdx, match.getOffset() + match.getLength() - 1);
+	}
+	
 }

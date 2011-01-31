@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,6 +181,9 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 	 *         <code>false</code> otherwise
 	 */
 	private boolean isTemplateParameterOpenBracket(int offset, IDocument document, CHeuristicScanner scanner) {
+		int nextToken = scanner.nextToken(offset + 1, Math.min(document.getLength(), offset + ANGLE_BRACKETS_SEARCH_BOUND));
+		if (nextToken == Symbols.TokenSHIFTLEFT || nextToken == Symbols.TokenLESSTHAN)
+			return false;
 		int prevToken= scanner.previousToken(offset - 1, Math.max(0, offset - ANGLE_BRACKETS_SEARCH_BOUND));
 		if (prevToken == Symbols.TokenIDENT || prevToken == Symbols.TokenTEMPLATE) {
 			return true;
@@ -203,6 +206,8 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 		if (offset >= document.getLength() - 1)
 			return true;
 		int thisToken= scanner.previousToken(offset, Math.max(0, offset - ANGLE_BRACKETS_SEARCH_BOUND));
+		if (thisToken == Symbols.TokenSHIFTRIGHT)
+			return true;
 		if (thisToken != Symbols.TokenGREATERTHAN)
 			return false;
 		int prevToken= scanner.previousToken(scanner.getPosition(), Math.max(0, offset - ANGLE_BRACKETS_SEARCH_BOUND));

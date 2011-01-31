@@ -3441,17 +3441,18 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				try {
 					statement.accept(this);
 				} catch (RuntimeException e) {
-					if (i < statementsLength - 1) {
-						reportFormattingProblem(e);
-						exitAlignments();
-						skipToNode(statements.get(i + 1));
-						while (scribe.indentationLevel < indentLevel) {
-							scribe.indent();
-						}
-						while (scribe.indentationLevel > indentLevel) {
-							scribe.unIndent();
-						}
-					} else throw e;
+					if (i >= statementsLength - 1) {
+						throw e;
+					}
+					reportFormattingProblem(e);
+					exitAlignments();
+					skipToNode(statements.get(i + 1));
+					while (scribe.indentationLevel < indentLevel) {
+						scribe.indent();
+					}
+					while (scribe.indentationLevel > indentLevel) {
+						scribe.unIndent();
+					}
 				}
 				previousStatement= statement;
 			}
@@ -3474,9 +3475,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		localScanner.resetTo(start, end);
 		if (localScanner.getNextToken() ==  Token.tLBRACE) {
 			switch (localScanner.getNextToken()) {
-				case Token.tBLOCKCOMMENT :
-				case Token.tLINECOMMENT :
-					return true;
+			case Token.tBLOCKCOMMENT:
+			case Token.tLINECOMMENT:
+				return true;
 			}
 		}
 		return false;
@@ -3504,8 +3505,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		int token = localScanner.getNextToken();
 		loop: while (true) {
 			switch (token) {
-			case Token.tBLOCKCOMMENT :
-			case Token.tLINECOMMENT :
+			case Token.tBLOCKCOMMENT:
+			case Token.tLINECOMMENT:
 				token = localScanner.getNextToken();
 				continue loop;
 			default:

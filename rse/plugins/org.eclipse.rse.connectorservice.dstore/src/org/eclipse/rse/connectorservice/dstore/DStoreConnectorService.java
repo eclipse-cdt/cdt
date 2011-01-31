@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -772,6 +772,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 					}
 				}
 				if (usedSSL && connectStatus.isSLLProblem()){
+					clientConnection.setPort(Integer.toString(getPort()));
 					// relaunching the server via the daemon so that we can connect again to the launched server with toggled useSSL settings
 					launchStatus = launchServer(clientConnection, info, daemonPort, monitor);
 					if (launchStatus.isConnected()) {

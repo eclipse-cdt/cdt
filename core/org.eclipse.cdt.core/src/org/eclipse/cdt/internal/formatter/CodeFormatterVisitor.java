@@ -3428,7 +3428,6 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			} catch (ASTProblemException e) {
 				skipToNode(statements.get(1));
 			}
-			final boolean previousStatementIsNullStmt= previousStatement instanceof IASTNullStatement;
 			final int indentLevel= scribe.indentationLevel;
 			for (int i = 1; i < statementsLength - 1; i++) {
 				final IASTStatement statement= statements.get(i);
@@ -3436,8 +3435,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					continue;
 				}
 				final boolean statementIsNullStmt= statement instanceof IASTNullStatement;
-				if ((previousStatementIsNullStmt && !statementIsNullStmt)
-						|| (!previousStatementIsNullStmt && !statementIsNullStmt)) {
+				if (!statementIsNullStmt) {
 					scribe.startNewLine();
 				}
 				try {
@@ -3459,8 +3457,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			}
 			final IASTStatement statement= statements.get(statementsLength - 1);
 			final boolean statementIsNullStmt= statement instanceof IASTNullStatement;
-			if ((previousStatementIsNullStmt && !statementIsNullStmt)
-				|| (!previousStatementIsNullStmt && !statementIsNullStmt)) {
+			if (!statementIsNullStmt) {
 				scribe.startNewLine();
 			}
 			statement.accept(this);

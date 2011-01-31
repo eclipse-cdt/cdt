@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.browser;
 
 import org.eclipse.cdt.core.CConventions;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.core.runtime.IStatus;
 
 /**
@@ -271,7 +272,7 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		for (int i = 0; i < fSegments.length; ++i) {
 		    String segment = fSegments[i];
 			// type name must follow C conventions
-			IStatus val = CConventions.validateIdentifier(segment);
+			IStatus val = CConventions.validateIdentifier(segment, GPPLanguage.getDefault());
 			if (val.getSeverity() == IStatus.ERROR)
 			    return false;
 		}
@@ -282,7 +283,7 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		if (segment.indexOf(QUALIFIER) != -1)
 		    return false;
 		// type name must follow C conventions
-		IStatus val = CConventions.validateIdentifier(segment);
+		IStatus val = CConventions.validateIdentifier(segment, GPPLanguage.getDefault());
 		return (val.getSeverity() != IStatus.ERROR);
 	}
 

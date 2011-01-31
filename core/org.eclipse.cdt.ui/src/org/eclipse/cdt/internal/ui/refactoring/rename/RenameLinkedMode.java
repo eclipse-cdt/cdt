@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,8 +63,11 @@ import org.eclipse.cdt.core.CConventions;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.dom.parser.AbstractCLikeLanguage;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
@@ -500,12 +503,25 @@ public class RenameLinkedMode {
 			String newName= fNamePosition.getContent();
 			if (fOriginalName.equals(newName))
 				return false;
-			return CConventions.validateIdentifier(newName).isOK();
+			return CConventions.validateIdentifier(newName, getLanguage()).isOK();
 		} catch (BadLocationException e) {
 			return false;
 		}
 	}
 
+	private AbstractCLikeLanguage getLanguage() {
+		ITranslationUnit tu = (ITranslationUnit) fEditor.getInputCElement();
+		ILanguage language = null;
+		try {
+			language = tu.getLanguage();
+		} catch (CoreException e) {
+		}
+		if (language instanceof AbstractCLikeLanguage) {
+			return (AbstractCLikeLanguage) language;
+		}
+		return GPPLanguage.getDefault();
+	}
+	
 	public boolean isOriginalName() {
 		try {
 			String newName= fNamePosition.getContent();

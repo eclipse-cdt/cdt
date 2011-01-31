@@ -60,6 +60,7 @@ import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
@@ -450,7 +451,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         ITextSelection textSel = getEditorTextSelection();
         if (textSel != null) {
             String text = textSel.getText();
-            if (text != null && text.length() > 0 && CConventions.validateClassName(text).isOK()) {
+            if (text != null && text.length() > 0 &&
+            		CConventions.validateClassName(text).isOK()) {
                 className = text;
             }
         }

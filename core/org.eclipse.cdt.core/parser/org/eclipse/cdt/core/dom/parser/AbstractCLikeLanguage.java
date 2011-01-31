@@ -61,7 +61,6 @@ import org.eclipse.core.runtime.CoreException;
  * @since 5.0
  */
 public abstract class AbstractCLikeLanguage extends AbstractLanguage implements ICLanguageKeywords {
-
 	
 	static class NameCollector extends ASTVisitor {
 		{
@@ -80,13 +79,11 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 		}
 	}
 	
-	
 	/**
 	 * @return the scanner extension configuration for this language, may not
 	 *         return <code>null</code>
 	 */
 	protected abstract IScannerExtensionConfiguration getScannerExtensionConfiguration();
-
 	
 	/**
 	 * @returns the actual parser object.
@@ -94,12 +91,10 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	protected abstract ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode,
 			IParserLogService logService, IIndex index);
 	
-	
 	/**
 	 * @return The ParserLanguage value corresponding to the language supported.
 	 */
 	protected abstract ParserLanguage getParserLanguage();
-	
 	
 	@Deprecated
 	public IASTTranslationUnit getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader reader,
@@ -173,7 +168,6 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 		return node;
 	}
 	
-	
 	/**
 	 * Create the parser.
 	 * 
@@ -186,9 +180,9 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	 */
 	protected ISourceCodeParser createParser(IScanner scanner, IParserLogService log, IIndex index, boolean forCompletion, int options) {
 		ParserMode mode;
-		if(forCompletion)
+		if (forCompletion)
 			mode= ParserMode.COMPLETION_PARSE;
-		else if((options & OPTION_SKIP_FUNCTION_BODIES) != 0)
+		else if ((options & OPTION_SKIP_FUNCTION_BODIES) != 0)
 			mode= ParserMode.STRUCTURAL_PARSE;
 		else
 			mode= ParserMode.COMPLETE_PARSE;
@@ -201,7 +195,6 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 		}
 		return parser;
 	}
-	
 	
 	/**
 	 * @deprecated Replaced by
@@ -221,8 +214,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	protected final IScanner createScanner(FileContent content, IScannerInfo scanInfo, IncludeFileContentProvider fcp, IParserLogService log) {
 		return new CPreprocessor(content, scanInfo, getParserLanguage(), log, getScannerExtensionConfiguration(), fcp);
 	}
-	
-	
+
 	@Deprecated
 	public IASTName[] getSelectedNames(IASTTranslationUnit ast, int start, int length) {
 		IASTNode selectedNode= ast.getNodeSelector(null).findNode(start, length);
@@ -242,17 +234,15 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 		return collector.getNames();
 	}
 	
-	
 	public IContributedModelBuilder createModelBuilder(ITranslationUnit tu) {
 		// use default model builder
 		return null;
 	}
 
-
 	private ICLanguageKeywords cLanguageKeywords = null;
 	
 	private synchronized ICLanguageKeywords getCLanguageKeywords() {
-		if(cLanguageKeywords == null)
+		if (cLanguageKeywords == null)
 			cLanguageKeywords = new CLanguageKeywords(getParserLanguage(), getScannerExtensionConfiguration());
 		return cLanguageKeywords;
 	}
@@ -260,7 +250,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
-		if(ICLanguageKeywords.class.equals(adapter))
+		if (ICLanguageKeywords.class.equals(adapter))
 			return getCLanguageKeywords();
 		
 		return super.getAdapter(adapter);
@@ -278,5 +268,4 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	public String[] getPreprocessorKeywords() {
 		return getCLanguageKeywords().getPreprocessorKeywords();
 	}
-
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2001, 2009 IBM Corporation and others.
+ *  Copyright (c) 2001, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,11 +7,14 @@
  * 
  *  Contributors:
  *     Rational Software - initial implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.dom.parser.AbstractCLikeLanguage;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.CharOperation;
@@ -91,7 +94,7 @@ public class CConventions {
 		char[] scannedID;
 		if (index == -1) {
 			// simple name
-			IStatus status = validateIdentifier(name);
+			IStatus status = validateIdentifier(name, GPPLanguage.getDefault());
 			if (!status.isOK()){
 				return status;
 			}
@@ -105,7 +108,7 @@ public class CConventions {
 				return status;
 			}
 			String type = name.substring(index + scopeResolutionOperator.length()).trim();
-			status = validateIdentifier(type);
+			status = validateIdentifier(type, GPPLanguage.getDefault());
 			if (!status.isOK()){
 				return status;
 			}
@@ -152,7 +155,7 @@ public class CConventions {
 		char[] scannedID;
 		if (index == -1) {
 			// simple name
-			IStatus status = validateIdentifier(name);
+			IStatus status = validateIdentifier(name, GPPLanguage.getDefault());
 			if (!status.isOK()){
 				return status;
 			}
@@ -166,7 +169,7 @@ public class CConventions {
 				return status;
 			}
 			String type = name.substring(index + scopeResolutionOperator.length()).trim();
-			status = validateIdentifier(type);
+			status = validateIdentifier(type, GPPLanguage.getDefault());
 			if (!status.isOK()){
 				return status;
 			}
@@ -242,21 +245,21 @@ public class CConventions {
 	 *		object indicating what is wrong with the name
 	 */
 	public static IStatus validateFieldName(String name) {
-		return validateIdentifier(name);
+		return validateIdentifier(name, GPPLanguage.getDefault());
 	}
 
 	/**
-	 * Validate the given C identifier.
-	 * The identifier must not have the same spelling as a C keyword,
-	 * boolean literal (<code>"true"</code>, <code>"false"</code>), or null literal (<code>"null"</code>).
-	 * See section 3.8 of the <em>C Language Specification, Second Edition</em> (JLS2).
+	 * Validate the given identifier.
 	 * A valid identifier can act as a simple type name, method name or field name.
 	 *
 	 * @param id the C identifier
 	 * @return a status object with code <code>IStatus.OK</code> if
 	 *		the given identifier is a valid C identifier, otherwise a status
 	 *		object indicating what is wrong with the identifier
+	 * @deprecated Notice that the identifier is not being checked against language keywords.
+	 *      Use validateIdentifier(String id, AbstractCLikeLanguage language) instead.
 	 */
+	@Deprecated
 	public static IStatus validateIdentifier(String id) {
 		if (!isLegalIdentifier(id)) {
 			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_illegalIdentifier, id), null); 
@@ -264,6 +267,33 @@ public class CConventions {
 
 		if (!isValidIdentifier(id)) {
 			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_invalid, id), null); 
+		}
+
+		return CModelStatus.VERIFIED_OK;
+	}
+
+	/**
+	 * Validate the given C or C++ identifier.
+	 * The identifier must not have the same spelling as a C or C++ keyword.
+	 * A valid identifier can act as a simple type name, method name or field name.
+	 *
+	 * @param id the C identifier
+	 * @return a status object with code <code>IStatus.OK</code> if
+	 *		the given identifier is a valid C identifier, otherwise a status
+	 *		object indicating what is wrong with the identifier
+	 * @since 5.3
+	 */
+	public static IStatus validateIdentifier(String id, AbstractCLikeLanguage language) {
+		if (!isLegalIdentifier(id)) {
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_illegalIdentifier, id), null); 
+		}
+
+		if (!isValidIdentifier(id)) {
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_invalid, id), null); 
+		}
+		
+		if (isReservedKeyword(id, language)) {
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_reservedKeyword, id), null);
 		}
 
 		return CModelStatus.VERIFIED_OK;
@@ -282,10 +312,10 @@ public class CConventions {
 	 *		object indicating what is wrong with the name
 	 */
 	public static IStatus validateMethodName(String name) {
-		if(name.startsWith("~")) { //$NON-NLS-1$
-			return validateIdentifier(name.substring(1));
+		if (name.startsWith("~")) { //$NON-NLS-1$
+			return validateIdentifier(name.substring(1), GPPLanguage.getDefault());
 		}
-		return validateIdentifier(name);
+		return validateIdentifier(name, GPPLanguage.getDefault());
 	}
 
 	/**
@@ -327,6 +357,15 @@ public class CConventions {
 				return true;
 			}
 		} catch (Exception e) {
+		}
+		return false;
+	}
+	
+	private static boolean isReservedKeyword(String name, AbstractCLikeLanguage language) {
+		String[] keywords = language.getKeywords();
+		for (String kw : keywords) {
+			if (kw.equals(name))
+				return true;
 		}
 		return false;
 	}
@@ -438,7 +477,7 @@ public class CConventions {
 	}
 
 	/**
-	 * Validate the given CPP enum name, either simple or qualified. For
+	 * Validate the given C++ enum name, either simple or qualified. For
 	 * example, <code>"A::B::C"</code>, or <code>"C"</code>.
 	 * <p>
 	 *
@@ -463,7 +502,7 @@ public class CConventions {
 		char[] scannedID;
 		if (index == -1) {
 			// simple name
-			IStatus status = validateIdentifier(name);
+			IStatus status = validateIdentifier(name, GPPLanguage.getDefault());
 			if (!status.isOK()){
 				return status;
 			}
@@ -477,7 +516,7 @@ public class CConventions {
 				return status;
 			}
 			String type = name.substring(index + scopeResolutionOperator.length()).trim();
-			status = validateIdentifier(type);
+			status = validateIdentifier(type, GPPLanguage.getDefault());
 			if (!status.isOK()){
 				return status;
 			}

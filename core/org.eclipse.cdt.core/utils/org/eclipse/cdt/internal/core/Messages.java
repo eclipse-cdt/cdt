@@ -18,6 +18,7 @@ public class Messages extends NLS {
 	public static String Addr_valueOutOfRange;
 	public static String convention_illegalIdentifier;
 	public static String convention_invalid;
+	public static String convention_reservedKeyword;
 	public static String convention_scope_leadingUnderscore;
 	public static String convention_scope_lowercaseName;
 	public static String convention_scope_nullName;

@@ -34,6 +34,7 @@ import org.junit.runners.Suite;
 	MICatchpointsTest_7_1.class,
 	MIDisassemblyTest_7_1.class,
 	GDBProcessesTest_7_1.class,
+	LaunchConfigurationAndRestartTest_7_1.class,
 	Suite_Sessionless_Tests.class
 	/* Add your test class here */
 })

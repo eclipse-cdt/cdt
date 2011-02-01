@@ -39,6 +39,8 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 
 /**
  * This is the base class for the GDB/MI Unit tests.
@@ -49,13 +51,16 @@ import org.junit.BeforeClass;
  * code is to be run.
  */
 public class BaseTestCase {
-
+	
+	// Make the current test naem available through testName.getMethodName()
+	@Rule public TestName testName = new TestName();
+	
 	public static final String ATTR_DEBUG_SERVER_NAME = TestsPlugin.PLUGIN_ID + ".DEBUG_SERVER_NAME";
 	private static final String DEFAULT_TEST_APP = "data/launch/bin/GDBMIGenericTestApp";
 	
     private static GdbLaunch fLaunch;
-	private static Map<String, Object> attrs = new HashMap<String, Object>();
-    private static Process gdbserverProc = null;
+	private static Map<String, Object> attrs;
+    private static Process gdbserverProc;
     
 	/** The MI event associated with the breakpoint at main() */
 	private MIStoppedEvent fInitialStoppedEvent;
@@ -114,6 +119,9 @@ public class BaseTestCase {
    
     @BeforeClass
     public static void baseBeforeClassMethod() {
+    	// Must clear all the attributes, because some tests change them.
+    	attrs = new HashMap<String, Object>();
+    	
 		// Setup information for the launcher
    		attrs.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, DEFAULT_TEST_APP);
 
@@ -134,9 +142,9 @@ public class BaseTestCase {
     
     @Before
  	public void baseBeforeMethod() throws Exception {
-    	System.out.println("====================================================================");
-		System.out.println("Launching test application: " + attrs.get(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME));
-		System.out.println("====================================================================");
+    	System.out.println("====================================================================================================");
+		System.out.println("Running test: " + testName.getMethodName() + " using GDB: " + attrs.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME));
+    	System.out.println("====================================================================================================");
 		
  		// First check if we should launch gdbserver in the case of a remote session
 		launchGdbServer();

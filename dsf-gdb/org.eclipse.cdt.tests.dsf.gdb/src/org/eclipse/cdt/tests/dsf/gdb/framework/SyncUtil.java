@@ -15,11 +15,14 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -35,8 +38,10 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
@@ -53,6 +58,7 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil.DefaultTimeouts.ETimeout;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -61,7 +67,7 @@ import org.eclipse.core.runtime.Status;
  */
 public class SyncUtil {
     
-    private static ICommandControlService fCommandControl;
+    private static IGDBControl fGdbControl;
     private static IMIRunControl fRunControl;
     private static MIStack fStack;
     private static IExpressions fExpressions;
@@ -82,14 +88,14 @@ public class SyncUtil {
 	        		new DsfServicesTracker(TestsPlugin.getBundleContext(), 
 	        				fSession.getId());
 	        	
-	        	fCommandControl = tracker.getService(ICommandControlService.class);		   		
+	        	fGdbControl = tracker.getService(IGDBControl.class);		   		
 	        	fRunControl = tracker.getService(IMIRunControl.class);
 	        	fStack = tracker.getService(MIStack.class);
 	        	fExpressions = tracker.getService(IExpressions.class);
 	        	fProcessesService = tracker.getService(IMIProcesses.class);
 	        	fCommandFactory = tracker.getService(IMICommandControl.class).getCommandFactory();
 	        	
-	        	fBreakpointsDmc = (IBreakpointsTargetDMContext)fCommandControl.getContext();
+	        	fBreakpointsDmc = (IBreakpointsTargetDMContext)fGdbControl.getContext();
 	        	
 	        	tracker.dispose();
             }
@@ -139,13 +145,13 @@ public class SyncUtil {
 				// ServiceEvent telling us the program has been suspended again
 				switch(stepType) {
 				case STEP_INTO:
-					fCommandControl.queueCommand(fCommandFactory.createMIExecStep(dmc), null);
+					fGdbControl.queueCommand(fCommandFactory.createMIExecStep(dmc), null);
 					break;
 				case STEP_OVER:
-					fCommandControl.queueCommand(fCommandFactory.createMIExecNext(dmc), null);
+					fGdbControl.queueCommand(fCommandFactory.createMIExecNext(dmc), null);
 					break;
 				case STEP_RETURN:
-					fCommandControl.queueCommand(fCommandFactory.createMIExecFinish(fStack.createFrameDMContext(dmc, 0)), null);
+					fGdbControl.queueCommand(fCommandFactory.createMIExecFinish(fStack.createFrameDMContext(dmc, 0)), null);
 					break;
 				default:
 					Assert.assertTrue("Unsupported step type; " + stepType.toString(), false);
@@ -175,7 +181,7 @@ public class SyncUtil {
 				// No need for a RequestMonitor since we will wait for the
 				// ServiceEvent telling us the program has been suspended again
 				
-				fCommandControl.queueCommand(
+				fGdbControl.queueCommand(
 						fCommandFactory.createMIExecUntil(dmc, fileName + ":" + lineNo), //$NON-NLS-1$
 						null);
 			}
@@ -234,7 +240,7 @@ public class SyncUtil {
 			}
 		};
 
-		fCommandControl.queueCommand(
+		fGdbControl.queueCommand(
 				fCommandFactory.createMIBreakInsert(fBreakpointsDmc, temporary, false, null, 0, location, 0),
 			    addBreakDone);
 		
@@ -260,7 +266,7 @@ public class SyncUtil {
 			}
 		};
 
-		fCommandControl.queueCommand(fCommandFactory.createMIBreakList(fBreakpointsDmc), listDRM);
+		fGdbControl.queueCommand(fCommandFactory.createMIBreakList(fBreakpointsDmc), listDRM);
 		
         wait.waitUntilDone(timeout);
         assertTrue(wait.getMessage(), wait.isOK());
@@ -293,7 +299,7 @@ public class SyncUtil {
 			}
 		};
 
-		fCommandControl.queueCommand(
+		fGdbControl.queueCommand(
 				fCommandFactory.createMIBreakDelete(fBreakpointsDmc, breakpointIndices), //$NON-NLS-1$
 				deleteBreakDone);
 		
@@ -312,7 +318,7 @@ public class SyncUtil {
 			public void run() {
 				// No need for a RequestMonitor since we will wait for the
 				// ServiceEvent telling us the program has been suspended again
-				fCommandControl.queueCommand(
+				fGdbControl.queueCommand(
 						fCommandFactory.createMIExecContinue(dmc),
 						null);
 			}
@@ -341,7 +347,7 @@ public class SyncUtil {
 			public void run() {
 				// No need for a RequestMonitor since we will wait for the
 				// ServiceEvent telling us the program has been resumed
-				fCommandControl.queueCommand(
+				fGdbControl.queueCommand(
 						fCommandFactory.createMIExecContinue(dmc),
 						null);
 			}
@@ -407,6 +413,26 @@ public class SyncUtil {
         StackFrameQuery sfQuery = new StackFrameQuery();
         fSession.getExecutor().execute(sfQuery);
         return sfQuery.get();
+    }
+    
+    public static IFrameDMData getFrameData(final IExecutionDMContext execCtx, final int level) throws Throwable {
+      	Query<IFrameDMData> query = new Query<IFrameDMData>() {
+    		@Override
+    		protected void execute(final DataRequestMonitor<IFrameDMData> rm) {
+    			fStack.getFrames(execCtx, level, level, new DataRequestMonitor<IFrameDMContext[]>(ImmediateExecutor.getInstance(), rm) {
+    				@Override
+    				protected void handleSuccess() {
+    					IFrameDMContext[] frameDmcs = getData();
+    					assert frameDmcs != null;
+    					assert frameDmcs.length == 1;
+    					fStack.getFrameData(frameDmcs[0], rm);
+    				}
+    			});
+    		}
+    	};
+
+    	fSession.getExecutor().execute(query);
+    	return query.get(500, TimeUnit.MILLISECONDS);
     }
 
     public static IExpressionDMContext createExpression(final IDMContext parentCtx, final String expression)
@@ -550,7 +576,7 @@ public class SyncUtil {
 		fProcessesService.getExecutor().submit(new Runnable() {
             public void run() {
             	fProcessesService.getProcessesBeingDebugged(
-            			fCommandControl.getContext(), 
+            			fGdbControl.getContext(), 
             			new DataRequestMonitor<IDMContext[]>(fProcessesService.getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
@@ -576,4 +602,48 @@ public class SyncUtil {
     	return (IContainerDMContext)waitor.getReturnInfo();
 	}
     
+    /**
+     * Restart the program.
+     */
+	public static void restart(final GdbLaunch launch) throws Throwable {	
+    	// Check if restart is allowed
+        Query<Boolean> query = new Query<Boolean>() {
+			@Override
+			protected void execute(DataRequestMonitor<Boolean> rm) {
+			    rm.setData(fGdbControl.canRestart());
+				rm.done();
+			}
+        };
+
+        fGdbControl.getExecutor().execute(query);
+        boolean canRestart = query.get(500, TimeUnit.MILLISECONDS);
+        if (!canRestart) {
+        	throw new CoreException(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, "Unable to restart"));
+        }
+
+        // Now wait for the stopped event of the restart
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
+			new ServiceEventWaitor<MIStoppedEvent>(
+					fSession,
+					MIStoppedEvent.class);
+			
+        // Perform the restart
+        Query<Boolean> query2 = new Query<Boolean>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Boolean> rm) {
+				fGdbControl.initInferiorInputOutput(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+                	@Override
+                	protected void handleSuccess() {
+                		fGdbControl.createInferiorProcess();
+                		fGdbControl.restart(launch, rm);
+                	}
+                });
+			}
+        };
+
+        fGdbControl.getExecutor().execute(query2);
+        query2.get(500, TimeUnit.MILLISECONDS);
+        
+ 		eventWaitor.waitForEvent(DefaultTimeouts.get(ETimeout.waitForStop));
+    }
 }

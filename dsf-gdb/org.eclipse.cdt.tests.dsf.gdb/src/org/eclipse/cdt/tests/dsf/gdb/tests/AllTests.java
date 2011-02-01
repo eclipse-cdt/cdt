@@ -32,7 +32,8 @@ import org.junit.runners.Suite;
 	MIBreakpointsTest.class,
 	MICatchpointsTest.class,
 	MIDisassemblyTest.class,
-	GDBProcessesTest.class
+	GDBProcessesTest.class,
+	LaunchConfigurationAndRestartTest.class,
 	/* Add your suite class here */
 })
 

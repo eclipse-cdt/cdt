@@ -350,6 +350,8 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	 */
 	public boolean compareContent1(InputStream a, InputStream b) {
 		int c, d;
+		StringBuilder bufferA = new StringBuilder(100);
+		StringBuilder bufferB = new StringBuilder(100);
 		if (a == null && b == null)
 			return true;
 		try {
@@ -359,13 +361,15 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 				return false;
 			}
 			while ((c = a.read()) == (d = b.read()) && (c != -1 && d != -1)) {
-				//body not needed
+				//remember the read value to string buffer
+				bufferA.append(c);
+				bufferB.append(d);
 			}
 			if (c == -1 && d == -1)
 			{
 				return true;
 			}
-			String msg = "difference: c is: " + c + " but d is: " + d + "  a is: " + a.toString() + " but b is: " + b.toString();
+			String msg = "difference: c is: " + c + " but d is: " + d + "  a so far is: " + bufferA.toString() + " but b so far is: " + bufferB.toString();
 			fail(msg);
 			return false;	
 		} catch (IOException e) {

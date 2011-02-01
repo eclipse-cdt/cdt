@@ -365,7 +365,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 			{
 				return true;
 			}
-			String msg = "difference: c is " + c + " but d is " + d;
+			String msg = "difference: c is: " + c + " but d is: " + d + "  a is: " + a.toString() + " but b is: " + b.toString();
 			fail(msg);
 			return false;	
 		} catch (IOException e) {

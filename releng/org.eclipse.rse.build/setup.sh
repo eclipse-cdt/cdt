@@ -48,11 +48,11 @@ esac
 
 # prepare the base Eclipse installation in folder "eclipse"
 ep_rel="S-"
-ep_ver=3.7M4
-ep_date="-201012081300"
+ep_ver=3.7M5
+ep_date="-201101272034"
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.0.v3716.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.0.v3721b.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -138,7 +138,7 @@ fi
 #CDTVER=201006141710
 CDTREL=8.0.0
 CDTFEAT=8.0.0
-CDTVER=201011050851
+CDTVER=201101311025
 CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
 CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
 if [ ! -f eclipse/plugins/org.eclipse.cdt_${CDTFEAT}.${CDTVER}.jar ]; then

@@ -1024,8 +1024,8 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			//return false;
 		}
 		finally {
-			if (channel.getChannel() != null) {
-				channel.getChannel().disconnect();
+			if (channel != null) {
+				channel.release();
 			}
 		}
 	}

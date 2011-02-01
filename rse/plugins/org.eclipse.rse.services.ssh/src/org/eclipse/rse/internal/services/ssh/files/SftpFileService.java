@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@
  * Martin Oberhuber (Wind River) - [274568] Dont use SftpMonitor for Streams transfer
  * Patrick Tassé    (Ericsson)   - [285226] Empty directory shown as an error message
  * Martin Oberhuber (Wind River) - [286129][api] RemoteFileException(String) violates API contract
+ * Martin Tauber				 - [256581][performance] Re-use Sftp channels
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -56,6 +57,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import java.util.regex.Pattern;
@@ -69,6 +71,7 @@ import org.eclipse.osgi.util.NLS;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
@@ -97,22 +100,160 @@ import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
-import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 public class SftpFileService extends AbstractFileService implements ISshService, IFilePermissionsService
 {
+	
+	private class SSHChannel {
+		public final static int TYPE_SFTP = 1;
+		//public final static int TYPE_EXEC = 2;
+		
+		private boolean available = true;
+		protected boolean connected = false;
+		private boolean pooledChannel = false;
+		int type;
+		
+		ChannelSftp channel = null;
+		
+		public SSHChannel(int type, boolean pooledChannel) {
+			this.pooledChannel = pooledChannel;
+			this.type = type;
+		}
+		
+		public boolean isConnected() {
+			return connected;
+		}
+		
+		public boolean isAvailable() {
+			return available;
+		}
+		
+		public int getType() {
+			return type;
+		}
+		
+		public void setType(int type) {
+			this.type = type;
+		}
+		
+		public void request() {
+			this.available=false;
+		}
+
+		public void release() {
+			if (pooledChannel) {
+				this.available = true;
+			} else {
+				this.disconnect();
+			}
+		}
+
+		public void connect() throws JSchException {
+			if (!connected) {
+				if (this.type == TYPE_SFTP) {
+					channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
+				} else {
+					channel = (ChannelSftp)fSessionProvider.getSession().openChannel("exec"); //$NON-NLS-1$
+				}
+			
+				channel.connect();
+				connected = true;
+			}
+		}
+		
+		public void disconnect() {
+			channel.disconnect();
+			available = true;
+			connected = false;
+		}
+		
+		public ChannelSftp getChannel() {
+			return channel;
+		}
+		
+	}
+		
+	private SSHChannelPool sshChannelPool = new SSHChannelPool();
+	
+	private class SSHChannelPool {
+		private Vector pool = new Vector();
+
+		private SSHChannelPool() {
+			SSHChannel sshChannel;
+			
+			for (int i=0; i<10; i++) {
+				sshChannel = new SSHChannel(SSHChannel.TYPE_SFTP, true);
+				this.pool.add(sshChannel);
+			}
+		}
+		
+		public SSHChannel requestChannel(int type) throws JSchException {
+			SSHChannel sshChannel;
+			
+			// Check if there is a pooled Channel of the requested type available
+			Iterator iterator = pool.iterator();
+			while (iterator.hasNext()) {
+				sshChannel = (SSHChannel)iterator.next();
+				
+				if (sshChannel.isAvailable() && sshChannel.getType() == type) {
+					if (!sshChannel.isConnected()) {
+						sshChannel.connect();
+					}
+					
+					sshChannel.request();
+					return sshChannel;
+				}
+			}
+			
+			// Check if there is a pooled Channel of any type available
+			iterator = pool.iterator();
+			while (iterator.hasNext()) {
+				sshChannel = (SSHChannel)iterator.next();
+				if (sshChannel.isAvailable()) {
+					if (sshChannel.isConnected()) {
+						sshChannel.disconnect();
+					}
+
+					sshChannel.setType(type);
+					sshChannel.connect();
+					
+					sshChannel.request();
+					return sshChannel;
+				}
+			}
+		
+			// No pooled channel is available so return unpooled channel
+			sshChannel = new SSHChannel(type, false);
+			sshChannel.connect();
+			
+			return sshChannel;
+		}
+		
+		public void release() {
+			SSHChannel sshChannel;
+			
+			Iterator iterator = pool.iterator();
+			while (iterator.hasNext()) {
+				sshChannel = (SSHChannel)iterator.next();
+				
+				if (sshChannel.isConnected()) {
+					sshChannel.disconnect();
+				}
+			}
+		}
+	}
 
 	private static class SftpBufferedInputStream extends BufferedInputStream {
 
-		private ChannelSftp channel;
+		private SSHChannel channel;
 
 		/**
 		 * Creates a BufferedInputStream  and saves its argument, the input stream, for later use. An internal buffer array is created.
 		 * @param in the underlying input stream.
 		 * @param channel the associated channel.
 		 */
-		public SftpBufferedInputStream(InputStream in, ChannelSftp channel) {
+		public SftpBufferedInputStream(InputStream in, SSHChannel channel) {
 			super(in);
 			this.channel = channel;
 		}
@@ -123,7 +264,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		 * @param size the buffer size.
 		 * @param channel the associated channel.
 		 */
-		public SftpBufferedInputStream(InputStream in, int size, ChannelSftp channel) {
+		public SftpBufferedInputStream(InputStream in, int size, SSHChannel channel) {
 			super(in, size);
 			this.channel = channel;
 		}
@@ -134,20 +275,20 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		 */
 		public void close() throws IOException {
 			super.close();
-			channel.disconnect();
+			channel.release();
 		}
 	}
 
 	private static class SftpBufferedOutputStream extends BufferedOutputStream {
 
-		private ChannelSftp channel;
+		private SSHChannel channel;
 
 		/**
 		 * Creates a new buffered output stream to write data to the specified underlying output stream with a default 512-byte buffer size.
 		 * @param out the underlying output stream.
 		 * @param channel the associated channel.
 		 */
-		public SftpBufferedOutputStream(OutputStream out, ChannelSftp channel) {
+		public SftpBufferedOutputStream(OutputStream out, SSHChannel channel) {
 			super(out);
 			this.channel = channel;
 		}
@@ -158,7 +299,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		 * @param size the buffer size.
 		 * @param channel the associated channel.
 		 */
-		public SftpBufferedOutputStream(OutputStream out, int size, ChannelSftp channel) {
+		public SftpBufferedOutputStream(OutputStream out, int size, SSHChannel channel) {
 			super(out, size);
 			this.channel = channel;
 		}
@@ -169,7 +310,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		 */
 		public void close() throws IOException {
 			super.close();
-			channel.disconnect();
+			channel.release();
 		}
 	}
 
@@ -425,6 +566,10 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		if (fChannelSftp!=null && fChannelSftp.isConnected()) {
 			fChannelSftp.disconnect();
 		}
+		
+		// disconnect all pooled connections
+		sshChannelPool.release();
+		
 		fDirChannelMutex.interruptAll();
 		fChannelSftp = null;
 	}
@@ -711,7 +856,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			dst = concat(dst, remoteFile);
 		}
 		//TODO what to do with isBinary?
-		ChannelSftp channel = null;
+		SSHChannel channel = null;
 		//Fixing bug 158534. TODO remove when bug 162688 is fixed.
 		if (monitor==null) {
 			monitor = new NullProgressMonitor();
@@ -721,14 +866,13 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			int mode=ChannelSftp.OVERWRITE;
 			dst = recodeSafeForJsch(dst);
 			getChannel("SftpFileService.upload "+remoteFile); //check the session is healthy //$NON-NLS-1$
-			channel=(ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
-			channel.connect();
-			channel.put(localFile.getAbsolutePath(), dst, sftpMonitor, mode);
+			channel=sshChannelPool.requestChannel(SSHChannel.TYPE_SFTP);
+			channel.getChannel().put(localFile.getAbsolutePath(), dst, sftpMonitor, mode);
 			Activator.trace("SftpFileService.upload "+remoteFile+ " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (monitor.isCanceled()) {
 				throw new SystemOperationCancelledException();
 			} else {
-				SftpATTRS attr = channel.stat(dst);
+				SftpATTRS attr = channel.getChannel().stat(dst);
 				////[237616] Modtime will be set by calling setLastModified() from UniversalFileTransferUtility
 				//attr.setACMODTIME(attr.getATime(), (int)(localFile.lastModified()/1000));
 
@@ -753,7 +897,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			//return false;
 		}
 		finally {
-			if (channel!=null) channel.disconnect();
+			if (channel!=null) channel.release();
 		}
 	}
 
@@ -836,7 +980,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 
 	public void download(String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
 	{
-		ChannelSftp channel = null;
+		SSHChannel channel = null;
 		String remotePath = concat(remoteParent, remoteFile);
 		try {
 			if (!localFile.exists()) {
@@ -851,14 +995,13 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			int mode=ChannelSftp.OVERWRITE;
 			MyProgressMonitor sftpMonitor = new MyProgressMonitor(monitor);
 			getChannel("SftpFileService.download "+remoteFile); //check the session is healthy //$NON-NLS-1$
-			channel=(ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
-			channel.connect();
-			channel.get(remotePathRecoded, localFile.getAbsolutePath(), sftpMonitor, mode);
+			channel=sshChannelPool.requestChannel(SSHChannel.TYPE_SFTP);
+			channel.getChannel().get(remotePathRecoded, localFile.getAbsolutePath(), sftpMonitor, mode);
 			Activator.trace("SftpFileService.download "+remoteFile+ " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (monitor.isCanceled()) {
 				throw new SystemOperationCancelledException();
 			} else {
-				SftpATTRS attr = channel.stat(remotePathRecoded);
+				SftpATTRS attr = channel.getChannel().stat(remotePathRecoded);
 				localFile.setLastModified(1000L * attr.getMTime());
 				//TODO should we set the read-only status?
 				//if (0==(attrs.getPermissions() & 00400)) localFile.setReadOnly();
@@ -881,8 +1024,8 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 			//return false;
 		}
 		finally {
-			if (channel!=null) {
-				channel.disconnect();
+			if (channel.getChannel() != null) {
+				channel.getChannel().disconnect();
 			}
 		}
 	}
@@ -1080,7 +1223,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 				String stringToSend = new String(bytesDesired);
 				byte[] bytesSent = stringToSend.getBytes();
 				if (!bytesDesired.equals(bytesSent)) {
-					throw new UnsupportedEncodingException("Cannot encode for JSch as \"" + fJSchChannelEncoding + "\": " + command);
+					throw new UnsupportedEncodingException("Cannot encode for JSch as \"" + fJSchChannelEncoding + "\": " + command); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				((ChannelExec) channel).setCommand(new String(bytesDesired));
 			}
@@ -1250,9 +1393,8 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 		try {
 			String remotePathRecoded = recode(remotePath);
 			getChannel("SftpFileService.getInputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
-			ChannelSftp channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
-			channel.connect();
-			stream = new SftpBufferedInputStream(channel.get(remotePathRecoded), channel);
+			SSHChannel channel = sshChannelPool.requestChannel(SSHChannel.TYPE_SFTP);
+			stream = new SftpBufferedInputStream(channel.getChannel().get(remotePathRecoded), channel);
 			Activator.trace("SftpFileService.getInputStream " + remoteFile + " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		catch (Exception e) {
@@ -1297,9 +1439,8 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 				mode = ChannelSftp.APPEND;
 			}
 			getChannel("SftpFileService.getOutputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
-			ChannelSftp channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
-			channel.connect();
-			stream = new SftpBufferedOutputStream(channel.put(recodeSafeForJsch(dst), mode), channel);
+			SSHChannel channel = sshChannelPool.requestChannel(SSHChannel.TYPE_SFTP);
+			stream = new SftpBufferedOutputStream(channel.getChannel().put(recodeSafeForJsch(dst), mode), channel);
 			Activator.trace("SftpFileService.getOutputStream " + remoteFile + " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		catch (Exception e) {

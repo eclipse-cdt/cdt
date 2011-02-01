@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2005, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Michael Scharf (Wind River) - [209665] Add ability to log byte streams from terminal
  * Alex Panchenko (Xored) - [277061]  TelnetConnection.isConnected() should check if socket was not closed
  * Uwe Stieber (Wind River) - [281329] Telnet connection not handling "SocketException: Connection reset" correct
+ * Nils Hagge (Siemens AG) - [276023] close socket streams after connection is disconnected 
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.telnet;
 
@@ -336,11 +337,13 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 				Logger.logException(ex);
 			}
 
-			// Tell the ITerminalControl object that the connection is
-			// closed.
-			terminalControl.setState(TerminalState.CLOSED);
 		} catch (Exception ex) {
 			Logger.logException(ex);
+		} finally {
+			// Tell the ITerminalControl object that the connection is closed.
+			terminalControl.setState(TerminalState.CLOSED);
+			try { inputStream.close(); } catch(IOException ioe) { /*ignore*/ }
+			try { outputStream.close(); } catch(IOException ioe) { /*ignore*/ }
 		}
 	}
 

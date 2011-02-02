@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *     Ericsson             - Modified for the breakpoint service
  *     Ericsson             - Added Tracepoint support (284286)
+ *     Abeer Bagul (Tensilica) - Differentiate between hw breakpoint and watchpoint
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -433,8 +434,10 @@ public class MIBreakpoint  {
                 //type="hw watchpoint"
                 if (type.startsWith("hw")) { //$NON-NLS-1$
                     isHdw = true;
-                    isWWpt = true;
-                    isWpt = true;
+					if (type.indexOf("watchpoint") != -1) { //$NON-NLS-1$
+						isWWpt = true;
+						isWpt = true;
+					}
                 }
                 //type="acc watchpoint"
                 if (type.startsWith("acc")) { //$NON-NLS-1$

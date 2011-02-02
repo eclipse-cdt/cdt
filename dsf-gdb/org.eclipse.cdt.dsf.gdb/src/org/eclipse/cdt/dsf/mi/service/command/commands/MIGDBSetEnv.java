@@ -32,14 +32,17 @@ public class MIGDBSetEnv extends MIGDBSet
     }
 
     public MIGDBSetEnv(ICommandControlDMContext dmc, String name, String value) {
-    	// We need to avoid putting "" around the variable.
-    	// -gdb-set env "MYVAR=MY VAR"
-    	// will not set MYVAR to MY VAR, but instead will create an empty variable with name "MYVAR=MY VAR"
-    	// This is because "" are automatically inserted if there is a space in the parameter.
-    	// What we really want to send is:
-    	// -gdb-set env MYVAR=MY VAR
-    	// To achieve that, we split the value into separate parameters
-        super(dmc, null);
+    	// MICommand wraps a parameter with double quotes if it contains a space. If the
+    	// value of the environment variable has a space, and we bundle the var name, the
+    	// '=' and the value as a single parameter, then we'll end up with something like
+    	//
+    	//    -gdb-set env "MYVAR=MY VAR"
+    	//
+    	// which defines an environment variable named "MYVAR=MY VAR", with an empty
+    	// string for a value. To avoid this, we send each element as a separate parameter
+    	//
+    	//    -gdb-set env MYVAR = MY VAR
+    	super(dmc, null);
         
         if (value == null || value.length() == 0) {
         	setParameters(new String[] { "env", name }); //$NON-NLS-1$

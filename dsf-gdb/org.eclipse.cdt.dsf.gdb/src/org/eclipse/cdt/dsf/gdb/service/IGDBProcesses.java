@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Ericsson and others.
+ * Copyright (c) 2008, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.util.Map;
+
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
@@ -50,5 +55,26 @@ public interface IGDBProcesses extends IMIProcesses {
      * @param containerDmc The container for which we want to get the execution contexts
      */
     IMIExecutionDMContext[] getExecutionContexts(IMIContainerDMContext containerDmc);
-
+    
+    /**
+     * Returns whether the specified process can be restarted.
+     *  
+     * @param containerDmc The process that should be restarted
+     * @param rm The requestMonitor that returns if a restart is allowed on the specified process.
+     * 
+     * @since 4.0
+     */
+    void canRestart(IContainerDMContext containerDmc, DataRequestMonitor<Boolean> rm);
+    
+    /**
+     * Request that the specified process be restarted.
+     * 
+     * @param containerDmc The process that should be restarted
+     * @param attributes Different attributes that affect the restart operation.  This is 
+     *                   usually the launch configuration attributes
+     * @param rm The requetMonitor that indicates that the restart request has been completed.
+     *           
+     * @since 4.0
+     */
+	void restart(IContainerDMContext containerDmc, Map<String, Object> attributes, RequestMonitor rm);
 }

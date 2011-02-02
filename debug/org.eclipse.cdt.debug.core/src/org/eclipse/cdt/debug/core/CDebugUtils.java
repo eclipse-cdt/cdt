@@ -19,6 +19,7 @@ import java.nio.charset.CharsetDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -672,5 +673,27 @@ public class CDebugUtils {
 	/** Throws a CoreException. Clutter-reducing utility method. */
 	private static void throwCoreException(String msg, Exception innerException, int code) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), code, msg, innerException));
+	}
+	
+	/**
+	 * Generic method to fetch an attribute from a Map that has keys of type String.  The defaultValue
+	 * parameter will be returned if the map does not contain the key, or if the matching value is not
+	 * of the correct type.
+	 * 
+	 * @param <V> The type of the value we are looking for.  Specified by the type of defaultValue.
+	 * @param attributes The map with keys of type String, and values of any type.  Cannot be null.
+	 * @param key They key for which we want the value.
+	 * @param defaultValue The default value to return if the key is not found in the map, or if the value found
+	 *                     is not of the same type as defaultValue. Cannot be null.
+	 * @return The value, if found and of the same type as defaultValue.  Else, returns defaultValue.
+	 * @since 7.1
+	 */
+	@SuppressWarnings("unchecked")
+	public static <V> V getAttribute(Map<String, ?> attributes, String key, V defaultValue) {
+		Object value = attributes.get(key);
+		if (defaultValue.getClass().isInstance(value)) {
+			return (V)value;
+		}
+		return defaultValue;
 	}
 }

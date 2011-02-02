@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import java.util.Properties;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -33,22 +32,16 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
-import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend.BackendStateChangedEvent;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
-import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
-import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses.ContainerExitedDMEvent;
-import org.eclipse.cdt.dsf.mi.service.MIProcesses.ContainerStartedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl;
 import org.eclipse.cdt.dsf.mi.service.command.CLIEventProcessor;
@@ -57,18 +50,13 @@ import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess.State;
 import org.eclipse.cdt.dsf.mi.service.command.MIRunControlEventProcessor;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
-import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.osgi.framework.BundleContext;
 
@@ -273,122 +261,6 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     	}
     }
 
-
-    public boolean canRestart() {
-    	if (fMIBackend.getIsAttachSession() || fMIBackend.getSessionType() == SessionType.CORE) {
-    		return false;
-    	}
-    	
-    	// Before GDB6.8, the Linux gdbserver would restart a new
-    	// process when getting a -exec-run but the communication
-    	// with GDB had a bug and everything hung.
-    	// with GDB6.8 the program restarts properly one time,
-    	// but on a second attempt, gdbserver crashes.
-    	// So, lets just turn off the Restart for Remote debugging
-    	if (fMIBackend.getSessionType() == SessionType.REMOTE) return false;
-    	
-    	return true;
-    }
-
-     /*
-     * Start the program.
-     */
-    public void start(GdbLaunch launch, final RequestMonitor requestMonitor) {
-    	startOrRestart(launch, false, requestMonitor);
-    }
-
-    /*
-     * Before restarting the inferior, we must re-initialize its input/output streams
-     * and create a new inferior process object.  Then we can restart the inferior.
-     */
-    public void restart(final GdbLaunch launch, final RequestMonitor requestMonitor) {
-   		startOrRestart(launch, true, requestMonitor);
-    }
-
-    /*
-     * Insert breakpoint at entry if set, and start or restart the program.
-     */
-    protected void startOrRestart(final GdbLaunch launch, boolean restart, final RequestMonitor requestMonitor) {
-    	if (fMIBackend.getIsAttachSession()) {
-    		// When attaching to a running process, we do not need to set a breakpoint or
-    		// start the program; it is left up to the user.
-    		requestMonitor.done();
-    		return;
-    	}
-
-    	DsfServicesTracker servicesTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), getSession().getId());
-    	IMIProcesses procService = servicesTracker.getService(IMIProcesses.class);
-    	servicesTracker.dispose();
-   		final IContainerDMContext containerDmc = procService.createContainerContextFromGroupId(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
-
-    	final ICommand<MIInfo> execCommand;
-    	if (useContinueCommand(launch, restart)) {
-    		execCommand = getCommandFactory().createMIExecContinue(containerDmc);
-    	} else {
-    		execCommand = getCommandFactory().createMIExecRun(containerDmc);	
-    	}
-
-    	boolean stopInMain = false;
-    	try {
-    		stopInMain = launch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false );
-    	} catch (CoreException e) {
-    		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve stop at entry point boolean", e)); //$NON-NLS-1$
-    		requestMonitor.done();
-    		return;
-    	}
-
-    	final DataRequestMonitor<MIInfo> execMonitor = new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-    		@Override
-    		protected void handleSuccess() {
-    	    	if (fMIBackend.getSessionType() != SessionType.REMOTE) {
-    	    		// Don't send the ContainerStarted event for a remote session because
-    	    		// it has already been done by MIRunControlEventProcessor when receiving
-    	    		// the ^connect
-    	    		getSession().dispatchEvent(new ContainerStartedDMEvent(containerDmc), getProperties());
-    	    	}
-    			super.handleSuccess();
-    		}
-    	};
-
-    	if (!stopInMain) {
-    		// Just start the program.
-    		queueCommand(execCommand, execMonitor);
-    	} else {
-    		String stopSymbol = null;
-    		try {
-    			stopSymbol = launch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
-    		} catch (CoreException e) {
-    			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.CONFIGURATION_INVALID, "Cannot retrieve the entry point symbol", e)); //$NON-NLS-1$
-    			requestMonitor.done();
-    			return;
-    		}
-
-    		// Insert a breakpoint at the requested stop symbol.
-    		queueCommand(
-    				getCommandFactory().createMIBreakInsert(fControlDmc, true, false, null, 0, stopSymbol, 0), 
-    				new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), requestMonitor) { 
-    					@Override
-    					protected void handleSuccess() {
-    						// After the break-insert is done, execute the -exec-run or -exec-continue command.
-    						queueCommand(execCommand, execMonitor);
-    					}
-    				});
-    	}
-    }
-
-    /**
-     * This method indicates if we should use the -exec-continue method
-     * instead of the -exec-run method.
-     * This can be overridden to allow for customization.
-     * 
-     * @since 4.0
-     */
-    protected boolean useContinueCommand(ILaunch launch, boolean restart) {
-    	// When doing remote debugging, we use -exec-continue instead of -exec-run
-    	// Restart does not apply to remote sessions
-    	return fMIBackend.getSessionType() == SessionType.REMOTE;
-    }
-    
     /*
      * This method creates a new inferior process object based on the current Pty or output stream.
      */

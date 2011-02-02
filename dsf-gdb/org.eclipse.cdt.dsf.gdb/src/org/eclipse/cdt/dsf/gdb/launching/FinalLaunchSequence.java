@@ -14,6 +14,7 @@
 package org.eclipse.cdt.dsf.gdb.launching;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -26,12 +27,14 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
+import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
@@ -39,6 +42,7 @@ import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
+import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -682,10 +686,21 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 * Start executing the program.
 	 * @since 4.0
 	 */
+	@SuppressWarnings("unchecked")
 	@Execute
 	public void stepStartExecution(final RequestMonitor requestMonitor) {
 		if (fSessionType != SessionType.CORE) {
-			fCommandControl.start(fLaunch, requestMonitor);
+			Map<String, Object> attributes = null;
+			try {
+				attributes = fLaunch.getLaunchConfiguration().getAttributes();
+			} catch (CoreException e) {}
+
+			IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
+			IContainerDMContext containerDmc = procService.createContainerContextFromGroupId(fCommandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
+
+			// For now, call restart since it does the same as start
+			// but this is just temporary until procService.debugNewProcess is ready
+			procService.restart(containerDmc, attributes, requestMonitor);
 		} else {
 			requestMonitor.done();
 		}

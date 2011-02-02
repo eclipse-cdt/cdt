@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Ericsson and others.
+ * Copyright (c) 2008, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
@@ -979,6 +980,38 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 	public void terminate(IThreadDMContext thread, RequestMonitor rm) {
 		fCommandControl.terminate(rm);
+	}
+	
+	/** @since 4.0 */
+	public void canRestart(IContainerDMContext containerDmc, DataRequestMonitor<Boolean> rm) {		
+    	if (fBackend.getIsAttachSession() || fBackend.getSessionType() == SessionType.CORE) {
+        	rm.setData(false);
+        	rm.done();
+        	return;
+    	}
+    	
+    	// Before GDB6.8, the Linux gdbserver would restart a new
+    	// process when getting a -exec-run but the communication
+    	// with GDB had a bug and everything hung.
+    	// with GDB6.8 the program restarts properly one time,
+    	// but on a second attempt, gdbserver crashes.
+    	// So, lets just turn off the Restart for Remote debugging
+    	if (fBackend.getSessionType() == SessionType.REMOTE) {
+        	rm.setData(false);
+        	rm.done();
+        	return;
+    	}
+    	
+    	rm.setData(true);
+    	rm.done();
+	}
+	
+	/** @since 4.0 */
+	public void restart(IContainerDMContext containerDmc, Map<String, Object> attributes, RequestMonitor rm) {
+   		ImmediateExecutor.getInstance().execute(
+   				 new StartOrRestartProcessSequence_7_0(
+   						getExecutor(), containerDmc, attributes, true, 
+   						new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm)));
 	}
 	
     @DsfServiceEventHandler

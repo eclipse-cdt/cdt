@@ -41,10 +41,10 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
-import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
@@ -76,7 +76,7 @@ public class SyncUtil {
     private static CommandFactory fCommandFactory;
 
     private static IBreakpointsTargetDMContext fBreakpointsDmc;
-	private static IMIProcesses fProcessesService;
+	private static IGDBProcesses fProcessesService;
     
     // Initialize some common things, once the session has been established
     public static void initialize(DsfSession session) throws Exception {
@@ -92,7 +92,7 @@ public class SyncUtil {
 	        	fRunControl = tracker.getService(IMIRunControl.class);
 	        	fStack = tracker.getService(MIStack.class);
 	        	fExpressions = tracker.getService(IExpressions.class);
-	        	fProcessesService = tracker.getService(IMIProcesses.class);
+	        	fProcessesService = tracker.getService(IGDBProcesses.class);
 	        	fCommandFactory = tracker.getService(IMICommandControl.class).getCommandFactory();
 	        	
 	        	fBreakpointsDmc = (IBreakpointsTargetDMContext)fGdbControl.getContext();
@@ -606,12 +606,22 @@ public class SyncUtil {
      * Restart the program.
      */
 	public static void restart(final GdbLaunch launch) throws Throwable {	
-    	// Check if restart is allowed
+		final IContainerDMContext containerDmc = getContainerContext();
+
+		// Check if restart is allowed
         Query<Boolean> query = new Query<Boolean>() {
 			@Override
-			protected void execute(DataRequestMonitor<Boolean> rm) {
-			    rm.setData(fGdbControl.canRestart());
-				rm.done();
+			protected void execute(final DataRequestMonitor<Boolean> rm) {
+				fProcessesService.canRestart(
+            			containerDmc,
+            			new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), rm) {
+            				@Override
+            				protected void handleSuccess() {
+            					rm.setData(getData());
+            					rm.done();
+            				}
+            			});
+            	
 			}
         };
 
@@ -628,14 +638,20 @@ public class SyncUtil {
 					MIStoppedEvent.class);
 			
         // Perform the restart
-        Query<Boolean> query2 = new Query<Boolean>() {
+        Query<Object> query2 = new Query<Object>() {
 			@Override
-			protected void execute(final DataRequestMonitor<Boolean> rm) {
+			protected void execute(final DataRequestMonitor<Object> rm) {
 				fGdbControl.initInferiorInputOutput(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
-                	@Override
+                	@SuppressWarnings("unchecked")
+					@Override
                 	protected void handleSuccess() {
                 		fGdbControl.createInferiorProcess();
-                		fGdbControl.restart(launch, rm);
+	                	Map<String, Object> attributes = null;
+						try {
+							attributes = launch.getLaunchConfiguration().getAttributes();
+						} catch (CoreException e) {}
+						
+						fProcessesService.restart(containerDmc, attributes, rm);
                 	}
                 });
 			}

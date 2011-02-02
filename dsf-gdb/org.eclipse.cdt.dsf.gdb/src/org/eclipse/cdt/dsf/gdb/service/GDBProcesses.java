@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Ericsson and others.
+ * Copyright (c) 2008, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,23 +17,32 @@ import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
+import org.eclipse.cdt.debug.core.CDebugUtils;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.debug.service.IProcesses;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
+import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
@@ -42,7 +51,7 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 
-public class GDBProcesses extends MIProcesses {
+public class GDBProcesses extends MIProcesses implements IGDBProcesses {
     
 	private class GDBContainerDMC extends MIContainerDMC
 	implements IMemoryDMContext 
@@ -53,6 +62,8 @@ public class GDBProcesses extends MIProcesses {
 	}
 	
     private IGDBControl fGdb;
+    private IGDBBackend fBackend;
+    private CommandFactory fCommandFactory;
     
     // A map of pid to names.  It is filled when we get all the
     // processes that are running
@@ -83,10 +94,13 @@ public class GDBProcesses extends MIProcesses {
 	private void doInitialize(RequestMonitor requestMonitor) {
         
         fGdb = getServicesTracker().getService(IGDBControl.class);
-        
+    	fBackend = getServicesTracker().getService(IGDBBackend.class);
+		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+
 		// Register this service.
 		register(new String[] { IProcesses.class.getName(),
 				IMIProcesses.class.getName(),
+				IGDBProcesses.class.getName(),
 				MIProcesses.class.getName(),
 				GDBProcesses.class.getName() },
 				new Hashtable<String, String>());
@@ -148,8 +162,7 @@ public class GDBProcesses extends MIProcesses {
 				if (inferior != null) {
 					String inferiorPidStr = inferior.getPid();
 					if (inferiorPidStr != null && Integer.parseInt(inferiorPidStr) == pid) {
-						IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
-						name = backend.getProgramPath().lastSegment();
+						name = fBackend.getProgramPath().lastSegment();
 					}
 				}
 			}
@@ -160,8 +173,7 @@ public class GDBProcesses extends MIProcesses {
 				// Until bug 305385 is fixed, the above code will not work, so we assume we
 				// are looking for our own process
 //				assert false : "Don't have entry for process ID: " + pid; //$NON-NLS-1$
-				IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
-				name = backend.getProgramPath().lastSegment();
+				name = fBackend.getProgramPath().lastSegment();
 
 			}
 		
@@ -248,8 +260,7 @@ public class GDBProcesses extends MIProcesses {
 	@Override
 	public void getRunningProcesses(IDMContext dmc, final DataRequestMonitor<IProcessDMContext[]> rm) {
 		final ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-		IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
-		if (backend.getSessionType() == SessionType.LOCAL) {
+		if (fBackend.getSessionType() == SessionType.LOCAL) {
 			IProcessList list = null;
 			try {
 				list = CCorePlugin.getDefault().getProcessList();
@@ -296,6 +307,113 @@ public class GDBProcesses extends MIProcesses {
 	    }
 	}
 	
+    /** @since 4.0 */
+    public IMIExecutionDMContext[] getExecutionContexts(IMIContainerDMContext containerDmc) {
+    	assert false; // This is not being used before GDB 7.0
+    	return null;
+    }
+    
+	/** @since 4.0 */
+	public void canRestart(IContainerDMContext containerDmc, DataRequestMonitor<Boolean> rm) {		
+    	if (fBackend.getIsAttachSession() || fBackend.getSessionType() == SessionType.CORE) {
+        	rm.setData(false);
+        	rm.done();
+        	return;
+    	}
+    	
+    	// Before GDB6.8, the Linux gdbserver would restart a new
+    	// process when getting a -exec-run but the communication
+    	// with GDB had a bug and everything hung.
+    	// with GDB6.8 the program restarts properly one time,
+    	// but on a second attempt, gdbserver crashes.
+    	// So, lets just turn off the Restart for Remote debugging
+    	if (fBackend.getSessionType() == SessionType.REMOTE) {
+        	rm.setData(false);
+        	rm.done();
+        	return;
+    	}
+    	
+    	rm.setData(true);
+    	rm.done();
+	}
+	
+	/** @since 4.0 */
+	public void restart(IContainerDMContext containerDmc, Map<String, Object> attributes, RequestMonitor rm) {
+		startOrRestart(containerDmc, attributes, true, rm);
+	}
+	
+    /**
+     * Insert breakpoint at entry if set, and start or restart the program.
+     *
+     * @since 4.0 
+     */
+    protected void startOrRestart(final IContainerDMContext containerDmc, Map<String, Object> attributes,
+    		                      boolean restart, final RequestMonitor requestMonitor) {
+    	if (fBackend.getIsAttachSession()) {
+    		// When attaching to a running process, we do not need to set a breakpoint or
+    		// start the program; it is left up to the user.
+    		requestMonitor.done();
+    		return;
+    	}
+
+    	final DataRequestMonitor<MIInfo> execMonitor = new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+    		@Override
+    		protected void handleSuccess() {
+    			if (fBackend.getSessionType() != SessionType.REMOTE) {
+    				// Don't send the ContainerStarted event for a remote session because
+    				// it has already been done by MIRunControlEventProcessor when receiving
+    				// the ^connect
+    				getSession().dispatchEvent(new ContainerStartedDMEvent(containerDmc), getProperties());
+    			}
+    			super.handleSuccess();
+    		}
+    	};
+
+    	final ICommand<MIInfo> execCommand;
+    	if (useContinueCommand()) {
+    		execCommand = fCommandFactory.createMIExecContinue(containerDmc);
+    	} else {
+    		execCommand = fCommandFactory.createMIExecRun(containerDmc);	
+    	}
+
+    	boolean stopInMain = CDebugUtils.getAttribute(attributes, 
+					 								  ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
+					 								  false);
+
+    	if (!stopInMain) {
+    		// Just start the program.
+    		fGdb.queueCommand(execCommand, execMonitor);
+    	} else {
+    		String stopSymbol = CDebugUtils.getAttribute(attributes, 
+					                                     ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
+					                                     ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
+
+    		// Insert a breakpoint at the requested stop symbol.
+    		IBreakpointsTargetDMContext bpTarget = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
+    		fGdb.queueCommand(
+    				fCommandFactory.createMIBreakInsert(bpTarget, true, false, null, 0, stopSymbol, 0), 
+    				new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), requestMonitor) { 
+    					@Override
+    					protected void handleSuccess() {
+    						// After the break-insert is done, execute the -exec-run or -exec-continue command.
+    						fGdb.queueCommand(execCommand, execMonitor);
+    					}
+    				});
+    	}
+    }
+
+    /**
+     * This method indicates if we should use the -exec-continue command
+     * instead of the -exec-run command.
+     * This method can be overridden to allow for customization.
+     * @since 4.0
+     */
+    protected boolean useContinueCommand() {
+    	// When doing remote debugging, we use -exec-continue instead of -exec-run
+    	// Restart does not apply to remote sessions
+    	return fBackend.getSessionType() == SessionType.REMOTE;
+    }
+
     /**
 	 * @since 3.0
 	 */

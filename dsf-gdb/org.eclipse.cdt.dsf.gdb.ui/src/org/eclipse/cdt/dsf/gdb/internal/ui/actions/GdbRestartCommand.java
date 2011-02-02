@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
+import java.util.Map;
+
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.ui.actions.DsfCommandRunnable;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GDBProcess;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -51,19 +58,29 @@ public class GdbRestartCommand implements IRestartHandler {
             request.done();
             return;
         }
-    	
-        fExecutor.submit(new DsfRunnable() {
-            public void run() {
-    			IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
-				if (gdbControl != null) {
-					request.setEnabled(gdbControl.canRestart());
-				} else {
-                    request.setEnabled(false);
-				}			
-				request.done();
+
+        fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
+            @Override public void doExecute() {
+                IContainerDMContext containerDmc = DMContexts.getAncestorOfType(getContext(), IContainerDMContext.class);
+            	IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
+
+                if (procService != null) {
+                	procService.canRestart(
+                			containerDmc,
+                			new DataRequestMonitor<Boolean>(fExecutor, null) {
+                				@Override
+                				protected void handleCompleted() {
+                					request.setEnabled(isSuccess() && getData());
+                					request.done();
+                				}
+                			});
+                } else {
+                	request.setEnabled(false);
+					request.done();
+       			}
             }
-        });        
-    }
+        });
+	}
     
     private class UpdateLaunchJob extends Job {
     	IDebugCommandRequest fRequest;
@@ -106,20 +123,29 @@ public class GdbRestartCommand implements IRestartHandler {
 	        
 	        // Now that we have added the new inferior to the launch,
 	        // which creates its console, we can perform the restart safely.
-	        fExecutor.submit(new DsfRunnable() {
-	        	public void run() {
-	        		final IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
-	        		if (gdbControl != null) {
-	        			gdbControl.restart(fLaunch, new RequestMonitor(fExecutor, null) {
-	        				@Override
-	        				protected void handleCompleted() {
-	        					fRequest.done();
-	        				};
-	        			});
-	        		} else {
-    					fRequest.done();
-	        		}
-	        	}
+	    	fExecutor.submit(new DsfCommandRunnable(fTracker, fRequest.getElements()[0], fRequest) { 
+	            @SuppressWarnings("unchecked")
+				@Override public void doExecute() {
+	                IContainerDMContext containerDmc = DMContexts.getAncestorOfType(getContext(), IContainerDMContext.class);
+	            	IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
+
+	                if (procService != null) {
+	                	Map<String, Object> attributes = null;
+						try {
+							attributes = fLaunch.getLaunchConfiguration().getAttributes();
+						} catch (CoreException e) {}
+						
+	                	procService.restart(containerDmc, attributes, 
+	                						new RequestMonitor(fExecutor, null) {
+	                							@Override
+	                							protected void handleCompleted() {
+	                								fRequest.done();
+	                							};
+	                						});
+	                } else {
+	                	fRequest.done();
+	       			}
+	            }
 	        });
 	        
 	        return Status.OK_STATUS;

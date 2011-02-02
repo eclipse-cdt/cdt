@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Ericsson and others.
+ * Copyright (c) 2008, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse  License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
@@ -27,9 +26,6 @@ public interface IGDBControl extends IMICommandControl {
 	void terminate(final RequestMonitor rm);
 	void initInferiorInputOutput(final RequestMonitor requestMonitor);
 
-	boolean canRestart();
-	void start(GdbLaunch launch, final RequestMonitor requestMonitor);
-	void restart(final GdbLaunch launch, final RequestMonitor requestMonitor);
 	void createInferiorProcess();
 
 	boolean isConnected();

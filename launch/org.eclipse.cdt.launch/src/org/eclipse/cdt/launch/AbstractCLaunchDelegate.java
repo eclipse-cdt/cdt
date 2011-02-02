@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 QNX Software Systems and others.
+ * Copyright (c) 2005, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Ken Ryall (Nokia) - bug 178731
  *     Anton Leherbauer (Wind River Systems) - bug 224187
  *     Alex Collins (Broadcom Corp.) - choose build config automatically
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.launch;
 
@@ -155,6 +156,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * Used in conjunction with build before launch settings in the main tab.
 	 */
 	private boolean workspaceBuildBeforeLaunch;
+	/** Flag set to true if build before launch failed, or was cancelled. */
+	private boolean buildFailed;
 	
 	abstract public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
 			throws CoreException;
@@ -600,15 +603,21 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		try {
 			monitor.beginTask(LaunchMessages.AbstractCLaunchDelegate_building_projects, totalWork); 
 
-			for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
-				IProject proj = (IProject)i.next();
-				monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_building + proj.getName()); 
-				proj.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(monitor, scale));
-			}
+			try {
+				for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
+					IProject proj = (IProject)i.next();
+					monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_building + proj.getName()); 
+					proj.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new LaunchUtils.BuildProgressMonitor(monitor, scale));
+				}
 
-			monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_building + project.getName()); 
-			setBuildConfiguration(configuration, project);
-			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(monitor, scale));
+				monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_building + project.getName()); 
+				setBuildConfiguration(configuration, project);
+				project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new LaunchUtils.BuildProgressMonitor(monitor, scale));
+			} catch (Exception e) {
+				// Catch CoreException or OperationCancelledException possibly thrown by the build contract.
+				// Still allow the user to continue to the launch
+				buildFailed = true;
+			}
 		} finally {
 			monitor.done();
 		}
@@ -671,15 +680,20 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			if (ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_ENABLED == configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH,
 					ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING)) {
 				
-				IProgressMonitor buildMonitor = new SubProgressMonitor(monitor, 10, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
-				buildMonitor.beginTask(LaunchMessages.AbstractCLaunchDelegate_BuildBeforeLaunch, 10); 	
-				buildMonitor.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingBuild); 
-				if (buildForLaunch(configuration, mode, new SubProgressMonitor(buildMonitor, 7))) {
-					buildMonitor.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingIncrementalBuild); 
-					ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(buildMonitor, 3));				
-				}
-				else {
-					buildMonitor.worked(3); /* No incremental build required */
+				try {
+					IProgressMonitor buildMonitor = new LaunchUtils.BuildProgressMonitor(monitor, 10, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+					buildMonitor.beginTask(LaunchMessages.AbstractCLaunchDelegate_BuildBeforeLaunch, 10); 	
+					buildMonitor.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingBuild); 
+					if (buildForLaunch(configuration, mode, new SubProgressMonitor(buildMonitor, 7))) {
+						buildMonitor.subTask(LaunchMessages.AbstractCLaunchDelegate_PerformingIncrementalBuild); 
+						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(buildMonitor, 3));				
+					} else {
+						buildMonitor.worked(3); /* No incremental build required */
+					}
+				} catch (Exception e) {
+					// Catch CoreException or OperationCancelledException possibly thrown by the build contract.
+					// Still allow the user to continue to the launch
+					buildFailed = true;
 				}
 			}
 		}
@@ -697,26 +711,28 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		int totalWork = (orderedProjects.size() + 1) * scale;
 		try {
 			monitor.beginTask(LaunchMessages.AbstractCLaunchDelegate_searching_for_errors, totalWork); 
-			boolean compileErrorsInProjs = false;
-			
+			boolean compileErrorsInProjs = buildFailed;
+
 			//check prerequisite projects for compile errors.
-			for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
-				IProject proj = (IProject)i.next();
-				monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_searching_for_errors_in + proj.getName()); 
-				monitor.worked(scale);
-				compileErrorsInProjs = existsErrors(proj);
-				if (compileErrorsInProjs) {
-					break;
+			if (!compileErrorsInProjs) {
+				for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
+					IProject proj = (IProject)i.next();
+					monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_searching_for_errors_in + proj.getName()); 
+					monitor.worked(scale);
+					compileErrorsInProjs = existsErrors(proj);
+					if (compileErrorsInProjs) {
+						break;
+					}
 				}
 			}
-			
+
 			//check current project, if prerequite projects were ok
 			if (!compileErrorsInProjs) {
 				monitor.subTask(LaunchMessages.AbstractCLaunchDelegate_searching_for_errors_in + project.getName()); 
 				monitor.worked(scale);
 				compileErrorsInProjs = existsErrors(project);
 			}
-			
+
 			//if compile errors exist, ask the user before continuing.
 			if (compileErrorsInProjs) {
 				IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
@@ -844,8 +860,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 */
 	protected Properties getEnvironmentAsProperty(ILaunchConfiguration config) throws CoreException {
 		String[] envp = getEnvironment(config);
-		Properties p = new Properties();
-		for(int i = 0; i < envp.length; i++) {
+		Properties p = new Properties( );
+		for( int i = 0; i < envp.length; i++ ) {
 			int idx = envp[i].indexOf('=');
 			if (idx != -1) {
 				String key = envp[i].substring(0, idx);

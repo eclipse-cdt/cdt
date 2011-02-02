@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Nokia and others.
+ * Copyright (c) 2010, 2011 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ken Ryall (Nokia)
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.launch;
 
@@ -65,6 +66,8 @@ import org.eclipse.osgi.util.NLS;
 public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelegate {
 
 	private boolean workspaceBuildBeforeLaunch;
+	/** Flag set to true if build before launch failed, or was cancelled. */
+	private boolean buildFailed;
 	private boolean requireCProject;
 
 	public AbstractCLaunchDelegate2() {
@@ -302,13 +305,13 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	 * @throws CoreException
 	 */
 	protected void buildProject(final IProject project, final String buildConfigID, IProgressMonitor monitor) throws CoreException {
+		final int TOTAL_TICKS = 1000;
 
 		// Some day, this will hopefully be a simple pass-thru to a cdt.core
 		// utility. See bug 313927
-		
+
 		IWorkspaceRunnable build = new IWorkspaceRunnable(){
 			public void run(IProgressMonitor pm) throws CoreException {
-				final int TOTAL_TICKS = 1000;
 				SubMonitor localmonitor = SubMonitor.convert(pm, "", TOTAL_TICKS); //$NON-NLS-1$
 
 				try {
@@ -357,7 +360,11 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 				}
 			}
 		};
-		ResourcesPlugin.getWorkspace().run(build, monitor);
+		try {
+			ResourcesPlugin.getWorkspace().run(build, new LaunchUtils.BuildProgressMonitor(monitor, TOTAL_TICKS));
+		} catch (Exception e) {
+			buildFailed = true;
+		}
 	}
 
 	/** TODO: Temporarily duplicated from BuilderFactory. Remove when 313927 is addressed */
@@ -455,7 +462,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		try {
 			SubMonitor localMonitor = SubMonitor.convert(monitor, LaunchMessages.AbstractCLaunchDelegate_BuildBeforeLaunch, 10); 
-	
+			
 			if (!workspaceBuildBeforeLaunch) {
 				// buildForLaunch was not called which means that the workspace pref is disabled.  see if the user enabled the
 				// launch specific setting in the main tab.  if so, we do call buildBeforeLaunch here.
@@ -469,7 +476,6 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 					}
 				}
 			}
-
 			// We can just call our super's implementation to have it check for
 			// build errors, but it is too generic. It doesn't know the concept
 			// of a CDT build configuration, and the fact that we requested the
@@ -481,7 +487,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 			if (cproject != null) {
 				IProject project = cproject.getProject();
 				localMonitor.subTask(DebugCoreMessages.LaunchConfigurationDelegate_6);
-				if (existsProblems(project)) {
+				if (buildFailed || existsProblems(project)) {
 					// There's a build error in the main project
 					
 					// Put up the error dialog. 
@@ -534,7 +540,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 				monitor.done();
 			}
 		}
-	}
+}
 
 	protected ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
 		String name = CDebugUtils.getProjectName(config);

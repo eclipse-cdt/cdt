@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Alex Collins (Broadcom Corp.) - choose build config automatically
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.launch;
 
@@ -34,7 +35,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -46,6 +49,35 @@ import org.eclipse.ui.activities.IWorkbenchActivitySupport;
  * Utility methods.
  */
 public class LaunchUtils {
+
+	/**
+	 * A specialised WrapperProgressMonitor which doesn't let cancellation of the
+	 * child build task cause cancellation of our top-level launch task.
+	 */
+	static class BuildProgressMonitor extends SubProgressMonitor {
+		private boolean cancelled;
+
+		public BuildProgressMonitor(IProgressMonitor monitor, int ticks, int style) {
+			super(monitor, ticks, style);
+		}
+		
+		public BuildProgressMonitor(IProgressMonitor monitor, int ticks) {
+			this(monitor, ticks, 0);
+		}
+
+		@Override
+		public void setCanceled(boolean b) {
+			// Only cancel this operation, not the top-level launch.
+			cancelled = b;
+		}
+
+		@Override
+		public boolean isCanceled() {
+			// Canceled if this monitor has been explicitly canceled
+			//  || parent has been canceled.
+			return cancelled || super.isCanceled();
+		}
+	}
 
 	/**
 	 * For given launch configuration returns the program arguments as 

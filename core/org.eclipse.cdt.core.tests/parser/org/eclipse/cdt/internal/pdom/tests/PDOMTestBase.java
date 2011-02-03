@@ -99,7 +99,10 @@ public class PDOMTestBase extends BaseTestCase {
 			// Index the project
 			CCorePlugin.getIndexManager().setIndexerId(cprojects[0], IPDOMManager.ID_FAST_INDEXER);
 			// wait until the indexer is done
-			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+			try {
+				waitForIndexer(cprojects[0]);
+			} catch (InterruptedException e) {
+			}
 		} finally {
 			mj.dispose();
 		}

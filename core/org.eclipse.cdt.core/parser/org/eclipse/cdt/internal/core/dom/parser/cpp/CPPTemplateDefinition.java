@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,8 +48,8 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		public CPPTemplateProblem(IASTNode node, int id, char[] arg) {
 			super(node, id, arg);
 		}
-		public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
-			throw new DOMException(this);
+		public ICPPTemplateParameter[] getTemplateParameters() {
+			return ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
 		}
 		public ICPPClassTemplatePartialSpecialization[] getTemplateSpecializations() throws DOMException {
 			throw new DOMException(this);

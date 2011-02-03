@@ -5760,7 +5760,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// int i1 = f<1>(0); // ambiguous
 	// int i2 = f<1000>(0); // ambiguous
 	public void test14_8_2s9() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		parse(getAboveComment(), ParserLanguage.CPP, false, 2);
 	}
 
 	//	namespace std {

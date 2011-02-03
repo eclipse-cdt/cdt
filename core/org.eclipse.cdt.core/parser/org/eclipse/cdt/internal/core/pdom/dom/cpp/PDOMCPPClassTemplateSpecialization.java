@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 QNX Software Systems and others.
+ * Copyright (c) 2007, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 		return IIndexCPPBindingConstants.CPP_CLASS_TEMPLATE_SPECIALIZATION;
 	}
 		
-	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
+	public ICPPTemplateParameter[] getTemplateParameters() {
 		ICPPClassTemplate template = (ICPPClassTemplate) getSpecializedBinding();
 		return template.getTemplateParameters();
 	}
@@ -103,58 +103,54 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 		
 		
 		final ICPPClassSpecialization classSpec2 = (ICPPClassSpecialization) type;
-		try {
-			if (getKey() != classSpec2.getKey()) 
-				return false;
-			
-			if (!CharArrayUtils.equals(getNameCharArray(), classSpec2.getNameCharArray()))
-				return false;
+		if (getKey() != classSpec2.getKey()) 
+			return false;
+		
+		if (!CharArrayUtils.equals(getNameCharArray(), classSpec2.getNameCharArray()))
+			return false;
 
-			ICPPTemplateParameter[] params1= getTemplateParameters();
-			ICPPTemplateParameter[] params2= ((ICPPClassTemplate) type).getTemplateParameters();
+		ICPPTemplateParameter[] params1= getTemplateParameters();
+		ICPPTemplateParameter[] params2= ((ICPPClassTemplate) type).getTemplateParameters();
 
-			if (params1 == params2)
-				return true;
+		if (params1 == params2)
+			return true;
 
-			if (params1 == null || params2 == null)
-				return false;
+		if (params1 == null || params2 == null)
+			return false;
 
-			if (params1.length != params2.length)
-				return false;
+		if (params1.length != params2.length)
+			return false;
 
-			for (int i = 0; i < params1.length; i++) {
-				ICPPTemplateParameter p1= params1[i];
-				ICPPTemplateParameter p2= params2[i];
-				if (p1 instanceof IType && p2 instanceof IType) {
-					IType t1= (IType) p1;
-					IType t2= (IType) p2;
-					if (!t1.isSameType(t2)) {
-						return false;
-					}
-				} else if (p1 instanceof ICPPTemplateNonTypeParameter
-						&& p2 instanceof ICPPTemplateNonTypeParameter) {
-					IType t1= ((ICPPTemplateNonTypeParameter)p1).getType();
-					IType t2= ((ICPPTemplateNonTypeParameter)p2).getType();
-					if (t1 != t2) {
-						if (t1 == null || t2 == null || !t1.isSameType(t2)) {
-							return false;
-						}
-					}
-				} else {
+		for (int i = 0; i < params1.length; i++) {
+			ICPPTemplateParameter p1= params1[i];
+			ICPPTemplateParameter p2= params2[i];
+			if (p1 instanceof IType && p2 instanceof IType) {
+				IType t1= (IType) p1;
+				IType t2= (IType) p2;
+				if (!t1.isSameType(t2)) {
 					return false;
 				}
-			}
-
-			final IBinding owner1= getOwner();
-			final IBinding owner2= classSpec2.getOwner();
-			// for a specialization that is not an instance the owner has to be a class-type
-			if (owner1 instanceof ICPPClassType == false || owner2 instanceof ICPPClassType == false)
+			} else if (p1 instanceof ICPPTemplateNonTypeParameter
+					&& p2 instanceof ICPPTemplateNonTypeParameter) {
+				IType t1= ((ICPPTemplateNonTypeParameter)p1).getType();
+				IType t2= ((ICPPTemplateNonTypeParameter)p2).getType();
+				if (t1 != t2) {
+					if (t1 == null || t2 == null || !t1.isSameType(t2)) {
+						return false;
+					}
+				}
+			} else {
 				return false;
-
-			return ((ICPPClassType) owner1).isSameType((ICPPClassType) owner2);
-		} catch (DOMException e) {
-			return false;
+			}
 		}
+
+		final IBinding owner1= getOwner();
+		final IBinding owner2= classSpec2.getOwner();
+		// for a specialization that is not an instance the owner has to be a class-type
+		if (owner1 instanceof ICPPClassType == false || owner2 instanceof ICPPClassType == false)
+			return false;
+
+		return ((ICPPClassType) owner1).isSameType((ICPPClassType) owner2);
 	}
 	
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {

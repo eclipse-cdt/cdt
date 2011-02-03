@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 QNX Software Systems and others.
+ * Copyright (c) 2007, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -210,18 +209,14 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 	
 	@Override
 	public CPPTemplateParameterMap getTemplateParameterMap() {
-		try {
-			ICPPTemplateParameter[] params = getClassTemplate().getTemplateParameters();
-			ICPPTemplateArgument[] args = getTemplateArguments();
-			int size = Math.min(args.length, params.length);
-			CPPTemplateParameterMap map = new CPPTemplateParameterMap(size);
-			for (int i = 0; i < size; i++) {
-				map.put(params[i], args[i]);
-			}
-			return map;
-		} catch (DOMException e) {
+		ICPPTemplateParameter[] params = getClassTemplate().getTemplateParameters();
+		ICPPTemplateArgument[] args = getTemplateArguments();
+		int size = Math.min(args.length, params.length);
+		CPPTemplateParameterMap map = new CPPTemplateParameterMap(size);
+		for (int i = 0; i < size; i++) {
+			map.put(params[i], args[i]);
 		}
-		return CPPTemplateParameterMap.EMPTY;
+		return map;
 	}
 	
 	@Deprecated

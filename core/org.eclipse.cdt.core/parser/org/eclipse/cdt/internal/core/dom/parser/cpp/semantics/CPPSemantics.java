@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,9 +108,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -148,6 +150,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -2769,12 +2773,9 @@ public class CPPSemantics {
 			}
 			IBinding template = id.getTemplateName().resolveBinding();
 			if (template instanceof ICPPTemplateDefinition) {
-				try {
-					ICPPTemplateParameter[] ps = ((ICPPTemplateDefinition) template).getTemplateParameters();
-					if (i < args.length && i < ps.length && ps[i] instanceof ICPPTemplateNonTypeParameter) {
-						targetType= ((ICPPTemplateNonTypeParameter) ps[i]).getType();
-					}
-				} catch (DOMException e) {
+				ICPPTemplateParameter[] ps = ((ICPPTemplateDefinition) template).getTemplateParameters();
+				if (i < args.length && i < ps.length && ps[i] instanceof ICPPTemplateNonTypeParameter) {
+					targetType= ((ICPPTemplateNonTypeParameter) ps[i]).getType();
 				}
 			}
 		} else if (prop == IASTReturnStatement.RETURNVALUE) {
@@ -3584,12 +3585,19 @@ public class CPPSemantics {
 		IASTName name = innerDtor.getName();
 		ICPPASTTemplateDeclaration templateDecl = CPPTemplates.getTemplateDeclaration(name);
 		if (templateDecl != null) {
+			
 			if (templateDecl instanceof ICPPASTTemplateSpecialization) {
 				if (!(function instanceof ICPPSpecialization))
 					return false;
 			} else {
-				if (!(function instanceof ICPPTemplateDefinition))
+				if (function instanceof ICPPTemplateDefinition) {
+					final ICPPTemplateDefinition funcTemplate = (ICPPTemplateDefinition) function;
+					if (!isSameTemplateParameterList(funcTemplate.getTemplateParameters(), templateDecl.getTemplateParameters())) {
+						return false;
+					}
+				} else {
 					return false;
+				}
 			}
 		} else if (function instanceof ICPPTemplateDefinition) {
 			return false;
@@ -3603,6 +3611,47 @@ public class CPPSemantics {
 		return false;
 	}
 	
+	private static boolean isSameTemplateParameterList(ICPPTemplateParameter[] tplist, ICPPASTTemplateParameter[] tps) {
+		if (tplist.length != tps.length)
+			return false;
+		
+		for (int i = 0; i < tps.length; i++) {
+			if (!isSameTemplateParameter(tplist[i], tps[i])) 
+				return false;
+		}
+		return true;
+	}
+
+	private static boolean isSameTemplateParameter(ICPPTemplateParameter tp1, ICPPASTTemplateParameter tp2) {
+		if (tp1.isParameterPack() != tp2.isParameterPack())
+			return false;
+		
+		if (tp1 instanceof ICPPTemplateNonTypeParameter) {
+			if (tp2 instanceof ICPPASTParameterDeclaration) {
+				IType t1= ((ICPPTemplateNonTypeParameter) tp1).getType();
+				IType t2= CPPVisitor.createType((ICPPASTParameterDeclaration) tp2, true);
+				return t1 != null && t1.isSameType(t2);
+			}
+			return false;
+		}
+		if (tp1 instanceof ICPPTemplateTypeParameter) {
+			if (tp2 instanceof ICPPASTSimpleTypeTemplateParameter) {
+				return true;
+			}
+			return false;
+		}
+		if (tp1 instanceof ICPPTemplateTemplateParameter) {
+			if (tp2 instanceof ICPPASTTemplatedTypeTemplateParameter) {
+				final ICPPTemplateTemplateParameter ttp1 = (ICPPTemplateTemplateParameter) tp1;
+				final ICPPASTTemplatedTypeTemplateParameter ttp2 = (ICPPASTTemplatedTypeTemplateParameter) tp2;
+				return isSameTemplateParameterList(ttp1.getTemplateParameters(), ttp2.getTemplateParameters());
+			}
+			return false;
+		}
+		
+		return false;
+	}
+
 	static protected IBinding resolveUnknownName(IScope scope, ICPPUnknownBinding unknown) {
 		final IASTName unknownName = unknown.getUnknownName();
 		LookupData data = new LookupData(unknownName);

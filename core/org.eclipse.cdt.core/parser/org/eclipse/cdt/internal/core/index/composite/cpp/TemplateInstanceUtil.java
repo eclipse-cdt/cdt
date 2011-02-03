@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2011 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,18 +126,14 @@ public class TemplateInstanceUtil {
 		Object[] keys= preresult.keyArray();
 		Object[] keysToAdapt= keys;
 		
-		try {
-			if(specd instanceof ICPPTemplateDefinition) {
-				keysToAdapt= ((ICPPTemplateDefinition)specd).getTemplateParameters();
-			}
-			for(int i = 0; i < keys.length && i < keysToAdapt.length; i++) {
-				IType type= (IType) preresult.get(keys[i]);
-				result.put(
-						cf.getCompositeBinding((IIndexFragmentBinding)keysToAdapt[i]),
-						cf.getCompositeType(type));
-			}
-		} catch(DOMException de) {
-			CCorePlugin.log(de);
+		if(specd instanceof ICPPTemplateDefinition) {
+			keysToAdapt= ((ICPPTemplateDefinition)specd).getTemplateParameters();
+		}
+		for(int i = 0; i < keys.length && i < keysToAdapt.length; i++) {
+			IType type= (IType) preresult.get(keys[i]);
+			result.put(
+					cf.getCompositeBinding((IIndexFragmentBinding)keysToAdapt[i]),
+					cf.getCompositeType(type));
 		}
 		
 		return result;

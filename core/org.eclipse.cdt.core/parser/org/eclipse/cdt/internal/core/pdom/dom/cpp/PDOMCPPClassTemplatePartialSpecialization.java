@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 QNX Software Systems and others.
+ * Copyright (c) 2007, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -200,15 +200,12 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 	
 	@Deprecated
 	public ObjectMap getArgumentMap() {
-		try {
-			ICPPTemplateParameter[] params = getPrimaryClassTemplate().getTemplateParameters();
-			ICPPTemplateArgument[] args= getTemplateArguments();
-			int len= Math.min(params.length, args.length);
-			ObjectMap result= new ObjectMap(len);
-			for (int i = 0; i < len; i++) {
-				result.put(params[i], args[i]);
-			}
-		} catch (DOMException e) {
+		ICPPTemplateParameter[] params = getPrimaryClassTemplate().getTemplateParameters();
+		ICPPTemplateArgument[] args= getTemplateArguments();
+		int len= Math.min(params.length, args.length);
+		ObjectMap result= new ObjectMap(len);
+		for (int i = 0; i < len; i++) {
+			result.put(params[i], args[i]);
 		}
 		return ObjectMap.EMPTY_MAP;
 	}

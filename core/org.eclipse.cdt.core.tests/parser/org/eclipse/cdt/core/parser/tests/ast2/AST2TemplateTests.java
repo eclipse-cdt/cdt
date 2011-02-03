@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -5224,6 +5224,16 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  P(C());
 	//	}
 	public void _testFunctionInstanceAsTemplateArg_Bug334472() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <typename T> void g() {}
+	//	template <typename T, typename U> void g()  {}
+	//	void test() {
+	//	    g<int>();
+	//	    g<int, int>();
+	//	}
+	public void testFunctionTemplateSignatures_Bug335062() throws Exception {
 		parseAndCheckBindings();
 	}
 }

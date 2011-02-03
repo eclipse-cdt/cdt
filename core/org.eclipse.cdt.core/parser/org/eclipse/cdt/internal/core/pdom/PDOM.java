@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 QNX Software Systems and others.
+ * Copyright (c) 2005, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -203,6 +203,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  112.0 - inline namespaces, bug 305980
 	 *  113.0 - Changed marshaling of values, bug 327878
 	 *  114.0 - Partial specializations for class template specializations, bug 332884.
+	 *  115.0 - Corrected signatures for function templates, bug 335062.
 	 */
 	private static final int MIN_SUPPORTED_VERSION= version(114, 0);
 	private static final int MAX_SUPPORTED_VERSION= version(114, Short.MAX_VALUE);

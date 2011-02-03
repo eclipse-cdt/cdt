@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,17 +111,13 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	}
 	
 	public CPPTemplateParameterMap getTemplateParameterMap() {
-		try {
-			ICPPTemplateParameter[] params = fClassTemplate.getTemplateParameters();
-			int size = Math.min(fArguments.length, params.length);
-			CPPTemplateParameterMap map = new CPPTemplateParameterMap(size);
-			for (int i = 0; i < size; i++) {
-				map.put(params[i], fArguments[i]);
-			}
-			return map;
-		} catch (DOMException e) {
+		ICPPTemplateParameter[] params = fClassTemplate.getTemplateParameters();
+		int size = Math.min(fArguments.length, params.length);
+		CPPTemplateParameterMap map = new CPPTemplateParameterMap(size);
+		for (int i = 0; i < size; i++) {
+			map.put(params[i], fArguments[i]);
 		}
-		return CPPTemplateParameterMap.EMPTY;
+		return map;
 	}
 
 	public IBinding getSpecializedBinding() {

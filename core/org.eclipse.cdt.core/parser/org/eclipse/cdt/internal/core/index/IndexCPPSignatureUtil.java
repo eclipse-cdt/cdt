@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 QNX Software Systems and others.
+ * Copyright (c) 2007, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.CoreException;
@@ -61,7 +66,13 @@ public class IndexCPPSignatureUtil {
 		
 		if (binding instanceof ICPPFunction) {
 			IFunction function = (ICPPFunction) binding;
-			buffer.append(getFunctionParameterString(function.getType()));
+			final IFunctionType ftype = function.getType();
+			buffer.append(getFunctionParameterString(ftype));
+			if (binding instanceof ICPPTemplateDefinition) {
+				ICPPTemplateDefinition tdef= (ICPPTemplateDefinition) binding;
+				appendTemplateParameters(tdef.getTemplateParameters(), buffer);
+				ASTTypeUtil.appendType(ftype.getReturnType(), true, buffer);
+			}
 		}
 		if (binding instanceof ICPPMethod && !(binding instanceof ICPPConstructor)) {
 			ICPPFunctionType ft = ((ICPPMethod) binding).getType();
@@ -74,6 +85,28 @@ public class IndexCPPSignatureUtil {
 		return buffer.toString();
 	}
 	
+	private static void appendTemplateParameters(ICPPTemplateParameter[] tpars,	StringBuilder buffer) {
+		buffer.append('<');
+		for (ICPPTemplateParameter tpar : tpars) {
+			appendTemplateParameter(tpar, buffer);
+			buffer.append(',');
+		}
+		buffer.append('>');
+	}
+
+	private static void appendTemplateParameter(ICPPTemplateParameter tpar, StringBuilder buffer) {
+		if (tpar instanceof ICPPTemplateNonTypeParameter) {
+			ASTTypeUtil.appendType(((ICPPTemplateNonTypeParameter) tpar).getType(), true, buffer);
+		} else if (tpar instanceof ICPPTemplateTypeParameter) {
+			buffer.append('#');
+		} else if (tpar instanceof ICPPTemplateTemplateParameter) {
+			buffer.append('#');
+			appendTemplateParameters(((ICPPTemplateTemplateParameter) tpar).getTemplateParameters(), buffer);
+		}
+		if (tpar.isParameterPack())
+			buffer.append("..."); //$NON-NLS-1$
+	}
+
 	/**
 	 * Constructs a string in the format:
 	 *   <typeName1,typeName2,...>

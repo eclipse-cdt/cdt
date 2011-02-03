@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 
 /**
  * Base interface for all template definitions including explicit (partial) specializations.
@@ -27,5 +26,5 @@ public interface ICPPTemplateDefinition extends ICPPBinding {
 	 * a partial specialization will have the specialized parameter list
 	 * @return array of ICPPTemplateParameter
 	 */
-	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException;
+	public ICPPTemplateParameter[] getTemplateParameters();
 }

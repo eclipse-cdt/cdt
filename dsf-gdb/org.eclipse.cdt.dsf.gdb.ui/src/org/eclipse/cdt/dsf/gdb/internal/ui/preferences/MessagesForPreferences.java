@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Ericsson and others.
+ * Copyright (c) 2009, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,19 +20,21 @@ class MessagesForPreferences extends NLS {
 	public static String GdbDebugPreferencePage_description;
 	public static String GdbDebugPreferencePage_traces_label;
 	public static String GdbDebugPreferencePage_enableTraces_label;
+	/** @since 2.2 */
+	public static String GdbDebugPreferencePage_maxGdbTraces_label;
 	public static String GdbDebugPreferencePage_termination_label;
 	public static String GdbDebugPreferencePage_autoTerminateGdb_label;
 	public static String GdbDebugPreferencePage_hover_label;
 	public static String GdbDebugPreferencePage_useInspectorHover_label;
-	/** @since 3.0 */
+	/** @since 2.2 */
 	public static String GdbDebugPreferencePage_prettyPrinting_label;
-	/** @since 3.0 */
+	/** @since 2.2 */
 	public static String GdbDebugPreferencePage_enablePrettyPrinting_label1;
-	/** @since 3.0 */
+	/** @since 2.2 */
 	public static String GdbDebugPreferencePage_enablePrettyPrinting_label2;
-	/** @since 3.0 */
+	/** @since 2.2 */
 	public static String GdbDebugPreferencePage_initialChildCountLimitForCollections_label;
-	/** @since 3.0 */
+	/** @since 2.2 */
 	public static String GdbDebugPreferencePage_defaults_label;
 	static {
 		// initialize resource bundle

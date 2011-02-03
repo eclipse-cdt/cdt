@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Ericsson and others.
+ * Copyright (c) 2009, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,12 @@ public interface IGdbDebugPreferenceConstants {
 	 * Boolean preference whether to enable GDB traces. Default is <code>true</code>. 
 	 */
 	public static final String PREF_TRACES_ENABLE = "tracesEnable"; //$NON-NLS-1$
+
+	/**
+	 * The maximum number of characters in the GDB trace console.  Default is 500000 characters.
+	 * @since 4.0
+	 */
+	public static final String PREF_MAX_GDB_TRACES = "maxGdbTraces"; //$NON-NLS-1$
 
 	/**
 	 * Boolean preference whether to automatically terminate GDB when the inferior exists. Default is <code>true</code>. 

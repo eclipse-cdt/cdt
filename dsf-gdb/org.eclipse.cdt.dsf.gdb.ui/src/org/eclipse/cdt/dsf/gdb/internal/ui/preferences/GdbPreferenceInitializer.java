@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Ericsson and others.
+ * Copyright (c) 2009, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ public class GdbPreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
 		store.setDefault(IGdbDebugPreferenceConstants.PREF_TRACES_ENABLE, true);
+		store.setDefault(IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES, 500000);
 		store.setDefault(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, true);
 		store.setDefault(IGdbDebugPreferenceConstants.PREF_USE_INSPECTOR_HOVER, true);
 		store.setDefault(IGdbDebugPreferenceConstants.PREF_ENABLE_PRETTY_PRINTING, true);

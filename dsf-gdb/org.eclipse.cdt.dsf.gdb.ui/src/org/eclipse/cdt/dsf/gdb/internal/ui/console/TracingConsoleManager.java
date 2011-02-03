@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Ericsson and others.
+ * Copyright (c) 2009, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,6 +121,7 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 				if (launch.isTerminated() == false) {
 					// Create and  new tracing console.
 					TracingConsole console = new TracingConsole(launch, ConsoleMessages.ConsoleMessages_trace_console_name);
+					console.setWaterMarks(400000, 500000);
 					ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{console});
 				} // else we don't display a new console for a terminated launch
 			}

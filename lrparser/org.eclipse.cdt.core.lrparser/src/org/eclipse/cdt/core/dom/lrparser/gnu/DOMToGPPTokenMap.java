@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -185,6 +185,7 @@ public class DOMToGPPTokenMap implements IDOMTokenMap {
 			case t__Imaginary : return TK__Imaginary;
 			case t_restrict   : return TK_restrict;
 			
+			case tPOUND : return TK_Invalid;
 			default:
 				assert false : "token not recognized by the GPP parser: " + token.getType(); //$NON-NLS-1$
 				return TK_Invalid;

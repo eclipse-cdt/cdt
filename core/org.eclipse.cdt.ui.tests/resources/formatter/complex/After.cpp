@@ -16,7 +16,7 @@ public:
 	// comment
 	Complex(float re, float im) :
 		// comment
-				re(re), im(im) {
+		re(re), im(im) {
 	}
 	// comment
 	float GetRe() {

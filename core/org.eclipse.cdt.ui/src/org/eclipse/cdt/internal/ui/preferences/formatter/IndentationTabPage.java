@@ -43,7 +43,7 @@ public class IndentationTabPage extends FormatterTabPage {
 		"#include <math.h>\n\n" + //$NON-NLS-1$
 		"class Point {" +  //$NON-NLS-1$
 		"public:" +  //$NON-NLS-1$
-		"Point(double xc, double yc) : x(xc), y(yc) {}" + //$NON-NLS-1$ 
+		"Point(double x, double y) : x(x), y(y) {}" + //$NON-NLS-1$ 
 		"\n\n" +  //$NON-NLS-1$
 		"double distance(const Point& other) const;" + //$NON-NLS-1$
 		"int compareX(const Point& other) const;" + //$NON-NLS-1$

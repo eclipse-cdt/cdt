@@ -41,7 +41,7 @@ public class BracesTabPage extends FormatterTabPage {
 		"\n\n" +  //$NON-NLS-1$
 		"class Point {" +  //$NON-NLS-1$
 		"public:" +  //$NON-NLS-1$
-		"Point(double xc, double yc) : x(xc), y(yc) {}" + //$NON-NLS-1$ 
+		"Point(double x, double y) : x(x), y(y) {}" + //$NON-NLS-1$ 
 		"double distance(const Point& other) const;" + //$NON-NLS-1$
 		"int compareX(const Point& other) const;" + //$NON-NLS-1$
 		"double x;" +  //$NON-NLS-1$
@@ -80,9 +80,7 @@ public class BracesTabPage extends FormatterTabPage {
 		"}"+ //$NON-NLS-1$
 		"} // end namespace FOO"; //$NON-NLS-1$
 
-	
 	private TranslationUnitPreview fPreview;
-	
 	
 	private final String [] fBracePositions= {
 	    DefaultCodeFormatterConstants.END_OF_LINE,
@@ -109,20 +107,18 @@ public class BracesTabPage extends FormatterTabPage {
 	    FormatterMessages.BracesTabPage_position_next_line_indented, 
 		FormatterMessages.BracesTabPage_position_next_line_on_wrap
 	};
-
 	
 	/**
 	 * Create a new BracesTabPage.
 	 * @param modifyDialog
 	 * @param workingValues
 	 */
-	public BracesTabPage(ModifyDialog modifyDialog, Map<String,String> workingValues) {
+	public BracesTabPage(ModifyDialog modifyDialog, Map<String, String> workingValues) {
 		super(modifyDialog, workingValues);
 	}
 	
 	@Override
 	protected void doCreatePreferences(Composite composite, int numColumns) {
-		
 		final Group group= createGroup(numColumns, composite, FormatterMessages.BracesTabPage_group_brace_positions_title); 
 		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_class_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION); 
 		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_namespace_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_NAMESPACE_DECLARATION); 
@@ -179,11 +175,9 @@ public class BracesTabPage extends FormatterTabPage {
 		data.horizontalIndent= fPixelConverter.convertWidthInCharsToPixels(1);
 		return pref;
 	}
-	
 
     @Override
 	protected void doUpdatePreview() {
         fPreview.update();
     }
-
 }

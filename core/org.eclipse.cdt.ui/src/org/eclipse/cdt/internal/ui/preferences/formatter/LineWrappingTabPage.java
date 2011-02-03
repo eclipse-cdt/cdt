@@ -90,11 +90,8 @@ public class LineWrappingTabPage extends FormatterTabPage {
 
 	private final static String PREF_CATEGORY_INDEX= CUIPlugin.PLUGIN_ID + "formatter_page.line_wrapping_tab_page.last_category_index"; //$NON-NLS-1$ 
 	
-	
 	private final class CategoryListener implements ISelectionChangedListener, IDoubleClickListener {
-		
 		private final List<Category> fCategoriesList;
-		
 		private int fIndex= 0;
 		
 		public CategoryListener(List<Category> categoriesTree) {
@@ -404,6 +401,20 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		    FormatterMessages.LineWrappingTabPage_throws_clause_lowercase
 		);
 
+	private final Category fConstructorInitializerListCategory= new Category(
+		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONSTRUCTOR_INITIALIZER_LIST, 
+		    "class Point {" + //$NON-NLS-1$
+		    "public:" + //$NON-NLS-1$
+		    "Point(double x, double y) : x(x), y(y) {" + //$NON-NLS-1$
+		    "}\n\n" + //$NON-NLS-1$
+		    "private:" + //$NON-NLS-1$
+		    "double x;" + //$NON-NLS-1$
+		    "double y;" + //$NON-NLS-1$
+		    "};", //$NON-NLS-1$
+		    FormatterMessages.LineWrappingTabPage_constructor_initializer_list, 
+		    FormatterMessages.LineWrappingTabPage_constructor_initializer_list_lowercase
+		);
+
 //	private final Category fConstructorThrowsClauseCategory= new Category(
 //	    	DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_CONSTRUCTOR_DECLARATION, 
 //	    	"class Example {" + //$NON-NLS-1$
@@ -412,8 +423,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 //	    	FormatterMessages.LineWrappingTabPage_throws_clause
 //			FormatterMessages.LineWrappingTabPage_throws_clause_lowercase
 //		);
-//
-//	
+
 //	private final Category fAllocationExpressionArgumentsCategory= new Category(
 //	    	DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ALLOCATION_EXPRESSION,
 //	    	"class Example {SomeClass foo() {return new SomeClass(100, 200, 300, 400, 500, 600, 700, 800, 900 );}}", //$NON-NLS-1$
@@ -475,7 +485,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 //	    	FormatterMessages.LineWrappingTabPage_enum_constant_arguments,
 //    		FormatterMessages.LineWrappingTabPage_enum_constant_arguments_lowercase
 //		);
-//	
+	
 //	private final Category fEnumDeclInterfacesCategory= new Category(
 //	    	DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_SUPERINTERFACES_IN_ENUM_DECLARATION,
 //	    	"enum Example implements A, B, C {" + //$NON-NLS-1$
@@ -483,7 +493,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 //	    	FormatterMessages.LineWrappingTabPage_enum_superinterfaces,
 //    		FormatterMessages.LineWrappingTabPage_enum_superinterfaces_lowercase
 //		);
-//	
+	
 	private final Category fEnumeratorsCategory= new Category(
 		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ENUMERATOR_LIST,
 		    "enum Example {" + //$NON-NLS-1$
@@ -591,10 +601,12 @@ public class LineWrappingTabPage extends FormatterTabPage {
 //		final Category constructorDeclarations= new Category(null, null, FormatterMessages.LineWrappingTabPage_constructor_decls); 
 //		constructorDeclarations.children.add(fConstructorDeclarationsParametersCategory);
 //		constructorDeclarations.children.add(fConstructorThrowsClauseCategory);
+//		constructorDeclarations.children.add(fConstructorInitializerListCategory);
 
 		final Category methodDeclarations= new Category(null, null, FormatterMessages.LineWrappingTabPage_function_decls,FormatterMessages.LineWrappingTabPage_function_decls_lowercase); 
 		methodDeclarations.children.add(fMethodDeclarationsParametersCategory);
 		methodDeclarations.children.add(fMethodThrowsClauseCategory);
+		methodDeclarations.children.add(fConstructorInitializerListCategory);
 
 		final Category enumDeclarations= new Category(FormatterMessages.LineWrappingTabPage_enum_decls,FormatterMessages.LineWrappingTabPage_enum_decls_lowercase); 
 		enumDeclarations.children.add(fEnumeratorsCategory);
@@ -635,7 +647,6 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	 */
 	@Override
 	protected void doCreatePreferences(Composite composite, int numColumns) {
-	
 		final Group lineWidthGroup= createGroup(numColumns, composite, FormatterMessages.LineWrappingTabPage_width_indent); 
 
 		createNumberPref(lineWidthGroup, numColumns, FormatterMessages.LineWrappingTabPage_width_indent_option_max_line_width, DefaultCodeFormatterConstants.FORMATTER_LINE_SPLIT, 0, 9999); 
@@ -692,14 +703,12 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		// selection state object
 		fSelectionState= new SelectionState();
 	}
-	
 		
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#doCreatePreviewPane(org.eclipse.swt.widgets.Composite, int)
 	 */
 	@Override
 	protected Composite doCreatePreviewPane(Composite composite, int numColumns) {
-		
 		super.doCreatePreviewPane(composite, numColumns);
 		
 		final NumberPreference previewLineWidth= new NumberPreference(composite, numColumns / 2, fPreviewPreferences, LINE_SPLIT,
@@ -716,7 +725,6 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		
 		return composite;
 	}
-
 	
     /*
      * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#doCreateCPreview(org.eclipse.swt.widgets.Composite)
@@ -732,7 +740,6 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	 */
 	@Override
 	protected void initializePage() {
-		
 		fCategoriesViewer.addSelectionChangedListener(fCategoryListener);
 		fCategoriesViewer.addDoubleClickListener(fCategoryListener);
 		

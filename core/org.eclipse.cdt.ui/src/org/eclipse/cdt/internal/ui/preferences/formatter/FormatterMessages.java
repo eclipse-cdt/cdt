@@ -201,6 +201,7 @@ final class FormatterMessages extends NLS {
 	public static String LineWrappingTabPage_parameters;
 	public static String LineWrappingTabPage_arguments;
 	public static String LineWrappingTabPage_throws_clause;
+	public static String LineWrappingTabPage_constructor_initializer_list;
 	public static String LineWrappingTabPage_enum_decls;
 	public static String LineWrappingTabPage_enumerator_list;
 	public static String LineWrappingTabPage_initializer_list;
@@ -222,6 +223,7 @@ final class FormatterMessages extends NLS {
 	public static String LineWrappingTabPage_parameters_lowercase;
 	public static String LineWrappingTabPage_arguments_lowercase;
 	public static String LineWrappingTabPage_throws_clause_lowercase;
+	public static String LineWrappingTabPage_constructor_initializer_list_lowercase;
 	public static String LineWrappingTabPage_enum_decls_lowercase;
 	public static String LineWrappingTabPage_enumerator_list_lowercase;
 	public static String LineWrappingTabPage_initializer_list_lowercase;
@@ -375,7 +377,7 @@ final class FormatterMessages extends NLS {
 	public static String ModifyDialog_tabpage_indentation_title;
 	public static String ModifyDialog_tabpage_whitespace_title;
 //	public static String ModifyDialog_tabpage_blank_lines_title;
-//	public static String ModifyDialog_tabpage_new_lines_title;
+	public static String ModifyDialog_tabpage_new_lines_title;
 	public static String ModifyDialog_tabpage_control_statements_title;
 	public static String ModifyDialog_tabpage_line_wrapping_title;
 //	public static String ModifyDialog_tabpage_comments_title;
@@ -384,8 +386,9 @@ final class FormatterMessages extends NLS {
 	public static String ModifyDialogTabPage_error_msg_values_items_text_unassigned;
 	public static String ModifyDialogTabPage_NumberPreference_error_invalid_key;
 	public static String ModifyDialogTabPage_NumberPreference_error_invalid_value;
-//	public static String NewLinesTabPage_preview_header;
-//	public static String NewLinesTabPage_newlines_group_title;
+	public static String NewLinesTabPage_preview_header;
+	public static String NewLinesTabPage_newlines_group_title;
+	public static String NewLinesTabPage_newlines_group_option_before_colon_in_constructor_initializer_list;
 //	public static String NewLinesTabPage_newlines_group_option_empty_class_body;
 //	public static String NewLinesTabPage_newlines_group_option_empty_method_body;
 //	public static String NewLinesTabPage_newlines_group_option_empty_block;

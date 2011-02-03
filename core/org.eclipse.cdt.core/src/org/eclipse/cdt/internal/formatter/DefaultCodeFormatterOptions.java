@@ -68,9 +68,10 @@ public class DefaultCodeFormatterOptions {
 	public int alignment_for_member_access;
 	public int alignment_for_parameters_in_method_declaration;
 	public int alignment_for_throws_clause_in_method_declaration;
-	
+	public int alignment_for_constructor_initializer_list;
+
 //	public boolean align_type_members_on_columns;
-	
+
 	public String brace_position_for_block;
 	public String brace_position_for_block_in_case;
 //	public String brace_position_for_enum_declaration;
@@ -79,10 +80,10 @@ public class DefaultCodeFormatterOptions {
 	public String brace_position_for_namespace_declaration;
 	public String brace_position_for_switch;
 	public String brace_position_for_type_declaration;
-	
+
 	public int continuation_indentation;
 	public int continuation_indentation_for_initializer_list;
-	
+
 //	public int blank_lines_after_includes;
 //	public int blank_lines_before_field;
 //	public int blank_lines_before_first_class_body_declaration;
@@ -118,6 +119,7 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_new_line_at_end_of_file_if_missing;
 	public boolean insert_new_line_before_catch_in_try_statement;
 	public boolean insert_new_line_before_closing_brace_in_initializer_list;
+	public boolean insert_new_line_before_colon_in_constructor_initializer_list;
 	public boolean insert_new_line_before_else_in_if_statement;
 	public boolean insert_new_line_before_while_in_do_statement;
 	public boolean insert_new_line_before_identifier_in_function_declaration;
@@ -278,6 +280,7 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION, getAlignment(this.alignment_for_parameters_in_method_declaration));
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_SELECTOR_IN_METHOD_INVOCATION, getAlignment(this.alignment_for_selector_in_method_invocation));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BASE_CLAUSE_IN_TYPE_DECLARATION, getAlignment(this.alignment_for_base_clause_in_type_declaration));
+		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONSTRUCTOR_INITIALIZER_LIST, getAlignment(this.alignment_for_constructor_initializer_list));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION, getAlignment(this.alignment_for_throws_clause_in_method_declaration));
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGN_TYPE_MEMBERS_ON_COLUMNS, this.align_type_members_on_columns ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_INITIALIZER_LIST, this.brace_position_for_initializer_list);
@@ -322,6 +325,7 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AT_END_OF_FILE_IF_MISSING, this.insert_new_line_at_end_of_file_if_missing ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_CATCH_IN_TRY_STATEMENT, this.insert_new_line_before_catch_in_try_statement? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_CLOSING_BRACE_IN_INITIALIZER_LIST, this.insert_new_line_before_closing_brace_in_initializer_list? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_COLON_IN_CONSTRUCTOR_INITIALIZER_LIST, this.insert_new_line_before_colon_in_constructor_initializer_list? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_ELSE_IN_IF_STATEMENT, this.insert_new_line_before_else_in_if_statement? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_WHILE_IN_DO_STATEMENT, this.insert_new_line_before_while_in_do_statement? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_IDENTIFIER_IN_FUNCTION_DECLARATION, this.insert_new_line_before_identifier_in_function_declaration? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
@@ -591,6 +595,16 @@ public class DefaultCodeFormatterOptions {
 				this.alignment_for_base_clause_in_type_declaration = Alignment.M_NEXT_SHIFTED_SPLIT;
 			} catch (ClassCastException e) {
 				this.alignment_for_base_clause_in_type_declaration = Alignment.M_NEXT_SHIFTED_SPLIT;
+			}
+		}
+		final Object alignmentForConstructorInitializerListOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONSTRUCTOR_INITIALIZER_LIST);
+		if (alignmentForConstructorInitializerListOption != null) {
+			try {
+				this.alignment_for_constructor_initializer_list = Integer.parseInt((String) alignmentForConstructorInitializerListOption);
+			} catch (NumberFormatException e) {
+				this.alignment_for_constructor_initializer_list = Alignment.M_COMPACT_SPLIT;
+			} catch (ClassCastException e) {
+				this.alignment_for_constructor_initializer_list = Alignment.M_COMPACT_SPLIT;
 			}
 		}
 		final Object alignmentForThrowsClauseInMethodDeclarationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION);
@@ -890,6 +904,10 @@ public class DefaultCodeFormatterOptions {
 		final Object insertNewLineBeforeClosingBraceInInitializerListOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_CLOSING_BRACE_IN_INITIALIZER_LIST);
 		if (insertNewLineBeforeClosingBraceInInitializerListOption != null) {
 			this.insert_new_line_before_closing_brace_in_initializer_list = CCorePlugin.INSERT.equals(insertNewLineBeforeClosingBraceInInitializerListOption);
+		}
+		final Object insertNewLineBeforeColonInConstructorInitializerListOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_COLON_IN_CONSTRUCTOR_INITIALIZER_LIST);
+		if (insertNewLineBeforeColonInConstructorInitializerListOption != null) {
+			this.insert_new_line_before_colon_in_constructor_initializer_list = CCorePlugin.INSERT.equals(insertNewLineBeforeColonInConstructorInitializerListOption);
 		}
 		final Object insertNewLineBeforeElseInIfStatementOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_ELSE_IN_IF_STATEMENT);
 		if (insertNewLineBeforeElseInIfStatementOption != null) {

@@ -1012,12 +1012,20 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (node instanceof ICPPASTFunctionDefinition) {
 			final ICPPASTConstructorChainInitializer[] constructorChain= ((ICPPASTFunctionDefinition) node).getMemberInitializers();
 			if (constructorChain != null && constructorChain.length > 0) {
-				// TLETODO [formatter] need special constructor chain alignment
-				scribe.printNextToken(Token.tCOLON, true);
-				scribe.printTrailingComment();
-				scribe.startNewLine();
-				scribe.indent();
-				final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
+				if (preferences.insert_new_line_before_colon_in_constructor_initializer_list) {
+					scribe.printTrailingComment();
+					scribe.startNewLine();
+					scribe.indent();
+				}
+				scribe.printNextToken(Token.tCOLON, !preferences.insert_new_line_before_colon_in_constructor_initializer_list);
+				if (preferences.insert_new_line_before_colon_in_constructor_initializer_list) {
+					scribe.space();
+				} else {
+					scribe.printTrailingComment();
+					scribe.startNewLine();
+					scribe.indent();
+				}
+				final ListAlignment align= new ListAlignment(preferences.alignment_for_constructor_initializer_list);
 				align.fTieBreakRule = Alignment.R_OUTERMOST;
 				formatList(Arrays.asList(constructorChain), align, false, false);
 				scribe.unIndent();
@@ -1162,7 +1170,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			if (pointer instanceof ICPPASTReferenceOperator) {
 				scribe.printNextToken(Token.tAMPER, false);
 			} else if (pointer instanceof ICPPASTPointerToMember) {
-				final ICPPASTPointerToMember ptrToMember= (ICPPASTPointerToMember)pointer;
+				final ICPPASTPointerToMember ptrToMember= (ICPPASTPointerToMember) pointer;
 				final IASTName name= ptrToMember.getName();
 				if (name != null) {
 					name.accept(this);
@@ -1226,7 +1234,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					}
 				}
 				if (arrayModifier instanceof ICASTArrayModifier) {
-					final ICASTArrayModifier cArrayModifier= (ICASTArrayModifier)arrayModifier;
+					final ICASTArrayModifier cArrayModifier= (ICASTArrayModifier) arrayModifier;
 					if (scribe.printModifiers()) {
 						scribe.space();
 					}
@@ -2920,7 +2928,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		IASTStatement bodyStmt= node.getBody();
 		final List<IASTStatement> statements;
 		if (bodyStmt instanceof IASTCompoundStatement) {
-			statements= Arrays.asList(((IASTCompoundStatement)bodyStmt).getStatements());
+			statements= Arrays.asList(((IASTCompoundStatement) bodyStmt).getStatements());
 		} else {
 			statements= Collections.singletonList(bodyStmt);
 		}
@@ -3565,7 +3573,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				continue;
 			}
 			if (statement instanceof IASTPreprocessorIfStatement) {
-				IASTPreprocessorIfStatement ifStmt = (IASTPreprocessorIfStatement)statement;
+				IASTPreprocessorIfStatement ifStmt = (IASTPreprocessorIfStatement) statement;
 				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 				if (!ifStmt.taken()) {
 					if (!inInactiveCode) {
@@ -3574,7 +3582,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					}
 				}
 			} else if (statement instanceof IASTPreprocessorIfdefStatement) {
-				IASTPreprocessorIfdefStatement ifdefStmt = (IASTPreprocessorIfdefStatement)statement;
+				IASTPreprocessorIfdefStatement ifdefStmt = (IASTPreprocessorIfdefStatement) statement;
 				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 				if (!ifdefStmt.taken()) {
 					if (!inInactiveCode) {
@@ -3583,7 +3591,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					}
 				}
 			} else if (statement instanceof IASTPreprocessorIfndefStatement) {
-				IASTPreprocessorIfndefStatement ifndefStmt = (IASTPreprocessorIfndefStatement)statement;
+				IASTPreprocessorIfndefStatement ifndefStmt = (IASTPreprocessorIfndefStatement) statement;
 				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 				if (!ifndefStmt.taken()) {
 					if (!inInactiveCode) {
@@ -3592,7 +3600,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					}
 				}
 			} else if (statement instanceof IASTPreprocessorElseStatement) {
-				IASTPreprocessorElseStatement elseStmt = (IASTPreprocessorElseStatement)statement;
+				IASTPreprocessorElseStatement elseStmt = (IASTPreprocessorElseStatement) statement;
 				if (!elseStmt.taken() && !inInactiveCode) {
 					inactiveCodeStart = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
 					inInactiveCode = true;
@@ -3602,7 +3610,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					inInactiveCode = false;
 				}
 			} else if (statement instanceof IASTPreprocessorElifStatement) {
-				IASTPreprocessorElifStatement elifStmt = (IASTPreprocessorElifStatement)statement;
+				IASTPreprocessorElifStatement elifStmt = (IASTPreprocessorElifStatement) statement;
 				if (!elifStmt.taken() && !inInactiveCode) {
 					inactiveCodeStart = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
 					inInactiveCode = true;

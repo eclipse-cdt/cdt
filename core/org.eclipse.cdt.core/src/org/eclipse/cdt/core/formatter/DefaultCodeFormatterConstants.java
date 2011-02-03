@@ -234,6 +234,17 @@ public class DefaultCodeFormatterConstants {
 	public static final String FORMATTER_ALIGNMENT_FOR_BASE_CLAUSE_IN_TYPE_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_base_clause_in_type_declaration";	 //$NON-NLS-1$
 	/**
 	 * <pre>
+	 * FORMATTER / Option for alignment of constructor initializer list
+	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_constructor_initializer_list"
+	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
+	 * </pre>
+	 * @see #createAlignmentValue(boolean, int, int)
+	 * @since 5.3
+	 */
+	public static final String FORMATTER_ALIGNMENT_FOR_CONSTRUCTOR_INITIALIZER_LIST = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_constructor_initializer_list";	 //$NON-NLS-1$
+	/**
+	 * <pre>
 	 * FORMATTER / Option for alignment of throws clause in method declaration
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_throws_clause_in_method_declaration"
 	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
@@ -242,7 +253,6 @@ public class DefaultCodeFormatterConstants {
 	 * @see #createAlignmentValue(boolean, int, int)
 	 */
 	public static final String FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_throws_clause_in_method_declaration";	 //$NON-NLS-1$
-//
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option to add blank lines after #include directive
@@ -717,6 +727,18 @@ public class DefaultCodeFormatterConstants {
 	 * @see CCorePlugin#DO_NOT_INSERT
 	 */
 	public static final String FORMATTER_INSERT_NEW_LINE_BEFORE_CLOSING_BRACE_IN_INITIALIZER_LIST = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_before_closing_brace_in_array_initializer";//$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a new line before colon in constructor initializer list.
+	 *     - option id:         "org.eclipse.cdt.core.formatter.formatter.insert_new_line_before_colon_in_constructor_initializer_list"
+	 *     - possible values:   { DO_NOT_INSERT, INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 * @since 5.3
+	 */
+	public static final String FORMATTER_INSERT_NEW_LINE_BEFORE_COLON_IN_CONSTRUCTOR_INITIALIZER_LIST = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_before_colon_in_constructor_initializer_list"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a new line before the else keyword in if statement

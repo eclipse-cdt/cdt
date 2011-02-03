@@ -1108,6 +1108,59 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//class Point {
+	//public:
+	//Point(int x, int y) : x(x), y(y) {}
+	//
+	//private:
+	//int x;
+	//int y;
+	//};
+
+	//class Point {
+	//public:
+	//    Point(int x, int y) :
+	//        x(x), y(y) {
+	//    }
+	//
+	//private:
+	//    int x;
+	//    int y;
+	//};
+	public void testConstructorInitializer_1() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
+	//class Point {
+	//public:
+	//Point(int x, int y) : x(x), y(y) {}
+	//
+	//private:
+	//int x;
+	//int y;
+	//};
+
+	//class Point {
+	//public:
+	//    Point(int x, int y)
+	//        : x(x),
+	//          y(y) {
+	//    }
+	//
+	//private:
+	//    int x;
+	//    int y;
+	//};
+	public void testConstructorInitializer_2() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_COLON_IN_CONSTRUCTOR_INITIALIZER_LIST,
+				CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONSTRUCTOR_INITIALIZER_LIST,
+				Integer.toString(Alignment.M_NEXT_PER_LINE_SPLIT | Alignment.M_INDENT_ON_COLUMN | Alignment.M_FORCE));
+		assertFormatterResult();
+	}
+
 	//#define A (0)
 	//#define B (1)
 	//#define ARGS (A, B)

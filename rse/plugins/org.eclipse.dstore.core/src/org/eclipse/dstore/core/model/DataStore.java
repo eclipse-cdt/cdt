@@ -3626,8 +3626,6 @@ public final class DataStore
   			}
   			
   			_userPreferencesDirectory = _userPreferencesDirectory + logDirectory + clientUserID;  
-  			System.out.println("pref dir ="+_userPreferencesDirectory);
-  			System.out.println("log dir="+logDirectory);
   			
 	  		File dirFile = new File(_userPreferencesDirectory);
 	  		if (!dirFile.exists()) {

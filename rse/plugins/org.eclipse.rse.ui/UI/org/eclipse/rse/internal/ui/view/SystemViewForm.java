@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  * David McKnight    (IBM)   - [187711] select SystemView APIs exposed by the ISystemTree interface
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David McKnight   (IBM)        - [257721] Doubleclick doing special handling and expanding
+ * David McKnight   (IBM)        - [334295] SystemViewForm dialogs don't display cancellable progress in the dialog
  *******************************************************************************/
 package org.eclipse.rse.internal.ui.view;
 import java.util.List;
@@ -441,6 +442,9 @@ public class SystemViewForm extends Composite implements  ISystemTree
 	    
 	    // for bug 257721, when using system view from a dialog, by default, we don't let adapter handle double-click
 	    tree.allowAdapterToHandleDoubleClick(false);
+	    
+	    // add custom content provider
+	    tree.setContentProvider(new SystemViewFormLabelAndContentProvider());
 	}
 	
 	protected void addOurMouseListener()

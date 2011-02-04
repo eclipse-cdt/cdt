@@ -1,8 +1,9 @@
 BreakpointTestApp.exe
-SpecialTestApp.exe
-GDBMIGenericTestApp.exe
-MemoryTestApp.exe
-ExpressionTestApp.exe
-MultiThread.exe
-TracepointTestApp.exe
 CatchpointTestApp.exe
+ExpressionTestApp.exe
+GDBMIGenericTestApp.exe
+LaunchConfigurationAndRestartTestApp.exe
+MemoryTestApp.exe
+MultiThread.exe
+SpecialTestApp.exe
+TracepointTestApp.exe

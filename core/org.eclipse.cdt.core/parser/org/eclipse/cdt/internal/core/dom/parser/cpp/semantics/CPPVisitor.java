@@ -144,6 +144,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -1267,7 +1268,7 @@ public class CPPVisitor extends ASTQueries {
 			return PROCESS_CONTINUE;
 		}
 	}
-	
+
 	public static class CollectDeclarationsAction extends ASTVisitor {
 	    private static final int DEFAULT_LIST_SIZE = 8;
 		private IASTName[] decls;
@@ -1275,16 +1276,17 @@ public class CPPVisitor extends ASTQueries {
 		private int idx = 0;
 		private int kind;
 		private char[] requiredName;
-		
+		private IIndex index;
+
 		private static final int KIND_LABEL  = 1;
 		private static final int KIND_OBJ_FN = 2;
 		private static final int KIND_TYPE   = 3;
-		private static final int KIND_NAMESPACE   = 4;
+		private static final int KIND_NAMESPACE = 4;
 		private static final int KIND_COMPOSITE = 5;
 		private static final int KIND_TEMPLATE_PARAMETER = 6;
-		
-		
+
 		public CollectDeclarationsAction(IBinding binding) {
+			shouldVisitTranslationUnit = true;
 			shouldVisitNames = true;
 			this.decls = new IASTName[DEFAULT_LIST_SIZE];
 			
@@ -1313,8 +1315,13 @@ public class CPPVisitor extends ASTQueries {
 				kind = KIND_OBJ_FN;
 			}
 		}
-		
-		@SuppressWarnings("fallthrough")
+
+		@Override
+		public int visit(IASTTranslationUnit tu) {
+			index = tu.getIndex();
+			return PROCESS_CONTINUE;
+		}
+
 		@Override
 		public int visit(IASTName name) {
 			if (name instanceof ICPPASTQualifiedName) return PROCESS_CONTINUE;
@@ -1372,8 +1379,8 @@ public class CPPVisitor extends ASTQueries {
         
 					if (kind == KIND_TYPE)
 					    return PROCESS_CONTINUE;
-					// fall through
-					
+					// $FALL-THROUGH$
+
 				case KIND_OBJ_FN:
 					if (prop == IASTDeclarator.DECLARATOR_NAME ||
 						    prop == IASTEnumerationSpecifier.IASTEnumerator.ENUMERATOR_NAME ||
@@ -1406,7 +1413,7 @@ public class CPPVisitor extends ASTQueries {
 		private boolean isDeclarationsBinding(IBinding nameBinding) {
 			if (nameBinding != null) {
 				for (IBinding binding : bindings) {
-					if (nameBinding.equals(binding)) {
+					if (areEquivalentBindings(nameBinding, binding)) {
 						return true;
 					}
 					// A using declaration is a declaration for the references of its delegates
@@ -1415,6 +1422,27 @@ public class CPPVisitor extends ASTQueries {
 							return true;
 						}
 					}
+				}
+			}
+			return false;
+		}
+
+		private boolean areEquivalentBindings(IBinding binding1, IBinding binding2) {
+			if (binding1.equals(binding2)) {
+				return true;
+			}
+			if ((binding1 instanceof IIndexBinding) != (binding2 instanceof IIndexBinding) &&
+					index != null) {
+				if (binding1 instanceof IIndexBinding) {
+					binding2 = index.adaptBinding(binding2);
+				} else {
+					binding1 = index.adaptBinding(binding1);
+				}
+				if (binding1 == null || binding2 == null) {
+					return false;
+				}
+				if (binding1.equals(binding2)) {
+					return true;
 				}
 			}
 			return false;

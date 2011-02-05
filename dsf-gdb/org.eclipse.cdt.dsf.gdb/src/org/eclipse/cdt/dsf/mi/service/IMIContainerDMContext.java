@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Ericsson and others.
+ * Copyright (c) 2008, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 335324)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 
 /**
@@ -18,7 +20,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
  * identifier.  These thread groups are the basis for this context.
  * @since 1.1
  */
-public interface IMIContainerDMContext extends IContainerDMContext 
+public interface IMIContainerDMContext extends IContainerDMContext, IBreakpointsTargetDMContext
 {
     /**
      * Returns the GDB/MI thread group identifier of this context.

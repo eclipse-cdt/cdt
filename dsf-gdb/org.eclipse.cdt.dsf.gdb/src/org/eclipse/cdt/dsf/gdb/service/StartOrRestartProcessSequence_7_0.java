@@ -21,6 +21,7 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ReflectionSequence;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
@@ -202,10 +203,11 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 															 ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
 															 ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
 
+			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(getContainerContext(), IBreakpointsTargetDMContext.class);
+
 			fCommandControl.queueCommand(
-					fCommandFactory.createMIBreakInsert((IBreakpointsTargetDMContext)fCommandControl.getContext(),
-							true, false, null, 0, userStopSymbol, 0),
-							new DataRequestMonitor<MIBreakInsertInfo>(ImmediateExecutor.getInstance(), rm) {
+					fCommandFactory.createMIBreakInsert(bpTargetDmc, true, false, null, 0, userStopSymbol, 0),
+					new DataRequestMonitor<MIBreakInsertInfo>(ImmediateExecutor.getInstance(), rm) {
 						@Override
 						public void handleSuccess() {
 							if (getData() != null) {
@@ -231,10 +233,12 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	@Execute
 	public void stepSetBreakpointForReverse(final RequestMonitor rm) {
 		if (fReverseEnabled) {
+			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(getContainerContext(), IBreakpointsTargetDMContext.class);
+
 			fCommandControl.queueCommand(
-					fCommandFactory.createMIBreakInsert((IBreakpointsTargetDMContext)fCommandControl.getContext(),
-							true, false, null, 0, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT, 0),
-							new DataRequestMonitor<MIBreakInsertInfo>(ImmediateExecutor.getInstance(), rm) {
+					fCommandFactory.createMIBreakInsert(bpTargetDmc, true, false, null, 0, 
+							                            ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT, 0),
+					new DataRequestMonitor<MIBreakInsertInfo>(ImmediateExecutor.getInstance(), rm) {
 						@Override
 						public void handleSuccess() {
 							if (getData() != null) {
@@ -291,8 +295,6 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 			GDBRunControl_7_0 reverseService = fTracker.getService(GDBRunControl_7_0.class);
 			if (reverseService != null) {
 				reverseService.setReverseModeEnabled(false);
-			} else {
-				assert false : "Missing reverse runControl service"; //$NON-NLS-1$
 			}
 		}
 		rm.done();

@@ -41,6 +41,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.service.command.events.MITracepointSelectedEvent;
@@ -948,9 +949,25 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		
 		@Override
 		public void execute(final RequestMonitor rm) {
+			fContainerDmcToSuspend = DMContexts.getAncestorOfType(fCtx, IContainerDMContext.class);
+			if (fContainerDmcToSuspend != null) {
+				// In non-stop, we don't actually need this particular process to be suspended,
+				// all we need is one of any of the processes to be suspended.
+				// However, for efficiency, we can first check if the process in question
+				// is suspended.
+				if (isSuspended(fContainerDmcToSuspend)) {
+					fTargetAvailable = true;
+					rm.done();
+					return;
+				}
+			}
+
+			// If we get here, we have to get the list of processes to know if any of
+			// them is suspended.
+			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(fCtx, ICommandControlDMContext.class);
 			IProcesses processControl = getServicesTracker().getService(IProcesses.class);
 			processControl.getProcessesBeingDebugged(
-					fCtx,
+					controlDmc,
 					new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {

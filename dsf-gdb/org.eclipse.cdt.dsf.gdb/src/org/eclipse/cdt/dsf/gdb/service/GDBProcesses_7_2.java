@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 TUBITAK BILGEM-ITI and others.
+ * Copyright (c) 2010, 2011 TUBITAK BILGEM-ITI and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIAddInferiorInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -99,7 +100,10 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 	        							@Override
 	        							protected void handleSuccess() {
 	        								rm.setData(containerDmc);
-	        								rm.done();
+	        								
+	        								// Start tracking this process' breakpoints.
+	        								MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
+	        								bpmService.startTrackingBreakpoints(containerDmc, rm);
 	        							}
 	        						});
 	        			}

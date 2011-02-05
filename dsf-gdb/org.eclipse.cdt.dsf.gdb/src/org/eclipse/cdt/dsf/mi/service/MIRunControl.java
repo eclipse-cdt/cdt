@@ -38,6 +38,7 @@ import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.service.command.events.MITracepointSelectedEvent;
@@ -967,9 +968,19 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 		
 		@Override
 		public void execute(final RequestMonitor rm) {
+			fContainerDmc = DMContexts.getAncestorOfType(fCtx, IContainerDMContext.class);
+			if (fContainerDmc != null) {
+				// In all-stop, if any process is suspended, then all of them are suspended
+				// so we only need to check this process.
+				fTargetAvailable = isSuspended(fContainerDmc);
+				rm.done();
+				return;
+			}
+
+			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(fCtx, ICommandControlDMContext.class);
 			IProcesses processControl = getServicesTracker().getService(IProcesses.class);
 			processControl.getProcessesBeingDebugged(
-					fCtx,
+					controlDmc,
 					new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {

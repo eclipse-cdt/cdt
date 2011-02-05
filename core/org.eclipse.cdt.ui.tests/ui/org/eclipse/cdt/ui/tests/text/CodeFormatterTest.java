@@ -1120,7 +1120,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//class Point {
 	//public:
 	//    Point(int x, int y) :
-	//        x(x), y(y) {
+	//            x(x), y(y) {
 	//    }
 	//
 	//private:
@@ -1144,8 +1144,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//class Point {
 	//public:
 	//    Point(int x, int y)
-	//        : x(x),
-	//          y(y) {
+	//            : x(x),
+	//              y(y) {
 	//    }
 	//
 	//private:

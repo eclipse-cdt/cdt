@@ -552,7 +552,7 @@ public class Scribe {
 			fSkippedIndentations++;
 			return;
 		}
-		indentationLevel+= indentationSize;
+		indentationLevel += indentationSize;
 		numberOfIndentations++;
 	}
 

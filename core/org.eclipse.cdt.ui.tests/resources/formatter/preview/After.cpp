@@ -4,8 +4,8 @@
 #include <math.h>
 class Point {
 public:
-	Point(double xc, double yc) :
-		x(xc), y(yc) {
+	Point(double x, double y) :
+			x(x), y(y) {
 	}
 	double distance(const Point& other) const;
 	int compareX(const Point& other) const;

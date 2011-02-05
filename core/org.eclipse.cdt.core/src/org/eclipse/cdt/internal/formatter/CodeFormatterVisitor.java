@@ -1010,12 +1010,15 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 		
 		if (node instanceof ICPPASTFunctionDefinition) {
-			final ICPPASTConstructorChainInitializer[] constructorChain= ((ICPPASTFunctionDefinition) node).getMemberInitializers();
+			final ICPPASTConstructorChainInitializer[] constructorChain=
+					((ICPPASTFunctionDefinition) node).getMemberInitializers();
 			if (constructorChain != null && constructorChain.length > 0) {
 				if (preferences.insert_new_line_before_colon_in_constructor_initializer_list) {
 					scribe.printTrailingComment();
 					scribe.startNewLine();
-					scribe.indent();
+					for (int i= 0; i < preferences.continuation_indentation; i++) {
+						scribe.indent();
+					}
 				}
 				scribe.printNextToken(Token.tCOLON, !preferences.insert_new_line_before_colon_in_constructor_initializer_list);
 				if (preferences.insert_new_line_before_colon_in_constructor_initializer_list) {
@@ -1023,12 +1026,16 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				} else {
 					scribe.printTrailingComment();
 					scribe.startNewLine();
-					scribe.indent();
+					for (int i= 0; i < preferences.continuation_indentation; i++) {
+						scribe.indent();
+					}
 				}
 				final ListAlignment align= new ListAlignment(preferences.alignment_for_constructor_initializer_list);
 				align.fTieBreakRule = Alignment.R_OUTERMOST;
 				formatList(Arrays.asList(constructorChain), align, false, false);
-				scribe.unIndent();
+				for (int i= 0; i < preferences.continuation_indentation; i++) {
+					scribe.unIndent();
+				}
 			}
 		}
 		

@@ -1,0 +1,20 @@
+//!Find function definition
+//#org.eclipse.cdt.ui.tests.refactoring.utils.DefinitionFinderTest
+//@.config
+filename=A.h
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+void foo();
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+void foo()
+{
+
+}
+

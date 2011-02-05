@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +43,6 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
-import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
@@ -93,8 +92,8 @@ public class SyncUtil {
 	        	fStack = tracker.getService(MIStack.class);
 	        	fExpressions = tracker.getService(IExpressions.class);
 	        	fProcessesService = tracker.getService(IGDBProcesses.class);
-	        	fCommandFactory = tracker.getService(IMICommandControl.class).getCommandFactory();
-	        	
+	        	fCommandFactory = fGdbControl.getCommandFactory();
+	        		        	
 	        	fBreakpointsDmc = (IBreakpointsTargetDMContext)fGdbControl.getContext();
 	        	
 	        	tracker.dispose();
@@ -103,7 +102,7 @@ public class SyncUtil {
 	    fSession.getExecutor().submit(runnable).get();
 	}
 
-	public static MIStoppedEvent step(int numSteps, final StepType stepType) throws Throwable {
+	public static MIStoppedEvent step(int numSteps, StepType stepType) throws Throwable {
 	    MIStoppedEvent retVal = null;
 		for (int i=0; i<numSteps; i++) {
 		    retVal = step(stepType, DefaultTimeouts.get(ETimeout.step));
@@ -119,16 +118,16 @@ public class SyncUtil {
 		return retVal;
 	}
 
-	public static MIStoppedEvent step(final StepType stepType) throws Throwable {
+	public static MIStoppedEvent step(StepType stepType) throws Throwable {
 		return step(stepType, DefaultTimeouts.get(ETimeout.step));
 	}
 
-	public static MIStoppedEvent step(final StepType stepType, int timeout) throws Throwable {
+	public static MIStoppedEvent step(StepType stepType, int timeout) throws Throwable {
         IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		return step(containerDmc, stepType, timeout);
 	}
 	
-	public static MIStoppedEvent step(final IExecutionDMContext dmc, final StepType stepType) throws Throwable {
+	public static MIStoppedEvent step(IExecutionDMContext dmc, StepType stepType) throws Throwable {
 		return step(dmc, stepType, DefaultTimeouts.get(ETimeout.step));		
 	}
 	
@@ -154,7 +153,7 @@ public class SyncUtil {
 					fGdbControl.queueCommand(fCommandFactory.createMIExecFinish(fStack.createFrameDMContext(dmc, 0)), null);
 					break;
 				default:
-					Assert.assertTrue("Unsupported step type; " + stepType.toString(), false);
+					fail("Unsupported step type; " + stepType.toString());
 				}
 			}
 		});
@@ -163,13 +162,13 @@ public class SyncUtil {
 		return eventWaitor.waitForEvent(timeout);
 	}
 
-	public static MIStoppedEvent runToLine(final IExecutionDMContext dmc, final String fileName, final String lineNo, 
-            final boolean skipBreakpoints) throws Throwable {
+	public static MIStoppedEvent runToLine(IExecutionDMContext dmc, String fileName, String lineNo, 
+            boolean skipBreakpoints) throws Throwable {
 		return runToLine(dmc, fileName, lineNo, skipBreakpoints, DefaultTimeouts.get(ETimeout.runToLine));
 	}
 
 	public static MIStoppedEvent runToLine(final IExecutionDMContext dmc, final String fileName, final String lineNo, 
-			                         final boolean skipBreakpoints, int timeout) throws Throwable {
+			                               boolean skipBreakpoints, int timeout) throws Throwable {
 		
         final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
             new ServiceEventWaitor<MIStoppedEvent>(
@@ -191,87 +190,68 @@ public class SyncUtil {
     	return eventWaitor.waitForEvent(timeout);	
 	}
 
-	public static MIStoppedEvent runToLine(final String fileName, final String lineNo, 
-            final boolean skipBreakpoints) throws Throwable {
+	public static MIStoppedEvent runToLine(String fileName, String lineNo, 
+            boolean skipBreakpoints) throws Throwable {
 		return runToLine(fileName, lineNo, skipBreakpoints, DefaultTimeouts.get(ETimeout.runToLine));
 	}
 
-	public static MIStoppedEvent runToLine(final String fileName, final String lineNo, 
-            final boolean skipBreakpoints, int timeout) throws Throwable {
+	public static MIStoppedEvent runToLine(String fileName, String lineNo, 
+            boolean skipBreakpoints, int timeout) throws Throwable {
         IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		return runToLine(containerDmc, fileName, lineNo, skipBreakpoints, timeout);
 	}
 
-	public static MIStoppedEvent runToLine(final String fileName, final String lineNo) throws Throwable {
+	public static MIStoppedEvent runToLine(String fileName, String lineNo) throws Throwable {
 		return runToLine(fileName, lineNo, DefaultTimeouts.get(ETimeout.runToLine));
 	}
 
-	public static MIStoppedEvent runToLine(final String fileName, final String lineNo, int timeout) throws Throwable {
-        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-		return runToLine(containerDmc, fileName, lineNo, false, timeout);
+	public static MIStoppedEvent runToLine(String fileName, String lineNo, int timeout) throws Throwable {
+		return runToLine(fileName, lineNo, false, timeout);
 	}
 
-	public static int addBreakpoint(final String location) throws Throwable {
+	public static int addBreakpoint(String location) throws Throwable {
 		return addBreakpoint(location, DefaultTimeouts.get(ETimeout.addBreakpoint));
 	}
 
-	public static int addBreakpoint(final String location, int timeout) throws Throwable {
+	public static int addBreakpoint(String location, int timeout) throws Throwable {
 		return addBreakpoint(location, true, timeout);
 	}
 
-	public static int addBreakpoint(final String location, boolean temporary) throws Throwable {
+	public static int addBreakpoint(String location, boolean temporary) throws Throwable {
 		return addBreakpoint(location, temporary, DefaultTimeouts.get(ETimeout.addBreakpoint));
 	}
 	
-	public static int addBreakpoint(final String location, boolean temporary, int timeout)
+	public static int addBreakpoint(final String location, final boolean temporary, int timeout)
 							throws Throwable {
 
-        final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
-		DataRequestMonitor<MIBreakInsertInfo> addBreakDone = 
-			new DataRequestMonitor<MIBreakInsertInfo>(fRunControl.getExecutor(), null) { 
+		Query<MIBreakInsertInfo> query = new Query<MIBreakInsertInfo>() {
 			@Override
-			protected void handleCompleted() {
-                if (isSuccess()) {
-                    wait.setReturnInfo(getData());
-                }
-                
-                wait.waitFinished(getStatus());
+			protected void execute(DataRequestMonitor<MIBreakInsertInfo> rm) {
+				fGdbControl.queueCommand(
+						fCommandFactory.createMIBreakInsert(fBreakpointsDmc, temporary, false, null, 0, location, 0),
+						rm);
 			}
 		};
-
-		fGdbControl.queueCommand(
-				fCommandFactory.createMIBreakInsert(fBreakpointsDmc, temporary, false, null, 0, location, 0),
-			    addBreakDone);
 		
-        wait.waitUntilDone(timeout);
-        assertTrue(wait.getMessage(), wait.isOK());
-        MIBreakInsertInfo info = (MIBreakInsertInfo) wait.getReturnInfo();
+		fGdbControl.getExecutor().execute(query);
+		MIBreakInsertInfo info = query.get(timeout, TimeUnit.MILLISECONDS);
         return info.getMIBreakpoints()[0].getNumber();
 	}
 
 	
 	public static int[] getBreakpointList(int timeout) throws Throwable {
-
-		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
-
-		DataRequestMonitor<MIBreakListInfo> listDRM = 
-			new DataRequestMonitor<MIBreakListInfo>(fRunControl.getExecutor(), null) { 
+		Query<MIBreakListInfo> query = new Query<MIBreakListInfo>() {
 			@Override
-			protected void handleCompleted() {
-                if (isSuccess()) {
-                    wait.setReturnInfo(getData());
-                }               
-                wait.waitFinished(getStatus());
+			protected void execute(DataRequestMonitor<MIBreakListInfo> rm) {
+				fGdbControl.queueCommand(fCommandFactory.createMIBreakList(fBreakpointsDmc), rm);
 			}
 		};
-
-		fGdbControl.queueCommand(fCommandFactory.createMIBreakList(fBreakpointsDmc), listDRM);
 		
-        wait.waitUntilDone(timeout);
-        assertTrue(wait.getMessage(), wait.isOK());
-
-		MIBreakpoint[] breakpoints = listDRM.getData().getMIBreakpoints();
+		fGdbControl.getExecutor().execute(query);
+		MIBreakListInfo info = query.get(timeout, TimeUnit.MILLISECONDS);
+		MIBreakpoint[] breakpoints = info.getMIBreakpoints();
+		
 		int[] result = new int[breakpoints.length];
 		for (int i = 0; i < breakpoints.length; i++) {
 			result[i] = breakpoints[i].getNumber();
@@ -283,28 +263,18 @@ public class SyncUtil {
 		deleteBreakpoint(new int[] {breakpointIndex}, timeout);
 	}
 	
-	public static void deleteBreakpoint(int[] breakpointIndices, int timeout) throws Throwable {
-
-        final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
-
-		DataRequestMonitor<MIInfo> deleteBreakDone = 
-			new DataRequestMonitor<MIInfo>(fRunControl.getExecutor(), null) { 
+	public static void deleteBreakpoint(final int[] breakpointIndices, int timeout) throws Throwable {
+		Query<MIInfo> query = new Query<MIInfo>() {
 			@Override
-			protected void handleCompleted() {
-                if (isSuccess()) {
-                    wait.setReturnInfo(getData());
-                }
-                
-                wait.waitFinished(getStatus());
+			protected void execute(DataRequestMonitor<MIInfo> rm) {
+				fGdbControl.queueCommand(
+						fCommandFactory.createMIBreakDelete(fBreakpointsDmc, breakpointIndices),
+						rm);
 			}
 		};
-
-		fGdbControl.queueCommand(
-				fCommandFactory.createMIBreakDelete(fBreakpointsDmc, breakpointIndices), //$NON-NLS-1$
-				deleteBreakDone);
 		
-        wait.waitUntilDone(timeout);
-        assertTrue(wait.getMessage(), wait.isOK());
+		fGdbControl.getExecutor().execute(query);
+		query.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
 	
@@ -353,7 +323,7 @@ public class SyncUtil {
 			}
 		});
 
-		// Wait for the execution to suspend after the step
+		// Wait for the execution to start after the step
     	return eventWaitor.waitForEvent(timeout);			
 	}
 
@@ -370,6 +340,14 @@ public class SyncUtil {
 		return waitForStop(DefaultTimeouts.get(ETimeout.waitForStop));
 	}
 	
+	// This method is risky.  If the command to resume/step execution
+	// is sent and the stopped event is received before we call this method
+	// here, then we will miss the stopped event.
+	// Normally, one shoudl initialize the ServiveEventWaitor before
+	// triggering the resume to make sure not to miss the stopped event.
+	// However, in some case this method will still work, for instance
+	// if there is a sleep in the code between the resume and the time
+	// it stops; this will give us plenty of time to call this method.
 	public static MIStoppedEvent waitForStop(int timeout) throws Throwable {
         final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
             new ServiceEventWaitor<MIStoppedEvent>(
@@ -380,11 +358,11 @@ public class SyncUtil {
     	return eventWaitor.waitForEvent(timeout);			
 	}
 	
-	public static MIStoppedEvent runToLocation(final String location) throws Throwable {
+	public static MIStoppedEvent runToLocation(String location) throws Throwable {
 		return runToLocation(location, DefaultTimeouts.get(ETimeout.runToLocation));
 	}
 	
-	public static MIStoppedEvent runToLocation(final String location, int timeout) throws Throwable {
+	public static MIStoppedEvent runToLocation(String location, int timeout) throws Throwable {
 		// Set a temporary breakpoint and run to it.
 		// Note that if there were other breakpoints set ahead of this one,
 		// they will stop execution earlier than planned
@@ -393,10 +371,10 @@ public class SyncUtil {
 	}
 	
     public static IFrameDMContext getStackFrame(final IExecutionDMContext execCtx, final int level) throws Throwable {
-        class StackFrameQuery extends Query<IFrameDMContext> {
+    	Query<IFrameDMContext> query = new Query<IFrameDMContext>() {
             @Override
             protected void execute(final DataRequestMonitor<IFrameDMContext> rm) {
-                fStack.getFrames(execCtx, new DataRequestMonitor<IFrameDMContext[]>(fSession.getExecutor(), rm) {
+                fStack.getFrames(execCtx, new DataRequestMonitor<IFrameDMContext[]>(ImmediateExecutor.getInstance(), rm) {
                     @Override
                     protected void handleSuccess() {
                         if (getData().length > level) {
@@ -408,11 +386,10 @@ public class SyncUtil {
                     }
                 });
             }
-        }
+        };
 
-        StackFrameQuery sfQuery = new StackFrameQuery();
-        fSession.getExecutor().execute(sfQuery);
-        return sfQuery.get();
+        fSession.getExecutor().execute(query);
+        return query.get(500, TimeUnit.MILLISECONDS);
     }
     
     public static IFrameDMData getFrameData(final IExecutionDMContext execCtx, final int level) throws Throwable {
@@ -571,35 +548,37 @@ public class SyncUtil {
 	public static IContainerDMContext getContainerContext() throws InterruptedException {
 		assert !fProcessesService.getExecutor().isInExecutorThread();
 
-		final AsyncCompletionWaitor waitor = new AsyncCompletionWaitor();
-		
-		fProcessesService.getExecutor().submit(new Runnable() {
-            public void run() {
-            	fProcessesService.getProcessesBeingDebugged(
+		Query<IContainerDMContext> query = new Query<IContainerDMContext>() {
+			@Override
+			protected void execute(final DataRequestMonitor<IContainerDMContext> rm) {
+				fProcessesService.getProcessesBeingDebugged(
             			fGdbControl.getContext(), 
-            			new DataRequestMonitor<IDMContext[]>(fProcessesService.getExecutor(), null) {
+            			new DataRequestMonitor<IDMContext[]>(ImmediateExecutor.getInstance(), null) {
                     @Override
                     protected void handleCompleted() {
-                       if (isSuccess()) {
-                    	   IDMContext[] contexts = getData();
-                    	   Assert.assertNotNull("invalid return value from service", contexts);
-                    	   Assert.assertEquals("unexpected number of processes", 1, contexts.length);
-                    	   IDMContext context = contexts[0];    
-                           Assert.assertNotNull("unexpected process context type ", context);
-                    	   waitor.setReturnInfo(context);
-                    	   waitor.waitFinished();
-                        } else {
-                           waitor.waitFinished(getStatus());
-                        }
+                    	if (isSuccess()) {
+                    		IDMContext[] contexts = getData();
+                    		Assert.assertNotNull("invalid return value from service", contexts);
+                    		Assert.assertEquals("unexpected number of processes", 1, contexts.length);
+                    		IDMContext context = contexts[0];    
+                    		Assert.assertNotNull("unexpected process context type ", context);
+                    		rm.setData((IContainerDMContext)context);
+                    	} else {
+                            rm.setStatus(getStatus());
+                    	}
+                    	rm.done();
                     }
-            		
             	});
-            }
-        });
+			}
+		};
 		
-    	waitor.waitUntilDone(TestsPlugin.massageTimeout(2000));
-    	Assert.assertTrue(waitor.getMessage(), waitor.isOK());
-    	return (IContainerDMContext)waitor.getReturnInfo();
+		fGdbControl.getExecutor().execute(query);
+		try {
+			return query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		return null;
 	}
     
     /**

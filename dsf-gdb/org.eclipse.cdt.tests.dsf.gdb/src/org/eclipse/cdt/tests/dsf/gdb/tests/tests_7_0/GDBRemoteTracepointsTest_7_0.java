@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMData;
@@ -27,7 +28,7 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsAddedEvent;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsRemovedEvent;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsUpdatedEvent;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
@@ -37,6 +38,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.junit.After;
@@ -125,11 +127,6 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
             public void run() {
         		fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 
-        		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
-           		fBreakpointsDmc = (IBreakpointsTargetDMContext)commandControl.getContext();
-                assert(fBreakpointsDmc != null);
-
-//                fTraceTargetDmc = (ITraceTargetDMContext)commandControl.getContext();
                 
         		fBreakpointService = fServicesTracker.getService(IBreakpoints.class);
 //        		fTraceService = fServicesTracker.getService(ITraceControl.class);
@@ -143,6 +140,12 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
             }
         };
         fSession.getExecutor().submit(runnable).get();
+        
+        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+        fBreakpointsDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
+        assert(fBreakpointsDmc != null);
+//                fTraceTargetDmc = DMContexts.getAncestorOfType(containerDmc, ITraceTargetDMContext.class);
+
 	}
 	
 	@After

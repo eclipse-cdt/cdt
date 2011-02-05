@@ -21,6 +21,7 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
@@ -34,8 +35,8 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
@@ -185,10 +186,6 @@ public class MIBreakpointsTest extends BaseTestCase {
             public void run() {
                 fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
                 assert(fServicesTracker != null);
-
-        		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
-           		fBreakpointsDmc = (IBreakpointsTargetDMContext)commandControl.getContext();
-                assert(fBreakpointsDmc != null);
         		    
                 fRunControl = fServicesTracker.getService(MIRunControl.class);
                 assert(fRunControl != null);
@@ -206,6 +203,10 @@ public class MIBreakpointsTest extends BaseTestCase {
             }
         };
         fSession.getExecutor().submit(runnable).get();
+
+        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+        fBreakpointsDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
+        assert(fBreakpointsDmc != null);
     }
 
     @After

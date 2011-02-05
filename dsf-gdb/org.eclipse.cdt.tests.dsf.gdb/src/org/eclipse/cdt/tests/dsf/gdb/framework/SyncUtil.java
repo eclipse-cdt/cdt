@@ -73,8 +73,6 @@ public class SyncUtil {
     private static DsfSession fSession;
 	
     private static CommandFactory fCommandFactory;
-
-    private static IBreakpointsTargetDMContext fBreakpointsDmc;
 	private static IGDBProcesses fProcessesService;
     
     // Initialize some common things, once the session has been established
@@ -93,9 +91,7 @@ public class SyncUtil {
 	        	fExpressions = tracker.getService(IExpressions.class);
 	        	fProcessesService = tracker.getService(IGDBProcesses.class);
 	        	fCommandFactory = fGdbControl.getCommandFactory();
-	        		        	
-	        	fBreakpointsDmc = (IBreakpointsTargetDMContext)fGdbControl.getContext();
-	        	
+	        		        		        	
 	        	tracker.dispose();
             }
 	    };
@@ -224,12 +220,14 @@ public class SyncUtil {
 	public static int addBreakpoint(final String location, final boolean temporary, int timeout)
 							throws Throwable {
 
-
+        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+        final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
+        
 		Query<MIBreakInsertInfo> query = new Query<MIBreakInsertInfo>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIBreakInsertInfo> rm) {
 				fGdbControl.queueCommand(
-						fCommandFactory.createMIBreakInsert(fBreakpointsDmc, temporary, false, null, 0, location, 0),
+						fCommandFactory.createMIBreakInsert(bpTargetDmc, temporary, false, null, 0, location, 0),
 						rm);
 			}
 		};
@@ -241,10 +239,13 @@ public class SyncUtil {
 
 	
 	public static int[] getBreakpointList(int timeout) throws Throwable {
-		Query<MIBreakListInfo> query = new Query<MIBreakListInfo>() {
+        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+        final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
+
+        Query<MIBreakListInfo> query = new Query<MIBreakListInfo>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIBreakListInfo> rm) {
-				fGdbControl.queueCommand(fCommandFactory.createMIBreakList(fBreakpointsDmc), rm);
+				fGdbControl.queueCommand(fCommandFactory.createMIBreakList(bpTargetDmc), rm);
 			}
 		};
 		
@@ -264,11 +265,14 @@ public class SyncUtil {
 	}
 	
 	public static void deleteBreakpoint(final int[] breakpointIndices, int timeout) throws Throwable {
-		Query<MIInfo> query = new Query<MIInfo>() {
+        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+        final IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
+
+        Query<MIInfo> query = new Query<MIInfo>() {
 			@Override
 			protected void execute(DataRequestMonitor<MIInfo> rm) {
 				fGdbControl.queueCommand(
-						fCommandFactory.createMIBreakDelete(fBreakpointsDmc, breakpointIndices),
+						fCommandFactory.createMIBreakDelete(bpTargetDmc, breakpointIndices),
 						rm);
 			}
 		};

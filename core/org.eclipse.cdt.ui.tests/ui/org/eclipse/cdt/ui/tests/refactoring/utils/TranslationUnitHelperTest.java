@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,12 +7,12 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ * 	   Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.utils;
 
+import java.util.Collection;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 
@@ -25,13 +25,11 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.TranslationUnitHelper;
 
 /**
  * @author Mirko Stocker
- *
  */
 public class TranslationUnitHelperTest extends RefactoringTest {
-
 	private int offset;
 
-	public TranslationUnitHelperTest(String name,Vector<TestSourceFile> files) {
+	public TranslationUnitHelperTest(String name, Collection<TestSourceFile> files) {
 		super(name, files);
 	}
 

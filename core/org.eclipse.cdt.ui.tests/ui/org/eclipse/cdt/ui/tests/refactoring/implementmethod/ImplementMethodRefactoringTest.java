@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,12 +7,12 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.implementmethod;
 
+import java.util.Collection;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -26,22 +26,18 @@ import org.eclipse.cdt.internal.ui.refactoring.implementmethod.ImplementMethodRe
  
 /**
  * @author Mirko Stocker
- *
  */
 public class ImplementMethodRefactoringTest extends RefactoringTest {
-
 	protected int finalWarnings;
 	private int initialWarnings;
 
-	public ImplementMethodRefactoringTest(String name,Vector<TestSourceFile> files) {
+	public ImplementMethodRefactoringTest(String name, Collection<TestSourceFile> files) {
 		super(name, files);
 	}
 
 	@Override
 	protected void runTest() throws Throwable {
-		
 		IFile refFile = project.getFile(fileName);
-		
 		CRefactoring refactoring = new ImplementMethodRefactoring(refFile, selection, null, cproject);
 		
 		try {
@@ -65,8 +61,7 @@ public class ImplementMethodRefactoringTest extends RefactoringTest {
 				assertConditionsWarning(finalConditions, finalWarnings);
 			}
 			compareFiles(fileMap);
-		}
-		finally {
+		} finally {
 			refactoring.unlockIndex();
 		}
 	}

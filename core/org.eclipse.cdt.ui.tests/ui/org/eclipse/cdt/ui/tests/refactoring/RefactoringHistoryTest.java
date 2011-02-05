@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2009, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,14 +7,14 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software (IFS)- initial API and implementation 
+ *     Institute for Software (IFS)- initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring;
 
 import java.io.ByteArrayInputStream;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -29,15 +29,11 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 
 /**
  * @author Emanuel Graf IFS
- * 
  */
-public class RefactoringHistoryTest extends
-		ExtractFunctionRefactoringTest {
-
+public class RefactoringHistoryTest extends	ExtractFunctionRefactoringTest {
 	private TestSourceFile scriptFile;
 
-	public RefactoringHistoryTest(String name,
-			Vector<TestSourceFile> files) {
+	public RefactoringHistoryTest(String name, Collection<TestSourceFile> files) {
 		super(name, files);
 	}
 

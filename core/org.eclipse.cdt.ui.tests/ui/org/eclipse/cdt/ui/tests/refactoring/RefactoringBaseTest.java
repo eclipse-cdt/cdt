@@ -7,15 +7,15 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Vector;
 
 import org.eclipse.cdt.core.tests.BaseTestFramework;
 import org.eclipse.core.resources.IFile;
@@ -27,7 +27,6 @@ import org.eclipse.jface.text.TextSelection;
 
 /**
  * @author Guido Zgraggen IFS
- *
  */
 public abstract class RefactoringBaseTest extends BaseTestFramework implements ILogListener{
 	protected static final NullProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
@@ -40,7 +39,7 @@ public abstract class RefactoringBaseTest extends BaseTestFramework implements I
 		super(name);
 	}
 	
-	public RefactoringBaseTest(String name, Vector<TestSourceFile> files) {
+	public RefactoringBaseTest(String name, Collection<TestSourceFile> files) {
 		super(name);
 		for (TestSourceFile file : files) {
 			fileMap.put(file.getName(), file);
@@ -79,7 +78,7 @@ public abstract class RefactoringBaseTest extends BaseTestFramework implements I
 		BufferedReader br = new BufferedReader(new InputStreamReader(file.getContents()));
 		StringBuilder code = new StringBuilder();
 		String line;
-		while((line = br.readLine()) != null) {
+		while ((line = br.readLine()) != null) {
 			code.append(line);
 			code.append('\n');
 		}

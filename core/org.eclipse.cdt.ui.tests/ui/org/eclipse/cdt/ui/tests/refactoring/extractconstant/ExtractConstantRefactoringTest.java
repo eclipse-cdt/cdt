@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,12 +7,12 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.extractconstant;
 
+import java.util.Collection;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -30,11 +30,9 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
  * @author Emanuel Graf
  */
 public class ExtractConstantRefactoringTest extends RefactoringTest {
-
-
 	protected VisibilityEnum visibility;
 
-	public ExtractConstantRefactoringTest(String name, Vector<TestSourceFile> files) {
+	public ExtractConstantRefactoringTest(String name, Collection<TestSourceFile> files) {
 		super(name, files);
 	}
 
@@ -57,7 +55,5 @@ public class ExtractConstantRefactoringTest extends RefactoringTest {
 	@Override
 	protected void configureRefactoring(Properties refactoringProperties) {
 		visibility = VisibilityEnum.getEnumForStringRepresentation(refactoringProperties.getProperty("visibility", VisibilityEnum.v_public.toString())); //$NON-NLS-1$
-	
 	}
-
 }

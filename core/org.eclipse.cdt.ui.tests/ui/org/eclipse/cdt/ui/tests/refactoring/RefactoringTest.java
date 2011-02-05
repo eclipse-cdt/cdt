@@ -14,8 +14,8 @@ package org.eclipse.cdt.ui.tests.refactoring;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
@@ -36,12 +36,9 @@ public abstract class RefactoringTest extends RefactoringBaseTest {
 	protected String fileName;
 	protected RefactoringASTCache astCache;
 
-	public RefactoringTest(String name, Vector<TestSourceFile> files) {
+	public RefactoringTest(String name, Collection<TestSourceFile> files) {
 		super(name, files);
 		initializeConfiguration(files);
-		for (TestSourceFile file : files) {
-			fileMap.put(file.getName(), file);
-		}
 	}
 
 	protected abstract void configureRefactoring(Properties refactoringProperties);
@@ -63,7 +60,7 @@ public abstract class RefactoringTest extends RefactoringBaseTest {
 		super.tearDown();
 	}
 
-	private void initializeConfiguration(Vector<TestSourceFile> files) {
+	private void initializeConfiguration(Collection<TestSourceFile> files) {
 		TestSourceFile configFile = null;
 
 		for (TestSourceFile currentFile : files) {
@@ -75,7 +72,7 @@ public abstract class RefactoringTest extends RefactoringBaseTest {
 		Properties refactoringProperties = new Properties();
 
 		try {
-			if(configFile != null) {
+			if (configFile != null) {
 				refactoringProperties.load(new ByteArrayInputStream(configFile.getSource().getBytes()));
 			}
 		} catch (IOException e) {

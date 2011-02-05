@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,12 +7,12 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.extractfunction;
 
+import java.util.Collection;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -30,10 +30,8 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 /**
  * @author Emanuel Graf
- *
  */
 public class ExtractFunctionRefactoringTest extends RefactoringTest {
-	
 	protected String methodName;
 	protected boolean replaceDuplicates;
 	protected boolean returnValue;
@@ -47,7 +45,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 	 * @param name
 	 * @param files
 	 */
-	public ExtractFunctionRefactoringTest(String name, Vector<TestSourceFile> files) {
+	public ExtractFunctionRefactoringTest(String name, Collection<TestSourceFile> files) {
 		super(name, files);
 	}
 

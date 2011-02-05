@@ -14,9 +14,9 @@
 package org.eclipse.cdt.ui.tests.refactoring.gettersandsetters;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -48,7 +48,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTest {
 	 * @param name
 	 * @param files
 	 */
-	public GenerateGettersAndSettersTest(String name, Vector<TestSourceFile> files) {
+	public GenerateGettersAndSettersTest(String name, Collection<TestSourceFile> files) {
 		super(name, files);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,12 +7,12 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable;
 
+import java.util.Collection;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -34,7 +34,7 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTest {
 	protected String variableName;
 	protected boolean fatalError;
 
-	public ExtractLocalVariableRefactoringTest(String name, Vector<TestSourceFile> files) {
+	public ExtractLocalVariableRefactoringTest(String name, Collection<TestSourceFile> files) {
 		super(name, files);
 	}
 
@@ -46,7 +46,7 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTest {
 		CRefactoring refactoring = new ExtractLocalVariableRefactoring( refFile, selection, info, cproject);
 		RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
 		
-		if(fatalError){
+		if (fatalError){
 			assertConditionsFatalError(checkInitialConditions);
 			return;
 		}

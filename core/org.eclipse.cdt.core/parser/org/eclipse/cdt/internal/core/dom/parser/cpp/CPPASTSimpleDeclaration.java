@@ -35,7 +35,7 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
 	public CPPASTSimpleDeclaration copy() {
 		CPPASTSimpleDeclaration copy = new CPPASTSimpleDeclaration();
 		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy());
-		for(IASTDeclarator declarator : getDeclarators())
+		for (IASTDeclarator declarator : getDeclarators())
 			copy.addDeclarator(declarator == null ? null : declarator.copy());
 		copy.setOffsetAndLength(this);
 		return copy;
@@ -46,22 +46,22 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
     }
 
     public IASTDeclarator[] getDeclarators() {
-        if( declarators == null ) return IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
-        declarators = (IASTDeclarator[]) ArrayUtil.removeNullsAfter( IASTDeclarator.class, declarators, declaratorsPos );
+        if (declarators == null) return IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
+        declarators = (IASTDeclarator[]) ArrayUtil.removeNullsAfter(IASTDeclarator.class, declarators, declaratorsPos);
         return declarators;
     }
     
-    public void addDeclarator( IASTDeclarator d ) {
+    public void addDeclarator(IASTDeclarator d) {
         assertNotFrozen();
     	if (d != null) {
-    		declarators = (IASTDeclarator[]) ArrayUtil.append( IASTDeclarator.class, declarators, ++declaratorsPos, d );
+    		declarators = (IASTDeclarator[]) ArrayUtil.append(IASTDeclarator.class, declarators, ++declaratorsPos, d);
     		d.setParent(this);
 			d.setPropertyInParent(DECLARATOR);
     	}
     }
     
-    private IASTDeclarator [] declarators = null;
-    private int declaratorsPos=-1;
+    private IASTDeclarator[] declarators = null;
+    private int declaratorsPos = -1;
     private IASTDeclSpecifier declSpecifier;
 
     /**
@@ -77,25 +77,25 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclarations ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclarations) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
-        if( declSpecifier != null ) if( !declSpecifier.accept( action ) ) return false;
-        IASTDeclarator [] dtors = getDeclarators();
-        for( int i = 0; i < dtors.length; i++ )
-            if( !dtors[i].accept( action ) ) return false;
+        if (declSpecifier != null) if (!declSpecifier.accept(action)) return false;
+        IASTDeclarator[] dtors = getDeclarators();
+        for (int i = 0; i < dtors.length; i++)
+            if (!dtors[i].accept(action)) return false;
         
-        if( action.shouldVisitDeclarations ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitDeclarations) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
@@ -103,8 +103,8 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
     
     public void replace(IASTNode child, IASTNode other) {
 		IASTDeclarator[] declarators = getDeclarators();
-		for(int i = 0; i < declarators.length; i++) {
-			if(declarators[i] == child) {
+		for (int i = 0; i < declarators.length; i++) {
+			if (declarators[i] == child) {
 				declarators[i] = (IASTDeclarator)other;
 				other.setParent(child.getParent());
 	            other.setPropertyInParent(child.getPropertyInParent());

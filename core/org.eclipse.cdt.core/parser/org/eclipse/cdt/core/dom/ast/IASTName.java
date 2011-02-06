@@ -85,9 +85,8 @@ public interface IASTName extends IASTNode, IName {
 	 * an argument to a macro expansion or is (part of) a macro definition found in the source code.
 	 * <p>
 	 * The image location is <code>null</code>, when the name consists of multiple tokens (qualified names)
-	 * and the tokens are not found side by side in the code or if 
-	 * the name is the result of a token-paste operation or the name is found in the definition of a 
-	 * built-in macro.
+	 * and the tokens are not found side by side in the code, or if the name is the result of
+	 * a token-paste operation or the name is found in the definition of a built-in macro.
 	 * @since 5.0
 	 */
 	public IASTImageLocation getImageLocation();

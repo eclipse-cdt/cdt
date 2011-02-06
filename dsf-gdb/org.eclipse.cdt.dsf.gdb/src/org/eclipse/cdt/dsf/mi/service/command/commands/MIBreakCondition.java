@@ -25,13 +25,37 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  
 public class MIBreakCondition extends MICommand<MIInfo>
 {
-	// In this particular case, because of a GDB peculiarity, setParameters() is 
-	// not used and the whole command is formatted on the parent's constructor.
-	// See bug 213076 for more information.
+	/* 
+	 * MICommand wraps a parameter with double quotes if it contains a space. 
+	 * However, GDB does not want quotes around a condition.
+	 * To avoid the double quotes, we create our own adjustable parameter.
+	 * It is important to send the breakpoint and condition as parameters because
+	 * MI can insert flags such as --thread-group between the command and the
+	 * parameters.  If we make the entire output be the command, then the
+	 * --thread-group flag will end up at the end, and the syntax will not be valid.
+	 * 
+	 * See bug 213076 for more information.
+	 */ 
 
 	public MIBreakCondition(IBreakpointsTargetDMContext ctx, int breakpoint, String condition) {
-        super(ctx, "-break-condition " + Integer.toString(breakpoint) + " " + condition); //$NON-NLS-1$ //$NON-NLS-2$
-//        super(ctx, "-break-condition"); //$NON-NLS-1$
-//        setParameters(new String[] { Integer.toString(breakpoint), condition });
+        super(ctx, "-break-condition"); //$NON-NLS-1$
+        
+        setParameters(new Adjustable[]{ new MIStandardParameterAdjustable(Integer.toString(breakpoint)),
+        		                        new NoChangeAdjustable(condition) });
     }
+	
+	/**
+	 * This adjustable makes sure that the condition parameter will not get surrounded
+	 * by double quotes.  We simply send the condition exactly as specified
+	 */
+	private class NoChangeAdjustable extends MICommandAdjustable {
+
+		public NoChangeAdjustable(String param) {
+			super(param);
+		}
+
+		public String getAdjustedValue() {
+			return getValue();
+		}
+	}
 }

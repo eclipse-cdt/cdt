@@ -689,7 +689,7 @@
             name="%CPluginBuildConsolePreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.BuildSettings"
             class="org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage"
-            id="org.eclipse.cdt.ui.preferences.CBuildConsolePreferernces">
+            id="org.eclipse.cdt.ui.preferences.CBuildConsolePreferences">
           <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page

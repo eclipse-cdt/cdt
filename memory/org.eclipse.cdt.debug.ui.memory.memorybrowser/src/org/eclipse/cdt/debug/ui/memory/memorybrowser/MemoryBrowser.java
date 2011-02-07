@@ -320,6 +320,10 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
         return false;
     }
 	
+    public void clearExpressionsFromList(String memorySpace) {
+    	fGotoAddressBar.clearExpressionsFromList(memorySpace);
+    }
+    
 	/**
      * Returns the presentation context id for this view.  Used to support the 
      * pin and clone feature patch from bug 145635. 
@@ -393,7 +397,8 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		
 		String expression = fGotoAddressBar.getExpressionText();
 		if (expression.length() > 0) {
-			performGo(inNewTab, fGotoAddressBar.getExpressionText(), memorySpace);	
+			fGotoAddressBar.addExpressionToList(memorySpace, expression);
+			performGo(inNewTab, expression, memorySpace);	
 		}
 	}
 	

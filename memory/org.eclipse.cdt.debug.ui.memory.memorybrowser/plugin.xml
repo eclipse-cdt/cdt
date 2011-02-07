@@ -10,6 +10,7 @@
 # Contributors:
 # Ted R Williams (Wind River) - initial implementation 
 # Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
+# Randy Rohrbach (Wind River) - Multiple expression support (326307)
 -->
 <plugin>
 
@@ -59,4 +60,19 @@
          </action>
       </viewContribution>
    </extension>
+   <!-- Add the ability to clear the expressions list -->
+   <extension point="org.eclipse.ui.viewActions">
+     <viewContribution
+       id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser.clearExpressionList"
+       targetID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser">
+       <action
+          class="org.eclipse.cdt.debug.ui.memory.memorybrowser.ClearExpressionsListAction"
+          id="org.eclipse.cdt.debug.ui.memory.memorybrowser.ClearExpressionListActionID"
+          label="%view.clearExpressionList"
+          menubarPath="additions">
+       </action>
+     </viewContribution>
+   </extension>
+   
+   
 </plugin>

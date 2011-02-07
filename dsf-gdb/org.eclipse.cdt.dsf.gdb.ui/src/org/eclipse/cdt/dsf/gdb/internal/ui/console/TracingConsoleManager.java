@@ -33,6 +33,18 @@ import org.eclipse.ui.console.IConsoleManager;
 public class TracingConsoleManager implements ILaunchesListener2, IPropertyChangeListener {
 
 	/**
+	 * The number of characters that should be deleted once the GDB traces console
+	 * reaches its configurable maximum.
+	 */
+	private static final int NUMBER_OF_CHARS_TO_DELETE = 100000;
+
+	/**
+	 * The minimum number of characters that should be kept when truncating
+	 * the console output. 
+	 */
+	private static final int MIN_NUMBER_OF_CHARS_TO_KEEP = 5000;
+
+	/**
 	 * Member to keep track of the preference.
 	 * We keep it up-to-date by registering as an IPropertyChangeListener
 	 */
@@ -47,7 +59,7 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 	 * The number of characters that will be kept in the console once we
 	 * go over fMaxNumCharacters and that we must remove some characters
 	 */
-	private int fMinNumCharacters = 400000;
+	private int fMinNumCharacters = fMaxNumCharacters - NUMBER_OF_CHARS_TO_DELETE;
 	
 	/**
 	 * Start the tracing console.  We don't do this in a constructor, because
@@ -183,12 +195,17 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 	
 	/** @since 2.2 */
 	protected void setWaterMarks(int maxChars) {
-		if (maxChars < 10000) maxChars = 10000;
+		if (maxChars < (MIN_NUMBER_OF_CHARS_TO_KEEP * 2)) {
+			maxChars = MIN_NUMBER_OF_CHARS_TO_KEEP * 2;
+		}
 		
 		fMaxNumCharacters = maxChars;
-		// If the max number of chars is anything below 105000, we only keep 5000 once we truncate.
-		// If the max number of chars is bigger than 105000, we truncate 100000 chars.
-		fMinNumCharacters = maxChars < 105000 ? 5000 : maxChars - 100000;
+		// If the max number of chars is anything below the number of chars we are going to delete
+		// (plus our minimum buffer), we only keep the minimum.
+		// If the max number of chars is bigger than the number of chars we are going to delete (plus
+		// the minimum buffer), we truncate a fixed amount chars.
+		fMinNumCharacters = maxChars < (NUMBER_OF_CHARS_TO_DELETE + MIN_NUMBER_OF_CHARS_TO_KEEP) 
+								? MIN_NUMBER_OF_CHARS_TO_KEEP : maxChars - NUMBER_OF_CHARS_TO_DELETE;
 	}
 
 	/** @since 2.2 */

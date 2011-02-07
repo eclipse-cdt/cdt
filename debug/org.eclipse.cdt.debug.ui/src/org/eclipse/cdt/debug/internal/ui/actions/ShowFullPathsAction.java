@@ -16,8 +16,11 @@ import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.ui.CDebugModelPresentation;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.launch.LaunchView;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugView;
@@ -98,6 +101,21 @@ public class ShowFullPathsAction extends ViewFilterAction {
 					setEnabled(true);
 					return;
 				}
+			}
+		}
+		
+		// Breakpoints view
+		else if (view instanceof BreakpointsView) {
+			IBreakpointManager bkptmgr = DebugPlugin.getDefault().getBreakpointManager();
+			IBreakpoint[] bkpts = bkptmgr.getBreakpoints();
+			for (IBreakpoint bkpt : bkpts) {
+				try {
+					Object attr = bkpt.getMarker().getAttribute(ICDebugInternalConstants.ATTR_CAPABLE_OF_SHOW_FULL_PATHS);
+					if (attr != null) {
+						setEnabled(true);
+						return;
+					}
+				} catch (Exception e) {/* ignore */}
 			}
 		}
 		super.selectionChanged(action, selection);

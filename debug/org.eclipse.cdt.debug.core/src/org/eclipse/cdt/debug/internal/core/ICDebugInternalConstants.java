@@ -44,4 +44,14 @@ public class ICDebugInternalConstants {
 	 * plus this key
 	 */
 	public static final String SHOW_FULL_PATHS_PREF_KEY = "org.eclipse.cdt.debug.ui.cDebug.show_full_paths"; //$NON-NLS-1$	
+	
+	/**
+	 * An attribute set by a non-ICBreakpoint to support fullpath capability in the Breakpoints view. 
+	 * If this attribute exists, not <code>null</code>, in the breakpoint marker or the breakpoint is an 
+	 * ICBreakpoint type, then the show fullpath action in the Breakpoints view is enabled, otherwise 
+	 * disabled. The show fullpath action does not toggle the value of this breakpoint attribute, it is 
+	 * the breakpoint's responsibility to monitor the SHOW_FULL_PATHS_PREF_KEY value change and update 
+	 * the breakpoint presentation in the Breakpoints view.
+	 */
+	public static final String ATTR_CAPABLE_OF_SHOW_FULL_PATHS = "org.eclipse.cdt.debug.ui.cDebug.capable_of_show_full_paths"; //$NON-NLS-1$
 }

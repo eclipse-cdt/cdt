@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -171,7 +171,8 @@ public class DOMToISOCPPTokenMap implements IDOMTokenMap {
 			case tCOMPLETION   : return TK_Completion;
 			case tEOC          : return TK_EndOfCompletion;
 			case tEND_OF_INPUT : return TK_EOF_TOKEN;
-
+			case tPOUND 	   : return TK_Invalid;
+			
 			default:
 				assert false : "token not recognized by the ISO CPP parser: " + token.getType(); //$NON-NLS-1$
 				return TK_Invalid;

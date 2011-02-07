@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.ui.memory.memorybrowser;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
@@ -38,8 +39,10 @@ public class GoToAddressBarWidget {
 	private Composite fComposite;
 	
 	protected static int ID_GO_NEW_TAB = 2000;
-
-	/**
+	
+	private IStatus expressionStatus = new Status(Status.OK, MemoryBrowserPlugin.PLUGIN_ID, null);
+	
+    /**
 	 * @param parent
 	 * @return
 	 */
@@ -68,8 +71,8 @@ public class GoToAddressBarWidget {
 		
 		return fComposite;
 	}
-
-	private Text createExpressionField(Composite parent) {
+	
+	private Text createExpressionField(Composite parent){
 		Text expression = new Text(parent, SWT.SINGLE | SWT.BORDER);
 		expression.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -103,8 +106,11 @@ public class GoToAddressBarWidget {
 			fEmptyExpression.show();
 		else 
 			fEmptyExpression.hide();
-
-		fWrongExpression.hide();
+		
+		if (expressionStatus.isOK())
+		    fWrongExpression.hide();
+		else
+		    fWrongExpression.show();
 	}
 
 	public int getHeight()
@@ -143,5 +149,16 @@ public class GoToAddressBarWidget {
 			fWrongExpression.setDescriptionText(message.getMessage());
 			fWrongExpression.show();
 		}
+		
+		expressionStatus = message;
 	}
+	
+	/**
+	 * Return the expression status
+	 * @return expression status
+	 */
+	public IStatus getExpressionStatus()
+    {
+        return expressionStatus;
+    }
 }

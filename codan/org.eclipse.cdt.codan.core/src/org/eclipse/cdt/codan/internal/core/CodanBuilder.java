@@ -52,14 +52,14 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 			switch (delta.getKind()) {
 				case IResourceDelta.ADDED:
 					// handle added resource
-					processResource(resource, monitor);
+					processResourceDelta(resource, monitor);
 					break;
 				case IResourceDelta.REMOVED:
 					// handle removed resource
 					break;
 				case IResourceDelta.CHANGED:
 					// handle changed resource
-					processResource(resource, monitor);
+					processResourceDelta(resource, monitor);
 					break;
 			}
 			// return true to continue visiting children.
@@ -91,11 +91,17 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 	}
 
 	public void processResource(IResource resource, IProgressMonitor monitor) {
-		processResource(resource, monitor, null, false);
+		processResource(resource, monitor, null, false, true);
+	}
+
+	public void processResourceDelta(IResource resource,
+			IProgressMonitor monitor) {
+		processResource(resource, monitor, null, false, false);
 	}
 
 	protected void processResource(IResource resource,
-			IProgressMonitor monitor, Object model, boolean inEditor) {
+			IProgressMonitor monitor, Object model, boolean inEditor,
+			boolean recursive) {
 		CheckersRegistry chegistry = CheckersRegistry.getInstance();
 		int checkers = chegistry.getCheckersSize();
 		int memsize = 0;
@@ -149,7 +155,7 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 					CodanCorePlugin.log(e);
 				}
 			}
-			if (resource instanceof IContainer) {
+			if (resource instanceof IContainer && recursive) {
 				try {
 					IResource[] members = ((IContainer) resource).members();
 					for (int i = 0; i < members.length; i++) {
@@ -190,6 +196,6 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 			IProgressMonitor monitor) {
 		if (model == null)
 			return;
-		processResource(resource, monitor, model, true);
+		processResource(resource, monitor, model, true, false);
 	}
 }

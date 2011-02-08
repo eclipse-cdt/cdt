@@ -14,6 +14,7 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
@@ -103,7 +104,8 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 	        								
 	        								// Start tracking this process' breakpoints.
 	        								MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
-	        								bpmService.startTrackingBreakpoints(containerDmc, rm);
+	        								IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
+	        								bpmService.startTrackingBreakpoints(bpTargetDmc, rm);
 	        							}
 	        						});
 	        			}

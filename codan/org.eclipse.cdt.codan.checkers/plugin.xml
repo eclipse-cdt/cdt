@@ -320,5 +320,19 @@
                       name="%checker.name.CaseBreak">
                 </problem>
              </checker>
+             <checker
+                   class="org.eclipse.cdt.codan.internal.checkers.fs.ScanfFormatStringSecurityChecker"
+                   id="org.eclipse.cdt.codan.internal.checkers.ScanfFormatStringSecurityChecker"
+                   name="%checker.name.FormatString">
+                 <problem
+                       category="org.eclipse.cdt.codan.core.categories.Security"
+                       defaultEnabled="false"
+                       defaultSeverity="Warning"
+                       description="%problem.description.FormatString"
+                       id="org.eclipse.cdt.codan.internal.checkers.ScanfFormatStringSecurityProblem"
+                       messagePattern="%problem.messagePattern.FormatString"
+                       name="%problem.name.FormatString">
+                 </problem>
+             </checker>
    </extension>
 </plugin>

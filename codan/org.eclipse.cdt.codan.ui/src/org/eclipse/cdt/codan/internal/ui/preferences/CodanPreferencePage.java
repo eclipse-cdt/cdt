@@ -63,7 +63,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	private Group info;
 	private Label infoDesc;
 	private Label infoMessage;
-	private Label infoParams;
+	//private Label infoParams;
 	private Button infoButton;
 	private ProblemsTreeEditor checkedTreeEditor;
 
@@ -141,7 +141,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	private void createInfoControl(Composite comp) {
 		info = new Group(comp, SWT.NONE);
 		info.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		info.setLayout(new GridLayout(3, false));
+		info.setLayout(new GridLayout(2, false));
 		info.setText(CodanUIMessages.CodanPreferencePage_Info);
 		GridDataFactory gdLab = GridDataFactory.swtDefaults()
 				.align(SWT.BEGINNING, SWT.BEGINNING).grab(false, false);
@@ -152,27 +152,27 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		labelMessage.setText(CodanUIMessages.CodanPreferencePage_MessageLabel);
 		labelMessage.setLayoutData(gdLab.create());
 		infoMessage = new Label(info, SWT.WRAP);
-		infoMessage.setLayoutData(gdFact.copy().span(2, 1).create());
+		infoMessage.setLayoutData(gdFact.copy().create());
 		// description
-		Label labelDesc = new Label(info, SWT.NONE);
-		labelDesc.setText(CodanUIMessages.CodanPreferencePage_Description);
-		labelDesc.setLayoutData(gdLab.create());
+		//		Label labelDesc = new Label(info, SWT.NONE);
+		//		labelDesc.setText(CodanUIMessages.CodanPreferencePage_Description);
+		//		labelDesc.setLayoutData(gdLab.create());
 		infoDesc = new Label(info, SWT.WRAP);
 		PixelConverter pixelConverter = new PixelConverter(comp);
 		infoDesc.setLayoutData(gdFact
 				.copy()
 				.span(2, 1)
-				.hint(pixelConverter.convertWidthInCharsToPixels(60),
+				.hint(SWT.DEFAULT,
 						pixelConverter.convertHeightInCharsToPixels(3))
 				.create());
 		// params
-		Label labelParams = new Label(info, SWT.NONE);
-		labelParams.setText(CodanUIMessages.CodanPreferencePage_Parameters);
-		labelParams.setLayoutData(gdLab.create());
-		infoParams = new Label(info, SWT.NONE);
-		infoParams.setLayoutData(gdFact.create());
+		//		Label labelParams = new Label(info, SWT.NONE);
+		//		labelParams.setText(CodanUIMessages.CodanPreferencePage_Parameters);
+		//		labelParams.setLayoutData(gdLab.create());
+		//		infoParams = new Label(info, SWT.NONE);
+		//		infoParams.setLayoutData(gdFact.create());
 		infoButton = new Button(info, SWT.PUSH);
-		infoButton.setLayoutData(GridDataFactory.swtDefaults()
+		infoButton.setLayoutData(GridDataFactory.swtDefaults().span(2, 1)
 				.align(SWT.END, SWT.BEGINNING).create());
 		infoButton.setText(CodanUIMessages.CodanPreferencePage_Customize);
 		infoButton.addSelectionListener(new SelectionAdapter() {
@@ -248,7 +248,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		if (selectedProblem == null) {
 			infoMessage.setText(""); //$NON-NLS-1$
 			infoDesc.setText(""); //$NON-NLS-1$
-			infoParams.setText(""); //$NON-NLS-1$
+			//infoParams.setText(""); //$NON-NLS-1$
 			infoButton.setEnabled(false);
 		} else {
 			IProblemPreference pref = selectedProblem.getPreference();
@@ -262,9 +262,9 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 			}
 			infoMessage.setText(message);
 			infoDesc.setText(description);
-			infoParams
-					.setText(pref == null ? CodanUIMessages.CodanPreferencePage_NoInfo
-							: CodanUIMessages.CodanPreferencePage_HasPreferences);
+			//			infoParams
+			//					.setText(pref == null ? CodanUIMessages.CodanPreferencePage_NoInfo
+			//							: CodanUIMessages.CodanPreferencePage_HasPreferences);
 			infoButton.setEnabled(true);
 		}
 		info.layout(true);

@@ -2,6 +2,7 @@ package org.eclipse.cdt.codan.ui.cfgview.views;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.cxx.internal.model.cfg.ControlFlowGraphBuilder;
 import org.eclipse.cdt.codan.core.cxx.internal.model.cfg.CxxControlFlowGraph;
@@ -95,6 +96,7 @@ public class ControlFlowGraphView extends ViewPart {
 	private Action action1;
 	private Action doubleClickAction;
 
+	class DeadNodes extends ArrayList<IBasicBlock> {}
 	class ViewContentProvider implements IStructuredContentProvider,
 			ITreeContentProvider {
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
@@ -118,7 +120,16 @@ public class ControlFlowGraphView extends ViewPart {
 				Collection<IBasicBlock> blocks = getFlat(
 						((IControlFlowGraph) parent).getStartNode(),
 						new ArrayList<IBasicBlock>());
-				return blocks.toArray();
+				DeadNodes dead = new DeadNodes();
+				Iterator<IBasicBlock> iter = ((IControlFlowGraph) parent).getUnconnectedNodeIterator();
+				for (; iter.hasNext();) {
+					IBasicBlock iBasicBlock = (IBasicBlock) iter.next();
+				    dead.add(iBasicBlock);
+				}
+				ArrayList all = new ArrayList();
+				all.addAll(blocks);
+				if (dead.size()>0) all.add(dead);
+				return all.toArray();
 			} else if (parent instanceof IDecisionNode) {
 				ArrayList blocks = new ArrayList();
 				IBasicBlock[] outgoingNodes = ((IDecisionNode) parent)

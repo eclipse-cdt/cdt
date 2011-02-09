@@ -18,6 +18,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.core.model.cfg.IBranchNode;
 import org.eclipse.cdt.codan.core.model.cfg.ICfgData;
 import org.eclipse.cdt.codan.core.model.cfg.IConnectorNode;
+import org.eclipse.cdt.codan.core.model.cfg.IDecisionNode;
 import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
 import org.eclipse.cdt.codan.core.model.cfg.IJumpNode;
 import org.eclipse.cdt.codan.core.model.cfg.IPlainNode;
@@ -191,10 +192,11 @@ public class ControlFlowGraphBuilder {
 		ICPPASTCatchHandler[] catchHandlers = body.getCatchHandlers();
 		for (int i = 0; i < catchHandlers.length; i++) {
 			ICPPASTCatchHandler handler = catchHandlers[i];
-			IBranchNode handlerNode = factory
-					.createBranchNode(handler.getDeclaration());
+			IBranchNode handlerNode = factory.createBranchNode(handler
+					.getDeclaration());
 			addOutgoing(ifNode, handlerNode);
-			IBasicBlock els = createSubGraph(handlerNode, handler.getCatchBody());
+			IBasicBlock els = createSubGraph(handlerNode,
+					handler.getCatchBody());
 			addJump(els, mergeNode);
 		}
 		return mergeNode;
@@ -483,6 +485,10 @@ public class ControlFlowGraphBuilder {
 			dead.add(node);
 			return;
 		} else if (prev instanceof ICfgData) {
+			if (prev instanceof IDecisionNode && !(node instanceof IBranchNode)) {
+				dead.add(node);
+				return;
+			}
 			((AbstractBasicBlock) prev).addOutgoing(node);
 		}
 		if (!(node instanceof IStartNode))

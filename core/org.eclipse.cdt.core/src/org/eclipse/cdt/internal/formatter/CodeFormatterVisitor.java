@@ -1016,9 +1016,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				if (preferences.insert_new_line_before_colon_in_constructor_initializer_list) {
 					scribe.printTrailingComment();
 					scribe.startNewLine();
-					for (int i= 0; i < preferences.continuation_indentation; i++) {
-						scribe.indent();
-					}
+					scribe.indentForContinuation();
 				}
 				scribe.printNextToken(Token.tCOLON, !preferences.insert_new_line_before_colon_in_constructor_initializer_list);
 				if (preferences.insert_new_line_before_colon_in_constructor_initializer_list) {
@@ -1026,16 +1024,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				} else {
 					scribe.printTrailingComment();
 					scribe.startNewLine();
-					for (int i= 0; i < preferences.continuation_indentation; i++) {
-						scribe.indent();
-					}
+					scribe.indentForContinuation();
 				}
 				final ListAlignment align= new ListAlignment(preferences.alignment_for_constructor_initializer_list);
 				align.fTieBreakRule = Alignment.R_OUTERMOST;
 				formatList(Arrays.asList(constructorChain), align, false, false);
-				for (int i= 0; i < preferences.continuation_indentation; i++) {
-					scribe.unIndent();
-				}
+				scribe.unIndentForContinuation();
 			}
 		}
 		
@@ -1689,10 +1683,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			if (align.fSpaceAfterOpeningParen) {
 				scribe.space();
 			}
-			final int continuationIndentation=
-				align.fContinuationIndentation >= 0
-					? align.fContinuationIndentation
-					: preferences.continuation_indentation;
+			final int continuationIndentation= align.fContinuationIndentation >= 0 ?
+					align.fContinuationIndentation : preferences.continuation_indentation;
 			Alignment listAlignment = scribe.createAlignment(
 					"listElements_" + (elements.isEmpty() ? "ellipsis" : elements.get(0).getClass().getSimpleName()), //$NON-NLS-1$ //$NON-NLS-2$
 					align.fMode,
@@ -2309,13 +2301,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					scribe.printCommentPreservingNewLines();
 					if (!indented && line != scribe.line) {
 						indented= true;
-						scribe.indent();
+						scribe.indentForContinuation();
 					}
 					needSpace= true;
 				}
 			} finally {
 				if (indented) {
-					scribe.unIndent();
+					scribe.unIndentForContinuation();
 				}
 			}
 		} else {

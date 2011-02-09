@@ -692,9 +692,7 @@ public class Scribe {
 					++parenLevel;
 					print(currentToken.getLength(), hasWhitespace);
 					if (parenLevel > 0) {
-						for (int i= 0; i < preferences.continuation_indentation; i++) {
-							indent();
-						}
+						indentForContinuation();
 						if (column <= indentationLevel) {
 							// HACK: avoid indent in same line
 							column= indentationLevel + 1;
@@ -704,9 +702,7 @@ public class Scribe {
 				case Token.tRPAREN:
 					--parenLevel;
 					if (parenLevel >= 0) {
-						for (int i= 0; i < preferences.continuation_indentation; i++) {
-							unIndent();
-						}
+						unIndentForContinuation();
 					}
 					print(currentToken.getLength(), hasWhitespace);
 					break;
@@ -743,6 +739,18 @@ public class Scribe {
 			scanner.resetTo(startOffset + length, scannerEndPosition - 1);
 			skipOverInactive= savedSkipOverInactive;
 			preserveNewLines= savedPreserveNL;
+		}
+	}
+
+	public void indentForContinuation() {
+		for (int i= 0; i < preferences.continuation_indentation; i++) {
+			indent();
+		}
+	}
+
+	public void unIndentForContinuation() {
+		for (int i= 0; i < preferences.continuation_indentation; i++) {
+			unIndent();
 		}
 	}
 

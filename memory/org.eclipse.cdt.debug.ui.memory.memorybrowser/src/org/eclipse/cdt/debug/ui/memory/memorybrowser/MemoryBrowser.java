@@ -610,6 +610,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			rendering.dispose();
 			if (rendering == fActiveRendering) {
 				fActiveRendering = null;
+				getSite().getSelectionProvider().setSelection(new StructuredSelection());				
 			}
 		}
 		map.clear();

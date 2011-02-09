@@ -5236,4 +5236,26 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testFunctionTemplateSignatures_Bug335062() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <bool B, class T = void> struct enable_if {
+	//		typedef T type;
+	//	};
+	//	template <class T> struct enable_if<false, T> {};
+	//
+	//	template <typename T> struct is_int {
+	//		static const bool value = false;
+	//	};
+	//	template <> struct is_int<int> {
+	//		static const bool value = true;
+	//	};
+	//
+	//	template <typename T> typename enable_if<!is_int<T>::value>::type function(T);
+	//	template <typename T> typename enable_if<is_int<T>::value>::type function(T);
+	//
+	//	void g() {
+	//		function(0);  // ERROR HERE
+	//	}
+	public void testSyntaxErrorInReturnTypeOfFunctionInstance_Bug336426() throws Exception {
+		parseAndCheckBindings();
+	}
 }

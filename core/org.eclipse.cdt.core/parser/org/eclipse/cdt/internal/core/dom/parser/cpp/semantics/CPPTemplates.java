@@ -1605,7 +1605,9 @@ public class CPPTemplates {
 			if (args != null) {
 				IBinding instance= instantiateFunctionTemplate(template, args, map);
 				if (instance instanceof ICPPFunction) {
-					return (ICPPFunction) instance;
+					final ICPPFunction f = (ICPPFunction) instance;
+					if (isValidType(f.getType())) 
+						return f;
 				} 
 			}
 		} catch (DOMException e) {
@@ -1917,10 +1919,27 @@ public class CPPTemplates {
 	}
 
 	static boolean isValidType(IType t) {
-		while (t instanceof ITypeContainer) {
-			t = ((ITypeContainer) t).getType();
+		for (;;) {
+			if (t instanceof ISemanticProblem) {
+				return false;
+			} else if (t instanceof IFunctionType) {
+				IFunctionType ft= (IFunctionType) t;
+				for (IType parameterType : ft.getParameterTypes()) {
+					if (!isValidType(parameterType))
+						return false;
+				}
+				t= ft.getReturnType();
+			} else if (t instanceof ICPPPointerToMemberType) {
+				ICPPPointerToMemberType mptr= (ICPPPointerToMemberType) t;
+				if (!isValidType(mptr.getMemberOfClass()))
+					return false;
+				t= mptr.getType();
+			} else if (t instanceof ITypeContainer) {
+				t= ((ITypeContainer) t).getType();
+			} else {
+				return true;
+			}
 		}
-		return !(t instanceof ISemanticProblem);
 	}
 	
 	static boolean isValidArgument(ICPPTemplateArgument arg) {

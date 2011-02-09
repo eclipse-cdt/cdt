@@ -135,6 +135,8 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	 * @param result
 	 */
 	private void getNodes(IBasicBlock start, Collection<IBasicBlock> result) {
+		if (start == null)
+			return; // huh
 		if (result.contains(start))
 			return;
 		result.add(start);

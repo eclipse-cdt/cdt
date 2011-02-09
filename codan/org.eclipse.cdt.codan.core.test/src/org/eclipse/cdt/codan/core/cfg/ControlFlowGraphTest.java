@@ -61,38 +61,58 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		ast.accept(visitor);
 	}
 
+	private void checkCfg() {
+		checkCfg(true);
+	}
+
 	/**
 	 * 
 	 */
-	private void checkCfg() {
+	private void checkCfg(boolean decision) {
 		assertNotNull(graph);
 		assertNotNull(graph.getStartNode());
 		Collection<IBasicBlock> nodes = graph.getNodes();
 		for (Iterator<IBasicBlock> iterator = nodes.iterator(); iterator
 				.hasNext();) {
 			IBasicBlock node = iterator.next();
-			checkNode(node);
+			checkNode(node, decision);
 		}
 	}
 
 	/**
 	 * @param node
 	 */
-	private void checkNode(IBasicBlock node) {
+	private void checkNode(IBasicBlock node, boolean decision) {
 		IBasicBlock[] incomingNodes = node.getIncomingNodes();
-		for (int i = 0; i < incomingNodes.length; i++) {
+		nodes: for (int i = 0; i < incomingNodes.length; i++) {
 			IBasicBlock b = incomingNodes[i];
-			if (!contains(node, b.getOutgoingNodes()))
+			if (b == null) {
+				// check if dead node
+				Iterator<IBasicBlock> iterator = graph
+						.getUnconnectedNodeIterator();
+				boolean dead = false;
+				for (; iterator.hasNext();) {
+					IBasicBlock d = iterator.next();
+					if (node == d) {
+						dead = true;
+						break;
+					}
+				}
+				if (!dead)
+					fail("Block " + node + " prev is null");
+			} else if (!contains(node, b.getOutgoingNodes()))
 				fail("Block " + node + " inconsitent prev/next " + b);
 		}
 		IBasicBlock[] outgoingNodes = node.getOutgoingNodes();
 		for (int i = 0; i < outgoingNodes.length; i++) {
 			IBasicBlock b = outgoingNodes[i];
+			if (b == null)
+				fail("Block " + node + " next is null");
 			if (!contains(node, b.getIncomingNodes()))
 				fail("Block " + node + " inconsitent next/prev " + b);
 		}
-		if (node instanceof IDecisionNode) {
-			assertTrue("decision node outgping size",
+		if (node instanceof IDecisionNode && decision) {
+			assertTrue("decision node outgoing size " + node.getOutgoingSize(),
 					node.getOutgoingSize() > 1);
 			assertNotNull(((IDecisionNode) node).getMergeNode());
 		}
@@ -359,5 +379,37 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		IBasicBlock m2 = jumpEnd(bThen);
 		IBasicBlock m1 = jumpEnd(bElse);
 		assertSame(m1, m2);
+	}
+
+	//	 foo() {
+	//	   switch (0) {
+	//     case 1: ;
+	//	   }
+	//	 }
+	public void test_switch1() {
+		buildCfg(getAboveComment(), false);
+		checkCfg(false);
+	}
+
+	//	 foo() {
+	//	   switch (0) {
+	//     case 1: break;
+	//	   }
+	//	 }
+	public void test_switchbreak() {
+		buildCfg(getAboveComment(), false);
+		checkCfg(false);
+	}
+
+	//	 foo() {
+	//	   switch (0) {
+	//	         a++;
+	//	   }
+	//	 }
+	public void test_switchdead() {
+		buildCfg(getAboveComment(), false);
+		checkCfg(false);
+		IStartNode startNode = graph.getStartNode();
+		assertEquals(1, graph.getUnconnectedNodeSize());
 	}
 }

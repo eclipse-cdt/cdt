@@ -13,6 +13,7 @@ package org.eclipse.cdt.codan.core.cxx.internal.model.cfg;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.core.model.cfg.IBranchNode;
@@ -22,6 +23,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IDecisionNode;
 import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
 import org.eclipse.cdt.codan.core.model.cfg.IJumpNode;
 import org.eclipse.cdt.codan.core.model.cfg.IPlainNode;
+import org.eclipse.cdt.codan.core.model.cfg.ISingleOutgoing;
 import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
 import org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock;
 import org.eclipse.cdt.codan.internal.core.cfg.DecisionNode;
@@ -80,10 +82,33 @@ public class ControlFlowGraphBuilder {
 			returnExit.setStartNode(start);
 			addOutgoing(last, returnExit);
 			exits.add(returnExit);
+			if (dead.size() > 0) {
+				for (Iterator iterator = dead.iterator(); iterator.hasNext();) {
+					IBasicBlock ds = (IBasicBlock) iterator.next();
+					IBasicBlock dl = findLast(ds);
+					if (dl != null && dl.getOutgoingSize() == 0
+							&& dl != returnExit) {
+						((AbstractBasicBlock) dl).addOutgoing(returnExit);
+					}
+				}
+			}
 		}
 		CxxControlFlowGraph graph = new CxxControlFlowGraph(start, exits);
 		graph.setUnconnectedNodes(dead);
 		return graph;
+	}
+
+	public IBasicBlock findLast(IBasicBlock node) {
+		if (node instanceof IJumpNode)
+			return null;
+		if (node.getOutgoingSize() == 0)
+			return node;
+		if (node instanceof ISingleOutgoing) {
+			return findLast(((ISingleOutgoing) node).getOutgoing());
+		} else if (node instanceof IDecisionNode) {
+			return findLast(((IDecisionNode) node).getMergeNode().getOutgoing());
+		}
+		return node;
 	}
 
 	/**
@@ -335,6 +360,7 @@ public class ControlFlowGraphBuilder {
 			IBasicBlock last = createSubGraph(prev, elem);
 			prev = last;
 		}
+		addJump(prev, mergeNode);
 	}
 
 	/**

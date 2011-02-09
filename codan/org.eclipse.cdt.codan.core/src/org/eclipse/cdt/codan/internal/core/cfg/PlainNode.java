@@ -29,6 +29,8 @@ public class PlainNode extends AbstractSingleIncomingNode implements IPlainNode 
 	}
 
 	public int getOutgoingSize() {
+		if (next == null)
+			return 0;
 		return 1;
 	}
 

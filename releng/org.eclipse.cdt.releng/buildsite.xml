@@ -12,10 +12,10 @@
 	<feature id="org.eclipse.cdt.debug.gdbjtag" url="features/org.eclipse.cdt.debug.gdbjtag_7.0.0.@timeStamp@.jar" version="7.0.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.core.lrparser.feature" url="features/org.eclipse.cdt.core.lrparser.feature_5.1.0.@timeStamp@.jar" version="5.1.0.@timeStamp@">
+	<feature id="org.eclipse.cdt.core.lrparser.feature" url="features/org.eclipse.cdt.core.lrparser.feature_5.2.0.@timeStamp@.jar" version="5.2.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.core.lrparser.sdk" url="features/org.eclipse.cdt.core.lrparser.sdk_5.1.0.@timeStamp@.jar" version="5.1.0.@timeStamp@">
+	<feature id="org.eclipse.cdt.core.lrparser.sdk" url="features/org.eclipse.cdt.core.lrparser.sdk_5.2.0.@timeStamp@.jar" version="5.2.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
 	<feature id="org.eclipse.cdt.core.parser.upc.feature" url="features/org.eclipse.cdt.core.parser.upc.feature_5.1.0.@timeStamp@.jar" version="5.1.0.@timeStamp@">

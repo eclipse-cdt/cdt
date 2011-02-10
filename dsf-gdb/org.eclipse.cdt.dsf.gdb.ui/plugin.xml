@@ -465,4 +465,18 @@
          </action>
       </objectContribution>
    </extension>   
+   <extension point="org.eclipse.debug.ui.toggleBreakpointsTargetFactories">
+      <toggleTargetFactory
+            id="org.eclipse.cdt.dsf.gdb.ui.ToggleTracepointsTargetFactory"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.ToggleTracepointsTargetFactory">
+         <enablement>
+            <and>   
+               <reference
+                     definitionId="org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive">
+               </reference>
+               <instanceof value="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart"/>
+            </and>  
+         </enablement>
+      </toggleTargetFactory>
+   </extension>
 </plugin>

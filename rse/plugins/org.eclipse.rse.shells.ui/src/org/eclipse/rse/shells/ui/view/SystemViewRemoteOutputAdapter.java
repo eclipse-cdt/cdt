@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@
  * David McKnight   (IBM)        - [233475] Cannot drag and drop file/folder within the shell output
  * Kevin Doyle		(IBM)		 - [247297] Double Clicking on a Shell doesn't open that Shell
  * Martin Oberhuber (Wind River) - [227135] Cryptic exception when sftp-server is missing
+ * David McKnight   (IBM)        - [336640] SystemViewRemoteOutputAdapter should not use hard-coded editor id
  *******************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -85,6 +86,7 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 
@@ -436,7 +438,7 @@ implements ISystemRemoteElementAdapter
 	protected IEditorDescriptor getDefaultTextEditor()
 	{
 		IEditorRegistry registry = getEditorRegistry();
-		return registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
+		return registry.findEditor(EditorsUI.DEFAULT_TEXT_EDITOR_ID); 
 	}
 
 	/**

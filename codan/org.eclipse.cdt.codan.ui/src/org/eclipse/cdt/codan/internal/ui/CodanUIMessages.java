@@ -34,6 +34,7 @@ public class CodanUIMessages extends NLS {
 	public static String OverlayPage_Use_Project_Settings;
 	public static String OverlayPage_Configure_Workspace_Settings;
 	public static String PropertyStore_Cannot_write_resource_property;
+	public static String CustomizeProblemComposite_LaunchingTab;
 	public static String CustomizeProblemComposite_TabParameters;
 	public static String CustomizeProblemComposite_TabScope;
 	public static String CustomizeProblemDialog_Message;

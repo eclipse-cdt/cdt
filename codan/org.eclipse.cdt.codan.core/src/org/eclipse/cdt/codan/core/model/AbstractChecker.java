@@ -150,7 +150,7 @@ public abstract class AbstractChecker implements IChecker {
 	}
 
 	/**
-	 * Defines if checker should be run as user type in C editor. Override this
+	 * Defines if checker should be run as user type in editor. Override this
 	 * method is checker is too heavy for that (runs too long)
 	 */
 	public boolean runInEditor() {

@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.Messages;
+import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
 import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.ICodanBuilder;
 import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
@@ -91,17 +92,19 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 	}
 
 	public void processResource(IResource resource, IProgressMonitor monitor) {
-		processResource(resource, monitor, null, false, true);
+		processResource(resource, monitor, null,
+				CheckerLaunchMode.RUN_ON_FULL_BUILD);
 	}
 
 	public void processResourceDelta(IResource resource,
 			IProgressMonitor monitor) {
-		processResource(resource, monitor, null, false, false);
+		processResource(resource, monitor, null,
+				CheckerLaunchMode.RUN_ON_INC_BUILD);
 	}
 
 	protected void processResource(IResource resource,
-			IProgressMonitor monitor, Object model, boolean inEditor,
-			boolean recursive) {
+			IProgressMonitor monitor, Object model,
+			CheckerLaunchMode checkerLaunchMode) {
 		CheckersRegistry chegistry = CheckersRegistry.getInstance();
 		int checkers = chegistry.getCheckersSize();
 		int memsize = 0;
@@ -122,14 +125,16 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 				try {
 					if (monitor.isCanceled())
 						return;
-					if (checker.enabledInContext(resource)) {
+					if (checker.enabledInContext(resource)
+							&& chegistry.isCheckerEnabledForLaunchMode(checker,
+									resource, checkerLaunchMode)) {
 						synchronized (checker) {
 							try {
 								checker.before(resource);
 								if (chegistry.isCheckerEnabled(checker,
 										resource)) {
 									//long time = System.currentTimeMillis();
-									if (inEditor) {
+									if (checkerLaunchMode == CheckerLaunchMode.RUN_AS_YOU_TYPE) {
 										if (checker.runInEditor()
 												&& checker instanceof IRunnableInEditorChecker) {
 											((IRunnableInEditorChecker) checker)
@@ -155,7 +160,8 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 					CodanCorePlugin.log(e);
 				}
 			}
-			if (resource instanceof IContainer && recursive) {
+			if (resource instanceof IContainer
+					&& (checkerLaunchMode == CheckerLaunchMode.RUN_ON_FULL_BUILD)) {
 				try {
 					IResource[] members = ((IContainer) resource).members();
 					for (int i = 0; i < members.length; i++) {
@@ -172,6 +178,15 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 		} finally {
 			monitor.done();
 		}
+	}
+
+	/**
+	 * @param checker
+	 * @return
+	 */
+	private boolean isEnabledForLaunchMode(IChecker checker) {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 	protected void fullBuild(final IProgressMonitor monitor)
@@ -196,6 +211,7 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 			IProgressMonitor monitor) {
 		if (model == null)
 			return;
-		processResource(resource, monitor, model, true, false);
+		processResource(resource, monitor, model,
+				CheckerLaunchMode.RUN_AS_YOU_TYPE);
 	}
 }

@@ -66,7 +66,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	 * Constructor
 	 * 
 	 * @param style
-	 *            - layout style
+	 *        - layout style
 	 */
 	public FieldEditorOverlayPage(int style) {
 		super(style);
@@ -76,9 +76,9 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	 * Constructor
 	 * 
 	 * @param title
-	 *            - title string
+	 *        - title string
 	 * @param style
-	 *            - layout style
+	 *        - layout style
 	 */
 	public FieldEditorOverlayPage(String title, int style) {
 		super(title, style);
@@ -88,11 +88,11 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	 * Constructor
 	 * 
 	 * @param title
-	 *            - title string
+	 *        - title string
 	 * @param image
-	 *            - title image
+	 *        - title image
 	 * @param style
-	 *            - layout style
+	 *        - layout style
 	 */
 	public FieldEditorOverlayPage(String title, ImageDescriptor image, int style) {
 		super(title, image, style);
@@ -144,6 +144,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	 * 
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#addField(org.eclipse.jface.preference.FieldEditor)
 	 */
+	@Override
 	protected void addField(FieldEditor editor) {
 		editors.add(editor);
 		super.addField(editor);
@@ -156,6 +157,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	 * 
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl()
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		// Special treatment for property pages
 		if (isPropertyPage()) {
@@ -185,6 +187,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	 * 
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		if (isPropertyPage())
 			createSelectionGroup(parent);
@@ -196,7 +199,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	 * push button.
 	 * 
 	 * @param parent
-	 *            - the parent composite
+	 *        - the parent composite
 	 */
 	private void createSelectionGroup(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -213,8 +216,10 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 		useProjectSettingsButton = createRadioButton(radioGroup,
 				CodanUIMessages.OverlayPage_Use_Project_Settings);
 		configureButton = new Button(comp, SWT.PUSH);
-		configureButton.setText(CodanUIMessages.OverlayPage_Use_Workspace_Settings);
+		configureButton
+				.setText(CodanUIMessages.OverlayPage_Configure_Workspace_Settings);
 		configureButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				configureWorkspaceSettings();
 			}
@@ -238,15 +243,16 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	 * Convenience method creating a radio button
 	 * 
 	 * @param parent
-	 *            - the parent composite
+	 *        - the parent composite
 	 * @param label
-	 *            - the button label
+	 *        - the button label
 	 * @return - the new button
 	 */
 	private Button createRadioButton(Composite parent, String label) {
 		final Button button = new Button(parent, SWT.RADIO);
 		button.setText(label);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				configureButton
 						.setEnabled(button == useWorkspaceSettingsButton);
@@ -262,6 +268,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	 * 
 	 * @see org.eclipse.jface.preference.PreferencePage#getPreferenceStore()
 	 */
+	@Override
 	public IPreferenceStore getPreferenceStore() {
 		if (isPropertyPage())
 			return overlayStore;
@@ -282,7 +289,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	 * may override.
 	 * 
 	 * @param enabled
-	 *            - true if enabled
+	 *        - true if enabled
 	 */
 	protected void updateFieldEditors(boolean enabled) {
 		Composite parent = getFieldEditorParent();
@@ -300,6 +307,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	 * 
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		boolean result = super.performOk();
 		if (result && isPropertyPage()) {
@@ -316,6 +324,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	 * 
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		if (isPropertyPage()) {
 			useWorkspaceSettingsButton.setSelection(true);
@@ -350,9 +359,9 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	 * Show a single preference pages
 	 * 
 	 * @param id
-	 *            - the preference page identification
+	 *        - the preference page identification
 	 * @param page
-	 *            - the preference page
+	 *        - the preference page
 	 */
 	protected void showPreferencePage(String id, IPreferencePage page) {
 		final IPreferenceNode targetNode = new PreferenceNode(id, page);

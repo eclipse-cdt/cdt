@@ -144,7 +144,11 @@ public class CodanPreferencesLoader {
 		String exported = storePreferences.get(prefKey, null);
 		if (exported != null) {
 			//System.err.println(prefKey + " import " + exported);
-			prob.getPreference().importValue(exported);
+			try {
+				prob.getPreference().importValue(exported);
+			} catch (IllegalArgumentException e) {
+				CodanCorePlugin.log(e);
+			}
 		}
 	}
 

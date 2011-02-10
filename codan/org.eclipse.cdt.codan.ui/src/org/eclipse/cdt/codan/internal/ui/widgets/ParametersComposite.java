@@ -18,6 +18,7 @@ import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.FileScopeProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreferenceCompositeDescriptor;
+import org.eclipse.cdt.codan.core.param.LaunchTypeProblemPreference;
 import org.eclipse.cdt.codan.core.param.ListProblemPreference;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -66,7 +67,8 @@ public class ParametersComposite extends Composite {
 				noDefaultAndApplyButton();
 				((GridLayout) getFieldEditorParent().getLayout()).numColumns = 2;
 				addField(new BooleanFieldEditor(PREF_ENABLED,
-						CodanUIMessages.ParametersComposite_IsEnabled, getFieldEditorParent()));
+						CodanUIMessages.ParametersComposite_IsEnabled,
+						getFieldEditorParent()));
 				String[][] entries = {
 						{ CodanSeverity.Error.toString(),
 								CodanSeverity.Error.toString() }, //
@@ -75,9 +77,11 @@ public class ParametersComposite extends Composite {
 						{ CodanSeverity.Info.toString(),
 								CodanSeverity.Info.toString() }, //
 				};
-				addField(new ComboFieldEditor(PREF_SEVERITY, CodanUIMessages.ParametersComposite_Severity,
-						entries, getFieldEditorParent()));
-				addField(new StringFieldEditor(PREF_MESSAGE, CodanUIMessages.ParametersComposite_MessagePattern,
+				addField(new ComboFieldEditor(PREF_SEVERITY,
+						CodanUIMessages.ParametersComposite_Severity, entries,
+						getFieldEditorParent()));
+				addField(new StringFieldEditor(PREF_MESSAGE,
+						CodanUIMessages.ParametersComposite_MessagePattern,
 						getFieldEditorParent()));
 				IProblemPreference pref = problem.getPreference();
 				createFieldEditorsForParameters(pref);
@@ -97,6 +101,8 @@ public class ParametersComposite extends Composite {
 					return;
 				if (info.getKey() == FileScopeProblemPreference.KEY)
 					return; // skip the scope
+				if (info.getKey() == LaunchTypeProblemPreference.KEY)
+					return; // skip the launch
 				switch (info.getType()) {
 					case TYPE_STRING: {
 						StringFieldEditor fe = new StringFieldEditor(
@@ -256,7 +262,7 @@ public class ParametersComposite extends Composite {
 	}
 
 	private void initPrefStore(IProblemPreference desc) {
-		if (desc == null)
+		if (desc == null || desc.getValue() == null)
 			return;
 		String key = desc.getQualifiedKey();
 		switch (desc.getType()) {

@@ -173,6 +173,10 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 					throw new IllegalArgumentException(
 							String.valueOf((char) token));
 				IProblemPreference desc = getChildDescriptor(key);
+				if (desc == null && LaunchTypeProblemPreference.KEY.equals(key)) {
+					desc = new LaunchTypeProblemPreference();
+					addChildDescriptor(desc);
+				}
 				if (desc != null && desc instanceof AbstractProblemPreference) {
 					((AbstractProblemPreference) desc).importValue(tokenizer);
 					setChildValue(key, desc.getValue());
@@ -253,8 +257,9 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 			if (value2 instanceof IProblemPreference) {
 				hash.put(key, (IProblemPreference) value2);
 			} else {
-				setChildValue(key, value2);
 				IProblemPreference pref = hash2.get(key);
+				addChildDescriptor(pref);
+				//setChildValue(key, value2);
 				pref.setValue(value2);
 				hash.put(key, pref);
 			}

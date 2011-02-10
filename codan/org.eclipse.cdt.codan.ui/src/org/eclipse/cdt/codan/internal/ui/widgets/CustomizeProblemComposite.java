@@ -31,6 +31,7 @@ public class CustomizeProblemComposite extends Composite {
 	private ParametersComposite problemsComposite;
 	private FileScopeComposite scopeComposite;
 	private IResource resource;
+	private LaunchingTabComposite launchingComposite;
 
 	/**
 	 * @param parent
@@ -49,11 +50,13 @@ public class CustomizeProblemComposite extends Composite {
 		// createMainTab(tabFolder);
 		createParamtersTab(tabFolder);
 		createScopeTab(tabFolder);
+		createLaunchingTab(tabFolder);
 	}
 
 	public void save(IProblemWorkingCopy problem) {
 		problemsComposite.save(problem);
 		scopeComposite.save(problem);
+		launchingComposite.save(problem);
 	}
 
 	/**
@@ -82,5 +85,16 @@ public class CustomizeProblemComposite extends Composite {
 		scopeComposite = new FileScopeComposite(comp, problem, resource);
 		scopeComposite.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING,
 				true, false));
+	}
+
+	private void createLaunchingTab(TabFolder tabFolder) {
+		TabItem tabItem1 = new TabItem(tabFolder, SWT.NULL);
+		tabItem1.setText(CodanUIMessages.CustomizeProblemComposite_LaunchingTab);
+		Composite comp = new Composite(tabFolder, SWT.NONE);
+		tabItem1.setControl(comp);
+		comp.setLayout(new GridLayout());
+		launchingComposite = new LaunchingTabComposite(comp, problem, resource);
+		launchingComposite.setLayoutData(new GridData(SWT.BEGINNING,
+				SWT.BEGINNING, true, false));
 	}
 }

@@ -17,6 +17,8 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
+import org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences;
+import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.ICheckerWithPreferences;
@@ -25,6 +27,9 @@ import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
+import org.eclipse.cdt.codan.core.param.IProblemPreference;
+import org.eclipse.cdt.codan.core.param.LaunchTypeProblemPreference;
+import org.eclipse.cdt.codan.core.param.MapProblemPreference;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblem;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblemCategory;
 import org.eclipse.cdt.codan.internal.core.model.ProblemProfile;
@@ -431,6 +436,46 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 		}
 		// no problem is enabled for this checker, skip the checker
 		return false;
+	}
+
+	/**
+	 * Test if checker need to run in specific launch mode
+	 * 
+	 * @param checker
+	 * @param resource
+	 * @param mode
+	 * @return
+	 */
+	public boolean isCheckerEnabledForLaunchMode(IChecker checker,
+			IResource resource, CheckerLaunchMode mode) {
+		IProblemProfile resourceProfile = getResourceProfile(resource);
+		Collection<IProblem> refProblems = getRefProblems(checker);
+		boolean enabled = false;
+		for (Iterator<IProblem> iterator = refProblems.iterator(); iterator
+				.hasNext();) {
+			IProblem p = iterator.next();
+			// we need to check problem enablement in particular profile
+			IProblem problem = resourceProfile.findProblem(p.getId());
+			if (problem == null)
+				throw new IllegalArgumentException("Id is not registered"); //$NON-NLS-1$
+			if (checker instanceof AbstractCheckerWithProblemPreferences) {
+				MapProblemPreference map = (MapProblemPreference) problem
+						.getPreference();
+				IProblemPreference pref1 = map
+						.getChildDescriptor(LaunchTypeProblemPreference.KEY);
+				LaunchTypeProblemPreference pref = (LaunchTypeProblemPreference) pref1;
+				if (pref == null
+						|| pref.isRunningInMode(CheckerLaunchMode.USE_PARENT)) {
+					enabled = true;
+					break;
+				}
+				if (pref.isRunningInMode(mode)) {
+					enabled = true;
+					break;
+				}
+			}
+		}
+		return enabled;
 	}
 
 	/**

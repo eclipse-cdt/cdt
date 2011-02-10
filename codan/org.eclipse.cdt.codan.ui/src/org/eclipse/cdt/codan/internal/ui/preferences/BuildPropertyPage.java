@@ -42,9 +42,11 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements
 	@Override
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_ON_BUILD,
-				CodanUIMessages.BuildPropertyPage_RunWithBuild, getFieldEditorParent()));
+				CodanUIMessages.BuildPropertyPage_RunWithBuild,
+				getFieldEditorParent()));
 		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_IN_EDITOR,
-				CodanUIMessages.BuildPropertyPage_RunAsYouType, getFieldEditorParent()));
+				CodanUIMessages.BuildPropertyPage_RunAsYouType,
+				getFieldEditorParent()));
 	}
 
 	@Override
@@ -98,9 +100,5 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements
 					.getPreferenceStore(((IProject) getElement()));
 			setPreferenceStore(scoped);
 		}
-	}
-
-	protected String getPageId() {
-		return "org.eclipse.cdt.codan.internal.ui.preferences.CodanPreferencePage"; //$NON-NLS-1$
 	}
 }

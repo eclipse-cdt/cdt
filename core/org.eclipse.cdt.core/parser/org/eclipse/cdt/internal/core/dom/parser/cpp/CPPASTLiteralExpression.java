@@ -27,12 +27,11 @@ import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * Represents a c++ literal.
+ * Represents a C++ literal.
  */
 public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralExpression {
-
-	public static final CPPASTLiteralExpression INT_ZERO = new CPPASTLiteralExpression(lk_integer_constant, new char[] {'0'} );
-	
+	public static final CPPASTLiteralExpression INT_ZERO =
+			new CPPASTLiteralExpression(lk_integer_constant, new char[] {'0'});
 	
     private int kind;
     private char[] value = CharArrayUtils.EMPTY;
@@ -75,19 +74,19 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}  
         return true;
@@ -136,7 +135,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 			final char c = value[i];
 			if (c == '"') {
 				if (isRaw) {
-					for (int j=i+1; j<length; j++) {
+					for (int j = i + 1; j < length; j++) {
 						final char d= value[j];
 						if (d == '(') {
 							length -= 2*(j-i);
@@ -146,7 +145,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				}
 				length -= i;
 				if (length < 0)
-					length= 0;
+					length = 0;
 				break;
 			} else if (c == 'R') {
 				isRaw = true;
@@ -229,7 +228,6 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
         assertNotFrozen();
         this.value = value.toCharArray();
     }
-    
 
     /**
      * @deprecated use {@link #CPPASTLiteralExpression(int, char[])}, instead.

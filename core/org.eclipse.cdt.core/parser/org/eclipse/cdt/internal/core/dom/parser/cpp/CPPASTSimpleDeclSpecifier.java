@@ -178,10 +178,10 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implement
 	            default: break;
 	        }
 		}
-        
+
 		if (fDeclTypeExpression != null && !fDeclTypeExpression.accept(action))
 			return false;
-               
+
         if (action.shouldVisitDeclSpecifiers) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -191,7 +191,7 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implement
 		}
         return true;
     }
-    
+
 	public void replace(IASTNode child, IASTNode other) {
 		if (child == fDeclTypeExpression) {
 			other.setPropertyInParent(child.getPropertyInParent());

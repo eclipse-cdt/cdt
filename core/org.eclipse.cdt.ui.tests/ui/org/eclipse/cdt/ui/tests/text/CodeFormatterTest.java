@@ -941,6 +941,43 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//#define MY_MACRO(a, b, c)
+	//
+	//MY_MACRO(abcdefghijklmnopqrstuvwxyz,25,"very very very very very very very very very very long text");
+
+	//#define MY_MACRO(a, b, c)
+	//
+	//MY_MACRO(abcdefghijklmnopqrstuvwxyz, 25,
+	//        "very very very very very very very very very very long text");
+	public void testFunctionStyleMacro_1() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
+	//#define MY_MACRO(a, b, c) \
+	//int a = b; \
+	//const char s[] = c
+	//
+	//MY_MACRO(abcdefghijklmnopqrstuvwxyz,(25 + 3),"very very very very very very very very very very long text");
+
+	//#define MY_MACRO(a, b, c) \
+	//int a = b; \
+	//const char s[] = c
+	//
+	//MY_MACRO( abcdefghijklmnopqrstuvwxyz,
+	//          (25 + 3),
+	//          "very very very very very very very very very very long text" );
+	public void testFunctionStyleMacro_2() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
+				Integer.toString(Alignment.M_NEXT_PER_LINE_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_METHOD_INVOCATION,
+				CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_METHOD_INVOCATION,
+				CCorePlugin.INSERT);
+		assertFormatterResult();
+	}
+
 	//void foo() {
 	//for(int i=0;i<50;++i){}
 	//}

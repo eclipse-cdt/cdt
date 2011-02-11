@@ -1301,7 +1301,7 @@ public class Scribe {
 				pendingSpace= false;
 				needSpace= true;
 				throw new AbortFormatting(
-						"["	+ (line+1) + "/" + column + "] unexpected token type, expecting:" + expectedTokenType + ", actual:" + currentToken);//$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+						"["	+ (line + 1) + "/" + column + "] unexpected token type, expecting:" + expectedTokenType + ", actual:" + currentToken);//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
 			}
 			print(currentToken.getLength(), considerSpaceIfAny);
 		} finally {
@@ -1333,7 +1333,7 @@ public class Scribe {
 				expectations.append(expectedTokenTypes[i]);
 			}
 			throw new AbortFormatting(
-					"["	+ (line+1) + "/" + column + "] unexpected token type, expecting:[" + expectations.toString() + "], actual:" + currentToken);//$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					"["	+ (line + 1) + "/" + column + "] unexpected token type, expecting:[" + expectations.toString() + "], actual:" + currentToken);//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
 		}
 		print(currentToken.getLength(), considerSpaceIfAny);
 	}

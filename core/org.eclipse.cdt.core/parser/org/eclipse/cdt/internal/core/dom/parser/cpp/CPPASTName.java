@@ -36,6 +36,7 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
 	public static IASTName NOT_INITIALIZED= new CPPASTName(null);
 	
 	private char[] name;
+
     public CPPASTName(char[] name) {
         this.name = name;
     }
@@ -163,8 +164,7 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
                 break;
             }
         }
-        
-                
+
         if (action.shouldVisitNames) {
             switch (action.leave(this)) {
             case ASTVisitor.PROCESS_ABORT:

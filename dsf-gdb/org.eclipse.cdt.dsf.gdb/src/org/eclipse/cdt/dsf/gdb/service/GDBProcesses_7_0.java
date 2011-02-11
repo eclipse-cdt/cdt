@@ -27,6 +27,7 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -47,6 +48,7 @@ import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
+import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
@@ -54,6 +56,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupCreatedEvent;
@@ -73,8 +76,10 @@ import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunch;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -430,6 +435,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	
     private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 
+    private boolean fInitialProcess = true;
+
     public GDBProcesses_7_0(DsfSession session) {
     	super(session);
     }
@@ -639,8 +646,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 				} else if (name.length() == 0) {
 					// Probably will not happen, but just in case...use the
 					// binary file name (absolute path)
-					IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
-					name = backend.getProgramPath().toOSString();
+					name = fBackend.getProgramPath().toOSString();
 					fDebuggedProcessesAndNames.put(id, name);
 				}
 			}
@@ -702,11 +708,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     
     /** @since 4.0 */
     protected boolean doIsDebuggerAttachSupported() {
-    	IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
-    	if (backend != null) {
-    		return backend.getIsAttachSession();
-    	}
-    	return false;
+   		return fBackend.getIsAttachSession() && !fCommandControl.isConnected();
     }
     
     public void isDebuggerAttachSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
@@ -714,39 +716,102 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     	rm.done();
     }
 
-    public void attachDebuggerToProcess(final IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> rm) {
+    public void attachDebuggerToProcess(final IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> dataRm) {
 		if (procCtx instanceof IMIProcessDMContext) {
 	    	if (!doIsDebuggerAttachSupported()) {
-	            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Attach not supported.", null)); //$NON-NLS-1$
-	            rm.done();    		
+	            dataRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Attach not supported.", null)); //$NON-NLS-1$
+	            dataRm.done();    		
 	    		return;
 	    	}
 	    	
-	    	ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, ICommandControlDMContext.class);
-			fCommandControl.queueCommand(
-					fCommandFactory.createMITargetAttach(controlDmc, ((IMIProcessDMContext)procCtx).getProcId()),
-					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-						@Override
-						protected void handleSuccess() {
-							// By now, GDB has reported the groupId that was attached to this process
-			                rm.setData(createContainerContext(procCtx, getGroupFromPid(((IMIProcessDMContext)procCtx).getProcId())));
-							rm.done();
-						}
-					});
+	    	// Use a sequence for better control of each step
+	    	ImmediateExecutor.getInstance().execute(new Sequence(getExecutor(), dataRm) {
+	    		
+	    		private IMIContainerDMContext fContainerDmc;
+	    		
+	    		private Step[] steps = new Step[] {
+	    				// For remote attach, we must set the binary first
+	    				// For a local attach, GDB can figure out the binary automatically,
+	    				// so we don't specify it.
+	    				new Step() { 
+	    					@Override
+	    					public void execute(RequestMonitor rm) {
+	    						// There is no groupId until we attach, so we can use the default groupId
+	    						fContainerDmc = createContainerContext(procCtx, MIProcesses.UNIQUE_GROUP_ID);
 
+	    				    	if (fBackend.getSessionType() == SessionType.REMOTE) {
+	    				    		final IPath execPath = fBackend.getProgramPath();
+	    				    		if (execPath != null && !execPath.isEmpty()) {
+	    				    			fCommandControl.queueCommand(
+	    				    					fCommandFactory.createMIFileExecAndSymbols(fContainerDmc, execPath.toPortableString()), 
+   				    							new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+	    				    			return;
+									}
+	    						}
+
+	    				    	rm.done();
+	    					}
+	    				},
+	    				// Attach to the process
+	    				new Step() { 
+	    					@Override
+	    					public void execute(RequestMonitor rm) {
+	    						fCommandControl.queueCommand(
+	    								fCommandFactory.createMITargetAttach(fContainerDmc, ((IMIProcessDMContext)procCtx).getProcId()),
+	    								new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+	    					}
+	    				},
+	    				new Step() { 
+	    					@Override
+	    					public void execute(RequestMonitor rm) {
+								// By now, GDB has reported the groupId that was created for this process
+	    						fContainerDmc = createContainerContext(procCtx, getGroupFromPid(((IMIProcessDMContext)procCtx).getProcId()));
+		                    	// Store the fully formed container context so it can be returned to the caller.
+							    dataRm.setData(fContainerDmc);
+
+								// Start tracking breakpoints.
+								MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
+								IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
+								bpmService.startTrackingBreakpoints(bpTargetDmc, rm);
+	    					}
+	    				},
+	    				// Turn on reverse debugging if it was enabled as a launch option
+	    				new Step() { 
+	    					@Override
+	    					public void execute(RequestMonitor rm) {								
+								IReverseRunControl reverseService = getServicesTracker().getService(IReverseRunControl.class);
+								if (reverseService != null) {
+									ILaunch launch = (ILaunch)procCtx.getAdapter(ILaunch.class);
+									if (launch != null) {
+										try {
+											boolean reverseEnabled = 
+												launch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
+														IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
+											if (reverseEnabled) {
+												reverseService.enableReverseMode(fCommandControl.getContext(), true, rm);
+												return;
+											}
+										} catch (CoreException e) {
+											// Ignore, just don't set reverse
+										}
+									}
+								}
+								rm.done();
+	    					}
+	    				},
+	    		};
+
+	    		@Override public Step[] getSteps() { return steps; }
+	    	});
 	    } else {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
-            rm.done();
+            dataRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
+            dataRm.done();
 	    }
 	}
 
     /** @since 4.0 */
     protected boolean doCanDetachDebuggerFromProcess() {
-    	IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
-    	if (backend != null) {
-    		return backend.getIsAttachSession() && fCommandControl.isConnected();
-    	}
-    	return false;
+   		return fBackend.getIsAttachSession() && fCommandControl.isConnected();
     }
     
     public void canDetachDebuggerFromProcess(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
@@ -781,15 +846,29 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	}
 
 	public void isDebugNewProcessSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
-		rm.setData(false);
-		rm.done();	
+		rm.setData(doIsDebugNewProcessSupported());
+		rm.done();  
 	}
 
+	/** @since 4.0 */
+	protected boolean doIsDebugNewProcessSupported() {
+		return false;
+	}
+	
 	public void debugNewProcess(IDMContext dmc, String file, 
 			                    Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
-		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
-				NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
-		rm.done();
+		if (!fInitialProcess) {
+			// If we have already dealt with the initial process, check if we are allowed to create another one
+			if (!doIsDebugNewProcessSupported()) {
+				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Cannot start a new process", null)); //$NON-NLS-1$
+				rm.done();
+				return;
+			}
+		}
+		
+		fInitialProcess = false;
+		ImmediateExecutor.getInstance().execute(
+				new DebugNewProcessSequence(getExecutor(), dmc, file, attributes, rm));
 	}
     
 	public void getProcessesBeingDebugged(final IDMContext dmc, final DataRequestMonitor<IDMContext[]> rm) {
@@ -904,8 +983,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 							// list natively (as we do with gdb 6.8). If
 							// we're debugging remotely, the user is out
 							// of luck
-							IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
-							if (backend.getSessionType() == SessionType.LOCAL) {
+							if (fBackend.getSessionType() == SessionType.LOCAL) {
 								IProcessList list = null;
 								try {
 									list = CCorePlugin.getDefault().getProcessList();
@@ -1185,8 +1263,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     											// Looks like this gdb doesn't truly support
     											// "-list-thread-groups --available". Get the
     											// process list natively if we're debugging locally
-    											IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
-    											if (backend.getSessionType() == SessionType.LOCAL) {
+    											if (fBackend.getSessionType() == SessionType.LOCAL) {
 	    											IProcessList list = null;
 	    											try {
 	    												list = CCorePlugin.getDefault().getProcessList();

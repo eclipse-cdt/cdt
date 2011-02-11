@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Ericsson and others.
+ * Copyright (c) 2008, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,35 +15,30 @@ package org.eclipse.cdt.dsf.gdb.launching;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ReflectionSequence;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
-import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
-import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
-import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
-import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -62,6 +57,9 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	private GdbLaunch fLaunch;
 	private SessionType fSessionType;
 	private boolean fAttach;
+	
+	// The launchConfiguration attributes
+	private Map<String, Object> fAttributes;
 
 	private IGDBControl fCommandControl;
 	private IGDBBackend	fGDBBackend;
@@ -82,22 +80,24 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		if (GROUP_TOP_LEVEL.equals(group)) {
 			return new String[] {
 					"stepInitializeFinalLaunchSequence",   //$NON-NLS-1$
+					// Global GDB settings
 					"stepSetEnvironmentDirectory",   //$NON-NLS-1$
 					"stepSetBreakpointPending",    //$NON-NLS-1$
 					"stepEnablePrettyPrinting",    //$NON-NLS-1$
 					"stepSourceGDBInitFile",   //$NON-NLS-1$
-					"stepSetEnvironmentVariables",   //$NON-NLS-1$
-					"stepSetExecutable",   //$NON-NLS-1$
-					"stepSetArguments",   //$NON-NLS-1$
 					"stepSetNonStop",   //$NON-NLS-1$
 					"stepSetAutoLoadSharedLibrarySymbols",   //$NON-NLS-1$
 					"stepSetSharedLibraryPaths",   //$NON-NLS-1$
 					"stepSetSourceLookupPath",   //$NON-NLS-1$
+					// For post-mortem launch only
 					"stepSpecifyCoreFile",   //$NON-NLS-1$
+					// For remote-attach launch only
 					"stepRemoteConnection",   //$NON-NLS-1$
+					// For all launches except attach ones
+					"stepNewProcess", //$NON-NLS-1$
+					// For local attach launch only
 					"stepAttachToProcess",   //$NON-NLS-1$
-					"stepStartTrackingBreakpoints",   //$NON-NLS-1$
-					"stepStartExecution",   //$NON-NLS-1$
+					// Global
 					"stepDataModelInitializationComplete",   //$NON-NLS-1$
 					"stepCleanup",   //$NON-NLS-1$
 			};
@@ -110,6 +110,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 * This step is mandatory for the rest fo the sequence to complete.
 	 * @since 4.0 
 	 */
+	@SuppressWarnings("unchecked")
 	@Execute
 	public void stepInitializeFinalLaunchSequence(RequestMonitor requestMonitor) {
 		fTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fLaunch.getSession().getId());
@@ -132,6 +133,14 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		fProcService = fTracker.getService(IMIProcesses.class);
 		if (fProcService == null) {
 			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain process service", null)); //$NON-NLS-1$
+			requestMonitor.done();
+			return;
+		}
+
+		try {
+			fAttributes = fLaunch.getLaunchConfiguration().getAttributes();
+		} catch (CoreException e) {
+			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain launch configuration attributes", null)); //$NON-NLS-1$
 			requestMonitor.done();
 			return;
 		}
@@ -248,90 +257,15 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	}
 
 	/**
-	 * Specify environment variables if needed
-	 * @since 4.0 
-	 */
-	@Execute
-	public void stepSetEnvironmentVariables(final RequestMonitor requestMonitor) {
-		boolean clear = false;
-		Properties properties = new Properties();
-		try {
-			clear = fGDBBackend.getClearEnvironment();
-			properties = fGDBBackend.getEnvironmentVariables();
-		} catch (CoreException e) {
-			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get environment information", e)); //$NON-NLS-1$
-			requestMonitor.done();
-			return;
-		}
-
-		if (clear == true || properties.size() > 0) {
-			fCommandControl.setEnvironment(properties, clear, requestMonitor);
-		} else {
-			requestMonitor.done();
-		}
-	}
-
-	/**
-	 * Specify the executable file to be debugged and read the symbol table.
-	 * @since 4.0 
-	 */
-	@Execute
-	public void stepSetExecutable(final RequestMonitor requestMonitor) {
-		boolean noFileCommand = IGDBLaunchConfigurationConstants.DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP_DEFAULT;
-		try {
-			noFileCommand = fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP,
-					IGDBLaunchConfigurationConstants.DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP_DEFAULT);
-		} catch (CoreException e) {
-			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot read use solib symbols for app options", e)); //$NON-NLS-1$
-			requestMonitor.done();
-			return;
-		}
-
-		final IPath execPath = fGDBBackend.getProgramPath();
-		if (!noFileCommand && execPath != null && !execPath.isEmpty()) {
-			fCommandControl.queueCommand(
-					fCommandFactory.createMIFileExecAndSymbols(fCommandControl.getContext(), 
-							execPath.toPortableString()), 
-							new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
-		} else {
-			requestMonitor.done();
-		}
-	}
-
-	/**
-	 * Specify the arguments to the executable file.
-	 * @since 4.0 
-	 */
-	@Execute
-	public void stepSetArguments(final RequestMonitor requestMonitor) {
-		try {
-			String args = fGDBBackend.getProgramArguments();
-
-			if (args != null) {
-				fCommandControl.queueCommand(
-						fCommandFactory.createMIGDBSetArgs(fCommandControl.getContext(), args), 
-						new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
-			} else {
-				requestMonitor.done();
-			}
-		} catch (CoreException e) {
-			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get inferior arguments", e)); //$NON-NLS-1$
-			requestMonitor.done();
-		}    		
-	}
-
-	/**
 	 * Enable non-stop mode if requested.
 	 * @since 4.0 
 	 */
 	@Execute
 	public void stepSetNonStop(final RequestMonitor requestMonitor) {
-		boolean isNonStop = false;
-		try {
-			isNonStop = fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
-					IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
-		} catch (CoreException e) {    		
-		}
+		boolean isNonStop = CDebugUtils.getAttribute(
+				fAttributes,
+				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
+				IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
 
 		// GDBs that don't support non-stop don't allow you to set it to false.
 		// We really should set it to false when GDB supports it though.
@@ -365,16 +299,14 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepSetAutoLoadSharedLibrarySymbols(RequestMonitor requestMonitor) {
-		try {
-			boolean autolib = fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB,
-					IGDBLaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT);
-			fCommandControl.queueCommand(
-					fCommandFactory.createMIGDBSetAutoSolib(fCommandControl.getContext(), autolib), 
-					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
-		} catch (CoreException e) {
-			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot set shared library option", e)); //$NON-NLS-1$
-			requestMonitor.done();
-		}
+		boolean autolib = CDebugUtils.getAttribute(
+				fAttributes,
+				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB,
+				IGDBLaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT);
+
+		fCommandControl.queueCommand(
+				fCommandFactory.createMIGDBSetAutoSolib(fCommandControl.getContext(), autolib), 
+				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
 	}
 
 	/**
@@ -476,10 +408,14 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	@Execute
 	public void stepSpecifyCoreFile(final RequestMonitor requestMonitor) {
 		if (fSessionType == SessionType.CORE) {
-			try {
-				String coreFile = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, ""); //$NON-NLS-1$
-				final String coreType = fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
-						IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
+			String coreFile = CDebugUtils.getAttribute(
+					fAttributes,
+					ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, ""); //$NON-NLS-1$
+			final String coreType = CDebugUtils.getAttribute(
+					fAttributes,
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
+					IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
+			
 				if (coreFile.length() == 0) {
 					new PromptForCoreJob(
 							"Prompt for post mortem file",  //$NON-NLS-1$
@@ -530,124 +466,93 @@ public class FinalLaunchSequence extends ReflectionSequence {
 						requestMonitor.done();
 					}
 				}
-			} catch (CoreException e) {
-				requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get post mortem file path", e));
-				requestMonitor.done();
-			}
 		} else {
 			requestMonitor.done();
 		}
 	}
-
-
-	private boolean fTcpConnection;
-	private String fRemoteTcpHost;
-	private String fRemoteTcpPort;
-	private String fSerialDevice;
-
-	private boolean checkConnectionType(RequestMonitor requestMonitor) {
-		try {
-			fTcpConnection = fLaunch.getLaunchConfiguration().getAttribute(
-					IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
-					false);
-		} catch (CoreException e) {
-			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve connection mode", e)); //$NON-NLS-1$
-			requestMonitor.done();
-			return false;
-		}
-		return true;
-	}
-
-	private boolean getSerialDevice(RequestMonitor requestMonitor) {
-		try {
-			fSerialDevice = fLaunch.getLaunchConfiguration().getAttribute(
-					IGDBLaunchConfigurationConstants.ATTR_DEV, "invalid"); //$NON-NLS-1$
-		} catch (CoreException e) {
-			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve serial device", e)); //$NON-NLS-1$
-			requestMonitor.done();
-			return false;
-		}
-		return true;
-	}
-
-	private boolean getTcpHost(RequestMonitor requestMonitor) {
-		try {
-			fRemoteTcpHost = fLaunch.getLaunchConfiguration().getAttribute(
-					IGDBLaunchConfigurationConstants.ATTR_HOST, "invalid"); //$NON-NLS-1$
-		} catch (CoreException e) {
-			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve remote TCP host", e)); //$NON-NLS-1$
-			requestMonitor.done();
-			return false;
-		}
-		return true;
-	}
-
-	private boolean getTcpPort(RequestMonitor requestMonitor) {
-		try {
-			fRemoteTcpPort = fLaunch.getLaunchConfiguration().getAttribute(
-					IGDBLaunchConfigurationConstants.ATTR_PORT, "invalid"); //$NON-NLS-1$
-		} catch (CoreException e) {
-			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot retrieve remote TCP port", e)); //$NON-NLS-1$
-			requestMonitor.done();
-			return false;
-		}
-		return true;
-	}
-
+	
+	private final static String INVALID = "invalid";   //$NON-NLS-1$
 	/** 
-	 * If we are dealing with a remote debugging session, connect to the target.
+	 * If we are dealing with a remote-attach debugging session, connect to the target.
 	 * @since 4.0
 	 */
 	@Execute
-	public void stepRemoteConnection(final RequestMonitor requestMonitor) {
-		if (fSessionType == SessionType.REMOTE) {
-			if (!checkConnectionType(requestMonitor)) return;
+	public void stepRemoteConnection(final RequestMonitor rm) {
+		if (fSessionType == SessionType.REMOTE && fAttach) {
+			boolean isTcpConnection = CDebugUtils.getAttribute(
+					fAttributes,
+					IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
+					false);
 
-			if (fTcpConnection) {
-				if (!getTcpHost(requestMonitor)) return;
-				if (!getTcpPort(requestMonitor)) return;
+			if (isTcpConnection) {
+				String remoteTcpHost = CDebugUtils.getAttribute(
+						fAttributes,
+						IGDBLaunchConfigurationConstants.ATTR_HOST, INVALID);
+				String remoteTcpPort = CDebugUtils.getAttribute(
+						fAttributes,
+						IGDBLaunchConfigurationConstants.ATTR_PORT, INVALID);
 
 				fCommandControl.queueCommand(
 						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), 
-								fRemoteTcpHost, fRemoteTcpPort, fAttach), 
-								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+								remoteTcpHost, remoteTcpPort, true), 
+								new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
 			} else {
-				if (!getSerialDevice(requestMonitor)) return;
+				String serialDevice = CDebugUtils.getAttribute(
+						fAttributes,
+						IGDBLaunchConfigurationConstants.ATTR_DEV, INVALID);
 
 				fCommandControl.queueCommand(
 						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), 
-								fSerialDevice, fAttach), 
-								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+								serialDevice, true), 
+								new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
 			}
 		} else {
-			requestMonitor.done();
+			rm.done();
 		}
 	}
 
 	/**
-	 * If we are dealing with an attach debugging session, perform the attach.
+	 * Start a new process if we are not dealing with an attach session
+	 * i.e., a local session, a remote session or a post-mortem (core) session.
+	 * @since 4.0
+	 */
+	@Execute
+	public void stepNewProcess(final RequestMonitor rm) {
+		if (!fAttach) {
+
+			boolean noBinarySpecified = CDebugUtils.getAttribute(
+					fAttributes,
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP,
+					IGDBLaunchConfigurationConstants.DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP_DEFAULT);
+
+			String binary = null;
+			final IPath execPath = fGDBBackend.getProgramPath();
+			if (!noBinarySpecified && execPath != null && !execPath.isEmpty()) {
+				binary = execPath.toPortableString();
+			}
+
+			// Even if binary is null, we must call this to do all the other steps
+			// necessary to create a process.  It is possible that the binary is not needed
+			fProcService.debugNewProcess(fCommandControl.getContext(), binary, fAttributes, 
+					new DataRequestMonitor<IDMContext>(getExecutor(), rm));
+		} else {
+			rm.done();
+		}
+	}
+
+	/**
+	 * If we are dealing with an local attach session, perform the attach.
+     * For a remote attach session, we don't attach during the launch; instead
+     * we wait for the user to manually do the attach.
 	 * @since 4.0 
 	 */
 	@Execute
 	public void stepAttachToProcess(final RequestMonitor requestMonitor) {
-		// A local attach can figure out the binary from the attach
-		// command.  This allows the user not to specify the binary
-		// in the launch.  But for breakpoints to work, we must do the
-		// attach before we set the breakpoints, i.e., here.
-		// On the other hand, for a remote attach, we need to specify
-		// the binary anyway, or use the solib command.  In both cases,
-		// breakpoints can be set before we attach.  Therefore, we don't
-		// force an attach here, but wait for the user to decide to connect
-		// using the connect action.
 		if (fAttach && fSessionType != SessionType.REMOTE) {
-			// If we are attaching, get the process id.
-			int pid = -1;
-			try {
-				// have we already been given the pid (maybe from a JUnit test launch or something)
-				pid = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, -1);
-			} catch (CoreException e) { 
-				// do nothing and fall to below
-			}
+			// Is the process id already stored in the launch?
+			int pid = CDebugUtils.getAttribute(
+					fAttributes,
+					ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, -1);
 
 			if (pid != -1) {
 				fProcService.attachDebuggerToProcess(
@@ -661,48 +566,6 @@ public class FinalLaunchSequence extends ReflectionSequence {
 					requestMonitor.done();
 				}
 			}
-		} else {
-			requestMonitor.done();
-		}
-	}
-	
-	/**
-	 * Start tracking the breakpoints.  Note that for remote debugging
-	 * we should first connect to the target.
-	 * @since 4.0
-	 */
-	@Execute
-	public void stepStartTrackingBreakpoints(final RequestMonitor requestMonitor) {
-		if (fSessionType != SessionType.CORE) {
-			MIBreakpointsManager bpmService = fTracker.getService(MIBreakpointsManager.class);
-			IMIContainerDMContext containerDmc = fProcService.createContainerContextFromGroupId(fCommandControl.getContext(), null);
-			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
-
-			bpmService.startTrackingBreakpoints(bpTargetDmc, requestMonitor);
-		} else {
-			requestMonitor.done();
-		}
-	}
-	
-	/**
-	 * Start executing the program.
-	 * @since 4.0
-	 */
-	@SuppressWarnings("unchecked")
-	@Execute
-	public void stepStartExecution(final RequestMonitor requestMonitor) {
-		if (fSessionType != SessionType.CORE) {
-			Map<String, Object> attributes = null;
-			try {
-				attributes = fLaunch.getLaunchConfiguration().getAttributes();
-			} catch (CoreException e) {}
-
-			IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
-			IContainerDMContext containerDmc = procService.createContainerContextFromGroupId(fCommandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
-
-			// For now, call restart since it does the same as start
-			// but this is just temporary until procService.debugNewProcess is ready
-			procService.restart(containerDmc, attributes, requestMonitor);
 		} else {
 			requestMonitor.done();
 		}

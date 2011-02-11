@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -37,6 +38,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
@@ -46,6 +48,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
@@ -200,22 +203,51 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 
 	@Override
     public void attachDebuggerToProcess(final IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> rm) {
-		super.attachDebuggerToProcess(
-			procCtx, 
-			new DataRequestMonitor<IDMContext>(getExecutor(), rm) {
-				@Override
-				protected void handleSuccess() {
-					fGdb.setConnected(true);
+		// For remote attach, we must set the binary first
+		// For a local attach, GDB can figure out the binary automatically,
+		// so we don't specify it.
+		
+		IMIContainerDMContext containerDmc = createContainerContext(procCtx, MIProcesses.UNIQUE_GROUP_ID);
 
-					MIInferiorProcess inferiorProcess = fGdb.getInferiorProcess();
-				    if (inferiorProcess != null) {
-				    	inferiorProcess.setPid(((IMIProcessDMContext)procCtx).getProcId());
-				    }
+		DataRequestMonitor<MIInfo> attachRm = new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm) {
+			@Override
+			protected void handleSuccess() {
+				GDBProcesses.super.attachDebuggerToProcess(
+						procCtx, 
+						new DataRequestMonitor<IDMContext>(ImmediateExecutor.getInstance(), rm) {
+							@Override
+							protected void handleSuccess() {
+								fGdb.setConnected(true);
 
-					rm.setData(getData());
-					rm.done();
-				}
-			});
+								MIInferiorProcess inferiorProcess = fGdb.getInferiorProcess();
+								if (inferiorProcess != null) {
+									inferiorProcess.setPid(((IMIProcessDMContext)procCtx).getProcId());
+								}
+
+								IDMContext containerDmc = getData();
+								rm.setData(containerDmc);
+
+								// Start tracking breakpoints.
+								MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
+								IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
+								bpmService.startTrackingBreakpoints(bpTargetDmc, rm);
+							}
+						});
+			}
+		};
+		
+		if (fBackend.getSessionType() == SessionType.REMOTE) {
+			final IPath execPath = fBackend.getProgramPath();
+			if (execPath != null && !execPath.isEmpty()) {
+				fGdb.queueCommand(
+					fCommandFactory.createMIFileExecAndSymbols(containerDmc, execPath.toPortableString()), 
+					attachRm);
+				return;
+			}
+		}
+
+		// If we get here, let's do the attach by completing the requestMonitor
+		attachRm.done();
 	}
 
 	@Override
@@ -241,6 +273,13 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 					rm.done();
 				}
 			});
+	}
+	
+	@Override
+	public void debugNewProcess(IDMContext dmc, String file, 
+			                    Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
+		ImmediateExecutor.getInstance().execute(
+				new DebugNewProcessSequence(getExecutor(), dmc, file, attributes, rm));
 	}
 	
 	@Override

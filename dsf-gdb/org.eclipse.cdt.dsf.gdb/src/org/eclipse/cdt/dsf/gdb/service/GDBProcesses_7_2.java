@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.util.Map;
+
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
@@ -26,8 +31,11 @@ import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIAddInferiorInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunch;
 
 /**
  * Adding support for multi-process with GDB 7.2
@@ -38,6 +46,14 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
     
     private CommandFactory fCommandFactory;
     private IGDBControl fCommandControl;
+    private IGDBBackend fBackend;
+
+    /**
+     * Keeps track if we are dealing with the very first
+     * process of GDB.  In such a case, we should not create a new
+     * inferior, since GDB has already created one by default.
+     */
+    private boolean fInitialProcess = true;
     
 	public GDBProcesses_7_2(DsfSession session) {
 		super(session);
@@ -64,6 +80,8 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 	private void doInitialize(RequestMonitor requestMonitor) {
 		fCommandControl = getServicesTracker().getService(IGDBControl.class);
         fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+    	fBackend = getServicesTracker().getService(IGDBBackend.class);
+    	
     	requestMonitor.done();
 	}
 
@@ -72,47 +90,140 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		super.shutdown(requestMonitor);
 	}
 	
+    @Override
+	protected boolean doIsDebuggerAttachSupported() {
+		// Multi-process is not applicable to post-mortem sessions (core)
+		// or to non-attach remote sessions.
+		if (fBackend.getSessionType() == SessionType.CORE) {
+			return false;
+		}
+
+		if (fBackend.getSessionType() == SessionType.REMOTE && !fBackend.getIsAttachSession()) {
+			return false;
+		}
+
+		return true;
+	}
+
 	@Override
-    public void attachDebuggerToProcess(final IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> rm) {
+    public void attachDebuggerToProcess(final IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> dataRm) {
 		if (procCtx instanceof IMIProcessDMContext) {
 	    	if (!doIsDebuggerAttachSupported()) {
-	            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Attach not supported.", null)); //$NON-NLS-1$
-	            rm.done();    		
+	            dataRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Attach not supported.", null)); //$NON-NLS-1$
+	            dataRm.done();    		
 	    		return;
 	    	}
 	    	
-	    	ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, ICommandControlDMContext.class);
-	        fCommandControl.queueCommand(
-	        		fCommandFactory.createMIAddInferior(controlDmc),
-	        		new DataRequestMonitor<MIAddInferiorInfo>(getExecutor(), rm) {
-	        			@Override
-	        			protected void handleSuccess() {
-	        				final String groupId = getData().getGroupId();
-	        				if (groupId == null || groupId.trim().length() == 0) {
-     				           rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid gdb group id.", null)); //$NON-NLS-1$
-    				           rm.done();
-    				           return;
-        					}
-	        				
-	        				final IMIContainerDMContext containerDmc = createContainerContext(procCtx, groupId);
-	        				fCommandControl.queueCommand(
-	        						fCommandFactory.createMITargetAttach(containerDmc, ((IMIProcessDMContext)procCtx).getProcId()),
-	        						new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-	        							@Override
-	        							protected void handleSuccess() {
-	        								rm.setData(containerDmc);
-	        								
-	        								// Start tracking this process' breakpoints.
-	        								MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
-	        								IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
-	        								bpmService.startTrackingBreakpoints(bpTargetDmc, rm);
-	        							}
-	        						});
-	        			}
-	        		});
+	    	// Use a sequence for better control of each step
+	    	ImmediateExecutor.getInstance().execute(new Sequence(getExecutor(), dataRm) {
+	    		private IMIContainerDMContext fContainerDmc;
+
+		        private Step[] steps = new Step[] {
+		        		// If this is not the very first inferior, we first need create the new inferior
+		                new Step() { 
+		                    @Override
+		                    public void execute(final RequestMonitor rm) {
+		                    	if (fInitialProcess) {
+		                    		fInitialProcess = false;
+		        					fContainerDmc = createContainerContext(procCtx, "i1"); //$NON-NLS-1$
+		                    		rm.done();
+		                    		return;
+		                    	}
+		                    	
+		            	    	ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, ICommandControlDMContext.class);
+		            	        fCommandControl.queueCommand(
+		            	        		fCommandFactory.createMIAddInferior(controlDmc),
+		            	        		new DataRequestMonitor<MIAddInferiorInfo>(ImmediateExecutor.getInstance(), rm) {
+		            	        			@Override
+		            	        			protected void handleSuccess() {
+		            	        				final String groupId = getData().getGroupId();
+		            	        				if (groupId == null || groupId.trim().length() == 0) {
+		            	        					rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid gdb group id.", null)); //$NON-NLS-1$
+		            	        				} else {
+		            	        					fContainerDmc = createContainerContext(procCtx, groupId);
+		            	        				}
+		            	        				rm.done();
+		            	        			}
+		            	        		});
+		                    }
+		                },
+	    				// For remote attach, we must set the binary first
+	    				// For a local attach, GDB can figure out the binary automatically,
+	    				// so we don't specify it.
+	    				new Step() { 
+	    					@Override
+	    					public void execute(RequestMonitor rm) {
+	    				    	if (fBackend.getSessionType() == SessionType.REMOTE) {
+	    				    		final IPath execPath = fBackend.getProgramPath();
+	    				    		if (execPath != null && !execPath.isEmpty()) {
+	    				    			fCommandControl.queueCommand(
+	    				    					fCommandFactory.createMIFileExecAndSymbols(fContainerDmc, execPath.toPortableString()), 
+   				    							new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+	    				    			return;
+									}
+	    						}
+
+	    				    	rm.done();
+	    					}
+	    				},		                
+		                // Now, actually do the attach
+		                new Step() { 
+		                    @Override
+		                    public void execute(RequestMonitor rm) {
+		    					fCommandControl.queueCommand(
+		    							fCommandFactory.createMITargetAttach(fContainerDmc, ((IMIProcessDMContext)procCtx).getProcId()),
+		    							new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+		                    }
+		                },
+                    	// Start tracking this process' breakpoints.
+		                new Step() { 
+		                    @Override
+		                    public void execute(RequestMonitor rm) {
+		                    	MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
+		                    	IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
+		                    	bpmService.startTrackingBreakpoints(bpTargetDmc, rm);
+		                    }
+		                },
+		                // Turn on reverse debugging if it was enabled as a launch option
+		                new Step() { 
+		                    @Override
+		                    public void execute(RequestMonitor rm) {								
+								IReverseRunControl reverseService = getServicesTracker().getService(IReverseRunControl.class);
+								if (reverseService != null) {
+									ILaunch launch = (ILaunch)procCtx.getAdapter(ILaunch.class);
+									if (launch != null) {
+										try {
+											boolean reverseEnabled = 
+												launch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
+														                                     IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
+											if (reverseEnabled) {
+												reverseService.enableReverseMode(fCommandControl.getContext(), true, rm);
+												return;
+											}
+										} catch (CoreException e) {
+											// Ignore, just don't set reverse
+										}
+									}
+								}
+								rm.done();
+		                    }
+		                },
+                    	// Store the fully formed container context so it can be returned to the caller.
+		                new Step() { 
+		                    @Override
+		                    public void execute(RequestMonitor rm) {
+								dataRm.setData(fContainerDmc);
+								
+								rm.done();
+		                    }
+		                },
+		    	};
+		        
+	    		@Override public Step[] getSteps() { return steps; }
+	    	});
 	    } else {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
-            rm.done();
+            dataRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
+            dataRm.done();
 	    }
 	}
 	
@@ -155,6 +266,42 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid context.", null)); //$NON-NLS-1$
             rm.done();
 	    }
+	}
+	
+	@Override
+	protected boolean doIsDebugNewProcessSupported() {
+		// Multi-process is not applicable to post-mortem sessions (core)
+		// or to non-attach remote sessions.
+		SessionType type = fBackend.getSessionType();
+		
+		if (type == SessionType.CORE) {
+			return false;
+		}
+
+		if (type == SessionType.REMOTE && !fBackend.getIsAttachSession()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public void debugNewProcess(IDMContext dmc, String file, 
+			                    Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
+		boolean isInitial = fInitialProcess;
+		if (fInitialProcess) {
+			fInitialProcess = false;
+		} else {
+			// If we are trying to create another process than the initial one, see if we are allowed
+			if (!doIsDebugNewProcessSupported()) {
+		        rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Not allowed to create a new process", null)); //$NON-NLS-1$
+		        rm.done();
+		        return;
+			}
+		}
+		
+		ImmediateExecutor.getInstance().execute(
+				new DebugNewProcessSequence_7_2(getExecutor(), isInitial, dmc, file, attributes, rm));
 	}
 }
 

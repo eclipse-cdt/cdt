@@ -216,13 +216,13 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	}
 	
 	protected final class CheckboxPreference extends ButtonPreference {
-		public CheckboxPreference(Composite composite, int numColumns, Map<String,String> preferences, String key, String[] values, String text) {
+		public CheckboxPreference(Composite composite, int numColumns, Map<String, String> preferences, String key, String[] values, String text) {
 	        super(composite, numColumns, preferences, key, values, text, SWT.CHECK);
         }
 	}
 	
 	protected final class RadioPreference extends ButtonPreference {
-		public RadioPreference(Composite composite, int numColumns, Map<String,String> preferences, String key, String[] values, String text) {
+		public RadioPreference(Composite composite, int numColumns, Map<String, String> preferences, String key, String[] values, String text) {
 	        super(composite, numColumns, preferences, key, values, text, SWT.RADIO);
         }	
 	}
@@ -606,7 +606,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	/**
 	 * The map where the current settings are stored.
 	 */
-	protected Map<String,String> fWorkingValues;
+	protected Map<String, String> fWorkingValues;
 	
 	/**
 	 * The modify dialog where we can display status messages.
@@ -617,7 +617,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	/*
 	 * Create a new <code>ModifyDialogTabPage</code>
 	 */
-	public ModifyDialogTabPage(IModifyDialogTabPage.IModificationListener modifyListener, Map<String,String> workingValues) {
+	public ModifyDialogTabPage(IModifyDialogTabPage.IModificationListener modifyListener, Map<String, String> workingValues) {
 		fWorkingValues= workingValues;
 		fModifyListener= modifyListener;
 		fDefaultFocusManager= new DefaultFocusManager();
@@ -630,7 +630,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setWorkingValues(Map<String,String> workingValues) {
+	public void setWorkingValues(Map<String, String> workingValues) {
 		fWorkingValues= workingValues;
 	}
 	

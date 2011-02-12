@@ -66,19 +66,19 @@ public class LineWrappingTabPage extends FormatterTabPage {
 
 		public int index;
 
-		public Category(String _key, String _previewText, String _name, String _description) {
-			this.key= _key;
-			this.name= _name;
-			this.previewText= _previewText != null ? createPreviewHeader(_name) + _previewText : null;
-			this.description = _description;
+		public Category(String key, String previewText, String name, String description) {
+			this.key= key;
+			this.name= name;
+			this.previewText= previewText != null ? createPreviewHeader(name) + previewText : null;
+			this.description = description;
 			children= new ArrayList<Category>();
 		}
 		
 		/**
-		 * @param _name Category name
+		 * @param name Category name
 		 */
-		public Category(String _name, String _description) {
-		    this(null, null, _name, _description);
+		public Category(String name, String description) {
+		    this(null, null, name, description);
 		}
 		
 		@Override

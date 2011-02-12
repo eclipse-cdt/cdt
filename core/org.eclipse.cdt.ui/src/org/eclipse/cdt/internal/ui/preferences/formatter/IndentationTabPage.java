@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     istvan@benedek-home.de - 103706 [formatter] indent empty lines
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences.formatter;
@@ -24,16 +24,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 
-
 public class IndentationTabPage extends FormatterTabPage {
-	
-	/**
-	 * Constant array for boolean selection 
-	 */
-	private static String[] FALSE_TRUE = {
-		DefaultCodeFormatterConstants.FALSE,
-		DefaultCodeFormatterConstants.TRUE
-	};
 	
 	/**
 	 * Some C++ source code used for preview.

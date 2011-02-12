@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences.formatter;
@@ -34,7 +34,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
 import org.eclipse.cdt.internal.ui.util.Messages;
-
 
 /**
  * The model for the set of profiles which are available in the workbench.
@@ -450,7 +449,7 @@ public abstract class ProfileManager extends Observable {
 		String profileId= instanceScope.getNode(CUIPlugin.PLUGIN_ID).get(fProfileKey, null);
 		if (profileId == null) {
 			// request from bug 129427
-			profileId= new DefaultScope().getNode(CUIPlugin.PLUGIN_ID).get(fProfileKey, null);
+			profileId= DefaultScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID).get(fProfileKey, null);
 		}
 	    return profileId;
     }
@@ -545,7 +544,6 @@ public abstract class ProfileManager extends Observable {
 		} catch (BackingStoreException e) {
 			// ignore
 		}
-		
 	}
 
 	private boolean updatePreferences(IEclipsePreferences prefs, List<String> keys, Map<String,String> profileOptions) {
@@ -566,7 +564,6 @@ public abstract class ProfileManager extends Observable {
 		}
 		return hasChanges;
 	}
-	
 	
 	/**
 	 * Update all formatter settings with the settings of the specified profile. 
@@ -770,7 +767,6 @@ public abstract class ProfileManager extends Observable {
 		
 		notifyObservers(SETTINGS_CHANGED_EVENT);
 	}
-	
 	
 	private void updateProfilesWithName(String oldName, Profile newProfile, boolean applySettings) {
 		IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();

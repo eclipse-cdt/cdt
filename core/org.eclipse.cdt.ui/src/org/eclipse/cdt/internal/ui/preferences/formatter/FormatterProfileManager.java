@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
 
 public class FormatterProfileManager extends ProfileManager {
-	
 	private static final List<String> EMPTY_LIST = Collections.emptyList();
 
 	public final static String KANDR_PROFILE= "org.eclipse.cdt.ui.default.kandr_profile"; //$NON-NLS-1$
@@ -63,7 +62,7 @@ public class FormatterProfileManager extends ProfileManager {
 
 		// Add the Profiles which are at default scope and hence are contributed by a product.
     	try {
-    	    List<Profile> defaultProfiles= new FormatterProfileStore(profileVersioner).readProfiles(new DefaultScope());
+    	    List<Profile> defaultProfiles= new FormatterProfileStore(profileVersioner).readProfiles(DefaultScope.INSTANCE);
     	    if (defaultProfiles != null) {
     	    	Map<String, Profile> profMap= new LinkedHashMap<String, Profile>();
     	    	// Add the already loaded / created profiles to a map 
@@ -125,7 +124,7 @@ public class FormatterProfileManager extends ProfileManager {
 		String profileId= instanceScope.getNode(CUIPlugin.PLUGIN_ID).get(PROFILE_KEY, null);
 		if (profileId == null) {
 			// request from bug 129427
-			profileId= new DefaultScope().getNode(CUIPlugin.PLUGIN_ID).get(PROFILE_KEY, null);
+			profileId= DefaultScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID).get(PROFILE_KEY, null);
 			// fix for bug 89739
 //			if (DEFAULT_PROFILE.equals(profileId)) { // default default: 
 //				IEclipsePreferences node= instanceScope.getNode(CCorePlugin.PLUGIN_ID);
@@ -150,5 +149,4 @@ public class FormatterProfileManager extends ProfileManager {
     		return p;
 	    return getProfile(DEFAULT_PROFILE);
     }
-    
 }

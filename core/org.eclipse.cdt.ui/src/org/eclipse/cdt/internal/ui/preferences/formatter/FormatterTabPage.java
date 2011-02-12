@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
@@ -35,6 +36,13 @@ public abstract class FormatterTabPage extends ModifyDialogTabPage {
      */
     protected static String[] TRUE_FALSE= { DefaultCodeFormatterConstants.TRUE, DefaultCodeFormatterConstants.FALSE };
 
+    /**
+     * Constant array for boolean true/false selection.
+     * 
+     * @since 5.3
+     */
+    protected static String[] FALSE_TRUE= { DefaultCodeFormatterConstants.FALSE, DefaultCodeFormatterConstants.TRUE };
+
 	/**
 	 * Constant array for insert / not_insert.
 	 */
@@ -44,9 +52,9 @@ public abstract class FormatterTabPage extends ModifyDialogTabPage {
 	private final IDialogSettings fDialogSettings;
 	private Button fShowInvisibleButton;
 
-	public FormatterTabPage(IModifyDialogTabPage.IModificationListener modifyListener, Map<String, String> workingValues) {
+	public FormatterTabPage(IModifyDialogTabPage.IModificationListener modifyListener,
+			Map<String, String> workingValues) {
 		super(modifyListener, workingValues);
-		
 		fDialogSettings= CUIPlugin.getDefault().getDialogSettings();
 	}
 

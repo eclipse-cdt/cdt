@@ -24,14 +24,6 @@ import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 public class BracesTabPage extends FormatterTabPage {
 	
 	/**
-	 * Constant array for boolean selection 
-	 */
-	private static String[] FALSE_TRUE = {
-		DefaultCodeFormatterConstants.FALSE,
-		DefaultCodeFormatterConstants.TRUE
-	};	
-	
-	/**
 	 * Some C++ source code used for preview.
 	 */
 	private final static String PREVIEW=

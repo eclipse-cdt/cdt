@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Christian Walther (Indel AG) - [335344] test for changing language IDs
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
@@ -60,9 +61,36 @@ public class TestExtSettingsProvider extends CExternalSettingProvider {
 		})
 	};
 
+	private static CExternalSetting[] SETTINGS_3 = new CExternalSetting[]{
+		new CExternalSetting(
+				new String[]{
+						"org.eclipse.cdt.core.assembly"
+				},
+				null, null,
+				new ICSettingEntry[]{
+						new CMacroEntry("m_c", "mv_c", 0)
+				}
+		)
+	};
+	
+	private static CExternalSetting[] SETTINGS_4 = new CExternalSetting[]{
+		new CExternalSetting(
+				new String[]{
+						"org.eclipse.cdt.core.assembly",
+						"org.eclipse.cdt.core.gcc"
+				},
+				null, null,
+				new ICSettingEntry[]{
+						new CMacroEntry("m_c", "mv_c", 0)
+				}
+		)
+	};
+
 	public static final CExternalSetting[][] SETTINGS_VARIANTS = new CExternalSetting[][]{
 								SETTINGS_1, 
-								SETTINGS_2};
+								SETTINGS_2,
+								SETTINGS_3,
+								SETTINGS_4};
 
 	private static int variantNum;
 	

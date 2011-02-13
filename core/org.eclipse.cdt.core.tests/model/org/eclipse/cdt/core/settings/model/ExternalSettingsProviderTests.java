@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,12 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * James Blackburn (Broadcom Corp.)
+ * Christian Walther (Indel AG) - [335344] test for changing language IDs
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
 import java.util.Arrays;
-
+import java.util.HashMap;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -28,7 +29,7 @@ import org.eclipse.core.runtime.Path;
 
 public class ExternalSettingsProviderTests extends BaseTestCase{
 	private static final String PROJ_NAME_PREFIX = "espt_";
-	ICProject p1, p2, p3, p4;
+	ICProject p1, p2, p3, p4, p5;
 	
 	public static TestSuite suite() {
 		return suite(ExternalSettingsProviderTests.class, "_");
@@ -39,6 +40,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		p2 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "b", IPDOMManager.ID_NO_INDEXER);
 		p3 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "c", IPDOMManager.ID_NO_INDEXER);
 		p4 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "d", IPDOMManager.ID_NO_INDEXER);
+		p5 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "e", IPDOMManager.ID_NO_INDEXER);
 	}
 	
 	/**
@@ -350,6 +352,79 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		return out;
 	}
 
+	/**
+	 * Test if changing only the language IDs of an external setting works
+	 */
+	public void testChangeLanguageSet() throws CoreException {
+		TestExtSettingsProvider.setVariantNum(2);
+
+		CoreModel model = CoreModel.getDefault();
+		ICProjectDescriptionManager mngr = model.getProjectDescriptionManager();
+		IProject project = p5.getProject();
+		
+		// add external settings provider
+		ICProjectDescription des = model.getProjectDescription(project);
+		ICConfigurationDescription cfgDes = des.getConfigurations()[0];
+		String[] extPIds = new String[]{TestExtSettingsProvider.TEST_EXTERNAL_PROVIDER_ID};
+		cfgDes.setExternalSettingsProviderIds(extPIds);
+		model.setProjectDescription(project, des);
+		
+		// read out the settings it caused
+		des = model.getProjectDescription(project, false);
+		cfgDes = des.getConfigurations()[0];
+		ICFolderDescription root = cfgDes.getRootFolderDescription();
+		HashMap<String, ICLanguageSetting> languageSettingsById = new HashMap<String, ICLanguageSetting>();
+		for (ICLanguageSetting s: root.getLanguageSettings()) {
+			languageSettingsById.put(s.getLanguageId(), s);
+		}
+		
+		ICLanguageSetting ls;
+		ICLanguageSettingEntry[] entries;
+		ICLanguageSettingEntry[] expectedEntriesSet = new ICLanguageSettingEntry[]{
+				new CMacroEntry("m_c", "mv_c", 0)
+		};
+		ICLanguageSettingEntry[] expectedEntriesUnset = new ICLanguageSettingEntry[] {};
+		
+		// setting should be present for assembly but not for C
+		ls = languageSettingsById.get("org.eclipse.cdt.core.assembly");
+		assertNotNull(ls);
+		entries = ls.getSettingEntries(ICSettingEntry.MACRO);
+		assertEquals(1, entries.length);
+		assertTrue(Arrays.equals(expectedEntriesSet, entries));
+		
+		ls = languageSettingsById.get("org.eclipse.cdt.core.gcc");
+		assertNotNull(ls);
+		entries = ls.getSettingEntries(ICSettingEntry.MACRO);
+		assertEquals(0, entries.length);
+		assertTrue(Arrays.equals(expectedEntriesUnset, entries));
+		
+		// update settings provider
+		TestExtSettingsProvider.setVariantNum(3);
+		mngr.updateExternalSettingsProviders(extPIds, null);
+		
+		// read out the settings it caused
+		des = model.getProjectDescription(project, false);
+		cfgDes = des.getConfigurations()[0];
+		root = cfgDes.getRootFolderDescription();
+		languageSettingsById = new HashMap<String, ICLanguageSetting>();
+		for (ICLanguageSetting s: root.getLanguageSettings()) {
+			languageSettingsById.put(s.getLanguageId(), s);
+		}
+		
+		// setting should be present for both now
+		ls = languageSettingsById.get("org.eclipse.cdt.core.gcc");
+		assertNotNull(ls);
+		entries = ls.getSettingEntries(ICSettingEntry.MACRO);
+		assertEquals(1, entries.length);
+		assertTrue(Arrays.equals(expectedEntriesSet, entries));
+		
+		ls = languageSettingsById.get("org.eclipse.cdt.core.assembly");
+		assertNotNull(ls);
+		entries = ls.getSettingEntries(ICSettingEntry.MACRO);
+		assertEquals(1, entries.length);
+		assertTrue(Arrays.equals(expectedEntriesSet, entries));
+	}
+
 	protected void tearDown() throws Exception {
 		try {
 			p1.getProject().delete(true, null);
@@ -365,6 +440,10 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		}
 		try {
 			p4.getProject().delete(true, null);
+		} catch (CoreException e){
+		}
+		try {
+			p5.getProject().delete(true, null);
 		} catch (CoreException e){
 		}
 	}

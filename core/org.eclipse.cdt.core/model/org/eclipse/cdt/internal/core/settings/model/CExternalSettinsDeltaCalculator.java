@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Christian Walther (Indel AG) - [335344] changing language IDs
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -15,10 +16,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICExternalSetting;
@@ -232,7 +234,7 @@ class CExternalSettinsDeltaCalculator {
 		if(oldSettings == null || oldSettings.length == 0)
 			return createDeltas(newSettings, true);
 
-		List<ExtSettingsDelta> deltaList = new ArrayList<ExtSettingsDelta>();
+		LinkedList<ExtSettingsDelta> deltaList = new LinkedList<ExtSettingsDelta>();
 
 		Map<ExtSettingMapKey, ICExternalSetting> newMap= toSettingsKeyMap(newSettings);
 		Map<ExtSettingMapKey, ICExternalSetting> oldMap = toSettingsKeyMap(oldSettings);
@@ -240,16 +242,20 @@ class CExternalSettinsDeltaCalculator {
 			CExternalSetting newSetting = (CExternalSetting)entry.getValue();
 			CExternalSetting oldSetting = (CExternalSetting)oldMap.remove(entry.getKey());
 			if(oldSetting == null){
-				deltaList.add(new ExtSettingsDelta(newSetting, true));
+				deltaList.addLast(new ExtSettingsDelta(newSetting, true));
 			} else {
 				ExtSettingsDelta delta = createDelta(newSetting, oldSetting);
 				if(delta != null)
-					deltaList.add(delta);
+					deltaList.addLast(delta);
 			}
 		}
 
 		for (ICExternalSetting oldSettng : oldMap.values()) {
-			deltaList.add(new ExtSettingsDelta((CExternalSetting)oldSettng, false));
+			// removals must be prepended to the list so that they are applied before additions,
+			// otherwise a setting that was just added might be immediately removed again in
+			// CExternalSettingsDeltaProcessor.applyDelta(ICLanguageSetting, ExtSettingsDelta[], int)
+			// if the old and new setting only differ in their language sets and these overlap
+			deltaList.addFirst(new ExtSettingsDelta((CExternalSetting)oldSettng, false));
 		}
 
 		if(deltaList.size() == 0)

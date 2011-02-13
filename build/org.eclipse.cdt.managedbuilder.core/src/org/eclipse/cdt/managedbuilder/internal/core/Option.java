@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2010 IBM Corporation and others.
+ *  Copyright (c) 2003, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM - Initial API and implementation
  *     ARM Ltd. - basic tooltip support
+ *     Petri Tuononen - [321040] Get Library Search Paths
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -1387,7 +1388,6 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 	}
 
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getLibraryFiles()
 	 */
@@ -1405,6 +1405,23 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getLibraryPaths()
+	 */
+	public String[] getLibraryPaths() throws BuildException {
+		if (getValueType() != LIBRARY_PATHS) {
+			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
+		@SuppressWarnings("unchecked")
+		ArrayList<String> v = (ArrayList<String>)getValue();
+		if (v == null) {
+			return EMPTY_STRING_ARRAY;
+		} else {
+			v.trimToSize();
+			return v.toArray(new String[v.size()]);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getDefaultEnumValue()
 	 */

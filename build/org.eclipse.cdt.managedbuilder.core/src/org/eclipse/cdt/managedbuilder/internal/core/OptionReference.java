@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     ARM Ltd. - basic tooltip support
+ *     Petri Tuononen - [321040] Get Library Search Paths
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -455,6 +456,21 @@ public class OptionReference implements IOption {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getLibraryPaths()
+	 */
+	public String[] getLibraryPaths() throws BuildException {
+		if (value == null)
+			return option.getLibraryPaths();
+		else if (getValueType() == LIBRARY_PATHS) {
+			@SuppressWarnings("unchecked")
+			ArrayList<String> list = (ArrayList<String>)value;
+			return list.toArray(new String[list.size()]);
+		}
+		else
+			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getName()
 	 */

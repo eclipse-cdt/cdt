@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM - Initial API and implementation
  *     ARM Ltd. - basic tooltip support
  *     James Blackburn (Broadcom Corp.)
+ *     Petri Tuononen - [321040] Get Library Search Paths
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
@@ -340,8 +341,17 @@ public interface IOption extends IBuildObject {
 	 * 
 	 * @since 7.0
 	 */
-	public String[] getLibraryFiles() throws BuildException ;
-	
+	public String[] getLibraryFiles() throws BuildException;
+
+	/**
+	 * @return an array or <code>String</code>s containing the library paths
+	 * passed to the linker.
+	 *
+	 * @throws BuildException if the option isn't of type IOption#LIBRARY_PATHS
+	 * @since 8.0
+	 */
+	public String[] getLibraryPaths() throws BuildException;
+
 	/**
 	 * @return a <code>String</code> containing the unique ID of the selected 
 	 * enumeration in an enumerated option. For an option that has not been 

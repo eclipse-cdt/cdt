@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     IBM Corporation
  *     Anton Leherbauer (Wind River Systems)
  *     Warren Paul (Nokia) - Bug 218266
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -704,7 +705,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		ICProject cProject = getCProject();
 		IProject project= cProject.getProject();
 		
-		ICProjectDescription description = CoreModel.getDefault().getProjectDescription(project, true);
+		ICProjectDescription description = CoreModel.getDefault().getProjectDescription(project, false);
 		ICConfigurationDescription configuration;
 		
 		if (description == null) {

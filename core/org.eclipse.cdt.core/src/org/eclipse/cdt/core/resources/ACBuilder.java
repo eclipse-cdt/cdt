@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     IBM Corporation
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.core.resources;
 
@@ -166,7 +167,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	@SuppressWarnings("nls")
 	private String cfgIdToNames(String strIds) {
 		IProject project = getProject();
-		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project, false);
 		if (prjDesc==null)
 			return strIds;
 		

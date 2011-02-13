@@ -1293,8 +1293,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 //		}
 
 		// Get all the projects the build target depends on
-//		IProject[] refdProjects = null;
-		IConfiguration[] refConfigs = ManagedBuildManager.getReferencedConfigurations(config);
+		// If this configuration produces a static archive, building the archive doesn't depend on the output
+		// from any of the referenced configurations
+		IConfiguration[] refConfigs = new IConfiguration[0];
+		if (!ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_STATICLIB.equals(config.getBuildArtefactType().getId()))
+			refConfigs = ManagedBuildManager.getReferencedConfigurations(config);
+
 /*		try {
 			refdProjects = project.getReferencedProjects();
 		} catch (CoreException e) {

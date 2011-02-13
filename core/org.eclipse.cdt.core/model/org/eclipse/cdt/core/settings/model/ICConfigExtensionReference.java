@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,10 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Kirk Beitz (Nokia) - [323094] documentation warnings
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.CoreException;
  * project configuration.  Like ICExtensionReference
  * but has knowledge of its ICConfigurationDescription
  * 
- * @see ICExtensionReference
+ * deprecated-@see ICExtensionReference
  */
 public interface ICConfigExtensionReference {
     /**

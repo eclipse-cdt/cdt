@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,10 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * James Blackburn (Broadcom Corp.)
+ * Kirk Beitz (Nokia) - [323094] documentation warnings
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
 import org.eclipse.core.runtime.CoreException;
@@ -34,14 +34,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * (.cproject) a relational database (.cprojectdb) or any other format of the extenders choosing.
  * <br /><br />
  * These capabilities are used by the build system for persisting build configuration data
- * as well as by the CoreModel {@link ICDescriptor} storage trees. See
+ * as well as by the CoreModel {@link ICConfigurationDescription} storage trees. See
  * {@link CConfigurationDataProvider#loadConfiguration(ICConfigurationDescription, IProgressMonitor)}
  * and {@link CConfigurationDataProvider#applyConfiguration(ICConfigurationDescription, ICConfigurationDescription, CConfigurationData, IProgressMonitor)}
  *
  * @see ICStorageElement
  * @see ICProjectDescription
  * @see ICConfigurationDescription
- * @see ICDescriptor
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -57,12 +56,6 @@ public interface ICSettingsStorage {
 	 * @see {@link ICStorageElement}
 	 */
 	ICStorageElement getStorage(String id, boolean create) throws CoreException;
-
-	/**
-	 * Return a Map of StorageID -> ICStorageElement
-	 * @return
-	 */
-//	Map<String, ICStorageElement> getStorages();
 
 	/**
 	 * Remove the storage module with the given ID from this ICSettingsStorage

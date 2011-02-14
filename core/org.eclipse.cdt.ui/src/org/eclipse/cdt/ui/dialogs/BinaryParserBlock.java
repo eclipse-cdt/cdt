@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICDescriptorOperation;
-import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
@@ -287,9 +287,9 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 		if (getContainer().getProject() != null) {
 			try {
-				ICExtensionReference[] ref = CCorePlugin.getDefault().getBinaryParserExtensions(getContainer().getProject()); 
+				ICConfigExtensionReference[] ref = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(getContainer().getProject()); 
 				initialSelected = new ArrayList<BinaryParserConfiguration>(ref.length);
-				for (ICExtensionReference element : ref) {
+				for (ICConfigExtensionReference element : ref) {
 					if (configMap.get(element.getID()) != null) {
 						initialSelected.add(configMap.get(element.getID()));
 						elements.add(configMap.get(element.getID()));

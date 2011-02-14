@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
@@ -71,8 +73,15 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 		monitor.beginTask(CUIMessages.BinaryParserPage_task_savingAttributes, 1); 
 		IProject proj = getContainer().getProject();
 		if (proj != null) {
-			ICExtensionReference[] cext = CCorePlugin.getDefault().getBinaryParserExtensions(proj);
-			if (cext.length > 0) {
+			ICConfigExtensionReference[] cext = null;
+			ICProjectDescription desc = CCorePlugin.getDefault().getProjectDescription(proj, true);
+			if (desc != null) {
+				ICConfigurationDescription cfgDesc = desc.getDefaultSettingConfiguration();
+				if (cfgDesc != null) {
+					cext = cfgDesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+				}
+			}
+			if (cext != null && cext.length > 0) {
 				initializeParserId();
 				for (int i = 0; i < cext.length; i++) {
 					if (cext[i].getID().equals(parserID)) {
@@ -86,6 +95,7 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 						}
 					}
 				}
+				CCorePlugin.getDefault().setProjectDescription(proj, desc);
 			}
 		} else {
 			Preferences store = getContainer().getPreferences();
@@ -243,7 +253,7 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 		IProject proj = getContainer().getProject();
 		if (proj != null) {
 			try {
-				ICExtensionReference[] cext = CCorePlugin.getDefault().getBinaryParserExtensions(proj);
+				ICConfigExtensionReference[] cext = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(proj);
 				if (cext.length > 0) {
 					initializeParserId();
 					for (int i = 0; i < cext.length; i++) {

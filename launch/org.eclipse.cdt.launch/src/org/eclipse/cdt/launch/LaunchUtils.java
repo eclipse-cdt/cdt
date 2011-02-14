@@ -19,8 +19,9 @@ import java.util.Set;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
-import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -102,10 +103,10 @@ public class LaunchUtils {
 	 * @since 6.0
 	 */
 	public static IBinaryObject getBinary(IProject project, IPath exePath) throws CoreException {
-		ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(project);
+		ICConfigExtensionReference[] parserRef = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(project);
 		for (int i = 0; i < parserRef.length; i++) {
 			try {
-				IBinaryParser parser = (IBinaryParser)parserRef[i].createExtension();
+				IBinaryParser parser = CoreModelUtil.getBinaryParser(parserRef[i]);
 				IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);				
 				if (exe != null) {
 					return exe;

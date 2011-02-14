@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2010, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,12 +27,13 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
-import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -137,10 +138,10 @@ public class LaunchUtils {
 	 * @return An object representing the binary file. 
 	 */
 	public static IBinaryObject verifyBinary(ILaunchConfiguration configuration, IPath exePath) throws CoreException {
-		ICExtensionReference[] parserRefs = CCorePlugin.getDefault().getBinaryParserExtensions(getCProject(configuration).getProject());
-		for (ICExtensionReference parserRef : parserRefs) {
+		ICConfigExtensionReference[] parserRefs = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(getCProject(configuration).getProject());
+		for (ICConfigExtensionReference parserRef : parserRefs) {
 			try {
-				IBinaryParser parser = (IBinaryParser)parserRef.createExtension();
+				IBinaryParser parser = CoreModelUtil.getBinaryParser(parserRef);
 				IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
 				if (exe != null) {
 					return exe;

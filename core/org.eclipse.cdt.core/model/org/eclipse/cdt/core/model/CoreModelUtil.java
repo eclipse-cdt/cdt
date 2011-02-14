@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,17 +18,21 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
+import org.eclipse.cdt.internal.core.model.BinaryParserConfig;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -790,5 +794,17 @@ public class CoreModelUtil {
 		for (ICConfigurationDescription cfg : cfgs) {
 			cfg.getTargetPlatformSetting().setBinaryParserIds(pids);
 		}
+	}
+	
+	/**
+	 * Instantiate binary parser for given extension reference.
+	 * 
+	 * @param ref  binary parser extension reference
+	 * @return a binary parser instance
+	 * @throws CoreException  if the parser could not be created
+	 * @since 5.3
+	 */
+	public static IBinaryParser getBinaryParser(ICConfigExtensionReference ref) throws CoreException {
+		return new BinaryParserConfig(ref).getBinaryParser();
 	}
 }

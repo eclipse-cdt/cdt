@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
-import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.DialogField;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.IDialogFieldListener;
@@ -500,7 +501,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			dialog.setTitle(LaunchUIMessages.getString("SolibSearchPathBlock.7")); //$NON-NLS-1$
 			dialog.setMessage(LaunchUIMessages.getString("SolibSearchPathBlock.8")); //$NON-NLS-1$
 			dialog.setEmptyListMessage(LaunchUIMessages.getString("SolibSearchPathBlock.9")); //$NON-NLS-1$
-			dialog.setSorter(new ViewerSorter());
+			dialog.setComparator(new ViewerSorter());
 			dialog.setInput(libs);
 			dialog.setInitialElementSelections(Arrays.asList(fAutoSolibs));
 			if (dialog.open() == Window.OK) {
@@ -555,9 +556,9 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		if (project != null) {
 			IPath fullPath = new Path(file.getPath());
 			try {
-				ICExtensionReference[] binaryParsersExt = CCorePlugin.getDefault().getBinaryParserExtensions(project);
+				ICConfigExtensionReference[] binaryParsersExt = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(project);
 				for(int i = 0; i < binaryParsersExt.length; i++) {
-					IBinaryParser parser = (IBinaryParser)binaryParsersExt[i].createExtension();
+					IBinaryParser parser = CoreModelUtil.getBinaryParser(binaryParsersExt[i]);
 					try {
 						IBinaryFile bin = parser.getBinary(fullPath);
 						if (bin instanceof IBinaryShared) {
@@ -589,9 +590,9 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		if (project != null) {
 			IPath fullPath = new Path(file.getPath());
 			try {
-				ICExtensionReference[] binaryParsersExt = CCorePlugin.getDefault().getBinaryParserExtensions(project);
+				ICConfigExtensionReference[] binaryParsersExt = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(project);
 				for(int i = 0; i < binaryParsersExt.length; i++) {
-					IBinaryParser parser = (IBinaryParser)binaryParsersExt[i].createExtension();
+					IBinaryParser parser = CoreModelUtil.getBinaryParser(binaryParsersExt[i]);
 					try {
 						IBinaryFile bin = parser.getBinary(fullPath);
 						return (bin instanceof IBinaryShared);

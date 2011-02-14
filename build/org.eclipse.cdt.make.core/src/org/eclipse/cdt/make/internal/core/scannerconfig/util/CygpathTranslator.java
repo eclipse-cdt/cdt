@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,8 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.utils.CygPath;
 import org.eclipse.cdt.utils.ICygwinToolsFactroy;
 import org.eclipse.core.resources.IProject;
@@ -43,10 +44,10 @@ public class CygpathTranslator {
     
     public CygpathTranslator(IProject project) {
         try {
-            ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(project);
+            ICConfigExtensionReference[] parserRef = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(project);
             for (int i = 0; i < parserRef.length; i++) {
                 try {
-                    IBinaryParser parser = (IBinaryParser)parserRef[i].createExtension();
+                    IBinaryParser parser = CoreModelUtil.getBinaryParser(parserRef[i]);
                     ICygwinToolsFactroy cygwinToolFactory = (ICygwinToolsFactroy) parser.getAdapter(ICygwinToolsFactroy.class);
                     if (cygwinToolFactory != null) {
                         cygPath = cygwinToolFactory.getCygPath();

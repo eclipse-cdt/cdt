@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,10 +21,11 @@ import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
@@ -729,9 +730,9 @@ public class CDIDebugModel {
 
 	private static IBinaryExecutable getBinary( IFile file ) throws CoreException {
 		IProject project = file.getProject();
-		ICExtensionReference[] binaryParsersExt = CCorePlugin.getDefault().getBinaryParserExtensions( project );
+		ICConfigExtensionReference[] binaryParsersExt = CCorePlugin.getDefault().getDefaultBinaryParserExtensions( project );
 		for( int i = 0; i < binaryParsersExt.length; i++ ) {
-			IBinaryParser parser = (IBinaryParser)binaryParsersExt[i].createExtension();
+			IBinaryParser parser = CoreModelUtil.getBinaryParser(binaryParsersExt[i]);
 			try {
 				IBinaryFile exe = parser.getBinary( file.getLocation() );
 				if ( exe instanceof IBinaryExecutable ) {

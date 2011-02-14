@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2008, 2011 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
@@ -114,15 +114,17 @@ class ProjectMap {
 	
 	private static Map<IPath, String> load(IProject project) throws CoreException {
 		Map<IPath, String> result= new HashMap<IPath, String>();
-		ICDescriptor pd= CCorePlugin.getDefault().getCProjectDescription(project, true);
-		ICStorageElement e = pd.getProjectStorageElement(ATTRVAL_STORAGEID);
-		for (ICStorageElement node : e.getChildrenByName(ELEMENT_DOC_COMMENT_OWNER)) {
-			String commentOwnerID = node.getAttribute(ATTRKEY_DCO_ID);
-			if(commentOwnerID != null) {
-				for (ICStorageElement path : node.getChildrenByName(ELEMENT_PATH)) {
-					String pathValue= path.getAttribute(ATTRKEY_PATH_VALUE);
-					if(pathValue != null) {
-						result.put(Path.fromPortableString(pathValue), commentOwnerID);
+		ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(project, false);
+		ICStorageElement e = pd.getStorage(ATTRVAL_STORAGEID, false);
+		if (e != null) {
+			for (ICStorageElement node : e.getChildrenByName(ELEMENT_DOC_COMMENT_OWNER)) {
+				String commentOwnerID = node.getAttribute(ATTRKEY_DCO_ID);
+				if(commentOwnerID != null) {
+					for (ICStorageElement path : node.getChildrenByName(ELEMENT_PATH)) {
+						String pathValue= path.getAttribute(ATTRKEY_PATH_VALUE);
+						if(pathValue != null) {
+							result.put(Path.fromPortableString(pathValue), commentOwnerID);
+						}
 					}
 				}
 			}
@@ -134,10 +136,10 @@ class ProjectMap {
 	 * Write the map to the .cproject file
 	 */
 	public void save() throws CoreException {
-		ICDescriptor pd= CCorePlugin.getDefault().getCProjectDescription(fProject, true);
+		ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(fProject, true);
 
 		// remove current associations
-		ICStorageElement data = pd.getProjectStorageElement(ATTRVAL_STORAGEID);
+		ICStorageElement data = pd.getStorage(ATTRVAL_STORAGEID, true);
 		for (ICStorageElement child : data.getChildren())
 			data.removeChild(child);
 
@@ -155,6 +157,6 @@ class ProjectMap {
 				}
 			}
 		}
-		pd.saveProjectData();
+		CCorePlugin.getDefault().setProjectDescription(fProject, pd);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2009 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -16,8 +16,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -31,14 +31,17 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
 import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -72,8 +75,8 @@ public class LanguageMappingStore {
 
 	public ProjectLanguageConfiguration decodeMappings(IProject project) throws CoreException {
 		ProjectLanguageConfiguration config = new ProjectLanguageConfiguration();
-		ICDescriptor descriptor = getProjectDescription(project);
-		ICStorageElement rootElement = descriptor.getProjectStorageElement(LANGUAGE_MAPPING_ID);
+		ICProjectDescription descriptor = getProjectDescription(project, false);
+		ICStorageElement rootElement = descriptor.getStorage(LANGUAGE_MAPPING_ID, false);
 		if (rootElement == null) {
 			return config;
 		}
@@ -106,8 +109,8 @@ public class LanguageMappingStore {
 		return decodedMappings;
 	}
 
-	protected ICDescriptor getProjectDescription(IProject project) throws CoreException {
-		return CCorePlugin.getDefault().getCProjectDescription(project, true);
+	protected ICProjectDescription getProjectDescription(IProject project, boolean write) throws CoreException {
+		return CCorePlugin.getDefault().getProjectDescription(project, write);
 	}
 
 	private Map<String, String> decodeContentTypeMappings(Element rootElement) throws CoreException {
@@ -146,8 +149,8 @@ public class LanguageMappingStore {
 	}
 
 	public void storeMappings(IProject project, ProjectLanguageConfiguration config) throws CoreException {
-		ICDescriptor descriptor = getProjectDescription(project);
-		ICStorageElement rootElement = descriptor.getProjectStorageElement(LANGUAGE_MAPPING_ID);
+		ICProjectDescription descriptor = getProjectDescription(project, true);
+		ICStorageElement rootElement = descriptor.getStorage(LANGUAGE_MAPPING_ID, true);
 		// clear all children and settings
 		rootElement.clear();
 
@@ -155,7 +158,7 @@ public class LanguageMappingStore {
 
 		addProjectContentTypeMappings(config.getContentTypeMappings(), projectMappings);
 		addFileMappings(config.getFileMappings(), projectMappings);
-		descriptor.saveProjectData();
+		CCorePlugin.getDefault().setProjectDescription(project, descriptor);
 	}
 
 	private void addProjectContentTypeMappings(Map<String, Map<String, String>> contentTypeMappings, ICStorageElement rootElement) {
@@ -192,19 +195,25 @@ public class LanguageMappingStore {
 			serializer.transform(source, result);
 			String encodedMappings = buffer.getBuffer().toString();
 
-			Preferences node = CCorePlugin.getDefault().getPluginPreferences();
-			node.setValue(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS, encodedMappings);
-			CCorePlugin.getDefault().savePluginPreferences();
+			IEclipsePreferences node = new InstanceScope().getNode(CCorePlugin.PLUGIN_ID);
+			node.put(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS, encodedMappings);
+			node.flush();
 		} catch (ParserConfigurationException e) {
 			throw new CoreException(Util.createStatus(e));
 		} catch (TransformerException e) {
+			throw new CoreException(Util.createStatus(e));
+		} catch (BackingStoreException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
 	}
 
 	public WorkspaceLanguageConfiguration decodeWorkspaceMappings() throws CoreException {
-		Preferences node = CCorePlugin.getDefault().getPluginPreferences();
-		String encodedMappings = node.getString(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS);
+		IEclipsePreferences node = new InstanceScope().getNode(CCorePlugin.PLUGIN_ID);
+		IEclipsePreferences defaultNode = new DefaultScope().getNode(CCorePlugin.PLUGIN_ID);
+		String encodedMappings = defaultNode.get(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS, null);
+		if (encodedMappings == null) {
+			encodedMappings = node.get(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS, null);
+		}
 		WorkspaceLanguageConfiguration config = new WorkspaceLanguageConfiguration();
 
 		if (encodedMappings == null || encodedMappings.length() == 0) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
-import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.core.MICoreUtils;
@@ -94,6 +95,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			super( parentShell );
 		}
 
+		@Override
 		protected Control createDialogArea( Composite parent ) {
 			Composite composite = (Composite)super.createDialogArea( parent );
 
@@ -119,6 +121,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			fBrowseButton.setLayoutData( data );
 			fBrowseButton.addSelectionListener( new SelectionAdapter() {
 
+				@Override
 				public void widgetSelected( SelectionEvent evt ) {
 					DirectoryDialog dialog = new DirectoryDialog( AddDirectoryDialog.this.getShell() );
 					dialog.setMessage( MIUIMessages.getString( "SolibSearchPathBlock.5" ) ); //$NON-NLS-1$
@@ -133,6 +136,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			return composite;
 		}
 
+		@Override
 		protected void configureShell( Shell newShell ) {
 			super.configureShell( newShell );
 			newShell.setText( MIUIMessages.getString( "SolibSearchPathBlock.Add_Directory" ) ); //$NON-NLS-1$
@@ -146,6 +150,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			fValue = ( value != null ) ? new Path( value ) : null;
 		}
 
+		@Override
 		protected void buttonPressed( int buttonId ) {
 			if ( buttonId == IDialogConstants.OK_ID ) {
 				setValue( fText.getText() );
@@ -166,6 +171,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			return ( text.trim().length() > 0 );
 		}
 
+		@Override
 		protected Control createButtonBar( Composite parent ) {
 			Control control = super.createButtonBar( parent );
 			updateOKButton();
@@ -184,6 +190,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.internal.ui.dialogfields.ListDialogField#managedButtonPressed(int)
 		 */
+		@Override
 		protected boolean managedButtonPressed( int index ) {
 			boolean result = super.managedButtonPressed( index );
 			if ( result )
@@ -194,6 +201,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.mi.internal.ui.dialogfields.ListDialogField#getManagedButtonState(org.eclipse.jface.viewers.ISelection, int)
 		 */
+		@Override
 		protected boolean getManagedButtonState( ISelection sel, int index ) {
 			if ( index > 3 )
 				return getButtonState( sel, index );
@@ -244,6 +252,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			}
 		};
 		ILabelProvider lp = new LabelProvider() {
+			@Override
 			public String getText( Object element ) {
 				if ( element instanceof IPath )
 					return ((IPath)element).toOSString();
@@ -464,6 +473,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	
 			LabelProvider lp = new LabelProvider() {
 	
+				@Override
 				public String getText( Object element ) {
 					if ( element instanceof File )
 						return ((File)element).getName();
@@ -529,9 +539,9 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		if ( project != null ) {
 			IPath fullPath = new Path( file.getPath() );
 			try {
-				ICExtensionReference[] binaryParsersExt = CCorePlugin.getDefault().getBinaryParserExtensions( project );
+				ICConfigExtensionReference[] binaryParsersExt = CCorePlugin.getDefault().getDefaultBinaryParserExtensions( project );
 				for( int i = 0; i < binaryParsersExt.length; i++ ) {
-					IBinaryParser parser = (IBinaryParser)binaryParsersExt[i].createExtension();
+					IBinaryParser parser = CoreModelUtil.getBinaryParser(binaryParsersExt[i]);
 					try {
 						IBinaryFile bin = parser.getBinary( fullPath );
 						if ( bin instanceof IBinaryShared ) {
@@ -563,9 +573,9 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		if ( project != null ) {
 			IPath fullPath = new Path( file.getPath() );
 			try {
-				ICExtensionReference[] binaryParsersExt = CCorePlugin.getDefault().getBinaryParserExtensions( project );
+				ICConfigExtensionReference[] binaryParsersExt = CCorePlugin.getDefault().getDefaultBinaryParserExtensions( project );
 				for( int i = 0; i < binaryParsersExt.length; i++ ) {
-					IBinaryParser parser = (IBinaryParser)binaryParsersExt[i].createExtension();
+					IBinaryParser parser = CoreModelUtil.getBinaryParser(binaryParsersExt[i]);
 					try {
 						IBinaryFile bin = parser.getBinary( fullPath );
 						return ( bin instanceof IBinaryShared );

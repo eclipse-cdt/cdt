@@ -74,26 +74,26 @@ public class BracesTabPage extends FormatterTabPage {
 
 	private TranslationUnitPreview fPreview;
 	
-	private final String [] fBracePositions= {
+	private final String[] fBracePositions= {
 	    DefaultCodeFormatterConstants.END_OF_LINE,
 	    DefaultCodeFormatterConstants.NEXT_LINE,
 	    DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED
 	};
 	
-	private final String [] fExtendedBracePositions= {
+	private final String[] fExtendedBracePositions= {
 		DefaultCodeFormatterConstants.END_OF_LINE,
 	    DefaultCodeFormatterConstants.NEXT_LINE,
 	    DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED, 
 		DefaultCodeFormatterConstants.NEXT_LINE_ON_WRAP
 	};
 	
-	private final String [] fBracePositionNames= {
+	private final String[] fBracePositionNames= {
 	    FormatterMessages.BracesTabPage_position_same_line, 
 	    FormatterMessages.BracesTabPage_position_next_line, 
 	    FormatterMessages.BracesTabPage_position_next_line_indented
 	};
 	
-	private final String [] fExtendedBracePositionNames= {
+	private final String[] fExtendedBracePositionNames= {
 	    FormatterMessages.BracesTabPage_position_same_line, 
 	    FormatterMessages.BracesTabPage_position_next_line, 
 	    FormatterMessages.BracesTabPage_position_next_line_indented, 
@@ -161,7 +161,7 @@ public class BracesTabPage extends FormatterTabPage {
 		return createComboPref(composite, numColumns, message, key, fExtendedBracePositions, fExtendedBracePositionNames);
 	}
 	
-	private CheckboxPreference createIndentedCheckboxPref(Composite composite, int numColumns, String message, String key, String [] values) {
+	private CheckboxPreference createIndentedCheckboxPref(Composite composite, int numColumns, String message, String key, String[] values) {
 		CheckboxPreference pref= createCheckboxPref(composite, numColumns, message, key, values);
 		GridData data= (GridData) pref.getControl().getLayoutData();
 		data.horizontalIndent= fPixelConverter.convertWidthInCharsToPixels(1);

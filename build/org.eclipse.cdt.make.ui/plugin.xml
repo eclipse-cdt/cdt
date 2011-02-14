@@ -113,6 +113,7 @@
       point="org.eclipse.ui.commands">
       <command
             name="%CommandTargetBuild.name"
+            defaultHandler="org.eclipse.cdt.make.ui.actions.BuildTargetHandler"
             description="%CommandTargetBuild.description"
             categoryId="org.eclipse.ui.category.project"
             id="org.eclipse.cdt.make.ui.targetBuildCommand">
@@ -303,7 +304,6 @@
                </groupMarker>
             </menu>   
             <action
-               definitionId="org.eclipse.cdt.make.ui.targetBuildLastCommand"
                label="%LastTargetBuild.name"
                class="org.eclipse.cdt.make.ui.actions.BuildLastTargetAction"
                menubarPath="project/org.eclipse.cdt.make.ui.prjmenu/gm1"
@@ -330,7 +330,6 @@
             </enablement>
          </action>  
             <action
-               definitionId="org.eclipse.cdt.make.ui.targetBuildCommand"
                label="%ActionMakeBuildTarget.label"
                class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
                menubarPath="project/org.eclipse.cdt.make.ui.prjmenu/gm1"

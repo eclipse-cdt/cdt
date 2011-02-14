@@ -18,6 +18,7 @@ import org.eclipse.cdt.make.core.IMakeTargetManager;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.MessageLine;
+import org.eclipse.cdt.make.ui.TargetBuild;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
@@ -493,15 +494,17 @@ public class MakeTargetDialog extends Dialog {
 					String lastTargetName = null;
 					IContainer container = target.getContainer();
 					try {
-						lastTargetName = (String)container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget")); //$NON-NLS-1$
+						lastTargetName = (String) container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+								TargetBuild.LAST_TARGET));
 					} catch (CoreException e) {
 					}
 					if (lastTargetName != null && lastTargetName.equals(target.getName())) {
-						IPath path = container.getProjectRelativePath().removeFirstSegments(
-								container.getProjectRelativePath().segmentCount());
-						path = path.append(targetName);
-						container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"), //$NON-NLS-1$
-								path.toString());
+						container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+								TargetBuild.LAST_TARGET), targetName);
+						IPath path = target.getContainer().getProjectRelativePath();
+						container.getProject().setSessionProperty(
+								new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+										TargetBuild.LAST_TARGET_CONTAINER), path.toString());
 					}
 
 					fTargetManager.renameTarget(target, targetName);

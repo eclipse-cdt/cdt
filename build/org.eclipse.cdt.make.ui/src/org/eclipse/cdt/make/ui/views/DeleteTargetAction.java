@@ -17,6 +17,7 @@ import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.IMakeTargetManager;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.ui.TargetBuild;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
@@ -84,13 +85,19 @@ public class DeleteTargetAction extends SelectionListenerAction {
 					String lastTargetName = null;
 					IContainer container = ((IMakeTarget) target).getContainer();
 					try {
-						lastTargetName = (String)container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget")); //$NON-NLS-1$
+						lastTargetName = (String) container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+								TargetBuild.LAST_TARGET));
 					} catch (CoreException e) {
 					}
 					if (lastTargetName != null && lastTargetName.equals(((IMakeTarget) target).getName())) {
 						try {
 							container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
-									"lastTarget"), null); //$NON-NLS-1$
+									TargetBuild.LAST_TARGET), null);
+						} catch (CoreException e) {
+						}
+						try {
+							container.getProject().setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+									TargetBuild.LAST_TARGET_CONTAINER), null);
 						} catch (CoreException e) {
 						}
 					}

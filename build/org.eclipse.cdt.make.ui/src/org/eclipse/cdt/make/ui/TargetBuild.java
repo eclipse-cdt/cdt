@@ -45,7 +45,10 @@ import org.eclipse.ui.progress.IProgressService;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class TargetBuild {
-
+	/** @since 7.1 */
+	public static final String LAST_TARGET = "lastTarget"; //$NON-NLS-1$
+	/** @since 7.1 */
+	public static final String LAST_TARGET_CONTAINER = "lastTargetContainer"; //$NON-NLS-1$
 	/**
 	 * Causes all editors to save any modified resources depending on the user's preference.
 	 */

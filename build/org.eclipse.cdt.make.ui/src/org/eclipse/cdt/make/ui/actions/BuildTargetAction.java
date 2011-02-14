@@ -14,6 +14,7 @@ package org.eclipse.cdt.make.ui.actions;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.ui.TargetBuild;
 import org.eclipse.cdt.make.ui.dialogs.BuildTargetDialog;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
@@ -61,33 +62,25 @@ public class BuildTargetAction extends AbstractTargetAction {
 			BuildTargetDialog dialog = new BuildTargetDialog(getShell(), container, true);
 			String name = null;
 			try {
-				name = (String)container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget")); //$NON-NLS-1$
+				name = (String) container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+						TargetBuild.LAST_TARGET));
 			} catch (CoreException e) {
 			}
 			try {
 				if (name != null) {
-					IPath path = new Path(name);
-					name = path.segment(path.segmentCount() - 1);
-					IContainer targetContainer;
-					if (path.segmentCount() > 1) {
-						path = path.removeLastSegments(1);
-						targetContainer = (IContainer)container.findMember(path);
-					} else {
-						targetContainer = container;
-					}
-					IMakeTarget target = MakeCorePlugin.getDefault().getTargetManager().findTarget(targetContainer, name);
+					IMakeTarget target = MakeCorePlugin.getDefault().getTargetManager().findTarget(container, name);
 					if (target != null)
 						dialog.setTarget(target);
 				}
 				if (dialog.open() == Window.OK) {
 					IMakeTarget target = dialog.getTarget();
 					if (target != null) {
-						IPath path =
-							target.getContainer().getProjectRelativePath().removeFirstSegments(
-								container.getProjectRelativePath().segmentCount());
-						path = path.append(target.getName());
-						container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"), //$NON-NLS-1$
-						path.toString());
+						container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+								TargetBuild.LAST_TARGET), target.getName());
+						IPath path = target.getContainer().getProjectRelativePath();
+						container.getProject().setSessionProperty(
+								new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+										TargetBuild.LAST_TARGET_CONTAINER), path.toString());
 					}
 				}
 			} catch (CoreException e) {

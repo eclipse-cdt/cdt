@@ -48,12 +48,17 @@ public class BuildTargetAction extends SelectionListenerAction {
 			TargetBuild.buildTargets(shell, targets);
 			// set last target property for last element
 			IContainer container = targets[targets.length-1].getContainer();
-			IPath path = container.getProjectRelativePath().removeFirstSegments(
-					container.getProjectRelativePath().segmentCount());
-			path = path.append(targets[targets.length-1].getName());
 			try {
-				container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),"lastTarget"), //$NON-NLS-1$
-						path.toString());
+				container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+						TargetBuild.LAST_TARGET), targets[targets.length - 1].getName());
+			} catch (CoreException e) {
+			}
+			// store container of last target, too
+			try {
+				IPath path = container.getProjectRelativePath();
+				container.getProject().setSessionProperty(
+						new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+								TargetBuild.LAST_TARGET_CONTAINER), path.toString());
 			} catch (CoreException e) {
 			}
 		}

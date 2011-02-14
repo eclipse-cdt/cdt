@@ -41,23 +41,45 @@ public class BuildLastTargetAction extends AbstractTargetAction {
 		IContainer container = getSelectedContainer();
 		if (container != null) {
 			String name = null;
-			if (MakePreferencePage.useProjectForLastMakeTarget()) {
-				container = container.getProject();
-			}
-			try {
-				name = (String)container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget")); //$NON-NLS-1$
-			} catch (CoreException e) {
+			if (MakePreferencePage.useProjectLastMakeTarget()) {
+				try {
+					name = (String) container.getProject().getSessionProperty(
+							new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+									TargetBuild.LAST_TARGET_CONTAINER));
+					if (name != null) {
+						IContainer lastTargetContainer;
+						if ( name.isEmpty() )
+							lastTargetContainer = container.getProject();
+						else
+							lastTargetContainer = container.getProject().getFolder(new Path(name));
+						if ( lastTargetContainer.exists() )
+							container = lastTargetContainer;
+						name = (String) container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+								TargetBuild.LAST_TARGET));
+					}
+				} catch (CoreException e) {
+				}
+			} else {
+				if (MakePreferencePage.useProjectRootForLastMakeTarget()) {
+					container = container.getProject();
+				}
+				try {
+					name = (String) container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+							TargetBuild.LAST_TARGET));
+				} catch (CoreException e) {
+				}
 			}
 			try {
 				boolean showDialog = true;
 				if (name != null) {
-					IPath path = new Path(name);
-					if (path.segmentCount() <= 1) {// do not look recursively for last target
-						IMakeTarget target = MakeCorePlugin.getDefault().getTargetManager().findTarget(container, name);
-						if (target != null) {
-							TargetBuild.buildTargets(getShell(), new IMakeTarget[] { target });
-							showDialog = false;
-						} 
+					IMakeTarget target = MakeCorePlugin.getDefault().getTargetManager().findTarget(container, name);
+					if (target != null) {
+						TargetBuild.buildTargets(getShell(), new IMakeTarget[] { target });
+						showDialog = false;
+						IPath path = container.getProjectRelativePath();
+						container.getProject().setSessionProperty(
+								new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+										TargetBuild.LAST_TARGET_CONTAINER), path.toString());
 					} 
 				} 
 				
@@ -67,12 +89,13 @@ public class BuildLastTargetAction extends AbstractTargetAction {
 					if (dialog.open() == Window.OK) {
 						IMakeTarget target = dialog.getTarget();
 						if (target != null) {
-							IPath path =
-								target.getContainer().getProjectRelativePath().removeFirstSegments(
-										container.getProjectRelativePath().segmentCount());
-							path = path.append(target.getName());
-							container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"), //$NON-NLS-1$
-									path.toString());
+							container.setSessionProperty(new QualifiedName(
+									MakeUIPlugin.getUniqueIdentifier(), TargetBuild.LAST_TARGET),
+									target.getName());
+							IPath path = target.getContainer().getProjectRelativePath();
+							container.getProject().setSessionProperty(
+									new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+											TargetBuild.LAST_TARGET_CONTAINER), path.toString());
 						}
 					}
 				}

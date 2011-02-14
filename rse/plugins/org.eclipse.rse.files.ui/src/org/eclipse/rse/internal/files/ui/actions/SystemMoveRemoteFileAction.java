@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -25,6 +25,7 @@
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
+ * David McKnight   (IBM)        - [240699] Problem with moving a file which has been opened in an editor
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -32,9 +33,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
@@ -43,13 +49,17 @@ import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
+import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
+import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.ui.dialogs.CopyRunnable;
 import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -341,6 +351,69 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
         return null;
 	}   
 
+	private void moveTempResource(IResource oldLocalResource, IResource newLocalResource, IRemoteFile newRemoteFile, IRemoteFileSubSystem ss)
+	{
+		if (oldLocalResource != null)
+		{
+			try
+			{
+				moveTempFileProperties(oldLocalResource, ss, newRemoteFile);
+				oldLocalResource.move(newLocalResource.getFullPath(), true, null);
+
+			}
+			catch (Exception e)
+			{
+			}
+
+		}
+	}
+
+	private void moveTempFileProperties(IResource oldLocalResource, IRemoteFileSubSystem ss, IRemoteFile newRemoteFile)
+	{
+
+		if (oldLocalResource instanceof IContainer)
+		{
+			IContainer localContainer = (IContainer) oldLocalResource;
+			try
+			{
+				IResource[] members = localContainer.members();
+				for (int i = 0; i < members.length; i++)
+				{
+					IResource member = members[i];
+					IRemoteFile newChildRemoteFile = ss.getRemoteFileObject(newRemoteFile, member.getName(), new NullProgressMonitor());
+					moveTempFileProperties(member, ss, newChildRemoteFile); //$NON-NLS-1$
+				}
+			}
+			catch (Exception e)
+			{
+			}
+		}
+		else if (oldLocalResource instanceof IFile)
+		{
+			IFile localFile = (IFile)oldLocalResource;
+			try
+			{
+				SystemIFileProperties properties = new SystemIFileProperties(localFile);
+				properties.setRemoteFilePath(newRemoteFile.getAbsolutePath());
+
+				Object editableObj = properties.getRemoteFileObject();
+				if (editableObj != null)
+				{
+					SystemEditableRemoteFile editable = (SystemEditableRemoteFile)editableObj;
+			
+					// change the remote file regardless of whether it's open in an editor or not
+					// there's an in-memory editable, so change the associated remote file
+					editable.setRemoteFile(newRemoteFile);
+
+				}
+			}
+			catch (Exception e)
+			{
+			}
+
+		}
+
+	}
 	/**
 	 * Called after all the copy/move operations end, be it successfully or not.
 	 * Your opportunity to display completion or do post-copy selections/refreshes
@@ -357,6 +430,27 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 			operation = ISystemRemoteChangeEvents.SYSTEM_REMOTE_OPERATION_MOVE;
 		}
 		
+		// deal with editors
+		for (int i = 0; i < movedFiles.size(); i++){
+			
+			IRemoteFile oldRemoteFile = (IRemoteFile)movedFiles.get(i);
+			IRemoteFile newRemoteFile = null;
+			try {
+				newRemoteFile = ss.getRemoteFileObject((String)copiedFiles.get(i), new NullProgressMonitor());
+			} catch (SystemMessageException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			IResource oldLocalResource = null;
+			if (SystemRemoteEditManager.getInstance().doesRemoteEditProjectExist()){				
+				oldLocalResource = UniversalFileTransferUtility.getTempFileFor(oldRemoteFile);
+			}
+	
+			if (oldLocalResource != null){
+				IResource newLocalResource = UniversalFileTransferUtility.getTempFileFor(newRemoteFile);			
+				moveTempResource(oldLocalResource, newLocalResource, newRemoteFile, ss);
+			}
+		}
 		
 		Viewer originatingViewer = getViewer(); 
     	RSECorePlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(operation,

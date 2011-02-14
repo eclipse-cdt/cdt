@@ -19,6 +19,7 @@ import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.preferences.MakePreferencePage;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -57,7 +58,7 @@ public class TargetBuild {
 		if (!BuildAction.isSaveAllSet())
 			return;
 
-		List projects = new ArrayList();
+		List<IProject> projects = new ArrayList<IProject>();
 		for (int i = 0; i < targets.length; ++i) {
 			IMakeTarget target = targets[i];
 			projects.add(target.getProject());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [219975] Fix implementations of clone()
  * Martin Oberhuber (Wind River) - [220041][api][breaking] Get rid of IHostProcessFilter#getStates()
+ * David McKnight   (IBM)        - [225776] [dstore][processes] process filter status fields aren't persisted
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.processes;
@@ -468,7 +469,6 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable
 	public void setSpecificState(String stateCode)
 	{
 		anystatus = false;
-		initStates();
 		states.put(stateCode, new Boolean(true));
 	}
 	

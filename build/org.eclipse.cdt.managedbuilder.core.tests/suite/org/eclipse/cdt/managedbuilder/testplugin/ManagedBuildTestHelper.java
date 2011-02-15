@@ -446,6 +446,11 @@ public class ManagedBuildTestHelper {
 					continue;
 				}
 			}
+			if (isDependencyFile(testFileLocation)) {
+				if (compareDependencyFiles(testFileLocation, benchmarkFileLocation)) {
+					continue;
+				}
+			}
 			StringBuffer testBuffer = readContentsStripLineEnds(project, testFileLocation);
 			StringBuffer benchmarkBuffer = readContentsStripLineEnds(project, benchmarkFileLocation);
 			if (!testBuffer.toString().equals(benchmarkBuffer.toString())) {
@@ -490,6 +495,11 @@ public class ManagedBuildTestHelper {
 		}
 		return ext.equals("mk");
 	}
+	
+	private static boolean isDependencyFile(IPath file) {
+		String ext = file.getFileExtension();
+		return "d".equals(ext);
+	}
 
 	/**
 	 * Compare makefiles using a bunch of heuristics to avoid ordering mismatches
@@ -513,14 +523,14 @@ public class ManagedBuildTestHelper {
 		Set<String> extraLines = new TreeSet<String>();
 		for (int i=0;i<benchmarkArray.size() || i<testArray.size();i++) {
 			if (!(i<benchmarkArray.size())) {
-				System.out.println(testFile.lastSegment()+": extra line =["+testArray.get(i)+ "] not in benchmark. File "+testFile);
-				System.out.println(testFile.lastSegment()+": benchmark file "+benchmarkFile);
+				System.err.println(testFile.lastSegment()+": extra line =["+testArray.get(i)+ "] not in benchmark. File "+testFile);
+				System.err.println(testFile.lastSegment()+": benchmark file "+benchmarkFile);
 				extraLines.add(testArray.get(i));
 				continue;
 			}
 			if (!(i<testArray.size())) {
-				System.out.println(testFile.lastSegment()+": missing line =["+benchmarkArray.get(i)+ "] comparing to benchmark. File "+testFile);
-				System.out.println(testFile.lastSegment()+": benchmark file "+benchmarkFile);
+				System.err.println(testFile.lastSegment()+": missing line =["+benchmarkArray.get(i)+ "] comparing to benchmark. File "+testFile);
+				System.err.println(testFile.lastSegment()+": benchmark file "+benchmarkFile);
 				extraLines.add(benchmarkArray.get(i));
 				continue;
 			}
@@ -562,9 +572,9 @@ public class ManagedBuildTestHelper {
 					String[] benchmarkSubstrings = benchmarkLine.split(" ");
 					String[] testSubstrings = testLine.split(" ");
 					if (testSubstrings.length!=benchmarkSubstrings.length) {
-						System.out.println("Following lines do not match ("+testFile.lastSegment()+"):");
-						System.out.println("actual  : ["+testLine+"], file "+testFile);
-						System.out.println("expected: ["+benchmarkLine+"], file "+benchmarkFile);
+						System.err.println("Following lines do not match ("+testFile.lastSegment()+"):");
+						System.err.println("actual  : ["+testLine+"], file "+testFile);
+						System.err.println("expected: ["+benchmarkLine+"], file "+benchmarkFile);
 						return false;
 					}
 					
@@ -582,24 +592,24 @@ public class ManagedBuildTestHelper {
 								.replace(WORKSPACE_DIR_STR,workspaceLocation);
 						}
 						if (!testSubstring.equals(benchmarkSubstring)) {
-							System.out.println("Following lines do not match ("+testFile.lastSegment()+"):");
-							System.out.println("actual  : ["+testLine+"], file "+testFile);
-							System.out.println("expected: ["+benchmarkLine+"], file "+benchmarkFile);
-							System.out.println("substring actual : ["+testSubstring+"], file "+testFile);
-							System.out.println("substring expected: ["+benchmarkSubstring+"], file "+benchmarkFile);
+							System.err.println("Following lines do not match ("+testFile.lastSegment()+"):");
+							System.err.println("actual  : ["+testLine+"], file "+testFile);
+							System.err.println("expected: ["+benchmarkLine+"], file "+benchmarkFile);
+							System.err.println("substring actual : ["+testSubstring+"], file "+testFile);
+							System.err.println("substring expected: ["+benchmarkSubstring+"], file "+benchmarkFile);
 							return false;
 						}
 					}
 				} else {
-					System.out.println("Following lines do not match ("+testFile.lastSegment()+"):");
-					System.out.println("actual  : ["+testLine+"], file "+testFile);
-					System.out.println("expected: ["+benchmarkLine+"], file "+benchmarkFile);
+					System.err.println("Following lines do not match ("+testFile.lastSegment()+"):");
+					System.err.println("actual  : ["+testLine+"], file "+testFile);
+					System.err.println("expected: ["+benchmarkLine+"], file "+benchmarkFile);
 					return false;
 				}
 			}
 		}
 		if (testArray.size()!=benchmarkArray.size()) {
-			System.out.println("testArray.size="+testArray.size()+ " while benchmarkArray.size="+benchmarkArray.size());
+			System.err.println("testArray.size="+testArray.size()+ " while benchmarkArray.size="+benchmarkArray.size());
 			// Ignore benign differences
 			for (String line : extraLines) {
 				if (line==null || line.length()==0) {
@@ -617,17 +627,67 @@ public class ManagedBuildTestHelper {
 		String[] benchNotMatchingLinesArray = benchNotMatchingLines.toArray(new String[0]);
 		for (int i=0;i<testNotMatchingLinesArray.length;i++) {
 			if (! testNotMatchingLinesArray[i].equals(benchNotMatchingLinesArray[i])) {
-				System.out.println("Following line is missing ("+testFile.lastSegment()+"):");
+				System.err.println("Following line is missing ("+testFile.lastSegment()+"):");
 				if (testNotMatchingLinesArray[i].compareTo(benchNotMatchingLinesArray[i]) < 0) {
-					System.out.println("line ["+testNotMatchingLinesArray[i]+"], missing in file "+benchmarkFile);
+					System.err.println("line ["+testNotMatchingLinesArray[i]+"], missing in file "+benchmarkFile);
 				} else {
-					System.out.println("line ["+benchNotMatchingLinesArray[i]+"], missing in file "+testFile);
+					System.err.println("line ["+benchNotMatchingLinesArray[i]+"], missing in file "+testFile);
 				}
 				return false;
 			}
 		}
 
 		return true;
+	}
+	
+	/**
+	 * Compare dependency files *.d using some of heuristics to avoid mismatches
+	 * related to different gcc versions
+	 * 
+	 * @param testFile - location of actual file
+	 * @param benchmarkFile - location of the benchmark file
+	 * @return {@code true} if matches, {@code false} otherwise 
+	 */
+	private static boolean compareDependencyFiles(IPath testFile, IPath benchmarkFile) {
+		boolean result = true;
+		ArrayList<String> testArray = getContents(testFile);
+		ArrayList<String> benchmarkArray = getContents(benchmarkFile);
+		
+		for (int i=0;i<benchmarkArray.size() || i<testArray.size();i++) {
+			if (!(i<benchmarkArray.size())) {
+				System.err.println(testFile.lastSegment()+": extra line =["+testArray.get(i)+ "] not in benchmark. File "+testFile);
+				System.err.println(testFile.lastSegment()+": benchmark file "+benchmarkFile);
+				continue;
+			}
+			if (!(i<testArray.size())) {
+				System.err.println(testFile.lastSegment()+": missing line =["+benchmarkArray.get(i)+ "] comparing to benchmark. File "+testFile);
+				System.err.println(testFile.lastSegment()+": benchmark file "+benchmarkFile);
+				continue;
+			}
+			String testLine = testArray.get(i);
+			String benchmarkLine = benchmarkArray.get(i);
+			if (!testLine.equals(benchmarkLine)) {
+				// Accommodate for differences in amount of leading  and trailing spaces
+				if (testLine.startsWith(" ") && benchmarkLine.startsWith(" ")) {
+					String testLineTrimmed = testLine;
+					String benchmarkLineTrimmed = benchmarkLine;
+					if (testLineTrimmed.endsWith("\\") && benchmarkLineTrimmed.endsWith("\\")) {
+						// trim ending "\"
+						testLineTrimmed = testLineTrimmed.substring(0, testLineTrimmed.length()-1);
+						benchmarkLineTrimmed = benchmarkLineTrimmed.substring(0, benchmarkLineTrimmed.length()-1);
+					}
+					if (testLineTrimmed.trim().equals(benchmarkLineTrimmed.trim())) {
+						continue;
+					}
+					System.err.println("Following lines do not match ("+testFile.lastSegment()+"):");
+					System.err.println("actual  : ["+testLine+"], file "+testFile);
+					System.err.println("expected: ["+benchmarkLine+"], file "+benchmarkFile);
+					result = false;
+				}
+			}
+		}
+
+		return result;
 	}
 
 	private static ArrayList<String> getContents(IPath fullPath) {
@@ -706,6 +766,11 @@ public class ManagedBuildTestHelper {
 		IPath bmFileLocation = bmFile.getLocation();
 		if (isMakefile(tFileLocation)) {
 			if (compareMakefiles(tFileLocation, bmFileLocation)) {
+				return true;
+			}
+		}
+		if (isDependencyFile(tFileLocation)) {
+			if (compareDependencyFiles(tFileLocation, bmFileLocation)) {
 				return true;
 			}
 		}

@@ -48,7 +48,7 @@ public class BuildLastTargetAction extends AbstractTargetAction {
 									TargetBuild.LAST_TARGET_CONTAINER));
 					if (name != null) {
 						IContainer lastTargetContainer;
-						if ( name.isEmpty() )
+						if (name.length() == 0)
 							lastTargetContainer = container.getProject();
 						else
 							lastTargetContainer = container.getProject().getFolder(new Path(name));

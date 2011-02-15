@@ -66,7 +66,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 	public void run(IAction action) {
 		if (fSelection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
-			ArrayList projects = new ArrayList(elems.length);
+			ArrayList<IProject> projects = new ArrayList<IProject>(elems.length);
 
 			for (int i = 0; i < elems.length; i++) {
 				Object elem = elems[i];
@@ -85,7 +85,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 				}
 			}
 
-			final IProject[] projectArray = (IProject[]) projects.toArray(new IProject[projects.size()]);
+			final IProject[] projectArray = projects.toArray(new IProject[projects.size()]);
 
 			UpdateMakeProjectWizard wizard = new UpdateMakeProjectWizard(projectArray);
 			WizardDialog dialog = new WizardDialog(MakeUIPlugin.getActiveWorkbenchShell(), wizard);
@@ -96,7 +96,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 
 	public static IProject[] getOldProjects() {
 		IProject[] project = MakeUIPlugin.getWorkspace().getRoot().getProjects();
-		Vector result = new Vector();
+		Vector<IProject> result = new Vector<IProject>();
 		try {
 			for (int i = 0; i < project.length; i++) {
 				if (isOldProject(project[i])) {
@@ -107,7 +107,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 			MakeUIPlugin.logException(e);
 		}
 
-		return (IProject[]) result.toArray(new IProject[result.size()]);
+		return result.toArray(new IProject[result.size()]);
 	}
 
 	protected static boolean isOldProject(IProject project) throws CoreException {

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
 
@@ -294,6 +295,8 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode
 	    	}
         } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
             return IModelDelta.SELECT | IModelDelta.EXPAND;
+	    } else if (e instanceof StateChangedEvent) {
+	    	return IModelDelta.STATE;
 	    }
 	    return IModelDelta.NO_CHANGE;
 	}
@@ -376,6 +379,10 @@ public abstract class AbstractContainerVMNode extends AbstractDMVMNode
                     }
                 });
             return;
+	    } else if (e instanceof StateChangedEvent) {	    	
+	    	// If there is a state change needed on the container, update the container
+	    	if (dmc instanceof IContainerDMContext)
+	    		parentDelta.addNode(createVMContext(dmc), IModelDelta.STATE);
 	    }
 	
 		requestMonitor.done();

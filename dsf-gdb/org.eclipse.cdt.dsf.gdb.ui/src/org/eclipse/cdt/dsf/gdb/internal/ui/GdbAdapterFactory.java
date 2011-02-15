@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Navid Mehregani (TI) - Bug 289526 - Migrate the Restart feature to the new one, as supported by the platform
+ *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui;
 
@@ -172,7 +173,7 @@ public class GdbAdapterFactory
             fSaveTraceDataTarget = new GdbSaveTraceDataCommand(session);
             fSelectNextRecordTarget = new GdbSelectNextTraceRecordCommand(session);
             fSelectPrevRecordTarget = new GdbSelectPrevTraceRecordCommand(session);
-            fPinProvider = new GdbPinProvider();
+            fPinProvider = new GdbPinProvider(session);
 
             session.registerModelAdapter(ISteppingModeTarget.class, fSteppingModeTarget);
             session.registerModelAdapter(IStepIntoHandler.class, fStepIntoCommand);
@@ -285,6 +286,7 @@ public class GdbAdapterFactory
             fSaveTraceDataTarget.dispose();
             fSelectNextRecordTarget.dispose();
             fSelectPrevRecordTarget.dispose();
+            fPinProvider.dispose();
         }
     }
 

@@ -68,7 +68,7 @@
             targetID="org.eclipse.cdt.dsf.debug.ui.disassembly.view">
          <action
                class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
-               icon="icons/pin.gif"
+               icon="icons/toolbar_pinned.gif"
                id="org.eclipse.pinclone.disassembly.pinDebugContext"
                label="%PinView.name "
                style="toggle"

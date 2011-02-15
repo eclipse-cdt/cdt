@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Andrew Gvozdev (Quoin Inc.) - initial API and implementation
+ *    Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -183,6 +184,29 @@ public class CDTSharedImages {
 	public static final String IMG_OVR_ERROR = "icons/ovr16/error_co.gif"; //$NON-NLS-1$
 	public static final String IMG_OVR_SETTING = "icons/ovr16/setting_nav.gif"; //$NON-NLS-1$
 	public static final String IMG_OVR_INACTIVE = "icons/ovr16/inactive_co.gif"; //$NON-NLS-1$
+	
+	// Pin & Clone
+    public static final String IMG_THREAD_SUSPENDED_R_PINNED = "icons/obj16/threads_obj_r.gif"; //$NON-NLS-1$
+    public static final String IMG_THREAD_SUSPENDED_G_PINNED = "icons/obj16/threads_obj_g.gif"; //$NON-NLS-1$
+    public static final String IMG_THREAD_SUSPENDED_B_PINNED = "icons/obj16/threads_obj_b.gif"; //$NON-NLS-1$
+    
+    public static final String IMG_THREAD_RUNNING_R_PINNED = "icons/obj16/thread_obj_r.gif"; //$NON-NLS-1$
+    public static final String IMG_THREAD_RUNNING_G_PINNED = "icons/obj16/thread_obj_g.gif"; //$NON-NLS-1$
+    public static final String IMG_THREAD_RUNNING_B_PINNED = "icons/obj16/thread_obj_b.gif"; //$NON-NLS-1$    
+    
+    public static final String IMG_CONTAINER_SUSPENDED_R_PINNED = "icons/obj16/debugts_obj_r.gif"; //$NON-NLS-1$
+    public static final String IMG_CONTAINER_SUSPENDED_G_PINNED = "icons/obj16/debugts_obj_g.gif"; //$NON-NLS-1$
+    public static final String IMG_CONTAINER_SUSPENDED_B_PINNED = "icons/obj16/debugts_obj_b.gif"; //$NON-NLS-1$
+    
+    public static final String IMG_CONTAINER_RUNNING_R_PINNED = "icons/obj16/debugt_obj_r.gif"; //$NON-NLS-1$    
+    public static final String IMG_CONTAINER_RUNNING_G_PINNED = "icons/obj16/debugt_obj_g.gif"; //$NON-NLS-1$
+    public static final String IMG_CONTAINER_RUNNING_B_PINNED = "icons/obj16/debugt_obj_b.gif"; //$NON-NLS-1$
+
+    public static final String IMG_VIEW_PIN_ACTION = "icons/obj16/toolbar_pinned.gif"; //$NON-NLS-1$
+    public static final String IMG_VIEW_PIN_ACTION_R = "icons/obj16/toolbar_pinned_r.gif"; //$NON-NLS-1$
+    public static final String IMG_VIEW_PIN_ACTION_G = "icons/obj16/toolbar_pinned_g.gif"; //$NON-NLS-1$
+    public static final String IMG_VIEW_PIN_ACTION_B = "icons/obj16/toolbar_pinned_b.gif"; //$NON-NLS-1$
+    public static final String IMG_VIEW_PIN_ACTION_MULTI = "icons/obj16/toolbar_pinned_multi.gif"; //$NON-NLS-1$
 
 	/**
 	 * The method finds URL of the image corresponding to the key which could be project-relative path

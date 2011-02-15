@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson 		  - Modified for multi threaded functionality
+ *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
 
@@ -350,6 +351,8 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
             return IModelDelta.CONTENT;            
         } else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
             return IModelDelta.SELECT | IModelDelta.EXPAND;
+        } else if (e instanceof StateChangedEvent) {
+        	return IModelDelta.STATE;
         }
         return IModelDelta.NO_CHANGE;
     }
@@ -408,8 +411,10 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
                         rm.done();
                     }
                 });
-        } else {
-            
+        } else if (e instanceof StateChangedEvent) {
+        	parentDelta.addNode(createVMContext(dmc), IModelDelta.STATE);
+        	rm.done();        	
+        } else {            
             rm.done();
         }
     }

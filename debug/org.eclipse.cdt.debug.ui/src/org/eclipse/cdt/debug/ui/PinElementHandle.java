@@ -7,11 +7,12 @@
  *
  * Contributors:
  *     Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
+ *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
  *****************************************************************/
 package org.eclipse.cdt.debug.ui;
 
+import org.eclipse.cdt.debug.ui.IPinProvider.IPinElementColorDescriptor;
 import org.eclipse.cdt.debug.ui.IPinProvider.IPinElementHandle;
-import org.eclipse.cdt.debug.ui.IPinProvider.IPinHandleLabelProvider;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -19,22 +20,33 @@ import org.eclipse.core.runtime.PlatformObject;
  * 
  * @since 7.1
  */
-public class PinElementHandle extends PlatformObject implements IPinHandleLabelProvider, IPinElementHandle {
-	private final Object fDebugContext;
-	private final String fLabel;
+public class PinElementHandle extends PlatformObject implements IPinElementHandle {
+	private Object fDebugContext;
+	private String fLabel;
+	private IPinElementColorDescriptor fColorDescriptor;
 	
-	public PinElementHandle(Object debugContext, String label) {
+	public PinElementHandle(Object debugContext, String label, IPinElementColorDescriptor colorDescriptor) {
 		fDebugContext = debugContext;
 		fLabel = label;
+		fColorDescriptor = colorDescriptor;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.ui.IPinProvider.IPinElementHandle#getDebugContext()
 	 */
-	public Object getDebugContext() {
+	public synchronized Object getDebugContext() {
 		return fDebugContext;
 	}	
+	
+	/**
+	 * Sets the debug context.
+	 * 
+	 * @param debugContext the new debug context
+	 */
+	public synchronized void setDebugContext(Object debugContext) {
+		fDebugContext = debugContext;
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -43,7 +55,15 @@ public class PinElementHandle extends PlatformObject implements IPinHandleLabelP
 	public String getLabel() {
 		return fLabel;
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.ui.IPinProvider.IPinElementHandle#getPinElementColorDescriptor()
+	 */
+	public IPinElementColorDescriptor getPinElementColorDescriptor() {
+		return fColorDescriptor;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
+ *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
  *****************************************************************/
 package org.eclipse.cdt.debug.internal.ui.pinclone;
 
@@ -93,20 +94,7 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 	 * @return true if the pinned handles are pinned to the debug context
 	 */
 	public boolean isPinnedTo(Object debugContext) {
-		IPinProvider pinProvider = null;
-		if (debugContext instanceof IAdaptable) {
-			pinProvider = (IPinProvider) ((IAdaptable)debugContext).getAdapter(IPinProvider.class);
-		}		
-
-		for (IPinElementHandle handle : fPinHandles) {
-			if (pinProvider != null && pinProvider.isPinnedTo(debugContext, handle)) {
-				return true;			
-			
-			} else if (handle.getDebugContext().equals(debugContext)) {
-				return true;
-			}
-		}
-		return false;
+		return PinCloneUtils.isPinnedTo(fPinHandles, debugContext);		
 	}
 	
 	/**
@@ -131,7 +119,7 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 					handles.add(handle);
 					fPinProvider.put(handle, pinProvider);					
 				} else
-					handles.add(new PinElementHandle(element, null));					
+					handles.add(new PinElementHandle(element, null, PinCloneUtils.getDefaultPinElementColorDescriptor()));					
 			}
 		} 
 		

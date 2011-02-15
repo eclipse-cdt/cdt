@@ -8,9 +8,14 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson 		  - Modified for multi threaded functionality	
+ *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
 
+import java.util.Map;
+
+import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
+import org.eclipse.cdt.debug.ui.IPinProvider.IPinElementColorDescriptor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -20,6 +25,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractThreadVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ExecutionContextLabelText;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
+import org.eclipse.cdt.dsf.gdb.internal.ui.GdbPinProvider;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -35,6 +41,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.VMDelegatingPropertiesUpdate;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
@@ -61,7 +68,7 @@ public class ThreadVMNode extends AbstractThreadVMNode
     @Override
     protected IElementLabelProvider createLabelProvider() {
         PropertiesBasedLabelProvider provider = new PropertiesBasedLabelProvider();
-
+        
         provider.setColumnInfo(
             PropertiesBasedLabelProvider.ID_COLUMN_NO_COLUMNS, 
             new LabelColumnInfo(new LabelAttribute[] { 
@@ -83,6 +90,55 @@ public class ThreadVMNode extends AbstractThreadVMNode
                         ExecutionContextLabelText.PROP_STATE_CHANGE_DETAILS_KNOWN,
                         ILaunchVMConstants.PROP_STATE_CHANGE_DETAILS}),
                 new LabelText(MessagesForGdbLaunchVM.ThreadVMNode_No_columns__Error__label, new String[0]),
+                /* RUNNING THREAD - RED PIN */
+                new LabelImage(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_THREAD_RUNNING_R_PINNED)) {
+					{ setPropertyNames(new String[] {
+							ILaunchVMConstants.PROP_IS_SUSPENDED, 
+							IGdbLaunchVMConstants.PROP_PINNED_CONTEXT, 
+							IGdbLaunchVMConstants.PROP_PIN_COLOR }); }
+
+					@Override
+					public boolean isEnabled(IStatus status, Map<String, Object> properties) {
+						Boolean prop = (Boolean) properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED);
+						Boolean pin_prop = (Boolean) properties.get(IGdbLaunchVMConstants.PROP_PINNED_CONTEXT);
+						Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR); 
+						return (prop != null && pin_prop != null && pin_color_prop != null) ? 
+								!prop.booleanValue() && pin_prop.booleanValue() && pin_color_prop.equals(IPinElementColorDescriptor.RED) : false;
+					};
+				},
+				/* RUNNING THREAD - GREEN PIN */
+				new LabelImage(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_THREAD_RUNNING_G_PINNED)) {
+					{ setPropertyNames(new String[] {
+							ILaunchVMConstants.PROP_IS_SUSPENDED, 
+							IGdbLaunchVMConstants.PROP_PINNED_CONTEXT, 
+							IGdbLaunchVMConstants.PROP_PIN_COLOR }); }
+
+					@Override
+					public boolean isEnabled(IStatus status, Map<String, Object> properties) {
+						Boolean prop = (Boolean) properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED);
+						Boolean pin_prop = (Boolean) properties.get(IGdbLaunchVMConstants.PROP_PINNED_CONTEXT);
+						Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR); 
+						return (prop != null && pin_prop != null && pin_color_prop != null) ? 
+								!prop.booleanValue() && pin_prop.booleanValue() && pin_color_prop.equals(IPinElementColorDescriptor.GREEN) : false;
+					};
+				},
+				/* RUNNING THREAD - BLUE PIN */
+				new LabelImage(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_THREAD_RUNNING_B_PINNED)) {
+					{ setPropertyNames(new String[] {
+							ILaunchVMConstants.PROP_IS_SUSPENDED, 
+							IGdbLaunchVMConstants.PROP_PINNED_CONTEXT, 
+							IGdbLaunchVMConstants.PROP_PIN_COLOR }); }
+
+					@Override
+					public boolean isEnabled(IStatus status, Map<String, Object> properties) {
+						Boolean prop = (Boolean) properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED);
+						Boolean pin_prop = (Boolean) properties.get(IGdbLaunchVMConstants.PROP_PINNED_CONTEXT);
+						Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR); 
+						return (prop != null && pin_prop != null && pin_color_prop != null) ? 
+								!prop.booleanValue() && pin_prop.booleanValue() && pin_color_prop.equals(IPinElementColorDescriptor.BLUE) : false;
+					};
+				},
+				/* RUNNING THREAD - NO PIN */
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING)) {
                     { setPropertyNames(new String[] { ILaunchVMConstants.PROP_IS_SUSPENDED }); }
                     
@@ -93,6 +149,49 @@ public class ThreadVMNode extends AbstractThreadVMNode
                     	return (prop != null) ? !prop.booleanValue() : false;
                     };
                 },
+                /* SUSPENDED THREAD - RED PIN */
+                new LabelImage(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_THREAD_SUSPENDED_R_PINNED)) {
+                	{ setPropertyNames(new String[] { 
+                			IGdbLaunchVMConstants.PROP_PINNED_CONTEXT, 
+                			IGdbLaunchVMConstants.PROP_PIN_COLOR }); }
+                	
+                	@Override 
+                	public boolean isEnabled(IStatus status, Map<String, Object> properties) { 
+                		Boolean pin_prop = (Boolean)properties.get(IGdbLaunchVMConstants.PROP_PINNED_CONTEXT);
+                		Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR); 
+                		return (pin_prop != null && pin_color_prop != null) ? 
+                				pin_prop.booleanValue() && pin_color_prop.equals(IPinElementColorDescriptor.RED) : false; 
+                	};
+                },
+                /* SUSPENDED THREAD - GREEN PIN */
+                new LabelImage(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_THREAD_SUSPENDED_G_PINNED)) {
+                	{ setPropertyNames(new String[] { 
+                			IGdbLaunchVMConstants.PROP_PINNED_CONTEXT, 
+                			IGdbLaunchVMConstants.PROP_PIN_COLOR }); }
+                	
+                	@Override 
+                	public boolean isEnabled(IStatus status, Map<String, Object> properties) { 
+                		Boolean pin_prop = (Boolean)properties.get(IGdbLaunchVMConstants.PROP_PINNED_CONTEXT);
+                		Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR); 
+                		return (pin_prop != null && pin_color_prop != null) ? 
+                				pin_prop.booleanValue() && pin_color_prop.equals(IPinElementColorDescriptor.GREEN) : false; 
+                	};
+                },
+                /* SUSPENDED THREAD - BLUE PIN */
+                new LabelImage(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_THREAD_SUSPENDED_B_PINNED)) {
+                	{ setPropertyNames(new String[] { 
+                			IGdbLaunchVMConstants.PROP_PINNED_CONTEXT, 
+                			IGdbLaunchVMConstants.PROP_PIN_COLOR }); }
+                	
+                	@Override 
+                	public boolean isEnabled(IStatus status, Map<String, Object> properties) { 
+                		Boolean pin_prop = (Boolean)properties.get(IGdbLaunchVMConstants.PROP_PINNED_CONTEXT);
+                		Object pin_color_prop = properties.get(IGdbLaunchVMConstants.PROP_PIN_COLOR); 
+                		return (pin_prop != null && pin_color_prop != null) ? 
+                				pin_prop.booleanValue() && pin_color_prop.equals(IPinElementColorDescriptor.BLUE) : false; 
+                	};
+                },
+                /* SUSPENDED THREAD - NO PIN */
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED)),
             }));
         return provider;
@@ -118,6 +217,13 @@ public class ThreadVMNode extends AbstractThreadVMNode
                 update.getViewerInput(), update.getElementPath(), IMIExecutionDMContext.class);
             if (execDmc != null) {
                 update.setProperty(ILaunchVMConstants.PROP_ID, Integer.toString(execDmc.getThreadId()));
+
+                // set pin properties
+                IPinElementColorDescriptor colorDesc = PinCloneUtils.getPinElementColorDescriptor(GdbPinProvider.getPinnedHandles(), execDmc);
+        		updates[i].setProperty(IGdbLaunchVMConstants.PROP_PIN_COLOR, 
+        				colorDesc != null ? colorDesc.getOverlayColor() : null);
+        		updates[i].setProperty(IGdbLaunchVMConstants.PROP_PINNED_CONTEXT, 
+        				PinCloneUtils.isPinnedTo(GdbPinProvider.getPinnedHandles(), execDmc));
             }
 
             if (update.getProperties().contains(PROP_NAME) || 

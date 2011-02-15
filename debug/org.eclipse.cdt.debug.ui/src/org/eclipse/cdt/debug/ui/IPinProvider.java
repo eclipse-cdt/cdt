@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
+ *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
  *****************************************************************/
 package org.eclipse.cdt.debug.ui; 
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -29,17 +31,49 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public interface IPinProvider {
 	/**
-	 * An interface that provides label for the pinned handle. Handle that
-	 * wish to provide custom label should implement this interface.  
+	 * Pin element color descriptor.
 	 */
-	public interface IPinHandleLabelProvider {
+	public interface IPinElementColorDescriptor {
 		/**
-		 * Returns the label the label will be used to display
-		 * in the pinned view's descriptor.
-		 *  
-		 * @return the handle label
+		 * Default number of color count.
 		 */
-		String getLabel();
+		final int DEFAULT_COLOR_COUNT = 3; 
+		
+		/**
+		 * An undefined color
+		 */
+		int UNDEFINED = -1;
+		
+		/**
+		 * Green color (Default)
+		 */
+		int GREEN = 0;
+		
+		/**
+		 * Red color
+		 */
+		int RED = 1;
+		
+		/**
+		 * Blue color
+		 */
+		int BLUE = 2;
+		
+		/**
+		 * Returns the overlay pin color. The overlay pin will be used to decorate the debug view for element that
+		 * is pinned to a view.
+		 * 
+		 * @return one of the overlay color
+		 */
+		int getOverlayColor();
+		
+		/**
+		 * Returns the toolbar pin action image description to use when the view is pinned, can be <code>null</code>. 
+		 * If <code>null</code>, than the default image description will be use.
+		 *  
+		 * @return the icon descriptor
+		 */
+		ImageDescriptor getToolbarIconDescriptor();
 	}
 	
 	/**
@@ -51,7 +85,22 @@ public interface IPinProvider {
 		 * 
 		 * @return the debug context
 		 */
-		Object getDebugContext();		
+		Object getDebugContext();
+		
+		/**
+		 * Returns the label the label will be used to display
+		 * in the pinned view's descriptor.
+		 *  
+		 * @return the handle label
+		 */
+		String getLabel();
+		
+		/**
+		 * Returns color descriptor for this element.
+		 * 
+		 * @return the color descriptor, can be <code>null</code>
+		 */
+		IPinElementColorDescriptor getPinElementColorDescriptor();
 	}
 	
 	/**

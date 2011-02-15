@@ -44,7 +44,7 @@
             targetID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser">
          <action
                class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
-               icon="icons/pin.gif"
+               icon="icons/toolbar_pinned.gif"
                id="org.eclipse.pinclone.memoryBrowser.pinDebugContext"
                label="%PinView.name "
                style="toggle"

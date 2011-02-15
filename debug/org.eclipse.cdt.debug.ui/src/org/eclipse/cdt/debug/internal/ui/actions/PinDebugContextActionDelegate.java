@@ -7,23 +7,27 @@
  *
  * Contributors:
  *     Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
+ *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
  *****************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.cdt.debug.internal.ui.pinclone.DebugContextPinProvider;
 import org.eclipse.cdt.debug.internal.ui.pinclone.DebugEventFilterService;
 import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
+import org.eclipse.cdt.debug.ui.IPinProvider;
+import org.eclipse.cdt.debug.ui.IPinProvider.IPinElementColorDescriptor;
 import org.eclipse.cdt.debug.ui.IPinProvider.IPinElementHandle;
-import org.eclipse.cdt.debug.ui.IPinProvider.IPinHandleLabelProvider;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate2;
@@ -40,12 +44,13 @@ import org.eclipse.ui.PlatformUI;
  * Pin the selected debug context for the view. 
  */
 public class PinDebugContextActionDelegate implements IViewActionDelegate, IActionDelegate2, IDebugContextListener {
-	IViewPart fPart;
-	IAction fAction;
-	IPartListener2 fPartListener;
-	DebugContextPinProvider fProvider;
+	private IViewPart fPart;
+	private IAction fAction;
+	private IPartListener2 fPartListener;
+	private DebugContextPinProvider fProvider;
 	
-	public PinDebugContextActionDelegate() {}
+	public PinDebugContextActionDelegate() {
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
@@ -61,13 +66,13 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 		if (action.isChecked()) {
 			fProvider = DebugEventFilterService.getInstance().addDebugEventFilter(fPart, getActiveDebugContext());
 			if (fProvider != null) {
-				// TODO: set image descriptor
+				updatePinContextColor(fProvider);
 				updatePinContextLabel(fProvider);
 			}			
 		} else {
 			fProvider = null;
 			DebugEventFilterService.getInstance().removeDebugEventFilter(fPart);
-			// TODO: remove image descriptor
+			updatePinContextColor(fProvider);
 			updatePinContextLabel(fProvider);
 		}
 	}
@@ -152,8 +157,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 		
 		if (provider != null) {
 			Set<String> labels = new HashSet<String>();
-			Set<IPinElementHandle> handles = provider.getPinHandles();
-			for (IPinElementHandle handle : handles) {
+			for (IPinElementHandle handle : provider.getPinHandles()) {
 				String tmp = getLabel(handle);
 				if (tmp != null && tmp.trim().length() != 0)
 					labels.add(tmp);
@@ -162,7 +166,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 			for (String label : labels) {
 				if (label != null) {
 					if (description.length() > 0) {
-						description += "," + label; //$NON-NLS-1$
+						description += ", " + label; //$NON-NLS-1$
 					} else {
 						description = label;
 					}
@@ -176,16 +180,77 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 	private String getLabel(IPinElementHandle handle) {
 		String label = ""; //$NON-NLS-1$
 
-		if (handle instanceof IAdaptable) {
-			IPinHandleLabelProvider provider = 
-				(IPinHandleLabelProvider) ((IAdaptable) handle).getAdapter(IPinHandleLabelProvider.class);
-			if (provider != null)
-				label = provider.getLabel();
-		}
+		if (handle != null)
+			label = handle.getLabel();
 		
 		return label;
 	}
 
+	private boolean useMultiPinImage(Set<IPinElementHandle> handles) {
+		if (handles.size() <= 1) return false;
+		
+		int overlayColor = IPinElementColorDescriptor.UNDEFINED;
+		ImageDescriptor imageDesc = null;
+		for (IPinElementHandle handle : handles) {
+			IPinElementColorDescriptor colorDesc = handle.getPinElementColorDescriptor();
+			if (colorDesc != null) {
+				ImageDescriptor descImageDesc = colorDesc.getToolbarIconDescriptor();
+				if (imageDesc != null && !imageDesc.equals(descImageDesc))
+					return true;
+				imageDesc = descImageDesc;
+				
+				int descOverlayColor = colorDesc.getOverlayColor();
+				if (overlayColor != IPinElementColorDescriptor.UNDEFINED && descOverlayColor != overlayColor)
+					return true;
+				overlayColor = descOverlayColor;
+			}
+		}
+		
+		return false;
+	}
+	
+	private void updatePinContextColor(DebugContextPinProvider provider) {
+		ImageDescriptor imageDesc = null;
+		if (provider != null) {
+			Set<IPinElementHandle> handles = provider.getPinHandles();
+			
+			// if handles have different toolbar icon descriptor or different pin color, than use a 
+			// multi-pin toolbar icon
+			if (useMultiPinImage(handles))
+				imageDesc =  CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_VIEW_PIN_ACTION_MULTI);
+			
+			if (imageDesc == null) {
+				Iterator<IPinElementHandle> itr = handles.iterator();
+				if (itr.hasNext()) {
+					IPinElementHandle handle = itr.next();
+					IPinElementColorDescriptor desc = handle.getPinElementColorDescriptor();
+					if (desc != null)
+						imageDesc = desc.getToolbarIconDescriptor();
+					
+					if (imageDesc == null && desc != null) {
+						int overlayColor = desc.getOverlayColor() % IPinElementColorDescriptor.DEFAULT_COLOR_COUNT;
+						
+						switch (overlayColor) {
+						case IPinProvider.IPinElementColorDescriptor.GREEN:
+							imageDesc = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_VIEW_PIN_ACTION_G);
+							break;
+						case IPinProvider.IPinElementColorDescriptor.RED:
+							imageDesc = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_VIEW_PIN_ACTION_R);
+							break;
+						case IPinProvider.IPinElementColorDescriptor.BLUE:
+							imageDesc = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_VIEW_PIN_ACTION_B);
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		if (imageDesc == null)
+			imageDesc = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_VIEW_PIN_ACTION);
+		fAction.setImageDescriptor(imageDesc);
+	}	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
 	 */

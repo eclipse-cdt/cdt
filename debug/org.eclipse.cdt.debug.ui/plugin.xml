@@ -1049,7 +1049,7 @@
             targetID="org.eclipse.debug.ui.ExpressionView">
          <action
                class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
-               icon="icons/elcl16/pin.gif"
+               icon="icons/elcl16/toolbar_pinned.gif"
                id="org.eclipse.pinclone.expression.pinDebugContext"
                label="%PinView.name "
                style="toggle"
@@ -1069,7 +1069,7 @@
             targetID="org.eclipse.debug.ui.VariableView">
          <action
                class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
-               icon="icons/elcl16/pin.gif"
+               icon="icons/elcl16/toolbar_pinned.gif"
                id="org.eclipse.pinclone.variable.pinDebugContext"
                label="%PinView.name "
                style="toggle"
@@ -1089,7 +1089,7 @@
             targetID="org.eclipse.debug.ui.RegisterView">
          <action
                class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
-               icon="icons/elcl16/pin.gif"
+               icon="icons/elcl16/toolbar_pinned.gif"
                id="org.eclipse.pinclone.register.pinDebugContext"
                label="%PinView.name "
                style="toggle"

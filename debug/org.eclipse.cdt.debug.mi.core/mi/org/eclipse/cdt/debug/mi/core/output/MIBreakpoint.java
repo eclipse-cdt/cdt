@@ -104,7 +104,6 @@ public class MIBreakpoint {
 	}
 
 	public void setHardware(boolean hd) {
-		isWpt = hd;
 		isHdw = hd;
 	}
 

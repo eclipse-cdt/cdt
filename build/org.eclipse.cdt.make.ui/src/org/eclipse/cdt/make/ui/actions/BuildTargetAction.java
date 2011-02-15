@@ -19,7 +19,6 @@ import org.eclipse.cdt.make.ui.dialogs.BuildTargetDialog;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.bindings.BindingManagerEvent;

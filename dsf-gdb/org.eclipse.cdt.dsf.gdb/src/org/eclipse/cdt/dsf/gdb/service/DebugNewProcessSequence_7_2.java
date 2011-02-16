@@ -41,13 +41,13 @@ public class DebugNewProcessSequence_7_2 extends DebugNewProcessSequence {
 	private IGDBControl fGdbControl;
 	private IGDBProcesses fProcService;
 	private String fSessionId;
-	private boolean fInitialProcess;
+	private final boolean fInitialProcess;
 
-	public DebugNewProcessSequence_7_2(DsfExecutor executor, boolean initialProcess, IDMContext dmc, String file, 
+	public DebugNewProcessSequence_7_2(DsfExecutor executor, boolean isInitial, IDMContext dmc, String file, 
 			                           Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
-		super(executor, dmc, file, attributes, rm);
+		super(executor, isInitial, dmc, file, attributes, rm);
 		fSessionId = dmc.getSessionId();
-		fInitialProcess = initialProcess;
+		fInitialProcess = isInitial;
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class DebugNewProcessSequence_7_2 extends DebugNewProcessSequence {
 	}
 	
 	/** 
-	 * Initialize the members of the {@link DebugNewProcessSequence_7_2} class.
+	 * Initialize the members of the DebugNewProcessSequence_7_2 class.
 	 * This step is mandatory for the rest of the sequence to complete.
 	 */
 	@Execute

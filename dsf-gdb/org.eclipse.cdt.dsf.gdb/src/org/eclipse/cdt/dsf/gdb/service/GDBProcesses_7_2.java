@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.gdb.service;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
@@ -48,13 +49,6 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
     private IGDBControl fCommandControl;
     private IGDBBackend fBackend;
 
-    /**
-     * Keeps track if we are dealing with the very first
-     * process of GDB.  In such a case, we should not create a new
-     * inferior, since GDB has already created one by default.
-     */
-    private boolean fInitialProcess = true;
-    
 	public GDBProcesses_7_2(DsfSession session) {
 		super(session);
 	}
@@ -123,8 +117,10 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		                new Step() { 
 		                    @Override
 		                    public void execute(final RequestMonitor rm) {
-		                    	if (fInitialProcess) {
-		                    		fInitialProcess = false;
+		                    	if (isInitialProcess()) {
+		                    		// If it is the first inferior, GDB has already created it for us
+		                    		// We really should get the id from GDB instead of hard-coding it
+		                    		setIsInitialProcess(false);
 		        					fContainerDmc = createContainerContext(procCtx, "i1"); //$NON-NLS-1$
 		                    		rm.done();
 		                    		return;
@@ -286,22 +282,9 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 	}
 
 	@Override
-	public void debugNewProcess(IDMContext dmc, String file, 
-			                    Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
-		boolean isInitial = fInitialProcess;
-		if (fInitialProcess) {
-			fInitialProcess = false;
-		} else {
-			// If we are trying to create another process than the initial one, see if we are allowed
-			if (!doIsDebugNewProcessSupported()) {
-		        rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Not allowed to create a new process", null)); //$NON-NLS-1$
-		        rm.done();
-		        return;
-			}
-		}
-		
-		ImmediateExecutor.getInstance().execute(
-				new DebugNewProcessSequence_7_2(getExecutor(), isInitial, dmc, file, attributes, rm));
+	protected Sequence getDebugNewProcessSequence(DsfExecutor executor, boolean isInitial, IDMContext dmc, String file, 
+												  Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
+		return new DebugNewProcessSequence_7_2(executor, isInitial, dmc, file, attributes, rm);
 	}
 }
 

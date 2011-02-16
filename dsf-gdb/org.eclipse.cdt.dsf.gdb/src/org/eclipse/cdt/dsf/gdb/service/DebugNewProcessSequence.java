@@ -20,6 +20,7 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ReflectionSequence;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
@@ -68,7 +69,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 		fContainerCtx = ctx;
 	}
 	
-	public DebugNewProcessSequence(DsfExecutor executor, IDMContext dmc, String file, Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
+	public DebugNewProcessSequence(DsfExecutor executor, boolean isInitial, IDMContext dmc, String file, Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
 		super(executor, rm);
 		fContext = dmc;
 		fBinaryName = file;
@@ -94,7 +95,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	}
 
 	/** 
-	 * Initialize the members of the {@link StartOrRestartProcessSequence_7_0} class.
+	 * Initialize the members of the DebugNewProcessSequence class.
 	 * This step is mandatory for the rest of the sequence to complete.
 	 */
 	@Execute
@@ -267,7 +268,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	public void stepStartExecution(final RequestMonitor rm) {
 		if (fBackend.getSessionType() != SessionType.CORE) {
 			ImmediateExecutor.getInstance().execute(
-					new StartOrRestartProcessSequence_7_0(
+					getStartOrRestartProcessSequence(
 							getExecutor(), getContainerContext(), fAttributes, false,
 							new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm) {
 								@Override
@@ -298,5 +299,15 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 		fTracker.dispose();
 		fTracker = null;
 		rm.done();
+	}
+	
+	/**
+	 * Return the sequence that is to be used to start or restart the specified process.
+	 * Allows others to extend more easily.
+	 */
+	protected Sequence getStartOrRestartProcessSequence(DsfExecutor executor, IContainerDMContext containerDmc, 
+														Map<String, Object> attributes, boolean restart, 
+														DataRequestMonitor<IContainerDMContext> rm) {
+		return new StartOrRestartProcessSequence_7_0(executor, containerDmc, attributes, restart, rm);
 	}
 }

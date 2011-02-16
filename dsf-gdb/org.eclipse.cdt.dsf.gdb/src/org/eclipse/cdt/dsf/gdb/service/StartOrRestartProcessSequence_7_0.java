@@ -149,7 +149,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	}
 	
 	/** 
-	 * Initialize the members of the {@link StartOrRestartProcessSequence_7_0} class.
+	 * Initialize the members of the StartOrRestartProcessSequence_7_0 class.
 	 * This step is mandatory for the rest of the sequence to complete.
 	 */
 	@Execute

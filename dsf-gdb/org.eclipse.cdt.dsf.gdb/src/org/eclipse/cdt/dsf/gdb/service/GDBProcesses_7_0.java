@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -435,6 +436,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	
     private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 
+    /** 
+     * Keeps track if we are dealing with the very first process of GDB.
+     */  
     private boolean fInitialProcess = true;
 
     public GDBProcesses_7_0(DsfSession session) {
@@ -536,6 +540,16 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	/** @since 4.0 */
 	protected Map<String, String> getGroupToPidMap() {
 		return fGroupToPidMap;
+	}
+
+	/** @since 4.0 */
+	protected boolean isInitialProcess() {
+		return fInitialProcess;
+	}
+
+	/** @since 4.0 */
+	protected void setIsInitialProcess(boolean isInitial) {
+		fInitialProcess = isInitial;
 	}
 
 	/** 
@@ -736,6 +750,13 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	    				new Step() { 
 	    					@Override
 	    					public void execute(RequestMonitor rm) {
+	    						
+		                    	if (isInitialProcess()) {
+		                    		// To be proper, set the initialProcess variable to false
+		                    		// it may be necessary for a class that extends this class
+		                    		setIsInitialProcess(false);
+		                    	}
+		                    	
 	    						// There is no groupId until we attach, so we can use the default groupId
 	    						fContainerDmc = createContainerContext(procCtx, MIProcesses.UNIQUE_GROUP_ID);
 
@@ -857,20 +878,35 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	
 	public void debugNewProcess(IDMContext dmc, String file, 
 			                    Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
-		if (!fInitialProcess) {
-			// If we have already dealt with the initial process, check if we are allowed to create another one
+
+		// Store the current value of the initialProcess variable because we will use it later
+		// and we are about to change it.
+		boolean isInitial = isInitialProcess();
+		if (isInitialProcess()) {
+			setIsInitialProcess(false);
+		} else {
+			// If we are trying to create another process than the initial one, see if we are allowed
 			if (!doIsDebugNewProcessSupported()) {
-				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Cannot start a new process", null)); //$NON-NLS-1$
-				rm.done();
-				return;
+		        rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Not allowed to create a new process", null)); //$NON-NLS-1$
+		        rm.done();
+		        return;
 			}
 		}
-		
-		fInitialProcess = false;
+
 		ImmediateExecutor.getInstance().execute(
-				new DebugNewProcessSequence(getExecutor(), dmc, file, attributes, rm));
+				getDebugNewProcessSequence(getExecutor(), isInitial, dmc, file, attributes, rm));
 	}
     
+	/**
+	 * Return the sequence that is to be used to create a new process the specified process.
+	 * Allows others to extend more easily.
+	 * @since 4.0
+	 */
+	protected Sequence getDebugNewProcessSequence(DsfExecutor executor, boolean isInitial, IDMContext dmc, String file, 
+												  Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
+		return new DebugNewProcessSequence(executor, isInitial, dmc, file, attributes, rm);
+	}
+	
 	public void getProcessesBeingDebugged(final IDMContext dmc, final DataRequestMonitor<IDMContext[]> rm) {
 		final ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 		final IMIContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
@@ -1088,9 +1124,20 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	/** @since 4.0 */
 	public void restart(IContainerDMContext containerDmc, Map<String, Object> attributes, RequestMonitor rm) {
    		ImmediateExecutor.getInstance().execute(
-   				 new StartOrRestartProcessSequence_7_0(
+   				getStartOrRestartProcessSequence(
    						getExecutor(), containerDmc, attributes, true, 
    						new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm)));
+	}
+	
+	/**
+	 * Return the sequence that is to be used to start or restart the specified process.
+	 * Allows others to extend more easily.
+	 * @since 4.0
+	 */
+	protected Sequence getStartOrRestartProcessSequence(DsfExecutor executor, IContainerDMContext containerDmc, 
+														Map<String, Object> attributes, boolean restart, 
+														DataRequestMonitor<IContainerDMContext> rm) {
+		return new StartOrRestartProcessSequence_7_0(executor, containerDmc, attributes, restart, rm);
 	}
 	
     @DsfServiceEventHandler

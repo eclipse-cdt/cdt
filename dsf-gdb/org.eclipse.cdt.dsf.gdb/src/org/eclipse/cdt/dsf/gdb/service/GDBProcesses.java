@@ -20,8 +20,10 @@ import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
@@ -279,7 +281,17 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	public void debugNewProcess(IDMContext dmc, String file, 
 			                    Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
 		ImmediateExecutor.getInstance().execute(
-				new DebugNewProcessSequence(getExecutor(), dmc, file, attributes, rm));
+				getDebugNewProcessSequence(getExecutor(), true, dmc, file, attributes, rm));
+	}
+	
+	/**
+	 * Return the sequence that is to be used to create a new process.
+	 * Allows others to extend more easily.
+	 * @since 4.0
+	 */
+	protected Sequence getDebugNewProcessSequence(DsfExecutor executor, boolean isInitial, IDMContext dmc, String file, 
+												  Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
+		return new DebugNewProcessSequence(executor, isInitial, dmc, file, attributes, rm);
 	}
 	
 	@Override

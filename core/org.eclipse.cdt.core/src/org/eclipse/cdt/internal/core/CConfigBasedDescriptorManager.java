@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,8 +56,7 @@ import org.eclipse.core.runtime.Status;
 /**
  * CConfigBasedDescriptorManager
  *
- * ICDescriptor settings are set on all the ICConfigurationDescriptions in the
- * project's "org.eclipse.core.cdt.settings" storageModule.
+ * ICDescriptor settings are set directly within the project description.
  *
  * The ICDescriptorManager can be used to fetch the current ICDescriptor
  * for the project get and set settings in this module in a safe manner.
@@ -72,7 +71,7 @@ import org.eclipse.core.runtime.Status;
  * Usage:
  * 	  Users should consider making changes to project ICDescriptors using an {@link ICDescriptorOperation}
  * with the {@link #runDescriptorOperation} method.
- *    The ICDescriptor's returned for {@link #getDescriptor} are shared between multiple thread,
+ *    The ICDescriptor's returned for {@link #getDescriptor} are shared between multiple threads,
  * but they are synchronized.  This is safe as long as structural changes aren't made to the same
  * project storage element from multiple threads.
  *

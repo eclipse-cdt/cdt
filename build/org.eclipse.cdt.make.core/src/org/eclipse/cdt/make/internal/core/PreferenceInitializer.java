@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core;
 
@@ -72,7 +73,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         scInfo2.setAutoDiscoveryEnabled(true);
         scInfo2.setProblemReportingEnabled(true);
         scInfo2.setSelectedProfileId(ScannerConfigProfileManager.DEFAULT_SI_PROFILE_ID);
-        scInfo2.setBuildOutputFileActionEnabled(false);
+        scInfo2.setBuildOutputFileActionEnabled(true);
         scInfo2.setBuildOutputFilePath(""); //$NON-NLS-1$
         scInfo2.setBuildOutputParserEnabled(true);
         String providerId = "specsFile";    //$NON-NLS-1$

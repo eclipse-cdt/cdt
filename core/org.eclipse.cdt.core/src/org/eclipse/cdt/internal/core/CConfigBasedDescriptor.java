@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -56,11 +55,13 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Concrete ICDescriptor for a Project.
  *
- * There is only one of these per project.  Settings are serialized into all the
- * ICConfigurationDescriptions of the project.  Methods which change or access data
+ * There is only one of these per project.  Settings are serialized as storage elements
+ * as children of the root of the project description. Methods which change or access data
  * on the descriptor use the Eclipse ILock 'fLock' on the given descriptor instance.
  *
  * Structural changes made to extension elements are persisted immediately to
@@ -434,7 +435,12 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 			// Check if the storage element already exists in our local map
 			SynchronizedStorageElement storageEl = fStorageDataElMap.get(id);
 			if(storageEl == null){
-				ICStorageElement el = fCfgDes.getStorage(id, true);
+				// Check in the Proejct Description
+				ICStorageElement el = fCfgDes.getProjectDescription().getStorage(id, false);
+
+				// Fall-back to checking in the configuration (which is how it used ot be)
+				if (el == null)
+					el = fCfgDes.getStorage(id, true);
 				try {
 					el = el.createCopy();
 				} catch (UnsupportedOperationException e) {
@@ -461,7 +467,9 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 			SynchronizedStorageElement storageEl = fStorageDataElMap.get(id);
 			ICStorageElement el;
 			if(storageEl == null) {
-				el = fCfgDes.getStorage(id, true);
+				el = fCfgDes.getProjectDescription().getStorage(id, false);
+				if (el == null)
+					el = fCfgDes.getStorage(id, true);
 				try {
 					el = el.createCopy();
 				} catch (UnsupportedOperationException e) {
@@ -697,7 +705,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 	 * @param des
 	 * @return boolean indicating whether changes were made
 	 */
-	public static boolean reconcile(CConfigBasedDescriptor descriptor, ICProjectDescription des){
+	public static boolean reconcile(CConfigBasedDescriptor descriptor, ICProjectDescription des) throws CoreException {
 		try {
 			descriptor.fLock.acquire();
 
@@ -726,44 +734,36 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 		}
 	}
 
-	private static boolean reconcile(String id, ICStorageElement newStorEl, ICProjectDescription des) {
-		ICConfigurationDescription cfgs[] = des.getConfigurations();
-		boolean reconciled = false;
-
-		for(int i = 0; i < cfgs.length; i++){
-			try {
-				if(reconcile(id, newStorEl, cfgs[i]))
-					reconciled = true;
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-			}
-		}
-
-		return reconciled;
-	}
-
-	private static boolean reconcile(String id, ICStorageElement newStorEl, ICConfigurationDescription cfg) throws CoreException{
-		CConfigurationSpecSettings setting = ((IInternalCCfgInfo)cfg).getSpecSettings();
-		ICStorageElement storEl = setting.getStorage(id, false);
+	private static boolean reconcile(String id, ICStorageElement newStorEl, ICProjectDescription des) throws CoreException {
+		ICStorageElement storEl = des.getStorage(id, false);
 
 		boolean modified = false;
 
 		if(storEl != null){
 			if(newStorEl == null){
-				setting.removeStorage(id);
+				des.removeStorage(id);
 				modified = true;
 			} else {
 				if(!newStorEl.equals(storEl)){
-					setting.importStorage(id, newStorEl);
+					des.importStorage(id, newStorEl);
 					modified = true;
 				}
 			}
 		} else {
 			if(newStorEl != null){
-				setting.importStorage(id, newStorEl);
+				des.importStorage(id, newStorEl);
 				modified = true;
 			}
 		}
+
+		// Now storing the descriptor info directly in the Project Description.
+		// Ensure that the setting is no longer stored in all the configurations
+		for (ICConfigurationDescription cfgDes : des.getConfigurations()) {
+			ICStorageElement el = cfgDes.getStorage(id, false);
+			if (el != null)
+				cfgDes.removeStorage(id);
+		}
+
 		return modified;
 	}
 

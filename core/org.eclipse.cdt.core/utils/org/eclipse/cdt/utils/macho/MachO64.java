@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,10 +49,8 @@ public class MachO64 {
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	protected static final SymbolComparator symbol_comparator = new SymbolComparator();
-	
 
 	public class MachOhdr {
-
 	    /* values of magic */
 	    public final static int MH_MAGIC = 0xfeedface;      /* the mach magic number */
 	    public final static int MH_CIGAM = 0xcefaedfe;
@@ -165,84 +163,81 @@ public class MachO64 {
 	    public final static int MH_OBJECT = 0x1;			/* relocatable object file */
 	    public final static int MH_EXECUTE = 0x2;			/* demand paged executable file */
 	    public final static int MH_FVMLIB = 0x3;			/* fixed VM shared library file */
-	    public final static int MH_CORE = 0x4;			/* core file */
+	    public final static int MH_CORE = 0x4;				/* core file */
 	    public final static int MH_PRELOAD = 0x5;			/* preloaded executable file */
-	    public final static int MH_DYLIB = 0x6;			/* dynamically bound shared library */
-	    public final static int MH_DYLINKER = 0x7;		/* dynamic link editor */
+	    public final static int MH_DYLIB = 0x6;				/* dynamically bound shared library */
+	    public final static int MH_DYLINKER = 0x7;			/* dynamic link editor */
 	    public final static int MH_BUNDLE = 0x8;			/* dynamically bound bundle file */
 	    public final static int MH_DYLIB_STUB = 0x9;		/* shared library stub for static linking only, no section contents */
-	    public final static int MH_DSYM = 0xa;             /* companion file with only debug */
+	    public final static int MH_DSYM = 0xa;             	/* companion file with only debug */
 	    
 	    /* values of flags */
 	    public final static int MH_NOUNDEFS = 0x1;			/* the object file has no undefined references */
 		public final static int MH_INCRLINK = 0x2;			/* the object file is the output of an incremental link against a base file and can't be link edited again */
 		public final static int MH_DYLDLINK = 0x4;			/* the object file is input for the dynamic linker and can't be staticly link edited again */
-		public final static int MH_BINDATLOAD = 0x8;			/* the object file's undefined references are bound by the dynamic linker when loaded. */
+		public final static int MH_BINDATLOAD = 0x8;		/* the object file's undefined references are bound by the dynamic linker when loaded. */
 		public final static int MH_PREBOUND = 0x10;			/* the file has its dynamic undefined references prebound. */
-		public final static int MH_SPLIT_SEGS = 0x20;			/* the file has its read-only and read-write segments split */
-		public final static int MH_LAZY_INIT = 0x40;			/* the shared library init routine is to be run lazily via catching memory faults to its writeable segments (obsolete) */
+		public final static int MH_SPLIT_SEGS = 0x20;		/* the file has its read-only and read-write segments split */
+		public final static int MH_LAZY_INIT = 0x40;		/* the shared library init routine is to be run lazily via catching memory faults to its writeable segments (obsolete) */
 		public final static int MH_TWOLEVEL = 0x80;			/* the image is using two-level name space bindings */
 		public final static int MH_FORCE_FLAT = 0x100;		/* the executable is forcing all images to use flat name space bindings */
 		public final static int MH_NOMULTIDEFS = 0x200;		/* this umbrella guarantees no multiple defintions of symbols in its sub-images so the two-level namespace hints can always be used. */
 		public final static int MH_NOFIXPREBINDING = 0x400;	/* do not have dyld notify the prebinding agent about this executable */
-		public final static int MH_PREBINDABLE = 0x800;      /* the binary is not prebound but can  have its prebinding redone. only used  when MH_PREBOUND is not set. */
-		public final static int MH_ALLMODSBOUND = 0x1000;    /* indicates that this binary binds to all two-level namespace modules of  its dependent libraries. only used  when MH_PREBINDABLE and MH_TWOLEVEL are both set. */ 
+		public final static int MH_PREBINDABLE = 0x800;     /* the binary is not prebound but can  have its prebinding redone. only used  when MH_PREBOUND is not set. */
+		public final static int MH_ALLMODSBOUND = 0x1000;   /* indicates that this binary binds to all two-level namespace modules of  its dependent libraries. only used  when MH_PREBINDABLE and MH_TWOLEVEL are both set. */ 
 		public final static int MH_SUBSECTIONS_VIA_SYMBOLS = 0x2000; /* safe to divide up the sections into sub-sections via symbols for dead code stripping */
-		public final static int MH_CANONICAL = 0x4000;          /* the binary has been canonicalized via the unprebind operation */
-		public final static int MH_WEAK_DEFINES = 0x8000;      /* the final linked image contains external weak symbols */
-		public final static int MH_BINDS_TO_WEAK = 0x10000;    /* the final linked image uses weak symbols */
+		public final static int MH_CANONICAL = 0x4000;      /* the binary has been canonicalized via the unprebind operation */
+		public final static int MH_WEAK_DEFINES = 0x8000;   /* the final linked image contains external weak symbols */
+		public final static int MH_BINDS_TO_WEAK = 0x10000; /* the final linked image uses weak symbols */
 		public final static int MH_ALLOW_STACK_EXECUTION = 0x20000; /* When this bit is set, all stacks in the task will be given stack execution privilege.  Only used in MH_EXECUTE filetypes. */
-		public final static int MH_ROOT_SAFE = 0x40000;        /* When this bit is set, the binary declares it is safe for use in processes with uid zero */
-		public final static int MH_SETUID_SAFE = 0x80000;         /* When this bit is set, the binary declares it is safe for use in processes when issetugid() is true */
+		public final static int MH_ROOT_SAFE = 0x40000;     /* When this bit is set, the binary declares it is safe for use in processes with uid zero */
+		public final static int MH_SETUID_SAFE = 0x80000;   /* When this bit is set, the binary declares it is safe for use in processes when issetugid() is true */
 		public final static int MH_NO_REEXPORTED_DYLIBS = 0x100000; /* When this bit is set on a dylib,the static linker does not need to examine dependent dylibs to see if any are re-exported */
 		public final static int MH_PIE = 0x200000;          /* When this bit is set, the OS will load the main executable at a random address.  Only used in  MH_EXECUTE filetypes. */
         public int magic;		/* mach magic number identifier */
         public int cputype;		/* cpu specifier */
         public int cpusubtype;	/* machine specifier */
-        public int filetype;		/* type of file */
+        public int filetype;	/* type of file */
         public int ncmds;		/* number of load commands */
         public int sizeofcmds;	/* the size of all the load commands */
-        public int flags;			/* flags */
-        public int reserved; // 64bit reserved
+        public int flags;		/* flags */
+        public int reserved; 	// 64bit reserved
+
 		protected MachOhdr() throws IOException {
 			efile.seek(0);
 			efile.setEndian(false);
 			magic = efile.readIntE();
-			if ( magic == MH_CIGAM || magic == MH_CIGAM_64) {
+			if (magic == MH_CIGAM || magic == MH_CIGAM_64) {
 				efile.setEndian(true);
 				if (MH_CIGAM_64 == magic)
 					b64 = true;
-			}
-			else
-			if ( magic == MH_UNIVERSAL)
-			{ 
+			} else if (magic == MH_UNIVERSAL) { 
 				String arch = System.getProperty("os.arch"); //$NON-NLS-1$
 				int numArchives = efile.readIntE();
-				while (numArchives-- > 0)
-				{
+				while (numArchives-- > 0) {
 					int cpuType =       efile.readIntE(); // cpuType
 					                    efile.readIntE(); // cpuSubType
 					int archiveOffset = efile.readIntE(); // archiveOffset
 									 	efile.readIntE(); // archiveSize
 									 	efile.readIntE(); // archiveAlignment
-					if ((cpuType == MachO64.MachOhdr.CPU_TYPE_I386 && arch.equalsIgnoreCase("i386")) ||  //$NON-NLS-1$
+					if ((cpuType == MachO64.MachOhdr.CPU_TYPE_I386 &&
+							(arch.equalsIgnoreCase("i386") || arch.equalsIgnoreCase("x86_64"))) ||  //$NON-NLS-1$ //$NON-NLS-2$
 							(cpuType == MachO64.MachOhdr.CPU_TYPE_POWERPC && arch.equalsIgnoreCase("ppc")) || //$NON-NLS-1$
-							(cpuType == MachO64.MachOhdr.CPU_TYPE_X86_64 && arch.equalsIgnoreCase("x86_64"))) //$NON-NLS-1$
-					{
+							(cpuType == MachO64.MachOhdr.CPU_TYPE_X86_64 && arch.equalsIgnoreCase("x86_64"))) { //$NON-NLS-1$
 						if (cpuType == MachO64.MachOhdr.CPU_TYPE_X86_64)
 							b64 = true;
 						efile.seek(archiveOffset);
 						magic = efile.readIntE();
-						if ( magic == MH_CIGAM || magic == MH_CIGAM_64)
+						if (magic == MH_CIGAM || magic == MH_CIGAM_64)
 							efile.setEndian(true);
-							else if ( magic != MH_MAGIC && magic != MH_MAGIC_64)
-								throw new IOException(CCorePlugin.getResourceString("Util.exception.notMACHO")); //$NON-NLS-1$
-					break;
+						else if (magic != MH_MAGIC && magic != MH_MAGIC_64)
+							throw new IOException(CCorePlugin.getResourceString("Util.exception.notMACHO")); //$NON-NLS-1$
+						break;
 					}
 				}
-			}
-			else if ( magic != MH_MAGIC && magic != MH_MAGIC_64)
+			} else if (magic != MH_MAGIC && magic != MH_MAGIC_64) {
 				throw new IOException(CCorePlugin.getResourceString("Util.exception.notMACHO")); //$NON-NLS-1$
+			}
 			if (magic == MH_MAGIC_64 || magic == MH_CIGAM_64)
 				b64 = true;
 			cputype = efile.readIntE();
@@ -260,41 +255,37 @@ public class MachO64 {
 			boolean isle = false;
 			int offset = 0;
 			magic = makeInt(bytes, offset, isle); offset += 4;
-			if ( magic == MH_CIGAM || magic == MH_CIGAM_64) {
+			if (magic == MH_CIGAM || magic == MH_CIGAM_64) {
 				isle = true;
 				if (MH_CIGAM_64 == magic)
 					b64 = true;
-			}
-			else
-				if ( magic == MH_UNIVERSAL)
-				{ 
-					String arch = System.getProperty("os.arch"); //$NON-NLS-1$
-					int numArchives = makeInt(bytes, offset, isle); offset += 4;
-					while (numArchives-- > 0)
-					{
-						int cpuType = makeInt(bytes, offset, isle); offset += 4;
-						offset += 4; // cpuSubType
-						int archiveOffset = makeInt(bytes, offset, isle); offset += 4; 
-						offset += 4; // archiveSize
-						offset += 4; // archiveAlignment
-						if ((cpuType == MachO64.MachOhdr.CPU_TYPE_I386 && arch.equalsIgnoreCase("i386")) ||  //$NON-NLS-1$
-								(cpuType == MachO64.MachOhdr.CPU_TYPE_POWERPC && arch.equalsIgnoreCase("ppc")) || //$NON-NLS-1$
-								(cpuType == MachO64.MachOhdr.CPU_TYPE_X86_64 && arch.equalsIgnoreCase("x86_64"))) //$NON-NLS-1$
-						{
-							if (cpuType == MachO64.MachOhdr.CPU_TYPE_X86_64)
-								b64 = true;
-							offset = archiveOffset;
-							magic = makeInt(bytes, offset, isle); offset += 4;
-							if ( magic == MH_CIGAM || magic == MH_CIGAM_64 )
-								isle = true;
-								else if ( magic != MH_MAGIC && magic != MH_MAGIC_64)
-									throw new IOException(CCorePlugin.getResourceString("Util.exception.notMACHO")); //$NON-NLS-1$
+			} else if (magic == MH_UNIVERSAL) { 
+				String arch = System.getProperty("os.arch"); //$NON-NLS-1$
+				int numArchives = makeInt(bytes, offset, isle); offset += 4;
+				while (numArchives-- > 0) {
+					int cpuType = makeInt(bytes, offset, isle); offset += 4;
+					offset += 4; // cpuSubType
+					int archiveOffset = makeInt(bytes, offset, isle); offset += 4; 
+					offset += 4; // archiveSize
+					offset += 4; // archiveAlignment
+					if ((cpuType == MachO64.MachOhdr.CPU_TYPE_I386 &&
+							(arch.equalsIgnoreCase("i386") || arch.equalsIgnoreCase("x86_64"))) ||  //$NON-NLS-1$ //$NON-NLS-2$
+							(cpuType == MachO64.MachOhdr.CPU_TYPE_POWERPC && arch.equalsIgnoreCase("ppc")) || //$NON-NLS-1$
+							(cpuType == MachO64.MachOhdr.CPU_TYPE_X86_64 && arch.equalsIgnoreCase("x86_64"))) { //$NON-NLS-1$
+						if (cpuType == MachO64.MachOhdr.CPU_TYPE_X86_64)
+							b64 = true;
+						offset = archiveOffset;
+						magic = makeInt(bytes, offset, isle); offset += 4;
+						if (magic == MH_CIGAM || magic == MH_CIGAM_64 )
+							isle = true;
+						else if (magic != MH_MAGIC && magic != MH_MAGIC_64)
+							throw new IOException(CCorePlugin.getResourceString("Util.exception.notMACHO")); //$NON-NLS-1$
 						break;
-						}
 					}
 				}
-			else if ( magic != MH_MAGIC && magic != MH_MAGIC_64)
+			} else if (magic != MH_MAGIC && magic != MH_MAGIC_64) {
 				throw new IOException(CCorePlugin.getResourceString("Util.exception.notMACHO")); //$NON-NLS-1$
+			}
 			if (magic == MH_MAGIC_64 || magic == MH_CIGAM_64)
 				b64 = true;
 			cputype = makeInt(bytes, offset, isle); offset += 4;
@@ -307,16 +298,16 @@ public class MachO64 {
 				reserved = makeInt(bytes, offset, isle); offset += 4;
 			}
 		}
+		
 		public boolean is64() {
 			return b64;
 		}
 	}
 
-	private static final int makeInt(byte [] val, int offset, boolean isle) throws IOException
-	{
+	private static final int makeInt(byte [] val, int offset, boolean isle) throws IOException {
 		if (val.length < offset + 4)
 			throw new IOException();
-		if ( isle ) {
+		if (isle ) {
 			return (((val[offset + 3] & 0xff) << 24) |
 					((val[offset + 2] & 0xff) << 16) |
 					((val[offset + 1] & 0xff) << 8) |
@@ -334,28 +325,28 @@ public class MachO64 {
 
 		/* values of cmd */
 		public final static int LC_SEGMENT = 0x1;			/* segment of this file to be mapped */
-		public final static int LC_SYMTAB = 0x2;				/* link-edit stab symbol table info */
-		public final static int LC_SYMSEG = 0x3;				/* link-edit gdb symbol table info (obsolete) */
-		public final static int LC_THREAD = 0x4;				/* thread */
-		public final static int LC_UNIXTHREAD = 0x5;			/* unix thread (includes a stack) */
-		public final static int LC_LOADFVMLIB = 0x6;			/* load a specified fixed VM shared library */
+		public final static int LC_SYMTAB = 0x2;			/* link-edit stab symbol table info */
+		public final static int LC_SYMSEG = 0x3;			/* link-edit gdb symbol table info (obsolete) */
+		public final static int LC_THREAD = 0x4;			/* thread */
+		public final static int LC_UNIXTHREAD = 0x5;		/* unix thread (includes a stack) */
+		public final static int LC_LOADFVMLIB = 0x6;		/* load a specified fixed VM shared library */
 		public final static int LC_IDFVMLIB = 0x7;			/* fixed VM shared library identification */
 		public final static int LC_IDENT = 0x8;				/* object identification info (obsolete) */
 		public final static int LC_FVMFILE = 0x9;			/* fixed VM file inclusion (internal use) */
 		public final static int LC_PREPAGE = 0xa;			/* prepage command (internal use) */
 		public final static int LC_DYSYMTAB = 0xb;			/* dynamic link-edit symbol table info */
-		public final static int LC_LOAD_DYLIB = 0xc;			/* load a dynamically linked shared library */
+		public final static int LC_LOAD_DYLIB = 0xc;		/* load a dynamically linked shared library */
 		public final static int LC_ID_DYLIB = 0xd;			/* dynamically linked shared lib ident */
 		public final static int LC_LOAD_DYLINKER = 0xe;		/* load a dynamic linker */
 		public final static int LC_ID_DYLINKER = 0xf;		/* dynamic linker identification */
 		public final static int LC_PREBOUND_DYLIB = 0x10;	/* modules prebound for a dynamically linked shared library */
 		public final static int LC_ROUTINES = 0x11;			/* image routines */
-		public final static int LC_SUB_FRAMEWORK = 0x12;		/* sub framework */
+		public final static int LC_SUB_FRAMEWORK = 0x12;	/* sub framework */
 		public final static int LC_SUB_UMBRELLA = 0x13;		/* sub umbrella */
 		public final static int LC_SUB_CLIENT = 0x14;		/* sub client */
 		public final static int LC_SUB_LIBRARY = 0x15;		/* sub library */
 		public final static int LC_TWOLEVEL_HINTS = 0x16;	/* two-level namespace lookup hints */
-		public final static int LC_PREBIND_CKSUM = 0x17;		/* prebind checksum */
+		public final static int LC_PREBIND_CKSUM = 0x17;	/* prebind checksum */
 		public final static int LC_SEGMENT_64 = 0x19;
 		public final static int LC_ROUTINES_64 = 0x1a;
 		public final static int LC_UUID = 0x1b;
@@ -394,44 +385,43 @@ public class MachO64 {
 		public final static int VM_PROT_COPY = 0x10;
 		public final static int VM_PROT_WANTS_COPY = 0x10;
 
-        public String segname;    /* segment name */
-        public long vmaddr;        /* memory address of this segment */
-        public long vmsize;        /* memory size of this segment */
+        public String segname; 		/* segment name */
+        public long vmaddr;        	/* memory address of this segment */
+        public long vmsize;        	/* memory size of this segment */
         public long fileoff;        /* file offset of this segment */
         public long filesize;       /* amount to map from the file */
-        public int maxprot;       /* maximum VM protection */
-        public int initprot;      /* initial VM protection */
-        public int nsects;        /* number of sections in segment */
-        public int flags;          /* flags */
+        public int maxprot;       	/* maximum VM protection */
+        public int initprot;      	/* initial VM protection */
+        public int nsects;        	/* number of sections in segment */
+        public int flags;          	/* flags */
         
         public boolean prot(int val) {
-        		return (initprot & val) == val;
+       		return (initprot & val) == val;
         }
 	}
 
 	public class Section  {
-
 		public final static int SECTION_TYP = 0x000000ff;				/* 256 section types */
 		public final static int SECTION_ATTRIBUTES = 0xffffff00;		/*  24 section attributes */
-		public final static int SECTION_ATTRIBUTES_USR =0xff000000;	/* User setable attributes */
+		public final static int SECTION_ATTRIBUTES_USR =0xff000000;		/* User setable attributes */
 		
 		/* values of flags */
-		public final static int S_REGULAR = 0x0;							/* regular section */
-		public final static int S_ZEROFILL = 0x1;							/* zero fill on demand section */
-		public final static int S_CSTRING_LITERALS = 0x2;					/* section with only literal C strings*/
+		public final static int S_REGULAR = 0x0;						/* regular section */
+		public final static int S_ZEROFILL = 0x1;						/* zero fill on demand section */
+		public final static int S_CSTRING_LITERALS = 0x2;				/* section with only literal C strings*/
 		public final static int S_4BYTE_LITERALS = 0x3;					/* section with only 4 byte literals */
 		public final static int S_8BYTE_LITERALS = 0x4;					/* section with only 8 byte literals */
-		public final static int S_LITERAL_POINTERS = 0x5;					/* section with only pointers to literals */
-		public final static int S_NON_LAZY_SYMBOL_POINTERS = 0x6;			/* section with only non-lazy symbol pointers */
-		public final static int S_LAZY_SYMBOL_POINTERS = 0x7;				/* section with only lazy symbol pointers */
-		public final static int S_SYMBOL_STUBS = 0x8;						/* section with only symbol stubs, byte size of stub in the reserved2 field */
+		public final static int S_LITERAL_POINTERS = 0x5;				/* section with only pointers to literals */
+		public final static int S_NON_LAZY_SYMBOL_POINTERS = 0x6;		/* section with only non-lazy symbol pointers */
+		public final static int S_LAZY_SYMBOL_POINTERS = 0x7;			/* section with only lazy symbol pointers */
+		public final static int S_SYMBOL_STUBS = 0x8;					/* section with only symbol stubs, byte size of stub in the reserved2 field */
 		public final static int S_MOD_INIT_FUNC_POINTERS = 0x9;			/* section with only function pointers for initialization*/
 		public final static int S_MOD_TERM_FUNC_POINTERS = 0xa;			/* section with only function pointers for termination */
 		public final static int S_COALESCED = 0xb;						/* section contains symbols that are to be coalesced */
 		public final static int S_ATTR_PURE_INSTRUCTIONS = 0x80000000;	/* section contains only true machine instructions */
-		public final static int S_ATTR_NO_TOC =  0x40000000;				/* section contains coalesced symbols that are not to be in a ranlib table of contents */
+		public final static int S_ATTR_NO_TOC =  0x40000000;			/* section contains coalesced symbols that are not to be in a ranlib table of contents */
 		public final static int S_ATTR_STRIP_STATIC_SYMS = 0x20000000;	/* ok to strip static symbols in this section in files with the MH_DYLDLINK flag */
-		public final static int SECTION_ATTRIBUTES_SYS = 0x00ffff00;		/* system setable attributes */
+		public final static int SECTION_ATTRIBUTES_SYS = 0x00ffff00;	/* system setable attributes */
 		public final static int S_ATTR_SOME_INSTRUCTIONS = 0x00000400;	/* section contains some machine instructions */
 		public final static int S_ATTR_EXT_RELOC = 0x00000200;			/* section has external relocation entries */
 		public final static int S_ATTR_LOC_RELOC = 0x00000100;			/* section has local relocation entries */
@@ -439,19 +429,19 @@ public class MachO64 {
         public String sectname;			/* name of this section */
         public String segname;			/* name segment this section goes in */
         public SegmentCommand segment;	/* segment this section goes in */
-        public long addr;					/* memory address of this section */
-        public long size;					/* size in bytes of this section */
+        public long addr;				/* memory address of this section */
+        public long size;				/* size in bytes of this section */
         public int offset;				/* file offset of this section */
         public int align;				/* section alignment (power of 2) */
         public int reloff;				/* file offset of relocation entries */
         public int nreloc;				/* number of relocation entries */
-        public int flags;					/* flags (section type and attributes)*/
+        public int flags;				/* flags (section type and attributes)*/
         public int reserved1;			/* reserved */
         public int reserved2;			/* reserved */
         public int reserved3;
         
         public int flags(int mask) {
-        		return flags & mask;
+       		return flags & mask;
         }
 	}
 	
@@ -463,8 +453,8 @@ public class MachO64 {
 		
         @Override
 		public String toString() {
-			if ( lc_str_name == null ) {
-					return EMPTY_STRING;
+			if (lc_str_name == null ) {
+				return EMPTY_STRING;
 			}
 			return lc_str_name;
 		}
@@ -485,8 +475,8 @@ public class MachO64 {
 		
         @Override
 		public String toString() {
-			if ( lc_str_name == null ) {
-					return EMPTY_STRING;
+			if (lc_str_name == null ) {
+				return EMPTY_STRING;
 			}
 			return lc_str_name;
 		}
@@ -502,8 +492,8 @@ public class MachO64 {
 		
         @Override
 		public String toString() {
-			if ( lc_str_name == null ) {
-					return EMPTY_STRING;
+			if (lc_str_name == null ) {
+				return EMPTY_STRING;
 			}
 			return lc_str_name;
 		}
@@ -515,8 +505,8 @@ public class MachO64 {
 		
         @Override
 		public String toString() {
-			if ( lc_str_name == null ) {
-					return EMPTY_STRING;
+			if (lc_str_name == null ) {
+				return EMPTY_STRING;
 			}
 			return lc_str_name;
 		}
@@ -528,8 +518,8 @@ public class MachO64 {
 		
         @Override
 		public String toString() {
-			if ( lc_str_name == null ) {
-					return EMPTY_STRING;
+			if (lc_str_name == null ) {
+				return EMPTY_STRING;
 			}
 			return lc_str_name;
 		}
@@ -541,8 +531,8 @@ public class MachO64 {
 		
         @Override
 		public String toString() {
-			if ( lc_str_name == null ) {
-					return EMPTY_STRING;
+			if (lc_str_name == null ) {
+				return EMPTY_STRING;
 			}
 			return lc_str_name;
 		}
@@ -556,8 +546,8 @@ public class MachO64 {
 		
         @Override
 		public String toString() {
-			if ( lc_str_name == null ) {
-					return EMPTY_STRING;
+			if (lc_str_name == null ) {
+				return EMPTY_STRING;
 			}
 			return lc_str_name;
 		}
@@ -569,8 +559,8 @@ public class MachO64 {
 		
         @Override
 		public String toString() {
-			if ( lc_str_name == null ) {
-					return EMPTY_STRING;
+			if (lc_str_name == null ) {
+				return EMPTY_STRING;
 			}
 			return lc_str_name;
 		}
@@ -676,34 +666,32 @@ public class MachO64 {
 		
         @Override
 		public String toString() {
-			if ( lc_str_name == null ) {
-					return EMPTY_STRING;
+			if (lc_str_name == null ) {
+				return EMPTY_STRING;
 			}
 			return lc_str_name;
 		}
 	}
 
-    private void commonSetup( String file, long offset, boolean filton ) 
-       throws IOException 
-    {
+    private void commonSetup(String file, long offset, boolean filton ) throws IOException {
         this.cppFiltEnabled = filton;
 
 		try {
 	        efile = new ERandomAccessFile(file, "r"); //$NON-NLS-1$
-    	    efile.setFileOffset( offset );
+    	    efile.setFileOffset(offset );
 			mhdr = new MachOhdr();
 			this.file = file;
 		} finally {
-			if ( mhdr == null ) {
+			if (mhdr == null ) {
 				dispose();
 			}
 		}
     }
     
 	protected String string_from_macho_symtab(MachO64.SymtabCommand symtab, int index) throws IOException {
-		if ( index > symtab.strsize ) {
-				return EMPTY_STRING;
-			}
+		if (index > symtab.strsize ) {
+			return EMPTY_STRING;
+		}
 		efile.seek(symtab.stroff + index);
 		return getCStr();
 	}
@@ -791,7 +779,7 @@ public class MachO64 {
 		}
 
         public Symbol() {
-        	}
+       	}
 
 		public boolean n_type_mask(int mask) {
 			return (n_type & mask) != 0;
@@ -808,11 +796,11 @@ public class MachO64 {
 		public int compareTo(Object obj) {
 			long thisVal = 0;
 			long anotherVal = 0;
-			if ( obj instanceof Symbol ) {
+			if (obj instanceof Symbol ) {
 				Symbol sym = (Symbol)obj;
 				thisVal = this.n_value;
 				anotherVal = sym.n_value;
-			} else if ( obj instanceof Long ) {
+			} else if (obj instanceof Long ) {
 				Long val = (Long)obj;
 				anotherVal = val.longValue();
 				thisVal = this.n_value;
@@ -825,7 +813,7 @@ public class MachO64 {
 			if (n_strx == 0 || symtab == null) {
 				return EMPTY_STRING;
 			}
-			if ( name == null ) {
+			if (name == null ) {
 				try { 
 					name = cppFilt(string_from_macho_symtab(symtab, (int)n_strx));
 				} catch (IOException e ) {
@@ -905,7 +893,7 @@ public class MachO64 {
 		 * then -1 is returned.
 		 */
 		public int getFuncLineNumber() {
-			if ( line == null ) {
+			if (line == null ) {
 				lineInfo();
 			}
 			if (line == null) {
@@ -933,9 +921,9 @@ public class MachO64 {
 		}
 		
 		int ndx = Arrays.binarySearch(lines, new Long(value));
-		if ( ndx >= 0 )
+		if (ndx >= 0 )
 			return lines[ndx];
-		if ( ndx == -1 ) {
+		if (ndx == -1 ) {
 			return null;
 		}
 		ndx = -ndx - 1;
@@ -948,7 +936,7 @@ public class MachO64 {
 	}
 	
 	/**
-	 * We have to implement a separate compararator since when we do the
+	 * We have to implement a separate comparator since when we do the
 	 * binary search down below we are using a Long and a Symbol object
 	 * and the Long doesn't know how to compare against a Symbol so if
 	 * we compare Symbol vs Long it is ok, but not if we do Long vs Symbol.
@@ -956,24 +944,22 @@ public class MachO64 {
 	public static class SymbolComparator implements Comparator<Object> {
 		long val1, val2;
 		public int compare(Object o1, Object o2) {
-
-			if(o1 instanceof Long) {
-				val1 = ((Long)o1).longValue();
-			} else if(o1 instanceof Symbol) {
-				val1 = ((Symbol)o1).n_value;
+			if (o1 instanceof Long) {
+				val1 = ((Long) o1).longValue();
+			} else if (o1 instanceof Symbol) {
+				val1 = ((Symbol) o1).n_value;
 			} else {
 				return -1;
 			}
 			
-			if(o2 instanceof Long) {
-				val2 = ((Long)o2).longValue();
-			} else if(o2 instanceof Symbol) {
-				val2 = ((Symbol)o2).n_value;
+			if (o2 instanceof Long) {
+				val2 = ((Long) o2).longValue();
+			} else if (o2 instanceof Symbol) {
+				val2 = ((Symbol) o2).n_value;
 			} else {
 				return -1;
 			}
-			return (val1 == val2) ? 0 
-								  : ((val1 < val2) ? -1 : 1);
+			return val1 == val2 ? 0 : val1 < val2 ? -1 : 1;
 		}
 	}
 	
@@ -989,11 +975,11 @@ public class MachO64 {
 		public int compareTo(Object obj) {
 			long thisVal = 0;
 			long anotherVal = 0;
-			if ( obj instanceof Line ) {
+			if (obj instanceof Line ) {
 				Line l = (Line)obj;
 				thisVal = this.address;
 				anotherVal = l.address;
-			} else if ( obj instanceof Long ) {
+			} else if (obj instanceof Long ) {
 				Long val = (Long)obj;
 				anotherVal = val.longValue();
 				thisVal = this.address;
@@ -1013,26 +999,26 @@ public class MachO64 {
     }
 
 	public MachO64 (String file, long offset) throws IOException {
-        commonSetup( file, offset, true );
+        commonSetup(file, offset, true );
     }
 
     public MachO64 (String file) throws IOException {
-        commonSetup( file, 0, true );
+        commonSetup(file, 0, true );
     }
      
     public MachO64 (String file, long offset, boolean filton) throws IOException {
-        commonSetup( file, offset, filton );
+        commonSetup(file, offset, filton );
     }
 
     public MachO64 (String file, boolean filton) throws IOException {
-        commonSetup( file, 0, filton );
+        commonSetup(file, 0, filton );
     }
 
     public boolean cppFilterEnabled() {
         return cppFiltEnabled;
     }
 
-    public void setCppFilter( boolean enabled ) {
+    public void setCppFilter(boolean enabled ) {
         cppFiltEnabled = enabled;
     }
   
@@ -1080,70 +1066,70 @@ public class MachO64 {
     public Attribute getAttributes() throws IOException {
 		Attribute attrib = new Attribute();
     
-	    switch( mhdr.filetype ) {
-        	case MachO64.MachOhdr.MH_OBJECT:
-				attrib.type = Attribute.MACHO_TYPE_OBJ;
-				break;
-            case MachO64.MachOhdr.MH_EXECUTE:
-            case MachO64.MachOhdr.MH_PRELOAD:
-            case MachO64.MachOhdr.MH_BUNDLE:
-            case MachO64.MachOhdr.MH_DYLINKER:
-                attrib.type = Attribute.MACHO_TYPE_EXE;
-                break;
-            case MachO64.MachOhdr.MH_CORE:
-                attrib.type = Attribute.MACHO_TYPE_CORE;
-                break;
-            case MachO64.MachOhdr.MH_DYLIB:
-            case MachO64.MachOhdr.MH_FVMLIB:
-               attrib.type = Attribute.MACHO_TYPE_SHLIB;
-                break;
+	    switch(mhdr.filetype ) {
+    	case MachO64.MachOhdr.MH_OBJECT:
+			attrib.type = Attribute.MACHO_TYPE_OBJ;
+			break;
+        case MachO64.MachOhdr.MH_EXECUTE:
+        case MachO64.MachOhdr.MH_PRELOAD:
+        case MachO64.MachOhdr.MH_BUNDLE:
+        case MachO64.MachOhdr.MH_DYLINKER:
+            attrib.type = Attribute.MACHO_TYPE_EXE;
+            break;
+        case MachO64.MachOhdr.MH_CORE:
+            attrib.type = Attribute.MACHO_TYPE_CORE;
+            break;
+        case MachO64.MachOhdr.MH_DYLIB:
+        case MachO64.MachOhdr.MH_FVMLIB:
+           attrib.type = Attribute.MACHO_TYPE_SHLIB;
+            break;
         }
 	   
 		switch (mhdr.cputype) {
-			case MachO64.MachOhdr.CPU_TYPE_X86_64:
-				attrib.cpu = "x86_64"; //$NON-NLS-1$
-				break;
-			case MachO64.MachOhdr.CPU_TYPE_I386 :
-				attrib.cpu = "x86"; //$NON-NLS-1$
-				break;
-			case MachO64.MachOhdr.CPU_TYPE_POWERPC :
-				attrib.cpu = "ppc"; //$NON-NLS-1$
-				break;
-			case MachO64.MachOhdr.CPU_TYPE_VAX :
-				attrib.cpu = "vax"; //$NON-NLS-1$
-				break;
-			case MachO64.MachOhdr.CPU_TYPE_MC680x0 :
-				attrib.cpu = "m68k"; //$NON-NLS-1$
-				break;
-			case MachO64.MachOhdr.CPU_TYPE_MC98000 :
-				attrib.cpu = "98000"; //$NON-NLS-1$
-				break;
-			case MachO64.MachOhdr.CPU_TYPE_MC88000 :
-				attrib.cpu = "88000"; //$NON-NLS-1$
-				break;
-			case MachO64.MachOhdr.CPU_TYPE_HPPA :
-				attrib.cpu = "hp"; //$NON-NLS-1$
-				break;
-			case MachO64.MachOhdr.CPU_TYPE_SPARC:
-				attrib.cpu = "sparc"; //$NON-NLS-1$
-				break;
-			case MachO64.MachOhdr.CPU_TYPE_I860:
-				attrib.cpu = "i860"; //$NON-NLS-1$
-				break;
-			case MachO64.MachOhdr.CPU_TYPE_ANY:
-			default:
-				attrib.cpu = "any"; //$NON-NLS-1$
+		case MachO64.MachOhdr.CPU_TYPE_X86_64:
+			attrib.cpu = "x86_64"; //$NON-NLS-1$
+			break;
+		case MachO64.MachOhdr.CPU_TYPE_I386:
+			attrib.cpu = "x86"; //$NON-NLS-1$
+			break;
+		case MachO64.MachOhdr.CPU_TYPE_POWERPC:
+			attrib.cpu = "ppc"; //$NON-NLS-1$
+			break;
+		case MachO64.MachOhdr.CPU_TYPE_VAX:
+			attrib.cpu = "vax"; //$NON-NLS-1$
+			break;
+		case MachO64.MachOhdr.CPU_TYPE_MC680x0:
+			attrib.cpu = "m68k"; //$NON-NLS-1$
+			break;
+		case MachO64.MachOhdr.CPU_TYPE_MC98000:
+			attrib.cpu = "98000"; //$NON-NLS-1$
+			break;
+		case MachO64.MachOhdr.CPU_TYPE_MC88000:
+			attrib.cpu = "88000"; //$NON-NLS-1$
+			break;
+		case MachO64.MachOhdr.CPU_TYPE_HPPA:
+			attrib.cpu = "hp"; //$NON-NLS-1$
+			break;
+		case MachO64.MachOhdr.CPU_TYPE_SPARC:
+			attrib.cpu = "sparc"; //$NON-NLS-1$
+			break;
+		case MachO64.MachOhdr.CPU_TYPE_I860:
+			attrib.cpu = "i860"; //$NON-NLS-1$
+			break;
+		case MachO64.MachOhdr.CPU_TYPE_ANY:
+		default:
+			attrib.cpu = "any"; //$NON-NLS-1$
 		}
 		
 		switch (mhdr.magic) {
-			case MachO64.MachOhdr.MH_CIGAM_64:
-			case MachO64.MachOhdr.MH_CIGAM :
-				attrib.isle = true;
-				break;
-			case MachO64.MachOhdr.MH_MAGIC_64 :
-			case MachO64.MachOhdr.MH_MAGIC :
-				attrib.isle = false;
-				break;
+		case MachO64.MachOhdr.MH_CIGAM_64:
+		case MachO64.MachOhdr.MH_CIGAM:
+			attrib.isle = true;
+			break;
+		case MachO64.MachOhdr.MH_MAGIC_64:
+		case MachO64.MachOhdr.MH_MAGIC:
+			attrib.isle = false;
+			break;
 		}
 	
 		if (debugsym) {
@@ -1161,7 +1147,6 @@ public class MachO64 {
 	}
 
 	public static Attribute getAttributes(byte [] array) throws IOException {
-		
 		MachO64 emptyMachO = new MachO64();
 		emptyMachO.mhdr = emptyMachO.new MachOhdr(array);
 		//emptyMachO.sections = new MachO64.Section[0];
@@ -1212,33 +1197,33 @@ public class MachO64 {
 		DySymtabCommand dysymtab = null;
 		for (LoadCommand loadcommand : loadcommands) {
 			switch (loadcommand.cmd) {
-				case LoadCommand.LC_SYMTAB:
-					symtab = (SymtabCommand)loadcommand;
-					efile.seek(symtab.symoff);
-					ArrayList<Symbol> symList = new ArrayList<Symbol>(symtab.nsyms);
-					for (int s = 0; s < symtab.nsyms; s++) {
-						Symbol symbol = new Symbol();
-						symbol.is64 = b64;
-						symbol.n_strx = efile.readIntE();
-						symbol.n_type = (byte)efile.readUnsignedByte();
-						symbol.n_sect = (byte)efile.readUnsignedByte();
-						symbol.n_desc = efile.readShortE();
-						// figure out 64 bit file an dload 64 bit symbols
-						if (b64)
-							symbol.n_value = efile.readLongE();
-						else
-							symbol.n_value = efile.readIntE();							
-						symList.add(symbol);
-						if ((symbol.n_type & Symbol.N_STAB) != 0) {
-							debugsym = true;
-						}
+			case LoadCommand.LC_SYMTAB:
+				symtab = (SymtabCommand)loadcommand;
+				efile.seek(symtab.symoff);
+				ArrayList<Symbol> symList = new ArrayList<Symbol>(symtab.nsyms);
+				for (int s = 0; s < symtab.nsyms; s++) {
+					Symbol symbol = new Symbol();
+					symbol.is64 = b64;
+					symbol.n_strx = efile.readIntE();
+					symbol.n_type = (byte)efile.readUnsignedByte();
+					symbol.n_sect = (byte)efile.readUnsignedByte();
+					symbol.n_desc = efile.readShortE();
+					// figure out 64 bit file an dload 64 bit symbols
+					if (b64)
+						symbol.n_value = efile.readLongE();
+					else
+						symbol.n_value = efile.readIntE();							
+					symList.add(symbol);
+					if ((symbol.n_type & Symbol.N_STAB) != 0) {
+						debugsym = true;
 					}
-					symbols = symList.toArray(new Symbol[0]);
-					break;
-					
-				case LoadCommand.LC_DYSYMTAB:
-					dysymtab = (DySymtabCommand)loadcommand;
-					break;
+				}
+				symbols = symList.toArray(new Symbol[0]);
+				break;
+				
+			case LoadCommand.LC_DYSYMTAB:
+				dysymtab = (DySymtabCommand)loadcommand;
+				break;
 			}
 		}
 		if (dysymtab != null) {
@@ -1307,15 +1292,14 @@ public class MachO64 {
 				}
 			}
 		}
-		
 	}
 	
 	private ArrayList<Section> getSections(SegmentCommand seg) throws IOException {
-		if ( seg.nsects == 0 ) {
+		if (seg.nsects == 0 ) {
 			return new ArrayList<Section>();			
 		}
 		ArrayList<Section> sections = new ArrayList<Section>();
-		for ( int i = 0; i < seg.nsects; i++ ) {
+		for (int i = 0; i < seg.nsects; i++ ) {
 			Section section = new Section();
 			byte[] sectname = new byte[16];
 			byte[] segname = new byte[16];
@@ -1327,7 +1311,7 @@ public class MachO64 {
 			if (b64) {
 				section.addr = efile.readLongE();
 				section.size = efile.readLongE();
-			}else {
+			} else {
 				section.addr = efile.readIntE();
 				section.size = efile.readIntE();				
 			}
@@ -1346,11 +1330,11 @@ public class MachO64 {
 	}
 
 //	private TwoLevelHint[] getTwoLevelHints(int nhints) throws IOException {
-//		if ( nhints == 0 ) {
+//		if (nhints == 0 ) {
 //			return new TwoLevelHint[0];			
 //		}
 //		TwoLevelHint[] tlhints = new TwoLevelHint[nhints];
-//		for ( int i = 0; i < nhints; i++ ) {
+//		for (int i = 0; i < nhints; i++ ) {
 //			int field = efile.readIntE();
 //			tlhints[i] = new TwoLevelHint();
 //			tlhints[i].isub_image = (field & 0xff000000) >> 24;
@@ -1361,7 +1345,7 @@ public class MachO64 {
 	
 	private String getCStr() throws IOException {
 		StringBuffer str = new StringBuffer();
-		while( true ) {
+		while(true ) {
 			byte tmp = efile.readByte();
 			if (tmp == 0)
 				break;
@@ -1384,307 +1368,307 @@ public class MachO64 {
 	}
 
 	private void loadLoadCommands() throws IOException {
-		if ( loadcommands == null ) {
-			if ( mhdr.ncmds == 0 ) {
+		if (loadcommands == null ) {
+			if (mhdr.ncmds == 0 ) {
 				loadcommands = new LoadCommand[0];			
 				return;
 			}
 			loadcommands = new LoadCommand[mhdr.ncmds];
-			for ( int i = 0; i < mhdr.ncmds; i++ ) {
+			for (int i = 0; i < mhdr.ncmds; i++ ) {
 				int cmd = efile.readIntE();
 				int len = efile.readIntE();
 				
 				switch (cmd) {
-					case LoadCommand.LC_SEGMENT_64:
-						SegmentCommand seg64 = new SegmentCommand();
-						byte[] segname64 = new byte[16];
-						seg64.cmd = cmd;
-						seg64.cmdsize = len;
-						efile.readFully(segname64);
-						seg64.segname = new String(segname64, 0, 16);
-						seg64.vmaddr = efile.readLongE();
-						seg64.vmsize = efile.readLongE();
-						seg64.fileoff = efile.readLongE();
-						seg64.filesize = efile.readLongE();
-				        seg64.maxprot = efile.readIntE();
-				        seg64.initprot = efile.readIntE();
-				        seg64.nsects = efile.readIntE();
-				        seg64.flags = efile.readIntE();
-				        sections.addAll(getSections(seg64));
-				        loadcommands[i] = seg64;
-						break;
-					case LoadCommand.LC_SEGMENT:
-						SegmentCommand seg = new SegmentCommand();
-						byte[] segname = new byte[16];
-						seg.cmd = cmd;
-						seg.cmdsize = len;
-						efile.readFully(segname);
-						seg.segname = new String(segname, 0, 16);
-						seg.vmaddr = efile.readIntE();
-						seg.vmsize = efile.readIntE();
-						seg.fileoff = efile.readIntE();
-						seg.filesize = efile.readIntE();
-				        seg.maxprot = efile.readIntE();
-				        seg.initprot = efile.readIntE();
-				        seg.nsects = efile.readIntE();
-				        seg.flags = efile.readIntE();
-				        sections.addAll(getSections(seg));
-				        loadcommands[i] = seg;
-						break;
+				case LoadCommand.LC_SEGMENT_64:
+					SegmentCommand seg64 = new SegmentCommand();
+					byte[] segname64 = new byte[16];
+					seg64.cmd = cmd;
+					seg64.cmdsize = len;
+					efile.readFully(segname64);
+					seg64.segname = new String(segname64, 0, 16);
+					seg64.vmaddr = efile.readLongE();
+					seg64.vmsize = efile.readLongE();
+					seg64.fileoff = efile.readLongE();
+					seg64.filesize = efile.readLongE();
+			        seg64.maxprot = efile.readIntE();
+			        seg64.initprot = efile.readIntE();
+			        seg64.nsects = efile.readIntE();
+			        seg64.flags = efile.readIntE();
+			        sections.addAll(getSections(seg64));
+			        loadcommands[i] = seg64;
+					break;
+				case LoadCommand.LC_SEGMENT:
+					SegmentCommand seg = new SegmentCommand();
+					byte[] segname = new byte[16];
+					seg.cmd = cmd;
+					seg.cmdsize = len;
+					efile.readFully(segname);
+					seg.segname = new String(segname, 0, 16);
+					seg.vmaddr = efile.readIntE();
+					seg.vmsize = efile.readIntE();
+					seg.fileoff = efile.readIntE();
+					seg.filesize = efile.readIntE();
+			        seg.maxprot = efile.readIntE();
+			        seg.initprot = efile.readIntE();
+			        seg.nsects = efile.readIntE();
+			        seg.flags = efile.readIntE();
+			        sections.addAll(getSections(seg));
+			        loadcommands[i] = seg;
+					break;
 
-					case LoadCommand.LC_SYMTAB:
-						SymtabCommand stcmd = new SymtabCommand();
-						stcmd.cmd = cmd;
-						stcmd.cmdsize = len;
-						stcmd.symoff = efile.readIntE();
-						stcmd.nsyms = efile.readIntE();
-						stcmd.stroff = efile.readIntE();
-						stcmd.strsize = efile.readIntE();
-						loadcommands[i] = stcmd;
-						break;
-						
-					case LoadCommand.LC_SYMSEG:
-						SymSegCommand sscmd = new SymSegCommand();
-						sscmd.cmd = cmd;
-						sscmd.cmdsize = len;
-						sscmd.offset = efile.readIntE();
-						sscmd.size = efile.readIntE();
-						loadcommands[i] = sscmd;
-						break;
+				case LoadCommand.LC_SYMTAB:
+					SymtabCommand stcmd = new SymtabCommand();
+					stcmd.cmd = cmd;
+					stcmd.cmdsize = len;
+					stcmd.symoff = efile.readIntE();
+					stcmd.nsyms = efile.readIntE();
+					stcmd.stroff = efile.readIntE();
+					stcmd.strsize = efile.readIntE();
+					loadcommands[i] = stcmd;
+					break;
 					
-					case LoadCommand.LC_THREAD:
-					case LoadCommand.LC_UNIXTHREAD:
-						ThreadCommand thcmd = new ThreadCommand();
-						thcmd.cmd = cmd;
-						thcmd.cmdsize = len;
-						efile.skipBytes(len - 8);
-						loadcommands[i] = thcmd;
-						break;
+				case LoadCommand.LC_SYMSEG:
+					SymSegCommand sscmd = new SymSegCommand();
+					sscmd.cmd = cmd;
+					sscmd.cmdsize = len;
+					sscmd.offset = efile.readIntE();
+					sscmd.size = efile.readIntE();
+					loadcommands[i] = sscmd;
+					break;
+				
+				case LoadCommand.LC_THREAD:
+				case LoadCommand.LC_UNIXTHREAD:
+					ThreadCommand thcmd = new ThreadCommand();
+					thcmd.cmd = cmd;
+					thcmd.cmdsize = len;
+					efile.skipBytes(len - 8);
+					loadcommands[i] = thcmd;
+					break;
+				
+				case LoadCommand.LC_LOADFVMLIB:
+				case LoadCommand.LC_IDFVMLIB:
+					FVMLibCommand fvmcmd = new FVMLibCommand();
+					fvmcmd.cmd = cmd;
+					fvmcmd.cmdsize = len;
+					fvmcmd.fvmlib = new FVMLib();
+					fvmcmd.fvmlib.name = efile.readIntE();
+					fvmcmd.fvmlib.minor_version = efile.readIntE();
+					fvmcmd.fvmlib.header_addr = efile.readIntE();
+					len = fvmcmd.cmdsize - 20 /* sizeof FVMLibCommand */;
+					fvmcmd.fvmlib.lc_str_name = getLCStr(len);
+					len -= fvmcmd.fvmlib.lc_str_name.length() + 1;
+					efile.skipBytes(len);
+					loadcommands[i] = fvmcmd;
+					break;
+
+				case LoadCommand.LC_IDENT:
+					IdentCommand icmd = new IdentCommand();
+					icmd.cmd = cmd;
+					icmd.cmdsize = len;
+					loadcommands[i] = icmd;
+					break;
 					
-					case LoadCommand.LC_LOADFVMLIB:
-					case LoadCommand.LC_IDFVMLIB:
-						FVMLibCommand fvmcmd = new FVMLibCommand();
-						fvmcmd.cmd = cmd;
-						fvmcmd.cmdsize = len;
-						fvmcmd.fvmlib = new FVMLib();
-						fvmcmd.fvmlib.name = efile.readIntE();
-						fvmcmd.fvmlib.minor_version = efile.readIntE();
-						fvmcmd.fvmlib.header_addr = efile.readIntE();
-						len = fvmcmd.cmdsize - 20 /* sizeof FVMLibCommand */;
-						fvmcmd.fvmlib.lc_str_name = getLCStr(len);
-						len -= fvmcmd.fvmlib.lc_str_name.length() + 1;
-						efile.skipBytes(len);
-						loadcommands[i] = fvmcmd;
-						break;
+				case LoadCommand.LC_FVMFILE:
+					FVMFileCommand fcmd = new FVMFileCommand();
+					fcmd.cmd = cmd;
+					fcmd.cmdsize = len;
+					fcmd.name = efile.readIntE();
+					fcmd.header_addr = efile.readIntE();
+					len = fcmd.cmdsize - 16 /* sizeof FVMFileCommand */;
+					fcmd.lc_str_name = getLCStr(len);
+					len -= fcmd.lc_str_name.length() + 1;
+					efile.skipBytes(len);						
+					loadcommands[i] = fcmd;
+					break;
 
-					case LoadCommand.LC_IDENT:
-						IdentCommand icmd = new IdentCommand();
-						icmd.cmd = cmd;
-						icmd.cmdsize = len;
-						loadcommands[i] = icmd;
-						break;
-						
-					case LoadCommand.LC_FVMFILE:
-						FVMFileCommand fcmd = new FVMFileCommand();
-						fcmd.cmd = cmd;
-						fcmd.cmdsize = len;
-						fcmd.name = efile.readIntE();
-						fcmd.header_addr = efile.readIntE();
-						len = fcmd.cmdsize - 16 /* sizeof FVMFileCommand */;
-						fcmd.lc_str_name = getLCStr(len);
-						len -= fcmd.lc_str_name.length() + 1;
-						efile.skipBytes(len);						
-						loadcommands[i] = fcmd;
-						break;
+				case LoadCommand.LC_DYSYMTAB:
+					DySymtabCommand dscmd = new DySymtabCommand();
+					dscmd.cmd = cmd;
+					dscmd.cmdsize = len;
+					dscmd.ilocalsym = efile.readIntE();
+					dscmd.nlocalsym = efile.readIntE();
+					dscmd.iextdefsym = efile.readIntE();
+					dscmd.nextdefsym = efile.readIntE();
+					dscmd.iundefsym = efile.readIntE();
+					dscmd.nundefsym = efile.readIntE();
+					dscmd.tocoff = efile.readIntE();
+					dscmd.ntoc = efile.readIntE();
+					dscmd.modtaboff = efile.readIntE();
+					dscmd.nmodtab = efile.readIntE();
+					dscmd.extrefsymoff = efile.readIntE();
+					dscmd.nextrefsyms = efile.readIntE();
+					dscmd.indirectsymoff = efile.readIntE();
+					dscmd.nindirectsyms = efile.readIntE();
+					dscmd.extreloff = efile.readIntE();
+					dscmd.nextrel = efile.readIntE();
+					dscmd.locreloff = efile.readIntE();
+					dscmd.nlocrel = efile.readIntE();
+					loadcommands[i] = dscmd;
+					dynsym = true;
+					break;
 
-					case LoadCommand.LC_DYSYMTAB:
-						DySymtabCommand dscmd = new DySymtabCommand();
-						dscmd.cmd = cmd;
-						dscmd.cmdsize = len;
-						dscmd.ilocalsym = efile.readIntE();
-						dscmd.nlocalsym = efile.readIntE();
-						dscmd.iextdefsym = efile.readIntE();
-						dscmd.nextdefsym = efile.readIntE();
-						dscmd.iundefsym = efile.readIntE();
-						dscmd.nundefsym = efile.readIntE();
-						dscmd.tocoff = efile.readIntE();
-						dscmd.ntoc = efile.readIntE();
-						dscmd.modtaboff = efile.readIntE();
-						dscmd.nmodtab = efile.readIntE();
-						dscmd.extrefsymoff = efile.readIntE();
-						dscmd.nextrefsyms = efile.readIntE();
-						dscmd.indirectsymoff = efile.readIntE();
-						dscmd.nindirectsyms = efile.readIntE();
-						dscmd.extreloff = efile.readIntE();
-						dscmd.nextrel = efile.readIntE();
-						dscmd.locreloff = efile.readIntE();
-						dscmd.nlocrel = efile.readIntE();
-						loadcommands[i] = dscmd;
-						dynsym = true;
-						break;
+				case LoadCommand.LC_LOAD_DYLIB:
+				case LoadCommand.LC_ID_DYLIB:
+				case LoadCommand.LC_LOAD_WEAK_DYLIB:
+					DyLibCommand dylcmd = new DyLibCommand();
+					dylcmd.cmd = cmd;
+					dylcmd.cmdsize = len;
+					dylcmd.dylib = new DyLib();
+					dylcmd.dylib.name = efile.readIntE();
+					dylcmd.dylib.timestamp = efile.readIntE();
+					dylcmd.dylib.current_version = efile.readIntE();
+					dylcmd.dylib.compatibility_version = efile.readIntE();
+					len = dylcmd.cmdsize - 24 /* sizeof DyLibCommand */;
+					dylcmd.dylib.lc_str_name = getLCStr(len);
+					len -= dylcmd.dylib.lc_str_name.length() + 1;
+					efile.skipBytes(len);
+					loadcommands[i] = dylcmd;
+					break;
+		        	
+				case LoadCommand.LC_LOAD_DYLINKER:
+				case LoadCommand.LC_ID_DYLINKER:
+					DyLinkerCommand dylkcmd = new DyLinkerCommand();
+					dylkcmd.cmd = cmd;
+					dylkcmd.cmdsize = len;
+					dylkcmd.name = efile.readIntE();
+					len = dylkcmd.cmdsize - 12 /* sizeof(DyLinkerCommand) */;
+					dylkcmd.lc_str_name = getLCStr(len);
+					len -= dylkcmd.lc_str_name.length() + 1;
+					efile.skipBytes(len);
+					loadcommands[i] = dylkcmd;
+					break;
+				
+				case LoadCommand.LC_PREBOUND_DYLIB:
+					PreboundDyLibCommand pbcmd = new PreboundDyLibCommand();
+					pbcmd.cmd = cmd;
+					pbcmd.cmdsize = len;
+					pbcmd.name = efile.readIntE();
+					pbcmd.nmodules = efile.readIntE();
+					pbcmd.linked_modules = efile.readIntE();
+					len = pbcmd.cmdsize - 20 /* sizeof(PreboundDyLibCommand) */;
+					pbcmd.lc_str_name = getLCStr(len);
+					len -= pbcmd.lc_str_name.length() + 1;
+					efile.skipBytes(len);
+					loadcommands[i] = pbcmd;
+					break;
 
-					case LoadCommand.LC_LOAD_DYLIB:
-					case LoadCommand.LC_ID_DYLIB:
-					case LoadCommand.LC_LOAD_WEAK_DYLIB:
-						DyLibCommand dylcmd = new DyLibCommand();
-						dylcmd.cmd = cmd;
-						dylcmd.cmdsize = len;
-						dylcmd.dylib = new DyLib();
-						dylcmd.dylib.name = efile.readIntE();
-						dylcmd.dylib.timestamp = efile.readIntE();
-						dylcmd.dylib.current_version = efile.readIntE();
-						dylcmd.dylib.compatibility_version = efile.readIntE();
-						len = dylcmd.cmdsize - 24 /* sizeof DyLibCommand */;
-						dylcmd.dylib.lc_str_name = getLCStr(len);
-						len -= dylcmd.dylib.lc_str_name.length() + 1;
-						efile.skipBytes(len);
-						loadcommands[i] = dylcmd;
-						break;
-			        	
-					case LoadCommand.LC_LOAD_DYLINKER:
-					case LoadCommand.LC_ID_DYLINKER:
-						DyLinkerCommand dylkcmd = new DyLinkerCommand();
-						dylkcmd.cmd = cmd;
-						dylkcmd.cmdsize = len;
-						dylkcmd.name = efile.readIntE();
-						len = dylkcmd.cmdsize - 12 /* sizeof(DyLinkerCommand) */;
-						dylkcmd.lc_str_name = getLCStr(len);
-						len -= dylkcmd.lc_str_name.length() + 1;
-						efile.skipBytes(len);
-						loadcommands[i] = dylkcmd;
-						break;
+				case LoadCommand.LC_ROUTINES_64:
+					RoutinesCommand rcmd64 = new RoutinesCommand();
+					rcmd64.cmd = cmd;
+					rcmd64.cmdsize = len;
+					rcmd64.init_address = efile.readLongE();
+					rcmd64.init_module = efile.readLongE();
+					rcmd64.reserved1 = efile.readLongE();
+					rcmd64.reserved2 = efile.readLongE();
+					rcmd64.reserved3 = efile.readLongE();
+					rcmd64.reserved4 = efile.readLongE();
+					rcmd64.reserved5 = efile.readLongE();
+					rcmd64.reserved6 = efile.readLongE();
+					loadcommands[i] = rcmd64;
+					break;
+
+				case LoadCommand.LC_ROUTINES:
+					RoutinesCommand rcmd = new RoutinesCommand();
+					rcmd.cmd = cmd;
+					rcmd.cmdsize = len;
+					rcmd.init_address = efile.readIntE();
+					rcmd.init_module = efile.readIntE();
+					rcmd.reserved1 = efile.readIntE();
+					rcmd.reserved2 = efile.readIntE();
+					rcmd.reserved3 = efile.readIntE();
+					rcmd.reserved4 = efile.readIntE();
+					rcmd.reserved5 = efile.readIntE();
+					rcmd.reserved6 = efile.readIntE();
+					loadcommands[i] = rcmd;
+					break;
+				
+				case LoadCommand.LC_SUB_FRAMEWORK:
+					SubFrameworkCommand subfcmd = new SubFrameworkCommand();
+					subfcmd.cmd = cmd;
+					subfcmd.cmdsize = len;
+					subfcmd.umbrella = efile.readIntE();
+					len = subfcmd.cmdsize - 12 /* sizeof(SubFrameworkCommand) */   ;
+					subfcmd.lc_str_name = getLCStr(len);
+					len -= subfcmd.lc_str_name.length() + 1;
+					efile.skipBytes(len);
+					loadcommands[i] = subfcmd;
+					break;
+
+				case LoadCommand.LC_SUB_UMBRELLA:
+					SubUmbrellaCommand subucmd = new SubUmbrellaCommand();
+					subucmd.cmd = cmd;
+					subucmd.cmdsize = len;
+					subucmd.sub_umbrella = efile.readIntE();
+					len = subucmd.cmdsize - 12 /* sizeof(SubUmbrellaCommand) */;
+					subucmd.lc_str_name = getLCStr(len);
+					len -= subucmd.lc_str_name.length() + 1;
+					efile.skipBytes(len);
+					loadcommands[i] = subucmd;
+					break;
+
+				case LoadCommand.LC_SUB_CLIENT:
+					SubClientCommand subccmd = new SubClientCommand();
+					subccmd.cmd = cmd;
+					subccmd.cmdsize = len;
+					subccmd.client = efile.readIntE();
+					len = subccmd.cmdsize - 12 /* sizeof(SubClientCommand) */;
+					subccmd.lc_str_name = getLCStr(len);
+					len -= subccmd.lc_str_name.length() + 1;
+					efile.skipBytes(len);
+					loadcommands[i] = subccmd;
+					break;
 					
-					case LoadCommand.LC_PREBOUND_DYLIB:
-						PreboundDyLibCommand pbcmd = new PreboundDyLibCommand();
-						pbcmd.cmd = cmd;
-						pbcmd.cmdsize = len;
-						pbcmd.name = efile.readIntE();
-						pbcmd.nmodules = efile.readIntE();
-						pbcmd.linked_modules = efile.readIntE();
-						len = pbcmd.cmdsize - 20 /* sizeof(PreboundDyLibCommand) */;
-						pbcmd.lc_str_name = getLCStr(len);
-						len -= pbcmd.lc_str_name.length() + 1;
-						efile.skipBytes(len);
-						loadcommands[i] = pbcmd;
-						break;
-
-					case LoadCommand.LC_ROUTINES_64:
-						RoutinesCommand rcmd64 = new RoutinesCommand();
-						rcmd64.cmd = cmd;
-						rcmd64.cmdsize = len;
-						rcmd64.init_address = efile.readLongE();
-						rcmd64.init_module = efile.readLongE();
-						rcmd64.reserved1 = efile.readLongE();
-						rcmd64.reserved2 = efile.readLongE();
-						rcmd64.reserved3 = efile.readLongE();
-						rcmd64.reserved4 = efile.readLongE();
-						rcmd64.reserved5 = efile.readLongE();
-						rcmd64.reserved6 = efile.readLongE();
-						loadcommands[i] = rcmd64;
-						break;
-
-					case LoadCommand.LC_ROUTINES:
-						RoutinesCommand rcmd = new RoutinesCommand();
-						rcmd.cmd = cmd;
-						rcmd.cmdsize = len;
-						rcmd.init_address = efile.readIntE();
-						rcmd.init_module = efile.readIntE();
-						rcmd.reserved1 = efile.readIntE();
-						rcmd.reserved2 = efile.readIntE();
-						rcmd.reserved3 = efile.readIntE();
-						rcmd.reserved4 = efile.readIntE();
-						rcmd.reserved5 = efile.readIntE();
-						rcmd.reserved6 = efile.readIntE();
-						loadcommands[i] = rcmd;
-						break;
+				case LoadCommand.LC_SUB_LIBRARY:
+					SubLibraryCommand sublcmd = new SubLibraryCommand();
+					sublcmd.cmd = cmd;
+					sublcmd.cmdsize = len;
+					sublcmd.sub_library = efile.readIntE();
+					len = sublcmd.cmdsize - 12 /* sizeof(SubLibraryCommand) */;
+					sublcmd.lc_str_name = getLCStr(len);
+					len -= sublcmd.lc_str_name.length() + 1;
+					efile.skipBytes(len);
+					loadcommands[i] = sublcmd;
+					break;
+				
+				case LoadCommand.LC_TWOLEVEL_HINTS:
+					TwoLevelHintsCommand tlhcmd = new TwoLevelHintsCommand();
+					tlhcmd.cmd = cmd;
+					tlhcmd.cmdsize = len;
+					tlhcmd.offset = efile.readIntE();
+					tlhcmd.nhints = efile.readIntE();
+					loadcommands[i] = tlhcmd;
+					break;
+				case LoadCommand.LC_UUID:
+					MachUUID uuidCmd = new MachUUID();
+					uuidCmd.cmd = cmd;
+					uuidCmd.cmdsize = len;
+					byte[] uuid = new byte[16];
+					efile.readFully(uuid);
+					uuidCmd.uuid = new String(uuid,0,16);
+					loadcommands[i] = uuidCmd;
+					break;
+				case LoadCommand.LC_PREBIND_CKSUM:
+					PrebindCksumCommand pbccmd = new PrebindCksumCommand();
+					pbccmd.cmd = cmd;
+					pbccmd.cmdsize = len;
+					pbccmd.cksum = efile.readIntE();
+					loadcommands[i] = pbccmd;
+					break;
 					
-					case LoadCommand.LC_SUB_FRAMEWORK:
-						SubFrameworkCommand subfcmd = new SubFrameworkCommand();
-						subfcmd.cmd = cmd;
-						subfcmd.cmdsize = len;
-						subfcmd.umbrella = efile.readIntE();
-						len = subfcmd.cmdsize - 12 /* sizeof(SubFrameworkCommand) */   ;
-						subfcmd.lc_str_name = getLCStr(len);
-						len -= subfcmd.lc_str_name.length() + 1;
-						efile.skipBytes(len);
-						loadcommands[i] = subfcmd;
-						break;
-
-					case LoadCommand.LC_SUB_UMBRELLA:
-						SubUmbrellaCommand subucmd = new SubUmbrellaCommand();
-						subucmd.cmd = cmd;
-						subucmd.cmdsize = len;
-						subucmd.sub_umbrella = efile.readIntE();
-						len = subucmd.cmdsize - 12 /* sizeof(SubUmbrellaCommand) */;
-						subucmd.lc_str_name = getLCStr(len);
-						len -= subucmd.lc_str_name.length() + 1;
-						efile.skipBytes(len);
-						loadcommands[i] = subucmd;
-						break;
-
-					case LoadCommand.LC_SUB_CLIENT:
-						SubClientCommand subccmd = new SubClientCommand();
-						subccmd.cmd = cmd;
-						subccmd.cmdsize = len;
-						subccmd.client = efile.readIntE();
-						len = subccmd.cmdsize - 12 /* sizeof(SubClientCommand) */;
-						subccmd.lc_str_name = getLCStr(len);
-						len -= subccmd.lc_str_name.length() + 1;
-						efile.skipBytes(len);
-						loadcommands[i] = subccmd;
-						break;
-						
-					case LoadCommand.LC_SUB_LIBRARY:
-						SubLibraryCommand sublcmd = new SubLibraryCommand();
-						sublcmd.cmd = cmd;
-						sublcmd.cmdsize = len;
-						sublcmd.sub_library = efile.readIntE();
-						len = sublcmd.cmdsize - 12 /* sizeof(SubLibraryCommand) */;
-						sublcmd.lc_str_name = getLCStr(len);
-						len -= sublcmd.lc_str_name.length() + 1;
-						efile.skipBytes(len);
-						loadcommands[i] = sublcmd;
-						break;
-					
-					case LoadCommand.LC_TWOLEVEL_HINTS:
-						TwoLevelHintsCommand tlhcmd = new TwoLevelHintsCommand();
-						tlhcmd.cmd = cmd;
-						tlhcmd.cmdsize = len;
-						tlhcmd.offset = efile.readIntE();
-						tlhcmd.nhints = efile.readIntE();
-						loadcommands[i] = tlhcmd;
-						break;
-					case LoadCommand.LC_UUID:
-						MachUUID uuidCmd = new MachUUID();
-						uuidCmd.cmd = cmd;
-						uuidCmd.cmdsize = len;
-						byte[] uuid = new byte[16];
-						efile.readFully(uuid);
-						uuidCmd.uuid = new String(uuid,0,16);
-						loadcommands[i] = uuidCmd;
-						break;
-					case LoadCommand.LC_PREBIND_CKSUM:
-						PrebindCksumCommand pbccmd = new PrebindCksumCommand();
-						pbccmd.cmd = cmd;
-						pbccmd.cmdsize = len;
-						pbccmd.cksum = efile.readIntE();
-						loadcommands[i] = pbccmd;
-						break;
-						
-					default:
-						// fallback, just in case we don't recognize the command
-						UnknownCommand unknowncmd = new UnknownCommand();
-						unknowncmd.cmd = cmd;
-						unknowncmd.cmdsize = 0;
-						loadcommands[i] = unknowncmd;
-						break;
+				default:
+					// fallback, just in case we don't recognize the command
+					UnknownCommand unknowncmd = new UnknownCommand();
+					unknowncmd.cmd = cmd;
+					unknowncmd.cmdsize = 0;
+					loadcommands[i] = unknowncmd;
+					break;
 				}
 			}
 		}
 	}
 
 	public void loadBinary() throws IOException {
-		if ( loadcommands == null ) {
+		if (loadcommands == null ) {
 			loadLoadCommands();
 			loadSymbolTable();
 			loadLineTable();
@@ -1699,7 +1683,7 @@ public class MachO64 {
 
     public Symbol[] getDynamicSymbols() {
         if (dynsym) {
-        		return symbols;
+    		return symbols;
         }
         return null;
     }
@@ -1709,10 +1693,10 @@ public class MachO64 {
     }
     
     public Symbol[] getLocalSymbols() {
-    		if (local_symbols == null) {
-    			return symbols;
-    		}
-    		return local_symbols;
+		if (local_symbols == null) {
+			return symbols;
+		}
+		return local_symbols;
     }
 
     public Line[] getLineTable() {
@@ -1735,23 +1719,23 @@ public class MachO64 {
     }
 	
 	/* return the address of the function that address is in */
-	public Symbol getSymbol( long vma ) {
-		if ( symbols == null ) {
+	public Symbol getSymbol(long vma ) {
+		if (symbols == null ) {
 			return null;
 		}
 
 		int ndx = Arrays.binarySearch(symbols, new Long(vma), symbol_comparator);
-		if ( ndx > 0 )
+		if (ndx > 0 )
 			return symbols[ndx];
-		if ( ndx == -1 ) {
+		if (ndx == -1 ) {
 			return null;
 		}
 		ndx = -ndx - 1;
 		return symbols[ndx-1];
 	}
 		
-	public long swapInt( long val ) {
-		if ( mhdr.magic == MachOhdr.MH_CIGAM || mhdr.magic == MachOhdr.MH_CIGAM_64 ) {
+	public long swapInt(long val ) {
+		if (mhdr.magic == MachOhdr.MH_CIGAM || mhdr.magic == MachOhdr.MH_CIGAM_64 ) {
 			short tmp[] = new short[4];
 			tmp[0] = (short)(val & 0x00ff);
 			tmp[1] = (short)((val >> 8) & 0x00ff);
@@ -1762,8 +1746,8 @@ public class MachO64 {
 		return val;
 	}
 
-	public int swapShort( short val ) {
-		if ( mhdr.magic == MachOhdr.MH_CIGAM || mhdr.magic == MachOhdr.MH_CIGAM_64) {
+	public int swapShort(short val ) {
+		if (mhdr.magic == MachOhdr.MH_CIGAM || mhdr.magic == MachOhdr.MH_CIGAM_64) {
 			short tmp[] = new short[2];
 			tmp[0] = (short)(val & 0x00ff);
 			tmp[1] = (short)((val >> 8) & 0x00ff);
@@ -1779,30 +1763,31 @@ public class MachO64 {
 	private ISymbolReader createStabsReader() {
 		ISymbolReader symReader = null;
 
-			try {
-				if ( loadcommands == null ) {
-					loadLoadCommands();
-				}
-			} catch (Throwable e) { e.printStackTrace(); }
+		try {
+			if (loadcommands == null ) {
+				loadLoadCommands();
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 
-
-			for (LoadCommand loadcommand : loadcommands) {
-				if (loadcommand.cmd == LoadCommand.LC_SYMTAB)
-				{
-					symtab = (SymtabCommand)loadcommand;
-					try {
-						int symSize = symtab.nsyms * (mhdr.is64() ? StabConstant.SIZE_64 :StabConstant.SIZE);
-						byte[] data = new byte[symSize];
-						efile.seek(symtab.symoff);
-						efile.readFully(data);
-						byte[] stabstr = new byte[symtab.strsize];			
-						efile.seek(symtab.stroff);
-						efile.readFully(stabstr);
-						symReader = new StabsReader(data, stabstr, getAttributes().isLittleEndian(),mhdr.is64());
-					} catch (Throwable e) { e.printStackTrace(); }
-					
+		for (LoadCommand loadcommand : loadcommands) {
+			if (loadcommand.cmd == LoadCommand.LC_SYMTAB) {
+				symtab = (SymtabCommand)loadcommand;
+				try {
+					int symSize = symtab.nsyms * (mhdr.is64() ? StabConstant.SIZE_64 : StabConstant.SIZE);
+					byte[] data = new byte[symSize];
+					efile.seek(symtab.symoff);
+					efile.readFully(data);
+					byte[] stabstr = new byte[symtab.strsize];			
+					efile.seek(symtab.stroff);
+					efile.readFully(stabstr);
+					symReader = new StabsReader(data, stabstr, getAttributes().isLittleEndian(),mhdr.is64());
+				} catch (Throwable e) {
+					e.printStackTrace();
 				}
 			}
+		}
 		return symReader;
 	}
 

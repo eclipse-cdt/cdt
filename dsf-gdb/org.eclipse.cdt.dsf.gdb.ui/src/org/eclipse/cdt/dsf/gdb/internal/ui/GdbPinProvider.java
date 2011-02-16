@@ -240,7 +240,7 @@ public class GdbPinProvider implements IPinProvider {
 		Object debugContext = handle.getDebugContext();
 		if (debugContext instanceof IAdaptable) {
 			IDMContext dmc = (IDMContext) ((IAdaptable) debugContext).getAdapter(IDMContext.class);
-			GdbPinColorTracker.INSTANCE.removeRef(dmc.getSessionId() + handle.getLabel());
+			GdbPinColorTracker.INSTANCE.removeRef(dmc.getSessionId() + "." + handle.getLabel()); //$NON-NLS-1$
 			dispatchChangedEvent(dmc);
 			
 		}

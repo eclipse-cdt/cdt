@@ -12,6 +12,7 @@ package org.eclipse.cdt.make.ui;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
@@ -62,6 +63,12 @@ public class TargetBuild {
 		for (int i = 0; i < targets.length; ++i) {
 			IMakeTarget target = targets[i];
 			projects.add(target.getProject());
+			// Ensure we correctly save files in all referenced projects before build
+			try {
+				projects.addAll(Arrays.asList(target.getProject().getReferencedProjects()));
+			} catch (CoreException e) {
+				// Project not accessible or not open
+			}
 		}
 
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();

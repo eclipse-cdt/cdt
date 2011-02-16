@@ -23,11 +23,13 @@ public class ScannerContext {
 
 	public ScannerContext() {
 	}
+
 	public ScannerContext initialize(Reader r) {
 		fReader = r;
 		fOffset = 0;
 		return this;
 	}
+
 	public ScannerContext initialize(Reader r, int offset) {
 		try {
 			r.skip(offset);
@@ -79,5 +81,4 @@ public class ScannerContext {
 	public void pushUndo(int undo) {
 		this.fUndo.push(new Integer(undo));
 	}
-
 }

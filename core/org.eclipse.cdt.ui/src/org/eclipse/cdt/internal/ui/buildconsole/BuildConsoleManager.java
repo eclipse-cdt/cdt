@@ -13,16 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -134,8 +131,8 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	protected void startConsoleActivity(IProject project) {
 		Object[] list = listeners.getListeners();
 		if (list.length > 0) {
-			for (int i = 0; i < list.length; i++) {
-				IBuildConsoleListener listener = (IBuildConsoleListener)list[i];
+			for (Object element : list) {
+				IBuildConsoleListener listener = (IBuildConsoleListener)element;
 				ConsoleEvent event = new ConsoleEvent(BuildConsoleManager.this, project, IBuildConsoleEvent.CONSOLE_START);
 				listener.consoleChange(event);
 			}
@@ -203,8 +200,8 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 					partioner.disconnect();
 					Object[] list = listeners.getListeners();
 					if (list.length > 0) {
-						for (int i = 0; i < list.length; i++) {
-							IBuildConsoleListener listener = (IBuildConsoleListener)list[i];
+						for (Object element : list) {
+							IBuildConsoleListener listener = (IBuildConsoleListener)element;
 							ConsoleEvent consoleEvent = new ConsoleEvent(this, (IProject)resource, IBuildConsoleEvent.CONSOLE_CLOSE);
 							listener.consoleChange(consoleEvent);
 						}

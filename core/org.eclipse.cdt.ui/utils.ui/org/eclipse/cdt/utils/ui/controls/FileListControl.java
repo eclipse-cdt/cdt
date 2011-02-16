@@ -78,7 +78,6 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTStatusInfo;
 import org.eclipse.cdt.ui.newui.TypedCDTViewerFilter;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Nokia Corporation and others.
+ * Copyright (c) 2009, 2011 Nokia Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,13 +134,15 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 		try {
 			GetExpressionValueQuery query = new GetExpressionValueQuery(frame, expression, dsfServicesTracker);
 			DsfSession session = DsfSession.getSession(sessionId);
-	        session.getExecutor().execute(query);
-	        try {
-	        	FormattedValueDMData data = query.get();
-	        	if (data != null)
-	        		return data.getFormattedValue();
-	        } catch (Exception e) {
-	        }
+			if (session != null) {
+		        session.getExecutor().execute(query);
+		        try {
+		        	FormattedValueDMData data = query.get();
+		        	if (data != null)
+		        		return data.getFormattedValue();
+		        } catch (Exception e) {
+		        }
+			}
 		} finally {
 			dsfServicesTracker.dispose();
 		}

@@ -51,6 +51,8 @@ import org.eclipse.core.runtime.jobs.Job;
  * </ul>
  */
 public abstract class AbstractBuilderTest extends TestCase {
+	private static final boolean WINDOWS = java.io.File.separatorChar == '\\';
+
 	static final String PATH = "builderTests";
 
 	private String workspace;
@@ -136,7 +138,7 @@ public abstract class AbstractBuilderTest extends TestCase {
 		Collection<IResource> resources = getProjectBuildResources(projectName, cfgName, objs);
 		IProject project = getWorkspace().getRoot().getProject(projectName);
 		IFolder buildDir = project.getFolder(cfgName);
-		resources.add(buildDir.getFile(projectName));
+		resources.add(buildDir.getFile(projectName + (WINDOWS ? ".exe" : "")));
 		return resources;
 	}
 

@@ -266,7 +266,6 @@ public class BuilderFactory {
 		return new Builder(cfg.getToolChain(), subId, subName, (Builder)base);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static IBuilder createBuilderFromCommand(IConfiguration cfg, ICommand command){
 		Map<String, String> args = command.getArguments();
 		if(!args.containsKey(IBuilder.ID)){
@@ -436,7 +435,6 @@ public class BuilderFactory {
 		return NO_CHANGES;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static boolean applyBuilder(ICommand cmd, IBuilder builder) {
 		Map<String, String> oldMap = cmd.getArguments();
 		Map<String, String> map = builderBuildArgsMap(builder);

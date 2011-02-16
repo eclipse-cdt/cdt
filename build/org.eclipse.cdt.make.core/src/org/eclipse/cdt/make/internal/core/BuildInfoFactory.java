@@ -464,7 +464,6 @@ public class BuildInfoFactory {
 				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
 						MakeMessages.getString("BuildInfoFactory.Missing_Builder") + builderID, null)); //$NON-NLS-1$
 			}
-			@SuppressWarnings("unchecked")
 			Map<String, String> builderArgs = builder.getArguments();
 			args = builderArgs;
 		}

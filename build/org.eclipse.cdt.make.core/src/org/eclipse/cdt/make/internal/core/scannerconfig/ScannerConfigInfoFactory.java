@@ -306,7 +306,6 @@ public class ScannerConfigInfoFactory {
 						MakeMessages.getString("ScannerConfigInfoFactory.Missing_Builder")//$NON-NLS-1$
 							+ builderID, null)); 
 			}
-			@SuppressWarnings("unchecked")
 			Map<String,String> bArgs = builder.getArguments();
 			args = bArgs;
 		}

@@ -85,7 +85,8 @@ public class BuildLastTargetAction extends AbstractTargetAction {
 				
 				// no last target found, let the user decide
 				if (showDialog) {
-					BuildTargetDialog dialog = new BuildTargetDialog(getShell(), container, false/*Recursive*/);
+					boolean recursive = MakePreferencePage.useProjectLastMakeTarget();
+					BuildTargetDialog dialog = new BuildTargetDialog(getShell(), container, recursive );
 					if (dialog.open() == Window.OK) {
 						IMakeTarget target = dialog.getTarget();
 						if (target != null) {

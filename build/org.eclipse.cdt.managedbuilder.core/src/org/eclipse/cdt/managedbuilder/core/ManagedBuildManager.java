@@ -4565,28 +4565,28 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	private static Map<IProject, IConfiguration[]> sortConfigs(IConfiguration cfgs[]){
-		Map cfgMap = new HashMap();
-
+		Map<IProject, Set<IConfiguration>> cfgSetMap = new HashMap<IProject, Set<IConfiguration>>();
 		for (IConfiguration cfg : cfgs) {
 			IProject proj = cfg.getOwner().getProject();
-			Set set = (Set)cfgMap.get(proj);
+			Set<IConfiguration> set = cfgSetMap.get(proj);
 			if(set == null){
-				set = new HashSet();
-				cfgMap.put(proj, set);
+				set = new HashSet<IConfiguration>();
+				cfgSetMap.put(proj, set);
 			}
-
 			set.add(cfg);
 		}
 
-		if(cfgMap.size() != 0){
-			for(Iterator iter = cfgMap.entrySet().iterator(); iter.hasNext();){
-				Map.Entry entry = (Map.Entry)iter.next();
-				Set set = (Set)entry.getValue();
-				entry.setValue(set.toArray(new Configuration[set.size()]));
+		Map<IProject, IConfiguration[]> cfgArrayMap = new HashMap<IProject, IConfiguration[]>();
+		if(cfgSetMap.size() != 0){
+			Set<Entry<IProject, Set<IConfiguration>>> entrySet = cfgSetMap.entrySet();
+			for (Entry<IProject, Set<IConfiguration>> entry : entrySet) {
+				IProject key = entry.getKey();
+				Set<IConfiguration> set = entry.getValue();
+				cfgArrayMap.put(key, set.toArray(new Configuration[set.size()]));
 			}
 		}
 
-		return cfgMap;
+		return cfgArrayMap;
 	}
 
 	/**

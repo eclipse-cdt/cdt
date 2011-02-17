@@ -3616,7 +3616,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return supportsManagedBuild.booleanValue();
 	}
 	
-	public Object getMatchKey() {
+	public MatchKey<Tool> getMatchKey() {
 		if(isAbstract())
 			return null;
 		if(!isExtensionTool)

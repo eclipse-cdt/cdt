@@ -2293,7 +2293,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return false;
 	}
 	
-	public Object getMatchKey() {
+	public MatchKey<ToolChain> getMatchKey() {
 		if(isAbstract())
 			return null;
 		if(!isExtensionToolChain)

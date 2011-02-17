@@ -81,6 +81,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
+import org.eclipse.cdt.managedbuilder.internal.core.MatchKey;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiFolderInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiResourceInfo;
@@ -4222,7 +4223,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		HashMap map = new HashMap();
 		for(Iterator iter = elements.iterator(); iter.hasNext();){
 			IMatchKeyProvider p = (IMatchKeyProvider)iter.next();
-			Object key = p.getMatchKey();
+			MatchKey key = p.getMatchKey();
 			if(key == null)
 				continue;
 

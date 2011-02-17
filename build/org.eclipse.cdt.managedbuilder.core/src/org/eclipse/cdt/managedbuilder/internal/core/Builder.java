@@ -2322,7 +2322,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return rBld == ManagedBuildManager.getRealBuilder(builder);
 	}
 
-	public Object getMatchKey() {
+	public MatchKey<Builder> getMatchKey() {
 		if(isAbstract())
 			return null;
 		if(!isExtensionBuilder)

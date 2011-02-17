@@ -890,7 +890,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		LinkedHashMap<Object, ITool> map = new LinkedHashMap<Object, ITool>();
 		for(ITool t : tools){
 			Tool realTool = (Tool)ManagedBuildManager.getRealTool(t);
-			Object key = realTool.getMatchKey();
+			MatchKey<Tool> key = realTool.getMatchKey();
 			ITool toolValue = extValues ? ManagedBuildManager.getExtensionTool(t) : t;
 			if(toolValue != null)
 				map.put(key, toolValue);

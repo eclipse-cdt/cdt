@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@
  * David McKnight   (IBM)        - [310215] SystemEditableRemoteFile.open does not behave as expected
  * David McKnight   (IBM)        - [324519] SystemEditableRemoteFile throws NPE when used in headless mode
  * David McKnight   (IBM)        - [325502] The default editor for a file is not updated when opened in RSE explorer
+ * David McKnight   (IBM)        - [334839] File Content Conflict is not handled properly
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -67,6 +68,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -114,6 +117,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -1663,6 +1667,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 		SystemIFileProperties properties = new SystemIFileProperties(file);
 		properties.setRemoteFileObject(this);
+		if (properties.getDirty()){
+			updateDirtyIndicator();
+		}
 	}
 
 	/**
@@ -1976,6 +1983,19 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		return true;
 	}
 
+	private void markEditorDirty(){
+		ITextEditor textEditor = (ITextEditor)editor;
+		IDocumentProvider provider = textEditor.getDocumentProvider();
+		if (provider != null){
+			IDocument doc = provider.getDocument(textEditor.getEditorInput());
+			String content = doc.get();
+			try {
+				doc.replace(0, content.length(), content);
+			} catch (BadLocationException e) {
+			}
+		}
+	}
+	
 	public void updateDirtyIndicator()
 	{
 		//  for lpex dirty indicator
@@ -1984,6 +2004,22 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			if (editor instanceof ISystemTextEditor)
 			{
 				((ISystemTextEditor) editor).updateDirtyIndicator();
+			}
+			else if (editor instanceof ITextEditor){ // mark dirty by updating editor contents
+				// only do this if we need to mark it as dirty
+				SystemIFileProperties properties = new SystemIFileProperties(localFile);
+				if (properties.getDirty()){
+					if (Display.getCurrent() == null){ // if we're not on a UI thread
+						Display.getDefault().asyncExec(new Runnable() {						
+							public void run() {
+								markEditorDirty();
+							}
+						});					
+					}
+					else {
+						markEditorDirty();
+					}
+				}
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -26,6 +26,7 @@
  * David McKnight   (IBM)        - [249544] Save conflict dialog appears when saving files in the editor
  * David McKnight   (IBM)        - [256048] Saving a member open in Remote LPEX editor while Working Offline doesn't set the dirty property
  * David McKnight   (IBM)        - [191284] Confusing behaviour when editing a Readonly file.
+ * David McKnight   (IBM)        - [334839] File Content Conflict is not handled properly
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -54,6 +55,8 @@ import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.internal.Workbench;
 
 /**
  * This class manages listening for resource changes within our temp file project
@@ -397,8 +400,8 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 				
 				// indicate that the temp file is no longer dirty
 				properties.setDirty(false);
-				editable.updateDirtyIndicator();
-
+				if (editable.isDirty())
+					editable.updateDirtyIndicator();
 			}
 			else if (storedModifiedStamp == -1)
 			{
@@ -430,17 +433,26 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 				final SystemEditableRemoteFile remoteEdit = editable;
 				final IFile tFile = tempFile;
 				final IRemoteFile rFile = remoteFile;
+				final SystemIFileProperties fProperties = properties;
 				
 				// upload is run in a job, so the conflict action/dialog needs to run in UI thread
 				Display.getDefault().asyncExec(new Runnable()
 				{
 					public void run()
 					{
-						Shell shell = RSEUIPlugin.getTheSystemRegistryUI().getShell();
-
+						boolean closing = Workbench.getInstance().isClosing();						
+						Shell shell = null;
+						if (closing){
+							shell = Display.getDefault().getActiveShell();
+						}
+						else {
+							shell = RSEUIPlugin.getTheSystemRegistryUI().getShell();
+						}
 						SystemUploadConflictAction conflictAction = new SystemUploadConflictAction(shell, tFile, rFile, remoteNewer);
 						conflictAction.run();
-						remoteEdit.updateDirtyIndicator();
+						if (fProperties.getDirty()){
+							remoteEdit.updateDirtyIndicator();
+						}
 					}
 				});
 				

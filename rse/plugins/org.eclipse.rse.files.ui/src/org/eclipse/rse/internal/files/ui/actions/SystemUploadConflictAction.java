@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,12 +25,14 @@
  * Kevin Doyle		(IBM)		 - [242389] [usability] RSE Save Conflict dialog should indicate which file is in conflict
  * David McKnight   (IBM)        - [267247] Wrong encoding
  * David McKnight   (IBM)        - [330804] Change the default selection of Save Conflict dialog
+ * David McKnight   (IBM)        - [334839] File Content Conflict is not handled properly
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
 
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -67,6 +69,8 @@ import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -83,6 +87,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.part.FileEditorInput;
 
 
@@ -141,8 +146,12 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                 }
 
                 ReopenAction reopen = new ReopenAction(_tempFile, _saveasFile);
-
-                Display.getDefault().asyncExec(reopen);
+                if (Display.getCurrent() != null){
+                	reopen.run();
+                }
+                else {
+                	Display.getDefault().asyncExec(reopen);
+                }
             }
 			return Status.OK_STATUS;
 		}
@@ -166,13 +175,20 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
 		        String srcEncoding = RemoteFileUtility.getSourceEncoding(_tempFile);
 
                 fs.download(_remoteFile, _tempFile.getLocation().makeAbsolute().toOSString(), srcEncoding, monitor);
-
+                
+                // need to refresh this otherwise the local resource will be out of sync
+                _tempFile.refreshLocal(IResource.DEPTH_ONE, new NullProgressMonitor());
                 properties.setRemoteFileTimeStamp(_remoteFile.getLastModified());
-					//properties.setRemoteFileTimeStamp(-1);                
-                 
-                 properties.setDirty(false);
-                 properties.setUsedBinaryTransfer(_remoteFile.isBinary());
-                     }
+                properties.setDirty(false);
+                properties.setUsedBinaryTransfer(_remoteFile.isBinary());
+                
+                Display.getDefault().asyncExec(new Runnable(){
+                	public void run(){
+                		IEditorPart part = getEditorFor(_tempFile);
+                		part.setFocus();
+                	}
+                });
+             }
              catch (final SystemMessageException e)
              {
             	Display.getDefault().asyncExec(new Runnable() {
@@ -275,6 +291,25 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             _overwriteLocal = _overwriteLocalButton.getSelection();
             _overwriteRemote = _overwriteRemoteButton.getSelection();
             _saveas = _saveasButton.getSelection();
+            if (_saveas){
+            	if (_saveasLocation == null){
+            		try {
+						_saveasLocation = _remoteFile.getParentRemoteFileSubSystem().getRemoteFileObject(_saveasFileEntry.getText(), new NullProgressMonitor());
+					} catch (SystemMessageException e) {						
+					}            		
+					if (_saveasLocation == null){
+						enableOkButton(false);
+			            _errorMessage = new SimpleSystemMessage(Activator.PLUGIN_ID,                     		
+			            		ISystemFileConstants.MSG_VALIDATE_PATH_EMPTY,
+			            		IStatus.ERROR,
+			            		FileResources.MSG_VALIDATE_PATH_EMPTY, 
+			            		FileResources.MSG_VALIDATE_PATH_EMPTY_DETAILS);
+
+			            setErrorMessage(_errorMessage);
+			            return;
+					}
+            	}
+            }
             close();
         }
 
@@ -374,6 +409,23 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
 
             _saveasFileEntry = new Text(s, SWT.BORDER);
             _saveasFileEntry.setEnabled(true);
+            _saveasFileEntry.addKeyListener(new KeyListener() {
+				
+				public void keyReleased(KeyEvent e) {
+					String loc = _saveasFileEntry.getText();
+					if (loc != null && loc.length() > 0){
+						_errorMessage = null;
+						setErrorMessage(_errorMessage);
+						enableOkButton(true);
+					}
+					else {
+						enableOkButton(false);
+					}
+				}
+				
+				public void keyPressed(KeyEvent e) {
+				}
+			});
 
             GridData fileEntryData = new GridData(GridData.FILL_BOTH);
             fileEntryData.widthHint = 100;
@@ -525,31 +577,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             _saveasFile = saveasFile;
         }
 
-        private IEditorPart getEditorFor(IFile tempFile)
-        {
-
-            IWorkbenchWindow window = SystemBasePlugin.getActiveWorkbenchWindow();
-            if (window != null)
-            {
-                IWorkbenchPage page = window.getActivePage();
-                if (page != null)
-                {
-                    IEditorPart editor = page.getActiveEditor();
-                    IEditorInput input = editor.getEditorInput();
-                    if (input instanceof FileEditorInput)
-                    {
-                        FileEditorInput finput = (FileEditorInput) input;
-                        if (finput.getFile().getFullPath().equals(tempFile.getFullPath()))
-                        {
-                            return editor;
-                        }
-                    }
-                }
-            }
-
-            return null;
-        }
-
+        
         public void run()
         {
             try
@@ -588,6 +616,21 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                 {
                     e.printStackTrace();
                 }
+            }
+            else {
+            	// editor closed, possibly due to shutdown
+            	// can't manipulate editors, but we can at least make the original temp file uptodate
+            	SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
+            	SystemEditableRemoteFile edit = (SystemEditableRemoteFile)properties.getRemoteFileObject();
+            	if (edit != null){
+            	 try {
+            		 edit.download(getShell());
+                     edit.addAsListener();
+                     edit.setLocalResourceProperties();
+            	 }
+            	 catch (Exception e){            		 
+            	 }
+            	}
             }
         }
     }
@@ -637,7 +680,13 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             {
                 IRemoteFile remoteFile = cnfDialog.getSaveasLocation();
                 BackgroundSaveasJob sjob = new BackgroundSaveasJob(remoteFile);
-                sjob.schedule();            
+            
+                if (Workbench.getInstance().isClosing()){                
+					sjob.run(new NullProgressMonitor());
+                }
+                else {
+                	sjob.schedule(); 
+                }
             }
         }
         else
@@ -647,4 +696,30 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
             properties.setDirty(true);
         }
     }
+    
+    private IEditorPart getEditorFor(IFile tempFile)
+    {
+
+        IWorkbenchWindow window = SystemBasePlugin.getActiveWorkbenchWindow();
+        if (window != null)
+        {
+            IWorkbenchPage page = window.getActivePage();
+            if (page != null)
+            {
+                IEditorPart editor = page.getActiveEditor();
+                IEditorInput input = editor.getEditorInput();
+                if (input instanceof FileEditorInput)
+                {
+                    FileEditorInput finput = (FileEditorInput) input;
+                    if (finput.getFile().getFullPath().equals(tempFile.getFullPath()))
+                    {
+                        return editor;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
 }

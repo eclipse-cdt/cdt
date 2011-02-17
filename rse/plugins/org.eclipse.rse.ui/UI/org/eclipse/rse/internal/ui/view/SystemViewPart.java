@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@
  * David McKnight   (IBM)        - [286670] TVT35:TCT586: CHS: English Strings Found
  * Martin Oberhuber (Wind River) - [326910] RSE looses selection when creating a project
  * David McKnight   (IBM)        - [330386] RSE SystemView has Focus Problems with Eclipse SDK 4.1M3
+ * David McKnight   (IBM)        - [238365] Collapsing tree in new window collapses tree in Original window
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -615,6 +616,7 @@ public class SystemViewPart
 		toolBarMgr.add(new Separator(ISystemContextMenuConstants.GROUP_EXPAND));
 		SystemCollapseAllAction collapseAllAction = new SystemCollapseAllAction(getShell());
 		collapseAllAction.setSelectionProvider(systemView);
+		collapseAllAction.setViewer(systemView); // fix for bug 238365 - action needs to know the viewer
 		toolBarMgr.add(collapseAllAction);
 
 		IMenuManager menuMgr = actionBars.getMenuManager();

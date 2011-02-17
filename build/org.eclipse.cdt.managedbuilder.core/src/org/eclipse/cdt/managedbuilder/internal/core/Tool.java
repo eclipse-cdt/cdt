@@ -3590,48 +3590,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return rT == ManagedBuildManager.getRealTool(tool);
 	}
 
-	boolean performMatchComparison(ITool tool){
-		if(tool == null)
-			return false;
-		
-		if(tool == this)
-			return true;
-		
-//		if(tool.isReal() && isReal())
-//			return false;
-//		if(!tool.getToolCommand().equals(getToolCommand()))
-//			return false;
-		
-		if(!tool.getName().equals(getName()))
-			return false;
-
-		String thisVersion = ManagedBuildManager.getVersionFromIdAndVersion(getId());
-		String otherVersion = ManagedBuildManager.getVersionFromIdAndVersion(tool.getId());
-		if(thisVersion == null || thisVersion.length() == 0){
-			if(otherVersion != null && otherVersion.length() != 0)
-				return false;
-		} else {
-			if(!thisVersion.equals(otherVersion))
-				return false;
-		}
-
-		return true;
-/*		IOption options[] = getOptions();
-		IOption otherOptions[] = tool.getOptions();
-		
-		if(!ListComparator.match(options,
-				otherOptions,
-				new Comparator(){
-			public boolean equal(Object o1, Object o2){
-				return ((Option)o1).matches((Option)o2);
-			}
-		}))
-			return false; 
-		
-		return true;
-		*/
-	}
-	
 /*	public SupportedProperties getSupportedProperties(){
 		Map map = findSupportedProperties();
 		if(map != null)
@@ -3658,43 +3616,12 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return supportsManagedBuild.booleanValue();
 	}
 	
-	private static class MatchKey {
-		Tool tool;
-		
-		public MatchKey(Tool tch) {
-			tool = tch;
-		}
-		
-		@Override
-		public boolean equals(Object obj) {
-			if(obj == this)
-				return true;
-			if(!(obj instanceof MatchKey))
-				return false;
-			MatchKey other = (MatchKey)obj;
-			return tool.performMatchComparison(other.tool);
-		}
-
-		@Override
-		public int hashCode() {
-			String name = tool.getName();
-			if(name == null)
-				name = tool.getId();
-			int code = name.hashCode();
-			String version = ManagedBuildManager.getVersionFromIdAndVersion(tool.getId());
-			if(version != null)
-				code += version.hashCode();
-			return code;
-		}
-		
-	}
-
 	public Object getMatchKey() {
 		if(isAbstract())
 			return null;
 		if(!isExtensionTool)
 			return null;
-		return new MatchKey(this);
+		return new MatchKey<Tool>(this);
 	}
 
 	public void setIdenticalList(List list) {

@@ -2322,71 +2322,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return rBld == ManagedBuildManager.getRealBuilder(builder);
 	}
 
-	public boolean performMatchComparison(IBuilder builder){
-		if(builder == null)
-			return false;
-		
-		if(builder == this)
-			return true;
-		
-//		if(tool.isReal() && isReal())
-//			return false;
-//		if(!tool.getToolCommand().equals(getToolCommand()))
-//			return false;
-		
-		if(!builder.getName().equals(getName()))
-			return false;
-
-		String thisVersion = ManagedBuildManager.getVersionFromIdAndVersion(getId());
-		String otherVersion = ManagedBuildManager.getVersionFromIdAndVersion(builder.getId());
-		if(thisVersion == null || thisVersion.length() == 0){
-			if(otherVersion != null && otherVersion.length() != 0)
-				return false;
-		} else {
-			if(!thisVersion.equals(otherVersion))
-				return false;
-		}
-
-		return true;
-	}
-	
-	private class MatchKey {
-		Builder builder;
-		
-		public MatchKey(Builder builder) {
-			this.builder = builder;
-		}
-		
-		@Override
-		public boolean equals(Object obj) {
-			if(obj == this)
-				return true;
-			if(!(obj instanceof MatchKey))
-				return false;
-			MatchKey other = (MatchKey)obj;
-			return builder.performMatchComparison(other.builder);
-		}
-
-		@Override
-		public int hashCode() {
-			String name = getName();
-			if(name == null)
-				name = getId();
-			int code = name.hashCode();
-			String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
-			if(version != null)
-				code += version.hashCode();
-			return code;
-		}
-		
-	}
-
 	public Object getMatchKey() {
 		if(isAbstract())
 			return null;
 		if(!isExtensionBuilder)
 			return null;
-		return new MatchKey(this);
+		return new MatchKey<Builder>(this);
 	}
 
 	public void setIdenticalList(List list) {

@@ -2249,57 +2249,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return rTc == ManagedBuildManager.getRealToolChain(tc);
 	}
 	
-	private boolean performMatchCompatison(IToolChain tCh){
-		if(tCh == null)
-			return false;
-		
-		if(tCh == this)
-			return true;
-		
-//		if(tCh.isReal() && isReal())
-//			return false;
-		
-		String name = tCh.getName();
-		if(name == null){
-			if(getName() != null)
-				return false;
-		} else if(!name.equals(getName())){
-			return false;
-		}
-		
-		String thisVersion = ManagedBuildManager.getVersionFromIdAndVersion(getId());
-		String otherVersion = ManagedBuildManager.getVersionFromIdAndVersion(tCh.getId());
-		if(thisVersion == null || thisVersion.length() == 0){
-			if(otherVersion != null && otherVersion.length() != 0)
-				return false;
-		} else {
-			if(!thisVersion.equals(otherVersion))
-				return false;
-		}
-			
-		return true;
-		
-//		if(true)
-//			return true;
-//		
-//		ITool tools[] = getTools();
-//		ITool otherTools[] = tCh.getTools();
-//		
-//		if(tools.length != otherTools.length)
-//			return false;
-//
-//		if(!ListComparator.match(tools,
-//				otherTools,
-//				new Comparator(){
-//			public boolean equal(Object o1, Object o2){
-//				return ((Tool)o1).performMatchComparison((Tool)o2);
-//			}
-//		}))
-//			return false; 
-//		
-//		return true;
-	}
-	
 	public List getIdenticalList(){
 		return identicalList;//;(ArrayList)identicalToolChainsList.clone();
 	}
@@ -2344,43 +2293,12 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return false;
 	}
 	
-	private class MatchKey {
-		ToolChain toolChain;
-		
-		public MatchKey(ToolChain tch) {
-			toolChain = tch;
-		}
-		
-		@Override
-		public boolean equals(Object obj) {
-			if(obj == this)
-				return true;
-			if(!(obj instanceof MatchKey))
-				return false;
-			MatchKey other = (MatchKey)obj;
-			return toolChain.performMatchCompatison(other.toolChain);
-		}
-
-		@Override
-		public int hashCode() {
-			String name = getName();
-			if(name == null)
-				name = getId();
-			int code = name.hashCode();
-			String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
-			if(version != null)
-				code += version.hashCode();
-			return code;
-		}
-		
-	}
-
 	public Object getMatchKey() {
 		if(isAbstract())
 			return null;
 		if(!isExtensionToolChain)
 			return null;
-		return new MatchKey(this);
+		return new MatchKey<ToolChain>(this);
 	}
 
 	public void setIdenticalList(List list) {

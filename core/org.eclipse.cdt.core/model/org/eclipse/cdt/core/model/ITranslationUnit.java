@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 /**
  * Represents an entire C translation unit (<code>.c</code> source file).
  * The children are of type <code>IStructureElement</code>,
@@ -160,7 +161,8 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 *
 	 * @param name the name of the namespace
 	 * @param monitor the progress monitor to notify
-	 * @return the newly inserted namespace declaration (or the previously existing one in case attempting to create a duplicate)
+	 * @return the newly inserted namespace declaration (or the previously existing one in case
+	 *     attempting to create a duplicate)
 	 *
 	 * @exception CModelException if the element could not be created. Reasons include:
 	 * <ul>
@@ -172,8 +174,8 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	INamespace createNamespace (String namespace, ICElement sibling, IProgressMonitor monitor) throws CModelException;   
 
 	/**
-	 * Returns the shared working copy for this element, using the default <code>IBuffer</code> factory, or
-	 * <code>null</code>, if no working copy has been created for this element.
+	 * Returns the shared working copy for this element, using the default <code>IBuffer</code>
+	 * factory, or <code>null</code>, if no working copy has been created for this element.
 	 * <p>
 	 * Users of this method must not destroy the resulting working copy.
 	 * 
@@ -231,7 +233,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 *
 	 * @param position a source position inside the translation unit
 	 * @return the innermost C element enclosing a given source position or <code>null</code>
-	 *	if none (excluding the translation unit).
+	 *		if none (excluding the translation unit).
 	 * @exception CModelException if the translation unit does not exist or if an
 	 *		exception occurs while accessing its corresponding resource
 	 */
@@ -243,8 +245,9 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * Returns the include declaration in this translation unit with the given name.
 	 *
 	 * @param the name of the include to find (For example: <code>"stdio.h"</code> 
-	 * 	or <code>"sys/types.h"</code>)
-	 * @return a handle onto the corresponding include declaration. The include declaration may or may not exist.
+	 * 		or <code>"sys/types.h"</code>)
+	 * @return a handle onto the corresponding include declaration. The include declaration may or
+	 * 		may not exist.
 	 */
 	IInclude getInclude(String name) ;
 
@@ -425,8 +428,8 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	public IScannerInfo getScannerInfo(boolean force);
 
 	/**
-	 * Creates the full AST for this translation unit. May return <code>null</code> if the language of this
-	 * translation unit does not support ASTs.
+	 * Creates the full AST for this translation unit. May return <code>null</code> if the language
+	 * of this translation unit does not support ASTs.
 	 * @return the AST for the translation unit or <code>null</code>
 	 * @throws CoreException
 	 * @since 4.0
@@ -434,8 +437,10 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	public IASTTranslationUnit getAST() throws CoreException;
 
 	/**
-	 * Creates an AST based on the requested style. May return <code>null</code> if the language of this
-	 * translation unit does not support ASTs.
+	 * Creates an AST based on the requested style. May return <code>null</code> if the language of
+	 * this translation unit does not support ASTs. If the index was supplied, the caller has to
+	 * hold a read lock on it. The returned AST is valid only while the read lock is being held
+	 * and should not be accessed after releasing the lock. 
 	 * @param index	index to back up the parsing of the AST, may be <code>null</code>
 	 * @param style <code>0</code> or a combination of {@link #AST_SKIP_ALL_HEADERS}, 
 	 * {@link #AST_SKIP_IF_NO_BUILD_INFO}, {@link #AST_SKIP_INDEXED_HEADERS}
@@ -485,6 +490,4 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 */
 	@Deprecated
 	org.eclipse.cdt.core.parser.CodeReader getCodeReader();
-
-
 }

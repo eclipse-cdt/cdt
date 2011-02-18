@@ -429,8 +429,11 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     	}
     	
    		if (e.getReason() != StateChangeReason.STEP) {
-	    	fCommandCache.reset(e.getDMContext());
 	    	IMemoryDMContext memoryDMC = DMContexts.getAncestorOfType(e.getDMContext(), IMemoryDMContext.class);
+	    	// It is the memory context we want to clear, not only the context that resumed.  The resumed context
+	    	// is probably a thread but that running thread could have changed any memory within the memory
+	    	// context.
+	    	fCommandCache.reset(memoryDMC);
 	    	if (fMemoryCaches.containsKey(memoryDMC)) {
 	    		// We do not want to use the call to getMemoryCache() here.
 	    		// This is because:
@@ -453,8 +456,11 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     		fCommandCache.setContextAvailable(e.getDMContext(), true);
     	}
     	
-    	fCommandCache.reset(e.getDMContext());
     	IMemoryDMContext memoryDMC = DMContexts.getAncestorOfType(e.getDMContext(), IMemoryDMContext.class);
+    	// It is the memory context we want to clear, not only the context that stopped.  The stopped context
+    	// is probably a thread but that thread that ran could have changed any memory within the memory
+    	// context.
+    	fCommandCache.reset(memoryDMC);
     	if (fMemoryCaches.containsKey(memoryDMC)) {
     		// We do not want to use the call to getMemoryCache() here.
     		// This is because:

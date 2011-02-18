@@ -251,9 +251,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	// Environment Build Paths Change Listener
 	private static IEnvironmentBuildPathsChangeListener fEnvironmentBuildPathsChangeListener;
 
-	private static HashMap<String, List<IToolChain>> fSortedToolChains;
-	private static HashMap<String, List<ITool>> fSortedTools;
-	private static HashMap<String, List<IBuilder>> fSortedBuilders;
+	private static HashMap<MatchKey, List<ToolChain>> fSortedToolChains;
+	private static HashMap<MatchKey, List<Tool>> fSortedTools;
+	private static HashMap<MatchKey, List<Builder>> fSortedBuilders;
 
 	private static Map<IProject, IManagedBuildInfo> fInfoMap = new HashMap<IProject, IManagedBuildInfo>();
 
@@ -4198,36 +4198,38 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 */
 
-	private static HashMap<String, List<IToolChain>> getSortedToolChains(){
+	private static HashMap<MatchKey, List<ToolChain>> getSortedToolChains(){
 		if(fSortedToolChains == null){
-			fSortedToolChains = getSortedElements(ManagedBuildManager.getExtensionToolChainMap().values());
+			Collection<? extends ToolChain> toolChains = (Collection<? extends ToolChain>)ManagedBuildManager.getExtensionToolChainMap().values();
+			fSortedToolChains = (HashMap)getSortedElements(toolChains);
 		}
 		return fSortedToolChains;
 	}
 
-	private static HashMap<String, List<ITool>> getSortedTools(){
+	private static HashMap<MatchKey, List<Tool>> getSortedTools(){
 		if(fSortedTools == null){
-			fSortedTools = getSortedElements(ManagedBuildManager.getExtensionToolMap().values());
+			Collection<? extends Tool> tools = (Collection<? extends Tool>)ManagedBuildManager.getExtensionToolMap().values();
+			fSortedTools = (HashMap)getSortedElements(tools);
 		}
 		return fSortedTools;
 	}
 
-	private static HashMap<String, List<IBuilder>> getSortedBuilders(){
+	private static HashMap<MatchKey, List<Builder>> getSortedBuilders(){
 		if(fSortedBuilders == null){
-			fSortedBuilders = getSortedElements(ManagedBuildManager.getExtensionBuilderMap().values());
+			Collection<? extends Builder> builders = (Collection<? extends Builder>)ManagedBuildManager.getExtensionBuilderMap().values();
+			fSortedBuilders = (HashMap)getSortedElements(builders);
 		}
 		return fSortedBuilders;
 	}
 
-	private static HashMap getSortedElements(Collection elements){
-		HashMap map = new HashMap();
-		for(Iterator iter = elements.iterator(); iter.hasNext();){
-			IMatchKeyProvider p = (IMatchKeyProvider)iter.next();
+	private static HashMap<MatchKey, List> getSortedElements(Collection<? extends IMatchKeyProvider> elements){
+		HashMap<MatchKey, List> map = new HashMap();
+		for (IMatchKeyProvider p : elements) {
 			MatchKey key = p.getMatchKey();
 			if(key == null)
 				continue;
 
-			List list = (List)map.get(key);
+			List list = map.get(key);
 			if(list == null){
 				list = new ArrayList();
 				map.put(key, list);
@@ -4236,37 +4238,38 @@ public class ManagedBuildManager extends AbstractCExtension {
 			p.setIdenticalList(list);
 		}
 
-		for(Iterator iter = map.values().iterator(); iter.hasNext();){
-			Collections.sort((List)iter.next());
+		Collection<List> values = map.values();
+		for (List list : values) {
+			Collections.sort(list);
 		}
 		return map;
 	}
 
 	public static IToolChain[] getRealToolChains(){
-		HashMap<String, List<IToolChain>> map = getSortedToolChains();
+		HashMap<MatchKey, List<ToolChain>> map = getSortedToolChains();
 		IToolChain tcs[] = new ToolChain[map.size()];
 		int i = 0;
-		for (List<IToolChain> list : map.values()) {
+		for (List<ToolChain> list : map.values()) {
 			tcs[i++] = list.get(0);
 		}
 		return tcs;
 	}
 
 	public static ITool[] getRealTools(){
-		HashMap<String, List<ITool>> map = getSortedTools();
+		HashMap<MatchKey, List<Tool>> map = getSortedTools();
 		Tool ts[] = new Tool[map.size()];
 		int i = 0;
-		for (List<ITool> list : map.values()) {
-			ts[i++] = (Tool)list.get(0);
+		for (List<Tool> list : map.values()) {
+			ts[i++] = list.get(0);
 		}
 		return ts;
 	}
 
 	public static IBuilder[] getRealBuilders(){
-		HashMap<String, List<IBuilder>> map = getSortedBuilders();
+		HashMap<MatchKey, List<Builder>> map = getSortedBuilders();
 		IBuilder bs[] = new Builder[map.size()];
 		int i = 0;
-		for (List<IBuilder> list : map.values()) {
+		for (List<Builder> list : map.values()) {
 			bs[i++] = list.get(0);
 		}
 		return bs;
@@ -4380,9 +4383,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	public static IToolChain[] getExtensionsToolChains(String propertyType, String propertyValue, boolean supportedPropsOnly){
-		HashMap<String, List<IToolChain>> all = getSortedToolChains();
+		HashMap<MatchKey, List<ToolChain>> all = getSortedToolChains();
 		List<IToolChain> result = new ArrayList<IToolChain>();
-		for (List<IToolChain> list : all.values()) {
+		for (List<ToolChain> list : all.values()) {
 			IToolChain tc = findToolChain(list, propertyType, propertyValue, supportedPropsOnly);
 			if(tc != null)
 				result.add(tc);
@@ -4405,14 +4408,14 @@ public class ManagedBuildManager extends AbstractCExtension {
 		getSortedBuilders();
 	}
 
-	private static IToolChain findToolChain(List<IToolChain> list, String propertyType, String propertyValue, boolean supportedOnly){
+	private static IToolChain findToolChain(List<ToolChain> list, String propertyType, String propertyValue, boolean supportedOnly){
 		ToolChain bestMatch = null;
 		IConfiguration cfg = null;
 		IProjectType type = null;
 		boolean valueSupported = false;
 
 		for(int i = 0; i < list.size(); i++){
-			ToolChain tc = (ToolChain)list.get(i);
+			ToolChain tc = list.get(i);
 			if(tc.supportsValue(propertyType, propertyValue)){
 				valueSupported = true;
 			} else if (valueSupported){

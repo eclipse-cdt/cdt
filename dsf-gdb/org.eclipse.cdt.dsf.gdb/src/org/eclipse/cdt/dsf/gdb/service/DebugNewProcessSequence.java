@@ -183,9 +183,9 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 			String args = fBackend.getProgramArguments();
 
 			if (args != null) {
+				String[] argArray = args.replaceAll("\n", " ").split(" ");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				fCommandControl.queueCommand(
-						// here we need to pass the proper container context
-						fCommandFactory.createMIGDBSetArgs(fCommandControl.getContext(), args), 
+						fCommandFactory.createMIGDBSetArgs(getContainerContext(), argArray), 
 						new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
 			} else {
 				rm.done();

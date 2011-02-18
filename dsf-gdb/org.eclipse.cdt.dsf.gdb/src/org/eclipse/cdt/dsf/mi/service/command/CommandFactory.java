@@ -527,16 +527,6 @@ public class CommandFactory {
 		return new MIExecUntil(dmc, loc);
 	}
 
-	@Deprecated
-	public ICommand<MIInfo> createMIFileExecAndSymbols(ICommandControlDMContext dmc, String file) {
-		return new MIFileExecAndSymbols(dmc, file);
-	}
-
-	@Deprecated
-	public ICommand<MIInfo> createMIFileExecAndSymbols(ICommandControlDMContext dmc) {
-		return new MIFileExecAndSymbols(dmc);
-	}
-
 	/**  @since 4.0 */
 	public ICommand<MIInfo> createMIFileExecAndSymbols(IMIContainerDMContext dmc, String file) {
 		return new MIFileExecAndSymbols(dmc, file);
@@ -571,16 +561,13 @@ public class CommandFactory {
 		return new MIGDBSet(ctx, params);
 	}
 
-	public ICommand<MIInfo> createMIGDBSetArgs(ICommandControlDMContext dmc) {
+	/** @since 4.0 */
+	public ICommand<MIInfo> createMIGDBSetArgs(IMIContainerDMContext dmc) {
 		return new MIGDBSetArgs(dmc);
 	}
 
-	public ICommand<MIInfo> createMIGDBSetArgs(ICommandControlDMContext dmc, String arguments) {
-		return new MIGDBSetArgs(dmc, arguments);
-	}
-
 	/** @since 4.0 */
-	public ICommand<MIInfo> createMIGDBSetArgs(ICommandControlDMContext dmc, String[] arguments) {
+	public ICommand<MIInfo> createMIGDBSetArgs(IMIContainerDMContext dmc, String[] arguments) {
 		return new MIGDBSetArgs(dmc, arguments);
 	}
 	

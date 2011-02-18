@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Ericsson and others.
+ * Copyright (c) 2008, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 
 /**
  *      -gdb-set args ARGS
@@ -21,14 +21,14 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  * @since 1.1
  */
 public class MIGDBSetArgs extends MIGDBSet {
-    public MIGDBSetArgs(ICommandControlDMContext dmc) {
+
+    /** @since 4.0 */
+	public MIGDBSetArgs(IMIContainerDMContext dmc) {
         this(dmc, new String[0]);
     }
 
-    /**
-	 * @since 4.0
-	 */
-    public MIGDBSetArgs(ICommandControlDMContext dmc, String[] arguments) {
+    /** @since 4.0 */
+    public MIGDBSetArgs(IMIContainerDMContext dmc, String[] arguments) {
         super(dmc, null);
 
     	String[] cmdArray = new String[arguments.length + 1];
@@ -37,13 +37,5 @@ public class MIGDBSetArgs extends MIGDBSet {
     		cmdArray[i + 1] = arguments[i];
     	}
     	setParameters(cmdArray);
-    }
-
-    /**
-     * @deprecated Use MIGDBSetArgs(ICommandControlDMContext, String[]) instead.
-     */
-    @Deprecated
-    public MIGDBSetArgs(ICommandControlDMContext dmc, String arguments) {
-        this(dmc, arguments.replaceAll("\n", " ").split(" ")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 }

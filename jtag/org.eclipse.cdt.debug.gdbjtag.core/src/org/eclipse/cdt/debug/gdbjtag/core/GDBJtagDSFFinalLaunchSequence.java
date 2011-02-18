@@ -51,6 +51,7 @@ import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
+import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICommand;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -212,8 +213,10 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
         			String args = fGDBBackend.getProgramArguments();
         			
             		if (args != null) {
+        				String[] argArray = args.replaceAll("\n", " ").split(" ");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        				IMIContainerDMContext containerDmc = fProcService.createContainerContextFromGroupId(fCommandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
             			fCommandControl.queueCommand(
-            					fCommandFactory.createMIGDBSetArgs(fCommandControl.getContext(), args), 
+            					fCommandFactory.createMIGDBSetArgs(containerDmc, argArray), 
             					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
             		} else {
             			requestMonitor.done();

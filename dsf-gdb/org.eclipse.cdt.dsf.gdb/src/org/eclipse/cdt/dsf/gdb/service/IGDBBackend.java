@@ -139,7 +139,7 @@ public interface IGDBBackend extends IMIBackend {
 	public SessionType getSessionType();
 
 	/**
-	 * @return true if the ongoing session is attaching to a remote target.
+	 * @return true if the ongoing session is attaching to a program locally or remotely.
 	 */	
 	public boolean getIsAttachSession();
 

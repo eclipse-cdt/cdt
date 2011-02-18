@@ -19,6 +19,7 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces.IMemorySpaceDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryBlock.MemorySpaceDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -61,20 +62,34 @@ public class GDBMemory_7_0 extends MIMemory {
 	{
 		IDMContext threadOrMemoryDmc = dmc;
 
+		// A memory context is a container.  We have two limitations with GDB here:
+		// 1- Before GDB 7.2, there is no way to specify a process for an MI command, so to work around
+		// that, we need to specify a thread for the process we want to point to.  This is important
+		// to support multi-process for targets that have that kind of support before GDB 7.2
+		// 2- GDB cannot read memory when pointing to a thread that is running.  For non-stop mode
+		// we can have some threads running with others stopped, so we need to choose a thread that is
+		// actually stopped.
 		IMIContainerDMContext containerCtx = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
 		if(containerCtx != null) {
 			IGDBProcesses procService = getServicesTracker().getService(IGDBProcesses.class);
+			IRunControl runControl = getServicesTracker().getService(IRunControl.class);
 
-			if (procService != null) {
+			if (procService != null && runControl != null) {
 				IMIExecutionDMContext[] execCtxs = procService.getExecutionContexts(containerCtx);
-				// Return any thread... let's take the first one.
+				// Return any thread, as long as it is suspended.  This will allow GDB to read the memory
+				// and it will be for the process we care about (since we choose a thread within it).
 				if (execCtxs != null && execCtxs.length > 0) {
-					threadOrMemoryDmc = execCtxs[0];
+					for (IMIExecutionDMContext execCtx : execCtxs) {
+						if (runControl.isSuspended(execCtx)) {
+							threadOrMemoryDmc = execCtx;
 
-					// Not so fast, Charlie. The context we were given may have
-					// a memory space qualifier. We need to preserve it.
-					if (dmc instanceof IMemorySpaceDMContext) {
-						threadOrMemoryDmc = new MemorySpaceDMContext(getSession().getId(), ((IMemorySpaceDMContext)dmc).getMemorySpaceId(), threadOrMemoryDmc);
+							// Not so fast, Charlie. The context we were given may have
+							// a memory space qualifier. We need to preserve it.
+							if (dmc instanceof IMemorySpaceDMContext) {
+								threadOrMemoryDmc = new MemorySpaceDMContext(getSession().getId(), ((IMemorySpaceDMContext)dmc).getMemorySpaceId(), threadOrMemoryDmc);
+							}
+							break;
+						}
 					}
 				}
 			}
@@ -89,20 +104,34 @@ public class GDBMemory_7_0 extends MIMemory {
 	{
 		IDMContext threadOrMemoryDmc = dmc;
 
+		// A memory context is a container.  We have two limitations with GDB here:
+		// 1- Before GDB 7.2, there is no way to specify a process for an MI command, so to work around
+		// that, we need to specify a thread for the process we want to point to.  This is important
+		// to support multi-process for targets that have that kind of support before GDB 7.2
+		// 2- GDB cannot write memory when pointing to a thread that is running.  For non-stop mode
+		// we can have some threads running with others stopped, so we need to choose a thread that is
+		// actually stopped.
 		IMIContainerDMContext containerCtx = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
 		if(containerCtx != null) {
 			IGDBProcesses procService = getServicesTracker().getService(IGDBProcesses.class);
+			IRunControl runControl = getServicesTracker().getService(IRunControl.class);
 
-			if (procService != null) {
+			if (procService != null && runControl != null) {
 				IMIExecutionDMContext[] execCtxs = procService.getExecutionContexts(containerCtx);
-				// Return any thread... let's take the first one.
+				// Return any thread, as long as it is suspended.  This will allow GDB to read the memory
+				// and it will be for the process we care about (since we choose a thread within it).
 				if (execCtxs != null && execCtxs.length > 0) {
-					threadOrMemoryDmc = execCtxs[0];
-					
-					// Not so fast, Charlie. The context we were given may have
-					// a memory space qualifier. We need to preserve it.
-					if (dmc instanceof IMemorySpaceDMContext) {
-						threadOrMemoryDmc = new MemorySpaceDMContext(getSession().getId(), ((IMemorySpaceDMContext)dmc).getMemorySpaceId(), threadOrMemoryDmc);
+					for (IMIExecutionDMContext execCtx : execCtxs) {
+						if (runControl.isSuspended(execCtx)) {
+							threadOrMemoryDmc = execCtx;
+
+							// Not so fast, Charlie. The context we were given may have
+							// a memory space qualifier. We need to preserve it.
+							if (dmc instanceof IMemorySpaceDMContext) {
+								threadOrMemoryDmc = new MemorySpaceDMContext(getSession().getId(), ((IMemorySpaceDMContext)dmc).getMemorySpaceId(), threadOrMemoryDmc);
+							}
+							break;
+						}
 					}
 				}
 			}

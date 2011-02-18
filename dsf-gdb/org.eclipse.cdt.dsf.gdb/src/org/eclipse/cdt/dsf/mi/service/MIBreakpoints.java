@@ -574,11 +574,20 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
 		}
 
+		// GDB seems inconsistent about allowing parentheses so we must remove them.
+		// Bug 336888
+		int paren = function.indexOf('(');
+		if (paren != -1) {
+			function = function.substring(0, paren);
+		}
+
 		if (!fileName.equals(NULL_STRING)) {
-			if (lineNumber != -1) {
-				location = fileName + ":" + lineNumber; //$NON-NLS-1$
+			// If the function is set it means we want a function breakpoint
+			// We must check it first because the line number is still set in this case.
+			if (!function.equals(NULL_STRING)) {
+				location = fileName + ":" + function; //$NON-NLS-1$
 			} else {
-				location = fileName + ":" + function;   //$NON-NLS-1$
+				location = fileName + ":" + lineNumber;   //$NON-NLS-1$
 			}
 		} else if (!function.equals(NULL_STRING)) {
 			// function location without source

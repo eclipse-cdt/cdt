@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
@@ -124,7 +123,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.osgi.framework.Version;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.URIUtil;
@@ -134,6 +132,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.Version;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -4222,24 +4221,24 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return fSortedBuilders;
 	}
 
-	private static HashMap<MatchKey, List> getSortedElements(Collection<? extends IMatchKeyProvider> elements){
-		HashMap<MatchKey, List> map = new HashMap();
+	private static HashMap<MatchKey, List<IMatchKeyProvider>> getSortedElements(Collection<? extends IMatchKeyProvider> elements){
+		HashMap<MatchKey, List<IMatchKeyProvider>> map = new HashMap<MatchKey, List<IMatchKeyProvider>>();
 		for (IMatchKeyProvider p : elements) {
 			MatchKey key = p.getMatchKey();
 			if(key == null)
 				continue;
 
-			List list = map.get(key);
+			List<IMatchKeyProvider> list = map.get(key);
 			if(list == null){
-				list = new ArrayList();
+				list = new ArrayList<IMatchKeyProvider>();
 				map.put(key, list);
 			}
 			list.add(p);
 			p.setIdenticalList(list);
 		}
 
-		Collection<List> values = map.values();
-		for (List list : values) {
+		Collection<List<IMatchKeyProvider>> values = map.values();
+		for (List<IMatchKeyProvider> list : values) {
 			Collections.sort(list);
 		}
 		return map;

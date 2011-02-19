@@ -26,11 +26,13 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
@@ -42,13 +44,13 @@ abstract public class BaseTestFramework extends TestCase {
     static protected IProject 				project;
     static protected ICProject				cproject;
     static protected FileManager 			fileManager;
-	static protected boolean				indexDisabled=false;
-	
+	static protected boolean				indexDisabled= false;
+
 	static void initProject() {
 		if (project != null) {
 			return;
 		}
-        if( CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null){
+        if (CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null) {
 			//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
 			monitor = new NullProgressMonitor();
 			
@@ -59,14 +61,11 @@ abstract public class BaseTestFramework extends TestCase {
 	        
 	            project = cproject.getProject();
 	            
-	            /*project.setSessionProperty(SourceIndexer.activationKey, Boolean.FALSE );
+	            /*project.setSessionProperty(SourceIndexer.activationKey, Boolean.FALSE);
 	        	//Set the id of the source indexer extension point as a session property to allow
 	    		//index manager to instantiate it
 	    		project.setSessionProperty(IndexManager.indexerIDKey, sourceIndexerID);*/
-	    		
-	 
-	    		
-	        } catch ( CoreException e ) {
+	        } catch (CoreException e) {
 	            /*boo*/
 	        }
 			if (project == null)
@@ -77,22 +76,21 @@ abstract public class BaseTestFramework extends TestCase {
         }
 	}
             
-    public BaseTestFramework()
-    {
+    public BaseTestFramework() {
         super();
     }
+
     /**
      * @param name
      */
-    public BaseTestFramework(String name)
-    {
+    public BaseTestFramework(String name) {
         super(name);
     }
       
     public void cleanupProject() throws Exception {
         try{
-	        project.delete( true, false, monitor );
-	    } catch( Throwable e ){
+	        project.delete(true, false, monitor);
+	    } catch (Throwable e) {
 	        /*boo*/
 	    } finally {
 	    	project= null;
@@ -106,36 +104,50 @@ abstract public class BaseTestFramework extends TestCase {
 	}
 
 	protected void tearDown() throws Exception {
-        if( project == null || !project.exists() )
+        if (project == null || !project.exists())
             return;
         
         IResource [] members = project.members();
-        for( int i = 0; i < members.length; i++ ){
-            if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
+        for (int i = 0; i < members.length; i++) {
+            if (members[i].getName().equals(".project") || members[i].getName().equals(".cproject")) //$NON-NLS-1$ //$NON-NLS-2$
                 continue;
             if (members[i].getName().equals(".settings"))
             	continue;
-            try{
-                members[i].delete( false, monitor );
-            } catch( Throwable e ){
+            try {
+                members[i].delete(false, monitor);
+            } catch (Throwable e) {
                 /*boo*/
             }
         }
 	}
-    protected IFile importFile(String fileName, String contents ) throws Exception{
-		//Obtain file handle
+
+    protected IFile importFile(String fileName, String contents) throws Exception {
+		// Obtain file handle
 		IFile file = project.getProject().getFile(fileName);
 		
-		InputStream stream = new ByteArrayInputStream( contents.getBytes() );
-		//Create file input stream
-		if( file.exists() )
-		    file.setContents( stream, false, false, monitor );
-		else
-			file.create( stream, false, monitor );
+		InputStream stream = new ByteArrayInputStream(contents.getBytes());
+		// Create file input stream
+		if (file.exists()) {
+		    file.setContents(stream, false, false, monitor);
+		} else {
+			IPath path = file.getLocation();
+			path = path.makeRelativeTo(project.getLocation());
+			if (path.segmentCount() > 1) {
+				path = path.removeLastSegments(1);
+				
+				for (int i = path.segmentCount() - 1; i >= 0; i--) {
+					IPath currentPath = path.removeLastSegments(i);
+					IFolder folder = project.getFolder(currentPath);
+					if (!folder.exists()) {
+						folder.create(false, true, null);
+					}
+				}
+			}
+			file.create(stream, false, monitor);	
+		}
 		
 		fileManager.addFile(file);
 		
 		return file;
 	}
-
 }

@@ -272,7 +272,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 		
 		IASTSimpleDeclaration decl = context.existingFields.get(0);
 		InsertLocation2 location = MethodDefinitionInsertLocationFinder2.find(
-				decl.getFileLocation(), decl.getParent(), astCache);
+				tu, decl.getFileLocation(), decl.getParent(), astCache);
 
 		if (location.getFile() == null || NodeHelper.isContainedInTemplateDeclaration(decl)) {
 			location.setNodeToInsertAfter(NodeHelper.findTopLevelParent(decl), tu);

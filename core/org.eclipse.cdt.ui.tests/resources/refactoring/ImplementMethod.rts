@@ -811,3 +811,25 @@ void n1::n2::A::B::testmethod2()
 
 
 
+//!Bug 337040 - Insert definition in empty implementation file (.cxx)
+//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+
+class TestClass {
+public:
+	/*$*/void foo();/*$$*/
+};
+
+
+//@A.cxx
+
+//=
+
+
+
+void TestClass::foo()
+{
+}
+

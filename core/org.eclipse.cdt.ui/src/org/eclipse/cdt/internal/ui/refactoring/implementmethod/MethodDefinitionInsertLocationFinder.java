@@ -15,10 +15,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -27,7 +26,11 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+
+import org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder;
 import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
 import org.eclipse.cdt.internal.ui.refactoring.utils.FileHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
@@ -85,12 +88,15 @@ public class MethodDefinitionInsertLocationFinder {
 			}
 		}
 
-		IPath path = file.getLocation().removeFileExtension().addFileExtension("cpp");  //$NON-NLS-1$
-		IFile fileForLocation = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-
-		if (fileForLocation != null && fileForLocation.exists()) {
-			result.setInsertFile(fileForLocation);
+		ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(file);
+		ITranslationUnit partner = SourceHeaderPartnerFinder.getPartnerTranslationUnit(tu);
+		if (partner != null) {
+			IFile fileForLocation = ResourceLookup.selectFileForLocation(partner.getLocation(), file.getProject());
+			if (fileForLocation != null && fileForLocation.exists()) {
+				result.setInsertFile(fileForLocation);
+			}
 		}
+		
 		return result;
 	}
 

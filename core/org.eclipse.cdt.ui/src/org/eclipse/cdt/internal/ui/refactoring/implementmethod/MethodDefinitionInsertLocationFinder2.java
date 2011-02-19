@@ -24,7 +24,9 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 
+import org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
 import org.eclipse.cdt.internal.ui.refactoring.utils.ASTNameInContext;
 import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder2;
@@ -60,7 +62,7 @@ public class MethodDefinitionInsertLocationFinder2 {
 		return functionDefinitionInParents;
 	}
 
-	public static InsertLocation2 find(IASTFileLocation methodDeclarationLocation, IASTNode parent,
+	public static InsertLocation2 find(ITranslationUnit declarationTu, IASTFileLocation methodDeclarationLocation, IASTNode parent,
 			RefactoringASTCache astCache) throws CoreException {
 		IASTDeclaration[] declarations = NodeHelper.getDeclarations(parent);
 		InsertLocation2 insertLocation = new InsertLocation2();
@@ -81,6 +83,13 @@ public class MethodDefinitionInsertLocationFinder2 {
 				insertLocation.setNodeToInsertBefore(findFirstSurroundingParentFunctionNode(
 						definition.getName()), definition.getTranslationUnit());
 			}
+		}
+		
+		if (insertLocation.getTranslationUnit() == null) {
+			ITranslationUnit partner = SourceHeaderPartnerFinder.getPartnerTranslationUnit(declarationTu, astCache);
+			if (partner != null) {
+				insertLocation.setParentNode(astCache.getAST(partner, null), partner);
+			}	
 		}
 
 		return insertLocation;

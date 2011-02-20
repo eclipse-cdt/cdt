@@ -26,9 +26,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
- * @author Alena
- * 
+ * @author Alena Laskavaia
  */
+@SuppressWarnings("nls")
 public class CheckerTestCase extends CodanTestCase {
 	protected IMarker[] markers;
 

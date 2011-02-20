@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.cdt.codan.core.test;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.codan.core.internal.checkers.AssignmentInConditionCheckerTest;
@@ -30,11 +31,11 @@ public class AutomatedIntegrationSuite extends TestSuite {
 	public AutomatedIntegrationSuite() {
 	}
 
-	public AutomatedIntegrationSuite(Class theClass, String name) {
+	public AutomatedIntegrationSuite(Class<? extends TestCase> theClass, String name) {
 		super(theClass, name);
 	}
 
-	public AutomatedIntegrationSuite(Class theClass) {
+	public AutomatedIntegrationSuite(Class<? extends TestCase> theClass) {
 		super(theClass);
 	}
 

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2009,2010 QNX Software Systems
+ * Copyright (c) 2009,2011 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX Software Systems (Alena Laskavaia)  - initial API and implementation
+ *     QNX Software Systems (Alena Laskavaia)  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.test;
 
@@ -46,7 +46,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 /**
  * TODO: add description
  */
-@SuppressWarnings("restriction")
+@SuppressWarnings({ "nls", "restriction" })
 public abstract class CodanFastCxxAstTestCase extends TestCase {
 	protected IASTTranslationUnit tu;
 
@@ -58,7 +58,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 		try {
 			CodanCoreTestActivator plugin = CodanCoreTestActivator.getDefault();
 			return TestSourceReader.getContentsForTest(plugin == null ? null
-					: plugin.getBundle(), "src", getClass(), getName(), //$NON-NLS-1$
+					: plugin.getBundle(), "src", getClass(), getName(),
 					sections);
 		} catch (IOException e) {
 			fail(e.getMessage());
@@ -73,18 +73,15 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 
 	/**
 	 * @return
-	 * 
+	 *
 	 */
 	public IASTTranslationUnit parse(String code) {
 		return parse(code, isCpp() ? ParserLanguage.CPP : ParserLanguage.C,
 				true);
 	}
 
-	@SuppressWarnings("restriction")
-	protected IASTTranslationUnit parse(String code, ParserLanguage lang,
-			boolean gcc) {
-		FileContent codeReader = FileContent.create("code.c", //$NON-NLS-1$
-				code.toCharArray());
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean gcc) {
+		FileContent codeReader = FileContent.create("code.c", code.toCharArray());
 		IScannerInfo scannerInfo = new ScannerInfo();
 		IScanner scanner = AST2BaseTest.createScanner(codeReader, lang,
 				ParserMode.COMPLETE_PARSE, scannerInfo);
@@ -103,12 +100,11 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 				config = new GCCParserExtensionConfiguration();
 			else
 				config = new ANSICParserExtensionConfiguration();
-			parser2 = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE,
-					NULL_LOG, config);
+			parser2 = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
 		}
 		IASTTranslationUnit tu = parser2.parse();
 		if (parser2.encounteredError() && !hasCodeErrors())
-			fail("PARSE FAILURE"); //$NON-NLS-1$
+			fail("PARSE FAILURE");
 		if (!hasCodeErrors()) {
 			if (lang == ParserLanguage.C) {
 				IASTProblem[] problems = CVisitor.getProblems(tu);
@@ -125,7 +121,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 	/**
 	 * Override if any of code that test tried to parse has errors, otherwise
 	 * parse method would assert
-	 * 
+	 *
 	 * @return
 	 */
 	protected boolean hasCodeErrors() {
@@ -156,11 +152,9 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 	}
 
 	void runCodan(IASTTranslationUnit tu) {
-		IProblemReporter problemReporter = CodanRuntime.getInstance()
-				.getProblemReporter();
+		IProblemReporter problemReporter = CodanRuntime.getInstance() .getProblemReporter();
 		CodanRuntime.getInstance().setProblemReporter(new IProblemReporter() {
-			public void reportProblem(String problemId, IProblemLocation loc,
-					Object... args) {
+			public void reportProblem(String problemId, IProblemLocation loc, Object... args) {
 				codanproblems.add(new ProblemInstance(problemId, loc, args));
 			}
 		});

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *     Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.test;
 
@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.Path;
 /**
  * TODO: add description
  */
+@SuppressWarnings("nls")
 public class CodanTestCase extends BaseTestCase {
 	ArrayList<File> tempFiles = new ArrayList<File>();
 	protected File tmpDir;
@@ -47,7 +48,7 @@ public class CodanTestCase extends BaseTestCase {
 	protected IFile currentIFile;
 
 	/**
-	 * 
+	 *
 	 */
 	public CodanTestCase() {
 		super();
@@ -62,7 +63,7 @@ public class CodanTestCase extends BaseTestCase {
 
 	/**
 	 * Override for c++ (i.e. at least one c++ test)
-	 * 
+	 *
 	 * @return is c++ tests
 	 */
 	public boolean isCpp() {
@@ -82,8 +83,7 @@ public class CodanTestCase extends BaseTestCase {
 		if (cproject != null) {
 			try {
 				cproject.getProject().delete(
-						IResource.FORCE
-								| IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+						IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
 						new NullProgressMonitor());
 			} catch (CoreException e) {
 				throw e;
@@ -100,8 +100,7 @@ public class CodanTestCase extends BaseTestCase {
 		for (int i = 0; i < projects.length; i++) {
 			IProject p = projects[i];
 			if (p.getName().startsWith("Codan")) {
-				p.delete(IResource.FORCE
-						| IResource.ALWAYS_DELETE_PROJECT_CONTENT,
+				p.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
 						new NullProgressMonitor());
 			}
 		}
@@ -112,8 +111,7 @@ public class CodanTestCase extends BaseTestCase {
 		ModelJoiner mj = new ModelJoiner();
 		try {
 			// Create the cproject
-			final String projectName = "CodanProjTest_"
-					+ System.currentTimeMillis();
+			final String projectName = "CodanProjTest_" + System.currentTimeMillis();
 			final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			workspace.run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
@@ -189,7 +187,7 @@ public class CodanTestCase extends BaseTestCase {
 	}
 
 	public File loadcode(String code, boolean cpp) {
-		String fileKey = "@file:"; //$NON-NLS-1$
+		String fileKey = "@file:";
 		int indf = code.indexOf(fileKey);
 		if (indf >= 0) {
 			int sep = code.indexOf('\n');
@@ -201,7 +199,7 @@ public class CodanTestCase extends BaseTestCase {
 				return loadcode(code, new File(tmpDir, fileName));
 			}
 		}
-		String ext = cpp ? ".cpp" : ".c"; //$NON-NLS-1$ //$NON-NLS-2$
+		String ext = cpp ? ".cpp" : ".c";
 		File testFile = null;
 		try {
 			testFile = File.createTempFile("test", ext, tmpDir); //$NON-NLS-1$
@@ -229,15 +227,14 @@ public class CodanTestCase extends BaseTestCase {
 				// hmm
 				fail(e.getMessage());
 			}
-			currentCElem = cproject
-					.findElement(new Path(currentFile.toString()));
+			currentCElem = cproject.findElement(new Path(currentFile.toString()));
 			currentIFile = (IFile) currentCElem.getResource();
 			return testFile;
 		} catch (IOException e) {
-			fail("Cannot save test: " + testFile + ": " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+			fail("Cannot save test: " + testFile + ": " + e.getMessage());
 			return null;
 		} catch (CModelException e) {
-			fail("Cannot find file: " + testFile + ": " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+			fail("Cannot find file: " + testFile + ": " + e.getMessage());
 			return null;
 		}
 	}

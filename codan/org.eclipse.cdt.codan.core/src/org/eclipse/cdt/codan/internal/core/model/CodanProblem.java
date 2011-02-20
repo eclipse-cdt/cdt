@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *     Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core.model;
 
@@ -15,21 +15,30 @@ import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 
+/**
+ * A type of problems reported by Codan.
+ */
 public class CodanProblem implements IProblemWorkingCopy, Cloneable {
+
 	private String id;
 	private String name;
-	private String message;
+	private String messagePattern;
 	private CodanSeverity severity = CodanSeverity.Warning;
 	private boolean enabled = true;
 	private IProblemPreference preference;
 	private boolean frozen;
 	private String description;
 	private String markerType = IProblemReporter.GENERIC_CODE_ANALYSIS_MARKER_TYPE;
+	private String[] exampleParams = { "X", "Y", "Z", "U", "V" }; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$
 
 	public CodanSeverity getSeverity() {
 		return severity;
 	}
 
+	/**
+	 * @param problemId - the ID of the problem
+	 * @param name - the name of the problem
+	 */
 	public CodanProblem(String problemId, String name) {
 		this.id = problemId;
 		this.name = name;
@@ -65,7 +74,7 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
@@ -92,11 +101,11 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblem#getMessagePattern()
 	 */
 	public String getMessagePattern() {
-		return message;
+		return messagePattern;
 	}
 
 	protected void freeze() {
@@ -104,12 +113,12 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 	}
 
 	/**
-	 * @param message
-	 *        the message to set
+	 * @param messagePattern
+	 *            the message to set
 	 */
-	public void setMessagePattern(String message) {
+	public void setMessagePattern(String messagePattern) {
 		checkSet();
-		this.message = message;
+		this.messagePattern = messagePattern;
 	}
 
 	protected void checkSet() {
@@ -119,7 +128,7 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblem#getDescription()
 	 */
 	public String getDescription() {
@@ -128,7 +137,7 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.IProblemWorkingCopy#setDescription(java
 	 * .lang.String)
@@ -139,14 +148,40 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblem#getMarkerType()
 	 */
 	public String getMarkerType() {
 		return markerType;
 	}
 
-	public void setMarkerType(String type) {
-		markerType = type;
+	/**
+	 * Sets the marker id for the problem.
+
+	 * @param markerType
+	 */
+	public void setMarkerType(String markerType) {
+		this.markerType = markerType;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.cdt.codan.core.model.IProblem#getExampleParameters()
+	 */
+	public String[] getExampleMessageParameters() {
+		return exampleParams.clone();
+	}
+
+	/**
+	 * Sets an example message parameter to use with {@link #getMessagePattern()}.
+	 *
+	 * @param exampleParameters - the example message parameters to set,
+	 *    e.g. { "&lt;variable_name&gt;" }.
+	 * @see #getExampleMessageParameters()
+	 */
+	public void setExampleMessageParameters(String[] exampleParameters) {
+		checkSet();
+		this.exampleParams = exampleParameters;
 	}
 }

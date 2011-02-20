@@ -168,6 +168,56 @@ where xxx what checker would post as an argument for the problem.
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="exampleParam0" type="string">
+            <annotation>
+               <documentation>
+                  Example parameter for &apos;messagePattern&apos; (with position 0.) This value is used only in the &quot;Code Analysis&quot; Preference UI to provide some context to the message shown for a particular problem.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="exampleParam1" type="string">
+            <annotation>
+               <documentation>
+                  Example parameter for &apos;messagePattern&apos; (with position 1.) This value is used only in the &quot;Code Analysis&quot; Preference UI to provide some context to the message shown for a particular problem.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="exampleParam2" type="string">
+            <annotation>
+               <documentation>
+                  Example parameter for &apos;messagePattern&apos; (with position 2.) This value is used only in the &quot;Code Analysis&quot; Preference UI to provide some context to the message shown for a particular problem.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="exampleParam3" type="string">
+            <annotation>
+               <documentation>
+                  Example parameter for &apos;messagePattern&apos; (with position 3.) This value is used only in the &quot;Code Analysis&quot; Preference UI to provide some context to the message shown for a particular problem.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="exampleParam4" type="string">
+            <annotation>
+               <documentation>
+                  Example parameter for &apos;messagePattern&apos; (with position 4.) This value is used only in the &quot;Code Analysis&quot; Preference UI to provide some context to the message shown for a particular problem.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
          <attribute name="description" type="string">
             <annotation>
                <documentation>

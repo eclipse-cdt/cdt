@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -33,7 +33,9 @@ public class FileContentHelper {
 		InputStreamReader reader = getReaderForFile(file);	
 		skip(start, reader);
 		
-		return readRest(reader);
+		final String rest = readRest(reader);
+		reader.close();
+		return rest;
 		
 	}
 	
@@ -45,7 +47,7 @@ public class FileContentHelper {
 			skip(start, r);
 			
 			read(length, r, bytes);
-			
+			r.close();
 			return new String(bytes);
 		} catch (IOException e) {
 			CCorePlugin.log(e);

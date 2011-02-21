@@ -150,7 +150,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
             new LabelColumnInfo(new LabelAttribute[] { 
                 new LabelText(
                     MessagesForLaunchVM.StackFramesVMNode_No_columns__Incomplete_stack_marker__text_format,
-                    new String[] { PROP_NAME })
+                    new String[] { PROP_IS_INCOMPLETE_STACK_MARKER })
                 {
                     @Override
                     public boolean isEnabled(IStatus status, Map<String, Object> properties) {

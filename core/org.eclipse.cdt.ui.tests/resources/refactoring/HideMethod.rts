@@ -850,6 +850,7 @@ public:
 
 private:
     void methode2();
+
 };
 
 #endif /* HIDEMETHOD_H_ */
@@ -1219,7 +1220,7 @@ struct A{
 
 struct A{
 private:
-    void method2();
+	void method2();
 };
 
 #endif /*A_H_*/
@@ -1263,7 +1264,7 @@ public:
 private:
     void set(bool b)
     {
-    }
+	}
 };
 
 //!HideMethod CheckIfPrivateBug 2
@@ -1305,7 +1306,7 @@ public:
 private:
     void set(bool b)
     {
-    }
+	}
 };
 
 //!HideMethod CheckIfPrivateBug 3
@@ -1334,7 +1335,7 @@ public:
 struct other
 {
 private:
-    bool value() {return true;}
+  bool value() {return true;}
 };
 
 class Klass
@@ -1381,7 +1382,7 @@ public:
 	void set(bool b){}
 
 private:
-    void test()
+	void test()
 	{
 	  other o;
 	  this->set(o.value());

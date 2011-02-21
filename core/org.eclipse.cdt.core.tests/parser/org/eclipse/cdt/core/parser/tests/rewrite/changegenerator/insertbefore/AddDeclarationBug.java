@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -69,27 +69,23 @@ public class AddDeclarationBug extends ChangeGeneratorTest {
 					returnTyp.setType(IASTSimpleDeclSpecifier.t_int);
 					newDecl.setDeclSpecifier(returnTyp);
 					
-					IASTStandardFunctionDeclarator declarator = new CPPASTFunctionDeclarator(new CPPASTName("exp".toCharArray()));
+					IASTStandardFunctionDeclarator declarator = new CPPASTFunctionDeclarator(new CPPASTName("exp".toCharArray())); //$NON-NLS-1$
 					IASTSimpleDeclSpecifier paramTyp = new CPPASTSimpleDeclSpecifier();
 					paramTyp.setType(IASTSimpleDeclSpecifier.t_int);
-					IASTDeclarator decl = new CPPASTDeclarator(new CPPASTName("i".toCharArray()));
+					IASTDeclarator decl = new CPPASTDeclarator(new CPPASTName("i".toCharArray())); //$NON-NLS-1$
 					ICPPASTParameterDeclaration param = new CPPASTParameterDeclaration(paramTyp, decl);
 					declarator.addParameterDeclaration(param);
 					newDecl.addDeclarator(declarator);
 					
-					ASTModification mod= new ASTModification(ModificationKind.APPEND_CHILD, classNode, newDecl, null);
+					ASTModification mod = new ASTModification(ModificationKind.APPEND_CHILD, classNode, newDecl, null);
 					modStore.storeModification(null, mod);
 				}
 				return PROCESS_CONTINUE;
 			}
-			
-			
 		};
 	}
 	
 	public static Test suite() {
 		return new AddDeclarationBug();
-		
 	}
-
 }

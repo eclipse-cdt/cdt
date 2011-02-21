@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -16,10 +16,14 @@ import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.parser.tests.rewrite.TestHelper;
 import org.eclipse.cdt.core.tests.BaseTestFramework;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.changegenerator.ChangeGenerator;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.Document;
@@ -43,23 +47,23 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 	}
 
 	@Override
-	public void runTest() {
+	public void runTest() throws Exception{
 		final ASTModificationStore modStore = new ASTModificationStore();
 		final ChangeGenerator changegenartor = new ChangeGenerator(modStore);
-		try {
-			importFile("source.h", source); //$NON-NLS-1$
-	
-			IASTTranslationUnit unit = CDOM.getInstance().getTranslationUnit(
-					project.getFile(new Path("source.h")), //$NON-NLS-1$
-			        CDOM.getInstance().getCodeReaderFactory(
-			              CDOM.PARSE_SAVED_RESOURCES),
-			        true);
+			IFile testFile = importFile("source.h", source); //$NON-NLS-1$
+			
 			CPPASTVisitor visitor = createModificator(modStore);
-		
+			
+			CCorePlugin.getIndexManager().reindex(cproject);
+
+			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+
+			boolean joined = CCorePlugin.getIndexManager().joinIndexer(20000, new NullProgressMonitor());
+			assertTrue("The indexing operation of the test CProject has not finished jet. This should not happen...", joined);
+			
+			IASTTranslationUnit unit = CoreModelUtil.findTranslationUnit(testFile).getAST();
 			unit.accept(visitor);
 			
-
-			//			assertEquals(expectedSource, changegenartor.write(unit));
 			changegenartor.generateChange(unit);
 			Document doc = new Document(source);
 			for(Change curChange : ((CompositeChange)changegenartor.getChange()).getChildren()){
@@ -69,10 +73,6 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 				}
 			}
 			assertEquals(TestHelper.unifyNewLines(expectedSource), TestHelper.unifyNewLines(doc.get()));
-		} catch (Exception e) {
-			e.printStackTrace();
-			assertTrue(false);
-		}
 	}
 
 	protected abstract CPPASTVisitor createModificator(ASTModificationStore modStore);

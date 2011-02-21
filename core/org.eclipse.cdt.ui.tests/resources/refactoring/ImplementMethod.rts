@@ -221,8 +221,7 @@ namespace NameSpace
 	}
 
     void ClassInNamespace::test2()
-    {
-    }
+    {}
 }
 //!virtual method in the middle of con/destructor, without parameters and void return value
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
@@ -542,8 +541,7 @@ namespace OuterSpace {
 	}
 
     int NameSpace::test2()
-    {
-    }
+    {}
 }
 //!implement function within namespaces
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
@@ -576,8 +574,7 @@ namespace OuterSpace {
 		}
 
 	    int test2()
-	    {
-	    }
+	    {}
 	}
 }
 //!class template member functions with multiple templates

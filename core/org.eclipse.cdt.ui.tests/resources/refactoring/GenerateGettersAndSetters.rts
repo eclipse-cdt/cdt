@@ -99,8 +99,8 @@ public:
     {
         return name;
     }
-
-    int getSystemId(){
+	
+	int getSystemId(){
 		return systemId;
 	}
 	
@@ -217,8 +217,8 @@ namespace Personal {
 	    {
 	        return name;
 	    }
-
-	    int getSystemId(){
+		
+		int getSystemId(){
 			return systemId;
 		}
 		
@@ -334,8 +334,8 @@ public:
     {
         this->name = name;
     }
-
-    int getSystemId(){
+	
+	int getSystemId(){
 		return systemId;
 	}
 	
@@ -456,8 +456,8 @@ public:
     {
         this->name = name;
     }
-
-    int getSystemId(){
+	
+	int getSystemId(){
 		return systemId;
 	}
 	
@@ -568,7 +568,8 @@ public:
         this->systemId = systemId;
     }
 
-    Person(int socSecNo); // contructor
+
+  Person(int socSecNo); // contructor
 
   ~Person(); // destructor
 
@@ -691,7 +692,6 @@ public:
     {
         this->id = id;
     }
-
 };
 
 #endif /*C_H_*/
@@ -744,8 +744,7 @@ public:
     {
         this->i = i;
     }
-
-    //comment3
+	//comment3
 };
 
 #endif /* TEST_H_ */
@@ -934,7 +933,7 @@ namespace Personal {
         return name;
     }
 
-    int Person::SocSecNo() {
+int Person::SocSecNo() {
 	return socSecNo;
 }
 
@@ -1473,8 +1472,8 @@ namespace foo
     {
         this->testField = testField;
     }
-
-    void Test::foo()
+    
+	void Test::foo()
 	{
 	
 	}

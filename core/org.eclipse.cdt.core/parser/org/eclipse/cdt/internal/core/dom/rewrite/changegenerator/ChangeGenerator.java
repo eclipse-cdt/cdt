@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationMap;
@@ -56,7 +55,7 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEditGroup;
 
-public class ChangeGenerator extends CPPASTVisitor {
+public class ChangeGenerator extends ASTVisitor {
 
 
 	private final LinkedHashMap<String, Integer> sourceOffsets = new LinkedHashMap<String, Integer>();
@@ -105,7 +104,7 @@ public class ChangeGenerator extends CPPASTVisitor {
 		generateChange(rootNode, this);
 	}
 
-	public void generateChange(IASTNode rootNode, CPPASTVisitor pathProvider)
+	public void generateChange(IASTNode rootNode, ASTVisitor pathProvider)
 			throws ProblemRuntimeException {
 		change = new CompositeChange(Messages.ChangeGenerator_compositeChange);
 		initParentModList();
@@ -217,7 +216,7 @@ public class ChangeGenerator extends CPPASTVisitor {
 		
 		String synthSource = synthWriter.write(synthNode, fileScope, commentMap);
 
-		reformatSynthCode(synthNode, synthSource); /*XXX resultat wird nicht verwendet?*/
+		createChange(synthNode, synthSource);
 
 		int newOffset = synthNode.getFileLocation().getNodeOffset()
 		+ synthNode.getFileLocation().getNodeLength();
@@ -271,42 +270,11 @@ public class ChangeGenerator extends CPPASTVisitor {
 		}
 	}
 
-	private String reformatSynthCode(IASTNode synthNode, String synthSource) {
+	private void createChange(IASTNode synthNode, String synthSource) {
 		IFile relevantFile = FileHelper.getIFilefromIASTNode(synthNode);
-		StringBuilder formattedCode = new StringBuilder();
 
 		String originalCode = originalCodeOfNode(synthNode);
 		CodeComparer codeComparer = new CodeComparer(originalCode, synthSource);
-
-		int lastCommonPositionInOriginalCode = codeComparer
-				.getLastCommonPositionInOriginalCode();
-		if (lastCommonPositionInOriginalCode > -1) {
-			formattedCode.append(originalCode.substring(0,
-					lastCommonPositionInOriginalCode + 1));
-		}
-
-		int lastCommonPositionInSynthCode = codeComparer
-				.getLastCommonPositionInSynthCode();
-		int firstPositionOfCommonEndInSynthCode = codeComparer
-				.getFirstPositionOfCommonEndInSynthCode(lastCommonPositionInSynthCode, lastCommonPositionInOriginalCode);
-
-		int firstPositionOfCommonEndInOriginalCode = codeComparer
-				.getFirstPositionOfCommonEndInOriginalCode(lastCommonPositionInOriginalCode, lastCommonPositionInSynthCode);
-		if (firstPositionOfCommonEndInSynthCode == -1) {
-			formattedCode.append(synthSource
-					.substring(lastCommonPositionInSynthCode + 1));
-		} else {
-			if (lastCommonPositionInSynthCode + 1 < firstPositionOfCommonEndInSynthCode) {
-				formattedCode.append(synthSource.substring(
-						lastCommonPositionInSynthCode + 1,
-						firstPositionOfCommonEndInSynthCode));
-			}
-		}
-
-		if (firstPositionOfCommonEndInOriginalCode > -1) {
-			formattedCode.append(originalCode
-					.substring(firstPositionOfCommonEndInOriginalCode));
-		}
 
 		MultiTextEdit edit;
 		if (changes.containsKey(relevantFile)) {
@@ -317,8 +285,6 @@ public class ChangeGenerator extends CPPASTVisitor {
 		}
 
 		codeComparer.createChange(edit, synthNode);
-
-		return formattedCode.toString();
 	}
 
 	public String originalCodeOfNode(IASTNode node) {
@@ -481,130 +447,133 @@ public class ChangeGenerator extends CPPASTVisitor {
 
 		private final StringBuilder originalCode;
 		private final StringBuilder synthCode;
+		private int lastCommonInSynthStart;
+		private int lastCommonInOriginalStart;
+		private int firstCommonInSynthEnd;
+		private int  firstCommonInOriginalEnd;
 
 		public CodeComparer(String originalCode, String synthCode) {
 			this.originalCode = new StringBuilder(originalCode);
 			this.synthCode = new StringBuilder(synthCode);
+			calculatePositions();
+		}
+		
+		private void calculatePositions(){
+			lastCommonInSynthStart = calcLastCommonPositionInSynthCode();
+			lastCommonInOriginalStart = calcLastCommonPositionInOriginalCode();	
+			firstCommonInSynthEnd = calcFirstPositionOfCommonEndInSynthCode(lastCommonInSynthStart, lastCommonInOriginalStart);
+			firstCommonInOriginalEnd = calcFirstPositionOfCommonEndInOriginalCode(lastCommonInOriginalStart, lastCommonInSynthStart);
+			trimTrailingNewlines();
+		}
+
+		private void trimTrailingNewlines() {
+			int prevOrigEnd = firstCommonInOriginalEnd - 1;
+			while( prevOrigEnd > lastCommonInOriginalStart 
+					&& prevOrigEnd > -1
+					&& isUninterresting(originalCode, prevOrigEnd)){
+				
+				firstCommonInOriginalEnd = prevOrigEnd;
+				prevOrigEnd--;
+			}
+			
+			while(firstCommonInOriginalEnd > 0 && firstCommonInOriginalEnd +1 < originalCode.length() && (originalCode.charAt(firstCommonInOriginalEnd) == ' ' || originalCode.charAt(firstCommonInOriginalEnd) == '\t')){
+				firstCommonInOriginalEnd++;
+			}
+			
+			int prevSynthEnd = firstCommonInSynthEnd - 1;
+			while( prevSynthEnd > lastCommonInSynthStart 
+					&& prevSynthEnd > -1
+					&& isUninterresting(synthCode, prevSynthEnd)){
+				
+				firstCommonInSynthEnd = prevSynthEnd;
+				prevSynthEnd--;
+			}
+			while(firstCommonInSynthEnd > 0 && firstCommonInSynthEnd +1< synthCode.length() && (synthCode.charAt(firstCommonInSynthEnd) == ' ' || synthCode.charAt(firstCommonInSynthEnd) == '\t')){
+				firstCommonInSynthEnd++;
+			}
 		}
 
 		public int getLastCommonPositionInSynthCode() {
-
-			int lastCommonPosition = -1;
-			int originalCodePosition = -1;
-			int synthCodePosition = -1;
-
-			do {
-				lastCommonPosition = synthCodePosition;
-				originalCodePosition = nextInterrestingPosition(originalCode,
-						originalCodePosition);
-				synthCodePosition = nextInterrestingPosition(synthCode,
-						synthCodePosition);
-			} while (originalCodePosition > -1
-					&& synthCodePosition > -1
-					&& originalCode.charAt(originalCodePosition) == synthCode
-							.charAt(synthCodePosition));
-
-			return lastCommonPosition;
+			return lastCommonInSynthStart;
 		}
-
+		
 		public int getLastCommonPositionInOriginalCode() {
-
-			int lastCommonPosition = -1;
-			int originalCodePosition = -1;
-			int synthCodePosition = -1;
-
-			do {
-				lastCommonPosition = originalCodePosition;
-				originalCodePosition = nextInterrestingPosition(originalCode,
-						originalCodePosition);
-				synthCodePosition = nextInterrestingPosition(synthCode,
-						synthCodePosition);
-			} while (originalCodePosition > -1
-					&& synthCodePosition > -1
-					&& originalCode.charAt(originalCodePosition) == synthCode
-							.charAt(synthCodePosition));
-
-			return lastCommonPosition;
+			return lastCommonInOriginalStart;	
+		}		
+		
+		public int getFirstPositionOfCommonEndInOriginalCode() {
+			return firstCommonInOriginalEnd;
 		}
 
-		public int getFirstPositionOfCommonEndInOriginalCode(int originalLimit, int synthLimit) {
+		public int getFirstPositionOfCommonEndInSynthCode() {
+			return firstCommonInSynthEnd;
+		}
+		
 
-			int lastCommonPosition = -1;
-			int originalCodePosition = -1;
-			int synthCodePosition = -1;
+		public int calcLastCommonPositionInSynthCode() {
+			return findLastCommonPosition(synthCode, originalCode);
+		}
+		
+		public int calcLastCommonPositionInOriginalCode() {
+			return findLastCommonPosition(originalCode, synthCode);	
+		}		
+		
+		
+		private int calcFirstPositionOfCommonEndInOriginalCode(int originalLimit, int synthLimit) {
 
 			StringBuilder reverseOriginalCode = new StringBuilder(originalCode)
 					.reverse();
 			StringBuilder reverseSynthCode = new StringBuilder(synthCode)
 					.reverse();
-
-			do {
-				lastCommonPosition = originalCodePosition;
-				originalCodePosition = nextInterrestingPosition(
-						reverseOriginalCode, originalCodePosition);
-				synthCodePosition = nextInterrestingPosition(reverseSynthCode,
-						synthCodePosition);
-			} while (originalCodePosition > -1
-					&& originalCodePosition < originalCode.length() - originalLimit
-					&& synthCodePosition > -1
-					&& synthCodePosition < synthCode.length() - synthLimit
-					&& reverseOriginalCode.charAt(originalCodePosition) == reverseSynthCode
-							.charAt(synthCodePosition));
+			int lastCommonPosition = findLastCommonPosition(reverseOriginalCode, reverseSynthCode,
+					reverseOriginalCode.length() - originalLimit - 1, reverseSynthCode.length() - synthLimit - 1);
 
 			if (lastCommonPosition < 0
 					|| lastCommonPosition >= originalCode.length()) {
 				return -1;
 			}
 
-			return originalCode.length() - lastCommonPosition;
+			return originalCode.length() - lastCommonPosition -1;
 		}
 
-		public int getFirstPositionOfCommonEndInSynthCode(int limmit, int lastCommonPositionInOriginal) {
-
-			int lastCommonPosition = 0;
-			int originalCodePosition = -1;
-			int synthCodePosition = -1;
-			int korOffset = 0;
-
+		private int calcFirstPositionOfCommonEndInSynthCode(int synthLimit, int originalLimit) {
 			StringBuilder reverseOriginalCode = new StringBuilder(originalCode)
 			.reverse();
 			StringBuilder reverseSynthCode = new StringBuilder(synthCode)
 			.reverse();
 
-			do {
-				if (lastCommonPosition >= 0
-						&& lastCommonPositionInOriginal >= 0
-						&& lastCommonPositionInOriginal	- korOffset >= 0
-						&& originalCode.charAt(lastCommonPositionInOriginal
-								- korOffset) == reverseSynthCode
-								.charAt(lastCommonPosition)) {
-					++korOffset;
-				} else {
-					korOffset = 0;
-				}
-				lastCommonPosition = synthCodePosition;
-				originalCodePosition = nextInterrestingPosition(
-						reverseOriginalCode, originalCodePosition);
-				synthCodePosition = nextInterrestingPosition(reverseSynthCode,
-						synthCodePosition);
-
-			} while (originalCodePosition > -1
-					&& originalCodePosition < originalCode.length() - lastCommonPositionInOriginal
-					&& synthCodePosition > -1
-					&& synthCodePosition < synthCode.length() - limmit
-					&& reverseOriginalCode.charAt(originalCodePosition) == reverseSynthCode
-					.charAt(synthCodePosition));
+			int lastCommonPosition = findLastCommonPosition(reverseSynthCode, reverseOriginalCode,
+					reverseSynthCode.length() - synthLimit -1, reverseOriginalCode.length() - originalLimit -1);
 
 			if (lastCommonPosition < 0
 					|| lastCommonPosition >= synthCode.length()) {
 				return -1;
 			}
 
-			if (korOffset > 0) {
-				--korOffset;
-			}
+			return synthCode.length() - lastCommonPosition - 1;
+		}
+		
+		
+		private int findLastCommonPosition(StringBuilder first, StringBuilder second){
+			return findLastCommonPosition(first, second, first.length(), second.length());
+		}
+		
+		
+		private int findLastCommonPosition(StringBuilder first, StringBuilder second, int firstLimit, int secondLimit){
+			int firstIndex = -1;
+			int secondIndex = -1;
+			int lastCommonIndex = -1;
 
-			return synthCode.length() - lastCommonPosition + korOffset;
+			do {
+				lastCommonIndex = firstIndex;
+				firstIndex = nextInterrestingPosition(first, firstIndex);
+				secondIndex = nextInterrestingPosition(second, secondIndex);
+			} while (firstIndex > -1
+					&& firstIndex <= firstLimit
+					&& secondIndex > -1
+					&& secondIndex <= secondLimit
+					&& first.charAt(firstIndex) == second.charAt(secondIndex));
+			return lastCommonIndex;
 		}
 
 		private int nextInterrestingPosition(StringBuilder code, int position) {
@@ -648,43 +617,37 @@ public class ChangeGenerator extends CPPASTVisitor {
 
 		private void createChange(MultiTextEdit edit, int changeOffset) {
 
-			int lastCommonPositionInOriginal = getLastCommonPositionInOriginalCode();
-			int lastCommonPositionInSynth = getLastCommonPositionInSynthCode();
-			int firstOfCommonEndInOriginal = getFirstPositionOfCommonEndInOriginalCode(lastCommonPositionInOriginal, lastCommonPositionInSynth);
-			int firstOfCommonEndInSynth = getFirstPositionOfCommonEndInSynthCode(
-					lastCommonPositionInSynth, lastCommonPositionInOriginal);
-
-			int i = (firstOfCommonEndInSynth >= 0 ? firstOfCommonEndInOriginal
+			int i = (firstCommonInSynthEnd >= 0 ? firstCommonInOriginalEnd
 					: originalCode.length())
-					- lastCommonPositionInOriginal;
+					- lastCommonInOriginalStart;
 			if (i <= 0) {
 				String insertCode = synthCode.substring(
-						lastCommonPositionInSynth, firstOfCommonEndInSynth);
+						lastCommonInSynthStart, firstCommonInSynthEnd);
 				InsertEdit iEdit = new InsertEdit(changeOffset
-						+ lastCommonPositionInOriginal, insertCode);
+						+ lastCommonInOriginalStart, insertCode);
 				edit.addChild(iEdit);
-			} else if ((firstOfCommonEndInSynth >= 0 ? firstOfCommonEndInSynth
+			} else if ((firstCommonInSynthEnd >= 0 ? firstCommonInSynthEnd
 					: synthCode.length())
-					- lastCommonPositionInSynth <= 0) {
+					- lastCommonInSynthStart <= 0) {
 				int correction = 0;
-				if (lastCommonPositionInSynth > firstOfCommonEndInSynth) {
-					correction = lastCommonPositionInSynth
-							- firstOfCommonEndInSynth;
+				if (lastCommonInSynthStart > firstCommonInSynthEnd) {
+					correction = lastCommonInSynthStart
+							- firstCommonInSynthEnd;
 				}
 				DeleteEdit dEdit = new DeleteEdit(changeOffset
-						+ lastCommonPositionInOriginal,
-						firstOfCommonEndInOriginal
-								- lastCommonPositionInOriginal + correction);
+						+ lastCommonInOriginalStart,
+						firstCommonInOriginalEnd
+								- lastCommonInOriginalStart + correction);
 				edit.addChild(dEdit);
-			} else {
+			} else {			
 				String replacementCode = getReplacementCode(
-						lastCommonPositionInSynth, firstOfCommonEndInSynth);
+						lastCommonInSynthStart, firstCommonInSynthEnd);
 				ReplaceEdit rEdit = new ReplaceEdit(
 						changeOffset
-								+ Math.max(lastCommonPositionInOriginal, 0),
-						(firstOfCommonEndInOriginal >= 0 ? firstOfCommonEndInOriginal
+								+ Math.max(lastCommonInOriginalStart, 0),
+						(firstCommonInOriginalEnd >= 0 ? firstCommonInOriginalEnd
 								: originalCode.length())
-								- Math.max(lastCommonPositionInOriginal, 0),
+								- Math.max(lastCommonInOriginalStart, 0),
 						replacementCode);
 				edit.addChild(rEdit);
 			}

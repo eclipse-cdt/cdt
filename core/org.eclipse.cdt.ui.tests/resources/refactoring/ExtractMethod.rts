@@ -236,7 +236,7 @@ int main(){
 	
 	int i;
     exp(i);
-    return i;
+	return i;
 }
 
 //@.config
@@ -2590,6 +2590,7 @@ void exp()
 
 int main(int argc, char **argv) {
     exp();
+
 }
 
 //!Bug#264712 Refactor extract function deletes comments in header

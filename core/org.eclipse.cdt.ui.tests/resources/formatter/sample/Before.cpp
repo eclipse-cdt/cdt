@@ -55,7 +55,7 @@ const SimpleStruct array[] =
 void SimpleStruct_construct( 
 struct SimpleStruct * const s )
   {
-// single line
+ // single line
 s->num = 1;
 s->name = "boo";
 s->floatNum = 1.5;

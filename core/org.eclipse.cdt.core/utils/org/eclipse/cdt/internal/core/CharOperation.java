@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
@@ -17,7 +18,6 @@ package org.eclipse.cdt.internal.core;
  * @since 2.1
  */
 public final class CharOperation {
-
 	/**
 	 * Constant for an empty char array
 	 */
@@ -935,11 +935,13 @@ public final class CharOperation {
 		if (first.length != second.length)
 			return false;
 
-		for (int i = first.length; --i >= 0;)
+		for (int i = first.length; --i >= 0;) {
 			if (!equals(first[i], second[i]))
 				return false;
+		}
 		return true;
 	}
+
 	/**
 	 * If isCaseSensite is true, answers true if the two arrays are identical character
 	 * by character, otherwise false.
@@ -985,11 +987,7 @@ public final class CharOperation {
 	 * @return true if the two arrays are identical character by character according to the value
 	 * of isCaseSensitive, otherwise false
 	 */
-	public static final boolean equals(
-		char[][] first,
-		char[][] second,
-		boolean isCaseSensitive) {
-
+	public static final boolean equals(char[][] first, char[][] second,	boolean isCaseSensitive) {
 		if (isCaseSensitive) {
 			return equals(first, second);
 		}
@@ -1000,9 +998,10 @@ public final class CharOperation {
 		if (first.length != second.length)
 			return false;
 
-		for (int i = first.length; --i >= 0;)
+		for (int i = first.length; --i >= 0;) {
 			if (!equals(first[i], second[i], false))
 				return false;
+		}
 		return true;
 	}
 	/**
@@ -1049,9 +1048,10 @@ public final class CharOperation {
 		if (first.length != second.length)
 			return false;
 
-		for (int i = first.length; --i >= 0;)
+		for (int i = first.length; --i >= 0;) {
 			if (first[i] != second[i])
 				return false;
+		}
 		return true;
 	}
 	/**
@@ -1099,11 +1099,7 @@ public final class CharOperation {
 	 * @return true if the two arrays are identical character by character according to the value
 	 * of isCaseSensitive, otherwise false
 	 */
-	public static final boolean equals(
-		char[] first,
-		char[] second,
-		boolean isCaseSensitive) {
-
+	public static final boolean equals(char[] first, char[] second, boolean isCaseSensitive) {
 		if (isCaseSensitive) {
 			return equals(first, second);
 		}
@@ -1114,12 +1110,147 @@ public final class CharOperation {
 		if (first.length != second.length)
 			return false;
 
-		for (int i = first.length; --i >= 0;)
-			if (Character.toLowerCase(first[i])
-				!= Character.toLowerCase(second[i]))
+		for (int i = first.length; --i >= 0;) {
+			if (Character.toLowerCase(first[i]) != Character.toLowerCase(second[i]))
 				return false;
+		}
 		return true;
 	}
+
+	/**
+	 * Answers true if the first array is identical character by character to a portion of the second array
+	 * delimited from position secondStart (inclusive) to secondEnd(exclusive), otherwise false.
+	 * The equality is case sensitive.
+	 * <br>
+	 * <br>
+	 * For example:
+	 * <ol>
+	 * <li><pre>
+	 *    first = null
+	 *    second = null
+	 *    secondStart = 0
+	 *    secondEnd = 0
+	 *    result => true
+	 * </pre>
+	 * </li>
+	 * <li><pre>
+	 *    first = { }
+	 *    second = null
+	 *    secondStart = 0
+	 *    secondEnd = 0
+	 *    result => false
+	 * </pre>
+	 * </li>
+	 * <li><pre>
+	 *    first = { 'a' }
+	 *    second = { 'a' }
+	 *    secondStart = 0
+	 *    secondEnd = 1
+	 *    result => true
+	 * </pre>
+	 * </li>
+	 * <li><pre>
+	 *    first = { 'a' }
+	 *    second = { 'A' }
+	 *    secondStart = 0
+	 *    secondEnd = 1
+	 *    result => false
+	 * </pre>
+	 * </li>
+	 * </ol>
+	 * @param first the first array
+	 * @param second the second array
+	 * @param secondStart inclusive start position in the second array to compare
+	 * @param secondEnd exclusive end position in the second array to compare
+	 * @return true if the first array is identical character by character to fragment of second array ranging from secondStart to secondEnd-1, otherwise false
+	 * @since 3.0
+	 */
+	public static final boolean equals(char[] first, char[] second, int secondStart, int secondEnd) {
+		return equals(first, second, secondStart, secondEnd, true);
+	}
+
+	/**
+	 * <p>Answers true if the first array is identical character by character to a portion of the second array
+	 * delimited from position secondStart (inclusive) to secondEnd(exclusive), otherwise false. The equality could be either
+	 * case sensitive or case insensitive according to the value of the <code>isCaseSensitive</code> parameter.
+	 * </p>
+	 * <p>For example:</p>
+	 * <ol>
+	 * <li><pre>
+	 *    first = null
+	 *    second = null
+	 *    secondStart = 0
+	 *    secondEnd = 0
+	 *    isCaseSensitive = false
+	 *    result => true
+	 * </pre>
+	 * </li>
+	 * <li><pre>
+	 *    first = { }
+	 *    second = null
+	 *    secondStart = 0
+	 *    secondEnd = 0
+	 *    isCaseSensitive = false
+	 *    result => false
+	 * </pre>
+	 * </li>
+	 * <li><pre>
+	 *    first = { 'a' }
+	 *    second = { 'a' }
+	 *    secondStart = 0
+	 *    secondEnd = 1
+	 *    isCaseSensitive = true
+	 *    result => true
+	 * </pre>
+	 * </li>
+	 * <li><pre>
+	 *    first = { 'a' }
+	 *    second = { 'A' }
+	 *    secondStart = 0
+	 *    secondEnd = 1
+	 *    isCaseSensitive = true
+	 *    result => false
+	 * </pre>
+	 * </li>
+	 * <li><pre>
+	 *    first = { 'a' }
+	 *    second = { 'A' }
+	 *    secondStart = 0
+	 *    secondEnd = 1
+	 *    isCaseSensitive = false
+	 *    result => true
+	 * </pre>
+	 * </li>
+	 * </ol>
+	 * @param first the first array
+	 * @param second the second array
+	 * @param secondStart inclusive start position in the second array to compare
+	 * @param secondEnd exclusive end position in the second array to compare
+	 * @param isCaseSensitive check whether or not the equality should be case sensitive
+	 * @return true if the first array is identical character by character to fragment of second array ranging from secondStart to secondEnd-1, otherwise false
+	 * @since 3.2
+	 */
+	public static final boolean equals(char[] first, char[] second, int secondStart, int secondEnd,
+			boolean isCaseSensitive) {
+		if (first == second)
+			return true;
+		if (first == null || second == null)
+			return false;
+		if (first.length != secondEnd - secondStart)
+			return false;
+		if (isCaseSensitive) {
+			for (int i = first.length; --i >= 0;)
+				if (first[i] != second[i + secondStart])
+					return false;
+		} else {
+			for (int i = first.length; --i >= 0;) {
+				if (Character.toLowerCase(first[i]) != Character.toLowerCase(second[i + secondStart]))
+					return false;
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * If isCaseSensite is true, the equality is case sensitive, otherwise it is case insensitive.
 	 * 
@@ -1170,12 +1301,8 @@ public final class CharOperation {
 	 * value of isCaseSensitive, otherwise false.
 	 * @exception NullPointerException if fragment or name is null.
 	 */
-	public static final boolean fragmentEquals(
-		char[] fragment,
-		char[] name,
-		int startIndex,
-		boolean isCaseSensitive) {
-
+	public static final boolean fragmentEquals(char[] fragment,	char[] name, int startIndex,
+			boolean isCaseSensitive) {
 		int max = fragment.length;
 		if (name.length < max + startIndex)
 			return false;
@@ -1187,14 +1314,13 @@ public final class CharOperation {
 					return false;
 			return true;
 		}
-		for (int i = max;
-			--i >= 0;
-			) // assumes the prefix is not larger than the name
-			if (Character.toLowerCase(fragment[i])
-				!= Character.toLowerCase(name[i + startIndex]))
+		for (int i = max; --i >= 0;) { // assumes the prefix is not larger than the name
+			if (Character.toLowerCase(fragment[i]) != Character.toLowerCase(name[i + startIndex]))
 				return false;
+		}
 		return true;
 	}
+
 	/**
 	 * Answers a hashcode for the array
 	 * 

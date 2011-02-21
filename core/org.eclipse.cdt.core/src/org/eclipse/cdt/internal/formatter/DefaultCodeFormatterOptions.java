@@ -7,9 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin, Google
- *     Anton Leherbauer (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.formatter;
 
@@ -81,10 +80,8 @@ public class DefaultCodeFormatterOptions {
 	public String brace_position_for_switch;
 	public String brace_position_for_type_declaration;
 
-	public int continuation_indentation;
-	public int continuation_indentation_for_initializer_list;
-
 //	public int blank_lines_after_includes;
+//	public int blank_lines_at_beginning_of_method_body;
 //	public int blank_lines_before_field;
 //	public int blank_lines_before_first_class_body_declaration;
 //	public int blank_lines_before_includes;
@@ -92,7 +89,6 @@ public class DefaultCodeFormatterOptions {
 //	public int blank_lines_before_method;
 //	public int blank_lines_before_new_chunk;
 //	public int blank_lines_between_type_declarations;
-//	public int blank_lines_at_beginning_of_method_body;
 	
 //	public boolean comment_clear_blank_lines;
 //	public boolean comment_format;
@@ -100,7 +96,13 @@ public class DefaultCodeFormatterOptions {
 //	public boolean comment_format_html;
 //	public boolean comment_format_source;
 //	public int comment_line_length;
+	public int comment_min_distance_between_code_and_line_comment;
+	public boolean comment_preserve_white_space_between_code_and_line_comment;
+	public boolean never_indent_line_comments_on_first_column = true;
 	
+	public int continuation_indentation;
+	public int continuation_indentation_for_initializer_list;
+
 	public boolean indent_statements_compare_to_block;
 	public boolean indent_statements_compare_to_body;
 	public boolean indent_body_declarations_compare_to_access_specifier;
@@ -283,6 +285,15 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONSTRUCTOR_INITIALIZER_LIST, getAlignment(this.alignment_for_constructor_initializer_list));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION, getAlignment(this.alignment_for_throws_clause_in_method_declaration));
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGN_TYPE_MEMBERS_ON_COLUMNS, this.align_type_members_on_columns ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
+//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_AFTER_IMPORTS, Integer.toString(this.blank_lines_after_includes));
+//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BEFORE_FIELD, Integer.toString(this.blank_lines_before_field));
+//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BEFORE_FIRST_CLASS_BODY_DECLARATION, Integer.toString(this.blank_lines_before_first_class_body_declaration));
+//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BEFORE_IMPORTS, Integer.toString(this.blank_lines_before_includes));
+//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BEFORE_MEMBER_TYPE, Integer.toString(this.blank_lines_before_member_type));
+//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BEFORE_METHOD, Integer.toString(this.blank_lines_before_method));
+//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BEFORE_NEW_CHUNK, Integer.toString(this.blank_lines_before_new_chunk));
+//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BETWEEN_TYPE_DECLARATIONS, Integer.toString(this.blank_lines_between_type_declarations));
+//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_AT_BEGINNING_OF_METHOD_BODY, Integer.toString(this.blank_lines_at_beginning_of_method_body));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_INITIALIZER_LIST, this.brace_position_for_initializer_list);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_BLOCK, this.brace_position_for_block);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_BLOCK_IN_CASE, this.brace_position_for_block_in_case);
@@ -297,17 +308,10 @@ public class DefaultCodeFormatterOptions {
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_FORMAT_HTML, this.comment_format_html ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_FORMAT_SOURCE, this.comment_format_source ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_LINE_LENGTH, Integer.toString(this.comment_line_length));
+		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_MIN_DISTANCE_BETWEEN_CODE_AND_LINE_COMMENT, Integer.toString(this.comment_min_distance_between_code_and_line_comment));
+		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_PRESERVE_WHITE_SPACE_BETWEEN_CODE_AND_LINE_COMMENT, this.comment_preserve_white_space_between_code_and_line_comment ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION, Integer.toString(this.continuation_indentation));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION_FOR_INITIALIZER_LIST, Integer.toString(this.continuation_indentation_for_initializer_list));
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_AFTER_IMPORTS, Integer.toString(this.blank_lines_after_includes));
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BEFORE_FIELD, Integer.toString(this.blank_lines_before_field));
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BEFORE_FIRST_CLASS_BODY_DECLARATION, Integer.toString(this.blank_lines_before_first_class_body_declaration));
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BEFORE_IMPORTS, Integer.toString(this.blank_lines_before_includes));
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BEFORE_MEMBER_TYPE, Integer.toString(this.blank_lines_before_member_type));
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BEFORE_METHOD, Integer.toString(this.blank_lines_before_method));
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BEFORE_NEW_CHUNK, Integer.toString(this.blank_lines_before_new_chunk));
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BETWEEN_TYPE_DECLARATIONS, Integer.toString(this.blank_lines_between_type_declarations));
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_AT_BEGINNING_OF_METHOD_BODY, Integer.toString(this.blank_lines_at_beginning_of_method_body));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BLOCK, this.indent_statements_compare_to_block ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BODY, this.indent_statements_compare_to_body ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, this.indent_body_declarations_compare_to_access_specifier ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
@@ -621,90 +625,6 @@ public class DefaultCodeFormatterOptions {
 //		if (alignTypeMembersOnColumnsOption != null) {
 //			this.align_type_members_on_columns = DefaultCodeFormatterConstants.TRUE.equals(alignTypeMembersOnColumnsOption);
 //		}
-		final Object bracePositionForInitializerListOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_INITIALIZER_LIST);
-		if (bracePositionForInitializerListOption != null) {
-			try {
-				this.brace_position_for_initializer_list = (String) bracePositionForInitializerListOption;
-			} catch (ClassCastException e) {
-				this.brace_position_for_initializer_list = DefaultCodeFormatterConstants.END_OF_LINE;
-			}
-		}
-		final Object bracePositionForBlockOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_BLOCK);
-		if (bracePositionForBlockOption != null) {
-			try {
-				this.brace_position_for_block = (String) bracePositionForBlockOption;
-			} catch (ClassCastException e) {
-				this.brace_position_for_block = DefaultCodeFormatterConstants.END_OF_LINE;
-			}
-		}
-		final Object bracePositionForBlockInCaseOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_BLOCK_IN_CASE);
-		if (bracePositionForBlockInCaseOption != null) {
-			try {
-				this.brace_position_for_block_in_case = (String) bracePositionForBlockInCaseOption;
-			} catch (ClassCastException e) {
-				this.brace_position_for_block_in_case = DefaultCodeFormatterConstants.END_OF_LINE;
-			}
-		}
-//		final Object bracePositionForEnumDeclarationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_ENUM_DECLARATION);
-//		if (bracePositionForEnumDeclarationOption != null) {
-//			try {
-//				this.brace_position_for_enum_declaration = (String) bracePositionForEnumDeclarationOption;
-//			} catch (ClassCastException e) {
-//				this.brace_position_for_enum_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
-//			}
-//		}
-		final Object bracePositionForMethodDeclarationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION);
-		if (bracePositionForMethodDeclarationOption != null) {
-			try {
-				this.brace_position_for_method_declaration = (String) bracePositionForMethodDeclarationOption;
-			} catch (ClassCastException e) {
-				this.brace_position_for_method_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
-			}
-		}
-		final Object bracePositionForSwitchOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_SWITCH);
-		if (bracePositionForSwitchOption != null) {
-			try {
-				this.brace_position_for_switch = (String) bracePositionForSwitchOption;
-			} catch (ClassCastException e) {
-				this.brace_position_for_switch = DefaultCodeFormatterConstants.END_OF_LINE;
-			}
-		}
-		final Object bracePositionForTypeDeclarationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION);
-		if (bracePositionForTypeDeclarationOption != null) {
-			try {
-				this.brace_position_for_type_declaration = (String) bracePositionForTypeDeclarationOption;
-			} catch (ClassCastException e) {
-				this.brace_position_for_type_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
-			}
-		}
-		final Object bracePositionForNamespaceDeclarationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_NAMESPACE_DECLARATION);
-		if (bracePositionForNamespaceDeclarationOption != null) {
-			try {
-				this.brace_position_for_namespace_declaration = (String) bracePositionForNamespaceDeclarationOption;
-			} catch (ClassCastException e) {
-				this.brace_position_for_namespace_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
-			}
-		}
-		final Object continuationIndentationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION);
-		if (continuationIndentationOption != null) {
-			try {
-				this.continuation_indentation = Integer.parseInt((String) continuationIndentationOption);
-			} catch (NumberFormatException e) {
-				this.continuation_indentation = 2;
-			} catch (ClassCastException e) {
-				this.continuation_indentation = 2;
-			}
-		}
-		final Object continuationIndentationForInitializerListOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION_FOR_INITIALIZER_LIST);
-		if (continuationIndentationForInitializerListOption != null) {
-			try {
-				this.continuation_indentation_for_initializer_list = Integer.parseInt((String) continuationIndentationForInitializerListOption);
-			} catch (NumberFormatException e) {
-				this.continuation_indentation_for_initializer_list = 2;
-			} catch (ClassCastException e) {
-				this.continuation_indentation_for_initializer_list = 2;
-			}
-		}
 //		final Object blankLinesAfterIncludesOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_AFTER_IMPORTS);
 //		if (blankLinesAfterIncludesOption != null) {
 //			try {
@@ -795,6 +715,70 @@ public class DefaultCodeFormatterOptions {
 //				this.blank_lines_at_beginning_of_method_body = 0;
 //			}
 //		}
+		final Object bracePositionForInitializerListOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_INITIALIZER_LIST);
+		if (bracePositionForInitializerListOption != null) {
+			try {
+				this.brace_position_for_initializer_list = (String) bracePositionForInitializerListOption;
+			} catch (ClassCastException e) {
+				this.brace_position_for_initializer_list = DefaultCodeFormatterConstants.END_OF_LINE;
+			}
+		}
+		final Object bracePositionForBlockOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_BLOCK);
+		if (bracePositionForBlockOption != null) {
+			try {
+				this.brace_position_for_block = (String) bracePositionForBlockOption;
+			} catch (ClassCastException e) {
+				this.brace_position_for_block = DefaultCodeFormatterConstants.END_OF_LINE;
+			}
+		}
+		final Object bracePositionForBlockInCaseOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_BLOCK_IN_CASE);
+		if (bracePositionForBlockInCaseOption != null) {
+			try {
+				this.brace_position_for_block_in_case = (String) bracePositionForBlockInCaseOption;
+			} catch (ClassCastException e) {
+				this.brace_position_for_block_in_case = DefaultCodeFormatterConstants.END_OF_LINE;
+			}
+		}
+//		final Object bracePositionForEnumDeclarationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_ENUM_DECLARATION);
+//		if (bracePositionForEnumDeclarationOption != null) {
+//			try {
+//				this.brace_position_for_enum_declaration = (String) bracePositionForEnumDeclarationOption;
+//			} catch (ClassCastException e) {
+//				this.brace_position_for_enum_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
+//			}
+//		}
+		final Object bracePositionForMethodDeclarationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION);
+		if (bracePositionForMethodDeclarationOption != null) {
+			try {
+				this.brace_position_for_method_declaration = (String) bracePositionForMethodDeclarationOption;
+			} catch (ClassCastException e) {
+				this.brace_position_for_method_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
+			}
+		}
+		final Object bracePositionForSwitchOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_SWITCH);
+		if (bracePositionForSwitchOption != null) {
+			try {
+				this.brace_position_for_switch = (String) bracePositionForSwitchOption;
+			} catch (ClassCastException e) {
+				this.brace_position_for_switch = DefaultCodeFormatterConstants.END_OF_LINE;
+			}
+		}
+		final Object bracePositionForTypeDeclarationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION);
+		if (bracePositionForTypeDeclarationOption != null) {
+			try {
+				this.brace_position_for_type_declaration = (String) bracePositionForTypeDeclarationOption;
+			} catch (ClassCastException e) {
+				this.brace_position_for_type_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
+			}
+		}
+		final Object bracePositionForNamespaceDeclarationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_NAMESPACE_DECLARATION);
+		if (bracePositionForNamespaceDeclarationOption != null) {
+			try {
+				this.brace_position_for_namespace_declaration = (String) bracePositionForNamespaceDeclarationOption;
+			} catch (ClassCastException e) {
+				this.brace_position_for_namespace_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
+			}
+		}
 //		final Object commentClearBlankLinesOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_COMMENT_CLEAR_BLANK_LINES);
 //		if (commentClearBlankLinesOption != null) {
 //			this.comment_clear_blank_lines = DefaultCodeFormatterConstants.TRUE.equals(commentClearBlankLinesOption);
@@ -825,6 +809,40 @@ public class DefaultCodeFormatterOptions {
 //				this.comment_line_length = 80;
 //			}
 //		}
+		final Object commentMinDistanceBetweenCodeAndLineCommentOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_COMMENT_MIN_DISTANCE_BETWEEN_CODE_AND_LINE_COMMENT);
+		if (commentMinDistanceBetweenCodeAndLineCommentOption != null) {
+			try {
+				this.comment_min_distance_between_code_and_line_comment = Integer.parseInt((String) commentMinDistanceBetweenCodeAndLineCommentOption);
+			} catch (NumberFormatException e) {
+				this.comment_min_distance_between_code_and_line_comment = 1;
+			} catch (ClassCastException e) {
+				this.comment_min_distance_between_code_and_line_comment = 1;
+			}
+		}
+		final Object commentPreserveWhiteSpaceBetweenCodeAndLineCommentOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_COMMENT_PRESERVE_WHITE_SPACE_BETWEEN_CODE_AND_LINE_COMMENT);
+		if (commentPreserveWhiteSpaceBetweenCodeAndLineCommentOption != null) {
+			this.comment_preserve_white_space_between_code_and_line_comment = DefaultCodeFormatterConstants.TRUE.equals(commentPreserveWhiteSpaceBetweenCodeAndLineCommentOption);
+		}
+		final Object continuationIndentationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION);
+		if (continuationIndentationOption != null) {
+			try {
+				this.continuation_indentation = Integer.parseInt((String) continuationIndentationOption);
+			} catch (NumberFormatException e) {
+				this.continuation_indentation = 2;
+			} catch (ClassCastException e) {
+				this.continuation_indentation = 2;
+			}
+		}
+		final Object continuationIndentationForInitializerListOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION_FOR_INITIALIZER_LIST);
+		if (continuationIndentationForInitializerListOption != null) {
+			try {
+				this.continuation_indentation_for_initializer_list = Integer.parseInt((String) continuationIndentationForInitializerListOption);
+			} catch (NumberFormatException e) {
+				this.continuation_indentation_for_initializer_list = 2;
+			} catch (ClassCastException e) {
+				this.continuation_indentation_for_initializer_list = 2;
+			}
+		}
 		final Object indentStatementsCompareToBlockOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BLOCK);
 		if (indentStatementsCompareToBlockOption != null) {
 			this.indent_statements_compare_to_block = DefaultCodeFormatterConstants.TRUE.equals(indentStatementsCompareToBlockOption);
@@ -1463,6 +1481,15 @@ public class DefaultCodeFormatterOptions {
 //		this.alignment_for_selector_in_method_invocation = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_throws_clause_in_method_declaration = Alignment.M_COMPACT_SPLIT;
 //		this.align_type_members_on_columns = false;
+//		this.blank_lines_after_includes = 1;
+//		this.blank_lines_before_field = 1;
+//		this.blank_lines_before_first_class_body_declaration = 0;
+//		this.blank_lines_before_includes = 1;
+//		this.blank_lines_before_member_type = 1;
+//		this.blank_lines_before_method = 1;
+//		this.blank_lines_before_new_chunk = 1;
+//		this.blank_lines_between_type_declarations = 1;
+//		this.blank_lines_at_beginning_of_method_body = 0;
 		this.brace_position_for_block = DefaultCodeFormatterConstants.END_OF_LINE;
 		this.brace_position_for_block_in_case = DefaultCodeFormatterConstants.END_OF_LINE;
 //		this.brace_position_for_enum_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
@@ -1471,6 +1498,8 @@ public class DefaultCodeFormatterOptions {
 		this.brace_position_for_namespace_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
 		this.brace_position_for_switch = DefaultCodeFormatterConstants.END_OF_LINE;
 		this.brace_position_for_type_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
+		this.comment_min_distance_between_code_and_line_comment = 1;
+		this.comment_preserve_white_space_between_code_and_line_comment = false;
 //		this.comment_clear_blank_lines = false;
 //		this.comment_format = true;
 //		this.comment_format_header = false;
@@ -1483,15 +1512,6 @@ public class DefaultCodeFormatterOptions {
 //		this.comment_line_length = 80;
 		this.continuation_indentation = 2;
 		this.continuation_indentation_for_initializer_list = 2;
-//		this.blank_lines_after_includes = 1;
-//		this.blank_lines_before_field = 1;
-//		this.blank_lines_before_first_class_body_declaration = 0;
-//		this.blank_lines_before_includes = 1;
-//		this.blank_lines_before_member_type = 1;
-//		this.blank_lines_before_method = 1;
-//		this.blank_lines_before_new_chunk = 1;
-//		this.blank_lines_between_type_declarations = 1;
-//		this.blank_lines_at_beginning_of_method_body = 0;
 		this.indent_statements_compare_to_block = true;
 		this.indent_statements_compare_to_body = true;
 		this.indent_body_declarations_compare_to_namespace_header = false;

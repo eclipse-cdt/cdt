@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences.formatter;
@@ -18,12 +18,6 @@ import org.eclipse.osgi.util.NLS;
  * Helper class to get NLSed messages.
  */
 final class FormatterMessages extends NLS {
-
-	private static final String BUNDLE_NAME= FormatterMessages.class.getName(); 
-
-	private FormatterMessages() {
-		// Do not instantiate
-	}
 
 	public static String FormatterTabPage_ShowInvisibleCharacters_label;
 	public static String ModifyDialog_BuiltIn_Status;
@@ -318,21 +312,14 @@ final class FormatterMessages extends NLS {
 	public static String CodingStyleConfigurationBlock_error_serializing_xml_message;
 	public static String CodingStyleConfigurationBlock_delete_confirmation_title;
 	public static String CodingStyleConfigurationBlock_delete_confirmation_question;
+	public static String CommentsTabPage_preview_header;
+	public static String CommentsTabPage_group1_title;
+	public static String CommentsTabPage_preserve_white_space_before_line_comment;
+	public static String CommentsTabPage_line_width;
 	public static String CustomCodeFormatterBlock_formatter_name;
 	public static String CustomCodeFormatterBlock_default_formatter;
 	public static String CustomCodeFormatterBlock_formatter_note;
 	public static String CustomCodeFormatterBlock_contributed_formatter_warning;
-//	public static String CommentsTabPage_group1_title;
-//	public static String CommentsTabPage_enable_comment_formatting;
-//	public static String CommentsTabPage_format_header;
-//	public static String CommentsTabPage_format_html;
-//	public static String CommentsTabPage_format_code_snippets;
-//	public static String CommentsTabPage_group2_title;
-//	public static String CommentsTabPage_clear_blank_lines;
-//	public static String CommentsTabPage_indent_description_after_param;
-//	public static String CommentsTabPage_new_line_after_param_tags;
-//	public static String CommentsTabPage_group3_title;
-//	public static String CommentsTabPage_line_width;
 	public static String ControlStatementsTabPage_preview_header;
 	public static String ControlStatementsTabPage_general_group_title;
 	public static String ControlStatementsTabPage_general_group_insert_new_line_before_else_statements;
@@ -380,7 +367,7 @@ final class FormatterMessages extends NLS {
 	public static String ModifyDialog_tabpage_new_lines_title;
 	public static String ModifyDialog_tabpage_control_statements_title;
 	public static String ModifyDialog_tabpage_line_wrapping_title;
-//	public static String ModifyDialog_tabpage_comments_title;
+	public static String ModifyDialog_tabpage_comments_title;
 	public static String ModifyDialogTabPage_preview_label_text;
 	public static String ModifyDialogTabPage_error_msg_values_text_unassigned;
 	public static String ModifyDialogTabPage_error_msg_values_items_text_unassigned;
@@ -409,7 +396,11 @@ final class FormatterMessages extends NLS {
 
 	public static String CPreview_formatter_exception;
 
+	private FormatterMessages() {
+		// Do not instantiate
+	}
+
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, FormatterMessages.class);
+		NLS.initializeMessages(FormatterMessages.class.getName(), FormatterMessages.class);
 	}
 }

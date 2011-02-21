@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.formatter;
@@ -497,7 +497,30 @@ public class DefaultCodeFormatterConstants {
 //	 * </pre>
 //	 */	
 //	public final static String FORMATTER_COMMENT_LINE_LENGTH = CCorePlugin.PLUGIN_ID + ".formatter.comment.line_length"; //$NON-NLS-1$
-//
+	/**
+	 * <pre>
+	 * FORMATTER / Option to specify the minimum distance between code and line comment.
+	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.min_distance_between_code_and_line_comment"
+	 *     - possible values:   "&lt;n&gt;", where n is zero or a positive integer
+	 *     - default:           "1"
+	 * </pre>
+	 * @since 5.3
+	 */	
+	public final static String FORMATTER_COMMENT_MIN_DISTANCE_BETWEEN_CODE_AND_LINE_COMMENT = CCorePlugin.PLUGIN_ID + ".formatter.comment.min_distance_between_code_and_line_comment"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to control whether the white space between code and line comments should be preserved or replaced with a single space
+	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.preserve_white_space_between_code_and_line_comments"
+	 *     - possible values:   { TRUE, FALSE }
+	 *     - default:           FALSE
+	 * </pre>
+	 * @see #TRUE
+	 * @see #FALSE
+	 * @since 5.3
+	 */
+
+	public final static String FORMATTER_COMMENT_PRESERVE_WHITE_SPACE_BETWEEN_CODE_AND_LINE_COMMENT = CCorePlugin.PLUGIN_ID + ".formatter.comment.preserve_white_space_between_code_and_line_comments"; //$NON-NLS-1$
+
 	/**
 	 * <pre>
 	 * FORMATTER / Option to compact else/if

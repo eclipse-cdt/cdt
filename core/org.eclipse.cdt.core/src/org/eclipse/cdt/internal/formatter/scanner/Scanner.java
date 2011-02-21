@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.formatter.scanner;
 
@@ -21,7 +22,6 @@ import org.eclipse.cdt.internal.core.CharOperation;
  * @since 4.0
  */
 public class Scanner extends SimpleScanner {
-
 	public char[] source;
 	public int eofPosition;
 	public int startPosition;
@@ -62,7 +62,7 @@ public class Scanner extends SimpleScanner {
 		if (end >= source.length - 1) {
 			reader= new CharArrayReader(source);
 		} else {
-			reader= new CharArrayReader(source, 0, Math.min(source.length, end+1));
+			reader= new CharArrayReader(source, 0, Math.min(source.length, end + 1));
 		}
 		fContext= new ScannerContext().initialize(reader, start);
 		startPosition= start;
@@ -98,6 +98,13 @@ public class Scanner extends SimpleScanner {
 	}
 
 	/**
+	 * Returns {@code true} if the scanner has reached the end of file.
+	 */
+	public final boolean atEnd() {
+		return getCurrentPosition() >= eofPosition;
+	}
+
+	/**
 	 * Get the next character.
 	 * @return the next character
 	 */
@@ -118,6 +125,15 @@ public class Scanner extends SimpleScanner {
 		}
 		ungetChar(c);
 		return false;
+	}
+
+	/**
+	 * Returns the next character without moving the pointer.
+	 */
+	public int peekNextChar() {
+		int c = getChar();
+		ungetChar(c);
+		return c;
 	}
 
 	/**

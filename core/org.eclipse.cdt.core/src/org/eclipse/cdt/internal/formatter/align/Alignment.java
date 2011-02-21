@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.formatter.align;
 
@@ -19,9 +20,22 @@ import org.eclipse.cdt.internal.formatter.Scribe;
  * @since 4.0
  */
 public class Alignment {
+	// Alignment names.
+	public static final String ASSIGNMENT_EXPRESSION = "assignmentExpression"; //$NON-NLS-1$
+	public static final String BINARY_EXPRESSION = "binaryExpression"; //$NON-NLS-1$
+	public static final String COMPACT_IF = "compactIf"; //$NON-NLS-1$
+	public static final String CONDITIONAL_EXPRESSION = "conditionalExpression"; //$NON-NLS-1$
+	public static final String DECLARATION_INITIALIZER = "declarationInitializer"; //$NON-NLS-1$
+	public static final String DESIGNATED_INITIALIZER = "designatedInitializer"; //$NON-NLS-1$
+	public static final String EXCEPTION_SPECIFICATION = "exceptionSpecification"; //$NON-NLS-1$
+	public static final String FIELD_REFERENCE = "fieldReference"; //$NON-NLS-1$
+	public static final String FOR = "for"; //$NON-NLS-1$
+	public static final String MACRO_ARGUMENTS = "macroArguments"; //$NON-NLS-1$
+	public static final String LIST_ELEMENTS_PREFIX = "listElements_"; //$NON-NLS-1$
+
 	// name of alignment
 	public String name;
-	
+
 	// link to enclosing alignment
 	public Alignment enclosing;
 	 

@@ -126,7 +126,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	case CONTINUE_CONFUSION: {
 	//		//the indentation problem continues...
 	//	}
-	//	default://....still not right
+	//	default: //....still not right
 	//	}
 	//}
 	public void testIndentConfusionByCastExpression_Bug191021() throws Exception {
@@ -824,6 +824,45 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//int a = 0, b = 1, c = 2, d = 3;
 	public void testSpaceAfterCommaInDeclaratorList2_Bug234915() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_DECLARATOR_LIST, CCorePlugin.INSERT);
+		assertFormatterResult();
+	}
+
+	//void foo() {
+	//    int x;        // comment
+	//    int y;        // will be shifted to the left to avoid exceeding max line length
+	//    		        // continuation of the previous comment
+	////  int z;  <- comments starting from the beginning of line are not indented
+	//}
+
+	//void foo() {
+	//    int x;        // comment
+	//    int y;     // will be shifted to the left to avoid exceeding max line length
+	//               // continuation of the previous comment
+	////  int z;  <- comments starting from the beginning of line are not indented
+	//}
+	public void testLineCommentPreserveWhiteSpaceBefore() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_PRESERVE_WHITE_SPACE_BETWEEN_CODE_AND_LINE_COMMENT,
+				DefaultCodeFormatterConstants.TRUE);
+		assertFormatterResult();
+	}
+
+	//void foo() {
+	//    int x;        // comment
+	//    int y;        // comment
+	//    		        // continuation of the previous comment
+	////  int z;  <- comments starting from the beginning of line are not indented
+	//}
+
+	//void foo() {
+	//    int x;  // comment
+	//    int y;  // comment
+	//            // continuation of the previous comment
+	////  int z;  <- comments starting from the beginning of line are not indented
+	//}
+	public void testLineCommentMinDistanceFromCode() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_MIN_DISTANCE_BETWEEN_CODE_AND_LINE_COMMENT, "2");
 		assertFormatterResult();
 	}
 

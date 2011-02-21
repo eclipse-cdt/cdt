@@ -368,7 +368,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 		final int continuationIndentation = preferences.continuation_indentation;
 		Alignment listAlignment = scribe.createAlignment(
-				"macroArguments", //$NON-NLS-1$
+				Alignment.MACRO_ARGUMENTS,
 				preferences.alignment_for_arguments_in_method_invocation,
 				Alignment.R_OUTERMOST,
 				binding.getParameterList().length,
@@ -451,7 +451,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	@Override
 	public int visit(IASTDeclaration node) {
-		if (!startNode(node)) { return PROCESS_SKIP; }
+		if (!startNode(node)) {
+			return PROCESS_SKIP;
+		}
 		try {
 			return formatDeclaration(node);
 		} finally {
@@ -1223,7 +1225,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	private void formatExceptionSpecification(final IASTTypeId[] exceptionSpecification) {
 		if (exceptionSpecification.length > 0) {
 			Alignment alignment =scribe.createAlignment(
-					"exceptionSpecification", //$NON-NLS-1$
+					Alignment.EXCEPTION_SPECIFICATION,
 					preferences.alignment_for_throws_clause_in_method_declaration,
 					exceptionSpecification.length,
 					scribe.scanner.getCurrentPosition());
@@ -1816,7 +1818,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			final int continuationIndentation= align.fContinuationIndentation >= 0 ?
 					align.fContinuationIndentation : preferences.continuation_indentation;
 			Alignment listAlignment = scribe.createAlignment(
-					"listElements_" + (elements.isEmpty() ? "ellipsis" : elements.get(0).getClass().getSimpleName()), //$NON-NLS-1$ //$NON-NLS-2$
+					Alignment.LIST_ELEMENTS_PREFIX +
+							(elements.isEmpty() ? "ellipsis" : elements.get(0).getClass().getSimpleName()), //$NON-NLS-1$
 					align.fMode,
 					align.fTieBreakRule,
 					elementsLength + (addEllipsis ? 1 : 0),
@@ -1956,7 +1959,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			scribe.space();
 		}
     	Alignment conditionalExpressionAlignment = scribe.createAlignment(
-    			"conditionalExpression", //$NON-NLS-1$
+    			Alignment.CONDITIONAL_EXPRESSION,
     			preferences.alignment_for_conditional_expression,
     			2,
     			scribe.scanner.getCurrentPosition());
@@ -2119,7 +2122,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		} else {
 			// declaration initializer
 	    	Alignment expressionAlignment= scribe.createAlignment(
-	    			"declarationInitializer", //$NON-NLS-1$
+	    			Alignment.DECLARATION_INITIALIZER,
 	    			preferences.alignment_for_assignment,
 	    			Alignment.R_OUTERMOST,
 	    			1,
@@ -2161,7 +2164,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 
     	Alignment expressionAlignment= scribe.createAlignment(
-    			"designatedInitializer", //$NON-NLS-1$
+    			Alignment.DESIGNATED_INITIALIZER,
     			preferences.alignment_for_assignment,
     			1,
     			scribe.scanner.getCurrentPosition());
@@ -2307,7 +2310,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			return formatAssignment(node);
 		}
 		Alignment expressionAlignment= scribe.createAlignment(
-				"binaryExpression", //$NON-NLS-1$
+				Alignment.BINARY_EXPRESSION,
 				preferences.alignment_for_binary_expression,
 				2,
 				scribe.scanner.getCurrentPosition());
@@ -2370,7 +2373,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 
     	Alignment expressionAlignment= scribe.createAlignment(
-    			"assignmentExpression", //$NON-NLS-1$
+    			Alignment.ASSIGNMENT_EXPRESSION,
     			preferences.alignment_for_assignment,
     			Alignment.R_OUTERMOST,
     			1,
@@ -2454,7 +2457,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		final IASTName fieldName= node.getFieldName();
 		if (fieldName != null) {
 	    	Alignment alignment= scribe.createAlignment(
-	    			"fieldReference", //$NON-NLS-1$
+	    			Alignment.FIELD_REFERENCE,
 	    			preferences.alignment_for_member_access,
 	    			Alignment.R_OUTERMOST,
 	    			1,
@@ -2677,7 +2680,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	    scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_for);
 		fInsideFor= true;
 		Alignment alignment = scribe.createAlignment(
-				"for", //$NON-NLS-1$
+				Alignment.FOR,
 				Alignment.M_COMPACT_SPLIT,
 				Alignment.R_OUTERMOST,
 				2,
@@ -2844,7 +2847,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				}
  				if (elseStatement == null && preferences.keep_simple_if_on_one_line) {
 					Alignment compactIfAlignment = scribe.createAlignment(
-							"compactIf", //$NON-NLS-1$
+							Alignment.COMPACT_IF,
 							preferences.alignment_for_compact_if,
 							Alignment.R_OUTERMOST,
 							1,
@@ -3241,6 +3244,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 * @return <code>false</code> if the node should be skipped 
 	 */
 	private boolean startNode(IASTNode node) {
+		scribe.startNode();
 		if (node instanceof IASTProblemHolder) {
 			return false;
 		}
@@ -3610,7 +3614,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private boolean commentStartsBlock(int start, int end) {
 		localScanner.resetTo(start, end);
-		if (localScanner.getNextToken() ==  Token.tLBRACE) {
+		if (localScanner.getNextToken() == Token.tLBRACE) {
 			switch (localScanner.getNextToken()) {
 			case Token.tBLOCKCOMMENT:
 			case Token.tLINECOMMENT:

@@ -19,7 +19,6 @@ package org.eclipse.cdt.internal.formatter;
  * @since 4.0
  */
 public class Location {
-
 	public int inputOffset;
 	public int outputLine;
 	public int outputColumn;

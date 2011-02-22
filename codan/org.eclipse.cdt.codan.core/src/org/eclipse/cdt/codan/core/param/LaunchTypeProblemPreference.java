@@ -35,9 +35,12 @@ public class LaunchTypeProblemPreference extends MapProblemPreference {
 		CheckerLaunchMode[] values = CheckerLaunchMode.values();
 		for (int i = 0; i < values.length; i++) {
 			CheckerLaunchMode checkerLaunchMode = values[i];
-			addChildDescriptor(new BasicProblemPreference(
+			BasicProblemPreference desc = new BasicProblemPreference(
 					checkerLaunchMode.name(), checkerLaunchMode.name(),
-					PreferenceType.TYPE_BOOLEAN));
+					PreferenceType.TYPE_BOOLEAN);
+			IProblemPreference desc1 = addChildDescriptor(desc);
+			if (checkerLaunchMode == CheckerLaunchMode.USE_PARENT)
+				desc1.setValue(Boolean.TRUE);
 		}
 	}
 

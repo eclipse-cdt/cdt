@@ -16,6 +16,7 @@ import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -46,11 +47,12 @@ public class RunCodeAnalysis implements IObjectActionDelegate {
 					return Status.CANCEL_STATUS;
 				for (Iterator iterator = ss.iterator(); iterator.hasNext();) {
 					Object o = iterator.next();
-
 					if (o instanceof ICContainer) {
 						o = ((ICContainer) o).getResource();
 					}
-
+					if (o instanceof IAdaptable) {
+						o = ((IAdaptable) o).getAdapter(IResource.class);
+					}
 					if (o instanceof IResource) {
 						IResource res = (IResource) o;
 						SubProgressMonitor subMon = new SubProgressMonitor(

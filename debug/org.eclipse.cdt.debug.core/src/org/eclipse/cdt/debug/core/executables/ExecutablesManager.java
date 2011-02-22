@@ -220,15 +220,16 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 			}
 			trace("refresh job finished at " + getStringFromTimestamp(System.currentTimeMillis())); //$NON-NLS-1$
 		}
-		
+
+		Map<IPath, Executable> resultMap = new HashMap<IPath, Executable>();
+
 		synchronized (executablesMap) {
 			for (List<Executable> exes : executablesMap.values()) {
 				for (Executable exe : exes) {
-					if (!executables.contains(exe)) {
-						executables.add(exe);
-					}
+					resultMap.put(exe.getPath(), exe);
 				}
 			}
+			executables.addAll(resultMap.values());
 		}
 
 		trace("getExecutables returned at " + getStringFromTimestamp(System.currentTimeMillis())); //$NON-NLS-1$

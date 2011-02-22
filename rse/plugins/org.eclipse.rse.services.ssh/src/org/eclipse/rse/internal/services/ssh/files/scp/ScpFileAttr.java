@@ -243,8 +243,9 @@ public class ScpFileAttr {
 		}
 		mTime = parseDateTime(dateField);
 		/* The rest of the entry is name ( and may be symlink ) */
+	
 		String[] namesplit = Pattern.compile(
-				dateField.replaceAll(" ", "\\s+") + "\\s").split(lsString);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+				dateField.replaceAll(" ", "\\\\s+") + "\\s").split(lsString);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		if (namesplit.length != 2)
 			return;
 		name = namesplit[1];

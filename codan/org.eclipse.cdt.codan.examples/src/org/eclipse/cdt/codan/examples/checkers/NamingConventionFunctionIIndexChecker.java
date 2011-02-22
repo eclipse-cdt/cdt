@@ -21,9 +21,10 @@ import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.core.runtime.CoreException;
 
 /**
+ * Example demonstrate how to write checked using "C Model"
+ * 
  * @author Alena
  * 
  */
@@ -44,16 +45,15 @@ public class NamingConventionFunctionIIndexChecker extends
 		final IProblem pt = getProblemById(ER_ID, getFile());
 		try {
 			unit.accept(new ICElementVisitor() {
-				public boolean visit(ICElement element) throws CoreException {
+				public boolean visit(ICElement element) {
 					if (element.getElementType() == ICElement.C_FUNCTION) {
 						String parameter = (String) pt.getPreference()
 								.getValue();
 						Pattern pattern = Pattern.compile(parameter);
 						String name = element.getElementName();
 						if (!pattern.matcher(name).find()) {
-							reportProblem(ER_ID, getFile(), 1, // TODO: line
-																// number
-									name, parameter);
+							// TODO: line number
+							reportProblem(ER_ID, getFile(), 1, name, parameter);
 						}
 						return false;
 					}
@@ -73,10 +73,10 @@ public class NamingConventionFunctionIIndexChecker extends
 	 * (org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
 	 */
 	public void initPreferences(IProblemWorkingCopy problem) {
+		super.initPreferences(problem);
 		IProblemPreference info = new BasicProblemPreference(PARAM_KEY,
 				"Name Pattern");
-		info.setValue(DEFAULT_PATTERN);
-		problem.setPreference(info);
+		addPreference(problem, info, DEFAULT_PATTERN);
 	}
 
 	@Override

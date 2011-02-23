@@ -55,6 +55,9 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
  * preferences can be accessed directly via the preference store.
  */
 public class CodanPreferencePage extends FieldEditorOverlayPage implements IWorkbenchPreferencePage {
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private static final String SINGLE_PLACEHOLDER_ONLY = "{0}"; //$NON-NLS-1$
+
 	private IProblemProfile profile;
 	private ISelectionChangedListener problemSelectionListener;
 	private IProblem selectedProblem;
@@ -208,7 +211,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 
 	private void saveWidgetValues() {
 		CodanUIActivator.getDefault().getDialogSettings().put(getWidgetId(),
-				selectedProblem == null ? "" : selectedProblem.getId()); //$NON-NLS-1$
+				selectedProblem == null ? EMPTY_STRING : selectedProblem.getId()); 
 	}
 
 	private void restoreWidgetValues() {
@@ -230,21 +233,23 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 
 	private void updateProblemInfo() {
 		if (selectedProblem == null) {
-			infoMessage.setText(""); //$NON-NLS-1$
-			infoDesc.setText(""); //$NON-NLS-1$
+			infoMessage.setText(EMPTY_STRING); 
+			infoDesc.setText(EMPTY_STRING); 
 //			infoParams.setText(""); //$NON-NLS-1$
 			infoButton.setEnabled(false);
 		} else {
 			String description = selectedProblem.getDescription();
 			if (description == null)
 				description = CodanUIMessages.CodanPreferencePage_NoInfo;
-			String messageToShow = CodanUIMessages.CodanPreferencePage_NoInfo;
 			String messagePattern = selectedProblem.getMessagePattern();
-			if (messagePattern != null) {
-				Object[] exampleParams = selectedProblem.getExampleMessageParameters();
-				messageToShow = MessageFormat.format(messagePattern, exampleParams);
+			String message = CodanUIMessages.CodanPreferencePage_NoInfo;
+			if (SINGLE_PLACEHOLDER_ONLY.equals(messagePattern)) {
+				message = EMPTY_STRING;
 			}
-			infoMessage.setText(messageToShow);
+			else if (messagePattern != null) {
+				message = MessageFormat.format(messagePattern, "X", "Y", "Z"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+			}
+			infoMessage.setText(message);
 			infoDesc.setText(description);
 //			IProblemPreference pref = selectedProblem.getPreference();
 //			infoParams.setText(pref == null ?

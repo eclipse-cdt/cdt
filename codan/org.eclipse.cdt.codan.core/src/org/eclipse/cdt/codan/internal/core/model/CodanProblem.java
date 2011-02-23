@@ -29,7 +29,6 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 	private boolean frozen;
 	private String description;
 	private String markerType = IProblemReporter.GENERIC_CODE_ANALYSIS_MARKER_TYPE;
-	private String[] exampleParams = { "X", "Y", "Z", "U", "V" }; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$
 
 	public CodanSeverity getSeverity() {
 		return severity;
@@ -162,26 +161,5 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 	 */
 	public void setMarkerType(String markerType) {
 		this.markerType = markerType;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.IProblem#getExampleParameters()
-	 */
-	public String[] getExampleMessageParameters() {
-		return exampleParams.clone();
-	}
-
-	/**
-	 * Sets an example message parameter to use with {@link #getMessagePattern()}.
-	 *
-	 * @param exampleParameters - the example message parameters to set,
-	 *    e.g. { "&lt;variable_name&gt;" }.
-	 * @see #getExampleMessageParameters()
-	 */
-	public void setExampleMessageParameters(String[] exampleParameters) {
-		checkSet();
-		this.exampleParams = exampleParameters;
 	}
 }

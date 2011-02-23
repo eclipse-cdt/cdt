@@ -69,15 +69,6 @@ public interface IProblem extends IProblemElement {
 	String getMessagePattern();
 
 	/**
-	 * Returns the example parameters to use with {@link #getMessagePattern()}.
-	 * These parameters are used only in the "Code Analysis" Preference UI.
-	 *
-	 * @return example parameters
-	 * @since 2.0
-	 */
-	public String[] getExampleMessageParameters();
-
-	/**
 	 * Returns root preference descriptor or null if not defined (used by UI to
 	 * generate user controls for changing parameters)
 	 *

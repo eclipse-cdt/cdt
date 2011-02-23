@@ -193,13 +193,6 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 			String enab = getAtt(configurationElement, "defaultEnabled", false); //$NON-NLS-1$
 			String sev = getAtt(configurationElement, "defaultSeverity", false); //$NON-NLS-1$
 			String patt = getAtt(configurationElement, "messagePattern", false); //$NON-NLS-1$
-			ArrayList<String> exampleParams = new ArrayList<String>();
-			for (int i = 0; ; i++) {
-				String param = configurationElement.getAttribute("exampleParam" + i); //$NON-NLS-1$
-				if (param == null)
-					break;
-				exampleParams.add(param);
-			}
 			String desc = getAtt(configurationElement, "description", false); //$NON-NLS-1$
 			String markerType = getAtt(configurationElement, "markerType", false); //$NON-NLS-1$
 			if (enab != null) {
@@ -212,9 +205,6 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 			}
 			if (patt != null) {
 				p.setMessagePattern(patt);
-			}
-			if (!exampleParams.isEmpty()) {
-				p.setExampleMessageParameters(exampleParams.toArray(new String[exampleParams.size()]));
 			}
 			if (markerType != null) {
 				p.setMarkerType(markerType);

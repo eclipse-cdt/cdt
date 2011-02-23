@@ -15,6 +15,9 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.codan.ui.AbstractCodanProblemDetailsProvider;
 
+/**
+ * Example of codan problem details provider for flexlint integration
+ */
 public class FlexlintHelpLink extends AbstractCodanProblemDetailsProvider {
 	@Override
 	public boolean isApplicable(String id) {

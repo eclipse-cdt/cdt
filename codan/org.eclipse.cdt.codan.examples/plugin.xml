@@ -19,6 +19,29 @@
             markerType="org.eclipse.cdt.codan.core.codanProblem">
       </problem>
       </checker>
+       <checker
+             class="org.eclipse.cdt.codan.examples.checkers.GrepChecker"
+             id="org.eclipse.cdt.codan.examples.checkers.GrepChecker"
+             name="Search string">
+          <problem
+                category="org.eclipse.cdt.codan.core.categories.CodeStyle"
+                defaultEnabled="false"
+                defaultSeverity="Warning"
+                description="Finds a strings in the code defined by user"
+                id="org.eclipse.cdt.codan.examples.checkers.GrepCheckerProblemWarning"
+                messagePattern="{0}"
+                name="Search string warning">
+          </problem>
+                   <problem
+                category="org.eclipse.cdt.codan.core.categories.CodeStyle"
+                defaultEnabled="false"
+                defaultSeverity="Error"
+                description="Finds a strings in the code defined by user"
+                id="org.eclipse.cdt.codan.examples.checkers.GrepCheckerProblemError"
+                messagePattern="{0}"
+                name="Search string error">
+          </problem>
+       </checker>
    </extension>
        <extension
           point="org.eclipse.cdt.codan.ui.codanProblemDetails">

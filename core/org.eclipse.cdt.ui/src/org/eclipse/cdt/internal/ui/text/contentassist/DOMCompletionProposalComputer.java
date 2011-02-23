@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 QNX Software Systems and others.
+ * Copyright (c) 2007, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *    Markus Schorn (Wind River Systems)
  *    Anton Leherbauer (Wind River Systems)
  *    Sergey Prigogin (Google)
+ *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -64,6 +65,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ContentAssistMatcherFactory;
+import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
@@ -198,26 +201,32 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 	private void addMacroProposals(CContentAssistInvocationContext context, String prefix,
 			List<ICompletionProposal> proposals) {
-		char[] prefixChars= prefix.toCharArray();
-		final boolean matchPrefix= !context.isContextInformationStyle();
 		IASTCompletionNode completionNode = context.getCompletionNode();
-		IASTPreprocessorMacroDefinition[] macros = completionNode.getTranslationUnit().getMacroDefinitions();
+		addMacroProposals(context, prefix, proposals, completionNode.getTranslationUnit()
+				.getMacroDefinitions());
+		addMacroProposals(context, prefix, proposals, completionNode.getTranslationUnit()
+				.getBuiltinMacroDefinitions());
+	}
+
+	private void addMacroProposals(CContentAssistInvocationContext context, String prefix,
+			List<ICompletionProposal> proposals, IASTPreprocessorMacroDefinition[] macros) {
 		if (macros != null) {
-			for (int i = 0; i < macros.length; ++i) {
-				final char[] macroName= macros[i].getName().toCharArray();
-				if (CharArrayUtils.equals(macroName, 0, matchPrefix ? prefixChars.length : macroName.length,
-						prefixChars, true)) {
-					handleMacro(macros[i], context, prefix, proposals);
+			char[] prefixChars= prefix.toCharArray();
+			final boolean matchPrefix= !context.isContextInformationStyle();
+			if (matchPrefix) {
+				IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(prefixChars);
+				for (int i = 0; i < macros.length; ++i) {
+					final char[] macroName= macros[i].getName().toCharArray();
+					if (matcher.match(macroName)) {
+						handleMacro(macros[i], context, prefix, proposals);
+					}
 				}
-			}
-		}
-		macros = completionNode.getTranslationUnit().getBuiltinMacroDefinitions();
-		if (macros != null) {
-			for (int i = 0; i < macros.length; ++i) {
-				final char[] macroName= macros[i].getName().toCharArray();
-				if (CharArrayUtils.equals(macroName, 0, matchPrefix ? prefixChars.length : macroName.length,
-						prefixChars, true)) {
-					handleMacro(macros[i], context, prefix, proposals);
+			} else {
+				for (int i = 0; i < macros.length; ++i) {
+					final char[] macroName= macros[i].getName().toCharArray();
+					if (CharArrayUtils.equals(macroName, 0, macroName.length, prefixChars, true)) {
+						handleMacro(macros[i], context, prefix, proposals);
+					}
 				}
 			}
 		}

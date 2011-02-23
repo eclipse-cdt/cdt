@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 QNX Software Systems and others.
+ * Copyright (c) 2006, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *    QNX - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Andrew Ferguson (Symbian)
+ *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -32,15 +33,28 @@ public final class BindingCollector extends NamedNodeCollector {
 	 * Collects all bindings with given name.
 	 */
 	public BindingCollector(PDOMLinkage linkage, char[] name) {
-		this(linkage, name, null, false, true);
+		this(linkage, name, null, false, false, true);
 	}
-		
+
 	/**
-	 * Collects all bindings with given name, passing the filter. If prefixLookup is set to
-	 * <code>true</code> a binding is considered if its name starts with the given prefix.
+	 * Collects all bindings with given name, passing the filter.
+	 * 
+	 * @param linkage
+	 * @param name
+	 * @param filter
+	 * @param prefixLookup
+	 *            If set to <code>true</code> a binding is considered if its name starts with the given prefix
+	 *            Otherwise, the binding will only be considered if its name matches exactly. This parameter
+	 *            is ignored if <code>contentAssistLookup</code> is true.
+	 * @param contentAssistLookup
+	 *            If set to <code>true</code> a binding is considered if its names matches according to the
+	 *            current content assist matching rules.
+	 * @param caseSensitive
+	 *            Ignored if <code>contentAssistLookup</code> is true.
 	 */
-	public BindingCollector(PDOMLinkage linkage, char[] name, IndexFilter filter, boolean prefixLookup, boolean caseSensitive) {
-		super(linkage, name, prefixLookup, caseSensitive);
+	public BindingCollector(PDOMLinkage linkage, char[] name, IndexFilter filter, boolean prefixLookup,
+			boolean contentAssistLookup, boolean caseSensitive) {
+		super(linkage, name, prefixLookup, contentAssistLookup, caseSensitive);
 		this.filter= filter;
 	}
 		

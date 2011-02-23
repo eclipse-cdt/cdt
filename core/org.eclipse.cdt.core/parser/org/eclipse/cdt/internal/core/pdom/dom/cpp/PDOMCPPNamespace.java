@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 QNX Software Systems and others.
+ * Copyright (c) 2006, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *    Markus Schorn (Wind River Systems)
  *    Andrew Ferguson (Symbian)
  *    Bryan Wilkinson (QNX)
+ *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -151,7 +152,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	public IBinding[] find(String name) {
 		try {
 			BindingCollector visitor = new BindingCollector(getLinkage(),  name.toCharArray(),
-					IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, false, true);
+					IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, false, false, true);
 			getIndex().accept(visitor);
 			return visitor.getBindings();
 		} catch (CoreException e) {
@@ -182,7 +183,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 				result= getBindingsViaCache(name.getLookupKey());
 			} else {
 				BindingCollector visitor= new BindingCollector(getLinkage(), name.getLookupKey(),
-						IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, prefixLookup, !prefixLookup);
+						IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, prefixLookup, prefixLookup, !prefixLookup);
 				getIndex().accept(visitor);
 				result = visitor.getBindings();
 			}
@@ -203,7 +204,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 			return result;
 		}
 		BindingCollector visitor = new BindingCollector(getLinkage(), name,
-				IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, false, true);
+				IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, false, false, true);
 		getIndex().accept(visitor);
 		result = visitor.getBindings();
 		pdom.putCachedResult(key, result);

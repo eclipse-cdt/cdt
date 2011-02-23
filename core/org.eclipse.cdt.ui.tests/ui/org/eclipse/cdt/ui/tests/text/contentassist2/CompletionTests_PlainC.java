@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -594,7 +595,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//void f() {gC/*cursor*/
 	public void testGlobalVariables_GlobalScope() throws Exception {
 		final String[] expected= {
-				"gC1", "gC2"
+				"gC1", "gC2", "gfC1(void)", "gfC2(void)"
 		};
 		assertCompletionResults(expected);
 	}
@@ -604,7 +605,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	//void foo() {gC/*cursor*/
 	public void testGlobalVariables_FunctionScope() throws Exception {
 		final String[] expected= {
-				"gC1", "gC2"
+				"gC1", "gC2", "gfC1(void)", "gfC2(void)"
 		};
 		assertCompletionResults(expected);
 	}

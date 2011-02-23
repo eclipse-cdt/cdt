@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *    Bryan Wilkinson (QNX)
  *    Andrew Ferguson (Symbian)
  *    Sergey Prigogin (Google)
+ *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.index;
 
@@ -214,11 +215,17 @@ public interface IIndexFragment {
 	IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 	
 	/**
+	 * Returns all bindings that would be a valid completion for the given text.
+	 * @param monitor to report progress, may be <code>null</code>
+	 */
+	IIndexFragmentBinding[] findBindingsForContentAssist(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+	
+	/**
 	 * Returns all macros with the given prefix or name, accepted by the given filter
 	 * @param monitor to report progress, may be <code>null</code>
 	 */
 	IIndexMacro[] findMacros(char[] name, boolean isPrefix, boolean caseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
-
+	
 	/**
 	 * Returns the linkages that are contained in this fragment
 	 */

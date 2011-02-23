@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Bryan Wilkinson (QNX)
  *     Markus Schorn (Wind River Systems)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.prefix;
 
@@ -296,4 +297,44 @@ public class BasicCompletionTest extends CompletionTestBase {
 		checkNonPrefixCompletion(code, true, expected);
 	}
 	
+	// typedef int FooBar;
+	// typedef int Foo_Bar;
+	// FB
+	public void testCamelCaseCompletion_CScope() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"FooBar", "Foo_Bar"};
+		checkCompletion(code, false, expected);
+	}
+
+	// typedef int FooBar;
+	// typedef int Foo_Bar;
+	// FB
+	public void testCamelCaseCompletion_CPPScope() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"FooBar", "Foo_Bar"};
+		checkCompletion(code, true, expected);
+	}
+	
+	// class FooBar {
+	//   FooBar();
+	// }
+	// FooBar::FB
+	public void testCamelCaseCompletion_CPPASTQualifiedName_CPPClassScope() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"FooBar", "FooBar"};
+		checkCompletion(code, true, expected);
+	}
+
+	//	struct s1 {
+	//	  int fooBar;
+	//	  int foo_bar;
+	//	};
+	//	void test() {
+	//	  struct s1 s;
+	//	  s.
+	public void testCamelCaseCompletion_CVisitor() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"fooBar", "foo_bar"};
+		checkCompletion(code, false, expected);
+	}
 }

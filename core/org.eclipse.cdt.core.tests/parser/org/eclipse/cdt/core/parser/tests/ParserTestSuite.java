@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
@@ -29,6 +30,8 @@ public class ParserTestSuite extends TestCase {
 		TestSuite suite= new TestSuite(ParserTestSuite.class.getName());
 		suite.addTestSuite(ArrayUtilsTest.class);
 		suite.addTestSuite(CharArrayUtilsTest.class);
+		suite.addTestSuite(SegmentMatcherTest.class);
+		suite.addTestSuite(ContentAssistMatcherFactoryTest.class);
 		suite.addTestSuite(CModelElementsTests.class);
 		suite.addTestSuite(StructuralCModelElementsTests.class);
 		suite.addTestSuite(ObjectMapTest.class);

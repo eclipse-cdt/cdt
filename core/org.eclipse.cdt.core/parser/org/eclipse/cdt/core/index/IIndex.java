@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *    Andrew Ferguson (Symbian)
  *    Bryan Wilkinson (QNX)
  *    Sergey Prigogin (Google)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
 
@@ -326,7 +327,19 @@ public interface IIndex {
 	 * @throws CoreException
 	 */
 	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean fileScopeOnly, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
-	
+
+	/**
+	 * Searches for all bindings that are valid completions to the given prefix.
+	 * @param prefix the text to be completed.
+	 * @param fileScopeOnly if true, only bindings at file scope are returned
+	 * @param filter a filter that allows for skipping parts of the index
+	 * @param monitor a monitor for progress reporting and cancellation, may be <code>null</code>
+	 * @return an array of bindings that complete the given text
+	 * @throws CoreException
+	 * @since 5.3
+	 */
+	public IIndexBinding[] findBindingsForContentAssist(char[] prefix, boolean fileScopeOnly, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+
 	/**
 	 * Searches for all names that resolve to the given binding. You can limit the result to references, declarations
 	 * or definitions, or a combination of those.

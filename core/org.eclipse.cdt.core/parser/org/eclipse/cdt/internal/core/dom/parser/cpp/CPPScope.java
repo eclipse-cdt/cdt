@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -37,6 +38,8 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ContentAssistMatcherFactory;
+import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -211,7 +214,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 						IndexFilter filter = IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE;
 						final char[] nchars = name.getLookupKey();
 						IBinding[] bindings = prefixLookup ?
-								index.findBindingsForPrefix(nchars, true, filter, null) :
+								index.findBindingsForContentAssist(nchars, true, filter, null) :
 								index.findBindings(nchars, filter, null);
 						if (fileSet != null) {
 							bindings= fileSet.filterFileLocalBindings(bindings);
@@ -253,9 +256,10 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	    if (prefixLookup) {
 	    	Object[] keys = bindings != null ? bindings.keyArray() : new Object[0];
 	    	ObjectSet<Object> all= new ObjectSet<Object>(16);
+	    	IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(c);
 	    	for (Object key2 : keys) {
 	    		final char[] key = (char[]) key2;
-	    		if (key != CONSTRUCTOR_KEY && CharArrayUtils.equals(key, 0, c.length, c, true)) {
+				if (key != CONSTRUCTOR_KEY && matcher.match(key)) {
 	    			obj= bindings.get(key);
 	    			if (obj instanceof ObjectSet<?>) {
 	    				all.addAll((ObjectSet<?>) obj);

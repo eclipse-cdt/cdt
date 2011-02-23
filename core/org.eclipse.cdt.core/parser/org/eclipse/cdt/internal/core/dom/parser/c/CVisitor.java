@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *    Markus Schorn (Wind River Systems)
  *    Bryan Wilkinson (QNX)
  *    Andrew Ferguson (Symbian)
+ *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -89,6 +90,8 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ContentAssistMatcherFactory;
+import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
@@ -609,9 +612,10 @@ public class CVisitor extends ASTQueries {
 		    if (prefix) {
 		        IBinding[] result = null;
 		        char[] p = fieldReference.getFieldName().toCharArray();
+		        IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(p);
 				IField[] fields = ((ICompositeType) type).getFields();
 				for (IField field : fields) {
-				    if (CharArrayUtils.equals(field.getNameCharArray(), 0, p.length, p, true)) {
+					if (matcher.match(field.getNameCharArray())) {
 				        result = (IBinding[]) ArrayUtil.append(IBinding.class, result, field);
 				    }
 				}

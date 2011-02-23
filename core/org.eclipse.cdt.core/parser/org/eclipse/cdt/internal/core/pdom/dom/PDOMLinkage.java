@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 QNX Software Systems and others.
+ * Copyright (c) 2005, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
  *     Andrew Ferguson (Symbian)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -399,7 +400,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				return result;
 		}
 		
-		BindingCollector visitor = new BindingCollector(this, name, null, false, true);
+		BindingCollector visitor = new BindingCollector(this, name, null, false, false, true);
 		visitor.setMonitor(monitor);
 		getIndex().accept(visitor);
 		PDOMBinding[] result= visitor.getBindings();

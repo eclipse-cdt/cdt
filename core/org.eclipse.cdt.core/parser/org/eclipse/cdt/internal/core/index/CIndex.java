@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *    Andrew Ferguson (Symbian)
  *    Anton Leherbauer (Wind River Systems)
  *    Sergey Prigogin (Google)
+ *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.index;
 
@@ -531,6 +532,34 @@ public class CIndex implements IIndex {
 		}
 	}
 
+	public IIndexBinding[] findBindingsForContentAssist(char[] prefix, boolean filescope,
+			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
+			return fFragments[0].findBindingsForContentAssist(prefix, filescope, filter, monitor);
+		} else {
+			List<IIndexBinding[]> result = new ArrayList<IIndexBinding[]>();
+			ILinkage[] linkages = Linkage.getIndexerLinkages();
+			for (ILinkage linkage : linkages) {
+				if (filter.acceptLinkage(linkage)) {
+					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
+					for (int i = 0; i < fPrimaryFragmentCount; i++) {
+						try {
+							IBinding[] part = fFragments[i].findBindingsForContentAssist(prefix, filescope, retargetFilter(linkage, filter), monitor);
+							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
+							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
+						} catch (CoreException e) {
+							CCorePlugin.log(e);
+							fragmentBindings[i] = IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+						}
+					}
+					ICompositesFactory factory = getCompositesFactory(linkage.getLinkageID());
+					result.add(factory.getCompositeBindings(fragmentBindings));
+				}
+			}
+			return flatten(result);
+		}
+	}
+	
 	public IIndexBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
 			return fFragments[0].findBindings(name, filescope, filter, monitor);

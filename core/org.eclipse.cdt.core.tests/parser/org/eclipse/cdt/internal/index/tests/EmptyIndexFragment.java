@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Symbian Software Ltd. and others.
+ * Copyright (c) 2007, 2011 Symbian Software Ltd. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *    Andrew Ferguson (Symbian) - initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Sergey Prigogin (Google)
+ *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -68,6 +69,12 @@ public class EmptyIndexFragment implements IIndexFragment {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
+	public IIndexFragmentBinding[] findBindingsForContentAssist(char[] prefix,
+			boolean filescope, IndexFilter filter, IProgressMonitor monitor)
+	throws CoreException {
+		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+	
 	public IIndexMacro[] findMacros(char[] name, boolean isPrefix, boolean caseSensitive, IndexFilter filter, IProgressMonitor monitor) {
 		return IIndexMacro.EMPTY_INDEX_MACRO_ARRAY;
 	}

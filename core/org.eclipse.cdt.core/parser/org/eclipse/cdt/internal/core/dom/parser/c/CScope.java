@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -56,6 +57,8 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ContentAssistMatcherFactory;
+import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousParameterDeclaration;
@@ -327,10 +330,11 @@ public class CScope implements ICScope, IASTInternalScope {
         populateCache();
         for (CharArrayObjectMap map : mapsToNameOrBinding) {
         	if (prefixLookup) {
+        		IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(c);
         		Object[] keys = map.keyArray();
         		for (Object key2 : keys) {
         			char[] key = (char[]) key2;
-        			if (CharArrayUtils.equals(key, 0, c.length, c, true)) {
+					if (matcher.match(key)) {
         				obj = ArrayUtil.append(obj, map.get(key));
         			}
         		}
@@ -344,7 +348,7 @@ public class CScope implements ICScope, IASTInternalScope {
 			IIndex index = tu.getIndex();
 			if (index != null) {
 				try {
-					IBinding[] bindings = prefixLookup ? index.findBindingsForPrefix(name.toCharArray(), true, INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null)
+					IBinding[] bindings = prefixLookup ? index.findBindingsForContentAssist(name.toCharArray(), true, INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null)
 							: index.findBindings(name.toCharArray(), INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null);
 					if (fileSet != null) {
 						bindings = fileSet.filterFileLocalBindings(bindings);

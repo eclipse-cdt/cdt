@@ -10,6 +10,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     IBM Corporation
  *     Kirk Beitz (Nokia)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences;
@@ -25,6 +26,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
@@ -32,7 +35,7 @@ import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 /**
  * CodeAssistPreferencePage
  */
-public class CodeAssistPreferencePage extends AbstractPreferencePage {
+public class CodeAssistPreferencePage extends AbstractMixedPreferencePage {
 
 	/**
 	 * 
@@ -66,7 +69,18 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		return keys;
 
 	}
+	
+	@Override
+	protected OverlayPreferenceStore.OverlayKey[] createCorePrefsOverlayStoreKeys() {
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
 
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CCorePreferenceConstants.SHOW_CAMEL_CASE_MATCHES));
+
+        OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
+		overlayKeys.toArray(keys);
+		return keys;
+	}
+	
 	/*
 	 * @see PreferencePage#createControl(Composite)
 	 */
@@ -83,7 +97,9 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 	protected Control createContents(Composite parent) {
 		fOverlayStore.load();
 		fOverlayStore.start();
-
+		corePrefsOverlayStore.load();
+		corePrefsOverlayStore.start();
+		
 		Composite contentAssistComposite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -122,7 +138,10 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_proposalFilterSelect ; 
 		addComboBox(sortingGroup, label, ContentAssistPreference.PROPOSALS_FILTER, NO_TEXT_LIMIT, 0);
-    	
+
+		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_showCamelCaseMatches;
+		addCorePrefsCheckBox(sortingGroup, label, CCorePreferenceConstants.SHOW_CAMEL_CASE_MATCHES, 0);
+
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// The following items are grouped for Auto Activation
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_autoActivationGroupTitle; 
@@ -153,7 +172,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 	 */
 	@Override
 	public void init(IWorkbench workbench) {
-		// TODO Auto-generated method stub
+		// Nothing to do.
 	}
 
 	public static void initDefaults(IPreferenceStore store) {
@@ -172,5 +191,5 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		store.setDefault(ContentAssistPreference.PROPOSALS_FILTER, ProposalFilterPreferencesUtil.getProposalFilternamesAsString());  // $NON_NLS 1$
 
 	}
-	
+
 }

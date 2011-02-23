@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Rational Software - Initial API and implementation
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.contentassist;
@@ -35,10 +36,10 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.link.ILinkedModeListener;
 import org.eclipse.jface.text.link.LinkedModeModel;
 import org.eclipse.jface.text.link.LinkedModeUI;
-import org.eclipse.jface.text.link.LinkedPosition;
-import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.text.link.LinkedModeUI.ExitFlags;
 import org.eclipse.jface.text.link.LinkedModeUI.IExitPolicy;
+import org.eclipse.jface.text.link.LinkedPosition;
+import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -49,6 +50,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
 
+import org.eclipse.cdt.core.parser.util.ContentAssistMatcherFactory;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 
@@ -481,7 +483,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		if (offset < fReplacementOffset)
 			return false;
 				
-		boolean validated= startsWith(document, offset, fReplacementString);	
+		boolean validated= match(document, offset, fReplacementString);	
 
 		if (validated && event != null) {
 			// adapt replacement range to document change
@@ -509,10 +511,10 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	}
 
 	/**
-	 * Returns <code>true</code> if a words starts with the code completion prefix in the document,
+	 * Returns <code>true</code> if a words matches the code completion prefix in the document,
 	 * <code>false</code> otherwise.
 	 */	
-	protected boolean startsWith(IDocument document, int offset, String word) {
+	protected boolean match(IDocument document, int offset, String word) {
 		if (word == null) 
 			return false;
 		
@@ -522,8 +524,8 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		
 		try {
 			int length= offset - fReplacementOffset;
-			String start= document.get(fReplacementOffset, length);
-			return word.substring(0, length).equalsIgnoreCase(start);
+			String pattern= document.get(fReplacementOffset, length);
+			return ContentAssistMatcherFactory.getInstance().match(pattern.toCharArray(), word.toCharArray());
 		} catch (BadLocationException x) {
 		}
 		

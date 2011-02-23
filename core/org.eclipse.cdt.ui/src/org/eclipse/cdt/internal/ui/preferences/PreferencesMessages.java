@@ -13,6 +13,7 @@
  *     Andrew Ferguson (Symbian)
  *     Kirk Beitz (Nokia)
  *     James Blackburn (Broadcom Corp.)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -48,6 +49,7 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorPreferencePage_ContentAssistPage_insertSingleProposalAutomatically;
 	public static String CEditorPreferencePage_ContentAssistPage_insertCommonProposalAutomatically;
 	public static String CEditorPreferencePage_ContentAssistPage_showProposalsInAlphabeticalOrder;
+	public static String CEditorPreferencePage_ContentAssistPage_showCamelCaseMatches;
 	public static String CEditorPreferencePage_ContentAssistPage_autoActivationGroupTitle;
 	public static String CEditorPreferencePage_ContentAssistPage_autoActivationEnableDot;
 	public static String CEditorPreferencePage_ContentAssistPage_autoActivationEnableArrow;

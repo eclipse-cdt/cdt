@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google) 
  *     IBM Corporation
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
@@ -163,4 +164,11 @@ public class CCorePreferenceConstants {
 	 * @since 5.3
 	 */
 	public static final String PREF_BUILD_CONFIGS_RESOURCE_CHANGES = "build.proj.ref.configs.enabled"; //$NON-NLS-1$
+	
+	/**
+	 * Key for boolean preference telling whether camel case/underscore matches are to be shown by content assist features or not.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String SHOW_CAMEL_CASE_MATCHES = "contentAssist.showCamelCaseMatches"; //$NON-NLS-1$
 }

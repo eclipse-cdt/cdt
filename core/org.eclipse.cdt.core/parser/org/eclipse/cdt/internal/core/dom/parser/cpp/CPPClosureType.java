@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn (Wind River Systems) - initial API and implementation
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -45,6 +46,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ContentAssistMatcherFactory;
+import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -342,9 +345,10 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 
 		private IBinding[] getPrefixBindings(char[] name) {
 			List<IBinding> result= new ArrayList<IBinding>();
+			IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(name);
 			for (ICPPMethod m : getMethods()) {
 				if (!(m instanceof ICPPConstructor)) {
-					if (CharArrayUtils.equals(name, 0, name.length, m.getNameCharArray(), true)) {
+					if (matcher.match(m.getNameCharArray())) {
 						result.add(m);
 					}
 				}

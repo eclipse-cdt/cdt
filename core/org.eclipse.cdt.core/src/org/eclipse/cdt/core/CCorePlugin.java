@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Andrew Ferguson (Symbian)
  *     Anton Leherbauer (Wind River Systems)
  *     oyvind.harboe@zylin.com - http://bugs.eclipse.org/250638
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
@@ -32,6 +33,7 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.util.ContentAssistMatcherFactory;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
@@ -294,7 +296,9 @@ public class CCorePlugin extends Plugin {
 
             fNewCProjectDescriptionManager.shutdown();
             ResourceLookup.shutdown();
-
+            
+            ContentAssistMatcherFactory.shutdown();
+            
 			savePluginPreferences();
 		} finally {
 			super.stop(context);

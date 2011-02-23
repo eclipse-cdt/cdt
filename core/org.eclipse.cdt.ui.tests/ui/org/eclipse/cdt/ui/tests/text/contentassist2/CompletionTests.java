@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
  *     Sergey Prigogin (Google)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -300,7 +301,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//void f() {gC/*cursor*/
 	public void testGlobalVariables_GlobalScope() throws Exception {
 		final String[] expected= {
-				"gC1", "gC2"
+				"gC1", "gC2", "gfC1(void)", "gfC2(void)"
 		};
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
@@ -308,7 +309,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//void C1::f() {gC/*cursor*/
 	public void testGlobalVariables_MethodScope() throws Exception {
 		final String[] expected= {
-				"gC1", "gC2"
+				"gC1", "gC2", "gfC1(void)", "gfC2(void)"
 		};
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_ID_STRINGS);
 	}
@@ -1351,6 +1352,20 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	};
 	public void testDeferredBaseClass_Bug330762() throws Exception {
 		final String[] expected= { "BaseMethod(void)" };
+		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
+	}
+
+	//	#define fooBar
+	//  #define foo_bar
+	//  fB/*cursor*/
+	public void testUserMacroSegmentMatch() throws Exception {
+		final String[] expected= { "fooBar", "foo_bar" };
+		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
+	}
+	
+	//  __bVA/*cursor*/
+	public void testBuiltinMacroSegmentMatch() throws Exception {
+		final String[] expected= { "__builtin_va_arg(ap, type)" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
 	}
 }

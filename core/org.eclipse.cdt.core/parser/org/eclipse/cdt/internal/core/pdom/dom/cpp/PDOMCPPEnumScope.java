@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -28,7 +29,8 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ContentAssistMatcherFactory;
+import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -72,8 +74,9 @@ class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
 			if (prefixLookup) {
 				final List<IBinding> result= new ArrayList<IBinding>();
 				final char[] nc= name.toCharArray();
+				IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(nc);
 				for (char[] key : map.keys()) {
-					if (CharArrayUtils.equals(key, 0, nc.length, nc, true)) {
+					if (matcher.match(key)) {
 						result.add(map.get(key));
 					}
 				}

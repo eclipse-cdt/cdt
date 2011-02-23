@@ -8,6 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Sergey Prigogin (Google)
+ *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -114,6 +115,14 @@ public class PDOMProxy implements IPDOM {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
+	public synchronized IIndexFragmentBinding[] findBindingsForContentAssist(char[] prefix, boolean filescope,
+			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		if (fDelegate != null)
+			return fDelegate.findBindingsForContentAssist(prefix, filescope, filter, monitor);
+		
+		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+	
 	public synchronized IIndexFragmentInclude[] findIncludedBy(IIndexFragmentFile file) throws CoreException {
 		if (fDelegate != null)
 			return fDelegate.findIncludedBy(file);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -40,6 +41,8 @@ import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.util.ContentAssistMatcherFactory;
+import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
@@ -249,9 +252,10 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		final int prefixLength = namePrefix.length();
 		final IProject project= tu.getCProject().getProject();
 		File[] files= fileDir.listFiles();
+		IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(namePrefix);
 		for (File file : files) {
 			final String name= file.getName();
-			if (name.length() >= prefixLength && namePrefix.equalsIgnoreCase(name.substring(0, prefixLength))) {
+			if (name.length() >= prefixLength && matcher.match(name.toCharArray())) {
 				if (file.isFile()) {
 					if (CoreModel.isValidCXXHeaderUnitName(project, name) || CoreModel.isValidCHeaderUnitName(project, name)) {
 						includeFiles.add(prefixPath.append(name).toString());
@@ -296,6 +300,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		}
 		final IPath cPrefixPath= prefixPath;
 		final int prefixLength = namePrefix.length();
+		final IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(namePrefix);
 		final IProject project= tu.getCProject().getProject();
 		parent.accept(new IResourceProxyVisitor() {
 			boolean fFirstVisit= true;
@@ -306,7 +311,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 					fFirstVisit= false;
 					return true;
 				}
-				if (name.length() >= prefixLength && namePrefix.equalsIgnoreCase(name.substring(0, prefixLength))) {
+				if (name.length() >= prefixLength && matcher.match(name.toCharArray())) {
 					if (type == IResource.FILE) {
 						if (CoreModel.isValidCXXHeaderUnitName(project, name) || CoreModel.isValidCHeaderUnitName(project, name)) {
 							includeFiles.add(cPrefixPath.append(name).toString());

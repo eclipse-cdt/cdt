@@ -12,6 +12,7 @@
  *    Andrew Ferguson (Symbian)
  *    Anton Leherbauer (Wind River Systems)
  *    Sergey Prigogin (Google)
+ *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -694,7 +695,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 			char[][] simpleNames= extractSimpleNames(patterns);
 			if (simpleNames != null && simpleNames.length == 1) {
 				return findMacroContainers(simpleNames[0], false, caseSensitive, filter, monitor);
-			} 
+			}
+			
 			char[] prefix= extractPrefix(patterns);
 			if (prefix != null) {
 				return findMacroContainers(prefix, true, caseSensitive, filter, monitor);
@@ -734,7 +736,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 				nodes.add(linkage);
 				for (int i=0; i < names.length-1; i++) {
 					char[] name= names[i];
-					NamedNodeCollector collector= new NamedNodeCollector(linkage, name, false, caseSensitive);
+					NamedNodeCollector collector= new NamedNodeCollector(linkage, name, false, false, caseSensitive);
 					for (Iterator<PDOMNamedNode> in = nodes.iterator(); in.hasNext();) {
 						PDOMNode node= in.next();
 						node.accept(collector);
@@ -743,7 +745,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 					nodes.addAll(Arrays.asList(collector.getNodes()));
 				}
 				char[] name= names[names.length-1];
-				BindingCollector collector= new BindingCollector(linkage, name, filter, false, caseSensitive);
+				BindingCollector collector= new BindingCollector(linkage, name, filter, false, false, caseSensitive);
 				for (Iterator<PDOMNamedNode> in = nodes.iterator(); in.hasNext();) {
 					PDOMNode node= in.next();
 					node.accept(collector);
@@ -1071,13 +1073,21 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		return findBindingsForPrefix(prefix, filescope, false, filter, monitor);
 	}
-	
+
 	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, boolean caseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		return findBindingsForPrefixOrContentAssist(prefix, filescope, false, caseSensitive, filter, monitor);
+	}
+
+	public IIndexFragmentBinding[] findBindingsForContentAssist(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		return findBindingsForPrefixOrContentAssist(prefix, filescope, true, false, filter, monitor);
+	}
+
+	private IIndexFragmentBinding[] findBindingsForPrefixOrContentAssist(char[] prefix, boolean filescope, boolean isContentAssist, boolean caseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IIndexFragmentBinding> result= new ArrayList<IIndexFragmentBinding>();
 		for (PDOMLinkage linkage : getLinkageList()) {
 			if (filter.acceptLinkage(linkage)) {
 				PDOMBinding[] bindings;
-				BindingCollector visitor = new BindingCollector(linkage, prefix, filter, true, caseSensitive);
+				BindingCollector visitor = new BindingCollector(linkage, prefix, filter, !isContentAssist, isContentAssist, caseSensitive);
 				visitor.setMonitor(monitor);
 				try {
 					linkage.accept(visitor);
@@ -1117,7 +1127,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 					} 
 					
 					if (!isCaseSensitive || !filescope) {
-						BindingCollector visitor= new BindingCollector(linkage, name, filter, false, isCaseSensitive);
+						BindingCollector visitor= new BindingCollector(linkage, name, filter, false, false, isCaseSensitive);
 						visitor.setMonitor(monitor);
 					
 						if (!isCaseSensitive)
@@ -1146,7 +1156,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		try {
 			for (PDOMLinkage linkage : getLinkageList()) {
 				if (filter.acceptLinkage(linkage)) {
-					MacroContainerCollector visitor = new MacroContainerCollector(linkage, prefix, isPrefix, isCaseSensitive);
+					MacroContainerCollector visitor = new MacroContainerCollector(linkage, prefix, isPrefix, false, isCaseSensitive);
 					visitor.setMonitor(monitor);
 					linkage.getMacroIndex().accept(visitor);
 					result.addAll(visitor.getMacroList());
@@ -1157,13 +1167,13 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 		return result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
-
+	
 	public IIndexMacro[] findMacros(char[] prefix, boolean isPrefix, boolean isCaseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IIndexMacro> result= new ArrayList<IIndexMacro>();
 		try {
 			for (PDOMLinkage linkage : getLinkageList()) {
 				if (filter.acceptLinkage(linkage)) {
-					MacroContainerCollector visitor = new MacroContainerCollector(linkage, prefix, isPrefix, isCaseSensitive);
+					MacroContainerCollector visitor = new MacroContainerCollector(linkage, prefix, isPrefix, false, isCaseSensitive);
 					visitor.setMonitor(monitor);
 					linkage.getMacroIndex().accept(visitor);
 					for (PDOMMacroContainer mcont : visitor.getMacroList()) {
@@ -1175,7 +1185,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 		return result.toArray(new IIndexMacro[result.size()]);
 	}
-	
+
 	public String getProperty(String propertyName) throws CoreException {
 		if (IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName)) {
 			return FRAGMENT_PROPERTY_VALUE_FORMAT_ID;
@@ -1393,7 +1403,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			};
 		}
 		if (filter != null) {
-			BindingCollector collector= new BindingCollector(cpp, binding.getNameCharArray(), filter, false, true);
+			BindingCollector collector= new BindingCollector(cpp, binding.getNameCharArray(), filter, false, false, true);
 			cpp.accept(collector);
 			return collector.getBindings();
 		}

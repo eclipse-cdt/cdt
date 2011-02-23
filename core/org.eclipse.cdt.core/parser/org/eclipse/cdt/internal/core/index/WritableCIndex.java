@@ -23,13 +23,12 @@ import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.core.runtime.CoreException;
 
 public class WritableCIndex extends CIndex implements IWritableIndex {
-
 	final private IWritableIndexFragment fWritableFragment;
 	private boolean fIsWriteLocked= false;
 	private Object fThread;
 
 	public WritableCIndex(IWritableIndexFragment writable, IIndexFragment[] readonly) {
-		super (concat(writable, readonly));
+		super(concat(writable, readonly));
 		fWritableFragment= writable;
 	}
 

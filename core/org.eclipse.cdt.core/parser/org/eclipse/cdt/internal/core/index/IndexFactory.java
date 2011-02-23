@@ -53,19 +53,19 @@ public class IndexFactory {
 		projects = (ICProject[]) ArrayUtil.removeNulls(ICProject.class, projects);
 		
 		boolean addDependencies= (options & ADD_DEPENDENCIES) != 0;
-		boolean addDependent=    (options & ADD_DEPENDENT) != 0;
+		boolean addDependent= (options & ADD_DEPENDENT) != 0;
 		boolean skipProvided= (options & SKIP_PROVIDED) != 0;
 		
 		HashMap<IProject, Integer> map= new HashMap<IProject, Integer>();
 		Collection<ICProject> selectedProjects= getProjects(projects, addDependencies, addDependent, map, new Integer(1));
 		
 		HashMap<String, IIndexFragment> fragments= new LinkedHashMap<String, IIndexFragment>();
-		for(ICProject cproject : selectedProjects) {
+		for (ICProject cproject : selectedProjects) {
 			IIndexFragment pdom= fPDOMManager.getPDOM(cproject);
 			if (pdom != null) {
 				safeAddFragment(fragments, pdom);
 				
-				if(!skipProvided) {
+				if (!skipProvided) {
 					safeAddProvidedFragments(cproject, fragments);
 				}
 			}
@@ -81,11 +81,11 @@ public class IndexFactory {
 			selectedProjects.clear();
 			// don't clear the map, so projects are not selected again
 			selectedProjects= getProjects(projects, true, false, map, new Integer(2));
-			for(ICProject cproject : selectedProjects) {
+			for (ICProject cproject : selectedProjects) {
 				IIndexFragment pdom= fPDOMManager.getPDOM(cproject);
 				safeAddFragment(fragments, pdom);
 				
-				if(!skipProvided) {
+				if (!skipProvided) {
 					safeAddProvidedFragments(cproject, fragments);
 				}
 			}
@@ -107,7 +107,7 @@ public class IndexFactory {
 		Collection<ICProject> selectedProjects= getProjects(new ICProject[] {project}, true, false, new HashMap<IProject, Integer>(), new Integer(1));		
 		selectedProjects.remove(project);
 		
-		for(ICProject cproject : selectedProjects) {
+		for (ICProject cproject : selectedProjects) {
 			safeAddFragment(readOnlyFrag, fPDOMManager.getPDOM(cproject));
 		}
 				
@@ -118,7 +118,7 @@ public class IndexFactory {
 	private Collection<ICProject> getProjects(ICProject[] projects, boolean addDependencies, boolean addDependent, HashMap<IProject, Integer> map, Integer markWith) {
 		List<IProject> projectsToSearch= new ArrayList<IProject>();
 		
-		for(ICProject cproject : projects) {
+		for (ICProject cproject : projects) {
 			IProject project= cproject.getProject();
 			checkAddProject(project, map, projectsToSearch, markWith);
 			projectsToSearch.add(project);
@@ -150,7 +150,7 @@ public class IndexFactory {
 		
 		CoreModel cm= CoreModel.getDefault();
 		Collection<ICProject> result= new ArrayList<ICProject>();
-		for(Map.Entry<IProject, Integer> entry : map.entrySet()) {
+		for (Map.Entry<IProject, Integer> entry : map.entrySet()) {
 			if (entry.getValue() == markWith) {
 				ICProject cproject= cm.create(entry.getKey());
 				if (cproject != null) {
@@ -180,7 +180,7 @@ public class IndexFactory {
 	 * @param fragment the fragment or null (which will result in no action)
 	 */
 	private void safeAddFragment(Map<String, IIndexFragment> id2fragment, IIndexFragment fragment) {
-		if(fragment!=null) {
+		if (fragment != null) {
 			try {
 				fragment.acquireReadLock();
 				try {
@@ -206,13 +206,13 @@ public class IndexFactory {
 	 */
 	private void safeAddProvidedFragments(ICProject cproject, Map<String, IIndexFragment> fragments) {
 		ICProjectDescription pd= CoreModel.getDefault().getProjectDescription(cproject.getProject(), false);
-		if(pd!=null) {
+		if (pd != null) {
 			IndexProviderManager ipm = CCoreInternals.getPDOMManager().getIndexProviderManager();
 			ICConfigurationDescription cfg= pd.getDefaultSettingConfiguration();
 			if (cfg != null) {
 				try {
 					IIndexFragment[] pFragments= ipm.getProvidedIndexFragments(cfg);
-					for(IIndexFragment fragment : pFragments) {
+					for (IIndexFragment fragment : pFragments) {
 						safeAddFragment(fragments, fragment);
 					}
 				} catch(CoreException ce) {

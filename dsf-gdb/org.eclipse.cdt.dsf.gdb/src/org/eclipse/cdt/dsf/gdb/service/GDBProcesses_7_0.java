@@ -654,9 +654,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 			} else {
 				name = fDebuggedProcessesAndNames.get(id);
 				if (name == null) {
-					// We don't have the name in our map.  Should not happen.
+					// We don't have the name in our map.  This could happen
+					// if a process has terminated but the 
+					// debug session is not terminated because the preference
+					// to keep GDB running has been selected or because there
+					// are other processes part of that session.
 					name = "Unknown name"; //$NON-NLS-1$
-					assert false : "Don't have entry for process ID: " + id; //$NON-NLS-1$
 				} else if (name.length() == 0) {
 					// Probably will not happen, but just in case...use the
 					// binary file name (absolute path)

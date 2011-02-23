@@ -172,14 +172,14 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 				}
 			}
 			if (name == null) {
-				// Should not happen.
+				// This could happen if a process has terminated but the 
+				// debug session is not terminated because the preference
+				// to keep GDB running has been selected.
 				name = "Unknown name"; //$NON-NLS-1$
 
 				// Until bug 305385 is fixed, the above code will not work, so we assume we
 				// are looking for our own process
-//				assert false : "Don't have entry for process ID: " + pid; //$NON-NLS-1$
 				name = fBackend.getProgramPath().lastSegment();
-
 			}
 		
 			rm.setData(new MIThreadDMData(name, pidStr));

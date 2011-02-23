@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [165680] "Show in Remote Shell View" does not work
+ * David McKnight   (IBM)        - [338031] Remote Shell view tabs should have close (x) icon
  *******************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -20,12 +21,15 @@ package org.eclipse.rse.internal.shells.ui.view;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.rse.shells.ui.view.SystemCommandsView;
 import org.eclipse.rse.shells.ui.view.TabFolderLayout;
+import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemTableView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -213,7 +217,7 @@ public class CommandsViewWorkbook extends Composite
 	{
 		CommandsViewPage commandsViewPage = new CommandsViewPage(_viewPart);
 
-		CTabItem titem = new CTabItem(_folder, SWT.NULL);
+		CTabItem titem = new CTabItem(_folder, SWT.CLOSE);	
 		setTabTitle(root, titem);
  
 		titem.setData(commandsViewPage);
@@ -228,6 +232,31 @@ public class CommandsViewWorkbook extends Composite
 		//commandsViewPage.getViewer().addSelectionChangedListener((SystemCommandsViewPart)_viewPart);
 		
 		commandsViewPage.setFocus();
+		
+		titem.addDisposeListener(new DisposeListener() {
+
+			public void widgetDisposed(DisposeEvent e) {
+				Object source = e.getSource();
+				if (source instanceof CTabItem) {
+					CTabItem currentItem = (CTabItem) source;
+					Object data = currentItem.getData();
+					if (data instanceof CommandsViewPage) {
+						IRemoteCommandShell command = (IRemoteCommandShell)((CommandsViewPage)data).getInput();
+						try {
+							IRemoteCmdSubSystem cmdSubSystem = command.getCommandSubSystem();
+							if (cmdSubSystem != null){
+								cmdSubSystem.removeShell(command);
+							}
+						}
+						catch (Exception ex){
+						}
+					}
+				}
+
+			}
+
+		});
+
 	}
 
 	private void setTabTitle(IAdaptable root, CTabItem titem)

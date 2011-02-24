@@ -26,6 +26,7 @@
    <extension-point id="quickAssistProcessors" name="%quickAssistProcessorExtensionPoint" schema="schema/quickAssistProcessors.exsd"/>
    <extension-point id="DocCommentOwner" name="%DocCommentOwner.name" schema="schema/DocCommentOwner.exsd"/>
    <extension-point id="workingSetConfigurations" name="%workingSetConfigurationsExtensionPoint" schema="schema/workingSetConfigurations.exsd"/>
+   <extension-point id="RefreshExclusionContributor" name="Refresh Exclusion Contributor" schema="schema/RefreshExclusionContributor.exsd"/>
 
    <extension
          point="org.eclipse.core.runtime.adapters">

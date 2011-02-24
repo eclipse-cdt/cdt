@@ -12,15 +12,24 @@
 package org.eclipse.cdt.debug.ui.memory.memorybrowser;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.debug.core.model.provisional.ITargetLabelProvider;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -34,6 +43,8 @@ import org.eclipse.ui.PlatformUI;
 
 public class GoToAddressBarWidget {
 	
+	private static String SEPARATOR = "<sperator>";
+	private static String UNKNOWN_TARGET_NAME = "Unknown";
 	private Combo fExpression;
 	private ControlDecoration fEmptyExpression;
 	private ControlDecoration fWrongExpression;
@@ -77,9 +88,9 @@ public class GoToAddressBarWidget {
 	}
 	
 	private final static String SAVED_EXPRESSIONS = "saved_expressions";  //$NON-NLS-1$
-	private final static int MAX_SAVED_EXPRESSIONS = 30 ;
+	private final static int MAX_SAVED_EXPRESSIONS = 15 ;
 	
-	private void saveExpression( String memorySpace, String expr ) {
+	private void saveExpression( String memorySpace, Object context, String expr ) {
 		/*
 		 * Get the saved expressions if any.
 		 * 
@@ -87,21 +98,100 @@ public class GoToAddressBarWidget {
 		 * 
 		 *     expression,expression,.....,expression
 		 */
-		IPreferenceStore store = MemoryBrowserPlugin.getDefault().getPreferenceStore();
-		String currentExpressions = store.getString(SAVED_EXPRESSIONS);
-		if ( currentExpressions != null && currentExpressions.length() != 0 ) {
-			store.setValue(SAVED_EXPRESSIONS, currentExpressions + ","  + expr);
+		ILaunch launch = getLaunch(context);
+		if(launch == null)
+		{
+			return;
 		}
-		else {
-			store.setValue(SAVED_EXPRESSIONS, expr);
+		
+		String targetName = getTargetName(context);
+		
+		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
+		String currentExpressions = "";
+		if (launchConfiguration != null) {
+			try {
+				ILaunchConfigurationWorkingCopy wc = launchConfiguration.getWorkingCopy();
+				if (wc != null) {
+					currentExpressions = wc.getAttribute(getSaveExpressionKey(targetName,memorySpace), "");
+					
+					StringTokenizer st = new StringTokenizer(currentExpressions, ","); //$NON-NLS-1$
+					/*
+					 * Parse through the list creating an ordered array for display.
+					 */
+					ArrayList<String> list = new ArrayList<String>();
+					while(st.hasMoreElements())
+					{
+						String expression = (String) st.nextElement();
+						list.add(expression);
+					}
+					if(!list.contains(expr))
+					{
+						list.add(expr);
+					
+						while(list.size() > MAX_SAVED_EXPRESSIONS)
+						{
+							list.remove(0);
+						}
+						
+						currentExpressions = "";
+						for ( int idx =0 ; idx < list.size(); idx ++ ) {
+							if(idx > 0)
+							{
+								currentExpressions += ",";
+							}
+							currentExpressions += list.get(idx);
+						}
+						wc.setAttribute(getSaveExpressionKey(targetName,memorySpace), currentExpressions);					
+						wc.doSave();
+					}
+				}			
+			}
+			catch(CoreException e) {
+			}
 		}
 	}
 	
-	public void deleteExpressions(String memorySpace) {
-		MemoryBrowserPlugin.getDefault().getPreferenceStore().setValue(SAVED_EXPRESSIONS, "");
+	public void deleteExpressions(Object context) {
+		
+		if(context == null)
+		{
+			return;
+		}
+		
+		ILaunch launch = getLaunch(context);
+		if(launch == null)
+		{
+			return;
+		}
+		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
+		if (launchConfiguration != null) {
+			try {
+				ILaunchConfigurationWorkingCopy wc = launchConfiguration.getWorkingCopy();
+				if (wc != null) {
+					@SuppressWarnings("unchecked")
+					Map<String,Object> attributes = (Map<String,Object>)wc.getAttributes();
+					if (attributes != null && !attributes.isEmpty()) {
+
+						Iterator<String> iterator = attributes.keySet().iterator();
+						while(iterator.hasNext())
+						{
+							String key = iterator.next();
+							if(key.startsWith(SAVED_EXPRESSIONS))
+							{
+								wc.removeAttribute(key);
+							}
+						}
+						wc.doSave();
+					}	
+				}
+			}
+			catch(CoreException e) {
+			}
+		}
+
 	}
 
-	private String[] getSavedExpressions(String memorySpace) {
+	private String[] getSavedExpressions(String memorySpace, Object context) {
 		/*
 		 * Get the saved expressions if any.
 		 * 
@@ -109,9 +199,23 @@ public class GoToAddressBarWidget {
 		 * 
 		 *     expression,expression,.....,expression
 		 */
-		IPreferenceStore store = MemoryBrowserPlugin.getDefault().getPreferenceStore();
-		String expressions = store.getString(SAVED_EXPRESSIONS);
 		
+		ILaunch launch = getLaunch(context);
+		if(launch == null)
+		{
+			return new String[0];
+		}
+		
+		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
+		String expressions = "";
+		if (launchConfiguration != null) {
+			try {
+				expressions = launchConfiguration.getAttribute(getSaveExpressionKey(getTargetName(context),memorySpace), "");
+			}
+			catch(CoreException e) {
+			}
+		}
+
 		StringTokenizer st = new StringTokenizer(expressions, ","); //$NON-NLS-1$
 		/*
 		 * Parse through the list creating an ordered array for display.
@@ -125,26 +229,22 @@ public class GoToAddressBarWidget {
 		return list.toArray(new String[list.size()]);
 	}
 	
-	private String removeOldestExpression( String memorySpace ) {
-		String[] currentSavedExpressions = getSavedExpressions(memorySpace);
-		if ( currentSavedExpressions.length > 0 ) {
-			/*
-			 * Remove all expressions and then repopulate the list.
-			 */
-			deleteExpressions(memorySpace);
-			/*
-			 * The first in the list is the oldest. So we will delete it by not
-			 * putting it back.
-			 */
-			for ( int idx = 1 ; idx < currentSavedExpressions.length; idx ++ ) {
-				saveExpression( memorySpace, currentSavedExpressions[idx]);
-			}
-			return currentSavedExpressions[0];
+	public void loadSavedExpressions(String memorySpace, Object context)
+	{
+		String[] expressions = getSavedExpressions(memorySpace, context);
+		String text = fExpression.getText(); 
+		fExpression.removeAll();
+		for(int idx=0; idx < expressions.length; idx++)
+		{
+			fExpression.add(expressions[idx]);
 		}
-		return null;
+		if(text != null)
+		{
+			fExpression.setText(text);
+		}
 	}
 	
-	public void addExpressionToList( String memorySpace, String expr ) {
+	public void addExpressionToList( String memorySpace, Object context, String expr ) {
 		/*
 		 * Make sure it does not already exist, we do not want to show duplicates.
 		 */
@@ -152,8 +252,8 @@ public class GoToAddressBarWidget {
 			/*
 			 * Cap the size of the list.
 			 */
-			if ( ( fExpression.getItemCount() + 1 ) > MAX_SAVED_EXPRESSIONS ) {
-				fExpression.remove(removeOldestExpression(memorySpace));
+			while ( fExpression.getItemCount() >= MAX_SAVED_EXPRESSIONS ) {
+				fExpression.remove(0);
 			}
 			
 			/*
@@ -161,14 +261,14 @@ public class GoToAddressBarWidget {
 			 */
 			fExpression.add(expr);
 			
-			/*
-			 * Add it to the persistense database.
-			 */
-			saveExpression(memorySpace, expr);
 		}
+		/*
+		 * Add it to the persistense database.
+		 */
+		saveExpression(memorySpace, context, expr);
 	}
 	
-	public void clearExpressionsFromList(String memorySpace) {
+	public void clearExpressionsFromList(String[] memorySpaces, Object context) {
 		/*
 		 * Clean up the combo list.
 		 */
@@ -178,7 +278,7 @@ public class GoToAddressBarWidget {
 		/*
 		 * Clean out the expression persistense.
 		 */
-		deleteExpressions(memorySpace);
+		deleteExpressions(context);
 		
 		/*
 		 * Make sure the status image indicator shows OK.
@@ -196,14 +296,6 @@ public class GoToAddressBarWidget {
 				updateButtons();
 			}
 		});
-		
-		/*
-		 * Populate the list with the expressions from the last time the view was brought up.
-		 */
-		String[] expressions = getSavedExpressions("");
-		for ( String expr : expressions ) {
-			combo.add( expr );
-		}
 		
 		fEmptyExpression = new ControlDecoration(combo, SWT.LEFT | SWT.CENTER);
 		fEmptyExpression.setDescriptionText(Messages.getString("GoToAddressBarWidget.EnterExpressionMessage")); //$NON-NLS-1$
@@ -300,4 +392,55 @@ public class GoToAddressBarWidget {
     {
         return fExpressionStatus;
     }
+	
+    private ILaunch getLaunch(Object context)
+    {
+        IAdaptable adaptable = null;
+        ILaunch launch  = null;
+		if(context instanceof IAdaptable)
+		{
+			adaptable = (IAdaptable) context;
+			launch  = ((ILaunch) adaptable.getAdapter(ILaunch.class));
+		}
+		
+		return launch;
+    	
+    }
+    
+    private String getTargetName(Object context)
+    {
+    	String targetName = null;
+		if(context instanceof IAdaptable)
+		{
+			IAdaptable adaptable = (IAdaptable) context;
+			ITargetLabelProvider labelProvider = (ITargetLabelProvider)adaptable.getAdapter(ITargetLabelProvider.class);
+			if(labelProvider != null)
+			{
+				try
+				{
+					targetName = labelProvider.getLabel();
+				}
+				catch(DebugException e)
+				{
+				}
+			}
+		}
+		if(targetName == null || targetName.trim().length() == 0)
+		{
+			targetName = UNKNOWN_TARGET_NAME;
+		}
+		return targetName;
+    	
+    }
+    
+    private String getSaveExpressionKey(String targetName, String memorySpace)
+    {
+    	String key = SAVED_EXPRESSIONS + SEPARATOR + targetName.trim();
+    	if(memorySpace != null && memorySpace.trim().length() > 0)
+    	{ 
+    		key += SEPARATOR + memorySpace.trim();
+    	}
+    	return key;
+    }
+
 }

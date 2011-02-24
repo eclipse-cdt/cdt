@@ -1,6 +1,8 @@
-#Sat Feb 19 16:19:49 PST 2011
+#Wed Feb 23 19:44:07 EST 2011
 eclipse.preferences.version=1
 editor_save_participant_org.eclipse.jdt.ui.postsavelistener.cleanup=true
+formatter_profile=_Eclipse [built-in] - Alena
+formatter_settings_version=11
 sp_cleanup.add_default_serial_version_id=true
 sp_cleanup.add_generated_serial_version_id=false
 sp_cleanup.add_missing_annotations=true

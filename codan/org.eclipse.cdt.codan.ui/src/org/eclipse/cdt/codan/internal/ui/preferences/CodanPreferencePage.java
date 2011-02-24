@@ -70,7 +70,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 
 	public CodanPreferencePage() {
 		super(GRID);
-		setPreferenceStore(new ScopedPreferenceStore(InstanceScope.INSTANCE,
+		setPreferenceStore(new ScopedPreferenceStore(new InstanceScope(),
 				CodanCorePlugin.PLUGIN_ID));
 		// setDescription("Code Analysis Preference Page");
 		problemSelectionListener = new ISelectionChangedListener() {

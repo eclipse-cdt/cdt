@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation. All rights reserved.
+ * Copyright (c) 2007, 2011 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * David McKnight    (IBM)  -[246857] Rename problem when a file is opened in the editor
  * David McKnight    (IBM)  -[279014] [dstore][encoding] text file corruption can occur when downloading from UTF8 to cp1252
  * David McKnight    (IBM)  -[324669] [dstore] IBM-eucJP to UTF-8 char conversion appends nulls to end of file during text-mode download
+ * David McKnight    (IBM)  -[280451] IFileServiceCodePageConverter.convertClientStringToRemoteBytes() should throw runtime exception
  ********************************************************************************/
 package org.eclipse.rse.services.files;
 
@@ -42,8 +43,9 @@ public class DefaultFileServiceCodePageConverter implements
 		}
 		catch (Exception e)
 		{
+			// outstream could not be written properly: report
+			throw new RuntimeException(e);
 		}
-		return clientString.getBytes();
 	}
 
 	public void convertFileFromRemoteEncoding(String remotePath, File file, String remoteEncoding,

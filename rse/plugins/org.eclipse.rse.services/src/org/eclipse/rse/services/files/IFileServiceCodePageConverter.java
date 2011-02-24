@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation. All rights reserved.
+ * Copyright (c) 2007, 2011 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * David McKnight    (IBM)  -[209704] [api] Ability to override default encoding conversion needed.
  * David McKnight    (IBM)  -[220379] [api] Provide a means for contributing custom BIDI encodings
  * David McKnight    (IBM)  -[279014] [dstore][encoding] text file corruption can occur when downloading from UTF8 to cp1252
+ * David McKnight    (IBM)  -[280451] IFileServiceCodePageConverter.convertClientStringToRemoteBytes() should throw runtime exception
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -36,6 +37,7 @@ public interface IFileServiceCodePageConverter {
 	 * @param fs                The file service to apply conversion to.
 	 *                          Can be used to determine implementation specific settings to the converter
 	 * @return					The bytes to upload to the server
+	 * @throws RuntimeException (wrapping a CharacterCodingException or IOException) in case of an error transposing from source to target encoding
 	 */
 	public byte [] convertClientStringToRemoteBytes(String remotePath, String clientString, String remoteEncoding, IFileService fs);
 

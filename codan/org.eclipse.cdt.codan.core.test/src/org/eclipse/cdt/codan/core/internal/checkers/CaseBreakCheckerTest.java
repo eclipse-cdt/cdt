@@ -117,7 +117,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	}
 
 	// void foo(int a) {
-	//  
+	//
 	//  switch( a ) {
 	//  case 1:
 	//    throw 1;
@@ -442,12 +442,31 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//   case 1:
 	//     while (a--)
 	//       break;
+	//   case 2:
+	//     while (a--) {
+	//       break;
+	//     }
 	//   }
 	// }
-	public void testEmptyLastCaseWithLoopBreak() {
+	public void testEmptyCaseWithLoopBreak() {
 		loadCodeAndRun(getAboveComment());
-		checkNoErrors(); // FALSE NEGATIVE
-		//checkErrorLine(3);
+		checkErrorLines(3, 6);
+	}
+
+	// void foo(int a) {
+	//   switch( a ) {
+	//   case 1: {
+	//     break;
+	//   }
+	//   case 2: {
+	//     a--;
+	//     break;
+	//   }
+	//   }
+	// }
+	public void testCaseWithCurlyBrackets() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
 	}
 
 	// void foo(void) {

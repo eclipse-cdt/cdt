@@ -28,7 +28,8 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
-public class CaseBreakChecker extends AbstractIndexAstChecker implements ICheckerWithPreferences {
+public class CaseBreakChecker extends AbstractIndexAstChecker implements
+		ICheckerWithPreferences {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.CaseBreakProblem"; //$NON-NLS-1$
 	public static final String PARAM_LAST_CASE = "last_case_param"; //$NON-NLS-1$
 	public static final String PARAM_EMPTY_CASE = "empty_case_param"; //$NON-NLS-1$
@@ -73,7 +74,8 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		 * @return Is the next comment located after 'node'
 		 */
 		public boolean isNextAfterThis(IASTNode node) {
-			return (_comments[_next].getFileLocation().getNodeOffset() > node.getFileLocation().getNodeOffset());
+			return (_comments[_next].getFileLocation().getNodeOffset() > node
+					.getFileLocation().getNodeOffset());
 		}
 
 		/**
@@ -81,7 +83,8 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		 * @return Is the next comment located after 'node' ends
 		 */
 		public boolean isNextAfterThisEnds(IASTNode node) {
-			return (_comments[_next].getFileLocation().getNodeOffset() > node.getFileLocation().getNodeOffset()
+			return (_comments[_next].getFileLocation().getNodeOffset() > node
+					.getFileLocation().getNodeOffset()
 					+ node.getFileLocation().getNodeLength());
 		}
 
@@ -105,11 +108,46 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 			_switchStatement = null;
 		}
 
+		/**
+		 * @param statement
+		 * @return true iff the statement is directly under the "switch" and not
+		 *  in the scope of some loop statement, such as "while". 
+		 */
+		private boolean doesStatementAffectThisSwitch(IASTStatement statement) {
+			IASTNode parent = statement.getParent(); 
+			if(parent == _switchStatement)
+				return true;
+			if(parent instanceof IASTCompoundStatement)
+				return doesStatementAffectThisSwitch((IASTCompoundStatement)parent);
+			
+			return false;
+		}
+		
+		/**
+		 * @param statement
+		 * @return true iff the statement is on of:
+		 * - "break" (checks that the break actually exists the "switch")
+		 * - "return"
+		 * - "continue"
+		 * - "goto" (does not check that the goto actually exists the switch)
+		 * - "thorw"
+		 * - "exit"
+		 */
+		protected boolean isBreakOrExitStatement(IASTStatement statement) {
+			CxxAstUtils utils = CxxAstUtils.getInstance();
+			return (statement instanceof IASTBreakStatement && doesStatementAffectThisSwitch(statement))
+					|| statement instanceof IASTReturnStatement
+					|| statement instanceof IASTContinueStatement
+					|| statement instanceof IASTGotoStatement
+					|| utils.isThrowStatement(statement) || utils.isExitStatement(statement);
+		}		
+		
 		@Override
 		public int visit(IASTStatement statement) {
 			if (statement instanceof IASTSwitchStatement) {
 				// Are we already visiting this statement?
-				if (_switchStatement == null || !statement.equals(_switchStatement)) {
+				if (_switchStatement == null
+						|| !statement.equals(_switchStatement)) {
 					SwitchVisitor switch_visitor = new SwitchVisitor(statement);
 					statement.accept(switch_visitor);
 					return PROCESS_SKIP;
@@ -153,7 +191,8 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		 * @return Was a "break" statement the last statement in this case
 		 */
 		private boolean breakFoundPrevious() {
-			return _prev_normal_stmnt_offset < _prev_break_stmnt_offset && _prev_case_stmnt_offset < _prev_break_stmnt_offset;
+			return _prev_normal_stmnt_offset < _prev_break_stmnt_offset
+					&& _prev_case_stmnt_offset < _prev_break_stmnt_offset;
 		}
 
 		/**
@@ -193,7 +232,8 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 
 		@Override
 		public int visit(IASTStatement statement) {
-			if (statement instanceof IASTCaseStatement || statement instanceof IASTDefaultStatement) {
+			if (statement instanceof IASTCaseStatement
+					|| statement instanceof IASTDefaultStatement) {
 				if (_first_case_statement) {
 					/*
 					 * This is the first "case", i.e. the beginning of the
@@ -208,7 +248,8 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 					 */
 					IASTComment comment = null;
 					// Do we have a comment which is before this "case" statement (but after the previous statement)?
-					while (_commentsIt.hasNext() && !_commentsIt.isNextAfterThis(statement)) {
+					while (_commentsIt.hasNext()
+							&& !_commentsIt.isNextAfterThis(statement)) {
 						comment = _commentsIt.getNext();
 						_commentsIt.advance();
 					}
@@ -219,15 +260,19 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 					checkPreviousCase(comment, false);
 				}
 				/* Update variables with the new opened "case" */
-				_prev_case_stmnt_offset = statement.getFileLocation().getNodeOffset();
+				_prev_case_stmnt_offset = statement.getFileLocation()
+						.getNodeOffset();
 				_prev_case_stmnt = statement;
-			} else if (isBreakOrExitStatement(statement)) { // A "break" statement
-				_prev_break_stmnt_offset = statement.getFileLocation().getNodeOffset();
+			} else if (isBreakOrExitStatement(statement)) { // A relevant "break" statement
+				_prev_break_stmnt_offset = statement.getFileLocation()
+						.getNodeOffset();
 			} else { // a non-switch related statement
-				_prev_normal_stmnt_offset = statement.getFileLocation().getNodeOffset();
+				_prev_normal_stmnt_offset = statement.getFileLocation()
+						.getNodeOffset();
 			}
 			/* advance comments we already passed */
-			while (_commentsIt.hasNext() && !_commentsIt.isNextAfterThis(statement))
+			while (_commentsIt.hasNext()
+					&& !_commentsIt.isNextAfterThis(statement))
 				_commentsIt.advance();
 			return super.visit(statement); // This would handle nested "switch"s
 		}
@@ -238,10 +283,12 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 			 * Are we leaving the "switch" altogether? (we need to see how the
 			 * last "case" ended)
 			 */
-			if (_checkLastCase && statement instanceof IASTCompoundStatement && statement.getParent() == _switchStatement) {
+			if (_checkLastCase && statement instanceof IASTCompoundStatement
+					&& statement.getParent() == _switchStatement) {
 				IASTComment comment = null;
 				// is "Next" still in the switch's scope? if it is it was after the last statement
-				while (_commentsIt.hasNext() && !_commentsIt.isNextAfterThisEnds(statement)) {
+				while (_commentsIt.hasNext()
+						&& !_commentsIt.isNextAfterThisEnds(statement)) {
 					comment = _commentsIt.getNext();
 					_commentsIt.advance();
 				}
@@ -256,34 +303,34 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 	}
 
 	/************************************************
-	 * This class's functions...
+	 * "CaseBreakChecker" functions...
 	 ************************************************/
 	public CaseBreakChecker() {
 	}
 
-	/**
-	 * @param statement
-	 * @return
-	 */
-	public boolean isBreakOrExitStatement(IASTStatement statement) {
-		CxxAstUtils utils = CxxAstUtils.getInstance();
-		return statement instanceof IASTBreakStatement || statement instanceof IASTReturnStatement
-				|| statement instanceof IASTContinueStatement || statement instanceof IASTGotoStatement
-				|| utils.isThrowStatement(statement) || utils.isExitStatement(statement);
-	}
-
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, PARAM_NO_BREAK_COMMENT, CheckersMessages.CaseBreakChecker_DefaultNoBreakCommentDescription,
+		addPreference(
+				problem,
+				PARAM_NO_BREAK_COMMENT,
+				CheckersMessages.CaseBreakChecker_DefaultNoBreakCommentDescription,
 				DEFAULT_NO_BREAK_COMMENT);
-		addPreference(problem, PARAM_LAST_CASE, CheckersMessages.CaseBreakChecker_LastCaseDescription, Boolean.TRUE);
-		addPreference(problem, PARAM_EMPTY_CASE, CheckersMessages.CaseBreakChecker_EmptyCaseDescription, Boolean.FALSE);
+		addPreference(problem, PARAM_LAST_CASE,
+				CheckersMessages.CaseBreakChecker_LastCaseDescription,
+				Boolean.TRUE);
+		addPreference(problem, PARAM_EMPTY_CASE,
+				CheckersMessages.CaseBreakChecker_EmptyCaseDescription,
+				Boolean.FALSE);
+
 	}
 
 	public void processAst(IASTTranslationUnit ast) {
-		_checkLastCase = (Boolean) getPreference(getProblemById(ER_ID, getFile()), PARAM_LAST_CASE);
-		_checkEmptyCase = (Boolean) getPreference(getProblemById(ER_ID, getFile()), PARAM_EMPTY_CASE);
-		_noBreakComment = (String) getPreference(getProblemById(ER_ID, getFile()), PARAM_NO_BREAK_COMMENT);
+		_checkLastCase = (Boolean) getPreference(
+				getProblemById(ER_ID, getFile()), PARAM_LAST_CASE);
+		_checkEmptyCase = (Boolean) getPreference(
+				getProblemById(ER_ID, getFile()), PARAM_EMPTY_CASE);
+		_noBreakComment = (String) getPreference(
+				getProblemById(ER_ID, getFile()), PARAM_NO_BREAK_COMMENT);
 		SwitchFindingVisitor visitor = new SwitchFindingVisitor();
 		_commentsIt = new CommentsIterator(ast.getComments());
 		ast.accept(visitor);

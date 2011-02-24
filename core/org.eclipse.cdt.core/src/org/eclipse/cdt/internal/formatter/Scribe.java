@@ -1951,7 +1951,7 @@ public class Scribe {
 
 	/**
 	 * Skip to the next occurrence of the given token type.
-	 * If successful, the next token will be the epxected token,
+	 * If successful, the next token will be the expected token,
 	 * otherwise the scanner position is left unchanged.
 	 * 
 	 * @param expectedTokenType

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@
  * David McKnight   (IBM)        - [279829] [local] Save conflict dialog keeps popping up on mounted drive
  * David McKnight   (IBM)        - [331247] Local file paste failed on Vista and Windows 7
  * Xuan Chen        (IBM)        - [222544] [testing] FileServiceArchiveTest leaves temporary files and folders behind in TEMP dir
+ * David McKnight   (IBM)        - [337612] Failed to copy the content of a tar file
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -1397,6 +1398,15 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		}
 	}
 
+	private boolean isTempFile(File resource){
+		String workspaceLocation = System.getProperty("osgi.instance.area");
+		if (workspaceLocation != null && workspaceLocation.length() > 0){
+			workspaceLocation = workspaceLocation.substring(6).replace('/', File.separatorChar);
+		}
+		String path = resource.getAbsolutePath();
+		return (path.startsWith(workspaceLocation));
+	}
+	
 	/**
 	 * Copy a file or folder to a new target parent folder, but if
 	 * copying from an archive, extract the file in the encoding specified
@@ -1425,7 +1435,9 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			archiveOperationMonitor = new SystemOperationMonitor();
 			checkArchiveOperationStatusThread = new CheckArchiveOperationStatusThread(archiveOperationMonitor, monitor);
 		}
-		if (!(ArchiveHandlerManager.isVirtual(targetFolder.getAbsolutePath())) && !ArchiveHandlerManager.getInstance().isArchive(targetFolder))
+		boolean isTempFile = isTempFile(targetFolder);
+		
+		if (!(ArchiveHandlerManager.isVirtual(targetFolder.getAbsolutePath()) && !isTempFile) && !ArchiveHandlerManager.getInstance().isArchive(targetFolder))
 		{
 			// this is an optimization to speed up extractions from large zips. Instead of
 			// extracting to a temp location and then copying the temp files to the target location
@@ -1511,7 +1523,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				handler.extractVirtualDirectory(child.fullName, tempSource, sourceEncoding, isText, archiveOperationMonitor);
 			src = tempSource.getAbsolutePath() + File.separatorChar + child.name;
 		}
-		if (ArchiveHandlerManager.isVirtual(targetFolder.getAbsolutePath()) || ArchiveHandlerManager.getInstance().isArchive(targetFolder))
+		if ((ArchiveHandlerManager.isVirtual(targetFolder.getAbsolutePath()) && !isTempFile) || ArchiveHandlerManager.getInstance().isArchive(targetFolder))
 		{
 			File source = new File(src);
 			boolean returnValue = copyToArchive(source, targetFolder, newName, monitor, SystemEncodingUtil.ENCODING_UTF_8, targetEncoding, isText);

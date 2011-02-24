@@ -28,9 +28,7 @@ public class CheckersMessages extends NLS {
 	public static String StatementHasNoEffectChecker_ParameterMacro;
 	public static String SuggestedParenthesisChecker_SuggestParanthesesAroundNot;
 	public static String SuspiciousSemicolonChecker_ParamElse;
-	
 	public static String ProblemBindingChecker_Candidates;
-	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, CheckersMessages.class);

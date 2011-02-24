@@ -63,8 +63,7 @@ public class CxxAstUtilsTest extends CodanFastCxxAstTestCase {
 					IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) decl;
 					IASTDeclSpecifier spec = sdecl.getDeclSpecifier();
 					if (spec instanceof IASTNamedTypeSpecifier) {
-						IASTName tname = ((IASTNamedTypeSpecifier) spec)
-								.getName();
+						IASTName tname = ((IASTNamedTypeSpecifier) spec).getName();
 						IType typeName = (IType) tname.resolveBinding();
 						result[0] = instance.unwindTypedef(typeName);
 					}
@@ -96,9 +95,7 @@ public class CxxAstUtilsTest extends CodanFastCxxAstTestCase {
 			@Override
 			public int visit(IASTStatement stmt) {
 				if (stmt instanceof IASTExpressionStatement) {
-					boolean check = instance
-							.isInMacro(((IASTExpressionStatement) stmt)
-									.getExpression());
+					boolean check = instance.isInMacro(((IASTExpressionStatement) stmt).getExpression());
 					result[i] = check;
 					i++;
 				}

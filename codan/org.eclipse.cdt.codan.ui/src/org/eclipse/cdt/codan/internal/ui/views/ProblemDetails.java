@@ -85,8 +85,7 @@ public class ProblemDetails extends ViewPart {
 				// link file format example "file:/tmp/file.c#42", 42 is the line number
 				if (link.startsWith("file:")) { //$NON-NLS-1$
 					try {
-						CodanEditorUtility.openFileURL(link, curProvider
-								.getMarker().getResource());
+						CodanEditorUtility.openFileURL(link, curProvider.getMarker().getResource());
 					} catch (PartInitException e1) {
 						CodanUIActivator.log(e1);
 					} catch (BadLocationException e1) {
@@ -106,11 +105,9 @@ public class ProblemDetails extends ViewPart {
 		description = new Link(area, SWT.WRAP);
 		description.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		description.addSelectionListener(linkSelAdapter);
-		ISelectionService ser = (ISelectionService) getSite().getService(
-				ISelectionService.class);
+		ISelectionService ser = (ISelectionService) getSite().getService(ISelectionService.class);
 		ser.addSelectionListener(new ISelectionListener() {
-			public void selectionChanged(IWorkbenchPart part,
-					ISelection selection) {
+			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 				if (part.getSite().getId().equals(problemsViewId)) {
 					processSelection(selection);
 				}
@@ -124,12 +121,10 @@ public class ProblemDetails extends ViewPart {
 		if (selection == null || selection.isEmpty())
 			return;
 		if (selection instanceof IStructuredSelection) {
-			Object firstElement = ((IStructuredSelection) selection)
-					.getFirstElement();
+			Object firstElement = ((IStructuredSelection) selection).getFirstElement();
 			IMarker marker = null;
 			if (firstElement instanceof IAdaptable) {
-				marker = (IMarker) ((IAdaptable) firstElement)
-						.getAdapter(IMarker.class);
+				marker = (IMarker) ((IAdaptable) firstElement).getAdapter(IMarker.class);
 			} else if (firstElement instanceof IMarker) {
 				marker = (IMarker) firstElement;
 			}
@@ -142,8 +137,7 @@ public class ProblemDetails extends ViewPart {
 
 	private void queryProviders(IMarker marker) {
 		String id = marker.getAttribute(ICodanProblemMarker.ID, "id"); //$NON-NLS-1$
-		Collection<AbstractCodanProblemDetailsProvider> providers = ProblemDetailsExtensions
-				.getProviders(id);
+		Collection<AbstractCodanProblemDetailsProvider> providers = ProblemDetailsExtensions.getProviders(id);
 		for (AbstractCodanProblemDetailsProvider provider : providers) {
 			synchronized (provider) {
 				provider.setMarker(marker);
@@ -160,12 +154,10 @@ public class ProblemDetails extends ViewPart {
 	private void applyProvider(AbstractCodanProblemDetailsProvider provider) {
 		curProvider = provider;
 		setTextSafe(message, provider, provider.getStyledProblemMessage());
-		setTextSafe(description, provider,
-				provider.getStyledProblemDescription());
+		setTextSafe(description, provider, provider.getStyledProblemDescription());
 	}
 
-	protected void setTextSafe(Link control,
-			AbstractCodanProblemDetailsProvider provider, String text) {
+	protected void setTextSafe(Link control, AbstractCodanProblemDetailsProvider provider, String text) {
 		try {
 			control.setText(text);
 		} catch (Exception e) {

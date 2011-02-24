@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 public class CxxDecisionNode extends DecisionNode {
 	/**
 	 * @param node
-	 *            the node to set
+	 *        the node to set
 	 */
 	public void setNode(IASTNode node) {
 		setData(node);

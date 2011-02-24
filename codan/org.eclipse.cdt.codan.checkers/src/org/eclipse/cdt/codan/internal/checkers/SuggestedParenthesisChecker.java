@@ -35,8 +35,6 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem"; //$NON-NLS-1$
 	public static final String PARAM_NOT = "paramNot"; //$NON-NLS-1$
 
-
-
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
 		ast.accept(new ExpressionVisitor());
@@ -121,8 +119,7 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 	}
 
 	public boolean isParamNot() {
-		return (Boolean) getPreference(getProblemById(ER_ID, getFile()),
-				PARAM_NOT);
+		return (Boolean) getPreference(getProblemById(ER_ID, getFile()), PARAM_NOT);
 	}
 
 	/*
@@ -135,7 +132,6 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, PARAM_NOT,
-				CheckersMessages.SuggestedParenthesisChecker_SuggestParanthesesAroundNot, Boolean.FALSE);
+		addPreference(problem, PARAM_NOT, CheckersMessages.SuggestedParenthesisChecker_SuggestParanthesesAroundNot, Boolean.FALSE);
 	}
 }

@@ -38,8 +38,7 @@ public class CodanApplication implements IApplication {
 	private boolean all = false;
 
 	public Object start(IApplicationContext context) throws Exception {
-		String[] args = (String[]) context.getArguments().get(
-				"application.args"); //$NON-NLS-1$
+		String[] args = (String[]) context.getArguments().get("application.args"); //$NON-NLS-1$
 		if (args == null || args.length == 0) {
 			help();
 			return EXIT_OK;
@@ -51,8 +50,7 @@ public class CodanApplication implements IApplication {
 			@Override
 			protected void reportProblem(ICodanProblemMarker pm) {
 				IResource file = pm.getResource();
-				System.out.println(file.getLocation()
-						+ ":" + pm.getLocation().getLineNumber() + ": " //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println(file.getLocation() + ":" + pm.getLocation().getLineNumber() + ": " //$NON-NLS-1$ //$NON-NLS-2$
 						+ pm.createMessage());
 			}
 		});
@@ -65,15 +63,11 @@ public class CodanApplication implements IApplication {
 				log(Messages.CodanApplication_LogRunProject + project);
 				IProject wProject = root.getProject(project);
 				if (!wProject.exists()) {
-					System.err
-							.println( //
-							NLS.bind(
-									Messages.CodanApplication_Error_ProjectDoesNotExists,
-									project));
+					System.err.println( //
+							NLS.bind(Messages.CodanApplication_Error_ProjectDoesNotExists, project));
 					continue;
 				}
-				codanBuilder.processResource(wProject,
-						new NullProgressMonitor());
+				codanBuilder.processResource(wProject, new NullProgressMonitor());
 			}
 		}
 		return EXIT_OK;

@@ -15,6 +15,5 @@ package org.eclipse.cdt.codan.ui;
  *             {@link AbstractCodanCMarkerResolution}
  */
 @Deprecated
-public abstract class AbstarctCodanCMarkerResolution extends
-		AbstractCodanCMarkerResolution {
+public abstract class AbstarctCodanCMarkerResolution extends AbstractCodanCMarkerResolution {
 }

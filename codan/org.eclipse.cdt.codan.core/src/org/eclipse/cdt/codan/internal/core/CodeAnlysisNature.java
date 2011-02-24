@@ -50,8 +50,7 @@ public class CodeAnlysisNature implements IProjectNature {
 			if (commands[i].getBuilderName().equals(CodanBuilder.BUILDER_ID)) {
 				ICommand[] newCommands = new ICommand[commands.length - 1];
 				System.arraycopy(commands, 0, newCommands, 0, i);
-				System.arraycopy(commands, i + 1, newCommands, i,
-						commands.length - i - 1);
+				System.arraycopy(commands, i + 1, newCommands, i, commands.length - i - 1);
 				description.setBuildSpec(newCommands);
 				project.setDescription(description, null);
 				return;

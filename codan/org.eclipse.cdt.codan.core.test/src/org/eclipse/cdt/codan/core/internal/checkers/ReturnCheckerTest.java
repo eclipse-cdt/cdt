@@ -132,8 +132,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//		}
 	//	};
 	public void testContructor_Bug323602() {
-		IProblemPreference macro = getPreference(ReturnChecker.RET_NO_VALUE_ID,
-				ReturnChecker.PARAM_IMPLICIT);
+		IProblemPreference macro = getPreference(ReturnChecker.RET_NO_VALUE_ID, ReturnChecker.PARAM_IMPLICIT);
 		macro.setValue(Boolean.TRUE);
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();

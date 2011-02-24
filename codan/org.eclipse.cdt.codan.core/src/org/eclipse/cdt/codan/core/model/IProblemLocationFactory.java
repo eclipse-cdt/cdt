@@ -46,8 +46,7 @@ public interface IProblemLocationFactory {
 	 *        exclusive.
 	 * @return instance of IProblemLocation
 	 */
-	public IProblemLocation createProblemLocation(IFile file, int startChar,
-			int endChar);
+	public IProblemLocation createProblemLocation(IFile file, int startChar, int endChar);
 
 	/**
 	 * Create and return instance of IProblemLocation
@@ -55,13 +54,13 @@ public interface IProblemLocationFactory {
 	 * @param astFile - file where problem is found
 	 * @param startChar - start char of the problem in the file, is
 	 *        zero-relative
-	 * @param endChar - end char of the problem in the file, is zero-relative and
+	 * @param endChar - end char of the problem in the file, is zero-relative
+	 *        and
 	 *        exclusive.
 	 * 
 	 * @param line
 	 *        - start line number (for visualisation purposes)
 	 * @return instance of IProblemLocation
 	 */
-	public IProblemLocation createProblemLocation(IFile astFile,
-			int startChar, int endChar, int line);
+	public IProblemLocation createProblemLocation(IFile astFile, int startChar, int endChar, int line);
 }

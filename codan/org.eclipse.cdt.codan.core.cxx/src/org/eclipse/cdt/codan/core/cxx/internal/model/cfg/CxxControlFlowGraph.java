@@ -32,8 +32,10 @@ public class CxxControlFlowGraph extends ControlFlowGraph {
 	public static CxxControlFlowGraph build(IASTFunctionDefinition def) {
 		return new ControlFlowGraphBuilder().build(def);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -41,5 +43,4 @@ public class CxxControlFlowGraph extends ControlFlowGraph {
 		// TODO Auto-generated method stub
 		return super.toString();
 	}
-
 }

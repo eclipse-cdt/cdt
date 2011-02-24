@@ -24,8 +24,7 @@ import java.net.URL;
  */
 @SuppressWarnings("nls")
 public class TestUtils {
-	public static File saveFile(InputStream st, File testFile)
-			throws FileNotFoundException, IOException {
+	public static File saveFile(InputStream st, File testFile) throws FileNotFoundException, IOException {
 		BufferedReader r = new BufferedReader(new InputStreamReader(st));
 		String line;
 		PrintStream wr = new PrintStream(testFile);

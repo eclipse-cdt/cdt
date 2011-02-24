@@ -35,14 +35,11 @@ public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 			@Override
 			public int visit(IASTStatement statement) {
 				if (statement instanceof IASTIfStatement) {
-					IASTStatement thenStmt = ((IASTIfStatement) statement)
-							.getThenClause();
-					IASTStatement elseStmt = ((IASTIfStatement) statement)
-							.getElseClause();
+					IASTStatement thenStmt = ((IASTIfStatement) statement).getThenClause();
+					IASTStatement elseStmt = ((IASTIfStatement) statement).getElseClause();
 					if (elseStmt != null && doNotReportIfElse() == true)
 						return PROCESS_CONTINUE;
-					if (thenStmt instanceof IASTNullStatement
-							&& noMacroInvolved(thenStmt)) {
+					if (thenStmt instanceof IASTNullStatement && noMacroInvolved(thenStmt)) {
 						reportProblem(ER_ID, thenStmt, (Object) null);
 					}
 				}
@@ -57,19 +54,14 @@ public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 	}
 
 	protected boolean noMacroInvolved(IASTStatement node) {
-		IASTNodeSelector nodeSelector = node.getTranslationUnit()
-				.getNodeSelector(node.getTranslationUnit().getFilePath());
+		IASTNodeSelector nodeSelector = node.getTranslationUnit().getNodeSelector(node.getTranslationUnit().getFilePath());
 		IASTFileLocation fileLocation = node.getFileLocation();
-		IASTPreprocessorMacroExpansion macro = nodeSelector
-				.findEnclosingMacroExpansion(fileLocation.getNodeOffset() - 1,
-						1);
+		IASTPreprocessorMacroExpansion macro = nodeSelector.findEnclosingMacroExpansion(fileLocation.getNodeOffset() - 1, 1);
 		return macro == null;
 	}
 
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, PARAM_ELSE,
-				CheckersMessages.SuspiciousSemicolonChecker_ParamElse,
-				Boolean.FALSE);
+		addPreference(problem, PARAM_ELSE, CheckersMessages.SuspiciousSemicolonChecker_ParamElse, Boolean.FALSE);
 	}
 }

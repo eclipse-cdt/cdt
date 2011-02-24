@@ -19,8 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 public class CxxBranchNode extends BranchNode {
 	private IASTNode labelData;
 
-
-    CxxBranchNode(IASTNode label) {
+	CxxBranchNode(IASTNode label) {
 		super(label.getRawSignature());
 		this.labelData = label;
 	}
@@ -32,6 +31,6 @@ public class CxxBranchNode extends BranchNode {
 	 */
 	@Override
 	public String toString() {
-		return labelData.getRawSignature()+":"; //$NON-NLS-1$
+		return labelData.getRawSignature() + ":"; //$NON-NLS-1$
 	}
 }

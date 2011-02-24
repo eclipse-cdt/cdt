@@ -37,11 +37,9 @@ public final class JFaceTextUtils {
 	 * @param document
 	 *        the document to use
 	 */
-	public static void markLocationForInsert(IASTFileLocation location,
-			ITextViewer viewer) {
+	public static void markLocationForInsert(IASTFileLocation location, ITextViewer viewer) {
 		IDocument document = viewer.getDocument();
-		LinkedPosition pos = new LinkedPosition(document,
-				location.getNodeOffset(), location.getNodeLength());
+		LinkedPosition pos = new LinkedPosition(document, location.getNodeOffset(), location.getNodeLength());
 		LinkedModeModel model = new LinkedModeModel();
 		LinkedPositionGroup group = new LinkedPositionGroup();
 		try {

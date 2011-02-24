@@ -19,8 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 /**
  * Abstract class for checkers that do all the work on function definition level
  */
-public abstract class AbstractAstFunctionChecker extends
-		AbstractIndexAstChecker implements ICheckerWithPreferences {
+public abstract class AbstractAstFunctionChecker extends AbstractIndexAstChecker implements ICheckerWithPreferences {
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
 		ast.accept(new ASTVisitor() {
@@ -30,7 +29,7 @@ public abstract class AbstractAstFunctionChecker extends
 
 			public int visit(IASTDeclaration element) {
 				if (element instanceof IASTFunctionDefinition) {
-					processFunction((IASTFunctionDefinition) element);					
+					processFunction((IASTFunctionDefinition) element);
 				}
 				// visit all nodes to support inner functions within class definitions 
 				// and gcc extensions
@@ -43,9 +42,7 @@ public abstract class AbstractAstFunctionChecker extends
 	 * Process function.
 	 * 
 	 * @param func
-	 *            - ast node representing function definition
+	 *        - ast node representing function definition
 	 */
 	protected abstract void processFunction(IASTFunctionDefinition func);
-
-
 }

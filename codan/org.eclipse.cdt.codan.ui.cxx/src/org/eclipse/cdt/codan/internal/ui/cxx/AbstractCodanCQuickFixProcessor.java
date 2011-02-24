@@ -25,7 +25,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
 /**
- * Abstract class IQuickFixProcessor - not used right now because it does not work
+ * Abstract class IQuickFixProcessor - not used right now because it does not
+ * work
  * properly for non hardcoded errors
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
@@ -53,22 +54,21 @@ public abstract class AbstractCodanCQuickFixProcessor implements IQuickFixProces
 	 * .cdt.ui.text.IInvocationContext,
 	 * org.eclipse.cdt.ui.text.IProblemLocation[])
 	 */
-	public ICCompletionProposal[] getCorrections(IInvocationContext context,
-			IProblemLocation[] locations) throws CoreException {
-		if (locations==null || locations.length==0) return null;
+	public ICCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations) throws CoreException {
+		if (locations == null || locations.length == 0)
+			return null;
 		IProblemLocation loc = locations[0];
-		IPath location= context.getTranslationUnit().getLocation();
+		IPath location = context.getTranslationUnit().getLocation();
 		IFile astFile = ResourceLookup.selectFileForLocation(location, context.getTranslationUnit().getCProject().getProject());
 		IMarker[] markers = astFile.findMarkers(loc.getMarkerType(), false, 1);
 		for (int i = 0; i < markers.length; i++) {
 			IMarker m = markers[i];
 			int start = m.getAttribute(IMarker.CHAR_START, -1);
-			if (start==loc.getOffset()) {
-				String id = m.getAttribute(ICodanProblemMarker.ID,""); //$NON-NLS-1$
+			if (start == loc.getOffset()) {
+				String id = m.getAttribute(ICodanProblemMarker.ID, ""); //$NON-NLS-1$
 				return getCorrections(context, id, m);
 			}
 		}
-		
 		return null;
 	}
 
@@ -87,12 +87,12 @@ public abstract class AbstractCodanCQuickFixProcessor implements IQuickFixProces
 		}
 		return position;
 	}
+
 	/**
 	 * @param context
 	 * @param loc
 	 * @param marker
 	 * @return
 	 */
-	public abstract ICCompletionProposal[] getCorrections(IInvocationContext context,
-			String problemId, IMarker marker);
+	public abstract ICCompletionProposal[] getCorrections(IInvocationContext context, String problemId, IMarker marker);
 }

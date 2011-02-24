@@ -8,7 +8,6 @@
  * Contributors:
  *    Meisam Fathi  - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.codan.internal.checkers.fs;
 
 import java.util.Collection;
@@ -19,16 +18,15 @@ import java.util.regex.Pattern;
 
 /**
  * This class parses the format string argument and extracts all %s tokens.
+ * 
  * @version 0.2, June 04, 2010
  * @author Meisam Fathi
  */
 public class CFormatStringParser {
-
 	/**
 	 * At least one digit should be present
 	 */
 	private static final String DIGIT_PATTERN = "[0-9][0-9]*";//$NON-NLS-1$
-
 	/**
 	 * The general format for a <strong>format string</strong> argument is
 	 * "%[*][size][modifier]type", in which type is one of the following items:
@@ -46,7 +44,6 @@ public class CFormatStringParser {
 	 *      for more information.
 	 */
 	private static final String STRING_FORMAT_PATTERN = "%[\\*]?[0-9]*[hlL]?[cdeEfgGsuxX]";//$NON-NLS-1$
-
 	/**
 	 * If there is an asterisk in the format argument, then it cannot be
 	 * vulnerable. If there is a [modifier] (i.e. hlL), then compiler warns.
@@ -57,29 +54,24 @@ public class CFormatStringParser {
 	 * @see #FORMAT_STRING_PATTERN
 	 */
 	private static final String VULNERABLE_PATTERN = "%[0-9]*s";//$NON-NLS-1$
-
 	/**
 	 * The pattern which represents a string format.
 	 */
 	private final Pattern argumentPattern;
-
 	/**
 	 * The matcher which matches string format arguments.
 	 */
 	private final Matcher argumentMatcher;
-
 	/**
 	 * The pattern which may lead to vulnerability in <code>scanf</code>
 	 * function calls.
 	 */
 	private final Pattern vulnerablePattern;
-
 	/**
 	 * I guess, this must be a concurrent Collection, but I'm not sure. --
 	 * Meisam
 	 */
 	private final Collection<VulnerableFormatStringArgument> vulnerableArguments;
-
 	public final static int ARGUMENT_SIZE_NOT_SPECIFIED = -1;
 
 	/**
@@ -88,10 +80,8 @@ public class CFormatStringParser {
 	 * @param argument
 	 */
 	protected CFormatStringParser(final String argument) {
-
 		this.argumentPattern = Pattern.compile(STRING_FORMAT_PATTERN);
 		this.argumentMatcher = this.argumentPattern.matcher(argument);
-
 		this.vulnerablePattern = Pattern.compile(VULNERABLE_PATTERN);
 		this.vulnerableArguments = new ConcurrentLinkedQueue<VulnerableFormatStringArgument>();
 		extractVulnerableArguments();
@@ -120,22 +110,19 @@ public class CFormatStringParser {
 		 * I'm not sure if clearing the collection is necessary. -- Meisam Fathi
 		 */
 		this.vulnerableArguments.clear();
-
 		boolean hasMore = this.argumentMatcher.find();
 		int indexOfCurrentArgument = 0;
 		while (hasMore) {
 			final String formatString = this.argumentMatcher.group();
 			final String matchedArgument = formatString;
-			final Matcher vulnerabilityMatcher = this.vulnerablePattern
-					.matcher(matchedArgument);
+			final Matcher vulnerabilityMatcher = this.vulnerablePattern.matcher(matchedArgument);
 			final boolean isVulnerable = vulnerabilityMatcher.find();
 			if (isVulnerable) {
 				final int argumentSize = parseArgumentSize(formatString);
-				final VulnerableFormatStringArgument vulnerableArgument = new VulnerableFormatStringArgument(
-						indexOfCurrentArgument, formatString, argumentSize);
+				final VulnerableFormatStringArgument vulnerableArgument = new VulnerableFormatStringArgument(indexOfCurrentArgument,
+						formatString, argumentSize);
 				this.vulnerableArguments.add(vulnerableArgument);
 			}
-
 			hasMore = this.argumentMatcher.find();
 			indexOfCurrentArgument++;
 		}
@@ -144,7 +131,8 @@ public class CFormatStringParser {
 	/**
 	 * This method takes a string as input. The format of the input string is
 	 * %[0-9]*s. If there is no digit present in the given string it returns
-	 * <code>ARGUMENT_SIZE_NOT_SPECIFIED</code>, otherwise it returns the number specified after "%". For example:
+	 * <code>ARGUMENT_SIZE_NOT_SPECIFIED</code>, otherwise it returns the number
+	 * specified after "%". For example:
 	 * <ul>
 	 * <li>%s ==> -1</li>
 	 * <li>%123s ==> 123</li>
@@ -154,19 +142,17 @@ public class CFormatStringParser {
 	 * </ul>
 	 * 
 	 * @param formatString
-	 *            The given format string.
-	 * @return Either ARGUMENT_SIZE_NOT_SPECIFIED or the number embedded in the input string.
+	 *        The given format string.
+	 * @return Either ARGUMENT_SIZE_NOT_SPECIFIED or the number embedded in the
+	 *         input string.
 	 */
 	private int parseArgumentSize(final String formatString) {
-
 		// The minimum possible size for a string of format %[0-9]*s
 		final int MINIMUM_POSSIBLE_SIZE = 2;
-
 		int argumentSize = ARGUMENT_SIZE_NOT_SPECIFIED;
 		if (formatString.length() > MINIMUM_POSSIBLE_SIZE) {
 			final Pattern numberPattern = Pattern.compile(DIGIT_PATTERN);
 			final Matcher numberMatcher = numberPattern.matcher(formatString);
-
 			if (numberMatcher.find()) {
 				final String sizeModifierString = numberMatcher.group();
 				argumentSize = Integer.parseInt(sizeModifierString);

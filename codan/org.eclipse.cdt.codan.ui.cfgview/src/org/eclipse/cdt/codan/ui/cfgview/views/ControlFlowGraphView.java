@@ -96,9 +96,10 @@ public class ControlFlowGraphView extends ViewPart {
 	private Action action1;
 	private Action doubleClickAction;
 
-	class DeadNodes extends ArrayList<IBasicBlock> {}
-	class ViewContentProvider implements IStructuredContentProvider,
-			ITreeContentProvider {
+	class DeadNodes extends ArrayList<IBasicBlock> {
+	}
+
+	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
 
@@ -117,32 +118,29 @@ public class ControlFlowGraphView extends ViewPart {
 			if (parent instanceof Collection) {
 				return ((Collection) parent).toArray();
 			} else if (parent instanceof IControlFlowGraph) {
-				Collection<IBasicBlock> blocks = getFlat(
-						((IControlFlowGraph) parent).getStartNode(),
-						new ArrayList<IBasicBlock>());
+				Collection<IBasicBlock> blocks = getFlat(((IControlFlowGraph) parent).getStartNode(), new ArrayList<IBasicBlock>());
 				DeadNodes dead = new DeadNodes();
 				Iterator<IBasicBlock> iter = ((IControlFlowGraph) parent).getUnconnectedNodeIterator();
 				for (; iter.hasNext();) {
 					IBasicBlock iBasicBlock = (IBasicBlock) iter.next();
-				    dead.add(iBasicBlock);
+					dead.add(iBasicBlock);
 				}
 				ArrayList all = new ArrayList();
 				all.addAll(blocks);
-				if (dead.size()>0) all.add(dead);
+				if (dead.size() > 0)
+					all.add(dead);
 				return all.toArray();
 			} else if (parent instanceof IDecisionNode) {
 				ArrayList blocks = new ArrayList();
-				IBasicBlock[] outgoingNodes = ((IDecisionNode) parent)
-						.getOutgoingNodes();
+				IBasicBlock[] outgoingNodes = ((IDecisionNode) parent).getOutgoingNodes();
 				for (int i = 0; i < outgoingNodes.length; i++) {
-					IBasicBlock arc= outgoingNodes[i];
+					IBasicBlock arc = outgoingNodes[i];
 					blocks.add(arc);
 				}
 				blocks.add(((IDecisionNode) parent).getMergeNode());
 				return blocks.toArray();
 			} else if (parent instanceof IBranchNode) {
-				Collection<IBasicBlock> blocks = getFlat(((IBranchNode) parent)
-						.getOutgoing(), new ArrayList<IBasicBlock>());
+				Collection<IBasicBlock> blocks = getFlat(((IBranchNode) parent).getOutgoing(), new ArrayList<IBasicBlock>());
 				return blocks.toArray();
 			}
 			return new Object[0];
@@ -157,16 +155,14 @@ public class ControlFlowGraphView extends ViewPart {
 		 * @param startNode
 		 * @return
 		 */
-		public Collection<IBasicBlock> getFlat(IBasicBlock node,
-				Collection<IBasicBlock> list) {
+		public Collection<IBasicBlock> getFlat(IBasicBlock node, Collection<IBasicBlock> list) {
 			list.add(node);
 			if (node instanceof IJumpNode)
 				return list;
 			if (node instanceof ISingleOutgoing) {
 				getFlat(((ISingleOutgoing) node).getOutgoing(), list);
 			} else if (node instanceof IDecisionNode) {
-				getFlat(((IDecisionNode) node).getMergeNode().getOutgoing(),
-						list);
+				getFlat(((IDecisionNode) node).getMergeNode().getOutgoing(), list);
 			}
 			return list;
 		}
@@ -181,9 +177,9 @@ public class ControlFlowGraphView extends ViewPart {
 				strdata = ((AbstractBasicBlock) obj).toStringData();
 			}
 			if (obj instanceof IConnectorNode) {
-				strdata = blockHexLabel(obj) ;
+				strdata = blockHexLabel(obj);
 			} else if (obj instanceof IJumpNode) {
-				strdata = "jump to "+blockHexLabel(((IJumpNode) obj).getJumpNode());
+				strdata = "jump to " + blockHexLabel(((IJumpNode) obj).getJumpNode());
 			}
 			return obj.getClass().getSimpleName() + ": " + strdata;
 		}
@@ -198,8 +194,7 @@ public class ControlFlowGraphView extends ViewPart {
 
 		public Image getImage(Object obj) {
 			String imageKey = "task.png";
-			if (obj instanceof IDecisionNode
-					|| obj instanceof IControlFlowGraph)
+			if (obj instanceof IDecisionNode || obj instanceof IControlFlowGraph)
 				imageKey = "decision.png";
 			else if (obj instanceof IExitNode)
 				imageKey = "exit.png";
@@ -211,8 +206,7 @@ public class ControlFlowGraphView extends ViewPart {
 				imageKey = "labeled.png";
 			else if (obj instanceof IConnectorNode)
 				imageKey = "connector.png";
-			return ControlFlowGraphPlugin.getDefault().getImage(
-					"icons/" + imageKey);
+			return ControlFlowGraphPlugin.getDefault().getImage("icons/" + imageKey);
 		}
 	}
 
@@ -279,15 +273,11 @@ public class ControlFlowGraphView extends ViewPart {
 	private void makeActions() {
 		action1 = new Action() {
 			public void run() {
-				IEditorPart e = PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getActivePage()
-						.getActiveEditor();
-				ITranslationUnit tu = (ITranslationUnit) CDTUITools
-						.getEditorInputCElement(e.getEditorInput());
+				IEditorPart e = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+				ITranslationUnit tu = (ITranslationUnit) CDTUITools.getEditorInputCElement(e.getEditorInput());
 				Job job = new SharedASTJob("Job Name", tu) {
 					@Override
-					public IStatus runOnAST(ILanguage lang,
-							IASTTranslationUnit ast) throws CoreException {
+					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 						processAst(ast);
 						return Status.OK_STATUS;
 					}
@@ -297,13 +287,11 @@ public class ControlFlowGraphView extends ViewPart {
 		};
 		action1.setText("Synchronize");
 		action1.setToolTipText("Synchronize");
-		action1.setImageDescriptor(ControlFlowGraphPlugin.getDefault()
-				.getImageDescriptor("icons/refresh_view.gif"));
+		action1.setImageDescriptor(ControlFlowGraphPlugin.getDefault().getImageDescriptor("icons/refresh_view.gif"));
 		doubleClickAction = new Action() {
 			public void run() {
 				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection)
-						.getFirstElement();
+				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				showMessage("Double-click detected on " + obj.toString());
 			}
 		};
@@ -318,8 +306,7 @@ public class ControlFlowGraphView extends ViewPart {
 	}
 
 	private void showMessage(String message) {
-		MessageDialog.openInformation(viewer.getControl().getShell(),
-				"Control Flow Graph", message);
+		MessageDialog.openInformation(viewer.getControl().getShell(), "Control Flow Graph", message);
 	}
 
 	protected void processAst(IASTTranslationUnit ast) {
@@ -331,8 +318,7 @@ public class ControlFlowGraphView extends ViewPart {
 
 			public int visit(IASTDeclaration decl) {
 				if (decl instanceof IASTFunctionDefinition) {
-					CxxControlFlowGraph graph = new ControlFlowGraphBuilder()
-							.build((IASTFunctionDefinition) decl);
+					CxxControlFlowGraph graph = new ControlFlowGraphBuilder().build((IASTFunctionDefinition) decl);
 					functions.add(graph);
 					return PROCESS_SKIP;
 				}
@@ -367,11 +353,9 @@ public class ControlFlowGraphView extends ViewPart {
 			this.aPart = part;
 		}
 
-		protected boolean open(String filename) throws PartInitException,
-				CModelException {
+		protected boolean open(String filename) throws PartInitException, CModelException {
 			IPath path = new Path(filename);
-			IFile f = ResourcesPlugin.getWorkspace().getRoot()
-					.getFileForLocation(path);
+			IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
 			if (f != null) {
 				EditorUtility.openInEditor(f);
 				return true;
@@ -415,13 +399,10 @@ public class ControlFlowGraphView extends ViewPart {
 						// }
 					}
 					if (aPart instanceof AbstractTextEditor) {
-						((AbstractTextEditor) aPart).selectAndReveal(loc
-								.getNodeOffset(), loc.getNodeLength());
+						((AbstractTextEditor) aPart).selectAndReveal(loc.getNodeOffset(), loc.getNodeLength());
 					} else
-						System.out.println(A_PART_INSTANCEOF
-								+ aPart.getClass().getName());
-					aPart.getSite().getPage().activate(
-							aPart.getSite().getPage().findView(ID));
+						System.out.println(A_PART_INSTANCEOF + aPart.getClass().getName());
+					aPart.getSite().getPage().activate(aPart.getSite().getPage().findView(ID));
 				}
 			}
 		}

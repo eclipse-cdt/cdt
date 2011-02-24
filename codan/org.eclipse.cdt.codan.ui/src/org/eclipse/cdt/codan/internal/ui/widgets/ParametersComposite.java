@@ -66,23 +66,13 @@ public class ParametersComposite extends Composite {
 			protected void createFieldEditors() {
 				noDefaultAndApplyButton();
 				((GridLayout) getFieldEditorParent().getLayout()).numColumns = 2;
-				addField(new BooleanFieldEditor(PREF_ENABLED,
-						CodanUIMessages.ParametersComposite_IsEnabled,
-						getFieldEditorParent()));
-				String[][] entries = {
-						{ CodanSeverity.Error.toString(),
-								CodanSeverity.Error.toString() }, //
-						{ CodanSeverity.Warning.toString(),
-								CodanSeverity.Warning.toString() }, //
-						{ CodanSeverity.Info.toString(),
-								CodanSeverity.Info.toString() }, //
+				addField(new BooleanFieldEditor(PREF_ENABLED, CodanUIMessages.ParametersComposite_IsEnabled, getFieldEditorParent()));
+				String[][] entries = { { CodanSeverity.Error.toString(), CodanSeverity.Error.toString() }, //
+						{ CodanSeverity.Warning.toString(), CodanSeverity.Warning.toString() }, //
+						{ CodanSeverity.Info.toString(), CodanSeverity.Info.toString() }, //
 				};
-				addField(new ComboFieldEditor(PREF_SEVERITY,
-						CodanUIMessages.ParametersComposite_Severity, entries,
-						getFieldEditorParent()));
-				addField(new StringFieldEditor(PREF_MESSAGE,
-						CodanUIMessages.ParametersComposite_MessagePattern,
-						getFieldEditorParent()));
+				addField(new ComboFieldEditor(PREF_SEVERITY, CodanUIMessages.ParametersComposite_Severity, entries, getFieldEditorParent()));
+				addField(new StringFieldEditor(PREF_MESSAGE, CodanUIMessages.ParametersComposite_MessagePattern, getFieldEditorParent()));
 				IProblemPreference pref = problem.getPreference();
 				createFieldEditorsForParameters(pref);
 			}
@@ -95,8 +85,7 @@ public class ParametersComposite extends Composite {
 			/**
 			 * @param info
 			 */
-			private void createFieldEditorsForParameters(
-					final IProblemPreference info) {
+			private void createFieldEditorsForParameters(final IProblemPreference info) {
 				if (info == null)
 					return;
 				if (info.getKey() == FileScopeProblemPreference.KEY)
@@ -105,27 +94,21 @@ public class ParametersComposite extends Composite {
 					return; // skip the launch
 				switch (info.getType()) {
 					case TYPE_STRING: {
-						StringFieldEditor fe = new StringFieldEditor(
-								info.getQualifiedKey(), info.getLabel(),
-								getFieldEditorParent());
+						StringFieldEditor fe = new StringFieldEditor(info.getQualifiedKey(), info.getLabel(), getFieldEditorParent());
 						addField(fe);
 						break;
 					}
 					case TYPE_BOOLEAN: {
-						BooleanFieldEditor fe = new BooleanFieldEditor(
-								info.getQualifiedKey(), info.getLabel(),
-								getFieldEditorParent());
+						BooleanFieldEditor fe = new BooleanFieldEditor(info.getQualifiedKey(), info.getLabel(), getFieldEditorParent());
 						addField(fe);
 						break;
 					}
 					case TYPE_LIST:
-						ListEditor le = new ListEditor(info.getQualifiedKey(),
-								info.getLabel(), getFieldEditorParent()) {
+						ListEditor le = new ListEditor(info.getQualifiedKey(), info.getLabel(), getFieldEditorParent()) {
 							@Override
 							protected String[] parseString(String stringList) {
 								ListProblemPreference list = (ListProblemPreference) info;
-								IProblemPreference[] childDescriptors = list
-										.getChildDescriptors();
+								IProblemPreference[] childDescriptors = list.getChildDescriptors();
 								if (childDescriptors.length == 0)
 									return new String[0];
 								String res[] = new String[childDescriptors.length];
@@ -139,12 +122,9 @@ public class ParametersComposite extends Composite {
 							@Override
 							protected String getNewInputObject() {
 								ListProblemPreference list = (ListProblemPreference) info;
-								String label = list.getChildDescriptor()
-										.getLabel();
-								InputDialog dialog = new InputDialog(
-										getShell(),
-										CodanUIMessages.ParametersComposite_NewValue,
-										label, "", null); //$NON-NLS-1$
+								String label = list.getChildDescriptor().getLabel();
+								InputDialog dialog = new InputDialog(getShell(), CodanUIMessages.ParametersComposite_NewValue, label,
+										"", null); //$NON-NLS-1$
 								if (dialog.open() == Window.OK) {
 									return dialog.getValue();
 								}
@@ -153,8 +133,7 @@ public class ParametersComposite extends Composite {
 
 							@Override
 							protected String createList(String[] items) {
-								ListProblemPreference list = (ListProblemPreference) info
-										.clone();
+								ListProblemPreference list = (ListProblemPreference) info.clone();
 								list.clear();
 								for (int i = 0; i < items.length; i++) {
 									String val = items[i];
@@ -166,30 +145,24 @@ public class ParametersComposite extends Composite {
 						addField(le);
 						break;
 					case TYPE_MAP:
-						IProblemPreference[] childrenDescriptor = ((IProblemPreferenceCompositeDescriptor) info)
-								.getChildDescriptors();
+						IProblemPreference[] childrenDescriptor = ((IProblemPreferenceCompositeDescriptor) info).getChildDescriptors();
 						for (int i = 0; i < childrenDescriptor.length; i++) {
 							IProblemPreference desc = childrenDescriptor[i];
 							createFieldEditorsForParameters(desc);
 						}
 						break;
 					case TYPE_CUSTOM: {
-						StringFieldEditor fe = new StringFieldEditor(
-								info.getQualifiedKey(), info.getLabel(),
-								getFieldEditorParent());
+						StringFieldEditor fe = new StringFieldEditor(info.getQualifiedKey(), info.getLabel(), getFieldEditorParent());
 						addField(fe);
 						break;
 					}
 					case TYPE_FILE: {
-						FileFieldEditor fe = new FileFieldEditor(
-								info.getQualifiedKey(), info.getLabel(),
-								getFieldEditorParent());
+						FileFieldEditor fe = new FileFieldEditor(info.getQualifiedKey(), info.getLabel(), getFieldEditorParent());
 						addField(fe);
 						break;
 					}
 					default:
-						throw new UnsupportedOperationException(info.getType()
-								.toString());
+						throw new UnsupportedOperationException(info.getType().toString());
 				}
 			}
 		};
@@ -219,8 +192,7 @@ public class ParametersComposite extends Composite {
 		page.performOk();
 		savePrefStore(problem.getPreference());
 		problem.setEnabled(prefStore.getBoolean(PREF_ENABLED));
-		problem.setSeverity(CodanSeverity.valueOf(prefStore
-				.getString(PREF_SEVERITY)));
+		problem.setSeverity(CodanSeverity.valueOf(prefStore.getString(PREF_SEVERITY)));
 		problem.setMessagePattern(prefStore.getString(PREF_MESSAGE));
 	}
 
@@ -248,16 +220,14 @@ public class ParametersComposite extends Composite {
 				desc.importValue(prefStore.getString(key));
 				break;
 			case TYPE_MAP:
-				IProblemPreference[] childrenDescriptor = ((IProblemPreferenceCompositeDescriptor) desc)
-						.getChildDescriptors();
+				IProblemPreference[] childrenDescriptor = ((IProblemPreferenceCompositeDescriptor) desc).getChildDescriptors();
 				for (int i = 0; i < childrenDescriptor.length; i++) {
 					IProblemPreference chi = childrenDescriptor[i];
 					savePrefStore(chi);
 				}
 				break;
 			default:
-				throw new UnsupportedOperationException(desc.getType()
-						.toString());
+				throw new UnsupportedOperationException(desc.getType().toString());
 		}
 	}
 
@@ -285,16 +255,14 @@ public class ParametersComposite extends Composite {
 				prefStore.setValue(key, desc.exportValue());
 				break;
 			case TYPE_MAP:
-				IProblemPreference[] childrenDescriptor = ((IProblemPreferenceCompositeDescriptor) desc)
-						.getChildDescriptors();
+				IProblemPreference[] childrenDescriptor = ((IProblemPreferenceCompositeDescriptor) desc).getChildDescriptors();
 				for (int i = 0; i < childrenDescriptor.length; i++) {
 					IProblemPreference chi = childrenDescriptor[i];
 					initPrefStore(chi);
 				}
 				break;
 			default:
-				throw new UnsupportedOperationException(desc.getType()
-						.toString());
+				throw new UnsupportedOperationException(desc.getType().toString());
 		}
 	}
 

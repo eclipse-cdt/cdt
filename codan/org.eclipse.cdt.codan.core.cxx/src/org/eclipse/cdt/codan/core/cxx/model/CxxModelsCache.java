@@ -33,7 +33,6 @@ public class CxxModelsCache {
 	private ITranslationUnit tu;
 	private IIndex index;
 	private WeakHashMap<IASTFunctionDefinition, IControlFlowGraph> cfgmap = new WeakHashMap<IASTFunctionDefinition, IControlFlowGraph>(0);
-
 	private static CxxModelsCache instance = new CxxModelsCache();
 
 	public static CxxModelsCache getInstance() {
@@ -42,20 +41,20 @@ public class CxxModelsCache {
 
 	public synchronized IControlFlowGraph getControlFlowGraph(IASTFunctionDefinition func) {
 		IControlFlowGraph cfg = cfgmap.get(func);
-		if (cfg!=null) return cfg;
+		if (cfg != null)
+			return cfg;
 		cfg = CxxControlFlowGraph.build(func);
-		if (cfgmap.size()>20) { // if too many function better drop the cash XXX should be LRU
+		if (cfgmap.size() > 20) { // if too many function better drop the cash XXX should be LRU
 			cfgmap.clear();
 		}
 		cfgmap.put(func, cfg);
 		return cfg;
 	}
-	public synchronized IASTTranslationUnit getAst(IFile file)
-			throws CoreException, InterruptedException {
+
+	public synchronized IASTTranslationUnit getAst(IFile file) throws CoreException, InterruptedException {
 		if (file.equals(this.file)) {
 			return ast;
 		}
-
 		// create translation unit and access index
 		ICElement celement = CoreModel.getDefault().create(file);
 		if (!(celement instanceof ITranslationUnit))
@@ -88,8 +87,7 @@ public class CxxModelsCache {
 		index = null;
 	}
 
-	public synchronized IIndex getIndex(IFile file)
-			throws CoreException, InterruptedException {
+	public synchronized IIndex getIndex(IFile file) throws CoreException, InterruptedException {
 		if (file.equals(this.file)) {
 			return index;
 		}

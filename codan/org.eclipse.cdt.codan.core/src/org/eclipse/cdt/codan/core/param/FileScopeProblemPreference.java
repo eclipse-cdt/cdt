@@ -148,22 +148,19 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 		exclusion = exc.toArray(new IPath[exc.size()]);
 	}
 
-	private void checkChar(StreamTokenizer tokenizer, char c)
-			throws IOException {
+	private void checkChar(StreamTokenizer tokenizer, char c) throws IOException {
 		tokenizer.nextToken();
 		if (tokenizer.ttype != c)
 			throw new IllegalArgumentException("Expected " + c); //$NON-NLS-1$
 	}
 
-	private void checkKeyword(StreamTokenizer tokenizer, String keyword)
-			throws IOException {
+	private void checkKeyword(StreamTokenizer tokenizer, String keyword) throws IOException {
 		tokenizer.nextToken();
 		if (tokenizer.sval == null || !tokenizer.sval.equals(keyword))
 			throw new IllegalArgumentException("Expected " + keyword); //$NON-NLS-1$
 	}
 
-	protected List<IPath> importPathList(StreamTokenizer tokenizer,
-			String keyword) throws IOException {
+	protected List<IPath> importPathList(StreamTokenizer tokenizer, String keyword) throws IOException {
 		checkKeyword(tokenizer, keyword);
 		checkChar(tokenizer, '=');
 		checkChar(tokenizer, '>');
@@ -217,8 +214,7 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 	 */
 	@Override
 	public Object clone() {
-		FileScopeProblemPreference scope = (FileScopeProblemPreference) super
-				.clone();
+		FileScopeProblemPreference scope = (FileScopeProblemPreference) super.clone();
 		scope.setValue(this);
 		return scope;
 	}

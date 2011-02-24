@@ -29,37 +29,37 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * e.g:
  * <p>
  * <code>
- * int f() {                                                               <br>
- *     char inputstr[5];                                                   <br>
- *     scanf("%s", inputstr); // detects vulnerability here                <br>
- *     return 0;                                                           <br>
+ * int f() { <br>
+ * char inputstr[5]; <br>
+ * scanf("%s", inputstr); // detects vulnerability here <br>
+ * return 0; <br>
  * }
  * </code>
  * <p>
  * e.g:
  * <p>
  * <code>
- * int f(void) {                                                           <br>
- *     char inputstr[5];                                                   <br>
- *     int inputval;                                                       <br>
- *     int i = 5;                                                          <br>
- *     scanf("%d %9s", inputval, inputstr); // detects vulnerability here  <br>
- *     printf("%d" ,i);                                                    <br>
- *     return 0;                                                           <br>
- * }                                                                       <br>
+ * int f(void) { <br>
+ * char inputstr[5]; <br>
+ * int inputval; <br>
+ * int i = 5; <br>
+ * scanf("%d %9s", inputval, inputstr); // detects vulnerability here <br>
+ * printf("%d" ,i); <br>
+ * return 0; <br>
+ * } <br>
  * </code> <br>
  * <p>
  * e.g:
  * <p>
  * <code>
- * int main(void) {                                                        <br>
- * char inputstr[5];                                                       <br>
- * int inputval;                                                           <br>
- * int i = 5;                                                              <br>
- * scanf("%4s %i", inputstr, inputval); // no vulnerability here           <br>
- * printf("%d" ,i);                                                        <br>
- * return 0;                                                               <br>
- * }                                                                       <br>
+ * int main(void) { <br>
+ * char inputstr[5]; <br>
+ * int inputval; <br>
+ * int i = 5; <br>
+ * scanf("%4s %i", inputstr, inputval); // no vulnerability here <br>
+ * printf("%d" ,i); <br>
+ * return 0; <br>
+ * } <br>
  * </code>
  * 
  * @version 0.3 July 29, 2010
@@ -68,7 +68,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
  */
 public class ScanfFormatStringSecurityChecker extends AbstractIndexAstChecker {
 	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.ScanfFormatStringSecurityProblem"; //$NON-NLS-1$
-
 	private final static VulnerableFunction[] VULNERABLE_FUNCTIONS = {//
 	// list of all format string vulnerable functions
 			new VulnerableFunction("scanf", 0), //$NON-NLS-1$
@@ -85,7 +84,6 @@ public class ScanfFormatStringSecurityChecker extends AbstractIndexAstChecker {
 
 	private static final class VulnerableFunction {
 		private final String name;
-
 		private final int formatStringArgumentIndex;
 
 		private VulnerableFunction(String name, int formatStringArgumentIndex) {
@@ -106,7 +104,6 @@ public class ScanfFormatStringSecurityChecker extends AbstractIndexAstChecker {
 		public int getFormatStringArgumentIndex() {
 			return formatStringArgumentIndex;
 		}
-
 	}
 
 	private class FormatStringVisitor extends ASTVisitor {
@@ -121,22 +118,15 @@ public class ScanfFormatStringSecurityChecker extends AbstractIndexAstChecker {
 				if (vulnerableFunction == null) {
 					return PROCESS_CONTINUE;
 				}
-				IASTInitializerClause[] arguments = callExpression
-						.getArguments();
-				int stringArgumentIndex = vulnerableFunction
-						.getFormatStringArgumentIndex();
-
-				detectFaulyArguments(callExpression, arguments,
-						stringArgumentIndex);
-
+				IASTInitializerClause[] arguments = callExpression.getArguments();
+				int stringArgumentIndex = vulnerableFunction.getFormatStringArgumentIndex();
+				detectFaulyArguments(callExpression, arguments, stringArgumentIndex);
 			}
 			return PROCESS_CONTINUE;
 		}
 
-		private VulnerableFunction getVulnerableFunctionForExpression(
-				IASTFunctionCallExpression callExpression) {
-			String rawSignature = callExpression.getFunctionNameExpression()
-					.getRawSignature();
+		private VulnerableFunction getVulnerableFunctionForExpression(IASTFunctionCallExpression callExpression) {
+			String rawSignature = callExpression.getFunctionNameExpression().getRawSignature();
 			for (int i = 0; i < VULNERABLE_FUNCTIONS.length; i++) {
 				if (VULNERABLE_FUNCTIONS[i].getName().equals(rawSignature)) {
 					return VULNERABLE_FUNCTIONS[i];
@@ -145,57 +135,41 @@ public class ScanfFormatStringSecurityChecker extends AbstractIndexAstChecker {
 			return null;
 		}
 
-		private void detectFaulyArguments(
-				IASTFunctionCallExpression callExpression,
-				IASTInitializerClause[] arguments, int formatStringArgumentIndex) {
+		private void detectFaulyArguments(IASTFunctionCallExpression callExpression, IASTInitializerClause[] arguments,
+				int formatStringArgumentIndex) {
 			final IASTInitializerClause formatArgument = arguments[formatStringArgumentIndex];
 			final String formatArgumentValue = formatArgument.getRawSignature();
-			final CFormatStringParser formatStringParser = new CFormatStringParser(
-					formatArgumentValue);
-
+			final CFormatStringParser formatStringParser = new CFormatStringParser(formatArgumentValue);
 			if (!formatStringParser.isVulnerable()) {
 				return;
 			}
-
 			// match arguments;
 			final Iterator<VulnerableFormatStringArgument> vulnerableArgumentsIterator = formatStringParser
 					.getVulnerableArgumentsIterator();
-
 			while (vulnerableArgumentsIterator.hasNext()) {
-				final VulnerableFormatStringArgument currentArgument = vulnerableArgumentsIterator
-						.next();
+				final VulnerableFormatStringArgument currentArgument = vulnerableArgumentsIterator.next();
 				final int argumentIndex = currentArgument.getArgumentIndex();
 				final int argumentSize = currentArgument.getArgumentSize();
-
 				if (argumentSize == CFormatStringParser.ARGUMENT_SIZE_NOT_SPECIFIED) {
-					reportProblem(ER_ID, callExpression,
-							callExpression.getRawSignature());
+					reportProblem(ER_ID, callExpression, callExpression.getRawSignature());
 				}
-
 				// else there some size is specified, so it should be less than
 				// or equal
 				// the size of the string variable.
-				int suspectArgumentIndex = 1 + formatStringArgumentIndex
-						+ argumentIndex;
+				int suspectArgumentIndex = 1 + formatStringArgumentIndex + argumentIndex;
 				IASTInitializerClause suspectArgument = arguments[suspectArgumentIndex];
-
 				if (suspectArgument instanceof IASTIdExpression) {
 					final IASTIdExpression idExpression = (IASTIdExpression) suspectArgument;
-
 					IType expressionType = idExpression.getExpressionType();
 					if (expressionType instanceof IArrayType) {
 						IArrayType arrayExpressionType = (IArrayType) expressionType;
-						long arraySize = arrayExpressionType.getSize()
-								.numericalValue().longValue();
-
+						long arraySize = arrayExpressionType.getSize().numericalValue().longValue();
 						if (argumentSize > arraySize) {
-							reportProblem(ER_ID, idExpression,
-									idExpression.getRawSignature());
+							reportProblem(ER_ID, idExpression, idExpression.getRawSignature());
 						}
 					}
 				}
 			}
-
 		}
 	}
 }

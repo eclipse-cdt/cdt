@@ -111,8 +111,7 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 				setValue(new File(str));
 				break;
 			default:
-				throw new IllegalArgumentException(getType()
-						+ " is not supported for basic type"); //$NON-NLS-1$
+				throw new IllegalArgumentException(getType() + " is not supported for basic type"); //$NON-NLS-1$
 		}
 	}
 

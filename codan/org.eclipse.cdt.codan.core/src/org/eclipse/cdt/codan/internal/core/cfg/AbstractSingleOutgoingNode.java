@@ -17,8 +17,7 @@ import org.eclipse.cdt.codan.core.model.cfg.ISingleOutgoing;
  * Abstract implementation of basic block with single outgoing arc (node)
  * 
  */
-public abstract class AbstractSingleOutgoingNode extends AbstractBasicBlock
-		implements ISingleOutgoing {
+public abstract class AbstractSingleOutgoingNode extends AbstractBasicBlock implements ISingleOutgoing {
 	private IBasicBlock next;
 
 	/**

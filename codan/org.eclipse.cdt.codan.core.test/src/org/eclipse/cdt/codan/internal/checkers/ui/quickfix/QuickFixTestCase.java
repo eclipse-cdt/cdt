@@ -57,8 +57,7 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 
 	public static void closeWelcome() {
 		try {
-			IWorkbenchWindow window = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow();
+			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			IWorkbenchPage activePage = window.getActivePage();
 			IWorkbenchPart activePart = activePage.getActivePart();
 			if (activePart.getTitle().equals("Welcome")) {
@@ -77,16 +76,14 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 		quickFix = createQuickFix();
 		display = PlatformUI.getWorkbench().getDisplay();
 		closeWelcome();
-		IPreferenceStore store = CodanUIActivator.getDefault()
-				.getPreferenceStore(cproject.getProject());
+		IPreferenceStore store = CodanUIActivator.getDefault().getPreferenceStore(cproject.getProject());
 		// turn off editor reconsiler
 		store.setValue(PreferenceConstants.P_RUN_IN_EDITOR, false);
 	}
 
 	@Override
 	public void tearDown() throws CoreException {
-		IWorkbenchPage[] pages = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getPages();
+		IWorkbenchPage[] pages = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPages();
 		for (IWorkbenchPage page : pages) {
 			page.closeAllEditors(false);
 			dispatch(200);
@@ -147,7 +144,6 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 	 * @param expected
 	 */
 	public void assertContainedIn(String expected, String result) {
-		assertTrue(
-				"Text <" + expected + "> not found in <" + result + ">", result.contains(expected)); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		assertTrue("Text <" + expected + "> not found in <" + result + ">", result.contains(expected)); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

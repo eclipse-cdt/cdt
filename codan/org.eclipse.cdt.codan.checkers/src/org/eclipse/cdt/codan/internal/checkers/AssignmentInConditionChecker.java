@@ -37,8 +37,7 @@ public class AssignmentInConditionChecker extends AbstractIndexAstChecker {
 		}
 
 		public int visit(IASTExpression expression) {
-			if (isAssignmentExpression(expression)
-					&& isUsedAsCondition(expression)) {
+			if (isAssignmentExpression(expression) && isUsedAsCondition(expression)) {
 				reportProblem(ER_ID, expression, expression.getRawSignature());
 			}
 			return PROCESS_CONTINUE;
@@ -54,16 +53,13 @@ public class AssignmentInConditionChecker extends AbstractIndexAstChecker {
 
 		private boolean isUsedAsCondition(IASTExpression expression) {
 			ASTNodeProperty prop = expression.getPropertyInParent();
-			if (prop == IASTForStatement.CONDITION
-					|| prop == IASTIfStatement.CONDITION
-					|| prop == IASTWhileStatement.CONDITIONEXPRESSION
+			if (prop == IASTForStatement.CONDITION || prop == IASTIfStatement.CONDITION || prop == IASTWhileStatement.CONDITIONEXPRESSION
 					|| prop == IASTDoStatement.CONDITION)
 				return true;
 			if (prop == IASTUnaryExpression.OPERAND) {
-				IASTUnaryExpression expr = (IASTUnaryExpression) expression
-						.getParent();
-				if (expr.getOperator() == IASTUnaryExpression.op_bracketedPrimary && 
-						expr.getPropertyInParent() == IASTConditionalExpression.LOGICAL_CONDITION) {
+				IASTUnaryExpression expr = (IASTUnaryExpression) expression.getParent();
+				if (expr.getOperator() == IASTUnaryExpression.op_bracketedPrimary
+						&& expr.getPropertyInParent() == IASTConditionalExpression.LOGICAL_CONDITION) {
 					return true;
 				}
 			}

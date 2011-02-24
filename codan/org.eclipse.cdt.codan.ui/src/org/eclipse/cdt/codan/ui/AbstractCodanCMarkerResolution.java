@@ -43,8 +43,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * 
  * @since 1.1
  */
-public abstract class AbstractCodanCMarkerResolution implements
-		IMarkerResolution {
+public abstract class AbstractCodanCMarkerResolution implements IMarkerResolution {
 	private boolean codanProblem;
 
 	/**
@@ -156,8 +155,7 @@ public abstract class AbstractCodanCMarkerResolution implements
 	protected IDocument openDocument(IEditorPart editorPart) {
 		if (editorPart instanceof ITextEditor) {
 			ITextEditor editor = (ITextEditor) editorPart;
-			IDocument doc = editor.getDocumentProvider().getDocument(
-					editor.getEditorInput());
+			IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 			return doc;
 		}
 		return null;
@@ -171,8 +169,7 @@ public abstract class AbstractCodanCMarkerResolution implements
 	 * @return The translation unit
 	 */
 	protected ITranslationUnit getTranslationUnitViaEditor(IMarker marker) {
-		ITranslationUnit tu = (ITranslationUnit) CDTUITools
-				.getEditorInputCElement(openEditor(marker).getEditorInput());
+		ITranslationUnit tu = (ITranslationUnit) CDTUITools.getEditorInputCElement(openEditor(marker).getEditorInput());
 		return tu;
 	}
 
@@ -186,8 +183,7 @@ public abstract class AbstractCodanCMarkerResolution implements
 	protected ITranslationUnit getTranslationUnitViaWorkspace(IMarker marker) {
 		IPath path = marker.getResource().getFullPath();
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-		ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(
-				file);
+		ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(file);
 		return tu;
 	}
 
@@ -200,11 +196,9 @@ public abstract class AbstractCodanCMarkerResolution implements
 	 *        The AST to check
 	 * @return The enclosing ASTName or null
 	 */
-	protected IASTName getASTNameFromMarker(IMarker marker,
-			IASTTranslationUnit ast) {
+	protected IASTName getASTNameFromMarker(IMarker marker, IASTTranslationUnit ast) {
 		final int charStart = marker.getAttribute(IMarker.CHAR_START, -1);
-		final int length = marker.getAttribute(IMarker.CHAR_END, -1)
-				- charStart;
+		final int length = marker.getAttribute(IMarker.CHAR_END, -1) - charStart;
 		return getASTNameFromPositions(ast, charStart, length);
 	}
 
@@ -214,10 +208,8 @@ public abstract class AbstractCodanCMarkerResolution implements
 	 * @param length
 	 * @return
 	 */
-	protected IASTName getASTNameFromPositions(IASTTranslationUnit ast,
-			final int charStart, final int length) {
-		IASTName name = ast.getNodeSelector(null).findEnclosingName(charStart,
-				length);
+	protected IASTName getASTNameFromPositions(IASTTranslationUnit ast, final int charStart, final int length) {
+		IASTName name = ast.getNodeSelector(null).findEnclosingName(charStart, length);
 		return name;
 	}
 
@@ -230,8 +222,7 @@ public abstract class AbstractCodanCMarkerResolution implements
 	 * @return the received index
 	 * @throws CoreException
 	 */
-	protected IIndex getIndexFromMarker(final IMarker marker)
-			throws CoreException {
+	protected IIndex getIndexFromMarker(final IMarker marker) throws CoreException {
 		IProject project = marker.getResource().getProject();
 		ICProject cProject = CoreModel.getDefault().create(project);
 		IIndex index = CCorePlugin.getIndexManager().getIndex(cProject);

@@ -108,8 +108,7 @@ public class CatchByReferenceTest extends CheckerTestCase {
 	//		}
 	//	}
 	public void test_class_unknown() {
-		setPreferenceValue(CatchByReference.ER_ID,
-				CatchByReference.PARAM_UNKNOWN_TYPE, false);
+		setPreferenceValue(CatchByReference.ER_ID, CatchByReference.PARAM_UNKNOWN_TYPE, false);
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -121,8 +120,7 @@ public class CatchByReferenceTest extends CheckerTestCase {
 	//		}
 	//	}
 	public void test_class_unknown_on() {
-		setPreferenceValue(CatchByReference.ER_ID,
-				CatchByReference.PARAM_UNKNOWN_TYPE, true);
+		setPreferenceValue(CatchByReference.ER_ID, CatchByReference.PARAM_UNKNOWN_TYPE, true);
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(4);
 	}

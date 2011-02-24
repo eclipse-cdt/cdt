@@ -39,8 +39,7 @@ public class CustomizeProblemComposite extends Composite {
 	 * @param resource
 	 * @param style
 	 */
-	public CustomizeProblemComposite(Composite parent,
-			IProblem selectedProblem, IResource resource) {
+	public CustomizeProblemComposite(Composite parent, IProblem selectedProblem, IResource resource) {
 		super(parent, SWT.NONE);
 		this.setLayout(new GridLayout(1, false));
 		this.problem = selectedProblem;
@@ -69,8 +68,7 @@ public class CustomizeProblemComposite extends Composite {
 		tabItem1.setControl(parametersTab);
 		parametersTab.setLayout(new GridLayout());
 		problemsComposite = new ParametersComposite(parametersTab, problem);
-		problemsComposite.setLayoutData(new GridData(SWT.BEGINNING,
-				SWT.BEGINNING, true, false));
+		problemsComposite.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
 	}
 
 	/**
@@ -83,8 +81,7 @@ public class CustomizeProblemComposite extends Composite {
 		tabItem1.setControl(comp);
 		comp.setLayout(new GridLayout());
 		scopeComposite = new FileScopeComposite(comp, problem, resource);
-		scopeComposite.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING,
-				true, false));
+		scopeComposite.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
 	}
 
 	private void createLaunchingTab(TabFolder tabFolder) {
@@ -94,7 +91,6 @@ public class CustomizeProblemComposite extends Composite {
 		tabItem1.setControl(comp);
 		comp.setLayout(new GridLayout());
 		launchingComposite = new LaunchingTabComposite(comp, problem, resource);
-		launchingComposite.setLayoutData(new GridData(SWT.BEGINNING,
-				SWT.BEGINNING, true, false));
+		launchingComposite.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
 	}
 }

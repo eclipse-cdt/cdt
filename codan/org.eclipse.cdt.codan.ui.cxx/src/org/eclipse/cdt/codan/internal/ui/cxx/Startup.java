@@ -81,8 +81,7 @@ public class Startup implements IStartup {
 				};
 				page.addPartListener(partListener);
 				// check current open editors
-				IEditorReference[] editorReferences = page
-						.getEditorReferences();
+				IEditorReference[] editorReferences = page.getEditorReferences();
 				for (int i = 0; i < editorReferences.length; i++) {
 					IEditorReference ref = editorReferences[i];
 					partListener.partOpened(ref);

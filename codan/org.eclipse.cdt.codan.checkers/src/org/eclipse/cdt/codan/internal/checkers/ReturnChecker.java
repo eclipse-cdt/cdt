@@ -48,7 +48,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
  * <li>Function declared as returning non-void has no return (requires control
  * flow graph)
  */
-public class ReturnChecker extends AbstractAstFunctionChecker  {
+public class ReturnChecker extends AbstractAstFunctionChecker {
 	public static final String PARAM_IMPLICIT = "implicit"; //$NON-NLS-1$
 	public static final String RET_NO_VALUE_ID = "org.eclipse.cdt.codan.checkers.noreturn"; //$NON-NLS-1$
 	public static final String RET_ERR_VALUE_ID = "org.eclipse.cdt.codan.checkers.errreturnvalue"; //$NON-NLS-1$
@@ -64,31 +64,30 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 			this.func = func;
 			this.hasret = false;
 		}
+
 		public int visit(IASTDeclaration element) {
-			if (element!=func)
-			   return PROCESS_SKIP; // skip inner functions
+			if (element != func)
+				return PROCESS_SKIP; // skip inner functions
 			return PROCESS_CONTINUE;
 		}
+
 		public int visit(IASTStatement stmt) {
 			if (stmt instanceof IASTReturnStatement) {
 				hasret = true;
 				IASTReturnStatement ret = (IASTReturnStatement) stmt;
 				if (!isVoid(func) && !isConstructorDestructor()) {
-					if (checkImplicitReturn(RET_NO_VALUE_ID)
-							|| isExplicitReturn(func)) {
-						
+					if (checkImplicitReturn(RET_NO_VALUE_ID) || isExplicitReturn(func)) {
 						if (ret.getReturnValue() == null)
 							reportProblem(RET_NO_VALUE_ID, ret);
 					}
 				} else {
 					if (ret.getReturnValue() != null) {
 						IType type = ret.getReturnValue().getExpressionType();
-						if (isVoid(type)) 
+						if (isVoid(type))
 							return PROCESS_SKIP;
 						reportProblem(RET_ERR_VALUE_ID, ret.getReturnValue());
 					}
 				}
-
 				return PROCESS_SKIP;
 			}
 			if (stmt instanceof IASTExpressionStatement) {
@@ -101,20 +100,20 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 			}
 			return PROCESS_CONTINUE;
 		}
+
 		/**
-		 * @return 
+		 * @return
 		 * 
 		 */
 		public boolean isConstructorDestructor() {
 			if (func instanceof ICPPASTFunctionDefinition) {
 				IBinding method = func.getDeclarator().getName().resolveBinding();
-				if (method instanceof ICPPConstructor || method instanceof ICPPMethod && ((ICPPMethod)method).isDestructor()) {
+				if (method instanceof ICPPConstructor || method instanceof ICPPMethod && ((ICPPMethod) method).isDestructor()) {
 					return true;
 				}
 			}
 			return false;
 		}
-
 	}
 
 	/*
@@ -129,8 +128,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 		func.accept(visitor);
 		if (!visitor.hasret) {
 			// no return at all
-			if (!isVoid(func)
-					&& (checkImplicitReturn(RET_NORET_ID) || isExplicitReturn(func))) {
+			if (!isVoid(func) && (checkImplicitReturn(RET_NORET_ID) || isExplicitReturn(func))) {
 				if (endsWithNoExitNode(func))
 					reportProblem(RET_NORET_ID, func.getDeclSpecifier());
 			}
@@ -143,7 +141,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 	 */
 	protected boolean checkImplicitReturn(String id) {
 		final IProblem pt = getProblemById(id, getFile());
-		return (Boolean) getPreference(pt,PARAM_IMPLICIT);
+		return (Boolean) getPreference(pt, PARAM_IMPLICIT);
 	}
 
 	/**
@@ -151,8 +149,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 	 * @return
 	 */
 	protected boolean endsWithNoExitNode(IASTFunctionDefinition func) {
-		IControlFlowGraph graph = CxxModelsCache.getInstance()
-				.getControlFlowGraph(func);
+		IControlFlowGraph graph = CxxModelsCache.getInstance().getControlFlowGraph(func);
 		Iterator<IExitNode> exitNodeIterator = graph.getExitNodeIterator();
 		boolean noexitop = false;
 		for (; exitNodeIterator.hasNext();) {
@@ -189,9 +186,11 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 		}
 		return false;
 	}
+
 	/**
 	 * check if type if void
 	 * (uses deprecated API for compatibility with 6.0)
+	 * 
 	 * @param type
 	 * @throws DOMException
 	 */
@@ -199,7 +198,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 	public boolean isVoid(IType type) {
 		if (type instanceof IBasicType) {
 			try {
-				if (((IBasicType) type).getType()==IBasicType.t_void)
+				if (((IBasicType) type).getType() == IBasicType.t_void)
 					return true;
 			} catch (DOMException e) {
 				return false;
@@ -207,6 +206,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 		}
 		return false;
 	}
+
 	/**
 	 * @param func
 	 * @return
@@ -217,10 +217,8 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 		if (declSpecifier instanceof IASTSimpleDeclSpecifier) {
 			type = ((IASTSimpleDeclSpecifier) declSpecifier).getType();
 		} else if (declSpecifier instanceof IASTNamedTypeSpecifier) {
-			IBinding binding = ((IASTNamedTypeSpecifier) declSpecifier)
-					.getName().resolveBinding();
-			IType utype = CxxAstUtils.getInstance().unwindTypedef(
-					(IType) binding);
+			IBinding binding = ((IASTNamedTypeSpecifier) declSpecifier).getName().resolveBinding();
+			IType utype = CxxAstUtils.getInstance().unwindTypedef((IType) binding);
 			if (isVoid(utype))
 				return IASTSimpleDeclSpecifier.t_void;
 		}
@@ -230,10 +228,8 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 	/* checker must implement @link ICheckerWithPreferences */
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		if (problem.getId().equals(RET_NO_VALUE_ID)
-				|| problem.getId().equals(RET_NORET_ID)) {
-			addPreference(problem, PARAM_IMPLICIT,
-					CheckersMessages.ReturnChecker_Param0, Boolean.FALSE);
+		if (problem.getId().equals(RET_NO_VALUE_ID) || problem.getId().equals(RET_NORET_ID)) {
+			addPreference(problem, PARAM_IMPLICIT, CheckersMessages.ReturnChecker_Param0, Boolean.FALSE);
 		}
 	}
 }

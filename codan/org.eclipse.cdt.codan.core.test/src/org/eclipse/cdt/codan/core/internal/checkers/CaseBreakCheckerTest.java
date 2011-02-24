@@ -309,8 +309,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	public void testGeneral1() {
 		setEmpty(true);
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(4, 6, 7, 11, 14, 16, 19, 20, 24, 27, 32, 37, 41, 46,
-				49, 51);
+		checkErrorLines(4, 6, 7, 11, 14, 16, 19, 20, 24, 27, 32, 37, 41, 46, 49, 51);
 	}
 
 	// void foo(void) {
@@ -429,14 +428,12 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	}
 
 	private void setLast(boolean val) {
-		IProblemPreference pref = getPreference(CaseBreakChecker.ER_ID,
-				CaseBreakChecker.PARAM_LAST_CASE);
+		IProblemPreference pref = getPreference(CaseBreakChecker.ER_ID, CaseBreakChecker.PARAM_LAST_CASE);
 		pref.setValue(val);
 	}
 
 	private void setEmpty(boolean val) {
-		IProblemPreference pref = getPreference(CaseBreakChecker.ER_ID,
-				CaseBreakChecker.PARAM_EMPTY_CASE);
+		IProblemPreference pref = getPreference(CaseBreakChecker.ER_ID, CaseBreakChecker.PARAM_EMPTY_CASE);
 		pref.setValue(val);
 	}
 

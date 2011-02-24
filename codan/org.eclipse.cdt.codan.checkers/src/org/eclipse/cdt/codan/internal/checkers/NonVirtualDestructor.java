@@ -60,7 +60,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 							if (destructorName instanceof ICPPInternalBinding) {
 								ICPPInternalBinding bin = (ICPPInternalBinding) destructorName;
 								IASTNode[] decls = bin.getDeclarations();
-								if (decls!=null && decls.length>0)
+								if (decls != null && decls.length > 0)
 									ast = decls[0];
 							}
 							reportProblem(ER_ID, ast, clazz, method, destructorName.getName());
@@ -80,8 +80,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 		 * @param decl
 		 * @throws DOMException
 		 */
-		private boolean hasErrorCondition(IASTDeclSpecifier decl)
-				throws DOMException {
+		private boolean hasErrorCondition(IASTDeclSpecifier decl) throws DOMException {
 			ICPPASTCompositeTypeSpecifier spec = (ICPPASTCompositeTypeSpecifier) decl;
 			className = spec.getName();
 			IBinding binding = className.getBinding();
@@ -123,8 +122,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 				// class does not have virtual methods but has virtual
 				// destructor
 				// - not an error
-				if (hasOwnVirtualMethod == false && hasDestructor == true
-						&& hasOwnNonVirDestructor == false) {
+				if (hasOwnVirtualMethod == false && hasDestructor == true && hasOwnNonVirDestructor == false) {
 					return false;
 				}
 				ICPPMethod[] allDeclaredMethods = type.getAllDeclaredMethods();

@@ -15,23 +15,20 @@ package org.eclipse.cdt.codan.internal.checkers.fs;
  * @author Meisam Fathi
  */
 public class VulnerableFormatStringArgument {
-
 	/**
 	 * The index of the argument that is matched, starting at zero.
 	 */
 	private final int indexOfArgument;
-
 	/**
 	 * The string format argument that may contain the fault
 	 */
 	private final String argument;
-
 	/**
 	 * the size of the argument.
 	 * <ul>
-	 * <li><code>%15s  ==> 15 </code>
+	 * <li><code>%15s ==> 15 </code>
 	 * <li><code>%128s ==> 128 </code>
-	 * <li><code>%s    ==> infinity </code>
+	 * <li><code>%s ==> infinity </code>
 	 * </ul>
 	 */
 	private final int size;
@@ -40,8 +37,7 @@ public class VulnerableFormatStringArgument {
 	 * @param indexOfCurrentArgument
 	 * @param group
 	 */
-	public VulnerableFormatStringArgument(final int indexOfArgument,
-	    final String rgument, final int size) {
+	public VulnerableFormatStringArgument(final int indexOfArgument, final String rgument, final int size) {
 		this.indexOfArgument = indexOfArgument;
 		this.argument = rgument;
 		this.size = size;
@@ -67,5 +63,4 @@ public class VulnerableFormatStringArgument {
 	public int getArgumentSize() {
 		return this.size;
 	}
-
 }

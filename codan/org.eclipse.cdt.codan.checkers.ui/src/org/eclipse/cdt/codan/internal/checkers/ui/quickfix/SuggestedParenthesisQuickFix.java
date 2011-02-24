@@ -17,8 +17,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
-public class SuggestedParenthesisQuickFix extends
-		AbstractCodanCMarkerResolution {
+public class SuggestedParenthesisQuickFix extends AbstractCodanCMarkerResolution {
 	public String getLabel() {
 		return Messages.SuggestedParenthesisQuickFix_Message;
 	}
@@ -39,7 +38,7 @@ public class SuggestedParenthesisQuickFix extends
 			return;
 		try {
 			document.replace(charStart, 0, "("); //$NON-NLS-1$
-			document.replace(charEnd+1, 0, ")"); //$NON-NLS-1$
+			document.replace(charEnd + 1, 0, ")"); //$NON-NLS-1$
 		} catch (BadLocationException e) {
 			CheckersUiActivator.log(e);
 		}

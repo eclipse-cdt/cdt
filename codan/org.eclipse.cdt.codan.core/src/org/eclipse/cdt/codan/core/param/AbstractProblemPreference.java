@@ -58,8 +58,7 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 		if (isValidIdentifier(key))
 			this.key = key;
 		else
-			throw new IllegalArgumentException(
-					"Key must have java identifier syntax or number, i.e no dots and other funky stuff: " + key); //$NON-NLS-1$
+			throw new IllegalArgumentException("Key must have java identifier syntax or number, i.e no dots and other funky stuff: " + key); //$NON-NLS-1$
 	}
 
 	protected boolean isValidIdentifier(String id) {
@@ -128,8 +127,7 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 	 */
 	protected StreamTokenizer getImportTokenizer(String str) {
 		ByteArrayInputStream st = new ByteArrayInputStream(str.getBytes());
-		StreamTokenizer tokenizer = new StreamTokenizer(new InputStreamReader(
-				st));
+		StreamTokenizer tokenizer = new StreamTokenizer(new InputStreamReader(st));
 		tokenizer.resetSyntax();
 		tokenizer.quoteChar('"');
 		tokenizer.wordChars('_', '_');
@@ -166,8 +164,7 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 	 * @param tokenizer
 	 * @throws IOException
 	 */
-	public abstract void importValue(StreamTokenizer tokenizer)
-			throws IOException;
+	public abstract void importValue(StreamTokenizer tokenizer) throws IOException;
 
 	public void importValue(String str) {
 		StreamTokenizer tokenizer = getImportTokenizer(str);

@@ -26,14 +26,12 @@ public abstract class AbstractProblemReporter implements IProblemReporter {
 			throw new NullPointerException("file"); //$NON-NLS-1$
 		if (id == null)
 			throw new NullPointerException("id"); //$NON-NLS-1$
-		IProblem problem = CheckersRegistry.getInstance()
-				.getResourceProfile(file).findProblem(id);
+		IProblem problem = CheckersRegistry.getInstance().getResourceProfile(file).findProblem(id);
 		if (problem == null)
 			throw new IllegalArgumentException("Id is not registered:" + id); //$NON-NLS-1$
 		if (problem.isEnabled() == false)
 			return; // skip
-		ICodanProblemMarker codanProblemMarker = new CodanProblemMarker(
-				problem, loc, args);
+		ICodanProblemMarker codanProblemMarker = new CodanProblemMarker(problem, loc, args);
 		reportProblem(codanProblemMarker);
 	}
 

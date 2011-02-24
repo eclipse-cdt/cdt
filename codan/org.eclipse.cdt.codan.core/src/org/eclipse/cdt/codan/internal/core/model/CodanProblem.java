@@ -19,7 +19,6 @@ import org.eclipse.cdt.codan.core.param.IProblemPreference;
  * A type of problems reported by Codan.
  */
 public class CodanProblem implements IProblemWorkingCopy, Cloneable {
-
 	private String id;
 	private String name;
 	private String messagePattern;
@@ -73,7 +72,7 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
@@ -100,7 +99,7 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblem#getMessagePattern()
 	 */
 	public String getMessagePattern() {
@@ -113,7 +112,7 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/**
 	 * @param messagePattern
-	 *            the message to set
+	 *        the message to set
 	 */
 	public void setMessagePattern(String messagePattern) {
 		checkSet();
@@ -127,7 +126,7 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblem#getDescription()
 	 */
 	public String getDescription() {
@@ -136,7 +135,7 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.IProblemWorkingCopy#setDescription(java
 	 * .lang.String)
@@ -147,7 +146,7 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblem#getMarkerType()
 	 */
 	public String getMarkerType() {
@@ -156,7 +155,7 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/**
 	 * Sets the marker id for the problem.
-
+	 * 
 	 * @param markerType
 	 */
 	public void setMarkerType(String markerType) {

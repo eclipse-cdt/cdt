@@ -77,7 +77,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	 * relative path
 	 * 
 	 * @param path
-	 *            the path
+	 *        the path
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
@@ -88,7 +88,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	 * Logs the specified status with this plug-in's log.
 	 * 
 	 * @param status
-	 *            status to log
+	 *        status to log
 	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
@@ -98,7 +98,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	 * Logs an internal error with the specified throwable
 	 * 
 	 * @param e
-	 *            the exception to be logged
+	 *        the exception to be logged
 	 */
 	public static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, 1, "Internal Error", e)); //$NON-NLS-1$
@@ -108,7 +108,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	 * Logs an internal error with the specified message.
 	 * 
 	 * @param message
-	 *            the error message to log
+	 *        the error message to log
 	 */
 	public static void log(String message) {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, 1, message, null));
@@ -119,8 +119,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	 */
 	public IPreferenceStore getCorePreferenceStore() {
 		if (preferenceCoreStore == null) {
-			preferenceCoreStore = new ScopedPreferenceStore(
-					new InstanceScope(), CodanCorePlugin.PLUGIN_ID);
+			preferenceCoreStore = new ScopedPreferenceStore(new InstanceScope(), CodanCorePlugin.PLUGIN_ID);
 		}
 		return preferenceCoreStore;
 	}

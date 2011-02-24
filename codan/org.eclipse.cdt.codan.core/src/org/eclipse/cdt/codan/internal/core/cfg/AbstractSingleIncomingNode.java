@@ -17,8 +17,7 @@ import org.eclipse.cdt.codan.core.model.cfg.ISingleIncoming;
  * Abstract node with one incoming arc (node)
  * 
  */
-public abstract class AbstractSingleIncomingNode extends AbstractBasicBlock
-		implements ISingleIncoming {
+public abstract class AbstractSingleIncomingNode extends AbstractBasicBlock implements ISingleIncoming {
 	private IBasicBlock prev;
 
 	/**

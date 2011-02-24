@@ -56,10 +56,8 @@ public abstract class AbstractChecker implements IChecker {
 	 *        it will be error message (not recommended because of
 	 *        internationalization)
 	 */
-	public void reportProblem(String id, IFile file, int lineNumber,
-			Object... args) {
-		getProblemReporter().reportProblem(id,
-				createProblemLocation(file, lineNumber), args);
+	public void reportProblem(String id, IFile file, int lineNumber, Object... args) {
+		getProblemReporter().reportProblem(id, createProblemLocation(file, lineNumber), args);
 	}
 
 	/**
@@ -73,8 +71,7 @@ public abstract class AbstractChecker implements IChecker {
 	 * @return problem instance
 	 */
 	public IProblem getProblemById(String id, IResource file) {
-		IProblem problem = CheckersRegistry.getInstance()
-				.getResourceProfile(file).findProblem(id);
+		IProblem problem = CheckersRegistry.getInstance().getResourceProfile(file).findProblem(id);
 		if (problem == null)
 			throw new IllegalArgumentException("Id is not registered"); //$NON-NLS-1$
 		return problem;
@@ -92,8 +89,7 @@ public abstract class AbstractChecker implements IChecker {
 	 *        - line
 	 */
 	public void reportProblem(String id, IFile file, int lineNumber) {
-		getProblemReporter().reportProblem(id,
-				createProblemLocation(file, lineNumber), new Object[] {});
+		getProblemReporter().reportProblem(id, createProblemLocation(file, lineNumber), new Object[] {});
 	}
 
 	/**
@@ -127,8 +123,7 @@ public abstract class AbstractChecker implements IChecker {
 	 * @return instance of IProblemLocation
 	 */
 	protected IProblemLocation createProblemLocation(IFile file, int line) {
-		return getRuntime().getProblemLocationFactory().createProblemLocation(
-				file, line);
+		return getRuntime().getProblemLocationFactory().createProblemLocation(file, line);
 	}
 
 	/**
@@ -143,10 +138,8 @@ public abstract class AbstractChecker implements IChecker {
 	 *        exclusive.
 	 * @return instance of IProblemLocation
 	 */
-	protected IProblemLocation createProblemLocation(IFile file, int startChar,
-			int endChar) {
-		return getRuntime().getProblemLocationFactory().createProblemLocation(
-				file, startChar, endChar);
+	protected IProblemLocation createProblemLocation(IFile file, int startChar, int endChar) {
+		return getRuntime().getProblemLocationFactory().createProblemLocation(file, startChar, endChar);
 	}
 
 	/**
@@ -164,8 +157,7 @@ public abstract class AbstractChecker implements IChecker {
 	 * @param loc - problem location
 	 * @param args - extra problem arguments
 	 */
-	public void reportProblem(String problemId, IProblemLocation loc,
-			Object... args) {
+	public void reportProblem(String problemId, IProblemLocation loc, Object... args) {
 		getProblemReporter().reportProblem(problemId, loc, args);
 	}
 
@@ -196,23 +188,19 @@ public abstract class AbstractChecker implements IChecker {
 	 */
 	public boolean before(IResource resource) {
 		IChecker checker = this;
-		IProblemReporter problemReporter = CodanRuntime.getInstance()
-				.getProblemReporter();
+		IProblemReporter problemReporter = CodanRuntime.getInstance().getProblemReporter();
 		IProblemReporter sessionReporter = problemReporter;
 		if (problemReporter instanceof IProblemReporterSessionPersistent) {
 			// create session problem reporter
-			sessionReporter = ((IProblemReporterSessionPersistent) problemReporter)
-					.createReporter(resource, checker);
+			sessionReporter = ((IProblemReporterSessionPersistent) problemReporter).createReporter(resource, checker);
 			((IProblemReporterSessionPersistent) sessionReporter).start();
 		} else if (problemReporter instanceof IProblemReporterPersistent) {
 			// delete markers if checker can possibly run on this
 			// resource  this way if checker is not enabled markers would be
 			// deleted too
-			((IProblemReporterPersistent) problemReporter).deleteProblems(
-					resource, checker);
+			((IProblemReporterPersistent) problemReporter).deleteProblems(resource, checker);
 		}
-		((AbstractChecker) checker).setContext(new CheckerInvocationContext(
-				resource, sessionReporter));
+		((AbstractChecker) checker).setContext(new CheckerInvocationContext(resource, sessionReporter));
 		return true;
 	}
 
@@ -222,8 +210,7 @@ public abstract class AbstractChecker implements IChecker {
 	public boolean after(IResource resource) {
 		if (getContext().getProblemReporter() instanceof IProblemReporterSessionPersistent) {
 			// delete general markers
-			((IProblemReporterSessionPersistent) getContext()
-					.getProblemReporter()).done();
+			((IProblemReporterSessionPersistent) getContext().getProblemReporter()).done();
 		}
 		return true;
 	}

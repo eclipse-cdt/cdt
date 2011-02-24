@@ -39,27 +39,22 @@ public class QuickFixCreateField extends AbstractAstRewriteQuickFix {
 	public void modifyAST(IIndex index, IMarker marker) {
 		CxxAstUtils utils = CxxAstUtils.getInstance();
 		try {
-			IASTTranslationUnit ast = getTranslationUnitViaEditor(marker)
-					.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			IASTTranslationUnit ast = getTranslationUnitViaEditor(marker).getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			IASTName astName = getASTNameFromMarker(marker, ast);
 			if (astName == null) {
 				return;
 			}
-			IASTDeclaration declaration = utils
-					.createDeclaration(astName, ast.getASTNodeFactory(), index);
-			IASTCompositeTypeSpecifier targetCompositeType = utils
-					.getEnclosingCompositeTypeSpecifier(astName);
+			IASTDeclaration declaration = utils.createDeclaration(astName, ast.getASTNodeFactory(), index);
+			IASTCompositeTypeSpecifier targetCompositeType = utils.getEnclosingCompositeTypeSpecifier(astName);
 			if (targetCompositeType == null) {
 				// We're not in an inline method;
 				// check if we're in a method at all
-				targetCompositeType = utils.getCompositeTypeFromFunction(
-						utils.getEnclosingFunction(astName), index);
+				targetCompositeType = utils.getCompositeTypeFromFunction(utils.getEnclosingFunction(astName), index);
 				if (targetCompositeType == null) {
 					return;
 				}
 			}
-			ASTRewrite r = ASTRewrite.create(targetCompositeType
-					.getTranslationUnit());
+			ASTRewrite r = ASTRewrite.create(targetCompositeType.getTranslationUnit());
 			IASTNode where = findInsertionPlace(targetCompositeType);
 			r.insertBefore(targetCompositeType, where, declaration, null);
 			Change c = r.rewriteAST();
@@ -68,8 +63,6 @@ public class QuickFixCreateField extends AbstractAstRewriteQuickFix {
 			e.printStackTrace();
 		}
 	}
-
-
 
 	/**
 	 * Suggests a default place to insert a field:
@@ -96,8 +89,7 @@ public class QuickFixCreateField extends AbstractAstRewriteQuickFix {
 		// Get initial candidate at the beginning (after class name and
 		// composite type specifiers)
 		for (IASTNode child : children) {
-			if (child instanceof IASTName
-					|| child instanceof ICPPASTBaseSpecifier) {
+			if (child instanceof IASTName || child instanceof ICPPASTBaseSpecifier) {
 				continue;
 			}
 			bestMatch = child;
@@ -109,21 +101,16 @@ public class QuickFixCreateField extends AbstractAstRewriteQuickFix {
 			IASTNode child = children[i];
 			if (child instanceof ICPPASTVisibilityLabel) {
 				ICPPASTVisibilityLabel label = (ICPPASTVisibilityLabel) child;
-				inDesiredAccessibilityContext = (wantPublicContext && label
-						.getVisibility() == ICPPASTVisibilityLabel.v_public)
+				inDesiredAccessibilityContext = (wantPublicContext && label.getVisibility() == ICPPASTVisibilityLabel.v_public)
 						|| (!wantPublicContext && label.getVisibility() == ICPPASTVisibilityLabel.v_private);
-			} else if (inDesiredAccessibilityContext
-					&& (child instanceof IASTDeclaration)
-					&& !(child instanceof IASTFunctionDefinition)) {
+			} else if (inDesiredAccessibilityContext && (child instanceof IASTDeclaration) && !(child instanceof IASTFunctionDefinition)) {
 				// TODO: the above condition needs to also check if child is not
 				// a typedef
 				for (IASTNode gchild : child.getChildren()) {
-					if ((gchild instanceof IASTDeclarator)
-							&& !(gchild instanceof IASTFunctionDeclarator)) {
+					if ((gchild instanceof IASTDeclarator) && !(gchild instanceof IASTFunctionDeclarator)) {
 						// Before the next node or at the end (= after the
 						// current node)
-						bestMatch = (i + 1 < children.length) ? children[i + 1]
-								: null;
+						bestMatch = (i + 1 < children.length) ? children[i + 1] : null;
 						break;
 					}
 				}

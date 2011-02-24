@@ -46,15 +46,13 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
 /**
  * @author Berthold Daum
  */
-public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
-		implements IWorkbenchPropertyPage {
+public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
 	// Stores all created field editors
 	private List editors = new ArrayList();
 	// Stores owning element of properties
 	private IAdaptable element;
 	// Additional buttons for property pages
-	private Button useWorkspaceSettingsButton, useProjectSettingsButton,
-			configureButton;
+	private Button useWorkspaceSettingsButton, useProjectSettingsButton, configureButton;
 	// Overlay preference store for property pages
 	private IPreferenceStore overlayStore;
 	// The image descriptor of this pages title image
@@ -167,10 +165,8 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 			IAdaptable e = getElement();
 			if (e != null) {
 				ProjectScope ps = new ProjectScope((IProject) e);
-				ScopedPreferenceStore scoped = new ScopedPreferenceStore(ps,
-						CodanCorePlugin.PLUGIN_ID);
-				scoped.setSearchContexts(new IScopeContext[] { ps,
-						new InstanceScope() });
+				ScopedPreferenceStore scoped = new ScopedPreferenceStore(ps, CodanCorePlugin.PLUGIN_ID);
+				scoped.setSearchContexts(new IScopeContext[] { ps, new InstanceScope() });
 				overlayStore = scoped;
 			}
 			// Set overlay store as current preference store
@@ -211,13 +207,10 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 		Composite radioGroup = new Composite(comp, SWT.NONE);
 		radioGroup.setLayout(new GridLayout());
 		radioGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		useWorkspaceSettingsButton = createRadioButton(radioGroup,
-				CodanUIMessages.OverlayPage_Use_Workspace_Settings);
-		useProjectSettingsButton = createRadioButton(radioGroup,
-				CodanUIMessages.OverlayPage_Use_Project_Settings);
+		useWorkspaceSettingsButton = createRadioButton(radioGroup, CodanUIMessages.OverlayPage_Use_Workspace_Settings);
+		useProjectSettingsButton = createRadioButton(radioGroup, CodanUIMessages.OverlayPage_Use_Project_Settings);
 		configureButton = new Button(comp, SWT.PUSH);
-		configureButton
-				.setText(CodanUIMessages.OverlayPage_Configure_Workspace_Settings);
+		configureButton.setText(CodanUIMessages.OverlayPage_Configure_Workspace_Settings);
 		configureButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -226,8 +219,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 		});
 		// Set workspace/project radio buttons
 		try {
-			Boolean useWorkspace = getPreferenceStore().getBoolean(
-					PreferenceConstants.P_USE_PARENT);
+			Boolean useWorkspace = getPreferenceStore().getBoolean(PreferenceConstants.P_USE_PARENT);
 			if (useWorkspace) {
 				useWorkspaceSettingsButton.setSelection(true);
 			} else {
@@ -254,8 +246,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				configureButton
-						.setEnabled(button == useWorkspaceSettingsButton);
+				configureButton.setEnabled(button == useWorkspaceSettingsButton);
 				updateFieldEditors();
 			}
 		});
@@ -312,8 +303,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 		boolean result = super.performOk();
 		if (result && isPropertyPage()) {
 			// Save state of radiobuttons in project properties
-			getPreferenceStore().setValue(PreferenceConstants.P_USE_PARENT,
-					!useProjectSettingsButton.getSelection());
+			getPreferenceStore().setValue(PreferenceConstants.P_USE_PARENT, !useProjectSettingsButton.getSelection());
 		}
 		return result;
 	}
@@ -342,8 +332,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	protected void configureWorkspaceSettings() {
 		try {
 			// create a new instance of the current class
-			IPreferencePage page = (IPreferencePage) this.getClass()
-					.newInstance();
+			IPreferencePage page = (IPreferencePage) this.getClass().newInstance();
 			page.setTitle(getTitle());
 			page.setImageDescriptor(image);
 			// and show it
@@ -367,8 +356,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 		final IPreferenceNode targetNode = new PreferenceNode(id, page);
 		PreferenceManager manager = new PreferenceManager();
 		manager.addToRoot(targetNode);
-		final PreferenceDialog dialog = new PreferenceDialog(getControl()
-				.getShell(), manager);
+		final PreferenceDialog dialog = new PreferenceDialog(getControl().getShell(), manager);
 		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 			public void run() {
 				dialog.create();

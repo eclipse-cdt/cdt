@@ -36,8 +36,7 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 	 * @param selectedProblem
 	 * @param iResource
 	 */
-	public CustomizeProblemDialog(Shell parentShell, IProblem selectedProblem,
-			IResource resource) {
+	public CustomizeProblemDialog(Shell parentShell, IProblem selectedProblem, IResource resource) {
 		super(parentShell);
 		this.problem = selectedProblem;
 		this.resource = resource;
@@ -48,7 +47,7 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 	 * Stores edit values into problem working copy
 	 * 
 	 * @param problem
-	 *            - problem working copy
+	 *        - problem working copy
 	 */
 	public void save(IProblemWorkingCopy problem) {
 		comp.save(problem);

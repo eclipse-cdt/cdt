@@ -26,8 +26,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 * initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
-		IPreferenceStore store = CodanUIActivator.getDefault()
-				.getPreferenceStore();
+		IPreferenceStore store = CodanUIActivator.getDefault().getPreferenceStore();
 		store.setDefault(PreferenceConstants.P_RUN_ON_BUILD, false);
 		store.setDefault(PreferenceConstants.P_RUN_IN_EDITOR, true);
 	}

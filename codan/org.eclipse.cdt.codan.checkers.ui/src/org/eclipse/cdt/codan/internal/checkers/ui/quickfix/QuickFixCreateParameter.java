@@ -44,25 +44,19 @@ public class QuickFixCreateParameter extends AbstractAstRewriteQuickFix {
 	@Override
 	public void modifyAST(IIndex index, IMarker marker) {
 		CxxAstUtils utils = CxxAstUtils.getInstance();
-		CompositeChange c = new CompositeChange(
-				Messages.QuickFixCreateParameter_0);
+		CompositeChange c = new CompositeChange(Messages.QuickFixCreateParameter_0);
 		try {
 			ITranslationUnit baseTU = getTranslationUnitViaEditor(marker);
-			IASTTranslationUnit baseAST = baseTU.getAST(index,
-					ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			IASTTranslationUnit baseAST = baseTU.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			IASTName astName = getASTNameFromMarker(marker, baseAST);
 			if (astName == null) {
 				return;
 			}
-			IASTDeclaration declaration = CxxAstUtils.getInstance()
-					.createDeclaration(astName, baseAST.getASTNodeFactory(), index);
+			IASTDeclaration declaration = CxxAstUtils.getInstance().createDeclaration(astName, baseAST.getASTNodeFactory(), index);
 			// We'll need a FunctionParameterDeclaration later
-			final IASTDeclSpecifier finalDeclSpec = (IASTDeclSpecifier) declaration
-					.getChildren()[0];
-			final IASTDeclarator finalDeclarator = (IASTDeclarator) declaration
-					.getChildren()[1];
-			IASTFunctionDefinition function = utils
-					.getEnclosingFunction(astName);
+			final IASTDeclSpecifier finalDeclSpec = (IASTDeclSpecifier) declaration.getChildren()[0];
+			final IASTDeclarator finalDeclarator = (IASTDeclarator) declaration.getChildren()[1];
+			IASTFunctionDefinition function = utils.getEnclosingFunction(astName);
 			if (function == null) {
 				return;
 			}
@@ -71,21 +65,18 @@ public class QuickFixCreateParameter extends AbstractAstRewriteQuickFix {
 			function.accept(nameFinderVisitor);
 			IASTName funcName = nameFinderVisitor.name;
 			IBinding binding = funcName.resolveBinding();
-			IIndexName[] declarations = index.findNames(binding,
-					IIndex.FIND_DECLARATIONS_DEFINITIONS);
+			IIndexName[] declarations = index.findNames(binding, IIndex.FIND_DECLARATIONS_DEFINITIONS);
 			if (declarations.length == 0) {
 				return;
 			}
 			HashMap<ITranslationUnit, IASTTranslationUnit> cachedASTs = new HashMap<ITranslationUnit, IASTTranslationUnit>();
 			HashMap<ITranslationUnit, ASTRewrite> cachedRewrites = new HashMap<ITranslationUnit, ASTRewrite>();
 			for (IIndexName iname : declarations) {
-				ITranslationUnit declTU = utils
-						.getTranslationUnitFromIndexName(iname);
+				ITranslationUnit declTU = utils.getTranslationUnitFromIndexName(iname);
 				ASTRewrite rewrite;
 				IASTTranslationUnit declAST;
 				if (!cachedASTs.containsKey(declTU)) {
-					declAST = declTU.getAST(index,
-							ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+					declAST = declTU.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 					rewrite = ASTRewrite.create(declAST);
 					cachedASTs.put(declTU, declAST);
 					cachedRewrites.put(declTU, rewrite);
@@ -94,9 +85,8 @@ public class QuickFixCreateParameter extends AbstractAstRewriteQuickFix {
 					rewrite = cachedRewrites.get(declTU);
 				}
 				IASTFileLocation fileLocation = iname.getFileLocation();
-				IASTName declName = declAST.getNodeSelector(null)
-						.findEnclosingName(fileLocation.getNodeOffset(),
-								fileLocation.getNodeLength());
+				IASTName declName = declAST.getNodeSelector(null).findEnclosingName(fileLocation.getNodeOffset(),
+						fileLocation.getNodeLength());
 				if (declName == null) {
 					continue;
 				}
@@ -109,8 +99,7 @@ public class QuickFixCreateParameter extends AbstractAstRewriteQuickFix {
 					}
 					functionDecl = (IASTFunctionDeclarator) n;
 				}
-				IASTParameterDeclaration newParam = factory
-						.newParameterDeclaration(finalDeclSpec, finalDeclarator);
+				IASTParameterDeclaration newParam = factory.newParameterDeclaration(finalDeclSpec, finalDeclarator);
 				rewrite.insertBefore(functionDecl, null, newParam, null);
 			}
 			for (ASTRewrite rewrite : cachedRewrites.values()) {

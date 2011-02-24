@@ -43,8 +43,7 @@ public class LaunchingTabComposite extends Composite {
 	 * @param resource
 	 * @param style
 	 */
-	public LaunchingTabComposite(Composite parent, final IProblem problem,
-			IResource resource) {
+	public LaunchingTabComposite(Composite parent, final IProblem problem, IResource resource) {
 		super(parent, SWT.NONE);
 		if (problem == null)
 			throw new NullPointerException();
@@ -81,8 +80,7 @@ public class LaunchingTabComposite extends Composite {
 		if (launchPref == null)
 			return;
 		saveToPref(launchPref, page.getPreferenceStore());
-		MapProblemPreference parentMap = (MapProblemPreference) problem
-				.getPreference();
+		MapProblemPreference parentMap = (MapProblemPreference) problem.getPreference();
 		parentMap.addChildDescriptor(launchPref);
 	}
 
@@ -90,14 +88,12 @@ public class LaunchingTabComposite extends Composite {
 	 * @param launchPref2
 	 * @param preferenceStore
 	 */
-	private void saveToPref(LaunchTypeProblemPreference launchPref,
-			IPreferenceStore preferenceStore) {
+	private void saveToPref(LaunchTypeProblemPreference launchPref, IPreferenceStore preferenceStore) {
 		CheckerLaunchMode[] values = CheckerLaunchMode.values();
 		for (int i = 0; i < values.length; i++) {
 			CheckerLaunchMode checkerLaunchMode = values[i];
 			if (!preferenceStore.isDefault(checkerLaunchMode.name())) {
-				launchPref.setRunningMode(checkerLaunchMode,
-						preferenceStore.getBoolean(checkerLaunchMode.name()));
+				launchPref.setRunningMode(checkerLaunchMode, preferenceStore.getBoolean(checkerLaunchMode.name()));
 			}
 		}
 	}
@@ -105,13 +101,11 @@ public class LaunchingTabComposite extends Composite {
 	private void initPrefStore() {
 		if (launchPref == null)
 			return;
-		prefStore.setDefault(
-				CheckerLaunchMode.USE_PARENT.name(), true);
+		prefStore.setDefault(CheckerLaunchMode.USE_PARENT.name(), true);
 		CheckerLaunchMode[] values = CheckerLaunchMode.values();
 		for (int i = 0; i < values.length; i++) {
 			CheckerLaunchMode checkerLaunchMode = values[i];
-			prefStore.setValue(checkerLaunchMode.name(),
-					launchPref.isRunningInMode(checkerLaunchMode));
+			prefStore.setValue(checkerLaunchMode.name(), launchPref.isRunningInMode(checkerLaunchMode));
 		}
 	}
 

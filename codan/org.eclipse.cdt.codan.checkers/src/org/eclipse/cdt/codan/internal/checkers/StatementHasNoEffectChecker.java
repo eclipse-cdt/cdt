@@ -55,11 +55,9 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		@Override
 		public int visit(IASTStatement stmt) {
 			if (stmt instanceof IASTExpressionStatement) {
-				IASTExpression expression = ((IASTExpressionStatement) stmt)
-						.getExpression();
+				IASTExpression expression = ((IASTExpressionStatement) stmt).getExpression();
 				if (hasNoEffect(expression)) {
-					boolean inMacro = CxxAstUtils.getInstance().isInMacro(
-							expression);
+					boolean inMacro = CxxAstUtils.getInstance().isInMacro(expression);
 					boolean shouldReportInMacro = shouldReportInMacro();
 					if (inMacro && !shouldReportInMacro)
 						return PROCESS_SKIP;
@@ -88,8 +86,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 				switch (binExpr.getOperator()) {
 					case IASTBinaryExpression.op_logicalOr:
 					case IASTBinaryExpression.op_logicalAnd:
-						return hasNoEffect(binExpr.getOperand1())
-								&& hasNoEffect(binExpr.getOperand2());
+						return hasNoEffect(binExpr.getOperand1()) && hasNoEffect(binExpr.getOperand2());
 				}
 				return true;
 			}
@@ -130,25 +127,20 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, PARAM_MACRO_ID,
-				CheckersMessages.StatementHasNoEffectChecker_ParameterMacro,
-				Boolean.TRUE);
-		addListPreference(problem, PARAM_EXCEPT_ARG_LIST,
-				CheckersMessages.GenericParameter_ParameterExceptions,
+		addPreference(problem, PARAM_MACRO_ID, CheckersMessages.StatementHasNoEffectChecker_ParameterMacro, Boolean.TRUE);
+		addListPreference(problem, PARAM_EXCEPT_ARG_LIST, CheckersMessages.GenericParameter_ParameterExceptions,
 				CheckersMessages.GenericParameter_ParameterExceptionsItem);
 	}
 
 	public boolean isFilteredArg(String arg) {
-		return isFilteredArg(arg, getProblemById(ER_ID, getFile()),
-				PARAM_EXCEPT_ARG_LIST);
+		return isFilteredArg(arg, getProblemById(ER_ID, getFile()), PARAM_EXCEPT_ARG_LIST);
 	}
 
 	/**
 	 * @return
 	 */
 	public boolean shouldReportInMacro() {
-		return (Boolean) getPreference(getProblemById(ER_ID, getFile()),
-				PARAM_MACRO_ID);
+		return (Boolean) getPreference(getProblemById(ER_ID, getFile()), PARAM_MACRO_ID);
 	}
 
 	public boolean isPossibleAssignment(IASTBinaryExpression expr) {

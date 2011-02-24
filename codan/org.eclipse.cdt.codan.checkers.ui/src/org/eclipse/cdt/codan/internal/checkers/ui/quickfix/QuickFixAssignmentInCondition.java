@@ -21,19 +21,16 @@ import org.eclipse.jface.text.IDocument;
 /**
  * quick fix for assignment in condition
  */
-public class QuickFixAssignmentInCondition extends
-		AbstractCodanCMarkerResolution {
+public class QuickFixAssignmentInCondition extends AbstractCodanCMarkerResolution {
 	public String getLabel() {
 		return Messages.QuickFixAssignmentInCondition_Message;
 	}
-
 
 	@Override
 	public void apply(IMarker marker, IDocument document) {
 		int pos = getOffset(marker, document);
 		try {
-			FindReplaceDocumentAdapter dad = new FindReplaceDocumentAdapter(
-					document);
+			FindReplaceDocumentAdapter dad = new FindReplaceDocumentAdapter(document);
 			dad.find(pos, "=", /* forwardSearch *///$NON-NLS-1$
 					true, /* caseSensitive */false,
 					/* wholeWord */false, /* regExSearch */false);

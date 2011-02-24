@@ -13,7 +13,6 @@ package org.eclipse.cdt.codan.core.internal.checkers;
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
 
 public class ReturnStyleCheckerTest extends CheckerTestCase {
-
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();

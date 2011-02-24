@@ -27,8 +27,7 @@ public class CatchByReferenceQuickFix extends AbstractCodanCMarkerResolution {
 	}
 
 	public void apply(IMarker marker, IDocument document) {
-		FindReplaceDocumentAdapter dad = new FindReplaceDocumentAdapter(
-				document);
+		FindReplaceDocumentAdapter dad = new FindReplaceDocumentAdapter(document);
 		try {
 			int pos = getOffset(marker, document);
 			dad.find(pos, " ", /* forwardSearch *///$NON-NLS-1$

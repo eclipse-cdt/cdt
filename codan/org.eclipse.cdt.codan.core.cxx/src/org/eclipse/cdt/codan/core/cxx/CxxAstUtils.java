@@ -59,11 +59,8 @@ import org.eclipse.core.runtime.Path;
  * Useful functions for doing code analysis on c/c++ AST
  */
 public final class CxxAstUtils {
-
 	public static class NameFinderVisitor extends ASTVisitor {
-
 		public IASTName name;
-
 		{
 			shouldVisitNames = true;
 		}
@@ -74,7 +71,6 @@ public final class CxxAstUtils {
 			return PROCESS_ABORT;
 		}
 	}
-
 	private static CxxAstUtils instance;
 
 	private CxxAstUtils() {
@@ -107,13 +103,10 @@ public final class CxxAstUtils {
 	}
 
 	public boolean isInMacro(IASTNode node) {
-		IASTNodeSelector nodeSelector = node.getTranslationUnit()
-				.getNodeSelector(node.getTranslationUnit().getFilePath());
+		IASTNodeSelector nodeSelector = node.getTranslationUnit().getNodeSelector(node.getTranslationUnit().getFilePath());
 		IASTFileLocation fileLocation = node.getFileLocation();
-
-		IASTPreprocessorMacroExpansion macro = nodeSelector
-				.findEnclosingMacroExpansion(fileLocation.getNodeOffset(),
-						fileLocation.getNodeLength());
+		IASTPreprocessorMacroExpansion macro = nodeSelector.findEnclosingMacroExpansion(fileLocation.getNodeOffset(),
+				fileLocation.getNodeLength());
 		return macro != null;
 	}
 
@@ -124,8 +117,7 @@ public final class CxxAstUtils {
 		return (IASTFunctionDefinition) node;
 	}
 
-	public IASTCompositeTypeSpecifier getEnclosingCompositeTypeSpecifier(
-			IASTNode node) {
+	public IASTCompositeTypeSpecifier getEnclosingCompositeTypeSpecifier(IASTNode node) {
 		while (node != null && !(node instanceof IASTCompositeTypeSpecifier)) {
 			node = node.getParent();
 		}
@@ -141,47 +133,36 @@ public final class CxxAstUtils {
 
 	/**
 	 * @param astName
-	 *            a name for the declaration
+	 *        a name for the declaration
 	 * @param factory
-	 *            the factory
-	 * @param index 
+	 *        the factory
+	 * @param index
 	 * @return
 	 */
-	public IASTDeclaration createDeclaration(IASTName astName,
-			INodeFactory factory, IIndex index) {
-
+	public IASTDeclaration createDeclaration(IASTName astName, INodeFactory factory, IIndex index) {
 		// Depending on context, either a type or a declaration is easier to
 		// infer
-
 		IType inferredType = null;
 		IASTSimpleDeclaration declaration = null;
-
 		inferredType = tryInferTypeFromBinaryExpr(astName);
 		if (inferredType == null)
 			declaration = tryInferTypeFromFunctionCall(astName, factory, index);
-
 		// After the inference, create the statement is needed
-
 		if (declaration != null) { // A declaration was generated
 			return declaration;
 		} else if (inferredType != null) { // A type was inferred, create the
 											// declaration and return it
-			DeclarationGenerator generator = DeclarationGenerator
-					.create(factory);
-			IASTDeclarator declarator = generator.createDeclaratorFromType(
-					inferredType, astName.toCharArray());
-			IASTDeclSpecifier declspec = generator
-					.createDeclSpecFromType(inferredType);
-			IASTSimpleDeclaration simpleDeclaration = factory
-					.newSimpleDeclaration(declspec);
+			DeclarationGenerator generator = DeclarationGenerator.create(factory);
+			IASTDeclarator declarator = generator.createDeclaratorFromType(inferredType, astName.toCharArray());
+			IASTDeclSpecifier declspec = generator.createDeclSpecFromType(inferredType);
+			IASTSimpleDeclaration simpleDeclaration = factory.newSimpleDeclaration(declspec);
 			simpleDeclaration.addDeclarator(declarator);
 			return simpleDeclaration;
 		} else { // Fallback - return a `void` declaration
 			IASTDeclarator declarator = factory.newDeclarator(astName.copy());
 			IASTSimpleDeclSpecifier declspec = factory.newSimpleDeclSpecifier();
 			declspec.setType(Kind.eInt);
-			IASTSimpleDeclaration simpleDeclaration = factory
-					.newSimpleDeclaration(declspec);
+			IASTSimpleDeclaration simpleDeclaration = factory.newSimpleDeclaration(declspec);
 			simpleDeclaration.addDeclarator(declarator);
 			return simpleDeclaration;
 		}
@@ -194,8 +175,7 @@ public final class CxxAstUtils {
 	 * @return inferred type or null if couldn't infer
 	 */
 	private IType tryInferTypeFromBinaryExpr(IASTName astName) {
-		if (astName.getParent() instanceof IASTIdExpression
-				&& astName.getParent().getParent() instanceof IASTBinaryExpression) {
+		if (astName.getParent() instanceof IASTIdExpression && astName.getParent().getParent() instanceof IASTBinaryExpression) {
 			IASTNode binaryExpr = astName.getParent().getParent();
 			for (IASTNode node : binaryExpr.getChildren()) {
 				if (node != astName.getParent()) {
@@ -210,28 +190,23 @@ public final class CxxAstUtils {
 	/**
 	 * For a function call, tries to find a matching function declaration.
 	 * Checks the argument count.
-	 * @param index 
+	 * 
+	 * @param index
 	 * 
 	 * @return a generated declaration or null if not suitable
 	 */
-	private IASTSimpleDeclaration tryInferTypeFromFunctionCall(
-			IASTName astName, INodeFactory factory, IIndex index) {
-		if (astName.getParent() instanceof IASTIdExpression
-				&& astName.getParent().getParent() instanceof IASTFunctionCallExpression
+	private IASTSimpleDeclaration tryInferTypeFromFunctionCall(IASTName astName, INodeFactory factory, IIndex index) {
+		if (astName.getParent() instanceof IASTIdExpression && astName.getParent().getParent() instanceof IASTFunctionCallExpression
 				&& astName.getParent().getPropertyInParent() == IASTFunctionCallExpression.ARGUMENT) {
-
-			IASTFunctionCallExpression call = (IASTFunctionCallExpression) astName
-					.getParent().getParent();
+			IASTFunctionCallExpression call = (IASTFunctionCallExpression) astName.getParent().getParent();
 			NameFinderVisitor visitor = new NameFinderVisitor();
 			call.getFunctionNameExpression().accept(visitor);
 			IASTName funcname = visitor.name;
-
 			int expectedParametersNum = 0;
 			int targetParameterNum = -1;
 			for (IASTNode n : call.getChildren()) {
 				if (n.getPropertyInParent() == IASTFunctionCallExpression.ARGUMENT) {
-					if (n instanceof IASTIdExpression
-							&& n.getChildren()[0] == astName) {
+					if (n instanceof IASTIdExpression && n.getChildren()[0] == astName) {
 						targetParameterNum = expectedParametersNum;
 					}
 					expectedParametersNum++;
@@ -240,13 +215,11 @@ public final class CxxAstUtils {
 			if (targetParameterNum == -1) {
 				return null;
 			}
-
 			IBinding[] bindings;
 			{
 				IBinding binding = funcname.resolveBinding();
 				if (binding instanceof IProblemBinding) {
-					bindings = ((IProblemBinding) binding)
-							.getCandidateBindings();
+					bindings = ((IProblemBinding) binding).getCandidateBindings();
 				} else {
 					bindings = new IBinding[] { binding };
 				}
@@ -266,44 +239,32 @@ public final class CxxAstUtils {
 					}
 				}
 				for (IIndexName decl : declSet) {
-
 					// for now, just use the first overload found
-
 					ITranslationUnit tu = getTranslationUnitFromIndexName(decl);
-					IASTName name = (IASTName) tu.getAST(null,
-							ITranslationUnit.AST_SKIP_INDEXED_HEADERS)
-							.getNodeSelector(null).findEnclosingNode(
-									decl.getNodeOffset(), decl.getNodeLength());
-
+					IASTName name = (IASTName) tu.getAST(null, ITranslationUnit.AST_SKIP_INDEXED_HEADERS).getNodeSelector(null)
+							.findEnclosingNode(decl.getNodeOffset(), decl.getNodeLength());
 					IASTNode fdecl = name;
 					while (fdecl instanceof IASTName) {
 						fdecl = fdecl.getParent();
 					}
 					assert (fdecl instanceof IASTFunctionDeclarator);
-
 					// find the needed param number
 					int nthParam = 0;
 					for (IASTNode child : fdecl.getChildren()) {
 						if (child instanceof IASTParameterDeclaration) {
 							if (nthParam == targetParameterNum) {
 								IASTParameterDeclaration pd = (IASTParameterDeclaration) child;
-								IASTDeclSpecifier declspec = pd
-										.getDeclSpecifier().copy();
-								IASTDeclarator declarator = pd.getDeclarator()
-										.copy();
-								setNameInNestedDeclarator(declarator, astName
-										.copy());
-								IASTSimpleDeclaration declaration = factory
-										.newSimpleDeclaration(declspec);
+								IASTDeclSpecifier declspec = pd.getDeclSpecifier().copy();
+								IASTDeclarator declarator = pd.getDeclarator().copy();
+								setNameInNestedDeclarator(declarator, astName.copy());
+								IASTSimpleDeclaration declaration = factory.newSimpleDeclaration(declspec);
 								declaration.addDeclarator(declarator);
 								return declaration;
 							}
 							nthParam++;
 						}
-
 					}
 					name.getParent();
-
 				}
 			} catch (InterruptedException e) {
 				// skip
@@ -312,25 +273,21 @@ public final class CxxAstUtils {
 			} finally {
 				index.releaseReadLock();
 			}
-
 		}
 		return null;
 	}
 
-	private void setNameInNestedDeclarator(IASTDeclarator declarator,
-			IASTName astName) {
+	private void setNameInNestedDeclarator(IASTDeclarator declarator, IASTName astName) {
 		while (declarator.getNestedDeclarator() != null) {
 			declarator = declarator.getNestedDeclarator();
 		}
 		declarator.setName(astName);
 	}
 
-	public ITranslationUnit getTranslationUnitFromIndexName(IIndexName decl)
-			throws CoreException {
+	public ITranslationUnit getTranslationUnitFromIndexName(IIndexName decl) throws CoreException {
 		Path path = new Path(decl.getFile().getLocation().getFullPath());
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-		ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(
-				file);
+		ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(file);
 		return tu;
 	}
 
@@ -339,17 +296,14 @@ public final class CxxAstUtils {
 	 * Otherwise, returns null.
 	 * 
 	 * @param function
-	 *            the function definition to check
+	 *        the function definition to check
 	 * @param index
-	 *            the index to use for name lookup
+	 *        the index to use for name lookup
 	 * @return Either a type specifier or null
 	 */
-	public IASTCompositeTypeSpecifier getCompositeTypeFromFunction(
-			final IASTFunctionDefinition function, final IIndex index) {
-
+	public IASTCompositeTypeSpecifier getCompositeTypeFromFunction(final IASTFunctionDefinition function, final IIndex index) {
 		// return value to be set via visitor
 		final IASTCompositeTypeSpecifier returnSpecifier[] = { null };
-
 		function.accept(new ASTVisitor() {
 			{
 				shouldVisitDeclarators = true;
@@ -358,43 +312,31 @@ public final class CxxAstUtils {
 
 			@Override
 			public int visit(IASTName name) {
-				if (!(name instanceof ICPPASTQualifiedName && name.getParent()
-						.getParent() == function))
+				if (!(name instanceof ICPPASTQualifiedName && name.getParent().getParent() == function))
 					return PROCESS_CONTINUE;
-
 				ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
-
 				// A qualified name may have 1 name, but in our case needs to
 				// have 2.
 				// The pre-last name is either a namespace or a class.
 				if (qname.getChildren().length < 2) {
 					return PROCESS_CONTINUE;
 				}
-				IASTName namePart = (IASTName) qname.getChildren()[qname
-						.getChildren().length - 2];
-
+				IASTName namePart = (IASTName) qname.getChildren()[qname.getChildren().length - 2];
 				IBinding binding = namePart.resolveBinding();
 				try {
 					index.acquireReadLock();
 					IIndexName[] declarations = index.findDeclarations(binding);
-
 					// Check the declarations and use first suitable
 					for (IIndexName decl : declarations) {
-
 						ITranslationUnit tu = getTranslationUnitFromIndexName(decl);
-						IASTNode node = tu.getAST(index,
-								ITranslationUnit.AST_SKIP_INDEXED_HEADERS)
-								.getNodeSelector(null).findEnclosingNode(
-										decl.getNodeOffset(),
-										decl.getNodeLength());
+						IASTNode node = tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS).getNodeSelector(null)
+								.findEnclosingNode(decl.getNodeOffset(), decl.getNodeLength());
 						IASTCompositeTypeSpecifier specifier = getEnclosingCompositeTypeSpecifier(node);
-
 						if (specifier != null) {
 							returnSpecifier[0] = specifier;
 							break;
 						}
 					}
-
 				} catch (InterruptedException e) {
 					return PROCESS_ABORT;
 				} catch (CoreException e) {
@@ -403,14 +345,12 @@ public final class CxxAstUtils {
 				} finally {
 					index.releaseReadLock();
 				}
-
 				return PROCESS_ABORT;
 			}
-
 		});
 		return returnSpecifier[0];
 	}
-	
+
 	/**
 	 * @param body
 	 * @return
@@ -418,8 +358,7 @@ public final class CxxAstUtils {
 	public boolean isThrowStatement(IASTNode body) {
 		if (!(body instanceof IASTExpressionStatement))
 			return false;
-		IASTExpression expression = ((IASTExpressionStatement) body)
-				.getExpression();
+		IASTExpression expression = ((IASTExpressionStatement) body).getExpression();
 		if (!(expression instanceof IASTUnaryExpression))
 			return false;
 		return ((IASTUnaryExpression) expression).getOperator() == IASTUnaryExpression.op_throw;
@@ -428,12 +367,10 @@ public final class CxxAstUtils {
 	public boolean isExitStatement(IASTNode body) {
 		if (!(body instanceof IASTExpressionStatement))
 			return false;
-		IASTExpression expression = ((IASTExpressionStatement) body)
-				.getExpression();
+		IASTExpression expression = ((IASTExpressionStatement) body).getExpression();
 		if (!(expression instanceof IASTFunctionCallExpression))
 			return false;
-		IASTExpression functionNameExpression = ((IASTFunctionCallExpression) expression)
-				.getFunctionNameExpression();
+		IASTExpression functionNameExpression = ((IASTFunctionCallExpression) expression).getFunctionNameExpression();
 		return functionNameExpression.getRawSignature().equals("exit"); //$NON-NLS-1$
 	}
 }

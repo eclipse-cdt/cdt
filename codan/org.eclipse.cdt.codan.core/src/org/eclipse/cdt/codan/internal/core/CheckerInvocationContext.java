@@ -25,8 +25,7 @@ public class CheckerInvocationContext implements ICheckerInvocationContext {
 	 * @param resource
 	 * @param sessionReporter
 	 */
-	public CheckerInvocationContext(IResource resource,
-			IProblemReporter sessionReporter) {
+	public CheckerInvocationContext(IResource resource, IProblemReporter sessionReporter) {
 		this.resource = resource;
 		this.sessionReporter = sessionReporter;
 	}

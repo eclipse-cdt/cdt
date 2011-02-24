@@ -29,8 +29,7 @@ import org.eclipse.core.runtime.IPath;
  * Checker can produce several problems, but preferences are per problem.
  * Sharing preferences between problems is not supported now.
  */
-public abstract class AbstractCheckerWithProblemPreferences extends
-		AbstractChecker implements ICheckerWithPreferences {
+public abstract class AbstractCheckerWithProblemPreferences extends AbstractChecker implements ICheckerWithPreferences {
 	/**
 	 * Checker that actually has parameter must override this
 	 */
@@ -47,8 +46,8 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	 * @return scope problem preference, null if not defined
 	 */
 	public FileScopeProblemPreference getScopePreference(IProblem problem) {
-		FileScopeProblemPreference scope = (FileScopeProblemPreference) getTopLevelPreferenceMap(
-				problem).getChildDescriptor(FileScopeProblemPreference.KEY);
+		FileScopeProblemPreference scope = (FileScopeProblemPreference) getTopLevelPreferenceMap(problem).getChildDescriptor(
+				FileScopeProblemPreference.KEY);
 		return scope;
 	}
 
@@ -63,14 +62,10 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	 * @return true if checker should report problems, fails otherwise.
 	 */
 	public boolean shouldProduceProblems(IResource res) {
-		Collection<IProblem> refProblems = getRuntime().getCheckersRegistry()
-				.getRefProblems(this);
-		for (Iterator<IProblem> iterator = refProblems.iterator(); iterator
-				.hasNext();) {
+		Collection<IProblem> refProblems = getRuntime().getCheckersRegistry().getRefProblems(this);
+		for (Iterator<IProblem> iterator = refProblems.iterator(); iterator.hasNext();) {
 			IProblem checkerProblem = iterator.next();
-			if (shouldProduceProblem(
-					getProblemById(checkerProblem.getId(), res),
-					res.getLocation()))
+			if (shouldProduceProblem(getProblemById(checkerProblem.getId(), res), res.getLocation()))
 				return true;
 		}
 		return false;
@@ -99,10 +94,8 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	}
 
 	@Override
-	public void reportProblem(String problemId, IProblemLocation loc,
-			Object... args) {
-		if (shouldProduceProblem(getProblemById(problemId, loc.getFile()), loc
-				.getFile().getLocation()))
+	public void reportProblem(String problemId, IProblemLocation loc, Object... args) {
+		if (shouldProduceProblem(getProblemById(problemId, loc.getFile()), loc.getFile().getLocation()))
 			super.reportProblem(problemId, loc, args);
 	}
 
@@ -119,11 +112,9 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	 *        - parameter default value
 	 * @return - parameter info object
 	 */
-	public IProblemPreference addPreference(IProblemWorkingCopy problem,
-			String key, String label, Object defaultValue) {
+	public IProblemPreference addPreference(IProblemWorkingCopy problem, String key, String label, Object defaultValue) {
 		MapProblemPreference map = getTopLevelPreferenceMap(problem);
-		BasicProblemPreference info = new BasicProblemPreference(key, label,
-				PreferenceType.typeOf(defaultValue));
+		BasicProblemPreference info = new BasicProblemPreference(key, label, PreferenceType.typeOf(defaultValue));
 		map.addChildDescriptor(info);
 		setDefaultPreferenceValue(problem, key, defaultValue);
 		return info;
@@ -144,12 +135,10 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	 *         values or set different element type
 	 * 
 	 */
-	public ListProblemPreference addListPreference(IProblemWorkingCopy problem,
-			String key, String label, String itemLabel) {
+	public ListProblemPreference addListPreference(IProblemWorkingCopy problem, String key, String label, String itemLabel) {
 		MapProblemPreference map = getTopLevelPreferenceMap(problem);
 		ListProblemPreference list = new ListProblemPreference(key, label);
-		list.setChildDescriptor(new BasicProblemPreference(
-				ListProblemPreference.COMMON_DESCRIPTOR_KEY, itemLabel,
+		list.setChildDescriptor(new BasicProblemPreference(ListProblemPreference.COMMON_DESCRIPTOR_KEY, itemLabel,
 				PreferenceType.TYPE_STRING));
 		return (ListProblemPreference) map.addChildDescriptor(list);
 	}
@@ -162,8 +151,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	 * @param defaultValue - default value of the preference
 	 * @return added preference
 	 */
-	public IProblemPreference addPreference(IProblemWorkingCopy problem,
-			IProblemPreference pref, Object defaultValue) {
+	public IProblemPreference addPreference(IProblemWorkingCopy problem, IProblemPreference pref, Object defaultValue) {
 		MapProblemPreference map = getTopLevelPreferenceMap(problem);
 		String key = pref.getKey();
 		pref = map.addChildDescriptor(pref);
@@ -179,8 +167,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	 * @param key - preference key
 	 * @param defaultValue - value of preference to be set
 	 */
-	protected void setDefaultPreferenceValue(IProblemWorkingCopy problem,
-			String key, Object defaultValue) {
+	protected void setDefaultPreferenceValue(IProblemWorkingCopy problem, String key, Object defaultValue) {
 		MapProblemPreference map = getTopLevelPreferenceMap(problem);
 		if (map.getChildValue(key) == null)
 			map.setChildValue(key, defaultValue);
@@ -197,8 +184,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	 * @return top level preference if it is a map
 	 */
 	protected MapProblemPreference getTopLevelPreferenceMap(IProblem problem) {
-		MapProblemPreference map = (MapProblemPreference) problem
-				.getPreference();
+		MapProblemPreference map = (MapProblemPreference) problem.getPreference();
 		if (map == null) {
 			map = new MapProblemPreference(AbstractProblemPreference.PARAM, ""); //$NON-NLS-1$
 			if (problem instanceof IProblemWorkingCopy) {
@@ -217,8 +203,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	 * @return value of the preference
 	 */
 	public Object getPreference(IProblem problem, String key) {
-		return ((MapProblemPreference) problem.getPreference())
-				.getChildValue(key);
+		return ((MapProblemPreference) problem.getPreference()).getChildValue(key);
 	}
 
 	/**
@@ -229,8 +214,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	 * @return true if argument matches of the names in the exception list
 	 * @since 2.0
 	 */
-	public boolean isFilteredArg(String arg, IProblem problem,
-			String exceptionListParamId) {
+	public boolean isFilteredArg(String arg, IProblem problem, String exceptionListParamId) {
 		Object[] arr = (Object[]) getPreference(problem, exceptionListParamId);
 		for (int i = 0; i < arr.length; i++) {
 			String str = (String) arr[i];

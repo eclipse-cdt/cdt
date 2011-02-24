@@ -17,11 +17,9 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * TODO: add description
  */
 public class CxxPlainNode extends PlainNode {
-
-
 	/**
 	 * @param node
-	 *            the node to set
+	 *        the node to set
 	 */
 	public void setNode(IASTNode node) {
 		setData(node);

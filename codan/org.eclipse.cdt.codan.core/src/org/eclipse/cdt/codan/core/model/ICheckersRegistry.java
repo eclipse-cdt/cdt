@@ -59,8 +59,7 @@ public interface ICheckersRegistry extends Iterable<IChecker> {
 	 * @param parentCategoryId
 	 *        - parent category id
 	 */
-	public abstract void addCategory(IProblemCategory category,
-			String parentCategoryId);
+	public abstract void addCategory(IProblemCategory category, String parentCategoryId);
 
 	/**
 	 * Add problem reference to a checker, i.e. claim that checker can produce

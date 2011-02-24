@@ -28,8 +28,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
  * @author Alena
  * 
  */
-public class NamingConventionFunctionIIndexChecker extends
-		AbstractCIndexChecker implements ICheckerWithPreferences {
+public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker implements ICheckerWithPreferences {
 	private static final String DEFAULT_PATTERN = "^[a-z]"; // name starts with english lowercase letter //$NON-NLS-1$
 	public static final String PARAM_KEY = "pattern"; //$NON-NLS-1$
 	private static final String ER_ID = "org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionProblem"; //$NON-NLS-1$
@@ -47,8 +46,7 @@ public class NamingConventionFunctionIIndexChecker extends
 			unit.accept(new ICElementVisitor() {
 				public boolean visit(ICElement element) {
 					if (element.getElementType() == ICElement.C_FUNCTION) {
-						String parameter = (String) pt.getPreference()
-								.getValue();
+						String parameter = (String) pt.getPreference().getValue();
 						Pattern pattern = Pattern.compile(parameter);
 						String name = element.getElementName();
 						if (!pattern.matcher(name).find()) {
@@ -74,8 +72,7 @@ public class NamingConventionFunctionIIndexChecker extends
 	 */
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		IProblemPreference info = new BasicProblemPreference(PARAM_KEY,
-				"Name Pattern");
+		IProblemPreference info = new BasicProblemPreference(PARAM_KEY, "Name Pattern");
 		addPreference(problem, info, DEFAULT_PATTERN);
 	}
 

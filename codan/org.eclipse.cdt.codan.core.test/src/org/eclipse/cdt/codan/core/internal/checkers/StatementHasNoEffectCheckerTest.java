@@ -151,9 +151,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// }
 	@SuppressWarnings("restriction")
 	public void testInMacro() {
-		IProblemPreference macro = getPreference(
-				StatementHasNoEffectChecker.ER_ID,
-				StatementHasNoEffectChecker.PARAM_MACRO_ID);
+		IProblemPreference macro = getPreference(StatementHasNoEffectChecker.ER_ID, StatementHasNoEffectChecker.PARAM_MACRO_ID);
 		macro.setValue(Boolean.TRUE);
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(4);
@@ -177,9 +175,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// }
 	@SuppressWarnings("restriction")
 	public void testInMacroParamOff() {
-		IProblemPreference macro = getPreference(
-				StatementHasNoEffectChecker.ER_ID,
-				StatementHasNoEffectChecker.PARAM_MACRO_ID);
+		IProblemPreference macro = getPreference(StatementHasNoEffectChecker.ER_ID, StatementHasNoEffectChecker.PARAM_MACRO_ID);
 		macro.setValue(Boolean.FALSE);
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();

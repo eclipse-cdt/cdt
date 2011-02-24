@@ -58,16 +58,13 @@ public class QuickFixCreateLocalVariable extends AbstractAstRewriteQuickFix {
 		}
 		ASTRewrite r = ASTRewrite.create(ast);
 		INodeFactory factory = ast.getASTNodeFactory();
-		IASTDeclaration declaration = utils.createDeclaration(astName, factory,
-				index);
-		IASTDeclarationStatement newStatement = factory
-				.newDeclarationStatement(declaration);
+		IASTDeclaration declaration = utils.createDeclaration(astName, factory, index);
+		IASTDeclarationStatement newStatement = factory.newDeclarationStatement(declaration);
 		IASTNode targetStatement = utils.getEnclosingStatement(astName);
 		if (targetStatement == null) {
 			return;
 		}
-		r.insertBefore(targetStatement.getParent(), targetStatement,
-				newStatement, null);
+		r.insertBefore(targetStatement.getParent(), targetStatement, newStatement, null);
 		Change c = r.rewriteAST();
 		try {
 			c.perform(new NullProgressMonitor());

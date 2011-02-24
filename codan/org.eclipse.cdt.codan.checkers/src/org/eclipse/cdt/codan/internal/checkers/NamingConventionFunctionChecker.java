@@ -28,13 +28,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
  * regular expression defining the style.
  * 
  */
-public class NamingConventionFunctionChecker extends AbstractIndexAstChecker
-		implements ICheckerWithPreferences {
+public class NamingConventionFunctionChecker extends AbstractIndexAstChecker implements ICheckerWithPreferences {
 	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionChecker"; //$NON-NLS-1$
 	public static final String PARAM_KEY = "pattern"; //$NON-NLS-1$
 	public static final String PARAM_METHODS = "macro"; //$NON-NLS-1$
 	public static final String PARAM_EXCEPT_ARG_LIST = "exceptions"; //$NON-NLS-1$
-	
+
 	public void processAst(IASTTranslationUnit ast) {
 		final IProblem pt = getProblemById(ER_ID, getFile());
 		try {
@@ -47,8 +46,7 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker
 					if (element instanceof IASTFunctionDefinition) {
 						String parameter = (String) getPreference(pt, PARAM_KEY);
 						Pattern pattern = Pattern.compile(parameter);
-						IASTName astName = ((IASTFunctionDefinition) element)
-								.getDeclarator().getName();
+						IASTName astName = ((IASTFunctionDefinition) element).getDeclarator().getName();
 						String name = astName.toString();
 						if (astName instanceof ICPPASTQualifiedName) {
 							if (!shouldReportCppMethods())
@@ -59,10 +57,9 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker
 							name = cppAstName.getLastName().toString();
 							if (name.startsWith("~")) // destructor //$NON-NLS-1$
 								return PROCESS_SKIP;
-							
 							IASTName[] names = cppAstName.getNames();
-							if (names.length>=2) {
-								if (names[names.length-1].toString().equals(names[names.length-2].toString())) {
+							if (names.length >= 2) {
+								if (names[names.length - 1].toString().equals(names[names.length - 2].toString())) {
 									// constructor
 									return PROCESS_SKIP;
 								}
@@ -89,29 +86,19 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker
 	 */
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(
-				problem,
-				PARAM_KEY,
-				CheckersMessages.NamingConventionFunctionChecker_LabelNamePattern,
-				"^[a-z]"); //$NON-NLS-1$
-		addPreference(problem, PARAM_METHODS,
-				"Also check C++ method names",
-				Boolean.TRUE);
-		addListPreference(
-				problem,
-				PARAM_EXCEPT_ARG_LIST,
-				CheckersMessages.GenericParameter_ParameterExceptions,
+		addPreference(problem, PARAM_KEY, CheckersMessages.NamingConventionFunctionChecker_LabelNamePattern, "^[a-z]"); //$NON-NLS-1$
+		addPreference(problem, PARAM_METHODS, "Also check C++ method names", Boolean.TRUE);
+		addListPreference(problem, PARAM_EXCEPT_ARG_LIST, CheckersMessages.GenericParameter_ParameterExceptions,
 				CheckersMessages.GenericParameter_ParameterExceptionsItem);
 	}
+
 	public boolean shouldReportCppMethods() {
-		return (Boolean) getPreference(getProblemById(ER_ID, getFile()),
-				PARAM_METHODS);
-	}
-	public boolean isFilteredArg(String arg) {
-		return isFilteredArg(arg, getProblemById(ER_ID, getFile()),
-				PARAM_EXCEPT_ARG_LIST);
+		return (Boolean) getPreference(getProblemById(ER_ID, getFile()), PARAM_METHODS);
 	}
 
+	public boolean isFilteredArg(String arg) {
+		return isFilteredArg(arg, getProblemById(ER_ID, getFile()), PARAM_EXCEPT_ARG_LIST);
+	}
 
 	@Override
 	public boolean runInEditor() {

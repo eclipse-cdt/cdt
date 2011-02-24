@@ -59,8 +59,7 @@ public class CatchByReference extends AbstractIndexAstChecker {
 			if (stmt instanceof ICPPASTTryBlockStatement) {
 				try {
 					ICPPASTTryBlockStatement tblock = (ICPPASTTryBlockStatement) stmt;
-					ICPPASTCatchHandler[] catchHandlers = tblock
-							.getCatchHandlers();
+					ICPPASTCatchHandler[] catchHandlers = tblock.getCatchHandlers();
 					for (int i = 0; i < catchHandlers.length; i++) {
 						ICPPASTCatchHandler catchHandler = catchHandlers[i];
 						IASTDeclaration decl = catchHandler.getDeclaration();
@@ -69,15 +68,10 @@ public class CatchByReference extends AbstractIndexAstChecker {
 							IASTDeclSpecifier spec = sdecl.getDeclSpecifier();
 							if (!usesReference(catchHandler)) {
 								if (spec instanceof IASTNamedTypeSpecifier) {
-									IASTName tname = ((IASTNamedTypeSpecifier) spec)
-											.getName();
-									IType typeName = (IType) tname
-											.resolveBinding();
-									typeName = CxxAstUtils.getInstance()
-											.unwindTypedef(typeName);
-									if (typeName instanceof IBasicType
-											|| typeName instanceof IPointerType
-											|| typeName == null)
+									IASTName tname = ((IASTNamedTypeSpecifier) spec).getName();
+									IType typeName = (IType) tname.resolveBinding();
+									typeName = CxxAstUtils.getInstance().unwindTypedef(typeName);
+									if (typeName instanceof IBasicType || typeName instanceof IPointerType || typeName == null)
 										continue;
 									if (typeName instanceof IProblemBinding && !shouldReportForUnknownType())
 										continue;
@@ -106,12 +100,10 @@ public class CatchByReference extends AbstractIndexAstChecker {
 		private boolean usesReference(ICPPASTCatchHandler catchHandler) {
 			IASTDeclaration declaration = catchHandler.getDeclaration();
 			if (declaration instanceof IASTSimpleDeclaration) {
-				IASTDeclarator[] declarators = ((IASTSimpleDeclaration) declaration)
-						.getDeclarators();
+				IASTDeclarator[] declarators = ((IASTSimpleDeclaration) declaration).getDeclarators();
 				for (int i = 0; i < declarators.length; i++) {
 					IASTDeclarator d = declarators[i];
-					IASTPointerOperator[] pointerOperators = d
-							.getPointerOperators();
+					IASTPointerOperator[] pointerOperators = d.getPointerOperators();
 					for (int j = 0; j < pointerOperators.length; j++) {
 						IASTPointerOperator po = pointerOperators[j];
 						if (po instanceof ICPPASTReferenceOperator) {
@@ -130,16 +122,13 @@ public class CatchByReference extends AbstractIndexAstChecker {
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, PARAM_UNKNOWN_TYPE,
-				CheckersMessages.CatchByReference_ReportForUnknownType, Boolean.FALSE);
-		addListPreference(problem, PARAM_EXCEPT_ARG_LIST,
-				CheckersMessages.GenericParameter_ParameterExceptions,
+		addPreference(problem, PARAM_UNKNOWN_TYPE, CheckersMessages.CatchByReference_ReportForUnknownType, Boolean.FALSE);
+		addListPreference(problem, PARAM_EXCEPT_ARG_LIST, CheckersMessages.GenericParameter_ParameterExceptions,
 				CheckersMessages.GenericParameter_ParameterExceptionsItem);
 	}
 
 	public boolean isFilteredArg(String arg) {
-		Object[] arr = (Object[]) getPreference(
-				getProblemById(ER_ID, getFile()), PARAM_EXCEPT_ARG_LIST);
+		Object[] arr = (Object[]) getPreference(getProblemById(ER_ID, getFile()), PARAM_EXCEPT_ARG_LIST);
 		for (int i = 0; i < arr.length; i++) {
 			String str = (String) arr[i];
 			if (arg.equals(str))
@@ -152,7 +141,6 @@ public class CatchByReference extends AbstractIndexAstChecker {
 	 * @return
 	 */
 	public boolean shouldReportForUnknownType() {
-		return (Boolean) getPreference(getProblemById(ER_ID, getFile()),
-				PARAM_UNKNOWN_TYPE);
+		return (Boolean) getPreference(getProblemById(ER_ID, getFile()), PARAM_UNKNOWN_TYPE);
 	}
 }

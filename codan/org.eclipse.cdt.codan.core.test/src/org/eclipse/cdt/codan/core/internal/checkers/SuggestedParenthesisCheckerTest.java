@@ -24,9 +24,7 @@ public class SuggestedParenthesisCheckerTest extends CheckerTestCase {
 	//	   if (!a<10) b=4; // error here on line 3
 	//	 }	
 	public void test1() {
-		IProblemPreference macro = getPreference(
-				SuggestedParenthesisChecker.ER_ID,
-				SuggestedParenthesisChecker.PARAM_NOT);
+		IProblemPreference macro = getPreference(SuggestedParenthesisChecker.ER_ID, SuggestedParenthesisChecker.PARAM_NOT);
 		macro.setValue(Boolean.TRUE);
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);

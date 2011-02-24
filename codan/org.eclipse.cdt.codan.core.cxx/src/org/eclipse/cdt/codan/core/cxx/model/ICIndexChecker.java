@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 public interface ICIndexChecker extends IChecker {
 	/**
 	 * Run checker on translation unit
+	 * 
 	 * @param unit - translation unit
 	 */
 	void processUnit(ITranslationUnit unit);

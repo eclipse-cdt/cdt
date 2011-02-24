@@ -35,8 +35,7 @@ public class ProblemLocationFactory implements IProblemLocationFactory {
 	 * @seeorg.eclipse.cdt.codan.core.model.IProblemLocationFactory#
 	 * createProblemLocation(org.eclipse.core.resources.IFile, int, int)
 	 */
-	public IProblemLocation createProblemLocation(IFile file, int startChar,
-			int endChar) {
+	public IProblemLocation createProblemLocation(IFile file, int startChar, int endChar) {
 		return new CodanProblemLocation(file, startChar, endChar);
 	}
 
@@ -46,8 +45,7 @@ public class ProblemLocationFactory implements IProblemLocationFactory {
 	 * @seeorg.eclipse.cdt.codan.core.model.IProblemLocationFactory#
 	 * createProblemLocation(org.eclipse.core.resources.IFile, int, int, int)
 	 */
-	public IProblemLocation createProblemLocation(IFile file, int startChar,
-			int endChar, int line) {
+	public IProblemLocation createProblemLocation(IFile file, int startChar, int endChar, int line) {
 		return new CodanProblemLocation(file, startChar, endChar, line);
 	}
 }

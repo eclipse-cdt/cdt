@@ -21,8 +21,7 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 
-public class BuildPropertyPage extends FieldEditorPreferencePage implements
-		IWorkbenchPropertyPage {
+public class BuildPropertyPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
 	private IAdaptable element;
 
 	/**
@@ -41,11 +40,9 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements
 	 */
 	@Override
 	protected void createFieldEditors() {
-		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_ON_BUILD,
-				CodanUIMessages.BuildPropertyPage_RunWithBuild,
+		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_ON_BUILD, CodanUIMessages.BuildPropertyPage_RunWithBuild,
 				getFieldEditorParent()));
-		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_IN_EDITOR,
-				CodanUIMessages.BuildPropertyPage_RunAsYouType,
+		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_IN_EDITOR, CodanUIMessages.BuildPropertyPage_RunAsYouType,
 				getFieldEditorParent()));
 	}
 
@@ -55,10 +52,8 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements
 		if (result) {
 			IAdaptable res = getElement();
 			if (res instanceof IProject) {
-				boolean runOnBuild = getPreferenceStore().getBoolean(
-						PreferenceConstants.P_RUN_ON_BUILD);
-				new ToggleNatureAction().toggleNature((IProject) res,
-						runOnBuild);
+				boolean runOnBuild = getPreferenceStore().getBoolean(PreferenceConstants.P_RUN_ON_BUILD);
+				new ToggleNatureAction().toggleNature((IProject) res, runOnBuild);
 				// if (runOnBuild == false) {
 				// boolean openQuestion = MessageDialog
 				// .openQuestion(
@@ -96,8 +91,7 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements
 	public void setElement(IAdaptable element) {
 		this.element = element;
 		if (getElement() != null) {
-			IPreferenceStore scoped = CodanUIActivator.getDefault()
-					.getPreferenceStore(((IProject) getElement()));
+			IPreferenceStore scoped = CodanUIActivator.getDefault().getPreferenceStore(((IProject) getElement()));
 			setPreferenceStore(scoped);
 		}
 	}

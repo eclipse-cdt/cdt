@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 public class CxxExitNode extends ExitNode implements IExitNode {
 	/**
 	 * @param node
-	 *            the node to set
+	 *        the node to set
 	 */
 	public void setNode(IASTNode node) {
 		setData(node);

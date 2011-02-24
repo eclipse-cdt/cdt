@@ -135,8 +135,7 @@ public class CodanPreferencesLoader {
 	 * @param problemId
 	 * @param storePreferences
 	 */
-	private void setProblemPreferenceValues(String problemId,
-			Preferences storePreferences) {
+	private void setProblemPreferenceValues(String problemId, Preferences storePreferences) {
 		IProblem prob = baseModel.findProblem(problemId);
 		String prefKey = getPreferencesKey(problemId);
 		if (prefKey == null)
@@ -161,8 +160,7 @@ public class CodanPreferencesLoader {
 	public static Preferences getProjectNode(IProject project) {
 		if (!project.exists())
 			return null;
-		Preferences prefNode = new ProjectScope(project)
-				.getNode(CodanCorePlugin.PLUGIN_ID);
+		Preferences prefNode = new ProjectScope(project).getNode(CodanCorePlugin.PLUGIN_ID);
 		if (prefNode == null)
 			return null;
 		return prefNode;
@@ -174,8 +172,7 @@ public class CodanPreferencesLoader {
 	 * @return project preferences node
 	 */
 	public static Preferences getWorkspaceNode() {
-		Preferences prefNode = new InstanceScope()
-				.getNode(CodanCorePlugin.PLUGIN_ID);
+		Preferences prefNode = new InstanceScope().getNode(CodanCorePlugin.PLUGIN_ID);
 		if (prefNode == null)
 			return null;
 		return prefNode;

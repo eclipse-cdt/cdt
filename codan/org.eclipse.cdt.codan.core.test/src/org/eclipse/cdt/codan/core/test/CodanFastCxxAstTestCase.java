@@ -57,9 +57,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 	protected StringBuffer[] getContents(int sections) {
 		try {
 			CodanCoreTestActivator plugin = CodanCoreTestActivator.getDefault();
-			return TestSourceReader.getContentsForTest(plugin == null ? null
-					: plugin.getBundle(), "src", getClass(), getName(),
-					sections);
+			return TestSourceReader.getContentsForTest(plugin == null ? null : plugin.getBundle(), "src", getClass(), getName(), sections);
 		} catch (IOException e) {
 			fail(e.getMessage());
 			return null;
@@ -73,18 +71,16 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 
 	/**
 	 * @return
-	 *
+	 * 
 	 */
 	public IASTTranslationUnit parse(String code) {
-		return parse(code, isCpp() ? ParserLanguage.CPP : ParserLanguage.C,
-				true);
+		return parse(code, isCpp() ? ParserLanguage.CPP : ParserLanguage.C, true);
 	}
 
 	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean gcc) {
 		FileContent codeReader = FileContent.create("code.c", code.toCharArray());
 		IScannerInfo scannerInfo = new ScannerInfo();
-		IScanner scanner = AST2BaseTest.createScanner(codeReader, lang,
-				ParserMode.COMPLETE_PARSE, scannerInfo);
+		IScanner scanner = AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
 		ISourceCodeParser parser2 = null;
 		if (lang == ParserLanguage.CPP) {
 			ICPPParserExtensionConfiguration config = null;
@@ -92,8 +88,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 				config = new GPPParserExtensionConfiguration();
 			else
 				config = new ANSICPPParserExtensionConfiguration();
-			parser2 = new GNUCPPSourceParser(scanner,
-					ParserMode.COMPLETE_PARSE, NULL_LOG, config);
+			parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
 		} else {
 			ICParserExtensionConfiguration config = null;
 			if (gcc)
@@ -121,7 +116,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 	/**
 	 * Override if any of code that test tried to parse has errors, otherwise
 	 * parse method would assert
-	 *
+	 * 
 	 * @return
 	 */
 	protected boolean hasCodeErrors() {
@@ -152,7 +147,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 	}
 
 	void runCodan(IASTTranslationUnit tu) {
-		IProblemReporter problemReporter = CodanRuntime.getInstance() .getProblemReporter();
+		IProblemReporter problemReporter = CodanRuntime.getInstance().getProblemReporter();
 		CodanRuntime.getInstance().setProblemReporter(new IProblemReporter() {
 			public void reportProblem(String problemId, IProblemLocation loc, Object... args) {
 				codanproblems.add(new ProblemInstance(problemId, loc, args));

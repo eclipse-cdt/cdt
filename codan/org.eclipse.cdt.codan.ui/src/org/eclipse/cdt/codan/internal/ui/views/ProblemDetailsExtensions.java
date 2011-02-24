@@ -32,7 +32,8 @@ public class ProblemDetailsExtensions {
 	private static HashMap<String, Collection<?>> map = new HashMap<String, Collection<?>>();
 
 	private static synchronized void readExtensions() {
-		if (extensionsLoaded) return;
+		if (extensionsLoaded)
+			return;
 		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(CodanUIActivator.PLUGIN_ID, EXTENSION_POINT_NAME);
 		if (ep == null)
 			return;
@@ -80,8 +81,11 @@ public class ProblemDetailsExtensions {
 
 	/**
 	 * Remove provider from the list
+	 * 
 	 * @param id - codan problem id or ALL
-	 * @param el - details provider (class extending AbstractCodanProblemDetailsProvider) or ElementConfiguration (user internally) 
+	 * @param el - details provider (class extending
+	 *        AbstractCodanProblemDetailsProvider) or ElementConfiguration (user
+	 *        internally)
 	 */
 	@SuppressWarnings("rawtypes")
 	public static void removeExtension(String id, Object el) {
@@ -118,7 +122,7 @@ public class ProblemDetailsExtensions {
 				// resolve
 				collection.remove(object);
 				AbstractCodanProblemDetailsProvider provider = resolveClass((IConfigurationElement) object);
-				if (provider!=null)
+				if (provider != null)
 					collection.add(provider);
 			}
 		}
@@ -127,6 +131,7 @@ public class ProblemDetailsExtensions {
 
 	/**
 	 * Add extension (details provider) using API
+	 * 
 	 * @param id - codan problem id or ALL
 	 * @param provider - class extending AbstractCodanProblemDetailsProvider
 	 */

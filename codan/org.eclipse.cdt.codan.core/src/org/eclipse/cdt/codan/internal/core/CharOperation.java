@@ -46,9 +46,9 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param array
-	 *            the array that is concanated with the suffix character
+	 *        the array that is concanated with the suffix character
 	 * @param suffix
-	 *            the suffix character
+	 *        the suffix character
 	 * @return the new array
 	 */
 	public static final char[] append(char[] array, char suffix) {
@@ -97,28 +97,26 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param target
-	 *            the given target
+	 *        the given target
 	 * @param index
-	 *            the given index
+	 *        the given index
 	 * @param array
-	 *            the given array
+	 *        the given array
 	 * @param start
-	 *            the given start index
+	 *        the given start index
 	 * @param end
-	 *            the given end index
+	 *        the given end index
 	 * 
 	 * @return the new array
 	 * @throws NullPointerException
-	 *             if the target array is null
+	 *         if the target array is null
 	 */
-	public static final char[] append(char[] target, int index, char[] array,
-			int start, int end) {
+	public static final char[] append(char[] target, int index, char[] array, int start, int end) {
 		int targetLength = target.length;
 		int subLength = end - start;
 		int newTargetLength = subLength + index;
 		if (newTargetLength > targetLength) {
-			System.arraycopy(target, 0, target = new char[newTargetLength * 2],
-					0, index);
+			System.arraycopy(target, 0, target = new char[newTargetLength * 2], 0, index);
 		}
 		System.arraycopy(array, start, target, index, subLength);
 		return target;
@@ -160,9 +158,9 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param first
-	 *            the first array to concatenate
+	 *        the first array to concatenate
 	 * @param second
-	 *            the second array to concatenate
+	 *        the second array to concatenate
 	 * @return the concatenation of the two arrays, or null if the two arrays
 	 *         are null.
 	 */
@@ -209,9 +207,9 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param first
-	 *            the first array to concatenate
+	 *        the first array to concatenate
 	 * @param second
-	 *            the array to add at the end of the first array
+	 *        the array to add at the end of the first array
 	 * @return a new array adding the second array at the end of first array, or
 	 *         null if the two arrays are null.
 	 */
@@ -280,12 +278,12 @@ public final class CharOperation {
 	 * </p>
 	 * 
 	 * @param array
-	 *            the given array
+	 *        the given array
 	 * @param prefix
-	 *            the given prefix
+	 *        the given prefix
 	 * @return the result of the comparison
 	 * @exception NullPointerException
-	 *                if either array or prefix is null
+	 *            if either array or prefix is null
 	 */
 	public static final int compareWith(char[] array, char[] prefix) {
 		int arrayLength = array.length;
@@ -333,9 +331,9 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param first
-	 *            the first array to concatenate
+	 *        the first array to concatenate
 	 * @param second
-	 *            the second array to concatenate
+	 *        the second array to concatenate
 	 * @return the concatenation of the two arrays, or null if the two arrays
 	 *         are null.
 	 */
@@ -400,11 +398,11 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param first
-	 *            the first array to concatenate
+	 *        the first array to concatenate
 	 * @param second
-	 *            the second array to concatenate
+	 *        the second array to concatenate
 	 * @param third
-	 *            the third array to concatenate
+	 *        the third array to concatenate
 	 * 
 	 * @return the concatenation of the three arrays, or null if the three
 	 *         arrays are null.
@@ -460,17 +458,16 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param first
-	 *            the first array to concatenate
+	 *        the first array to concatenate
 	 * @param second
-	 *            the second array to concatenate
+	 *        the second array to concatenate
 	 * @param separator
-	 *            the character to insert
+	 *        the character to insert
 	 * @return the concatenation of the two arrays inserting the separator
 	 *         character
 	 *         between the two arrays , or null if the two arrays are null.
 	 */
-	public static final char[] concat(char[] first, char[] second,
-			char separator) {
+	public static final char[] concat(char[] first, char[] second, char separator) {
 		if (first == null)
 			return second;
 		if (second == null)
@@ -545,21 +542,20 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param first
-	 *            the first array to concatenate
+	 *        the first array to concatenate
 	 * @param sep1
-	 *            the character to insert
+	 *        the character to insert
 	 * @param second
-	 *            the second array to concatenate
+	 *        the second array to concatenate
 	 * @param sep2
-	 *            the character to insert
+	 *        the character to insert
 	 * @param third
-	 *            the second array to concatenate
+	 *        the second array to concatenate
 	 * @return the concatenation of the three arrays inserting the sep1
 	 *         character between the
 	 *         two arrays and sep2 between the last two.
 	 */
-	public static final char[] concat(char[] first, char sep1, char[] second,
-			char sep2, char[] third) {
+	public static final char[] concat(char[] first, char sep1, char[] second, char sep2, char[] third) {
 		if (first == null)
 			return concat(second, third, sep2);
 		if (second == null)
@@ -604,12 +600,12 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param prefix
-	 *            the prefix character
+	 *        the prefix character
 	 * @param array
-	 *            the array that is concanated with the prefix and suffix
-	 *            characters
+	 *        the array that is concanated with the prefix and suffix
+	 *        characters
 	 * @param suffix
-	 *            the suffix character
+	 *        the suffix character
 	 * @return the new array
 	 */
 	public static final char[] concat(char prefix, char[] array, char suffix) {
@@ -653,17 +649,16 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param name
-	 *            the given name
+	 *        the given name
 	 * @param array
-	 *            the given array
+	 *        the given array
 	 * @param separator
-	 *            the given separator
+	 *        the given separator
 	 * @return the concatenation of the given array parts using the given
 	 *         separator between each
 	 *         part and appending the given name at the end
 	 */
-	public static final char[] concatWith(char[] name, char[][] array,
-			char separator) {
+	public static final char[] concatWith(char[] name, char[][] array, char separator) {
 		int nameLength = name == null ? 0 : name.length;
 		if (nameLength == 0)
 			return concatWith(array, separator);
@@ -721,17 +716,16 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param array
-	 *            the given array
+	 *        the given array
 	 * @param name
-	 *            the given name
+	 *        the given name
 	 * @param separator
-	 *            the given separator
+	 *        the given separator
 	 * @return the concatenation of the given array parts using the given
 	 *         separator between each
 	 *         part and appending the given name at the end
 	 */
-	public static final char[] concatWith(char[][] array, char[] name,
-			char separator) {
+	public static final char[] concatWith(char[][] array, char[] name, char separator) {
 		int nameLength = name == null ? 0 : name.length;
 		if (nameLength == 0)
 			return concatWith(array, separator);
@@ -780,9 +774,9 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param array
-	 *            the given array
+	 *        the given array
 	 * @param separator
-	 *            the given separator
+	 *        the given separator
 	 * @return the concatenation of the given array parts using the given
 	 *         separator between each part
 	 */
@@ -807,8 +801,7 @@ public final class CharOperation {
 		while (--index >= 0) {
 			length = array[index].length;
 			if (length > 0) {
-				System.arraycopy(array[index], 0, result, (size -= length),
-						length);
+				System.arraycopy(array[index], 0, result, (size -= length), length);
 				if (--size >= 0)
 					result[size] = separator;
 			}
@@ -839,13 +832,13 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param character
-	 *            the character to search
+	 *        the character to search
 	 * @param array
-	 *            the array in which the search is done
+	 *        the array in which the search is done
 	 * @return true if the array contains an occurrence of character, false
 	 *         otherwise.
 	 * @exception NullPointerException
-	 *                if array is null.
+	 *            if array is null.
 	 */
 	public static final boolean contains(char character, char[][] array) {
 		for (int i = array.length; --i >= 0;) {
@@ -880,13 +873,13 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param character
-	 *            the character to search
+	 *        the character to search
 	 * @param array
-	 *            the array in which the search is done
+	 *        the array in which the search is done
 	 * @return true if the array contains an occurrence of character, false
 	 *         otherwise.
 	 * @exception NullPointerException
-	 *                if array is null.
+	 *            if array is null.
 	 */
 	public static final boolean contains(char character, char[] array) {
 		for (int i = array.length; --i >= 0;)
@@ -899,7 +892,7 @@ public final class CharOperation {
 	 * Answers a deep copy of the toCopy array.
 	 * 
 	 * @param toCopy
-	 *            the array to copy
+	 *        the array to copy
 	 * @return a deep copy of the toCopy array.
 	 */
 	public static final char[][] deepCopy(char[][] toCopy) {
@@ -938,14 +931,14 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param array
-	 *            the array to check
+	 *        the array to check
 	 * @param toBeFound
-	 *            the array to find
+	 *        the array to find
 	 * @return true if array ends with the sequence of characters contained in
 	 *         toBeFound,
 	 *         otherwise false.
 	 * @exception NullPointerException
-	 *                if array is null or toBeFound is null
+	 *            if array is null or toBeFound is null
 	 */
 	public static final boolean endsWith(char[] array, char[] toBeFound) {
 		int i = toBeFound.length;
@@ -993,9 +986,9 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param first
-	 *            the first array
+	 *        the first array
 	 * @param second
-	 *            the second array
+	 *        the second array
 	 * @return true if the two arrays are identical character by character,
 	 *         otherwise false
 	 */
@@ -1053,17 +1046,16 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param first
-	 *            the first array
+	 *        the first array
 	 * @param second
-	 *            the second array
+	 *        the second array
 	 * @param isCaseSensitive
-	 *            check whether or not the equality should be case sensitive
+	 *        check whether or not the equality should be case sensitive
 	 * @return true if the two arrays are identical character by character
 	 *         according to the value
 	 *         of isCaseSensitive, otherwise false
 	 */
-	public static final boolean equals(char[][] first, char[][] second,
-			boolean isCaseSensitive) {
+	public static final boolean equals(char[][] first, char[][] second, boolean isCaseSensitive) {
 		if (isCaseSensitive) {
 			return equals(first, second);
 		}
@@ -1114,9 +1106,9 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param first
-	 *            the first array
+	 *        the first array
 	 * @param second
-	 *            the second array
+	 *        the second array
 	 * @return true if the two arrays are identical character by character,
 	 *         otherwise false
 	 */
@@ -1174,17 +1166,16 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param first
-	 *            the first array
+	 *        the first array
 	 * @param second
-	 *            the second array
+	 *        the second array
 	 * @param isCaseSensitive
-	 *            check whether or not the equality should be case sensitive
+	 *        check whether or not the equality should be case sensitive
 	 * @return true if the two arrays are identical character by character
 	 *         according to the value
 	 *         of isCaseSensitive, otherwise false
 	 */
-	public static final boolean equals(char[] first, char[] second,
-			boolean isCaseSensitive) {
+	public static final boolean equals(char[] first, char[] second, boolean isCaseSensitive) {
 		if (isCaseSensitive) {
 			return equals(first, second);
 		}
@@ -1195,8 +1186,7 @@ public final class CharOperation {
 		if (first.length != second.length)
 			return false;
 		for (int i = first.length; --i >= 0;)
-			if (Character.toLowerCase(first[i]) != Character
-					.toLowerCase(second[i]))
+			if (Character.toLowerCase(first[i]) != Character.toLowerCase(second[i]))
 				return false;
 		return true;
 	}
@@ -1246,21 +1236,20 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param fragment
-	 *            the fragment to check
+	 *        the fragment to check
 	 * @param name
-	 *            the array to check
+	 *        the array to check
 	 * @param startIndex
-	 *            the starting index
+	 *        the starting index
 	 * @param isCaseSensitive
-	 *            check whether or not the equality should be case sensitive
+	 *        check whether or not the equality should be case sensitive
 	 * @return true if the name contains the fragment at the starting index
 	 *         startIndex according to the
 	 *         value of isCaseSensitive, otherwise false.
 	 * @exception NullPointerException
-	 *                if fragment or name is null.
+	 *            if fragment or name is null.
 	 */
-	public static final boolean fragmentEquals(char[] fragment, char[] name,
-			int startIndex, boolean isCaseSensitive) {
+	public static final boolean fragmentEquals(char[] fragment, char[] name, int startIndex, boolean isCaseSensitive) {
 		int max = fragment.length;
 		if (name.length < max + startIndex)
 			return false;
@@ -1273,8 +1262,7 @@ public final class CharOperation {
 		}
 		for (int i = max; --i >= 0;)
 			// assumes the prefix is not larger than the name
-			if (Character.toLowerCase(fragment[i]) != Character
-					.toLowerCase(name[i + startIndex]))
+			if (Character.toLowerCase(fragment[i]) != Character.toLowerCase(name[i + startIndex]))
 				return false;
 		return true;
 	}
@@ -1283,10 +1271,10 @@ public final class CharOperation {
 	 * Answers a hashcode for the array
 	 * 
 	 * @param array
-	 *            the array for which a hashcode is required
+	 *        the array for which a hashcode is required
 	 * @return the hashcode
 	 * @exception NullPointerException
-	 *                if array is null
+	 *            if array is null
 	 */
 	public static final int hashCode(char[] array) {
 		int hash = 0;
@@ -1324,7 +1312,7 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param c
-	 *            the character to check
+	 *        the character to check
 	 * @return true if c is a whitespace according to the JLS, otherwise false.
 	 */
 	public static boolean isWhitespace(char c) {
@@ -1364,14 +1352,14 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param toBeFound
-	 *            the character to search
+	 *        the character to search
 	 * @param array
-	 *            the array to be searched
+	 *        the array to be searched
 	 * @return the first index in the array for which the corresponding
 	 *         character is
 	 *         equal to toBeFound, -1 otherwise
 	 * @exception NullPointerException
-	 *                if array is null
+	 *            if array is null
 	 */
 	public static final int indexOf(char toBeFound, char[] array) {
 		for (int i = 0; i < array.length; i++)
@@ -1413,18 +1401,18 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param toBeFound
-	 *            the character to search
+	 *        the character to search
 	 * @param array
-	 *            the array to be searched
+	 *        the array to be searched
 	 * @param start
-	 *            the starting index
+	 *        the starting index
 	 * @return the first index in the array for which the corresponding
 	 *         character is
 	 *         equal to toBeFound, -1 otherwise
 	 * @exception NullPointerException
-	 *                if array is null
+	 *            if array is null
 	 * @exception ArrayIndexOutOfBoundsException
-	 *                if start is lower than 0
+	 *            if start is lower than 0
 	 */
 	public static final int indexOf(char toBeFound, char[] array, int start) {
 		for (int i = start; i < array.length; i++)
@@ -1457,15 +1445,15 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param toBeFound
-	 *            the character to search
+	 *        the character to search
 	 * @param array
-	 *            the array to be searched
+	 *        the array to be searched
 	 * @return the last index in the array for which the corresponding character
 	 *         is
 	 *         equal to toBeFound starting from the end of the array, -1
 	 *         otherwise
 	 * @exception NullPointerException
-	 *                if array is null
+	 *            if array is null
 	 */
 	public static final int lastIndexOf(char toBeFound, char[] array) {
 		for (int i = array.length; --i >= 0;)
@@ -1507,21 +1495,20 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param toBeFound
-	 *            the character to search
+	 *        the character to search
 	 * @param array
-	 *            the array to be searched
+	 *        the array to be searched
 	 * @param startIndex
-	 *            the stopping index
+	 *        the stopping index
 	 * @return the last index in the array for which the corresponding character
 	 *         is
 	 *         equal to toBeFound stopping at the index startIndex, -1 otherwise
 	 * @exception NullPointerException
-	 *                if array is null
+	 *            if array is null
 	 * @exception ArrayIndexOutOfBoundsException
-	 *                if startIndex is lower than 0
+	 *            if startIndex is lower than 0
 	 */
-	public static final int lastIndexOf(char toBeFound, char[] array,
-			int startIndex) {
+	public static final int lastIndexOf(char toBeFound, char[] array, int startIndex) {
 		for (int i = array.length; --i >= startIndex;)
 			if (toBeFound == array[i])
 				return i;
@@ -1564,25 +1551,24 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param toBeFound
-	 *            the character to search
+	 *        the character to search
 	 * @param array
-	 *            the array to be searched
+	 *        the array to be searched
 	 * @param startIndex
-	 *            the stopping index
+	 *        the stopping index
 	 * @param endIndex
-	 *            the starting index
+	 *        the starting index
 	 * @return the last index in the array for which the corresponding character
 	 *         is
 	 *         equal to toBeFound starting from endIndex to startIndex, -1
 	 *         otherwise
 	 * @exception NullPointerException
-	 *                if array is null
+	 *            if array is null
 	 * @exception ArrayIndexOutOfBoundsException
-	 *                if endIndex is greater or equals to array length or
-	 *                starting is lower than 0
+	 *            if endIndex is greater or equals to array length or
+	 *            starting is lower than 0
 	 */
-	public static final int lastIndexOf(char toBeFound, char[] array,
-			int startIndex, int endIndex) {
+	public static final int lastIndexOf(char toBeFound, char[] array, int startIndex, int endIndex) {
 		for (int i = endIndex; --i >= startIndex;)
 			if (toBeFound == array[i])
 				return i;
@@ -1599,12 +1585,12 @@ public final class CharOperation {
 	 * </pre>
 	 * 
 	 * @param array
-	 *            the array
+	 *        the array
 	 * @param separator
-	 *            the given separator
+	 *        the given separator
 	 * @return the last portion of a name given a separator
 	 * @exception NullPointerException
-	 *                if array is null
+	 *            if array is null
 	 */
 	final static public char[] lastSegment(char[] array, char separator) {
 		int pos = lastIndexOf(separator, array);
@@ -1651,22 +1637,20 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param pattern
-	 *            the given pattern
+	 *        the given pattern
 	 * @param name
-	 *            the given name
+	 *        the given name
 	 * @param isCaseSensitive
-	 *            flag to know whether or not the matching should be case
-	 *            sensitive
+	 *        flag to know whether or not the matching should be case
+	 *        sensitive
 	 * @return true if the pattern matches the given name, false otherwise
 	 */
-	public static final boolean match(char[] pattern, char[] name,
-			boolean isCaseSensitive) {
+	public static final boolean match(char[] pattern, char[] name, boolean isCaseSensitive) {
 		if (name == null)
 			return false; // null name cannot match
 		if (pattern == null)
 			return true; // null pattern is equivalent to '*'
-		return match(pattern, 0, pattern.length, name, 0, name.length,
-				isCaseSensitive, true);
+		return match(pattern, 0, pattern.length, name, 0, name.length, isCaseSensitive, true);
 	}
 
 	/**
@@ -1708,31 +1692,28 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param pattern
-	 *            the given pattern
+	 *        the given pattern
 	 * @param patternStart
-	 *            the given pattern start
+	 *        the given pattern start
 	 * @param patternEnd
-	 *            the given pattern end
+	 *        the given pattern end
 	 * @param name
-	 *            the given name
+	 *        the given name
 	 * @param nameStart
-	 *            the given name start
+	 *        the given name start
 	 * @param nameEnd
-	 *            the given name end
+	 *        the given name end
 	 * @param isCaseSensitive
-	 *            flag to know if the matching should be case sensitive
+	 *        flag to know if the matching should be case sensitive
 	 * @return true if the a sub-pattern matches the subpart of the given name,
 	 *         false otherwise
 	 */
-	public static final boolean match(char[] pattern, int patternStart,
-			int patternEnd, char[] name, int nameStart, int nameEnd,
+	public static final boolean match(char[] pattern, int patternStart, int patternEnd, char[] name, int nameStart, int nameEnd,
 			boolean isCaseSensitive) {
-		return match(pattern, patternStart, patternEnd, name, nameStart,
-				nameEnd, isCaseSensitive, false);
+		return match(pattern, patternStart, patternEnd, name, nameStart, nameEnd, isCaseSensitive, false);
 	}
 
-	public static final boolean match(char[] pattern, int patternStart,
-			int patternEnd, char[] name, int nameStart, int nameEnd,
+	public static final boolean match(char[] pattern, int patternStart, int patternEnd, char[] name, int nameStart, int nameEnd,
 			boolean isCaseSensitive, boolean allowEscaping) {
 		if (name == null)
 			return false; // null name cannot match
@@ -1747,8 +1728,7 @@ public final class CharOperation {
 		/* check first segment */
 		char patternChar = 0;
 		boolean isEscaped = false;
-		while ((iPattern < patternEnd)
-				&& ((patternChar = pattern[iPattern]) != '*' || (patternChar == '*' && isEscaped))) {
+		while ((iPattern < patternEnd) && ((patternChar = pattern[iPattern]) != '*' || (patternChar == '*' && isEscaped))) {
 			if (allowEscaping && pattern[iPattern] == '\\' && !isEscaped) {
 				iPattern++;
 				isEscaped = true;
@@ -1757,8 +1737,7 @@ public final class CharOperation {
 				isEscaped = false;
 			if (iName == nameEnd)
 				return false;
-			if (patternChar != (isCaseSensitive ? name[iName] : Character
-					.toLowerCase(name[iName])) && patternChar != '?') {
+			if (patternChar != (isCaseSensitive ? name[iName] : Character.toLowerCase(name[iName])) && patternChar != '?') {
 				return false;
 			}
 			iName++;
@@ -1789,9 +1768,7 @@ public final class CharOperation {
 				continue checkSegment;
 			}
 			/* check current name character */
-			if ((isCaseSensitive ? name[iName] : Character
-					.toLowerCase(name[iName])) != patternChar
-					&& patternChar != '?') {
+			if ((isCaseSensitive ? name[iName] : Character.toLowerCase(name[iName])) != patternChar && patternChar != '?') {
 				iPattern = segmentStart; // mismatch - restart current segment
 				iName = ++prefixStart;
 				continue checkSegment;
@@ -1799,8 +1776,7 @@ public final class CharOperation {
 			iName++;
 			iPattern++;
 		}
-		return (segmentStart == patternEnd)
-				|| (iName == nameEnd && iPattern == patternEnd)
+		return (segmentStart == patternEnd) || (iName == nameEnd && iPattern == patternEnd)
 				|| (iPattern == patternEnd - 1 && pattern[iPattern] == '*');
 	}
 
@@ -1823,19 +1799,18 @@ public final class CharOperation {
 	 * name will be lowercased character per character as comparing.
 	 * 
 	 * @param pattern
-	 *            the given pattern
+	 *        the given pattern
 	 * @param filepath
-	 *            the given path
+	 *        the given path
 	 * @param isCaseSensitive
-	 *            to find out whether or not the matching should be case
-	 *            sensitive
+	 *        to find out whether or not the matching should be case
+	 *        sensitive
 	 * @param pathSeparator
-	 *            the given path separator
+	 *        the given path separator
 	 * @return true if the pattern matches the filepath using the pathSepatator,
 	 *         false otherwise
 	 */
-	public static final boolean pathMatch(char[] pattern, char[] filepath,
-			boolean isCaseSensitive, char pathSeparator) {
+	public static final boolean pathMatch(char[] pattern, char[] filepath, boolean isCaseSensitive, char pathSeparator) {
 		if (filepath == null)
 			return false; // null name cannot match
 		if (pattern == null)
@@ -1850,8 +1825,7 @@ public final class CharOperation {
 		} else {
 			pSegmentStart = 1;
 		}
-		int pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern,
-				pSegmentStart + 1);
+		int pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern, pSegmentStart + 1);
 		if (pSegmentEnd < 0)
 			pSegmentEnd = pLength;
 		// special case: pattern foo\ is equivalent to foo\**
@@ -1866,29 +1840,24 @@ public final class CharOperation {
 		if (fSegmentStart != pSegmentStart) {
 			return false; // both must start with a separator or none.
 		}
-		int fSegmentEnd = CharOperation.indexOf(pathSeparator, filepath,
-				fSegmentStart + 1);
+		int fSegmentEnd = CharOperation.indexOf(pathSeparator, filepath, fSegmentStart + 1);
 		if (fSegmentEnd < 0)
 			fSegmentEnd = fLength;
 		// first segments
 		while (pSegmentStart < pLength
 				&& !freeLeadingDoubleStar
-				&& !(pSegmentEnd == pLength && freeTrailingDoubleStar || (pSegmentEnd == pSegmentStart + 2
-						&& pattern[pSegmentStart] == '*' && pattern[pSegmentStart + 1] == '*'))) {
+				&& !(pSegmentEnd == pLength && freeTrailingDoubleStar || (pSegmentEnd == pSegmentStart + 2 && pattern[pSegmentStart] == '*' && pattern[pSegmentStart + 1] == '*'))) {
 			if (fSegmentStart >= fLength)
 				return false;
-			if (!CharOperation.match(pattern, pSegmentStart, pSegmentEnd,
-					filepath, fSegmentStart, fSegmentEnd, isCaseSensitive)) {
+			if (!CharOperation.match(pattern, pSegmentStart, pSegmentEnd, filepath, fSegmentStart, fSegmentEnd, isCaseSensitive)) {
 				return false;
 			}
 			// jump to next segment		
-			pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern,
-					pSegmentStart = pSegmentEnd + 1);
+			pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern, pSegmentStart = pSegmentEnd + 1);
 			// skip separator
 			if (pSegmentEnd < 0)
 				pSegmentEnd = pLength;
-			fSegmentEnd = CharOperation.indexOf(pathSeparator, filepath,
-					fSegmentStart = fSegmentEnd + 1);
+			fSegmentEnd = CharOperation.indexOf(pathSeparator, filepath, fSegmentStart = fSegmentEnd + 1);
 			// skip separator
 			if (fSegmentEnd < 0)
 				fSegmentEnd = fLength;
@@ -1896,10 +1865,8 @@ public final class CharOperation {
 		/* check sequence of doubleStar+segment */
 		int pSegmentRestart;
 		if ((pSegmentStart >= pLength && freeTrailingDoubleStar)
-				|| (pSegmentEnd == pSegmentStart + 2
-						&& pattern[pSegmentStart] == '*' && pattern[pSegmentStart + 1] == '*')) {
-			pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern,
-					pSegmentStart = pSegmentEnd + 1);
+				|| (pSegmentEnd == pSegmentStart + 2 && pattern[pSegmentStart] == '*' && pattern[pSegmentStart + 1] == '*')) {
+			pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern, pSegmentStart = pSegmentEnd + 1);
 			// skip separator
 			if (pSegmentEnd < 0)
 				pSegmentEnd = pLength;
@@ -1915,30 +1882,24 @@ public final class CharOperation {
 				if (freeTrailingDoubleStar)
 					return true;
 				// mismatch - restart current path segment
-				pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern,
-						pSegmentStart = pSegmentRestart);
+				pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern, pSegmentStart = pSegmentRestart);
 				if (pSegmentEnd < 0)
 					pSegmentEnd = pLength;
-				fSegmentRestart = CharOperation.indexOf(pathSeparator,
-						filepath, fSegmentRestart + 1);
+				fSegmentRestart = CharOperation.indexOf(pathSeparator, filepath, fSegmentRestart + 1);
 				// skip separator
 				if (fSegmentRestart < 0) {
 					fSegmentRestart = fLength;
 				} else {
 					fSegmentRestart++;
 				}
-				fSegmentEnd = CharOperation.indexOf(pathSeparator, filepath,
-						fSegmentStart = fSegmentRestart);
+				fSegmentEnd = CharOperation.indexOf(pathSeparator, filepath, fSegmentStart = fSegmentRestart);
 				if (fSegmentEnd < 0)
 					fSegmentEnd = fLength;
 				continue checkSegment;
 			}
 			/* path segment is ending */
-			if (pSegmentEnd == pSegmentStart + 2
-					&& pattern[pSegmentStart] == '*'
-					&& pattern[pSegmentStart + 1] == '*') {
-				pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern,
-						pSegmentStart = pSegmentEnd + 1);
+			if (pSegmentEnd == pSegmentStart + 2 && pattern[pSegmentStart] == '*' && pattern[pSegmentStart + 1] == '*') {
+				pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern, pSegmentStart = pSegmentEnd + 1);
 				// skip separator
 				if (pSegmentEnd < 0)
 					pSegmentEnd = pLength;
@@ -1949,43 +1910,35 @@ public final class CharOperation {
 				continue checkSegment;
 			}
 			/* chech current path segment */
-			if (!CharOperation.match(pattern, pSegmentStart, pSegmentEnd,
-					filepath, fSegmentStart, fSegmentEnd, isCaseSensitive)) {
+			if (!CharOperation.match(pattern, pSegmentStart, pSegmentEnd, filepath, fSegmentStart, fSegmentEnd, isCaseSensitive)) {
 				// mismatch - restart current path segment
-				pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern,
-						pSegmentStart = pSegmentRestart);
+				pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern, pSegmentStart = pSegmentRestart);
 				if (pSegmentEnd < 0)
 					pSegmentEnd = pLength;
-				fSegmentRestart = CharOperation.indexOf(pathSeparator,
-						filepath, fSegmentRestart + 1);
+				fSegmentRestart = CharOperation.indexOf(pathSeparator, filepath, fSegmentRestart + 1);
 				// skip separator
 				if (fSegmentRestart < 0) {
 					fSegmentRestart = fLength;
 				} else {
 					fSegmentRestart++;
 				}
-				fSegmentEnd = CharOperation.indexOf(pathSeparator, filepath,
-						fSegmentStart = fSegmentRestart);
+				fSegmentEnd = CharOperation.indexOf(pathSeparator, filepath, fSegmentStart = fSegmentRestart);
 				if (fSegmentEnd < 0)
 					fSegmentEnd = fLength;
 				continue checkSegment;
 			}
 			// jump to next segment		
-			pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern,
-					pSegmentStart = pSegmentEnd + 1);
+			pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern, pSegmentStart = pSegmentEnd + 1);
 			// skip separator
 			if (pSegmentEnd < 0)
 				pSegmentEnd = pLength;
-			fSegmentEnd = CharOperation.indexOf(pathSeparator, filepath,
-					fSegmentStart = fSegmentEnd + 1);
+			fSegmentEnd = CharOperation.indexOf(pathSeparator, filepath, fSegmentStart = fSegmentEnd + 1);
 			// skip separator
 			if (fSegmentEnd < 0)
 				fSegmentEnd = fLength;
 		}
-		return (pSegmentRestart >= pSegmentEnd)
-				|| (fSegmentStart >= fLength && pSegmentStart >= pLength)
-				|| (pSegmentStart == pLength - 2
-						&& pattern[pSegmentStart] == '*' && pattern[pSegmentStart + 1] == '*')
+		return (pSegmentRestart >= pSegmentEnd) || (fSegmentStart >= fLength && pSegmentStart >= pLength)
+				|| (pSegmentStart == pLength - 2 && pattern[pSegmentStart] == '*' && pattern[pSegmentStart + 1] == '*')
 				|| (pSegmentStart == pLength && freeTrailingDoubleStar);
 	}
 
@@ -2012,13 +1965,13 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param toBeFound
-	 *            the given character
+	 *        the given character
 	 * @param array
-	 *            the given array
+	 *        the given array
 	 * @return the number of occurrences of the given character in the given
 	 *         array, 0 if any
 	 * @exception NullPointerException
-	 *                if array is null
+	 *            if array is null
 	 */
 	public static final int occurencesOf(char toBeFound, char[] array) {
 		int count = 0;
@@ -2054,15 +2007,15 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param toBeFound
-	 *            the given character
+	 *        the given character
 	 * @param array
-	 *            the given array
+	 *        the given array
 	 * @return the number of occurrences of the given character in the given
 	 *         array, 0 if any
 	 * @exception NullPointerException
-	 *                if array is null
+	 *            if array is null
 	 * @exception ArrayIndexOutOfBoundsException
-	 *                if start is lower than 0
+	 *            if start is lower than 0
 	 */
 	public static final int occurencesOf(char toBeFound, char[] array, int start) {
 		int count = 0;
@@ -2095,13 +2048,13 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param prefix
-	 *            the given prefix
+	 *        the given prefix
 	 * @param name
-	 *            the given name
+	 *        the given name
 	 * @return true if the given name starts with the given prefix, false
 	 *         otherwise
 	 * @exception NullPointerException
-	 *                if the given name is null or if the given prefix is null
+	 *            if the given name is null or if the given prefix is null
 	 */
 	public static final boolean prefixEquals(char[] prefix, char[] name) {
 		int max = prefix.length;
@@ -2140,19 +2093,18 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param prefix
-	 *            the given prefix
+	 *        the given prefix
 	 * @param name
-	 *            the given name
+	 *        the given name
 	 * @param isCaseSensitive
-	 *            to find out whether or not the comparison should be case
-	 *            sensitive
+	 *        to find out whether or not the comparison should be case
+	 *        sensitive
 	 * @return true if the given name starts with the given prefix, false
 	 *         otherwise
 	 * @exception NullPointerException
-	 *                if the given name is null or if the given prefix is null
+	 *            if the given name is null or if the given prefix is null
 	 */
-	public static final boolean prefixEquals(char[] prefix, char[] name,
-			boolean isCaseSensitive) {
+	public static final boolean prefixEquals(char[] prefix, char[] name, boolean isCaseSensitive) {
 		int max = prefix.length;
 		if (name.length < max)
 			return false;
@@ -2165,8 +2117,7 @@ public final class CharOperation {
 		}
 		for (int i = max; --i >= 0;)
 			// assumes the prefix is not larger than the name
-			if (Character.toLowerCase(prefix[i]) != Character
-					.toLowerCase(name[i]))
+			if (Character.toLowerCase(prefix[i]) != Character.toLowerCase(name[i]))
 				return false;
 		return true;
 	}
@@ -2198,16 +2149,15 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param array
-	 *            the given array
+	 *        the given array
 	 * @param toBeReplaced
-	 *            the character to be replaced
+	 *        the character to be replaced
 	 * @param replacementChar
-	 *            the replacement character
+	 *        the replacement character
 	 * @exception NullPointerException
-	 *                if the given array is null
+	 *            if the given array is null
 	 */
-	public static final void replace(char[] array, char toBeReplaced,
-			char replacementChar) {
+	public static final void replace(char[] array, char toBeReplaced, char replacementChar) {
 		if (toBeReplaced != replacementChar) {
 			for (int i = 0, max = array.length; i < max; i++) {
 				if (array[i] == toBeReplaced)
@@ -2243,18 +2193,17 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param array
-	 *            the given array
+	 *        the given array
 	 * @param toBeReplaced
-	 *            characters to be replaced
+	 *        characters to be replaced
 	 * @param replacementChars
-	 *            the replacement characters
+	 *        the replacement characters
 	 * @return a new array of characters with substitutions or the given array
 	 *         if none
 	 * @exception NullPointerException
-	 *                if the given array is null
+	 *            if the given array is null
 	 */
-	public static final char[] replace(char[] array, char[] toBeReplaced,
-			char[] replacementChars) {
+	public static final char[] replace(char[] array, char[] toBeReplaced, char[] replacementChars) {
 		int max = array.length;
 		int replacedLength = toBeReplaced.length;
 		int replacementLength = replacementChars.length;
@@ -2270,25 +2219,21 @@ public final class CharOperation {
 						continue next;
 				}
 				if (occurrenceCount == starts.length) {
-					System.arraycopy(starts, 0,
-							starts = new int[occurrenceCount * 2], 0,
-							occurrenceCount);
+					System.arraycopy(starts, 0, starts = new int[occurrenceCount * 2], 0, occurrenceCount);
 				}
 				starts[occurrenceCount++] = i;
 			}
 		}
 		if (occurrenceCount == 0)
 			return array;
-		char[] result = new char[max + occurrenceCount
-				* (replacementLength - replacedLength)];
+		char[] result = new char[max + occurrenceCount * (replacementLength - replacedLength)];
 		int inStart = 0, outStart = 0;
 		for (int i = 0; i < occurrenceCount; i++) {
 			int offset = starts[i] - inStart;
 			System.arraycopy(array, inStart, result, outStart, offset);
 			inStart += offset;
 			outStart += offset;
-			System.arraycopy(replacementChars, 0, result, outStart,
-					replacementLength);
+			System.arraycopy(replacementChars, 0, result, outStart, replacementLength);
 			inStart += replacedLength;
 			outStart += replacementLength;
 		}
@@ -2331,9 +2276,9 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param divider
-	 *            the given divider
+	 *        the given divider
 	 * @param array
-	 *            the given array
+	 *        the given array
 	 * @return a new array which is the split of the given array using the given
 	 *         divider and triming each subarray to remove
 	 *         whitespaces equals to ' '
@@ -2358,8 +2303,7 @@ public final class CharOperation {
 				while (end > start && array[end] == ' ')
 					end--;
 				split[currentWord] = new char[end - start + 1];
-				System.arraycopy(array, start, split[currentWord++], 0, end
-						- start + 1);
+				System.arraycopy(array, start, split[currentWord++], 0, end - start + 1);
 				last = i + 1;
 			}
 		}
@@ -2401,9 +2345,9 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param divider
-	 *            the given divider
+	 *        the given divider
 	 * @param array
-	 *            the given array
+	 *        the given array
 	 * @return a new array which is the split of the given array using the given
 	 *         divider
 	 */
@@ -2450,21 +2394,20 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param divider
-	 *            the given divider
+	 *        the given divider
 	 * @param array
-	 *            the given array
+	 *        the given array
 	 * @param start
-	 *            the given starting index
+	 *        the given starting index
 	 * @param end
-	 *            the given ending index
+	 *        the given ending index
 	 * @return a new array which is the split of the given array using the given
 	 *         divider
 	 * @exception ArrayIndexOutOfBoundsException
-	 *                if start is lower than 0 or end is greater than the array
-	 *                length
+	 *            if start is lower than 0 or end is greater than the array
+	 *            length
 	 */
-	public static final char[][] splitOn(char divider, char[] array, int start,
-			int end) {
+	public static final char[][] splitOn(char divider, char[] array, int start, int end) {
 		if (array == null)
 			return NO_CHAR_CHAR;
 		final int length = array.length;
@@ -2518,16 +2461,16 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param array
-	 *            the given array
+	 *        the given array
 	 * @param start
-	 *            the given starting index
+	 *        the given starting index
 	 * @param end
-	 *            the given ending index
+	 *        the given ending index
 	 * @return a new array which is a copy of the given array starting at the
 	 *         given start and
 	 *         ending at the given end
 	 * @exception NullPointerException
-	 *                if the given array is null
+	 *            if the given array is null
 	 */
 	public static final char[][] subarray(char[][] array, int start, int end) {
 		if (end == -1)
@@ -2573,16 +2516,16 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param array
-	 *            the given array
+	 *        the given array
 	 * @param start
-	 *            the given starting index
+	 *        the given starting index
 	 * @param end
-	 *            the given ending index
+	 *        the given ending index
 	 * @return a new array which is a copy of the given array starting at the
 	 *         given start and
 	 *         ending at the given end
 	 * @exception NullPointerException
-	 *                if the given array is null
+	 *            if the given array is null
 	 */
 	public static final char[] subarray(char[] array, int start, int end) {
 		if (end == -1)
@@ -2620,7 +2563,7 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param chars
-	 *            the chars to convert
+	 *        the chars to convert
 	 * @return the result of a char[] conversion to lowercase
 	 */
 	final static public char[] toLowerCase(char[] chars) {
@@ -2633,8 +2576,7 @@ public final class CharOperation {
 			char lc = Character.toLowerCase(c);
 			if ((c != lc) || (lowerChars != null)) {
 				if (lowerChars == null) {
-					System.arraycopy(chars, 0, lowerChars = new char[length],
-							0, i);
+					System.arraycopy(chars, 0, lowerChars = new char[length], 0, i);
 				}
 				lowerChars[i] = lc;
 			}
@@ -2663,7 +2605,7 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param chars
-	 *            the given array
+	 *        the given array
 	 * @return a new array removing leading and trailing spaces (' ')
 	 */
 	final static public char[] trim(char[] chars) {
@@ -2702,7 +2644,7 @@ public final class CharOperation {
 	 * </ol>
 	 * 
 	 * @param array
-	 *            the given array
+	 *        the given array
 	 * @return a string which is the concatenation of the given array using the
 	 *         '.' as a separator
 	 */

@@ -60,15 +60,9 @@ public class LaunchModesPropertyPage extends FieldEditorPreferencePage {
 	@Override
 	protected void createFieldEditors() {
 		createSelectionGroup(getFieldEditorParent());
-		addField(new BooleanFieldEditor(
-				CheckerLaunchMode.RUN_ON_FULL_BUILD.name(),
-				"Run on full build", useLocalGroup));
-		addField(new BooleanFieldEditor(
-				CheckerLaunchMode.RUN_ON_INC_BUILD.name(),
-				"Run on incremental build", useLocalGroup));
-		addField(new BooleanFieldEditor(
-				CheckerLaunchMode.RUN_AS_YOU_TYPE.name(),
-				"Run as you type", useLocalGroup));
+		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_FULL_BUILD.name(), "Run on full build", useLocalGroup));
+		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_INC_BUILD.name(), "Run on incremental build", useLocalGroup));
+		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_AS_YOU_TYPE.name(), "Run as you type", useLocalGroup));
 		updateFieldEditors();
 	}
 
@@ -102,8 +96,7 @@ public class LaunchModesPropertyPage extends FieldEditorPreferencePage {
 		Composite radioGroup = new Composite(comp, SWT.NONE);
 		radioGroup.setLayout(new GridLayout(2, false));
 		radioGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		useParentSettingsButton = createRadioButton(radioGroup,
-				CodanUIMessages.OverlayPage_Use_Project_Settings);
+		useParentSettingsButton = createRadioButton(radioGroup, CodanUIMessages.OverlayPage_Use_Project_Settings);
 		configureButton = new Button(radioGroup, SWT.PUSH);
 		configureButton.setText("Configure...");
 		configureButton.addSelectionListener(new SelectionAdapter() {
@@ -112,15 +105,13 @@ public class LaunchModesPropertyPage extends FieldEditorPreferencePage {
 				configureProjectSettings();
 			}
 		});
-		useLocalSettingsButton = createRadioButton(radioGroup,
-				"Use checker specific settings");
+		useLocalSettingsButton = createRadioButton(radioGroup, "Use checker specific settings");
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		useLocalSettingsButton.setLayoutData(gd);
 		// Set workspace/project radio buttons
 		try {
-			Boolean useParent = getPreferenceStore().getBoolean(
-					CheckerLaunchMode.USE_PARENT.name());
+			Boolean useParent = getPreferenceStore().getBoolean(CheckerLaunchMode.USE_PARENT.name());
 			if (useParent) {
 				useParentSettingsButton.setSelection(true);
 			} else {
@@ -162,9 +153,7 @@ public class LaunchModesPropertyPage extends FieldEditorPreferencePage {
 			public void widgetSelected(SelectionEvent e) {
 				boolean useParent = button == useParentSettingsButton;
 				configureButton.setEnabled(useParent);
-				getPreferenceStore().setValue(
-						CheckerLaunchMode.USE_PARENT
-								.name(), useParent);
+				getPreferenceStore().setValue(CheckerLaunchMode.USE_PARENT.name(), useParent);
 				updateFieldEditors();
 			}
 		});

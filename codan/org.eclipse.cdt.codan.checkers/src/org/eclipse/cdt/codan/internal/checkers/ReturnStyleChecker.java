@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 
 public class ReturnStyleChecker extends AbstractIndexAstChecker {
 	public final String ERR_ID = "org.eclipse.cdt.codan.internal.checkers.ReturnStyleProblem"; //$NON-NLS-1$
-	
+
 	@Override
 	public boolean runInEditor() {
 		return true;
@@ -35,21 +35,17 @@ public class ReturnStyleChecker extends AbstractIndexAstChecker {
 			@Override
 			public int visit(IASTStatement statement) {
 				if (statement instanceof IASTReturnStatement) {
-					
 					boolean isValidStyle = false;
-					
 					IASTNode[] children = statement.getChildren();
-					
 					if (children.length == 0) {
 						isValidStyle = true;
-					} else if (children.length == 1
-							&& children[0] instanceof IASTUnaryExpression) {
+					} else if (children.length == 1 && children[0] instanceof IASTUnaryExpression) {
 						IASTUnaryExpression unaryExpression = (IASTUnaryExpression) children[0];
 						if (unaryExpression.getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
 							isValidStyle = true;
 						}
 					}
-					if(!isValidStyle) {
+					if (!isValidStyle) {
 						reportProblem(ERR_ID, statement);
 					}
 				}
@@ -57,5 +53,4 @@ public class ReturnStyleChecker extends AbstractIndexAstChecker {
 			}
 		});
 	}
-
 }

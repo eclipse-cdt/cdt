@@ -46,16 +46,13 @@ public class GrepChecker extends AbstractCheckerWithProblemPreferences {
 	}
 
 	void processFile(IFile file) {
-		Collection<IProblem> refProblems = getRuntime().getCheckersRegistry()
-				.getRefProblems(this);
-		for (Iterator<IProblem> iterator = refProblems.iterator(); iterator
-				.hasNext();) {
+		Collection<IProblem> refProblems = getRuntime().getCheckersRegistry().getRefProblems(this);
+		for (Iterator<IProblem> iterator = refProblems.iterator(); iterator.hasNext();) {
 			IProblem checkerProblem = iterator.next();
 			IProblem problem = getProblemById(checkerProblem.getId(), file);
 			if (shouldProduceProblem(problem, file.getLocation())) {
 				// do something
-				Object[] values = (Object[]) getPreference(problem,
-						PARAM_STRING_LIST);
+				Object[] values = (Object[]) getPreference(problem, PARAM_STRING_LIST);
 				if (values.length == 0)
 					continue; // nothing to do
 				externalRun(file, values, problem);
@@ -81,8 +78,7 @@ public class GrepChecker extends AbstractCheckerWithProblemPreferences {
 				for (int i = 0; i < values.length; i++) {
 					String str = (String) values[i];
 					if (line.contains(str)) {
-						reportProblem(problem.getId(), file, iline, "Found "
-								+ str);
+						reportProblem(problem.getId(), file, iline, "Found " + str);
 					}
 				}
 			}
@@ -104,7 +100,6 @@ public class GrepChecker extends AbstractCheckerWithProblemPreferences {
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addListPreference(problem, PARAM_STRING_LIST, "Search strings",
-				"Search string");
+		addListPreference(problem, PARAM_STRING_LIST, "Search strings", "Search string");
 	}
 }

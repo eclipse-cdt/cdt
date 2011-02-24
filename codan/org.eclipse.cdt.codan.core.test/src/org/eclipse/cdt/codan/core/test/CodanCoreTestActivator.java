@@ -19,7 +19,6 @@ import org.osgi.framework.BundleContext;
 public class CodanCoreTestActivator extends Plugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.cdt.codan.core.test"; //$NON-NLS-1$
-
 	// The shared instance
 	private static CodanCoreTestActivator plugin;
 
@@ -31,7 +30,9 @@ public class CodanCoreTestActivator extends Plugin {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
+	 * 
+	 * @see
+	 * org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
@@ -41,7 +42,9 @@ public class CodanCoreTestActivator extends Plugin {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
+	 * 
+	 * @see
+	 * org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
@@ -51,7 +54,7 @@ public class CodanCoreTestActivator extends Plugin {
 
 	/**
 	 * Returns the shared instance
-	 *
+	 * 
 	 * @return the shared instance
 	 */
 	public static CodanCoreTestActivator getDefault() {

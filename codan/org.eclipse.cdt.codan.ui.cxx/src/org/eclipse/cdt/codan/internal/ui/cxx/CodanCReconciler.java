@@ -75,8 +75,7 @@ public class CodanCReconciler implements ICReconcilingListener {
 	 * .eclipse.cdt.core.dom.ast.IASTTranslationUnit, boolean,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void reconciled(IASTTranslationUnit ast, boolean force,
-			IProgressMonitor progressMonitor) {
+	public void reconciled(IASTTranslationUnit ast, boolean force, IProgressMonitor progressMonitor) {
 		if (ast == null)
 			return;
 		String filePath = ast.getFilePath();
@@ -88,8 +87,7 @@ public class CodanCReconciler implements ICReconcilingListener {
 		if (resources != null && resources.length > 0) {
 			IFile resource = resources[0];
 			IProject project = resource.getProject();
-			IPreferenceStore store = CodanUIActivator.getDefault()
-					.getPreferenceStore(project);
+			IPreferenceStore store = CodanUIActivator.getDefault().getPreferenceStore(project);
 			if (store.getBoolean(PreferenceConstants.P_RUN_IN_EDITOR)) {
 				reconsiler.reconciledAst(ast, resource, progressMonitor);
 			}

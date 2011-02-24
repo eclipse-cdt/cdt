@@ -38,6 +38,5 @@ public interface IProblemReporter {
 	 * @param args - custom arguments, can be none, in this case default message
 	 *        is reported
 	 */
-	public void reportProblem(String problemId, IProblemLocation loc,
-			Object... args);
+	public void reportProblem(String problemId, IProblemLocation loc, Object... args);
 }

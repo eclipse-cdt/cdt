@@ -33,8 +33,8 @@ import org.eclipse.core.runtime.Path;
  * 
  * Clients may extend this class.
  */
-public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblemPreferences implements
-		ICAstChecker, IRunnableInEditorChecker {
+public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblemPreferences implements ICAstChecker,
+		IRunnableInEditorChecker {
 	private IFile file;
 
 	protected IFile getFile() {
@@ -63,7 +63,8 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 	}
 
 	public synchronized boolean processResource(IResource resource) {
-		if (!shouldProduceProblems(resource)) return false;
+		if (!shouldProduceProblems(resource))
+			return false;
 		if (resource instanceof IFile) {
 			IFile file = (IFile) resource;
 			try {
@@ -82,8 +83,7 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 	public void reportProblem(String id, IASTNode astNode, Object... args) {
 		IASTFileLocation astLocation = astNode.getFileLocation();
 		IPath location = new Path(astLocation.getFileName());
-		IFile astFile = ResourceLookup.selectFileForLocation(location,
-				getProject());
+		IFile astFile = ResourceLookup.selectFileForLocation(location, getProject());
 		if (astFile == null) {
 			astFile = file;
 		}
@@ -94,15 +94,10 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 		IProblemLocation loc;
 		int line = astLocation.getStartingLineNumber();
 		if (line == astLocation.getEndingLineNumber())
-			loc = getRuntime().getProblemLocationFactory()
-					.createProblemLocation(
-							astFile,
-							astLocation.getNodeOffset(),
-							astLocation.getNodeOffset()
-									+ astLocation.getNodeLength(), line);
+			loc = getRuntime().getProblemLocationFactory().createProblemLocation(astFile, astLocation.getNodeOffset(),
+					astLocation.getNodeOffset() + astLocation.getNodeLength(), line);
 		else
-			loc = getRuntime().getProblemLocationFactory()
-					.createProblemLocation(astFile, line);
+			loc = getRuntime().getProblemLocationFactory().createProblemLocation(astFile, line);
 		reportProblem(id, loc, args);
 	}
 
@@ -121,11 +116,10 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 	@SuppressWarnings("restriction")
 	public synchronized void processModel(Object model) {
 		if (model instanceof IASTTranslationUnit) {
-			 CxxModelsCache.getInstance().clearCash();
+			CxxModelsCache.getInstance().clearCash();
 			IASTTranslationUnit ast = (IASTTranslationUnit) model;
 			IPath location = new Path(ast.getFilePath());
-			IFile astFile = ResourceLookup.selectFileForLocation(location,
-					getProject());
+			IFile astFile = ResourceLookup.selectFileForLocation(location, getProject());
 			file = astFile;
 			processAst(ast);
 		}

@@ -61,6 +61,5 @@ public interface IProblemReporterSessionPersistent extends IProblemReporter {
 	 * @return
 	 * @since 2.0
 	 */
-	public IProblemReporterSessionPersistent createReporter(IResource resource,
-			IChecker checker);
+	public IProblemReporterSessionPersistent createReporter(IResource resource, IChecker checker);
 }

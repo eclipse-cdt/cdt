@@ -21,19 +21,16 @@ public class OpenProblemPreferences implements IObjectActionDelegate {
 
 	public void run(IAction action) {
 		if (selection instanceof IStructuredSelection) {
-			Object firstElement = ((IStructuredSelection) selection)
-					.getFirstElement(); // TODO support multiple
+			Object firstElement = ((IStructuredSelection) selection).getFirstElement(); // TODO support multiple
 			if (firstElement instanceof IMarker) {
 				IMarker marker = (IMarker) firstElement;
 				String id = CodanProblemMarker.getProblemId(marker);
 				if (id == null)
 					return;
 				IResource resource = marker.getResource();
-				IProblemProfile profile = CodanProblemMarker
-						.getProfile(resource);
+				IProblemProfile profile = CodanProblemMarker.getProfile(resource);
 				CodanProblem problem = ((CodanProblem) profile.findProblem(id));
-				new CustomizeProblemDialog(targetPart.getSite().getShell(),
-						problem, resource).open();
+				new CustomizeProblemDialog(targetPart.getSite().getShell(), problem, resource).open();
 			}
 		}
 	}

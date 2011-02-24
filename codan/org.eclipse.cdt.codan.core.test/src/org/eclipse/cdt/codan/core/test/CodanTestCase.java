@@ -63,7 +63,7 @@ public class CodanTestCase extends BaseTestCase {
 
 	/**
 	 * Override for c++ (i.e. at least one c++ test)
-	 *
+	 * 
 	 * @return is c++ tests
 	 */
 	public boolean isCpp() {
@@ -82,9 +82,7 @@ public class CodanTestCase extends BaseTestCase {
 	public void tearDown() throws CoreException {
 		if (cproject != null) {
 			try {
-				cproject.getProject().delete(
-						IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
-						new NullProgressMonitor());
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
 			} catch (CoreException e) {
 				throw e;
 			}
@@ -100,8 +98,7 @@ public class CodanTestCase extends BaseTestCase {
 		for (int i = 0; i < projects.length; i++) {
 			IProject p = projects[i];
 			if (p.getName().startsWith("Codan")) {
-				p.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
-						new NullProgressMonitor());
+				p.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
 			}
 		}
 	}
@@ -116,10 +113,8 @@ public class CodanTestCase extends BaseTestCase {
 			workspace.run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					// Create the cproject
-					ICProject cproject = cpp ? CProjectHelper.createCCProject(
-							projectName, null, IPDOMManager.ID_NO_INDEXER)
-							: CProjectHelper.createCProject(projectName, null,
-									IPDOMManager.ID_NO_INDEXER);
+					ICProject cproject = cpp ? CProjectHelper.createCCProject(projectName, null, IPDOMManager.ID_NO_INDEXER)
+							: CProjectHelper.createCProject(projectName, null, IPDOMManager.ID_NO_INDEXER);
 					cprojects[0] = cproject;
 				}
 			}, null);
@@ -138,8 +133,7 @@ public class CodanTestCase extends BaseTestCase {
 			}
 		}, null);
 		// Index the cproject
-		CCorePlugin.getIndexManager().setIndexerId(cproject,
-				IPDOMManager.ID_FAST_INDEXER);
+		CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(cproject);
 		// wait until the indexer is done
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(1000 * 60, // 1 min
@@ -178,8 +172,7 @@ public class CodanTestCase extends BaseTestCase {
 	protected StringBuffer[] getContents(int sections) {
 		try {
 			CodanCoreTestActivator plugin = CodanCoreTestActivator.getDefault();
-			return TestSourceReader.getContentsForTest(plugin.getBundle(),
-					"src", getClass(), getName(), sections);
+			return TestSourceReader.getContentsForTest(plugin.getBundle(), "src", getClass(), getName(), sections);
 		} catch (IOException e) {
 			fail(e.getMessage());
 			return null;
@@ -194,8 +187,7 @@ public class CodanTestCase extends BaseTestCase {
 			if (sep != -1) {
 				String line = code.substring(0, sep);
 				code = code.substring(sep + 1);
-				String fileName = line.substring(indf + fileKey.length())
-						.trim();
+				String fileName = line.substring(indf + fileKey.length()).trim();
 				return loadcode(code, new File(tmpDir, fileName));
 			}
 		}
@@ -218,8 +210,7 @@ public class CodanTestCase extends BaseTestCase {
 	private File loadcode(String code, File testFile) {
 		try {
 			tempFiles.add(testFile);
-			TestUtils.saveFile(
-					new ByteArrayInputStream(code.trim().getBytes()), testFile);
+			TestUtils.saveFile(new ByteArrayInputStream(code.trim().getBytes()), testFile);
 			currentFile = testFile;
 			try {
 				cproject.getProject().refreshLocal(1, null);

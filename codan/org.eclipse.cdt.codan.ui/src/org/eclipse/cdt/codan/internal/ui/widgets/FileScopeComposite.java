@@ -41,8 +41,7 @@ public class FileScopeComposite extends Composite {
 	 * @param resource
 	 * @param style
 	 */
-	public FileScopeComposite(Composite parent, final IProblem problem,
-			IResource resource) {
+	public FileScopeComposite(Composite parent, final IProblem problem, IResource resource) {
 		super(parent, SWT.NONE);
 		if (problem == null)
 			throw new NullPointerException();
@@ -79,8 +78,7 @@ public class FileScopeComposite extends Composite {
 		if (scope == null)
 			return;
 		String key = scope.getQualifiedKey();
-		((MapProblemPreference) problem.getPreference()).setChildValue(
-				FileScopeProblemPreference.KEY, scope);
+		((MapProblemPreference) problem.getPreference()).setChildValue(FileScopeProblemPreference.KEY, scope);
 		prefStore.setValue(key, scope.exportValue());
 	}
 

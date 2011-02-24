@@ -51,8 +51,7 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 			@Override
 			public int visit(IASTDeclaration decl) {
 				if (decl instanceof IASTFunctionDefinition) {
-					graph = new ControlFlowGraphBuilder()
-							.build((IASTFunctionDefinition) decl);
+					graph = new ControlFlowGraphBuilder().build((IASTFunctionDefinition) decl);
 					return PROCESS_ABORT;
 				}
 				return PROCESS_CONTINUE;
@@ -72,8 +71,7 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		assertNotNull(graph);
 		assertNotNull(graph.getStartNode());
 		Collection<IBasicBlock> nodes = graph.getNodes();
-		for (Iterator<IBasicBlock> iterator = nodes.iterator(); iterator
-				.hasNext();) {
+		for (Iterator<IBasicBlock> iterator = nodes.iterator(); iterator.hasNext();) {
 			IBasicBlock node = iterator.next();
 			checkNode(node, decision);
 		}
@@ -88,8 +86,7 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 			IBasicBlock b = incomingNodes[i];
 			if (b == null) {
 				// check if dead node
-				Iterator<IBasicBlock> iterator = graph
-						.getUnconnectedNodeIterator();
+				Iterator<IBasicBlock> iterator = graph.getUnconnectedNodeIterator();
 				boolean dead = false;
 				for (; iterator.hasNext();) {
 					IBasicBlock d = iterator.next();
@@ -112,8 +109,7 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 				fail("Block " + node + " inconsitent next/prev " + b);
 		}
 		if (node instanceof IDecisionNode && decision) {
-			assertTrue("decision node outgoing size " + node.getOutgoingSize(),
-					node.getOutgoingSize() > 1);
+			assertTrue("decision node outgoing size " + node.getOutgoingSize(), node.getOutgoingSize() > 1);
 			assertNotNull(((IDecisionNode) node).getMergeNode());
 		}
 	}

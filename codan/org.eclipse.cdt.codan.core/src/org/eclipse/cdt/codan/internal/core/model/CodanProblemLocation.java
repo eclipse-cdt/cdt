@@ -25,8 +25,7 @@ public class CodanProblemLocation extends AbstractProblemLocation {
 	 * @param endChar - end char, absolute file offset, exclusive
 	 * @param line - line number
 	 */
-	public CodanProblemLocation(IResource file, int startChar, int endChar,
-			int line) {
+	public CodanProblemLocation(IResource file, int startChar, int endChar, int line) {
 		super(file, startChar, endChar);
 		this.line = line;
 	}

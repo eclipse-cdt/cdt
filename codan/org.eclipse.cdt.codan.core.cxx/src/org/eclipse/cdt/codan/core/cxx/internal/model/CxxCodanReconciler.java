@@ -25,23 +25,20 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  */
 public class CxxCodanReconciler {
-	private CodanBuilder builder = (CodanBuilder) CodanRuntime.getInstance()
-			.getBuilder();
+	private CodanBuilder builder = (CodanBuilder) CodanRuntime.getInstance().getBuilder();
 
-	public void reconciledAst(IASTTranslationUnit ast, IResource resource,
-			IProgressMonitor monitor) {
+	public void reconciledAst(IASTTranslationUnit ast, IResource resource, IProgressMonitor monitor) {
 		if (ast == null)
 			return;
 		IProject project = resource.getProject();
-		if (project==null) return;
+		if (project == null)
+			return;
 		try {
-			if (project.hasNature(CProjectNature.C_NATURE_ID)
-					|| project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+			if (project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
 				builder.runInEditor(ast, resource, monitor);
 			}
 		} catch (CoreException e) {
 			// ignore
 		}
-		
 	}
 }

@@ -21,8 +21,8 @@ import java.util.Iterator;
  * 
  * @noextend This class is not intended to be extended by clients.
  */
-public class ListProblemPreference extends AbstractProblemPreference implements
-		IProblemPreferenceCompositeValue, IProblemPreferenceCompositeDescriptor {
+public class ListProblemPreference extends AbstractProblemPreference implements IProblemPreferenceCompositeValue,
+		IProblemPreferenceCompositeDescriptor {
 	/**
 	 * Constant that represent a key for "shared" child preference (descriptor)
 	 * of all elements
@@ -57,8 +57,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 		childDescriptor = desc;
 		if (desc != null) {
 			childDescriptor.setValue(null);
-			((AbstractProblemPreference) childDescriptor)
-					.setKey(COMMON_DESCRIPTOR_KEY);
+			((AbstractProblemPreference) childDescriptor).setKey(COMMON_DESCRIPTOR_KEY);
 		}
 		return desc;
 	}
@@ -95,8 +94,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 	 */
 	public IProblemPreference getChildDescriptor(int i) {
 		Object value = list.get(i);
-		AbstractProblemPreference desc = (AbstractProblemPreference) childDescriptor
-				.clone();
+		AbstractProblemPreference desc = (AbstractProblemPreference) childDescriptor.clone();
 		desc.setKey(String.valueOf(i));
 		desc.setValue(value);
 		return desc;
@@ -109,8 +107,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 	 * @throws NumberFormatException
 	 *         if key is not number
 	 */
-	public IProblemPreference getChildDescriptor(String key)
-			throws NumberFormatException {
+	public IProblemPreference getChildDescriptor(String key) throws NumberFormatException {
 		if (key == null || key.equals(COMMON_DESCRIPTOR_KEY)) {
 			// return common descriptor
 			return getChildDescriptor();
@@ -118,8 +115,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 		Integer iv = Integer.valueOf(key);
 		if (iv.intValue() >= list.size()) {
 			// create one
-			AbstractProblemPreference clone = (AbstractProblemPreference) childDescriptor
-					.clone();
+			AbstractProblemPreference clone = (AbstractProblemPreference) childDescriptor.clone();
 			clone.setKey(key);
 			return clone;
 		}
@@ -193,8 +189,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 	public Object clone() {
 		ListProblemPreference list1 = (ListProblemPreference) super.clone();
 		list1.list = new ArrayList<Object>();
-		list1.setChildDescriptor((IProblemPreference) getChildDescriptor()
-				.clone());
+		list1.setChildDescriptor((IProblemPreference) getChildDescriptor().clone());
 		for (Iterator<Object> iterator = list.iterator(); iterator.hasNext();) {
 			Object value = iterator.next();
 			list1.addChildValue(value);

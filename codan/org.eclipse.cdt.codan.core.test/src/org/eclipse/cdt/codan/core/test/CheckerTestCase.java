@@ -67,9 +67,7 @@ public class CheckerTestCase extends CodanTestCase {
 			m = markers[j];
 			line = getLine(m);
 			mfile = m.getResource().getName();
-			if (line.equals(expectedLine)
-					&& (problemId == null || problemId
-							.equals(CodanProblemMarker.getProblemId(m)))) {
+			if (line.equals(expectedLine) && (problemId == null || problemId.equals(CodanProblemMarker.getProblemId(m)))) {
 				found = true;
 				if (file != null && !file.getName().equals(mfile))
 					found = false;
@@ -111,8 +109,7 @@ public class CheckerTestCase extends CodanTestCase {
 			// all good
 		} else {
 			IMarker m = markers[0];
-			fail("Found " + markers.length + " errors but should not. First "
-					+ CodanProblemMarker.getProblemId(m) + " at line "
+			fail("Found " + markers.length + " errors but should not. First " + CodanProblemMarker.getProblemId(m) + " at line "
 					+ getLine(m));
 		}
 	}
@@ -143,16 +140,9 @@ public class CheckerTestCase extends CodanTestCase {
 	 *
 	 */
 	protected void runCodan() {
-		CodanRuntime
-				.getInstance()
-				.getBuilder()
-				.processResource(cproject.getProject(),
-						new NullProgressMonitor());
+		CodanRuntime.getInstance().getBuilder().processResource(cproject.getProject(), new NullProgressMonitor());
 		try {
-			markers = cproject.getProject()
-					.findMarkers(
-							IProblemReporter.GENERIC_CODE_ANALYSIS_MARKER_TYPE,
-							true, 1);
+			markers = cproject.getProject().findMarkers(IProblemReporter.GENERIC_CODE_ANALYSIS_MARKER_TYPE, true, 1);
 		} catch (CoreException e) {
 			fail(e.getMessage());
 		}
@@ -164,16 +154,13 @@ public class CheckerTestCase extends CodanTestCase {
 	 * @return
 	 */
 	protected IProblemPreference getPreference(String problemId, String paramId) {
-		IProblem problem = CodanRuntime.getInstance().getCheckersRegistry()
-				.getResourceProfile(cproject.getResource())
+		IProblem problem = CodanRuntime.getInstance().getCheckersRegistry().getResourceProfile(cproject.getResource())
 				.findProblem(problemId);
-		IProblemPreference pref = ((MapProblemPreference) problem
-				.getPreference()).getChildDescriptor(paramId);
+		IProblemPreference pref = ((MapProblemPreference) problem.getPreference()).getChildDescriptor(paramId);
 		return pref;
 	}
 
-	protected IProblemPreference setPreferenceValue(String problemId,
-			String paramId, Object value) {
+	protected IProblemPreference setPreferenceValue(String problemId, String paramId, Object value) {
 		IProblemPreference param = getPreference(problemId, paramId);
 		param.setValue(value);
 		return param;
@@ -196,8 +183,7 @@ public class CheckerTestCase extends CodanTestCase {
 	}
 
 	protected void enableProblems(String... ids) {
-		IProblemProfile profile = CodanRuntime.getInstance()
-				.getCheckersRegistry().getWorkspaceProfile();
+		IProblemProfile profile = CodanRuntime.getInstance().getCheckersRegistry().getWorkspaceProfile();
 		IProblem[] problems = profile.getProblems();
 		for (int i = 0; i < problems.length; i++) {
 			IProblem p = problems[i];
@@ -210,8 +196,7 @@ public class CheckerTestCase extends CodanTestCase {
 				}
 			}
 		}
-		CodanRuntime.getInstance().getCheckersRegistry()
-				.updateProfile(cproject.getProject(), profile);
+		CodanRuntime.getInstance().getCheckersRegistry().updateProfile(cproject.getProject(), profile);
 		return;
 	}
 }

@@ -73,8 +73,7 @@ public class CodanProblemCategory implements IProblemCategory, Cloneable {
 	 * @param id - problem id
 	 * @return list of categories
 	 */
-	public static IProblemCategory[] findProblemCategories(IProblemCategory c,
-			String id) {
+	public static IProblemCategory[] findProblemCategories(IProblemCategory c, String id) {
 		ArrayList<IProblemCategory> list = new ArrayList<IProblemCategory>();
 		Object[] children = c.getChildren();
 		for (Object object : children) {
@@ -119,8 +118,7 @@ public class CodanProblemCategory implements IProblemCategory, Cloneable {
 		try {
 			CodanProblemCategory clone = (CodanProblemCategory) super.clone();
 			clone.list = new ArrayList<IProblemElement>();
-			for (Iterator<IProblemElement> iterator = this.list.iterator(); iterator
-					.hasNext();) {
+			for (Iterator<IProblemElement> iterator = this.list.iterator(); iterator.hasNext();) {
 				IProblemElement child = iterator.next();
 				clone.list.add((IProblemElement) child.clone());
 			}

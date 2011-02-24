@@ -43,8 +43,7 @@ public class CodanEditorUtility {
 	 * @throws PartInitException
 	 * @throws BadLocationException
 	 */
-	public static void openFileURL(String fileUrl, IResource markerResource)
-			throws PartInitException, BadLocationException {
+	public static void openFileURL(String fileUrl, IResource markerResource) throws PartInitException, BadLocationException {
 		String file = getFileFromURL(fileUrl);
 		IEditorPart part = openInEditor(file, markerResource);
 		int line = getLineFromURL(fileUrl);
@@ -73,21 +72,18 @@ public class CodanEditorUtility {
 		return file;
 	}
 
-	public static void revealLine(IEditorPart part, int line)
-			throws BadLocationException {
+	public static void revealLine(IEditorPart part, int line) throws BadLocationException {
 		if (line > 0) {
 			if (part instanceof ITextEditor) {
 				ITextEditor textEditor = (ITextEditor) part;
-				IDocument document = textEditor.getDocumentProvider()
-						.getDocument(part.getEditorInput());
+				IDocument document = textEditor.getDocumentProvider().getDocument(part.getEditorInput());
 				textEditor.selectAndReveal(document.getLineOffset(line - 1), 0);
 			}
 		}
 	}
 
 	@SuppressWarnings("restriction")
-	public static IEditorPart openInEditor(String file, IResource markerResource)
-			throws PartInitException {
+	public static IEditorPart openInEditor(String file, IResource markerResource) throws PartInitException {
 		IPath pfile = new Path(file);
 		ICElement element = null;
 		if (markerResource != null)
@@ -96,8 +92,7 @@ public class CodanEditorUtility {
 		return part;
 	}
 
-	public static IEditorPart openInEditor(IMarker marker)
-			throws PartInitException {
+	public static IEditorPart openInEditor(IMarker marker) throws PartInitException {
 		String href = getLocationHRef(marker);
 		String file = getFileFromURL(href);
 		return openInEditor(file, marker.getResource());

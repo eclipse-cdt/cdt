@@ -37,8 +37,7 @@ import org.eclipse.swt.widgets.Tree;
  * <code>getListSeparator</code> framework methods.
  * </p>
  */
-public abstract class CheckedTreeEditor extends FieldEditor implements
-		ICheckStateListener {
+public abstract class CheckedTreeEditor extends FieldEditor implements ICheckStateListener {
 	/**
 	 * The list widget; <code>null</code> if none (before creation or after
 	 * disposal).
@@ -58,11 +57,11 @@ public abstract class CheckedTreeEditor extends FieldEditor implements
 	 * Creates a list field editor.
 	 * 
 	 * @param name
-	 *            the name of the preference this field editor works on
+	 *        the name of the preference this field editor works on
 	 * @param labelText
-	 *            the label text of the field editor
+	 *        the label text of the field editor
 	 * @param parent
-	 *            the parent of the field editor's control
+	 *        the parent of the field editor's control
 	 */
 	public CheckedTreeEditor(String name, String labelText, Composite parent) {
 		init(name, labelText);
@@ -188,8 +187,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements
 	 */
 	protected void doLoadDefault() {
 		if (getTreeControl() != null) {
-			String s = getPreferenceStore().getDefaultString(
-					getPreferenceName());
+			String s = getPreferenceStore().getDefaultString(getPreferenceName());
 			getViewer().setInput(modelFromString(s));
 		}
 	}
@@ -208,15 +206,14 @@ public abstract class CheckedTreeEditor extends FieldEditor implements
 	 * Returns this field editor's list control.
 	 * 
 	 * @param parent
-	 *            the parent control
+	 *        the parent control
 	 * @return the list control
 	 */
 	public Tree createListControl(Composite parent) {
 		Tree table = (Tree) getTreeControl();
 		if (table == null) {
 			listParent = parent;
-			treeViewer = new CheckboxTreeViewer(parent, SWT.BORDER | SWT.MULTI
-					| SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+			treeViewer = new CheckboxTreeViewer(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 			table = treeViewer.getTree();
 			table.setFont(parent.getFont());
 			treeViewer.addCheckStateListener(this);

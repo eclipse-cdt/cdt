@@ -30,8 +30,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
 
-public class CodanProblemMarkerResolutionGenerator implements
-		IMarkerResolutionGenerator {
+public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionGenerator {
 	private static final String EXTENSION_POINT_NAME = "codanMarkerResolution"; //$NON-NLS-1$
 	private static Map<String, Collection<ConditionalResolution>> resolutions = new HashMap<String, Collection<ConditionalResolution>>();
 	private static boolean resolutionsLoaded = false;
@@ -40,8 +39,7 @@ public class CodanProblemMarkerResolutionGenerator implements
 		IMarkerResolution res;
 		String messagePattern;
 
-		public ConditionalResolution(IMarkerResolution res2,
-				String messagePattern2) {
+		public ConditionalResolution(IMarkerResolution res2, String messagePattern2) {
 			res = res2;
 			messagePattern = messagePattern2;
 		}
@@ -58,8 +56,7 @@ public class CodanProblemMarkerResolutionGenerator implements
 		Collection<ConditionalResolution> collection = resolutions.get(id);
 		if (collection != null) {
 			ArrayList<IMarkerResolution> list = new ArrayList<IMarkerResolution>();
-			for (Iterator<ConditionalResolution> iterator = collection
-					.iterator(); iterator.hasNext();) {
+			for (Iterator<ConditionalResolution> iterator = collection.iterator(); iterator.hasNext();) {
 				ConditionalResolution res = iterator.next();
 				if (res.messagePattern != null) {
 					try {
@@ -71,14 +68,12 @@ public class CodanProblemMarkerResolutionGenerator implements
 							setArgumentsFromPattern(matcher, marker);
 						}
 					} catch (Exception e) {
-						CodanUIActivator
-								.log("Cannot compile regex: " + res.messagePattern); //$NON-NLS-1$
+						CodanUIActivator.log("Cannot compile regex: " + res.messagePattern); //$NON-NLS-1$
 						continue;
 					}
 				}
 				if (res.res instanceof AbstractCodanCMarkerResolution) {
-					if (!((AbstractCodanCMarkerResolution) res.res)
-							.isApplicable(marker))
+					if (!((AbstractCodanCMarkerResolution) res.res).isApplicable(marker))
 						continue;
 				}
 				list.add(res.res);
@@ -112,8 +107,7 @@ public class CodanProblemMarkerResolutionGenerator implements
 	}
 
 	private static synchronized void readExtensions() {
-		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(
-				CodanUIActivator.PLUGIN_ID, EXTENSION_POINT_NAME);
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(CodanUIActivator.PLUGIN_ID, EXTENSION_POINT_NAME);
 		if (ep == null)
 			return;
 		try {
@@ -131,12 +125,10 @@ public class CodanProblemMarkerResolutionGenerator implements
 	/**
 	 * @param configurationElement
 	 */
-	private static void processResolution(
-			IConfigurationElement configurationElement) {
+	private static void processResolution(IConfigurationElement configurationElement) {
 		if (configurationElement.getName().equals("resolution")) { //$NON-NLS-1$
 			String id = configurationElement.getAttribute("problemId"); //$NON-NLS-1$
-			String messagePattern = configurationElement
-					.getAttribute("messagePattern"); //$NON-NLS-1$
+			String messagePattern = configurationElement.getAttribute("messagePattern"); //$NON-NLS-1$
 			if (id == null && messagePattern == null) {
 				CodanUIActivator.log("Extension for " + EXTENSION_POINT_NAME //$NON-NLS-1$
 						+ " problemId is not defined"); //$NON-NLS-1$
@@ -144,8 +136,7 @@ public class CodanProblemMarkerResolutionGenerator implements
 			}
 			IMarkerResolution res;
 			try {
-				res = (IMarkerResolution) configurationElement
-						.createExecutableExtension("class");//$NON-NLS-1$
+				res = (IMarkerResolution) configurationElement.createExecutableExtension("class");//$NON-NLS-1$
 			} catch (CoreException e) {
 				CodanUIActivator.log(e);
 				return;
@@ -156,19 +147,16 @@ public class CodanProblemMarkerResolutionGenerator implements
 				} catch (Exception e) {
 					// bad pattern log and ignore
 					CodanUIActivator.log("Extension for " //$NON-NLS-1$
-							+ EXTENSION_POINT_NAME
-							+ " messagePattern is invalid: " + e.getMessage()); //$NON-NLS-1$
+							+ EXTENSION_POINT_NAME + " messagePattern is invalid: " + e.getMessage()); //$NON-NLS-1$
 					return;
 				}
 			}
-			ConditionalResolution co = new ConditionalResolution(res,
-					messagePattern);
+			ConditionalResolution co = new ConditionalResolution(res, messagePattern);
 			addResolution(id, co);
 		}
 	}
 
-	public static void addResolution(String id, IMarkerResolution res,
-			String messagePattern) {
+	public static void addResolution(String id, IMarkerResolution res, String messagePattern) {
 		addResolution(id, new ConditionalResolution(res, messagePattern));
 	}
 

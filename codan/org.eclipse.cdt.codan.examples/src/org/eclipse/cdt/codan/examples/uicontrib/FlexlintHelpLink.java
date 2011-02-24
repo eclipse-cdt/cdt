@@ -44,6 +44,4 @@ public class FlexlintHelpLink extends AbstractCodanProblemDetailsProvider {
 		String url = "http://www.gimpel-online.com/MsgRef.html#" + helpId;
 		return "<a href=\"" + url + "\">" + url + "</a>";
 	}
-
-
 }

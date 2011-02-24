@@ -55,10 +55,8 @@ public class RunCodeAnalysis implements IObjectActionDelegate {
 					}
 					if (o instanceof IResource) {
 						IResource res = (IResource) o;
-						SubProgressMonitor subMon = new SubProgressMonitor(
-								monitor, 100);
-						CodanRuntime.getInstance().getBuilder()
-								.processResource(res, subMon);
+						SubProgressMonitor subMon = new SubProgressMonitor(monitor, 100);
+						CodanRuntime.getInstance().getBuilder().processResource(res, subMon);
 						if (subMon.isCanceled())
 							return Status.CANCEL_STATUS;
 					}

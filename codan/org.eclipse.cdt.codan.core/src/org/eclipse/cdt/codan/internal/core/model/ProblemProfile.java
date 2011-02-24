@@ -67,7 +67,8 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	}
 
 	public void addProblem(IProblem p, IProblemCategory cat) {
-		if (cat == null) cat = getRoot();
+		if (cat == null)
+			cat = getRoot();
 		((CodanProblemCategory) cat).addChild(p);
 	}
 

@@ -49,8 +49,7 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 	 * @param loc
 	 * @param args
 	 */
-	public CodanProblemMarker(IProblem problem, IProblemLocation loc,
-			Object[] args) {
+	public CodanProblemMarker(IProblem problem, IProblemLocation loc, Object[] args) {
 		this.problem = problem;
 		this.loc = loc;
 		this.args = args;
@@ -102,8 +101,7 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 		marker.setAttribute(IMarker.CHAR_START, loc.getStartingChar());
 		String propArgs = serializeArgs(args);
 		marker.setAttribute(PROBLEM_ARGS, propArgs);
-		IProblemCategory[] cats = CodanProblemCategory.findProblemCategories(
-				getProfile(file).getRoot(), problem.getId());
+		IProblemCategory[] cats = CodanProblemCategory.findProblemCategories(getProfile(file).getRoot(), problem.getId());
 		String cat = cats.length > 0 ? cats[0].getId() : ""; //$NON-NLS-1$
 		marker.setAttribute(CATEGORY, cat);
 		return marker;
@@ -227,8 +225,7 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 	 * @return new instanceof of ICodanProblemMarker or null if marker is not
 	 *         codan marker
 	 */
-	public static ICodanProblemMarker createCodanProblemMarkerFromResourceMarker(
-			IMarker marker) {
+	public static ICodanProblemMarker createCodanProblemMarkerFromResourceMarker(IMarker marker) {
 		CodanProblem problem = getProblem(marker);
 		if (problem == null)
 			return null;
@@ -246,8 +243,7 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 			return null;
 		IResource resource = marker.getResource();
 		IProblemProfile profile = getProfile(resource);
-		CodanProblem problem = (CodanProblem) ((CodanProblem) profile
-				.findProblem(id)).clone();
+		CodanProblem problem = (CodanProblem) ((CodanProblem) profile.findProblem(id)).clone();
 		CodanSeverity sev = getSeverity(marker);
 		problem.setSeverity(sev);
 		return problem;
@@ -258,8 +254,7 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 	 * @return
 	 */
 	public static IProblemProfile getProfile(IResource resource) {
-		IProblemProfile profile = CheckersRegistry.getInstance()
-				.getResourceProfile(resource);
+		IProblemProfile profile = CheckersRegistry.getInstance().getResourceProfile(resource);
 		return profile;
 	}
 
@@ -271,8 +266,7 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 		int line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
 		int charend = marker.getAttribute(IMarker.CHAR_END, -1);
 		int charstart = marker.getAttribute(IMarker.CHAR_START, -1);
-		CodanProblemLocation loc = new CodanProblemLocation(
-				marker.getResource(), charstart, charend, line);
+		CodanProblemLocation loc = new CodanProblemLocation(marker.getResource(), charstart, charend, line);
 		return loc;
 	}
 
@@ -281,8 +275,7 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 	 * @param res
 	 * @throws CoreException
 	 */
-	public static void setProblemArguments(IMarker marker, String[] args)
-			throws CoreException {
+	public static void setProblemArguments(IMarker marker, String[] args) throws CoreException {
 		String propArgs = serializeArgs(args);
 		marker.setAttribute(PROBLEM_ARGS, propArgs);
 	}

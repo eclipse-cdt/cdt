@@ -19,8 +19,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IJumpNode;
 /**
  * TODO: add description
  */
-public class ConnectorNode extends AbstractSingleOutgoingNode implements
-		IConnectorNode {
+public class ConnectorNode extends AbstractSingleOutgoingNode implements IConnectorNode {
 	protected ArrayList<IBasicBlock> incoming = new ArrayList<IBasicBlock>(2);
 
 	protected ConnectorNode() {

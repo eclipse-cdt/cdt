@@ -34,10 +34,11 @@ public abstract class AbstractCIndexChecker extends AbstractCheckerWithProblemPr
 		return file;
 	}
 
-	void  processFile(IFile file) throws CoreException, InterruptedException {
+	void processFile(IFile file) throws CoreException, InterruptedException {
 		// create translation unit and access index
 		ICElement model = CoreModel.getDefault().create(file);
-		if (!(model instanceof ITranslationUnit)) return; // not a C/C++ file
+		if (!(model instanceof ITranslationUnit))
+			return; // not a C/C++ file
 		ITranslationUnit tu = (ITranslationUnit) model;
 		index = CCorePlugin.getIndexManager().getIndex(tu.getCProject());
 		// lock the index for read access

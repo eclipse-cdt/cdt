@@ -36,8 +36,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Problem reported that created eclipse markers
  */
-public class CodanMarkerProblemReporter extends AbstractProblemReporter
-		implements IProblemReporterPersistent,
+public class CodanMarkerProblemReporter extends AbstractProblemReporter implements IProblemReporterPersistent,
 		IProblemReporterSessionPersistent {
 	private IResource resource;
 	private IChecker checker;
@@ -92,8 +91,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 
 	public void deleteProblems(IResource file) {
 		try {
-			file.deleteMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
-					IResource.DEPTH_ZERO);
+			file.deleteMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true, IResource.DEPTH_ZERO);
 		} catch (CoreException ce) {
 			ce.printStackTrace();
 		}
@@ -101,11 +99,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 
 	public void deleteAllProblems() {
 		try {
-			ResourcesPlugin
-					.getWorkspace()
-					.getRoot()
-					.deleteMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
-							IResource.DEPTH_INFINITE);
+			ResourcesPlugin.getWorkspace().getRoot().deleteMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			CodanCorePlugin.log(e);
 		}
@@ -115,10 +109,8 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 		try {
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
-					Collection<IMarker> markers = findResourceMarkers(file,
-							checker);
-					for (Iterator<IMarker> iterator = markers.iterator(); iterator
-							.hasNext();) {
+					Collection<IMarker> markers = findResourceMarkers(file, checker);
+					for (Iterator<IMarker> iterator = markers.iterator(); iterator.hasNext();) {
 						IMarker iMarker = iterator.next();
 						iMarker.delete();
 					}
@@ -129,29 +121,23 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 		}
 	}
 
-	protected Collection<IMarker> findResourceMarkers(IResource resource,
-			IChecker checker) throws CoreException {
+	protected Collection<IMarker> findResourceMarkers(IResource resource, IChecker checker) throws CoreException {
 		Collection<IMarker> res = new ArrayList<IMarker>();
 		IMarker[] markers;
 		if (resource.exists()) {
-			markers = resource.findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE,
-					true, IResource.DEPTH_INFINITE);
+			markers = resource.findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true, IResource.DEPTH_INFINITE);
 		} else {
 			if (resource.getProject() == null || !resource.getProject().isAccessible())
 				return res;
 			// non resource markers attached to a project itself
-			markers = resource.getProject().findMarkers(
-					GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
-					IResource.DEPTH_ZERO);
+			markers = resource.getProject().findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true, IResource.DEPTH_ZERO);
 		}
-		ICheckersRegistry reg = CodanRuntime.getInstance()
-				.getCheckersRegistry();
+		ICheckersRegistry reg = CodanRuntime.getInstance().getCheckersRegistry();
 		Collection<IProblem> problems = reg.getRefProblems(checker);
 		for (int i = 0; i < markers.length; i++) {
 			IMarker m = markers[i];
 			String id = m.getAttribute(ICodanProblemMarker.ID, ""); //$NON-NLS-1$
-			for (Iterator<IProblem> iterator = problems.iterator(); iterator
-					.hasNext();) {
+			for (Iterator<IProblem> iterator = problems.iterator(); iterator.hasNext();) {
 				IProblem iProblem = iterator.next();
 				if (iProblem.getId().equals(id)) {
 					res.add(m);
@@ -167,8 +153,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 	 * @return session aware problem reporter
 	 * @since 1.1
 	 */
-	public IProblemReporterSessionPersistent createReporter(IResource resource,
-			IChecker checker) {
+	public IProblemReporterSessionPersistent createReporter(IResource resource, IChecker checker) {
 		return new CodanMarkerProblemReporter(resource, checker);
 	}
 
@@ -191,10 +176,8 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 		try {
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
-					Collection<IMarker> markers = findResourceMarkers(resource,
-							checker);
-					for (Iterator<IMarker> iterator = markers.iterator(); iterator
-							.hasNext();) {
+					Collection<IMarker> markers = findResourceMarkers(resource, checker);
+					for (Iterator<IMarker> iterator = markers.iterator(); iterator.hasNext();) {
 						IMarker m = iterator.next();
 						ICodanProblemMarker cm = similarMarker(m);
 						if (cm == null) {
@@ -204,8 +187,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 							toAdd.remove(cm);
 						}
 					}
-					for (Iterator<ICodanProblemMarker> iterator = toAdd
-							.iterator(); iterator.hasNext();) {
+					for (Iterator<ICodanProblemMarker> iterator = toAdd.iterator(); iterator.hasNext();) {
 						ICodanProblemMarker cm = iterator.next();
 						cm.createMarker();
 					}
@@ -244,11 +226,9 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 	 * @return
 	 */
 	protected ICodanProblemMarker similarMarker(IMarker m) {
-		ICodanProblemMarker mcm = CodanProblemMarker
-				.createCodanProblemMarkerFromResourceMarker(m);
+		ICodanProblemMarker mcm = CodanProblemMarker.createCodanProblemMarkerFromResourceMarker(m);
 		ArrayList<ICodanProblemMarker> cand = new ArrayList<ICodanProblemMarker>();
-		for (Iterator<ICodanProblemMarker> iterator = toAdd.iterator(); iterator
-				.hasNext();) {
+		for (Iterator<ICodanProblemMarker> iterator = toAdd.iterator(); iterator.hasNext();) {
 			ICodanProblemMarker cm = iterator.next();
 			if (mcm.equals(cm))
 				return cm;

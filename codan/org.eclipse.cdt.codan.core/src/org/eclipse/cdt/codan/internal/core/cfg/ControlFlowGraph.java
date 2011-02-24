@@ -49,15 +49,12 @@ public class ControlFlowGraph implements IControlFlowGraph {
 
 	public void setExitNodes(Collection<IExitNode> exitNodes) {
 		if (this.exitNodes != null)
-			throw new IllegalArgumentException(
-					"Cannot modify already exiting connector"); //$NON-NLS-1$
-		this.exitNodes = Collections.unmodifiableList(new ArrayList<IExitNode>(
-				exitNodes));
+			throw new IllegalArgumentException("Cannot modify already exiting connector"); //$NON-NLS-1$
+		this.exitNodes = Collections.unmodifiableList(new ArrayList<IExitNode>(exitNodes));
 	}
 
 	public void setUnconnectedNodes(Collection<IBasicBlock> nodes) {
-		this.deadNodes = Collections
-				.unmodifiableList(new ArrayList<IBasicBlock>(nodes));
+		this.deadNodes = Collections.unmodifiableList(new ArrayList<IBasicBlock>(nodes));
 	}
 
 	/*
@@ -122,8 +119,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	public Collection<IBasicBlock> getNodes() {
 		Collection<IBasicBlock> result = new LinkedHashSet<IBasicBlock>();
 		getNodes(getStartNode(), result);
-		for (Iterator<IBasicBlock> iterator = deadNodes.iterator(); iterator
-				.hasNext();) {
+		for (Iterator<IBasicBlock> iterator = deadNodes.iterator(); iterator.hasNext();) {
 			IBasicBlock d = iterator.next();
 			getNodes(d, result);
 		}

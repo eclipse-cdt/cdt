@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
+import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -143,13 +144,13 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 							}
 						}
 					} catch (DOMException e) {
-						e.printStackTrace();
+						CodanCheckersActivator.log(e);
 					}
 					return PROCESS_CONTINUE;
 				}
 			});
 		} catch (Exception e) {
-			e.printStackTrace();
+			CodanCheckersActivator.log(e);
 		}
 	}
 

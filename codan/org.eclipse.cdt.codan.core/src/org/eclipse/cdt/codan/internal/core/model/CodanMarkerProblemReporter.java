@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,7 +93,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter implemen
 		try {
 			file.deleteMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true, IResource.DEPTH_ZERO);
 		} catch (CoreException ce) {
-			ce.printStackTrace();
+			CodanCorePlugin.log(ce);
 		}
 	}
 
@@ -262,7 +262,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter implemen
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblemReporterSessionPersistent#
 	 * deleteProblems(boolean)
 	 */

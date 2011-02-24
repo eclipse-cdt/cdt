@@ -11,6 +11,7 @@
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
+import org.eclipse.cdt.codan.internal.checkers.ui.CheckersUiActivator;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -60,7 +61,7 @@ public class QuickFixCreateField extends AbstractAstRewriteQuickFix {
 			Change c = r.rewriteAST();
 			c.perform(new NullProgressMonitor());
 		} catch (CoreException e) {
-			e.printStackTrace();
+			CheckersUiActivator.log(e);
 		}
 	}
 

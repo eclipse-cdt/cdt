@@ -95,7 +95,6 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 						try {
 							((ICheckerWithPreferences) c).initPreferences((IProblemWorkingCopy) p);
 						} catch (Throwable t) {
-							t.printStackTrace();
 							CodanCorePlugin.log(t);
 						}
 					}
@@ -228,7 +227,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.ICheckersRegistry#iterator()
 	 */
 	public Iterator<IChecker> iterator() {
@@ -246,7 +245,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#addChecker(org.eclipse
 	 * .cdt.codan.core.model.IChecker)
@@ -257,7 +256,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#addProblem(org.eclipse
 	 * .cdt.codan.core.model.IProblem, java.lang.String)
@@ -271,7 +270,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#addCategory(org.eclipse
 	 * .cdt.codan.core.model.IProblemCategory, java.lang.String)
@@ -285,7 +284,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#addRefProblem(org.
 	 * eclipse.cdt.codan.core.model.IChecker,
@@ -302,7 +301,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 
 	/**
 	 * Returns list of problems registered for given checker
-	 * 
+	 *
 	 * @return collection of problems or null
 	 */
 	public Collection<IProblem> getRefProblems(IChecker checker) {
@@ -311,7 +310,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#getDefaultProfile()
 	 */
@@ -321,7 +320,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#getWorkspaceProfile()
 	 */
@@ -352,7 +351,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#getResourceProfile
 	 * (org.eclipse.core.resources.IResource)
@@ -386,7 +385,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seeorg.eclipse.cdt.codan.core.model.ICheckersRegistry#
 	 * getResourceProfileWorkingCopy(org.eclipse.core.resources.IResource)
 	 */
@@ -404,7 +403,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	 * Tests if a checker is enabled (needs to be run) or not. Checker is
 	 * enabled
 	 * if at least one problem it reports is enabled.
-	 * 
+	 *
 	 * @param checker
 	 * @param resource
 	 * @return <code>true</code> if the checker is enabled
@@ -427,7 +426,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 
 	/**
 	 * Tests if a checker needs to run in a specific launch mode.
-	 * 
+	 *
 	 * @param checker
 	 * @param resource
 	 * @param mode

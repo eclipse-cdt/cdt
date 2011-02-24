@@ -126,7 +126,6 @@ public abstract class AbstractCodanCMarkerResolution implements IMarkerResolutio
 		try {
 			editorPart = CodanEditorUtility.openInEditor(marker);
 		} catch (PartInitException e) {
-			e.printStackTrace();
 			CodanUIActivator.log(e);
 			return null;
 		}

@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
+import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -338,9 +339,9 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 			// and show it
 			showPreferencePage(pageId, page);
 		} catch (InstantiationException e) {
-			e.printStackTrace();
+			CodanUIActivator.log(e);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			CodanUIActivator.log(e);
 		}
 	}
 

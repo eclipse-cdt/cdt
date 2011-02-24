@@ -12,6 +12,7 @@ package org.eclipse.cdt.codan.internal.checkers;
 
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.codan.core.model.ICheckerWithPreferences;
 import org.eclipse.cdt.codan.core.model.IProblem;
@@ -73,7 +74,7 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker imp
 				}
 			});
 		} catch (Exception e) {
-			e.printStackTrace();
+			CodanCheckersActivator.log(e);
 		}
 	}
 

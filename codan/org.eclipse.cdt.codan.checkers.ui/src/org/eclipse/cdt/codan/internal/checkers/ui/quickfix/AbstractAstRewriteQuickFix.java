@@ -35,7 +35,6 @@ public abstract class AbstractAstRewriteQuickFix extends AbstractCodanCMarkerRes
 			try {
 				index = getIndexFromMarker(marker);
 			} catch (CoreException e) {
-				e.printStackTrace();
 				CheckersUiActivator.log(e);
 				return;
 			}
@@ -51,7 +50,7 @@ public abstract class AbstractAstRewriteQuickFix extends AbstractCodanCMarkerRes
 				index.releaseReadLock();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			CheckersUiActivator.log(e);
 		}
 	}
 

@@ -211,7 +211,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 	}
 
 	private void handleVariableProblem(IASTName name, String contextFlagsString) {
-		reportProblem(ERR_ID_VariableResolutionProblem, name, name.getRawSignature(), contextFlagsString);
+		reportProblem(ERR_ID_VariableResolutionProblem, name, name.getBinding().getName(), contextFlagsString, name.getRawSignature());
 	}
 
 	private boolean isFunctionCall(IASTNode parentNode) {

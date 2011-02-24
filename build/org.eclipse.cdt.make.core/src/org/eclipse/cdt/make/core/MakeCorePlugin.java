@@ -1,19 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
- * Nokia - Bug 163094
+ *     QNX Software Systems - Initial API and implementation
+ *     Nokia - Bug 163094
+ *     Wind River Systems - Bug 316502
  *******************************************************************************/
 package org.eclipse.cdt.make.core;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -37,6 +40,7 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigInfoFactory
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -61,6 +65,30 @@ import org.osgi.framework.BundleContext;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MakeCorePlugin extends Plugin {
+
+	private static class FileStoreReaderProvider implements IMakefileReaderProvider {
+
+		private final String fEncoding;
+
+		private FileStoreReaderProvider(String encoding) {
+			fEncoding = encoding != null ? encoding : ResourcesPlugin.getEncoding();
+		}
+
+		public Reader getReader(URI fileURI) throws IOException {
+			try {
+				final IFileStore store = EFS.getStore(fileURI);
+				final IFileInfo info = store.fetchInfo();
+				if (!info.exists() || info.isDirectory())
+					throw new IOException();
+				
+				return new InputStreamReader(store.openInputStream(EFS.NONE, null), fEncoding);
+			} catch (CoreException e) {
+				MakeCorePlugin.log(e);
+				throw new IOException(e.getMessage());
+			}
+		}
+	}
+	
 	public static final String PLUGIN_ID = "org.eclipse.cdt.make.core"; //$NON-NLS-1$
 	public static final String MAKE_PROJECT_ID = MakeCorePlugin.getUniqueIdentifier() + ".make"; //$NON-NLS-1$
 	public static final String OLD_BUILDER_ID = "org.eclipse.cdt.core.cbuilder"; //$NON-NLS-1$
@@ -153,7 +181,7 @@ public class MakeCorePlugin extends Plugin {
 		while (st.hasMoreElements()) {
 			v.add(st.nextToken());
 		}
-		return v.toArray(new String[v.size()]);		
+		return v.toArray(new String[v.size()]);
 	}
 
 	/**
@@ -186,9 +214,18 @@ public class MakeCorePlugin extends Plugin {
 		return makefile;
 	}
 
-	static public IMakefile createMakefile(IFileStore file, boolean isGnuStyle, String[] makefileDirs) throws CoreException {
-		return createMakefile(file.toURI(), isGnuStyle, makefileDirs, null);
+	public static IMakefile createMakefile(IFileStore file, boolean isGnuStyle, String[] makefileDirs) throws CoreException {
+		return createMakefile(file.toURI(), isGnuStyle, makefileDirs, (String) null);
 	}
+
+	static IMakefile createMakefile(IFileStore file, boolean isGnuStyle, String[] makefileDirs, String encoding) throws CoreException {
+		return createMakefile(file.toURI(), isGnuStyle, makefileDirs, encoding);
+	}
+
+	static IMakefile createMakefile(URI fileURI, boolean isGnuStyle, String[] makefileDirs, String encoding) {
+		return createMakefile(fileURI, isGnuStyle, makefileDirs, new FileStoreReaderProvider(encoding));
+	}
+
 
 	/**
 	 * Create an IMakefile using the given IMakefileReaderProvider to fetch
@@ -229,13 +266,12 @@ public class MakeCorePlugin extends Plugin {
 	 * 
 	 * @param fileURI URI of main file
 	 */
-	public static IMakefile createMakefile(URI fileURI,
-			boolean isGnuStyle, String[] makefileDirs) {
-		return createMakefile(fileURI, isGnuStyle, makefileDirs, null);
+	public static IMakefile createMakefile(URI fileURI, boolean isGnuStyle, String[] makefileDirs) {
+		return createMakefile(fileURI, isGnuStyle, makefileDirs, (String) null);
 	}
 
 	public IMakefile createMakefile(IFile file) throws CoreException {
-		return createMakefile(EFS.getStore(file.getLocationURI()), isMakefileGNUStyle(), getMakefileDirs());
+		return createMakefile(EFS.getStore(file.getLocationURI()), isMakefileGNUStyle(), getMakefileDirs(), file.getCharset());
 	}
 	
 	@Override

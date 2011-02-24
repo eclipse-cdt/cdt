@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Wind River Systems - Bug 316502
  *******************************************************************************/
 
 package org.eclipse.cdt.make.internal.ui.text.makefile;
@@ -20,18 +21,19 @@ import org.eclipse.cdt.make.internal.ui.editor.IReconcilingParticipant;
 import org.eclipse.cdt.make.internal.ui.editor.MakefileContentOutlinePage;
 import org.eclipse.cdt.make.internal.ui.editor.MakefileEditor;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
+import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
-public class MakefileReconcilingStrategy implements IReconcilingStrategy {
+public class MakefileReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
 
 
-	private int fLastRegionOffset;
 	private ITextEditor fEditor;	
 	private IWorkingCopyManager fManager;
 	private IDocumentProvider fDocumentProvider;
@@ -40,7 +42,6 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 
 	public MakefileReconcilingStrategy(MakefileEditor editor) {
 		fOutliner= editor.getOutlinePage();
-		fLastRegionOffset = Integer.MAX_VALUE;
 		fEditor= editor;
 		fManager= MakeUIPlugin.getDefault().getWorkingCopyManager();
 		fDocumentProvider= MakeUIPlugin.getDefault().getMakefileDocumentProvider();
@@ -61,23 +62,14 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 	 * @see IReconcilingStrategy#reconcile(IRegion)
 	 */
 	public void reconcile(IRegion region) {
-		// We use a trick to avoid running the reconciler multiple times
-		// on a file when it gets changed. This is because this gets called
-		// multiple times with different regions of the file, we do a 
-		// complete parse on the first region.
-		if(region.getOffset() <= fLastRegionOffset) {
-			reconcile();
-		}
-		fLastRegionOffset = region.getOffset();
+		reconcile();
 	}
 
 	/**
 	 * @see IReconcilingStrategy#reconcile(DirtyRegion, IRegion)
 	 */
 	public void reconcile(DirtyRegion dirtyRegion, IRegion region) {
-		// FIXME: This seems to generate to much flashing in
-		// the contentouline viewer.
-		//reconcile();
+		assert false : "This is a non-incremental reconciler"; //$NON-NLS-1$
 	}
 	
 	private void reconcile() {
@@ -102,5 +94,20 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 				//
 			}
 		}
- 	}	
+ 	}
+
+	/*
+	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void setProgressMonitor(IProgressMonitor monitor) {
+		// no use for a progress monitor at the moment
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#initialReconcile()
+	 */
+	public void initialReconcile() {
+		// no need to reconcile initially
+//		reconcile();
+	}	
 }

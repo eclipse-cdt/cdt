@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
@@ -124,6 +125,8 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	 */
 	@Override
 	protected void processFunction(IASTFunctionDefinition func) {
+		if (func.getParent() instanceof ICPPASTTemplateDeclaration)
+			return; // if it is template get out of here
 		ReturnStmpVisitor visitor = new ReturnStmpVisitor(func);
 		func.accept(visitor);
 		if (!visitor.hasret) {

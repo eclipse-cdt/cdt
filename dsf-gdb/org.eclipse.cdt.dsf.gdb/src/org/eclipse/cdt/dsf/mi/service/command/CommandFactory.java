@@ -13,6 +13,7 @@
  *     Vladimir Prus (CodeSourcery) - Support for -data-read-memory-bytes (bug 322658)
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
+ *     Abeer Bagul - Support for -exec-arguments (bug 337687)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -142,6 +143,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarSetUpdateRange;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowAttributes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowFormat;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarUpdate;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecArguments;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLICatchInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoProgramInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo;
@@ -399,6 +401,11 @@ public class CommandFactory {
 		return new MIEnvironmentDirectory(ctx, paths, reset);
 	}
 
+	/** @since 4.0 */
+	public ICommand<MIInfo> createMIExecArguments(IMIContainerDMContext ctx, String[] args) {
+		return new MIExecArguments(ctx, args);
+	}
+	
 	public ICommand<MIInfo> createMIExecContinue(IExecutionDMContext dmc) {
 		return new MIExecContinue(dmc);
 	}

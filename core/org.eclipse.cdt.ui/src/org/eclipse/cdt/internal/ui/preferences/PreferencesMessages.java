@@ -140,6 +140,7 @@ public final class PreferencesMessages extends NLS {
 	public static String AppearancePreferencePage_showTUChildren_label;
 	public static String AppearancePreferencePage_cviewGroupIncludes_label;
 	public static String AppearancePreferencePage_cviewSeparateHeaderAndSource_label;
+	public static String AppearancePreferencePage_cviewKeepSortOrderOfExcludedFiles_label;
 	public static String AppearancePreferencePage_cviewGroupMacros_label;
 	public static String AppearancePreferencePage_outlineGroupIncludes_label;
 	public static String AppearancePreferencePage_outlineGroupMethods_label;

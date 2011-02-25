@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -803,7 +803,18 @@ public class PreferenceConstants {
 	 * @since 5.0
 	 */
 	public static final String CVIEW_SEPARATE_HEADER_AND_SOURCE= "org.eclipse.cdt.ui.cview.separateheaderandsource"; //$NON-NLS-1$
-
+		
+	/**
+	 * A named preference that controls whether the sorting order of source files should be changed 
+	 * in the C/C++ Projects view and the Project Explorer view when they are excluded from build.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 5.3
+	 */
+	public static final String SORT_ORDER_OF_EXCLUDED_FILES= "org.eclipse.cdt.ui.cview.sortorderofexcludedfiles"; //$NON-NLS-1$
+	
 	/**
 	 * A named preference that controls which completion proposal categories
 	 * have been excluded from the default proposal list.
@@ -1707,12 +1718,12 @@ public class PreferenceConstants {
 				return node;
 			}
 		}
-		node = new InstanceScope().getNode(CUIPlugin.PLUGIN_ID);
+		node = InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID);
 		if (node.get(key, null) != null) {
 			return node;
 		}
 		
-		return new DefaultScope().getNode(CUIPlugin.PLUGIN_ID);
+		return DefaultScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 	private SelectionButtonDialogField fOutlineGroupMembers;
 	private SelectionButtonDialogField fOutlineGroupMacros;
 	private SelectionButtonDialogField fShowSourceRootsAtTopOfProject;
+	private SelectionButtonDialogField fCViewSortOrderOfExcludedFiles;
 
 	
 	public AppearancePreferencePage() {
@@ -100,7 +101,11 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		
 		fCViewGroupMacros= new SelectionButtonDialogField(SWT.CHECK);
 		fCViewGroupMacros.setDialogFieldListener(listener);
-		fCViewGroupMacros.setLabelText(PreferencesMessages.AppearancePreferencePage_cviewGroupMacros_label); 
+		fCViewGroupMacros.setLabelText(PreferencesMessages.AppearancePreferencePage_cviewGroupMacros_label);
+		
+		fCViewSortOrderOfExcludedFiles= new SelectionButtonDialogField(SWT.CHECK);
+		fCViewSortOrderOfExcludedFiles.setDialogFieldListener(listener);
+		fCViewSortOrderOfExcludedFiles.setLabelText(PreferencesMessages.AppearancePreferencePage_cviewKeepSortOrderOfExcludedFiles_label);
 	}
 
 	private void initFields() {
@@ -115,6 +120,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fOutlineGroupMacros.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_GROUP_MACROS));
 		boolean showSourceRootsAtTopOfProject = CCorePlugin.showSourceRootsAtTopOfProject();
 		fShowSourceRootsAtTopOfProject.setSelection(showSourceRootsAtTopOfProject);
+		fCViewSortOrderOfExcludedFiles.setSelection(prefs.getBoolean(PreferenceConstants.SORT_ORDER_OF_EXCLUDED_FILES));
 	}
 	
 	/*
@@ -152,6 +158,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		new Separator().doFillIntoGrid(result, nColumns);
 		
 		fCViewSeparateHeaderAndSource.doFillIntoGrid(result, nColumns);
+		fCViewSortOrderOfExcludedFiles.doFillIntoGrid(result, nColumns);
 		
 		String noteTitle= PreferencesMessages.AppearancePreferencePage_note;
 		String noteMessage= PreferencesMessages.AppearancePreferencePage_preferenceOnlyForNewViews; 
@@ -203,9 +210,10 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		prefs.setValue(PreferenceConstants.OUTLINE_GROUP_NAMESPACES, fOutlineGroupNamespaces.isSelected());
 		prefs.setValue(PreferenceConstants.OUTLINE_GROUP_MEMBERS, fOutlineGroupMembers.isSelected());
 		prefs.setValue(PreferenceConstants.OUTLINE_GROUP_MACROS, fOutlineGroupMacros.isSelected());
+		prefs.setValue(PreferenceConstants.SORT_ORDER_OF_EXCLUDED_FILES, fCViewSortOrderOfExcludedFiles.isSelected());
 		try {
-			new InstanceScope().getNode(CUIPlugin.PLUGIN_ID).flush();
-			IEclipsePreferences corePluginNode = new InstanceScope().getNode(CCorePlugin.PLUGIN_ID);
+			InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID).flush();
+			IEclipsePreferences corePluginNode = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
 			corePluginNode.putBoolean(
 					CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT, 
 					fShowSourceRootsAtTopOfProject.isSelected());
@@ -230,8 +238,9 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fOutlineGroupNamespaces.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES));
 		fOutlineGroupMembers.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS));
 		fOutlineGroupMacros.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_MACROS));
-		boolean showSourceRootsPref = new DefaultScope().getNode(CCorePlugin.PLUGIN_ID).getBoolean(CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT, true);
+		boolean showSourceRootsPref = DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).getBoolean(CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT, true);
 		fShowSourceRootsAtTopOfProject.setSelection(showSourceRootsPref);
+		fCViewSortOrderOfExcludedFiles.setSelection(prefs.getDefaultBoolean(PreferenceConstants.SORT_ORDER_OF_EXCLUDED_FILES));
 		super.performDefaults();
 	}
 }

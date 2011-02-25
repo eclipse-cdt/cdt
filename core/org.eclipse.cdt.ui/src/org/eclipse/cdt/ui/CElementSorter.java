@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package org.eclipse.cdt.ui;
 
 import java.util.Comparator;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IAdaptable;
@@ -124,6 +125,8 @@ public class CElementSorter extends ViewerSorter {
 	 * otherwise header and source files will be sorted by name.
 	 */
 	private boolean fSeparateHeaderAndSource;
+	
+	private boolean fKeepSortOrderOfExcludedFiles;
 
 	/**
 	 * Default constructor for use as executable extension.
@@ -131,6 +134,7 @@ public class CElementSorter extends ViewerSorter {
 	public CElementSorter() {
 		final IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
 		fSeparateHeaderAndSource= store.getBoolean(PreferenceConstants.CVIEW_SEPARATE_HEADER_AND_SOURCE);
+		fKeepSortOrderOfExcludedFiles= store.getBoolean(PreferenceConstants.SORT_ORDER_OF_EXCLUDED_FILES);
 	}
 	
 	@Override
@@ -159,15 +163,7 @@ public class CElementSorter extends ViewerSorter {
 				}
 				return CCONTAINERS;
 			case ICElement.C_UNIT:
-				if (fSeparateHeaderAndSource) {
-					if (CoreModel.isValidHeaderUnitName(cElement.getCProject().getProject(), cElement.getElementName())) {
-						return TRANSLATIONUNIT_HEADERS;
-					}
-					if (CoreModel.isValidSourceUnitName(cElement.getCProject().getProject(), cElement.getElementName())) {
-						return TRANSLATIONUNIT_SOURCE;
-					}
-				}
-				return TRANSLATIONUNITS;
+				return getTranslationUnitCategory(cElement.getCProject().getProject(), cElement.getElementName());
 			case ICElement.C_INCLUDE:
 				return INCLUDES;
 			case ICElement.C_MACRO:
@@ -219,7 +215,11 @@ public class CElementSorter extends ViewerSorter {
 				return PROJECTS;
 			case IResource.FOLDER:
 				return RESOURCEFOLDERS;
-			default:
+			default: // translation unit that was excluded from the build
+				if(fKeepSortOrderOfExcludedFiles &&
+						CoreModel.isValidTranslationUnitName(resource.getProject(), resource.getName())) {
+					return getTranslationUnitCategory(resource.getProject(), resource.getName());
+				} 
 				return RESOURCES;
 			}
 		} else if (element instanceof IStorage) {
@@ -254,6 +254,18 @@ public class CElementSorter extends ViewerSorter {
 		}
 		return NORMAL;
 	}
+	
+	private int getTranslationUnitCategory(IProject project, String name) {
+		if (fSeparateHeaderAndSource) {
+			if (CoreModel.isValidHeaderUnitName(project, name)) {
+				return TRANSLATIONUNIT_HEADERS;
+			}
+			if (CoreModel.isValidSourceUnitName(project, name)) {
+				return TRANSLATIONUNIT_SOURCE;
+			}
+		}
+		return TRANSLATIONUNITS;
+	} 
 
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
@@ -314,6 +326,8 @@ public class CElementSorter extends ViewerSorter {
 		    if (name1.length() > 0 && name1.charAt(0) == '~') {
 		    	name1 = name1.substring(1);
 		    }
+		} else if (e1 instanceof IResource) {
+		    name1 = ((IResource)e1).getName(); 
 		} else {
 			name1 = e1.toString();
 		}
@@ -327,6 +341,8 @@ public class CElementSorter extends ViewerSorter {
 		    if (name2.length() > 0 && name2.charAt(0) == '~') {
 		    	name2 = name2.substring(1);
 		    }
+		} else if(e2 instanceof IResource) {
+		    name2 = ((IResource)e2).getName(); 
 		} else {
 			name2 = e2.toString();
 		}

@@ -16,26 +16,19 @@ import java.util.Map;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfCommandRunnable;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
-import org.eclipse.cdt.dsf.gdb.launching.GDBProcess;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
-import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.debug.core.commands.IRestartHandler;
-import org.eclipse.debug.core.model.IProcess;
 
 public class GdbRestartCommand implements IRestartHandler {
     private final DsfExecutor fExecutor;
@@ -82,107 +75,42 @@ public class GdbRestartCommand implements IRestartHandler {
         });
 	}
     
-    private class UpdateLaunchJob extends Job {
-    	IDebugCommandRequest fRequest;
-    	
-    	UpdateLaunchJob(IDebugCommandRequest request) {
-			super(""); //$NON-NLS-1$
-			setSystem(true);
-			fRequest = request;
-    	}
-
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-	        // Before restarting the inferior, we must add it to our launch
-	        // we must do this here because we cannot do it in the executor, or else
-	        // it deadlocks
-	        // We must first remove the old inferior from our launch so that we
-			// can re-use its name
-			
-	        // Remove
-	        String inferiorLabel = null;
-
-	        IProcess[] launchProcesses = fLaunch.getProcesses();
-	        for (IProcess p : launchProcesses) {
-	        	if ((p instanceof GDBProcess) == false) {
-	        		// We have to processes in our launches, GDB and the inferior
-	        		// We can tell this is the inferior because it is not GDB.
-	        		// If we don't have an inferior at all, we just won't find it.
-	        		inferiorLabel = p.getLabel();
-	            	fLaunch.removeProcess(p);
-	            	break;
-	        	}
-	        }
-	        // Add
-	        if (inferiorLabel != null) {
-	        	try {
-	        		fLaunch.addInferiorProcess(inferiorLabel);
-	        	} catch (CoreException e) {
-	        	}
-	        }
-	        
-	        // Now that we have added the new inferior to the launch,
-	        // which creates its console, we can perform the restart safely.
-	    	fExecutor.submit(new DsfCommandRunnable(fTracker, fRequest.getElements()[0], fRequest) { 
-	            @SuppressWarnings("unchecked")
-				@Override public void doExecute() {
-	                IContainerDMContext containerDmc = DMContexts.getAncestorOfType(getContext(), IContainerDMContext.class);
-	            	IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
-
-	                if (procService != null) {
-	                	Map<String, Object> attributes = null;
-						try {
-							attributes = fLaunch.getLaunchConfiguration().getAttributes();
-						} catch (CoreException e) {}
-						
-	                	procService.restart(containerDmc, attributes, 
-	                						new DataRequestMonitor<IContainerDMContext>(fExecutor, null) {
-	                							@Override
-	                							protected void handleCompleted() {
-	                								fRequest.done();
-	                							};
-	                						});
-	                } else {
-	                	fRequest.done();
-	       			}
-	            }
-	        });
-	        
-	        return Status.OK_STATUS;
-		}
-    }
-    
     public boolean execute(final IDebugCommandRequest request) {
         if (request.getElements().length != 1) {
             request.done();
             return false;
         }
-
+        
+        Object element = request.getElements()[0];
+        if (!(element instanceof IDMVMContext)) {
+            request.done();
+            return false;
+        }
+        
+        final IContainerDMContext containerDmc = DMContexts.getAncestorOfType(((IDMVMContext)element).getDMContext(), 
+        																	  IContainerDMContext.class);
+        
         fExecutor.submit(new DsfRunnable() {
-        	public void run() {
-    			final IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
-				if (gdbControl != null) {
-                    gdbControl.initInferiorInputOutput(new RequestMonitor(fExecutor, null) {
-                    	@Override
-                    	protected void handleCompleted() {
-                    		if (isSuccess()) {                    			
-                        		gdbControl.createInferiorProcess();
-                        		
-                        		// Update the launch outside the executor.
-                        		// Also, we must have created the new inferior first to create
-                        		// the new streams.
-                        		// Finally, we should only do the actual restart after
-                        		// we have updated the launch, to make sure our consoles
-                        		// are ready to process any output from the new inferior (bug 223154)
-                        		new UpdateLaunchJob(request).schedule();
-                    		} else {
-                    			request.done();
-                    		}
-                    	}
-                    });
-				} else {
-					request.done();
-				}
+        	@SuppressWarnings("unchecked")
+			public void run() {
+            	IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
+
+                if (procService != null) {
+                	Map<String, Object> attributes = null;
+					try {
+						attributes = fLaunch.getLaunchConfiguration().getAttributes();
+					} catch (CoreException e) {}
+					
+                	procService.restart(containerDmc, attributes, 
+                						new DataRequestMonitor<IContainerDMContext>(fExecutor, null) {
+                							@Override
+                							protected void handleCompleted() {
+                								request.done();
+                							};
+                						});
+                } else {
+                	request.done();
+       			}
 			}
         });
         return false;

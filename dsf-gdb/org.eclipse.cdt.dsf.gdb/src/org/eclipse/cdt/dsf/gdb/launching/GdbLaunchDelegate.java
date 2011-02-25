@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 QNX Software Systems and others.
+ * Copyright (c) 2008, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -175,11 +175,8 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         // through an ICommandControlShutdownDMEvent
         launch.initializeControl();
 
-        // Add the CLI and "inferior" process objects to the launch.
+        // Add the GDB process object to the launch.
         launch.addCLIProcess("gdb"); //$NON-NLS-1$
-        if (!attach && sessionType != SessionType.CORE) {
-        	launch.addInferiorProcess(exePath.lastSegment());
-        }
 
         monitor.worked(1);
         

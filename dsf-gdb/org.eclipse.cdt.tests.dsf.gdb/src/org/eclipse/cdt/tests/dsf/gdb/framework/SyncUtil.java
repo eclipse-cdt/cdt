@@ -22,7 +22,6 @@ import junit.framework.Assert;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -622,21 +621,15 @@ public class SyncUtil {
 			
         // Perform the restart
         Query<IContainerDMContext> query2 = new Query<IContainerDMContext>() {
+			@SuppressWarnings("unchecked")
 			@Override
 			protected void execute(final DataRequestMonitor<IContainerDMContext> rm) {
-				fGdbControl.initInferiorInputOutput(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
-                	@SuppressWarnings("unchecked")
-					@Override
-                	protected void handleSuccess() {
-                		fGdbControl.createInferiorProcess();
-	                	Map<String, Object> attributes = null;
-						try {
-							attributes = launch.getLaunchConfiguration().getAttributes();
-						} catch (CoreException e) {}
-						
-						fProcessesService.restart(containerDmc, attributes, rm);
-                	}
-                });
+				Map<String, Object> attributes = null;
+				try {
+					attributes = launch.getLaunchConfiguration().getAttributes();
+				} catch (CoreException e) {}
+
+				fProcessesService.restart(containerDmc, attributes, rm);
 			}
         };
 

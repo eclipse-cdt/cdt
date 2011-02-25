@@ -34,6 +34,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.GDBProcess;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
@@ -53,6 +54,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IProcess;
 import org.osgi.framework.BundleContext;
 
 
@@ -398,12 +402,54 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 		startOrRestart(containerDmc, attributes, false, rm);
 	}
 	
+	/**
+	 * @since 4.0
+	 */
+	protected void createConsole(final boolean restart, final RequestMonitor rm) {
+		fGdb.initInferiorInputOutput(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+			@Override
+			protected void handleSuccess() {
+				fGdb.createInferiorProcess();
+				final Process inferior = fGdb.getInferiorProcess();
+
+				final String label = fBackend.getProgramPath().lastSegment();
+				final ILaunch launch = (ILaunch)getSession().getModelAdapter(ILaunch.class);
+
+				// Add the inferior to the launch.
+				// This cannot be done on the executor or things deadlock.
+				DebugPlugin.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						if (restart) {
+							// For a restart, remove the old inferior
+							IProcess[] launchProcesses = launch.getProcesses();
+							for (IProcess p : launchProcesses) {
+								// We know there is only one inferior, so just find it.
+								if ((p instanceof GDBProcess) == false) {
+									launch.removeProcess(p);
+									break;
+								}
+							}
+						}
+
+						// Add the inferior
+						IProcess process = DebugPlugin.newProcess(launch, inferior, label);
+
+						// Register as an IProcess so that the console is brought to the front
+						// when the inferior is selected
+						getSession().registerModelAdapter(IProcess.class, process);
+						rm.done();
+					}
+				});
+			}
+		});
+	}
+
     /**
      * Insert breakpoint at entry if set, and start or restart the program.
      *
      * @since 4.0 
      */
-    protected void startOrRestart(final IContainerDMContext containerDmc, Map<String, Object> attributes,
+    protected void startOrRestart(final IContainerDMContext containerDmc, final Map<String, Object> attributes,
     		                      boolean restart, final DataRequestMonitor<IContainerDMContext> requestMonitor) {
     	if (fBackend.getIsAttachSession()) {
     		// When attaching to a running process, we do not need to set a breakpoint or
@@ -412,6 +458,10 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
     		requestMonitor.done();
     		return;
     	}
+    	
+    	createConsole(restart, new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
+    		@Override
+    		protected void handleSuccess() {
 
     	final DataRequestMonitor<MIInfo> execMonitor = new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
     		@Override
@@ -458,6 +508,8 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
     					}
     				});
     	}
+    		}
+    	});
     }
 
     /**

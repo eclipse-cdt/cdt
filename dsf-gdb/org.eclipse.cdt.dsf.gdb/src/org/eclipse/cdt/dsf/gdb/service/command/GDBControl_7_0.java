@@ -139,7 +139,6 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
 
         final Sequence.Step[] initializeSteps = new Sequence.Step[] {
                 new CommandMonitoringStep(InitializationShutdownStep.Direction.INITIALIZING),
-                new InferiorInputOutputInitStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new CommandProcessorsStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new ListFeaturesStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new RegisterStep(InitializationShutdownStep.Direction.INITIALIZING),
@@ -157,7 +156,6 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
                 new RegisterStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new ListFeaturesStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new CommandProcessorsStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
-                new InferiorInputOutputInitStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new CommandMonitoringStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
             };
         Sequence shutdownSequence = 
@@ -447,20 +445,6 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
         @Override
         protected void shutdown(RequestMonitor requestMonitor) {
             stopCommandProcessing();
-            requestMonitor.done();
-        }
-    }
-    
-    protected class InferiorInputOutputInitStep extends InitializationShutdownStep {
-    	InferiorInputOutputInitStep(Direction direction) { super(direction); }
-
-        @Override
-        protected void initialize(final RequestMonitor requestMonitor) {
-        	initInferiorInputOutput(requestMonitor);
-        }
-
-        @Override
-        protected void shutdown(RequestMonitor requestMonitor) {
             requestMonitor.done();
         }
     }

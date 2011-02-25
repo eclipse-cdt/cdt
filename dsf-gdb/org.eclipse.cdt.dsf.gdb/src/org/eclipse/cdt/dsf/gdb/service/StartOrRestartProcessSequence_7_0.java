@@ -35,8 +35,12 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IProcess;
 
 /**
  * This class causes a process to start (run for the first time), or to
@@ -48,6 +52,8 @@ import org.eclipse.core.runtime.Status;
  * @since 4.0
  */
 public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
+	
+	private static final String GROUP_ATTR = GdbPlugin.PLUGIN_ID + "groupId"; //$NON-NLS-1$
 	
 	private IGDBControl fCommandControl;
 	private CommandFactory fCommandFactory;
@@ -137,6 +143,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 						"stepInitializeBaseSequence",  //$NON-NLS-1$
 						"stepInsertStopOnMainBreakpoint",  //$NON-NLS-1$
 						"stepSetBreakpointForReverse",   //$NON-NLS-1$
+						"stepCreateConsole",    //$NON-NLS-1$
 						"stepRunProgram",   //$NON-NLS-1$
 						"stepSetReverseOff",   //$NON-NLS-1$
 						"stepEnableReverse",   //$NON-NLS-1$
@@ -253,6 +260,57 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		} else {
 			rm.done();
 		}
+	}
+	
+	/**
+	 * Before running the program, we must create its console for IO.
+	 */
+	@Execute
+	public void stepCreateConsole(final RequestMonitor rm) {
+		fCommandControl.initInferiorInputOutput(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+			@Override
+			protected void handleSuccess() {
+				fCommandControl.createInferiorProcess();
+				final Process inferior = fCommandControl.getInferiorProcess();
+
+				final ILaunch launch = (ILaunch)getContainerContext().getAdapter(ILaunch.class);
+				final String groupId = ((IMIContainerDMContext)getContainerContext()).getGroupId();
+				final DsfSession session = fCommandControl.getSession();
+
+				IGDBBackend backend = fTracker.getService(IGDBBackend.class);
+				final String pathLabel = backend.getProgramPath().lastSegment();
+				
+				// Add the inferior to the launch.  
+				// This cannot be done on the executor or things deadlock.
+				DebugPlugin.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						String label = pathLabel;
+						if (fRestart) {
+							// For a restart, remove the old inferior
+							IProcess[] launchProcesses = launch.getProcesses();
+							for (IProcess process : launchProcesses) {
+								String groupAttribute = process.getAttribute(GROUP_ATTR);
+								if (groupId.equals(groupAttribute)) {
+									launch.removeProcess(process);
+									// Use the exact same label as before
+									label = process.getLabel();
+									break;
+								}
+							}
+						}
+
+						// Add the inferior
+						IProcess process = DebugPlugin.newProcess(launch, inferior, label);
+						process.setAttribute(GROUP_ATTR, groupId);
+						
+						// Register as an IProcess so that the console is brought to the front
+						// when the inferior is selected
+						session.registerModelAdapter(IProcess.class, process);
+						rm.done();
+					}
+				});
+			}
+		});
 	}
 	
 	/**

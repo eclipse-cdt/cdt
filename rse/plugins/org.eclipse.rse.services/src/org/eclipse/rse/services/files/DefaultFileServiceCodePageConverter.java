@@ -15,6 +15,7 @@
  * David McKnight    (IBM)  -[279014] [dstore][encoding] text file corruption can occur when downloading from UTF8 to cp1252
  * David McKnight    (IBM)  -[324669] [dstore] IBM-eucJP to UTF-8 char conversion appends nulls to end of file during text-mode download
  * David McKnight    (IBM)  -[280451] IFileServiceCodePageConverter.convertClientStringToRemoteBytes() should throw runtime exception
+ * David McKnight    (IBM)  -[280453] [performance] DefaultFileServiceCodePageConverter is wasteful with main memory
  ********************************************************************************/
 package org.eclipse.rse.services.files;
 
@@ -55,33 +56,82 @@ public class DefaultFileServiceCodePageConverter implements
 		// read in the file
 		try
 		{
+			// decoder to go from remote encoding to UTF8
+			Charset rmtCharset = Charset.forName(remoteEncoding);
+			CharsetDecoder rmtDecoder = rmtCharset.newDecoder();
+
+			inputStream = new FileInputStream(file);
+			
 			int fileLength = (int)file.length();
+			BufferedInputStream bufInputStream = new BufferedInputStream(inputStream, fileLength);
+			
+
 			if (fileLength > 0){
-				inputStream = new FileInputStream(file);
-				BufferedInputStream bufInputStream = new BufferedInputStream(inputStream, fileLength);
-				byte[] buffer = new byte[fileLength];
-				bufInputStream.read(buffer, 0, fileLength);
-				bufInputStream.close();
-				ByteBuffer rmtBuf = ByteBuffer.wrap(buffer, 0, fileLength);
-
-				// decoder to go from remote encoding to UTF8
-				Charset rmtCharset = Charset.forName(remoteEncoding);
-				CharsetDecoder rmtDecoder = rmtCharset.newDecoder();
-
-				// convert from the remote encoding
-				CharBuffer decodedBuf = null;
-				decodedBuf = rmtDecoder.decode(rmtBuf);
-				// for conversion to the local encoding
-				Charset charset = Charset.forName(localEncoding);
-				CharsetEncoder encoder = charset.newEncoder();
-				byte[] localBuffer = null;
-				// convert to the specified local encoding
-				ByteBuffer lclBuf = encoder.encode(decodedBuf);
-				localBuffer = lclBuf.array();
-				outStream = new FileOutputStream(file);
 				
-				// use the limit rather than the array length to avoid unwanted nulls
-				outStream.write(localBuffer, 0, lclBuf.limit());
+				int MAX_READ = 10000;
+				if (fileLength <= MAX_READ){ // read the whole file at once
+
+					byte[] buffer = new byte[fileLength];
+					bufInputStream.read(buffer, 0, fileLength);
+					bufInputStream.close();
+					inputStream.close();
+					
+					ByteBuffer rmtBuf = ByteBuffer.wrap(buffer, 0, fileLength);
+						
+					// convert from the remote encoding
+					CharBuffer decodedBuf = null;
+					decodedBuf = rmtDecoder.decode(rmtBuf);
+					// for conversion to the local encoding
+					Charset charset = Charset.forName(localEncoding);
+					CharsetEncoder encoder = charset.newEncoder();
+					byte[] localBuffer = null;
+					// convert to the specified local encoding
+					ByteBuffer lclBuf = encoder.encode(decodedBuf);
+					localBuffer = lclBuf.array();
+
+					// use the limit rather than the array length to avoid unwanted nulls
+					outStream = new FileOutputStream(file);
+					outStream.write(localBuffer, 0, lclBuf.limit());
+				}
+				else { // read and write sections of file at a time
+					int inOffset = 0;
+					int outOffset = 0;
+					
+					File altFile = new File(file.getAbsolutePath() + "~"); //$NON-NLS-1$
+					outStream = new FileOutputStream(altFile); // using alternate file because we're writing while reading
+					while (inOffset < fileLength){
+						int readSize = MAX_READ;
+						if (inOffset +  MAX_READ > fileLength){
+							readSize = fileLength - inOffset;
+						}
+						
+						byte[] buffer = new byte[readSize];
+						inputStream.read(buffer, 0, readSize);
+						inOffset += readSize;
+						ByteBuffer rmtBuf = ByteBuffer.wrap(buffer, 0, readSize);		
+						
+						// convert from the remote encoding
+						CharBuffer decodedBuf = null;
+						decodedBuf = rmtDecoder.decode(rmtBuf);
+
+						// for conversion to the local encoding
+						Charset charset = Charset.forName(localEncoding);
+						CharsetEncoder encoder = charset.newEncoder();
+						byte[] localBuffer = null;
+						// convert to the specified local encoding
+						ByteBuffer lclBuf = encoder.encode(decodedBuf);
+						localBuffer = lclBuf.array();
+											
+						// use the limit rather than the array length to avoid unwanted nulls
+						int writeSize = lclBuf.limit();
+						outStream.write(localBuffer, 0, writeSize);
+						outOffset += writeSize;
+					}
+					inputStream.close();	
+					outStream.close();
+					altFile.renameTo(file);
+				}
+
 			}
 		} catch (Exception e) {
 			// outstream could not be written properly: report

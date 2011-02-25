@@ -136,7 +136,7 @@ public class GdbRestartCommand implements IRestartHandler {
 						} catch (CoreException e) {}
 						
 	                	procService.restart(containerDmc, attributes, 
-	                						new RequestMonitor(fExecutor, null) {
+	                						new DataRequestMonitor<IContainerDMContext>(fExecutor, null) {
 	                							@Override
 	                							protected void handleCompleted() {
 	                								fRequest.done();

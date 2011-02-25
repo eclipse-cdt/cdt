@@ -14,7 +14,6 @@ package org.eclipse.cdt.dsf.gdb.service;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -72,9 +71,24 @@ public interface IGDBProcesses extends IMIProcesses {
      * @param containerDmc The process that should be restarted
      * @param attributes Different attributes that affect the restart operation.  This is 
      *                   usually the launch configuration attributes
-     * @param rm The requetMonitor that indicates that the restart request has been completed.
+     * @param rm The requetMonitor that indicates that the restart request has been completed.  It will
+     *           contain the IContainerDMContext fully filled with the data of the restarted process.
      *           
      * @since 4.0
      */
-	void restart(IContainerDMContext containerDmc, Map<String, Object> attributes, RequestMonitor rm);
+	void restart(IContainerDMContext containerDmc, Map<String, Object> attributes, DataRequestMonitor<IContainerDMContext> rm);
+	
+    /**
+     * Request that the specified process be started.
+     * 
+     * @param containerDmc The process that should be started.
+     * @param attributes Different attributes that affect the start operation.  This is 
+     *                   usually the launch configuration attributes
+     * @param rm The requestMonitor that indicates that the start request has been completed.  It will
+     *           contain the IContainerDMContext fully filled with the data of the newly started process.
+     *           
+     * @since 4.0
+     */
+	void start(IContainerDMContext containerDmc, Map<String, Object> attributes, DataRequestMonitor<IContainerDMContext> rm);
+
 }

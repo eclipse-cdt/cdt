@@ -1125,13 +1125,23 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	}
 	
 	/** @since 4.0 */
-	public void restart(IContainerDMContext containerDmc, Map<String, Object> attributes, RequestMonitor rm) {
-   		ImmediateExecutor.getInstance().execute(
-   				getStartOrRestartProcessSequence(
-   						getExecutor(), containerDmc, attributes, true, 
-   						new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm)));
+	public void restart(IContainerDMContext containerDmc, Map<String, Object> attributes, DataRequestMonitor<IContainerDMContext> rm) {
+		startOrRestart(containerDmc, attributes, true, rm);
 	}
 	
+	/** @since 4.0 */
+	public void start(IContainerDMContext containerDmc, Map<String, Object> attributes, DataRequestMonitor<IContainerDMContext> rm) {
+		startOrRestart(containerDmc, attributes, false, rm);
+	}
+	
+	/** @since 4.0 */
+	protected void startOrRestart(IContainerDMContext containerDmc, Map<String, Object> attributes, 
+								  boolean restart, DataRequestMonitor<IContainerDMContext> rm) {
+   		ImmediateExecutor.getInstance().execute(
+   				getStartOrRestartProcessSequence(
+   						getExecutor(), containerDmc, attributes, restart, rm));
+	}
+
 	/**
 	 * Return the sequence that is to be used to start or restart the specified process.
 	 * Allows others to extend more easily.

@@ -389,8 +389,13 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	}
 	
 	/** @since 4.0 */
-	public void restart(IContainerDMContext containerDmc, Map<String, Object> attributes, RequestMonitor rm) {
+	public void restart(IContainerDMContext containerDmc, Map<String, Object> attributes, DataRequestMonitor<IContainerDMContext> rm) {
 		startOrRestart(containerDmc, attributes, true, rm);
+	}
+	
+	/** @since 4.0 */
+	public void start(IContainerDMContext containerDmc, Map<String, Object> attributes, DataRequestMonitor<IContainerDMContext> rm) {
+		startOrRestart(containerDmc, attributes, false, rm);
 	}
 	
     /**
@@ -399,10 +404,11 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
      * @since 4.0 
      */
     protected void startOrRestart(final IContainerDMContext containerDmc, Map<String, Object> attributes,
-    		                      boolean restart, final RequestMonitor requestMonitor) {
+    		                      boolean restart, final DataRequestMonitor<IContainerDMContext> requestMonitor) {
     	if (fBackend.getIsAttachSession()) {
     		// When attaching to a running process, we do not need to set a breakpoint or
     		// start the program; it is left up to the user.
+    		requestMonitor.setData(containerDmc);
     		requestMonitor.done();
     		return;
     	}
@@ -416,7 +422,8 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
     				// the ^connect
     				getSession().dispatchEvent(new ContainerStartedDMEvent(containerDmc), getProperties());
     			}
-    			super.handleSuccess();
+    			requestMonitor.setData(containerDmc);
+    			requestMonitor.done();
     		}
     	};
 

@@ -621,9 +621,9 @@ public class SyncUtil {
 					MIStoppedEvent.class);
 			
         // Perform the restart
-        Query<Object> query2 = new Query<Object>() {
+        Query<IContainerDMContext> query2 = new Query<IContainerDMContext>() {
 			@Override
-			protected void execute(final DataRequestMonitor<Object> rm) {
+			protected void execute(final DataRequestMonitor<IContainerDMContext> rm) {
 				fGdbControl.initInferiorInputOutput(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
                 	@SuppressWarnings("unchecked")
 					@Override

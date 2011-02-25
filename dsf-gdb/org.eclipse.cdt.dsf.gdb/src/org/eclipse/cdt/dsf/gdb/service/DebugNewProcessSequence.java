@@ -20,7 +20,6 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ReflectionSequence;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
@@ -39,9 +38,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-/**
+/** 
+ * This sequence is used to start debugging a new process.
+ *
  * @since 4.0
- */
+*/
 public class DebugNewProcessSequence extends ReflectionSequence {
 
 	private final static String INVALID = "invalid";   //$NON-NLS-1$
@@ -267,23 +268,20 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	@Execute
 	public void stepStartExecution(final RequestMonitor rm) {
 		if (fBackend.getSessionType() != SessionType.CORE) {
-			ImmediateExecutor.getInstance().execute(
-					getStartOrRestartProcessSequence(
-							getExecutor(), getContainerContext(), fAttributes, false,
-							new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm) {
-								@Override
-								protected void handleSuccess() {
-									assert getData() instanceof IMIContainerDMContext;
-									
-									// Set the container that we created
-									setContainerContext(DMContexts.getAncestorOfType(getData(), IMIContainerDMContext.class));
-									fDataRequestMonitor.setData(getContainerContext());
+			fProcService.start(getContainerContext(), fAttributes, new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm) {
+				@Override
+				protected void handleSuccess() {
+					assert getData() instanceof IMIContainerDMContext;
 
-									// Don't call fDataRequestMonitor.done(), the sequence will
-									// automatically do that when we call rm.done();
-									rm.done();
-								}
-							}));
+					// Set the container that we created
+					setContainerContext(DMContexts.getAncestorOfType(getData(), IMIContainerDMContext.class));
+					fDataRequestMonitor.setData(getContainerContext());
+
+					// Don't call fDataRequestMonitor.done(), the sequence will
+					// automatically do that when it completes;
+					rm.done();
+				}
+			});
 		} else {
 			fDataRequestMonitor.setData(getContainerContext());
 			rm.done();
@@ -299,15 +297,5 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 		fTracker.dispose();
 		fTracker = null;
 		rm.done();
-	}
-	
-	/**
-	 * Return the sequence that is to be used to start or restart the specified process.
-	 * Allows others to extend more easily.
-	 */
-	protected Sequence getStartOrRestartProcessSequence(DsfExecutor executor, IContainerDMContext containerDmc, 
-														Map<String, Object> attributes, boolean restart, 
-														DataRequestMonitor<IContainerDMContext> rm) {
-		return new StartOrRestartProcessSequence_7_0(executor, containerDmc, attributes, restart, rm);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@
  * David McKnight  (IBM)  - [243495] [api] New: Allow file name search in Remote Search to not be case sensitive
  * David McKnight  (IBM)  - [299568] Remote search only shows result in the symbolic linked file
  * David McKnight  (IBM]  - [330989] [dstore] OutOfMemoryError occurs when searching for a text in a large remote file
+ * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  ********************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -41,6 +42,7 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.server.SecuredThread;
 import org.eclipse.dstore.core.server.SystemServiceManager;
 import org.eclipse.dstore.core.util.StringCompare;
+import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 import org.eclipse.dstore.internal.core.util.MemoryManager;
 import org.eclipse.rse.dstore.universal.miners.ICancellableHandler;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
@@ -102,7 +104,7 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 		_deVirtualFile = _dataStore.findObjectDescriptor(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR);
 		boolean includeSubfolders = searchString.isIncludeSubfolders();
 
-		String searchUnique = System.getProperty("DSTORE_SEARCH_ONLY_UNIQUE_FOLDERS"); //$NON-NLS-1$
+		String searchUnique = System.getProperty(IDataStoreSystemProperties.DSTORE_SEARCH_ONLY_UNIQUE_FOLDERS);
 		if (searchUnique != null && searchUnique.equals("false")) //$NON-NLS-1$
 		{
 			_searchOnlyUniqueFolders = false;

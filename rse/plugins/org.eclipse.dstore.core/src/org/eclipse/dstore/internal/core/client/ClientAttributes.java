@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.client;
@@ -22,6 +22,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.eclipse.dstore.core.model.DataStoreAttributes;
+import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 
 /**
  * ClientAttributes is a container of communication related
@@ -39,7 +40,7 @@ public class ClientAttributes extends DataStoreAttributes
 
 		try
 		{
-			String pluginPath = System.getProperty("A_PLUGIN_PATH"); //$NON-NLS-1$
+			String pluginPath = System.getProperty(IDataStoreSystemProperties.A_PLUGIN_PATH); 
 			if ((pluginPath != null) && (pluginPath.length() > 0))
 			{
 				setAttribute(A_PLUGIN_PATH, pluginPath + File.separator);

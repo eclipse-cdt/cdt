@@ -41,6 +41,7 @@
  * David McKnight   (IBM)        - [306989] [dstore] workspace in strange condition if expanding projects during  logon
  * David McKnight   (IBM)        - [313653] [dstore] Not Secured using SSL message appears twice per connect
  * David McKnight   (IBM) 		 - [284950] [dstore] Error binding socket on relaunch
+ * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -69,6 +70,7 @@ import org.eclipse.dstore.core.model.IDataStoreConstants;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.dstore.core.model.ISSLProperties;
 import org.eclipse.dstore.internal.core.client.ClientSSLProperties;
+import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 import org.eclipse.dstore.internal.core.util.XMLparser;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -441,7 +443,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			Version v = new Version(version);
 			String versionString = v.toString();
 			String dstorePath = getDStorePath(path, versionString);
-			System.setProperty("A_PLUGIN_PATH", dstorePath); //$NON-NLS-1$
+			System.setProperty(IDataStoreSystemProperties.A_PLUGIN_PATH, dstorePath); 
 		}
 		catch (IOException e)
 		{

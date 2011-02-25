@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * David McKnight (IBM) - [193426] don't display exceptions
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * David McKnight   (IBM) - [245714] [dstore] Multiple user ID/password prompts and connect fails
+ * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -42,6 +43,7 @@ import javax.net.ssl.SSLSocket;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.IDataStoreConstants;
 import org.eclipse.dstore.core.model.ISSLProperties;
+import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 import org.eclipse.dstore.internal.core.server.ServerReturnCodes;
 import org.eclipse.dstore.internal.core.server.ServerSSLProperties;
 import org.eclipse.dstore.internal.core.util.ssl.DStoreSSLContext;
@@ -266,7 +268,7 @@ public class ServerLauncher extends Thread {
 	                        // contains the authorization
 	                        // script path
 	                        //
-							String authPath = System.getProperty("RSE.AUTH"); //$NON-NLS-1$
+							String authPath = System.getProperty(IDataStoreSystemProperties.RSE_AUTH);
 							File authFile = null;
 							if (authPath != null && authPath.length() > 0)
 							{
@@ -427,7 +429,7 @@ public class ServerLauncher extends Thread {
 	 * Constructor
 	 */
 	public ServerLauncher() {
-		String pluginPath = System.getProperty("A_PLUGIN_PATH"); //$NON-NLS-1$
+		String pluginPath = System.getProperty(IDataStoreSystemProperties.A_PLUGIN_PATH);
 		if (pluginPath == null) {
 			System.out.println("A_PLUGIN_PATH is not defined"); //$NON-NLS-1$
 			System.exit(-1);
@@ -449,7 +451,7 @@ public class ServerLauncher extends Thread {
 	 *            the port for the daemon socket to run on
 	 */
 	public ServerLauncher(String portStr) {
-		String pluginPath = System.getProperty("A_PLUGIN_PATH"); //$NON-NLS-1$
+		String pluginPath = System.getProperty(IDataStoreSystemProperties.A_PLUGIN_PATH); 
 		if (pluginPath == null) {
 			System.out.println("A_PLUGIN_PATH is not defined"); //$NON-NLS-1$
 			System.exit(-1);
@@ -472,7 +474,7 @@ public class ServerLauncher extends Thread {
 	 *            the port range for launched servers
 	 */
 	public ServerLauncher(String portStr, String serverPortRange) {
-		String pluginPath = System.getProperty("A_PLUGIN_PATH"); //$NON-NLS-1$
+		String pluginPath = System.getProperty(IDataStoreSystemProperties.A_PLUGIN_PATH); 
 		if (pluginPath == null) {
 			System.out.println("A_PLUGIN_PATH is not defined"); //$NON-NLS-1$
 			System.exit(-1);

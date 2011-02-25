@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  * Contributors:
  * David McKnight  (IBM)  - [261644] [dstore] remote search improvements
  * David McKnight  (IBM)  - [277764] [dstore][regression] IllegalAccessException thrown when connecting to a running server
+ * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  ********************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.server.SystemServiceManager;
+import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 
 public class MemoryManager {
 	private Object mbean;
@@ -41,7 +43,7 @@ public class MemoryManager {
 	}
 
 	private void init(){
-		String thresholdString = System.getProperty("search.threshold"); //$NON-NLS-1$
+		String thresholdString = System.getProperty(IDataStoreSystemProperties.SEARCH_THRESHOLD); 
 		double threshold = 0.8;
 		if(thresholdString != null && thresholdString.length() > 0) {
 			threshold = Integer.parseInt(thresholdString) / 100.0;

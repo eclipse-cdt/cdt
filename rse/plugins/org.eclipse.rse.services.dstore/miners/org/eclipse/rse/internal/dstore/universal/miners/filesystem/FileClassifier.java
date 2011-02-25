@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  * David McKnight   (IBM)        - [251729][dstore] problems querying symbolic link folder
  * Noriaki Takatsu  (IBM)        - [256724] thread-level security is not established
+ * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -36,6 +37,7 @@ import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.server.SecuredThread;
+import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.services.clientserver.IServiceConstants;
 import org.eclipse.rse.services.clientserver.PathUtility;
@@ -134,7 +136,7 @@ public class FileClassifier extends SecuredThread
     	super(subject.getDataStore());
         _lines = new ArrayList();
         // special encoding passed in when starting server
-        _specialEncoding = System.getProperty("dstore.stdin.encoding"); //$NON-NLS-1$
+        _specialEncoding = System.getProperty(IDataStoreSystemProperties.DSTORE_STDIN_ENCODING); 
 
         _subject = subject;
         _dataStore = subject.getDataStore();

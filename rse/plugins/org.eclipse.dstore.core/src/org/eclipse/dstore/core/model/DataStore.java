@@ -35,6 +35,7 @@
  * David McKnight   (IBM) - [294933] [dstore] RSE goes into loop
  * David McKnight   (IBM) - [331922] [dstore] enable DataElement recycling
  * David McKnight   (IBM) - [336257] [dstore] leading file.searator in DSTORE_LOG_DIRECTORY not handled
+ * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -70,6 +71,7 @@ import org.eclipse.dstore.core.util.StringCompare;
 import org.eclipse.dstore.extra.IDomainNotifier;
 import org.eclipse.dstore.internal.core.client.ClientCommandHandler;
 import org.eclipse.dstore.internal.core.model.DefaultByteConverter;
+import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 import org.eclipse.dstore.internal.core.server.ServerUpdateHandler;
 import org.eclipse.dstore.internal.core.util.DataElementRemover;
 import org.eclipse.dstore.internal.core.util.XMLgenerator;
@@ -269,7 +271,7 @@ public final class DataStore
 		if (isVirtual()) _spiritModeOn = true;
 		else
 		{
-			String doSpirit = System.getProperty("DSTORE_SPIRIT_ON"); //$NON-NLS-1$
+			String doSpirit = System.getProperty(IDataStoreSystemProperties.DSTORE_SPIRIT_ON); 
 			_spiritModeOn = (doSpirit != null && doSpirit.equals("true")); //$NON-NLS-1$
 		}
 	}
@@ -3607,8 +3609,8 @@ public final class DataStore
 				_userPreferencesDirectory = _userPreferencesDirectory + File.separator;
 		    }
 
-  			// for bug 282599, log directory allows customization of log location relative to user dir
-  			String logDirectory = System.getProperty("DSTORE_LOG_DIRECTORY"); //$NON-NLS-1$
+  			// for bug 282599, 
+  			String logDirectory = System.getProperty(IDataStoreSystemProperties.DSTORE_LOG_DIRECTORY); 
   			if (logDirectory == null){
   				logDirectory = ".eclipse" + File.separator + "RSE" + File.separator;  //$NON-NLS-1$//$NON-NLS-2$
   			}
@@ -3665,7 +3667,7 @@ public final class DataStore
 			// if the idle is 0 or not set then it is considered indefinite.
 			// The server is considered idle for the period of which no commands are
 			// received in server command handler
-			String serverIdleShutdownTimeout = System.getProperty("DSTORE_IDLE_SHUTDOWN_TIMEOUT"); //$NON-NLS-1$
+			String serverIdleShutdownTimeout = System.getProperty(IDataStoreSystemProperties.DSTORE_IDLE_SHUTDOWN_TIMEOUT); 
 			if (serverIdleShutdownTimeout != null)
 			{
 				_serverIdleShutdownTimeout = Integer.parseInt(serverIdleShutdownTimeout);
@@ -3674,7 +3676,7 @@ public final class DataStore
 		}
 
 
-		String tracingProperty = System.getProperty("DSTORE_TRACING_ON"); //$NON-NLS-1$
+		String tracingProperty = System.getProperty(IDataStoreSystemProperties.DSTORE_TRACING_ON);
 		if (tracingProperty != null && tracingProperty.equals("true")) //$NON-NLS-1$
 		{
 			_tracingOn = true;
@@ -3723,7 +3725,7 @@ public final class DataStore
 	{
 		if (!isVirtual() && _deRemover == null)
 		{
-			String memLogging = System.getProperty("DSTORE_MEMLOGGING_ON"); //$NON-NLS-1$
+			String memLogging = System.getProperty(IDataStoreSystemProperties.DSTORE_MEMLOGGING_ON); 
 			_memLoggingOn = (memLogging != null && memLogging.equals("true")); //$NON-NLS-1$
 
 			if (_memLoggingOn)

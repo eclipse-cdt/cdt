@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  * Noriaki Takatsu (IBM)  - [226237] [dstore] Move the place where the ServerLogger instance is made
  * David McKnight  (IBM)  - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
+ * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -31,6 +32,7 @@ import java.util.List;
 import org.eclipse.dstore.core.miners.Miner;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 
 /**
  * The environment miner provides access to the environment variables
@@ -180,7 +182,7 @@ public class EnvironmentMiner extends Miner
 	    envCommand = "/QOpenSys/usr/bin/sh -c env"; //$NON-NLS-1$
 	}
 	
-	String specialEncoding= System.getProperty("dstore.stdin.encoding"); //$NON-NLS-1$
+	String specialEncoding= System.getProperty(IDataStoreSystemProperties.DSTORE_STDIN_ENCODING); 
 	try
 	    {
 		Process        _process = Runtime.getRuntime().exec(envCommand);

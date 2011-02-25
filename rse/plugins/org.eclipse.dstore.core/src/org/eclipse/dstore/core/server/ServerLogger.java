@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2011 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -21,6 +21,7 @@
  * David McKnight  (IBM)  - [269908] [dstore] rsecomm.log file management
  * David McKnight  (IBM)  - [284787] [dstore] ability to disable RSECOMM_LOGFILE_MAX option
  * David McKnight  (IBM)  - [305272] [dstore][multithread] log close in ServerLogger
+ * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  ********************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -31,6 +32,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.ResourceBundle;
+
+import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 
 /**
  * Class that facilitates logging for errors, warnings, debug messages and info
@@ -120,7 +123,7 @@ public class ServerLogger implements IServerLogger
 		String ext = ".log"; //$NON-NLS-1$
 		boolean found = false;
 		long logFileMax = 1000000;
-		String logFileMaxStr = System.getProperty("RSECOMM_LOGFILE_MAX"); //$NON-NLS-1$
+		String logFileMaxStr = System.getProperty(IDataStoreSystemProperties.RSECOMM_LOGFILE_MAX);
 		if (logFileMaxStr != null && logFileMaxStr.length() > 0){
 			try {
 				logFileMax = Integer.parseInt(logFileMaxStr);
@@ -169,7 +172,7 @@ public class ServerLogger implements IServerLogger
 	public void logInfo(String minerName, String message) {
 		if (!initialized)
 			initialize();
-		String loggerLogLevel = System.getProperty("DSTORE_LOGGER_LOG_LEVEL"); //$NON-NLS-1$
+		String loggerLogLevel = System.getProperty(IDataStoreSystemProperties.DSTORE_LOGGER_LOG_LEVEL);
 		if (loggerLogLevel != null){
 			try {
 				log_level = Integer.parseInt(loggerLogLevel);
@@ -202,7 +205,7 @@ public class ServerLogger implements IServerLogger
 	public void logWarning(String minerName, String message) {
 		if (!initialized)
 			initialize();
-		String loggerLogLevel = System.getProperty("DSTORE_LOGGER_LOG_LEVEL"); //$NON-NLS-1$
+		String loggerLogLevel = System.getProperty(IDataStoreSystemProperties.DSTORE_LOGGER_LOG_LEVEL); 
 		if (loggerLogLevel != null){
 			try {
 				log_level = Integer.parseInt(loggerLogLevel);
@@ -238,7 +241,7 @@ public class ServerLogger implements IServerLogger
 		if (!initialized)
 			initialize();
 		
-		String loggerLogLevel = System.getProperty("DSTORE_LOGGER_LOG_LEVEL"); //$NON-NLS-1$
+		String loggerLogLevel = System.getProperty(IDataStoreSystemProperties.DSTORE_LOGGER_LOG_LEVEL);
 		if (loggerLogLevel != null){
 			try {
 				log_level = Integer.parseInt(loggerLogLevel);
@@ -274,7 +277,7 @@ public class ServerLogger implements IServerLogger
 		if (!initialized)
 			initialize();
 		
-		String loggerLogLevel = System.getProperty("DSTORE_LOGGER_LOG_LEVEL"); //$NON-NLS-1$
+		String loggerLogLevel = System.getProperty(IDataStoreSystemProperties.DSTORE_LOGGER_LOG_LEVEL); 
 		if (loggerLogLevel != null){
 			try {
 				log_level = Integer.parseInt(loggerLogLevel);

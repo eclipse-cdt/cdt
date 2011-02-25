@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@
  *  David McKnight   (IBM)     [312415] [dstore] shell service interprets &lt; and &gt; sequences - handle old client/new server case
  *  David McKnight   (IBM)     [318372] [dstore][shells] "export" shell command invalid for certain shells
  *  David McKnight   (IBM)     [323262] [dstore] zos shell does not display [ ]  brackets properly
+ *  David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -55,6 +56,7 @@ import org.eclipse.dstore.core.model.Client;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
+import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 import org.eclipse.rse.dstore.universal.miners.CommandMiner;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.dstore.universal.miners.command.patterns.ParsedOutput;
@@ -146,7 +148,7 @@ public class CommandMinerThread extends MinerThread
 		
 		_subject = theElement;
 		
-		String maxLineLengthStr = System.getProperty("DSTORE_SHELL_MAX_LINE"); //$NON-NLS-1$
+		String maxLineLengthStr = System.getProperty(IDataStoreSystemProperties.DSTORE_SHELL_MAX_LINE); 
 		if (maxLineLengthStr != null)
 		{
 			try {
@@ -167,10 +169,10 @@ public class CommandMinerThread extends MinerThread
 		
 		if (isZ)
 		{
-			String inCoding = System.getProperty("dstore.stdin.encoding"); //$NON-NLS-1$
+			String inCoding = System.getProperty(IDataStoreSystemProperties.DSTORE_STDIN_ENCODING);
 			if (inCoding == null || inCoding.length() == 0){				
 				// IBM-1047 works better on z/OS than cp037
-				System.setProperty("dstore.stdin.encoding","IBM-1047"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.setProperty(IDataStoreSystemProperties.DSTORE_STDIN_ENCODING,"IBM-1047"); //$NON-NLS-1$
 			}
 		}
 	    	
@@ -284,7 +286,7 @@ public class CommandMinerThread extends MinerThread
 				}
 			
 				// check for custom shell invocation
-				String customShellInvocation = System.getProperty("DSTORE_SHELL_INVOCATION"); //$NON-NLS-1$
+				String customShellInvocation = System.getProperty(IDataStoreSystemProperties.DSTORE_SHELL_INVOCATION);
 				if (customShellInvocation != null && customShellInvocation.length() > 0){
 					theShell = customShellInvocation;
 				}
@@ -506,7 +508,7 @@ public class CommandMinerThread extends MinerThread
 			_stdError = new DataInputStream(_theProcess.getErrorStream());
 	
 			
-			String specialEncoding = System.getProperty("dstore.stdin.encoding"); //$NON-NLS-1$
+			String specialEncoding = System.getProperty(IDataStoreSystemProperties.DSTORE_STDIN_ENCODING); 
 			
 			if (specialEncoding != null)
 			{		

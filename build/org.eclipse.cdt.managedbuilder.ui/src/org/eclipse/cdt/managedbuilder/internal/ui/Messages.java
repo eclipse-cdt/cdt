@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010, 2010 Andrew Gvozdev and others.
+ *  Copyright (c) 2010, 2011 Andrew Gvozdev and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *  Andrew Gvozdev - Initial API and implementation
+ *  IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.ui;
 
@@ -209,6 +210,24 @@ public class Messages extends NLS {
 	public static String PropertyPageDefsTab_8;
 	public static String PropertyPageDefsTab_9;
 	public static String PropertyPageDefsTab_showIncludeFileTab;
+	public static String RefreshPolicyExceptionDialog_addButtonLabel;
+	public static String RefreshPolicyExceptionDialog_addDialogLabel;
+	public static String RefreshPolicyExceptionDialog_contentTypeDropdownLabel;
+	public static String RefreshPolicyExceptionDialog_deleteButtonLabel;
+	public static String RefreshPolicyExceptionDialog_editDialogLabel;
+	public static String RefreshPolicyExceptionDialog_exceptionPropertiesGroupLabel;
+	public static String RefreshPolicyExceptionDialog_exceptionTypeContentType;
+	public static String RefreshPolicyExceptionDialog_exceptionTypeDropdownLabel;
+	public static String RefreshPolicyExceptionDialog_exceptionTypeResourceNamePattern;
+	public static String RefreshPolicyExceptionDialog_exceptionTypeResources;
+	public static String RefreshPolicyExceptionDialog_patternsGroupLabel;
+	public static String RefreshPolicyTab_addExceptionButtonLabel;
+	public static String RefreshPolicyTab_addResourceButtonLabel;
+	public static String RefreshPolicyTab_deleteButtonLabel;
+	public static String RefreshPolicyTab_editButtonLabel;
+	public static String RefreshPolicyTab_exceptionsLabel;
+	public static String RefreshPolicyTab_resourcesGroupLabel;
+	public static String RefreshPolicyTab_tabLabel;
 	public static String ResourceCustomBuildStepBlock_label_applicability_rule_after;
 	public static String ResourceCustomBuildStepBlock_label_applicability_rule_before;
 	public static String ResourceCustomBuildStepBlock_label_applicability_rule_disable;

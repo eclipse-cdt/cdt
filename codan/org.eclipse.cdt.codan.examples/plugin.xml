@@ -29,7 +29,7 @@
                 defaultSeverity="Warning"
                 description="Finds a strings in the code defined by user"
                 id="org.eclipse.cdt.codan.examples.checkers.GrepCheckerProblemWarning"
-                messagePattern="{0}"
+                messagePattern="Found string {0}"
                 name="Search string warning">
           </problem>
                    <problem
@@ -38,7 +38,7 @@
                 defaultSeverity="Error"
                 description="Finds a strings in the code defined by user"
                 id="org.eclipse.cdt.codan.examples.checkers.GrepCheckerProblemError"
-                messagePattern="{0}"
+                messagePattern="Found string {0}"
                 name="Search string error">
           </problem>
        </checker>
@@ -47,6 +47,10 @@
           point="org.eclipse.cdt.codan.ui.codanProblemDetails">
        <problemDetails
              class="org.eclipse.cdt.codan.examples.uicontrib.FlexlintHelpLink"
+             >
+       </problemDetails>
+              <problemDetails
+             class="org.eclipse.cdt.codan.examples.uicontrib.GrepCheckerHelpLink"
              >
        </problemDetails>
     </extension>

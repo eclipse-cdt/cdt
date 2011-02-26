@@ -78,7 +78,7 @@ public class GrepChecker extends AbstractCheckerWithProblemPreferences {
 				for (int i = 0; i < values.length; i++) {
 					String str = (String) values[i];
 					if (line.contains(str)) {
-						reportProblem(problem.getId(), file, iline, "Found " + str);
+						reportProblem(problem.getId(), file, iline, str);
 					}
 				}
 			}

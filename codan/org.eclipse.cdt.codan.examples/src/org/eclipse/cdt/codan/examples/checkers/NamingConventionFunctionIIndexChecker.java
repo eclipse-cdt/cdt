@@ -46,7 +46,7 @@ public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker
 			unit.accept(new ICElementVisitor() {
 				public boolean visit(ICElement element) {
 					if (element.getElementType() == ICElement.C_FUNCTION) {
-						String parameter = (String) pt.getPreference().getValue();
+						String parameter = (String) getPreference(pt, PARAM_KEY);
 						Pattern pattern = Pattern.compile(parameter);
 						String name = element.getElementName();
 						if (!pattern.matcher(name).find()) {

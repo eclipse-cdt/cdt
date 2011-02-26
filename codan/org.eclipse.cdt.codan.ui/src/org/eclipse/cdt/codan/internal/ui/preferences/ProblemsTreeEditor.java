@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblem;
@@ -23,6 +25,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ICheckStateProvider;
@@ -30,6 +33,7 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -37,6 +41,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 public class ProblemsTreeEditor extends CheckedTreeEditor {
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private static final String SINGLE_PLACEHOLDER_ONLY = "{0}"; //$NON-NLS-1$
 	private CodanPreferencesLoader codanPreferencesLoader = new CodanPreferencesLoader();
 
 	public ProblemsTreeEditor() {
@@ -160,6 +166,8 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		// getTreeViewer().getTree().
 		getTreeViewer().setContentProvider(new ProblemsContentProvider());
 		getTreeViewer().setCheckStateProvider(new ProblemsCheckStateProvider());
+		//getTreeViewer().getTree().
+		ColumnViewerToolTipSupport.enableFor(getTreeViewer(), ToolTip.RECREATE);
 		// column Name
 		TreeViewerColumn column1 = new TreeViewerColumn(getTreeViewer(), SWT.NONE);
 		column1.getColumn().setWidth(300);
@@ -176,6 +184,48 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 					return p.getName();
 				}
 				return null;
+			}
+
+			@Override
+			public boolean useNativeToolTip(Object object) {
+				return true;
+			}
+
+			@Override
+			public String getToolTipText(Object element) {
+				if (element instanceof IProblem) {
+					IProblem p = (IProblem) element;
+					String sampleMessage = getSampleMessage(p);
+					int wrapLen = sampleMessage.length();
+					if (wrapLen < 60)
+						wrapLen = 60;
+					if (wrapLen > 100)
+						wrapLen = 100;
+					String toolTip = ""; //$NON-NLS-1$
+					String description = p.getDescription();
+					if (description != null) {
+						toolTip = wrapText(description, wrapLen);
+						toolTip += "\n\n"; //$NON-NLS-1$
+					}
+					toolTip += "Sample Message:";
+					toolTip += "\n  "; //$NON-NLS-1$
+					toolTip += wrapText(sampleMessage, wrapLen);
+					return toolTip;
+				}
+				return super.getToolTipText(element);
+			}
+
+			private String wrapText(String description, int i) {
+				String result = ""; //$NON-NLS-1$
+				while (description.length() > i) {
+					int k = description.lastIndexOf(' ', i);
+					if (k < 0)
+						k = i;
+					result += description.substring(0, k);
+					result += '\n';
+					description = description.substring(k);
+				}
+				return result + description;
 			}
 		});
 		// column Severity
@@ -317,5 +367,19 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 	@Override
 	protected String modelToString(Object model) {
 		return ""; //$NON-NLS-1$
+	}
+	
+	/**
+	 * @return
+	 */
+	public static String getSampleMessage(IProblem problem) {
+		String messagePattern = problem.getMessagePattern();
+		String message = CodanUIMessages.CodanPreferencePage_NoInfo;
+		if (SINGLE_PLACEHOLDER_ONLY.equals(messagePattern)) {
+			message = EMPTY_STRING;
+		} else if (messagePattern != null) {
+			message = MessageFormat.format(messagePattern, "X", "Y", "Z"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+		}
+		return message;
 	}
 }

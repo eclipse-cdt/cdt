@@ -35,11 +35,10 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
-
 public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionList, IASTAmbiguityParent {
 	private static final ICPPFunction[] NO_FUNCTIONS = new ICPPFunction[0];
 
-    private IASTExpression [] expressions = new IASTExpression[2];
+    private IASTExpression[] expressions = new IASTExpression[2];
     
 	/**
 	 * Caution: may contain nulls. 
@@ -47,7 +46,6 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 	 */
 	private IASTImplicitName[] implicitNames;
 	private ICPPFunction[] overloads = null;
-	
 	
 	public CPPASTExpressionList copy() {
 		CPPASTExpressionList copy = new CPPASTExpressionList();
@@ -57,9 +55,9 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 		return copy;
 	}
 	
-	public IASTExpression [] getExpressions() {
-        if( expressions == null ) return IASTExpression.EMPTY_EXPRESSION_ARRAY;
-        return (IASTExpression[]) ArrayUtil.trim( IASTExpression.class, expressions );
+	public IASTExpression[] getExpressions() {
+        if (expressions == null) return IASTExpression.EMPTY_EXPRESSION_ARRAY;
+        return (IASTExpression[]) ArrayUtil.trim(IASTExpression.class, expressions);
     }
 
     public void addExpression(IASTExpression expression) {
@@ -72,40 +70,39 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
       
         IASTExpression[] exps = getExpressions();
         IASTImplicitName[] implicits = action.shouldVisitImplicitNames ? computeImplicitNames() : null;
 
-        for(int i = 0, n = exps.length; i < n; i++) {
-        	if(!exps[i].accept(action)) { 
+        for (int i = 0, n = exps.length; i < n; i++) {
+        	if (!exps[i].accept(action)) { 
         		return false;
         	}
-        	if(i < n-1 && implicits != null && implicits[i] != null) {
-        		if(!implicits[i].accept(action)) {
+        	if (i < n - 1 && implicits != null && implicits[i] != null) {
+        		if (!implicits[i].accept(action)) {
         			return false;
         		}
         	}
         }
         
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		} 
         return true;
     }
-    
-    
+
     /**
      * Returns an array of implicit names where each element of the array
      * represents a comma between the expression in the same index and the
@@ -113,9 +110,9 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
      * for commas that do not resolve to overloaded operators.
      */
     private IASTImplicitName[] computeImplicitNames() {
-		if(implicitNames == null) {
+		if (implicitNames == null) {
 			IASTExpression[] exprs = getExpressions(); // has to be at least two
-			if(exprs.length < 2)
+			if (exprs.length < 2)
 				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			
 			implicitNames = new IASTImplicitName[exprs.length-1];
@@ -123,7 +120,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 			ICPPFunction[] overloads = getOverloads();
 			for(int i = 0; i < overloads.length; i++) {
 				ICPPFunction overload = overloads[i];
-				if(overload != null && !(overload instanceof CPPImplicitFunction)) {
+				if (overload != null && !(overload instanceof CPPImplicitFunction)) {
 					CPPASTImplicitName operatorName = new CPPASTImplicitName(OverloadableOperator.COMMA, this);
 					operatorName.setBinding(overload);
 					operatorName.computeOperatorOffsets(exprs[i], true);
@@ -134,17 +131,15 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 		
 		return implicitNames;
 	}
-    
-    
+
     public IASTImplicitName[] getImplicitNames() {
     	return (IASTImplicitName[])ArrayUtil.removeNulls(IASTImplicitName.class, computeImplicitNames());
     }
-    
-    
+
     private ICPPFunction[] getOverloads() {
-    	if(overloads == null) {
+    	if (overloads == null) {
 	    	IASTExpression[] exprs = getExpressions();
-	    	if(exprs.length < 2)
+	    	if (exprs.length < 2)
 	    		return overloads = NO_FUNCTIONS;
 	    	
 	    	ASTNodeProperty prop = getPropertyInParent();
@@ -181,7 +176,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
     }
 
     public void replace(IASTNode child, IASTNode other) {
-        if( expressions == null ) return;
+        if (expressions == null) return;
         for (int i = 0; i < expressions.length; ++i) {
             if (child == expressions[i]) {
                 other.setPropertyInParent(child.getPropertyInParent());

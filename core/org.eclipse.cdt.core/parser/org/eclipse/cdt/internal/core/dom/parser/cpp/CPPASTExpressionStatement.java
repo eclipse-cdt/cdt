@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -24,7 +24,6 @@ public class CPPASTExpressionStatement extends ASTNode implements
         IASTExpressionStatement, IASTAmbiguityParent {
 	
     private IASTExpression expression;
-
     
     public CPPASTExpressionStatement() {
 	}
@@ -54,32 +53,30 @@ public class CPPASTExpressionStatement extends ASTNode implements
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitStatements ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitStatements) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
-        if( expression != null ) if( !expression.accept( action ) ) return false;
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (expression != null && !expression.accept(action)) return false;
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
     }
 
     public void replace(IASTNode child, IASTNode other) {
-        if( child == expression )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
-            expression  = (IASTExpression) other;
+        if (child == expression) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
+            expression = (IASTExpression) other;
         }
     }
-
 }

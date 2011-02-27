@@ -14,7 +14,7 @@ import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
 
 /**
  * Problem preference for launch type of the checker
- * 
+ *
  * @since 2.0
  */
 public class LaunchTypeProblemPreference extends MapProblemPreference {
@@ -70,5 +70,20 @@ public class LaunchTypeProblemPreference extends MapProblemPreference {
 	 */
 	public void setRunningMode(CheckerLaunchMode mode, boolean value) {
 		setChildValue(mode.name(), value);
+	}
+
+	/**
+	 * @return true if all modes are enabled (or this is parent mode)
+	 */
+	public boolean isAllEnabled() {
+		return isRunningInMode(CheckerLaunchMode.RUN_AS_YOU_TYPE) && isRunningInMode(CheckerLaunchMode.RUN_ON_DEMAND)
+				&& isRunningInMode(CheckerLaunchMode.RUN_ON_FULL_BUILD);
+	}
+	/**
+	 * @return true if all modes are disabled
+	 */
+	public boolean isAllDisabled() {
+		return !isRunningInMode(CheckerLaunchMode.RUN_AS_YOU_TYPE) && !isRunningInMode(CheckerLaunchMode.RUN_ON_DEMAND)
+				&& !isRunningInMode(CheckerLaunchMode.RUN_ON_FULL_BUILD);
 	}
 }

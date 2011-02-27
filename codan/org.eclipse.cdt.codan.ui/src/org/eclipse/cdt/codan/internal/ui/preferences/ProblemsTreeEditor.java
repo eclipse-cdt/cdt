@@ -13,12 +13,16 @@ package org.eclipse.cdt.codan.internal.ui.preferences;
 import java.text.MessageFormat;
 
 import org.eclipse.cdt.codan.core.PreferenceConstants;
+import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemElement;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
+import org.eclipse.cdt.codan.core.param.IProblemPreference;
+import org.eclipse.cdt.codan.core.param.LaunchTypeProblemPreference;
+import org.eclipse.cdt.codan.core.param.MapProblemPreference;
 import org.eclipse.cdt.codan.internal.core.CodanPreferencesLoader;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.core.resources.IMarker;
@@ -85,6 +89,20 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		 */
 		public boolean isGrayed(Object element) {
 			if (element instanceof IProblem) {
+				IProblem p = (IProblem) element;
+				IProblemPreference preference = p.getPreference();
+				if (preference instanceof MapProblemPreference) {
+					LaunchTypeProblemPreference pref = (LaunchTypeProblemPreference) ((MapProblemPreference) preference)
+							.getChildDescriptor(LaunchTypeProblemPreference.KEY);
+					if (pref == null || pref.isRunningInMode(CheckerLaunchMode.USE_PARENT)) {
+						return false;
+					}
+					boolean enabled = p.isEnabled();
+					boolean match = pref.isAllEnabled();
+					if (enabled && match) return false;
+					if (!enabled && pref.isAllDisabled()) return false;
+					return true;
+				}
 				return false;
 			}
 			if (element instanceof IProblemCategory) {
@@ -368,7 +386,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 	protected String modelToString(Object model) {
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return
 	 */

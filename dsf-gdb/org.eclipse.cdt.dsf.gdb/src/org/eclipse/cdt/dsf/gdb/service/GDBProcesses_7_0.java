@@ -1097,7 +1097,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	}
 
 	public void terminate(IThreadDMContext thread, RequestMonitor rm) {
-		fCommandControl.terminate(rm);
+		if (thread instanceof IMIProcessDMContext) {
+			fCommandControl.terminate(rm);
+	    } else {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
+            rm.done();
+	    }
 	}
 	
 	/** @since 4.0 */

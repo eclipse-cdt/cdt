@@ -13,17 +13,15 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.cdt.dsf.debug.ui.actions.DsfCommandRunnable;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
+import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
-import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
-import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
-import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
@@ -54,30 +52,34 @@ public class DsfTerminateCommand implements ITerminateHandler {
             return;
         }
 
-        // Javac doesn't like the cast to "(AbstractDMVMLayoutNode<?>.DMVMContext)" need to use the 
-        // construct below and suppress warnings.
         IDMVMContext vmc = (IDMVMContext)request.getElements()[0];
-        final IExecutionDMContext dmc = DMContexts.getAncestorOfType(vmc.getDMContext(), IExecutionDMContext.class);
-        if (dmc == null) {
+        
+        // First check if there is an ancestor process to terminate.  This is the smallest entity we can terminate
+        final IProcessDMContext processDmc = DMContexts.getAncestorOfType(vmc.getDMContext(), IProcessDMContext.class);
+        if (processDmc == null) {
             request.setEnabled(false);
             request.done();
             return;
-        }            
+        }
         
         try {
             fExecutor.execute(
                 new DsfRunnable() { 
                     public void run() {
                         // Get the processes service and the exec context.
-                    	IGDBBackend gdbBackend = fTracker.getService(IGDBBackend.class);
-                        if (gdbBackend == null || dmc == null) {
-                            // Context or service already invalid.
+                    	IProcesses procService = fTracker.getService(IProcesses.class);
+                        if (procService == null) {
+                            // Service already invalid.
                             request.setEnabled(false);
                             request.done();
                         } else {
-                            // Check the terminate.
-                            request.setEnabled(gdbBackend.getState() == IMIBackend.State.STARTED);
-                            request.done();
+                        	procService.canTerminate(processDmc, new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), null) {
+                        		@Override
+                        		protected void handleCompleted() {
+                        			request.setEnabled(isSuccess() && getData());
+                        			request.done();
+                        		}
+                        	});
                         }
                     }
                 });
@@ -88,17 +90,27 @@ public class DsfTerminateCommand implements ITerminateHandler {
     }
 
     public boolean execute(final IDebugCommandRequest request) {
-        if (request.getElements().length != 1) {
-            request.done();
-            return false;
+        if (request.getElements().length != 1 || 
+        	!(request.getElements()[0] instanceof IDMVMContext)) {
+        	request.done();
+        	return false;
+        }
+
+        IDMVMContext vmc = (IDMVMContext)request.getElements()[0];
+
+        // First check if there is an ancestor process to terminate.  This is the smallest entity we can terminate
+        final IProcessDMContext processDmc = DMContexts.getAncestorOfType(vmc.getDMContext(), IProcessDMContext.class);
+        if (processDmc == null) {
+        	request.done();
+        	return false;
         }
 
         try {
-            fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
-                @Override public void doExecute() {
-                    IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
-                    if (gdbControl != null) {
-                        gdbControl.terminate(new RequestMonitor(ImmediateExecutor.getInstance(), null) {
+            fExecutor.execute(new DsfRunnable() { 
+                public void run() {
+                	IProcesses procService = fTracker.getService(IProcesses.class);
+                    if (procService != null) {
+                    	procService.terminate(processDmc, new RequestMonitor(ImmediateExecutor.getInstance(), null) {
                             @Override
                             protected void handleCompleted() {
                                 request.setStatus(getStatus());

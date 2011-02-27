@@ -3319,13 +3319,11 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					if (currentOffset < endOffset) {
 						scribe.skipRange(startOffset, endOffset);
 						break;
-					}
-					else if (currentOffset == endOffset && i == locations.length - 1) {
+					} else if (currentOffset == endOffset && i == locations.length - 1) {
 						scribe.skipRange(startOffset, endOffset);
 						break;
 					}
-				}
-				else {
+				} else {
 					break;
 				}
 			}
@@ -3769,5 +3767,4 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 		return positions;
 	}
-
 }

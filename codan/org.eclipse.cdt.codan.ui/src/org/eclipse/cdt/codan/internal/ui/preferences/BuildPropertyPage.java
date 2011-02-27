@@ -14,6 +14,7 @@ import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.cdt.codan.internal.ui.actions.ToggleNatureAction;
+import org.eclipse.cdt.codan.ui.LabelFieldEditor;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -40,6 +41,8 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements IWor
 	 */
 	@Override
 	protected void createFieldEditors() {
+		addField(new LabelFieldEditor("Set launch method for checkers, you can override this by editing individual problem settings",
+				getFieldEditorParent()));
 		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_ON_BUILD, CodanUIMessages.BuildPropertyPage_RunWithBuild,
 				getFieldEditorParent()));
 		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_IN_EDITOR, CodanUIMessages.BuildPropertyPage_RunAsYouType,

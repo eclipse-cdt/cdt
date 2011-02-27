@@ -61,7 +61,7 @@ public class LaunchModesPropertyPage extends FieldEditorPreferencePage {
 	protected void createFieldEditors() {
 		createSelectionGroup(getFieldEditorParent());
 		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_FULL_BUILD.name(), "Run on full build", useLocalGroup));
-		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_INC_BUILD.name(), "Run on incremental build", useLocalGroup));
+		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_DEMAND.name(), "Run on demand", useLocalGroup));
 		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_AS_YOU_TYPE.name(), "Run as you type", useLocalGroup));
 		updateFieldEditors();
 	}

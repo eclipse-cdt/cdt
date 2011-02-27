@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,7 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int,
 	 * java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -93,8 +93,20 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 		processResource(resource, monitor, null, CheckerLaunchMode.RUN_ON_FULL_BUILD);
 	}
 
-	public void processResourceDelta(IResource resource, IProgressMonitor monitor) {
-		processResource(resource, monitor, null, CheckerLaunchMode.RUN_ON_INC_BUILD);
+	/**
+	 * Run code analysis on given resource in a given mode
+	 *
+	 * @param resource - resource to process
+	 * @param monitor - progress monitor
+	 * @param mode - launch mode, @see {@link CheckerLaunchMode}
+	 * @since 2.0
+	 */
+	public void processResource(IResource resource, IProgressMonitor monitor, CheckerLaunchMode mode) {
+		processResource(resource, monitor, null, mode);
+	}
+
+	private void processResourceDelta(IResource resource, IProgressMonitor monitor) {
+		processResource(resource, monitor, CheckerLaunchMode.RUN_ON_INC_BUILD);
 	}
 
 	protected void processResource(IResource resource, IProgressMonitor monitor, Object model, CheckerLaunchMode checkerLaunchMode) {
@@ -147,7 +159,8 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 					CodanCorePlugin.log(e);
 				}
 			}
-			if (resource instanceof IContainer && (checkerLaunchMode == CheckerLaunchMode.RUN_ON_FULL_BUILD)) {
+			if (resource instanceof IContainer
+					&& (checkerLaunchMode == CheckerLaunchMode.RUN_ON_FULL_BUILD || checkerLaunchMode == CheckerLaunchMode.RUN_ON_DEMAND)) {
 				try {
 					IResource[] members = ((IContainer) resource).members();
 					for (int i = 0; i < members.length; i++) {
@@ -185,7 +198,7 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 
 	/**
 	 * Run all checkers that support "check as you type" mode
-	 * 
+	 *
 	 * @param model - model of given resource such as ast
 	 * @param resource - resource to process
 	 * @param monitor - progress monitor

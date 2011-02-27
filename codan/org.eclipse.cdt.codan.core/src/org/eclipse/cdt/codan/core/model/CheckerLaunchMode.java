@@ -7,7 +7,7 @@ package org.eclipse.cdt.codan.core.model;
  * part of a work in progress. There is no guarantee that this API will
  * work or that it will remain the same.
  * </p>
- * 
+ *
  * @since 2.0
  */
 public enum CheckerLaunchMode {
@@ -27,4 +27,8 @@ public enum CheckerLaunchMode {
 	 * checker run in editor as you type
 	 */
 	RUN_AS_YOU_TYPE,
+	/**
+	 * checker run when explicit command is given
+	 */
+	RUN_ON_DEMAND,
 }

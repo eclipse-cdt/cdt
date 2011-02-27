@@ -13,6 +13,7 @@ package org.eclipse.cdt.codan.internal.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -52,7 +53,7 @@ public class RunCodeAnalysis implements IObjectActionDelegate {
 					if (o instanceof IResource) {
 						IResource res = (IResource) o;
 						SubProgressMonitor subMon = new SubProgressMonitor(monitor, 100);
-						CodanRuntime.getInstance().getBuilder().processResource(res, subMon);
+						CodanRuntime.getInstance().getBuilder().processResource(res, subMon, CheckerLaunchMode.RUN_ON_DEMAND);
 						if (subMon.isCanceled())
 							return Status.CANCEL_STATUS;
 					}

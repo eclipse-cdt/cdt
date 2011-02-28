@@ -118,6 +118,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
@@ -167,8 +168,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 	}
 
-	private static class ListAlignment {
-		public int fMode;
+	private static class ListOptions {
+		public final int fMode;
 		public boolean fSpaceBeforeComma;
 		public boolean fSpaceAfterComma= true;
 		public boolean fSpaceAfterOpeningParen;
@@ -178,8 +179,120 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		public int fContinuationIndentation= -1;
 		public int fTieBreakRule = Alignment.R_INNERMOST;
 
-		public ListAlignment(int mode) {
+		public ListOptions(int mode) {
 			fMode= mode;
+		}
+	}
+
+	/*
+	 * Formats a given token at a given position.
+	 * @see #formatList(List, ListAlignment, boolean, boolean, Runnable)
+	 */
+	class TrailingTokenFormatter implements Runnable {
+		private final int tokenType;
+		private final int tokenPosition;
+		private final boolean spaceBeforeToken;
+		private final boolean spaceAfterToken;
+
+		TrailingTokenFormatter(int tokenType, int tokenPosition,
+				boolean spaceBeforeToken, boolean spaceAfterToken) {
+			this.tokenType = tokenType;
+			this.tokenPosition = tokenPosition;
+			this.spaceBeforeToken = spaceBeforeToken;
+			this.spaceAfterToken = spaceAfterToken;
+		}
+
+		public void run() {
+			int offset = scribe.scanner.getCurrentPosition();
+			if (tokenPosition < 0 || offset > tokenPosition)
+				return;
+			if (offset < tokenPosition)
+				scribe.restartAtOffset(tokenPosition);
+			int token= peekNextToken();
+			if (token == tokenType) {
+				scribe.pendingSpace = false;
+				scribe.printNextToken(tokenType, spaceBeforeToken);
+				scribe.printTrailingComment();
+				if (spaceAfterToken) {
+					scribe.space();
+				}
+			}
+		}
+	}
+
+	/*
+	 * Formats a trailing comma.
+	 * @see #formatList(List, ListAlignment, boolean, boolean, Runnable)
+	 */
+	class TrailingCommaFormatter extends TrailingTokenFormatter {
+		TrailingCommaFormatter(boolean spaceBeforeComma, boolean spaceAfterComma) {
+			super(Token.tCOMMA, scribe.findToken(Token.tCOMMA), spaceBeforeComma, spaceAfterComma);
+		}
+	}
+
+	/*
+	 * Formats a trailing semicolon.
+	 * @see #formatList(List, ListAlignment, boolean, boolean, Runnable)
+	 */
+	class TrailingSemicolonFormatter extends TrailingTokenFormatter {
+		TrailingSemicolonFormatter(IASTNode node) {
+			super(Token.tSEMI, getLastNodeCharacterPosition(node),
+					fInsideFor ? preferences.insert_space_before_semicolon_in_for :
+								 preferences.insert_space_before_semicolon,
+					false);
+		}
+	}
+
+	/*
+	 * Formats the part of a function declaration following the parameter list.
+	 * @see #formatList(List, ListAlignment, boolean, boolean, Runnable)
+	 */
+	public class CPPFunctionDeclaratorTailFormatter implements Runnable {
+		private final ICPPASTFunctionDeclarator node;
+		private final Runnable continuationFormatter;
+
+		public CPPFunctionDeclaratorTailFormatter(ICPPASTFunctionDeclarator node,
+				Runnable tailFormatter) {
+			this.node = node;
+			this.continuationFormatter = tailFormatter;
+		}
+
+		public void run() {
+			boolean needSpace = skipConstVolatileRestrict();
+			if (node.getExceptionSpecification() != null && peekNextToken() == Token.t_throw)
+				return;
+			// Skip the rest (=0)
+			if (needSpace && scribe.printComment()) {
+				scribe.space();
+			}
+			skipNode(node);
+			if (continuationFormatter != null)
+				continuationFormatter.run();
+		}
+	}
+	
+	public class ClosingParensesisTailFormatter implements Runnable {
+		private final boolean spaceBeforeClosingParen;
+		private final Runnable continuationFormatter;
+		private final int parenPosition;
+
+		public ClosingParensesisTailFormatter(boolean spaceBeforeClosingParen,
+				Runnable tailFormatter) {
+			this.spaceBeforeClosingParen = spaceBeforeClosingParen;
+			this.continuationFormatter = tailFormatter;
+			this.parenPosition = scribe.findToken(Token.tRPAREN);
+		}
+
+		public void run() {
+			int offset = scribe.scanner.getCurrentPosition();
+			if (parenPosition >= 0 && offset <= parenPosition) {
+				if (offset < parenPosition)
+					scribe.restartAtOffset(parenPosition);
+				scribe.pendingSpace = false;
+				scribe.printNextToken(Token.tRPAREN, spaceBeforeClosingParen);
+			}
+			if (continuationFormatter != null)
+				continuationFormatter.run();
 		}
 	}
 
@@ -1069,10 +1182,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 		final ICPPASTTemplateParameter[] templateParameters= node.getTemplateParameters();
 		if (templateParameters.length > 0) {
-			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
-			align.fSpaceAfterComma= preferences.insert_space_after_comma_in_template_parameters;
-			align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_template_parameters;
-			formatList(Arrays.asList(templateParameters), align, false, false);
+			final ListOptions options= new ListOptions(Alignment.M_COMPACT_SPLIT);
+			options.fSpaceAfterComma= preferences.insert_space_after_comma_in_template_parameters;
+			options.fSpaceBeforeComma= preferences.insert_space_before_comma_in_template_parameters;
+			formatList(Arrays.asList(templateParameters), options, false, false, null);
 		}
 		scribe.printNextToken(new int[] { Token.tGT, Token.tSHIFTR }, preferences.insert_space_before_closing_angle_bracket_in_template_parameters);
 		if (preferences.insert_space_after_closing_angle_bracket_in_template_parameters) {
@@ -1158,9 +1271,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					scribe.startNewLine();
 					scribe.indentForContinuation();
 				}
-				final ListAlignment align= new ListAlignment(preferences.alignment_for_constructor_initializer_list);
-				align.fTieBreakRule = Alignment.R_OUTERMOST;
-				formatList(Arrays.asList(constructorChain), align, false, false);
+				final ListOptions options= new ListOptions(preferences.alignment_for_constructor_initializer_list);
+				options.fTieBreakRule = Alignment.R_OUTERMOST;
+				formatList(Arrays.asList(constructorChain), options, false, false, null);
 				scribe.unIndentForContinuation();
 			}
 		}
@@ -1203,28 +1316,30 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(ICPPASTFunctionDeclarator node) {
-		visit((IASTStandardFunctionDeclarator) node);
+		final List<ICPPASTParameterDeclaration> parameters = Arrays.asList(node.getParameters());
+		final ListOptions options = createListOptionsForFunctionParameters();
+		formatList(parameters, options, true, node.takesVarArgs(),
+				new CPPFunctionDeclaratorTailFormatter(node, scribe.getTailFormatter()));
 
-		boolean needSpace = skipConstVolatileRestrict();
-		
-		final IASTTypeId[] exceptionSpecification= node.getExceptionSpecification();
-		if (exceptionSpecification != null) {
-			if (peekNextToken() == Token.t_throw) {
+		IASTFileLocation fileLocation= node.getFileLocation();
+		if (fileLocation != null &&
+				scribe.scanner.getCurrentPosition() < fileLocation.getNodeOffset() + fileLocation.getNodeLength()) {
+			skipConstVolatileRestrict();
+
+			final IASTTypeId[] exceptionSpecification= node.getExceptionSpecification();
+			if (exceptionSpecification != null && peekNextToken() == Token.t_throw)
 				formatExceptionSpecification(exceptionSpecification);
-				needSpace = false;
-			}
-		}
-		// skip the rest (=0)
-		if (needSpace && scribe.printComment()) {
+			// Skip the rest (=0)
+			scribe.printTrailingComment();
 			scribe.space();
+			skipNode(node);
 		}
-		skipNode(node);
 		return PROCESS_SKIP;
 	}
 
 	private void formatExceptionSpecification(final IASTTypeId[] exceptionSpecification) {
 		if (exceptionSpecification.length > 0) {
-			Alignment alignment =scribe.createAlignment(
+			Alignment alignment = scribe.createAlignment(
 					Alignment.EXCEPTION_SPECIFICATION,
 					preferences.alignment_for_throws_clause_in_method_declaration,
 					exceptionSpecification.length,
@@ -1279,17 +1394,41 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTStandardFunctionDeclarator node) {
 		final List<IASTParameterDeclaration> parameters = Arrays.asList(node.getParameters());
-		final ListAlignment align= new ListAlignment(preferences.alignment_for_parameters_in_method_declaration);
-		align.fSpaceBeforeOpeningParen= preferences.insert_space_before_opening_paren_in_method_declaration;
-		align.fSpaceAfterOpeningParen= preferences.insert_space_after_opening_paren_in_method_declaration;
-		align.fSpaceBeforeClosingParen= preferences.insert_space_before_closing_paren_in_method_declaration;
-		align.fSpaceBetweenEmptyParen= preferences.insert_space_between_empty_parens_in_method_declaration;
-		align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_method_declaration_parameters;
-		align.fSpaceAfterComma= preferences.insert_space_after_comma_in_method_declaration_parameters;
-		align.fTieBreakRule = Alignment.R_OUTERMOST;
-		formatList(parameters, align, true, node.takesVarArgs());
-
+		final ListOptions options = createListOptionsForFunctionParameters();
+		formatList(parameters, options, true, node.takesVarArgs(), new TrailingSemicolonFormatter(node));
 		return PROCESS_SKIP;
+	}
+
+	private ListOptions createListOptionsForFunctionParameters() {
+		final ListOptions options= new ListOptions(preferences.alignment_for_parameters_in_method_declaration);
+		options.fSpaceBeforeOpeningParen= preferences.insert_space_before_opening_paren_in_method_declaration;
+		options.fSpaceAfterOpeningParen= preferences.insert_space_after_opening_paren_in_method_declaration;
+		options.fSpaceBeforeClosingParen= preferences.insert_space_before_closing_paren_in_method_declaration;
+		options.fSpaceBetweenEmptyParen= preferences.insert_space_between_empty_parens_in_method_declaration;
+		options.fSpaceBeforeComma= preferences.insert_space_before_comma_in_method_declaration_parameters;
+		options.fSpaceAfterComma= preferences.insert_space_after_comma_in_method_declaration_parameters;
+		options.fTieBreakRule = Alignment.R_OUTERMOST;
+		return options;
+	}
+
+	/**
+	 * Returns the position of the last character of a node, or -1 if that character is part of
+	 * a macro expansion.
+	 * 
+	 * @param node an AST node
+	 * @return the position of the last character of a node, or -1 if that character is part of
+	 * 		a macro expansion.
+	 */
+	private static int getLastNodeCharacterPosition(IASTNode node) {
+		IASTNodeLocation[] locations= node.getNodeLocations();
+		if (locations.length > 0) {
+			IASTNodeLocation lastLocation = locations[locations.length - 1];
+			if (!(lastLocation instanceof IASTMacroExpansionLocation)) {
+				IASTFileLocation fileLocation= lastLocation.asFileLocation();
+				return fileLocation.getNodeOffset() + fileLocation.getNodeLength() - 1;
+			}
+		}
+		return -1;
 	}
 
 	private void formatPointers(IASTPointerOperator[] pointers) {
@@ -1323,13 +1462,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(ICASTKnRFunctionDeclarator node) {
 		final List<IASTName> parameters= Arrays.asList(node.getParameterNames());
-		ListAlignment align= new ListAlignment(preferences.alignment_for_parameters_in_method_declaration);
-		align.fSpaceAfterOpeningParen= preferences.insert_space_after_opening_paren_in_method_declaration;
-		align.fSpaceBeforeClosingParen= preferences.insert_space_before_closing_paren_in_method_declaration;
-		align.fSpaceBetweenEmptyParen= preferences.insert_space_between_empty_parens_in_method_declaration;
-		align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_method_declaration_parameters;
-		align.fSpaceAfterComma= preferences.insert_space_after_comma_in_method_declaration_parameters;
-		formatList(parameters, align, true, false);
+		ListOptions options= new ListOptions(preferences.alignment_for_parameters_in_method_declaration);
+		options.fSpaceAfterOpeningParen= preferences.insert_space_after_opening_paren_in_method_declaration;
+		options.fSpaceBeforeClosingParen= preferences.insert_space_before_closing_paren_in_method_declaration;
+		options.fSpaceBetweenEmptyParen= preferences.insert_space_between_empty_parens_in_method_declaration;
+		options.fSpaceBeforeComma= preferences.insert_space_before_comma_in_method_declaration_parameters;
+		options.fSpaceAfterComma= preferences.insert_space_after_comma_in_method_declaration_parameters;
+		formatList(parameters, options, true, false, null);
 
 		IASTDeclaration[] parameterDecls= node.getParameterDeclarations();
 		scribe.startNewLine();
@@ -1405,36 +1544,14 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					scribe.space();
 				}
 			}
-			final ListAlignment align= new ListAlignment(preferences.alignment_for_declarator_list);
-			align.fSpaceAfterComma= preferences.insert_space_after_comma_in_declarator_list;
-			align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_declarator_list;
-			formatList(declarators, align, false, false);
-		}
-		if (fExpectSemicolonAfterDeclaration) {
-			handleNodeEndingInSemicolon(node);
-			if (peekNextToken() == Token.tSEMI) {
-				scribe.printNextToken(Token.tSEMI, fInsideFor ? preferences.insert_space_before_semicolon_in_for : preferences.insert_space_before_semicolon);
-				scribe.printTrailingComment();
-			}
+			final ListOptions options= new ListOptions(preferences.alignment_for_declarator_list);
+			options.fSpaceAfterComma= preferences.insert_space_after_comma_in_declarator_list;
+			options.fSpaceBeforeComma= preferences.insert_space_before_comma_in_declarator_list;
+			Runnable tailFormatter = fExpectSemicolonAfterDeclaration ?
+					new TrailingSemicolonFormatter(node) : null;
+			formatList(declarators, options, false, false, tailFormatter);
 		}
 		return PROCESS_SKIP;
-	}
-
-	private void handleNodeEndingInSemicolon(IASTSimpleDeclaration node) {
-		if (scribe.skipRange() && peekNextToken(true) == Token.tSEMI) {
-			IASTNodeLocation[] locations= node.getNodeLocations();
-			if (locations.length > 0) {
-				IASTNodeLocation lastLocation = locations[locations.length - 1];
-				if (!(lastLocation instanceof IASTMacroExpansionLocation)) {
-					IASTFileLocation fileLocation= lastLocation.asFileLocation();
-					int startOffset= fileLocation.getNodeOffset();
-					int currentPosition= scribe.scanner.getCurrentPosition();
-					if (currentPosition >= startOffset) {
-						scribe.restartAtOffset(startOffset);
-					}
-				}
-			}
-		}
 	}
 
 	private int visit(ICPPASTTemplateDeclaration node) {
@@ -1451,10 +1568,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		// template parameters
 		final ICPPASTTemplateParameter[] templateParameters= node.getTemplateParameters();
 		if (templateParameters.length > 0) {
-			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
-			align.fSpaceAfterComma= preferences.insert_space_after_comma_in_template_parameters;
-			align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_template_parameters;
-			formatList(Arrays.asList(templateParameters), align, false, false);
+			final ListOptions options= new ListOptions(Alignment.M_COMPACT_SPLIT);
+			options.fSpaceAfterComma= preferences.insert_space_after_comma_in_template_parameters;
+			options.fSpaceBeforeComma= preferences.insert_space_before_comma_in_template_parameters;
+			formatList(Arrays.asList(templateParameters), options, false, false, null);
 		}
 		scribe.printNextToken(new int[] { Token.tGT, Token.tSHIFTR }, preferences.insert_space_before_closing_angle_bracket_in_template_parameters);
 		if (preferences.insert_space_after_closing_angle_bracket_in_template_parameters) {
@@ -1624,10 +1741,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			} catch (UnsupportedOperationException exc) {
 			} catch (ExpansionOverlapsBoundaryException exc) {
 			}
-			final ListAlignment align= new ListAlignment(preferences.alignment_for_base_clause_in_type_declaration);
-			align.fSpaceAfterComma= preferences.insert_space_after_comma_in_base_types;
-			align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_base_types;
-			formatList(baseSpecifiers, align, false, false);
+			final ListOptions options= new ListOptions(preferences.alignment_for_base_clause_in_type_declaration);
+			options.fSpaceAfterComma= preferences.insert_space_after_comma_in_base_types;
+			options.fSpaceBeforeComma= preferences.insert_space_before_comma_in_base_types;
+			formatList(baseSpecifiers, options, false, false, null);
 		}
 
 		// member declarations
@@ -1774,16 +1891,16 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
         final int enumIndent= scribe.numberOfIndentations;
 		final IASTEnumerator[] enumerators= node.getEnumerators();
 
-		final ListAlignment align= new ListAlignment(preferences.alignment_for_enumerator_list);
-		align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_enum_declarations;
-		align.fSpaceAfterComma= preferences.insert_space_after_comma_in_enum_declarations;
-		align.fContinuationIndentation= enumIndent == headerIndent ? 1 : 0;
-		formatList(Arrays.asList(enumerators), align, false, false);
+		final ListOptions options= new ListOptions(preferences.alignment_for_enumerator_list);
+		options.fSpaceBeforeComma= preferences.insert_space_before_comma_in_enum_declarations;
+		options.fSpaceAfterComma= preferences.insert_space_after_comma_in_enum_declarations;
+		options.fContinuationIndentation= enumIndent == headerIndent ? 1 : 0;
+		formatList(Arrays.asList(enumerators), options, false, false, null);
 
 		// handle trailing comma
 		if (peekNextToken() == Token.tCOMMA) {
-			scribe.printNextToken(Token.tCOMMA, align.fSpaceBeforeComma);
-			if (align.fSpaceAfterComma) {
+			scribe.printNextToken(Token.tCOMMA, options.fSpaceBeforeComma);
+			if (options.fSpaceAfterComma) {
 				scribe.space();
 			}
 		}
@@ -1800,97 +1917,86 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	/**
 	 * Format a given list of elements according alignment options.
 	 *
-	 * @param elements
-	 * @param align
-	 * @param encloseInParen
-	 * @param addEllipsis
+	 * @param elements the elements to format
+	 * @param options formatting options
+	 * @param encloseInParen indicates whether the list should be enclosed in parentheses
+	 * @param addEllipsis indicates whether ellipsis should be added after the last element
+	 * @param tailFormatter formatter for the trailing text that should be kept together with
+	 * 		the last element of the list. 
 	 */
-	private void formatList(List<? extends IASTNode> elements, ListAlignment align,
-			boolean encloseInParen, boolean addEllipsis) {
+	private void formatList(List<? extends IASTNode> elements, ListOptions options,
+			boolean encloseInParen, boolean addEllipsis, Runnable tailFormatter) {
 		if (encloseInParen)
-			scribe.printNextToken(Token.tLPAREN, align.fSpaceBeforeOpeningParen);
+			scribe.printNextToken(Token.tLPAREN, options.fSpaceBeforeOpeningParen);
 
 		final int elementsLength = elements.size();
+		if (encloseInParen) {
+			boolean spaceBeforeClosingParen = elements.isEmpty() && !addEllipsis ?
+					options.fSpaceBetweenEmptyParen : options.fSpaceBeforeClosingParen;
+			tailFormatter = new ClosingParensesisTailFormatter(spaceBeforeClosingParen, tailFormatter);
+		}
+
 		if (!elements.isEmpty() || addEllipsis) {
-			if (align.fSpaceAfterOpeningParen) {
+			if (options.fSpaceAfterOpeningParen) {
 				scribe.space();
 			}
-			final int continuationIndentation= align.fContinuationIndentation >= 0 ?
-					align.fContinuationIndentation : preferences.continuation_indentation;
-			Alignment listAlignment = scribe.createAlignment(
+			final int continuationIndentation= options.fContinuationIndentation >= 0 ?
+					options.fContinuationIndentation : preferences.continuation_indentation;
+			Alignment alignment = scribe.createAlignment(
 					Alignment.LIST_ELEMENTS_PREFIX +
 							(elements.isEmpty() ? "ellipsis" : elements.get(0).getClass().getSimpleName()), //$NON-NLS-1$
-					align.fMode,
-					align.fTieBreakRule,
+					options.fMode,
+					options.fTieBreakRule,
 					elementsLength + (addEllipsis ? 1 : 0),
 					scribe.scanner.getCurrentPosition(),
 					continuationIndentation,
 					false);
-			scribe.enterAlignment(listAlignment);
+			scribe.enterAlignment(alignment);
 			boolean ok = false;
 			do {
 				try {
 					int i;
 					for (i = 0; i < elementsLength; i++) {
-						if (i > 0) {
-							// handle missing parameter
-							int token= peekNextToken();
-							if (token == Token.tIDENTIFIER) {
-								if (!scribe.skipToToken(Token.tCOMMA)) {
-									break;
-								}
-							} else if (token == Token.tRPAREN) {
-								if (encloseInParen) {
-									break;
-								}
-								if (!scribe.skipToToken(Token.tCOMMA)) {
-									break;
-								}
-							}
-							scribe.printNextToken(Token.tCOMMA, align.fSpaceBeforeComma);
-							scribe.printTrailingComment();
-						}
-						scribe.alignFragment(listAlignment, i);
-						if (i > 0 && align.fSpaceAfterComma) {
-							scribe.space();
-						}
 						final IASTNode node= elements.get(i);
+						if (i < alignment.fragmentCount - 1) {
+							scribe.setTailFormatter(
+									new TrailingCommaFormatter(options.fSpaceBeforeComma,
+											options.fSpaceAfterComma));
+						} else {
+							scribe.setTailFormatter(tailFormatter);
+						}
+						scribe.alignFragment(alignment, i);
 						if (node instanceof ICPPASTConstructorChainInitializer) {
-							// this is a special case
+							// Constructor chain initializer is a special case.
 							visit((ICPPASTConstructorChainInitializer) node);
 						} else {
 							node.accept(this);
 						}
+						if (i < alignment.fragmentCount - 1) {
+							scribe.runTailFormatter();
+						}
 					}
 					if (addEllipsis) {
 						if (i > 0) {
-							scribe.printNextToken(Token.tCOMMA, align.fSpaceBeforeComma);
+							scribe.printNextToken(Token.tCOMMA, options.fSpaceBeforeComma);
 							scribe.printTrailingComment();
 						}
-						scribe.alignFragment(listAlignment, i);
-						if (i > 0 && align.fSpaceAfterComma) {
+						scribe.alignFragment(alignment, i);
+						if (i > 0 && options.fSpaceAfterComma) {
 							scribe.space();
 						}
 						scribe.printNextToken(Token.tELIPSE);
 					}
+					scribe.runTailFormatter();
 					ok = true;
 				} catch (AlignmentException e) {
 					scribe.redoAlignment(e);
 				} catch (ASTProblemException e) {
 				}
 			} while (!ok);
-			scribe.exitAlignment(listAlignment, true);
-		}
-		if (encloseInParen) {
-			// handle missing parameter
-			if (peekNextToken() == Token.tIDENTIFIER) {
-				scribe.skipToToken(Token.tRPAREN);
-			}
-			if (elementsLength == 0 && !addEllipsis) {
-				scribe.printNextToken(Token.tRPAREN, align.fSpaceBetweenEmptyParen);
-			} else {
-				scribe.printNextToken(Token.tRPAREN, align.fSpaceBeforeClosingParen);
-			}
+			scribe.exitAlignment(alignment, true);
+		} else if (tailFormatter != null) {
+			tailFormatter.run();
 		}
 	}
 
@@ -1958,17 +2064,17 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (preferences.insert_space_before_question_in_conditional) {
 			scribe.space();
 		}
-    	Alignment conditionalExpressionAlignment = scribe.createAlignment(
+    	Alignment alignment = scribe.createAlignment(
     			Alignment.CONDITIONAL_EXPRESSION,
     			preferences.alignment_for_conditional_expression,
     			2,
     			scribe.scanner.getCurrentPosition());
 
-    	scribe.enterAlignment(conditionalExpressionAlignment);
+    	scribe.enterAlignment(alignment);
     	boolean ok = false;
     	do {
     		try {
-    			scribe.alignFragment(conditionalExpressionAlignment, 0);
+    			scribe.alignFragment(alignment, 0);
     			scribe.printNextToken(Token.tQUESTION, false);
 
     			if (preferences.insert_space_after_question_in_conditional) {
@@ -1979,7 +2085,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
     				positiveExpression.accept(this);
     			}
     			scribe.printTrailingComment();
-    			scribe.alignFragment(conditionalExpressionAlignment, 1);
+    			scribe.alignFragment(alignment, 1);
     			scribe.printNextToken(Token.tCOLON, preferences.insert_space_before_colon_in_conditional);
 
     			if (preferences.insert_space_after_colon_in_conditional) {
@@ -1992,7 +2098,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
     			scribe.redoAlignment(e);
     		}
     	} while (!ok);
-    	scribe.exitAlignment(conditionalExpressionAlignment, true);
+    	scribe.exitAlignment(alignment, true);
     	return PROCESS_SKIP;
     }
 
@@ -2023,26 +2129,26 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (args != null) {
 			expressions= Arrays.asList(args);
 		} else {
-			// no arguments
+			// No arguments
 			expressions= Collections.emptyList();
 		}
-		final ListAlignment align= new ListAlignment(preferences.alignment_for_arguments_in_method_invocation);
-		align.fSpaceBeforeOpeningParen= preferences.insert_space_before_opening_paren_in_method_invocation;
-		align.fSpaceAfterOpeningParen= preferences.insert_space_after_opening_paren_in_method_invocation;
-		align.fSpaceBeforeClosingParen= preferences.insert_space_before_closing_paren_in_method_invocation;
-		align.fSpaceBetweenEmptyParen= preferences.insert_space_between_empty_parens_in_method_invocation;
-		align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_method_invocation_arguments;
-		align.fSpaceAfterComma= preferences.insert_space_after_comma_in_method_invocation_arguments;
-		align.fTieBreakRule = Alignment.R_OUTERMOST;
-		formatList(expressions, align, true, false);
+		final ListOptions options= new ListOptions(preferences.alignment_for_arguments_in_method_invocation);
+		options.fSpaceBeforeOpeningParen= preferences.insert_space_before_opening_paren_in_method_invocation;
+		options.fSpaceAfterOpeningParen= preferences.insert_space_after_opening_paren_in_method_invocation;
+		options.fSpaceBeforeClosingParen= preferences.insert_space_before_closing_paren_in_method_invocation;
+		options.fSpaceBetweenEmptyParen= preferences.insert_space_between_empty_parens_in_method_invocation;
+		options.fSpaceBeforeComma= preferences.insert_space_before_comma_in_method_invocation_arguments;
+		options.fSpaceAfterComma= preferences.insert_space_after_comma_in_method_invocation_arguments;
+		options.fTieBreakRule = Alignment.R_OUTERMOST;
+		formatList(expressions, options, true, false, scribe.getTailFormatter());
 	}
 
 	private int visit(IASTExpressionList node) {
 		final List<IASTExpression> expressions = Arrays.asList(node.getExpressions());
-		final ListAlignment align= new ListAlignment(preferences.alignment_for_expression_list);
-		align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_expression_list;
-		align.fSpaceAfterComma= preferences.insert_space_after_comma_in_expression_list;
-		formatList(expressions, align, false, false);
+		final ListOptions options= new ListOptions(preferences.alignment_for_expression_list);
+		options.fSpaceBeforeComma= preferences.insert_space_before_comma_in_expression_list;
+		options.fSpaceAfterComma= preferences.insert_space_after_comma_in_expression_list;
+		formatList(expressions, options, false, false, null);
     	return PROCESS_SKIP;
 	}
 
@@ -2206,16 +2312,16 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	        	scribe.space();
 	        }
 
-			final ListAlignment align= new ListAlignment(preferences.alignment_for_expressions_in_initializer_list);
-			align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_initializer_list;
-			align.fSpaceAfterComma= preferences.insert_space_after_comma_in_initializer_list;
-			align.fContinuationIndentation= preferences.continuation_indentation_for_initializer_list;
-			formatList(initializers, align, false, false);
+			final ListOptions options= new ListOptions(preferences.alignment_for_expressions_in_initializer_list);
+			options.fSpaceBeforeComma= preferences.insert_space_before_comma_in_initializer_list;
+			options.fSpaceAfterComma= preferences.insert_space_after_comma_in_initializer_list;
+			options.fContinuationIndentation= preferences.continuation_indentation_for_initializer_list;
+			formatList(initializers, options, false, false, null);
 
 			// handle trailing comma
 			if (peekNextToken() == Token.tCOMMA) {
-				scribe.printNextToken(Token.tCOMMA, align.fSpaceBeforeComma);
-				if (align.fSpaceAfterComma) {
+				scribe.printNextToken(Token.tCOMMA, options.fSpaceBeforeComma);
+				if (options.fSpaceAfterComma) {
 					scribe.space();
 				}
 			}
@@ -2665,10 +2771,17 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTExpressionStatement node) {
-		node.getExpression().accept(this);
+		Runnable semicolonFormatter = null;
 		if (!fInsideFor) {
-			scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
-			scribe.printTrailingComment();
+			semicolonFormatter = new TrailingSemicolonFormatter(node);
+			scribe.setTailFormatter(semicolonFormatter);
+		}
+		node.getExpression().accept(this);
+		if (semicolonFormatter != null) {
+			semicolonFormatter.run();
+			scribe.setTailFormatter(null);
+		}
+		if (!fInsideFor) {
 			scribe.startNewLine();
 		}
 		return PROCESS_SKIP;
@@ -2896,6 +3009,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					scribe.printNextToken(Token.t_else, true);
 				}
 			}
+
 			if (elseStatement instanceof IASTCompoundStatement) {
 				elseStatement.accept(this);
 			} else if (elseStatement instanceof IASTIfStatement) {
@@ -2926,7 +3040,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			scribe.printNextToken(Token.tCOLONCOLON);
 		}
 		IASTName[] names= node.getNames();
-		for (int i = 0; i < names.length-1; i++) {
+		for (int i = 0; i < names.length - 1; i++) {
 			names[i].accept(this);
 			scribe.printNextToken(Token.tCOLONCOLON);
 		}
@@ -2934,7 +3048,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			// destructor
 			scribe.printNextToken(Token.tCOMPL, false);
 		}
-		names[names.length-1].accept(this);
+		names[names.length - 1].accept(this);
 		return PROCESS_SKIP;
 	}
 
@@ -2948,10 +3062,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		int angleBrackets = fOpenAngleBrackets++;
 		final IASTNode[] templateArguments= node.getTemplateArguments();
 		if (templateArguments.length > 0) {
-			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
-			align.fSpaceAfterComma= preferences.insert_space_after_comma_in_template_arguments;
-			align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_template_arguments;
-			formatList(Arrays.asList(templateArguments), align, false, false);
+			final ListOptions options= new ListOptions(Alignment.M_COMPACT_SPLIT);
+			options.fSpaceAfterComma= preferences.insert_space_after_comma_in_template_arguments;
+			options.fSpaceBeforeComma= preferences.insert_space_before_comma_in_template_arguments;
+			formatList(Arrays.asList(templateArguments), options, false, false, null);
 		}
 		if (peekNextToken() == Token.tSHIFTR) {
 			if (fOpenAngleBrackets == angleBrackets + 2) {
@@ -3445,7 +3559,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		IASTNodeLocation[] locations= node.getNodeLocations();
 		if (locations.length == 0) {
 		} else if (node instanceof IASTProblemHolder) {
-		} else if (locations[locations.length-1] instanceof IASTMacroExpansionLocation) {
+		} else if (locations[locations.length - 1] instanceof IASTMacroExpansionLocation) {
 			return true;
 		}
 		return false;

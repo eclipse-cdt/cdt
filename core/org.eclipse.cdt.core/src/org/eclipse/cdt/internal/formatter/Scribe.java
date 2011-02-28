@@ -49,6 +49,9 @@ public class Scribe {
 	public Alignment currentAlignment;
 	public Alignment memberAlignment;
 	public AlignmentException currentAlignmentException;
+	
+	/** @see Alignment#tailFormatter */
+	private Runnable tailFormatter;
 
 	public Token currentToken;
 
@@ -869,7 +872,7 @@ public class Scribe {
 	}
 
 	private void print(int length, boolean considerSpaceIfAny) {
-		if (checkLineWrapping && length + column > pageWidth) {
+		if (checkLineWrapping && length + column - 1 > pageWidth) {
 			handleLineTooLong();
 		}
 		lastNumberOfNewLines= 0;
@@ -881,6 +884,9 @@ public class Scribe {
 		}
 		if (pendingSpace) {
 			addInsertEdit(scanner.getCurrentTokenStartPosition(), SPACE);
+		}
+		if (checkLineWrapping && length + column - 1 > pageWidth) {
+			handleLineTooLong();
 		}
 		pendingSpace= false;
 		column += length;
@@ -1544,7 +1550,7 @@ public class Scribe {
 	}
 
 	public void printNewLine() {
-		printNewLine(scanner.getCurrentTokenEndPosition() + 1);
+		printNewLine(scanner.getCurrentPosition());
 	}
 
 	public void printNewLine(int insertPosition) {
@@ -1950,7 +1956,7 @@ public class Scribe {
 	}
 
 	/**
-	 * Skip to the next occurrence of the given token type.
+	 * Skips to the next occurrence of the given token type.
 	 * If successful, the next token will be the expected token,
 	 * otherwise the scanner position is left unchanged.
 	 * 
@@ -1962,56 +1968,96 @@ public class Scribe {
 		if (shouldSkip(skipStart)) {
 			return true;
 		}
-		int braceLevel= 0;
-		int parenLevel= 0;
-		switch (expectedTokenType) {
-		case Token.tRBRACE:
-			++braceLevel;
-			break;
-		case Token.tRPAREN:
-			++parenLevel;
-			break;
+		int tokenStart = findToken(expectedTokenType);
+		if (tokenStart < 0) {
+			return false;
 		}
-		while ((currentToken= scanner.nextToken()) != null) {
-			switch (currentToken.type) {
-			case Token.tLBRACE:
-				if (expectedTokenType != Token.tLBRACE) {
-					++braceLevel;
-				}
-				break;
+		printRaw(skipStart, tokenStart - skipStart);
+		currentToken= scanner.nextToken();
+		scanner.resetTo(tokenStart, scannerEndPosition - 1);
+		return true;
+	}
+
+	/**
+	 * Searches for the next occurrence of the given token type.
+	 * If successful, returns the offset of the found token, otherwise -1.
+	 * The scanner position is left unchanged.
+	 * 
+	 * @param tokenType type of the token to look for
+	 * @return <code>true</code> if a matching token was found
+	 */
+	public int findToken(int tokenType) {
+		return findToken(tokenType, scannerEndPosition - 1);
+	}
+
+	/**
+	 * Searches for the next occurrence of the given token type.
+	 * If successful, returns the offset of the found token, otherwise -1.
+	 * The scanner position is left unchanged.
+	 * 
+	 * @param tokenType type of the token to look for
+	 * @param endPosition end position limiting the search
+	 * @return <code>true</code> if a matching token was found
+	 */
+	public int findToken(int tokenType, int endPosition) {
+		int startPosition= scanner.getCurrentPosition();
+		if (startPosition >= endPosition) {
+			return -1;
+		}
+		try {
+			int braceLevel= 0;
+			int parenLevel= 0;
+			switch (tokenType) {
 			case Token.tRBRACE:
-				--braceLevel;
-				break;
-			case Token.tLPAREN:
-				if (expectedTokenType != Token.tLPAREN) {
-					++parenLevel;
-				}
+				++braceLevel;
 				break;
 			case Token.tRPAREN:
-				--parenLevel;
+				++parenLevel;
 				break;
-			case Token.tWHITESPACE:
-			case Token.tLINECOMMENT:
-			case Token.tBLOCKCOMMENT:
-			case Token.tPREPROCESSOR:
-			case Token.tPREPROCESSOR_DEFINE:
-			case Token.tPREPROCESSOR_INCLUDE:
-				continue;
 			}
-			if (braceLevel <= 0 && parenLevel <= 0) {
-				if (currentToken.type == expectedTokenType) {
-					int tokenStart= scanner.getCurrentTokenStartPosition();
-					printRaw(skipStart, tokenStart - skipStart);
-					scanner.resetTo(tokenStart, scannerEndPosition - 1);
-					return true;
+			Token token;
+			while ((token= scanner.nextToken()) != null) {
+				if (scanner.getCurrentTokenEndPosition() > endPosition)
+					return -1;
+
+				switch (token.type) {
+				case Token.tLBRACE:
+					if (tokenType != Token.tLBRACE) {
+						++braceLevel;
+					}
+					break;
+				case Token.tRBRACE:
+					--braceLevel;
+					break;
+				case Token.tLPAREN:
+					if (tokenType != Token.tLPAREN) {
+						++parenLevel;
+					}
+					break;
+				case Token.tRPAREN:
+					--parenLevel;
+					break;
+				case Token.tWHITESPACE:
+				case Token.tLINECOMMENT:
+				case Token.tBLOCKCOMMENT:
+				case Token.tPREPROCESSOR:
+				case Token.tPREPROCESSOR_DEFINE:
+				case Token.tPREPROCESSOR_INCLUDE:
+					continue;
+				}
+				if (braceLevel <= 0 && parenLevel <= 0) {
+					if (token.type == tokenType) {
+						return scanner.getCurrentTokenStartPosition();
+					}
+				}
+				if (braceLevel < 0 || parenLevel < 0) {
+					break;
 				}
 			}
-			if (braceLevel < 0 || parenLevel < 0) {
-				break;
-			}
+		} finally {
+			scanner.resetTo(startPosition, scannerEndPosition - 1);
 		}
-		scanner.resetTo(skipStart, scannerEndPosition - 1);
-		return false;
+		return -1;
 	}
 
 	public boolean printCommentPreservingNewLines() {
@@ -2072,5 +2118,42 @@ public class Scribe {
 				scanner.resetTo(offset, scannerEndPosition - 1);
 			}
 		}
+	}
+
+	/*
+	 * Returns the tail formatter associated with the current alignment or, if there is no current
+	 * alignment, with the Scribe itself.
+	 * @see #tailFormatter
+	 */
+	public Runnable getTailFormatter() {
+		if (currentAlignment != null) {
+			return currentAlignment.tailFormatter;
+		} else {
+			return this.tailFormatter;
+		}
+	}
+
+	/*
+	 * Sets the tail formatter associated with the current alignment or, if there is no current
+	 * alignment, with the Scribe itself.
+	 * @see #tailFormatter
+	 */
+	public void setTailFormatter(Runnable tailFormatter) {
+		if (currentAlignment != null) {
+			currentAlignment.tailFormatter = tailFormatter;
+		} else {
+			this.tailFormatter = tailFormatter;
+		}
+	}
+
+	/*
+	 * Runs the tail formatter associated with the current alignment or, if there is no current
+	 * alignment, with the Scribe itself.
+	 * @see #tailFormatter
+	 */
+	public void runTailFormatter() {
+		Runnable formatter = getTailFormatter();
+		if (formatter != null)
+			formatter.run();
 	}
 }

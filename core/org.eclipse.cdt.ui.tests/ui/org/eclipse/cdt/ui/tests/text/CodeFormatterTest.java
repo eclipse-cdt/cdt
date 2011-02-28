@@ -953,6 +953,59 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//void f1(const char* long_parameter_name, int very_looooooooooong_parameter_name, int another_parameter_name );
+	//void f2(const char* long_parameter_name,int very_loooooooooooong_parameter_name, int another_parameter_name )  ;
+	//void f3(const char* long_parameter_name,int very_loooooooooooong_parameter_name,int very_loong_parameter_name)  ;
+	//void f4(const char* long_parameter_name, int very_loooooooooooong_parameter_name,int very_looong_parameter_name)  ;
+
+	//void f1(const char* long_parameter_name, int very_looooooooooong_parameter_name,
+	//        int another_parameter_name);
+	//void f2(const char* long_parameter_name,
+	//        int very_loooooooooooong_parameter_name, int another_parameter_name);
+	//void f3(const char* long_parameter_name,
+	//        int very_loooooooooooong_parameter_name, int very_loong_parameter_name);
+	//void f4(const char* long_parameter_name,
+	//        int very_loooooooooooong_parameter_name,
+	//        int very_looong_parameter_name);
+	public void testFunctionDeclaration() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
+				Integer.toString(Alignment.M_NEXT_PER_LINE_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		assertFormatterResult();
+	}
+
+	//int f1(int a, int b, int c, int d, int e, int f, int g);
+	//int f2(int a, int b, int c, int d, int e, int f, int g);
+	//
+	//void test() {
+	//f1(100000000,200000000,300000000,400000000,500000000,600000000,70000);
+	//f1(100000000,200000000,300000000,400000000,500000000,600000000,700000);
+	//f1(100000,200000,300000,400000,500000,600000,f2(1,2,3,4,5,6,7));
+	//f1(100000,200000,300000,400000,500000,600000,f2(1,2,3,4,5,6,70));
+	//f1(100000,200000,300000,400000,500000,f2(10,20,30,40,50,60,7000),700000);
+	//f1(100000,200000,300000,400000,500000,f2(10,20,30,40,50,60,70000),700000);
+	//}
+
+	//int f1(int a, int b, int c, int d, int e, int f, int g);
+	//int f2(int a, int b, int c, int d, int e, int f, int g);
+	//
+	//void test() {
+	//    f1(100000000, 200000000, 300000000, 400000000, 500000000, 600000000, 70000);
+	//    f1(100000000, 200000000, 300000000, 400000000, 500000000, 600000000,
+	//            700000);
+	//    f1(100000, 200000, 300000, 400000, 500000, 600000, f2(1, 2, 3, 4, 5, 6, 7));
+	//    f1(100000, 200000, 300000, 400000, 500000, 600000,
+	//            f2(1, 2, 3, 4, 5, 6, 70));
+	//    f1(100000, 200000, 300000, 400000, 500000, f2(10, 20, 30, 40, 50, 60, 7000),
+	//            700000);
+	//    f1(100000, 200000, 300000, 400000, 500000,
+	//            f2(10, 20, 30, 40, 50, 60, 70000), 700000);
+	//}
+	public void testFunctionCall() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
 	//#define MY_MACRO int a; \
 	//    int b; \
 	//    int c();

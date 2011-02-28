@@ -104,8 +104,9 @@ public final class CIndenter {
 		CorePrefs(ICProject project) {
 			preferenceService = Platform.getPreferencesService();
 			preferenceContexts = project != null ?
-					new IScopeContext[] { new ProjectScope(project.getProject()), new InstanceScope(), new DefaultScope() } :
-					new IScopeContext[] { new InstanceScope(), new DefaultScope() };
+					new IScopeContext[] { new ProjectScope(project.getProject()),
+										  InstanceScope.INSTANCE, DefaultScope.INSTANCE } :
+					new IScopeContext[] { InstanceScope.INSTANCE, DefaultScope.INSTANCE };
 			fProject= project;
 			prefUseTabs= prefUseTabs();
 			prefTabSize= prefTabSize();

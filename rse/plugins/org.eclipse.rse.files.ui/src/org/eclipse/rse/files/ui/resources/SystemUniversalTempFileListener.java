@@ -34,7 +34,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
@@ -55,8 +54,8 @@ import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.internal.Workbench;
 
 /**
  * This class manages listening for resource changes within our temp file project
@@ -440,7 +439,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 				{
 					public void run()
 					{
-						boolean closing = Workbench.getInstance().isClosing();						
+						boolean closing = PlatformUI.getWorkbench().isClosing();			
 						Shell shell = null;
 						if (closing){
 							shell = Display.getDefault().getActiveShell();

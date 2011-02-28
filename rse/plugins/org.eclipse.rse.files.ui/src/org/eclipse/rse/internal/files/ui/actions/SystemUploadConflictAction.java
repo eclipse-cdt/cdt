@@ -87,7 +87,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 
@@ -681,7 +681,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                 IRemoteFile remoteFile = cnfDialog.getSaveasLocation();
                 BackgroundSaveasJob sjob = new BackgroundSaveasJob(remoteFile);
             
-                if (Workbench.getInstance().isClosing()){                
+                if (PlatformUI.getWorkbench().isClosing()){                
 					sjob.run(new NullProgressMonitor());
                 }
                 else {

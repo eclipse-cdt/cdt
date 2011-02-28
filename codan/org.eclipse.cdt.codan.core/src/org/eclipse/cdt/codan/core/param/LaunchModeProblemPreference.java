@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.param;
 
+import java.io.IOException;
+import java.io.StreamTokenizer;
+
 import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
 
 /**
@@ -17,7 +20,7 @@ import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
  *
  * @since 2.0
  */
-public class LaunchTypeProblemPreference extends MapProblemPreference {
+public class LaunchModeProblemPreference extends MapProblemPreference {
 	/**
 	 * Propery key
 	 */
@@ -31,23 +34,34 @@ public class LaunchTypeProblemPreference extends MapProblemPreference {
 	/**
 	 * constructor
 	 */
-	public LaunchTypeProblemPreference() {
-		CheckerLaunchMode[] values = CheckerLaunchMode.values();
-		for (int i = 0; i < values.length; i++) {
-			CheckerLaunchMode checkerLaunchMode = values[i];
-			BasicProblemPreference desc = new BasicProblemPreference(checkerLaunchMode.name(), checkerLaunchMode.name(),
-					PreferenceType.TYPE_BOOLEAN);
-			IProblemPreference desc1 = addChildDescriptor(desc);
-			if (checkerLaunchMode == CheckerLaunchMode.USE_PARENT)
-				desc1.setValue(Boolean.TRUE);
-		}
+	public LaunchModeProblemPreference() {
+
 	}
 
 	/**
-	 * @return true if property is set to use parent mode
+	 * @return true if values has not been set
 	 */
-	public boolean isUsingParent() {
-		return isRunningInMode(CheckerLaunchMode.USE_PARENT);
+	@Override
+	public boolean isDefault(){
+		CheckerLaunchMode[] values = CheckerLaunchMode.values();
+		for (int i = 0; i < values.length; i++) {
+			CheckerLaunchMode checkerLaunchMode = values[i];
+			if (getChildDescriptor(checkerLaunchMode.name())!=null) return false;
+		}
+		return true;
+	}
+
+	/**
+	 * @param checkerLaunchMode - launch mode
+	 * @param value - value to set for the mode
+	 * @return preference
+	 */
+	public IProblemPreference addLaunchMode(CheckerLaunchMode checkerLaunchMode, boolean value) {
+		BasicProblemPreference desc = new BasicProblemPreference(checkerLaunchMode.name(), checkerLaunchMode.name(),
+				PreferenceType.TYPE_BOOLEAN);
+		IProblemPreference desc1 = addChildDescriptor(desc);
+		desc1.setValue(value);
+		return desc1;
 	}
 
 	/**
@@ -55,12 +69,15 @@ public class LaunchTypeProblemPreference extends MapProblemPreference {
 	 * @return true if this mode enabled for this preference
 	 */
 	public boolean isRunningInMode(CheckerLaunchMode mode) {
+		if (getChildDescriptor(mode.name())==null) {
+			if (mode == CheckerLaunchMode.RUN_ON_INC_BUILD)
+				return isRunningInMode(CheckerLaunchMode.RUN_ON_FULL_BUILD);
+			return true; // default is true
+		}
 		Object value = getChildValue(mode.name());
 		if (value instanceof Boolean) {
 			return (Boolean) value;
 		}
-		if (mode == CheckerLaunchMode.USE_PARENT && value == null)
-			return true;
 		return false;
 	}
 
@@ -69,7 +86,11 @@ public class LaunchTypeProblemPreference extends MapProblemPreference {
 	 * @param value
 	 */
 	public void setRunningMode(CheckerLaunchMode mode, boolean value) {
-		setChildValue(mode.name(), value);
+		if (getChildDescriptor(mode.name()) == null) {
+			addLaunchMode(mode, value);
+		} else {
+			setChildValue(mode.name(), value);
+		}
 	}
 
 	/**
@@ -79,11 +100,28 @@ public class LaunchTypeProblemPreference extends MapProblemPreference {
 		return isRunningInMode(CheckerLaunchMode.RUN_AS_YOU_TYPE) && isRunningInMode(CheckerLaunchMode.RUN_ON_DEMAND)
 				&& isRunningInMode(CheckerLaunchMode.RUN_ON_FULL_BUILD);
 	}
+
 	/**
 	 * @return true if all modes are disabled
 	 */
 	public boolean isAllDisabled() {
 		return !isRunningInMode(CheckerLaunchMode.RUN_AS_YOU_TYPE) && !isRunningInMode(CheckerLaunchMode.RUN_ON_DEMAND)
 				&& !isRunningInMode(CheckerLaunchMode.RUN_ON_FULL_BUILD);
+	}
+
+	@Override
+	protected IProblemPreference importChildValue(String key, StreamTokenizer tokenizer) throws IOException {
+		IProblemPreference desc = getChildDescriptor(key);
+		if (desc==null) {
+			CheckerLaunchMode mode = CheckerLaunchMode.valueOf(key);
+			if (mode==null)
+				throw new IllegalArgumentException(key);
+			desc = addLaunchMode(mode, true);
+		}
+		if (desc != null && desc instanceof AbstractProblemPreference) {
+			((AbstractProblemPreference) desc).importValue(tokenizer);
+			setChildValue(key, desc.getValue());
+		}
+		return desc;
 	}
 }

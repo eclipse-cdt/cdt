@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Custom preference for resource scope
- * 
+ *
  * @noextend This class is not intended to be extended by clients.
  * @since 1.0
  */
@@ -63,7 +63,7 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 
 	/**
 	 * Get attribute. Possible keys are EXCUSION and INCLUSION
-	 * 
+	 *
 	 * @param key
 	 * @return class attribute for given key
 	 */
@@ -77,7 +77,7 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 
 	/**
 	 * Set attribute to a value. Possible keys are EXCUSION and INCLUSION
-	 * 
+	 *
 	 * @param key
 	 * @param value
 	 */
@@ -124,6 +124,12 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 		return resource;
 	}
 
+	@Override
+	public boolean isDefault(){
+		if (inclusion.length==0 && exclusion.length==0)
+			return true;
+		return false;
+	}
 	public String exportValue() {
 		return exportPathList(INCLUSION, inclusion) + "," //$NON-NLS-1$
 				+ exportPathList(EXCLUSION, exclusion);
@@ -209,7 +215,7 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.param.AbstractProblemPreference#clone()
 	 */
 	@Override
@@ -224,7 +230,7 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 	 * exclusion/inclusion settings of this class). In inclusion list is defined
 	 * check first if it belongs to it, returns false if not.
 	 * Then checks if it belongs to exclusion list and return false if it is.
-	 * 
+	 *
 	 * @param path
 	 *        - resource path
 	 * @return true is given path is in scope
@@ -244,7 +250,7 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 
 	/**
 	 * Checks that given path matches on the paths provided as second argument
-	 * 
+	 *
 	 * @param resourcePath - resource path
 	 * @param paths - array of path patterns, for pattern see
 	 *        {@link CharOperation#pathMatch}

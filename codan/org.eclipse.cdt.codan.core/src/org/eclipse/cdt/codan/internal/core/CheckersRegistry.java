@@ -27,9 +27,8 @@ import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
-import org.eclipse.cdt.codan.core.param.IProblemPreference;
-import org.eclipse.cdt.codan.core.param.LaunchTypeProblemPreference;
-import org.eclipse.cdt.codan.core.param.MapProblemPreference;
+import org.eclipse.cdt.codan.core.param.LaunchModeProblemPreference;
+import org.eclipse.cdt.codan.core.param.RootProblemPreference;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblem;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblemCategory;
 import org.eclipse.cdt.codan.internal.core.model.ProblemProfile;
@@ -443,13 +442,11 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 			if (problem == null)
 				throw new IllegalArgumentException("Id is not registered"); //$NON-NLS-1$
 			if (checker instanceof AbstractCheckerWithProblemPreferences) {
-				MapProblemPreference map = (MapProblemPreference) problem.getPreference();
-				IProblemPreference pref1 = map.getChildDescriptor(LaunchTypeProblemPreference.KEY);
-				LaunchTypeProblemPreference pref = (LaunchTypeProblemPreference) pref1;
-				if (pref == null || pref.isRunningInMode(CheckerLaunchMode.USE_PARENT)) {
-					enabled = true;
-					break;
-				}
+				RootProblemPreference root = ((AbstractCheckerWithProblemPreferences)checker).getTopLevelPreference(problem);
+
+				LaunchModeProblemPreference pref = root.getLaunchModePreference();
+				// XXX: how to set defaults
+
 				if (pref.isRunningInMode(mode)) {
 					enabled = true;
 					break;

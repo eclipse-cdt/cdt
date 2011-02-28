@@ -72,7 +72,7 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
@@ -90,6 +90,8 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 	}
 
 	public void setPreference(IProblemPreference value) {
+		if (value==null)
+			throw new NullPointerException();
 		preference = value;
 	}
 
@@ -99,7 +101,7 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblem#getMessagePattern()
 	 */
 	public String getMessagePattern() {
@@ -126,7 +128,7 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblem#getDescription()
 	 */
 	public String getDescription() {
@@ -135,7 +137,7 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.IProblemWorkingCopy#setDescription(java
 	 * .lang.String)
@@ -146,7 +148,7 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.IProblem#getMarkerType()
 	 */
 	public String getMarkerType() {
@@ -155,7 +157,7 @@ public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 
 	/**
 	 * Sets the marker id for the problem.
-	 * 
+	 *
 	 * @param markerType
 	 */
 	public void setMarkerType(String markerType) {

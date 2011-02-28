@@ -14,8 +14,9 @@ import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
-import org.eclipse.cdt.codan.core.param.LaunchTypeProblemPreference;
+import org.eclipse.cdt.codan.core.param.LaunchModeProblemPreference;
 import org.eclipse.cdt.codan.core.param.MapProblemPreference;
+import org.eclipse.cdt.codan.core.param.RootProblemPreference;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.cdt.codan.internal.ui.preferences.LaunchModesPropertyPage;
 import org.eclipse.core.resources.IResource;
@@ -35,7 +36,7 @@ public class LaunchingTabComposite extends Composite {
 	private LaunchModesPropertyPage page;
 	private IProblem problem;
 	private PreferenceStore prefStore;
-	private LaunchTypeProblemPreference launchPref;
+	private LaunchModeProblemPreference launchPref;
 
 	/**
 	 * @param parent
@@ -51,18 +52,13 @@ public class LaunchingTabComposite extends Composite {
 		this.problem = problem;
 		this.prefStore = new PreferenceStore();
 		IProblemPreference info = problem.getPreference();
-		if (info == null || (!(info instanceof MapProblemPreference))) {
+		if (info == null || (!(info instanceof RootProblemPreference))) {
 			Label label = new Label(this, 0);
 			label.setText(CodanUIMessages.ParametersComposite_None);
 			return;
 		}
-		LaunchTypeProblemPreference launchModes = (LaunchTypeProblemPreference) ((MapProblemPreference) info)
-				.getChildDescriptor(LaunchTypeProblemPreference.KEY);
-		if (launchModes == null) {
-			launchPref = new LaunchTypeProblemPreference();
-		} else {
-			launchPref = (LaunchTypeProblemPreference) launchModes.clone();
-		}
+		LaunchModeProblemPreference launchModes = ((RootProblemPreference) info).getLaunchModePreference();
+		launchPref = (LaunchModeProblemPreference) launchModes.clone();
 		initPrefStore();
 		page = new LaunchModesPropertyPage(prefStore);
 		page.noDefaultAndApplyButton();
@@ -88,12 +84,14 @@ public class LaunchingTabComposite extends Composite {
 	 * @param launchPref2
 	 * @param preferenceStore
 	 */
-	private void saveToPref(LaunchTypeProblemPreference launchPref, IPreferenceStore preferenceStore) {
+	private void saveToPref(LaunchModeProblemPreference launchPref, IPreferenceStore preferenceStore) {
 		CheckerLaunchMode[] values = CheckerLaunchMode.values();
 		for (int i = 0; i < values.length; i++) {
 			CheckerLaunchMode checkerLaunchMode = values[i];
-			if (!preferenceStore.isDefault(checkerLaunchMode.name())) {
-				launchPref.setRunningMode(checkerLaunchMode, preferenceStore.getBoolean(checkerLaunchMode.name()));
+			String name = checkerLaunchMode.name();
+			if (!preferenceStore.isDefault(name)) {
+				boolean value = preferenceStore.getBoolean(name);
+				launchPref.setRunningMode(checkerLaunchMode, value);
 			}
 		}
 	}
@@ -101,10 +99,10 @@ public class LaunchingTabComposite extends Composite {
 	private void initPrefStore() {
 		if (launchPref == null)
 			return;
-		prefStore.setDefault(CheckerLaunchMode.USE_PARENT.name(), true);
 		CheckerLaunchMode[] values = CheckerLaunchMode.values();
 		for (int i = 0; i < values.length; i++) {
 			CheckerLaunchMode checkerLaunchMode = values[i];
+			prefStore.setDefault(checkerLaunchMode.name(), true);
 			prefStore.setValue(checkerLaunchMode.name(), launchPref.isRunningInMode(checkerLaunchMode));
 		}
 	}

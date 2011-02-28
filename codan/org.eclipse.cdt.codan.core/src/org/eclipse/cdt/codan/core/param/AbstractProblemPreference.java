@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import java.io.StreamTokenizer;
 /**
  * Default implementation of problem preference. It keeps preference metadata
  * together with preference value. Some implementations may separate them.
- * 
+ *
  */
 public abstract class AbstractProblemPreference implements IProblemPreference {
 	/**
@@ -49,7 +49,7 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 
 	/**
 	 * Set preference key for itself
-	 * 
+	 *
 	 * @param key
 	 */
 	public void setKey(String key) {
@@ -77,7 +77,7 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 
 	/**
 	 * Sets a label for UI control
-	 * 
+	 *
 	 * @param label
 	 */
 	public void setLabel(String label) {
@@ -88,7 +88,7 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 
 	/**
 	 * Sets tooltip for ui control. Not supported now.
-	 * 
+	 *
 	 * @param tooltip
 	 */
 	public void setToolTip(String tooltip) {
@@ -97,7 +97,7 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 
 	/**
 	 * Sets uiinfo for ui control. Not supported now.
-	 * 
+	 *
 	 * @param uiinfo
 	 */
 	public void setUiInfo(String uiinfo) {
@@ -195,5 +195,13 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 		}
 		String sval = tokenizer.sval;
 		return sval;
+	}
+
+	/**
+	 * @return true when value if default (usually don't require storage in this case)
+	 * @since 2.0
+	 */
+	public boolean isDefault(){
+		return false;
 	}
 }

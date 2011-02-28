@@ -27,7 +27,7 @@ import org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences;
  * "check setters". In this case you use this type.
  * {@link AbstractCheckerWithProblemPreferences} class has map as default top
  * level parameter preference.
- * 
+ *
  * @noextend This class is not intended to be extended by clients.
  */
 public class MapProblemPreference extends AbstractProblemPreference implements IProblemPreferenceCompositeValue,
@@ -58,7 +58,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 
 	/**
 	 * Get parameter preference for element by key
-	 * 
+	 *
 	 */
 	public IProblemPreference getChildDescriptor(String key) {
 		return hash.get(key);
@@ -68,7 +68,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 	 * Adds or replaces child descriptor and value for the element with the key
 	 * equals to desc.getKey(). The desc object would be put in the map, some of
 	 * its field may be modified.
-	 * 
+	 *
 	 * @param desc
 	 */
 	public IProblemPreference addChildDescriptor(IProblemPreference desc) {
@@ -130,6 +130,11 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 		for (Iterator<String> iterator = hash.keySet().iterator(); iterator.hasNext();) {
 			String key = iterator.next();
 			IProblemPreference d = hash.get(key);
+			if (d instanceof AbstractProblemPreference) {
+				if (((AbstractProblemPreference) d).isDefault()) {
+					continue;
+				}
+			}
 			buf.append(key + "=>" + d.exportValue()); //$NON-NLS-1$
 			if (iterator.hasNext())
 				buf.append(","); //$NON-NLS-1$
@@ -160,6 +165,8 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 			}
 			while (true) {
 				token = tokenizer.nextToken();
+				if (token == '}')
+					break;
 				String key = tokenizer.sval;
 				token = tokenizer.nextToken();
 				if (token != '=')
@@ -167,15 +174,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 				token = tokenizer.nextToken();
 				if (token != '>')
 					throw new IllegalArgumentException(String.valueOf((char) token));
-				IProblemPreference desc = getChildDescriptor(key);
-				if (desc == null && LaunchTypeProblemPreference.KEY.equals(key)) {
-					desc = new LaunchTypeProblemPreference();
-					addChildDescriptor(desc);
-				}
-				if (desc != null && desc instanceof AbstractProblemPreference) {
-					((AbstractProblemPreference) desc).importValue(tokenizer);
-					setChildValue(key, desc.getValue());
-				}
+				importChildValue(key, tokenizer);
 				token = tokenizer.nextToken();
 				if (token == '}')
 					break;
@@ -185,6 +184,22 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+
+	/**
+	 * @param key
+	 * @param tokenizer
+	 * @return
+	 * @throws IOException
+	 * @since 2.0
+	 */
+	protected IProblemPreference importChildValue(String key, StreamTokenizer tokenizer) throws IOException {
+		IProblemPreference desc = getChildDescriptor(key);
+		if (desc != null && desc instanceof AbstractProblemPreference) {
+			((AbstractProblemPreference) desc).importValue(tokenizer);
+			setChildValue(key, desc.getValue());
+		}
+		return desc;
 	}
 
 	/**
@@ -233,7 +248,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 	 * this map would be removed.
 	 * Preference descriptors for the keys must be set before calling this
 	 * method, unless value if instanceof {@link IProblemPreference}.
-	 * 
+	 *
 	 * @param value - must be Map<String,Object>
 	 */
 	@SuppressWarnings("unchecked")

@@ -18,7 +18,7 @@ import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.FileScopeProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreferenceCompositeDescriptor;
-import org.eclipse.cdt.codan.core.param.LaunchTypeProblemPreference;
+import org.eclipse.cdt.codan.core.param.LaunchModeProblemPreference;
 import org.eclipse.cdt.codan.core.param.ListProblemPreference;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -90,7 +90,7 @@ public class ParametersComposite extends Composite {
 					return;
 				if (info.getKey() == FileScopeProblemPreference.KEY)
 					return; // skip the scope
-				if (info.getKey() == LaunchTypeProblemPreference.KEY)
+				if (info.getKey() == LaunchModeProblemPreference.KEY)
 					return; // skip the launch
 				switch (info.getType()) {
 					case TYPE_STRING: {

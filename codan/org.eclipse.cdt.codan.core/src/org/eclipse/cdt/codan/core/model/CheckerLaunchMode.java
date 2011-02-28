@@ -12,10 +12,6 @@ package org.eclipse.cdt.codan.core.model;
  */
 public enum CheckerLaunchMode {
 	/**
-	 * use parent settings
-	 */
-	USE_PARENT,
-	/**
 	 * checker run when full build is running
 	 */
 	RUN_ON_FULL_BUILD,

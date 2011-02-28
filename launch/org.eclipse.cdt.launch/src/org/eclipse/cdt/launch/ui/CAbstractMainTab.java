@@ -561,7 +561,8 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		} catch (CoreException ce) {
 			LaunchUIPlugin.log(ce);
 		}
-		fProjText.setText(projectName);
+		if (!fProjText.getText().equals(projectName))
+			fProjText.setText(projectName);
 		updateBuildConfigCombo(configName);		
 	}
 

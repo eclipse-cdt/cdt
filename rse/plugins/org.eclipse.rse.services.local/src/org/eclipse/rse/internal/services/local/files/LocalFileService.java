@@ -69,12 +69,15 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.internal.services.local.Activator;
 import org.eclipse.rse.internal.services.local.ILocalMessageIds;
@@ -1399,12 +1402,13 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 	}
 
 	private boolean isTempFile(File resource){
-		String workspaceLocation = System.getProperty("osgi.instance.area");
-		if (workspaceLocation != null && workspaceLocation.length() > 0){
-			workspaceLocation = workspaceLocation.substring(6).replace('/', File.separatorChar);
-		}
-		String path = resource.getAbsolutePath();
-		return (path.startsWith(workspaceLocation));
+		Location instanceLoc = Platform.getInstanceLocation();
+		URL workspaceLocation = instanceLoc.getURL(); // currently, Eclipse doesn't escape URLs
+
+		String wsLocation = new File(workspaceLocation.getPath()).toURI().toString();
+		String fileLocation = resource.toURI().toString();
+
+		return fileLocation.startsWith(wsLocation);		
 	}
 	
 	/**

@@ -82,7 +82,7 @@ public class CIndex implements IIndex {
 			} else {
 				for (int i = 0; i < fPrimaryFragmentCount; i++) {
 					IIndexFragmentBinding binding= fFragments[i].findBinding((IASTName) name);
-					if (binding!=null) {
+					if (binding != null) {
 						return getCompositesFactory(binding.getLinkage().getLinkageID()).getCompositeBinding(binding);
 					}
 				}
@@ -207,7 +207,7 @@ public class CIndex implements IIndex {
 	public IIndexFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			IIndexFragmentFile candidate= fFragments[i].getFile(linkageID, location);
-			if (candidate!=null && candidate.hasContent()) {
+			if (candidate != null && candidate.hasContent()) {
 				return candidate;
 			}
 		}

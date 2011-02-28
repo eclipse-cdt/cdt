@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.doctools;
 
@@ -72,13 +73,13 @@ class ProjectMap {
 	 */
 	public String getOwnerID(IResource resource) {
 		String id= null;
-		if(resource!=null) {
-			for(IPath p= resource.getProjectRelativePath(); ; p= p.removeLastSegments(1)) {
-				if(fMap.containsKey(p)) {
+		if (resource != null) {
+			for (IPath p= resource.getProjectRelativePath(); ; p= p.removeLastSegments(1)) {
+				if (fMap.containsKey(p)) {
 					id= fMap.get(p);
 					break;
 				}
-				if(p.isEmpty())
+				if (p.isEmpty())
 					break;
 			}
 		}
@@ -94,9 +95,9 @@ class ProjectMap {
 	 */
 	public void setCommentOwner(IResource resource, IDocCommentOwner owner) {
 		Assert.isNotNull(resource);
-		if(ResourcesPlugin.getWorkspace().getRoot().equals(resource))
+		if (ResourcesPlugin.getWorkspace().getRoot().equals(resource))
 			throw new IllegalStateException();
-		if(owner!=null) {
+		if (owner != null) {
 			fMap.put(resource.getProjectRelativePath(), owner.getID());
 		} else {
 			fMap.remove(resource.getProjectRelativePath());
@@ -115,15 +116,17 @@ class ProjectMap {
 	private static Map<IPath, String> load(IProject project) throws CoreException {
 		Map<IPath, String> result= new HashMap<IPath, String>();
 		ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(project, false);
-		ICStorageElement e = pd.getStorage(ATTRVAL_STORAGEID, false);
-		if (e != null) {
-			for (ICStorageElement node : e.getChildrenByName(ELEMENT_DOC_COMMENT_OWNER)) {
-				String commentOwnerID = node.getAttribute(ATTRKEY_DCO_ID);
-				if(commentOwnerID != null) {
-					for (ICStorageElement path : node.getChildrenByName(ELEMENT_PATH)) {
-						String pathValue= path.getAttribute(ATTRKEY_PATH_VALUE);
-						if(pathValue != null) {
-							result.put(Path.fromPortableString(pathValue), commentOwnerID);
+		if (pd != null) {
+			ICStorageElement element = pd.getStorage(ATTRVAL_STORAGEID, false);
+			if (element != null) {
+				for (ICStorageElement node : element.getChildrenByName(ELEMENT_DOC_COMMENT_OWNER)) {
+					String commentOwnerID = node.getAttribute(ATTRKEY_DCO_ID);
+					if (commentOwnerID != null) {
+						for (ICStorageElement path : node.getChildrenByName(ELEMENT_PATH)) {
+							String pathValue= path.getAttribute(ATTRKEY_PATH_VALUE);
+							if(pathValue != null) {
+								result.put(Path.fromPortableString(pathValue), commentOwnerID);
+							}
 						}
 					}
 				}
@@ -144,11 +147,11 @@ class ProjectMap {
 			data.removeChild(child);
 
 		// invert and persist associations
-		for(Iterator<String> i= fMap.values().iterator(); i.hasNext();) {
+		for (Iterator<String> i= fMap.values().iterator(); i.hasNext();) {
 			String cid= i.next();
 			ICStorageElement commentNode = data.createChild(ELEMENT_DOC_COMMENT_OWNER);
 			commentNode.setAttribute(ATTRKEY_DCO_ID, cid);
-			for(Iterator<IPath> j= fMap.keySet().iterator(); j.hasNext(); ) {
+			for (Iterator<IPath> j= fMap.keySet().iterator(); j.hasNext(); ) {
 				IPath path= j.next();
 				String ccid= fMap.get(path);
 				if(cid.equals(ccid)) {

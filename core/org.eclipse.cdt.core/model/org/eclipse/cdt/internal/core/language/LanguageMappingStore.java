@@ -1,13 +1,14 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2011 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
- *   IBM Corporation - Initial API and implementation
- *   James Blackburn (Broadcom Corp.)
+ * Contributors:
+ * 	   IBM Corporation - Initial API and implementation
+ *     James Blackburn (Broadcom Corp.)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.language;
 
@@ -53,21 +54,13 @@ import org.xml.sax.SAXException;
  */
 public class LanguageMappingStore {
 	private static final String LANGUAGE_MAPPING_ID = "org.eclipse.cdt.core.language.mapping"; //$NON-NLS-1$
-
 	private static final String PROJECT_MAPPINGS = "project-mappings"; //$NON-NLS-1$
-
 	private static final String WORKSPACE_MAPPINGS = "workspace-mappings"; //$NON-NLS-1$
-
 	private static final String CONTENT_TYPE_MAPPING = "content-type-mapping"; //$NON-NLS-1$
-
 	private static final String FILE_MAPPING = "file-mapping"; //$NON-NLS-1$
-
 	private static final String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
-
 	private static final String ATTRIBUTE_CONTENT_TYPE = "content-type"; //$NON-NLS-1$
-
 	private static final String ATTRIBUTE_LANGUAGE = "language"; //$NON-NLS-1$
-
 	private static final String ATTRIBUTE_CONFIGURATION = "configuration"; //$NON-NLS-1$
 
 	public LanguageMappingStore() {
@@ -76,16 +69,16 @@ public class LanguageMappingStore {
 	public ProjectLanguageConfiguration decodeMappings(IProject project) throws CoreException {
 		ProjectLanguageConfiguration config = new ProjectLanguageConfiguration();
 		ICProjectDescription descriptor = getProjectDescription(project, false);
-		ICStorageElement rootElement = descriptor.getStorage(LANGUAGE_MAPPING_ID, false);
-		if (rootElement == null) {
-			return config;
-		}
-
-		ICStorageElement[] mappingElements = rootElement.getChildrenByName(PROJECT_MAPPINGS);
-		if (mappingElements.length > 0) {
-			ICStorageElement element = mappingElements[0];
-			config.setContentTypeMappings(decodeProjectContentTypeMappings(element));
-			config.setFileMappings(decodeFileMappings(element));
+		if (descriptor != null) {
+			ICStorageElement rootElement = descriptor.getStorage(LANGUAGE_MAPPING_ID, false);
+			if (rootElement != null) {
+				ICStorageElement[] mappingElements = rootElement.getChildrenByName(PROJECT_MAPPINGS);
+				if (mappingElements.length > 0) {
+					ICStorageElement element = mappingElements[0];
+					config.setContentTypeMappings(decodeProjectContentTypeMappings(element));
+					config.setFileMappings(decodeFileMappings(element));
+				}
+			}
 		}
 		return config;
 	}
@@ -195,7 +188,7 @@ public class LanguageMappingStore {
 			serializer.transform(source, result);
 			String encodedMappings = buffer.getBuffer().toString();
 
-			IEclipsePreferences node = new InstanceScope().getNode(CCorePlugin.PLUGIN_ID);
+			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
 			node.put(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS, encodedMappings);
 			node.flush();
 		} catch (ParserConfigurationException e) {
@@ -208,8 +201,8 @@ public class LanguageMappingStore {
 	}
 
 	public WorkspaceLanguageConfiguration decodeWorkspaceMappings() throws CoreException {
-		IEclipsePreferences node = new InstanceScope().getNode(CCorePlugin.PLUGIN_ID);
-		IEclipsePreferences defaultNode = new DefaultScope().getNode(CCorePlugin.PLUGIN_ID);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
+		IEclipsePreferences defaultNode = DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
 		String encodedMappings = defaultNode.get(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS, null);
 		if (encodedMappings == null) {
 			encodedMappings = node.get(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS, null);
@@ -245,7 +238,8 @@ public class LanguageMappingStore {
 		}
 	}
 
-	private void addMappings(Map<String, String> mappings, Element rootElement, String category, String keyName, String valueName) {
+	private void addMappings(Map<String, String> mappings, Element rootElement, String category,
+			String keyName, String valueName) {
 		Document document = rootElement.getOwnerDocument();
 		Iterator<Entry<String, String>> entries = mappings.entrySet().iterator();
 		while (entries.hasNext()) {

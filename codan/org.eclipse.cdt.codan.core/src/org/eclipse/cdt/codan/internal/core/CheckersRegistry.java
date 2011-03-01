@@ -28,7 +28,6 @@ import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.LaunchModeProblemPreference;
-import org.eclipse.cdt.codan.core.param.RootProblemPreference;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblem;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblemCategory;
 import org.eclipse.cdt.codan.internal.core.model.ProblemProfile;
@@ -442,11 +441,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 			if (problem == null)
 				throw new IllegalArgumentException("Id is not registered"); //$NON-NLS-1$
 			if (checker instanceof AbstractCheckerWithProblemPreferences) {
-				RootProblemPreference root = ((AbstractCheckerWithProblemPreferences)checker).getTopLevelPreference(problem);
-
-				LaunchModeProblemPreference pref = root.getLaunchModePreference();
-				// XXX: how to set defaults
-
+				LaunchModeProblemPreference pref = ((AbstractCheckerWithProblemPreferences) checker).getLaunchModePreference(problem);
 				if (pref.isRunningInMode(mode)) {
 					enabled = true;
 					break;

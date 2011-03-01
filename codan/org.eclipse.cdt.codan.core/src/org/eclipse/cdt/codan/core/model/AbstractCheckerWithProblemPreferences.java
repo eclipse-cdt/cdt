@@ -17,6 +17,7 @@ import org.eclipse.cdt.codan.core.param.BasicProblemPreference;
 import org.eclipse.cdt.codan.core.param.FileScopeProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreferenceDescriptor.PreferenceType;
+import org.eclipse.cdt.codan.core.param.LaunchModeProblemPreference;
 import org.eclipse.cdt.codan.core.param.ListProblemPreference;
 import org.eclipse.cdt.codan.core.param.MapProblemPreference;
 import org.eclipse.cdt.codan.core.param.RootProblemPreference;
@@ -47,6 +48,17 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	public FileScopeProblemPreference getScopePreference(IProblem problem) {
 		FileScopeProblemPreference scope = getTopLevelPreference(problem).getScopePreference();
 		return scope;
+	}
+
+
+	/**
+	 * @param problem - problem for which preference is extracted
+	 * @return launch mode preference
+	 * @since 2.0
+	 */
+	public LaunchModeProblemPreference getLaunchModePreference(IProblem problem) {
+		LaunchModeProblemPreference launchModes = getTopLevelPreference(problem).getLaunchModePreference();
+		return launchModes;
 	}
 
 	/**

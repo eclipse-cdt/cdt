@@ -35,18 +35,18 @@ public class LaunchModeProblemPreference extends MapProblemPreference {
 	 * constructor
 	 */
 	public LaunchModeProblemPreference() {
-
 	}
 
 	/**
 	 * @return true if values has not been set
 	 */
 	@Override
-	public boolean isDefault(){
+	public boolean isDefault() {
 		CheckerLaunchMode[] values = CheckerLaunchMode.values();
 		for (int i = 0; i < values.length; i++) {
 			CheckerLaunchMode checkerLaunchMode = values[i];
-			if (getChildDescriptor(checkerLaunchMode.name())!=null) return false;
+			if (getChildDescriptor(checkerLaunchMode.name()) != null)
+				return false;
 		}
 		return true;
 	}
@@ -69,7 +69,7 @@ public class LaunchModeProblemPreference extends MapProblemPreference {
 	 * @return true if this mode enabled for this preference
 	 */
 	public boolean isRunningInMode(CheckerLaunchMode mode) {
-		if (getChildDescriptor(mode.name())==null) {
+		if (getChildDescriptor(mode.name()) == null) {
 			if (mode == CheckerLaunchMode.RUN_ON_INC_BUILD)
 				return isRunningInMode(CheckerLaunchMode.RUN_ON_FULL_BUILD);
 			return true; // default is true
@@ -82,6 +82,7 @@ public class LaunchModeProblemPreference extends MapProblemPreference {
 	}
 
 	/**
+	 * Set a single running mode to a value (if mode is not defined it value assumed to be true!)
 	 * @param mode
 	 * @param value
 	 */
@@ -90,6 +91,24 @@ public class LaunchModeProblemPreference extends MapProblemPreference {
 			addLaunchMode(mode, value);
 		} else {
 			setChildValue(mode.name(), value);
+		}
+	}
+
+	/**
+	 * Set modes in the argument list to true, and the rest to false
+	 * @param modes
+	 */
+	public void enableInLaunchModes(CheckerLaunchMode... modes) {
+		CheckerLaunchMode[] all = CheckerLaunchMode.values();
+		for (int i = 0; i < all.length; i++) {
+			CheckerLaunchMode mode = all[i];
+			if (getChildDescriptor(mode.name()) == null) {
+				addLaunchMode(mode, false);
+			}
+		}
+		for (int i = 0; i < modes.length; i++) {
+			CheckerLaunchMode mode = modes[i];
+			setChildValue(mode.name(), true);
 		}
 	}
 
@@ -112,9 +131,9 @@ public class LaunchModeProblemPreference extends MapProblemPreference {
 	@Override
 	protected IProblemPreference importChildValue(String key, StreamTokenizer tokenizer) throws IOException {
 		IProblemPreference desc = getChildDescriptor(key);
-		if (desc==null) {
+		if (desc == null) {
 			CheckerLaunchMode mode = CheckerLaunchMode.valueOf(key);
-			if (mode==null)
+			if (mode == null)
 				throw new IllegalArgumentException(key);
 			desc = addLaunchMode(mode, true);
 		}

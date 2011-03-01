@@ -14,6 +14,8 @@ package org.eclipse.cdt.codan.internal.checkers;
 import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
+import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
+import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -57,6 +59,16 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 	@Override
 	public boolean runInEditor() {
 		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences#initPreferences(org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
+	 */
+	@Override
+	public void initPreferences(IProblemWorkingCopy problem) {
+		super.initPreferences(problem);
+		// these checkers should not run on full or incremental build
+		getLaunchModePreference(problem).enableInLaunchModes(CheckerLaunchMode.RUN_AS_YOU_TYPE, CheckerLaunchMode.RUN_ON_DEMAND);
 	}
 
 	public void processAst(IASTTranslationUnit ast) {

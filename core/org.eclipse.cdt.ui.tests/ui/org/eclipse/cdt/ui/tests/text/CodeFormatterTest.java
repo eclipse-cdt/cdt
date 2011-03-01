@@ -974,6 +974,21 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//void f1(const char* long_parameter_name,int very_looooooooong_parameter_name){}
+	//void f2(const char* long_parameter_name,int very_loooooooooong_parameter_name){}
+
+	//void f1(const char* long_parameter_name, int very_looooooooong_parameter_name) {
+	//}
+	//void f2(const char* long_parameter_name,
+	//        int very_loooooooooong_parameter_name) {
+	//}
+	public void testFunctionDefinition() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
+				Integer.toString(Alignment.M_NEXT_PER_LINE_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		assertFormatterResult();
+	}
+
 	//int f1(int a, int b, int c, int d, int e, int f, int g);
 	//int f2(int a, int b, int c, int d, int e, int f, int g);
 	//

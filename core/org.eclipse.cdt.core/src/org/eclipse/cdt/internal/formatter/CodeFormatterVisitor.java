@@ -186,7 +186,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	/*
 	 * Formats a given token at a given position.
-	 * @see #formatList(List, ListAlignment, boolean, boolean, Runnable)
+	 * @see #formatList(List, ListOptions, boolean, boolean, Runnable)
 	 */
 	class TrailingTokenFormatter implements Runnable {
 		private final int tokenType;
@@ -210,7 +210,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				scribe.restartAtOffset(tokenPosition);
 			int token= peekNextToken();
 			if (token == tokenType) {
-				scribe.pendingSpace = false;
+				if (scribe.pendingSpace) {
+					scribe.pendingSpace = false;
+					scribe.needSpace = true;
+				}
 				scribe.printNextToken(tokenType, spaceBeforeToken);
 				scribe.printTrailingComment();
 				if (spaceAfterToken) {
@@ -222,7 +225,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	/*
 	 * Formats a trailing comma.
-	 * @see #formatList(List, ListAlignment, boolean, boolean, Runnable)
+	 * @see #formatList(List, ListOptions, boolean, boolean, Runnable)
 	 */
 	class TrailingCommaFormatter extends TrailingTokenFormatter {
 		TrailingCommaFormatter(boolean spaceBeforeComma, boolean spaceAfterComma) {
@@ -232,7 +235,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	/*
 	 * Formats a trailing semicolon.
-	 * @see #formatList(List, ListAlignment, boolean, boolean, Runnable)
+	 * @see #formatList(List, ListOptions, boolean, boolean, Runnable)
 	 */
 	class TrailingSemicolonFormatter extends TrailingTokenFormatter {
 		TrailingSemicolonFormatter(IASTNode node) {
@@ -245,7 +248,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	/*
 	 * Formats the part of a function declaration following the parameter list.
-	 * @see #formatList(List, ListAlignment, boolean, boolean, Runnable)
+	 * @see #formatList(List, ListOptions, boolean, boolean, Runnable)
 	 */
 	public class CPPFunctionDeclaratorTailFormatter implements Runnable {
 		private final ICPPASTFunctionDeclarator node;
@@ -288,7 +291,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			if (parenPosition >= 0 && offset <= parenPosition) {
 				if (offset < parenPosition)
 					scribe.restartAtOffset(parenPosition);
-				scribe.pendingSpace = false;
+				if (scribe.pendingSpace) {
+					scribe.pendingSpace = false;
+					scribe.needSpace = true;
+				}
 				scribe.printNextToken(Token.tRPAREN, spaceBeforeClosingParen);
 			}
 			if (continuationFormatter != null)
@@ -1246,6 +1252,17 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (needSpace) {
 			scribe.space();
 		}
+		Runnable bodyLeftBraceFormatter = null;
+		if (DefaultCodeFormatterConstants.END_OF_LINE.equals(preferences.brace_position_for_method_declaration) &&
+				!hasMemberInitializers(node) && !(node instanceof ICPPASTFunctionWithTryBlock)) {
+			IASTStatement body = node.getBody();
+			if (body instanceof IASTCompoundStatement && !startsWithMacroExpansion(body)) {
+				bodyLeftBraceFormatter = new TrailingTokenFormatter(Token.tLBRACE,
+						body.getFileLocation().getNodeOffset(),
+						preferences.insert_space_before_opening_brace_in_method_declaration, false);
+				scribe.setTailFormatter(bodyLeftBraceFormatter);
+			}
+		}
 		declarator.accept(this);
 
 		if (node instanceof ICPPASTFunctionWithTryBlock) {
@@ -1277,13 +1294,18 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				scribe.unIndentForContinuation();
 			}
 		}
-		
-		// body
+	
+		if (bodyLeftBraceFormatter != null) {
+			scribe.setTailFormatter(null);
+		}
+		// Body
 		IASTStatement bodyStmt= node.getBody();
 		if (bodyStmt instanceof IASTCompoundStatement) {
 			if (startNode(bodyStmt)) {
 				try {
-			        formatLeftCurlyBrace(line, preferences.brace_position_for_method_declaration);
+					if (scribe.scanner.getCurrentPosition() <= bodyStmt.getFileLocation().getNodeOffset()) {
+						formatLeftCurlyBrace(line, preferences.brace_position_for_method_declaration);
+					}
 					formatBlock((IASTCompoundStatement) bodyStmt,
 							preferences.brace_position_for_method_declaration,
 							preferences.insert_space_before_opening_brace_in_method_declaration,
@@ -3598,7 +3620,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	private void formatBlockOpening(IASTCompoundStatement block, String block_brace_position,
 			boolean insertSpaceBeforeOpeningBrace) {
 		if (!startsWithMacroExpansion(block)) {
-			formatOpeningBrace(block_brace_position, insertSpaceBeforeOpeningBrace);
+			if (scribe.scanner.getCurrentPosition() <= block.getFileLocation().getNodeOffset()) {
+				formatOpeningBrace(block_brace_position, insertSpaceBeforeOpeningBrace);
+			}
 		} else {
 			scribe.startNewLine();
 			scribe.printComment();
@@ -3641,7 +3665,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	private void formatLeftCurlyBrace(final int line, final String bracePosition) {
 		scribe.formatBrace = true;
 		try {
-	        // deal with (quite unexpected) comments right before lcurly
+	        // Deal with (quite unexpected) comments right before left curly brace.
 	        scribe.printComment();
 	        if (DefaultCodeFormatterConstants.NEXT_LINE_ON_WRAP.equals(bracePosition)
 	                && (scribe.line > line || scribe.column >= preferences.page_width)) {
@@ -3660,7 +3684,6 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			scribe.indent();
 		}
 		scribe.printNextToken(Token.tLBRACE, insertSpaceBeforeBrace);
-
 		scribe.printTrailingComment();
 	}
 
@@ -3880,5 +3903,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			// handle dangling #if?
 		}
 		return positions;
+	}
+
+	private boolean hasMemberInitializers(IASTFunctionDefinition node) {
+		return node instanceof ICPPASTFunctionDefinition &&
+				((ICPPASTFunctionDefinition) node).getMemberInitializers().length > 0;
 	}
 }

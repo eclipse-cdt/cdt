@@ -2196,7 +2196,7 @@ public class DefaultCodeFormatterConstants {
 	/**
 	 * <pre>
 	 * FORMATTER / Value to set a brace location at the start of the next line if a wrapping
-	 *             occured.
+	 *             occurred.
 	 * </pre>
 	 * @see #FORMATTER_BRACE_POSITION_FOR_INITIALIZER_LIST
 	 * @see #FORMATTER_BRACE_POSITION_FOR_BLOCK

@@ -25,7 +25,6 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
-import org.eclipse.ui.internal.progress.ProgressMessages;
 
 public class SystemViewFormLabelAndContentProvider extends
 		SystemViewLabelAndContentProvider {
@@ -57,7 +56,7 @@ public class SystemViewFormLabelAndContentProvider extends
 				public void run(IProgressMonitor monitor)
 						throws InvocationTargetException, InterruptedException {
 					
-					String taskName = NLS.bind(ProgressMessages.DeferredTreeContentManager_FetchingName, fadapter.getAbsoluteName(felement));
+					String taskName = NLS.bind(SystemViewResources.RESID_FETCHING_CHILDREN_OF, fadapter.getAbsoluteName(felement));
 					monitor.beginTask(taskName, IProgressMonitor.UNKNOWN);
 				  	  if (fparent instanceof IContextObject){
 			    		  _children = fadapter.getChildren((IContextObject)fparent, monitor);
@@ -71,17 +70,15 @@ public class SystemViewFormLabelAndContentProvider extends
 				public Object[] getChildren(){
 					return _children;
 				}    		  
-	    	  };
+	    	  }
 	    	  
 	    	  MyRunnable runnable = new MyRunnable();
 	    	  try {
 				irc.run(true, true, runnable);
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				SystemBasePlugin.logError(e.getMessage());
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				SystemBasePlugin.logError(e.getMessage());
 			}
 			return runnable.getChildren();
     	}

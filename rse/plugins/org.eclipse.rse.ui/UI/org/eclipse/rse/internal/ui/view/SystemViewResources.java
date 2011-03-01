@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [216252] [nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  * Xuan Chen        (IBM)        - [222263] Need to provide a PropertySet Adapter for System Team View
+ * David McKnight   (IBM)        - [334295] SystemViewForm dialogs don't display cancellable progress in the dialog
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -135,6 +136,7 @@ public class SystemViewResources extends NLS {
 	public static String    RESID_REMOTE_SCRATCHPAD;
 	
 	public static String    RESID_FETCHING;
+	public static String    RESID_FETCHING_CHILDREN_OF;
 
 	static {
 		// load message values from bundle file

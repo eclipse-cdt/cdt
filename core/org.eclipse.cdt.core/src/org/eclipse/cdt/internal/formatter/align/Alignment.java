@@ -221,7 +221,7 @@ public class Alignment {
 				}
 			}
 			// backtrack only once all fragments got checked
-			if (this.needRedoColumnAlignment && this.fragmentIndex == this.fragmentCount-1) { // alignment too small
+			if (this.needRedoColumnAlignment && this.fragmentIndex == this.fragmentCount - 1) { // alignment too small
 //				if (CodeFormatterVisitor.DEBUG) {
 //					System.out.println("ALIGNMENT TOO SMALL");
 //					System.out.println(this);
@@ -410,7 +410,7 @@ public class Alignment {
 				.append(i)
 				.append(": ")	//$NON-NLS-1$
 				.append("<break: ")	//$NON-NLS-1$
-				.append(this.fragmentBreaks[i] > 0 ? "YES" : "NO")	//$NON-NLS-1$	//$NON-NLS-2$
+				.append(this.fragmentBreaks[i] > 0 ? "YES" : "NO")	//$NON-NLS-1$ //$NON-NLS-2$
 				.append(">")	//$NON-NLS-1$
 				.append("<indent: ")	//$NON-NLS-1$
 				.append(this.fragmentIndentations[i])

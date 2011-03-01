@@ -69,14 +69,19 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.internal.services.local.Activator;
@@ -1402,13 +1407,20 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 	}
 
 	private boolean isTempFile(File resource){
-		Location instanceLoc = Platform.getInstanceLocation();
-		URL workspaceLocation = instanceLoc.getURL(); // currently, Eclipse doesn't escape URLs
-
-		String wsLocation = new File(workspaceLocation.getPath()).toURI().toString();
-		String fileLocation = resource.toURI().toString();
-
-		return fileLocation.startsWith(wsLocation);		
+		try {
+			URI wsURI = URIUtil.toURI(Platform.getInstanceLocation().getURL());
+			File wsRoot = URIUtil.toFile(wsURI);
+			if (wsRoot!=null) {
+			  File rsProj = new File(wsRoot, "RemoteSystemsTempFiles"); //$NON-NLS-1$
+			  IPath rsProjPath = new Path(rsProj.getAbsolutePath());
+			  IPath resPath = new Path(resource.getAbsolutePath());
+			  return rsProjPath.isPrefixOf(resPath);
+			  //could also compare canonical paths at this point but won't do here
+			  //since it is costly and most likely not needed for the Tempfiles project.
+			}
+		} catch (URISyntaxException e) {
+		}
+		return false;
 	}
 	
 	/**

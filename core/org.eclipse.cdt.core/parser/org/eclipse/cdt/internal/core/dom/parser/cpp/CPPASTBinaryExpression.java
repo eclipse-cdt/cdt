@@ -180,7 +180,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 			if (stack.fState == 0) {
 				if (action.shouldVisitExpressions) {
 					switch (action.visit(expr)) {
-					case ASTVisitor.PROCESS_ABORT :
+					case ASTVisitor.PROCESS_ABORT:
 						return false;
 					case ASTVisitor.PROCESS_SKIP:
 						stack= stack.fNext;

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -26,7 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * Cast expression for c++
+ * Cast expression for C++
  */
 public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpression, IASTAmbiguityParent {
     private int op;
@@ -53,7 +53,6 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
-    
 
 	public void setTypeId(IASTTypeId typeId) {
         assertNotFrozen();
@@ -91,24 +90,24 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
     }
     
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
-        if( typeId != null ) if( !typeId.accept( action ) ) return false;
+        if (typeId != null && !typeId.accept(action)) return false;
         IASTExpression op = getOperand();
-        if( op != null ) if( !op.accept( action ) ) return false;
+        if (op != null && !op.accept(action)) return false;
         
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
@@ -141,6 +140,4 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 	public boolean isLValue() {
 		return getValueCategory() == LVALUE;
 	}
-	
-	
 }

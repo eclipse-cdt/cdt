@@ -2122,7 +2122,7 @@ public class Scribe {
 
 	/*
 	 * Returns the tail formatter associated with the current alignment or, if there is no current
-	 * alignment, with the Scribe itself.
+	 * alignment, with the scribe itself.
 	 * @see #tailFormatter
 	 */
 	public Runnable getTailFormatter() {
@@ -2134,8 +2134,26 @@ public class Scribe {
 	}
 
 	/*
+	 * Returns the tail formatter associated with the current alignment or, if there is no current
+	 * alignment, with the scribe itself. The tail formatter associated with the alignment or
+	 * the scribe is set to {@code null}.
+	 * @see #tailFormatter
+	 */
+	public Runnable takeTailFormatter() {
+		Runnable formatter;
+		if (currentAlignment != null) {
+			formatter = currentAlignment.tailFormatter;
+			currentAlignment.tailFormatter = null;
+		} else {
+			formatter = this.tailFormatter;
+			this.tailFormatter = null;
+		}
+		return formatter;
+	}
+
+	/*
 	 * Sets the tail formatter associated with the current alignment or, if there is no current
-	 * alignment, with the Scribe itself.
+	 * alignment, with the scribe itself.
 	 * @see #tailFormatter
 	 */
 	public void setTailFormatter(Runnable tailFormatter) {
@@ -2148,7 +2166,7 @@ public class Scribe {
 
 	/*
 	 * Runs the tail formatter associated with the current alignment or, if there is no current
-	 * alignment, with the Scribe itself.
+	 * alignment, with the scribe itself.
 	 * @see #tailFormatter
 	 */
 	public void runTailFormatter() {

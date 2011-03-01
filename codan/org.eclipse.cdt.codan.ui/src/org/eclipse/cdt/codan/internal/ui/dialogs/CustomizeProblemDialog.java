@@ -12,8 +12,11 @@ package org.eclipse.cdt.codan.internal.ui.dialogs;
 
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
+import org.eclipse.cdt.codan.core.param.RootProblemPreference;
+import org.eclipse.cdt.codan.internal.core.model.CodanProblem;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.cdt.codan.internal.ui.widgets.CustomizeProblemComposite;
+import org.eclipse.cdt.codan.internal.ui.widgets.ParametersComposite;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -29,6 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 public class CustomizeProblemDialog extends TitleAreaDialog {
 	private CustomizeProblemComposite comp;
 	private IProblem problem;
+	private IProblem[] problems;
 	private IResource resource;
 
 	/**
@@ -36,11 +40,28 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 	 * @param selectedProblem
 	 * @param iResource
 	 */
-	public CustomizeProblemDialog(Shell parentShell, IProblem selectedProblem, IResource resource) {
+	public CustomizeProblemDialog(Shell parentShell, IProblem[] selectedProblems, IResource resource) {
 		super(parentShell);
-		this.problem = selectedProblem;
+		this.problems = selectedProblems;
+		this.problem = buildCombined(selectedProblems);
 		this.resource = resource;
 		setShellStyle(getShellStyle() | SWT.RESIZE);
+	}
+
+	/**
+	 * @param selectedProblems
+	 * @return
+	 */
+	private IProblem buildCombined(IProblem[] selectedProblems) {
+		if (selectedProblems.length == 1) {
+			return selectedProblems[0];
+		}
+		CodanProblem problem = new CodanProblem("multi", getTitle());
+		problem.setMessagePattern(ParametersComposite.NO_CHANGE);
+		problem.setPreference(new RootProblemPreference());
+		problem.setSeverity(selectedProblems[0].getSeverity());
+		problem.setEnabled(selectedProblems[0].isEnabled());
+		return problem;
 	}
 
 	/**
@@ -63,7 +84,7 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		getShell().setText(CodanUIMessages.CustomizeProblemDialog_Title);
-		setTitle(problem.getName());
+		setTitle(getTitle());
 		setMessage(CodanUIMessages.CustomizeProblemDialog_Message);
 		Composite area = (Composite) super.createDialogArea(parent);
 		comp = new CustomizeProblemComposite(area, problem, resource);
@@ -73,6 +94,22 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 		return area;
 	}
 
+	/**
+	 * @return
+	 */
+	public String getTitle() {
+		if (problems.length == 1)
+			return problem.getName();
+		String b = ""; //$NON-NLS-1$
+		for (int i = 0; i < problems.length; i++) {
+			IProblem p = problems[i];
+			if (i != 0)
+				b += ", "; //$NON-NLS-1$
+			b += p.getName();
+		}
+		return b;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -80,7 +117,10 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 	 */
 	@Override
 	protected void okPressed() {
-		save((IProblemWorkingCopy) problem);
+		for (int i = 0; i < problems.length; i++) {
+			IProblemWorkingCopy wc = (IProblemWorkingCopy) problems[i];
+			save(wc);
+		}
 		super.okPressed();
 	}
 }

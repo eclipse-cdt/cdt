@@ -45,6 +45,7 @@ public class ParametersComposite extends Composite {
 	private static final String PREF_ENABLED = "enabled"; //$NON-NLS-1$
 	private static final String PREF_SEVERITY = "severity"; //$NON-NLS-1$
 	private static final String PREF_MESSAGE = "message"; //$NON-NLS-1$
+	public static final String NO_CHANGE = "<do not change>";
 	private FieldEditorPreferencePage page;
 	private IProblem problem;
 	private PreferenceStore prefStore;
@@ -70,6 +71,7 @@ public class ParametersComposite extends Composite {
 				String[][] entries = { { CodanSeverity.Error.toString(), CodanSeverity.Error.toString() }, //
 						{ CodanSeverity.Warning.toString(), CodanSeverity.Warning.toString() }, //
 						{ CodanSeverity.Info.toString(), CodanSeverity.Info.toString() }, //
+						{ NO_CHANGE, NO_CHANGE }, //
 				};
 				addField(new ComboFieldEditor(PREF_SEVERITY, CodanUIMessages.ParametersComposite_Severity, entries, getFieldEditorParent()));
 				addField(new StringFieldEditor(PREF_MESSAGE, CodanUIMessages.ParametersComposite_MessagePattern, getFieldEditorParent()));
@@ -183,17 +185,25 @@ public class ParametersComposite extends Composite {
 		} else {
 			initPrefStore(info);
 		}
-		prefStore.setValue(PREF_ENABLED, problem.isEnabled());
-		prefStore.setValue(PREF_SEVERITY, problem.getSeverity().toString());
-		prefStore.setValue(PREF_MESSAGE, problem.getMessagePattern());
+		prefStore.setDefault(PREF_ENABLED, problem.isEnabled());
+		if (problem.getMessagePattern() == NO_CHANGE) {
+			prefStore.setDefault(PREF_SEVERITY, NO_CHANGE);
+		} else {
+			prefStore.setDefault(PREF_SEVERITY, problem.getSeverity().toString());
+		}
+		prefStore.setDefault(PREF_MESSAGE, problem.getMessagePattern());
 	}
 
 	public void save(IProblemWorkingCopy problem) {
 		page.performOk();
 		savePrefStore(problem.getPreference());
 		problem.setEnabled(prefStore.getBoolean(PREF_ENABLED));
-		problem.setSeverity(CodanSeverity.valueOf(prefStore.getString(PREF_SEVERITY)));
-		problem.setMessagePattern(prefStore.getString(PREF_MESSAGE));
+		String severity = prefStore.getString(PREF_SEVERITY);
+		if (!severity.equals(NO_CHANGE))
+			problem.setSeverity(CodanSeverity.valueOf(severity));
+		String message = prefStore.getString(PREF_MESSAGE);
+		if (!message.equals(NO_CHANGE))
+			problem.setMessagePattern(message);
 	}
 
 	private void savePrefStore(IProblemPreference desc) {
@@ -237,22 +247,28 @@ public class ParametersComposite extends Composite {
 		String key = desc.getQualifiedKey();
 		switch (desc.getType()) {
 			case TYPE_STRING:
-				prefStore.setValue(key, (String) desc.getValue());
+				prefStore.setDefault(key, (String) desc.getValue());
+				//prefStore.setValue(key, (String) desc.getValue());
 				break;
 			case TYPE_BOOLEAN:
-				prefStore.setValue(key, (Boolean) desc.getValue());
+				prefStore.setDefault(key, (Boolean) desc.getValue());
+				//prefStore.setValue(key, (Boolean) desc.getValue());
 				break;
 			case TYPE_INTEGER:
-				prefStore.setValue(key, (Integer) desc.getValue());
+				prefStore.setDefault(key, (Integer) desc.getValue());
+				//prefStore.setValue(key, (Integer) desc.getValue());
 				break;
 			case TYPE_FILE:
-				prefStore.setValue(key, ((File) desc.getValue()).getPath());
+				prefStore.setDefault(key, ((File) desc.getValue()).getPath());
+				//prefStore.setValue(key, ((File) desc.getValue()).getPath());
 				break;
 			case TYPE_LIST:
-				prefStore.setValue(key, desc.exportValue());
+				prefStore.setDefault(key, desc.exportValue());
+				//prefStore.setValue(key, desc.exportValue());
 				break;
 			case TYPE_CUSTOM:
-				prefStore.setValue(key, desc.exportValue());
+				prefStore.setDefault(key, desc.exportValue());
+				//prefStore.setValue(key, desc.exportValue());
 				break;
 			case TYPE_MAP:
 				IProblemPreference[] childrenDescriptor = ((IProblemPreferenceCompositeDescriptor) desc).getChildDescriptors();

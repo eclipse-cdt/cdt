@@ -1,5 +1,9 @@
 package org.eclipse.cdt.codan.internal.ui.actions;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblem;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
@@ -21,17 +25,23 @@ public class OpenProblemPreferences implements IObjectActionDelegate {
 
 	public void run(IAction action) {
 		if (selection instanceof IStructuredSelection) {
-			Object firstElement = ((IStructuredSelection) selection).getFirstElement(); // TODO support multiple
-			if (firstElement instanceof IMarker) {
-				IMarker marker = (IMarker) firstElement;
-				String id = CodanProblemMarker.getProblemId(marker);
-				if (id == null)
-					return;
-				IResource resource = marker.getResource();
-				IProblemProfile profile = CodanProblemMarker.getProfile(resource);
-				CodanProblem problem = ((CodanProblem) profile.findProblem(id));
-				new CustomizeProblemDialog(targetPart.getSite().getShell(), problem, resource).open();
+			IStructuredSelection ss = (IStructuredSelection) selection;
+			ArrayList<IProblem> list = new ArrayList<IProblem>();
+			IResource resource = null;
+			for (Iterator<?> iterator = ss.iterator(); iterator.hasNext();) {
+				Object el = iterator.next();
+				if (el instanceof IMarker) {
+					IMarker marker = (IMarker) el;
+					String id = CodanProblemMarker.getProblemId(marker);
+					if (id == null)
+						return;
+					resource = marker.getResource();
+					IProblemProfile profile = CodanProblemMarker.getProfile(resource);
+					CodanProblem problem = ((CodanProblem) profile.findProblem(id));
+					list.add(problem);
+				}
 			}
+			new CustomizeProblemDialog(targetPart.getSite().getShell(), list.toArray(new IProblem[list.size()]), resource).open();
 		}
 	}
 

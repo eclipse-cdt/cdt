@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
@@ -53,7 +56,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private IProblemProfile profile;
 	private ISelectionChangedListener problemSelectionListener;
-	private IProblem selectedProblem;
+	private ArrayList<IProblem> selectedProblems;
 	private Button infoButton;
 	private ProblemsTreeEditor checkedTreeEditor;
 
@@ -66,10 +69,14 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 				if (infoButton != null) {
 					if (event.getSelection() instanceof ITreeSelection) {
 						ITreeSelection s = (ITreeSelection) event.getSelection();
-						if (s.getFirstElement() instanceof IProblem)
-							setSelectedProblem((IProblem) s.getFirstElement());
-						else
-							setSelectedProblem(null);
+						ArrayList<IProblem> list = new ArrayList<IProblem>();
+						for (Iterator iterator = s.iterator(); iterator.hasNext();) {
+							Object o = iterator.next();
+							if (o instanceof IProblem) {
+								list.add((IProblem) o);
+							}
+						}
+						setSelectedProblems(list);
 					}
 				}
 			}
@@ -124,7 +131,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 		Composite info = new Composite(comp, SWT.NONE);
 		info.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout(1, false);
-		layout.marginWidth=0;
+		layout.marginWidth = 0;
 		info.setLayout(layout);
 		infoButton = new Button(info, SWT.PUSH);
 		infoButton.setLayoutData(GridDataFactory.swtDefaults().align(SWT.END, SWT.BEGINNING).create());
@@ -141,8 +148,8 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 	/**
 	 * @param selection
 	 */
-	protected void setSelectedProblem(IProblem problem) {
-		this.selectedProblem = problem;
+	protected void setSelectedProblems(ArrayList<IProblem> list) {
+		this.selectedProblems = list;
 		updateProblemInfo();
 	}
 
@@ -167,8 +174,11 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 	}
 
 	private void saveWidgetValues() {
-		CodanUIActivator.getDefault().getDialogSettings()
-				.put(getWidgetId(), selectedProblem == null ? EMPTY_STRING : selectedProblem.getId());
+		CodanUIActivator
+				.getDefault()
+				.getDialogSettings()
+				.put(getWidgetId(),
+						(selectedProblems == null || selectedProblems.size() == 0) ? EMPTY_STRING : selectedProblems.get(0).getId());
 	}
 
 	private void restoreWidgetValues() {
@@ -176,7 +186,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 		if (id != null && id.length() > 0 && checkedTreeEditor != null) {
 			checkedTreeEditor.getTreeViewer().setSelection(new StructuredSelection(profile.findProblem(id)), true);
 		} else {
-			setSelectedProblem(null);
+			setSelectedProblems(null);
 		}
 	}
 
@@ -188,7 +198,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 	}
 
 	private void updateProblemInfo() {
-		if (selectedProblem == null) {
+		if (selectedProblems == null) {
 			infoButton.setEnabled(false);
 		} else {
 			infoButton.setEnabled(true);
@@ -205,9 +215,11 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 	}
 
 	protected void openCustomizeDialog() {
-		if (selectedProblem == null)
+		if (selectedProblems == null || selectedProblems.size() == 0)
 			return;
-		CustomizeProblemDialog dialog = new CustomizeProblemDialog(getShell(), selectedProblem, (IResource) getElement());
+		CustomizeProblemDialog dialog = new CustomizeProblemDialog(getShell(), selectedProblems.toArray(new IProblem[selectedProblems
+				.size()]), (IResource) getElement());
 		dialog.open();
+		checkedTreeEditor.getTreeViewer().refresh(true);
 	}
 }

@@ -18,7 +18,7 @@ import java.util.Iterator;
 
 /**
  * List implementation of IProblemPreference.
- * 
+ *
  * @noextend This class is not intended to be extended by clients.
  */
 public class ListProblemPreference extends AbstractProblemPreference implements IProblemPreferenceCompositeValue,
@@ -49,7 +49,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 	/**
 	 * Set child descriptor (all elements have the same). Value and key
 	 * of it would be ignored and reset.
-	 * 
+	 *
 	 * @param desc
 	 * @return set child descriptor
 	 */
@@ -66,7 +66,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 	 * Sets common descriptor for all elements, if value if not null sets the
 	 * value for its key also. Do not make assumptions of values of desc after
 	 * you pass it to this function.
-	 * 
+	 *
 	 * @return read only preference matching the key
 	 */
 	public IProblemPreference addChildDescriptor(IProblemPreference desc) {
@@ -78,7 +78,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 	}
 
 	/**
-	 * 
+	 *
 	 * @return descriptor of the child elements
 	 */
 	public IProblemPreference getChildDescriptor() {
@@ -88,7 +88,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 	/**
 	 * Returns cloned descriptor of the i'th child. Modifying return value would
 	 * not affect internal state of the list element.
-	 * 
+	 *
 	 * @param i - index of the element
 	 * @return child preference
 	 */
@@ -103,7 +103,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 	/**
 	 * Get read only problem preference for element equal to key's int value.
 	 * If key is null or # return generic descriptor with null value.
-	 * 
+	 *
 	 * @throws NumberFormatException
 	 *         if key is not number
 	 */
@@ -170,7 +170,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 
 	/**
 	 * Adds value to the list
-	 * 
+	 *
 	 * @param value
 	 */
 	public void addChildValue(Object value) {
@@ -211,6 +211,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 
 	@Override
 	public void importValue(String str) {
+		if (str.length()==0) return;
 		StreamTokenizer tokenizer = getImportTokenizer(str);
 		try {
 			importValue(tokenizer);
@@ -288,7 +289,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 
 	/**
 	 * Sets list value to values of array given as argument.
-	 * 
+	 *
 	 * @param value - must be Object[]
 	 */
 	@Override

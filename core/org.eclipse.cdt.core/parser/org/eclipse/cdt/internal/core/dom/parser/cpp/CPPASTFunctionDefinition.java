@@ -32,7 +32,6 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  */
 public class CPPASTFunctionDefinition extends ASTNode
 		implements ICPPASTFunctionDefinition, IASTAmbiguityParent {
-
     private IASTDeclSpecifier declSpecifier;
     private IASTFunctionDeclarator declarator;
     private IASTStatement bodyStatement;
@@ -112,7 +111,6 @@ public class CPPASTFunctionDefinition extends ASTNode
 		} 
     }
 
-    
 	public void addMemberInitializer(ICPPASTConstructorChainInitializer initializer) {
         assertNotFrozen();
     	if (initializer != null) {
@@ -131,7 +129,7 @@ public class CPPASTFunctionDefinition extends ASTNode
 	}
 
 	public IScope getScope() {
-		return ((ICPPASTFunctionDeclarator)declarator).getFunctionScope();
+		return ((ICPPASTFunctionDeclarator) declarator).getFunctionScope();
 	}
 
 	public boolean isDefaulted() {

@@ -5258,4 +5258,12 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testSyntaxErrorInReturnTypeOfFunctionInstance_Bug336426() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T> struct A {};
+	//	template <typename Functor> void f(Functor functor) {
+	//	    A<decltype(functor())> a;  
+	//	}
+	public void testFunctionCallOnDependentName_Bug337686() throws Exception {
+		parseAndCheckBindings();
+	}
 }

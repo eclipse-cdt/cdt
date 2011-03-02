@@ -42,6 +42,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 
@@ -250,6 +251,8 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 		if (t instanceof IFunctionType) {
 			return typeFromReturnType(((IFunctionType) t).getReturnType());
 		}
+		if (CPPTemplates.isDependentType(t))
+			return CPPUnknownClass.createUnnamedInstance();
 
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
     }

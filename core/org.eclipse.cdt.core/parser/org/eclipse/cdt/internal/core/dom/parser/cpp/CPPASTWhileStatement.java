@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -22,11 +22,10 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
- * While statement in c++.
+ * While statement in C++.
  */
-public class CPPASTWhileStatement extends ASTNode implements
-        ICPPASTWhileStatement, IASTAmbiguityParent {
-	
+public class CPPASTWhileStatement extends ASTNode
+		implements ICPPASTWhileStatement, IASTAmbiguityParent {
     private IASTExpression condition;
     private IASTStatement body;
     private IASTDeclaration condition2;
@@ -96,23 +95,23 @@ public class CPPASTWhileStatement extends ASTNode implements
 	}
 
 	@Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitStatements ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitStatements) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
-        if( condition != null ) if( !condition.accept( action ) ) return false;
-        if( condition2 != null ) if( !condition2.accept( action ) ) return false;
-        if( body != null ) if( !body.accept( action ) ) return false;
+        if (condition != null && !condition.accept(action)) return false;
+        if (condition2 != null && !condition2.accept(action)) return false;
+        if (body != null && !body.accept(action)) return false;
         
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
@@ -134,9 +133,8 @@ public class CPPASTWhileStatement extends ASTNode implements
 	}
 
 	public IScope getScope() {
-		if( scope == null )
-            scope = new CPPBlockScope( this );
+		if (scope == null)
+            scope = new CPPBlockScope(this);
         return scope;	
     }
-
 }

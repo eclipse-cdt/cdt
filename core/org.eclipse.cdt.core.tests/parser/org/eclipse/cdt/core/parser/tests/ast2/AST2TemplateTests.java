@@ -5272,7 +5272,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	void g() {
 	//	    S s;
 	//	    h(s);
-	//	    h(s, 1);  Variadicsd  f
+	//	    h(s, 1);  
 	//	    h(s, 1, 2); 
 	//	}
 	public void testVariadicFunctionTemplate_Bug333389() throws Exception {

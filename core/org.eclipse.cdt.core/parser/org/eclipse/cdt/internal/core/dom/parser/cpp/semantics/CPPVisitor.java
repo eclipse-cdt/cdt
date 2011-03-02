@@ -149,11 +149,16 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplate;
@@ -192,9 +197,11 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
 public class CPPVisitor extends ASTQueries {
 	public static final char[] SIZE_T = "size_t".toCharArray(); //$NON-NLS-1$
 	public static final char[] PTRDIFF_T = "ptrdiff_t".toCharArray(); //$NON-NLS-1$
+	static final char[] BEGIN = "begin".toCharArray(); //$NON-NLS-1$
 	public static final String STD = "std"; //$NON-NLS-1$
 	public static final String TYPE_INFO= "type_info"; //$NON-NLS-1$
 	private static final String INITIALIZER_LIST = "initializer_list"; //$NON-NLS-1$
+
 	// Thread-local set of DeclSpecifiers for which auto types are being created.
 	// Used to prevent infinite recursion while processing invalid self-referencing
 	// auto-type declarations.
@@ -1776,42 +1783,66 @@ public class CPPVisitor extends ASTQueries {
 			throw new IllegalArgumentException();
 		}
 
-		IASTNode initClause= declarator.getInitializer();
-		if (initClause instanceof IASTEqualsInitializer) {
-			initClause= ((IASTEqualsInitializer) initClause).getInitializerClause();
-		}
-		
 		if (declSpec instanceof ICPPASTSimpleDeclSpecifier &&
 				((ICPPASTSimpleDeclSpecifier) declSpec).getType() == IASTSimpleDeclSpecifier.t_auto) {
 			if (declarator instanceof ICPPASTFunctionDeclarator) {
 				return createAutoFunctionType(declSpec, (ICPPASTFunctionDeclarator) declarator);
 			}
-			boolean rangeBasedFor= false;
+			IASTInitializerClause autoInitClause= null;
 			parent = parent.getParent();
 			if (parent instanceof ICPPASTNewExpression) {
 				IASTInitializer initializer = ((ICPPASTNewExpression) parent).getInitializer();
 				if (initializer != null) {
 					IASTInitializerClause[] arguments = ((ICPPASTConstructorInitializer) initializer).getArguments();
 					if (arguments.length == 1) {
-						initClause = arguments[0];
+						autoInitClause = arguments[0];
 					} 
 				}
 			} else if (parent instanceof ICPPASTRangeBasedForStatement) {
 				ICPPASTRangeBasedForStatement forStmt= (ICPPASTRangeBasedForStatement) parent;
-				initClause= forStmt.getInitializerClause();
-				rangeBasedFor= true;
+				IASTInitializerClause forInit = forStmt.getInitializerClause();
+				IASTExpression beginExpr= null;
+				if (forInit instanceof IASTExpression) {
+					final IASTExpression expr = (IASTExpression) forInit;
+					IType type= expr.getExpressionType();
+					if (type instanceof IArrayType) {
+						beginExpr= expr.copy();
+					}
+				}
+				if (beginExpr == null) {
+					final CPPASTName name = new CPPASTName(BEGIN);
+					name.setOffset(((ASTNode) forInit).getOffset());
+					beginExpr= new CPPASTFunctionCallExpression(
+							new CPPASTIdExpression(name),
+							new IASTInitializerClause[] {forInit.copy()});
+				}
+				autoInitClause= new CPPASTUnaryExpression(IASTUnaryExpression.op_star, beginExpr);
+				autoInitClause.setParent(forStmt);
+				autoInitClause.setPropertyInParent(ICPPASTRangeBasedForStatement.INITIALIZER);
 			} else if (parent instanceof IASTCompositeTypeSpecifier &&
 					declSpec.getStorageClass() != IASTDeclSpecifier.sc_static) {
 				// Non-static auto-typed class members are not allowed.
 				return new ProblemType(ISemanticProblem.TYPE_AUTO_FOR_NON_STATIC_FIELD);
+			} else {
+				IASTInitializer initClause= declarator.getInitializer();
+				if (initClause instanceof IASTEqualsInitializer) {
+					autoInitClause= ((IASTEqualsInitializer) initClause).getInitializerClause();
+				} else if (initClause instanceof IASTInitializerClause) {
+					autoInitClause= (IASTInitializerClause) initClause;
+				}
 			}
-			return createAutoType(initClause, declSpec, declarator, rangeBasedFor);
+			return createAutoType(autoInitClause, declSpec, declarator);
 		}
 		
+
 		IType type = createType(declSpec);
 		type = createType(type, declarator);
 
 		// C++ specification 8.3.4.3 and 8.5.1.4
+		IASTNode initClause= declarator.getInitializer();
+		if (initClause instanceof IASTEqualsInitializer) {
+			initClause= ((IASTEqualsInitializer) initClause).getInitializerClause();
+		}
 		if (initClause instanceof IASTInitializerList) {
 			IType t= SemanticUtil.getNestedType(type, TDEF);
 			if (t instanceof IArrayType) {
@@ -1828,10 +1859,9 @@ public class CPPVisitor extends ASTQueries {
 		return type;
 	}
 
-	private static IType createAutoType(IASTNode initClause, IASTDeclSpecifier declSpec, IASTDeclarator declarator, 
-			boolean rangeBasedFor) {
+	private static IType createAutoType(IASTInitializerClause initClause, IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
 		//  C++0x: 7.1.6.4
-		if (!autoTypeDeclSpecs.get().add(declSpec)) {
+		if (initClause == null || !autoTypeDeclSpecs.get().add(declSpec)) {
 			// Detected a self referring auto type, e.g.: auto x = x;
 			return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
 		}
@@ -1879,14 +1909,6 @@ public class CPPVisitor extends ASTQueries {
 		if (initClause instanceof ICPPASTInitializerList) {
 			type = (IType) CPPTemplates.instantiate(initializer_list_template,
 					new ICPPTemplateArgument[] { new CPPTemplateArgument(type) }, true);
-		}
-		if (rangeBasedFor) {
-			if (type instanceof IArrayType) {
-				type= ((IArrayType) type).getType();
-			} else {
-				// todo: handle non-array types in for based range loops
-				// (c++-spec 6.5.4): 'typeof (* begin(type &&))'
-			}
 		}
 		return decorateType(type, declSpec, declarator);
 	}

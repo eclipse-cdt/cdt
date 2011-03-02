@@ -666,6 +666,25 @@ public class CPPSemantics {
             } catch (DOMException e) {
             }
         }
+        
+        if (data.astName != null 
+        		&& CharArrayUtils.equals(CPPVisitor.BEGIN, data.astName.getSimpleID())) {
+        	IASTNode parent = data.astName.getParent();     // id-expression
+        	if (parent != null)
+        		parent= parent.getParent();     			// function call
+        	if (parent != null)
+        		parent= parent.getParent();     			// the loop
+        	if (parent != null)
+        		parent= parent.getParent();     			// unary *
+        	if (parent instanceof ICPPASTRangeBasedForStatement) {
+        		IBinding[] std= parent.getTranslationUnit().getScope().find(CPPVisitor.STD);
+        		for (IBinding binding : std) {
+        			if (binding instanceof ICPPNamespace) {
+        				namespaces.add(((ICPPNamespace) binding).getNamespaceScope());
+        			}
+        		}
+        	}
+        }
         return namespaces;
     }
 

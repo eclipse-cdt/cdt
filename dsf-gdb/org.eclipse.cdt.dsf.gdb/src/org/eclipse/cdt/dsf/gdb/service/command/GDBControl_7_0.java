@@ -28,16 +28,12 @@ import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
-import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.gdb.service.GDBProcesses_7_0.ContainerExitedDMEvent;
-import org.eclipse.cdt.dsf.gdb.service.GDBProcesses_7_0.ContainerStartedDMEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
@@ -58,7 +54,6 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.osgi.framework.BundleContext;
@@ -97,8 +92,6 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     private GDBControlDMContext fControlDmc;
 
     private IGDBBackend fMIBackend;
-
-    private int fConnected = 0;
     
     private MIRunControlEventProcessor_7_0 fMIEventProcessor;
     private CLIEventProcessor_7_0 fCLICommandProcessor;
@@ -281,24 +274,11 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
      */
     public void createInferiorProcess() {
     	if (fPty == null) {
-    		fInferiorProcess = new GDBInferiorProcess(GDBControl_7_0.this, fMIBackend, fMIBackend.getMIOutputStream());
+    		fInferiorProcess = new MIInferiorProcess(GDBControl_7_0.this, fMIBackend.getMIOutputStream());
     	} else {
-    		fInferiorProcess = new GDBInferiorProcess(GDBControl_7_0.this, fMIBackend, fPty);
+    		fInferiorProcess = new MIInferiorProcess(GDBControl_7_0.this, fPty);
     	}
     }
-
-    public boolean isConnected() {
-        return fInferiorProcess.getState() != MIInferiorProcess.State.TERMINATED && 
-        			(!fMIBackend.getIsAttachSession() || fConnected > 0);
-    }
-    
-    public void setConnected(boolean connected) {
-    	if (connected) {
-    		fConnected++;
-    	} else {
-    		if (fConnected > 0) fConnected--;
-    	}
-   }
 
     public AbstractCLIProcess getCLIProcess() { 
         return fCLIProcess; 
@@ -357,31 +337,6 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
             // Handle "GDB Exited" event, just relay to following event.
             getSession().dispatchEvent(new GDBControlShutdownDMEvent(fControlDmc), getProperties());
         }
-    }
- 
-    /** @since 2.0 */
-    @DsfServiceEventHandler 
-    public void eventDispatched(ContainerStartedDMEvent e) {
-    	setConnected(true);
-    }
-
-    /** @since 2.0 */
-    @DsfServiceEventHandler 
-    public void eventDispatched(ContainerExitedDMEvent e) {
-    	setConnected(false);
-    	
-    	if (Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
-    													IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
-    													true, null)) {
-    		if (!isConnected() && 
-    				!(fMIBackend.getIsAttachSession() && 
-    				  fMIBackend.getSessionType() == SessionType.REMOTE)) {
-    			// If the last process we are debugging finishes, let's terminate GDB
-    			// but not for a remote attach session, since we could request to attach
-    			// to another process
-    			terminate(new RequestMonitor(ImmediateExecutor.getInstance(), null));
-    		}
-    	}
     }
 
     /** @since 3.0 */

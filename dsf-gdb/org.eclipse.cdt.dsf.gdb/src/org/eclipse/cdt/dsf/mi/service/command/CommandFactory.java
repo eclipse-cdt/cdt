@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataWriteMemory;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnablePrettyPrinting;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnvironmentCD;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnvironmentDirectory;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecArguments;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecFinish;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecInterrupt;
@@ -103,6 +104,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowExitCode;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInferiorTTYSet;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExec;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsole;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsoleKill;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIListFeatures;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIListThreadGroups;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIRemoveInferior;
@@ -143,7 +145,6 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarSetUpdateRange;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowAttributes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowFormat;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarUpdate;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecArguments;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLICatchInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoProgramInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo;
@@ -630,6 +631,11 @@ public class CommandFactory {
 	
 	public ICommand<MIInfo> createMIInterpreterExecConsole(IDMContext ctx, String cmd) {
 		return new MIInterpreterExecConsole<MIInfo>(ctx, cmd);
+	}
+
+	/** @since 4.0 */
+	public ICommand<MIInfo> createMIInterpreterExecConsoleKill(IMIContainerDMContext ctx) {
+		return new MIInterpreterExecConsoleKill(ctx);
 	}
 
 	/** @since 4.0 */

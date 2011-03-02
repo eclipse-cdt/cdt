@@ -28,10 +28,6 @@ public interface IGDBControl extends IMICommandControl {
 
 	void createInferiorProcess();
 
-	boolean isConnected();
-
-	void setConnected(boolean connected);
-
 	AbstractCLIProcess getCLIProcess();
 
 	MIInferiorProcess getInferiorProcess();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 QNX Software Systems and others.
+ * Copyright (c) 2009, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,11 +28,15 @@ import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
+import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.cdt.dsf.debug.service.command.ICommand;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
@@ -52,6 +56,8 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResultRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MITargetStreamOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
+import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
@@ -124,8 +130,6 @@ public class MIInferiorProcess extends Process
      * to write the user standard input into.
      *  
      * @param commandControl Command control that this inferior process belongs to.
-     * @param inferiorExecCtx The execution context controlling the execution 
-     * state of the inferior process.
      * @param gdbOutputStream The output stream to use to write user IO into.
      * @since 1.1
      */
@@ -139,8 +143,6 @@ public class MIInferiorProcess extends Process
      * to write the user standard input into.
      *  
      * @param commandControl Command control that this inferior process belongs to.
-     * @param inferiorExecCtx The execution context controlling the execution 
-     * state of the inferior process.
      * @param p The terminal to use to write user IO into.
      * @since 1.1
      */
@@ -153,7 +155,8 @@ public class MIInferiorProcess extends Process
     private MIInferiorProcess(ICommandControlService commandControl, final OutputStream gdbOutputStream, PTY p) {
         fCommandControl = commandControl;
         fSession = commandControl.getSession();
-        
+        fSession.addServiceEventListener(this, null);
+
         if (fCommandControl instanceof IMICommandControl) {
         	fCommandFactory = ((IMICommandControl)fCommandControl).getCommandFactory();
         } else {
@@ -173,7 +176,6 @@ public class MIInferiorProcess extends Process
             fOutputStream = new OutputStream() {
                 @Override
                 public void write(int b) throws IOException {
-                    // Have to re-dispatch to dispatch thread to check state
                     if (getState() != State.RUNNING) {
                         throw new IOException("Target is not running"); //$NON-NLS-1$
                     }                        
@@ -206,6 +208,8 @@ public class MIInferiorProcess extends Process
 
     @ConfinedToDsfExecutor("fSession#getExecutor")
     public void dispose() {
+    	fSession.removeServiceEventListener(this);
+    	
         fCommandControl.removeEventListener(this);
         fCommandControl.removeCommandListener(this);
         
@@ -369,18 +373,15 @@ public class MIInferiorProcess extends Process
     private void doDestroy() {
         if (isDisposed() || !fSession.isActive() || getState() == State.TERMINATED) return;
 
-        // To avoid a RejectedExecutionException, use an executor that
-        // immediately executes in the same dispatch cycle.
-        ICommand<MIInfo> cmd = fCommandFactory.createCLIExecAbort(getCommandControlService().getContext());
-        getCommandControlService().queueCommand(
-            cmd,
-            new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), null) { 
-                @Override
-                protected void handleCompleted() {
-                    setState(MIInferiorProcess.State.TERMINATED);
-                }
-            }
-        );         
+        DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fSession.getId());
+        IProcesses procService = tracker.getService(IProcesses.class);
+        tracker.dispose();
+        if (procService != null) {
+        	IProcessDMContext procDmc = DMContexts.getAncestorOfType(fContainerDMContext, IProcessDMContext.class);
+        	procService.terminate(procDmc, new RequestMonitor(ImmediateExecutor.getInstance(), null));
+        } else {
+        	setState(State.TERMINATED);
+        }
     }
 
     @ThreadSafe
@@ -406,12 +407,6 @@ public class MIInferiorProcess extends Process
         if (fState == State.TERMINATED) return;
         fState = state;
         if (fState == State.TERMINATED) {
-            if (fContainerDMContext != null) {
-            	// This may not be necessary in 7.0 because of the =thread-group-exited event
-                getSession().dispatchEvent(
-                    new ContainerExitedDMEvent(fContainerDMContext), 
-                    getCommandControlService().getProperties());
-            }
             closeIO();
         }
         notifyAll();
@@ -466,7 +461,14 @@ public class MIInferiorProcess extends Process
                             if (value instanceof MIConst) {
                                 String reason = ((MIConst) value).getString();
                                 if ("exited-signalled".equals(reason) || "exited-normally".equals(reason) || "exited".equals(reason)) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                    setState(State.TERMINATED);
+                                	if (fContainerDMContext != null) {
+                                		// This may not be necessary in 7.0 because of the =thread-group-exited event
+                                		getSession().dispatchEvent(
+                                				new ContainerExitedDMEvent(fContainerDMContext), 
+                                				getCommandControlService().getProperties());
+                                	} else {
+                                		setState(State.TERMINATED);
+                                	}
                                 } else {
                                     setState(State.STOPPED);
                                 }
@@ -520,10 +522,29 @@ public class MIInferiorProcess extends Process
         String state = rr.getResultClass();
         
              if ("running".equals(state)) { setState(State.RUNNING); }//$NON-NLS-1$            
-        else if ("exit".equals(state))    { setState(State.TERMINATED); }//$NON-NLS-1$            
+        else if ("exit".equals(state))    { //$NON-NLS-1$
+        	if (fContainerDMContext != null) {
+        		// This may not be necessary in 7.0 because of the =thread-group-exited event
+        		getSession().dispatchEvent(
+        				new ContainerExitedDMEvent(fContainerDMContext), 
+        				getCommandControlService().getProperties());
+        	} else {
+        		setState(State.TERMINATED);
+        	}
+        }            
         else if ("error".equals(state))   { setState(State.STOPPED); }//$NON-NLS-1$            
     }
 
+    /**
+	 * @since 4.0
+	 */
+    @DsfServiceEventHandler
+    public void eventDispatched(IExitedDMEvent e) {
+    	if (e.getDMContext() instanceof IContainerDMContext) {
+    		setState(State.TERMINATED);
+    	}
+    }
+    
 //    
 // Post-poned because 'info program' yields different result on different platforms.
 // https://bugs.eclipse.org/bugs/show_bug.cgi?id=305385#c20

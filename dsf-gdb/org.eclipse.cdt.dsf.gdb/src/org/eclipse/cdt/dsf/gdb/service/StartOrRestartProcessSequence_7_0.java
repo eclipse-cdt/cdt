@@ -30,6 +30,7 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
+import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
@@ -333,6 +334,11 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 				
 				if (fContainerDmc instanceof IMIContainerDMContext) {	
 					fContainerDmc = fProcService.createContainerContextFromGroupId(fCommandControl.getContext(), ((IMIContainerDMContext)fContainerDmc).getGroupId());
+					fCommandControl.getInferiorProcess().setContainerContext(fContainerDmc);
+
+					IMIProcessDMContext procDmc = DMContexts.getAncestorOfType(fContainerDmc, IMIProcessDMContext.class);
+					fCommandControl.getInferiorProcess().setPid(procDmc.getProcId());
+					
 					// This is the container context that this sequence is supposed to return: set the dataRm
 					fDataRequestMonitor.setData(fContainerDmc);					
 				} else {

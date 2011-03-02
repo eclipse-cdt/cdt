@@ -28,20 +28,17 @@ import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
-import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend.BackendStateChangedEvent;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
-import org.eclipse.cdt.dsf.mi.service.MIProcesses.ContainerExitedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl;
 import org.eclipse.cdt.dsf.mi.service.command.CLIEventProcessor;
@@ -55,7 +52,6 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.osgi.framework.BundleContext;
@@ -94,9 +90,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     private GDBControlDMContext fControlDmc;
 
     private IGDBBackend fMIBackend;
-    
-    private boolean fConnected;
-    
+        
     private MIRunControlEventProcessor fMIEventProcessor;
     private CLIEventProcessor fCLICommandProcessor;
     private AbstractCLIProcess fCLIProcess;
@@ -264,9 +258,9 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
      */
     public void createInferiorProcess() {
     	if (fPty == null) {
-    		fInferiorProcess = new GDBInferiorProcess(GDBControl.this, fMIBackend, fMIBackend.getMIOutputStream());
+    		fInferiorProcess = new MIInferiorProcess(GDBControl.this, fMIBackend.getMIOutputStream());
     	} else {
-    		fInferiorProcess = new GDBInferiorProcess(GDBControl.this, fMIBackend, fPty);
+    		fInferiorProcess = new MIInferiorProcess(GDBControl.this, fPty);
     	}
     	
     	// Create the CLI event processor each time this method is called
@@ -277,16 +271,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     	}
     	fCLICommandProcessor = new CLIEventProcessor(GDBControl.this, fControlDmc);
     }
-    
-    public boolean isConnected() {
-        return fInferiorProcess.getState() != MIInferiorProcess.State.TERMINATED && 
-        			(!fMIBackend.getIsAttachSession() || fConnected);
-    }
-
-    public void setConnected(boolean connected) {
-        fConnected = connected;
-    }
-
+ 
     public AbstractCLIProcess getCLIProcess() { 
         return fCLIProcess; 
     }
@@ -339,17 +324,6 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
             // Handle "GDB Exited" event, just relay to following event.
             getSession().dispatchEvent(new GDBControlShutdownDMEvent(fControlDmc), getProperties());
         }
-    }
-    
-    /** @since 2.0 */
-    @DsfServiceEventHandler 
-    public void eventDispatched(ContainerExitedDMEvent e) {
-    	if (Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
-    													IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
-    													true, null)) {
-    		// If the inferior finishes, let's terminate GDB
-    		terminate(new RequestMonitor(ImmediateExecutor.getInstance(), null));
-    	}
     }
     
     public static class InitializationShutdownStep extends Sequence.Step {

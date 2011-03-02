@@ -50,6 +50,7 @@ import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
@@ -60,6 +61,8 @@ import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
+import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess.State;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupCreatedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
@@ -79,6 +82,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.osgi.framework.BundleContext;
@@ -436,6 +440,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	
     private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 
+    /**
+     * Keeps track of how many processes we are currently connected to
+     */
+    private int fNumConnected;
+
     /** 
      * Keeps track if we are dealing with the very first process of GDB.
      */  
@@ -725,7 +734,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     
     /** @since 4.0 */
     protected boolean doIsDebuggerAttachSupported() {
-   		return fBackend.getIsAttachSession() && !fCommandControl.isConnected();
+   		return fBackend.getIsAttachSession() && fNumConnected == 0;
     }
     
     public void isDebuggerAttachSupported(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
@@ -790,7 +799,14 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	    					public void execute(RequestMonitor rm) {
 								// By now, GDB has reported the groupId that was created for this process
 	    						fContainerDmc = createContainerContext(procCtx, getGroupFromPid(((IMIProcessDMContext)procCtx).getProcId()));
-		                    	// Store the fully formed container context so it can be returned to the caller.
+	    						
+	    						MIInferiorProcess inferior = fCommandControl.getInferiorProcess();
+	    						if (inferior != null) {
+	    							inferior.setContainerContext(fContainerDmc);
+	    							inferior.setPid(((IMIProcessDMContext)procCtx).getProcId());
+	    						}
+	    						
+	    						// Store the fully formed container context so it can be returned to the caller.
 							    dataRm.setData(fContainerDmc);
 
 								// Start tracking breakpoints.
@@ -835,7 +851,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
     /** @since 4.0 */
     protected boolean doCanDetachDebuggerFromProcess() {
-   		return fBackend.getIsAttachSession() && fCommandControl.isConnected();
+   		return fBackend.getIsAttachSession() && fNumConnected > 0;
     }
     
     public void canDetachDebuggerFromProcess(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
@@ -857,7 +873,13 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
         	fCommandControl.queueCommand(
         			fCommandFactory.createMITargetDetach(controlDmc, procDmc.getProcId()),
-    				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+    				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+        				@Override
+        				protected void handleSuccess() {
+        					fCommandControl.getInferiorProcess().setPid(null);
+        					rm.done();
+        				}
+        			});
     	} else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid context.", null)); //$NON-NLS-1$
             rm.done();
@@ -1096,9 +1118,27 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		rm.done();
 	}
 
-	public void terminate(IThreadDMContext thread, RequestMonitor rm) {
+	public void terminate(IThreadDMContext thread, final RequestMonitor rm) {
 		if (thread instanceof IMIProcessDMContext) {
-			fCommandControl.terminate(rm);
+			getDebuggingContext(
+					thread, 
+					new DataRequestMonitor<IDMContext>(ImmediateExecutor.getInstance(), rm) {
+						@Override
+						protected void handleSuccess() {
+							if (getData() instanceof IMIContainerDMContext) {
+								if (fCommandControl.getInferiorProcess().getState() == State.RUNNING) {
+									fBackend.interrupt();
+								}
+
+								fCommandControl.queueCommand(
+										fCommandFactory.createMIInterpreterExecConsoleKill((IMIContainerDMContext)getData()),
+										new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+							} else {
+					            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
+					            rm.done();								
+							}
+						}
+					});         
 	    } else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
             rm.done();
@@ -1214,6 +1254,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     public void eventDispatched(IStartedDMEvent e) {
     	if (e instanceof ContainerStartedDMEvent) {
     		fContainerCommandCache.reset();
+    		fNumConnected++;
     	} else {
     		fThreadCommandCache.reset();
     	}
@@ -1224,6 +1265,22 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     public void eventDispatched(IExitedDMEvent e) {
     	if (e instanceof ContainerExitedDMEvent) {
     		fContainerCommandCache.reset();
+    		
+    		assert fNumConnected > 0;
+    		fNumConnected--;
+    		
+    		if (Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+    				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
+    				true, null)) {
+    			if (fNumConnected == 0 && 
+    					!(fBackend.getIsAttachSession() && 
+    							fBackend.getSessionType() == SessionType.REMOTE)) {
+    				// If the last process we are debugging finishes, let's terminate GDB
+    				// but not for a remote attach session, since we could request to attach
+    				// to another process
+    				fCommandControl.terminate(new RequestMonitor(ImmediateExecutor.getInstance(), null));
+    			}
+    		}
     	} else {
     		fThreadCommandCache.reset();
     	}

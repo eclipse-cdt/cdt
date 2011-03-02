@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
+ * David McKnight   (IBM)        - [338510] "Copy Connection" operation deletes the registered property set in the original connection
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -264,4 +265,11 @@ public class DummyHost extends PlatformObject implements IHost
 	
 	public void setDefaultEncoding(String encoding, boolean fromRemote) {
 	}
+	
+	/**
+	 * @since 3.2
+	 */
+	public void clonePropertySets(IPropertySetContainer targetContainer) {		
+	}
+	
 }

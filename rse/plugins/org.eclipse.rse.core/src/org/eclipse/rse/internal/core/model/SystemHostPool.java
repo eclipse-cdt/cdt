@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [206742] Make SystemHostPool thread-safe
  * David Dykstal (IBM) - [210537] removed exception signaling from this class to match the interface
  * Tom Hochstein (Freescale)     - [301075] Host copy doesn't copy contained property sets
+ * David McKnight   (IBM)        - [338510] "Copy Connection" operation deletes the registered property set in the original connection
 ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -38,9 +39,6 @@ import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.Host;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.model.IProperty;
-import org.eclipse.rse.core.model.IPropertySet;
-import org.eclipse.rse.core.model.IPropertySetContainer;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemHostPool;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -410,33 +408,11 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
                  conn.getHostName(), conn.getDescription(), conn.getLocalDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_HOST);
                 
         // Copy all properties as well.
-        clonePropertySets(copy, conn.getPropertySets());
+        conn.clonePropertySets(copy);
         return copy;
     }
-
-    /**
-     * Make copies of a list of property sets and add them to the specified container.
-     * Each property set may contain its own list of property sets, so the
-     * method is recursive.
-     * @param container
-     * @param propertySets
-     */
-    private static void clonePropertySets(IPropertySetContainer container, IPropertySet[] propertySets) {
-    	if (propertySets == null) {
-    		return;
-    	}
-    	for (int i = 0, n = propertySets.length; i < n; ++i) {
-    		IPropertySet fromSet = propertySets[i];
-    		IPropertySet copySet = container.createPropertySet(fromSet.getName(), fromSet.getDescription());
-    		String[] fromKeys = fromSet.getPropertyKeys();
-    		for (int i2 = 0, n2 = fromKeys.length; i2 < n2; ++i2) {
-    			IProperty fromProperty = fromSet.getProperty(fromKeys[i2]);
-    			copySet.addProperty(fromProperty.getKey(), fromProperty.getValue(), fromProperty.getType());
-    		}
-    		clonePropertySets(copySet, fromSet.getPropertySets());
-    	}
-    }
-
+    
+    
     /*
      * (non-Javadoc)
      * @see org.eclipse.rse.core.model.ISystemHostPool#moveHosts(org.eclipse.rse.core.model.IHost[], int)

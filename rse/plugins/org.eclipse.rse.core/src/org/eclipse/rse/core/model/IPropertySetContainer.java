@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * Johann Draschwandtner (Wind River) - [227509][apidoc] Add note how to persist property sets
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  * David Dykstal (IBM) - [261486][api] add noextend to interfaces that require it
+ * David McKnight   (IBM)        - [338510] "Copy Connection" operation deletes the registered property set in the original connection
  *******************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -100,5 +101,14 @@ public interface IPropertySetContainer {
 	 * false if a property set was not removed, usually if it does not exist in the container.
 	 */
 	public boolean removePropertySet(String name);
+	
+	/**
+     * Make copies of a list of property sets and add them to the specified container.
+     * Each property set may contain its own list of property sets, so the
+     * method is recursive.
+     * @param targetContainer new container to copy property sets into
+	 * @since 3.2
+     */
+    public void clonePropertySets(IPropertySetContainer targetContainer);
 
 }

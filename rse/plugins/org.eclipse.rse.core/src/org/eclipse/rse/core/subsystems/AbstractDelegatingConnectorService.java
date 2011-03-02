@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType()
  * David Dykstal (IBM) - [210474] Deny save password function missing
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
+ * David McKnight   (IBM)        - [338510] "Copy Connection" operation deletes the registered property set in the original connection
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
@@ -21,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.IPropertySetContainer;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 
 public abstract class AbstractDelegatingConnectorService implements IDelegatingConnectorService
@@ -811,4 +813,15 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return result;
 	}
 
+	/**
+	 * @since 3.2
+	 */
+	public void clonePropertySets(IPropertySetContainer targetContainer) {
+		IConnectorService connectorService = getRealConnectorService();
+		if (connectorService != null) {
+			connectorService.clonePropertySets(targetContainer);
+		}
+	}
+
+	
 }

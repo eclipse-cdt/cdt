@@ -14,10 +14,12 @@
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * David Dykstal (IBM) - [226561] Add API markup to RSE javadocs for extend / implement
  * David McKnight   (IBM)        - [334837] Ordering of Library list entries incorrect after migration
+ * David McKnight   (IBM)        - [338510] "Copy Connection" operation deletes the registered property set in the original connection
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
 
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -84,5 +86,30 @@ public abstract class PropertySetContainer extends RSEPersistableObject implemen
 	public boolean removePropertySet(String name) {
 		return _propertySets.remove(name) != null;
 	}
+	
+    /**
+	 * @since 3.2
+	 */
+    public void clonePropertySets(IPropertySetContainer container) {
+    	IPropertySet[] propertySets = getPropertySets();
+    	if (propertySets != null && propertySets.length > 0)
+    		clonePropertySets(container, propertySets);
+    }
+    
+    private void clonePropertySets(IPropertySetContainer container, IPropertySet[] propertySets){
+    	if (propertySets == null) {
+    		return;
+    	}
+    	for (int i = 0, n = propertySets.length; i < n; ++i) {
+    		IPropertySet fromSet = propertySets[i];
+    		IPropertySet copySet = container.createPropertySet(fromSet.getName(), fromSet.getDescription());
+    		String[] fromKeys = fromSet.getPropertyKeys();
+    		for (int i2 = 0, n2 = fromKeys.length; i2 < n2; ++i2) {
+    			IProperty fromProperty = fromSet.getProperty(fromKeys[i2]);
+    			copySet.addProperty(fromProperty.getKey(), fromProperty.getValue(), fromProperty.getType());
+    		}
+    		clonePropertySets(copySet, fromSet.getPropertySets());
+    	}
+    }
 
 }

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -37,6 +37,7 @@
  * Martin Oberhuber (Wind River) - [226574][api] Add ISubSystemConfiguration#supportsEncoding()
  * David Dykstal (IBM) - [236516] Bug in user code causes failure in RSE initialization
  * Martin Oberhuber (Wind River) - [218309] ConcurrentModificationException during workbench startup
+ * David McKnight   (IBM)        - [338510] "Copy Connection" operation deletes the registered property set in the original connection
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -66,6 +67,9 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ILabeledObject;
+import org.eclipse.rse.core.model.IProperty;
+import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.IPropertySetContainer;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISubSystemConfigurator;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -1057,6 +1061,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		}
 		return subsys;
 	}
+
 	/**
 	 * Clone a given subsystem into the given connection.
 	 * Called when user does a copy-connection action.
@@ -1076,7 +1081,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			internalInitializeNewSubSystem(subsys, newConnection);
 			// copy common data
 			subsys.setName(oldSubsystem.getName()); // just in case it was changed
-			subsys.addPropertySets(oldSubsystem.getPropertySets());
+
+			oldSubsystem.clonePropertySets(subsys);			
+
 			subsys.setHidden(oldSubsystem.isHidden());
 
 

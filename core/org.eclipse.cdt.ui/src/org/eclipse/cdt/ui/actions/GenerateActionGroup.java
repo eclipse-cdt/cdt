@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ import org.eclipse.cdt.ui.refactoring.actions.RefactoringAction;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.internal.ui.actions.CDTQuickMenuCreator;
+import org.eclipse.cdt.internal.ui.actions.FormatAllAction;
 import org.eclipse.cdt.internal.ui.editor.AddIncludeOnSelectionAction;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
@@ -131,7 +132,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //	private OrganizeIncludesAction fOrganizeIncludes;
 //	private SortMembersAction fSortMembers;
 	private SortLinesAction fSortLines;
-//	private FormatAllAction fFormatAll;
+	private FormatAllAction fFormatAll;
 //	private CopyQualifiedNameAction fCopyQualifiedNameAction;
 //	
 	private static final String QUICK_MENU_ID= "org.eclipse.cdt.ui.edit.text.c.source.quickMenu"; //$NON-NLS-1$
@@ -286,8 +287,8 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //		fSortMembers= new SortMembersAction(site);
 //		fSortMembers.setActionDefinitionId(ICEditorActionDefinitionIds.SORT_MEMBERS);
 //		
-//		fFormatAll= new FormatAllAction(site);
-//		fFormatAll.setActionDefinitionId(ICEditorActionDefinitionIds.FORMAT);
+		fFormatAll= new FormatAllAction(site);
+		fFormatAll.setActionDefinitionId(ICEditorActionDefinitionIds.FORMAT);
 //		
 //		fCleanUp= new CleanUpAction(site);
 //		fCleanUp.setActionDefinitionId(ICEditorActionDefinitionIds.CLEAN_UP);
@@ -304,7 +305,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //		fCleanUp.update(selection);
 //		fOrganizeIncludes.update(selection);
 //		fSortMembers.update(selection);
-//		fFormatAll.update(selection);
+		fFormatAll.update(selection);
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss= (IStructuredSelection)selection;
 			fAddBookmark.selectionChanged(ss);
@@ -324,7 +325,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //		registerSelectionListener(provider, fExternalizeStrings);
 //		registerSelectionListener(provider, fFindNLSProblems);
 //		registerSelectionListener(provider, fOrganizeIncludes);
-//		registerSelectionListener(provider, fFormatAll);
+		registerSelectionListener(provider, fFormatAll);
 //		registerSelectionListener(provider, fSortMembers);
 		registerSelectionListener(provider, fAddTaskAction);
 //		registerSelectionListener(provider, fCleanUp);
@@ -439,7 +440,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		source.add(new Separator(GROUP_COMMENT));
 //		added+= addAction(source, fAddCppDocStub);
 		source.add(new Separator(GROUP_EDIT));
-//		added+= addAction(source, fFormatAll);
+		added+= addAction(source, fFormatAll);
 		source.add(new Separator(GROUP_ORGANIZE));
 		added+= addAction(source, fAddInclude);
 //		added+= addAction(source, fOrganizeIncludes);
@@ -497,7 +498,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 			// editor provides its own implementation of these actions.
 			actionBar.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(), fAddBookmark);
 			actionBar.setGlobalActionHandler(IDEActionFactory.ADD_TASK.getId(), fAddTaskAction);
-//			actionBar.setGlobalActionHandler(CdtActionConstants.FORMAT, fFormatAll);
+			actionBar.setGlobalActionHandler(CdtActionConstants.FORMAT, fFormatAll);
 		} else {
 //			actionBar.setGlobalActionHandler(CopyQualifiedNameAction.ACTION_HANDLER_ID, fCopyQualifiedNameAction);
 		}

@@ -364,6 +364,10 @@
 <context id="toggle_mark_occurrences_action_context">
     <description>Allows you to switch mark occurrences on and off.</description>
 </context>
+<context id="format_all_action">
+    <description>This command formats selected C/C++ source files.</description>
+</context>
+
 <context id="appearance_preference_page_context">
     <description>Customize the appearance of C/C++ elements in viewers.</description>
     <topic label="Appearance Preferences" href="reference/cdt_u_appearance_pref.htm"/>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,13 @@ package org.eclipse.cdt.internal.ui.navigator;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
+import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
+
+import org.eclipse.cdt.ui.actions.GenerateActionGroup;
 
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 
@@ -26,24 +30,39 @@ import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 public class CNavigatorEditActionProvider extends CommonActionProvider {
 	 
 	private CNavigatorEditActionGroup fEditGroup;
-
-	private ICommonActionExtensionSite fSite;
+	private GenerateActionGroup fGenerateGroup;
 
 	/*
 	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
 	 */
 	@Override
 	public void init(ICommonActionExtensionSite anActionSite) {
-		fSite = anActionSite;
-		fEditGroup = new CNavigatorEditActionGroup(fSite.getViewSite().getShell());
+		super.init(anActionSite);
+		
+		fEditGroup = new CNavigatorEditActionGroup(anActionSite.getViewSite().getShell());
+
+		ICommonViewerWorkbenchSite workbenchSite= null;
+		if (anActionSite.getViewSite() instanceof ICommonViewerWorkbenchSite) {
+			workbenchSite= (ICommonViewerWorkbenchSite) anActionSite.getViewSite();
+		}
+		if (workbenchSite != null) {
+			if (workbenchSite.getPart() != null && workbenchSite.getPart() instanceof IViewPart) {
+				IViewPart viewPart= (IViewPart) workbenchSite.getPart();
+
+				fGenerateGroup = new GenerateActionGroup(viewPart);
+			}
+		}
 	}
 
 	/*
 	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
 	 */
 	@Override
-	public void dispose() { 
+	public void dispose() {
 		fEditGroup.dispose();
+		if (fGenerateGroup != null) {
+			fGenerateGroup.dispose();
+		}
 	}
 
 	/*
@@ -52,6 +71,9 @@ public class CNavigatorEditActionProvider extends CommonActionProvider {
 	@Override
 	public void fillActionBars(IActionBars actionBars) { 
 		fEditGroup.fillActionBars(actionBars);
+		if (fGenerateGroup != null) {
+			fGenerateGroup.fillActionBars(actionBars);
+		}
 	}
 
 	/*
@@ -60,6 +82,9 @@ public class CNavigatorEditActionProvider extends CommonActionProvider {
 	@Override
 	public void fillContextMenu(IMenuManager menu) { 
 		fEditGroup.fillContextMenu(menu);
+		if (fGenerateGroup != null) {
+			fGenerateGroup.fillContextMenu(menu);
+		}
 	}
 
 	/*
@@ -74,6 +99,9 @@ public class CNavigatorEditActionProvider extends CommonActionProvider {
 		} else {
 			fEditGroup.setContext(context);
 		}
+		if (fGenerateGroup != null) {
+			fGenerateGroup.setContext(context);
+		}
 	}
 
 	/*
@@ -82,5 +110,8 @@ public class CNavigatorEditActionProvider extends CommonActionProvider {
 	@Override
 	public void updateActionBars() { 
 		fEditGroup.updateActionBars();
+		if (fGenerateGroup != null) {
+			fGenerateGroup.updateActionBars();
+		}
 	}
 }

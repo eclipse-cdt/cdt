@@ -1435,6 +1435,24 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//#define MACRO(a, b) while (a) b
+	//bool f();
+	//void g();
+	//void test() {
+	//MACRO(f(), g());
+	//}
+
+	//#define MACRO(a, b) while (a) b
+	//bool f();
+	//void g();
+	//void test() {
+	//    MACRO(f(), g());
+	//}
+	public void testMacroStatement() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
 	//bool member __attribute__ ((__unused__)) = false;
 
 	//bool member __attribute__ ((__unused__)) = false;

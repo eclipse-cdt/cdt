@@ -3593,9 +3593,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				stmt.accept(this);
 				scribe.unIndent();
 			} else {
-				scribe.printTrailingComment();
-				scribe.startNewLine();
-				scribe.indent();
+				// Don't insert a line break if we have already passed the start of the statement.
+				// This is possible with macro expansions.
+				if (scribe.scanner.getCurrentPosition() <= stmt.getFileLocation().getNodeOffset()) {
+					scribe.printTrailingComment();
+					scribe.startNewLine();
+					scribe.indent();
+				}
 				stmt.accept(this);
 				scribe.unIndent();
 			}

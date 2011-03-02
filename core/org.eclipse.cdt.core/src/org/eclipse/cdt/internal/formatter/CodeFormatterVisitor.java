@@ -3595,13 +3595,16 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			} else {
 				// Don't insert a line break if we have already passed the start of the statement.
 				// This is possible with macro expansions.
+				boolean indented = false;
 				if (scribe.scanner.getCurrentPosition() <= stmt.getFileLocation().getNodeOffset()) {
 					scribe.printTrailingComment();
 					scribe.startNewLine();
 					scribe.indent();
+					indented = true;
 				}
 				stmt.accept(this);
-				scribe.unIndent();
+				if (indented)
+					scribe.unIndent();
 			}
 		}
 	}

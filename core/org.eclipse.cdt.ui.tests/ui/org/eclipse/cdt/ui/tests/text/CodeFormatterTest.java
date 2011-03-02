@@ -1440,6 +1440,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//void g();
 	//void test() {
 	//MACRO(f(), g());
+	//int i = 0;
 	//}
 
 	//#define MACRO(a, b) while (a) b
@@ -1447,6 +1448,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//void g();
 	//void test() {
 	//    MACRO(f(), g());
+	//    int i = 0;
 	//}
 	public void testMacroStatement() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);

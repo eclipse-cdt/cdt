@@ -5266,4 +5266,16 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testFunctionCallOnDependentName_Bug337686() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct S {};
+	//	template <typename... Args> void h(S s, Args... args) {}
+	//	void g() {
+	//	    S s;
+	//	    h(s);
+	//	    h(s, 1);  Variadicsd  f
+	//	    h(s, 1, 2); 
+	//	}
+	public void testVariadicFunctionTemplate_Bug333389() throws Exception {
+		parseAndCheckBindings();
+	}
 }

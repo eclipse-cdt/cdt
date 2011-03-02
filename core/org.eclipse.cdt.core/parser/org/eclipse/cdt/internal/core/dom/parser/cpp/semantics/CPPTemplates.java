@@ -946,11 +946,13 @@ public class CPPTemplates {
 			}
 			if (result != types) {
 				result[j++]= newType;
-			} else if (newType != origType) {
-				result = new IType[types.length];
-				j= i;
-				System.arraycopy(types, 0, result, 0, i);
-				result[j++]= newType;
+			} else {
+				if (newType != origType) {
+					result = new IType[types.length];
+					System.arraycopy(types, 0, result, 0, i);
+					result[j]= newType;
+				}
+				j++;
 			}
 		}
 		return result;

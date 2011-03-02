@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2010, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.gdb.service;
 import java.util.Hashtable;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
@@ -31,6 +32,7 @@ import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIEvent;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceDumpInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResultRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MITraceFindInfo;
@@ -56,20 +58,22 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 	@Immutable
 	protected static final class MITraceRecordDMContext extends AbstractDMContext implements ITraceRecordDMContext {
 
-		// The trace record reference
-		private final int fReference;
+		// The trace record GDB reference
+		private final String fReference;
 
 		/**
 		 * @param session    the DsfSession for this service
 		 * @param parents    the parent contexts
 		 * @param reference  the trace record reference
+		 * @since 4.0
 		 */
-		public MITraceRecordDMContext(DsfSession session, ITraceTargetDMContext parent, int reference) {
+		public MITraceRecordDMContext(DsfSession session, ITraceTargetDMContext parent, String reference) {
 			super(session.getId(), new IDMContext[] { parent });
 			fReference = reference;
 		}
 
-		public int getReference() {
+		/** @since 4.0 */
+		public String getRecordId() {
 			return fReference;
 		}
 
@@ -78,7 +82,8 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		 */
 		@Override
 		public boolean equals(Object obj) {
-			return baseEquals(obj) && (fReference == ((MITraceRecordDMContext) obj).fReference);
+			return baseEquals(obj) && (fReference == null ? ((MITraceRecordDMContext) obj).fReference == null : 
+									  (fReference.equals(((MITraceRecordDMContext) obj).fReference)));
 		}
 
 		/* (non-Javadoc)
@@ -86,7 +91,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		 */
 		@Override
 		public int hashCode() {
-			return baseHashCode() + fReference;
+			return baseHashCode() ^ (fReference == null ? 0 : fReference.hashCode());
 		}
 
 		/* (non-Javadoc)
@@ -113,6 +118,10 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 			super(session.getId(), new IDMContext[] { parent });
 		}
 
+		/** @since 4.0 */
+		public String getRecordId() {
+			return null;
+		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.dsf.datamodel.AbstractDMContext#equals(java.lang.Object)
@@ -160,6 +169,36 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 
 		public String getInitialValue() {
 			return fInitialValue;
+		}
+	}
+	
+	private class TraceRecordDMData implements ITraceRecordDMData {
+		private String fContent;
+		private String fTracepointNum;
+		private String fTimestamp;
+		private String fFrameNumber;
+		
+		public TraceRecordDMData(String content, String tracepointNum, String frameNumber, String timestamp) {
+			fContent = content;
+			fTracepointNum = tracepointNum;
+			fTimestamp = timestamp;
+			fFrameNumber = frameNumber;
+		}
+
+		public String getContent() {
+			return fContent;
+		}
+
+		public String getTracepointNumber() {
+			return fTracepointNum;
+		}
+		
+		public String getRecordId() {
+			return fFrameNumber;
+		}
+
+		public String getTimestamp() {
+			return fTimestamp;
 		}
 	}
 	
@@ -249,7 +288,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 	    	
 			if (fCurrentRecordDmc instanceof MITraceRecordDMContext) {
 				str += "Looking at trace frame " + 
-				             ((MITraceRecordDMContext)fCurrentRecordDmc).getReference() + 
+				             ((MITraceRecordDMContext)fCurrentRecordDmc).getRecordId() +
 				             ", tracepoint " + fTracepointIndexForTraceRecord + "\n\n";
 			} else {
 				str += "Not currently looking at any trace frame\n\n";
@@ -645,7 +684,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     							// Workaround for GDB pre-release where we don't get the details
     							// of the frame when we load a trace file.
     							// To get around this, we can force a select of record 0
-    							ITraceRecordDMContext initialRecord = createTraceRecordContext(context, 0);
+    							ITraceRecordDMContext initialRecord = createTraceRecordContext(context, "0"); //$NON-NLS-1$
     							selectTraceRecord(initialRecord, rm);
     						}
     					});
@@ -785,19 +824,21 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     
     /**
      * Create a trace record context
+     * @since 4.0
      */
-    public ITraceRecordDMContext createTraceRecordContext(ITraceTargetDMContext ctx, int index) {
-    	return new MITraceRecordDMContext(getSession(), ctx, index);
+    public ITraceRecordDMContext createTraceRecordContext(ITraceTargetDMContext ctx, String recordId) {
+    	return new MITraceRecordDMContext(getSession(), ctx, recordId);
     }
 
     public ITraceRecordDMContext createNextRecordContext(ITraceRecordDMContext ctx) {
     	ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(ctx, ITraceTargetDMContext.class);
     	if (ctx instanceof InvalidTraceRecordDMContext) {
     		// No specified context, so we return the context for the first
-    		return new MITraceRecordDMContext(getSession(), targetDmc, 0);
+    		return createTraceRecordContext(targetDmc, "0"); //$NON-NLS-1$
     	}
     	if (ctx instanceof MITraceRecordDMContext) {
-        	int recordIndex = ((MITraceRecordDMContext)ctx).getReference();
+        	String recordId = ((MITraceRecordDMContext)ctx).getRecordId();
+        	int recordIndex = Integer.parseInt(recordId);
         	recordIndex++;
         	if (recordIndex == fTraceRecordsStored) {
         		// Loop back to the front
@@ -805,7 +846,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
         	}
     		return new MITraceRecordDMContext(getSession(),
     				                          targetDmc,
-    				                          recordIndex);
+    				                          Integer.toString(recordIndex));
     	}
     	return null;
     }
@@ -813,7 +854,8 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     public ITraceRecordDMContext createPrevRecordContext(ITraceRecordDMContext ctx) {
     	if (ctx instanceof MITraceRecordDMContext) {
         	ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(ctx, ITraceTargetDMContext.class);
-        	int recordIndex = ((MITraceRecordDMContext)ctx).getReference();
+        	String recordId = ((MITraceRecordDMContext)ctx).getRecordId();
+        	int recordIndex = Integer.parseInt(recordId);
         	if (recordIndex == 0) {
         		// Loop back to the end
         		recordIndex = fTraceRecordsStored; // The last index of a trace record (zero-based)
@@ -821,7 +863,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
         	recordIndex--;
     		return new MITraceRecordDMContext(getSession(),
     				                          targetDmc,
-    				                          recordIndex);
+    				                          Integer.toString(recordIndex));
     	}
     	return null;
     }
@@ -845,7 +887,9 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 
     	if (context instanceof MITraceRecordDMContext) {
     		ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(context, ITraceTargetDMContext.class);
-    		final int reference = ((MITraceRecordDMContext)context).getReference();
+        	String recordId = ((MITraceRecordDMContext)context).getRecordId();
+        	final int reference = Integer.parseInt(recordId);
+
     		if (reference < 0) {
     			// This is how we indicate that we want to exit visualization mode
     			// We should have a specific call in the IGDBTraceControl interface to do this.
@@ -981,9 +1025,44 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     			});
     }
     
-	public void getTraceRecordData(ITraceRecordDMContext context, DataRequestMonitor<ITraceRecordDMData> rm) {
-		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Not implemented.", null)); //$NON-NLS-1$
-		rm.done();
+	public void getTraceRecordData(final ITraceRecordDMContext context, final DataRequestMonitor<ITraceRecordDMData> rm) {
+    	if (context instanceof MITraceRecordDMContext) {
+    		
+    		RequestMonitor tdumpRm = new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+				@Override
+				protected void handleSuccess() {
+					fConnection.queueCommand(
+							fCommandFactory.createCLITraceDump(context),
+							new DataRequestMonitor<CLITraceDumpInfo>(getExecutor(), rm) {
+								@Override
+								protected void handleSuccess() {
+
+									TraceRecordDMData data = new TraceRecordDMData(
+											getData().getContent(),
+											getData().getTracepointNumber(),
+											getData().getFrameNumber(),
+											getData().getTimestamp()
+									);
+									rm.setData(data);
+									rm.done();
+								}
+							});
+				}
+			};
+			
+    		// If we are pointing to the right context, we can do the tdump right away,
+    		// if not, we should first select the record.
+    		// This is because 'tdump' does not take any parameters to specify
+    		// which record we want to dump.
+    		if (fCurrentRecordDmc.equals(context)) {
+    			tdumpRm.done();
+    		} else {
+    			selectTraceRecord(context, tdumpRm); 
+    		}
+    	} else {
+    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid trace record context.", null)); //$NON-NLS-1$
+    		rm.done();
+    	}
 	}
 	
 	public void flushCache(IDMContext context) {

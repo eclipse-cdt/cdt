@@ -285,7 +285,7 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 			protected void execute(DataRequestMonitor<Object> rm) {
 				final IGDBTraceControl traceControl = getService(IGDBTraceControl.class);
 				if (traceControl != null) {
-					ITraceRecordDMContext emptyDmc = traceControl.createTraceRecordContext(ctx, -1);
+					ITraceRecordDMContext emptyDmc = traceControl.createTraceRecordContext(ctx, "-1"); //$NON-NLS-1$
        				traceControl.selectTraceRecord(emptyDmc, rm);
 				} else {
 					rm.setData(null);

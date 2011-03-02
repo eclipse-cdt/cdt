@@ -29,6 +29,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -46,6 +47,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.CLIRecord;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLISource;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIThread;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLITrace;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLITraceDump;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIUnsetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIAddInferior;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakAfter;
@@ -150,6 +152,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoProgramInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoThreadsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIThreadInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceDumpInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIAddInferiorInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
@@ -265,6 +268,11 @@ public class CommandFactory {
 
 	public ICommand<CLITraceInfo> createCLITrace(IBreakpointsTargetDMContext ctx, String location, String condition) {
 		return new CLITrace(ctx, location, condition);
+	}
+
+	/** @since 4.0 */
+	public ICommand<CLITraceDumpInfo> createCLITraceDump(ITraceRecordDMContext ctx) {
+		return new CLITraceDump(ctx);
 	}
 
 	public ICommand<MIInfo> createCLIUnsetEnv(ICommandControlDMContext ctx) {

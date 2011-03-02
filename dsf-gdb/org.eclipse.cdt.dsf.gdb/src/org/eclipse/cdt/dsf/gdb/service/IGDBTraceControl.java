@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2010, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,13 +39,39 @@ public interface IGDBTraceControl extends IDsfService {
      * Specific Trace Record context.  It describes tracing data.
      */
     @Immutable
-    public interface ITraceRecordDMContext extends IDMContext {}
+    public interface ITraceRecordDMContext extends IDMContext {
+    	/** 
+    	 * Returns the GDB id to the trace record.  Can return null
+    	 * if the context does not point to a valid trace record.
+    	 * @since 4.0 
+    	 */
+    	String getRecordId();
+    }
     
     /**
      * This is the model data interface that corresponds to ITraceRecordDMContext.
-     * The content of the data is backend-specific and therefore is not specified here.
      */
     public interface ITraceRecordDMData extends IDMData {
+    	/** 
+    	 * Return the content of the trace record in the form of a string
+    	 * @since 4.0 
+    	 */
+    	String getContent();
+    	/** 
+    	 * Return the timestamp of the trace record. Can return null.
+    	 * @since 4.0 
+    	 */
+    	String getTimestamp();
+    	/** 
+    	 * Return the GDB tracepoint number
+    	 * @since 4.0 
+    	 */
+    	String getTracepointNumber();
+    	/** 
+    	 * Returns the GDB id to the trace record
+    	 * @since 4.0 
+    	 */
+    	String getRecordId();
     }
 
     /**
@@ -113,6 +139,9 @@ public interface IGDBTraceControl extends IDsfService {
      */
     public void selectTraceRecord(ITraceRecordDMContext context, RequestMonitor rm);
     
+    /**
+     * Get the data associated to current GDB tracepoint record
+     */
     public void getTraceRecordData(ITraceRecordDMContext context, DataRequestMonitor<ITraceRecordDMData> rm);
 
     /////////////////////////////////////////////////
@@ -161,7 +190,8 @@ public interface IGDBTraceControl extends IDsfService {
      */
     public void getTraceVariables(ITraceTargetDMContext context, DataRequestMonitor<ITraceVariableDMData[]> rm);
 
-	public ITraceRecordDMContext createTraceRecordContext(ITraceTargetDMContext ctx, int index);
+	/** @since 4.0 */
+	public ITraceRecordDMContext createTraceRecordContext(ITraceTargetDMContext ctx, String recordId);
 	public void getCurrentTraceRecordContext(ITraceTargetDMContext context, DataRequestMonitor<ITraceRecordDMContext> drm);
 	public ITraceRecordDMContext createNextRecordContext(ITraceRecordDMContext ctx);
 	public ITraceRecordDMContext createPrevRecordContext(ITraceRecordDMContext ctx);

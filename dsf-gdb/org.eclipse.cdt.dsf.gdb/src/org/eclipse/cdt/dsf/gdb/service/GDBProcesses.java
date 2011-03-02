@@ -356,7 +356,14 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	
 	@Override
     public void terminate(IThreadDMContext thread, final RequestMonitor rm) {
-		if (thread instanceof IMIProcessDMContext) {
+		// If we will terminate GDB as soon as the inferior terminates, then let's
+		// just terminate GDB itself.  This is more robust since we actually monitor
+		// the success of terminating GDB.
+   		if (Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
+				true, null)) {
+			fGdb.terminate(new RequestMonitor(ImmediateExecutor.getInstance(), null));
+		} else if (thread instanceof IMIProcessDMContext) {
 			getDebuggingContext(
 					thread, 
 					new DataRequestMonitor<IDMContext>(ImmediateExecutor.getInstance(), rm) {

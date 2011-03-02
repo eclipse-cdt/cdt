@@ -1119,7 +1119,15 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	}
 
 	public void terminate(IThreadDMContext thread, final RequestMonitor rm) {
-		if (thread instanceof IMIProcessDMContext) {
+		// If we will terminate GDB as soon as the last inferior terminates, then let's
+		// just terminate GDB itself if this is the last inferior.  
+		// This is more robust since we actually monitor the success of terminating GDB.
+   		if (fNumConnected == 1 && 
+   			Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
+				true, null)) {
+   			fCommandControl.terminate(new RequestMonitor(ImmediateExecutor.getInstance(), null));
+   		} else if (thread instanceof IMIProcessDMContext) {
 			getDebuggingContext(
 					thread, 
 					new DataRequestMonitor<IDMContext>(ImmediateExecutor.getInstance(), rm) {
@@ -1272,12 +1280,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     		if (Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
     				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
     				true, null)) {
-    			if (fNumConnected == 0 && 
-    					!(fBackend.getIsAttachSession() && 
-    							fBackend.getSessionType() == SessionType.REMOTE)) {
+    			if (fNumConnected == 0) {
     				// If the last process we are debugging finishes, let's terminate GDB
-    				// but not for a remote attach session, since we could request to attach
-    				// to another process
+    				// We also do this for a remote attach session, since the 'auto terminate' preference
+    				// is enabled.  If users want to keep the session alive to attach to another process,
+    				// they can simply disable that preference
     				fCommandControl.terminate(new RequestMonitor(ImmediateExecutor.getInstance(), null));
     			}
     		}

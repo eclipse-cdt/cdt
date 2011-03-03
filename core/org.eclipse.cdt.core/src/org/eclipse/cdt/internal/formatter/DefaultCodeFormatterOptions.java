@@ -496,9 +496,9 @@ public class DefaultCodeFormatterOptions {
 			try {
 				this.alignment_for_assignment = Integer.parseInt((String) alignmentForAssignmentOption);
 			} catch (NumberFormatException e) {
-				this.alignment_for_assignment =  Alignment.M_ONE_PER_LINE_SPLIT;
+				this.alignment_for_assignment =  Alignment.M_COMPACT_SPLIT;
 			} catch (ClassCastException e) {
-				this.alignment_for_assignment =  Alignment.M_ONE_PER_LINE_SPLIT;
+				this.alignment_for_assignment =  Alignment.M_COMPACT_SPLIT;
 			}
 		}
 		final Object alignmentForBinaryExpressionOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BINARY_EXPRESSION);
@@ -1468,7 +1468,7 @@ public class DefaultCodeFormatterOptions {
 	public void setDefaultSettings() {
 //		this.alignment_for_arguments_in_allocation_expression = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_arguments_in_method_invocation = Alignment.M_COMPACT_SPLIT;
-		this.alignment_for_assignment = Alignment.M_NO_ALIGNMENT;
+		this.alignment_for_assignment = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_base_clause_in_type_declaration = Alignment.M_NEXT_PER_LINE_SPLIT;
 		this.alignment_for_binary_expression = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_compact_if = Alignment.M_COMPACT_SPLIT;

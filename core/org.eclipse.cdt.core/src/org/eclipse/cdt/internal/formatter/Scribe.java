@@ -242,23 +242,27 @@ public class Scribe {
 		return createAlignment(name, mode, Alignment.R_INNERMOST, count, sourceRestart);
 	}
 
-	public Alignment createAlignment(String name, int mode, int count, int sourceRestart, boolean adjust) {
+	public Alignment createAlignment(String name, int mode, int count, int sourceRestart,
+			boolean adjust) {
 		return createAlignment(name, mode, Alignment.R_INNERMOST, count, sourceRestart, adjust);
 	}
 
-	public Alignment createAlignment(String name, int mode, int tieBreakRule, int count, int sourceRestart) {
+	public Alignment createAlignment(String name, int mode, int tieBreakRule, int count,
+			int sourceRestart) {
 		return createAlignment(name, mode, tieBreakRule, count, sourceRestart,
 				preferences.continuation_indentation, false);
 	}
 
-	public Alignment createAlignment(String name, int mode, int count, int sourceRestart, int continuationIndent,
-			boolean adjust) {
-		return createAlignment(name, mode, Alignment.R_INNERMOST, count, sourceRestart, continuationIndent, adjust);
+	public Alignment createAlignment(String name, int mode, int count, int sourceRestart,
+			int continuationIndent, boolean adjust) {
+		return createAlignment(name, mode, Alignment.R_INNERMOST, count, sourceRestart,
+				continuationIndent, adjust);
 	}
 
-	public Alignment createAlignment(String name, int mode, int tieBreakRule, int count, int sourceRestart,
-			int continuationIndent, boolean adjust) {
-		Alignment alignment= new Alignment(name, mode, tieBreakRule, this, count, sourceRestart, continuationIndent);
+	public Alignment createAlignment(String name, int mode, int tieBreakRule, int count,
+			int sourceRestart, int continuationIndent, boolean adjust) {
+		Alignment alignment= new Alignment(name, mode, tieBreakRule, this, count, sourceRestart,
+				continuationIndent);
 		// adjust break indentation
 		if (adjust && memberAlignment != null) {
 			Alignment current= memberAlignment;
@@ -273,7 +277,8 @@ public class Scribe {
 					if ((mode & Alignment.M_INDENT_BY_ONE) != 0) {
 						alignment.breakIndentationLevel= indentationLevel + indentSize;
 					} else {
-						alignment.breakIndentationLevel= indentationLevel + continuationIndent * indentSize;
+						alignment.breakIndentationLevel= indentationLevel +
+								continuationIndent * indentSize;
 					}
 					alignment.update();
 					break;
@@ -281,8 +286,8 @@ public class Scribe {
 					if ((mode & Alignment.M_INDENT_BY_ONE) != 0) {
 						alignment.breakIndentationLevel= current.originalIndentationLevel + indentSize;
 					} else {
-						alignment.breakIndentationLevel= current.originalIndentationLevel + continuationIndent
-								* indentSize;
+						alignment.breakIndentationLevel= current.originalIndentationLevel +
+								continuationIndent * indentSize;
 					}
 					alignment.update();
 					break;
@@ -301,16 +306,18 @@ public class Scribe {
 						if ((mode & Alignment.M_INDENT_BY_ONE) != 0) {
 							alignment.breakIndentationLevel= indentationLevel + indentSize;
 						} else {
-							alignment.breakIndentationLevel= indentationLevel + continuationIndent * indentSize;
+							alignment.breakIndentationLevel= indentationLevel +
+									continuationIndent * indentSize;
 						}
 						alignment.update();
 						break;
 					case Alignment.CHUNK_FIELD:
 						if ((mode & Alignment.M_INDENT_BY_ONE) != 0) {
-							alignment.breakIndentationLevel= current.originalIndentationLevel + indentSize;
+							alignment.breakIndentationLevel= current.originalIndentationLevel +
+									indentSize;
 						} else {
-							alignment.breakIndentationLevel= current.originalIndentationLevel + continuationIndent
-									* indentSize;
+							alignment.breakIndentationLevel= current.originalIndentationLevel +
+									continuationIndent * indentSize;
 						}
 						alignment.update();
 						break;
@@ -573,8 +580,8 @@ public class Scribe {
 	}
 
 	public void handleLineTooLong() {
-		// search for closest breakable alignment, using tiebreak rules
-		// look for outermost breakable one
+		// Search for closest breakable alignment, using tie break rules
+		// look for outermost breakable one.
 		int relativeDepth= 0;
 		int outerMostDepth= -1;
 		Alignment targetAlignment= currentAlignment;
@@ -588,7 +595,7 @@ public class Scribe {
 		if (outerMostDepth >= 0) {
 			throwAlignmentException(AlignmentException.LINE_TOO_LONG, outerMostDepth);
 		}
-		// look for innermost breakable one
+		// Look for innermost breakable one
 		relativeDepth= 0;
 		targetAlignment= currentAlignment;
 		while (targetAlignment != null) {
@@ -598,7 +605,7 @@ public class Scribe {
 			targetAlignment= targetAlignment.enclosing;
 			relativeDepth++;
 		}
-		// did not find any breakable location - proceed
+		// Did not find any breakable location - proceed
 	}
 
 	private void throwAlignmentException(int kind, int relativeDepth) {
@@ -771,7 +778,8 @@ public class Scribe {
 				switch (currentToken.type) {
 				case Token.tLBRACE: {
 					scanner.resetTo(scanner.getCurrentTokenStartPosition(), scannerEndPosition - 1);
-					formatOpeningBrace(preferences.brace_position_for_block, preferences.insert_space_before_opening_brace_in_block);
+					formatOpeningBrace(preferences.brace_position_for_block,
+							preferences.insert_space_before_opening_brace_in_block);
 					if (preferences.indent_statements_compare_to_block) {
 						indent();
 					}
@@ -936,8 +944,9 @@ public class Scribe {
 				if (isNewLine) {
 					if (Character.isWhitespace((char) currentCharacter)) {
 						int previousStartPosition= scanner.getCurrentPosition();
-						while (currentCharacter != -1 && currentCharacter != '\r' && currentCharacter != '\n'
-								&& Character.isWhitespace((char) currentCharacter)) {
+						while (currentCharacter != -1 && currentCharacter != '\r' &&
+								currentCharacter != '\n' &&
+								Character.isWhitespace((char) currentCharacter)) {
 							previousStart= nextCharacterStart;
 							previousStartPosition= scanner.getCurrentPosition();
 							currentCharacter= scanner.getNextChar();
@@ -984,7 +993,8 @@ public class Scribe {
 		pendingSpace= false;
 		int previousStart= currentTokenStartPosition;
 
-		while (nextCharacterStart <= currentTokenEndPosition && (currentCharacter= scanner.getNextChar()) != -1) {
+		while (nextCharacterStart <= currentTokenEndPosition &&
+				(currentCharacter= scanner.getNextChar()) != -1) {
 			nextCharacterStart= scanner.getCurrentPosition();
 
 			switch (currentCharacter) {
@@ -1050,8 +1060,10 @@ public class Scribe {
 			if (skipOverInactive) {
 				Position inactivePos= getInactivePosAt(scanner.getCurrentTokenStartPosition());
 				if (inactivePos != null) {
-					int startOffset= Math.min(scanner.getCurrentTokenStartPosition(), inactivePos.getOffset());
-					int endOffset= Math.min(scannerEndPosition, inactivePos.getOffset() + inactivePos.getLength());
+					int startOffset= Math.min(scanner.getCurrentTokenStartPosition(),
+							inactivePos.getOffset());
+					int endOffset= Math.min(scannerEndPosition,
+							inactivePos.getOffset() + inactivePos.getLength());
 					if (startOffset < endOffset) {
 						int savedIndentLevel= indentationLevel;
 						scanner.resetTo(scanner.getCurrentTokenStartPosition(), scanner.eofPosition - 1);
@@ -1098,7 +1110,8 @@ public class Scribe {
 					// to change the trailing flag.
 					if (trailing == BASIC_TRAILING_COMMENT && hasLineComment) {
 						int currentCommentIndentation = computeIndentation(whiteSpaces, 0);
-						int relativeIndentation = currentCommentIndentation - lastLineComment.currentIndentation;
+						int relativeIndentation =
+							currentCommentIndentation - lastLineComment.currentIndentation;
 						if (tabLength == 0) {
 							canChangeTrailing = relativeIndentation == 0;
 						} else {

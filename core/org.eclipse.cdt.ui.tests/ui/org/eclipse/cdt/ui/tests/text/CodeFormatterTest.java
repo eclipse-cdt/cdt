@@ -227,8 +227,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//
 	//void test() {
 	//    ClassWithALongName* variable_with_a_long_name;
-	//    for (ClassWithALongName::Iterator
-	//            iter_for_class_with_a_long_name = variable_with_a_long_name->getIterator();
+	//    for (ClassWithALongName::Iterator iter_for_class_with_a_long_name =
+	//            variable_with_a_long_name->getIterator();
 	//            !iter_for_class_with_a_long_name.isDone();
 	//            iter_for_class_with_a_long_name.next()) {
 	//    }
@@ -627,9 +627,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//
 	//void test() {
 	//    ClassWithALongName* variable_with_a_long_name;
-	//    ClassWithALongName* another_variable =
-	//            variable_with_a_long_name->methodWithALongName()
-	//                    ->anotherMethodWithALongName();
+	//    ClassWithALongName* another_variable = variable_with_a_long_name
+	//            ->methodWithALongName()->anotherMethodWithALongName();
 	//}
 	public void testMemberAccess() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
@@ -969,8 +968,26 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//        int very_looong_parameter_name);
 	public void testFunctionDeclaration() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
-				Integer.toString(Alignment.M_NEXT_PER_LINE_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		assertFormatterResult();
+	}
+
+	//const char* function_name1(const char* parameter_name, const char* another_parameter_name,
+	//int very_loooooooooooooooooooooooong_parameter_name);
+	//const char* function_name2(const char* parameter_name, const char* another_parameter_name,
+	//int very_looooooooooooooooooooooooong_parameter_name);
+
+	//const char* function_name1(const char* parameter_name,
+	//                           const char* another_parameter_name,
+	//                           int very_loooooooooooooooooooooooong_parameter_name);
+	//const char* function_name2(
+	//        const char* parameter_name, const char* another_parameter_name,
+	//        int very_looooooooooooooooooooooooong_parameter_name);
+	public void testFunctionDeclarationFallbackFormat() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
 		assertFormatterResult();
 	}
 
@@ -984,8 +1001,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//}
 	public void testFunctionDefinition() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
-				Integer.toString(Alignment.M_NEXT_PER_LINE_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
 		assertFormatterResult();
 	}
 

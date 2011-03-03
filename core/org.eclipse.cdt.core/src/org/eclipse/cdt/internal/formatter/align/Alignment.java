@@ -32,7 +32,8 @@ public class Alignment {
 	public static final String FOR = "for"; //$NON-NLS-1$
 	public static final String MACRO_ARGUMENTS = "macroArguments"; //$NON-NLS-1$
 	public static final String LIST_ELEMENTS_PREFIX = "listElements_"; //$NON-NLS-1$
-
+	public static final String LIST_FALLBACK_TRAP = "listFallbackTrap"; //$NON-NLS-1$
+	
 	/** The name of the alignment */
 	public String name;
 
@@ -173,7 +174,7 @@ public class Alignment {
 			// indent broken fragments at next indentation level, based on current column
 			this.breakIndentationLevel = this.scribe.getNextIndentationLevel(currentColumn);
 			if (this.breakIndentationLevel == this.location.outputIndentationLevel) {
-				this.breakIndentationLevel += (continuationIndent * indentSize);
+				this.breakIndentationLevel += continuationIndent * indentSize;
 			}
 		} else if ((mode & M_INDENT_BY_ONE) != 0) {
 			// indent broken fragments exactly one level deeper than current indentation
@@ -318,8 +319,7 @@ public class Alignment {
 			 */
 			case M_NEXT_PER_LINE_SPLIT:
 				if (this.fragmentBreaks[0] == NONE) {
-					if (this.fragmentCount > 1
-							&& this.fragmentBreaks[1] == NONE) {
+					if (this.fragmentCount > 1 && this.fragmentBreaks[1] == NONE) {
 						if ((this.mode & M_INDENT_ON_COLUMN) != 0) {
 							this.fragmentIndentations[0] = this.breakIndentationLevel;
 						}

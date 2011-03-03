@@ -89,8 +89,6 @@ public class LRCPPTests extends AST2CPPTests {
 	@Override
 	public void testBug332114a() throws Exception {}
 	@Override
-	public void testAutoTypeInRangeBasedFor_332883() throws Exception {}
-	@Override
 	public void testResolutionInTrailingReturnType_333256() throws Exception {}
 	
 	//DeclType
@@ -98,7 +96,9 @@ public class LRCPPTests extends AST2CPPTests {
 	public void testDeclType_294730() throws Exception {}
 	
 	//Defaulted and deleted functions 
+	@Override
 	public void testDefaultedAndDeletedFunctions_305978() throws Exception {}
+	@Override
 	public void testDefaultedAndDeletedFunctions_305978b() throws Exception {}
 	
 	//Inline namespaces

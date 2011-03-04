@@ -27,7 +27,7 @@ public class ClearExpressionsListAction implements IViewActionDelegate {
 	public void run(IAction action) {
 		if ( fView instanceof MemoryBrowser ) {
 			MemoryBrowser browser = (MemoryBrowser) fView;
-			browser.clearExpressionsFromList(null);
+			browser.clearExpressionHistoryForActiveTab();
 		}
 	}
 

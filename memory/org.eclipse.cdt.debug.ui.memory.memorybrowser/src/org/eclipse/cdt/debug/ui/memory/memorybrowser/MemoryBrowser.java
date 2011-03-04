@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.debug.core.model.provisional.IMemoryRenderingViewportProvider;
 import org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval;
-import org.eclipse.cdt.debug.core.model.provisional.ITargetLabelProvider;
 import org.eclipse.cdt.debug.internal.core.CRequest;
 import org.eclipse.cdt.debug.ui.provisional.IRepositionableMemoryRendering2;
 import org.eclipse.core.runtime.CoreException;
@@ -84,6 +83,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -241,36 +241,31 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		fGotoAddressBar = new GoToAddressBarWidget();
 		fGotoAddressBarControl = fGotoAddressBar.createControl(fMainComposite);
 		
-		fGotoAddressBar.getButton(IDialogConstants.OK_ID).addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {}
+		fGotoAddressBar.getButton(IDialogConstants.OK_ID).addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				performGo(false);
 			}
 		});
 		
-		fGotoAddressBar.getButton(GoToAddressBarWidget.ID_GO_NEW_TAB).addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {}
+		fGotoAddressBar.getButton(GoToAddressBarWidget.ID_GO_NEW_TAB).addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				performGo(true);
 			}
 		});
 		
-		fGotoAddressBar.getExpressionWidget().addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {}
+		fGotoAddressBar.getExpressionWidget().addSelectionListener(new SelectionAdapter() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				performGo(false);
 			}
 		});
 		
-		fGotoMemorySpaceControl.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {}
+		fGotoMemorySpaceControl.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(fGotoMemorySpaceControl.getItemCount() >= 2)
-				{
+				if(fGotoMemorySpaceControl.getItemCount() >= 2) {
 					final CTabFolder activeFolder = (CTabFolder) fStackLayout.topControl;
 					if (activeFolder != null) {	
 						final Object context = activeFolder.getData(KEY_CONTEXT);
-				        fGotoAddressBar.loadSavedExpressions(fGotoMemorySpaceControl.getText(), context);
+				        fGotoAddressBar.loadSavedExpressions(context, fGotoMemorySpaceControl.getText());
 					}
 				}
 			}
@@ -336,11 +331,14 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
         return false;
     }
 	
-    public void clearExpressionsFromList(String memorySpace) {
+    /**
+     * Clears the expression history for the active tab
+     */
+    public void clearExpressionHistoryForActiveTab() {
 		final CTabFolder activeFolder = (CTabFolder) fStackLayout.topControl;
 		if (activeFolder != null) {	
 			final Object context = activeFolder.getData(KEY_CONTEXT);
-	    	fGotoAddressBar.clearExpressionsFromList(fGotoMemorySpaceControl.isVisible() ? fGotoMemorySpaceControl.getItems() : new String[]{""}, context);
+	    	fGotoAddressBar.clearExpressionHistory(context);
 		}
     }
     
@@ -422,7 +420,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			if (activeFolder != null) {	
 				context = activeFolder.getData(KEY_CONTEXT);
 			}
-			fGotoAddressBar.addExpressionToList(memorySpace, context, expression);
+			fGotoAddressBar.addExpressionToHistory(context, expression, memorySpace);
 			performGo(inNewTab, expression, memorySpace);	
 		}
 	}
@@ -909,7 +907,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 							CTabItem tabItem = (CTabItem)e.item;
 							updateExpression(tabItem);
 							updateMemorySpaceControlSelection(tabItem);
-					        fGotoAddressBar.loadSavedExpressions(fGotoMemorySpaceControl.isVisible() ? fGotoMemorySpaceControl.getText() : "", context);
+					        fGotoAddressBar.loadSavedExpressions(context, fGotoMemorySpaceControl.isVisible() ? fGotoMemorySpaceControl.getText() : null);
 							getSite().getSelectionProvider().setSelection(new StructuredSelection(tabItem.getData(KEY_RENDERING)));
 							handleTabActivated(tabItem);
 						}
@@ -920,7 +918,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					fStackLayout.topControl = tabFolder;
 					// set empty initial expression 
 					fGotoAddressBar.setExpressionText(""); //$NON-NLS-1$
-					fGotoAddressBar.loadSavedExpressions(fGotoMemorySpaceControl.isVisible() ? fGotoMemorySpaceControl.getText() : "", context);
+					fGotoAddressBar.loadSavedExpressions(context, fGotoMemorySpaceControl.isVisible() ? fGotoMemorySpaceControl.getText() : null);
 				}
 				// update debug context to the new selection
 				tabFolder.setData(KEY_CONTEXT, context);
@@ -955,7 +953,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 
 				updateExpression(activeFolder.getSelection());
 				updateMemorySpaceControlSelection(activeFolder.getSelection());
-		        fGotoAddressBar.loadSavedExpressions(fGotoMemorySpaceControl.isVisible() ? fGotoMemorySpaceControl.getText() : "", context);
+		        fGotoAddressBar.loadSavedExpressions(context, fGotoMemorySpaceControl.isVisible() ? fGotoMemorySpaceControl.getText() : null);
 				
 				fStackLayout.topControl.getParent().layout(true);
 			}

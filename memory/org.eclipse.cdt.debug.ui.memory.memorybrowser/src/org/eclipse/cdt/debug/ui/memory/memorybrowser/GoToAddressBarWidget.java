@@ -14,10 +14,9 @@ package org.eclipse.cdt.debug.ui.memory.memorybrowser;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.eclipse.cdt.debug.core.model.provisional.ITargetLabelProvider;
+import org.eclipse.cdt.debug.core.model.provisional.IRecurringDebugContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -43,8 +42,19 @@ import org.eclipse.ui.PlatformUI;
 
 public class GoToAddressBarWidget {
 	
-	private static String SEPARATOR = "<sperator>";
-	private static String UNKNOWN_TARGET_NAME = "Unknown";
+	/**
+	 * Character sequence that is unlikely to appear naturally in a recurring
+	 * debug context ID or memory space ID
+	 */
+	private static String SEPARATOR = "<seperator>";
+	
+	/**
+	 * At a minimum, the expression history is kept on a per launch
+	 * configuration basis. Where debug contexts (processes, in practice) can
+	 * provide a recurring ID, we further divide the history by those IDs. This
+	 * constant is used when no recurring context ID is available.
+	 */
+	private static String UNKNOWN_CONTEXT_ID = "Unknown";
 	private Combo fExpression;
 	private ControlDecoration fEmptyExpression;
 	private ControlDecoration fWrongExpression;
@@ -87,10 +97,12 @@ public class GoToAddressBarWidget {
 		return fComposite;
 	}
 	
+	/** The launch configuration attribute prefix used to persist expression history */
 	private final static String SAVED_EXPRESSIONS = "saved_expressions";  //$NON-NLS-1$
+	
 	private final static int MAX_SAVED_EXPRESSIONS = 15 ;
 	
-	private void saveExpression( String memorySpace, Object context, String expr ) {
+	private void addExpressionToHistoryPersistence( Object context, String expr, String memorySpace ) {
 		/*
 		 * Get the saved expressions if any.
 		 * 
@@ -104,7 +116,7 @@ public class GoToAddressBarWidget {
 			return;
 		}
 		
-		String targetName = getTargetName(context);
+		String contextID = getRecurringContextID(context);
 		
 		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 		String currentExpressions = "";
@@ -112,7 +124,7 @@ public class GoToAddressBarWidget {
 			try {
 				ILaunchConfigurationWorkingCopy wc = launchConfiguration.getWorkingCopy();
 				if (wc != null) {
-					currentExpressions = wc.getAttribute(getSaveExpressionKey(targetName,memorySpace), "");
+					currentExpressions = wc.getAttribute(getSaveExpressionKey(contextID,memorySpace), "");
 					
 					StringTokenizer st = new StringTokenizer(currentExpressions, ","); //$NON-NLS-1$
 					/*
@@ -141,7 +153,7 @@ public class GoToAddressBarWidget {
 							}
 							currentExpressions += list.get(idx);
 						}
-						wc.setAttribute(getSaveExpressionKey(targetName,memorySpace), currentExpressions);					
+						wc.setAttribute(getSaveExpressionKey(contextID,memorySpace), currentExpressions);					
 						wc.doSave();
 					}
 				}			
@@ -151,47 +163,67 @@ public class GoToAddressBarWidget {
 		}
 	}
 	
-	public void deleteExpressions(Object context) {
-		
-		if(context == null)
-		{
+	/**
+	 * Clear all expression history persisted in the launch configuration that
+	 * created the given debug context
+	 * 
+	 * @param context
+	 *            the debug context. In practice, this will always be a process
+	 *            context
+	 */
+	public void clearExpressionHistoryPersistence(Object context) {
+		if(context == null) {
 			return;
 		}
 		
 		ILaunch launch = getLaunch(context);
-		if(launch == null)
-		{
+		if(launch == null) {
 			return;
 		}
+		
+		// We maintain history for every process this launch configuration has
+		// launched. And where memory spaces are involved, each space has its
+		// own history. Here we just wipe out the persistence of all processes
+		// and memory spaces stored in the launch configuration that created the
+		// given processes.
 		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 		if (launchConfiguration != null) {
 			try {
 				ILaunchConfigurationWorkingCopy wc = launchConfiguration.getWorkingCopy();
 				if (wc != null) {
-					@SuppressWarnings("unchecked")
-					Map<String,Object> attributes = (Map<String,Object>)wc.getAttributes();
-					if (attributes != null && !attributes.isEmpty()) {
-
-						Iterator<String> iterator = attributes.keySet().iterator();
-						while(iterator.hasNext())
-						{
-							String key = iterator.next();
-							if(key.startsWith(SAVED_EXPRESSIONS))
-							{
-								wc.removeAttribute(key);
-							}
+					Map<?,?> attributes = wc.getAttributes();
+					Iterator<?> iterator = attributes.keySet().iterator();
+					while (iterator.hasNext()) {
+						String key = (String)iterator.next();
+						if (key.startsWith(SAVED_EXPRESSIONS)) {
+							wc.removeAttribute(key);
 						}
-						wc.doSave();
-					}	
+					}
+					wc.doSave();
 				}
 			}
 			catch(CoreException e) {
+				// Some unexpected snag working with the launch configuration
+				MemoryBrowserPlugin.log(e);
 			}
 		}
-
 	}
 
-	private String[] getSavedExpressions(String memorySpace, Object context) {
+	/**
+	 * Get the expression history persisted in the launch configuration for the
+	 * given debug context and memory space (where applicable)
+	 * 
+	 * @param context
+	 *            the debug context. In practice, this will always be a process
+	 *            context
+	 * @param memorySpace
+	 *            memory space ID or null if not applicable
+	 * @return a list of expressions, or empty collection if no history
+	 *         available (never null)
+	 * @throws CoreException
+	 *             if there's a problem working with the launch configuration
+	 */
+	private String[] getSavedExpressions(Object context, String memorySpace) throws CoreException {
 		/*
 		 * Get the saved expressions if any.
 		 * 
@@ -201,19 +233,14 @@ public class GoToAddressBarWidget {
 		 */
 		
 		ILaunch launch = getLaunch(context);
-		if(launch == null)
-		{
+		if(launch == null) {
 			return new String[0];
 		}
 		
 		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 		String expressions = "";
 		if (launchConfiguration != null) {
-			try {
-				expressions = launchConfiguration.getAttribute(getSaveExpressionKey(getTargetName(context),memorySpace), "");
-			}
-			catch(CoreException e) {
-			}
+			expressions = launchConfiguration.getAttribute(getSaveExpressionKey(getRecurringContextID(context),memorySpace), "");
 		}
 
 		StringTokenizer st = new StringTokenizer(expressions, ","); //$NON-NLS-1$
@@ -221,30 +248,43 @@ public class GoToAddressBarWidget {
 		 * Parse through the list creating an ordered array for display.
 		 */
 		ArrayList<String> list = new ArrayList<String>();
-		while(st.hasMoreElements())
-		{
-			String expr = (String) st.nextElement();
-			list.add(expr);
+		while(st.hasMoreElements()) {
+			list.add(st.nextToken());
 		}
 		return list.toArray(new String[list.size()]);
 	}
 	
-	public void loadSavedExpressions(String memorySpace, Object context)
+	/**
+	 * Populate the expression history combobox based on the history persisted
+	 * in the launch configuration for the given context and memory space (where
+	 * applicable)
+	 * 
+	 * @param context
+	 *            the debug context. In practice, this will always be a process
+	 *            context
+	 * @param memorySpace
+	 *            memory space ID; null if not applicable
+	 */
+	public void loadSavedExpressions(Object context, String memorySpace)
 	{
-		String[] expressions = getSavedExpressions(memorySpace, context);
-		String text = fExpression.getText(); 
-		fExpression.removeAll();
-		for(int idx=0; idx < expressions.length; idx++)
-		{
-			fExpression.add(expressions[idx]);
-		}
-		if(text != null)
-		{
-			fExpression.setText(text);
+		
+		try {
+			String[] expressions = getSavedExpressions(context, memorySpace);
+			String currentExpression = fExpression.getText(); 
+			fExpression.removeAll();
+			for (String expression : expressions) {
+				fExpression.add(expression);
+			}
+			if (currentExpression != null) {
+				fExpression.setText(currentExpression);
+			}
+		} catch (CoreException e) {
+			// Unexpected snag dealing with launch configuration
+			MemoryBrowserPlugin.log(e);
 		}
 	}
 	
-	public void addExpressionToList( String memorySpace, Object context, String expr ) {
+	public void addExpressionToHistory(Object context, String expr, String memorySpace) {
 		/*
 		 * Make sure it does not already exist, we do not want to show duplicates.
 		 */
@@ -257,7 +297,7 @@ public class GoToAddressBarWidget {
 			}
 			
 			/*
-			 * Add the new expression to the dropdown.
+			 * Add the new expression to the combobox
 			 */
 			fExpression.add(expr);
 			
@@ -265,20 +305,28 @@ public class GoToAddressBarWidget {
 		/*
 		 * Add it to the persistense database.
 		 */
-		saveExpression(memorySpace, context, expr);
+		addExpressionToHistoryPersistence(context, expr, memorySpace);
 	}
 	
-	public void clearExpressionsFromList(String[] memorySpaces, Object context) {
+	/**
+	 * Clears the history of expressions for the given debug context, both in
+	 * the GUI and the persistence data
+	 * 
+	 * @param context
+	 *            the debug context. In practice, this will always be a process
+	 *            context.
+	 */
+	public void clearExpressionHistory(Object context) {
 		/*
-		 * Clean up the combo list.
+		 * Clear the combobox
 		 */
 		fExpression.removeAll();
 		fExpression.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		
 		/*
-		 * Clean out the expression persistense.
+		 * Clear the history persisted in the launch configuration
 		 */
-		deleteExpressions(context);
+		clearExpressionHistoryPersistence(context);
 		
 		/*
 		 * Make sure the status image indicator shows OK.
@@ -407,38 +455,52 @@ public class GoToAddressBarWidget {
     	
     }
     
-    private String getTargetName(Object context)
+    /**
+	 * Get the identifier for the given context if it is a recurring one. See
+	 * {@link IRecurringDebugContext}
+	 * 
+	 * @param context
+	 *            the debug context
+	 * @return the ID or UNKNOWN_CONTEXT_ID if the context is non-recurring or
+	 *         can't provide us its ID
+	 */
+    private String getRecurringContextID(Object context)
     {
-    	String targetName = null;
-		if(context instanceof IAdaptable)
-		{
+    	String id = UNKNOWN_CONTEXT_ID;
+		if (context instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) context;
-			ITargetLabelProvider labelProvider = (ITargetLabelProvider)adaptable.getAdapter(ITargetLabelProvider.class);
-			if(labelProvider != null)
-			{
-				try
-				{
-					targetName = labelProvider.getLabel();
+			IRecurringDebugContext recurringDebugContext = (IRecurringDebugContext)adaptable.getAdapter(IRecurringDebugContext.class);
+			if (recurringDebugContext != null) {
+				try {
+					id = recurringDebugContext.getContextID();
 				}
-				catch(DebugException e)
-				{
+				catch(DebugException e) {
+					// If the context can't give us the ID, just treat it as a
+					// non-recurring context
 				}
 			}
 		}
-		if(targetName == null || targetName.trim().length() == 0)
-		{
-			targetName = UNKNOWN_TARGET_NAME;
-		}
-		return targetName;
+		return id;
     	
     }
     
-    private String getSaveExpressionKey(String targetName, String memorySpace)
-    {
-    	String key = SAVED_EXPRESSIONS + SEPARATOR + targetName.trim();
-    	if(memorySpace != null && memorySpace.trim().length() > 0)
-    	{ 
-    		key += SEPARATOR + memorySpace.trim();
+    /**
+	 * Get a key that we can use to persist the expression history for the given
+	 * debug context and memory space (where applicable). The key is used within
+	 * the scope of a launch configuration.
+	 * 
+	 * @param contextID
+	 *            a recurring debug context ID; see
+	 *            {@link IRecurringDebugContext}
+	 * @param memorySpace
+	 *            a memory space identifier, or null if not applicable
+	 * @return they key which will be used to persist the expression history
+	 */
+    private String getSaveExpressionKey(String contextID, String memorySpace) {
+    	assert contextID.length() > 0;
+    	String key = SAVED_EXPRESSIONS + SEPARATOR + contextID;
+    	if (memorySpace != null && memorySpace.length() > 0) { 
+    		key += SEPARATOR + memorySpace;
     	}
     	return key;
     }

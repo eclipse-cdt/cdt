@@ -30,9 +30,10 @@ public class Alignment {
 	public static final String EXCEPTION_SPECIFICATION = "exceptionSpecification"; //$NON-NLS-1$
 	public static final String FIELD_REFERENCE = "fieldReference"; //$NON-NLS-1$
 	public static final String FOR = "for"; //$NON-NLS-1$
-	public static final String MACRO_ARGUMENTS = "macroArguments"; //$NON-NLS-1$
 	public static final String LIST_ELEMENTS_PREFIX = "listElements_"; //$NON-NLS-1$
 	public static final String LIST_FALLBACK_TRAP = "listFallbackTrap"; //$NON-NLS-1$
+	public static final String MACRO_ARGUMENTS = "macroArguments"; //$NON-NLS-1$
+	public static final String TRAILING_TEXT = "trailingText"; //$NON-NLS-1$
 	
 	/** The name of the alignment */
 	public String name;

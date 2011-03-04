@@ -263,7 +263,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 		public void run() {
 			boolean needSpace = skipConstVolatileRestrict();
-			if (node.getExceptionSpecification() != null && peekNextToken() == Token.t_throw)
+			int token = peekNextToken();
+			if (token == Token.t_throw || token == Token.tIDENTIFIER)
 				return;
 			// Skip the rest (=0)
 			if (needSpace && scribe.printComment()) {
@@ -862,6 +863,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 */
 	@Override
 	public int visit(IASTStatement node) {
+		if (startsWithMacroExpansion(node))
+			scribe.printCommentPreservingNewLines();
 		if (!startNode(node)) { return PROCESS_SKIP; }
 		int indentLevel= scribe.indentationLevel;
 		try {
@@ -1341,21 +1344,51 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	private int visit(ICPPASTFunctionDeclarator node) {
 		final List<ICPPASTParameterDeclaration> parameters = Arrays.asList(node.getParameters());
 		final ListOptions options = createListOptionsForFunctionDeclarationParameters();
+		Runnable tailFormatter = scribe.getTailFormatter();
 		formatList(parameters, options, true, node.takesVarArgs(),
-				new CPPFunctionDeclaratorTailFormatter(node, scribe.getTailFormatter()));
+				new CPPFunctionDeclaratorTailFormatter(node, tailFormatter));
 
 		IASTFileLocation fileLocation= node.getFileLocation();
 		if (fileLocation != null &&
 				scribe.scanner.getCurrentPosition() < fileLocation.getNodeOffset() + fileLocation.getNodeLength()) {
 			skipConstVolatileRestrict();
 
-			final IASTTypeId[] exceptionSpecification= node.getExceptionSpecification();
-			if (exceptionSpecification != null && peekNextToken() == Token.t_throw)
-				formatExceptionSpecification(exceptionSpecification);
-			// Skip the rest (=0)
-			scribe.printTrailingComment();
-			scribe.space();
-			skipNode(node);
+			int token = peekNextToken();
+			if (token == Token.t_throw || token == Token.tIDENTIFIER) {
+				final IASTTypeId[] exceptionSpecification= node.getExceptionSpecification();
+				if (exceptionSpecification != null && token == Token.t_throw)
+					formatExceptionSpecification(exceptionSpecification);
+				if (peekNextToken() == Token.tIDENTIFIER) {
+					Alignment alignment = scribe.createAlignment(
+							Alignment.TRAILING_TEXT,
+							Alignment.M_COMPACT_SPLIT,
+							1,
+							scribe.scanner.getCurrentPosition());
+
+					scribe.enterAlignment(alignment);
+					boolean ok = false;
+					do {
+						try {
+							scribe.alignFragment(alignment, 0);
+							// Skip the rest of the declarator.
+							scribe.printTrailingComment();
+							scribe.space();
+							if (tailFormatter != null)
+								tailFormatter.run();
+							skipNode(node);
+							ok = true;
+						} catch (AlignmentException e) {
+							scribe.redoAlignment(e);
+						}
+					} while (!ok);
+					scribe.exitAlignment(alignment, true);
+				}
+			} else {
+				// Skip the rest (=0)
+				scribe.printTrailingComment();
+				scribe.space();
+				skipNode(node);
+			}
 		}
 		return PROCESS_SKIP;
 	}

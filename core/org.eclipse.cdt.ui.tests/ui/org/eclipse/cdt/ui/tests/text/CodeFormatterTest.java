@@ -991,6 +991,27 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//#define ABSTRACT = 0
+	//
+	//class A {
+	//    virtual bool function_with_a_loooooong_name(const char* parameter) ABSTRACT;
+	//    virtual bool function_with_a_looooooong_name(const char* parameter) ABSTRACT;
+	//};
+
+	//#define ABSTRACT = 0
+	//
+	//class A {
+	//    virtual bool function_with_a_loooooong_name(const char* parameter) ABSTRACT;
+	//    virtual bool function_with_a_looooooong_name(const char* parameter)
+	//            ABSTRACT;
+	//};
+	public void testFunctionDeclarationTrailingMacro() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		assertFormatterResult();
+	}
+
 	//void f1(const char* long_parameter_name,int very_looooooooong_parameter_name){}
 	//void f2(const char* long_parameter_name,int very_loooooooooong_parameter_name){}
 
@@ -1062,6 +1083,33 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	~asdf();
 	//};
 	public void testMacroWithMultipleDeclarations_Bug242053() throws Exception {
+		assertFormatterResult();
+	}
+
+	//#define STREAM GetStream()
+	//class Stream {
+	//Stream& operator <<(const char*);
+	//};
+	//Stream GetStream();
+	//
+	//void test() {
+	// // comment
+	//STREAM << "text " << "text " << "text " << "text " << "text " << "text " << "text " << "text ";
+	//}
+
+	//#define STREAM GetStream()
+	//class Stream {
+	//    Stream& operator <<(const char*);
+	//};
+	//Stream GetStream();
+	//
+	//void test() {
+	//    // comment
+	//    STREAM << "text " << "text " << "text " << "text " << "text " << "text "
+	//            << "text " << "text ";
+	//}
+	public void testMacroAfterComment() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		assertFormatterResult();
 	}
 

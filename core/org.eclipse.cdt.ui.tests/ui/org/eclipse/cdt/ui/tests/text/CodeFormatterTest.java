@@ -1870,6 +1870,35 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//class Stream {
+	//Stream& operator <<(const char*);
+	//Stream& operator <<(int);
+	//};
+	//
+	//Stream stream;
+	//
+	//void test() {
+	// // Breaking at << is preferred to breaking at +.
+	//stream << "text text text text text text text text text" << 1000000 + 2000000;
+	//}
+
+	//class Stream {
+	//    Stream& operator <<(const char*);
+	//    Stream& operator <<(int);
+	//};
+	//
+	//Stream stream;
+	//
+	//void test() {
+	//    // Breaking at << is preferred to breaking at +.
+	//    stream << "text text text text text text text text text"
+	//            << 1000000 + 2000000;
+	//}
+	public void testBreakingPrecedence() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
 	//#define m() f()
 	//void f() {
 	//if (1) f();

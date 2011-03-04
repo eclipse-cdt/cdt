@@ -46,9 +46,9 @@ void bug183220() {
 	if (((rtc_hdw_cr_sync_next != rtc_hdw_cr_sync) || rtc_hdw_cr_resync_enable)
 			&& !rtc_s2000_src_pending && !rtc_s2000_cr_sync_pending) {
 		if (!identify_hdw_fvr_master() || !rtc_hdw_current_clock->external
-				|| !rtc_hdw_cr_sync_next || ((rtc_hdw_current_clock->external
-				&& rtc_hdw_cr_sync_next && rtc_s2000_clock_source_state
-				!= RTC_CLOCK_PLL))) {
+				|| !rtc_hdw_cr_sync_next
+				|| ((rtc_hdw_current_clock->external && rtc_hdw_cr_sync_next
+						&& rtc_s2000_clock_source_state != RTC_CLOCK_PLL))) {
 		}
 	}
 }

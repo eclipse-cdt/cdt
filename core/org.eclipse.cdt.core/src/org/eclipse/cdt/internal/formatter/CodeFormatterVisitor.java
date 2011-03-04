@@ -2539,9 +2539,11 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (isAssignment(node)) {
 			return formatAssignment(node);
 		}
+
 		Alignment expressionAlignment= scribe.createAlignment(
 				Alignment.BINARY_EXPRESSION,
 				preferences.alignment_for_binary_expression,
+				Alignment.R_OUTERMOST,
 				2,
 				scribe.scanner.getCurrentPosition());
 
@@ -2549,12 +2551,11 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
     	boolean ok = false;
     	do {
     		try {
-    			scribe.alignFragment(expressionAlignment, 0);
     			final IASTExpression op1= node.getOperand1();
-    			// operand 1
+    			// Left operand
     			op1.accept(this);
-
     			scribe.printTrailingComment();
+
     			scribe.alignFragment(expressionAlignment, 1);
 
     			// In case of macros we may have already passed the operator position.
@@ -2577,7 +2578,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	    			}
     			}
 
-   				// operand 2
+   				// Right operand
    				final IASTExpression op2= node.getOperand2();
    				op2.accept(this);
 

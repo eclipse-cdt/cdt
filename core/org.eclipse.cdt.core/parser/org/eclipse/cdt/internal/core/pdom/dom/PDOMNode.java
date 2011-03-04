@@ -9,13 +9,11 @@
  *     Doug Schaefer (QNX) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
- *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.internal.core.index.composite.CompositeIndexBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
@@ -103,10 +101,6 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	public final boolean equals(Object obj) {
 		if (obj == this)
 			return true;
-		// For symmetry with CompositeIndexBinding.equals(Object)
-		if (obj instanceof CompositeIndexBinding) {
-			obj = ((CompositeIndexBinding) obj).getRawBinding();
-		}
 		if (obj instanceof PDOMNode) {
 			PDOMNode other = (PDOMNode) obj;
 			return getPDOM() == other.getPDOM() && record == other.record;

@@ -96,15 +96,13 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj == this)
+	public boolean equals(Object other) {
+		if (other == this)
 			return true;
-		if (obj instanceof IIndexFragmentBinding)
-			return rbinding.equals(obj);
-		if (obj instanceof CompositeIndexBinding)
-			return rbinding.equals(((CompositeIndexBinding) obj).rbinding);
-		
-		return super.equals(obj);
+		if (!(other instanceof CompositeIndexBinding))
+			return false;
+		CompositeIndexBinding otherComposite = (CompositeIndexBinding) other;
+		return rbinding.equals(otherComposite.rbinding) && cf.equals(otherComposite.cf);
 	}
 
 	@Override

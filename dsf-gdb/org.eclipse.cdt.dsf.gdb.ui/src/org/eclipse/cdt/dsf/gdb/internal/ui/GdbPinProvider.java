@@ -34,6 +34,8 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.StateChangedEvent;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -338,6 +340,11 @@ public class GdbPinProvider implements IPinProvider {
 	}
 	
 	@DsfServiceEventHandler
+	public void handleEvent(final ICommandControlShutdownDMEvent event) {
+		doHandleEvent(event, IPinModelListener.EXITED);
+	}
+
+	@DsfServiceEventHandler
 	public void handleEvent(final IExitedDMEvent event) {
 		doHandleEvent(event, IPinModelListener.EXITED);
 	}
@@ -381,6 +388,12 @@ public class GdbPinProvider implements IPinProvider {
 						if (procEventDmc.equals(procHandleDmc)) {
 							fireModleChangeEvent(listener, notificationId);
 						}
+						continue;
+					}
+					
+					// If we got a shutdown event 
+					if (eventDmc instanceof ICommandControlDMContext) {
+						fireModleChangeEvent(listener, notificationId);
 						continue;
 					}
 				}

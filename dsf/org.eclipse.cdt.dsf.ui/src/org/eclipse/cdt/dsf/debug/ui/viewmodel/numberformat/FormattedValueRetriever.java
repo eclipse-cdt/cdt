@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Wind River Systems and others.
+ * Copyright (c) 2009, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Winnie Lai (Texas Instruments) - Individual Element Number Format (Bug 202556)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat;
 
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,7 @@ import org.eclipse.cdt.dsf.service.DsfServices;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
+import org.eclipse.cdt.dsf.ui.viewmodel.IVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesUpdateStatus;
@@ -70,6 +73,7 @@ public class FormattedValueRetriever {
 
     private final IVMNode fNode;
     private final ICachingVMProviderExtension2 fCache;
+    private final IElementFormatProvider fElementFormatProvider;
     private final ServiceTracker fServiceTracker;
     private final Class<? extends IFormattedDataDMContext> fDmcType;
     private final String fPropertyPrefix;
@@ -90,6 +94,8 @@ public class FormattedValueRetriever {
     public FormattedValueRetriever(IVMNode node, Filter filter, Class<? extends IFormattedDataDMContext> dmcType, String propertyPrefix) {
         fNode = node;
         fCache = (ICachingVMProviderExtension2)node.getVMProvider();
+        IVMProvider vmprovider = fNode.getVMProvider();
+        fElementFormatProvider = vmprovider instanceof IElementFormatProvider ? (IElementFormatProvider) vmprovider : null;
         fServiceTracker = new ServiceTracker(DsfUIPlugin.getBundleContext(), filter, null);
         fServiceTracker.open();
         fDmcType = dmcType;
@@ -152,45 +158,112 @@ public class FormattedValueRetriever {
     @ConfinedToDsfExecutor("node.getExecutor()")
     public void update(final IPropertiesUpdate updates[], final RequestMonitor rm) 
     {
-        final Map<IPropertiesUpdate, String[]> cachedAvailableFormatsMap = calcCachedAvailableFormatsMap(updates);
-        if (cachedAvailableFormatsMap != null && cachedAvailableFormatsMap.size() == updates.length) {
-            // All updates were satisfied by the cache.
-            doUpdateWithAvailableFormats(updates, cachedAvailableFormatsMap, rm);
-        } else {
-            final IFormattedValues service = (IFormattedValues)fServiceTracker.getService();
-            if (service == null) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Service not available " + fServiceTracker, null)); //$NON-NLS-1$
-                rm.done();
-                return;
+    	retreiveElementActiveFormat(updates, new DataRequestMonitor<Map<IPropertiesUpdate, String>>(ImmediateExecutor.getInstance(), rm) {
+    		@Override
+    		protected void handleCompleted() {
+    			final Map<IPropertiesUpdate, String> elementFormatMap = getData();
+    	        final Map<IPropertiesUpdate, String[]> cachedAvailableFormatsMap = calcCachedAvailableFormatsMap(updates);
+    	        if ((cachedAvailableFormatsMap != null && cachedAvailableFormatsMap.size() == updates.length)) {
+    	            // All updates were satisfied by the cache.
+    	            doUpdateWithAvailableFormats(updates, cachedAvailableFormatsMap, elementFormatMap, rm);
+    	        } else {
+    	            final IFormattedValues service = (IFormattedValues)fServiceTracker.getService();
+    	            if (service == null) {
+    	                rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Service not available " + fServiceTracker, null)); //$NON-NLS-1$
+    	                rm.done();
+    	                return;
+    	            }
+    	            try {
+    	                service.getExecutor().execute(new DsfRunnable() {
+    	                    public void run() {
+    	                        retrieveAvailableFormats(
+    	                            calcOutstandingAvailableFormatsUpdates(updates, cachedAvailableFormatsMap), 
+    	                            new DataRequestMonitor<Map<IPropertiesUpdate, String[]>>(fNode.getVMProvider().getExecutor(), rm) {
+    	                                @Override
+    	                                protected void handleSuccess() {
+    	                                    Map<IPropertiesUpdate, String[]> availableFormatsMap;
+    	                                    if (cachedAvailableFormatsMap != null) {
+    	                                        availableFormatsMap = cachedAvailableFormatsMap;
+    	                                        availableFormatsMap.putAll(getData());
+    	                                    } else {
+    	                                        availableFormatsMap = getData();
+    	                                    }
+    	                                    // Retrieve the formatted values now that we have the available formats (where needed).
+    	                                    // Note that we are passing off responsibility of our parent monitor  
+    	                                    doUpdateWithAvailableFormats(updates, availableFormatsMap, elementFormatMap, rm); 
+    	                                }
+    	                            });
+    	                    }
+    	                });
+    	            } catch (RejectedExecutionException e) {
+    	                rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Service executor shut down " + service.getExecutor(), e)); //$NON-NLS-1$
+    	                rm.done();
+    	            }
+    	        }
+    		}
+    	});
+    }
+    
+    private void retreiveElementActiveFormat(final IPropertiesUpdate updates[], final DataRequestMonitor<Map<IPropertiesUpdate, String>> rm) {
+    	if (fElementFormatProvider == null) {
+    		rm.setData(new HashMap<IPropertiesUpdate, String>(0));
+    		rm.done();
+    		return;
+    	}
+        Map<IPropertiesUpdate, String> cachedMap = null;
+        HashSet<IPropertiesUpdate> outstanding = null;
+    	for (IPropertiesUpdate update : updates) {
+    		if (isElementFormatPropertyNeeded(update) == false) {
+    			continue;
+    		}
+    		String active = null;
+    		ICacheEntry cacheEntry = fCache.getCacheEntry(fNode, update.getViewerInput(), update.getElementPath());
+            if (cacheEntry != null && cacheEntry.getProperties() != null) {
+                active = (String) cacheEntry.getProperties().get(PROP_ACTIVE_FORMAT);
             }
-            
-            try {
-                service.getExecutor().execute(new DsfRunnable() {
-                    public void run() {
-                        retrieveAvailableFormats(
-                            calcOutstandingAvailableFormatsUpdates(updates, cachedAvailableFormatsMap), 
-                            new DataRequestMonitor<Map<IPropertiesUpdate, String[]>>(fNode.getVMProvider().getExecutor(), rm) {
-                                @Override
-                                protected void handleSuccess() {
-                                    Map<IPropertiesUpdate, String[]> availableFormatsMap;
-                                    if (cachedAvailableFormatsMap != null) {
-                                        availableFormatsMap = cachedAvailableFormatsMap;
-                                        availableFormatsMap.putAll(getData());
-                                    } else {
-                                        availableFormatsMap = getData();
-                                    }
-                                    // Retrieve the formatted values now that we have the available formats (where needed).
-                                    // Note that we are passing off responsibility of our parent monitor  
-                                    doUpdateWithAvailableFormats(updates, availableFormatsMap, rm); 
-                                }
-                            });
-                    }
-                });
-            } catch (RejectedExecutionException e) {
-                rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Service executor shut down " + service.getExecutor(), e)); //$NON-NLS-1$
-                rm.done();
+            if (active != null) {
+                if (cachedMap == null) {  
+                	cachedMap = new HashMap<IPropertiesUpdate, String>(updates.length * 4/3);
+                }
+                cachedMap.put(update, active);
+            } else {
+            	if (outstanding == null) {
+            		outstanding = new HashSet<IPropertiesUpdate>(updates.length * 4/3);
+            	}
+            	outstanding.add(update);
             }
+    	}
+    	if (outstanding == null || outstanding.size() == 0) {
+    		rm.setData(cachedMap == null ? new HashMap<IPropertiesUpdate, String>(0) : cachedMap);
+    		rm.done();
+    		return;
+    	}
+        if (cachedMap == null) {  
+        	cachedMap = new HashMap<IPropertiesUpdate, String>(updates.length * 4/3);
         }
+        final Map<IPropertiesUpdate, String> elementFormatMap = Collections.synchronizedMap(cachedMap);
+        rm.setData(elementFormatMap);
+        final CountingRequestMonitor countingRm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), rm); 
+        int count = 0;
+        for (final IPropertiesUpdate update : outstanding) {
+        	fElementFormatProvider.getActiveFormat(update.getPresentationContext(), fNode, update.getViewerInput(), update.getElementPath(),
+       			new ViewerDataRequestMonitor<String>(ImmediateExecutor.getInstance(), update) {
+       				@Override
+       				protected void handleCompleted() {
+       					if (isSuccess()) {
+       						String active = this.getData();
+       						if (update.getProperties().contains(PROP_ACTIVE_FORMAT)) {
+       							update.setProperty(PROP_ACTIVE_FORMAT, active);
+       						}
+       						elementFormatMap.put(update, active);
+       					}
+       					countingRm.done();
+       				}
+       			});
+            count++;
+        }
+        countingRm.setDoneCount(count);
+        
     }
     
     /**
@@ -329,6 +402,7 @@ public class FormattedValueRetriever {
     private void doUpdateWithAvailableFormats(
         IPropertiesUpdate updates[],
         final Map<IPropertiesUpdate, String[]> availableFormatsMap,
+        final Map<IPropertiesUpdate, String> elementFormatMap,
         final RequestMonitor rm)
     {
         final List<IPropertiesUpdate> outstandingUpdates = new ArrayList<IPropertiesUpdate>(updates.length); 
@@ -341,7 +415,7 @@ public class FormattedValueRetriever {
                 update.setProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE, preferredFormat);
             }
 
-            final String activeFormat = calcActiveFormat(update, preferredFormat, availableFormatsMap);
+            final String activeFormat = calcActiveFormat(update, preferredFormat, availableFormatsMap, elementFormatMap);
             
             if (update.getProperties().contains(PROP_ACTIVE_FORMAT)) {
                 assert activeFormat != null : "Our caller should have provided the available formats if this property was specified; given available formats, an 'active' nomination is guaranteed."; //$NON-NLS-1$
@@ -472,12 +546,18 @@ public class FormattedValueRetriever {
      * 
      * @param update Properties update to calculate the active format for.  
      * @param availableFormatsMap The map of available formats.
+     * @param elementFormatMap The map of element active format.
      * @return The active format, or null if active format not requested in 
      * update.
      */
-    private String calcActiveFormat(IPropertiesUpdate update, String preferredFormat, Map<IPropertiesUpdate, String[]> availableFormatsMap) {
+    private String calcActiveFormat(IPropertiesUpdate update, String preferredFormat, Map<IPropertiesUpdate, String[]> availableFormatsMap,
+    		Map<IPropertiesUpdate, String> elementFormatMap) {
         String[] availableFormats = availableFormatsMap.get(update);
         if (availableFormats != null && availableFormats.length != 0) {
+        	String elementFormat = elementFormatMap.get(update);
+            if (elementFormat != null && isFormatAvailable(elementFormat, availableFormats)) {
+            	return elementFormat;
+            }
             if (isFormatAvailable(preferredFormat, availableFormats)) {
                 return preferredFormat;
             } else {
@@ -585,6 +665,21 @@ public class FormattedValueRetriever {
     private boolean isAvailableFormatsPropertyNeeded(IPropertiesUpdate update) {
         return update.getProperties().contains(PROP_AVAILABLE_FORMATS) || 
                update.getProperties().contains(PROP_ACTIVE_FORMAT) ||
+               update.getProperties().contains(PROP_ACTIVE_FORMAT_VALUE);
+    }
+    
+    /**
+     * For each update, query the active format for the update's
+     * element...but only if necessary. It is necessary only if the
+     * update is asking what the active format is or is asking for the value
+     * of the element in that format.
+     * @param update
+     * @return true if needed
+     */
+    private boolean isElementFormatPropertyNeeded(IPropertiesUpdate update) {
+    	if (fElementFormatProvider == null)
+    		return false;
+        return update.getProperties().contains(PROP_ACTIVE_FORMAT) ||
                update.getProperties().contains(PROP_ACTIVE_FORMAT_VALUE);
     }
     

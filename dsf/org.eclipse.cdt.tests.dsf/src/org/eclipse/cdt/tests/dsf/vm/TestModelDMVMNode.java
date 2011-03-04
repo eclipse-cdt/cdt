@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Wind River Systems and others.
+ * Copyright (c) 2008, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,12 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Winnie Lai (Texas Instruments) - Individual Element Number Format (Bug 202556)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.vm;
+
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -16,6 +20,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueLabelText;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueRetriever;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.update.ElementFormatEvent;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
@@ -210,6 +215,10 @@ public class TestModelDMVMNode extends AbstractDMVMNode implements IRootVMNode, 
         {
             return IModelDelta.CONTENT;
         } 
+        if ( e instanceof ElementFormatEvent) 
+        {
+            return IModelDelta.STATE;
+        }         
         if (e instanceof TestEvent) {
             return ((TestEvent)e).getType();
         }
@@ -223,6 +232,14 @@ public class TestModelDMVMNode extends AbstractDMVMNode implements IRootVMNode, 
         {
             parent.setFlags(parent.getFlags() | IModelDelta.CONTENT);
         } 
+        if ( e instanceof ElementFormatEvent) 
+        {
+        	Set<Object> elements = ((ElementFormatEvent) e).getElements();
+        	Iterator<Object> it = elements.iterator();
+        	while (it.hasNext()) {
+        		parent.addNode(it.next(), IModelDelta.STATE);
+        	}
+        } 
         rm.done();
     }
 
@@ -235,6 +252,10 @@ public class TestModelDMVMNode extends AbstractDMVMNode implements IRootVMNode, 
         int flags = IModelDelta.NO_CHANGE;
         if ( event instanceof PropertyChangeEvent &&
             ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE) 
+        {
+            flags |= IModelDelta.CONTENT;
+        } 
+        if ( event instanceof ElementFormatEvent) 
         {
             flags |= IModelDelta.CONTENT;
         } 

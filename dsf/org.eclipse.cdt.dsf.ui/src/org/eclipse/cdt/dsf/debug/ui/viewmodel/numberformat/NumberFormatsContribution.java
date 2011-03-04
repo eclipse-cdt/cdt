@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems and others.
+ * Copyright (c) 2008, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Winnie Lai (Texas Instruments) - Individual Element Number Format (Bug 202556)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat;
 
@@ -38,7 +39,7 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class NumberFormatsContribution extends CompoundContributionItem implements IWorkbenchContribution {
     
-    private static final List<String> FORMATS = new LinkedList<String>(); 
+    protected static final List<String> FORMATS = new LinkedList<String>(); 
     static {
         FORMATS.add(IFormattedValues.NATURAL_FORMAT);
         FORMATS.add(IFormattedValues.HEX_FORMAT);
@@ -65,7 +66,7 @@ public class NumberFormatsContribution extends CompoundContributionItem implemen
         }
     }
  
-    private IServiceLocator fServiceLocator;
+    protected IServiceLocator fServiceLocator;
 
     private static IContributionItem[] NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS = new IContributionItem[] { 
     	new ContributionItem() {

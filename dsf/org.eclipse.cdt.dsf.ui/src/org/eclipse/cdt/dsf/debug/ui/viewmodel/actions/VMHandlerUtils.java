@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems and others.
+ * Copyright (c) 2008, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Winnie Lai (Texas Instruments) - Individual Element Number Format (Bug 202556)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.actions;
 
@@ -85,6 +86,23 @@ public class VMHandlerUtils {
             IWorkbenchPart part = HandlerUtil.getActivePart(event);        
             return getVMProviderForPart(part);
         }
+    }
+
+    /**
+     * Retrieves the selection from a given service locator's selection service.
+     * @param serviceLocator Service locator for access to active selection 
+     * and part.
+     * 
+     * @return The selection if available; return null otherwise.
+     * @since 2.2
+     */
+    static public ISelection getSelection(IServiceLocator serviceLocator) {
+        ISelectionService selectionService = 
+            (ISelectionService)serviceLocator.getService(ISelectionService.class);
+        if (selectionService != null) {
+            return selectionService.getSelection();
+        }
+        return null;
     }
 
     public static IVMProvider getVMProviderForPart(IWorkbenchPart part) {

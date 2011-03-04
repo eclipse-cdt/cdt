@@ -156,6 +156,20 @@
 	           </dynamic>
             </menu>         
        </menuContribution>
+       <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.RegisterView?after=variableGroup">
+            <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.registersView_elementNumberFormats" 
+            	 label="%menu.numberFormat">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreElementNumberFormatsSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.registersNumberFormats"
+	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.ElementNumberFormatsContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
 
 	   <!-- Variables view menu commands  -->
        <menuContribution
@@ -205,6 +219,20 @@
 	           </dynamic>
             </menu>         
        </menuContribution>
+       <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.VariableView?after=variableGroup">
+            <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.variablesView_elementNumberFormats" 
+            	 label="%menu.numberFormat">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreElementNumberFormatsSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.variablesNumberFormats"
+	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.ElementNumberFormatsContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
 
 	   <!-- Expressions view menu commands  -->
        <menuContribution
@@ -251,6 +279,20 @@
                <dynamic
 	               id="org.eclipse.cdt.dsf.debug.ui.expressionNumberFormats"
 	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.NumberFormatsContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
+       <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.ExpressionView?after=expressionGroup">
+            <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.expressionsView_elementNumberFormats" 
+            	 label="%menu.numberFormat">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreElementNumberFormatsSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.expressionNumberFormats"
+	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.ElementNumberFormatsContribution">
 	           </dynamic>
             </menu>         
        </menuContribution>
@@ -342,6 +384,24 @@
 			</or>
 	     </and>
       </definition>
+      <definition
+            id="org.eclipse.cdt.dsf.debug.ui.testAreElementNumberFormatsSupported">
+         <and>
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+            	   args="org.eclipse.cdt.dsf.ui"
+                   value="ACTIVE"/>
+            </with>
+            <with variable="selection">
+               <count value="+">
+               </count>
+               <iterate operator="and">
+                  <test property="org.eclipse.cdt.dsf.debug.ui.areElementNumberFormatsSupported">
+                  </test>
+               </iterate>
+            </with>
+	     </and>
+      </definition>
    </extension>  
 
    <extension
@@ -380,7 +440,7 @@
             class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.NumberFormatsPropertyTester"
             id="org.eclipse.cdt.dsf.debug.ui.selectionNumberFormatsTester"
             namespace="org.eclipse.cdt.dsf.debug.ui"
-            properties="areNumberFormatsSupported,isNumberFormatAvailable,isNumberFormatActive"
+            properties="areNumberFormatsSupported,isNumberFormatAvailable,isNumberFormatActive,areElementNumberFormatsSupported"
             type="org.eclipse.cdt.dsf.ui.viewmodel.IVMContext">
       </propertyTester>
       <propertyTester

@@ -103,5 +103,12 @@
             adaptableType="org.eclipse.cdt.examples.dsf.pda.ui.editor.PDAEditor">
 			<adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
       </factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.eclipse.cdt.examples.dsf.pda.ui.viewmodel.VariablePersistableFactory"
+            id="org.eclipse.cdt.examples.dsf.pda.ui.variablePersitableFactory">
+      </factory>
    </extension> -->
 </plugin>

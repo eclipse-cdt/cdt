@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems and others.
+ * Copyright (c) 2008, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Winnie Lai (Texas Instruments) - Individual Element Number Format (Bug 202556)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat;
 
@@ -46,6 +47,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public class NumberFormatsPropertyTester extends PropertyTester {
 
     private static final String SUPPORTED = "areNumberFormatsSupported"; //$NON-NLS-1$
+    private static final String ELEMENT_FORMATS_SUPPORTED = "areElementNumberFormatsSupported"; //$NON-NLS-1$
     private static final String AVAILABLE = "isNumberFormatAvailable"; //$NON-NLS-1$
     private static final String ACTIVE = "isNumberFormatActive"; //$NON-NLS-1$
 
@@ -63,18 +65,18 @@ public class NumberFormatsPropertyTester extends PropertyTester {
         if (receiver instanceof IVMContext) {
             IVMProvider provider = ((IVMContext)receiver).getVMNode().getVMProvider();
             if (provider != null) {
-                return testProvider(provider, property, expectedValue);
+                return testProvider(provider, property, expectedValue, (IVMContext) receiver);
             }
         } else if (receiver instanceof IDebugView) {
             IVMProvider provider = VMHandlerUtils.getVMProviderForPart((IDebugView)receiver);
             if (provider != null) {
-                return testProvider(provider, property, expectedValue);                    
+                return testProvider(provider, property, expectedValue, null);                    
             }
         }
         return false;
     }
 
-    private boolean testProvider(IVMProvider provider, String property, Object expectedValue) {
+    private boolean testProvider(IVMProvider provider, String property, Object expectedValue, IVMContext vmctx) {
         if (SUPPORTED.equals(property)) {
             return true;
         } else if (AVAILABLE.equals(property)) {
@@ -82,7 +84,11 @@ public class NumberFormatsPropertyTester extends PropertyTester {
         } else if (ACTIVE.equals(property)) {
             Object activeId = provider.getPresentationContext().getProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE);
             return expectedValue != null && expectedValue.equals(activeId);
-        } 
+        } else if (ELEMENT_FORMATS_SUPPORTED.equals(property)) {
+        	if (provider instanceof IElementFormatProvider) {
+        		return ((IElementFormatProvider) provider).supportFormat(vmctx);
+        	}
+        }
         return false;
     }
     

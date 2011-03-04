@@ -32,5 +32,12 @@
             markerType="markerType.breakpoint"
             id="org.eclipse.cdt.tests.dsf.breakpoint"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.eclipse.cdt.tests.dsf.vm.TestPersistableFactory"
+            id="org.eclipse.cdt.tests.dsf.vm.testPersistableFactory">
+      </factory>
+   </extension>
    
 </plugin>

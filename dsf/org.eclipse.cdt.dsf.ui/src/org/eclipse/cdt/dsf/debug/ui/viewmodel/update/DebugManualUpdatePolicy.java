@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems and others.
+ * Copyright (c) 2009, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Winnie Lai (Texas Instruments) - Individual Element Number Format (Bug 202556)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.update;
 
@@ -37,6 +38,7 @@ import org.eclipse.jface.viewers.TreePath;
 public class DebugManualUpdatePolicy extends ManualUpdatePolicy implements IVMUpdatePolicyExtension  {
 
     private final Set<String> fActiveNumberFormatPropertiesWithPrefixes;
+    private final Set<String> fElementFormatPropertiesWithPrefixes;
 
     /**
      * Creates a manual update policy for debug views. 
@@ -59,13 +61,19 @@ public class DebugManualUpdatePolicy extends ManualUpdatePolicy implements IVMUp
     public DebugManualUpdatePolicy(String[] prefixes) {
         if (prefixes.length == 0) {
             fActiveNumberFormatPropertiesWithPrefixes = ACTIVE_NUMBER_FORMAT_PROPERTIES;
+            fElementFormatPropertiesWithPrefixes = ELEMENT_FORMAT_PROPERTIES;
         } else {
             fActiveNumberFormatPropertiesWithPrefixes = new TreeSet<String>(ACTIVE_NUMBER_FORMAT_PROPERTIES);
+            fElementFormatPropertiesWithPrefixes = new TreeSet<String>(ELEMENT_FORMAT_PROPERTIES);
             for (String prefix : prefixes) {
                 fActiveNumberFormatPropertiesWithPrefixes.add(
                     (prefix + IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT).intern());                  
                 fActiveNumberFormatPropertiesWithPrefixes.add(
                     (prefix + IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE).intern());                  
+                fElementFormatPropertiesWithPrefixes.add(
+                        (prefix + IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT).intern());                  
+                fElementFormatPropertiesWithPrefixes.add(
+                        (prefix + IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE).intern());                  
             }
         }
         
@@ -76,6 +84,12 @@ public class DebugManualUpdatePolicy extends ManualUpdatePolicy implements IVMUp
         ACTIVE_NUMBER_FORMAT_PROPERTIES.add(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT);
         ACTIVE_NUMBER_FORMAT_PROPERTIES.add(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE);
         ACTIVE_NUMBER_FORMAT_PROPERTIES.add(IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE);
+    }
+
+    private static final Set<String> ELEMENT_FORMAT_PROPERTIES = new TreeSet<String>();
+    static {
+    	ELEMENT_FORMAT_PROPERTIES.add(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT);
+    	ELEMENT_FORMAT_PROPERTIES.add(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE);
     }
 
     /**
@@ -94,6 +108,7 @@ public class DebugManualUpdatePolicy extends ManualUpdatePolicy implements IVMUp
         }
         
         public boolean includes(IElementUpdateTester tester) {
+        	// includes ElementFormatUpdateTester as well?
             return tester.equals(this);
         }
         
@@ -109,6 +124,10 @@ public class DebugManualUpdatePolicy extends ManualUpdatePolicy implements IVMUp
              IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE.equals( ((PropertyChangeEvent)event).getProperty()) ) 
         {
             return fNumberFormatPropertyEventUpdateTester;
+        }
+        if ( event instanceof ElementFormatEvent ) 
+        {
+            return new ElementFormatUpdateTester(((ElementFormatEvent) event), fElementFormatPropertiesWithPrefixes);
         }
         return super.getElementUpdateTester(event);
     }

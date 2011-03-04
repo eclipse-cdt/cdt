@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -462,7 +462,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		if (element instanceof ICModel) {
 			// don't refresh workspace root
 //			super.postRefresh(fRealInput);
-		} else if (element instanceof ICProject  && fRealInput instanceof IWorkspaceRoot) {
+		} else if (element instanceof ICProject) {
 			super.postRefresh(((ICProject)element).getProject());
 		} else if (element instanceof ICElement) {
 			super.postRefresh(element);
@@ -484,7 +484,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 					super.postAdd(fRealInput, element);
 				}
 			}
-		} else if (parent instanceof ICProject && fRealInput instanceof IWorkspaceRoot) {
+		} else if (parent instanceof ICProject) {
 			super.postAdd(((ICProject)parent).getProject(), element);
 		} else if (parent instanceof ICElement) {
 			super.postAdd(parent, element);

@@ -70,7 +70,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 					if (event.getSelection() instanceof ITreeSelection) {
 						ITreeSelection s = (ITreeSelection) event.getSelection();
 						ArrayList<IProblem> list = new ArrayList<IProblem>();
-						for (Iterator iterator = s.iterator(); iterator.hasNext();) {
+						for (Iterator<?> iterator = s.iterator(); iterator.hasNext();) {
 							Object o = iterator.next();
 							if (o instanceof IProblem) {
 								list.add((IProblem) o);
@@ -184,7 +184,9 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 	private void restoreWidgetValues() {
 		String id = CodanUIActivator.getDefault().getDialogSettings().get(getWidgetId());
 		if (id != null && id.length() > 0 && checkedTreeEditor != null) {
-			checkedTreeEditor.getTreeViewer().setSelection(new StructuredSelection(profile.findProblem(id)), true);
+			IProblem problem = profile.findProblem(id);
+			if (problem != null)
+				checkedTreeEditor.getTreeViewer().setSelection(new StructuredSelection(problem), true);
 		} else {
 			setSelectedProblems(null);
 		}

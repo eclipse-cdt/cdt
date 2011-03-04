@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2010 Texas Instruments and others
+ * Copyright (c) 2010, 2011 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,9 @@
 package org.eclipse.cdt.dsf.gdb.internal.ui;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -24,12 +26,16 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateInDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.StateChangedEvent;
+import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -61,9 +67,10 @@ public class GdbPinProvider implements IPinProvider {
 	}
 	
 	/**
-	 * A set of pinned element handles.
+	 * A set of pinned element handles and their callback.
 	 */
-	static private Set<IPinElementHandle> gsPinnedHandles = Collections.synchronizedSet(new HashSet<IPinElementHandle>());
+	private static Map<IPinElementHandle, IPinModelListener> gsPinnedHandles = 
+		Collections.synchronizedMap(new HashMap<IPinElementHandle, IPinModelListener>());
 	
 	/**
 	 * Dsf session.
@@ -106,7 +113,7 @@ public class GdbPinProvider implements IPinProvider {
 	 * @return the element handles.
 	 */
 	public static Set<IPinElementHandle> getPinnedHandles() {
-		return gsPinnedHandles;
+		return gsPinnedHandles.keySet();
 	}
 	
 	private static IMIExecutionDMContext getExecutionDmc(IDMContext dmc) {		
@@ -189,9 +196,9 @@ public class GdbPinProvider implements IPinProvider {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.ui.IPinProvider#pin(org.eclipse.ui.IWorkbenchPart, java.lang.Object)
+	 * @see org.eclipse.cdt.debug.ui.IPinProvider#pin(org.eclipse.ui.IWorkbenchPart, java.lang.Object, org.eclipse.cdt.debug.ui.IPinModelListener)
 	 */
-	public IPinElementHandle pin(IWorkbenchPart part, Object debugContext) {
+	public IPinElementHandle pin(IWorkbenchPart part, Object debugContext, IPinModelListener listener) {
 		Object pinContext = debugContext;
 		String label = ""; //$NON-NLS-1$
 		String sessionId = ""; //$NON-NLS-1$
@@ -222,7 +229,7 @@ public class GdbPinProvider implements IPinProvider {
 		IPinElementColorDescriptor colorDesc = 
 			new GdbPinElementColorDescriptor(GdbPinColorTracker.INSTANCE.addRef(sessionId + label));
 		PinElementHandle handle = new PinElementHandle(pinContext, label, colorDesc);
-		gsPinnedHandles.add(handle);
+		gsPinnedHandles.put(handle, listener);
 		dispatchChangedEvent(dmc);
 		
 		return handle;
@@ -299,7 +306,7 @@ public class GdbPinProvider implements IPinProvider {
 		final IProcessDMContext eventProcessDmc = getProcessDmc(eventDmc); 
 	
 		if (eventProcessDmc != null) { 
-			for (final IPinElementHandle h : gsPinnedHandles) {
+			for (final IPinElementHandle h : getPinnedHandles()) {
 				new Job("Updating pin handler debug context") { //$NON-NLS-1$
 					{setPriority(INTERACTIVE);}
 					@Override
@@ -328,5 +335,67 @@ public class GdbPinProvider implements IPinProvider {
 				}.schedule();
 			}
 		}
+	}
+	
+	@DsfServiceEventHandler
+	public void handleEvent(final IExitedDMEvent event) {
+		doHandleEvent(event, IPinModelListener.EXITED);
+	}
+	
+	@DsfServiceEventHandler
+	public void handleEvent(final IResumedDMEvent event) {
+		doHandleEvent(event, IPinModelListener.RESUMED);
+	}
+	
+	private void doHandleEvent(IDMEvent<?> event, final int notificationId) {
+		Set<Entry<IPinElementHandle, IPinModelListener>> entries = gsPinnedHandles.entrySet();
+		for (final Entry<IPinElementHandle, IPinModelListener> e : entries) {			
+			final IPinModelListener listener = e.getValue();
+			if (listener != null) {
+				IPinElementHandle handle = e.getKey();
+				
+				Object handleObject = handle.getDebugContext();
+				if (handleObject instanceof IDMContext) {
+					IDMContext handleDmc = (IDMContext)handleObject;
+					IDMContext eventDmc = event.getDMContext();
+					
+					// First check if we have a thread.  We must use IMIExecutionDMContext and not
+					// IExecutionDMContext because IExecutionDMContext also represents a process
+					IMIExecutionDMContext execEventDmc = DMContexts.getAncestorOfType(eventDmc, IMIExecutionDMContext.class);
+					IMIExecutionDMContext execHandleDmc = DMContexts.getAncestorOfType(handleDmc, IMIExecutionDMContext.class);
+					
+					// Make sure both dmcs are not null to know if we should compare thread dmcs or container dmcs
+					if (execEventDmc != null && execHandleDmc != null) {
+						// It is a thread event, but is it the same as the pin handle?
+						if (execEventDmc.equals(execHandleDmc)) {
+							fireModleChangeEvent(listener, notificationId);
+						}
+						continue;
+					}
+					
+					// If we weren't dealing with a thread for either the event or the handle,
+					// let's check for IMIContainerDMContext
+					IMIContainerDMContext procEventDmc = DMContexts.getAncestorOfType(eventDmc, IMIContainerDMContext.class);
+					IMIContainerDMContext procHandleDmc = DMContexts.getAncestorOfType(handleDmc, IMIContainerDMContext.class);
+					if (procEventDmc != null && procHandleDmc != null) {
+						if (procEventDmc.equals(procHandleDmc)) {
+							fireModleChangeEvent(listener, notificationId);
+						}
+						continue;
+					}
+				}
+			}
+		}
+	}
+	
+	private void fireModleChangeEvent(final IPinModelListener listener, final int notificationId) {
+		new Job("Model Changed") { //$NON-NLS-1$
+			{ setSystem(true); }
+			@Override
+			protected IStatus run(IProgressMonitor arg0) {
+				listener.modelChanged(notificationId);
+				return Status.OK_STATUS;
+			}							
+		}.schedule();
 	}
 }

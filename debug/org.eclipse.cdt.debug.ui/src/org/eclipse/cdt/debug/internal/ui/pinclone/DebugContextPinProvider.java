@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2010 Texas Instruments and others
+ * Copyright (c) 2010, 2011 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.debug.ui.IPinProvider;
 import org.eclipse.cdt.debug.ui.IPinProvider.IPinElementHandle;
+import org.eclipse.cdt.debug.ui.IPinProvider.IPinModelListener;
 import org.eclipse.cdt.debug.ui.PinElementHandle;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.ui.contexts.AbstractDebugContextProvider;
@@ -26,11 +27,13 @@ import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextProvider2;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Pin debug context provider. 
- * It takes a debug context and translate to a handle for pinning purpose.
+ * It takes a debug context and translates it to a handle for pinning purpose.
  */
 public class DebugContextPinProvider extends AbstractDebugContextProvider implements IDebugContextProvider2 {
 	private ISelection fActiveContext;
@@ -50,7 +53,17 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 		fPinProvider = new HashMap<IPinElementHandle, IPinProvider>();
 		
 		fActiveContext = activeContext;
-		fPinHandles = pin(part, activeContext);
+		fPinHandles = pin(part, activeContext, new IPinModelListener() {
+			public void modelChanged(int eventType) {
+				// send a change notification for the view to update			
+				switch (eventType) {
+				case IPinModelListener.EXITED:
+				case IPinModelListener.RESUMED:
+					delegateEvent(new DebugContextEvent(DebugContextPinProvider.this, new StructuredSelection(), DebugContextEvent.ACTIVATED));
+					break;
+				}
+			}
+		});
 	}
 	
 	/**
@@ -102,9 +115,10 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 	 * 
 	 * @param part the workbench part where the pin action is requested
 	 * @param selection the debug context selection
+	 * @param listener pin model listener
 	 * @return a set of pinned handle
 	 */
-	private Set<IPinElementHandle> pin(IWorkbenchPart part, ISelection selection) {
+	private Set<IPinElementHandle> pin(IWorkbenchPart part, ISelection selection, IPinModelListener listener) {
 		Set<IPinElementHandle> handles = new HashSet<IPinElementHandle>();
 		
 		if (selection instanceof IStructuredSelection) {
@@ -115,7 +129,7 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 				}
 				
 				if (pinProvider != null) {
-					IPinElementHandle handle = pinProvider.pin(fWorkbenchPart, element);
+					IPinElementHandle handle = pinProvider.pin(fWorkbenchPart, element, listener);
 					handles.add(handle);
 					fPinProvider.put(handle, pinProvider);					
 				} else
@@ -132,7 +146,11 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 	 * @param event debug event
 	 */
 	public void delegateEvent(final DebugContextEvent event) {
-		fActiveContext = event.getContext();
-		fire(event);
+		Display.getDefault().syncExec(new Runnable() {			
+			public void run() {
+				fActiveContext = event.getContext();
+				fire(event);
+			}
+		});		
 	}
 }

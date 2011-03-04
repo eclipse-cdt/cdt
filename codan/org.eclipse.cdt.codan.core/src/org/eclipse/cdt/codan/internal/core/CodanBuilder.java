@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,16 +129,16 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 				try {
 					if (monitor.isCanceled())
 						return;
-					if (checker.enabledInContext(resource) && chegistry.isCheckerEnabledForLaunchMode(checker, resource, checkerLaunchMode)) {
+					if (doesCheckerSupportLaunchMode(checker, checkerLaunchMode)
+							&& checker.enabledInContext(resource)
+							&& chegistry.isCheckerEnabledForLaunchMode(checker, resource, checkerLaunchMode)) {
 						synchronized (checker) {
 							try {
 								checker.before(resource);
 								if (chegistry.isCheckerEnabled(checker, resource)) {
 									//long time = System.currentTimeMillis();
 									if (checkerLaunchMode == CheckerLaunchMode.RUN_AS_YOU_TYPE) {
-										if (checker.runInEditor() && checker instanceof IRunnableInEditorChecker) {
-											((IRunnableInEditorChecker) checker).processModel(model);
-										}
+										((IRunnableInEditorChecker) checker).processModel(model);
 									} else {
 										checker.processResource(resource);
 									}
@@ -178,12 +178,9 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 		}
 	}
 
-	/**
-	 * @param checker
-	 * @return
-	 */
-	private boolean isEnabledForLaunchMode(IChecker checker) {
-		// TODO Auto-generated method stub
+	private boolean doesCheckerSupportLaunchMode(IChecker checker, CheckerLaunchMode mode) {
+		if (mode == CheckerLaunchMode.RUN_AS_YOU_TYPE)
+			return checker.runInEditor() && checker instanceof IRunnableInEditorChecker;
 		return true;
 	}
 

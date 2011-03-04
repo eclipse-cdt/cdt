@@ -175,3 +175,10 @@ plugin@org.eclipse.cdt.codan.checkers=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/c
 plugin@org.eclipse.cdt.codan.checkers.ui=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/codan/org.eclipse.cdt.codan.checkers.ui
 plugin@org.eclipse.cdt.codan.examples=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/codan/org.eclipse.cdt.codan.examples
 feature@org.eclipse.cdt.codan.feature=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/codan/org.eclipse.cdt.codan-feature
+
+! Android
+plugin@org.eclipse.cdt.android.build.core=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/android/org.eclipse.cdt.android.build.core
+plugin@org.eclipse.cdt.android.build.ui=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/android/org.eclipse.cdt.android.build.ui
+plugin@org.eclipse.cdt.android.debug.core=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/android/org.eclipse.cdt.android.debug.core
+plugin@org.eclipse.cdt.android.debug.ui=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/android/org.eclipse.cdt.android.debug.ui
+feature@org.eclipse.cdt.android.feature=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/android/org.eclipse.cdt.android.feature

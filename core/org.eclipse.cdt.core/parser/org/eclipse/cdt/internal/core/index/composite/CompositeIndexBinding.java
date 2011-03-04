@@ -40,7 +40,7 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 	protected final IIndexFragmentBinding rbinding;
 	
 	public CompositeIndexBinding(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
-		if(rbinding == null || cf == null)
+		if (rbinding == null || cf == null)
 			throw new IllegalArgumentException();
 		this.cf = cf;
 		this.rbinding = rbinding;
@@ -102,7 +102,7 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 		if (obj instanceof IIndexFragmentBinding)
 			return rbinding.equals(obj);
 		if (obj instanceof CompositeIndexBinding)
-			return rbinding.equals(((CompositeIndexBinding)obj).rbinding);
+			return rbinding.equals(((CompositeIndexBinding) obj).rbinding);
 		
 		return super.equals(obj);
 	}

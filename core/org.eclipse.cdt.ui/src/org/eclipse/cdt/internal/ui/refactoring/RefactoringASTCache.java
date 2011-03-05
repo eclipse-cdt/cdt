@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -38,21 +38,26 @@ import org.eclipse.cdt.internal.ui.editor.ASTProvider;
  * Cache containing ASTs for the translation units participating in refactoring.
  * The cache object has to be disposed of after use. Failure to do so may cause
  * loss of index lock.
+ * 
+ * This class is thread-safe.
  */
 public class RefactoringASTCache implements IDisposable {
+	private final Map<ITranslationUnit, IASTTranslationUnit> fASTCache;
+	private final Object astBuildMutex;
 	private IIndex fIndex;
-	private Map<ITranslationUnit, IASTTranslationUnit> fASTCache;
 	private boolean fDisposed;
 
 	public RefactoringASTCache() {
-		fASTCache = new HashMap<ITranslationUnit, IASTTranslationUnit>();
+		fASTCache = new ConcurrentHashMap<ITranslationUnit, IASTTranslationUnit>();
+		astBuildMutex = new Object();
 	}
 
 	/**
 	 * Returns an AST for the given translation unit. The AST is built for the working
-	 * copy of the translation unit if such working copy exists. The returned AST is a shared
-	 * one whenever possible.
-	 * NOTE: No references to the AST or its nodes can be kept after calling the {@link #dispose()} method. 
+	 * copy of the translation unit if such working copy exists. The returned AST is
+	 * a shared one whenever possible.
+	 * NOTE: No references to the AST or its nodes can be kept after calling
+	 * the {@link #dispose()} method. 
 	 * @param tu The translation unit.
 	 * @param pm A progress monitor.
 	 * @return An AST, or <code>null</code> if the AST cannot be obtained.
@@ -60,20 +65,12 @@ public class RefactoringASTCache implements IDisposable {
 	public IASTTranslationUnit getAST(ITranslationUnit tu, IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
         Assert.isTrue(!fDisposed, "RefactoringASTCache is already disposed"); //$NON-NLS-1$
-		if (fIndex == null) {
-			ICProject[] projects;
-			projects = CoreModel.getDefault().getCModel().getCProjects();
-			IIndex index = CCorePlugin.getIndexManager().getIndex(projects);
-			try {
-				index.acquireReadLock();
-			} catch (InterruptedException e) {
-				throw new OperationCanceledException();
-			}
-			fIndex = index;
-		}
+        getIndex();  // Make sure the index is locked.
 
     	tu= CModelUtil.toWorkingCopy(tu);
-        IASTTranslationUnit ast= fASTCache.get(tu);
+    	IASTTranslationUnit ast;
+		ast= fASTCache.get(tu);
+
         if (ast == null) {
         	// Try to get a shared AST before creating our own.
         	final IASTTranslationUnit[] astHolder = new IASTTranslationUnit[1];
@@ -86,11 +83,17 @@ public class RefactoringASTCache implements IDisposable {
 				}
 			});
 			ast = astHolder[0];
-			if (ast == null) {
-            	int options= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT |
-            			ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
-        		ast= tu.getAST(fIndex, options);
-            	fASTCache.put(tu, ast);
+
+        	if (ast == null) {
+				synchronized (astBuildMutex) {
+					ast= fASTCache.get(tu);
+					if (ast == null) {
+						int options= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT |
+								ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
+						ast= tu.getAST(fIndex, options);
+		            	fASTCache.put(tu, ast);
+					}
+				}
 			}
         }
         if (pm != null) {
@@ -104,13 +107,25 @@ public class RefactoringASTCache implements IDisposable {
 	 * 
 	 * @return The index.
 	 */
-	public IIndex getIndex() {
+	public synchronized IIndex getIndex() throws CoreException, OperationCanceledException {
         Assert.isTrue(!fDisposed, "RefactoringASTCache is already disposed"); //$NON-NLS-1$
+		if (fIndex == null) {
+			ICProject[] projects;
+			projects = CoreModel.getDefault().getCModel().getCProjects();
+			IIndex index = CCorePlugin.getIndexManager().getIndex(projects);
+			try {
+				index.acquireReadLock();
+			} catch (InterruptedException e) {
+				throw new OperationCanceledException();
+			}
+			fIndex = index;
+		}
 		return fIndex;
 	}
 
 	/**
 	 * @see IDisposable#dispose()
+	 * This method should not be called concurrently with any other method.
 	 */
 	public void dispose() {
         Assert.isTrue(!fDisposed, "RefactoringASTCache.dispose() called more than once"); //$NON-NLS-1$

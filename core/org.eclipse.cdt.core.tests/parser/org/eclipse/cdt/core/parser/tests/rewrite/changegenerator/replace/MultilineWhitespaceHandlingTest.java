@@ -7,28 +7,21 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.replace;
 
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 
-
-
-
-
 public class MultilineWhitespaceHandlingTest extends ChangeGeneratorTest {
-
-	private boolean statementsInserted = false;
 	
 	public MultilineWhitespaceHandlingTest(){
 		super("Whitespace Handling in Replace"); //$NON-NLS-1$
@@ -38,7 +31,6 @@ public class MultilineWhitespaceHandlingTest extends ChangeGeneratorTest {
 	protected void setUp() throws Exception {
 		source = "void foo(){\r\n\r\n  for(int i = 0; i < 10; i++){\r\n\r\n  }\r\n\r\n"; //$NON-NLS-1$
 		expectedSource = "void foo(){\r\n\r\n  for(int i = 0; i < 10; i++){    int i;\r\n    int j;\r\n\r\n  }\r\n\r\n"; //$NON-NLS-1$
-		statementsInserted = false;
 		super.setUp();
 	}
 
@@ -46,10 +38,8 @@ public class MultilineWhitespaceHandlingTest extends ChangeGeneratorTest {
 		return new MultilineWhitespaceHandlingTest();
 	}
 
-
 	@Override
-	protected ASTVisitor createModificator(
-			final ASTModificationStore modStore) {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
 		return new ASTVisitor() {
 			{
 				shouldVisitStatements = true;

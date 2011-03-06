@@ -50,9 +50,6 @@ public class MultilineWhitespaceHandlingTest extends ChangeGeneratorTest {
 				if (statement instanceof IASTCompoundStatement) {
 					IASTCompoundStatement compoundStatement = (IASTCompoundStatement) statement;
 					CPPNodeFactory nf = CPPNodeFactory.getDefault();
-					
-					
-					
 					ASTModification modification = new ASTModification(ASTModification.ModificationKind.APPEND_CHILD, compoundStatement, null, null);
 					modStore.storeModification(null, modification);
 				}

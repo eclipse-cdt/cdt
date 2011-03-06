@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
@@ -39,9 +39,9 @@ public class ArraySizeExpressionTest extends ChangeGeneratorTest {
 	}
 
 	@Override
-	protected CPPASTVisitor createModificator(
+	protected ASTVisitor createModificator(
 			final ASTModificationStore modStore) {
-		return new CPPASTVisitor() {
+		return new ASTVisitor() {
 			{
 				shouldVisitExpressions = true;
 			}

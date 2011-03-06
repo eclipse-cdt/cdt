@@ -7,15 +7,15 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.append;
 
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
@@ -23,12 +23,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
-import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
-
-
-
-
+import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 
 public class ParameterToListTest extends ChangeGeneratorTest {
 
@@ -44,9 +40,8 @@ public class ParameterToListTest extends ChangeGeneratorTest {
 	}
 	
 	@Override
-	protected CPPASTVisitor createModificator(
-			final ASTModificationStore modStore) {
-		return new CPPASTVisitor() {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
+		return new ASTVisitor() {
 			{
 				shouldVisitDeclarators = true;
 			}
@@ -74,6 +69,5 @@ public class ParameterToListTest extends ChangeGeneratorTest {
 	
 	public static Test suite() {
 		return new ParameterToListTest();
-		
 	}
 }

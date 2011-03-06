@@ -7,16 +7,16 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.append;
 
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
@@ -25,9 +25,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 
-
 public class ExpressionTest extends ChangeGeneratorTest {
-
 
 	public ExpressionTest(){
 		super("Append Expression"); //$NON-NLS-1$
@@ -40,9 +38,8 @@ public class ExpressionTest extends ChangeGeneratorTest {
 		super.setUp();
 	}
 	@Override
-	protected CPPASTVisitor createModificator(
-			final ASTModificationStore modStore) {
-		return new CPPASTVisitor() {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
+		return new ASTVisitor() {
 			{
 				shouldVisitExpressions = true;
 			}

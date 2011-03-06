@@ -15,7 +15,7 @@ import junit.framework.Test;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
@@ -40,9 +40,9 @@ public class NewInitializerExpressionTest extends ChangeGeneratorTest {
 	}
 
 	@Override
-	protected CPPASTVisitor createModificator(
+	protected ASTVisitor createModificator(
 			final ASTModificationStore modStore) {
-		return new CPPASTVisitor() {
+		return new ASTVisitor() {
 			{
 				shouldVisitExpressions = true;
 			}

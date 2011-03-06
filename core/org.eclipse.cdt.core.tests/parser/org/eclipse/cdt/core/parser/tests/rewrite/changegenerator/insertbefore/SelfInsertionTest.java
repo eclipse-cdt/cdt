@@ -16,7 +16,7 @@ import junit.framework.Test;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
@@ -44,9 +44,9 @@ public class SelfInsertionTest extends ChangeGeneratorTest {
 
 
 	@Override
-	protected CPPASTVisitor createModificator(
+	protected ASTVisitor createModificator(
 			final ASTModificationStore modStore) {
-		return new CPPASTVisitor() {
+		return new ASTVisitor() {
 			{
 				shouldVisitStatements = true;
 			}

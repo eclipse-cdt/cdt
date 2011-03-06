@@ -12,7 +12,6 @@
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexManager;
@@ -48,29 +47,29 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 	public void runTest() throws Exception{
 		final ASTModificationStore modStore = new ASTModificationStore();
 		final ChangeGenerator changegenartor = new ChangeGenerator(modStore);
-			IFile testFile = importFile("source.h", source); //$NON-NLS-1$
-			
-			ASTVisitor visitor = createModificator(modStore);
-			
-			CCorePlugin.getIndexManager().reindex(cproject);
+		IFile testFile = importFile("source.h", source); //$NON-NLS-1$
+		
+		ASTVisitor visitor = createModificator(modStore);
+		
+		CCorePlugin.getIndexManager().reindex(cproject);
 
-			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+		ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 
-			boolean joined = CCorePlugin.getIndexManager().joinIndexer(20000, new NullProgressMonitor());
-			assertTrue("The indexing operation of the test CProject has not finished jet. This should not happen...", joined);
-			
-			IASTTranslationUnit unit = CoreModelUtil.findTranslationUnit(testFile).getAST();
-			unit.accept(visitor);
-			
-			changegenartor.generateChange(unit);
-			Document doc = new Document(source);
-			for (Change curChange : ((CompositeChange)changegenartor.getChange()).getChildren()){
-				if (curChange instanceof TextFileChange) {
-					TextFileChange textChange = (TextFileChange) curChange;
-					textChange.getEdit().apply(doc);
-				}
+		boolean joined = CCorePlugin.getIndexManager().joinIndexer(20000, new NullProgressMonitor());
+		assertTrue("The indexing operation of the test CProject has not finished jet. This should not happen...", joined);
+		
+		IASTTranslationUnit unit = CoreModelUtil.findTranslationUnit(testFile).getAST();
+		unit.accept(visitor);
+		
+		changegenartor.generateChange(unit);
+		Document doc = new Document(source);
+		for (Change curChange : ((CompositeChange)changegenartor.getChange()).getChildren()){
+			if (curChange instanceof TextFileChange) {
+				TextFileChange textChange = (TextFileChange) curChange;
+				textChange.getEdit().apply(doc);
 			}
-			assertEquals(TestHelper.unifyNewLines(expectedSource), TestHelper.unifyNewLines(doc.get()));
+		}
+		assertEquals(TestHelper.unifyNewLines(expectedSource), TestHelper.unifyNewLines(doc.get()));
 	}
 
 	protected abstract ASTVisitor createModificator(ASTModificationStore modStore);

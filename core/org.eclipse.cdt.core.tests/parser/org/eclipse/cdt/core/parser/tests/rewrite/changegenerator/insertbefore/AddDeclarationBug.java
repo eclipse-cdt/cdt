@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
@@ -53,8 +53,8 @@ public class AddDeclarationBug extends ChangeGeneratorTest {
 	}
 
 	@Override
-	protected CPPASTVisitor createModificator(final ASTModificationStore modStore) {
-		return new CPPASTVisitor() {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
+		return new ASTVisitor() {
 			{
 				shouldVisitDeclSpecifiers = true;
 			}

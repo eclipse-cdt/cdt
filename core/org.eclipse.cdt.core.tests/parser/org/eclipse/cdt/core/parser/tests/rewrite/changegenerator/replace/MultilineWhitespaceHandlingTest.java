@@ -15,7 +15,7 @@ import junit.framework.Test;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
@@ -48,9 +48,9 @@ public class MultilineWhitespaceHandlingTest extends ChangeGeneratorTest {
 
 
 	@Override
-	protected CPPASTVisitor createModificator(
+	protected ASTVisitor createModificator(
 			final ASTModificationStore modStore) {
-		return new CPPASTVisitor() {
+		return new ASTVisitor() {
 			{
 				shouldVisitStatements = true;
 			}

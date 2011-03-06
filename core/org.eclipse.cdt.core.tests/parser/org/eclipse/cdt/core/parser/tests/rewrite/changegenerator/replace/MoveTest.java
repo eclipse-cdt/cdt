@@ -15,7 +15,7 @@ import junit.framework.Test;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier;
@@ -45,9 +45,9 @@ public class MoveTest extends ChangeGeneratorTest {
 	}
 
 	@Override
-	protected CPPASTVisitor createModificator(
+	protected ASTVisitor createModificator(
 			final ASTModificationStore modStore) {
-		return new CPPASTVisitor() {
+		return new ASTVisitor() {
 			{
 				shouldVisitDeclSpecifiers = true;
 			}

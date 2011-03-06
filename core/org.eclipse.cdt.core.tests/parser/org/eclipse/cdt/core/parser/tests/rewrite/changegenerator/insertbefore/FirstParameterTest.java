@@ -16,7 +16,7 @@ import junit.framework.Test;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
@@ -46,9 +46,9 @@ public class FirstParameterTest extends ChangeGeneratorTest {
 	
 
 	@Override
-	protected CPPASTVisitor createModificator(
+	protected ASTVisitor createModificator(
 			final ASTModificationStore modStore) {
-		return new CPPASTVisitor() {
+		return new ASTVisitor() {
 			{
 				shouldVisitDeclarators = true;
 			}

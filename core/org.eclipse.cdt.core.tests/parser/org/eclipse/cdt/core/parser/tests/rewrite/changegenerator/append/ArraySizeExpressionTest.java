@@ -13,11 +13,11 @@ package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.append;
 
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTArrayModifier;
@@ -38,11 +38,10 @@ public class ArraySizeExpressionTest extends ChangeGeneratorTest {
 		super.setUp();
 	}
 
-
 	@Override
-	protected CPPASTVisitor createModificator(
+	protected ASTVisitor createModificator(
 			final ASTModificationStore modStore) {
-		return new CPPASTVisitor() {
+		return new ASTVisitor() {
 			{
 				shouldVisitExpressions = true;
 			}
@@ -65,7 +64,5 @@ public class ArraySizeExpressionTest extends ChangeGeneratorTest {
 	
 	public static Test suite() {
 		return new ArraySizeExpressionTest();
-		
 	}
-	
 }

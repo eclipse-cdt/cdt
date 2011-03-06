@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.append;
 
@@ -15,7 +15,7 @@ import junit.framework.Test;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTPointer;
@@ -24,7 +24,6 @@ import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
 
 public class PointerToParameterTest extends ChangeGeneratorTest {
-
 
 	public PointerToParameterTest(){
 		super("Append Pointer to Parameter"); //$NON-NLS-1$
@@ -36,12 +35,10 @@ public class PointerToParameterTest extends ChangeGeneratorTest {
 		expectedSource = "void foo(int *parameter){\n}\n\n"; //$NON-NLS-1$
 		super.setUp();
 	}
-	
 
 	@Override
-	protected CPPASTVisitor createModificator(
-			final ASTModificationStore modStore) {
-		return new CPPASTVisitor() {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
+		return new ASTVisitor() {
 			{
 				shouldVisitDeclarators = true;
 			}
@@ -51,8 +48,8 @@ public class PointerToParameterTest extends ChangeGeneratorTest {
 				if (declarator instanceof CPPASTFunctionDeclarator) {
 					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator)declarator;
 					IASTParameterDeclaration[] parameters = functionDeclarator.getParameters();
-					for(IASTParameterDeclaration curParam : parameters){
-						if(String.valueOf(curParam.getDeclarator().getName().toCharArray()).equals("parameter")){ //$NON-NLS-1$
+					for (IASTParameterDeclaration curParam : parameters){
+						if (String.valueOf(curParam.getDeclarator().getName().toCharArray()).equals("parameter")){ //$NON-NLS-1$
 							CPPASTPointer addedPointer = new CPPASTPointer();
 							ASTModification modification = new ASTModification(ModificationKind.APPEND_CHILD, curParam.getDeclarator(), addedPointer, null);
 							modStore.storeModification(null, modification);
@@ -67,6 +64,5 @@ public class PointerToParameterTest extends ChangeGeneratorTest {
 	
 	public static Test suite() {
 		return new PointerToParameterTest();
-		
 	}
 }

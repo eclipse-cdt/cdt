@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.replace;
 import junit.framework.Test;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
@@ -41,9 +41,9 @@ public class IdenticalTest extends ChangeGeneratorTest {
 	}
 
 	@Override
-	protected CPPASTVisitor createModificator(
+	protected ASTVisitor createModificator(
 			final ASTModificationStore modStore) {
-		return new CPPASTVisitor() {
+		return new ASTVisitor() {
 			{
 				shouldVisitDeclarators = true;
 			}

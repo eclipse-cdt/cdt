@@ -11,16 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.provider;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.provider.IIndexProvider;
 import org.eclipse.cdt.core.index.provider.IReadOnlyPDOMProvider;
@@ -44,7 +34,15 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Version;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The IndexProviderManager is responsible for maintaining the set of index
@@ -106,7 +104,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 			IExtension extension = extensions[i];
 			try {
 				IConfigurationElement[] ce = extension.getConfigurationElements();
-				for (int j=0; j<ce.length; j++) {
+				for (int j= 0; j < ce.length; j++) {
 					if (ce[j].getName().equals(ELEMENT_RO_PDOMPROVIDER)) {
 						IIndexProvider provider = (IIndexProvider) ce[j].createExecutableExtension(ATTRIBUTE_CLASS);
 
@@ -114,15 +112,13 @@ public final class IndexProviderManager implements IElementChangedListener {
 							provider = new ReadOnlyPDOMProviderBridge((IReadOnlyPDOMProvider) provider);
 							providers.add(provider);
 						} else {
-							CCorePlugin.log(MessageFormat.format(
-									Messages.IndexProviderManager_0,
-									new Object[] { extension.getContributor().getName() }
-							));
+							CCorePlugin.log(NLS.bind(Messages.IndexProviderManager_0,
+									extension.getContributor().getName()));
 						}
 					}
 				}
-			} catch(CoreException ce) {
-				CCorePlugin.log(ce);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
 			}
 		}
 
@@ -149,15 +145,15 @@ public final class IndexProviderManager implements IElementChangedListener {
 					for (int j= 0; j < fragments.length; j++) {
 						try {
 							processCandidate(id2fragment, fragments[j]);
-						} catch(InterruptedException ie) {
-							CCorePlugin.log(ie); // continue with next candidate
-						} catch(CoreException ce) {
-							CCorePlugin.log(ce); // continue with next candidate
+						} catch (InterruptedException e) {
+							CCorePlugin.log(e); // continue with next candidate
+						} catch (CoreException e) {
+							CCorePlugin.log(e); // continue with next candidate
 						}
 					}
 				}
-			} catch(CoreException ce) {
-				CCorePlugin.log(ce); // move to next provider
+			} catch (CoreException e) {
+				CCorePlugin.log(e); // move to next provider
 			}
 		}
 
@@ -167,13 +163,9 @@ public final class IndexProviderManager implements IElementChangedListener {
 			if (entry.getValue() == null) {
 				String key= entry.getKey();
 				if (!compatibleFragmentUnavailable.contains(key)) {
-					String msg= MessageFormat.format(
-						Messages.IndexProviderManager_NoCompatibleFragmentsAvailable,
-						new Object[]{key}
-					);
-					IStatus status= new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID,
-							IStatus.WARNING, msg, null);
-					CCorePlugin.log(status);
+					String msg= NLS.bind(
+							Messages.IndexProviderManager_NoCompatibleFragmentsAvailable, key);
+					CCorePlugin.log(new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, msg));
 					compatibleFragmentUnavailable.add(key);
 				}
 			} else {
@@ -295,7 +287,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 			try {
 				ICProject cproject= CoreModel.getDefault().create(project);
 				provisionMap.put(key, new Boolean(provider.providesFor(cproject)));
-			} catch(CoreException e) {
+			} catch (CoreException e) {
 				CCorePlugin.log(e);
 				provisionMap.put(key, Boolean.FALSE);
 			}
@@ -324,12 +316,11 @@ public final class IndexProviderManager implements IElementChangedListener {
 				processDelta(children[i]);
 			break;
 		case ICElement.C_PROJECT:
-			final ICProject cproject = (ICProject)delta.getElement();
+			final ICProject cproject = (ICProject) delta.getElement();
 			switch (delta.getKind()) {
 			case ICElementDelta.REMOVED:
 				List<ProvisionMapKey> toRemove = new ArrayList<ProvisionMapKey>();
-				for (Iterator<ProvisionMapKey> i = provisionMap.keySet().iterator(); i.hasNext(); ) {
-					ProvisionMapKey key = i.next();
+				for (ProvisionMapKey key : provisionMap.keySet()) {
 					if (key.getProject().equals(cproject.getProject())) {
 						toRemove.add(key);
 					}

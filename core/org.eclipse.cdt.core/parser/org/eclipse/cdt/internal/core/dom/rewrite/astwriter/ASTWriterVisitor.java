@@ -42,7 +42,6 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
  * @author Emanuel Graf IFS
  */
 public class ASTWriterVisitor extends ASTVisitor {
-	
 	protected Scribe scribe = new Scribe();
 	protected NodeCommentMap commentMap;
 	protected ExpressionWriter expWriter;

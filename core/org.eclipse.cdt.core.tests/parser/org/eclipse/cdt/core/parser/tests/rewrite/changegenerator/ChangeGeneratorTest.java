@@ -7,14 +7,14 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.CDOM;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.parser.tests.rewrite.TestHelper;
@@ -25,14 +25,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.Document;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 
 public abstract class ChangeGeneratorTest extends BaseTestFramework {
-
 	protected String source;
 	protected String expectedSource;
 
@@ -52,7 +50,7 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 		final ChangeGenerator changegenartor = new ChangeGenerator(modStore);
 			IFile testFile = importFile("source.h", source); //$NON-NLS-1$
 			
-			CPPASTVisitor visitor = createModificator(modStore);
+			ASTVisitor visitor = createModificator(modStore);
 			
 			CCorePlugin.getIndexManager().reindex(cproject);
 
@@ -66,7 +64,7 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 			
 			changegenartor.generateChange(unit);
 			Document doc = new Document(source);
-			for(Change curChange : ((CompositeChange)changegenartor.getChange()).getChildren()){
+			for (Change curChange : ((CompositeChange)changegenartor.getChange()).getChildren()){
 				if (curChange instanceof TextFileChange) {
 					TextFileChange textChange = (TextFileChange) curChange;
 					textChange.getEdit().apply(doc);
@@ -75,7 +73,7 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 			assertEquals(TestHelper.unifyNewLines(expectedSource), TestHelper.unifyNewLines(doc.get()));
 	}
 
-	protected abstract CPPASTVisitor createModificator(ASTModificationStore modStore);
+	protected abstract ASTVisitor createModificator(ASTModificationStore modStore);
 
 	public ChangeGeneratorTest(String name) {
 		super(name);
@@ -87,5 +85,4 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 		fileManager.closeAllFiles();
 		super.tearDown();
 	}
-
 }

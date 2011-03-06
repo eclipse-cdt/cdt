@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software - initial API and implementation 
+ *     Institute for Software - initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.commenthandler;
 
@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -56,8 +55,7 @@ import org.eclipse.core.runtime.Path;
  */
 public class ASTCommenter {
 	
-	private static final class PPRangeChecker extends CPPASTVisitor {
-		
+	private static final class PPRangeChecker extends ASTVisitor {
 		int ppOffset;
 		int commentOffset;
 		boolean isPrePPComment = true;
@@ -72,12 +70,12 @@ public class ASTCommenter {
 			int offset = ((ASTNode)node).getOffset();
 			int status = ASTVisitor.PROCESS_CONTINUE;
 			
-			if(offset > commentOffset && offset < ppOffset) {
+			if (offset > commentOffset && offset < ppOffset) {
 				isPrePPComment = false;
 				status = ASTVisitor.PROCESS_ABORT;
-			}else if ((offset + ((ASTNode)node).getLength() < commentOffset)) {
+			} else if ((offset + ((ASTNode)node).getLength() < commentOffset)) {
 				status = ASTVisitor.PROCESS_SKIP;
-			}else if(offset > ppOffset) {
+			} else if (offset > ppOffset) {
 				status = ASTVisitor.PROCESS_ABORT;
 			}
 			
@@ -165,7 +163,6 @@ public class ASTCommenter {
 		}
 	}
 
-
 	/**
 	 * Creates a NodeCommentMap for the given TranslationUnit. This is the only way
 	 * to get a NodeCommentMap which contains all the comments mapped against nodes.
@@ -174,11 +171,11 @@ public class ASTCommenter {
 	 * @return NodeCommentMap
 	 */
 	public static NodeCommentMap getCommentedNodeMap(IASTTranslationUnit transUnit){
-		if(transUnit== null) {
+		if (transUnit== null) {
 			return new NodeCommentMap();
 		}
 		ArrayList<IASTComment> comments = removeNotNeededComments(transUnit);		
-		if(comments == null || comments.size() == 0) {
+		if (comments == null || comments.size() == 0) {
 			return new NodeCommentMap();
 		}
 		return addCommentsToCommentMap(transUnit, comments);
@@ -219,7 +216,7 @@ public class ASTCommenter {
 				String fileName = statement.getFileLocation().getFileName();
 				treeOfPreProcessorLines.put(OffsetHelper.getStartingLineNumber(statement), fileName);
 				ArrayList<Integer> offsetList = ppOffsetForFiles.get(fileName);
-				if(offsetList == null) {
+				if (offsetList == null) {
 					offsetList = new ArrayList<Integer>();
 					ppOffsetForFiles.put(fileName, offsetList);
 				}
@@ -236,7 +233,7 @@ public class ASTCommenter {
 					)) {
 					continue;
 			}
-			if(commentIsAtTheBeginningBeforePreprocessorStatements(comment, ppOffsetForFiles.get(fileName), tu)) {
+			if (commentIsAtTheBeginningBeforePreprocessorStatements(comment, ppOffsetForFiles.get(fileName), tu)) {
 				continue;
 			}
 			commentsInCode.add(comment);
@@ -244,33 +241,32 @@ public class ASTCommenter {
 		return commentsInCode;
 	}
 
-	private static boolean commentIsAtTheBeginningBeforePreprocessorStatements(
-			IASTComment comment, 
+	private static boolean commentIsAtTheBeginningBeforePreprocessorStatements(IASTComment comment, 
 			ArrayList<Integer> listOfPreProcessorOffset, IASTTranslationUnit tu) {
-		if(listOfPreProcessorOffset == null) {
+		if (listOfPreProcessorOffset == null) {
 			return false;
 		}
 		
-		if(comment.getTranslationUnit()==null || comment.getTranslationUnit().getDeclarations().length < 1) {
+		if (comment.getTranslationUnit()==null || comment.getTranslationUnit().getDeclarations().length < 1) {
 			return true;
 		}
 		IASTDeclaration decl = comment.getTranslationUnit().getDeclarations()[0];
 		String commentFileName = comment.getFileLocation().getFileName();
 		boolean sameFile = decl.getFileLocation().getFileName().equals(commentFileName);
 		int commentNodeOffset = ((ASTNode)comment).getOffset();
-		if(sameFile) {
-			if(decl.getFileLocation().getNodeOffset() < commentNodeOffset) {
+		if (sameFile) {
+			if (decl.getFileLocation().getNodeOffset() < commentNodeOffset) {
 				return false;
 			}
 		}
 		Collections.sort(listOfPreProcessorOffset);
 		int nextPPOfset = -1;
 		for (Integer integer : listOfPreProcessorOffset) {
-			if(integer > commentNodeOffset) {
+			if (integer > commentNodeOffset) {
 				nextPPOfset = integer;
 				PPRangeChecker visti = new PPRangeChecker(true, nextPPOfset, commentNodeOffset);
 				tu.accept(visti);
-				if(visti.isPrePPComment) {
+				if (visti.isPrePPComment) {
 					return true;
 				}
 			}
@@ -283,11 +279,10 @@ public class ASTCommenter {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		IPath nodePath = new Path(node.getContainingFilename());
 		for (IProject project : projects) {
-			if(project.getLocation().isPrefixOf(nodePath)) return true;
+			if (project.getLocation().isPrefixOf(nodePath)) return true;
 		}
 		return false;
 	}
-
 	
 	private static NodeCommentMap addCommentsToCommentMap(IASTTranslationUnit rootNode,	ArrayList<IASTComment> comments){
 		NodeCommentMap commentMap = new NodeCommentMap();
@@ -295,9 +290,7 @@ public class ASTCommenter {
 
 		IASTDeclaration[] declarations = rootNode.getDeclarations();
 		for (int i = 0; i < declarations.length; i++) {
-
 			if (isInWorkspace(declarations[i])) {
-
 				ASTCommenterVisitor commenter = new ASTCommenterVisitor(commHandler, commentMap);
 				declarations[i].accept(commenter);
 				

@@ -26,9 +26,8 @@ public interface IPDOMDescriptor {
 	IPath getLocation();
 
 	/**
-	 * An index location converter suitable of translating the internal
-	 * formatted path representations to index locations representing the
-	 * current content location.
+	 * An index location converter suitable of translating the internal formatted
+	 * path representations to index locations representing the current content location.
 	 * @return an index location converter
 	 */
 	IIndexLocationConverter getIndexLocationConverter();

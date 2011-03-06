@@ -66,8 +66,10 @@ public class RefactoringASTCache implements IDisposable {
 			throws CoreException, OperationCanceledException {
         Assert.isTrue(!fDisposed, "RefactoringASTCache is already disposed"); //$NON-NLS-1$
         getIndex();  // Make sure the index is locked.
+		if (pm != null && pm.isCanceled())
+			throw new OperationCanceledException();
 
-    	tu= CModelUtil.toWorkingCopy(tu);
+		tu= CModelUtil.toWorkingCopy(tu);
     	IASTTranslationUnit ast;
 		ast= fASTCache.get(tu);
 
@@ -88,6 +90,8 @@ public class RefactoringASTCache implements IDisposable {
 				synchronized (astBuildMutex) {
 					ast= fASTCache.get(tu);
 					if (ast == null) {
+						if (pm != null && pm.isCanceled())
+							throw new OperationCanceledException();
 						int options= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT |
 								ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
 						ast= tu.getAST(fIndex, options);

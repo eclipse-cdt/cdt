@@ -42,6 +42,11 @@ import org.eclipse.cdt.internal.ui.editor.ASTProvider;
  * This class is thread-safe.
  */
 public class RefactoringASTCache implements IDisposable {
+	private static final int PARSE_MODE = ITranslationUnit.AST_SKIP_ALL_HEADERS
+			| ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT
+			| ITranslationUnit.AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS
+			| ITranslationUnit.AST_PARSE_INACTIVE_CODE;
+
 	private final Map<ITranslationUnit, IASTTranslationUnit> fASTCache;
 	private final Object astBuildMutex;
 	private IIndex fIndex;
@@ -76,7 +81,7 @@ public class RefactoringASTCache implements IDisposable {
         if (ast == null) {
         	// Try to get a shared AST before creating our own.
         	final IASTTranslationUnit[] astHolder = new IASTTranslationUnit[1];
-			ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_IF_OPEN, pm, new ASTRunnable() {
+			ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_ACTIVE_ONLY, pm, new ASTRunnable() {
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 					// Leaking of AST outside of runOnAST method is dangerous, but it does not cause
 					// harm here since the index remains locked for the duration of the AST life span.
@@ -92,9 +97,7 @@ public class RefactoringASTCache implements IDisposable {
 					if (ast == null) {
 						if (pm != null && pm.isCanceled())
 							throw new OperationCanceledException();
-						int options= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT |
-								ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
-						ast= tu.getAST(fIndex, options);
+						ast= tu.getAST(fIndex, PARSE_MODE);
 		            	fASTCache.put(tu, ast);
 					}
 				}

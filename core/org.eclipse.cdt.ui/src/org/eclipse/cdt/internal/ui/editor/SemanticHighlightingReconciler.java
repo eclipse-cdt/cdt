@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPartSite;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
@@ -39,7 +40,6 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -63,7 +63,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	/**
 	 * Collects positions from the AST.
 	 */
-	private class PositionCollector extends CPPASTVisitor {
+	private class PositionCollector extends ASTVisitor {
 
 		/** The semantic token */
 		private SemanticToken fToken= new SemanticToken();

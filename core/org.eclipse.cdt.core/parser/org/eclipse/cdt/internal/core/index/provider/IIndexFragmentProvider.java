@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.provider;
 
@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
  * The ICProject IIndex is a logical index composed of potentially many
  * IIndexFragments. An IIndexFragmentProvider is a source of IIndexFragments.
  * <p>
- * 
+ *
  * <p>
  * IndexProviders are registered via the extension point
  * <code>org.eclipse.cdt.core.CIndex</code>
@@ -27,9 +27,12 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IIndexFragmentProvider extends IIndexProvider {
 	/**
-	 * Returns an array of IIndexFragment objects to add to the specified {@link ICConfigurationDescription}
+	 * Returns an array of IIndexFragment objects to add to the specified
+	 * {@link ICConfigurationDescription}.
+	 *
 	 * @param project
-	 * @return an array of IIndexFragment objects to add to the specified {@link ICConfigurationDescription}
+	 * @return an array of IIndexFragment objects to add to the specified
+	 * {@link ICConfigurationDescription}
 	 */
-	IIndexFragment[] getIndexFragments(ICConfigurationDescription config) throws CoreException;	
+	IIndexFragment[] getIndexFragments(ICConfigurationDescription config) throws CoreException;
 }

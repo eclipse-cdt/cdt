@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.index.provider;
 
@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Describes a PDOM format file in the local file system.
- * @since 4.0.0
+ * @since 4.0
  */
 public interface IPDOMDescriptor {
 	/**
@@ -24,10 +24,10 @@ public interface IPDOMDescriptor {
 	 * @return an absolute location of an existing file
 	 */
 	IPath getLocation();
-	
+
 	/**
 	 * An index location converter suitable of translating the internal
-	 * formatted path representations to index locations representing the 
+	 * formatted path representations to index locations representing the
 	 * current content location.
 	 * @return an index location converter
 	 */

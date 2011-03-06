@@ -11,37 +11,31 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
-
 /**
- * 
  * Generates source code of template parameter nodes. The actual string operations are delegated
  * to the <code>Scribe</code> class.
  * 
  * @see Scribe
  * @see ICPPASTTemplateParameter
  * @author Emanuel Graf IFS
- * 
  */
 public class TemplateParameterWriter extends NodeWriter {
-
 	private static final String GREATER_THAN_CLASS = "> class"; //$NON-NLS-1$
 	private static final String TEMPLATE_LESS_THAN = "template <"; //$NON-NLS-1$
-
-
 
 	/**
 	 * @param scribe
 	 * @param visitor
 	 */
-	public TemplateParameterWriter(Scribe scribe, CPPASTVisitor visitor, NodeCommentMap commentMap) {
+	public TemplateParameterWriter(Scribe scribe, ASTVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 	}
 	
@@ -55,28 +49,23 @@ public class TemplateParameterWriter extends NodeWriter {
 		}
 	}
 
-
 	private void writeTemplatedTypeTemplateParameter(ICPPASTTemplatedTypeTemplateParameter templated) {
 		scribe.print(TEMPLATE_LESS_THAN);
-		
-		
 		ICPPASTTemplateParameter[] params = templated.getTemplateParameters();
 		writeNodeList(params);
 		
 		scribe.print(GREATER_THAN_CLASS);
 		
-		if(templated.getName()!=null){
+		if (templated.getName()!=null){
 			scribe.printSpace();
 			templated.getName().accept(visitor);
 		}
 		
-		if(templated.getDefaultValue() != null){
+		if (templated.getDefaultValue() != null){
 			scribe.print(EQUALS);
 			templated.getDefaultValue().accept(visitor);
 		}
 	}
-
-
 
 	private void writeSimpleTypeTemplateParameter(ICPPASTSimpleTypeTemplateParameter simple) {
 		switch (simple.getParameterType()) {
@@ -90,7 +79,7 @@ public class TemplateParameterWriter extends NodeWriter {
 					
 		visitNodeIfNotNull(simple.getName());
 		
-		if(simple.getDefaultType() != null){
+		if (simple.getDefaultType() != null){
 			scribe.print(EQUALS);
 			simple.getDefaultType().accept(visitor);
 		}

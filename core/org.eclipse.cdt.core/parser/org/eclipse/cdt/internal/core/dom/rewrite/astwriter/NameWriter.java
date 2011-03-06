@@ -11,37 +11,32 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
-
 /**
- * 
  * Generates source code of name nodes. The actual string operations are delegated
  * to the <code>Scribe</code> class.
  * 
  * @see Scribe
  * @see IASTName
  * @author Emanuel Graf IFS
- * 
  */
 public class NameWriter extends NodeWriter {
-
 	private static final String OPERATOR = "operator "; //$NON-NLS-1$
-
 
 	/**
 	 * @param scribe
 	 * @param visitor
 	 */
-	public NameWriter(Scribe scribe, CPPASTVisitor visitor, NodeCommentMap commentMap) {
+	public NameWriter(Scribe scribe, ASTVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 	}
 	
@@ -57,13 +52,13 @@ public class NameWriter extends NodeWriter {
 			scribe.print(name.toString());
 		}
 		
-		if(hasTrailingComments(name)) {
+		if (hasTrailingComments(name)) {
 			writeTrailingComments(name);			
 		}		
 	}
 	
 	private void writeTempalteId(ICPPASTTemplateId tempId) {
-		if(needsTemplateQualifier(tempId)) {
+		if (needsTemplateQualifier(tempId)) {
 			scribe.print(TEMPLATE);
 		}
 		scribe.print(tempId.getTemplateName().toString());
@@ -71,12 +66,12 @@ public class NameWriter extends NodeWriter {
 		IASTNode[] nodes = tempId.getTemplateArguments();
 		for (int i = 0; i < nodes.length; ++i) {
 			nodes[i].accept(visitor);
-			if(i + 1 < nodes.length) {
+			if (i + 1 < nodes.length) {
 				scribe.print(',');
 			}
 		}
 		scribe.print('>');
-		if(isNestedTemplateId(tempId)) {
+		if (isNestedTemplateId(tempId)) {
 			scribe.printSpace();
 		}
 	}
@@ -91,18 +86,16 @@ public class NameWriter extends NodeWriter {
 	
 	private boolean isDependentName(ICPPASTQualifiedName qname, ICPPASTTemplateId tempId) {
 		IASTName[] names = qname.getNames();
-		int i = 0;
-		for(;i < names.length; ++i){
-			if(names[i] == tempId){
+		for (int i = 0; i < names.length; ++i){
+			if (names[i] == tempId){
 				return isDependentName(qname, tempId, i);
 			}
 		}
 		return false;
 	}
 
-	private boolean isDependentName(ICPPASTQualifiedName qname,
-			ICPPASTTemplateId tempId, int i) {
-		if(i <= 0){
+	private boolean isDependentName(ICPPASTQualifiedName qname, ICPPASTTemplateId tempId, int i) {
+		if (i <= 0){
 			return false;
 		}
 		if (qname.getNames()[i-1] instanceof ICPPASTTemplateId) {
@@ -116,7 +109,7 @@ public class NameWriter extends NodeWriter {
 	}
 
 	private boolean isNestedTemplateId(IASTNode node) {
-		while((node = node.getParent()) != null) {
+		while ((node = node.getParent()) != null) {
 			if (node instanceof ICPPASTTemplateId) {
 				return true;
 			}
@@ -124,12 +117,11 @@ public class NameWriter extends NodeWriter {
 		return false;
 	}
 
-
 	private void writeQualifiedName(ICPPASTQualifiedName qname) {
 		IASTName[] nodes = qname.getNames();
 		for (int i = 0; i < nodes.length; ++i) {
 			nodes[i].accept(visitor);
-			if(i + 1 < nodes.length) {
+			if (i + 1 < nodes.length) {
 				scribe.print(COLON_COLON);
 			}
 		}

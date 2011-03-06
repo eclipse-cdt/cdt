@@ -7,10 +7,11 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ * 	   Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -26,7 +27,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
@@ -36,16 +36,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
-
 /**
- * 
  * Generates source code of declaration specifier nodes. The actual string operations are delegated
  * to the <code>Scribe</code> class.
  * 
  * @see Scribe
  * @see IASTDeclSpecifier
  * @author Emanuel Graf IFS
- * 
  */
 public class DeclSpecWriter extends NodeWriter {
 	private static final String MUTABLE = "mutable "; //$NON-NLS-1$
@@ -65,9 +62,8 @@ public class DeclSpecWriter extends NodeWriter {
 	private static final String ENUM = "enum "; //$NON-NLS-1$
 	private static final String _BOOL = "_Bool"; //$NON-NLS-1$
 	
-	public DeclSpecWriter(Scribe scribe, CPPASTVisitor visitor, NodeCommentMap commentMap) {
+	public DeclSpecWriter(Scribe scribe, ASTVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
-		
 	}
 
 	protected void writeDelcSpec(IASTDeclSpecifier declSpec) {
@@ -75,7 +71,7 @@ public class DeclSpecWriter extends NodeWriter {
 		writeDeclSpec(declSpec);
 		if (declSpec instanceof ICPPASTDeclSpecifier) {
 			writeCPPDeclSpec((ICPPASTDeclSpecifier) declSpec);
-		}else if (declSpec instanceof ICASTDeclSpecifier) {
+		} else if (declSpec instanceof ICASTDeclSpecifier) {
 			writeCDeclSpec((ICASTDeclSpecifier) declSpec);
 		}
 	}
@@ -88,9 +84,7 @@ public class DeclSpecWriter extends NodeWriter {
 		return getASTSimpleDecSpecifier(simpDeclSpec.getType(), false);
 	}
 
-
 	private String getASTSimpleDecSpecifier(int type, boolean isCpp) {
-
 		switch (type) {
 		case IASTSimpleDeclSpecifier.t_unspecified:
 			return ""; //$NON-NLS-1$
@@ -140,25 +134,25 @@ public class DeclSpecWriter extends NodeWriter {
 	}
 
 	private void writeCDeclSpec(ICASTDeclSpecifier cDeclSpec) {
-		if(cDeclSpec.isRestrict()) {
+		if (cDeclSpec.isRestrict()) {
 			scribe.print(RESTRICT);
 		}
 		
 		if (cDeclSpec instanceof ICASTCompositeTypeSpecifier) {
 			writeCompositeTypeSpecifier((ICASTCompositeTypeSpecifier) cDeclSpec);
-		}else if (cDeclSpec instanceof ICASTEnumerationSpecifier) {
+		} else if (cDeclSpec instanceof ICASTEnumerationSpecifier) {
 			writeEnumSpec((ICASTEnumerationSpecifier) cDeclSpec);
-		}else if (cDeclSpec instanceof ICASTElaboratedTypeSpecifier) {
+		} else if (cDeclSpec instanceof ICASTElaboratedTypeSpecifier) {
 			writeElaboratedTypeSec((ICASTElaboratedTypeSpecifier) cDeclSpec);
-		}else if (cDeclSpec instanceof ICASTSimpleDeclSpecifier) {
+		} else if (cDeclSpec instanceof ICASTSimpleDeclSpecifier) {
 			writeCSimpleDeclSpec((ICASTSimpleDeclSpecifier) cDeclSpec);
-		}else if (cDeclSpec instanceof ICASTTypedefNameSpecifier) {
+		} else if (cDeclSpec instanceof ICASTTypedefNameSpecifier) {
 			writeNamedTypeSpecifier((ICASTTypedefNameSpecifier) cDeclSpec);
 		}
 	}
 
 	private void writeNamedTypeSpecifier(ICPPASTNamedTypeSpecifier namedSpc) {
-		if( namedSpc.isTypename() ){
+		if ( namedSpc.isTypename() ){
 			scribe.print(TYPENAME);
 		}
 		namedSpc.getName().accept(visitor);
@@ -168,14 +162,10 @@ public class DeclSpecWriter extends NodeWriter {
 		namedSpc.getName().accept(visitor);
 	}
 
-
-
 	private void writeElaboratedTypeSec(IASTElaboratedTypeSpecifier elabType) {
 		scribe.print(getElabTypeString(elabType.getKind()));
 		elabType.getName().accept(visitor);
 	}
-
-
 
 	private String getElabTypeString(int kind) {
 		switch(kind) {
@@ -194,36 +184,32 @@ public class DeclSpecWriter extends NodeWriter {
 		}
 	}
 
-
-
 	private void writeCPPDeclSpec(ICPPASTDeclSpecifier cppDelcSpec) {
 		if (cppDelcSpec.isVirtual()) {
 			scribe.print(VIRTUAL);
 		}
-		if(cppDelcSpec.isExplicit()) {
+		if (cppDelcSpec.isExplicit()) {
 			scribe.print(EXPLICIT);
 		}
-		if(cppDelcSpec.isFriend()) {
+		if (cppDelcSpec.isFriend()) {
 			scribe.print(FRIEND);
 		}
-		if(cppDelcSpec.getStorageClass() == IASTDeclSpecifier.sc_mutable) {
+		if (cppDelcSpec.getStorageClass() == IASTDeclSpecifier.sc_mutable) {
 			scribe.print(MUTABLE);
 		}
 		
 		if (cppDelcSpec instanceof ICPPASTCompositeTypeSpecifier) {
 			writeCompositeTypeSpecifier((ICPPASTCompositeTypeSpecifier) cppDelcSpec);
-		}else if (cppDelcSpec instanceof IASTEnumerationSpecifier) {
+		} else if (cppDelcSpec instanceof IASTEnumerationSpecifier) {
 			writeEnumSpec((IASTEnumerationSpecifier) cppDelcSpec);
-		}else if (cppDelcSpec instanceof ICPPASTElaboratedTypeSpecifier) {
+		} else if (cppDelcSpec instanceof ICPPASTElaboratedTypeSpecifier) {
 			writeElaboratedTypeSec((ICPPASTElaboratedTypeSpecifier) cppDelcSpec);
-		}else if (cppDelcSpec instanceof ICPPASTSimpleDeclSpecifier) {
+		} else if (cppDelcSpec instanceof ICPPASTSimpleDeclSpecifier) {
 			writeCPPSimpleDeclSpec((ICPPASTSimpleDeclSpecifier) cppDelcSpec);
-		}else if (cppDelcSpec instanceof ICPPASTNamedTypeSpecifier) {
+		} else if (cppDelcSpec instanceof ICPPASTNamedTypeSpecifier) {
 			writeNamedTypeSpecifier((ICPPASTNamedTypeSpecifier) cppDelcSpec);
 		}
 	}
-
-
 
 	private void writeEnumSpec(IASTEnumerationSpecifier enumSpec) {
 		scribe.print(ENUM);
@@ -231,9 +217,9 @@ public class DeclSpecWriter extends NodeWriter {
 		scribe.print('{');
 		scribe.printSpace();
 		IASTEnumerator[] enums = enumSpec.getEnumerators();
-		for(int i = 0; i< enums.length;++i) {
+		for (int i = 0; i< enums.length;++i) {
 			writeEnumerator(enums[i]);
-			if(i+1< enums.length) {
+			if (i+1< enums.length) {
 				scribe.print(NodeWriter.COMMA_SPACE);
 			}
 		}
@@ -241,19 +227,15 @@ public class DeclSpecWriter extends NodeWriter {
 		
 	}
 
-
-
 	private void writeEnumerator(IASTEnumerator enumerator) {
 		enumerator.getName().accept(visitor);
 		
 		IASTExpression value = enumerator.getValue();
-		if(value != null) {
+		if (value != null) {
 			scribe.print(EQUALS);
 			value.accept(visitor);
 		}		
 	}
-
-
 
 	private void writeCompositeTypeSpecifier(IASTCompositeTypeSpecifier compDeclSpec) {
 		boolean hasTrailingComments = hasTrailingComments(compDeclSpec.getName());
@@ -264,16 +246,16 @@ public class DeclSpecWriter extends NodeWriter {
 			ICPPASTBaseSpecifier[] baseSpecifiers = cppComp.getBaseSpecifiers();
 			if (baseSpecifiers.length > 0) {
 				scribe.print(SPACE_COLON_SPACE);
-				for(int i = 0; i < baseSpecifiers.length;++i) {
+				for (int i = 0; i < baseSpecifiers.length;++i) {
 					writeBaseSpecifiers(baseSpecifiers[i]);
-					if(i+1 < baseSpecifiers.length) {
+					if (i+1 < baseSpecifiers.length) {
 						scribe.print(COMMA_SPACE);
 					}
 				}
 				hasTrailingComments = hasTrailingComments(baseSpecifiers[baseSpecifiers.length-1].getName());
 			}
 		}
-		if(!hasTrailingComments){
+		if (!hasTrailingComments){
 			scribe.newLine();
 		}
 		scribe.print('{');
@@ -281,19 +263,19 @@ public class DeclSpecWriter extends NodeWriter {
 		scribe.incrementIndentationLevel();
 		IASTDeclaration[] decls = getMembers(compDeclSpec);
 		
-		if(decls.length > 0) {
+		if (decls.length > 0) {
 			for (IASTDeclaration declaration : decls) {
 				declaration.accept(visitor);
 			}
 		}
 
-		if(hasFreestandingComments(compDeclSpec)) {
+		if (hasFreestandingComments(compDeclSpec)) {
 			writeFreeStandingComments(compDeclSpec);			
 		}
 		scribe.decrementIndentationLevel();
 		scribe.print('}');
 
-		if(hasTrailingComments(compDeclSpec)) {
+		if (hasTrailingComments(compDeclSpec)) {
 			writeTrailingComments(compDeclSpec);			
 		}
 	}
@@ -317,10 +299,8 @@ public class DeclSpecWriter extends NodeWriter {
 		specifier.getName().accept(visitor);
 	}
 
-
-
 	private String getCPPCompositeTypeString(int key) {
-		if(key <= IASTCompositeTypeSpecifier.k_last) {
+		if (key <= IASTCompositeTypeSpecifier.k_last) {
 			return getCompositeTypeString(key);
 		}
 		switch (key) {
@@ -331,8 +311,6 @@ public class DeclSpecWriter extends NodeWriter {
 			throw new IllegalArgumentException("Unknow Specifiertype: " + key); //$NON-NLS-1$
 		}
 	}
-
-
 
 	private String getCompositeTypeString(int key) {
 		switch (key) {
@@ -346,10 +324,8 @@ public class DeclSpecWriter extends NodeWriter {
 		}
 	}
 
-
-
 	private void writeDeclSpec(IASTDeclSpecifier declSpec) {
-		if(declSpec.isInline()) {
+		if (declSpec.isInline()) {
 			scribe.print(INLINE);
 		}
 		switch(declSpec.getStorageClass()) {
@@ -375,8 +351,6 @@ public class DeclSpecWriter extends NodeWriter {
 		if (declSpec.isVolatile()) {
 			scribe.printStringSpace(VOLATILE);
 		}
-		
-		
 	}
 
 	private void writeCPPSimpleDeclSpec(ICPPASTSimpleDeclSpecifier simpDeclSpec) {
@@ -393,17 +367,17 @@ public class DeclSpecWriter extends NodeWriter {
 	}
 	
 	private void printQualifiers(IASTSimpleDeclSpecifier simpDeclSpec) {
-		if(simpDeclSpec.isSigned()) {
+		if (simpDeclSpec.isSigned()) {
 			scribe.printStringSpace(SIGNED);
-		}else if(simpDeclSpec.isUnsigned()){
+		} else if (simpDeclSpec.isUnsigned()){
 			scribe.printStringSpace(UNSIGNED);
 		}
 		
-		if(simpDeclSpec.isShort()) {
+		if (simpDeclSpec.isShort()) {
 			scribe.printStringSpace(SHORT);
-		}else if(simpDeclSpec.isLong()) {
+		} else if (simpDeclSpec.isLong()) {
 			scribe.printStringSpace(LONG);
-		}else if(simpDeclSpec.isLongLong()) {			
+		} else if (simpDeclSpec.isLongLong()) {			
 			scribe.print(LONG_LONG);
 		}
 		if (simpDeclSpec instanceof ICASTSimpleDeclSpecifier) {
@@ -414,11 +388,8 @@ public class DeclSpecWriter extends NodeWriter {
 		}
 	}
 
-
-
 	private void writeCSimpleDeclSpec(ICASTSimpleDeclSpecifier simpDeclSpec) {
 		printQualifiers(simpDeclSpec);
 		scribe.print(getCSimpleDecSpecifier(simpDeclSpec));
 	}
-
 }

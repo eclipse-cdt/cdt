@@ -17,6 +17,7 @@ import org.eclipse.compare.structuremergeviewer.DocumentRangeNode;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -35,7 +36,6 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -58,7 +58,7 @@ import org.eclipse.cdt.internal.ui.CUIMessages;
  *
  * @since 5.0
  */
-class CStructureCreatorVisitor extends CPPASTVisitor {
+class CStructureCreatorVisitor extends ASTVisitor {
 
 	private static final String TRANSLATION_UNIT_NAME = CUIMessages.CStructureCreatorVisitor_translationUnitName; 
 	private static final String ANONYMOUS_NAME= CoreModelMessages.getString("CElementLabels.anonymous"); //$NON-NLS-1$

@@ -95,8 +95,6 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 		statementWriter = new ModifiedASTStatementWriter(scribe, this, stack, commentMap);
 		declSpecWriter = new ModifiedASTDeclSpecWriter(scribe, this, stack, commentMap);
 		declarationWriter = new ModifiedASTDeclarationWriter(scribe, this, stack, commentMap);
-		
-
 	}
 
 	@Override

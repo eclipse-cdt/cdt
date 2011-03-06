@@ -7,30 +7,29 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.DeclSpecWriter;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.Scribe;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 public class ModifiedASTDeclSpecWriter extends DeclSpecWriter {
-
 	private final ASTModificationHelper modificationHelper;
 	
-	public ModifiedASTDeclSpecWriter(Scribe scribe, CPPASTVisitor visitor, ModificationScopeStack stack, NodeCommentMap commentMap) {
+	public ModifiedASTDeclSpecWriter(Scribe scribe, ASTVisitor visitor, ModificationScopeStack stack,
+			NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 		this.modificationHelper = new ASTModificationHelper(stack);
 	}
 
 	@Override
-	protected IASTDeclaration[] getMembers(
-			IASTCompositeTypeSpecifier compDeclSpec) {
-		return modificationHelper.createModifiedChildArray(compDeclSpec, compDeclSpec.getMembers(), IASTDeclaration.class);
+	protected IASTDeclaration[] getMembers(IASTCompositeTypeSpecifier compDeclSpec) {
+		return modificationHelper.createModifiedChildArray(compDeclSpec, compDeclSpec.getMembers(),
+				IASTDeclaration.class);
 	}
-
 }

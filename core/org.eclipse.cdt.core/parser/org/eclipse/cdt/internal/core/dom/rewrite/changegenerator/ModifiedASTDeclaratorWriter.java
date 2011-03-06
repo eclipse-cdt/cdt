@@ -7,11 +7,12 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- *    Institute for Software - initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Institute for Software - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -22,30 +23,25 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.DeclaratorWriter;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.Scribe;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
-
 public class ModifiedASTDeclaratorWriter extends DeclaratorWriter {
-
 	private final ASTModificationHelper modificationHelper;
 
-	public ModifiedASTDeclaratorWriter(Scribe scribe, CPPASTVisitor visitor, ModificationScopeStack stack, NodeCommentMap commentMap) {
+	public ModifiedASTDeclaratorWriter(Scribe scribe, ASTVisitor visitor, ModificationScopeStack stack, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 		this.modificationHelper = new ASTModificationHelper(stack);
 	}
 
 	@Override
-	protected void writeParameterDeclarations(
-			IASTStandardFunctionDeclarator funcDec,
+	protected void writeParameterDeclarations(IASTStandardFunctionDeclarator funcDec,
 			IASTParameterDeclaration[] paraDecls) {	
 		IASTParameterDeclaration[] modifiedParameters = modificationHelper.createModifiedChildArray(funcDec, paraDecls, IASTParameterDeclaration.class);			
 		super.writeParameterDeclarations(funcDec, modifiedParameters);
-		
 	}
 
 	@Override
@@ -53,7 +49,6 @@ public class ModifiedASTDeclaratorWriter extends DeclaratorWriter {
 		IASTPointerOperator[] modifiedPointer = modificationHelper.createModifiedChildArray(declarator, unmodifiedPointerOperations, IASTPointerOperator.class);
 		super.writePointerOperators(declarator, modifiedPointer);
 	}
-	
 	
 	@Override
 	protected void writeArrayModifiers(IASTArrayDeclarator arrDecl,
@@ -74,8 +69,6 @@ public class ModifiedASTDeclaratorWriter extends DeclaratorWriter {
 		
 		super.writeExceptionSpecification(funcDec, modifiedExceptions);
 	}
-	
-	
 	
 	@Override
 	protected void writeKnRParameterDeclarations(

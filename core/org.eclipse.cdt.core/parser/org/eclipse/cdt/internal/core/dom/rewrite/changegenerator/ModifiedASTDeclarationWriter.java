@@ -7,13 +7,13 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- *    Institute for Software - initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Institute for Software - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -22,10 +22,9 @@ import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.Scribe;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 public class ModifiedASTDeclarationWriter extends DeclarationWriter {
-
 	private final ASTModificationHelper modificationHelper;
 	
-	public ModifiedASTDeclarationWriter(Scribe scribe, CPPASTVisitor visitor, ModificationScopeStack stack, NodeCommentMap commentMap) {
+	public ModifiedASTDeclarationWriter(Scribe scribe, ASTVisitor visitor, ModificationScopeStack stack, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 		this.modificationHelper = new ASTModificationHelper(stack);
 	}

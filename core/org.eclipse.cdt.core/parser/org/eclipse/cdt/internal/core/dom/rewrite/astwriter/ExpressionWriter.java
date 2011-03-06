@@ -7,11 +7,12 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- *    Institute for Software - initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Institute for Software - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
@@ -28,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
@@ -39,10 +39,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTBinaryExpression;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
-
 
 /**
  * 
@@ -52,10 +50,8 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
  * @see Scribe
  * @see IASTExpression
  * @author Emanuel Graf IFS
- * 
  */
 public class ExpressionWriter extends NodeWriter{
-	
 	private static final String VECTORED_DELETE_OP = "[] "; //$NON-NLS-1$
 	private static final String DELETE = "delete "; //$NON-NLS-1$
 	private static final String STATIC_CAST_OP = "static_cast<"; //$NON-NLS-1$
@@ -119,7 +115,7 @@ public class ExpressionWriter extends NodeWriter{
 	private static final String THIS = "this"; //$NON-NLS-1$
 	private final MacroExpansionHandler macroHandler;
 	
-	public ExpressionWriter(Scribe scribe, CPPASTVisitor visitor, MacroExpansionHandler macroHandler, NodeCommentMap commentMap) {
+	public ExpressionWriter(Scribe scribe, ASTVisitor visitor, MacroExpansionHandler macroHandler, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 		this.macroHandler = macroHandler;
 	}
@@ -137,23 +133,23 @@ public class ExpressionWriter extends NodeWriter{
 			writeCastExpression((IASTCastExpression) expression);
 		} else if (expression instanceof ICPPASTNewExpression) {
 			writeCPPNewExpression((ICPPASTNewExpression) expression);
-		}else if (expression instanceof IASTConditionalExpression) {
+		} else if (expression instanceof IASTConditionalExpression) {
 			writeConditionalExpression((IASTConditionalExpression) expression);
-		}else if (expression instanceof IASTArraySubscriptExpression) {
+		} else if (expression instanceof IASTArraySubscriptExpression) {
 			writeArraySubscriptExpression((IASTArraySubscriptExpression) expression);
-		}else if (expression instanceof IASTFieldReference) {
+		} else if (expression instanceof IASTFieldReference) {
 			writeFieldReference((IASTFieldReference) expression);
-		}else if (expression instanceof IASTFunctionCallExpression) {
+		} else if (expression instanceof IASTFunctionCallExpression) {
 			writeFunctionCallExpression((IASTFunctionCallExpression) expression);
-		}else if (expression instanceof IASTExpressionList) {
+		} else if (expression instanceof IASTExpressionList) {
 			writeExpressionList((IASTExpressionList) expression);
-		}else if (expression instanceof IASTProblemExpression) {
+		} else if (expression instanceof IASTProblemExpression) {
 			throw new ProblemRuntimeException(((IASTProblemExpression) expression));
-		}else if (expression instanceof IASTTypeIdExpression) {
+		} else if (expression instanceof IASTTypeIdExpression) {
 			writeTypeIdExpression((IASTTypeIdExpression) expression);
-		}else if (expression instanceof ICPPASTDeleteExpression) {
+		} else if (expression instanceof ICPPASTDeleteExpression) {
 			writeDeleteExpression((ICPPASTDeleteExpression) expression);
-		}else if (expression instanceof ICPPASTSimpleTypeConstructorExpression) {
+		} else if (expression instanceof ICPPASTSimpleTypeConstructorExpression) {
 			writeSimpleTypeConstructorExpression((ICPPASTSimpleTypeConstructorExpression) expression);
 		} else if (expression instanceof ICPPASTLambdaExpression) {
 			writeLambdaExpression((ICPPASTLambdaExpression) expression);
@@ -161,7 +157,6 @@ public class ExpressionWriter extends NodeWriter{
 	}
 
 	private String getBinaryExpressionOperator(int operator){
-
 		switch(operator){
 		case IASTBinaryExpression.op_multiply:
 			return MULTIPLY_OP;
@@ -235,7 +230,6 @@ public class ExpressionWriter extends NodeWriter{
 			System.err.println("Unknown unaryExpressionType: " + operator); //$NON-NLS-1$
 			throw new IllegalArgumentException("Unknown unaryExpressionType: " + operator); //$NON-NLS-1$
 		}
-
 	}
 	
 	private boolean isPrefixExpression(IASTUnaryExpression unExp) {
@@ -339,7 +333,7 @@ public class ExpressionWriter extends NodeWriter{
 			operand1.accept(visitor);
 		}
 		IASTExpression operand2 = binExp.getOperand2();
-		if(macroHandler.checkisMacroExpansionNode(operand2, false)&& macroHandler.macroExpansionAlreadyPrinted(operand2)) {
+		if (macroHandler.checkisMacroExpansionNode(operand2, false)&& macroHandler.macroExpansionAlreadyPrinted(operand2)) {
 			return;
 		}
 		scribe.print(getBinaryExpressionOperator(binExp.getOperator()));
@@ -347,7 +341,7 @@ public class ExpressionWriter extends NodeWriter{
 	}
 
 	private void writeCPPNewExpression(ICPPASTNewExpression newExp) {
-		if(newExp.isGlobal()) {
+		if (newExp.isGlobal()) {
 			scribe.print(COLON_COLON);
 		}
 		scribe.print(NEW);
@@ -387,11 +381,11 @@ public class ExpressionWriter extends NodeWriter{
 	}
 
 	private void writeUnaryExpression(IASTUnaryExpression unExp) {
-		if(isPrefixExpression(unExp )) {
+		if (isPrefixExpression(unExp )) {
 			scribe.print(getPrefixOperator(unExp));
 		}
 		visitNodeIfNotNull(unExp.getOperand());
-		if(isPostfixExpression(unExp)) {
+		if (isPostfixExpression(unExp)) {
 			scribe.print(getPostfixOperator(unExp));
 		}
 	}
@@ -422,19 +416,18 @@ public class ExpressionWriter extends NodeWriter{
 
 	private void writeFieldReference(IASTFieldReference fieldRef) {
 		fieldRef.getFieldOwner().accept(visitor);
-		if(fieldRef.isPointerDereference()) {
+		if (fieldRef.isPointerDereference()) {
 			scribe.print(ARROW);
-		}else {
+		} else {
 			scribe.print('.');
 		}
 		if (fieldRef instanceof ICPPASTFieldReference) {
 			ICPPASTFieldReference cppFieldRef = (ICPPASTFieldReference) fieldRef;
-			if(cppFieldRef.isTemplate()) {
+			if (cppFieldRef.isTemplate()) {
 				scribe.print(TEMPLATE);
 			}
 		}
 		fieldRef.getFieldName().accept(visitor);
-		
 	}
 
 	private void writeFunctionCallExpression(IASTFunctionCallExpression funcCallExp) {
@@ -487,7 +480,6 @@ public class ExpressionWriter extends NodeWriter{
 	}
 
 	private void writeExpressionList(IASTExpressionList expList) {
-
 		IASTExpression[] expressions = expList.getExpressions();
 		writeExpressions(expList, expressions);
 	}
@@ -509,20 +501,20 @@ public class ExpressionWriter extends NodeWriter{
 			return SIZEOF_OP + "("; //$NON-NLS-1$
 		case ICPPASTTypeIdExpression.op_typeid:
 			return TYPEID_OP;
-		case IGNUASTTypeIdExpression.op_alignof:
+		case IASTTypeIdExpression.op_alignof:
 			return ALIGNOF_OP + "("; //$NON-NLS-1$
-		case IGNUASTTypeIdExpression.op_typeof:
+		case IASTTypeIdExpression.op_typeof:
 			return TYPEOF_OP;
 		}
 		throw new IllegalArgumentException("Unknown TypeId Type"); //$NON-NLS-1$
 	}
 
 	private void writeDeleteExpression(ICPPASTDeleteExpression delExp) {
-		if(delExp.isGlobal()) {
+		if (delExp.isGlobal()) {
 			scribe.print(COLON_COLON);
 		}
 		scribe.print(DELETE);
-		if(delExp.isVectored()) {
+		if (delExp.isVectored()) {
 			scribe.print(VECTORED_DELETE_OP);
 		}
 		delExp.getOperand().accept(visitor);
@@ -571,6 +563,5 @@ public class ExpressionWriter extends NodeWriter{
 			capture.getIdentifier().accept(visitor);
 		}
 	}
-
 }
 

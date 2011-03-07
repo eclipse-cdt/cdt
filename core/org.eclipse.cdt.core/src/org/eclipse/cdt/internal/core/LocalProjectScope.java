@@ -7,8 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -24,7 +23,7 @@ public class LocalProjectScope implements IScopeContext {
 	private static final String QUALIFIER_EXT = ".prj-"; //$NON-NLS-1$
 
 	/**
-	 * String constant (value of <code>"project-local"</code>) used for the 
+	 * String constant (value of <code>"project-local"</code>) used for the
 	 * scope name for this preference scope.
 	 */
 	public static final String SCOPE = "project-local"; //$NON-NLS-1$
@@ -34,7 +33,7 @@ public class LocalProjectScope implements IScopeContext {
 	/**
 	 * Create and return a new local project scope for the given project. The given
 	 * project must not be <code>null</code>.
-	 * 
+	 *
 	 * @param context the project
 	 * @exception IllegalArgumentException if the project is <code>null</code>
 	 */
@@ -47,7 +46,7 @@ public class LocalProjectScope implements IScopeContext {
 	/**
 	 * Create and return a new local project scope for the given project. The given
 	 * project must not be <code>null</code>.
-	 * 
+	 *
 	 * @param projectName the name of the project
 	 * @exception IllegalArgumentException if the project is <code>null</code>
 	 */
@@ -66,9 +65,9 @@ public class LocalProjectScope implements IScopeContext {
 	}
 
 	public IEclipsePreferences getNode(String qualifier) {
-		return new InstanceScope().getNode(qualifier + QUALIFIER_EXT + fContext);
+		return InstanceScope.INSTANCE.getNode(qualifier + QUALIFIER_EXT + fContext);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -86,7 +85,7 @@ public class LocalProjectScope implements IScopeContext {
 		return fContext.hashCode();
 	}
 
-	
+
 	private static Preferences getPPP(String name) {
 		return new LocalProjectScope(name).getNode(CCorePlugin.PLUGIN_ID);
 	}

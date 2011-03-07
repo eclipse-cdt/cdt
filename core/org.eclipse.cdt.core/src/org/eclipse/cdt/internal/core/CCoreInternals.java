@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -27,10 +27,10 @@ public class CCoreInternals {
 	public static PDOMManager getPDOMManager() {
 		return (PDOMManager) CCorePlugin.getIndexManager();
 	}
-	
+
 	/**
 	 * Saves the local project preferences, shared project preferences and the
-	 * scope preferences for the core plugin. 
+	 * scope preferences for the core plugin.
 	 * @param project the project for which to save preferences, may be <code>null</code>
 	 * @since 4.0
 	 */
@@ -45,7 +45,7 @@ public class CCoreInternals {
     						new ProjectScope(project).getNode(CCorePlugin.PLUGIN_ID).flush();
     					}
         			}
-        			new InstanceScope().getNode(CCorePlugin.PLUGIN_ID).flush();
+        			InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).flush();
 				} catch (BackingStoreException e) {
 					CCorePlugin.log(e);
 				}

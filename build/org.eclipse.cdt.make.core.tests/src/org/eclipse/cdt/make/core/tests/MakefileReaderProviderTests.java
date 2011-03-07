@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Nokia and others.
+ * Copyright (c) 2008, 2011 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,20 +7,34 @@
  *
  * Contributors:
  *     Nokia (Ed Swartz) - initial API and implementation
+ *     Wind River Systems - Bug 338936
  *******************************************************************************/
-
 package org.eclipse.cdt.make.core.tests;
 
-import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.makefile.*;
-import org.eclipse.core.filesystem.URIUtil;
-import org.eclipse.core.runtime.*;
-
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
+import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider;
+import org.eclipse.cdt.make.core.makefile.IRule;
+import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 public class MakefileReaderProviderTests extends TestCase {
 	private String[] inclDirs;
@@ -91,7 +105,7 @@ public class MakefileReaderProviderTests extends TestCase {
 
 	public void testInMemoryReaderProvider() throws Exception {
 		IMakefile makefile = MakeCorePlugin.createMakefile(
-				URIUtil.toURI("Makefile.main"), true, inclDirs,
+				URIUtil.toURI("/memory/Makefile.main"), true, inclDirs,
 				new IMakefileReaderProvider() {
 
 					public Reader getReader(URI fileURI) throws IOException {
@@ -119,6 +133,25 @@ public class MakefileReaderProviderTests extends TestCase {
 		assertMakefileContents(makefile);
 	}
 	
+	public void testReaderIsClosed_Bug338936() throws Exception {
+		final boolean[] streamIsClosed = { false };
+		MakeCorePlugin.createMakefile(
+				URIUtil.toURI("Makefile.main"), true, inclDirs,
+				new IMakefileReaderProvider() {
+					public Reader getReader(URI fileURI) throws IOException {
+						return new StringReader("") {
+							@Override
+							public void close() {
+								super.close();
+								streamIsClosed[0] = true;
+							}
+						};
+					}
+					
+				});
+		assertTrue("Stream is not closed", streamIsClosed[0]);
+	}
+
 	/**
 	 * @param makefile
 	 */
@@ -152,19 +185,18 @@ public class MakefileReaderProviderTests extends TestCase {
 	}
 	
 	private URL getPluginRelativeURL(IPath path) throws Exception {
-		if (MakeTestsPlugin.getDefault() != null)
-			return FileLocator.find(
+		if (MakeTestsPlugin.getDefault() != null) {
+			URL url = FileLocator.find(
 					MakeTestsPlugin.getDefault().getBundle(), 
 					path, null);
+			return url != null ? FileLocator.toFileURL(url) : null;
+		}
 		else {
 			return new URL("file", null, path.toFile().getAbsolutePath());
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	public static Test suite() {
-		return new MakefileReaderProviderTests();
+		return new TestSuite(MakefileReaderProviderTests.class);
 	}
 }

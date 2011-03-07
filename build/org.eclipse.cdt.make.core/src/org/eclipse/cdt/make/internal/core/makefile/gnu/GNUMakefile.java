@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Wind River Systems - Bug 338936
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
@@ -137,206 +138,210 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 
 		setFileURI(fileURI);
 
-		while ((line = reader.readLine()) != null) {
-			startLine = endLine + 1;
-			endLine = reader.getLineNumber();
+		try {
+			while ((line = reader.readLine()) != null) {
+				startLine = endLine + 1;
+				endLine = reader.getLineNumber();
 
-			// Check if we enter in "define"
-			if (GNUMakefileUtil.isEndef(line)) {
-				// We should have a "define" for a "endef".
+				// Check if we enter in "define"
+				if (GNUMakefileUtil.isEndef(line)) {
+					// We should have a "define" for a "endef".
+					if (!defines.empty()) {
+						VariableDefinition def = defines.pop();
+						def.setEndLine(endLine);
+					}
+					Endef endef = new Endef(this);
+					endef.setLines(startLine, endLine);
+					addDirective(conditions, endef);
+					continue;
+				} else if (GNUMakefileUtil.isDefine(line)) {
+					VariableDefinition def = parseVariableDefinition(line);
+					def.setLines(startLine, endLine);
+					addDirective(conditions, def);
+					defines.push(def);
+					continue;
+				} else if (GNUMakefileUtil.isOverrideDefine(line)) {
+					VariableDefinition oDef = parseVariableDefinition(line);
+					oDef.setLines(startLine, endLine);
+					addDirective(conditions, oDef);
+					defines.push(oDef);
+					continue;
+				}
+
+				// We still in a define.
 				if (!defines.empty()) {
-					VariableDefinition def = defines.pop();
-					def.setEndLine(endLine);
-				}
-				Endef endef = new Endef(this);
-				endef.setLines(startLine, endLine);
-				addDirective(conditions, endef);
-				continue;
-			} else if (GNUMakefileUtil.isDefine(line)) {
-				VariableDefinition def = parseVariableDefinition(line);
-				def.setLines(startLine, endLine);
-				addDirective(conditions, def);
-				defines.push(def);
-				continue;
-			} else if (GNUMakefileUtil.isOverrideDefine(line)) {
-				VariableDefinition oDef = parseVariableDefinition(line);
-				oDef.setLines(startLine, endLine);
-				addDirective(conditions, oDef);
-				defines.push(oDef);
-				continue;
-			}
-
-			// We still in a define.
-			if (!defines.empty()) {
-				VariableDefinition def = defines.peek();
-				StringBuffer sb = def.getValue();
-				if (sb.length() > 0) {
-					sb.append('\n');
-				}
-				sb.append(line);
-				continue;
-			}
-
-			// 1- Try command first, since we can not strip '#' in command line
-			if (PosixMakefileUtil.isCommand(line)) {
-				Command cmd = new Command(this, line);
-				cmd.setLines(startLine, endLine);
-				if (!conditions.empty()) {
-					addDirective(conditions, cmd);
-					continue;
-				} else if (rules != null) {
-					// The command is added to the rules
-					for (Rule rule : rules) {
-						rule.addDirective(cmd);
-						rule.setEndLine(endLine);
+					VariableDefinition def = defines.peek();
+					StringBuffer sb = def.getValue();
+					if (sb.length() > 0) {
+						sb.append('\n');
 					}
+					sb.append(line);
 					continue;
 				}
-				// If we have no rules/condition for the command,
-				// give the other directives a chance by falling through
-			}
 
-			// 2- Strip away any comments.
-			int pound = Util.indexOfComment(line);
-			if (pound != -1) {
-				Comment cmt = new Comment(this, line.substring(pound + 1));
-				cmt.setLines(startLine, endLine);
-				if (rules != null) {
-					// The comment is added to the rules.
-					for (Rule rule : rules) {
-						rule.addDirective(cmt);
-						rule.setEndLine(endLine);
+				// 1- Try command first, since we can not strip '#' in command line
+				if (PosixMakefileUtil.isCommand(line)) {
+					Command cmd = new Command(this, line);
+					cmd.setLines(startLine, endLine);
+					if (!conditions.empty()) {
+						addDirective(conditions, cmd);
+						continue;
+					} else if (rules != null) {
+						// The command is added to the rules
+						for (Rule rule : rules) {
+							rule.addDirective(cmd);
+							rule.setEndLine(endLine);
+						}
+						continue;
 					}
-				} else {
-					addDirective(conditions, cmt);
+					// If we have no rules/condition for the command,
+					// give the other directives a chance by falling through
 				}
-				line = line.substring(0, pound);
-				// If all we have left are spaces continue
+
+				// 2- Strip away any comments.
+				int pound = Util.indexOfComment(line);
+				if (pound != -1) {
+					Comment cmt = new Comment(this, line.substring(pound + 1));
+					cmt.setLines(startLine, endLine);
+					if (rules != null) {
+						// The comment is added to the rules.
+						for (Rule rule : rules) {
+							rule.addDirective(cmt);
+							rule.setEndLine(endLine);
+						}
+					} else {
+						addDirective(conditions, cmt);
+					}
+					line = line.substring(0, pound);
+					// If all we have left are spaces continue
+					if (Util.isEmptyLine(line)) {
+						continue;
+					}
+					// The rest of the line maybe a valid directives.
+					// keep on trying by falling through.
+				}
+
+				// 3- Empty lines ?
 				if (Util.isEmptyLine(line)) {
+					Directive empty = new EmptyLine(this);
+					empty.setLines(startLine, endLine);
+					if (rules != null) {
+						// The EmptyLine is added to the rules.
+						for (Rule rule : rules) {
+							rule.addDirective(empty);
+							rule.setEndLine(endLine);
+						}
+					} else {
+						addDirective(conditions, empty);
+					}
 					continue;
 				}
-				// The rest of the line maybe a valid directives.
-				// keep on trying by falling through.
-			}
 
-			// 3- Empty lines ?
-			if (Util.isEmptyLine(line)) {
-				Directive empty = new EmptyLine(this);
-				empty.setLines(startLine, endLine);
-				if (rules != null) {
-					// The EmptyLine is added to the rules.
-					for (Rule rule : rules) {
-						rule.addDirective(empty);
-						rule.setEndLine(endLine);
+				// 4- reset the rules to null
+				// The first non empty line that does not begin with a <TAB> or '#'
+				// shall begin a new entry.
+				rules = null;
+
+				if (GNUMakefileUtil.isElse(line)) {
+					Conditional elseDirective = parseConditional(line);
+					elseDirective.setLines(startLine, endLine);
+					// Are we missing a if condition ?
+					if (!conditions.empty()) {
+						Conditional cond = (Conditional) conditions.pop();
+						cond.setEndLine(endLine - 1);
 					}
-				} else {
-					addDirective(conditions, empty);
+					addDirective(conditions, elseDirective);
+					conditions.push(elseDirective);
+					continue;
+				} else if (GNUMakefileUtil.isEndif(line)) {
+					Endif endif = new Endif(this);
+					endif.setLines(startLine, endLine);
+					// Are we missing a if/else condition ?
+					if (!conditions.empty()) {
+						Conditional cond = (Conditional) conditions.pop();
+						cond.setEndLine(endLine);
+					}
+					addDirective(conditions, endif);
+					continue;
 				}
-				continue;
-			}
 
-			// 4- reset the rules to null
-			// The first non empty line that does not begin with a <TAB> or '#'
-			// shall begin a new entry.
-			rules = null;
-
-			if (GNUMakefileUtil.isElse(line)) {
-				Conditional elseDirective = parseConditional(line);
-				elseDirective.setLines(startLine, endLine);
-				// Are we missing a if condition ?
-				if (!conditions.empty()) {
-					Conditional cond = (Conditional) conditions.pop();
-					cond.setEndLine(endLine - 1);
+				// 5- Check for the conditionnals.
+				Directive directive = processConditions(line);
+				if (directive != null) {
+					directive.setLines(startLine, endLine);
+					addDirective(conditions, directive);
+					conditions.push(directive);
+					continue;
 				}
-				addDirective(conditions, elseDirective);
-				conditions.push(elseDirective);
-				continue;
-			} else if (GNUMakefileUtil.isEndif(line)) {
-				Endif endif = new Endif(this);
-				endif.setLines(startLine, endLine);
-				// Are we missing a if/else condition ?
-				if (!conditions.empty()) {
-					Conditional cond = (Conditional) conditions.pop();
-					cond.setEndLine(endLine);
+
+				// 6- Check for other special gnu directives.
+				directive = processGNUDirectives(line);
+				if (directive != null) {
+					directive.setLines(startLine, endLine);
+					addDirective(conditions, directive);
+					continue;
 				}
-				addDirective(conditions, endif);
-				continue;
-			}
 
-			// 5- Check for the conditionnals.
-			Directive directive = processConditions(line);
-			if (directive != null) {
-				directive.setLines(startLine, endLine);
-				addDirective(conditions, directive);
-				conditions.push(directive);
-				continue;
-			}
-
-			// 6- Check for other special gnu directives.
-			directive = processGNUDirectives(line);
-			if (directive != null) {
-				directive.setLines(startLine, endLine);
-				addDirective(conditions, directive);
-				continue;
-			}
-
-			// 7- Check for GNU special rules.
-			SpecialRule special = processSpecialRules(line);
-			if (special != null) {
-				rules = new Rule[] { special };
-				special.setLines(startLine, endLine);
-				addDirective(conditions, special);
-				continue;
-			}
-
-			// - Check for inference rule.
-			if (PosixMakefileUtil.isInferenceRule(line)) {
-				InferenceRule irule = parseInferenceRule(line);
-				irule.setLines(startLine, endLine);
-				addDirective(conditions, irule);
-				rules = new Rule[] { irule };
-				continue;
-			}
-
-			// - Variable Definiton ?
-			if (GNUMakefileUtil.isVariableDefinition(line)) {
-				VariableDefinition vd = parseVariableDefinition(line);
-				vd.setLines(startLine, endLine);
-				addDirective(conditions, vd);
-				if (!vd.isTargetSpecific()) {
-					continue;					
+				// 7- Check for GNU special rules.
+				SpecialRule special = processSpecialRules(line);
+				if (special != null) {
+					rules = new Rule[] { special };
+					special.setLines(startLine, endLine);
+					addDirective(conditions, special);
+					continue;
 				}
-			}
 
-			// - GNU Static Target rule ?
-			if (GNUMakefileUtil.isStaticTargetRule(line)) {
-				StaticTargetRule[] srules = parseStaticTargetRule(line);
-				for (StaticTargetRule srule : srules) {
-					srule.setLines(startLine, endLine);
-					addDirective(conditions, srule);
+				// - Check for inference rule.
+				if (PosixMakefileUtil.isInferenceRule(line)) {
+					InferenceRule irule = parseInferenceRule(line);
+					irule.setLines(startLine, endLine);
+					addDirective(conditions, irule);
+					rules = new Rule[] { irule };
+					continue;
 				}
-				rules = srules;
-				continue;
-			}
 
-			// - Target Rule ?
-			if (GNUMakefileUtil.isGNUTargetRule(line)) {
-				TargetRule[] trules = parseGNUTargetRules(line);
-				for (TargetRule trule : trules) {
-					trule.setLines(startLine, endLine);
-					addDirective(conditions, trule);
+				// - Variable Definiton ?
+				if (GNUMakefileUtil.isVariableDefinition(line)) {
+					VariableDefinition vd = parseVariableDefinition(line);
+					vd.setLines(startLine, endLine);
+					addDirective(conditions, vd);
+					if (!vd.isTargetSpecific()) {
+						continue;					
+					}
 				}
-				rules = trules;
-				continue;
+
+				// - GNU Static Target rule ?
+				if (GNUMakefileUtil.isStaticTargetRule(line)) {
+					StaticTargetRule[] srules = parseStaticTargetRule(line);
+					for (StaticTargetRule srule : srules) {
+						srule.setLines(startLine, endLine);
+						addDirective(conditions, srule);
+					}
+					rules = srules;
+					continue;
+				}
+
+				// - Target Rule ?
+				if (GNUMakefileUtil.isGNUTargetRule(line)) {
+					TargetRule[] trules = parseGNUTargetRules(line);
+					for (TargetRule trule : trules) {
+						trule.setLines(startLine, endLine);
+						addDirective(conditions, trule);
+					}
+					rules = trules;
+					continue;
+				}
+
+				// XXX ?? Should not be here.
+				BadDirective stmt = new BadDirective(this, line);
+				stmt.setLines(startLine, endLine);
+				addDirective(conditions, stmt);
+
 			}
-
-			// XXX ?? Should not be here.
-			BadDirective stmt = new BadDirective(this, line);
-			stmt.setLines(startLine, endLine);
-			addDirective(conditions, stmt);
-
+			setLines(1, endLine);
+		} finally {
+			reader.close();
 		}
-		setLines(1, endLine);
 		// TEST please remove.
 		//GNUMakefileValidator validator = new GNUMakefileValidator();
 		//validator.validateDirectives(null, getDirectives());

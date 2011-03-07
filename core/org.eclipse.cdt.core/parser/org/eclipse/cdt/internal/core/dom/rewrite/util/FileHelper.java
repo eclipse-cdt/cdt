@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html  
- *  
- * Contributors: 
- * Institute for Software - initial API and implementation
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.dom.rewrite.util;
@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.text.TextUtilities;
 
 public class FileHelper {
-
 	private static final String DEFAULT_LINE_DELIMITTER = "\n"; //$NON-NLS-1$
 
 	public static IFile getIFilefromIASTNode(IASTNode node) {
@@ -39,7 +38,6 @@ public class FileHelper {
 	}
 
 	public static boolean isFirstWithinSecondLocation(IASTFileLocation loc1, IASTFileLocation loc2) {
-
 		boolean isEquals = true;
 
 		isEquals &= loc1.getFileName().equals(loc2.getFileName());
@@ -58,13 +56,13 @@ public class FileHelper {
 		} catch (CoreException e) {
 		} catch (IOException e) {
 		}
-		
+
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject();
 		IScopeContext[] scopeContext;
 		if (project != null) {
 			scopeContext = new IScopeContext[] { new ProjectScope(project) };
 		} else {
-			scopeContext = new IScopeContext[] { new InstanceScope() };
+			scopeContext = new IScopeContext[] { InstanceScope.INSTANCE };
 		}
 		String platformDefaultLineDelimiter = System.getProperty("line.separator", DEFAULT_LINE_DELIMITTER); //$NON-NLS-1$
 		String defaultLineDelimiter = Platform.getPreferencesService().getString(Platform.PI_RUNTIME,

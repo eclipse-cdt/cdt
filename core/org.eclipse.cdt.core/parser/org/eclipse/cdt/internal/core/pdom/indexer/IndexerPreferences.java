@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.Map;
@@ -42,7 +42,7 @@ public class IndexerPreferences {
 	public static final int UPDATE_POLICY_IMMEDIATE= 0;
 	public static final int UPDATE_POLICY_LAZY= 1;
 	public static final int UPDATE_POLICY_MANUAL= 2;
-	
+
 	public static final String KEY_INDEXER_ID= "indexerId"; //$NON-NLS-1$
 	public static final String KEY_INDEX_ALL_FILES= "indexAllFiles"; //$NON-NLS-1$
 	public static final String KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG= "indexUnusedHeadersWithDefaultLang"; //$NON-NLS-1$
@@ -58,9 +58,9 @@ public class IndexerPreferences {
 
 	private static final String KEY_INDEXER_PREFS_SCOPE = "preferenceScope"; //$NON-NLS-1$
 	private static final String KEY_INDEX_IMPORT_LOCATION = "indexImportLocation"; //$NON-NLS-1$
-	
+
 	private static final String DEFAULT_INDEX_IMPORT_LOCATION = ".settings/cdt-index.zip"; //$NON-NLS-1$
-	// See http://bugs.eclipse.org/bugs/show_bug.cgi?id=259843, 
+	// See http://bugs.eclipse.org/bugs/show_bug.cgi?id=259843,
 	//     http://bugs.eclipse.org/bugs/show_bug.cgi?id=294180 and
 	//     http://bugs.eclipse.org/bugs/show_bug.cgi?id=295518 for the rationale.
 	private static final String DEFAULT_FILES_TO_PARSE_UP_FRONT=
@@ -72,7 +72,7 @@ public class IndexerPreferences {
 		"sys/types.h, " +      // can be fragmented,      !! fragments bits/time.h !!		//$NON-NLS-1$
 		"signal.h, " +         // configures bits/signum.h									//$NON-NLS-1$
 		"cstdio";              // configures stdio.h for c++ !! fragments bits/signum.h !!	//$NON-NLS-1$
-	private static final int DEFAULT_UPDATE_POLICY= 0; 
+	private static final int DEFAULT_UPDATE_POLICY= 0;
 	public static final int DEFAULT_FILE_SIZE_LIMIT = 8;
 
 	private static final String QUALIFIER = CCorePlugin.PLUGIN_ID;
@@ -110,13 +110,13 @@ public class IndexerPreferences {
 	 * {@link #SCOPE_PROJECT_PRIVATE}.
 	 */
 	public static int setScope(IProject project, int scope) {
-		if (project == null) 
+		if (project == null)
 			throw new IllegalArgumentException();
 		boolean makeCopy= false;
 		switch (scope) {
 		case SCOPE_INSTANCE:
 			break;
-		case SCOPE_PROJECT_PRIVATE: 
+		case SCOPE_PROJECT_PRIVATE:
 		case SCOPE_PROJECT_SHARED:
 			makeCopy= true;
 			break;
@@ -134,7 +134,7 @@ public class IndexerPreferences {
 				setProperties(prefs[0], props);
 			}
 		}
-				
+
 		Preferences ppp= getLocalPreferences(project);
 		ppp.putInt(KEY_INDEXER_PREFS_SCOPE, scope);
 		return scope;
@@ -148,7 +148,7 @@ public class IndexerPreferences {
 	public static void setUpdatePolicy(IProject project, int policy) {
 		switch (policy) {
 		case UPDATE_POLICY_IMMEDIATE:
-		case UPDATE_POLICY_LAZY: 
+		case UPDATE_POLICY_LAZY:
 		case UPDATE_POLICY_MANUAL:
 			break;
 		default:
@@ -172,9 +172,9 @@ public class IndexerPreferences {
 	public static Properties getProperties(IProject project, int scope) {
 		Preferences[] prefs= getPreferences(project, scope);
 		Properties props= new Properties();
-		for (int i=0; i<prefs.length; i++) {
+		for (int i= 0; i < prefs.length; i++) {
 			readProperties(prefs[i], props);
-			if (i==0) {
+			if (i == 0) {
 				migrateProperties(props);
 			}
 		}
@@ -186,10 +186,10 @@ public class IndexerPreferences {
 			// backward compatibility
 			if ("true".equals(props.get(KEY_INDEX_ALL_FILES))) { //$NON-NLS-1$
 				props.put(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "true"); //$NON-NLS-1$
-			}	
+			}
 		}
 	}
-	
+
 	public static Properties getDefaultIndexerProperties() {
 		Preferences prefs= getDefaultPreferences();
 		Properties props= new Properties();
@@ -200,7 +200,7 @@ public class IndexerPreferences {
 	public static int getDefaultUpdatePolicy() {
 		Preferences[] prefs = new Preferences[] {
 				getDefaultPreferences()
-		};
+			};
 		return getUpdatePolicy(prefs);
 	}
 
@@ -284,21 +284,21 @@ public class IndexerPreferences {
 	private static Preferences[] getInstancePreferencesArray() {
 		return new Preferences[] {
 				getInstancePreferences(),
-				getConfigurationPreferences(), 
+				getConfigurationPreferences(),
 				getDefaultPreferences()
 		};
 	}
 
 	private static Preferences getDefaultPreferences() {
-		return new DefaultScope().getNode(QUALIFIER).node(INDEXER_NODE);
+		return DefaultScope.INSTANCE.getNode(QUALIFIER).node(INDEXER_NODE);
 	}
 
 	private static Preferences getConfigurationPreferences() {
-		return new ConfigurationScope().getNode(QUALIFIER).node(INDEXER_NODE);
+		return ConfigurationScope.INSTANCE.getNode(QUALIFIER).node(INDEXER_NODE);
 	}
 
 	private static Preferences getInstancePreferences() {
-		return new InstanceScope().getNode(QUALIFIER).node(INDEXER_NODE);
+		return InstanceScope.INSTANCE.getNode(QUALIFIER).node(INDEXER_NODE);
 	}
 
 	public static Preferences getProjectPreferences(IProject project) {
@@ -308,7 +308,7 @@ public class IndexerPreferences {
 	private static Preferences getLocalPreferences(IProject project) {
 		return new LocalProjectScope(project).getNode(QUALIFIER).node(INDEXER_NODE);
 	}
-	
+
 	private static void readProperties(Preferences preferences, Properties props) {
 		try {
 			String[] keys = preferences.keys();
@@ -343,7 +343,7 @@ public class IndexerPreferences {
 	public static void setDefaultIndexerId(String defaultId) {
 		getDefaultPreferences().put(KEY_INDEXER_ID, defaultId);
 	}
-	
+
 	public static void addChangeListener(IProject prj, IPreferenceChangeListener pcl) {
 		Preferences node= getProjectPreferences(prj);
 		addListener(node, pcl);
@@ -385,15 +385,14 @@ public class IndexerPreferences {
 					getConfigurationPreferences(),
 					getDefaultPreferences()
 			};
-		}
-		else {
+		} else {
 			prefs= new Preferences[] {
 					getInstancePreferences(),
 					getConfigurationPreferences(),
 					getDefaultPreferences()
 			};
 		}
-		
+
 		return Platform.getPreferencesService().get(KEY_INDEX_IMPORT_LOCATION, DEFAULT_INDEX_IMPORT_LOCATION, prefs);
 	}
 
@@ -415,14 +414,13 @@ public class IndexerPreferences {
 		if (val != null) {
 			try {
 				int result= Integer.parseInt(val);
-				switch(result) {
+				switch (result) {
 				case IndexUpdatePolicy.POST_CHANGE:
 				case IndexUpdatePolicy.POST_BUILD:
 				case IndexUpdatePolicy.MANUAL:
 					return result;
 				}
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				CCorePlugin.log(e);
 			}
 		}
@@ -432,23 +430,19 @@ public class IndexerPreferences {
 	public static boolean preferDefaultLanguage(IProject project) {
 		IPreferencesService prefService = Platform.getPreferencesService();
 		Preferences[] prefs= IndexerPreferences.getPreferences(project);
-		if ("true".equals(prefService.get(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, null, prefs))) { //$NON-NLS-1$
-			if ("true".equals(prefService.get(KEY_INDEX_ALL_FILES, null, prefs))) { //$NON-NLS-1$
-				if (!"true".equals(prefService.get(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, null, prefs))) { //$NON-NLS-1$
-					return false;
-				}
-			}
+		if ("true".equals(prefService.get(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, null, prefs)) && //$NON-NLS-1$
+				"true".equals(prefService.get(KEY_INDEX_ALL_FILES, null, prefs)) && //$NON-NLS-1$
+				!"true".equals(prefService.get(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, null, prefs))) { //$NON-NLS-1$
+			return false;
 		}
 		return true;
 	}
 
 	public static boolean preferDefaultLanguage(Properties props) {
-		if ("true".equals(props.get(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG))) { //$NON-NLS-1$
-			if ("true".equals(props.get(KEY_INDEX_ALL_FILES))) { //$NON-NLS-1$
-				if (!"true".equals(props.get(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG))) { //$NON-NLS-1$
-					return false;
-				}
-			}
+		if ("true".equals(props.get(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG)) && //$NON-NLS-1$
+				"true".equals(props.get(KEY_INDEX_ALL_FILES)) && //$NON-NLS-1$
+				!"true".equals(props.get(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG))) { //$NON-NLS-1$
+			return false;
 		}
 		return true;
 	}

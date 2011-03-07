@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Bala Torati (Symbian) - Initial API and implementation
+ *     Bala Torati (Symbian) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.templateengine.process;
 
@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Element;
-
 
 /**
  * This class contains methods to get first process block element, next process
@@ -65,7 +64,7 @@ public class Process {
 		ProcessParameter[] params = processRunner.getProcessParameters();
 		List<ProcessArgument> list = new ArrayList<ProcessArgument>(params.length);
 		int childIndex = 0;
-		for(int i=0; i<params.length; i++) {
+		for (int i= 0; i < params.length; i++) {
 			ProcessParameter param = params[i];
 			boolean childrenRemain = childIndex < children.size();
 			Element child = (childrenRemain ? children.get(childIndex) : null);
@@ -88,7 +87,8 @@ public class Process {
 	 * @return boolean, true if the Process is Ready.
 	 */
 	public boolean isReadyToProcess() {
-		if (processRunner == null || !processRunner.areArgumentsMatchingRequiredParameters(args) || !areAllMacrosExpandable()) {
+		if (processRunner == null || !processRunner.areArgumentsMatchingRequiredParameters(args) ||
+				!areAllMacrosExpandable()) {
 			return false;
 		}
 		return true;
@@ -100,7 +100,7 @@ public class Process {
 	 */
 	private boolean areAllMacrosExpandable() {
 		if (args != null) {
-			for(int i=0; i<args.length; i++) {
+			for (int i= 0; i < args.length; i++) {
 				ProcessArgument arg = args[i];
 				if (!arg.areAllMacrosExpandable()) {
 					return false;
@@ -116,10 +116,11 @@ public class Process {
 	private String getFirstNonExpandableMacroMessage(ProcessArgument[] args2) {
 		if (args != null) {
 			String macro;
-			for(int i=0; i<args.length; i++) {
+			for (int i= 0; i < args.length; i++) {
 				ProcessArgument arg = args[i];
 				if ((macro = arg.getFirstNonExpandableMacro()) != null) {
-					return TemplateEngineMessages.getString("Process.argument") + arg.getName() + TemplateEngineMessages.getString("Process.expandableMacro") + macro; //$NON-NLS-1$ //$NON-NLS-2$
+					return TemplateEngineMessages.getString("Process.argument") + arg.getName() + //$NON-NLS-1$
+							TemplateEngineMessages.getString("Process.expandableMacro") + macro; //$NON-NLS-1$
 				}
 			}
 		}
@@ -134,12 +135,12 @@ public class Process {
 	 */
 	private String getProcessMessage(int code, String msg) {
 		switch (code) {
-			case IStatus.ERROR:
-				return id + TemplateEngineMessages.getString("Process.error") + msg; //$NON-NLS-1$
-			case IStatus.OK:
-				return id + TemplateEngineMessages.getString("Process.success") + msg; //$NON-NLS-1$
-			default:
-				return id + TemplateEngineMessages.getString("Process.info") + msg; //$NON-NLS-1$
+		case IStatus.ERROR:
+			return id + TemplateEngineMessages.getString("Process.error") + msg; //$NON-NLS-1$
+		case IStatus.OK:
+			return id + TemplateEngineMessages.getString("Process.success") + msg; //$NON-NLS-1$
+		default:
+			return id + TemplateEngineMessages.getString("Process.info") + msg; //$NON-NLS-1$
 		}
 	}
 
@@ -166,7 +167,7 @@ public class Process {
 
 	private void resolve() {
 		if (args != null) {
-			for(int i=0; i<args.length; i++) {
+			for (int i= 0; i < args.length; i++) {
 				ProcessArgument arg = args[i];
 				if (!arg.isResolved()) {
 					arg.resolve();
@@ -181,7 +182,7 @@ public class Process {
 	public Set<String> getMacros() {
 		Set<String> set = null;
 		if (args != null) {
-			for(int i=0; i<args.length; i++) {
+			for (int i= 0; i < args.length; i++) {
 				ProcessArgument arg = args[i];
 				Set<String> subSet = arg.getMacros();
 				if (subSet != null) {

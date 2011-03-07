@@ -26,7 +26,9 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
@@ -53,9 +55,7 @@ import org.eclipse.debug.core.model.IProcess;
  * @since 4.0
  */
 public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
-	
-	private static final String GROUP_ATTR = GdbPlugin.PLUGIN_ID + "groupId"; //$NON-NLS-1$
-	
+		
 	private IGDBControl fCommandControl;
 	private CommandFactory fCommandFactory;
 	private IGDBProcesses fProcService;
@@ -290,7 +290,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 							// For a restart, remove the old inferior
 							IProcess[] launchProcesses = launch.getProcesses();
 							for (IProcess process : launchProcesses) {
-								String groupAttribute = process.getAttribute(GROUP_ATTR);
+								String groupAttribute = process.getAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR);
 								if (groupId.equals(groupAttribute)) {
 									launch.removeProcess(process);
 									// Use the exact same label as before
@@ -301,12 +301,10 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 						}
 
 						// Add the inferior
-						IProcess process = DebugPlugin.newProcess(launch, inferior, label);
-						process.setAttribute(GROUP_ATTR, groupId);
-						
-						// Register as an IProcess so that the console is brought to the front
-						// when the inferior is selected
-						session.registerModelAdapter(IProcess.class, process);
+			            InferiorRuntimeProcess runtimeInferior = new InferiorRuntimeProcess(launch, inferior, label, null);
+			            runtimeInferior.setAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR, groupId);
+			            launch.addProcess(runtimeInferior);
+
 						rm.done();
 					}
 				});

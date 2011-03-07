@@ -34,9 +34,10 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.gdb.launching.GDBProcess;
+import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
@@ -463,7 +464,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 							IProcess[] launchProcesses = launch.getProcesses();
 							for (IProcess p : launchProcesses) {
 								// We know there is only one inferior, so just find it.
-								if ((p instanceof GDBProcess) == false) {
+								if (p instanceof InferiorRuntimeProcess) {
 									launch.removeProcess(p);
 									break;
 								}
@@ -471,11 +472,10 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 						}
 
 						// Add the inferior
-						IProcess process = DebugPlugin.newProcess(launch, inferior, label);
+						InferiorRuntimeProcess runtimeInferior = new InferiorRuntimeProcess(launch, inferior, label, null);
+			            runtimeInferior.setAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR, MIProcesses.UNIQUE_GROUP_ID);
+						launch.addProcess(runtimeInferior);
 
-						// Register as an IProcess so that the console is brought to the front
-						// when the inferior is selected
-						getSession().registerModelAdapter(IProcess.class, process);
 						rm.done();
 					}
 				});

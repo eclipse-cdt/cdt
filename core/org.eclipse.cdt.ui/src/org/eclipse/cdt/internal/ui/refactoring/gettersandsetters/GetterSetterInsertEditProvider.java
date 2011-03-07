@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 
@@ -84,7 +85,7 @@ public class GetterSetterInsertEditProvider implements Comparable<GetterSetterIn
 		IASTCompositeTypeSpecifier comp = (IASTCompositeTypeSpecifier) n;
 		
 		CPPASTQualifiedName qname = new CPPASTQualifiedName();
-		qname.addName(comp.getName().copy());
+		qname.addName(comp.getName().copy(CopyStyle.withLocations));
 		return qname;
 	}
 

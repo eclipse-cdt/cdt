@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -77,7 +78,7 @@ public class NameHelper {
 			}
 		}
 
-		qname.addName(declaratorName.copy());
+		qname.addName(declaratorName.copy(CopyStyle.withLocations));
 		return qname;
 	}
 	

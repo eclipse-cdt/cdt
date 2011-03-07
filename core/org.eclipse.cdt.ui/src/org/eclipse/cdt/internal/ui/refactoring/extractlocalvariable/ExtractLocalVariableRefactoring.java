@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
@@ -294,7 +295,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 				newName.toCharArray());
 
 		IASTEqualsInitializer init = new CPPASTEqualsInitializer();
-		init.setInitializerClause(deblock(target.copy()));
+		init.setInitializerClause(deblock(target.copy(CopyStyle.withLocations)));
 		decl.setInitializer(init);
 		simple.addDeclarator(decl);
 

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -91,7 +92,8 @@ public class NamespaceHelper {
 	
 	private static IASTName createNameWithTemplates(IASTNode declarationParent) {
 		IASTName parentName;
-		parentName = ((ICPPASTCompositeTypeSpecifier) declarationParent).getName().copy();
+		parentName = ((ICPPASTCompositeTypeSpecifier) declarationParent).getName().copy(
+				CopyStyle.withLocations);
 		
 		if(classHasTemplates(declarationParent)) {
 			CPPASTTemplateId templateId = new CPPASTTemplateId();
@@ -105,7 +107,8 @@ public class NamespaceHelper {
 					CPPASTTypeId id = new CPPASTTypeId();
 					
 					CPPASTNamedTypeSpecifier namedTypeSpecifier = new CPPASTNamedTypeSpecifier();
-					namedTypeSpecifier.setName(simpleTypeTemplateParameter.getName().copy());
+					namedTypeSpecifier.setName(simpleTypeTemplateParameter.getName().copy(
+							CopyStyle.withLocations));
 					id.setDeclSpecifier(namedTypeSpecifier);
 					
 					templateId.addTemplateArgument(id);

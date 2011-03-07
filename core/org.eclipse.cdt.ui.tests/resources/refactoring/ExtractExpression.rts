@@ -912,3 +912,71 @@ void foo(){
     double y = bar(x);
 }
 
+//! Extract macro
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+
+//@.config
+filename=test.cpp
+methodname=bar
+
+//@test.cpp
+#define five 5
+#define ADD(a, b) a + b
+
+int main(){
+	int i = five; //comment3
+	i = /*$*/ADD(i, five)/*$$*/;
+
+	return i;
+}
+
+//=
+#define five 5
+#define ADD(a, b) a + b
+
+int bar(int & i)
+{
+    return ADD(i, five);
+}
+
+int main(){
+	int i = five; //comment3
+	i = bar(i);
+
+	return i;
+}
+
+//! Extract macro
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+
+//@.config
+filename=test.cpp
+methodname=bar
+
+//@test.cpp
+#define five 5
+#define ADD(a, b) a + b
+
+int main(){
+	int i = five; //comment3
+	i = /*$*/ADD(i, five)/*$$*/;
+
+	return i;
+}
+
+//=
+#define five 5
+#define ADD(a, b) a + b
+
+int bar(int & i)
+{
+    return ADD(i, five);
+}
+
+int main(){
+	int i = five; //comment3
+	i = bar(i);
+
+	return i;
+}
+

@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.cdt.core.dom.ast.IASTCopyLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -56,8 +57,9 @@ public class MacroExpansionHandler {
 	}
 
 	protected boolean isStatementWithMixedLocation(IASTStatement node) {
-		if(node.getNodeLocations() != null && node.getNodeLocations().length > 1) {
-			for (IASTNodeLocation loc : node.getNodeLocations()) {
+		IASTNodeLocation[] nodeLocations = getNodeLocations(node);
+		if(nodeLocations != null && nodeLocations.length > 1) {
+			for (IASTNodeLocation loc : nodeLocations) {
 				if (loc instanceof IASTMacroExpansionLocation) {
 					return true;
 				}
@@ -84,7 +86,7 @@ public class MacroExpansionHandler {
 		if(tu == null || !tu.equals(unit)) {
 			initEmptyMacros(unit);
 		}
-		IASTNodeLocation[] locs = node.getNodeLocations();
+		IASTNodeLocation[] locs = getNodeLocations(node);
 		if (locs != null && locs.length ==1) {
 			if (locs[0] instanceof IASTMacroExpansionLocation) {
 				IASTMacroExpansionLocation macroNode = (IASTMacroExpansionLocation) locs[0];
@@ -94,6 +96,7 @@ public class MacroExpansionHandler {
 				}
 				if (write) {
 					lastMacroExpOffset = macroNode.asFileLocation().getNodeOffset();
+					node = getOriginalNode(node);
 					scribe.print(node.getRawSignature());
 				}
 				return true;
@@ -103,13 +106,29 @@ public class MacroExpansionHandler {
 		handleEmptyMacroExpansion(node);
 		return false;
 	}
+
+	private IASTNode getOriginalNode(IASTNode node) {
+		IASTNodeLocation[] locs = node.getNodeLocations();
+		if (locs != null && locs.length == 1 && locs[0] instanceof IASTCopyLocation) {
+			node = ((IASTCopyLocation) locs[0]).getOriginalNode();
+		}
+		return node;
+	}
+
+	private IASTNodeLocation[] getNodeLocations(IASTNode node) {
+		IASTNodeLocation[] locs = node.getNodeLocations();
+		if (locs != null && locs.length == 1 && locs[0] instanceof IASTCopyLocation) {
+			locs = ((IASTCopyLocation) locs[0]).getOriginalNode().getNodeLocations();
+		}
+		return locs;
+	}
 	
 	private void handleEmptyMacroExpansion(IASTNode node) {
 		if(node.getTranslationUnit() == null)return;
 		String file = node.getContainingFilename();
 		List<IIndexName> exps = macroExpansion.get(file);
 		if(exps != null && !exps.isEmpty()) {
-			IASTFileLocation fileLocation = node.getFileLocation();
+			IASTFileLocation fileLocation = getFileLocation(node);
 			if(fileLocation != null) {
 				int nOff = fileLocation.getNodeOffset();
 				for (IIndexName iIndexName : exps) {
@@ -125,6 +144,17 @@ public class MacroExpansionHandler {
 			}
 		}
 		
+	}
+
+	private IASTFileLocation getFileLocation(IASTNode node) {
+		IASTFileLocation fileLocation = node.getFileLocation();
+		if (fileLocation == null) {
+			IASTNodeLocation[] locs = node.getNodeLocations();
+			if (locs != null && locs.length > 0 && locs[0] instanceof IASTCopyLocation) {
+				fileLocation = ((IASTCopyLocation) locs[0]).getOriginalNode().getFileLocation();
+			}
+		}
+		return fileLocation;
 	}
 
 	private void initEmptyMacros(IASTTranslationUnit unit) {

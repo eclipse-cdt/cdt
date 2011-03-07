@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -78,12 +79,12 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 		if(list.size()> 1 ) {
 			CPPASTBinaryExpression bExp = new CPPASTBinaryExpression();
 			bExp.setParent(list.get(0).getParent());
-			bExp.setOperand1((IASTExpression) list.get(0).copy());
+			bExp.setOperand1((IASTExpression) list.get(0).copy(CopyStyle.withLocations));
 			bExp.setOperator(((IASTBinaryExpression)list.get(1).getParent()).getOperator());
 			bExp.setOperand2(getExpression(list.subList(1, list.size())));
 			return bExp;
 		}else {
-			return (IASTExpression) list.get(0).copy();
+			return (IASTExpression) list.get(0).copy(CopyStyle.withLocations);
 		}
 		
 	}

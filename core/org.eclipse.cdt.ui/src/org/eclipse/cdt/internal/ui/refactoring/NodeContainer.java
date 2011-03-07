@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
@@ -131,10 +132,10 @@ public class NodeContainer {
 			
 			if (sourceDeclarator.getParent() instanceof IASTSimpleDeclaration) {
 				IASTSimpleDeclaration decl = (IASTSimpleDeclaration) sourceDeclarator.getParent();
-				declSpec= decl.getDeclSpecifier().copy();
+				declSpec = decl.getDeclSpecifier().copy(CopyStyle.withLocations);
 			} else if (sourceDeclarator.getParent() instanceof IASTParameterDeclaration) {
 				IASTParameterDeclaration decl = (IASTParameterDeclaration) sourceDeclarator.getParent();
-				declSpec= decl.getDeclSpecifier().copy();
+				declSpec = decl.getDeclSpecifier().copy(CopyStyle.withLocations);
 			}
 
 			IASTName name= nodeFactory.newName(getDeclaration().toCharArray());
@@ -143,14 +144,14 @@ public class NodeContainer {
 				IASTArrayDeclarator arrayDtor = nodeFactory.newArrayDeclarator(name);
 				IASTArrayModifier[] arrayModifiers = arrDeclarator.getArrayModifiers();
 				for (IASTArrayModifier arrayModifier : arrayModifiers) {
-					arrayDtor.addArrayModifier(arrayModifier.copy());
+					arrayDtor.addArrayModifier(arrayModifier.copy(CopyStyle.withLocations));
 				}
 				declarator= arrayDtor;
 			} else {
 				declarator = nodeFactory.newDeclarator(name);
 			}
 			for (IASTPointerOperator pointerOp : sourceDeclarator.getPointerOperators()) {
-				declarator.addPointerOperator(pointerOp.copy());
+				declarator.addPointerOperator(pointerOp.copy(CopyStyle.withLocations));
 			}
 
 			if (isReference && !hasReferenceOperartor(declarator)) {

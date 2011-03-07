@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -181,7 +182,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 
 	private IASTDeclaration createFunctionDefinition(IASTTranslationUnit unit, IASTSimpleDeclaration methodDeclaration) throws CoreException {
 		return createFunctionDefinition(
-				methodDeclaration.getDeclSpecifier().copy(), 
+methodDeclaration.getDeclSpecifier().copy(CopyStyle.withLocations),
 				(ICPPASTFunctionDeclarator) methodDeclaration.getDeclarators()[0], 
 				methodDeclaration.getParent(), unit);
 	}
@@ -212,7 +213,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		createdMethodDeclarator.setName(qname);
 		createdMethodDeclarator.setConst(functionDeclarator.isConst());
 		for (IASTPointerOperator pop : functionDeclarator.getPointerOperators()) {
-			createdMethodDeclarator.addPointerOperator(pop.copy());
+			createdMethodDeclarator.addPointerOperator(pop.copy(CopyStyle.withLocations));
 		}
 	
 		func.setDeclarator(createdMethodDeclarator);
@@ -223,7 +224,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 			templateDeclaration.setParent(unit);
 			
 			for (ICPPASTTemplateParameter templateParameter : ((ICPPASTTemplateDeclaration) declarationParent.getParent().getParent() ).getTemplateParameters()) {
-				templateDeclaration.addTemplateParameter(templateParameter.copy());
+				templateDeclaration.addTemplateParameter(templateParameter.copy(CopyStyle.withLocations));
 			}
 			
 			templateDeclaration.setDeclaration(func);

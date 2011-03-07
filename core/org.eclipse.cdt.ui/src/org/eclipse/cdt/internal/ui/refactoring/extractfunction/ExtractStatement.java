@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
@@ -48,11 +49,11 @@ public class ExtractStatement extends ExtractedFunctionConstructionHelper {
 		
 		if(returnVariable != null) {
 			IASTNode decl = ASTHelper.getDeclarationForNode(returnVariable.getDeclaration());
-			return ASTHelper.getDeclarationSpecifier(decl).copy();
+			return ASTHelper.getDeclarationSpecifier(decl).copy(CopyStyle.withLocations);
 		}
 		IASTDeclSpecifier declSpec = new CPPASTSimpleDeclSpecifier();
 		((IASTSimpleDeclSpecifier)declSpec).setType(IASTSimpleDeclSpecifier.t_void);
-		return declSpec.copy();
+		return declSpec.copy(CopyStyle.withLocations);
 	}
 
 	@Override

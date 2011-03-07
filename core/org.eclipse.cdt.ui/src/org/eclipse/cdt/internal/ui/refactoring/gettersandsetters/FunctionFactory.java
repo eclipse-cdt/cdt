@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -44,7 +45,7 @@ public class FunctionFactory {
 		
 		IASTFunctionDefinition getter = new CPPASTFunctionDefinition();
 		
-		getter.setDeclSpecifier(fieldDeclaration.getDeclSpecifier().copy());	
+		getter.setDeclSpecifier(fieldDeclaration.getDeclSpecifier().copy(CopyStyle.withLocations));
 		IASTDeclarator getterDeclarator = getGetterDeclarator(varName, fieldDeclaration, name);
 		// IASTFunctionDefinition. expects the outermost IASTFunctionDeclarator in declarator hierarchy
 		while (!(getterDeclarator instanceof IASTFunctionDeclarator)) {
@@ -77,7 +78,7 @@ public class FunctionFactory {
 		getterName.setName("get".concat(varPartOfGetterName).toCharArray()); //$NON-NLS-1$
 		
 		// copy declarator hierarchy
-		IASTDeclarator topDeclarator = fieldDeclaration.getDeclarators()[0].copy();
+		IASTDeclarator topDeclarator = fieldDeclaration.getDeclarators()[0].copy(CopyStyle.withLocations);
 		
 		// find the innermost declarator in hierarchy
 		IASTDeclarator innermost = topDeclarator;
@@ -95,7 +96,7 @@ public class FunctionFactory {
 			functionDeclarator.setName(getterName);
 		}
 		for(IASTPointerOperator pointer : innermost.getPointerOperators()){
-			functionDeclarator.addPointerOperator(pointer.copy());
+			functionDeclarator.addPointerOperator(pointer.copy(CopyStyle.withLocations));
 		}
 		
 		// replace innermost with functionDeclarator and return the whole declarator tree
@@ -134,12 +135,12 @@ public class FunctionFactory {
 			innerDeclarator = innerDeclarator.getNestedDeclarator();
 		}
 		IASTName fieldName = innerDeclarator.getName();
-		fieldRef.setFieldName(fieldName.copy());
+		fieldRef.setFieldName(fieldName.copy(CopyStyle.withLocations));
 		fieldRef.setIsPointerDereference(true);
 		binExpr.setOperand1(fieldRef);
 		binExpr.setOperator(IASTBinaryExpression.op_assign);
 		CPPASTIdExpression idExpr = new CPPASTIdExpression();
-		idExpr.setName(fieldName.copy());
+		idExpr.setName(fieldName.copy(CopyStyle.withLocations));
 		binExpr.setOperand2(idExpr);
 		exprStmt.setExpression(binExpr);
 		compound.addStatement(exprStmt);
@@ -159,9 +160,11 @@ public class FunctionFactory {
 			declarator.setName(setterName);
 		}
 		CPPASTParameterDeclaration parameterDeclaration = new CPPASTParameterDeclaration();
-		parameterDeclaration.setDeclarator(fieldDeclaration.getDeclarators()[0].copy());
-		parameterDeclaration.setDeclSpecifier(fieldDeclaration.getDeclSpecifier().copy());
-		declarator.addParameterDeclaration(parameterDeclaration.copy());
+		parameterDeclaration
+				.setDeclarator(fieldDeclaration.getDeclarators()[0].copy(CopyStyle.withLocations));
+		parameterDeclaration.setDeclSpecifier(fieldDeclaration.getDeclSpecifier().copy(
+				CopyStyle.withLocations));
+		declarator.addParameterDeclaration(parameterDeclaration.copy(CopyStyle.withLocations));
 		return declarator;
 	}
 
@@ -174,7 +177,7 @@ public class FunctionFactory {
 	public static IASTSimpleDeclaration createGetterDeclaration(String name,
 			IASTSimpleDeclaration fieldDeclaration) {
 		IASTSimpleDeclaration getter = new CPPASTSimpleDeclaration();
-		getter.setDeclSpecifier(fieldDeclaration.getDeclSpecifier().copy());	
+		getter.setDeclSpecifier(fieldDeclaration.getDeclSpecifier().copy(CopyStyle.withLocations));
 		getter.addDeclarator(getGetterDeclarator(name, fieldDeclaration, null));
 		
 		return getter;

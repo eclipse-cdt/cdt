@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
@@ -378,7 +379,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			IASTBinaryExpression newParentNode = new CPPASTBinaryExpression();
 			IASTBinaryExpression rootBinExp = getRootBinExp(parent, list);
 			newParentNode.setParent(rootBinExp.getParent());
-			newParentNode.setOperand1(leftSubTree.copy());
+			newParentNode.setOperand1(leftSubTree.copy(CopyStyle.withLocations));
 			newParentNode.setOperator(op);
 			newParentNode.setOperand2((IASTExpression) methodCall);
 			rewriter.replace(rootBinExp, newParentNode, editGroup);
@@ -623,7 +624,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			templateDeclaration.setParent(ast);
 			
 			for (ICPPASTTemplateParameter templateParameter : ((ICPPASTTemplateDeclaration) insertpoint.getParent()).getTemplateParameters()) {
-				templateDeclaration.addTemplateParameter(templateParameter.copy());
+				templateDeclaration.addTemplateParameter(templateParameter.copy(CopyStyle.withLocations));
 			}
 			
 			templateDeclaration.setDeclaration(func);
@@ -761,14 +762,14 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 					.getReturnVariable().getDeclaration());
 			IASTSimpleDeclaration decl = new CPPASTSimpleDeclaration();
 
-			decl.setDeclSpecifier(orgDecl.getDeclSpecifier().copy());
+			decl.setDeclSpecifier(orgDecl.getDeclSpecifier().copy(CopyStyle.withLocations));
 
 			IASTDeclarator declarator = new CPPASTDeclarator();
 
 			declarator.setName(retname);
 
 			for (IASTPointerOperator pointer : orgDecl.getDeclarators()[0].getPointerOperators()) {
-				declarator.addPointerOperator(pointer.copy());
+				declarator.addPointerOperator(pointer.copy(CopyStyle.withLocations));
 			}
 
 			IASTEqualsInitializer initializer = new CPPASTEqualsInitializer();

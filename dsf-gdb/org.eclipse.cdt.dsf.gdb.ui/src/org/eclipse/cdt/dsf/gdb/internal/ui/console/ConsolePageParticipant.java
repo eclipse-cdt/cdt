@@ -16,6 +16,7 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.launching.GDBProcess;
 import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
+import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
@@ -140,7 +141,7 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
         		// We have to check that the process is actually from a DSF-GDB session,
         		// since the current context could be for any debug session
         		if (processes[0] instanceof GDBProcess) {
-        			return launch.getProcesses()[0];
+        			return processes[0];
         		}
         	}
         	
@@ -154,12 +155,27 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 			if (container != null) {
 				ILaunch launch = (ILaunch)context.getAdapter(ILaunch.class);
 				if (launch != null) {
-					for (IProcess process : launch.getProcesses()) {
-						String groupId = process.getAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR);
-						if (container.getGroupId().equals(groupId)) {
-							return process;
-						}
-					}
+		        	IProcess[] processes = launch.getProcesses();
+		        	if (processes != null && processes.length > 0) {
+		        		for (IProcess process : launch.getProcesses()) {
+		        			if (process instanceof InferiorRuntimeProcess) {
+		        				String groupId = process.getAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR);
+
+		        				if (groupId == null || groupId.equals(MIProcesses.UNIQUE_GROUP_ID) || 
+		        					container.getGroupId().equals(groupId)) {
+		        					// if the groupId is not set in the process we know we are dealing
+		        					// with single process debugging and we can just return the inferior.
+		        					// If the groupId is set, then we must find the proper inferior
+		        					return process;
+		        				}
+		        			}
+		        		}
+
+		        		// No inferior?  return the gdb process
+		        		if (processes[0] instanceof GDBProcess) {
+		        			return processes[0];
+		        		}
+		        	}
 				}
 			}
 		}

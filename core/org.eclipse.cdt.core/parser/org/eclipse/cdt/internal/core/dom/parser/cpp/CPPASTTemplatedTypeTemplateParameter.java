@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,13 +41,20 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 	}
 	
 	public CPPASTTemplatedTypeTemplateParameter copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CPPASTTemplatedTypeTemplateParameter copy(CopyStyle style) {
 		CPPASTTemplatedTypeTemplateParameter copy = new CPPASTTemplatedTypeTemplateParameter();
-		copy.setName(fName == null ? null : fName.copy());
-		copy.setDefaultValue(fDefaultValue == null ? null : fDefaultValue.copy());
-		copy.fIsParameterPack= fIsParameterPack;
-		for(ICPPASTTemplateParameter param : getTemplateParameters()) 
-			copy.addTemplateParameter(param == null ? null : param.copy());
+		copy.setName(fName == null ? null : fName.copy(style));
+		copy.setDefaultValue(fDefaultValue == null ? null : fDefaultValue.copy(style));
+		copy.fIsParameterPack = fIsParameterPack;
+		for (ICPPASTTemplateParameter param : getTemplateParameters())
+			copy.addTemplateParameter(param == null ? null : param.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

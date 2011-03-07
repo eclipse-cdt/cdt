@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,10 +30,17 @@ public class CASTExpressionList extends ASTNode implements IASTExpressionList,
         IASTAmbiguityParent {
 
 	public CASTExpressionList copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CASTExpressionList copy(CopyStyle style) {
 		CASTExpressionList copy = new CASTExpressionList();
 		for(IASTExpression expr : getExpressions())
-			copy.addExpression(expr == null ? null : expr.copy());
+			copy.addExpression(expr == null ? null : expr.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.parser.scanner.ILexerLog;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
-import org.eclipse.cdt.internal.core.parser.scanner.Token;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
+import org.eclipse.cdt.internal.core.parser.scanner.Token;
 
 /**
  * Base class for all non-preprocessor nodes in the AST.
@@ -341,4 +341,9 @@ public abstract class ASTNode implements IASTNode {
 		}
 		return null;
 	}
+
+	protected void setCopyLocation(IASTNode originalNode) {
+		locations = new IASTNodeLocation[] {new ASTCopyLocation(originalNode)};
+	}
+	
 }

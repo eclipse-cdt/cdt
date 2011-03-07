@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2008 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -30,12 +30,21 @@ public class GPPASTPointerToMember extends CPPASTPointerToMember implements
 
 	@Override
 	public GPPASTPointerToMember copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	@Override
+	public GPPASTPointerToMember copy(CopyStyle style) {
 		IASTName name = getName();
-		GPPASTPointerToMember copy = new GPPASTPointerToMember(name == null ? null : name.copy());
+		GPPASTPointerToMember copy = new GPPASTPointerToMember(name == null ? null
+				: name.copy(style));
 		copy.setConst(isConst());
 		copy.setVolatile(isVolatile());
 		copy.setRestrict(isRestrict());
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 }

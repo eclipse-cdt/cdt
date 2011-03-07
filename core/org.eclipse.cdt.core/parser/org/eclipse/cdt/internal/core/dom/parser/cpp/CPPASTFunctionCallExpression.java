@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,11 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromReturnType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromReturnType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
@@ -66,17 +70,24 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 	}
 
 	public CPPASTFunctionCallExpression copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CPPASTFunctionCallExpression copy(CopyStyle style) {
 		IASTInitializerClause[] args = null;
 		if (fArguments.length > 0) {
 			args= new IASTInitializerClause[fArguments.length];
 			for (int i = 0; i < fArguments.length; i++) {
-				args[i]= fArguments[i].copy();
+				args[i] = fArguments[i].copy(style);
 			}
 		}
 
 		CPPASTFunctionCallExpression copy = new CPPASTFunctionCallExpression(null, args);
-		copy.setFunctionNameExpression(functionName == null ? null : functionName.copy());
+		copy.setFunctionNameExpression(functionName == null ? null : functionName.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 	

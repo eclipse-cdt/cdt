@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,9 +41,16 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
 	}
 	
 	public CPPASTTemplateSpecialization copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CPPASTTemplateSpecialization copy(CopyStyle style) {
 		CPPASTTemplateSpecialization copy = new CPPASTTemplateSpecialization();
-		copy.setDeclaration(declaration == null ? null : declaration.copy());
+		copy.setDeclaration(declaration == null ? null : declaration.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

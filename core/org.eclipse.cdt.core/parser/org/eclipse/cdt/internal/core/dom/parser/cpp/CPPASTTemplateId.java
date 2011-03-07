@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,13 +47,21 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 	}
 
 	public CPPASTTemplateId copy() {
-		CPPASTTemplateId copy = new CPPASTTemplateId(templateName == null ? null : templateName.copy());
-		for(IASTNode arg : getTemplateArguments())
-			copy.internalAddTemplateArgument(arg == null ? null : arg.copy());
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CPPASTTemplateId copy(CopyStyle style) {
+		CPPASTTemplateId copy = new CPPASTTemplateId(templateName == null ? null
+				: templateName.copy(style));
+		for (IASTNode arg : getTemplateArguments())
+			copy.internalAddTemplateArgument(arg == null ? null : arg.copy(style));
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public char[] getSimpleID() {
 		return templateName.getSimpleID();
 	}

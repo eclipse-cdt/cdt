@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,11 @@ public interface ICPPASTFunctionDefinition extends IASTFunctionDefinition {
 	 * @since 5.1
 	 */
 	public ICPPASTFunctionDefinition copy();
+
+	/**
+	 * @since 5.3
+	 */
+	public ICPPASTFunctionDefinition copy(CopyStyle style);
 
 	/**
 	 * Make this a defaulted function definition, e.g.: C::C() = default;

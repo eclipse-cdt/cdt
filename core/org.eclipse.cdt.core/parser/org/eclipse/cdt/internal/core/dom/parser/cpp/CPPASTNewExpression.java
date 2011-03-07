@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,19 +60,26 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 	}
 	
 	public CPPASTNewExpression copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CPPASTNewExpression copy(CopyStyle style) {
 		CPPASTNewExpression copy = new CPPASTNewExpression();
 		copy.setIsGlobal(isGlobal);
 		copy.setIsNewTypeId(isNewTypeId);
 		if (placement != null) {
 			IASTInitializerClause[] plcmt = new IASTInitializerClause[placement.length];
-			for (int i= 0; i < placement.length; i++) {
-				plcmt[i]= placement[i].copy();
+			for (int i = 0; i < placement.length; i++) {
+				plcmt[i] = placement[i].copy(style);
 			}
 			copy.setPlacementArguments(plcmt);
 		}
-		copy.setTypeId(typeId == null ? null : typeId.copy());
-		copy.setInitializer(initializer == null ? null : initializer.copy());
+		copy.setTypeId(typeId == null ? null : typeId.copy(style));
+		copy.setInitializer(initializer == null ? null : initializer.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

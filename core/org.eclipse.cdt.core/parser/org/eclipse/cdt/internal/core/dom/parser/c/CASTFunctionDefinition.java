@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,17 +44,25 @@ public class CASTFunctionDefinition extends ASTNode implements IASTFunctionDefin
 	}
 
 	public CASTFunctionDefinition copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CASTFunctionDefinition copy(CopyStyle style) {
 		CASTFunctionDefinition copy = new CASTFunctionDefinition();
-		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy());
+		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy(style));
 		
 		if (declarator != null) {
 			IASTDeclarator outer = CVisitor.findOutermostDeclarator(declarator);
-			outer = outer.copy();
+			outer = outer.copy(style);
 			copy.setDeclarator((IASTFunctionDeclarator) CVisitor.findTypeRelevantDeclarator(outer));
 		}	
 		
-		copy.setBody(bodyStatement == null ? null : bodyStatement.copy());
+		copy.setBody(bodyStatement == null ? null : bodyStatement.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+
 		return copy;
 	}
 	

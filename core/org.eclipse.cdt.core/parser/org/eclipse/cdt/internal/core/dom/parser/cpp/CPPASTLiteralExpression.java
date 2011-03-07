@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -45,11 +45,19 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	}
 
 	public CPPASTLiteralExpression copy() {
-		CPPASTLiteralExpression copy = new CPPASTLiteralExpression(kind, value == null ? null : value.clone());
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CPPASTLiteralExpression copy(CopyStyle style) {
+		CPPASTLiteralExpression copy = new CPPASTLiteralExpression(kind, value == null ? null
+				: value.clone());
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public int getKind() {
         return kind;
     }

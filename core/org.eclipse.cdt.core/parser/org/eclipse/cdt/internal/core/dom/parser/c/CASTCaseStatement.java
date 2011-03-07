@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,8 +34,15 @@ public class CASTCaseStatement extends ASTNode implements IASTCaseStatement, IAS
 	}
 	
 	public CASTCaseStatement copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CASTCaseStatement copy(CopyStyle style) {
 		CASTCaseStatement copy = new CASTCaseStatement(expression == null ? null : expression.copy());
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

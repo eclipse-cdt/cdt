@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,13 +36,20 @@ public class CPPASTDoStatement extends ASTNode implements IASTDoStatement, IASTA
 	}
 
 	public CPPASTDoStatement copy() {
-		CPPASTDoStatement copy = new CPPASTDoStatement();
-		copy.setBody(body == null ? null : body.copy());
-		copy.setCondition(condition == null ? null : condition.copy());
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CPPASTDoStatement copy(CopyStyle style) {
+		CPPASTDoStatement copy = new CPPASTDoStatement();
+		copy.setBody(body == null ? null : body.copy(style));
+		copy.setCondition(condition == null ? null : condition.copy(style));
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public IASTStatement getBody() {
         return body;
     }

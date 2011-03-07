@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,12 +33,20 @@ public class CASTFieldDeclarator extends CASTDeclarator implements IASTFieldDecl
 
 	@Override
 	public CASTFieldDeclarator copy() {
-		CASTFieldDeclarator copy = new CASTFieldDeclarator();
-		copyBaseDeclarator(copy);
-		copy.setBitFieldSize(bitFieldSize == null ? null : bitFieldSize.copy());
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
+	public CASTFieldDeclarator copy(CopyStyle style) {
+		CASTFieldDeclarator copy = new CASTFieldDeclarator();
+		copyBaseDeclarator(copy, style);
+		copy.setBitFieldSize(bitFieldSize == null ? null : bitFieldSize.copy(style));
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public IASTExpression getBitFieldSize() {
         return bitFieldSize;
     }

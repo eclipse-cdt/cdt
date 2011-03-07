@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -406,7 +406,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	 */
 	public abstract void resolveAmbiguities();
 	
-	protected void copyAbstractTU(ASTTranslationUnit copy) {
+	protected void copyAbstractTU(ASTTranslationUnit copy, CopyStyle style) {
 		copy.setIndex(fIndex);
 		copy.setIsHeaderUnit(fIsHeader);
 		copy.setASTNodeFactory(fNodeFactory);
@@ -414,7 +414,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		copy.setIsForContentAssist(fForContentAssist);
 		
 		for (IASTDeclaration declaration : getDeclarations())
-			copy.addDeclaration(declaration == null ? null : declaration.copy());
+			copy.addDeclaration(declaration == null ? null : declaration.copy(style));
 		
 		copy.setOffsetAndLength(this);
 	}

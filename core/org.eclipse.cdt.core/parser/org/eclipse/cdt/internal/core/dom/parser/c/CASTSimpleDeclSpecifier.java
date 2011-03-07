@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,12 +33,19 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 	private IASTExpression fDeclTypeExpression;
 
     public CASTSimpleDeclSpecifier copy() {
-		CASTSimpleDeclSpecifier copy = new CASTSimpleDeclSpecifier();
-		copySimpleDeclSpec(copy);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
     
-    protected void copySimpleDeclSpec(CASTSimpleDeclSpecifier copy) {
+	public CASTSimpleDeclSpecifier copy(CopyStyle style) {
+		CASTSimpleDeclSpecifier copy = new CASTSimpleDeclSpecifier();
+		copySimpleDeclSpec(copy, style);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
+	protected void copySimpleDeclSpec(CASTSimpleDeclSpecifier copy, CopyStyle style) {
     	copyBaseDeclSpec(copy);
     	copy.simpleType = simpleType;
     	copy.isSigned = isSigned;
@@ -49,7 +56,7 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
     	copy.complex = complex;
     	copy.imaginary = imaginary;
     	if (fDeclTypeExpression != null)
-    		copy.setDeclTypeExpression(fDeclTypeExpression.copy());
+			copy.setDeclTypeExpression(fDeclTypeExpression.copy(style));
     }
     
     public int getType() {

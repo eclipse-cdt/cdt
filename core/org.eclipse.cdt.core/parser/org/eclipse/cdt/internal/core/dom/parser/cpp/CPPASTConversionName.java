@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,12 +37,18 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 	}
 	
 	public CPPASTConversionName copy() {
-		CPPASTConversionName copy = new CPPASTConversionName();
-		copy.setTypeId(typeId == null ? null : typeId.copy());
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CPPASTConversionName copy(CopyStyle style) {
+		CPPASTConversionName copy = new CPPASTConversionName();
+		copy.setTypeId(typeId == null ? null : typeId.copy(style));
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
 
 	public IASTTypeId getTypeId() {
 		return typeId;

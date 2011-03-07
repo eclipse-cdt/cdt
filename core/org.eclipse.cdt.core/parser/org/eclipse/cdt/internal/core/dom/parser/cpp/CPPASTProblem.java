@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,9 +26,17 @@ public class CPPASTProblem extends ASTProblem {
 
     @Override
 	public CPPASTProblem copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	@Override
+	public CPPASTProblem copy(CopyStyle style) {
     	char[] arg = getArgument();
     	CPPASTProblem problem = new CPPASTProblem(getID(), arg == null ? null : arg.clone(), isError());
 		problem.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			problem.setCopyLocation(this);
+		}
 		return problem;
 	}
     

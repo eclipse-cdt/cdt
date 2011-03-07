@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,14 +33,21 @@ public class CPPASTRangeBasedForStatement extends ASTNode implements ICPPASTRang
 	}
 
     public CPPASTRangeBasedForStatement copy() {
-		CPPASTRangeBasedForStatement copy = new CPPASTRangeBasedForStatement();
-		copy.setDeclaration(fDeclaration == null ? null : fDeclaration.copy());
-		copy.setInitializerClause(fInitClause == null ? null : fInitClause.copy());
-		copy.setBody(fBody == null ? null : fBody.copy());
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
     
+	public CPPASTRangeBasedForStatement copy(CopyStyle style) {
+		CPPASTRangeBasedForStatement copy = new CPPASTRangeBasedForStatement();
+		copy.setDeclaration(fDeclaration == null ? null : fDeclaration.copy(style));
+		copy.setInitializerClause(fInitClause == null ? null : fInitClause.copy(style));
+		copy.setBody(fBody == null ? null : fBody.copy(style));
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public IASTDeclaration getDeclaration() {
         return fDeclaration;
     }

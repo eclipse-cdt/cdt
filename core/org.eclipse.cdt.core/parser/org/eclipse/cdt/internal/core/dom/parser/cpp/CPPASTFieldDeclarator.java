@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,9 +40,17 @@ public class CPPASTFieldDeclarator extends CPPASTDeclarator implements
 
 	@Override
 	public CPPASTFieldDeclarator copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	@Override
+	public CPPASTFieldDeclarator copy(CopyStyle style) {
 		CPPASTFieldDeclarator copy = new CPPASTFieldDeclarator();
-		copyBaseDeclarator(copy);
-		copy.setBitFieldSize(bitField == null ? null : bitField.copy());
+		copyBaseDeclarator(copy, style);
+		copy.setBitFieldSize(bitField == null ? null : bitField.copy(style));
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 	 

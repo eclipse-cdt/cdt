@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,16 +37,22 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPAS
 	}
 	
 	public CPPASTSimpleTypeTemplateParameter copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+	
+	public CPPASTSimpleTypeTemplateParameter copy(CopyStyle style) {
 		CPPASTSimpleTypeTemplateParameter copy = new CPPASTSimpleTypeTemplateParameter();
 		copy.fUsesKeywordClass = fUsesKeywordClass;
-		copy.fIsParameterPack= fIsParameterPack;
-		copy.setName(fName == null ? null : fName.copy());
-		copy.setDefaultType(fTypeId == null ? null : fTypeId.copy());
+		copy.fIsParameterPack = fIsParameterPack;
+		copy.setName(fName == null ? null : fName.copy(style));
+		copy.setDefaultType(fTypeId == null ? null : fTypeId.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 
-	
 	public boolean isParameterPack() {
 		return fIsParameterPack;
 	}

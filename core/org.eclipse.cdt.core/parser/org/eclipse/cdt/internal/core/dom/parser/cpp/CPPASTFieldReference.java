@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,10 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,12 +72,19 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 	}
 	
 	public CPPASTFieldReference copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CPPASTFieldReference copy(CopyStyle style) {
 		CPPASTFieldReference copy = new CPPASTFieldReference();
-		copy.setFieldName(name == null ? null : name.copy());
-		copy.setFieldOwner(owner == null ? null : owner.copy());
+		copy.setFieldName(name == null ? null : name.copy(style));
+		copy.setFieldOwner(owner == null ? null : owner.copy(style));
 		copy.isTemplate = isTemplate;
 		copy.isDeref = isDeref;
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

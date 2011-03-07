@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
@@ -46,13 +45,21 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 	}
 	
 	public CPPASTDeleteExpression copy() {
-		CPPASTDeleteExpression copy = new CPPASTDeleteExpression(operand == null ? null : operand.copy());
+		return copy(CopyStyle.withoutLocations);
+	}
+	
+	public CPPASTDeleteExpression copy(CopyStyle style) {
+		CPPASTDeleteExpression copy = new CPPASTDeleteExpression(operand == null ? null
+				: operand.copy(style));
 		copy.isGlobal = isGlobal;
 		copy.isVectored = isVectored;
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
-	
+
 	public IASTExpression getOperand() {
         return operand;
     }

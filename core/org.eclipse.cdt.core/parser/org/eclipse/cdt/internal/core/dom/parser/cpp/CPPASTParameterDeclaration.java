@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,10 +42,17 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
 	}
 
 	public CPPASTParameterDeclaration copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CPPASTParameterDeclaration copy(CopyStyle style) {
 		CPPASTParameterDeclaration copy = new CPPASTParameterDeclaration();
-		copy.setDeclSpecifier(fDeclSpec == null ? null : fDeclSpec.copy());
-		copy.setDeclarator(fDeclarator == null ? null : fDeclarator.copy());
+		copy.setDeclSpecifier(fDeclSpec == null ? null : fDeclSpec.copy(style));
+		copy.setDeclarator(fDeclarator == null ? null : fDeclarator.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

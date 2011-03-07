@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,13 +41,22 @@ public class CPPASTArrayDeclarator extends CPPASTDeclarator implements ICPPASTAr
 
     @Override
 	public CPPASTArrayDeclarator copy() {
-    	CPPASTArrayDeclarator copy = new CPPASTArrayDeclarator();
-		copyBaseDeclarator(copy);
-		for(IASTArrayModifier modifier : getArrayModifiers())
-			copy.addArrayModifier(modifier == null ? null : modifier.copy());
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
     
+
+	@Override
+	public CPPASTArrayDeclarator copy(CopyStyle style) {
+		CPPASTArrayDeclarator copy = new CPPASTArrayDeclarator();
+		copyBaseDeclarator(copy, style);
+		for (IASTArrayModifier modifier : getArrayModifiers())
+			copy.addArrayModifier(modifier == null ? null : modifier.copy(style));
+
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
     
 	public IASTArrayModifier[] getArrayModifiers() {
         if( arrayMods == null ) return IASTArrayModifier.EMPTY_ARRAY;

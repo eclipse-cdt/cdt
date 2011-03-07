@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,10 +27,18 @@ public class CASTInitializerExpression extends CASTEqualsInitializer implements 
 
 	@Override
 	public CASTInitializerExpression copy() {
-		CASTInitializerExpression copy= new CASTInitializerExpression();
-		IASTInitializerClause init= getInitializerClause();
-		copy.setInitializerClause(init == null ? null : init.copy());
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	@Override
+	public CASTInitializerExpression copy(CopyStyle style) {
+		CASTInitializerExpression copy = new CASTInitializerExpression();
+		IASTInitializerClause init = getInitializerClause();
+		copy.setInitializerClause(init == null ? null : init.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 }

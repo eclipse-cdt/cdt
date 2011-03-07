@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,11 +52,18 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
 	}
 	
 	public CASTFieldReference copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CASTFieldReference copy(CopyStyle style) {
 		CASTFieldReference copy = new CASTFieldReference();
-		copy.setFieldOwner(owner == null ? null : owner.copy());
-		copy.setFieldName(name == null ? null : name.copy());
+		copy.setFieldOwner(owner == null ? null : owner.copy(style));
+		copy.setFieldName(name == null ? null : name.copy(style));
 		copy.ptr = ptr;
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

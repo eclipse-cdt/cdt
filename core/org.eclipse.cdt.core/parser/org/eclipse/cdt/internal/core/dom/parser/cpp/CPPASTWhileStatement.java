@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,14 +45,21 @@ public class CPPASTWhileStatement extends ASTNode
 	}
 
     public CPPASTWhileStatement copy() {
-		CPPASTWhileStatement copy = new CPPASTWhileStatement();
-		copy.setConditionDeclaration(condition2 == null ? null : condition2.copy());
-		copy.setCondition(condition == null ? null : condition.copy());
-		copy.setBody(body == null ? null : body.copy());
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
     
+	public CPPASTWhileStatement copy(CopyStyle style) {
+		CPPASTWhileStatement copy = new CPPASTWhileStatement();
+		copy.setConditionDeclaration(condition2 == null ? null : condition2.copy(style));
+		copy.setCondition(condition == null ? null : condition.copy(style));
+		copy.setBody(body == null ? null : body.copy(style));
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public IASTExpression getCondition() {
         return condition;
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,12 +34,19 @@ public class CPPASTDeclarationStatement extends ASTNode implements
 	}
 
 	public CPPASTDeclarationStatement copy() {
-		CPPASTDeclarationStatement copy = new CPPASTDeclarationStatement();
-		copy.setDeclaration(declaration == null ? null : declaration.copy());
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CPPASTDeclarationStatement copy(CopyStyle style) {
+		CPPASTDeclarationStatement copy = new CPPASTDeclarationStatement();
+		copy.setDeclaration(declaration == null ? null : declaration.copy(style));
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public IASTDeclaration getDeclaration() {
         return declaration;
     }

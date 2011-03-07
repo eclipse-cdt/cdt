@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
@@ -45,23 +44,30 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 	 * @see org.eclipse.cdt.core.dom.ast.IASTExpression#copy()
 	 */
 	public CPPASTLambdaExpression copy() {
-		CPPASTLambdaExpression result= new CPPASTLambdaExpression();
-		result.fCaptureDefault= fCaptureDefault;
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CPPASTLambdaExpression copy(CopyStyle style) {
+		CPPASTLambdaExpression result = new CPPASTLambdaExpression();
+		result.fCaptureDefault = fCaptureDefault;
 		if (fCaptures != null) {
 			for (ICPPASTCapture capture : fCaptures) {
 				if (capture != null) {
-					result.addCapture(capture.copy());
+					result.addCapture(capture.copy(style));
 				}
 			}
 		}
 		if (fDeclarator != null) {
-			result.setDeclarator(fDeclarator.copy());
+			result.setDeclarator(fDeclarator.copy(style));
 		}
 		if (fBody != null) {
-			result.setBody(fBody.copy());
+			result.setBody(fBody.copy(style));
 		}
-		
+
 		result.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			result.setCopyLocation(this);
+		}
 		return result;
 	}
 

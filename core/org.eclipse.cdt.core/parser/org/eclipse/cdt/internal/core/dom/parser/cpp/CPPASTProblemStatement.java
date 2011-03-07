@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,8 +29,15 @@ public class CPPASTProblemStatement extends CPPASTProblemOwner implements IASTPr
 	}
 	
 	public CPPASTProblemStatement copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CPPASTProblemStatement copy(CopyStyle style) {
 		CPPASTProblemStatement copy = new CPPASTProblemStatement();
-		copyBaseProblem(copy);
+		copyBaseProblem(copy, style);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

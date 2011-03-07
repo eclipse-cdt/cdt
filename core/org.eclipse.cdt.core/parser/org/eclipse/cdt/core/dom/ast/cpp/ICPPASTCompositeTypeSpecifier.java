@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,6 +87,11 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 		public ICPPASTBaseSpecifier copy();
 		
 		/**
+		 * @since 5.3
+		 */
+		public ICPPASTBaseSpecifier copy(CopyStyle style);
+		
+		/**
 		 * Sets the name for this specifier, not allowed on frozen AST.
 		 */
 		public void setName(IASTName name);
@@ -126,4 +131,9 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 	 * @since 5.1
 	 */
 	public ICPPASTCompositeTypeSpecifier copy();
+
+	/**
+	 * @since 5.3
+	 */
+	public ICPPASTCompositeTypeSpecifier copy(CopyStyle style);
 }

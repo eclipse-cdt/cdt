@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,10 +34,17 @@ public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAli
 	}
 
 	public CPPASTNamespaceAlias copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CPPASTNamespaceAlias copy(CopyStyle style) {
 		CPPASTNamespaceAlias copy = new CPPASTNamespaceAlias();
-		copy.setAlias(alias == null ? null : alias.copy());
-		copy.setMappingName(qualifiedName == null ? null : qualifiedName.copy());
+		copy.setAlias(alias == null ? null : alias.copy(style));
+		copy.setMappingName(qualifiedName == null ? null : qualifiedName.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,9 +37,16 @@ public class CASTCompoundStatementExpression extends ASTNode implements IGNUASTC
 	}
 	
 	public CASTCompoundStatementExpression copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CASTCompoundStatementExpression copy(CopyStyle style) {
 		CASTCompoundStatementExpression copy = new CASTCompoundStatementExpression();
-		copy.setCompoundStatement(statement == null ? null : statement.copy());
+		copy.setCompoundStatement(statement == null ? null : statement.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,8 +30,8 @@ abstract class CASTProblemOwner extends ASTNode implements IASTProblemHolder {
 		setProblem(problem);
 	}
 
-	protected void copyBaseProblem(CASTProblemOwner copy) {
-		copy.setProblem(problem == null ? null : problem.copy());
+	protected void copyBaseProblem(CASTProblemOwner copy, CopyStyle style) {
+		copy.setProblem(problem == null ? null : problem.copy(style));
 		copy.setOffsetAndLength(this);
 	}
 	

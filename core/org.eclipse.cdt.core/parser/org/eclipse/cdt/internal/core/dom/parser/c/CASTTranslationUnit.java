@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,11 +39,18 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
 	}
 	
 	public CASTTranslationUnit copy() {
-		CASTTranslationUnit copy = new CASTTranslationUnit();
-		copyAbstractTU(copy);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CASTTranslationUnit copy(CopyStyle style) {
+		CASTTranslationUnit copy = new CASTTranslationUnit();
+		copyAbstractTU(copy, style);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

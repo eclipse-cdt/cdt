@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,13 +36,20 @@ public class CPPASTExplicitTemplateInstantiation extends ASTNode implements
 	}
 
 	public CPPASTExplicitTemplateInstantiation copy() {
-		CPPASTExplicitTemplateInstantiation copy = new CPPASTExplicitTemplateInstantiation();
-		copy.setDeclaration(declaration == null ? null : declaration.copy());
-		copy.setModifier(modifier);
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CPPASTExplicitTemplateInstantiation copy(CopyStyle style) {
+		CPPASTExplicitTemplateInstantiation copy = new CPPASTExplicitTemplateInstantiation();
+		copy.setDeclaration(declaration == null ? null : declaration.copy(style));
+		copy.setModifier(modifier);
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public IASTDeclaration getDeclaration() {
         return declaration;
     }

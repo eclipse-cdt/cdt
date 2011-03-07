@@ -37,10 +37,17 @@ public class CASTLabelStatement extends ASTNode implements IASTLabelStatement, I
 	}
 	
 	public CASTLabelStatement copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CASTLabelStatement copy(CopyStyle style) {
 		CASTLabelStatement copy = new CASTLabelStatement();
-		copy.setName(name == null ? null : name.copy());
-		copy.setNestedStatement(nestedStatement == null ? null : nestedStatement.copy());
+		copy.setName(name == null ? null : name.copy(style));
+		copy.setNestedStatement(nestedStatement == null ? null : nestedStatement.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

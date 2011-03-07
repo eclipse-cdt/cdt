@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,11 +39,18 @@ public class CPPASTCatchHandler extends ASTNode implements ICPPASTCatchHandler, 
 	}
 	
 	public CPPASTCatchHandler copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CPPASTCatchHandler copy(CopyStyle style) {
 		CPPASTCatchHandler copy = new CPPASTCatchHandler();
-		copy.setDeclaration(declaration == null ? null : declaration.copy());
-		copy.setCatchBody(body == null ? null : body.copy());
+		copy.setDeclaration(declaration == null ? null : declaration.copy(style));
+		copy.setCatchBody(body == null ? null : body.copy(style));
 		copy.setIsCatchAll(isCatchAll);
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

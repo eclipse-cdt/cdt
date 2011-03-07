@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,11 +45,18 @@ public class CASTBinaryExpression extends ASTNode implements
 	}
 	
 	public CASTBinaryExpression copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CASTBinaryExpression copy(CopyStyle style) {
 		CASTBinaryExpression copy = new CASTBinaryExpression();
 		copy.op = op;
-		copy.setOperand1(operand1 == null ? null : operand1.copy());
-		copy.setOperand2(operand2 == null ? null : operand2.copy());
+		copy.setOperand1(operand1 == null ? null : operand1.copy(style));
+		copy.setOperand2(operand2 == null ? null : operand2.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

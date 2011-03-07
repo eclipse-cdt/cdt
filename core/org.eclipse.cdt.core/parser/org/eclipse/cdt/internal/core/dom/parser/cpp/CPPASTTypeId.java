@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,11 +36,18 @@ public class CPPASTTypeId extends ASTNode implements ICPPASTTypeId {
 	}
 	
 	public CPPASTTypeId copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+	
+	public CPPASTTypeId copy(CopyStyle style) {
 		CPPASTTypeId copy = new CPPASTTypeId();
-		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy());
-		copy.setAbstractDeclarator(absDecl == null ? null : absDecl.copy());
+		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy(style));
+		copy.setAbstractDeclarator(absDecl == null ? null : absDecl.copy(style));
 		copy.setOffsetAndLength(this);
-		copy.isPackExpansion= isPackExpansion;
+		copy.isPackExpansion = isPackExpansion;
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

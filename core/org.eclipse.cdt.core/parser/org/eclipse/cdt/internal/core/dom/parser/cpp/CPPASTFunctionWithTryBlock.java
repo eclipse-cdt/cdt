@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,21 +35,29 @@ public class CPPASTFunctionWithTryBlock extends CPPASTFunctionDefinition impleme
 	
 	@Override
 	public CPPASTFunctionWithTryBlock copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	@Override
+	public CPPASTFunctionWithTryBlock copy(CopyStyle style) {
 		IASTDeclSpecifier declSpecifier = getDeclSpecifier();
-	    IASTFunctionDeclarator declarator = getDeclarator();
-	    IASTStatement bodyStatement = getBody();
-		
+		IASTFunctionDeclarator declarator = getDeclarator();
+		IASTStatement bodyStatement = getBody();
+
 		CPPASTFunctionWithTryBlock copy = new CPPASTFunctionWithTryBlock();
-		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy());
-		copy.setDeclarator(declarator == null ? null : declarator.copy());
-		copy.setBody(bodyStatement == null ? null : bodyStatement.copy());
-		
-		for(ICPPASTConstructorChainInitializer initializer : getMemberInitializers())
-			copy.addMemberInitializer(initializer == null ? null : initializer.copy());
-		for(ICPPASTCatchHandler handler : getCatchHandlers())
-			copy.addCatchHandler(handler == null ? null : handler.copy());
-		
+		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy(style));
+		copy.setDeclarator(declarator == null ? null : declarator.copy(style));
+		copy.setBody(bodyStatement == null ? null : bodyStatement.copy(style));
+
+		for (ICPPASTConstructorChainInitializer initializer : getMemberInitializers())
+			copy.addMemberInitializer(initializer == null ? null : initializer.copy(style));
+		for (ICPPASTCatchHandler handler : getCatchHandlers())
+			copy.addCatchHandler(handler == null ? null : handler.copy(style));
+
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

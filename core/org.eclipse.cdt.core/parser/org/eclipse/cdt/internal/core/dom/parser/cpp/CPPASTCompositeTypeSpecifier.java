@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,15 +47,24 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 	}
 
 	public CPPASTCompositeTypeSpecifier copy() {
-		CPPASTCompositeTypeSpecifier copy = new CPPASTCompositeTypeSpecifier(fKey, fName == null ? null : fName.copy());
-		copyBaseDeclSpec(copy);
-		for(IASTDeclaration member : getMembers())
-			copy.addMemberDeclaration(member == null ? null : member.copy());
-		for(ICPPASTBaseSpecifier baseSpecifier : getBaseSpecifiers())
-			copy.addBaseSpecifier(baseSpecifier == null ? null : baseSpecifier.copy());
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CPPASTCompositeTypeSpecifier copy(CopyStyle style) {
+		CPPASTCompositeTypeSpecifier copy = new CPPASTCompositeTypeSpecifier(fKey, fName == null
+				? null : fName.copy(style));
+		copyBaseDeclSpec(copy);
+		for (IASTDeclaration member : getMembers())
+			copy.addMemberDeclaration(member == null ? null : member.copy(style));
+		for (ICPPASTBaseSpecifier baseSpecifier : getBaseSpecifiers())
+			copy.addBaseSpecifier(baseSpecifier == null ? null : baseSpecifier.copy(style));
+
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
     public ICPPASTBaseSpecifier[] getBaseSpecifiers() {
         if( baseSpecs == null ) return ICPPASTBaseSpecifier.EMPTY_BASESPECIFIER_ARRAY;
         baseSpecs = (ICPPASTBaseSpecifier[]) ArrayUtil.removeNullsAfter( ICPPASTBaseSpecifier.class, baseSpecs, baseSpecsPos );

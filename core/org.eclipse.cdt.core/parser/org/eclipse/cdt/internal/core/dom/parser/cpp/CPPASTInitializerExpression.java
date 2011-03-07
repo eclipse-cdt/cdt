@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,10 +27,18 @@ public class CPPASTInitializerExpression extends CPPASTEqualsInitializer impleme
 
 	@Override
 	public CPPASTInitializerExpression copy() {
-		CPPASTInitializerExpression copy= new CPPASTInitializerExpression();
-		IASTInitializerClause init= getInitializerClause();
-		copy.setInitializerClause(init == null ? null : init.copy());
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	@Override
+	public CPPASTInitializerExpression copy(CopyStyle style) {
+		CPPASTInitializerExpression copy = new CPPASTInitializerExpression();
+		IASTInitializerClause init = getInitializerClause();
+		copy.setInitializerClause(init == null ? null : init.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,16 +56,24 @@ public class CPPASTForStatement extends ASTNode implements ICPPASTForStatement, 
 	}
 
     public CPPASTForStatement copy() {
-		CPPASTForStatement copy = new CPPASTForStatement();
-		copy.setInitializerStatement(init == null ? null : init.copy());
-		copy.setConditionDeclaration(condDeclaration == null ? null : condDeclaration.copy());
-		copy.setConditionExpression(condition == null ? null : condition.copy());
-		copy.setIterationExpression(iterationExpression == null ? null : iterationExpression.copy());
-		copy.setBody(body == null ? null : body.copy());
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
     
+	public CPPASTForStatement copy(CopyStyle style) {
+		CPPASTForStatement copy = new CPPASTForStatement();
+		copy.setInitializerStatement(init == null ? null : init.copy(style));
+		copy.setConditionDeclaration(condDeclaration == null ? null : condDeclaration.copy(style));
+		copy.setConditionExpression(condition == null ? null : condition.copy(style));
+		copy.setIterationExpression(iterationExpression == null ? null : iterationExpression
+				.copy(style));
+		copy.setBody(body == null ? null : body.copy(style));
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public IASTExpression getConditionExpression() {
         return condition;
     }

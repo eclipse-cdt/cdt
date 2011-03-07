@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,11 +42,18 @@ public class CASTConditionalExpression extends ASTNode implements
 	}
 	
 	public CASTConditionalExpression copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CASTConditionalExpression copy(CopyStyle style) {
 		CASTConditionalExpression copy = new CASTConditionalExpression();
-		copy.setLogicalConditionExpression(condition == null ? null : condition.copy());
-		copy.setPositiveResultExpression(positive == null ? null : positive.copy());
-		copy.setNegativeResultExpression(negative == null ? null : negative.copy());
+		copy.setLogicalConditionExpression(condition == null ? null : condition.copy(style));
+		copy.setPositiveResultExpression(positive == null ? null : positive.copy(style));
+		copy.setNegativeResultExpression(negative == null ? null : negative.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

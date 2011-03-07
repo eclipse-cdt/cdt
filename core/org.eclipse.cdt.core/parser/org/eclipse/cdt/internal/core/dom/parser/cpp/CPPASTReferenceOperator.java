@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,11 +31,18 @@ public class CPPASTReferenceOperator extends ASTNode implements ICPPASTReference
 	}
 
 	public CPPASTReferenceOperator copy() {
-		CPPASTReferenceOperator copy = new CPPASTReferenceOperator(fIsRValue);
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CPPASTReferenceOperator copy(CopyStyle style) {
+		CPPASTReferenceOperator copy = new CPPASTReferenceOperator(fIsRValue);
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
     @Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitPointerOperators) {

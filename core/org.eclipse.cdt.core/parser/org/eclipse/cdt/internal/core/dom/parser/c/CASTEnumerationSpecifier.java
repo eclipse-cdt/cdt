@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,16 +36,23 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 	}
 
 	public CASTEnumerationSpecifier copy() {
-		CASTEnumerationSpecifier copy = new CASTEnumerationSpecifier();
-		copyEnumerationSpecifier(copy);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
-	protected void copyEnumerationSpecifier(CASTEnumerationSpecifier copy) {
+	public CASTEnumerationSpecifier copy(CopyStyle style) {
+		CASTEnumerationSpecifier copy = new CASTEnumerationSpecifier();
+		copyEnumerationSpecifier(copy, style);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
+	protected void copyEnumerationSpecifier(CASTEnumerationSpecifier copy, CopyStyle style) {
 		copyBaseDeclSpec(copy);
-		copy.setName(name == null ? null : name.copy());
+		copy.setName(name == null ? null : name.copy(style));
 		for(IASTEnumerator enumerator : getEnumerators())
-			copy.addEnumerator(enumerator == null ? null : enumerator.copy());
+			copy.addEnumerator(enumerator == null ? null : enumerator.copy(style));
 	}
 	
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,20 +51,28 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 	
 	@Override
 	public CPPASTFunctionDeclarator copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	@Override
+	public CPPASTFunctionDeclarator copy(CopyStyle style) {
 		CPPASTFunctionDeclarator copy = new CPPASTFunctionDeclarator();
-		copyBaseDeclarator(copy);
+		copyBaseDeclarator(copy, style);
 		copy.varArgs = varArgs;
 		copy.pureVirtual = pureVirtual;
 		copy.isVolatile = isVolatile;
 		copy.isConst = isConst;
-		copy.isMutable= isMutable;
-		
-		for(IASTParameterDeclaration param : getParameters())
-			copy.addParameterDeclaration(param == null ? null : param.copy());
-		for(IASTTypeId typeId : getExceptionSpecification())
-			copy.addExceptionSpecificationTypeId(typeId == null ? null : typeId.copy());
+		copy.isMutable = isMutable;
+
+		for (IASTParameterDeclaration param : getParameters())
+			copy.addParameterDeclaration(param == null ? null : param.copy(style));
+		for (IASTTypeId typeId : getExceptionSpecification())
+			copy.addExceptionSpecificationTypeId(typeId == null ? null : typeId.copy(style));
 		if (trailingReturnType != null) {
-			copy.setTrailingReturnType(trailingReturnType.copy());
+			copy.setTrailingReturnType(trailingReturnType.copy(style));
+		}
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
 		}
 		return copy;
 	}

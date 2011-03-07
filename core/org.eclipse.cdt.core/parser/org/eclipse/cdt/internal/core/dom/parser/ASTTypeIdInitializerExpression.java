@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,10 +32,13 @@ public abstract class ASTTypeIdInitializerExpression extends ASTNode implements 
 		setInitializer(i);
 	}
 
-	protected void initializeCopy(ASTTypeIdInitializerExpression copy) {
-		copy.setTypeId(typeId == null ? null : typeId.copy());
-		copy.setInitializer(initializer == null ? null : initializer.copy());
+	protected void initializeCopy(ASTTypeIdInitializerExpression copy, CopyStyle style) {
+		copy.setTypeId(typeId == null ? null : typeId.copy(style));
+		copy.setInitializer(initializer == null ? null : initializer.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 	}
 	
 	public IASTTypeId getTypeId() {

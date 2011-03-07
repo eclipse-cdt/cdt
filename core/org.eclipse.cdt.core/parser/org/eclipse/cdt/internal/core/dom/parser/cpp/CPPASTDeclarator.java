@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,18 +62,25 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
 	}
 
     public CPPASTDeclarator copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CPPASTDeclarator copy(CopyStyle style) {
 		CPPASTDeclarator copy = new CPPASTDeclarator();
-		copyBaseDeclarator(copy);
+		copyBaseDeclarator(copy, style);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 
-    protected void copyBaseDeclarator(CPPASTDeclarator copy) {
-    	copy.setName(name == null ? null : name.copy());
-    	copy.setInitializer(initializer == null ? null : initializer.copy());
-		copy.setNestedDeclarator(nested == null ? null : nested.copy());
+	protected void copyBaseDeclarator(CPPASTDeclarator copy, CopyStyle style) {
+		copy.setName(name == null ? null : name.copy(style));
+		copy.setInitializer(initializer == null ? null : initializer.copy(style));
+		copy.setNestedDeclarator(nested == null ? null : nested.copy(style));
 		copy.isPackExpansion= isPackExpansion;
 		for (IASTPointerOperator pointer : getPointerOperators())
-			copy.addPointerOperator(pointer == null ? null : pointer.copy());
+			copy.addPointerOperator(pointer == null ? null : pointer.copy(style));
 		copy.setOffsetAndLength(this);
     }
 

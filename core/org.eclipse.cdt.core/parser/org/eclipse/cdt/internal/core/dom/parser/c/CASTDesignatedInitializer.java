@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,13 +41,21 @@ public class CASTDesignatedInitializer extends ASTNode implements ICASTDesignate
 	}
 
 	public CASTDesignatedInitializer copy() {
-		CASTDesignatedInitializer copy = new CASTDesignatedInitializer(rhs == null ? null : rhs.copy());
-		for(ICASTDesignator designator : getDesignators())
-			copy.addDesignator(designator == null ? null : designator.copy());
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CASTDesignatedInitializer copy(CopyStyle style) {
+		CASTDesignatedInitializer copy = new CASTDesignatedInitializer(rhs == null ? null
+				: rhs.copy(style));
+		for (ICASTDesignator designator : getDesignators())
+			copy.addDesignator(designator == null ? null : designator.copy(style));
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public void addDesignator(ICASTDesignator designator) {
         assertNotFrozen();
     	if (designator != null) {

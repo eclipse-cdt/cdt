@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,14 +28,22 @@ public class CPPASTPointerToMember extends CPPASTPointer implements ICPPASTPoint
 
 	@Override
 	public CPPASTPointerToMember copy() {
-		CPPASTPointerToMember copy = new CPPASTPointerToMember(n == null ? null : n.copy());
+		return copy(CopyStyle.withoutLocations);
+	}
+	
+	@Override
+	public CPPASTPointerToMember copy(CopyStyle style) {
+		CPPASTPointerToMember copy = new CPPASTPointerToMember(n == null ? null : n.copy(style));
 		copy.setConst(isConst());
 		copy.setVolatile(isVolatile());
 		copy.setRestrict(isRestrict());
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
-	
+
 	public void setName(IASTName name) {
         assertNotFrozen();
         n = name;

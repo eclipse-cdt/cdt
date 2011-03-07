@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,11 +29,18 @@ public class CPPASTProblemTypeId extends CPPASTProblemOwner implements IASTProbl
 	}
 
 	public CPPASTProblemTypeId copy() {
-		CPPASTProblemTypeId copy = new CPPASTProblemTypeId();
-		copyBaseProblem(copy);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CPPASTProblemTypeId copy(CopyStyle style) {
+		CPPASTProblemTypeId copy = new CPPASTProblemTypeId();
+		copyBaseProblem(copy, style);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
     @Override
 	public final boolean accept (ASTVisitor action) {
     	if (action.shouldVisitTypeIds) {

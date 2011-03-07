@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,11 +46,18 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	}
 	
 	public CPPASTTranslationUnit copy() {
-		CPPASTTranslationUnit copy = new CPPASTTranslationUnit();
-		copyAbstractTU(copy);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CPPASTTranslationUnit copy(CopyStyle style) {
+		CPPASTTranslationUnit copy = new CPPASTTranslationUnit();
+		copyAbstractTU(copy, style);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
     public CPPNamespaceScope getScope() {
         if (fScope == null) {
             fScope = new CPPNamespaceScope(this);

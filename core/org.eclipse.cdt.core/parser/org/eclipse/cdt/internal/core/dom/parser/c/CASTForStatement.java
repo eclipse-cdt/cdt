@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,16 +44,24 @@ public class CASTForStatement extends ASTNode implements IASTForStatement, IASTA
 	}
 
 	public CASTForStatement copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CASTForStatement copy(CopyStyle style) {
 		CASTForStatement copy = new CASTForStatement();
-		copyForStatement(copy);
+		copyForStatement(copy, style);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 	
-	protected void copyForStatement(CASTForStatement copy) {
-		copy.setInitializerStatement(init == null ? null : init.copy());
-		copy.setConditionExpression(condition == null ? null : condition.copy());
-		copy.setIterationExpression(iterationExpression == null ? null : iterationExpression.copy());
-		copy.setBody(body == null ? null : body.copy());
+	protected void copyForStatement(CASTForStatement copy, CopyStyle style) {
+		copy.setInitializerStatement(init == null ? null : init.copy(style));
+		copy.setConditionExpression(condition == null ? null : condition.copy(style));
+		copy.setIterationExpression(iterationExpression == null ? null : iterationExpression
+				.copy(style));
+		copy.setBody(body == null ? null : body.copy(style));
 		copy.setOffsetAndLength(this);
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,27 +40,34 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 
 	@Override
 	public CASTKnRFunctionDeclarator copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	@Override
+	public CASTKnRFunctionDeclarator copy(CopyStyle style) {
 		CASTKnRFunctionDeclarator copy = new CASTKnRFunctionDeclarator();
-		copyBaseDeclarator(copy);
-		
+		copyBaseDeclarator(copy, style);
+
 		copy.parameterNames = new IASTName[parameterNames.length];
-		for(int i = 0; i < parameterNames.length; i++) {
-			if(parameterNames[i] != null) {
-				copy.parameterNames[i] = parameterNames[i].copy();
+		for (int i = 0; i < parameterNames.length; i++) {
+			if (parameterNames[i] != null) {
+				copy.parameterNames[i] = parameterNames[i].copy(style);
 				copy.parameterNames[i].setParent(copy);
 				copy.parameterNames[i].setPropertyInParent(PARAMETER_NAME);
 			}
 		}
-		
+
 		copy.parameterDeclarations = new IASTDeclaration[parameterDeclarations.length];
-		for(int i = 0; i < parameterDeclarations.length; i++) {
-			if(parameterDeclarations[i] != null) {
-				copy.parameterDeclarations[i] = parameterDeclarations[i].copy();
+		for (int i = 0; i < parameterDeclarations.length; i++) {
+			if (parameterDeclarations[i] != null) {
+				copy.parameterDeclarations[i] = parameterDeclarations[i].copy(style);
 				copy.parameterDeclarations[i].setParent(copy);
 				copy.parameterDeclarations[i].setPropertyInParent(FUNCTION_PARAMETER);
 			}
 		}
-		
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,13 +37,20 @@ public class CASTDoStatement extends ASTNode implements IASTDoStatement, IASTAmb
 	}
 
 	public CASTDoStatement copy() {
-		CASTDoStatement copy = new CASTDoStatement();
-		copy.setBody(body == null ? null : body.copy());
-		copy.setCondition(condition == null ? null : condition.copy());
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CASTDoStatement copy(CopyStyle style) {
+		CASTDoStatement copy = new CASTDoStatement();
+		copy.setBody(body == null ? null : body.copy(style));
+		copy.setCondition(condition == null ? null : condition.copy(style));
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public IASTStatement getBody() {
         return body;
     }

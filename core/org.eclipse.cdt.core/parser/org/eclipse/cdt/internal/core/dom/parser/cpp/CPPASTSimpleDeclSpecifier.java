@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,12 +31,19 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implement
 	private IASTExpression fDeclTypeExpression;
 
     public CPPASTSimpleDeclSpecifier copy() {
-		CPPASTSimpleDeclSpecifier copy = new CPPASTSimpleDeclSpecifier();
-		copySimpleDeclSpec(copy);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
     
-    protected void copySimpleDeclSpec(CPPASTSimpleDeclSpecifier other) {
+	public CPPASTSimpleDeclSpecifier copy(CopyStyle style) {
+		CPPASTSimpleDeclSpecifier copy = new CPPASTSimpleDeclSpecifier();
+		copySimpleDeclSpec(copy, style);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
+	protected void copySimpleDeclSpec(CPPASTSimpleDeclSpecifier other, CopyStyle style) {
     	copyBaseDeclSpec(other);
     	other.type = type;
     	other.isSigned = isSigned;
@@ -47,7 +54,7 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implement
     	other.isComplex= isComplex;
     	other.isImaginary= isImaginary;
     	if (fDeclTypeExpression != null) {
-    		other.setDeclTypeExpression(fDeclTypeExpression.copy());
+			other.setDeclTypeExpression(fDeclTypeExpression.copy(style));
     	}
     }
 

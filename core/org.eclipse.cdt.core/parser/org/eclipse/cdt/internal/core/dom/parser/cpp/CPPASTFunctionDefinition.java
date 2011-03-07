@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,23 +51,31 @@ public class CPPASTFunctionDefinition extends ASTNode
 	}
 	
 	public CPPASTFunctionDefinition copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CPPASTFunctionDefinition copy(CopyStyle style) {
 		CPPASTFunctionDefinition copy = new CPPASTFunctionDefinition();
-		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy());
-		
+		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy(style));
+
 		if (declarator != null) {
 			IASTDeclarator outer = ASTQueries.findOutermostDeclarator(declarator);
-			outer = outer.copy();
-			copy.setDeclarator((IASTFunctionDeclarator)ASTQueries.findTypeRelevantDeclarator(outer));
-		}	
-		
-		copy.setBody(bodyStatement == null ? null : bodyStatement.copy());
-		
+			outer = outer.copy(style);
+			copy.setDeclarator((IASTFunctionDeclarator) ASTQueries
+					.findTypeRelevantDeclarator(outer));
+		}
+
+		copy.setBody(bodyStatement == null ? null : bodyStatement.copy(style));
+
 		for (ICPPASTConstructorChainInitializer initializer : getMemberInitializers())
-			copy.addMemberInitializer(initializer == null ? null : initializer.copy());
-		
-		copy.fDefaulted= fDefaulted;
-		copy.fDeleted= fDeleted;
+			copy.addMemberInitializer(initializer == null ? null : initializer.copy(style));
+
+		copy.fDefaulted = fDefaulted;
+		copy.fDeleted = fDeleted;
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,14 +43,22 @@ public class CPPASTNamespaceDefinition extends ASTNode implements
 	}
 
 	public CPPASTNamespaceDefinition copy() {
-		CPPASTNamespaceDefinition copy = new CPPASTNamespaceDefinition(fName == null ? null : fName.copy());
-		copy.fIsInline= fIsInline;
-		for(IASTDeclaration declaration : getDeclarations())
-			copy.addDeclaration(declaration == null ? null : declaration.copy());
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CPPASTNamespaceDefinition copy(CopyStyle style) {
+		CPPASTNamespaceDefinition copy = new CPPASTNamespaceDefinition(fName == null ? null
+				: fName.copy(style));
+		copy.fIsInline = fIsInline;
+		for (IASTDeclaration declaration : getDeclarations())
+			copy.addDeclaration(declaration == null ? null : declaration.copy(style));
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public IASTName getName() {
         return fName;
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,17 +44,24 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 	}
     
 	public CASTCompositeTypeSpecifier copy() {
-		CASTCompositeTypeSpecifier copy = new CASTCompositeTypeSpecifier();
-		copyCompositeTypeSpecifier(copy);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
-	protected void copyCompositeTypeSpecifier(CASTCompositeTypeSpecifier copy) {
+	public CASTCompositeTypeSpecifier copy(CopyStyle style) {
+		CASTCompositeTypeSpecifier copy = new CASTCompositeTypeSpecifier();
+		copyCompositeTypeSpecifier(copy, style);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
+	protected void copyCompositeTypeSpecifier(CASTCompositeTypeSpecifier copy, CopyStyle style) {
 		copyBaseDeclSpec(copy);
 		copy.setKey(fKey);
-		copy.setName(fName == null ? null : fName.copy());
+		copy.setName(fName == null ? null : fName.copy(style));
 		for(IASTDeclaration member : getMembers())
-			copy.addMemberDeclaration(member == null ? null : member.copy());	
+			copy.addMemberDeclaration(member == null ? null : member.copy(style));
 	}
 	
     public int getKey() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -32,16 +32,24 @@ public class CPPASTTypenameExpression extends CPPASTSimpleTypeConstructorExpress
 
 	@Override
 	public CPPASTTypenameExpression copy() {
-		super.copy();
+		return copy(CopyStyle.withoutLocations);
+	}
+	
+	@Override
+	public CPPASTTypenameExpression copy(CopyStyle style) {
+		super.copy(style);
 		CPPASTTypenameExpression copy = new CPPASTTypenameExpression();
 		ICPPASTDeclSpecifier declSpec = getDeclSpecifier();
 		IASTInitializer init = getInitializer();
-		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy());
-		copy.setInitializer(init == null ? null : init.copy());
+		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy(style));
+		copy.setInitializer(init == null ? null : init.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
-	
+
     public void setName(IASTName name) {
     	CPPASTNamedTypeSpecifier spec= new CPPASTNamedTypeSpecifier(name);
     	spec.setOffsetAndLength(this);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,8 +32,16 @@ public class CPPASTCaseStatement extends ASTNode implements IASTCaseStatement, I
 	}
 	
 	public CPPASTCaseStatement copy() {
-		CPPASTCaseStatement copy = new CPPASTCaseStatement(expression == null ? null : expression.copy());
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CPPASTCaseStatement copy(CopyStyle style) {
+		CPPASTCaseStatement copy = new CPPASTCaseStatement(expression == null ? null
+				: expression.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

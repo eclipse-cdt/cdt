@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Symbian Software Systems and others.
+ * Copyright (c) 2008, 2011 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,19 +85,23 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 
 
 	public IASTNode copy() {
-		
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public IASTNode copy(CopyStyle style) {
+
 		int sizeOfNodes = fNodes.size();
 		IASTNode[] copyNodes = new IASTNode[sizeOfNodes];
 		int arrayIndex = 0;
 		for(IASTNode node : fNodes) {
 			if(node!=null){
-				copyNodes[arrayIndex]=node.copy();
+				copyNodes[arrayIndex] = node.copy(style);
 			}else{
 				copyNodes[arrayIndex]=null;
 			}
 			arrayIndex++;
 		}
-		
+
 		ICPPASTAmbiguousTemplateArgument ambiguityNode = new CPPASTAmbiguousTemplateArgument(copyNodes);
 		return ambiguityNode;
 	}

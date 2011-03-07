@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,13 +46,21 @@ public class CPPASTStaticAssertionDeclaration extends ASTNode implements ICPPAST
 
 
 	public CPPASTStaticAssertionDeclaration copy() {
-		final IASTExpression condCopy = fCondition == null ? null : fCondition.copy();
-		final ICPPASTLiteralExpression msgCopy = fMessage == null ? null : fMessage.copy();
-		CPPASTStaticAssertionDeclaration copy = new CPPASTStaticAssertionDeclaration(condCopy, msgCopy);
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CPPASTStaticAssertionDeclaration copy(CopyStyle style) {
+		final IASTExpression condCopy = fCondition == null ? null : fCondition.copy(style);
+		final ICPPASTLiteralExpression msgCopy = fMessage == null ? null : fMessage.copy(style);
+		CPPASTStaticAssertionDeclaration copy = new CPPASTStaticAssertionDeclaration(condCopy,
+				msgCopy);
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
     @Override
 	public boolean accept( ASTVisitor action ){
 		if (action.shouldVisitDeclarations) {

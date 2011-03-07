@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,14 +33,20 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList,
     private int actualSize;
 
 	public CASTInitializerList copy() {
-		CASTInitializerList copy = new CASTInitializerList();
-		for(IASTInitializerClause initializer : getClauses())
-			copy.addClause(initializer == null ? null : initializer.copy());
-		copy.setOffsetAndLength(this);
-		copy.actualSize= getSize();
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CASTInitializerList copy(CopyStyle style) {
+		CASTInitializerList copy = new CASTInitializerList();
+		for (IASTInitializerClause initializer : getClauses())
+			copy.addClause(initializer == null ? null : initializer.copy(style));
+		copy.setOffsetAndLength(this);
+		copy.actualSize = getSize();
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
 	
 	public int getSize() {
 		return actualSize;

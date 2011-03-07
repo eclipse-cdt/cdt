@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,16 +46,21 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	}
 	
 	public CPPASTEnumerationSpecifier copy() {
-		CPPASTEnumerationSpecifier copy = new CPPASTEnumerationSpecifier(fIsScoped, 
-				fName == null ? null : fName.copy(), 
-				fBaseType == null ? null : fBaseType.copy());
-		copy.fIsOpaque= fIsOpaque;
-		for (IASTEnumerator enumerator : getEnumerators())
-			copy.addEnumerator(enumerator == null ? null : enumerator.copy());
-		copyBaseDeclSpec(copy);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CPPASTEnumerationSpecifier copy(CopyStyle style) {
+		CPPASTEnumerationSpecifier copy = new CPPASTEnumerationSpecifier(fIsScoped, fName == null
+				? null : fName.copy(style), fBaseType == null ? null : fBaseType.copy(style));
+		copy.fIsOpaque = fIsOpaque;
+		for (IASTEnumerator enumerator : getEnumerators())
+			copy.addEnumerator(enumerator == null ? null : enumerator.copy(style));
+		copyBaseDeclSpec(copy);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
 	
 	public boolean startValueComputation() {
 		if (fValuesComputed)

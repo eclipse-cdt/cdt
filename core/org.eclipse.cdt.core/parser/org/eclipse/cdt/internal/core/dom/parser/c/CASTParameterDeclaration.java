@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,10 +37,17 @@ public class CASTParameterDeclaration extends ASTNode implements IASTParameterDe
 	}
 
 	public CASTParameterDeclaration copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CASTParameterDeclaration copy(CopyStyle style) {
 		CASTParameterDeclaration copy = new CASTParameterDeclaration();
-		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy());
-		copy.setDeclarator(declarator == null ? null : declarator.copy());
+		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy(style));
+		copy.setDeclarator(declarator == null ? null : declarator.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 	

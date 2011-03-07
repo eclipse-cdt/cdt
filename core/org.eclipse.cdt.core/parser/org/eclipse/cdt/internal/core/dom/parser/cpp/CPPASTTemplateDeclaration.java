@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,15 +43,22 @@ public class CPPASTTemplateDeclaration extends ASTNode implements
 	}
 
 	public CPPASTTemplateDeclaration copy() {
-		CPPASTTemplateDeclaration copy = new CPPASTTemplateDeclaration();
-		copy.setDeclaration(declaration == null ? null : declaration.copy());
-		copy.exported = exported;
-		for (ICPPASTTemplateParameter param : getTemplateParameters()) 
-			copy.addTemplateParameter(param == null ? null : param.copy());
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CPPASTTemplateDeclaration copy(CopyStyle style) {
+		CPPASTTemplateDeclaration copy = new CPPASTTemplateDeclaration();
+		copy.setDeclaration(declaration == null ? null : declaration.copy(style));
+		copy.exported = exported;
+		for (ICPPASTTemplateParameter param : getTemplateParameters())
+			copy.addTemplateParameter(param == null ? null : param.copy(style));
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public boolean isExported() {
         return exported;
     }

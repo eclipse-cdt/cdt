@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,11 +51,18 @@ public class ASTProblem extends ASTNode implements IASTProblem {
 	}
 
 	public ASTProblem copy() {
-		ASTProblem problem = new ASTProblem(id, arg == null ? null : arg.clone(), isError);
-		problem.setOffsetAndLength(this);
-		return problem;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public ASTProblem copy(CopyStyle style) {
+		ASTProblem problem = new ASTProblem(id, arg == null ? null : arg.clone(), isError);
+		problem.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			problem.setCopyLocation(this);
+		}
+		return problem;
+	}
+
 	public int getID() {
         return id;
     }

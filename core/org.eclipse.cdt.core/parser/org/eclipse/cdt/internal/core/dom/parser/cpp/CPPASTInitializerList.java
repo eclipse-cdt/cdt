@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,15 +33,22 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 	private boolean fIsPackExpansion;
     
 	public CPPASTInitializerList copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+	
+	public CPPASTInitializerList copy(CopyStyle style) {
 		CPPASTInitializerList copy = new CPPASTInitializerList();
 		for (IASTInitializerClause initializer : getClauses())
-			copy.addClause(initializer == null ? null : initializer.copy());
+			copy.addClause(initializer == null ? null : initializer.copy(style));
 		copy.setOffsetAndLength(this);
 		copy.actualSize = getSize();
 		copy.fIsPackExpansion = fIsPackExpansion;
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
-	
+
 	public int getSize() {
 		return actualSize;
 	}

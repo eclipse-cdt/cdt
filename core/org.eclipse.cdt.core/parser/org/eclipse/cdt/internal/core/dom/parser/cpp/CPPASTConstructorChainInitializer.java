@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,11 +59,18 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 	}
 
 	public CPPASTConstructorChainInitializer copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CPPASTConstructorChainInitializer copy(CopyStyle style) {
 		CPPASTConstructorChainInitializer copy = new CPPASTConstructorChainInitializer();
-		copy.setMemberInitializerId(name == null ? null : name.copy());
-		copy.setInitializer(initializer == null ? null : initializer.copy());
+		copy.setMemberInitializerId(name == null ? null : name.copy(style));
+		copy.setInitializer(initializer == null ? null : initializer.copy(style));
 		copy.setOffsetAndLength(this);
-		copy.fIsPackExpansion= fIsPackExpansion;
+		copy.fIsPackExpansion = fIsPackExpansion;
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

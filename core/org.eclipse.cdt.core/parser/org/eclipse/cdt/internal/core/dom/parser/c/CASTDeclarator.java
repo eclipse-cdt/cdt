@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,17 +52,24 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
 	}
 	
 	public CASTDeclarator copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CASTDeclarator copy(CopyStyle style) {
 		CASTDeclarator copy = new CASTDeclarator();
-		copyBaseDeclarator(copy);
+		copyBaseDeclarator(copy, style);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 	
-	protected void copyBaseDeclarator(CASTDeclarator copy) {
-		copy.setName(name == null ? null : name.copy());
-		copy.setInitializer(initializer == null ? null : initializer.copy());
-		copy.setNestedDeclarator(nestedDeclarator == null ? null : nestedDeclarator.copy());
+	protected void copyBaseDeclarator(CASTDeclarator copy, CopyStyle style) {
+		copy.setName(name == null ? null : name.copy(style));
+		copy.setInitializer(initializer == null ? null : initializer.copy(style));
+		copy.setNestedDeclarator(nestedDeclarator == null ? null : nestedDeclarator.copy(style));
 		for(IASTPointerOperator pointer : getPointerOperators())
-			copy.addPointerOperator(pointer == null ? null : pointer.copy());
+			copy.addPointerOperator(pointer == null ? null : pointer.copy(style));
 		copy.setOffsetAndLength(this);
 	}
 	

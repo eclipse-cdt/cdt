@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,10 +31,17 @@ public class CPPASTCompoundStatement extends ASTNode implements
 
     
     public CPPASTCompoundStatement copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+
+	public CPPASTCompoundStatement copy(CopyStyle style) {
 		CPPASTCompoundStatement copy = new CPPASTCompoundStatement();
-		for(IASTStatement statement : getStatements())
-			copy.addStatement(statement == null ? null : statement.copy());
+		for (IASTStatement statement : getStatements())
+			copy.addStatement(statement == null ? null : statement.copy(style));
 		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

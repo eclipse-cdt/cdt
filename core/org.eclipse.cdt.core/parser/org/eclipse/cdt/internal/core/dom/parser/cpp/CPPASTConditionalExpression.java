@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -15,7 +15,10 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.XVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -64,14 +67,21 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 
 	
 	public CPPASTConditionalExpression copy() {
-		CPPASTConditionalExpression copy = new CPPASTConditionalExpression();
-		copy.setLogicalConditionExpression(fCondition == null ? null : fCondition.copy());
-		copy.setPositiveResultExpression(fPositive == null ? null : fPositive.copy());
-		copy.setNegativeResultExpression(fNegative == null ? null : fNegative.copy());
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CPPASTConditionalExpression copy(CopyStyle style) {
+		CPPASTConditionalExpression copy = new CPPASTConditionalExpression();
+		copy.setLogicalConditionExpression(fCondition == null ? null : fCondition.copy(style));
+		copy.setPositiveResultExpression(fPositive == null ? null : fPositive.copy(style));
+		copy.setNegativeResultExpression(fNegative == null ? null : fNegative.copy(style));
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public IASTExpression getLogicalConditionExpression() {
         return fCondition;
     }

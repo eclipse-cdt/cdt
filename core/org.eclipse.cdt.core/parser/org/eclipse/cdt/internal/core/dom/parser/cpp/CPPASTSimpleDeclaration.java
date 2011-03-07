@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,14 +33,21 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
 	}
 
 	public CPPASTSimpleDeclaration copy() {
-		CPPASTSimpleDeclaration copy = new CPPASTSimpleDeclaration();
-		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy());
-		for (IASTDeclarator declarator : getDeclarators())
-			copy.addDeclarator(declarator == null ? null : declarator.copy());
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	public CPPASTSimpleDeclaration copy(CopyStyle style) {
+		CPPASTSimpleDeclaration copy = new CPPASTSimpleDeclaration();
+		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy(style));
+		for (IASTDeclarator declarator : getDeclarators())
+			copy.addDeclarator(declarator == null ? null : declarator.copy(style));
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpecifier;
     }

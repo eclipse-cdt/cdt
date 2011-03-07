@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -319,4 +319,14 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IAdaptabl
 	 * @since 5.1
 	 */
 	public IASTTranslationUnit copy();
+
+	/**
+	 * Returns a copy of the AST, however the ILocationResolver and the preprocessor nodes are not copied.
+	 * 
+	 * @see IASTNode#copy()
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 5.3
+	 */
+	public IASTTranslationUnit copy(CopyStyle style);
 }

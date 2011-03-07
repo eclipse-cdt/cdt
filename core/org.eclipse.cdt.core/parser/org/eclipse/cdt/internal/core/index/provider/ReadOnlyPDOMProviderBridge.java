@@ -22,23 +22,23 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Wraps the offline PDOM provider as an IIndexFragmentProvider
+ * Adapts a IReadOnlyPDOMProvider to an IIndexFragmentProvider.
  */
 public class ReadOnlyPDOMProviderBridge implements IIndexFragmentProvider {
-	protected IReadOnlyPDOMProvider opp;
+	private final IReadOnlyPDOMProvider provider;
 
-	public ReadOnlyPDOMProviderBridge(IReadOnlyPDOMProvider opp) {
-		this.opp= opp;
+	public ReadOnlyPDOMProviderBridge(IReadOnlyPDOMProvider provider) {
+		this.provider= provider;
 	}
 
 	public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) throws CoreException {
-		IPDOMDescriptor[] descriptions = opp.getDescriptors(config);
-
 		List<PDOM> result = new ArrayList<PDOM>();
+		IPDOMDescriptor[] descriptions = provider.getDescriptors(config);
 
 		if (descriptions != null) {
-			for (IPDOMDescriptor dsc : descriptions) {
-				PDOM pdom= PDOMCache.getInstance().getPDOM(dsc.getLocation(), dsc.getIndexLocationConverter());
+			for (IPDOMDescriptor desc : descriptions) {
+				PDOM pdom= PDOMCache.getInstance().getPDOM(desc.getLocation(),
+						desc.getIndexLocationConverter()); 
 				if (pdom != null) {
 					result.add(pdom);
 				}
@@ -49,6 +49,6 @@ public class ReadOnlyPDOMProviderBridge implements IIndexFragmentProvider {
 	}
 
 	public boolean providesFor(ICProject cproject) throws CoreException {
-		return opp.providesFor(cproject);
+		return provider.providesFor(cproject);
 	}
 }

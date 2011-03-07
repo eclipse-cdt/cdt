@@ -56,7 +56,7 @@ public class Process {
 	}
 
 	/**
-	 * This method build the necessary Arguments for the process 
+	 * This method build the necessary Arguments for the process
 	 * @param templateCore
 	 * @param element
 	 */
@@ -69,7 +69,8 @@ public class Process {
 			ProcessParameter param = params[i];
 			boolean childrenRemain = childIndex < children.size();
 			Element child = (childrenRemain ? children.get(childIndex) : null);
-			if (param.isExternal() && (!childrenRemain || !param.getName().equals(child.getAttribute(ProcessArgument.ELEM_NAME)))) {
+			if (param.isExternal() &&
+					(child == null || !param.getName().equals(child.getAttribute(ProcessArgument.ELEM_NAME)))) {
 				list.add(new ProcessArgument(templateCore, param));
 			} else if (childrenRemain) {
 				list.add(new ProcessArgument(templateCore, child));
@@ -83,7 +84,7 @@ public class Process {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return boolean, true if the Process is Ready.
 	 */
 	public boolean isReadyToProcess() {
@@ -92,9 +93,9 @@ public class Process {
 		}
 		return true;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return boolean, true if Macros are Exapandable.
 	 */
 	private boolean areAllMacrosExpandable() {
@@ -108,7 +109,7 @@ public class Process {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Returns First NonExpandable Macro Message
 	 */
@@ -124,7 +125,7 @@ public class Process {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the Process Message depending on the parameters.
 	 * @param code
@@ -141,10 +142,10 @@ public class Process {
 				return id + TemplateEngineMessages.getString("Process.info") + msg; //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
      * Executes this process
-	 * @param monitor 
+	 * @param monitor
 	 * @return the result of executing this process
 	 * @throws ProcessFailureException
 	 */
@@ -193,7 +194,7 @@ public class Process {
 		}
 		return set;
 	}
-	
+
 	@Override
 	public String toString() {
 		return id;

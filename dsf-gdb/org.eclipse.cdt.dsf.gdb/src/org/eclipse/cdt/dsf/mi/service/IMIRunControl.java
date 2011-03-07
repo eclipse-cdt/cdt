@@ -24,6 +24,13 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 public interface IMIRunControl extends IRunControl2
 {
 	/**
+	 * Returns true if the target currently accepting commands.
+	 *
+	 * @since 4.0
+	 */
+	public boolean isTargetAcceptingCommands();
+	
+	/**
 	 * Request that the specified steps be executed by first ensuring the target is available
 	 * to receive commands.  Once the specified steps are executed, the target should be
 	 * returned to its original availability.

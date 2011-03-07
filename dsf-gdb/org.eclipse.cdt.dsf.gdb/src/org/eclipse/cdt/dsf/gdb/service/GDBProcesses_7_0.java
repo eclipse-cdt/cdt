@@ -58,11 +58,11 @@ import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
-import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess.State;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupCreatedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
@@ -1134,7 +1134,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 						@Override
 						protected void handleSuccess() {
 							if (getData() instanceof IMIContainerDMContext) {
-								if (fCommandControl.getInferiorProcess().getState() == State.RUNNING) {
+								IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+								if (runControl != null && !runControl.isTargetAcceptingCommands()) {
 									fBackend.interrupt();
 								}
 

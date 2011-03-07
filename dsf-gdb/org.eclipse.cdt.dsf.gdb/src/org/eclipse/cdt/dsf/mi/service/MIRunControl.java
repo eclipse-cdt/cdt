@@ -1250,4 +1250,14 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	public IRunMode getRunMode() {
 		return MIRunMode.ALL_STOP;
 	}
+	
+	/** @since 4.0 */
+	public boolean isTargetAcceptingCommands() {
+		// For all-stop mode:
+		// 1- if GDB is not terminated and
+		// 2- if execution is suspended and 
+		// 3- if we didn't just send a resume/stop command, then 
+		// we know GDB is accepting commands
+		return !fTerminated && fSuspended && !fResumePending;
+	}
 }

@@ -1481,6 +1481,12 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		return MIRunMode.NON_STOP;
 	}
 
+	/** @since 4.0 */
+	public boolean isTargetAcceptingCommands() {
+		// Always accepting commands in non-stop mode
+		return true;
+	}
+
 	/**
 	 * See bug 196154
 	 * 

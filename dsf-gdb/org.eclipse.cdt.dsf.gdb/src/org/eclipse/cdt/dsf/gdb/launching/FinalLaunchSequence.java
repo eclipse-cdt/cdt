@@ -20,10 +20,10 @@ import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ReflectionSequence;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -42,6 +42,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -50,14 +51,11 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.IStatusHandler;
 
 public class FinalLaunchSequence extends ReflectionSequence {
 
-	private GdbLaunch fLaunch;
-	private SessionType fSessionType;
-	private boolean fAttach;
-	
 	// The launchConfiguration attributes
 	private Map<String, Object> fAttributes;
 
@@ -67,12 +65,15 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	private CommandFactory fCommandFactory;
 
 	private DsfServicesTracker fTracker;
+	private DsfSession fSession;
 
-	public FinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType sessionType, boolean attach, IProgressMonitor pm) {
-		super(executor, pm, LaunchMessages.getString("FinalLaunchSequence.0"), LaunchMessages.getString("FinalLaunchSequence.1"));     //$NON-NLS-1$ //$NON-NLS-2$
-		fLaunch = launch;
-		fSessionType = sessionType;
-		fAttach = attach;
+	/**
+	 * @since 4.0
+	 */
+	public FinalLaunchSequence(DsfSession session, Map<String, Object> attributes, RequestMonitorWithProgress rm) {
+		super(session.getExecutor(), rm, LaunchMessages.getString("FinalLaunchSequence.0"), LaunchMessages.getString("FinalLaunchSequence.1"));     //$NON-NLS-1$ //$NON-NLS-2$
+		fSession = session;
+		fAttributes = attributes;
 	}
 
 	@Override
@@ -106,14 +107,13 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	}
 
 	/** 
-	 * Initialize the members of the {@link FinalLaunchSequence} class.
-	 * This step is mandatory for the rest fo the sequence to complete.
+	 * Initialize the members of the FinalLaunchSequence class.
+	 * This step is mandatory for the rest of the sequence to complete.
 	 * @since 4.0 
 	 */
-	@SuppressWarnings("unchecked")
 	@Execute
 	public void stepInitializeFinalLaunchSequence(RequestMonitor requestMonitor) {
-		fTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fLaunch.getSession().getId());
+		fTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fSession.getId());
 		fGDBBackend = fTracker.getService(IGDBBackend.class);
 		if (fGDBBackend == null) {
 			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain GDBBackend service", null)); //$NON-NLS-1$
@@ -133,14 +133,6 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		fProcService = fTracker.getService(IMIProcesses.class);
 		if (fProcService == null) {
 			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain process service", null)); //$NON-NLS-1$
-			requestMonitor.done();
-			return;
-		}
-
-		try {
-			fAttributes = fLaunch.getLaunchConfiguration().getAttributes();
-		} catch (CoreException e) {
-			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain launch configuration attributes", null)); //$NON-NLS-1$
 			requestMonitor.done();
 			return;
 		}
@@ -190,7 +182,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
      */
 	@Execute
 	public void stepSetBreakpointPending(final RequestMonitor requestMonitor) {
-		if (fSessionType != SessionType.CORE) {
+		if (fGDBBackend.getSessionType() != SessionType.CORE) {
 			fCommandControl.queueCommand(
 					fCommandFactory.createMIGDBSetBreakpointPending(fCommandControl.getContext(), true),
 					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
@@ -353,7 +345,8 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	@Execute
 	public void stepSetSourceLookupPath(RequestMonitor requestMonitor) {
 		CSourceLookup sourceLookup = fTracker.getService(CSourceLookup.class);
-		CSourceLookupDirector locator = (CSourceLookupDirector)fLaunch.getSourceLocator();
+		ILaunch launch = (ILaunch)fSession.getModelAdapter(ILaunch.class);
+		CSourceLookupDirector locator = (CSourceLookupDirector)launch.getSourceLocator();
 		ISourceLookupDMContext sourceLookupDmc = (ISourceLookupDMContext)fCommandControl.getContext();
 
 		sourceLookup.setSourceLookupPath(sourceLookupDmc, locator.getSourceContainers(), requestMonitor);
@@ -407,7 +400,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepSpecifyCoreFile(final RequestMonitor requestMonitor) {
-		if (fSessionType == SessionType.CORE) {
+		if (fGDBBackend.getSessionType() == SessionType.CORE) {
 			String coreFile = CDebugUtils.getAttribute(
 					fAttributes,
 					ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, ""); //$NON-NLS-1$
@@ -478,7 +471,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepRemoteConnection(final RequestMonitor rm) {
-		if (fSessionType == SessionType.REMOTE && fAttach) {
+		if (fGDBBackend.getSessionType() == SessionType.REMOTE && fGDBBackend.getIsAttachSession()) {
 			boolean isTcpConnection = CDebugUtils.getAttribute(
 					fAttributes,
 					IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
@@ -518,7 +511,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepNewProcess(final RequestMonitor rm) {
-		if (!fAttach) {
+		if (!fGDBBackend.getIsAttachSession()) {
 
 			boolean noBinarySpecified = CDebugUtils.getAttribute(
 					fAttributes,
@@ -548,7 +541,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepAttachToProcess(final RequestMonitor requestMonitor) {
-		if (fAttach && fSessionType != SessionType.REMOTE) {
+		if (fGDBBackend.getIsAttachSession() && fGDBBackend.getSessionType() != SessionType.REMOTE) {
 			// Is the process id already stored in the launch?
 			int pid = CDebugUtils.getAttribute(
 					fAttributes,
@@ -559,7 +552,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 						fProcService.createProcessContext(fCommandControl.getContext(), Integer.toString(pid)),
 						new DataRequestMonitor<IDMContext>(getExecutor(), requestMonitor));
 			} else {
-				IConnect connectCommand = (IConnect)fLaunch.getSession().getModelAdapter(IConnect.class);
+				IConnect connectCommand = (IConnect)fSession.getModelAdapter(IConnect.class);
 				if (connectCommand != null) {
 					connectCommand.connect(requestMonitor);
 				} else {
@@ -577,7 +570,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepDataModelInitializationComplete(final RequestMonitor requestMonitor) {
-		fLaunch.getSession().dispatchEvent(new DataModelInitializedEvent(fCommandControl.getContext()),
+		fSession.dispatchEvent(new DataModelInitializedEvent(fCommandControl.getContext()),
 				fCommandControl.getProperties());
 		requestMonitor.done();
 	}

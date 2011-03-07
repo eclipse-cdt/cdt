@@ -45,11 +45,14 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
-	private static final String GDB_6_8_VERSION = "6.8"; //$NON-NLS-1$
-	// This should eventually be "7.0" once GDB 7.0 is released
-	private static final String GDB_7_0_VERSION = "6.8.50.20090218"; //$NON-NLS-1$	
-	private static final String GDB_7_1_VERSION = "7.1"; //$NON-NLS-1$	
-	private static final String GDB_7_2_VERSION = "7.2"; //$NON-NLS-1$
+	/** @since 4.0 */
+	public static final String GDB_6_8_VERSION = "6.8"; //$NON-NLS-1$
+	/** @since 4.0 */
+	public static final String GDB_7_0_VERSION = "7.0"; //$NON-NLS-1$	
+	/** @since 4.0 */
+	public static final String GDB_7_1_VERSION = "7.1"; //$NON-NLS-1$	
+	/** @since 4.0 */
+	public static final String GDB_7_2_VERSION = "7.2"; //$NON-NLS-1$
 	
 	private final String fVersion;
 	

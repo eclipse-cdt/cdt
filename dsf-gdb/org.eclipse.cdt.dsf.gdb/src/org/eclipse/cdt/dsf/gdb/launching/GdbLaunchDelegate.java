@@ -19,9 +19,9 @@ import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.concurrent.Sequence;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
@@ -29,7 +29,9 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactoryNS;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
+import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.gdb.service.macos.MacOSGdbDebugServicesFactory;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate2;
 import org.eclipse.core.runtime.CoreException;
@@ -181,14 +183,32 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         monitor.worked(1);
         
         // Create and invoke the final launch sequence to setup GDB
-        IProgressMonitor subMon2 = new SubProgressMonitor(monitor, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK); 
-        final Sequence finalLaunchSequence = 
-        	getFinalLaunchSequence(launch.getSession().getExecutor(), launch, sessionType, attach, subMon2);
+        final IProgressMonitor subMon2 = new SubProgressMonitor(monitor, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK); 
 
-        launch.getSession().getExecutor().execute(finalLaunchSequence);
+        Query<Object> completeLaunchQuery = new Query<Object>() {
+            @Override
+            protected void execute(final DataRequestMonitor<Object> rm) {
+            	DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), launch.getSession().getId());
+            	IGDBControl control = tracker.getService(IGDBControl.class);
+            	tracker.dispose();
+            	control.completeInitialization(new RequestMonitorWithProgress(ImmediateExecutor.getInstance(), subMon2) {
+            		@Override
+            		protected void handleCompleted() {
+            			if (isCanceled()) {
+            				rm.cancel();
+            			} else {
+            				rm.setStatus(getStatus());
+            			}
+            			rm.done();
+            		}
+            	});
+            }
+        };
+
+        launch.getSession().getExecutor().execute(completeLaunchQuery);
         boolean succeed = false;
         try {
-        	finalLaunchSequence.get();
+        	completeLaunchQuery.get();
         	succeed = true;
         } catch (InterruptedException e1) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
@@ -248,14 +268,6 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	 */
 	protected String getGDBVersion(ILaunchConfiguration config) throws CoreException {
 		return LaunchUtils.getGDBVersion(config);
-	}
-
-	/*
-	 * This method can be overridden by subclasses to allow to change the final launch sequence without
-	 * having to change the entire GdbLaunchDelegate
-	 */
-	protected Sequence getFinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType type, boolean attach, IProgressMonitor pm) {
-		return new FinalLaunchSequence(executor, launch, type, attach, pm);
 	}
 
 	@Override

@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.concurrent.Future;
@@ -28,12 +29,15 @@ import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.FinalLaunchSequence;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
@@ -51,8 +55,11 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.osgi.framework.BundleContext;
 
@@ -313,6 +320,48 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		countingRm.setDoneCount(count);
 	}
 	 
+	/**
+	 * @since 4.0
+	 */
+	@SuppressWarnings("unchecked")
+	public void completeInitialization(final RequestMonitor rm) {
+		// We take the attributes from the launchConfiguration
+		ILaunch launch = (ILaunch)getSession().getModelAdapter(ILaunch.class);
+    	Map<String, Object> attributes = null;
+		try {
+			attributes = launch.getLaunchConfiguration().getAttributes();
+		} catch (CoreException e) {}
+
+		// We need a RequestMonitorWithProgress, if we don't have one, we create one.
+		RequestMonitorWithProgress progressRm;
+		if (rm instanceof RequestMonitorWithProgress) {
+			progressRm = (RequestMonitorWithProgress)rm;
+		} else {
+			progressRm = new RequestMonitorWithProgress(getExecutor(), new NullProgressMonitor()) {
+				@Override
+				protected void handleCompleted() {
+       				rm.setStatus(getStatus());
+        			rm.done();
+				}
+			};
+		}
+
+		ImmediateExecutor.getInstance().execute(getCompleteInitializationSequence(attributes, progressRm));
+	}
+	
+	/**
+	 * Return the sequence that is to be used to complete the initialization of GDB.
+	 * 
+	 * @param rm A RequestMonitorWithProgress that will indicate when the sequence is completed, but that
+	 *           also contains an IProgressMonitor to be able to cancel the launch.  A NullProgressMonitor
+	 *           can be used if cancellation is not required.
+	 * 
+	 * @since 4.0
+	 */
+	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes, RequestMonitorWithProgress rm) {
+		return new FinalLaunchSequence(getSession(), attributes, rm);
+	}
+	
     @DsfServiceEventHandler 
     public void eventDispatched(ICommandControlShutdownDMEvent e) {
         // Handle our "GDB Exited" event and stop processing commands.

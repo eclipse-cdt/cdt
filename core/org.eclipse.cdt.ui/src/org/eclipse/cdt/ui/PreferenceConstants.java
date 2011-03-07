@@ -42,6 +42,15 @@ import org.eclipse.cdt.internal.ui.text.spelling.SpellCheckEngine;
  * CDT-UI preference store using these values. Clients are not allowed to modify the
  * preference store programmatically.
  * 
+ * The preferences defined in this file are exported in the plugin's 
+ * "preferenceTransfer" extension. If adding a new preference please 
+ * also add it to one of the two if applicable:
+ * <ol>
+ * <li>"Editor Appearance" - Any preference related to how the editor presents 
+ * 							the edited code to the user.</li>
+ * <li>"Editor Behavior" - Any preference related to how the editor process the 
+ * 						  edited code.</li>
+ * </ol>
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @since 2.0

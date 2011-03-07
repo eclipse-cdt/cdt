@@ -3832,4 +3832,107 @@
           label="%BuildConsole.name">
     </consoleFactory>
  </extension>
+ <extension
+       point="org.eclipse.ui.preferenceTransfer">
+    <transfer
+          id="org.eclipse.cdt.ui.transfer.editor.appearance"
+          name="%transfer.EditorAppearance.name">
+       <mapping scope="instance">
+          <entry node="org.eclipse.cdt.ui">
+            <key name="c_multi_line_comment" match="prefix"/>
+            <key name="c_single_line_comment" match="prefix"/>
+            <key name="c_keyword" match="prefix"/>
+            <key name="c_type" match="prefix"/>
+            <key name="c_string" match="prefix"/>
+            <key name="c_operators" match="prefix"/>
+            <key name="c_braces" match="prefix"/>
+            <key name="c_numbers" match="prefix"/>
+            <key name="c_default" match="prefix"/>
+            <key name="pp_directive" match="prefix"/>
+            <key name="pp_default" match="prefix"/>
+            <key name="pp_header" match="prefix"/>
+            <key name="asm_directive" match="prefix"/>
+            <key name="asm_label" match="prefix"/>
+            <key name="c_comment_task_tag" match="prefix"/>
+            <key name="semanticHighlighting." match="prefix"/>
+            <key name="org.eclipse.cdt.internal.ui.text.doctools.doxygen." match="prefix"/>
+            <key name="handleTemporaryProblems"/>
+            <key name="matchingBracketsColor"/>
+            <key name="matchingBrackets"/>
+            <key name="inactiveCodeColor"/>
+            <key name="inactiveCodeEnable"/>
+            <key name="content_assist_proposals_background"/>
+            <key name="content_assist_proposals_foreground"/>
+            <key name="content_assist_parameters_background"/>
+            <key name="content_assist_parameters_foreground"/>
+            <key name="sourceHoverBackgroundColor"/>
+            <key name="sourceHoverBackgroundColor.SystemDefault"/>	
+            <key name="org.eclipse.cdt.ui.editors.textfont"/>
+            <key name="org.eclipse.cdt.ui.editor.showSegments"/>
+            <key name="CEditor.ShowTemporaryProblem"/>
+            <key name="org.eclipse.cdt.ui.outline." match="prefix"/>
+            <key name="editor_folding_" match="prefix"/>
+            <key name="org.eclipse.cdt.quickassist.lightbulb"/>
+          </entry>
+          <entry node="org.eclipse.cdt.core/doctool">
+            <key name="workspace.default"/>
+          </entry>
+          <entry node="org.eclipse.ui.editors">
+            <key name="indexResultIndicationColor"/>
+            <key name="indexResultIndication"/>
+            <key name="indexResultIndicationInVerticalRuler"/>
+            <key name="indexResultIndicationInOverviewRuler"/>
+            <key name="isIndexResultInNextPrevDropdownToolbarAction"/>
+            <key name="isIndexResultGoToNextNavigationTarget"/>
+            <key name="isIndexResultGoToPreviousNavigationTarget"/>
+            <key name="org.eclipse.cdt.ui." match="prefix"/>
+          </entry>
+       </mapping>
+       <description>
+          %transfer.EditorAppearance.description
+       </description>
+    </transfer>
+    <transfer
+          id="org.eclipse.cdt.ui.transfer.editor.behavior"
+          name="%transfer.EditorBehavior.name">
+       <mapping scope="instance">
+          <entry node="org.eclipse.cdt.ui">
+            <key name="org.eclipse.cdt.ui.editor.UseStructuralMode"/>
+            <key name="subWordNavigation"/>
+            <key name="closeStrings"/>
+            <key name="wrapStrings"/>
+            <key name="escapeStrings"/>
+            <key name="closeBrackets"/>
+            <key name="closeAngularBrackets"/>
+            <key name="closeBraces"/>
+            <key name="smartPaste"/>
+            <key name="autoIndent"/>
+            <key name="smart_tab"/>
+            <key name="hoverModifiers"/>
+            <key name="hoverModifierMasks"/>
+            <key name="org.eclipse.cdt.ui.BestMatchHover"/>
+            <key name="org.eclipse.cdt.ui.text.templates.format"/>
+            <key name="content_assist_disabled_computers"/>
+            <key name="content_assist_category_order"/>
+            <key name="ensureNewlineAtEOF"/>
+            <key name="removeTrailingWhitespace"/>
+            <key name="removeTrailingWhitespaceEditedLines"/>
+            <key name="Refactoring.savealleditors"/>
+            <key name="Refactor.lightweight"/>
+            <key name="spelling_" match="prefix"/>
+            <key name="org.eclipse.cdt.ui.add_comments"/>
+            <key name="codetemplates.includeGuardGenerationScheme"/>
+            <key name="markOccurrences"/>
+            <key name="stickyOccurrences"/>
+            <key name="markOverloadedOperatorsOccurrences"/>
+            <key name="scalability." match="prefix"/>
+          </entry>
+       </mapping>
+       <description>
+          %transfer.EditorBehavior.description 
+       </description>
+    </transfer>
+
+ </extension>
+
 </plugin>

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.provider;
 
@@ -36,10 +36,10 @@ public class ReadOnlyPDOMProviderBridge implements IIndexFragmentProvider {
 
 		List<PDOM> result = new ArrayList<PDOM>();
 
-		if(descriptions!=null) {
-			for(IPDOMDescriptor dsc : descriptions) {
-				PDOM pdom= PDOMCache.getInstance().getPDOM(dsc.getLocation(), dsc.getIndexLocationConverter()); 
-				if(pdom!=null) {
+		if (descriptions != null) {
+			for (IPDOMDescriptor dsc : descriptions) {
+				PDOM pdom= PDOMCache.getInstance().getPDOM(dsc.getLocation(), dsc.getIndexLocationConverter());
+				if (pdom != null) {
 					result.add(pdom);
 				}
 			}

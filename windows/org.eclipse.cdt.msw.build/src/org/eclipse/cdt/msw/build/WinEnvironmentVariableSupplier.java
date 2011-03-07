@@ -81,13 +81,21 @@ public class WinEnvironmentVariableSupplier
 		return envvars.values().toArray(new IBuildEnvironmentVariable[envvars.size()]);
 	}
 	
+	// Current support is for Windows SDK 7.1 with Visual C++ 10.0
+	// Secondary support for Windows SDK 7.0 with Visual C++ 9.0 
 	private static String getSDKDir() {
 		WindowsRegistry reg = WindowsRegistry.getRegistry();
+		String sdkDir = reg.getLocalMachineValue("SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows\\v7.1", "InstallationFolder");
+		if (sdkDir != null)
+			return sdkDir;
 		return reg.getLocalMachineValue("SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows\\v7.0", "InstallationFolder");
 	}
 	
 	private static String getVCDir() {
 		WindowsRegistry reg = WindowsRegistry.getRegistry();
+		String vcDir = reg.getLocalMachineValue("SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VC7", "10.0");
+		if (vcDir != null)
+			return vcDir;
 		return reg.getLocalMachineValue("SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VC7", "9.0");
 	}
 	
@@ -142,9 +150,10 @@ public class WinEnvironmentVariableSupplier
 		// PATH
 		buff = new StringBuffer();
 		if (vcDir != null) {
+			buff.append(vcDir).append("..\\Common7\\IDE;");
+			buff.append(vcDir).append("..\\Common7\\Tools;");
 			buff.append(vcDir).append("Bin;");
 			buff.append(vcDir).append("vcpackages;");
-			buff.append(vcDir).append("..\\Common7\\IDE;");
 		}
 		if (sdkDir != null) {
 			buff.append(sdkDir).append("Bin;");

@@ -47,7 +47,7 @@ public interface IIndexFragment {
 	/**
 	 * @see IIndex#SEARCH_ACROSS_LANGUAGE_BOUNDARIES
 	 */
-	final int SEARCH_ACROSS_LANGUAGE_BOUNDARIES= IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES;
+	final int SEARCH_ACROSS_LANGUAGE_BOUNDARIES = IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES;
 	/**
 	 * @see IIndex#FIND_DECLARATIONS_DEFINITIONS
 	 */
@@ -55,7 +55,7 @@ public interface IIndexFragment {
 	/**
 	 * @see IIndex#FIND_ALL_OCCURRENCES
 	 */
-	final int FIND_ALL_OCCURRENCES = 		  IIndex.FIND_ALL_OCCURRENCES;
+	final int FIND_ALL_OCCURRENCES = IIndex.FIND_ALL_OCCURRENCES;
 
 	/**
 	 * Property key for the fragment ID. The fragment ID should uniquely identify the fragments
@@ -165,7 +165,6 @@ public interface IIndexFragment {
 	 * @throws CoreException
 	 */
 	IIndexFragmentBinding[] findMacroContainers(Pattern pattern, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
-
 
 	/**
 	 * Searches for all bindings with qualified names that seen as an array of simple names equals

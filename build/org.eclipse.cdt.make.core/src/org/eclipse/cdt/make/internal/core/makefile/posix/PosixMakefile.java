@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Wind River Systems - Bug 338936
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.posix;
 
@@ -117,111 +118,115 @@ public class PosixMakefile extends AbstractMakefile {
 
 		setFileURI(fileURI);
 
-		while ((line = reader.readLine()) != null) {
-			startLine = endLine + 1;
-			endLine = reader.getLineNumber();
+		try {
+			while ((line = reader.readLine()) != null) {
+				startLine = endLine + 1;
+				endLine = reader.getLineNumber();
 
-			// 1- Try command first, since we can not strip '#' in command line
-			if (PosixMakefileUtil.isCommand(line)) {
-				Command cmd = new Command(this, line);
-				cmd.setLines(startLine, endLine);
-				// The command is added to the rules
-				if (rules != null) {
-					for (int i = 0; i < rules.length; i++) {
-						rules[i].addDirective(cmd);
-						rules[i].setEndLine(endLine);
+				// 1- Try command first, since we can not strip '#' in command line
+				if (PosixMakefileUtil.isCommand(line)) {
+					Command cmd = new Command(this, line);
+					cmd.setLines(startLine, endLine);
+					// The command is added to the rules
+					if (rules != null) {
+						for (int i = 0; i < rules.length; i++) {
+							rules[i].addDirective(cmd);
+							rules[i].setEndLine(endLine);
+						}
+						continue;
 					}
-					continue;
+					// If we have no rules for the command,
+					// give the other directives a chance by falling through
 				}
-				// If we have no rules for the command,
-				// give the other directives a chance by falling through
-			}
 
-			// 2- Strip away any comments.
-			int pound = Util.indexOfComment(line);
-			if (pound != -1) {
-				Comment cmt = new Comment(this, line.substring(pound + 1));
-				cmt.setLines(startLine, endLine);
-				if (rules != null) {
-					for (int i = 0; i < rules.length; i++) {
-						rules[i].addDirective(cmt);
-						rules[i].setEndLine(endLine);
+				// 2- Strip away any comments.
+				int pound = Util.indexOfComment(line);
+				if (pound != -1) {
+					Comment cmt = new Comment(this, line.substring(pound + 1));
+					cmt.setLines(startLine, endLine);
+					if (rules != null) {
+						for (int i = 0; i < rules.length; i++) {
+							rules[i].addDirective(cmt);
+							rules[i].setEndLine(endLine);
+						}
+					} else {
+						addDirective(cmt);
 					}
-				} else {
-					addDirective(cmt);
+					line = line.substring(0, pound);
+					// If all we have left are spaces continue
+					if (Util.isEmptyLine(line)) {
+						continue;
+					}
+					// The rest of the line maybe a valid directive.
+					// keep on trying by falling through.
 				}
-				line = line.substring(0, pound);
-				// If all we have left are spaces continue
+
+				// 3- Empty lines ?
 				if (Util.isEmptyLine(line)) {
+					Directive empty =  new EmptyLine(this);
+					empty.setLines(startLine, endLine);
+					if (rules != null) {
+						for (int i = 0; i < rules.length; i++) {
+							rules[i].addDirective(empty);
+							rules[i].setEndLine(endLine);
+						}
+					} else {
+						addDirective(empty);
+					}
 					continue;
 				}
-				// The rest of the line maybe a valid directive.
-				// keep on trying by falling through.
-			}
 
-			// 3- Empty lines ?
-			if (Util.isEmptyLine(line)) {
-				Directive empty =  new EmptyLine(this);
-				empty.setLines(startLine, endLine);
-				if (rules != null) {
-					for (int i = 0; i < rules.length; i++) {
-						rules[i].addDirective(empty);
-						rules[i].setEndLine(endLine);
-					}
-				} else {
-					addDirective(empty);
+				// 4- reset the rules to null
+				// The first non empty line that does not begin with a <TAB> or '#'
+				// shall begin a new entry.
+				rules = null;
+
+				// 5- Check for the special rules.
+				SpecialRule special = processSpecialRule(line);
+				if (special != null) {
+					rules = new Rule[] { special };
+					special.setLines(startLine, endLine);
+					addDirective(special);
+					continue;
 				}
-				continue;
-			}
 
-			// 4- reset the rules to null
-			// The first non empty line that does not begin with a <TAB> or '#'
-			// shall begin a new entry.
-			rules = null;
+				// 6- Check for inference rule.
+				if (PosixMakefileUtil.isInferenceRule(line)) {
+					InferenceRule irule = parseInferenceRule(line);
+					irule.setLines(startLine, endLine);
+					addDirective(irule);
+					rules = new Rule[]{irule};
+					continue;
+				}
 
-			// 5- Check for the special rules.
-			SpecialRule special = processSpecialRule(line);
-			if (special != null) {
-				rules = new Rule[] { special };
-				special.setLines(startLine, endLine);
-				addDirective(special);
-				continue;
-			}
+				// 7- Macro Definiton ?
+				if (PosixMakefileUtil.isMacroDefinition(line)) {
+					Directive stmt = parseMacroDefinition(line);
+					stmt.setLines(startLine, endLine);
+					addDirective(stmt);
+					continue;
+				}
 
-			// 6- Check for inference rule.
-			if (PosixMakefileUtil.isInferenceRule(line)) {
-				InferenceRule irule = parseInferenceRule(line);
-				irule.setLines(startLine, endLine);
-				addDirective(irule);
-				rules = new Rule[]{irule};
-				continue;
-			}
+				// 8- Target Rule ?
+				if (PosixMakefileUtil.isTargetRule(line)) {
+					TargetRule[] trules = parseTargetRule(line);
+					for (int i = 0; i < trules.length; i++) {
+						trules[i].setLines(startLine, endLine);
+						addDirective(trules[i]);
+					}
+					rules = trules;
+					continue;
+				}
 
-			// 7- Macro Definiton ?
-			if (PosixMakefileUtil.isMacroDefinition(line)) {
-				Directive stmt = parseMacroDefinition(line);
+				// XXX ?? Should not be here.
+				BadDirective stmt = new BadDirective(this, line);
 				stmt.setLines(startLine, endLine);
 				addDirective(stmt);
-				continue;
 			}
-
-			// 8- Target Rule ?
-			if (PosixMakefileUtil.isTargetRule(line)) {
-				TargetRule[] trules = parseTargetRule(line);
-				for (int i = 0; i < trules.length; i++) {
-					trules[i].setLines(startLine, endLine);
-					addDirective(trules[i]);
-				}
-				rules = trules;
-				continue;
-			}
-
-			// XXX ?? Should not be here.
-			BadDirective stmt = new BadDirective(this, line);
-			stmt.setLines(startLine, endLine);
-			addDirective(stmt);
+			setLines(1, endLine);
+		} finally {
+			reader.close();
 		}
-		setLines(1, endLine);
 	}
 
 	/* (non-Javadoc)

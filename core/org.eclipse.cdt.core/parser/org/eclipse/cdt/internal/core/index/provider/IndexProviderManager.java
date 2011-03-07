@@ -63,7 +63,7 @@ import java.util.Set;
  * @since 4.0
  */
 public final class IndexProviderManager implements IElementChangedListener {
-	private static final String ELEMENT_RO_PDOMPROVIDER= "ReadOnlyPDOMProvider"; //$NON-NLS-1$
+	private static final String ELEMENT_RO_PDOM_PROVIDER= "ReadOnlyPDOMProvider"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
 
 	private IIndexFragmentProvider[] allProviders;
@@ -96,26 +96,22 @@ public final class IndexProviderManager implements IElementChangedListener {
 	}
 
 	public void startup() {
-		List<IIndexProvider> providers = new ArrayList<IIndexProvider>();
+		List<IIndexFragmentProvider> providers = new ArrayList<IIndexFragmentProvider>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint indexProviders = registry.getExtensionPoint(CCorePlugin.INDEX_UNIQ_ID);
-		IExtension[] extensions = indexProviders.getExtensions();
-		for (int i= 0; i < extensions.length; i++) {
-			IExtension extension = extensions[i];
+		for (IExtension extension : indexProviders.getExtensions()) {
 			try {
-				IConfigurationElement[] ce = extension.getConfigurationElements();
-				for (int j= 0; j < ce.length; j++) {
-					if (ce[j].getName().equals(ELEMENT_RO_PDOMPROVIDER)) {
-						IIndexProvider provider = (IIndexProvider) ce[j].createExecutableExtension(ATTRIBUTE_CLASS);
+				for (IConfigurationElement element : extension.getConfigurationElements()) {
+					if (ELEMENT_RO_PDOM_PROVIDER.equals(element.getName())) {
+						Object provider = element.createExecutableExtension(ATTRIBUTE_CLASS);
 
 						if (provider instanceof IReadOnlyPDOMProvider) {
-							provider = new ReadOnlyPDOMProviderBridge((IReadOnlyPDOMProvider) provider);
-							providers.add(provider);
+							providers.add(new ReadOnlyPDOMProviderBridge((IReadOnlyPDOMProvider) provider));
 						} else {
 							CCorePlugin.log(NLS.bind(Messages.IndexProviderManager_0,
 									extension.getContributor().getName()));
 						}
-					}
+                    }
 				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -138,13 +134,13 @@ public final class IndexProviderManager implements IElementChangedListener {
 		Map<String, IIndexFragment> id2fragment = new HashMap<String, IIndexFragment>();
 
 		IProject project= config.getProjectDescription().getProject();
-		for (int i= 0; i < allProviders.length; i++) {
+		for (IIndexFragmentProvider provider : allProviders) {
 			try {
-				if (providesForProject(allProviders[i], project)) {
-					IIndexFragment[] fragments= allProviders[i].getIndexFragments(config);
-					for (int j= 0; j < fragments.length; j++) {
+				if (providesForProject(provider, project)) {
+					IIndexFragment[] fragments= provider.getIndexFragments(config);
+					for (IIndexFragment fragment : fragments) {
 						try {
-							processCandidate(id2fragment, fragments[j]);
+							processCandidate(id2fragment, fragment);
 						} catch (InterruptedException e) {
 							CCorePlugin.log(e); // continue with next candidate
 						} catch (CoreException e) {

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Abeer Bagul (Tensilica) - Updated error message (Bug 339048)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal;
 
@@ -122,9 +123,9 @@ public class GdbPlugin extends Plugin {
                 try {
                     launchShutdownQuery.get();
                 } catch (InterruptedException e) { 
-                    getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, "InterruptedException while shutting down PDA debugger launch " + gdbLaunch, e.getCause())); //$NON-NLS-1$
+                    getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, "InterruptedException while shutting down launch " + gdbLaunch, e.getCause())); //$NON-NLS-1$
                 } catch (ExecutionException e) {
-                    getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, "Exception while shutting down PDA debugger launch " + gdbLaunch, e.getCause())); //$NON-NLS-1$
+                    getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, "Exception while shutting down launch " + gdbLaunch, e.getCause())); //$NON-NLS-1$
                 }
             }
         }

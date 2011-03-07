@@ -9,7 +9,6 @@
  * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.dom.rewrite.util;
 
 import java.io.IOException;

@@ -861,8 +861,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 						}
 					}
 				}
-			}
-			catch (CoreException e) {
+			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
 		}
@@ -1023,10 +1022,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			ICElement[] children;
 			try {
 				children= getChildren();
-			} catch (CModelException exc) {
-				CCorePlugin.log(exc);
+			} catch (CModelException e) {
+				CCorePlugin.log(e);
 				return null;
 			}
+
 			switch (elementType) {
 			case ICElement.C_FUNCTION:
 			case ICElement.C_FUNCTION_DECLARATION:

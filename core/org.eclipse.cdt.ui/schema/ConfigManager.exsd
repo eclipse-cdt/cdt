@@ -54,7 +54,7 @@ project property pages,
                   Class which implements IConfigManager interface
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.ui.wizards.IConfigManager"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.ui.newui.IConfigManager"/>
                </appInfo>
             </annotation>
          </attribute>

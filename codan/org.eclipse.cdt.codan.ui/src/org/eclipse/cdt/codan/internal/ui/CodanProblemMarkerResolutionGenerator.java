@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.codan.core.model.ICodanProblemMarker;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
-import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
+import org.eclipse.cdt.codan.ui.ICodanMarkerResolution;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -72,8 +72,8 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 						continue;
 					}
 				}
-				if (res.res instanceof AbstractCodanCMarkerResolution) {
-					if (!((AbstractCodanCMarkerResolution) res.res).isApplicable(marker))
+				if (res.res instanceof ICodanMarkerResolution) {
+					if (!((ICodanMarkerResolution) res.res).isApplicable(marker))
 						continue;
 				}
 				list.add(res.res);

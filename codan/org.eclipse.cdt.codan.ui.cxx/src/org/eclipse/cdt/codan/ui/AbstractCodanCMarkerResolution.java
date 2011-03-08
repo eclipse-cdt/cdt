@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -43,7 +42,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * 
  * @since 1.1
  */
-public abstract class AbstractCodanCMarkerResolution implements IMarkerResolution {
+public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerResolution {
 	private boolean codanProblem;
 
 	/**

@@ -81,7 +81,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	 * Returns problem arguments by index (set by checker when reporting
 	 * problem)
 	 * 
-	 * @since 1.1
+	 * @since 2.0
 	 */
 	public String getProblemArgument(int index) {
 		return CodanProblemMarker.getProblemArgument(marker, index);
@@ -93,7 +93,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	 * 
 	 * @param marker - problem marker
 	 * @return problem arguments, can not be null. Can be 0 sized array.
-	 * @since 1.1
+	 * @since 2.0
 	 */
 	public String[] getProblemArguments() {
 		return CodanProblemMarker.getProblemArguments(marker);
@@ -120,7 +120,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	}
 
 	/**
-	 * @since 1.1
+	 * @since 2.0
 	 */
 	protected String getLocation() {
 		return CodanEditorUtility.getLocation(marker);

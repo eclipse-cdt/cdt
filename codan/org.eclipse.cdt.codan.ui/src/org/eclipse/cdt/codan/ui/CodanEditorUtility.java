@@ -10,21 +10,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.ui;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import java.io.File;
+
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -75,14 +78,30 @@ public class CodanEditorUtility {
 		}
 	}
 
-	@SuppressWarnings("restriction")
 	public static IEditorPart openInEditor(String file, IResource markerResource) throws PartInitException {
-		IPath pfile = new Path(file);
-		ICElement element = null;
-		if (markerResource != null)
-			element = CoreModel.getDefault().create(markerResource);
-		IEditorPart part = EditorUtility.openInEditor(pfile, element);
-		return part;
+		//		ICElement element = null;
+		//		if (markerResource != null)
+		//			element = CoreModel.getDefault().create(markerResource);
+		IFile efile = null;
+		if (markerResource instanceof IFile)
+			efile = (IFile) markerResource;
+		if (efile != null) {
+			IWorkbenchPage page = getActivePage();
+			IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file);
+			IEditorPart part = page.openEditor(new FileEditorInput(efile), desc.getId());
+			return part;
+		}
+		File fileToOpen = new File(file);
+		if (fileToOpen.exists() && fileToOpen.isFile()) {
+			IFileStore fileStore = EFS.getLocalFileSystem().getStore(fileToOpen.toURI());
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			try {
+				return IDE.openEditorOnFileStore(page, fileStore);
+			} catch (PartInitException e) {
+				//Put your exception handler here if you wish to
+			}
+		}
+		return null;
 	}
 
 	public static IEditorPart openInEditor(IMarker marker) throws PartInitException {
@@ -105,7 +124,7 @@ public class CodanEditorUtility {
 	/**
 	 * @param marker
 	 * @return
-	 * @since 1.1
+	 * @since 2.0
 	 */
 	public static String getLocation(IMarker marker) {
 		String loc = marker.getResource().getFullPath().toPortableString();
@@ -116,26 +135,36 @@ public class CodanEditorUtility {
 		}
 		return loc + ":" + line; //$NON-NLS-1$
 	}
-	
+
 	/**
-	 * @since 1.1
+	 * @since 2.0
 	 */
-	public static boolean isResourceOpenInEditor(IResource resource,
-			IEditorPart editor) {
-		if (editor == null) return false;
+	public static boolean isResourceOpenInEditor(IResource resource, IEditorPart editor) {
+		if (editor == null)
+			return false;
 		IResource realResource = ResourceUtil.getResource(editor.getEditorInput());
 		return resource.equals(realResource);
 	}
-	
+
 	/**
-	 * @since 1.1
+	 * @since 2.0
 	 */
 	public static IEditorPart getActiveEditor() {
-		IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (activeWorkbenchWindow==null) return null;
-		IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-		if (activePage==null) return null;
+		IWorkbenchPage activePage = getActivePage();
+		if (activePage == null)
+			return null;
 		IEditorPart e = activePage.getActiveEditor();
 		return e;
+	}
+
+	/**
+	 * @return
+	 */
+	private static IWorkbenchPage getActivePage() {
+		IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (activeWorkbenchWindow == null)
+			return null;
+		IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+		return activePage;
 	}
 }

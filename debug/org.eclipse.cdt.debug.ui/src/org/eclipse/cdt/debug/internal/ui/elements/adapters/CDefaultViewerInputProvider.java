@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 CodeSourcery and others.
+ * Copyright (c) 2010, 2011 CodeSourcery and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,14 @@
  *
  * Contributors:
  * CodeSourcery - Initial API and implementation
+ * Wind River Systems - flexible hierarchy Signals view (bug 338908)
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.internal.ui.elements.adapters;
 
 import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.internal.ui.CRegisterManagerProxies;
+import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.elements.adapters.DefaultViewerInputProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -32,6 +33,10 @@ public class CDefaultViewerInputProvider extends DefaultViewerInputProvider impl
             ICDebugTarget target = (ICDebugTarget)((ICDebugElement)source).getDebugTarget();
             return CRegisterManagerProxies.getInstance().getRegisterManagerProxy( target );
         }
+        if ( ICDebugUIConstants.ID_SIGNALS_VIEW.equals( context.getId() ) && source instanceof ICDebugElement ) {
+            ICDebugTarget target = (ICDebugTarget)((ICDebugElement)source).getDebugTarget();
+            return target;
+        }
         return super.getViewerInput( source, context, update );
     }
 
@@ -41,6 +46,8 @@ public class CDefaultViewerInputProvider extends DefaultViewerInputProvider impl
     @Override
     protected boolean supportsContextId( String id ) {
         if ( IDebugUIConstants.ID_REGISTER_VIEW.equals( id ) )
+            return true;
+        if ( ICDebugUIConstants.ID_SIGNALS_VIEW.equals( id ) )
             return true;
         return super.supportsContextId( id );
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,13 @@
  * IBM Corporation
  * ARM Limited - https://bugs.eclipse.org/bugs/show_bug.cgi?id=186981
  * Wind River Systems - adapted to work with platform Modules view (bug 210558)
+ * Wind River Systems - flexible hierarchy Signals view (bug 338908)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.elements.adapters; 
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextProvider;
+import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
@@ -60,6 +62,7 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
     private static IViewerInputProvider fgDefaultViewerInputProvider = new CDefaultViewerInputProvider();
     private static IViewerInputProvider fgStackFrameViewerInputProvider = new CStackFrameViewerInputProvider();
     private static IColumnPresentationFactory fgRegistersViewColumnPresentationFactory = new RegistersViewColumnPresentationFactory();
+    private static IColumnPresentationFactory fgDefaultViewColumnPresentationFactory = new DefaultViewColumnPresentationFactory();
     private static IElementMementoProvider fgRegisterManagerProxyMementoProvider = new CRegisterManagerProxyMementoProvider();
     
 	/* (non-Javadoc)
@@ -84,8 +87,8 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
                 return fgCRegisterManagerContentProvider;
             }
             if ( adaptableObject instanceof ICModule || 
-                    adaptableObject instanceof ICElement ) {
-                   return fgModuleContentProvider;
+            		adaptableObject instanceof ICElement ) {
+            	return fgModuleContentProvider;
             }
 		}
 		if ( adapterType.equals( IModelProxyFactory.class ) ) {
@@ -158,6 +161,8 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
         if ( adapterType.equals( IColumnPresentationFactory.class ) ) {
             if ( adaptableObject instanceof CRegisterManagerProxy ) {
                 return fgRegistersViewColumnPresentationFactory;
+            } else if (adaptableObject instanceof ICDebugElement) {
+            	return fgDefaultViewColumnPresentationFactory;
             }
         }
     	return null;

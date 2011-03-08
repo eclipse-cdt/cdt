@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems and others.
+ * Copyright (c) 2008, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,13 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Wind River Systems - flexible hierarchy Signals view (bug 338908)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.elements.adapters;
 
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleContentProvider;
+import org.eclipse.cdt.debug.internal.ui.views.signals.SignalsContentProvider;
+import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.debug.internal.ui.model.elements.DebugTargetContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
@@ -24,12 +27,16 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * implementation.
  */
 public class CDebugTargetContentProvider extends DebugTargetContentProvider {
-    private ModuleContentProvider fModuleContentProvider = new ModuleContentProvider();
+    private final ModuleContentProvider fModuleContentProvider = new ModuleContentProvider();
+    private final SignalsContentProvider fSignalsContentProvider = new SignalsContentProvider();
     
     @Override
     public void update(IChildrenCountUpdate[] updates) {
-        if (updates[0].getPresentationContext().getId().equals(IDebugUIConstants.ID_MODULE_VIEW)) {
+        String id = updates[0].getPresentationContext().getId();
+		if (IDebugUIConstants.ID_MODULE_VIEW.equals(id)) {
             fModuleContentProvider.update(updates);
+		} else if (ICDebugUIConstants.ID_SIGNALS_VIEW.equals(id)) {
+			fSignalsContentProvider.update(updates);
         } else {
             super.update(updates);
         }
@@ -37,8 +44,11 @@ public class CDebugTargetContentProvider extends DebugTargetContentProvider {
 
     @Override
     public void update(IHasChildrenUpdate[] updates) {
-        if (updates[0].getPresentationContext().getId().equals(IDebugUIConstants.ID_MODULE_VIEW)) {
+        String id = updates[0].getPresentationContext().getId();
+		if (IDebugUIConstants.ID_MODULE_VIEW.equals(id)) {
             fModuleContentProvider.update(updates);
+		} else if (ICDebugUIConstants.ID_SIGNALS_VIEW.equals(id)) {
+			fSignalsContentProvider.update(updates);
         } else {
             super.update(updates);
         }
@@ -46,8 +56,11 @@ public class CDebugTargetContentProvider extends DebugTargetContentProvider {
 
     @Override
     public void update(IChildrenUpdate[] updates) {
-        if (updates[0].getPresentationContext().getId().equals(IDebugUIConstants.ID_MODULE_VIEW)) {
+        String id = updates[0].getPresentationContext().getId();
+		if (IDebugUIConstants.ID_MODULE_VIEW.equals(id)) {
             fModuleContentProvider.update(updates);
+		} else if (ICDebugUIConstants.ID_SIGNALS_VIEW.equals(id)) {
+			fSignalsContentProvider.update(updates);
         } else {
             super.update(updates);
         }

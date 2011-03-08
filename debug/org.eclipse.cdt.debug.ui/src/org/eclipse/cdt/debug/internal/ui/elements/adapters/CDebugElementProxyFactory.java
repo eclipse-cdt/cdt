@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * QNX Software Systems - Initial API and implementation
  * IBM Corporation
  * Wind River Systems - adapted to work with platform Modules view (bug 210558)
+ * Wind River Systems - flexible hierarchy Signals view (bug 338908)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.elements.adapters; 
 
@@ -16,6 +17,7 @@ import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.core.model.DisassemblyRetrieval;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModulesViewModelProxy;
+import org.eclipse.cdt.debug.internal.ui.views.signals.SignalsViewModelProxy;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
@@ -28,6 +30,7 @@ public class CDebugElementProxyFactory extends DefaultModelProxyFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter#createModelProxy(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
+	@Override
 	public IModelProxy createModelProxy( Object element, IPresentationContext context ) {
         if ( IDebugUIConstants.ID_MODULE_VIEW.equals( context.getId() ) ) {
             IModuleRetrieval mr = null;
@@ -48,6 +51,11 @@ public class CDebugElementProxyFactory extends DefaultModelProxyFactory {
         else if ( ICDebugUIConstants.ID_DEFAULT_DISASSEMBLY_EDITOR.equals( context.getId() ) ) {
             if ( element instanceof DisassemblyRetrieval ) {
                 return new DisassemblyElementProxy( element );
+            }
+        }
+        else if ( ICDebugUIConstants.ID_SIGNALS_VIEW.equals( context.getId() ) ) {
+            if ( element instanceof ICDebugTarget ) {
+                return new SignalsViewModelProxy( element );
             }
         }
         return super.createModelProxy( element, context );

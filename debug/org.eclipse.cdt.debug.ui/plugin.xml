@@ -165,7 +165,7 @@
             name="%SignalsView.name"
             icon="icons/view16/signals_view.gif"
             category="org.eclipse.debug.ui"
-            class="org.eclipse.cdt.debug.internal.ui.views.signals.SignalsView"
+            class="org.eclipse.cdt.debug.internal.ui.views.signals.FlexibleSignalsView"
             id="org.eclipse.cdt.debug.ui.SignalsView">
       </view>
    </extension>
@@ -1365,9 +1365,8 @@
             class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
-         <adapter
-               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider">
-         </adapter>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider"/>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory"/>
       </factory>
       <factory
             adaptableType="org.eclipse.cdt.debug.core.model.ICThread"
@@ -1375,9 +1374,7 @@
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
-         <adapter
-               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider">
-         </adapter>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider"/>
       </factory>
       <factory
             adaptableType="org.eclipse.cdt.debug.core.model.ICStackFrame"
@@ -1385,12 +1382,8 @@
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
-         <adapter
-               type="org.eclipse.cdt.debug.ui.disassembly.IDocumentElementContentProvider">
-         </adapter>
-         <adapter
-               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider">
-         </adapter>
+         <adapter type="org.eclipse.cdt.debug.ui.disassembly.IDocumentElementContentProvider"/>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider"/>
       </factory>
       <factory
             adaptableType="org.eclipse.cdt.debug.core.model.ICModule"
@@ -1414,16 +1407,17 @@
                type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
          </adapter>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.cdt.core.model.ICElement"
-            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementLabelProviderFactory">
          <adapter
                type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
          </adapter>
       </factory>
       <factory
             adaptableType="org.eclipse.cdt.debug.core.model.ICVariable"
+            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementLabelProviderFactory">
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider"/>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.core.model.ICSignal"
             class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementLabelProviderFactory">
          <adapter
                type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">

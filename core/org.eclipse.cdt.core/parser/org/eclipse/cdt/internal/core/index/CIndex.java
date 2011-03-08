@@ -687,7 +687,7 @@ public class CIndex implements IIndex {
 		}
 		IIndexBinding[] compBinding = getCompositesFactory(ILinkage.CPP_LINKAGE_ID).getCompositeBindings(preresult);
 		IIndexScope[] result = new IIndexScope[compBinding.length];
-		for(int i = 0; i < result.length; i++) {
+		for (int i = 0; i < result.length; i++) {
 			result[i]= (IIndexScope) ((ICPPNamespace) compBinding[i]).getNamespaceScope();
 		}
 		return result;

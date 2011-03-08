@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
  
@@ -234,10 +235,23 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 		}
 	}
 
-	protected String getWorkingDirectory( ILaunchConfiguration config ) throws CoreException {
-		File cwd = getProjectPath( config ).toFile();
-		CommandFactory factory = getCommandFactory( config );
-		return factory.getWorkingDirectory(cwd);
+	protected String getWorkingDirectory( ILaunchConfiguration config ) throws CoreException {		
+		IPath path = null;
+		String location = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
+
+		if (location != null) {
+			String expandedLocation = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(location);
+			if (expandedLocation.length() > 0) {
+				path = new Path(expandedLocation);
+			}
+		} 
+		
+		if(path == null){
+			path = getProjectPath( config );
+		}
+
+		CommandFactory factory = getCommandFactory( config ); 
+		return factory.getWorkingDirectory(path.toFile());
 	}
 
 	protected String getCommandFile( ILaunchConfiguration config ) throws CoreException {

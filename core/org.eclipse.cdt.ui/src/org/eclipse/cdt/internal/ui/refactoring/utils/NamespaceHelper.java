@@ -74,7 +74,7 @@ public class NamespaceHelper {
 	}
 	
 	private static boolean checkFileNameAndLocation(final IFile insertFile, final int offset, IASTNode namespace) {
-		boolean fileNameOk = namespace.getFileLocation().getFileName().endsWith(insertFile.getFullPath().toOSString());
+		boolean fileNameOk = namespace.getFileLocation().getFileName().endsWith(insertFile.getLocation().toOSString());
 		if(!fileNameOk) {
 			return false;
 		}

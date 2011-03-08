@@ -12,7 +12,7 @@
  *    Anton Leherbauer (Wind River Systems)
  *    Sergey Prigogin (Google)
  *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
 import java.util.ArrayList;
@@ -54,16 +54,16 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class CIndex implements IIndex {
 	/**
-	 * If this constant is set, for logical index objects with only 
+	 * If this constant is set, for logical index objects with only
 	 * one fragment, composite binding wrappers will not be used.
 	 */
 	private static final boolean SPECIALCASE_SINGLES = true;
-	
+
 	final private IIndexFragment[] fFragments;
 	final private int fPrimaryFragmentCount;
 	private int fReadLock;
 	private ICompositesFactory cppCF, cCF, fCF;
-	
+
 	public CIndex(IIndexFragment[] fragments, int primaryFragmentCount) {
 		fFragments= fragments;
 		fPrimaryFragmentCount= primaryFragmentCount;
@@ -90,14 +90,14 @@ public class CIndex implements IIndex {
 		}
 		return null;
 	}
-	
+
 	public IIndexBinding[] findBindings(Pattern pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		return findBindings(new Pattern[]{pattern}, isFullyQualified, filter, monitor);
 	}
-	
+
 	public IIndexBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
-			 return fFragments[0].findBindings(patterns, isFullyQualified, filter, monitor); 
+			 return fFragments[0].findBindings(patterns, isFullyQualified, filter, monitor);
 		} else {
 			List<IIndexBinding[]> result = new ArrayList<IIndexBinding[]>();
 			ILinkage[] linkages = Linkage.getIndexerLinkages();
@@ -124,7 +124,7 @@ public class CIndex implements IIndex {
 
 	public IIndexBinding[] findMacroContainers(Pattern pattern, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
-			 return fFragments[0].findMacroContainers(pattern, filter, monitor); 
+			 return fFragments[0].findMacroContainers(pattern, filter, monitor);
 		} else {
 			List<IIndexBinding[]> result = new ArrayList<IIndexBinding[]>();
 			ILinkage[] linkages = Linkage.getIndexerLinkages();
@@ -164,8 +164,8 @@ public class CIndex implements IIndex {
 				return multi.toArray(new IIndexName[multi.size()]);
 			}
 			binding= bindings[0];
-		} 
-		
+		}
+
 		int fragCount= 0;
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			final IIndexFragmentName[] names = fFragments[i].findNames(binding, flags);
@@ -251,7 +251,7 @@ public class CIndex implements IIndex {
 
 	public IIndexInclude[] findIncludedBy(IIndexFile file) throws CoreException {
 		return findIncludedBy(file, 0);
-	}	
+	}
 
 	public IIndexInclude[] findIncludedBy(IIndexFile file, int depth) throws CoreException {
 		List<IIndexInclude> result= new ArrayList<IIndexInclude>();
@@ -405,10 +405,10 @@ public class CIndex implements IIndex {
 			}
 			monitor.done();
 			return flatten(result);
-			
+
 		}
 	}
-	
+
 	public IIndexBinding adaptBinding(IBinding binding) {
 		try {
 			if (SPECIALCASE_SINGLES && fFragments.length == 1) {
@@ -434,7 +434,7 @@ public class CIndex implements IIndex {
 	/*
 	 * Non-API
 	 */
-	
+
 	private IIndexBinding[] flatten(List<IIndexBinding[]> bindingArrays) {
 		int size = 0;
 		for (int i = 0; i<bindingArrays.size(); i++) {
@@ -449,13 +449,13 @@ public class CIndex implements IIndex {
 		}
 		return result;
 	}
-	
+
 	public IIndexFragment[] getPrimaryFragments() {
 		IIndexFragment[] result= new IIndexFragment[fPrimaryFragmentCount];
 		System.arraycopy(fFragments, 0, result, 0, fPrimaryFragmentCount);
 		return result;
 	}
-		
+
 	public IIndexFragmentBinding[] findEquivalentBindings(IBinding binding) throws CoreException {
 		List<IIndexFragmentBinding> result = new ArrayList<IIndexFragmentBinding>();
 		for (IIndexFragment fFragment : fFragments) {
@@ -466,24 +466,24 @@ public class CIndex implements IIndex {
 		}
 		return result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
-	
+
 	private ICompositesFactory getCompositesFactory(int linkageID) {
 		switch (linkageID) {
 		case ILinkage.CPP_LINKAGE_ID:
 			if (cppCF == null) {
 				cppCF = new CPPCompositesFactory(new CIndex(fFragments, fFragments.length));
 			}
-			return cppCF; 
-		
+			return cppCF;
+
 		case ILinkage.C_LINKAGE_ID:
 			if (cCF == null) {
 				cCF = new CCompositesFactory(new CIndex(fFragments, fFragments.length));
 			}
 			return cCF;
-		
+
 		case ILinkage.FORTRAN_LINKAGE_ID:
 			if (fCF == null) {
-				fCF = new CCompositesFactory(new CIndex(fFragments, fFragments.length)); 
+				fCF = new CCompositesFactory(new CIndex(fFragments, fFragments.length));
 			}
 			// This is a placeholder - it will throw CompositingNotImplementedError
 			// if non-empty (non-c) results are returned by a fragment
@@ -491,7 +491,7 @@ public class CIndex implements IIndex {
 		}
 		throw new CompositingNotImplementedError();
 	}
-	
+
 	private IndexFilter retargetFilter(final ILinkage linkage, final IndexFilter filter) {
 		return new IndexFilter() {
 			@Override
@@ -504,7 +504,7 @@ public class CIndex implements IIndex {
 			}
 		};
 	}
-	
+
 	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
 			return fFragments[0].findBindingsForPrefix(prefix, filescope, filter, monitor);
@@ -559,7 +559,7 @@ public class CIndex implements IIndex {
 			return flatten(result);
 		}
 	}
-	
+
 	public IIndexBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
 			return fFragments[0].findBindings(name, filescope, filter, monitor);
@@ -590,7 +590,7 @@ public class CIndex implements IIndex {
 	public IIndexMacro[] findMacros(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		return findMacros(name, false, true, filter, monitor);
 	}
-	
+
 	public IIndexMacro[] findMacrosForPrefix(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		return findMacros(name, true, false, filter, monitor);
 	}
@@ -648,13 +648,13 @@ public class CIndex implements IIndex {
 			fFragment.resetCacheCounters();
 		}
 	}
-	
+
 	protected void clearResultCache() {
 		for (IIndexFragment frag : fFragments) {
 			frag.clearResultCache();
 		}
 	}
-	
+
 	public IIndexFileSet createFileSet() {
 		return new IndexFileSet();
 	}
@@ -675,19 +675,19 @@ public class CIndex implements IIndex {
 	public IIndexScope[] getInlineNamespaces() throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
 			return fFragments[0].getInlineNamespaces();
-		} 
+		}
 
 		IIndexFragmentBinding[][] preresult = new IIndexFragmentBinding[fPrimaryFragmentCount][];
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			IIndexScope[] raw = fFragments[i].getInlineNamespaces();
 			IIndexFragmentBinding[] arr = preresult[i] = new IIndexFragmentBinding[raw.length];
-			for (int j=0; j<raw.length; j++) {
+			for (int j = 0; j < raw.length; j++) {
 				arr[j]= (IIndexFragmentBinding) raw[j].getScopeBinding();
-			} 
+			}
 		}
 		IIndexBinding[] compBinding = getCompositesFactory(ILinkage.CPP_LINKAGE_ID).getCompositeBindings(preresult);
 		IIndexScope[] result = new IIndexScope[compBinding.length];
-		for(int i=0; i<result.length; i++) {
+		for(int i = 0; i < result.length; i++) {
 			result[i]= (IIndexScope) ((ICPPNamespace) compBinding[i]).getNamespaceScope();
 		}
 		return result;

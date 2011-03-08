@@ -45,7 +45,7 @@ public class ParametersComposite extends Composite {
 	private static final String PREF_ENABLED = "enabled"; //$NON-NLS-1$
 	private static final String PREF_SEVERITY = "severity"; //$NON-NLS-1$
 	private static final String PREF_MESSAGE = "message"; //$NON-NLS-1$
-	public static final String NO_CHANGE = "<do not change>";
+	public static final String NO_CHANGE = CodanUIMessages.ParametersComposite_DoNotChange;
 	private FieldEditorPreferencePage page;
 	private IProblem problem;
 	private PreferenceStore prefStore;

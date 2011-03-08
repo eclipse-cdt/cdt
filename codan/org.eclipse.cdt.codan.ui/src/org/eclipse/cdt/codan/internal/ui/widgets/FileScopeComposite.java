@@ -71,14 +71,14 @@ public class FileScopeComposite extends Composite {
 	public void save(IProblemWorkingCopy problem) {
 		if (page != null)
 			page.performOk();
-		savePrefStore();
+		savePrefStore(problem);
 	}
 
-	private void savePrefStore() {
+	private void savePrefStore(IProblemWorkingCopy problem) {
 		if (scope == null)
 			return;
 		String key = scope.getQualifiedKey();
-		((MapProblemPreference) problem.getPreference()).setChildValue(FileScopeProblemPreference.KEY, scope);
+		((MapProblemPreference) problem.getPreference()).addChildDescriptor(scope);
 		prefStore.setValue(key, scope.exportValue());
 	}
 

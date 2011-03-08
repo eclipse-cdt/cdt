@@ -40,6 +40,7 @@ public class CodanUIMessages extends NLS {
 	public static String CustomizeProblemDialog_Message;
 	public static String CustomizeProblemDialog_Title;
 	public static String Job_TitleRunningAnalysis;
+	public static String ParametersComposite_DoNotChange;
 	public static String ParametersComposite_IsEnabled;
 	public static String ParametersComposite_MessagePattern;
 	public static String ParametersComposite_NewValue;

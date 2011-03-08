@@ -66,18 +66,18 @@ public class LaunchingTabComposite extends Composite {
 		page.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
-	public void save(@SuppressWarnings("unused") IProblemWorkingCopy problem) {
+	public void save(IProblemWorkingCopy problem) {
 		if (page != null)
 			page.performOk();
-		savePrefStore();
+		savePrefStore(problem);
 	}
 
-	private void savePrefStore() {
+	private void savePrefStore(IProblemWorkingCopy problem) {
 		if (launchPref == null)
 			return;
 		saveToPref(launchPref, page.getPreferenceStore());
 		MapProblemPreference parentMap = (MapProblemPreference) problem.getPreference();
-		parentMap.addChildDescriptor(launchPref);
+		parentMap.addChildDescriptor((IProblemPreference) launchPref.clone());
 	}
 
 	/**

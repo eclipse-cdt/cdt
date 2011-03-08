@@ -53,14 +53,23 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 	 * @return
 	 */
 	private IProblem buildCombined(IProblem[] selectedProblems) {
+		if (selectedProblems.length == 0)
+			return null;
+		IProblem one = selectedProblems[0];
 		if (selectedProblems.length == 1) {
-			return selectedProblems[0];
+			return one;
 		}
-		CodanProblem problem = new CodanProblem("multi", getTitle());
+		CodanProblem problem = new CodanProblem("multi", getTitle()); //$NON-NLS-1$
 		problem.setMessagePattern(ParametersComposite.NO_CHANGE);
 		problem.setPreference(new RootProblemPreference());
-		problem.setSeverity(selectedProblems[0].getSeverity());
-		problem.setEnabled(selectedProblems[0].isEnabled());
+		problem.setSeverity(one.getSeverity());
+		problem.setEnabled(one.isEnabled());
+		if (one.getPreference() instanceof RootProblemPreference) {
+			RootProblemPreference onepref = (RootProblemPreference) one.getPreference();
+			RootProblemPreference pref = (RootProblemPreference) problem.getPreference();
+			pref.addChildDescriptor(onepref.getLaunchModePreference());
+			pref.addChildDescriptor(onepref.getScopePreference());
+		}
 		return problem;
 	}
 

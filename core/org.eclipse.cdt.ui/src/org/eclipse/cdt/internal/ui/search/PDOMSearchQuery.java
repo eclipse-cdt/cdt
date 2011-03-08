@@ -79,19 +79,19 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	public static final int FIND_DECLARATIONS_DEFINITIONS = FIND_DECLARATIONS | FIND_DEFINITIONS;
 	public static final int FIND_ALL_OCCURRENCES = FIND_DECLARATIONS | FIND_DEFINITIONS | FIND_REFERENCES;
 	
-	protected final static long LABEL_FLAGS= 
-		CElementLabels.M_PARAMETER_TYPES | 
-		CElementLabels.ALL_FULLY_QUALIFIED |
-		CElementLabels.TEMPLATE_ARGUMENTS;
+	protected static final long LABEL_FLAGS= 
+			CElementLabels.M_PARAMETER_TYPES | 
+			CElementLabels.ALL_FULLY_QUALIFIED |
+			CElementLabels.TEMPLATE_ARGUMENTS;
 
-
-	protected PDOMSearchResult result = new PDOMSearchResult(this);
+	protected PDOMSearchResult result;
 	protected int flags;
 	
 	protected ICElement[] scope;
 	protected ICProject[] projects;
 
 	protected PDOMSearchQuery(ICElement[] scope, int flags) {
+		result = new PDOMSearchResult(this);
 		this.flags = flags;
 		this.scope = scope;
 		
@@ -125,7 +125,8 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		}
 	}
 	
-	protected String labelForBinding(final IIndex index, IBinding binding, String defaultLabel) throws CoreException {
+	protected String labelForBinding(final IIndex index, IBinding binding, String defaultLabel)
+			throws CoreException {
 		IIndexName[] names= index.findNames(binding, IIndex.FIND_DECLARATIONS_DEFINITIONS);
 		if (names.length > 0) {
 			ICElementHandle elem= IndexUI.getCElementForName((ICProject) null, index, names[0]);
@@ -197,8 +198,8 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		return false; // i.e. keep it
 	}
 
-	private void createMatchesFromNames(IIndex index, Map<IIndexFile, Set<Match>> fileMatches, Collection<IIndexName> names, boolean isPolymorphicOnly)
-			throws CoreException {
+	private void createMatchesFromNames(IIndex index, Map<IIndexFile, Set<Match>> fileMatches,
+			Collection<IIndexName> names, boolean isPolymorphicOnly) throws CoreException {
 		if (names == null)
 			return;
 
@@ -221,7 +222,8 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 						enclosingElement = IndexUI.getCElementForName(preferred, index, enclosingDefinition);
 					}
 					boolean isWriteAccess = name.isWriteAccess();
-					matches.add(new Match(nodeOffset, nodeLength, isPolymorphicOnly, enclosingElement, isWriteAccess));
+					matches.add(new Match(nodeOffset, nodeLength, isPolymorphicOnly, enclosingElement,
+							isWriteAccess));
 				}
 			}
 
@@ -249,7 +251,8 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		return matches;
 	}
 
-	private void collectNames(IIndex index, Collection<IIndexName> names, Collection<IIndexName> polymorphicNames) throws CoreException {
+	private void collectNames(IIndex index, Collection<IIndexName> names,
+			Collection<IIndexName> polymorphicNames) throws CoreException {
 		// group all matched names by files
 		Map<IIndexFile, Set<Match>> fileMatches = new HashMap<IIndexFile, Set<Match>>();
 		createMatchesFromNames(index, fileMatches, names, false);
@@ -379,10 +382,12 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 							}
 							if (node != null) {
 								IASTFunctionDefinition definition = (IASTFunctionDefinition) node;
-								element = IndexUI.getCElementForName(getPreferredProject(), ast.getIndex(), definition.getDeclarator().getName());
+								element = IndexUI.getCElementForName(getPreferredProject(),
+										ast.getIndex(), definition.getDeclarator().getName());
 							}
 							boolean isWrite = CSearchUtil.isWriteOccurrence(name, binding);
-							localMatches.add(new Match(ref.getOffset(), ref.getLength(), false, element , isWrite));
+							localMatches.add(new Match(ref.getOffset(), ref.getLength(), false,
+									element, isWrite));
 							fileLocation = typeInfo.getIFL();
 						}
 					}

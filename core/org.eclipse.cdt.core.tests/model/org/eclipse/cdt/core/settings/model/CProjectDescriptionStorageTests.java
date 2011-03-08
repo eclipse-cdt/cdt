@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Broadcom Corporation and others.
+ * Copyright (c) 2008, 2011 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 /**
  * Testsuite for the project description storage. This
@@ -242,27 +243,32 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 	 * @throws Exception
 	 */
 	public void testReadOnlyProjectDescription() throws Exception {
-		makeDescriptionReadOnly();
-		IProject project = cProj.getProject();
-		ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project, true);
-		projDesc.getDefaultSettingConfiguration().getStorage("Temp_testing_storage", true);
-		CoreModel.getDefault().setProjectDescription(project, projDesc);
+		enableSetWritableWhenHeadless(true);
+		try {
+			makeDescriptionReadOnly();
+			IProject project = cProj.getProject();
+			ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project, true);
+			projDesc.getDefaultSettingConfiguration().getStorage("Temp_testing_storage", true);
+			CoreModel.getDefault().setProjectDescription(project, projDesc);
 
-		project.close(null);
-		project.open(null);
+			project.close(null);
+			project.open(null);
 
-		projDesc = CoreModel.getDefault().getProjectDescription(project, false);
-		assertNotNull(projDesc.getDefaultSettingConfiguration().getStorage("Temp_testing_storage", false));
-		projDesc = CoreModel.getDefault().getProjectDescription(project, true);
-		makeDescriptionReadOnly();
-		projDesc.getDefaultSettingConfiguration().removeStorage("Temp_testing_storage");
-		CoreModel.getDefault().setProjectDescription(project, projDesc);
+			projDesc = CoreModel.getDefault().getProjectDescription(project, false);
+			assertNotNull(projDesc.getDefaultSettingConfiguration().getStorage("Temp_testing_storage", false));
+			projDesc = CoreModel.getDefault().getProjectDescription(project, true);
+			makeDescriptionReadOnly();
+			projDesc.getDefaultSettingConfiguration().removeStorage("Temp_testing_storage");
+			CoreModel.getDefault().setProjectDescription(project, projDesc);
 
-		project.close(null);
-		project.open(null);
+			project.close(null);
+			project.open(null);
 
-		projDesc = CoreModel.getDefault().getProjectDescription(project, false);
-		assertNull(projDesc.getDefaultSettingConfiguration().getStorage("Temp_testing_storage", false));
+			projDesc = CoreModel.getDefault().getProjectDescription(project, false);
+			assertNull(projDesc.getDefaultSettingConfiguration().getStorage("Temp_testing_storage", false));
+		} finally {
+			enableSetWritableWhenHeadless(false);
+		}
 	}
 
 	/*
@@ -270,6 +276,14 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 	 * Helper methods for external modifications
 	 *
 	 */
+
+	/**
+	 * Enables/disables team UI preference whether validateEdit should
+	 * set files writable if no UI context has been provided.
+	 */
+	private void enableSetWritableWhenHeadless(boolean enable) {
+		InstanceScope.INSTANCE.getNode("org.eclipse.team.ui").putBoolean("org.eclipse.team.ui.validate_edit_with_no_context", enable);
+	}
 
 	/**
 	 * makes the project description (as stored by the XmlProjectDescriptionStorage &

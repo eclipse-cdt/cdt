@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Broadcom Corporation and others.
+ * Copyright (c) 2008, 2011 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,16 +45,17 @@ import org.eclipse.cdt.internal.core.settings.model.xml2.XmlProjectDescriptionSt
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Version;
@@ -373,7 +375,7 @@ public class CProjectDescriptionStorageManager {
 	 * Helper method to ensure that a resource is writable. This means: <br/>
 	 *  - If the resource doesn't exist, it can be created (its parent is made writable) <br/>
 	 *  - If the resource exists and its a file, it's made writable <br/>
-	 *  - If the resource exists and its a directory, it and its children
+	 *  - If the resource exists and its a directory, it and its (direct) children
 	 * 		are made writable
 	 * @param resource
 	 * @throws CoreException on failure
@@ -390,16 +392,32 @@ public class CProjectDescriptionStorageManager {
 			}
 		} else {
 			// If resource exists, ensure it and children are writable
-			resource.accept(new IResourceVisitor() {
-				public boolean visit(IResource resource) throws CoreException {
-					ResourceAttributes resAttr = resource.getResourceAttributes();
-					if (resAttr.isReadOnly()) {
-						resAttr.setReadOnly(false);
-						resource.setResourceAttributes(resAttr);
-					}
-					return true;
+			if (resource instanceof IFile) {
+				if (resource.getResourceAttributes().isReadOnly()) {
+				    IStatus result = resource.getWorkspace().validateEdit(new IFile[] { (IFile) resource }, null);
+				    if (!result.isOK())
+				        throw new CoreException(result);
 				}
-			});
+			} else if (resource instanceof IContainer) {
+				ResourceAttributes resAttr = resource.getResourceAttributes();
+				if (resAttr.isReadOnly()) {
+					resAttr.setReadOnly(false);
+					resource.setResourceAttributes(resAttr);
+				}
+				IResource[] members = ((IContainer) resource).members();
+				List<IFile> files = new ArrayList<IFile>(members.length);
+				for (IResource member : members) {
+					if (member instanceof IFile && member.getResourceAttributes().isReadOnly()) {
+						files.add((IFile) member);
+					}
+				}
+				if (files.size() > 0) {
+					IFile[] filesToValidate = files.toArray(new IFile[files.size()]);
+				    IStatus result = resource.getWorkspace().validateEdit(filesToValidate, null);
+				    if (!result.isOK())
+				        throw new CoreException(result);
+				}
+			}
 		}
 	}
 

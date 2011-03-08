@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,15 +38,23 @@ public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier i
 
 	@Override
 	public UPCASTElaboratedTypeSpecifier copy() {
-		IASTName name = getName();
-		UPCASTElaboratedTypeSpecifier copy = new UPCASTElaboratedTypeSpecifier(getKind(), name == null ? null : name.copy());
-		copy.referenceType = referenceType;
-		copy.sharedQualifier = sharedQualifier;
-		copy.setBlockSizeExpression(blockSizeExpression == null ? null : blockSizeExpression.copy());
-		copy.setOffsetAndLength(this);
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
+	public UPCASTElaboratedTypeSpecifier copy(CopyStyle style) {
+		IASTName name = getName();
+		UPCASTElaboratedTypeSpecifier copy = new UPCASTElaboratedTypeSpecifier(getKind(), name == null ? null : name.copy(style));
+		copy.referenceType = referenceType;
+		copy.sharedQualifier = sharedQualifier;
+		copy.setBlockSizeExpression(blockSizeExpression == null ? null : blockSizeExpression.copy(style));
+		copy.setOffsetAndLength(this);
+		if(style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public IASTExpression getBlockSizeExpression() {
 		return blockSizeExpression;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -34,9 +34,17 @@ public class UPCASTForallStatement extends CASTForStatement implements IUPCASTFo
 
 	@Override
 	public UPCASTForallStatement copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+	
+	@Override
+	public UPCASTForallStatement copy(CopyStyle style) {
 		UPCASTForallStatement copy = new UPCASTForallStatement();
-		copyForStatement(copy);
-		copy.setAffinityExpression(affinity == null ? null : affinity.copy());
+		copyForStatement(copy, style);
+		copy.setAffinityExpression(affinity == null ? null : affinity.copy(style));
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 	

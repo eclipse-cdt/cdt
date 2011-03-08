@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -33,14 +33,22 @@ public class UPCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier
 
 	@Override
 	public UPCASTSimpleDeclSpecifier copy() {
-		UPCASTSimpleDeclSpecifier copy = new UPCASTSimpleDeclSpecifier();
-		copySimpleDeclSpec(copy);
-		copy.referenceType = referenceType;
-		copy.sharedQualifier = sharedQualifier;
-		copy.setBlockSizeExpression(blockSizeExpression == null ? null : blockSizeExpression.copy());
-		return copy;
+		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
+	public UPCASTSimpleDeclSpecifier copy(CopyStyle style) {
+		UPCASTSimpleDeclSpecifier copy = new UPCASTSimpleDeclSpecifier();
+		copySimpleDeclSpec(copy, style);
+		copy.referenceType = referenceType;
+		copy.sharedQualifier = sharedQualifier;
+		copy.setBlockSizeExpression(blockSizeExpression == null ? null : blockSizeExpression.copy(style));
+		if(style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	public IASTExpression getBlockSizeExpression() {
 		return blockSizeExpression;
 	}

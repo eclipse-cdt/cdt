@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2010 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -31,8 +31,15 @@ public class UPCASTKeywordExpression extends ASTNode implements IUPCASTKeywordEx
 	}
 	
 	public UPCASTKeywordExpression copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+	
+	public UPCASTKeywordExpression copy(CopyStyle style) {
 		UPCASTKeywordExpression copy = new UPCASTKeywordExpression(keywordKind);
 		copy.setOffsetAndLength(this);
+		if(style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
 

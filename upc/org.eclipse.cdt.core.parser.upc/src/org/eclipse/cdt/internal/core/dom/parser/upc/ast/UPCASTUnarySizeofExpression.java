@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,14 +36,22 @@ public class UPCASTUnarySizeofExpression extends CASTUnaryExpression implements 
 
 	@Override
 	public UPCASTUnarySizeofExpression copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+	
+	@Override
+	public UPCASTUnarySizeofExpression copy(CopyStyle style) {
 		UPCASTUnarySizeofExpression copy = new UPCASTUnarySizeofExpression();
 		copy.setUPCSizeofOperator(upcSizeofOperator);
 		IASTExpression operand = getOperand();
-		copy.setOperand(operand == null ? null : operand.copy());
+		copy.setOperand(operand == null ? null : operand.copy(style));
 		copy.setOffsetAndLength(this);
+		if(style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
 		return copy;
 	}
-	
+
 	public int getUPCSizeofOperator() {
 		return upcSizeofOperator;
 	}

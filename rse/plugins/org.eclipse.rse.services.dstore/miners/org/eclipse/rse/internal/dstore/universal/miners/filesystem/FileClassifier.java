@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [251729][dstore] problems querying symbolic link folder
  * Noriaki Takatsu  (IBM)        - [256724] thread-level security is not established
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
+ * David McKnight   (IBM)        - [153635] [dstore-linux] dangling symbolic links are not classified properly
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -163,7 +164,8 @@ public class FileClassifier extends SecuredThread
 
         // determine if we are classifying virtual files
         // we are if the subject is an archive, virtual folder or a virtual file
-        if (objType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR) || objType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)
+        if (objType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR) || 
+        		objType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)
                 || objType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR))
         {
             _classifyVirtual = true;
@@ -191,28 +193,30 @@ public class FileClassifier extends SecuredThread
                 DataElement child = _subject.get(i);
                 if (child != null && !child.isDeleted())
                 {
-                if (child.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR)
-                        || child.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)
-                        || child.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR))
-                {
-                    String name = child.getName();
-                    String properties = child.getSource();
-
-                    // if this file has already been classified
-                    // ignore it
-                    String[] tokens = properties.split("\\" + IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
-
-                    if (tokens.length < 12)
-                    {
-                        putElement(name, child);
-                    }
-                    /*
-                     * StringTokenizer tokenizer = new
-                     * StringTokenizer(properties,
-                     * IUniversalDataStoreConstants.TOKEN_SEPARATOR); if
-                     * (tokenizer.countTokens() < 12) { putElement(name, child); }
-                     */
-                }
+                	String type = child.getType();
+	                if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR)
+	                        || type.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)
+	                        || type.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR)
+	                        || type.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR))
+	                {
+	                    String name = child.getName();
+	                    String properties = child.getSource();
+	
+	                    // if this file has already been classified
+	                    // ignore it
+	                    String[] tokens = properties.split("\\" + IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
+	
+	                    if (tokens.length < 12)
+	                    {
+	                        putElement(name, child);
+	                    }
+	                    /*
+	                     * StringTokenizer tokenizer = new
+	                     * StringTokenizer(properties,
+	                     * IUniversalDataStoreConstants.TOKEN_SEPARATOR); if
+	                     * (tokenizer.countTokens() < 12) { putElement(name, child); }
+	                     */
+	                }
                 }
             }
 
@@ -791,10 +795,9 @@ public class FileClassifier extends SecuredThread
                                 	StringBuffer path = new StringBuffer(element.getValue());
                                 	path.append(File.separatorChar);
                                 	path.append(element.getName());
-                                    File refFile = new File(path.toString());
+                                   
 
                                     // canonical file path
-
                                     String canonicalPath = null;
 
                                     // if the file is a link resolve it
@@ -802,7 +805,7 @@ public class FileClassifier extends SecuredThread
                                     // to resolve links, ignore it
                                     if (type.equals(STR_SYMBOLIC_LINK) && !resolveLinks)
                                     {
-
+                                    	File refFile = new File(path.toString());
                                         // get canonical file path
                                         canonicalPath = refFile.getCanonicalPath();
 
@@ -843,6 +846,7 @@ public class FileClassifier extends SecuredThread
 
                                         if (type.equals(STR_SYMBOLIC_LINK))
                                         {
+                                        	File refFile = new File(path.toString());
                                             canonicalPath = refFile.getCanonicalPath();
                                         }
                                     }
@@ -868,8 +872,9 @@ public class FileClassifier extends SecuredThread
                                     String textToCheck = STR_SYMBOLIC_LINK;
 
                                     int linkIndex = currentProperties.lastIndexOf(textToCheck);
+                               //     int brokenLink = currentProperties.lastIndexOf(STR_BROKEN_SYMBOLIC_LINK);
 
-                                    if (linkIndex != -1)
+                                    if (linkIndex != -1)// && brokenLink == 0)
                                     {
                                         int cutOffIndex = linkIndex + textToCheck.length();
 
@@ -905,6 +910,7 @@ public class FileClassifier extends SecuredThread
                 }
             }
 
+        	_dataStore.trace("out of loop");
             if (reader != null)
                 reader.close();
             else
@@ -912,6 +918,7 @@ public class FileClassifier extends SecuredThread
             // we have found links
             if (hasLinks)
             {
+            	_dataStore.trace("has links");
                 // if we were told not to resolve them, but we are capable of
                 // doing so, then
                 // let's try again

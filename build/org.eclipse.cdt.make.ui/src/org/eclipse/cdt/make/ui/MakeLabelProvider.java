@@ -7,13 +7,16 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Andrew Gvozdev - some improvements such as adding source folders bug 339015
  *******************************************************************************/
 package org.eclipse.cdt.make.ui;
 
 
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -22,13 +25,15 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
+ * Label provider for Make Targets view and for Make Targets dialog from
+ * "Make Targets"->"Build..." in project context menu.
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MakeLabelProvider extends LabelProvider implements ITableLabelProvider {
 	private IPath pathPrefix;
-
-	WorkbenchLabelProvider fLableProvider = new WorkbenchLabelProvider();
+	private WorkbenchLabelProvider fLableProvider = new WorkbenchLabelProvider();
 
 	public MakeLabelProvider() {
 		this(null);
@@ -43,10 +48,14 @@ public class MakeLabelProvider extends LabelProvider implements ITableLabelProvi
 	@Override
 	public Image getImage(Object obj) {
 		Image image = null;
-		if (obj instanceof IMakeTarget) {
-			return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_BUILD_TARGET);
+		if (obj instanceof TargetSourceContainer) {
+			return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_SOURCE_ROOT);
 		} else if (obj instanceof IContainer) {
+			if (!(obj instanceof IProject) && MakeContentProvider.isSourceEntry((IContainer) obj))
+				return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_SOURCE_ROOT);
 			return fLableProvider.getImage(obj);
+		} else if (obj instanceof IMakeTarget) {
+			return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_BUILD_TARGET);
 		}
 		return image;
 	}
@@ -56,10 +65,16 @@ public class MakeLabelProvider extends LabelProvider implements ITableLabelProvi
 	 */
 	@Override
 	public String getText(Object obj) {
-		if (obj instanceof IMakeTarget) {
-			return ((IMakeTarget) obj).getName();
+		if (obj instanceof TargetSourceContainer) {
+			IContainer container = ((TargetSourceContainer) obj).getContainer();
+			IPath path = container.getFullPath();
+			// remove leading project name
+			path = path.removeFirstSegments(1);
+			return path.toString();
 		} else if (obj instanceof IContainer) {
 			return fLableProvider.getText(obj);
+		} else if (obj instanceof IMakeTarget) {
+			return ((IMakeTarget) obj).getName();
 		}
 		return ""; //$NON-NLS-1$
 	}

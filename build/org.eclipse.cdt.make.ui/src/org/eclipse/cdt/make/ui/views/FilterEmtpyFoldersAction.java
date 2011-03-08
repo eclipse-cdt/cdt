@@ -11,11 +11,15 @@
 
 package org.eclipse.cdt.make.ui.views;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
-import org.eclipse.core.resources.IFolder;
+import org.eclipse.cdt.make.ui.MakeContentProvider;
+import org.eclipse.cdt.make.ui.TargetSourceContainer;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
@@ -57,7 +61,7 @@ public class FilterEmtpyFoldersAction extends Action {
 			//Check the make targets of the specified container, and if they don't exist, run
 			//through the children looking for the first match that we can find that contains
 			//a make target.
-			private boolean hasMakeTargets(IFolder container) throws CoreException {
+			private boolean hasMakeTargets(IContainer container) throws CoreException {
 				IMakeTarget [] targets = MakeCorePlugin.getDefault().getTargetManager().getTargets(container);
 				if(targets != null && targets.length > 0) {
 					return true;
@@ -65,7 +69,7 @@ public class FilterEmtpyFoldersAction extends Action {
 
 				final boolean [] haveTargets = new boolean[1];
 				haveTargets[0] = false;
-
+				
 				IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
 					public boolean visit(IResourceProxy proxy) throws CoreException {
 						if(haveTargets[0]) {
@@ -74,7 +78,14 @@ public class FilterEmtpyFoldersAction extends Action {
 						if(proxy.getType() != IResource.FOLDER) {
 							return true;	//We only look at folders for content
 						}
-						IFolder folder = (IFolder) proxy.requestResource();
+						IContainer folder = (IContainer) proxy.requestResource();
+						if (CCorePlugin.showSourceRootsAtTopOfProject() && !(folder instanceof IProject)) {
+							boolean isSourceEntry = MakeContentProvider.isSourceEntry(folder);
+							if (isSourceEntry)
+								return false;
+						}
+
+						
 						IMakeTarget [] targets = MakeCorePlugin.getDefault().getTargetManager().getTargets(folder);
 						if(targets != null && targets.length > 0) {
 							haveTargets[0] = true;
@@ -88,13 +99,30 @@ public class FilterEmtpyFoldersAction extends Action {
 				return haveTargets[0];
 			}
 
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+			 */
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (isChecked() && element instanceof IFolder) {
-					try {
-						return hasMakeTargets((IFolder)element);
-					} catch(Exception ex) {
-						return false;
+				if (isChecked()) {
+					IContainer container = null;
+					if (element instanceof IContainer) {
+						container = (IContainer)element;
+						if (!(container instanceof IProject)) {
+							// under subfolders do not show source roots second time (when filtered)
+							if (CCorePlugin.showSourceRootsAtTopOfProject() && MakeContentProvider.isSourceEntry(container))
+								return false;
+						}
+					} else if (element instanceof TargetSourceContainer) {
+						container = ((TargetSourceContainer) element).getContainer();
+					}
+
+					if (container!=null) {
+						try {
+							return hasMakeTargets(container);
+						} catch(Exception ex) {
+							return false;
+						}
 					}
 				}
 				return true;
@@ -102,6 +130,9 @@ public class FilterEmtpyFoldersAction extends Action {
 		});
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
 	@Override
 	public void run() {
 		fViewer.refresh();

@@ -15,6 +15,7 @@ import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.dnd.MakeTargetDndUtil;
+import org.eclipse.cdt.make.ui.TargetSourceContainer;
 import org.eclipse.cdt.make.ui.dialogs.MakeTargetDialog;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
@@ -43,12 +44,20 @@ public class AddTargetAction extends SelectionListenerAction {
 	public void run() {
 		Object selection = getSelectedElement();
 		try {
-			if (selection instanceof IContainer) {
-				MakeTargetDialog dialog = new MakeTargetDialog(shell, (IContainer) selection);
-				dialog.open();
-			} else if (selection instanceof IMakeTarget) {
+			if (selection instanceof IMakeTarget) {
 				IMakeTarget makeTarget = (IMakeTarget)selection;
 				MakeTargetDndUtil.copyOneTarget(makeTarget, makeTarget.getContainer(), DND.DROP_COPY, shell, false);
+			} else {
+				IContainer container = null;
+				if (selection instanceof TargetSourceContainer) {
+					container = ((TargetSourceContainer) selection).getContainer();
+				} else if (selection instanceof IContainer) {
+					container = (IContainer) selection;
+				}
+				if (container!=null) {
+					MakeTargetDialog dialog = new MakeTargetDialog(shell, container);
+					dialog.open();
+				}
 			}
 		} catch (CoreException e) {
 			MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("AddTargetAction.exception.title"), //$NON-NLS-1$
@@ -65,7 +74,7 @@ public class AddTargetAction extends SelectionListenerAction {
 	private Object getSelectedElement() {
 		if (getStructuredSelection().size()==1) {
 			Object element = getStructuredSelection().getFirstElement();
-			if (element instanceof IContainer || element instanceof IMakeTarget) {
+			if (element instanceof IContainer || element instanceof TargetSourceContainer || element instanceof IMakeTarget) {
 				return element;
 			}
 		}

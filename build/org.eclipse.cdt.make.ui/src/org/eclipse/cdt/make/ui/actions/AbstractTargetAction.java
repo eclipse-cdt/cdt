@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.ui.TargetSourceContainer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -84,6 +85,8 @@ public abstract class AbstractTargetAction
 				} else {
 					fContainer = ((IResource)obj).getParent();
 				}
+			} else if (obj instanceof TargetSourceContainer) {
+				fContainer = ((TargetSourceContainer)obj).getContainer();
 			} else if (obj instanceof IMakeTarget) {
 				fContainer = ((IMakeTarget)obj).getContainer();
 			} else {

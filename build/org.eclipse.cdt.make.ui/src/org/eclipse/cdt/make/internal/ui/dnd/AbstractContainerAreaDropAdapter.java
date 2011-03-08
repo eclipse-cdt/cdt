@@ -12,6 +12,7 @@
 package org.eclipse.cdt.make.internal.ui.dnd;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
+import org.eclipse.cdt.make.ui.TargetSourceContainer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.swt.dnd.DND;
@@ -257,6 +258,9 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 			return ((IMakeTarget) dropTarget).getContainer();
 		} else if (dropTarget instanceof IContainer) {
 			return (IContainer) dropTarget;
+		} else if (dropTarget instanceof TargetSourceContainer) {
+			IContainer dropContainer = ((TargetSourceContainer) dropTarget).getContainer();
+			return dropContainer;
 		}
 		return null;
 	}

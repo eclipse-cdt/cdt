@@ -26,6 +26,7 @@ import org.eclipse.cdt.make.internal.ui.dnd.TextTransferDropTargetListener;
 import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.make.ui.MakeContentProvider;
 import org.eclipse.cdt.make.ui.MakeLabelProvider;
+import org.eclipse.cdt.make.ui.TargetSourceContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.IMenuListener;
@@ -64,11 +65,12 @@ import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 
 /**
+ * Implementation of Make Target View.
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MakeView extends ViewPart {
-
 	private static final String TARGET_BUILD_LAST_COMMAND = "org.eclipse.cdt.make.ui.targetBuildLastCommand"; //$NON-NLS-1$
 
 	private Clipboard clipboard;
@@ -129,13 +131,14 @@ public class MakeView extends ViewPart {
 		});
 
 		fViewer.setSorter(new ViewerSorter() {
-
 			@Override
 			public int category(Object element) {
-				if (element instanceof IResource) {
-					return 0;
+				if (element instanceof TargetSourceContainer) {
+					return 1;
+				} else if (element instanceof IResource) {
+					return 2;
 				}
-				return 1;
+				return 3;
 			}
 		});
 		fViewer.setInput(ResourcesPlugin.getWorkspace().getRoot());

@@ -18,6 +18,7 @@ import org.eclipse.cdt.make.internal.ui.dnd.MakeTargetTransfer;
 import org.eclipse.cdt.make.internal.ui.dnd.MakeTargetTransferData;
 import org.eclipse.cdt.make.internal.ui.dnd.MakeTargetTransferDropTargetListener;
 import org.eclipse.cdt.make.internal.ui.dnd.TextTransferDropTargetListener;
+import org.eclipse.cdt.make.ui.TargetSourceContainer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.Clipboard;
@@ -144,6 +145,10 @@ public class PasteTargetAction extends SelectionListenerAction {
 				}
 			}
 			return dropContainer;
+		}
+
+		if (first instanceof TargetSourceContainer) {
+			return ((TargetSourceContainer) first).getContainer();
 		}
 
 		return null;

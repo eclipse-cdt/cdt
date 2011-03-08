@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -20,6 +20,7 @@
  * David Dykstal (IBM) - [232130] meaningless label provided for filter references
  * David McKnight   (IBM)        - [244430] [regression] Incorrect behaviour for SystemSelectRemoteFolderAction
  * David McKnight   (IBM)        - [267061] resource dialog/form to allow custom host combo label
+ * David McKnight   (IBM)        - [339282] SystemResourceSelectionForm.selectionChanged() should check for null subsystem
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -534,9 +535,11 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 					setPathTextFromSelection(selectedObject);
 					
 					outputObjects = getSelections(selection);			
-					outputConnection = elementAdapter.getSubSystem(selectedObject).getHost();
-					
-				 	_history.put(outputConnection, previousSelection);
+					ISubSystem ss = elementAdapter.getSubSystem(selectedObject);
+					if (ss != null){
+						outputConnection = ss.getHost();				
+						_history.put(outputConnection, previousSelection);
+					}
 			  }
 		  }
 		  

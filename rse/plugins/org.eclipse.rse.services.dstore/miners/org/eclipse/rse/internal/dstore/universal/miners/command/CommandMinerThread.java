@@ -59,6 +59,7 @@ import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 import org.eclipse.rse.dstore.universal.miners.CommandMiner;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
+import org.eclipse.rse.dstore.universal.miners.UniversalServerUtilities;
 import org.eclipse.rse.internal.dstore.universal.miners.command.patterns.ParsedOutput;
 import org.eclipse.rse.internal.dstore.universal.miners.command.patterns.Patterns;
 
@@ -674,13 +675,18 @@ public class CommandMinerThread extends MinerThread
 			
 			
 			String origInput = input;
+			UniversalServerUtilities.logInfo(getName(), "shell input prior to char conversion="+input, _dataStore); //$NON-NLS-1$
+
 			if (_supportsCharConversion){
 				input = convertSpecialCharacters(input);
 			}
 			input.getBytes();
+			UniversalServerUtilities.logInfo(getName(), "shell input after char conversion="+input, _dataStore); //$NON-NLS-1$
+			
 			if (_isCsh && origInput.startsWith("export ")){ //$NON-NLS-1$
 				input = origInput.replaceAll("export ", "set ");  //$NON-NLS-1$//$NON-NLS-2$
-			}
+			}			
+			
 			try
 			{
 				BufferedWriter writer = _stdOutput;

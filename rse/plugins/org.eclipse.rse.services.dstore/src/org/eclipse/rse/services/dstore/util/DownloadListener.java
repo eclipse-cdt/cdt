@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [222448] [dstore] update DownloadListener to handle timeouts and nudge
  * David McKnight   (IBM)        - [225902] [dstore] use C_NOTIFICATION command to wake up the server
  * David McKnight   (IBM)        - [231126] [dstore] status monitor needs to reset WaitThreshold on nudge
+ * David McKnight   (IBM)        - [267478] [dstore] Invalid thread access thrown calling the DStoreFileService.download method
  ********************************************************************************/
 
 package org.eclipse.rse.services.dstore.util;
@@ -29,6 +30,7 @@ import java.io.File;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
@@ -149,8 +151,11 @@ public class DownloadListener implements IDomainListener
 			long delta = currentLength - _totalBytesNotified;
 			if (delta > 0)
 			{
-				//System.out.println(_status.getAttribute(DE.A_SOURCE));
-				_monitor.worked((int)delta);
+				try { // certain progress monitors can't do work when not on main thread
+					_monitor.worked((int)delta);
+				}
+				catch (Exception e){					
+				}
 
 				try
 				{

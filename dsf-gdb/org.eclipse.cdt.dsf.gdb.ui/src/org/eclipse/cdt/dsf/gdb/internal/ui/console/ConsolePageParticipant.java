@@ -157,7 +157,7 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 				if (launch != null) {
 		        	IProcess[] processes = launch.getProcesses();
 		        	if (processes != null && processes.length > 0) {
-		        		for (IProcess process : launch.getProcesses()) {
+		        		for (IProcess process : processes) {
 		        			if (process instanceof InferiorRuntimeProcess) {
 		        				String groupId = process.getAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR);
 

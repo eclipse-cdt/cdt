@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -11,9 +11,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import java.util.ArrayList;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
+import org.eclipse.cdt.core.dom.ast.IASTCopyLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 /**
@@ -89,14 +93,24 @@ public class NodeWriter {
 	}
 	
 	protected boolean hasTrailingComments(IASTNode node){
-		if(commentMap.getTrailingCommentsForNode(node).size()>0) {
+		if(getTrailingComments(node).size()>0) {
 			return true;
 		}
 		return false;
 	}
+
+	private ArrayList<IASTComment> getTrailingComments(IASTNode node) {
+		ArrayList<IASTComment> trailingComments = commentMap.getTrailingCommentsForNode(node);
+		IASTNodeLocation[] locs = node.getNodeLocations();
+		if (locs != null && locs.length > 0 && locs[0] instanceof IASTCopyLocation) {
+			IASTCopyLocation loc = (IASTCopyLocation) locs[0];
+			trailingComments.addAll(commentMap.getTrailingCommentsForNode(loc.getOriginalNode()));
+		}
+		return trailingComments;
+	}
 	
 	protected void writeTrailingComments(IASTNode node, boolean newLine) {
-		for(IASTComment comment : commentMap.getTrailingCommentsForNode(node)) {
+		for(IASTComment comment : getTrailingComments(node)) {
 			scribe.printSpace();
 			scribe.print(comment.getComment());
 			if(newLine) {
@@ -106,14 +120,24 @@ public class NodeWriter {
 	}
 
 	protected boolean hasFreestandingComments(IASTNode node){
-		if(commentMap.getFreestandingCommentsForNode(node).size()>0) {
+		if(getFreestandingComments(node).size()>0) {
 			return true;
 		}
 		return false;
 	}
 
+	private ArrayList<IASTComment> getFreestandingComments(IASTNode node) {
+		ArrayList<IASTComment> freestandingComments = commentMap.getFreestandingCommentsForNode(node);
+		IASTNodeLocation[] locs = node.getNodeLocations();
+		if (locs != null && locs.length > 0 && locs[0] instanceof IASTCopyLocation) {
+			IASTCopyLocation loc = (IASTCopyLocation) locs[0];
+			freestandingComments.addAll(commentMap.getFreestandingCommentsForNode(loc.getOriginalNode()));
+		}
+		return freestandingComments;
+	}
+
 	protected void writeFreeStandingComments(IASTNode node) {
-		for(IASTComment comment : commentMap.getFreestandingCommentsForNode(node)) {
+		for(IASTComment comment : getFreestandingComments(node)) {
 			scribe.print(comment.getComment());
 			scribe.newLine();
 		}

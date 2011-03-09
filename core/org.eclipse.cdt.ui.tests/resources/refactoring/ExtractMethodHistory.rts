@@ -178,6 +178,7 @@ void A::exp(int & i)
 int A::foo()
 {
 	int i = 2;
+	//comment
     exp(i);
 	return i;
 }
@@ -217,6 +218,7 @@ void exp(int & i)
 int main(){
 	
 	int i;
+	// Comment
     exp(i);
 	return i;
 }
@@ -249,7 +251,7 @@ void exp(int & i)
 int main(){
 	
 	int i;
-    exp(i);
+    exp(i); // Comment
 	return i;
 }
 

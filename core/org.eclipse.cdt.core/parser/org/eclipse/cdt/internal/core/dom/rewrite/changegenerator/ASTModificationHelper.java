@@ -15,14 +15,17 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ContainerNode;
+import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 public class ASTModificationHelper {
 
@@ -33,7 +36,7 @@ public class ASTModificationHelper {
 	}
 
 	
-	public <T extends IASTNode> T[] createModifiedChildArray(IASTNode parent, T[] unmodifiedChildren, Class<T> clazz){
+	public <T extends IASTNode> T[] createModifiedChildArray(IASTNode parent, T[] unmodifiedChildren, Class<T> clazz, NodeCommentMap commentMap){
 		ArrayList<T> modifiedChildren = new ArrayList<T>(Arrays.asList(unmodifiedChildren));
 
 		for(ASTModification parentModification : modificationsForNode(parent)){
@@ -78,6 +81,7 @@ public class ASTModificationHelper {
 					switch (childModification.getKind()) {
 					case REPLACE:
 						if (newNode != null) {
+							copyComments(newNode, currentChild, commentMap);
 							modifiedChildren.add(
 									modifiedChildren.indexOf(childModification.getTargetNode()),
 									newNode);
@@ -96,6 +100,33 @@ public class ASTModificationHelper {
 		return modifiedChildren.toArray(newArrayInstance(clazz, modifiedChildren.size()));
 	}
 
+	private void copyComments(IASTNode newNode, IASTNode oldNode, NodeCommentMap commentMap) {
+		// Attach all the comments that is attached to oldNode to newNode
+		ArrayList<IASTComment> leadingComments = commentMap.getLeadingCommentsForNode(oldNode);
+		for (IASTComment comment : leadingComments) {
+			commentMap.addLeadingCommentToNode(newNode, comment);
+		}
+		
+		ArrayList<IASTComment> trailingComments = commentMap.getTrailingCommentsForNode(oldNode);
+		for (IASTComment comment : trailingComments) {
+			commentMap.addTrailingCommentToNode(newNode, comment);
+		}
+		
+		ArrayList<IASTComment> freestandingComments = commentMap.getFreestandingCommentsForNode(oldNode);
+		for (IASTComment comment : freestandingComments) {
+			commentMap.addFreestandingCommentToNode(newNode, comment);
+		}
+		
+		// Detach comments from oldNode (to avoid memory leak)
+		HashMap<IASTNode, ArrayList<IASTComment>> leadingMap = commentMap.getLeadingMap();
+		leadingMap.remove(oldNode);
+		
+		HashMap<IASTNode, ArrayList<IASTComment>> trailingMap = commentMap.getTrailingMap();
+		trailingMap.remove(oldNode);
+		
+		HashMap<IASTNode, ArrayList<IASTComment>> freestandingMap = commentMap.getFreestandingMap();
+		freestandingMap.remove(oldNode);
+	}
 
 	private <T> void insertNode(Class<T> clazz, ArrayList<T> modifiedChildren,
 			ASTModification parentModification, IASTNode newNode) {

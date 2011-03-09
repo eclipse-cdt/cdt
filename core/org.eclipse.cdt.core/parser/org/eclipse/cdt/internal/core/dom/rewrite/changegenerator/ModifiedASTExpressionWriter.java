@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -37,7 +37,7 @@ public class ModifiedASTExpressionWriter extends ExpressionWriter {
 	@Override
 	protected void writeExpressions(IASTExpressionList expList, IASTExpression[] expressions) {
 		IASTExpression[] modifiedExpressions = modificationHelper.createModifiedChildArray(expList,
-				expressions, IASTExpression.class);
+				expressions, IASTExpression.class, commentMap);
 		super.writeExpressions(expList, modifiedExpressions);
 	}
 

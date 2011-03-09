@@ -87,7 +87,7 @@ int A::help()
 	return 42;
 }	
 
-//!ExtractFunctionRefactoringTest
+//!ExtractFunctionRefactoringTest with comment
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.h
 #ifndef A_H_
@@ -168,6 +168,7 @@ void A::exp(int & i)
 int A::foo()
 {
 	int i = 2;
+	//comment
     exp(i);
 	return i;
 }
@@ -205,6 +206,7 @@ void exp(int & i)
 int main(){
 	
 	int i;
+	// Comment
     exp(i);
 	return i;
 }
@@ -235,7 +237,7 @@ void exp(int & i)
 int main(){
 	
 	int i;
-    exp(i);
+    exp(i); // Comment
 	return i;
 }
 
@@ -2703,7 +2705,8 @@ int Test::exp()
 }
 
 int Test::calculateStuff() {
-    int result = exp();
+	// refactor these lines to a new method:
+	int result = exp();
 	return result;
 }
 
@@ -2860,6 +2863,7 @@ void A::exp(int & i)
 int A::foo()
 {
 	int i = 2;
+	//comment
     exp(i);
 	return i;
 }

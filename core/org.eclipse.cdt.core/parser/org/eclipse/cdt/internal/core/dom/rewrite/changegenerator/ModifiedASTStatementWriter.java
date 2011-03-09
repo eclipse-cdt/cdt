@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -41,6 +41,7 @@ public class ModifiedASTStatementWriter extends StatementWriter {
 
 	@Override
 	protected IASTStatement[] getNestedStatements(IASTCompoundStatement compoundStatement) {
-		return modificationHelper.createModifiedChildArray(compoundStatement, compoundStatement.getStatements(), IASTStatement.class);
+		return modificationHelper.createModifiedChildArray(compoundStatement,
+				compoundStatement.getStatements(), IASTStatement.class, commentMap);
 	}
 }

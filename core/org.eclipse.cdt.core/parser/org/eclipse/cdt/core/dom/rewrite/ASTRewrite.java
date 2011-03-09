@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.rewrite;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
@@ -17,49 +19,80 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
+import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTRewriteAnalyzer;
-import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
+import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
+import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.text.edits.TextEditGroup;
 
 /**
- * Infrastructure for modifying code by describing changes to AST nodes.
- * The AST rewriter collects descriptions of modifications to nodes and
- * translates these descriptions into text edits that can then be applied to
- * the original source. This is all done without actually modifying the 
- * original AST. The rewrite infrastructure tries to generate minimal
- * text changes, preserve existing comments and indentation, and follow code
- * formatter settings. 
+ * Infrastructure for modifying code by describing changes to AST nodes. The AST rewriter collects
+ * descriptions of modifications to nodes and translates these descriptions into text edits that can then be
+ * applied to the original source. This is all done without actually modifying the original AST. The rewrite
+ * infrastructure tries to generate minimal text changes, preserve existing comments and indentation, and
+ * follow code formatter settings. A {@link IASTComment} can be removed from or added to a node.
  * <p>
- * The initial implementation does not support nodes that implement 
- * {@link IASTPreprocessorStatement}, {@link IASTComment} or {@link IASTProblem}.
+ * The initial implementation does not support nodes that implement {@link IASTPreprocessorStatement} or
+ * {@link IASTProblem}.
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will
- * work or that it will remain the same. Please do not use this API without
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There
+ * is no guarantee that this API will work or that it will remain the same. Please do not use this API without
  * consulting with the CDT team.
  * </p>
+ * 
  * @since 5.0
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class ASTRewrite {
 	
 	/**
+	 * Defines the positions of the comment.
+	 * 
+	 * @since 5.3
+	 */
+	public enum CommentPosition{
+		
+		/**
+		 * Comments before a statement, declaration, or definition
+		 */
+		leading,
+		/**
+		 * Comments right after the AST node on the same line
+		 */
+		trailing,
+		/**
+		 * Comments before a closing brace such as they occur in namespace-, class- and method-definitions or
+		 * at the end of a file
+		 */
+		freestanding
+	}
+	
+	/**
 	 * Creates a rewriter for a translation unit.
 	 */
 	public static ASTRewrite create(IASTTranslationUnit node) {
-		return new ASTRewrite(node, new ASTModificationStore(), null);
+		NodeCommentMap commentMap = ASTCommenter.getCommentedNodeMap(node);
+		return new ASTRewrite(node, new ASTModificationStore(), null, commentMap);
 	}
 
 	private final IASTNode fRoot;
 	private final ASTModificationStore fModificationStore;
 	private final ASTModification fParentMod;
+	private final NodeCommentMap fCommentMap;
+	
+	private enum Operation{
+		insertBefore,
+		replace,
+		remove
+	}
 
-	private ASTRewrite(IASTNode root, ASTModificationStore modStore, ASTModification parentMod) {
+	private ASTRewrite(IASTNode root, ASTModificationStore modStore, ASTModification parentMod, NodeCommentMap commentMap) {
 		fRoot= root;
 		fModificationStore= modStore;
 		fParentMod= parentMod;
+		fCommentMap = commentMap;
 	}
 
 	/**
@@ -88,7 +121,7 @@ public final class ASTRewrite {
 	 */
 	public final void remove(IASTNode node, TextEditGroup editGroup) {
 		checkBelongsToAST(node);
-		checkSupportedNode(node);
+		checkSupportedNode(node, Operation.remove);
 		ASTModification mod= new ASTModification(ModificationKind.REPLACE, node, null, editGroup);
 		fModificationStore.storeModification(fParentMod, mod);
 	}
@@ -112,11 +145,11 @@ public final class ASTRewrite {
 			throw new IllegalArgumentException();
 		}
 		checkBelongsToAST(node);
-		checkSupportedNode(node);
-		checkSupportedNode(replacement);
+		checkSupportedNode(node, Operation.replace);
+		checkSupportedNode(replacement, Operation.replace);
 		ASTModification mod= new ASTModification(ModificationKind.REPLACE, node, replacement, editGroup);
 		fModificationStore.storeModification(fParentMod, mod);
-		return new ASTRewrite(replacement, fModificationStore, mod);
+		return new ASTRewrite(replacement, fModificationStore, mod, fCommentMap);
 	}
 
 	/**
@@ -140,9 +173,9 @@ public final class ASTRewrite {
 		if (newNode == null) {
 			throw new IllegalArgumentException();
 		}
-		checkSupportedNode(parent);
-		checkSupportedNode(insertionPoint);
-		checkSupportedNode(newNode);
+		checkSupportedNode(parent, Operation.insertBefore);
+		checkSupportedNode(insertionPoint, Operation.insertBefore);
+		checkSupportedNode(newNode, Operation.insertBefore);
 
 		ASTModification mod;
 		if (insertionPoint == null) {
@@ -155,7 +188,7 @@ public final class ASTRewrite {
 			mod= new ASTModification(ModificationKind.INSERT_BEFORE, insertionPoint, newNode, editGroup);
 		}
 		fModificationStore.storeModification(fParentMod, mod);
-		return new ASTRewrite(newNode, fModificationStore, mod);
+		return new ASTRewrite(newNode, fModificationStore, mod, fCommentMap);
 	}
 	
 	/**
@@ -175,7 +208,7 @@ public final class ASTRewrite {
 		if (!(fRoot instanceof IASTTranslationUnit)) {
 			throw new IllegalArgumentException("This API can only be used for the root rewrite object."); //$NON-NLS-1$
 		}
-		return ASTRewriteAnalyzer.rewriteAST((IASTTranslationUnit) fRoot, fModificationStore);
+		return ASTRewriteAnalyzer.rewriteAST((IASTTranslationUnit) fRoot, fModificationStore, fCommentMap);
 	}
 
 	private void checkBelongsToAST(IASTNode node) {
@@ -188,15 +221,63 @@ public final class ASTRewrite {
 		throw new IllegalArgumentException();
 	}
 	
-	private void checkSupportedNode(IASTNode node) {
+	private void checkSupportedNode(IASTNode node, Operation op) {
 		if (node instanceof IASTComment) {
-			throw new IllegalArgumentException("Rewriting comments is not yet supported"); //$NON-NLS-1$
+			if(op != Operation.remove) {
+				throw new IllegalArgumentException("Rewriting comments is not yet supported"); //$NON-NLS-1$
+			}
 		}
 		if (node instanceof IASTPreprocessorStatement) {
 			throw new IllegalArgumentException("Rewriting preprocessor statements is not yet supported"); //$NON-NLS-1$
 		}
 		if (node instanceof IASTProblem) {
-			throw new IllegalArgumentException("Rewriting problem nodes is supported"); //$NON-NLS-1$
+			throw new IllegalArgumentException("Rewriting problem nodes is not supported"); //$NON-NLS-1$
 		}		
+	}
+
+
+	/**
+	 * Assigns the comment to the node.
+	 * 
+	 * @param node
+	 * @param comment
+	 * @param pos
+	 * @since 5.3
+	 */
+	public void addComment(IASTNode node, IASTComment comment, CommentPosition pos) {
+		switch (pos) {
+		case leading:
+			fCommentMap.addLeadingCommentToNode(node, comment);
+			break;
+		case trailing:
+			fCommentMap.addTrailingCommentToNode(node, comment);
+			break;
+		case freestanding:
+			fCommentMap.addFreestandingCommentToNode(node, comment);
+			break;
+		}
+	}
+
+
+		/**
+	 * 
+	 * @param node
+	 *            the node
+	 * @param pos
+	 *            the position
+	 * @return All comments assigned to the node at this position
+	 * @since 5.3
+	 */
+	public List<IASTComment> getComments(IASTNode node, CommentPosition pos) {
+		switch (pos) {
+		case leading:
+			return fCommentMap.getLeadingCommentsForNode(node);
+		case trailing:
+			return fCommentMap.getTrailingCommentsForNode(node);
+		case freestanding:
+			return fCommentMap.getFreestandingCommentsForNode(node);
+
+		}
+		return fCommentMap.getLeadingCommentsForNode(node);
 	}
 }

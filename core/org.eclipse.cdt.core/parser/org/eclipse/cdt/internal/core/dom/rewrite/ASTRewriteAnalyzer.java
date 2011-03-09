@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.rewrite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.rewrite.changegenerator.ChangeGenerator;
+import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
@@ -19,8 +20,8 @@ import org.eclipse.ltk.core.refactoring.TextFileChange;
 public class ASTRewriteAnalyzer {
 	private static ICTextFileChangeFactory sFileChangeFactory;
 
-	public static Change rewriteAST(IASTTranslationUnit root, ASTModificationStore modificationStore) {
-		ChangeGenerator rewriter = new ChangeGenerator(modificationStore);
+	public static Change rewriteAST(IASTTranslationUnit root, ASTModificationStore modificationStore, NodeCommentMap commentMap) {
+		ChangeGenerator rewriter = new ChangeGenerator(modificationStore, commentMap);
 		rewriter.generateChange(root);
 		return rewriter.getChange();
 	}

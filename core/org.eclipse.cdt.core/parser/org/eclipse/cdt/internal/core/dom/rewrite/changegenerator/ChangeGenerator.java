@@ -37,7 +37,6 @@ import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTRewriteAnalyzer;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriter;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ProblemRuntimeException;
-import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileContentHelper;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
@@ -95,8 +94,9 @@ public class ChangeGenerator extends ASTVisitor {
 
 	}
 
-	public ChangeGenerator(ASTModificationStore modificationStore) {
+	public ChangeGenerator(ASTModificationStore modificationStore, NodeCommentMap commentMap) {
 		this.modificationStore = modificationStore;
+		this.commentMap = commentMap;
 
 	}
 
@@ -108,7 +108,6 @@ public class ChangeGenerator extends ASTVisitor {
 			throws ProblemRuntimeException {
 		change = new CompositeChange(Messages.ChangeGenerator_compositeChange);
 		initParentModList();
-		commentMap = ASTCommenter.getCommentedNodeMap(rootNode.getTranslationUnit());
 		rootNode.accept(pathProvider);
 		for (IFile currentFile : changes.keySet()) {
 

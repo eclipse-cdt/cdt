@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -30,6 +30,6 @@ public class ModifiedASTDeclSpecWriter extends DeclSpecWriter {
 	@Override
 	protected IASTDeclaration[] getMembers(IASTCompositeTypeSpecifier compDeclSpec) {
 		return modificationHelper.createModifiedChildArray(compDeclSpec, compDeclSpec.getMembers(),
-				IASTDeclaration.class);
+				IASTDeclaration.class, commentMap);
 	}
 }

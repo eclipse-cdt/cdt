@@ -9,16 +9,11 @@
  *     Symbian - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -28,7 +23,6 @@ import org.eclipse.core.runtime.CoreException;
  * Mirrors type-hierarchy from DOM interfaces
  */
 public abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding {
-
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE= PDOMBinding.RECORD_SIZE + 0;
 
@@ -40,21 +34,8 @@ public abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding 
 		super(linkage, parent, name);
 	}
 
-	final public char[][] getQualifiedNameCharArray() throws DOMException {
-		List<char[]> result = new ArrayList<char[]>();
-		try {
-			PDOMNode node = this;
-			while (node != null) {
-				if (node instanceof PDOMBinding && !(node instanceof ICPPTemplateInstance)) {
-					result.add(0, ((PDOMBinding) node).getName().toCharArray());
-				}
-				node = node.getParentNode();
-			}
-			return result.toArray(new char[result.size()][]);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
-		}
+	final public char[][] getQualifiedNameCharArray() {
+		return CPPVisitor.getQualifiedNameCharArray(this);
 	}
 
 	public final boolean isGloballyQualified() throws DOMException {

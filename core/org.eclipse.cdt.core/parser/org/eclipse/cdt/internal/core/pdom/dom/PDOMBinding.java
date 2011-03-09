@@ -6,16 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Andrew Ferguson (Symbian)
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -30,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBindingComparator;
@@ -40,7 +39,7 @@ import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Base class for bindings in the pdom.
+ * Base class for bindings in the PDOM.
  */
 public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding {
 	public static final PDOMBinding[] EMPTY_PDOMBINDING_ARRAY = {};
@@ -306,20 +305,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	}
 
 	final public String[] getQualifiedName() {
-		List<String> result = new ArrayList<String>();
-		try {
-			PDOMNode node = this;
-			while (node != null) {
-				if (node instanceof PDOMBinding) {							
-					result.add(0, ((PDOMBinding)node).getName());
-				}
-				node = node.getParentNode();
-			}
-			return result.toArray(new String[result.size()]);
-		} catch (CoreException ce) {
-			CCorePlugin.log(ce);
-			return null;
-		}
+		return CPPVisitor.getQualifiedName(this);
 	}
 	
 	final public boolean isFileLocal() throws CoreException {

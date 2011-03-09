@@ -90,6 +90,11 @@ public class LRCPPTests extends AST2CPPTests {
 	public void testBug332114a() throws Exception {}
 	@Override
 	public void testResolutionInTrailingReturnType_333256() throws Exception {}
+	@Override
+	public void testAutoTypeInRangeBasedFor_332883a() throws Exception {}
+	@Override
+	public void testAutoTypeInRangeBasedFor_332883b() throws Exception {}
+	
 	
 	//DeclType
 	@Override

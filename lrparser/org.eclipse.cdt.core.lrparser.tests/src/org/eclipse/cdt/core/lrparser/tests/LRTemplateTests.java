@@ -92,8 +92,12 @@ public class LRTemplateTests extends AST2TemplateTests {
 	public void testInlineNamespaces_305980() throws Exception {}
 	@Override
 	public void testFunctionParameterPacksInNonFinalPosition_324096() throws Exception {}
-	
-	
+	//decltype related
+	@Override
+	public void testFunctionCallOnDependentName_Bug337686() throws Exception {}
+	//variadic template 
+	@Override
+	public void testVariadicFunctionTemplate_Bug333389() throws Exception {}
 	
 	@Override
 	@SuppressWarnings("unused")

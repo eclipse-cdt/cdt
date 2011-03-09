@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * David Dykstal (IBM) - [232131] fix minor layout problems along with date formats
  * Martin Oberhuber (Wind River) - [235626] Convert dstore.security to MessageBundle format
+ * David McKnight (IBM)          - [210099] SSL Preference Page Restore Defaults Doesn't do anything
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.security.preference;
@@ -281,6 +282,7 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 	 */
 	private void initializeValues()
 	{
+		noDefaultAndApplyButton(); // restore defaults makes no sense here
 
 		String storePath = UniversalSecurityPlugin.getKeyStoreLocation();
 		String passw = UniversalSecurityPlugin.getKeyStorePassword();

@@ -81,6 +81,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	private IConfigurationElement valueHandlerElement = null;
 	private IManagedOptionValueHandler valueHandler = null;
 	private String valueHandlerExtraArgument;	
+	private String fieldEditorId;
+	private String fieldEditorExtraArgument;
 	private IConfigurationElement applicabilityCalculatorElement = null;
 	private IOptionApplicability applicabilityCalculator = null;
 	private BooleanExpressionApplicabilityCalculator booleanExpressionCalculator = null;
@@ -298,6 +300,13 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			valueHandlerExtraArgument = new String(option.valueHandlerExtraArgument);
 		}		
 		
+		if (option.fieldEditorId != null) {
+			fieldEditorId = option.fieldEditorId; 
+		}
+		if (option.fieldEditorExtraArgument != null) {
+			fieldEditorExtraArgument = new String(option.fieldEditorExtraArgument);
+		}		
+		
 		if(copyIds){
 			isDirty = option.isDirty;
 			rebuildState = option.rebuildState;
@@ -430,6 +439,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		// valueHandlerExtraArgument
 		valueHandlerExtraArgument = element.getAttribute(VALUE_HANDLER_EXTRA_ARGUMENT);
+
+		// fieldEditor and optional argument
+		fieldEditorId = element.getAttribute(FIELD_EDITOR_ID); 
+		fieldEditorExtraArgument = element.getAttribute(FIELD_EDITOR_EXTRA_ARGUMENT);
 	}
 	
 	/* (non-Javadoc)
@@ -2069,6 +2082,48 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
  				valueHandlerExtraArgument == null ||
  				!extraArgument.equals(valueHandlerExtraArgument)) {
 			valueHandlerExtraArgument = extraArgument;
+			if(!isExtensionElement()){
+				isDirty = true;
+				rebuildState = true;
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getFieldEditorId()
+	 */
+	public String getFieldEditorId() {
+		if (fieldEditorId == null) {
+			if (superClass != null) {
+				return ((Option)superClass).getFieldEditorId();
+			}
+		}
+		return fieldEditorId;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getFieldEditorExtraArgument()
+	 */
+	public String getFieldEditorExtraArgument() {
+		if (fieldEditorExtraArgument == null) {
+			if (superClass != null) {
+				return superClass.getFieldEditorExtraArgument();
+			} else {
+ 				return null;
+ 			}			
+		}
+		return fieldEditorExtraArgument;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setFieldEditorExtraArgument(java.lang.String)
+	 */
+	public void setFieldEditorExtraArgument(String extraArgument) {
+ 		if (extraArgument == null && fieldEditorExtraArgument == null) return;
+ 		if (extraArgument == null || 
+ 				fieldEditorExtraArgument == null ||
+ 				!extraArgument.equals(fieldEditorExtraArgument)) {
+			fieldEditorExtraArgument = extraArgument;
 			if(!isExtensionElement()){
 				isDirty = true;
 				rebuildState = true;

@@ -2,6 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
 
+     <extension-point id="buildDefinitionsUI" name="%buildDefinitionsUI.ep.name" schema="schema/buildDefinitionsUI.exsd"/>
      <extension-point id="newWizardPages" name="%extension-point.name" schema="schema/newWizardPages.exsd"/>
 
    <extension

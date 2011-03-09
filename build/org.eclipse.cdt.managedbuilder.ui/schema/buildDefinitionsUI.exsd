@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.managedbuilder.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.managedbuilder.ui" id="buildDefinitionsUI" name="Build Definitions UI Extensions"/>
+      </appInfo>
+      <documentation>
+         This extension point allows for the contribution of various UI extensions which can be referenced from the &lt;code&gt;org.eclipse.cdt.managedbuilder.core.buildDefinitions&lt;/code&gt; extensions.  Via this extension point, for example, the developer may contribute a custom JFace field-editor, which can then be referenced by its ID from an &lt;code&gt;&amp;lt;option&amp;gt;&lt;/code&gt; element of an &lt;code&gt;org.eclipse.cdt.managedbuilder.core.buildDefinitions&lt;/code&gt; extension.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="fieldEditor" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="fieldEditor">
+      <annotation>
+         <documentation>
+            This element can be used to contribute a custom JFace field-editor to represent a build-option in the project Properties dialog UI.  Contributing a custom field-editor through this element is not enough - the custom field-editor must also be referenced by its ID from an &lt;code&gt;&amp;lt;option&amp;gt;&lt;/code&gt; element of an &lt;code&gt;org.eclipse.cdt.managedbuilder.core.buildDefinitions&lt;/code&gt; extension.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier which will be used to reference this field-editor from an &lt;code&gt;&amp;lt;option&amp;gt;&lt;/code&gt; element of an &lt;code&gt;org.eclipse.cdt.managedbuilder.core.buildDefinitions&lt;/code&gt; extension.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Specifies the Java class which implements the custom field-editor.  This class must extend JFace&apos;s &lt;code&gt;FieldEditor&lt;/code&gt; abstract class, and implement the &lt;code&gt;ICustomBuildOptionEditor&lt;/code&gt; interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.preference.FieldEditor:org.eclipse.cdt.managedbuilder.ui.properties.ICustomBuildOptionEditor"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         8.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;extension point=&quot;org.eclipse.cdt.managedbuilder.ui.buildDefinitionsUI&quot;&gt;
+	&lt;fieldEditor
+		id=&quot;org.eclipse.cdt.managedbuilder.ui.tests.fieldEditors.CustomFieldEditor&quot;
+		class=&quot;org.eclipse.cdt.managedbuilder.ui.tests.fieldEditors.CustomFieldEditor&quot;/&gt;
+&lt;/extension&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         None
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         None
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2011 Texas Instruments Incorporated and others.
+All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available on the &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt; Eclipse&lt;/a&gt; website.
+      </documentation>
+   </annotation>
+
+</schema>

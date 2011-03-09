@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation
  * ARM Ltd. - basic tooltip support
  * Miwako Tokugawa (Intel Corporation) - Fixed-location tooltip support
+ * Baltasar Belyavsky (Texas Instruments) - custom field-editor support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
@@ -38,6 +39,10 @@ import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.ui.newui.AbstractPage;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
@@ -52,11 +57,14 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.Bundle;
+
 
 /**
  * Option settings page in project properties Build Settings under Tool Settings tab.
@@ -70,6 +78,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	private IHoldsOptions[] ohs;
 	/** The index of the current IHoldsOptions in ohs */
 	private int curr = -1;
+	private Map<String, CustomFieldEditorDescriptor> customFieldEditorDescriptorIndex;
 	private Map<FieldEditor, Composite> fieldEditorsToParentMap = 
 		new HashMap<FieldEditor, Composite>();
 	/** True if the user selected "Display tool option tips at a fixed location" in Preferences */
@@ -215,9 +224,35 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 					// Figure out which type the option is and add a proper field
 					// editor for it
 					Composite fieldEditorParent = getFieldEditorParent();
-					FieldEditor fieldEditor;
+					FieldEditor fieldEditor = null;
 
-					switch (opt.getValueType()) {
+					String customFieldEditorId = opt.getFieldEditorId();
+					if(customFieldEditorId != null) {
+						fieldEditor = createCustomFieldEditor(customFieldEditorId);
+						if(fieldEditor != null) {
+							ICustomBuildOptionEditor customFieldEditor = (ICustomBuildOptionEditor)fieldEditor;
+					        if(customFieldEditor.init(opt, opt.getFieldEditorExtraArgument(), optId, fieldEditorParent)) {
+								Control[] toolTipSources = customFieldEditor.getToolTipSources();
+								if(toolTipSources != null) {
+									for(Control control : toolTipSources) {
+										if(pageHasToolTipBox) {
+											control.setData(new TipInfo(nameStr,tipStr));
+											control.addListener(selectAction, tipSetListener);
+										}
+										else {
+											control.setToolTipText(tipStr);
+										}
+									}
+								}
+					        }
+					        else {
+					        	fieldEditor = null;
+					        }
+						}
+					}
+					
+					if(fieldEditor == null) {
+						switch (opt.getValueType()) {
 						case IOption.STRING: {
 							StringFieldEditor stringField;
 							
@@ -378,8 +413,9 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 						
 						default:
 							throw new BuildException(null);
+						}
 					}
-
+					
 					setFieldEditorEnablement(holder, opt, applicabilityCalculator, fieldEditor, fieldEditorParent);
 
 					addField(fieldEditor);
@@ -388,6 +424,82 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 
 				} catch (BuildException e) {
 				}
+			}
+		}
+	}
+	
+	/**
+	 * Instantiates the custom-field editor registered under the given id. 
+	 */
+	private FieldEditor createCustomFieldEditor(String customFieldEditorId) {
+		if(this.customFieldEditorDescriptorIndex == null) {
+			loadCustomFieldEditorDescriptors();
+		}
+		
+		CustomFieldEditorDescriptor editorDescriptor = this.customFieldEditorDescriptorIndex.get(customFieldEditorId);
+		if(editorDescriptor != null) {
+			return editorDescriptor.createEditor();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Holds all the information necessary to instantiate a custom field-editor. 
+	 * Also acts as a factory - instantiates and returns a non-initialized field-editor.
+	 */
+	private class CustomFieldEditorDescriptor
+	{
+		private final String editorClassName;
+		private final String bundleName;
+		
+		CustomFieldEditorDescriptor(String editorClassName, String bundleName) {
+			this.editorClassName = editorClassName;
+			this.bundleName = bundleName;
+		}
+		
+		FieldEditor createEditor() {
+			try {
+				Bundle bundle = Platform.getBundle(this.bundleName);
+				if(bundle != null) {
+					Class<?> editorClass = bundle.loadClass(this.editorClassName);
+					if(editorClass != null) {
+						Object editor = editorClass.newInstance();
+						if(editor instanceof FieldEditor && editor instanceof ICustomBuildOptionEditor) {
+							return (FieldEditor)editor;
+						}
+					}
+				}
+			}
+			catch(Exception x) {
+				ManagedBuilderUIPlugin.log(x);
+			}
+			
+			return null;
+		}
+	}
+	
+	/**
+	 * Loads all the registered custom field-editor descriptors.
+	 * Synchronization is not necessary as this would always be invoked on the UI thread.
+	 */
+	private void loadCustomFieldEditorDescriptors() {
+		if(this.customFieldEditorDescriptorIndex != null)
+			return;
+		
+		this.customFieldEditorDescriptorIndex = new HashMap<String, CustomFieldEditorDescriptor>();
+		
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(
+				ManagedBuilderUIPlugin.getUniqueIdentifier() + ".buildDefinitionsUI"); //$NON-NLS-1$
+		
+		for(IExtension e : ep.getExtensions()) {
+			for(IConfigurationElement providerElement : e.getConfigurationElements()) {
+				String editorId = providerElement.getAttribute("id"); //$NON-NLS-1$
+				String editorClassName = providerElement.getAttribute("class"); //$NON-NLS-1$
+
+				String bundleName = providerElement.getContributor().getName();
+				
+				this.customFieldEditorDescriptorIndex.put(editorId, new CustomFieldEditorDescriptor(editorClassName, bundleName));
 			}
 		}
 	}

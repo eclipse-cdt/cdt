@@ -911,6 +911,26 @@ public class OptionReference implements IOption {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getFieldEditorId()
+	 */
+	public String getFieldEditorId() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getFieldEditorExtraArgument()
+	 */
+	public String getFieldEditorExtraArgument() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setFieldEditorExtraArgument(java.lang.String)
+	 */
+	public void setFieldEditorExtraArgument(String extraArgument) {
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#isValid()
 	 */
 	public boolean isValid() {

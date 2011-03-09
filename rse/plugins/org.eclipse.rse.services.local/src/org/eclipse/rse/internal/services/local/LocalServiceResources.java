@@ -54,6 +54,9 @@ public class LocalServiceResources extends NLS
 	public static String FILEMSG_DELETING;
 	public static String FILEMSG_COPYING;
 	
+	public static String FILEMSG_ERROR_DOWNLOAD_SIZE;
+	public static String FILEMSG_ERROR_UPLOAD_SIZE;
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, LocalServiceResources.class);

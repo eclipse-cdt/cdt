@@ -50,6 +50,7 @@
  * David McKnight   (IBM)        - [331247] Local file paste failed on Vista and Windows 7
  * Xuan Chen        (IBM)        - [222544] [testing] FileServiceArchiveTest leaves temporary files and folders behind in TEMP dir
  * David McKnight   (IBM)        - [337612] Failed to copy the content of a tar file
+ * David McKnight   (IBM)        - [232084] [local] local file service should not throw operation cancelled exception due to file sizes
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -512,9 +513,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 					boolean sizeCheck = !isBinary && systemEncoding.equals(hostEncoding);
 
 					if (sizeCheck && (destinationFile.length() != file.length())) {
-						throw new SystemOperationCancelledException();
-//						System.err.println("local.upload: size mismach on "+destinationFile.getAbsolutePath()); //$NON-NLS-1$
-//						return false;
+						throw new RemoteFileIOException(new IOException(NLS.bind(LocalServiceResources.FILEMSG_ERROR_DOWNLOAD_SIZE,remoteFile)));
 					}
 				}
 			}
@@ -689,7 +688,6 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				if (isCancelled)
 				{
 					throw new SystemOperationCancelledException();
-//					return false;
 				} else if (destinationFile!=null) {
 					// commented out as per the following bug:
 					//	[279829] [local] Save conflict dialog keeps popping up on mounted drive
@@ -698,11 +696,11 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 					//if(!localFile.canWrite()) destinationFile.setReadOnly();
 
 					// File lengths can be different if the encodings are different
-/*					if (destinationFile.length() != localFile.length()) {
-						//	throw new SystemOperationCancelledException();
-						System.err.println("local.upload: size mismach on "+destinationFile.getAbsolutePath()); //$NON-NLS-1$
-						return false;
-					}*/
+					String systemEncoding = SystemEncodingUtil.getInstance().getEnvironmentEncoding();
+					boolean sizeCheck = !isBinary && systemEncoding.equals(hostEncoding);
+					if (sizeCheck && destinationFile.length() != localFile.length()) {
+						throw new RemoteFileIOException(new IOException(NLS.bind(LocalServiceResources.FILEMSG_ERROR_UPLOAD_SIZE,remoteFile)));
+					}
 				}
 			}
 			catch (IOException e)

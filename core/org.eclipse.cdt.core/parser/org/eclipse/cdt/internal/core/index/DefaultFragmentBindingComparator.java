@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+
 /**
  * Binding comparator suitable for C/C++ across index implementations. This will not be used
  * unless we ever have non-PDOM implementations of IIndexFragment, and in that case we may find
@@ -17,7 +19,7 @@ package org.eclipse.cdt.internal.core.index;
  */
 public class DefaultFragmentBindingComparator implements IIndexFragmentBindingComparator {
 	public int compare(IIndexFragmentBinding a, IIndexFragmentBinding b) {
-		int cmp= compareQualifiedNames(a.getQualifiedName(), b.getQualifiedName());
+		int cmp= compareQualifiedNames(CPPVisitor.getQualifiedName(a), CPPVisitor.getQualifiedName(b));
 		if (cmp == 0) {
 			int ac= a.getBindingConstant(), bc= b.getBindingConstant();
 			cmp= ac < bc ? -1 : (ac > bc ? 1 : 0);

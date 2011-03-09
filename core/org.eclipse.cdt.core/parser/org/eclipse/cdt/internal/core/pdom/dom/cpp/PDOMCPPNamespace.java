@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
@@ -246,7 +247,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 
     @Override
 	protected String toStringBase() {
-    	String[] names = getQualifiedName();
+    	String[] names = CPPVisitor.getQualifiedName(this);
     	if (names.length == 0) {
     		return "<unnamed namespace>"; //$NON-NLS-1$
     	}
@@ -255,7 +256,8 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 
 	public ICPPNamespaceScope[] getInlineNamespaces() {
 		if (fInlineNamespaces == null) {
-			List<PDOMCPPNamespace> nslist = collectInlineNamespaces(getDB(), getLinkage(), record+FIRST_NAMESPACE_CHILD_OFFSET);
+			List<PDOMCPPNamespace> nslist = collectInlineNamespaces(getDB(), getLinkage(),
+					record + FIRST_NAMESPACE_CHILD_OFFSET);
 			if (nslist == null) {
 				fInlineNamespaces= new PDOMCPPNamespace[0];
 			} else {
@@ -265,8 +267,8 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return fInlineNamespaces;
 	}
 
-	public static List<PDOMCPPNamespace> collectInlineNamespaces(Database db,
-			PDOMLinkage linkage, long listRecord) {
+	public static List<PDOMCPPNamespace> collectInlineNamespaces(Database db, PDOMLinkage linkage,
+			long listRecord) {
 		List<PDOMCPPNamespace> nslist= null;
 		try {
 			long rec= db.getRecPtr(listRecord);

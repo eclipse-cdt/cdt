@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScopeMapper.InlineNamespaceDirective;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
 
@@ -97,23 +98,23 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
     @Override
 	public IName getScopeName() {
         IASTNode node = getPhysicalNode();
-        if( node instanceof ICPPASTNamespaceDefinition ){
+        if (node instanceof ICPPASTNamespaceDefinition) {
             return ((ICPPASTNamespaceDefinition)node).getName();
         }
         return null;
     }
 
     public IScope findNamespaceScope(IIndexScope scope) {
-    	final String[] qname= scope.getScopeBinding().getQualifiedName();
+    	final String[] qname= CPPVisitor.getQualifiedName(scope.getScopeBinding());
     	final IScope[] result= {null};
-    	final ASTVisitor visitor= new ASTVisitor () {
+    	final ASTVisitor visitor= new ASTVisitor() {
     		private int depth= 0;
     		{
     			shouldVisitNamespaces= shouldVisitDeclarations= true;
     		}
     		@Override
     		public int visit( IASTDeclaration declaration ){
-    			if( declaration instanceof ICPPASTLinkageSpecification )
+    			if (declaration instanceof ICPPASTLinkageSpecification)
     				return PROCESS_CONTINUE;
     			return PROCESS_SKIP;
     		}

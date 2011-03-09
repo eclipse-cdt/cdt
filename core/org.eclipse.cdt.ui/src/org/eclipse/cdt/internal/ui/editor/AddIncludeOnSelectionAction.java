@@ -86,6 +86,7 @@ import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.cdt.ui.text.SharedASTJob;
 import org.eclipse.cdt.utils.PathUtil;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.corext.codemanipulation.AddIncludesOperation;
@@ -647,7 +648,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 	 * @throws CoreException
 	 */
 	private static String getBindingQualifiedName(IIndexBinding binding) throws CoreException {
-		String[] qname= binding.getQualifiedName();
+		String[] qname= CPPVisitor.getQualifiedName(binding);
 		StringBuilder result = new StringBuilder();
 		boolean needSep= false;
 		for (String element : qname) {

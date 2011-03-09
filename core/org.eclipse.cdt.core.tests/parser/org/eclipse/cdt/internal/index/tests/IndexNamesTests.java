@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -271,7 +272,7 @@ public class IndexNamesTests extends BaseTestCase {
 			for (IIndexName indexName : names) {
 				if (indexName.isReference() && indexName.toString().equals("vm")) {
 					assertEquals(couldbepolymorphic[j], indexName.couldBePolymorphicMethodCall());
-					assertEquals(container[j], fIndex.findBinding(indexName).getQualifiedName()[0]);
+					assertEquals(container[j], CPPVisitor.getQualifiedName(fIndex.findBinding(indexName))[0]);
 					j++;
 				}
 				else {
@@ -279,8 +280,7 @@ public class IndexNamesTests extends BaseTestCase {
 				}
 			}
 			assertEquals(couldbepolymorphic.length, j);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}

@@ -110,13 +110,18 @@ public class PerFileSettingsCalculator {
 		private int fMaxIndex;
 		private List<PathFilePathInfo>[] fStore;
 		
+		@SuppressWarnings("unchecked")
+		private List<PathFilePathInfo>[] emptyStore(int size) {
+			return new List[size];
+		}
+		
 		public ListIndexStore(int size){
 			if(size < 0)
 				size = 0;
 			
-			fStore = new List[size];
+			fStore = emptyStore(size);
 		}
-		
+
 		public void add(int index, PathFilePathInfo value){
 			List<PathFilePathInfo> list = checkResize(index) ? new ArrayList<PathFilePathInfo>() : fStore[index];
 			if(list == null){
@@ -133,7 +138,7 @@ public class PerFileSettingsCalculator {
 		private boolean checkResize(int index){
 			if(index >= fStore.length){
 				int newSize = ++index;
-				List<PathFilePathInfo> resized[] = new List[newSize];
+				List<PathFilePathInfo> resized[] = emptyStore(newSize);
 				if(fStore != null && fStore.length != 0){
 					System.arraycopy(fStore, 0, resized, 0, fStore.length);
 				}
@@ -153,7 +158,7 @@ public class PerFileSettingsCalculator {
 					list.add(l);
 			}
 			
-			return list.toArray(new List[list.size()]);
+			return list.toArray(emptyStore(list.size()));
 		}
 	}
 	
@@ -205,7 +210,7 @@ public class PerFileSettingsCalculator {
 				fPathFilePathInfoMap = new HashMap<PathInfo, List<PathFilePathInfo>>(3);
 			
 			PathInfo fileInfo = pInfo.fInfo;
-			List list = fileInfo == fMaxMatchInfo ? fMaxMatchInfoList : (List)fPathFilePathInfoMap.get(fileInfo);
+			List<PathFilePathInfo> list = fileInfo == fMaxMatchInfo ? fMaxMatchInfoList : fPathFilePathInfoMap.get(fileInfo);
 			if(list == null){
 				List<PathFilePathInfo> emptyList = new ArrayList<PathFilePathInfo>();
 				fPathFilePathInfoMap.put(fileInfo, emptyList);

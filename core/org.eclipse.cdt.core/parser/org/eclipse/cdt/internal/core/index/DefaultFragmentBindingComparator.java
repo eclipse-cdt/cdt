@@ -33,7 +33,7 @@ public class DefaultFragmentBindingComparator implements IIndexFragmentBindingCo
 			return -1;
 		if (a.length > b.length)
 			return 1;
-		for(int i= 0; i < a.length; i++) {
+		for (int i= 0; i < a.length; i++) {
 			int cmp= a[i].compareTo(b[i]);
 			if (cmp != 0)
 				return cmp;

@@ -184,8 +184,9 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IAdaptabl
 	public int getPreprocessorProblemsCount();
 
 	/**
-	 * Returns the translation unit's full path.  
-	 * @return String representation of path.
+	 * Returns the location of the root file of this translation unit.
+	 * This will be the same value as returned by {@code getFileLocation().getFileName()}
+	 * @see IASTFileLocation#getFileName()
 	 */
 	public String getFilePath();
     

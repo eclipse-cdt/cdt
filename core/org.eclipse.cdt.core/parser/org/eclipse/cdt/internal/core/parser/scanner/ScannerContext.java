@@ -20,8 +20,6 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
  * @since 5.0
  */
 final class ScannerContext {
-	private static final Token END_TOKEN = new Token(IToken.tEND_OF_INPUT, null, 0, 0);
-
 	enum BranchKind {eIf, eElif, eElse, eEnd}
 	enum CodeState {eActive, eParseInactive, eSkipInactive}
 	final static class Conditional {
@@ -231,7 +229,7 @@ final class ScannerContext {
 		if (fLexer != null) {
 			return fLexer.currentToken();
 		}
-		return END_TOKEN;
+		return new Token(IToken.tEND_OF_INPUT, null, 0, 0);
 	}
 	
 	/** 
@@ -245,7 +243,7 @@ final class ScannerContext {
 		if (fLexer != null) {
 			return fLexer.nextToken();
 		}
-		return END_TOKEN;
+		return new Token(IToken.tEND_OF_INPUT, null, 0, 0);
 	}
 
 	/**

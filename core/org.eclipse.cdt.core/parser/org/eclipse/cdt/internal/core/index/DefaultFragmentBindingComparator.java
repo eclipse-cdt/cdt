@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
@@ -17,25 +17,25 @@ package org.eclipse.cdt.internal.core.index;
  */
 public class DefaultFragmentBindingComparator implements IIndexFragmentBindingComparator {
 	public int compare(IIndexFragmentBinding a, IIndexFragmentBinding b) {
-		int cmp= compareQualifiedNames(a.getQualifiedName(),b.getQualifiedName());
-		if(cmp==0) {
+		int cmp= compareQualifiedNames(a.getQualifiedName(), b.getQualifiedName());
+		if (cmp == 0) {
 			int ac= a.getBindingConstant(), bc= b.getBindingConstant();
-			cmp= ac<bc ? -1 : (ac>bc ? 1 : 0);
-			if(cmp==0) {
+			cmp= ac < bc ? -1 : (ac > bc ? 1 : 0);
+			if (cmp == 0) {
 				cmp= IndexCPPSignatureUtil.compareSignatures(a, b);
 			}
 		}
 		return cmp;
 	}
 	
-	private int compareQualifiedNames(String[] afqn, String[] bfqn) {
-		if(afqn.length < bfqn.length)
+	private int compareQualifiedNames(String[] a, String[] b) {
+		if (a.length < b.length)
 			return -1;
-		if(afqn.length > bfqn.length)
+		if (a.length > b.length)
 			return 1;
-		for(int i=0; i<afqn.length; i++) {
-			int cmp= afqn[i].compareTo(bfqn[i]);
-			if(cmp!=0)
+		for(int i= 0; i < a.length; i++) {
+			int cmp= a[i].compareTo(b[i]);
+			if (cmp != 0)
 				return cmp;
 		}
 		return 0;

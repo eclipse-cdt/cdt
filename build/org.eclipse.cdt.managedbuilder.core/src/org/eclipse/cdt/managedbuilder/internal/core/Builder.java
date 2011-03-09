@@ -75,7 +75,7 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.osgi.framework.Version;
 
-public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider, IRealBuildObjectAssociation  {
+public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider<Builder>, IRealBuildObjectAssociation  {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -2575,8 +2575,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return num;
 	}
 
-	public int compareTo(Object o) {
-		Builder other = (Builder)o;
+	public int compareTo(Builder other) {
 		if(other.isSystemObject() != isSystemObject())
 			return isSystemObject() ? 1 : -1;
 		

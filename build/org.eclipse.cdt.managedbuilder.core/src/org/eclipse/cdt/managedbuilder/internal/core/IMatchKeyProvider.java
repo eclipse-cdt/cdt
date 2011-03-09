@@ -12,7 +12,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.List;
 
-public interface IMatchKeyProvider<T extends BuildObject> extends Comparable {
+public interface IMatchKeyProvider<T extends BuildObject> extends Comparable<T> {
 	MatchKey<T> getMatchKey();
 	
 	void setIdenticalList(List<IMatchKeyProvider<T>> list);

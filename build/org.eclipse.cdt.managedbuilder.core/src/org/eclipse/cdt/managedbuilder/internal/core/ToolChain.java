@@ -57,7 +57,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Version;
 
-public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropertiesRestriction, IMatchKeyProvider, IRealBuildObjectAssociation {
+public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropertiesRestriction, IMatchKeyProvider<ToolChain>, IRealBuildObjectAssociation {
 
 	private static final String EMPTY_STRING = new String();
 
@@ -2628,8 +2628,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return num;
 	}
 
-	public int compareTo(Object o) {
-		ToolChain other = (ToolChain)o;
+	public int compareTo(ToolChain other) {
 		if(other.isSystemObject() != isSystemObject())
 			return isSystemObject() ? 1 : -1;
 		

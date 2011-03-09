@@ -92,7 +92,7 @@ import org.osgi.framework.Version;
  * Note that this class implements IOptionCategory to represent the top
  * category.
  */
-public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatchKeyProvider, IRealBuildObjectAssociation {
+public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatchKeyProvider<Tool>, IRealBuildObjectAssociation {
 
 	public static final String DEFAULT_PATTERN = "${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"; //$NON-NLS-1$
 	public static final String DEFAULT_CBS_PATTERN = "${COMMAND}"; //$NON-NLS-1$
@@ -4020,8 +4020,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return num;
 	}
 
-	public int compareTo(Object o) {
-		Tool other = (Tool)o;
+	public int compareTo(Tool other) {
 		if(other.isSystemObject() != isSystemObject())
 			return isSystemObject() ? 1 : -1;
 		

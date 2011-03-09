@@ -34,6 +34,11 @@ public abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding 
 		super(linkage, parent, name);
 	}
 
+	@Override
+	final public String[] getQualifiedName() {
+		return CPPVisitor.getQualifiedName(this);
+	}
+
 	final public char[][] getQualifiedNameCharArray() {
 		return CPPVisitor.getQualifiedNameCharArray(this);
 	}

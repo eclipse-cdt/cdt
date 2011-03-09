@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBindingComparator;
@@ -82,8 +81,8 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	public static boolean isOrphaned(PDOM pdom, long record) throws CoreException {
 		Database db = pdom.getDB();
 		return db.getRecPtr(record + FIRST_DECL_OFFSET) == 0
-			&& db.getRecPtr(record + FIRST_DEF_OFFSET) == 0
-			&& db.getRecPtr(record + FIRST_REF_OFFSET) == 0;
+				&& db.getRecPtr(record + FIRST_DEF_OFFSET) == 0
+				&& db.getRecPtr(record + FIRST_REF_OFFSET) == 0;
 	}
 	
 	public final boolean hasDeclaration() throws CoreException {
@@ -304,8 +303,8 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		}
 	}
 
-	final public String[] getQualifiedName() {
-		return CPPVisitor.getQualifiedName(this);
+	public String[] getQualifiedName() {
+		return new String[] { getName() };
 	}
 	
 	final public boolean isFileLocal() throws CoreException {
@@ -352,7 +351,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 						cmp = b0 == b1 ? 0 : (b0 == null ? -1 : 1);
 					}
 				}
-			} while(cmp == 0 && b1 != null && b0 != null);
+			} while (cmp == 0 && b1 != null && b0 != null);
 			return cmp;
 		} catch (CoreException ce) {
 			CCorePlugin.log(ce);

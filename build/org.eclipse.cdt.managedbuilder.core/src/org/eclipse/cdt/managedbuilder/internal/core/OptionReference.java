@@ -9,6 +9,7 @@
  *     IBM - Initial API and implementation
  *     ARM Ltd. - basic tooltip support
  *     Petri Tuononen - [321040] Get Library Search Paths
+ *     Baltasar Belyavsky (Texas Instruments) - [279633] Custom command-generator support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -23,6 +24,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.IOptionCommandGenerator;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
 import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
@@ -309,6 +311,13 @@ public class OptionReference implements IOption {
 	 */
 	public String getCommand() {
 		return option.getCommand();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getCommandGenerator()
+	 */
+	public IOptionCommandGenerator getCommandGenerator() {
+		return option.getCommandGenerator();
 	}
 
 	/* (non-Javadoc)

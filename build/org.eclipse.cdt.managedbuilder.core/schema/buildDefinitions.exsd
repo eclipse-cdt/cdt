@@ -1341,6 +1341,16 @@ Additional special types exist to flag options of special relevance to the build
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="commandGenerator" type="string">
+            <annotation>
+               <documentation>
+                  Optional class which can be used to override the default command-generation logic for an option.  This class must impelment the IOptionCommandGenerator interface.  If no generator is specified then the &apos;comand&apos; attribute is used to generate the option&apos;s command.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.managedbuilder.core.IOptionCommandGenerator"/>
+               </appInfo>
+            </annotation>
+         </attribute>
          <attribute name="commandFalse" type="string">
             <annotation>
                <documentation>

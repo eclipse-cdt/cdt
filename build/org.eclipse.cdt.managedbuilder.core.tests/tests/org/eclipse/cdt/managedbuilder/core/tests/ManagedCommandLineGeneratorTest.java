@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Intel Corporation and others.
+ * Copyright (c) 2004, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ *     Baltasar Belyavsky (Texas Instruments) - [279633] Custom command-generator support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.tests;
 
@@ -171,6 +172,47 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
     	IManagedBuilderMakefileGenerator makeGen = ManagedBuildManager.getBuildfileGenerator(config);
     	String name = makeGen.getMakefileName();
     	assertEquals("TestBuildFile.mak", name);
+    }
+    
+    public final void testCustomOptionCommandGenerator() {
+		try{
+			IProject project = ManagedBuildTestHelper.createProject("COCG", null, (IPath)null, "cdt.test.customOptionCommand.ProjectType");
+			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+			IConfiguration config = info.getDefaultConfiguration();
+			ITool[] tools = config.getToolsBySuperClassId("cdt.test.customOptionCommand.Tool");
+			assertEquals(tools.length, 1);
+			
+			ITool tool = tools[0];
+			
+			IOption option1 = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.option1");
+			IOption option2 = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.option2");
+			IOption option3 = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.option3");
+			IOption option4 = tool.getOptionBySuperClassId("cdt.test.customOptionCommand.option4");
+			
+			assertTrue(option1.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(option2.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertTrue(option3.getCommandGenerator() instanceof CustomOptionCommandGenerator);
+			assertNull(option4.getCommandGenerator());
+			
+	    	option1 = config.setOption(tool, option1, new String[] {"val1", "val2", "${ProjName}"});
+	    	option2 = config.setOption(tool, option2, "${ProjName}");
+	    	option3 = config.setOption(tool, option3, "${ProjName}");
+	    	option4 = config.setOption(tool, option4, "${ProjName}");
+	    	
+	    	/* Expected results
+	    	 * 	option1: custom command-generator concatenates list-entries into quoted semicolon-separated list.
+	    	 * 	option2/3: custom command-generator returns 'null' causing CDT to fall-back to default behaviour.
+	    	 * 	option4: no custom command-generator contributed - CDT falls back to default behaviour.
+	    	 */
+	    	
+			String command = tool.getToolCommandFlagsString(null, null);
+	    	assertEquals("-opt1=\"val1;val2;COCG;\" -opt2=COCG -opt3 COCG -opt4=COCG", command);
+			
+			ManagedBuildTestHelper.removeProject("COCG");
+		}
+		catch(Exception e){
+			fail("Test failed on project creation: " + e.getLocalizedMessage());
+		}
     }
     
     public final void testDollarValue() {

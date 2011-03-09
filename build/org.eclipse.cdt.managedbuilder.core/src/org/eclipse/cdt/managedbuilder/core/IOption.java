@@ -10,6 +10,7 @@
  *     ARM Ltd. - basic tooltip support
  *     James Blackburn (Broadcom Corp.)
  *     Petri Tuononen - [321040] Get Library Search Paths
+ *     Baltasar Belyavsky (Texas Instruments) - [279633] Custom command-generator support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
@@ -85,6 +86,8 @@ public interface IOption extends IBuildObject {
 	public static final String CATEGORY = "category"; //$NON-NLS-1$
 	public static final String COMMAND = "command"; //$NON-NLS-1$
 	public static final String COMMAND_FALSE = "commandFalse"; //$NON-NLS-1$
+	/** @since 8.0 */
+	public static final String COMMAND_GENERATOR = "commandGenerator"; //$NON-NLS-1$
 	public static final String TOOL_TIP = "tip"; //$NON-NLS-1$
 	public static final String CONTEXT_ID = "contextId"; //$NON-NLS-1$
 	public static final String DEFAULT_VALUE = "defaultValue"; //$NON-NLS-1$
@@ -245,6 +248,12 @@ public interface IOption extends IBuildObject {
 	 * option associated with the option
 	 */
 	public String getCommand();
+	
+	/**
+	 * @return an instance of the class that overrides the default command generation for the option
+	 * @since 8.0
+	 */
+	public IOptionCommandGenerator getCommandGenerator();
 	
 	/**
 	 * Sets a <code>String</code> containing the actual command line 

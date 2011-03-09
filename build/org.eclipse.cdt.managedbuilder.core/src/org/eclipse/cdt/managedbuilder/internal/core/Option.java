@@ -9,6 +9,7 @@
  *     IBM - Initial API and implementation
  *     ARM Ltd. - basic tooltip support
  *     Petri Tuononen - [321040] Get Library Search Paths
+ *     Baltasar Belyavsky (Texas Instruments) - [279633] Custom command-generator support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -29,6 +30,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.IOptionCommandGenerator;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
@@ -63,6 +65,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	private IOptionCategory category;
 	private String categoryId;
 	private String command;
+	private IConfigurationElement commandGeneratorElement;
+	private IOptionCommandGenerator commandGenerator;
 	private String commandFalse;
 	private String tip;
 	private String contextId;
@@ -277,6 +281,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 
 		category = option.category;
+
+		commandGeneratorElement = option.commandGeneratorElement;
+		commandGenerator = option.commandGenerator;
+
 		applicabilityCalculatorElement = option.applicabilityCalculatorElement;
 		applicabilityCalculator = option.applicabilityCalculator;
 		
@@ -333,6 +341,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// Get the command defined for the option
 		command = element.getAttribute(COMMAND);
 		
+		// Get the command-generator, if any
+		String commandGeneratorStr = element.getAttribute(COMMAND_GENERATOR); 
+		if (commandGeneratorStr != null && element instanceof DefaultManagedConfigElement) {
+			commandGeneratorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+		}
+
 		// Get the command defined for a Boolean option when the value is False
 		commandFalse = element.getAttribute(COMMAND_FALSE);
 		
@@ -1179,6 +1193,29 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		return command;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getCommandGenerator()
+	 */
+	public IOptionCommandGenerator getCommandGenerator() {
+		if (commandGenerator == null) {
+			if (commandGeneratorElement != null) {
+				try {
+					if (commandGeneratorElement.getAttribute(COMMAND_GENERATOR) != null) {
+						commandGenerator = (IOptionCommandGenerator) commandGeneratorElement
+							.createExecutableExtension(COMMAND_GENERATOR);
+					}
+				} catch (CoreException e) {
+					ManagedBuilderCorePlugin.log(e);
+				}
+			}
+			else if(superClass != null) {
+				commandGenerator = superClass.getCommandGenerator();
+			}
+		}
+
+		return commandGenerator;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getCommandFalse()
 	 */

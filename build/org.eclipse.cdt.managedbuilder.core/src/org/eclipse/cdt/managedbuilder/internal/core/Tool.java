@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2010 IBM Corporation and others.
+ *  Copyright (c) 2003, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM - Initial API and implementation
+ *     Baltasar Belyavsky (Texas Instruments) - [279633] Custom option command-generator support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -47,6 +48,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.IOptionCommandGenerator;
 import org.eclipse.cdt.managedbuilder.core.IOptionPathConverter;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
@@ -2529,6 +2531,20 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				}
 				
 				try{
+				boolean generateDefaultCommand = true;
+				IOptionCommandGenerator commandGenerator = option.getCommandGenerator();
+				if(commandGenerator != null) {
+					IMacroContextInfo info = provider.getMacroContextInfo(BuildMacroProvider.CONTEXT_FILE, new FileContextData(inputFileLocation, outputFileLocation, option, this));
+					if(info != null) {
+						macroSubstitutor.setMacroContextInfo(info);
+						String command = commandGenerator.generateCommand(option, macroSubstitutor);
+						if(command != null) {
+							sb.append(command);
+							generateDefaultCommand = false;
+						}
+					}
+				}
+				if(generateDefaultCommand) {
 				switch (option.getValueType()) {
 				case IOption.BOOLEAN :
 					String boolCmd;
@@ -2611,6 +2627,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	
 				default :
 					break;
+				}
 				}
 					
 				if (sb.toString().trim().length() > 0)

@@ -377,7 +377,7 @@ public class PDOMASTAdapter {
 			if (qn.length < 1) {
 				qn= new String[]{null};
 			}
-			qn[qn.length-1]= new String(fName);
+			qn[qn.length - 1]= new String(fName);
 			return qn;
 		}
 
@@ -386,7 +386,7 @@ public class PDOMASTAdapter {
 			if (qn.length < 1) {
 				qn= new char[][]{null};
 			}
-			qn[qn.length-1]= fName;
+			qn[qn.length - 1]= fName;
 			return qn;
 		}
 

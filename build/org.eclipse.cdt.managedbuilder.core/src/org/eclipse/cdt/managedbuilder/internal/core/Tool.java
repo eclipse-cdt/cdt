@@ -3067,10 +3067,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			// If 'getSuperClass()' is null, then there is no tool available in
 			// plugin manifest file with the same 'id' & version.
 			// Look for the 'versionsSupported' attribute
-			String high = ManagedBuildManager.getExtensionToolMap()
-					.lastKey();
+			String high = ManagedBuildManager.getExtensionToolMap().lastKey();
 
-			SortedMap<String, ITool> subMap = null;
+			SortedMap<String, ? extends ITool> subMap = null;
 			if (superClassId.compareTo(high) <= 0) {
 				subMap = ManagedBuildManager.getExtensionToolMap().subMap(
 						superClassId, high + "\0"); //$NON-NLS-1$

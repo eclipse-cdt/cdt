@@ -30,7 +30,6 @@ import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
-import org.eclipse.cdt.managedbuilder.core.IBuildPropertiesRestriction;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
@@ -57,7 +56,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Version;
 
-public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropertiesRestriction, IMatchKeyProvider<ToolChain>, IRealBuildObjectAssociation {
+public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProvider<ToolChain>, IRealBuildObjectAssociation {
 
 	private static final String EMPTY_STRING = new String();
 
@@ -1870,10 +1869,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			// If 'getSuperClass()' is null, then there is no toolchain available in
 			// plugin manifest file with the 'id' & version.
 			// Look for the 'versionsSupported' attribute
-			String high = ManagedBuildManager
-					.getExtensionToolChainMap().lastKey();
+			String high = ManagedBuildManager.getExtensionToolChainMap().lastKey();
 			
-			SortedMap<String, IToolChain> subMap = null;
+			SortedMap<String, ? extends IToolChain> subMap = null;
 			if (superClassId.compareTo(high) <= 0) {
 				subMap = ManagedBuildManager.getExtensionToolChainMap().subMap(
 						superClassId, high + "\0"); //$NON-NLS-1$
@@ -1895,7 +1893,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			String baseId = ManagedBuildManager.getIdFromIdAndVersion(superClassId);
 			String version = getVersionFromId().toString();
 
-			Collection<IToolChain> c = subMap.values();
+			Collection<? extends IToolChain> c = subMap.values();
 			IToolChain[] toolChainElements = c.toArray(new IToolChain[c.size()]);
 			
 			for (int i = 0; i < toolChainElements.length; i++) {

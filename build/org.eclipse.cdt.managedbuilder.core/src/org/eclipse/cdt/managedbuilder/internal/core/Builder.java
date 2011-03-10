@@ -1418,7 +1418,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			String high = ManagedBuildManager
 					.getExtensionBuilderMap().lastKey();
 			
-			SortedMap<String, IBuilder> subMap = null;
+			SortedMap<String, ? extends IBuilder> subMap = null;
 			if (superClassId.compareTo(high) <= 0) {
 				subMap = ManagedBuildManager.getExtensionBuilderMap().subMap(superClassId, high + "\0"); //$NON-NLS-1$
 			} else {
@@ -1443,7 +1443,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			String version = ManagedBuildManager
 					.getVersionFromIdAndVersion(superClassId);
 
-			Collection<IBuilder> c = subMap.values();
+			Collection<? extends IBuilder> c = subMap.values();
 			IBuilder[] builderElements = c.toArray(new IBuilder[c.size()]);
 			
 			for (int i = 0; i < builderElements.length; i++) {

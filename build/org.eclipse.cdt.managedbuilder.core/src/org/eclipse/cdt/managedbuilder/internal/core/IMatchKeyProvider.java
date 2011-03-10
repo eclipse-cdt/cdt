@@ -15,7 +15,7 @@ import java.util.List;
 public interface IMatchKeyProvider<T extends BuildObject> extends Comparable<T> {
 	MatchKey<T> getMatchKey();
 	
-	void setIdenticalList(List<IMatchKeyProvider<T>> list);
+	void setIdenticalList(List<T> list);
 
-	List<IMatchKeyProvider<T>> getIdenticalList();
+	List<T> getIdenticalList();
 }

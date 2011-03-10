@@ -67,6 +67,7 @@ import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.buildproperties.BuildPropertyManager;
 import org.eclipse.cdt.managedbuilder.internal.core.BooleanExpressionApplicabilityCalculator;
 import org.eclipse.cdt.managedbuilder.internal.core.BuildDbgUtil;
+import org.eclipse.cdt.managedbuilder.internal.core.BuildObject;
 import org.eclipse.cdt.managedbuilder.internal.core.BuildSettingsUtil;
 import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.BuilderFactory;
@@ -4099,7 +4100,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			if(tc == null)
 				continue;
 
-			List list = findIdenticalElements((ToolChain)tc, fToolChainSorter);
+			List<ToolChain> list = findIdenticalElements((ToolChain)tc, fToolChainSorter);
 			int k = 0;
 			for(; k < result.size(); k++){
 				if(findIdenticalElements((ToolChain)result.get(k), fToolChainSorter) == list)
@@ -4130,10 +4131,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 		if(tChain.getParent() != null)
 			return tChain.getParent();
 
-		List list = findIdenticalElements((ToolChain)tChain, fToolChainSorter);
+		List<ToolChain> list = findIdenticalElements((ToolChain)tChain, fToolChainSorter);
 		if(list != null){
 			for(int i = 0; i < list.size(); i++){
-				ToolChain cur = (ToolChain)list.get(i);
+				ToolChain cur = list.get(i);
 				if(cur.getParent() != null)
 					return cur.getParent();
 			}
@@ -4144,12 +4145,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	public static IConfiguration[] getExtensionConfigurations(IToolChain tChain, String propertyType, String propertyValue){
 //		List all = getSortedToolChains();
-		List list = findIdenticalElements((ToolChain)tChain, fToolChainSorter);
+		List<ToolChain> list = findIdenticalElements((ToolChain)tChain, fToolChainSorter);
 		LinkedHashSet<IConfiguration> result = new LinkedHashSet<IConfiguration>();
 		boolean tcFound = false;
 		if(list != null){
 			for(int i = 0; i < list.size(); i++){
-				ToolChain cur = (ToolChain)list.get(i);
+				ToolChain cur = list.get(i);
 				if(cur == tChain){
 					tcFound = true;
 				}
@@ -4221,24 +4222,24 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return fSortedBuilders;
 	}
 
-	private static HashMap<MatchKey, List<IMatchKeyProvider>> getSortedElements(Collection<? extends IMatchKeyProvider> elements){
-		HashMap<MatchKey, List<IMatchKeyProvider>> map = new HashMap<MatchKey, List<IMatchKeyProvider>>();
-		for (IMatchKeyProvider p : elements) {
-			MatchKey key = p.getMatchKey();
+	private static <T extends BuildObject & IMatchKeyProvider<T>> HashMap<MatchKey<T>, List<T>> getSortedElements(Collection<? extends T> elements){
+		HashMap<MatchKey<T>, List<T>> map = new HashMap<MatchKey<T>, List<T>>();
+		for (T p : elements) {
+			MatchKey<T> key = p.getMatchKey();
 			if(key == null)
 				continue;
 
-			List<IMatchKeyProvider> list = map.get(key);
+			List<T> list = map.get(key);
 			if(list == null){
-				list = new ArrayList<IMatchKeyProvider>();
+				list = new ArrayList<T>();
 				map.put(key, list);
 			}
 			list.add(p);
 			p.setIdenticalList(list);
 		}
 
-		Collection<List<IMatchKeyProvider>> values = map.values();
-		for (List<IMatchKeyProvider> list : values) {
+		Collection<List<T>> values = map.values();
+		for (List<T> list : values) {
 			Collections.sort(list);
 		}
 		return map;
@@ -4282,12 +4283,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 
 		if(extBuilder != null){
-			List list = findIdenticalElements((Builder)extBuilder, fBuilderSorter);
+			List<Builder> list = findIdenticalElements((Builder)extBuilder, fBuilderSorter);
 			if(list.size() == 0){
 				realBuilder = extBuilder;
 			} else {
 				for (IBuilder realBldr : getRealBuilders()) {
-					List rList = findIdenticalElements((Builder)realBldr, fBuilderSorter);
+					List<Builder> rList = findIdenticalElements((Builder)realBldr, fBuilderSorter);
 					if(rList == list){
 						realBuilder = realBldr;
 						break;
@@ -4310,12 +4311,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 
 		if(extTool != null){
-			List list = findIdenticalElements((Tool)extTool, fToolSorter);
+			List<Tool> list = findIdenticalElements((Tool)extTool, fToolSorter);
 			if(list.size() == 0){
 				realTool = extTool;
 			} else {
 				for (ITool realT : getRealTools()) {
-					List rList = findIdenticalElements((Tool)realT, fToolSorter);
+					List<Tool> rList = findIdenticalElements((Tool)realT, fToolSorter);
 					if(rList == list){
 						realTool = realT;
 						break;
@@ -4344,12 +4345,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 
 		if(extTc != null){
-			List list = findIdenticalElements((ToolChain)extTc, fToolChainSorter);
+			List<ToolChain> list = findIdenticalElements((ToolChain)extTc, fToolChainSorter);
 			if(list.size() == 0){
 				realToolChain = extTc;
 			} else {
 				for (IToolChain realTc : getRealToolChains()) {
-					List rList = findIdenticalElements((ToolChain)realTc, fToolChainSorter);
+					List<ToolChain> rList = findIdenticalElements((ToolChain)realTc, fToolChainSorter);
 					if(rList == list){
 						realToolChain = realTc;
 						break;
@@ -4465,13 +4466,13 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return null;
 	}
 
-	private static List findIdenticalElements(IMatchKeyProvider p, ISorter sorter){
-		List list = p.getIdenticalList();
+	private static <T extends BuildObject & IMatchKeyProvider<T>> List<T> findIdenticalElements(T p, ISorter sorter){
+		List<T> list = p.getIdenticalList();
 		if(list == null){
 			sorter.sort();
 			list = p.getIdenticalList();
 			if(list == null){
-				list = new ArrayList(0);
+				list = new ArrayList<T>(0);
 				p.setIdenticalList(list);
 			}
 		}

@@ -451,7 +451,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	 * 
 	 * @since 4.0
 	 */
-	public void initializeInputOutput(IContainerDMContext containerDmc, final RequestMonitor rm) {
+	protected void initializeInputOutput(IContainerDMContext containerDmc, final RequestMonitor rm) {
     	if (fBackend.getSessionType() == SessionType.REMOTE || fBackend.getIsAttachSession()) {
     		// These types do not use a PTY
     		fPty = null;

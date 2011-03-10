@@ -115,7 +115,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	private boolean rebuildState;
 	private BooleanExpressionApplicabilityCalculator booleanExpressionCalculator;
 	
-	private List identicalList;
+	private List<ToolChain> identicalList;
 	private Set<String> unusedChildrenSet;
 
 	
@@ -2249,7 +2249,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return rTc == ManagedBuildManager.getRealToolChain(tc);
 	}
 	
-	public List getIdenticalList(){
+	public List<ToolChain> getIdenticalList(){
 		return identicalList;//;(ArrayList)identicalToolChainsList.clone();
 	}
 	
@@ -2301,7 +2301,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return new MatchKey<ToolChain>(this);
 	}
 
-	public void setIdenticalList(List list) {
+	public void setIdenticalList(List<ToolChain> list) {
 		identicalList = list;
 	}
 	

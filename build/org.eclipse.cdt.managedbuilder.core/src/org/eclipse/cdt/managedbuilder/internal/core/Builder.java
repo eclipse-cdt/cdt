@@ -133,7 +133,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	
 	private Boolean fSupportsCustomizedBuild;
 
-	private List identicalList;
+	private List<Builder> identicalList;
 	
 	private ICOutputEntry[] outputEntries;
 	
@@ -229,6 +229,11 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		loadFromProject(element);
 	}
 
+	@SuppressWarnings("unchecked")
+	private HashMap<String, String> cloneMap(HashMap<String, String> map) {
+		return (HashMap<String, String>) map.clone();
+	}
+	
 	/**
 	 * Create a <code>Builder</code> based upon an existing builder.
 	 * 
@@ -289,11 +294,11 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if(builder.customizedErrorParserIds != null)
 			customizedErrorParserIds = builder.customizedErrorParserIds.clone();
 		if(builder.customizedEnvironment != null)
-			customizedEnvironment = (HashMap<String, String>) builder.customizedEnvironment.clone();
+			customizedEnvironment = cloneMap(builder.customizedEnvironment);
 		appendEnvironment = builder.appendEnvironment;
 		buildPath = builder.buildPath;
 		if(builder.customBuildProperties != null)
-			customBuildProperties = (HashMap<String, String>) builder.customBuildProperties.clone();
+			customBuildProperties = cloneMap(builder.customBuildProperties);
 
 			
 			
@@ -393,14 +398,14 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if(builder.customizedErrorParserIds != null)
 			customizedErrorParserIds = builder.customizedErrorParserIds.clone();
 		if(builder.customizedEnvironment != null)
-			customizedEnvironment = (HashMap<String, String>) builder.customizedEnvironment.clone();
+			customizedEnvironment = cloneMap(builder.customizedEnvironment);
 		appendEnvironment = builder.appendEnvironment;
 		if(isBuildPathEditable()){
 			if(!getBuildPath().equals(builder.getBuildPath()))
 				setBuildPath(builder.getBuildPath());
 		}
 		if(builder.customBuildProperties != null)
-			customBuildProperties = (HashMap<String, String>) builder.customBuildProperties.clone();
+			customBuildProperties = cloneMap(builder.customBuildProperties);
 
 		if(allBuildSettings){
 			if(!getCommand().equals(builder.getCommand()))
@@ -2128,14 +2133,13 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	public Map<String, String> getEnvironment() {
 		if(customizedEnvironment != null)
-			return (HashMap<String, String>)customizedEnvironment.clone();
+			return cloneMap(customizedEnvironment);
 		return null;
 	}
 
 	public Map<String, String> getExpandedEnvironment() throws CoreException {
 		if(customizedEnvironment != null){
-			@SuppressWarnings("unchecked")
-			Map<String, String> expanded = (HashMap<String, String>)customizedEnvironment.clone();
+			Map<String, String> expanded = cloneMap(customizedEnvironment);
 			ICdtVariableManager mngr = CCorePlugin.getDefault().getCdtVariableManager();
 			String separator = CCorePlugin.getDefault().getBuildEnvironmentManager().getDefaultDelimiter();
 			ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(getParent().getParent());
@@ -2330,7 +2334,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return new MatchKey<Builder>(this);
 	}
 
-	public void setIdenticalList(List list) {
+	public void setIdenticalList(List<Builder> list) {
 		identicalList = list;
 	}
 
@@ -2343,7 +2347,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return name;
 	}
 
-	public List getIdenticalList() {
+	public List<Builder> getIdenticalList() {
 		return identicalList;
 	}
 

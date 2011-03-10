@@ -163,7 +163,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	
 	private HashMap<IInputType, CLanguageData> typeToDataMap = new HashMap<IInputType, CLanguageData>(2);
 	private boolean fDataMapInited;
-	private List identicalList;
+	private List<Tool> identicalList;
 	private HashMap<String, PathInfoCache> discoveredInfoMap = new HashMap<String, PathInfoCache>(2);
 	private String scannerConfigDiscoveryProfileId;
 
@@ -368,7 +368,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		setSuperClassInternal(toolSuperClass);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Tool(IBuildObject parent, String toolSuperClassId, String Id, String name, Tool tool){
 		super(resolvedDefault);
 		this.parent = parent;
@@ -466,7 +465,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		super.copyChildren(tool);
 		//  Clone the children
 		if (tool.inputTypeList != null) {
-			discoveredInfoMap = (HashMap<String, PathInfoCache>)tool.discoveredInfoMap.clone();
+			@SuppressWarnings("unchecked")
+			HashMap<String, PathInfoCache> clone = (HashMap<String, PathInfoCache>)tool.discoveredInfoMap.clone();
+			discoveredInfoMap = clone;
 			for (InputType inputType : tool.getInputTypeList()) {
 				PathInfoCache cache = discoveredInfoMap.remove(getTypeKey(inputType));
 				int nnn = ManagedBuildManager.getRandomNumber();
@@ -1833,7 +1834,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getAdditionalDependencies()
 	 */
-	@SuppressWarnings("unchecked")
 	public IPath[] getAdditionalDependencies() {
 		List<IPath> allDeps = new ArrayList<IPath>();
 		IInputType[] types = getInputTypes();
@@ -1862,6 +1862,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 									optType == IOption.LIBRARY_FILES ||
 									optType == IOption.MACRO_FILES
 									) {
+								@SuppressWarnings("unchecked")
 								List<String> inputNames = (List<String>)option.getValue();
 								filterValues(optType, inputNames);
 								for (String s : inputNames)
@@ -3354,7 +3355,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return typeToDataMap.get(type);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void initDataMap(){
 		if(fDataMapInited)
 			return;
@@ -3380,6 +3380,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 					iter.set(getEditableInputType(type));
 				}
 
+				@SuppressWarnings("unchecked")
 				Map<IInputType, CLanguageData> map = (Map<IInputType, CLanguageData>)typeToDataMap.clone();
 				for(IInputType type : types){
 					CLanguageData data = map.remove(type);
@@ -3641,7 +3642,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return new MatchKey<Tool>(this);
 	}
 
-	public void setIdenticalList(List list) {
+	public void setIdenticalList(List<Tool> list) {
 		identicalList = list;
 	}
 
@@ -3689,7 +3690,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			this.parent = ((IFolderInfo)rcInfo).getToolChain();
 	}
 
-	public List getIdenticalList() {
+	public List<Tool> getIdenticalList() {
 		return identicalList;
 	}
 
@@ -3985,8 +3986,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return list.toArray(new Option[list.size()]);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void filterValues(int type, List values){
+	public void filterValues(int type, List<String> values){
 		if(values.size() == 0)
 			return;
 		
@@ -3998,15 +3998,14 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			}
 			
 			if(filterSet.size() != 0){
-				Object oVal;
-				for(int i = 0; i < values.size(); i++){
-					oVal = values.get(i);
+				for (Iterator<String> iterator = values.iterator(); iterator.hasNext();) {
+					String oVal = iterator.next();
 					if(type == IOption.PREPROCESSOR_SYMBOLS){
-						String[] nameVal = BuildEntryStorage.macroNameValueFromValue((String)oVal);
+						String[] nameVal = BuildEntryStorage.macroNameValueFromValue(oVal);
 						oVal = nameVal[0];
 					}
 					if(filterSet.contains(oVal))
-						values.remove(i);
+						iterator.remove();
 				}
 			}
 		}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -54,6 +55,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -87,6 +89,12 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
     // A map of pid to names.  It is filled when we get all the
     // processes that are running
     private Map<Integer, String> fProcessNames = new HashMap<Integer, String>();
+
+    // Id of our process.  Currently, we only know it for an attach session.
+    private String fProcId;
+    
+    // If we can use a PTY, we store it here
+	private PTY fPty;
 
     public GDBProcesses(DsfSession session) {
     	super(session);
@@ -150,6 +158,18 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 		return new GDBContainerDMC(getSession().getId(), processDmc, groupId);
 	}
 	
+    /** @since 4.0 */
+	@Override
+    public IMIContainerDMContext createContainerContextFromGroupId(ICommandControlDMContext controlDmc, String groupId) {
+    	IProcessDMContext processDmc;
+		if (fProcId != null) {
+			processDmc = createProcessContext(controlDmc, fProcId);
+		} else {
+			processDmc = createProcessContext(controlDmc, groupId);
+		}
+    	return createContainerContext(processDmc, groupId);
+    }
+
 	@Override
 	public void getExecutionData(IThreadDMContext dmc, DataRequestMonitor<IThreadDMData> rm) {
 		if (dmc instanceof IMIProcessDMContext) {
@@ -159,10 +179,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 			// inside the context, so must find it another way.  Note that this method is also called to find the name
 			// of processes to attach to, and in this case, we do have the proper pid. 
 			if (pidStr == null || pidStr.length() == 0) {
-				MIInferiorProcess inferiorProcess = fGdb.getInferiorProcess();
-			    if (inferiorProcess != null) {
-			    	pidStr = inferiorProcess.getPid();
-			    }
+				pidStr = fProcId;
 			}
 			int pid = -1;
 			try {
@@ -173,12 +190,8 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 			String name = fProcessNames.get(pid);
 			if (name == null) {
 				// Hm. Strange. But if the pid is our inferior's, we can just use the binary name
-				MIInferiorProcess inferior = fGdb.getInferiorProcess();
-				if (inferior != null) {
-					String inferiorPidStr = inferior.getPid();
-					if (inferiorPidStr != null && Integer.parseInt(inferiorPidStr) == pid) {
-						name = fBackend.getProgramPath().lastSegment();
-					}
+				if (fProcId != null && Integer.parseInt(fProcId) == pid) {
+					name = fBackend.getProgramPath().lastSegment();
 				}
 			}
 			if (name == null) {
@@ -187,8 +200,9 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 				// to keep GDB running has been selected.
 				name = "Unknown name"; //$NON-NLS-1$
 
-				// Until bug 305385 is fixed, the above code will not work, so we assume we
-				// are looking for our own process
+				// Until bug 305385 is fixed, the above code will not work, because
+				// we don't know the pid of our process unless we are in an attach session
+				// Therefore, we assume we are looking for our own process
 				name = fBackend.getProgramPath().lastSegment();
 			}
 		
@@ -225,12 +239,8 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 						new DataRequestMonitor<IDMContext>(ImmediateExecutor.getInstance(), rm) {
 							@Override
 							protected void handleSuccess() {
-								MIInferiorProcess inferiorProcess = fGdb.getInferiorProcess();
-								if (inferiorProcess != null) {
-									inferiorProcess.setContainerContext(containerDmc);
-									inferiorProcess.setPid(((IMIProcessDMContext)procCtx).getProcId());
-								}
-
+								// For an attach, we actually know the pid, so let's remember it
+								fProcId = ((IMIProcessDMContext)procCtx).getProcId();
 								IDMContext containerDmc = getData();
 								rm.setData(containerDmc);
 
@@ -274,11 +284,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 			new RequestMonitor(getExecutor(), rm) {
 				@Override
 				protected void handleSuccess() {					
-					MIInferiorProcess inferiorProcess = fGdb.getInferiorProcess();
-				    if (inferiorProcess != null) {
-				    	inferiorProcess.setPid(null);
-				    }
-
+					fProcId = null;
 					rm.done();
 				}
 			});
@@ -303,11 +309,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	
 	@Override
 	public void getProcessesBeingDebugged(IDMContext dmc, DataRequestMonitor<IDMContext[]> rm) {
-        MIInferiorProcess inferiorProcess = fGdb.getInferiorProcess();
-	    if (fConnected && 
-	    	inferiorProcess != null && 
-	    	inferiorProcess.getState() != MIInferiorProcess.State.TERMINATED) {
-
+	    if (fConnected) {
    	    	super.getProcessesBeingDebugged(dmc, rm);
 	    } else {
 	    	rm.setData(new IDMContext[0]);
@@ -442,15 +444,56 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	}
 	
 	/**
+	 * This method does the necessary work to setup the input/output streams for the
+	 * inferior process, by either preparing the PTY to be used, to simply leaving
+	 * the PTY null, which indicates that the input/output streams of the CLI should
+	 * be used instead; this decision is based on the type of session.
+	 * 
+	 * @since 4.0
+	 */
+	public void initializeInputOutput(IContainerDMContext containerDmc, final RequestMonitor rm) {
+    	if (fBackend.getSessionType() == SessionType.REMOTE || fBackend.getIsAttachSession()) {
+    		// These types do not use a PTY
+    		fPty = null;
+    		rm.done();
+    	} else {
+    		// These types always use a PTY
+    		try {
+    			fPty = new PTY();
+
+    			// Tell GDB to use this PTY
+    			fGdb.queueCommand(
+    					fCommandFactory.createMIInferiorTTYSet((IMIContainerDMContext)containerDmc, fPty.getSlaveName()), 
+    					new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm) {
+    						@Override
+    						protected void handleFailure() {
+    							// We were not able to tell GDB to use the PTY
+    							// so we won't use it at all.
+    			    			fPty = null;
+    			        		rm.done();
+    						}
+    					});
+    		} catch (IOException e) {
+    			fPty = null;
+        		rm.done();
+    		}
+    	}
+	}
+	/**
 	 * @since 4.0
 	 */
 	protected void createConsole(final IContainerDMContext containerDmc, final boolean restart, final RequestMonitor rm) {
-		fGdb.initInferiorInputOutput(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+		initializeInputOutput(containerDmc, new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
 			@Override
 			protected void handleSuccess() {
-				fGdb.createInferiorProcess();				
-				final MIInferiorProcess inferior = fGdb.getInferiorProcess();
-				inferior.setContainerContext(containerDmc);
+				Process inferiorProcess;
+		    	if (fPty == null) {
+		    		inferiorProcess = new MIInferiorProcess(containerDmc, fBackend.getMIOutputStream());
+		    	} else {
+		    		inferiorProcess = new MIInferiorProcess(containerDmc, fPty);
+		    	}
+
+		    	final Process inferior = inferiorProcess;
 
 				final String label = fBackend.getProgramPath().lastSegment();
 				final ILaunch launch = (ILaunch)getSession().getModelAdapter(ILaunch.class);

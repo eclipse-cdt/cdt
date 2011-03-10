@@ -29,9 +29,9 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
+import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
@@ -77,7 +77,6 @@ public class GDBRunControl extends MIRunControl {
 	
     private IGDBBackend fGdb;
 	private IMIProcesses fProcService;
-	private IGDBControl fGbControlService;
 	private CommandFactory fCommandFactory;
 	
 	// Record list of execution contexts
@@ -104,7 +103,6 @@ public class GDBRunControl extends MIRunControl {
     	
         fGdb = getServicesTracker().getService(IGDBBackend.class);
         fProcService = getServicesTracker().getService(IMIProcesses.class);
-        fGbControlService = getServicesTracker().getService(IGDBControl.class);
         fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 
         register(new String[]{IRunControl.class.getName(), 
@@ -135,7 +133,7 @@ public class GDBRunControl extends MIRunControl {
     }
 
     @Override
-    public void suspend(IExecutionDMContext context, final RequestMonitor rm){
+    public void suspend(final IExecutionDMContext context, final RequestMonitor rm){
         canSuspend(
             context, 
             new DataRequestMonitor<Boolean>(getExecutor(), rm) {
@@ -151,7 +149,8 @@ public class GDBRunControl extends MIRunControl {
                     	if (fGdb.getIsAttachSession() 
                     			&& fGdb.getSessionType() != SessionType.REMOTE
                     			&& Platform.getOS().equals(Platform.OS_WIN32)) {
-                    		String inferiorPid = fGbControlService.getInferiorProcess().getPid();
+                    		IMIProcessDMContext processDmc = DMContexts.getAncestorOfType(context, IMIProcessDMContext.class);
+                    		String inferiorPid = processDmc.getProcId();
                     		if (inferiorPid != null) {
                     			fGdb.interruptInferiorAndWait(Long.parseLong(inferiorPid), IGDBBackend.INTERRUPT_TIMEOUT_DEFAULT, rm);
                     		}

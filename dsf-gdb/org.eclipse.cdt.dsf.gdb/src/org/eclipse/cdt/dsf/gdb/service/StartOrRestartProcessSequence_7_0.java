@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,13 +33,13 @@ import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
-import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
-import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -60,6 +61,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	private CommandFactory fCommandFactory;
 	private IGDBProcesses fProcService;
 	private IReverseRunControl fReverseService;
+	private IGDBBackend fBackend;
 	
 	private DsfServicesTracker fTracker;
 
@@ -81,6 +83,8 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	
 	// Indicates if the sequence is being used for a restart or a start
 	private final boolean fRestart;
+	
+	private PTY fPty;
 	
 	// Store the dataRM so that we can fill it with the new container context, which we must return
 	// Although we can access this through Sequence.getRequestMonitor(), we would loose the type-checking.
@@ -144,6 +148,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 						"stepInitializeBaseSequence",  //$NON-NLS-1$
 						"stepInsertStopOnMainBreakpoint",  //$NON-NLS-1$
 						"stepSetBreakpointForReverse",   //$NON-NLS-1$
+						"stepInitializeInputOutput",   //$NON-NLS-1$
 						"stepCreateConsole",    //$NON-NLS-1$
 						"stepRunProgram",   //$NON-NLS-1$
 						"stepSetReverseOff",   //$NON-NLS-1$
@@ -166,6 +171,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		fCommandControl = fTracker.getService(IGDBControl.class);
         fCommandFactory = fTracker.getService(IMICommandControl.class).getCommandFactory();		
 		fProcService = fTracker.getService(IGDBProcesses.class);
+		fBackend = fTracker.getService(IGDBBackend.class);
 
         if (fCommandControl == null || fCommandFactory == null || fProcService == null) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Cannot obtain service", null)); //$NON-NLS-1$
@@ -263,20 +269,57 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		}
 	}
 	
+    /**
+     * This method does the necessary work to setup the input/output streams for the
+     * inferior process, by either preparing the PTY to be used, to simply leaving
+     * the PTY null, which indicates that the input/output streams of the CLI should
+     * be used instead; this decision is based on the type of session.
+     */
+	@Execute
+    public void stepInitializeInputOutput(final RequestMonitor rm) {
+    	if (fBackend.getSessionType() == SessionType.REMOTE || fBackend.getIsAttachSession()) {
+    		// These types do not use a PTY
+    		fPty = null;
+    		rm.done();
+    	} else {
+    		// These types always use a PTY
+    		try {
+    			fPty = new PTY();
+
+    			// Tell GDB to use this PTY
+    			fCommandControl.queueCommand(
+    					fCommandFactory.createMIInferiorTTYSet((IMIContainerDMContext)getContainerContext(), fPty.getSlaveName()), 
+    					new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm) {
+    						@Override
+    						protected void handleFailure() {
+    							// We were not able to tell GDB to use the PTY
+    							// so we won't use it at all.
+    			    			fPty = null;
+    			        		rm.done();
+    						}
+    					});
+    		} catch (IOException e) {
+    			fPty = null;
+        		rm.done();
+    		}
+    	}
+    }
+	
 	/**
 	 * Before running the program, we must create its console for IO.
 	 */
 	@Execute
 	public void stepCreateConsole(final RequestMonitor rm) {
-		fCommandControl.initInferiorInputOutput(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
-			@Override
-			protected void handleSuccess() {
-				fCommandControl.createInferiorProcess();
-				final Process inferior = fCommandControl.getInferiorProcess();
+				Process inferiorProcess;
+		    	if (fPty == null) {
+		    		inferiorProcess = new MIInferiorProcess(fContainerDmc, fBackend.getMIOutputStream());
+		    	} else {
+		    		inferiorProcess = new MIInferiorProcess(fContainerDmc, fPty);
+		    	}
 
+		    	final Process inferior = inferiorProcess;
 				final ILaunch launch = (ILaunch)getContainerContext().getAdapter(ILaunch.class);
 				final String groupId = ((IMIContainerDMContext)getContainerContext()).getGroupId();
-				final DsfSession session = fCommandControl.getSession();
 
 				IGDBBackend backend = fTracker.getService(IGDBBackend.class);
 				final String pathLabel = backend.getProgramPath().lastSegment();
@@ -308,8 +351,6 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 						rm.done();
 					}
 				});
-			}
-		});
 	}
 	
 	/**
@@ -329,13 +370,8 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 				// Now that the process is started, the pid has been allocated
 				// so we need to fetch the proper container context
 				// We replace our current context which does not have the pid, with one that has the pid.
-				
 				if (fContainerDmc instanceof IMIContainerDMContext) {	
 					fContainerDmc = fProcService.createContainerContextFromGroupId(fCommandControl.getContext(), ((IMIContainerDMContext)fContainerDmc).getGroupId());
-					fCommandControl.getInferiorProcess().setContainerContext(fContainerDmc);
-
-					IMIProcessDMContext procDmc = DMContexts.getAncestorOfType(fContainerDmc, IMIProcessDMContext.class);
-					fCommandControl.getInferiorProcess().setPid(procDmc.getProcId());
 					
 					// This is the container context that this sequence is supposed to return: set the dataRm
 					fDataRequestMonitor.setData(fContainerDmc);					

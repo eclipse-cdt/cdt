@@ -31,6 +31,7 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
+import org.eclipse.cdt.dsf.mi.service.MIProcesses.ContainerExitedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses.ContainerStartedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
@@ -269,12 +270,28 @@ public class MIRunControlEventProcessor
     		event = MIFunctionFinishedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
     	} else if ("exited-normally".equals(reason) || "exited".equals(reason)) { //$NON-NLS-1$ //$NON-NLS-2$
     		event = MIInferiorExitEvent.parse(fCommandControl.getContext(), exec.getToken(), exec.getMIResults());
+    		// Until we clean up the handling of all these events, we need to send the containerExited event
+    		// Only needed GDB < 7.0, because GDB itself does not yet send an MI event about the inferior terminating
+    		sendContainerExitedEvent();
     	} else if ("exited-signalled".equals(reason)) { //$NON-NLS-1$
     		event = MIInferiorSignalExitEvent.parse(fCommandControl.getContext(), exec.getToken(), exec.getMIResults());
+    		// Until we clean up the handling of all these events, we need to send the containerExited event
+    		// Only needed GDB < 7.0, because GDB itself does not yet send an MI event about the inferior terminating
+    		sendContainerExitedEvent();
     	} else if (STOPPED_REASON.equals(reason)) {
     		event = MIStoppedEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
     	}
     	return event;
+    }
+    
+    private void sendContainerExitedEvent() {
+    	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+    	if (procService != null) {
+    		IContainerDMContext processContainerDmc = procService.createContainerContextFromGroupId(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
+
+    		fCommandControl.getSession().dispatchEvent(
+    				new ContainerExitedDMEvent(processContainerDmc), fCommandControl.getProperties());
+    	}
     }
     
     public void commandQueued(ICommandToken token) {

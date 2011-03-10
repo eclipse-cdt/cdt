@@ -39,7 +39,6 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.FinalLaunchSequence;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
-import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend.BackendStateChangedEvent;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
@@ -49,12 +48,10 @@ import org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl;
 import org.eclipse.cdt.dsf.mi.service.command.CLIEventProcessor;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
-import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
 import org.eclipse.cdt.dsf.mi.service.command.MIRunControlEventProcessor;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -101,9 +98,6 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     private MIRunControlEventProcessor fMIEventProcessor;
     private CLIEventProcessor fCLICommandProcessor;
     private AbstractCLIProcess fCLIProcess;
-    private MIInferiorProcess fInferiorProcess;
-    
-    private PTY fPty;
 
     /**
      * @since 3.0
@@ -225,51 +219,12 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
             }
         );
     }
-    
-    /*
-     * This method does the necessary work to setup the input/output streams for the
-     * inferior process, by either preparing the PTY to be used, to simply leaving
-     * the PTY null, which indicates that the input/output streams of the CLI should
-     * be used instead; this decision is based on the type of session.
-     */
-    public void initInferiorInputOutput(final RequestMonitor requestMonitor) {
-    	if (fMIBackend.getSessionType() == SessionType.REMOTE || fMIBackend.getIsAttachSession()) {
-    		// These types do not use a PTY
-    		fPty = null;
-    		requestMonitor.done();
-    	} else {
-    		// These types always use a PTY
-    		try {
-    			fPty = new PTY();
-
-    			// Tell GDB to use this PTY
-    			queueCommand(
-    					getCommandFactory().createMIInferiorTTYSet(fControlDmc, fPty.getSlaveName()), 
-    					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
-    						@Override
-    						protected void handleFailure() {
-    							// We were not able to tell GDB to use the PTY
-    							// so we won't use it at all.
-    			    			fPty = null;
-    			        		requestMonitor.done();
-    						}
-    					});
-    		} catch (IOException e) {
-    			fPty = null;
-        		requestMonitor.done();
-    		}
-    	}
-    }
 
     /*
      * This method creates a new inferior process object based on the current Pty or output stream.
      */
-    public void createInferiorProcess() {
-    	if (fPty == null) {
-    		fInferiorProcess = new MIInferiorProcess(GDBControl.this, fMIBackend.getMIOutputStream());
-    	} else {
-    		fInferiorProcess = new MIInferiorProcess(GDBControl.this, fPty);
-    	}
+    private void createInferiorProcess() {
+// khouzam BROKEN because no one does the below when we restart
     	
     	// Create the CLI event processor each time this method is called
     	// to reset the internal thread id count
@@ -282,10 +237,6 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
  
     public AbstractCLIProcess getCLIProcess() { 
         return fCLIProcess; 
-    }
-
-    public MIInferiorProcess getInferiorProcess() {
-        return fInferiorProcess;
     }
     
 	/**
@@ -437,9 +388,8 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
                 requestMonitor.done();
                 return;
             }
-
-            createInferiorProcess();
             
+        	fCLICommandProcessor = new CLIEventProcessor(GDBControl.this, fControlDmc);
             fMIEventProcessor = new MIRunControlEventProcessor(GDBControl.this, fControlDmc);
 
             requestMonitor.done();
@@ -450,7 +400,6 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
             fCLICommandProcessor.dispose();
             fMIEventProcessor.dispose();
             fCLIProcess.dispose();
-            fInferiorProcess.dispose();
 
             requestMonitor.done();
         }

@@ -629,7 +629,8 @@ public class CommandFactory {
 		return new MIGDBShowExitCode(ctx);
 	}
 
-	public ICommand<MIInfo> createMIInferiorTTYSet(ICommandControlDMContext dmc, String tty) {
+	/** @since 4.0 */
+	public ICommand<MIInfo> createMIInferiorTTYSet(IMIContainerDMContext dmc, String tty) {
 		return new MIInferiorTTYSet(dmc, tty);
 	}
 

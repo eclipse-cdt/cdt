@@ -19,32 +19,30 @@ import java.util.Properties;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
-import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
 
 public interface IGDBControl extends IMICommandControl {
 
-	void terminate(final RequestMonitor rm);
-	void initInferiorInputOutput(final RequestMonitor requestMonitor);
-
-	void createInferiorProcess();
-
 	AbstractCLIProcess getCLIProcess();
 
-	MIInferiorProcess getInferiorProcess();
-
-
+	/**
+	 * Request to terminate GDB.
+	 * 
+	 * @param rm The requestMonitor indicating that GDB has been terminated.
+	 */
+	void terminate(RequestMonitor rm);
+	
 	/**
 	 * This method should be called once and only once, during the launch,
 	 * to complete the initialization.  It will perform the final steps
 	 * to configure GDB for the type of debugging session chosen by the
 	 * user.
 	 * 
-	 * @param requestMonitor The requestMonitor indicating that the
-	 *                       final steps if initialization are completed.
+	 * @param rm The requestMonitor indicating that the final steps if 
+	 *           initialization are completed.
 	 *                       
 	 * @since 4.0
 	 */
-	void completeInitialization(RequestMonitor requestMonitor);
+	void completeInitialization(RequestMonitor rm);
 	
 	/**
 	 * @since 2.0

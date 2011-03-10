@@ -496,8 +496,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
-							IMIContainerDMContext containerDmc = createContainerContext(procCtx, 
-									                                             ((IMIProcessDMContext)procCtx).getProcId());
+							IMIContainerDMContext containerDmc = createContainerContext(procCtx, MIProcesses.UNIQUE_GROUP_ID); 
 			                getSession().dispatchEvent(new ContainerStartedDMEvent(containerDmc), 
 			                                           getProperties());
 			                rm.setData(containerDmc);

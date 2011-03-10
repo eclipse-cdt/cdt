@@ -62,7 +62,6 @@ import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
-import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupCreatedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
@@ -602,6 +601,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     		// In such a case, we choose the first process we find
     		// This works when we run a single process
     		// but will break for multi-process!!!
+    		// khouzam
     		if (getThreadToGroupMap().isEmpty()) {
     			groupId = MIProcesses.UNIQUE_GROUP_ID;
     		} else {
@@ -618,6 +618,18 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
     /** @since 4.0 */
     public IMIContainerDMContext createContainerContextFromGroupId(ICommandControlDMContext controlDmc, String groupId) {
+    	if (groupId == null || groupId.length() == 0) {
+    		// This happens when we are doing non-attach, so for GDB < 7.2, we know that in that case
+    		// we are single process, so lets see if we have the group in our map.
+    		assert getGroupToPidMap().size() <= 1 : "More than one process in our map"; //$NON-NLS-1$
+    		if (getGroupToPidMap().size() == 1) {
+    			for (String key : getGroupToPidMap().keySet()) {
+    				groupId = key;
+    				break;
+    			}
+    		}
+    	}
+    	
     	String pid = getGroupToPidMap().get(groupId);
     	if (pid == null) {
     		pid = groupId;
@@ -799,13 +811,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	    					public void execute(RequestMonitor rm) {
 								// By now, GDB has reported the groupId that was created for this process
 	    						fContainerDmc = createContainerContext(procCtx, getGroupFromPid(((IMIProcessDMContext)procCtx).getProcId()));
-	    						
-	    						MIInferiorProcess inferior = fCommandControl.getInferiorProcess();
-	    						if (inferior != null) {
-	    							inferior.setContainerContext(fContainerDmc);
-	    							inferior.setPid(((IMIProcessDMContext)procCtx).getProcId());
-	    						}
-	    						
+	    							    						
 	    						// Store the fully formed container context so it can be returned to the caller.
 							    dataRm.setData(fContainerDmc);
 
@@ -873,13 +879,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
         	fCommandControl.queueCommand(
         			fCommandFactory.createMITargetDetach(controlDmc, procDmc.getProcId()),
-    				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-        				@Override
-        				protected void handleSuccess() {
-        					fCommandControl.getInferiorProcess().setPid(null);
-        					rm.done();
-        				}
-        			});
+    				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
     	} else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid context.", null)); //$NON-NLS-1$
             rm.done();

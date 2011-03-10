@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Bryan Wilkinson (QNX)
- *    Andrew Ferguson (Symbian)
- *    Anton Leherbauer (Wind River Systems)
- *    Sergey Prigogin (Google)
- *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Markus Schorn - initial API and implementation
+ *     Bryan Wilkinson (QNX)
+ *     Andrew Ferguson (Symbian)
+ *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
@@ -92,7 +92,7 @@ public class CIndex implements IIndex {
 	}
 
 	public IIndexBinding[] findBindings(Pattern pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
-		return findBindings(new Pattern[]{pattern}, isFullyQualified, filter, monitor);
+		return findBindings(new Pattern[] { pattern }, isFullyQualified, filter, monitor);
 	}
 
 	public IIndexBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
@@ -344,8 +344,8 @@ public class CIndex implements IIndex {
 
 	public synchronized void releaseReadLock() {
 		if (--fReadLock == 0) {
-			for (IIndexFragment fFragment : fFragments) {
-				fFragment.releaseReadLock();
+			for (IIndexFragment fragment : fFragments) {
+				fragment.releaseReadLock();
 			}
 		}
 	}
@@ -355,8 +355,8 @@ public class CIndex implements IIndex {
 	}
 
 	public boolean hasWaitingReaders() {
-		for (IIndexFragment fFragment : fFragments) {
-			if (fFragment.hasWaitingReaders()) {
+		for (IIndexFragment fragment : fFragments) {
+			if (fragment.hasWaitingReaders()) {
 				return true;
 			}
 		}
@@ -365,8 +365,8 @@ public class CIndex implements IIndex {
 
 	public long getLastWriteAccess() {
 		long result= 0;
-		for (IIndexFragment fFragment : fFragments) {
-			result= Math.max(result, fFragment.getLastWriteAccess());
+		for (IIndexFragment fragment : fFragments) {
+			result= Math.max(result, fragment.getLastWriteAccess());
 		}
 		return result;
 	}
@@ -458,8 +458,8 @@ public class CIndex implements IIndex {
 
 	public IIndexFragmentBinding[] findEquivalentBindings(IBinding binding) throws CoreException {
 		List<IIndexFragmentBinding> result = new ArrayList<IIndexFragmentBinding>();
-		for (IIndexFragment fFragment : fFragments) {
-			IIndexFragmentBinding adapted = fFragment.adaptBinding(binding);
+		for (IIndexFragment fragment : fFragments) {
+			IIndexFragmentBinding adapted = fragment.adaptBinding(binding);
 			if (adapted != null) {
 				result.add(adapted);
 			}
@@ -629,23 +629,23 @@ public class CIndex implements IIndex {
 
 	public long getCacheHits() {
 		long result= 0;
-		for (IIndexFragment fFragment : fFragments) {
-			result+= fFragment.getCacheHits();
+		for (IIndexFragment fragment : fFragments) {
+			result+= fragment.getCacheHits();
 		}
 		return result;
 	}
 
 	public long getCacheMisses() {
 		long result= 0;
-		for (IIndexFragment fFragment : fFragments) {
-			result+= fFragment.getCacheMisses();
+		for (IIndexFragment fragment : fFragments) {
+			result+= fragment.getCacheMisses();
 		}
 		return result;
 	}
 
 	public void resetCacheCounters() {
-		for (IIndexFragment fFragment : fFragments) {
-			fFragment.resetCacheCounters();
+		for (IIndexFragment fragment : fFragments) {
+			fragment.resetCacheCounters();
 		}
 	}
 
@@ -661,9 +661,9 @@ public class CIndex implements IIndex {
 
 	public IIndexFile[] getAllFiles() throws CoreException {
 		HashMap<IIndexFileLocation, IIndexFile> result= new HashMap<IIndexFileLocation, IIndexFile>();
-		for (IIndexFragment ifrag : fFragments) {
-			for (IIndexFragmentFile iff : ifrag.getAllFiles()) {
-				result.put(iff.getLocation(), iff);
+		for (IIndexFragment fragment : fFragments) {
+			for (IIndexFragmentFile file : fragment.getAllFiles()) {
+				result.put(file.getLocation(), file);
 			}
 		}
 		return result.values().toArray(new IIndexFile[result.size()]);

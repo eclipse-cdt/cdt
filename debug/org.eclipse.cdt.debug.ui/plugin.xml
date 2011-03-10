@@ -1818,6 +1818,11 @@
           label="%TracepointActionSet.label"
           visible="false">
       </actionSet>
+      <actionSet
+          id="org.eclipse.cdt.debug.ui.debugViewLayoutActionSet"
+          label="%DebugViewLayoutActionSet.label"
+          visible="false">
+      </actionSet>
  </extension>
  <extension
        point="org.eclipse.ui.commands">
@@ -1897,6 +1902,23 @@
           helpContextId="view_memory_context"
           name="%command.viewMemory.name">
     </command>
+    <category
+          description="%DebugViewLayoutCategory.description"
+          id="org.eclipse.cdt.debug.ui.category.debugViewLayout"
+          name="%DebugViewLayoutCategory.name">
+    </category>
+    <command
+          categoryId="org.eclipse.cdt.debug.ui.category.debugViewLayout"
+          description="%GroupDebugContexts.description"
+          id="org.eclipse.cdt.debug.ui.command.groupDebugContexts"
+          name="%GroupDebugContexts.name">
+    </command>
+    <command
+          categoryId="org.eclipse.cdt.debug.ui.category.debugViewLayout"
+          description="%UngroupDebugContexts.description"
+          id="org.eclipse.cdt.debug.ui.command.ungroupDebugContexts"
+          name="%UngroupDebugContexts.name">
+    </command>
  </extension>
  <extension
          point="org.eclipse.ui.handlers">
@@ -1951,6 +1973,14 @@
 			    </with>
 			</activeWhen>
       </handler>
+      <handler
+            class="org.eclipse.cdt.debug.internal.ui.commands.GroupDebugContextsCommandHandler"
+            commandId="org.eclipse.cdt.debug.ui.command.groupDebugContexts">
+      </handler>
+      <handler
+            class="org.eclipse.cdt.debug.internal.ui.commands.UngroupDebugContextsCommandHandler"
+            commandId="org.eclipse.cdt.debug.ui.command.ungroupDebugContexts">
+      </handler>
  </extension>
  <extension
          point="org.eclipse.core.expressions.definitions">
@@ -2000,6 +2030,18 @@
                   operator="or">
                <equals
                      value="org.eclipse.cdt.debug.ui.debugActionSet">
+               </equals>
+            </iterate>
+         </with>
+      </definition>
+      <definition
+            id="org.eclipse.cdt.debug.ui.testDebugViewLayoutActionSetActive">
+         <with
+               variable="activeContexts">
+            <iterate
+                  operator="or">
+               <equals
+                     value="org.eclipse.cdt.debug.ui.debugViewLayoutActionSet">
                </equals>
             </iterate>
          </with>
@@ -2297,6 +2339,53 @@
           </visibleWhen>
        </command>
     </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.DebugView?after=emptyStepGroup">
+         <command
+			commandId="org.eclipse.cdt.debug.ui.command.groupDebugContexts"
+			label="%GroupDebugContexts.name">
+          	<visibleWhen
+            	checkEnabled="false">
+            		<and>
+		      			<reference
+		            		definitionId="org.eclipse.cdt.debug.ui.testDebugViewLayoutActionSetActive">
+		      			</reference>
+		         		<with
+		               		variable="debugContext">
+		               		<iterate
+								ifEmpty="false"
+                              	operator="and">
+                            	<test
+	        	        			property="org.eclipse.cdt.debug.ui.isGroupDebugContextsVisible">
+	    	           			</test>
+	    	           		</iterate>
+			         	</with>
+			   		</and>
+          	</visibleWhen>
+         </command>
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.ungroupDebugContexts"
+               label="%UngroupDebugContexts.name">
+				<visibleWhen
+            	checkEnabled="false">
+            		<and>
+		      			<reference
+		            		definitionId="org.eclipse.cdt.debug.ui.testDebugViewLayoutActionSetActive">
+		      			</reference>
+		         		<with
+		               		variable="debugContext">
+		               		<iterate
+								ifEmpty="false"
+                              	operator="and">
+                            	<test
+	        	        			property="org.eclipse.cdt.debug.ui.isUngroupDebugContextsVisible">
+	    	           			</test>
+	    	           		</iterate>
+			         	</with>
+			   		</and>
+          	</visibleWhen>
+         </command>
+      </menuContribution>
  </extension>
  
  <!-- Cast to Type / Display as Array -->

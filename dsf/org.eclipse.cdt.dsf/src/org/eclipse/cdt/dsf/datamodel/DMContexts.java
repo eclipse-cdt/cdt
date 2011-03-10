@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson 		  - Modified for additional features in DSF Reference implementation
+ *     Dobrin Alexiev (Texas Instruments) - added helpers for recursive data model contexts (bug 240208)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.datamodel;
 
@@ -73,6 +74,63 @@ public class DMContexts {
         return null;
     }
 
+    /**
+     * Finds the top most ancestor of the specified type.  
+     * It assumes only one immediate parent of the give type exists. 
+     * The search is done until there is no more immediate parents of the given type.
+     * The method returns the last one found.    
+     * 
+     * @param <V>
+     * @param ctx DMC to search.
+     * @param ancestorType Class type of the desired DMC ancestor.
+     * @return Returns the ancestor if found, null otherwise.
+     * @since 2.2
+     */
+    @ThreadSafe
+    @SuppressWarnings("unchecked")
+    public static <V extends IDMContext> V getTopMostAncestorOfType(IDMContext ctx, Class<V> ancestorType) {
+    	if(ctx == null)
+    		return null;
+    	
+    	V topMostAncestor = null;
+        boolean hasAncestorOfType = false;
+        IDMContext current = ctx;
+        do {
+        	hasAncestorOfType = false;
+        	IDMContext[] parents = current.getParents();
+        	for( IDMContext parent : parents) {
+                if (ancestorType.isAssignableFrom(parent.getClass())) {
+                	hasAncestorOfType = true;
+                	topMostAncestor = (V) parent;
+                	current = parent;
+                }
+        	}
+        	
+        } while( hasAncestorOfType);
+        return topMostAncestor;
+    }
+
+    /**
+     * Finds the immediate parent of the specified type if exists.  
+     * 
+     * @param ctx DMC to search.
+     * @param ancestorType Class type of the desired DMC ancestor.
+     * @return Returns the ancestor if found, null otherwise.
+     * @since 2.2
+     */
+    @ThreadSafe
+    @SuppressWarnings("unchecked")
+    public static <V extends IDMContext> V getParentOfType(IDMContext ctx, Class<V> ancestorType) {
+    	if(ctx == null)
+    		return null;
+
+    	for( IDMContext parent : ctx.getParents())
+            if (ancestorType.isAssignableFrom(parent.getClass())) 
+            	return (V)parent;
+
+    	return null;
+    }
+    
     /**
      * Finds all data model contexts of given type among ancestors of the 
      * specified context.  Ancestors are returned in order of closest to farthest,

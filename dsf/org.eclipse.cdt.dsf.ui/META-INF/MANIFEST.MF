@@ -22,6 +22,8 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.5.0",
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.dsf.debug.internal.ui;x-internal:=true,
  org.eclipse.cdt.dsf.debug.internal.ui.actions;x-internal:=true,
+ org.eclipse.cdt.dsf.debug.internal.ui.debugview.layout;x-internal:=true,
+ org.eclipse.cdt.dsf.debug.internal.ui.debugview.layout.actions,
  org.eclipse.cdt.dsf.debug.internal.ui.disassembly;x-internal:=true,
  org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions;x-internal:=true,
  org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model;x-internal:=true,

@@ -450,8 +450,14 @@
             properties="areNumberFormatsSupported,isNumberFormatAvailable,isNumberFormatActive"
             type="org.eclipse.debug.ui.IDebugView">
       </propertyTester>
+      <propertyTester
+			class="org.eclipse.cdt.dsf.debug.internal.ui.debugview.layout.DebugViewLayoutTester"
+			id="org.eclipse.cdt.dsf.ui.debug.view.layout.DebugViewLayoutTester"
+			namespace="org.eclipse.cdt.debug.ui"
+			properties="isGroupDebugContextsVisible,isUngroupDebugContextsVisible"
+			type="org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext">
+      </propertyTester>
    </extension>
-   
 	<extension 
 	    point="org.eclipse.debug.ui.detailPaneFactories">
         <detailFactories
@@ -789,5 +795,6 @@
             name="%disassemblyView.name">
       </editor>
    </extension>
+
 
 </plugin>

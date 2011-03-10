@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Ericsson and others.
+ * Copyright (c) 2008, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation
- *******************************************************************************/
+ *     Dobrin Alexiev (Texas Instruments) - user groups support (bug 240208)
+********************************************************************************/
 package org.eclipse.cdt.dsf.debug.service;
 
+import org.eclipse.cdt.dsf.debug.internal.provisional.service.IExecutionContextTranslator;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.service.DsfSession;
 
@@ -48,6 +50,8 @@ public abstract class AbstractDsfDebugServicesFactory implements IDsfDebugServic
 			return (V)createStackService(session);
 		} else if (ISymbols.class.isAssignableFrom(clazz)) {
 			return (V)createSymbolsService(session);
+		} else if (IExecutionContextTranslator.class.isAssignableFrom(clazz)) {
+			return (V)createExecutionContextTranslator(session);
 		} 
 		
 		return null;
@@ -66,5 +70,10 @@ public abstract class AbstractDsfDebugServicesFactory implements IDsfDebugServic
 	protected ISignals createSignalsService(DsfSession session) { return null; }	
 	protected IStack createStackService(DsfSession session) { return null; }	
 	protected ISymbols createSymbolsService(DsfSession session) { return null; }
+	
+	/**
+	 * @since 2.2
+	 */
+	protected IExecutionContextTranslator createExecutionContextTranslator( DsfSession session) { return null; }
 
 }

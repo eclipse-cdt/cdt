@@ -421,7 +421,7 @@ public class NewCfgDialog implements INewCfgDialog {
 		for (int i = 0; i < descs.length; ++i) {
 			cfgds[i] = ManagedBuildManager.getConfigurationForDescription(descs[i]);
 			IConfiguration cfg = cfgds[i];
-			for(; cfg != null && !cfg.isExtensionElement(); cfg = cfg.getParent());
+			for(; cfg != null && !cfg.isExtensionElement(); cfg = cfg.getParent()) {}
 			if (cfg != null) {
 				IProjectType pType = cfg.getProjectType();
 				if(pType != null){

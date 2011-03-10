@@ -244,7 +244,7 @@ public class CommandsViewWorkbook extends Composite
 						IRemoteCommandShell command = (IRemoteCommandShell)((CommandsViewPage)data).getInput();
 						try {
 							IRemoteCmdSubSystem cmdSubSystem = command.getCommandSubSystem();
-							if (cmdSubSystem != null){
+							if (cmdSubSystem != null && cmdSubSystem.isConnected()){
 								cmdSubSystem.removeShell(command);
 							}
 						}

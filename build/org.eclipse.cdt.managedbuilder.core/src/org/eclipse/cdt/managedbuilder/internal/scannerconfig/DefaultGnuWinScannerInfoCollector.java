@@ -30,20 +30,20 @@ public class DefaultGnuWinScannerInfoCollector extends DefaultGCCScannerInfoColl
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#contributeToScannerConfig(java.lang.Object, java.util.Map)
      */
-    @SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	@Override
-    public void contributeToScannerConfig(Object resource, Map scannerInfo) {
+    public void contributeToScannerConfig(Object resource, @SuppressWarnings("rawtypes") Map scannerInfo) {
         // check the resource
 //        if (resource != null && resource instanceof IResource &&
 //                ((IResource) resource).getProject().equals(getProject())) {
-            List includes = (List) scannerInfo.get(ScannerInfoTypes.INCLUDE_PATHS);
+            List<String> includes = (List<String>) scannerInfo.get(ScannerInfoTypes.INCLUDE_PATHS);
 //            List symbols = (List) scannerInfo.get(ScannerInfoTypes.SYMBOL_DEFINITIONS);
             
     		// This method will be called by the parser each time there is a new value
-            List translatedIncludes = CygpathTranslator.translateIncludePaths(fProject, includes);
-    		Iterator pathIter = translatedIncludes.listIterator();
+            List<String> translatedIncludes = CygpathTranslator.translateIncludePaths(fProject, includes);
+    		Iterator<String> pathIter = translatedIncludes.listIterator();
     		while (pathIter.hasNext()) {
-    			String convertedPath = (String) pathIter.next();
+    			String convertedPath = pathIter.next();
     			// On MinGW, there is no facility for converting paths
     			if (convertedPath.startsWith("/")) //$NON-NLS-1$
     				pathIter.remove();

@@ -28,17 +28,26 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 public class ProcessPrompter implements IStatusHandler {
 
+	public static class PrompterInfo {
+		public boolean supportsNewProcess;
+		public IProcessExtendedInfo[] processList;
+		
+		public PrompterInfo(boolean supportsNew, IProcessExtendedInfo[] list) {
+			supportsNewProcess = supportsNew;
+			processList = list;
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus,
 	 *      java.lang.Object)
 	 */
-	public Object handleStatus(IStatus status, Object processList) throws CoreException {
+	public Object handleStatus(IStatus status, Object info) throws CoreException {
 		Shell shell = GdbUIPlugin.getShell();
 		if (shell == null) {
 			IStatus error = new Status(IStatus.ERROR, GdbUIPlugin.getUniqueIdentifier(),
@@ -47,7 +56,8 @@ public class ProcessPrompter implements IStatusHandler {
 			throw new CoreException(error);
 		}
 
-		IProcessExtendedInfo[] plist = (IProcessExtendedInfo[])processList;		
+		PrompterInfo prompterInfo = (PrompterInfo) info;
+		IProcessExtendedInfo[] plist = prompterInfo.processList;		
 		if (plist == null) {
 			MessageDialog.openError(
 					shell,
@@ -91,11 +101,14 @@ public class ProcessPrompter implements IStatusHandler {
 
 					String[] cores = info.getCores();
 					if (cores != null && cores.length > 0) {
+						String coreStr;
 						if (cores.length == 1) {
-							text.append(" [core: ");
+							coreStr = LaunchUIMessages.getString("ProcessPrompter.Core");   //$NON-NLS-1$
 						} else {
-							text.append(" [cores: ");
+							coreStr = LaunchUIMessages.getString("ProcessPrompter.Cores");   //$NON-NLS-1$
 						}
+						text.append(" [" + coreStr + ": ");   //$NON-NLS-1$//$NON-NLS-2$
+						
 						for (String core : cores) {
 							text.append(core + ", "); //$NON-NLS-1$
 						}
@@ -133,15 +146,21 @@ public class ProcessPrompter implements IStatusHandler {
 			};
 
 			// Display the list of processes and have the user choose
-			TwoPaneElementSelector dialog = new TwoPaneElementSelector(shell, provider, qprovider);
+			ProcessPrompterDialog dialog = new ProcessPrompterDialog(shell, provider, qprovider, prompterInfo.supportsNewProcess);
 			dialog.setTitle(LaunchMessages.getString("LocalAttachLaunchDelegate.Select_Process")); //$NON-NLS-1$
 			dialog.setMessage(LaunchMessages.getString("LocalAttachLaunchDelegate.Select_Process_to_attach_debugger_to")); //$NON-NLS-1$
 
 			dialog.setElements(plist);
 			if (dialog.open() == Window.OK) {
-				IProcessExtendedInfo info = (IProcessExtendedInfo)dialog.getFirstResult();
-				if (info != null) {
-					return new Integer(info.getPid());
+				// First check if the user pressed the New button
+				String binaryPath = dialog.getBinaryPath();
+				if (binaryPath != null) {
+					return binaryPath;
+				}
+				
+				IProcessExtendedInfo processInfo = (IProcessExtendedInfo)dialog.getFirstResult();
+				if (processInfo != null) {
+					return new Integer(processInfo.getPid());
 				}
 			}
 		}

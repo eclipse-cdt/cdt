@@ -10,40 +10,59 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
-import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
-import org.eclipse.cdt.dsf.debug.service.IDisassembly;
-import org.eclipse.cdt.dsf.debug.service.IExpressions;
-import org.eclipse.cdt.dsf.debug.service.IMemory;
-import org.eclipse.cdt.dsf.debug.service.IModules;
-import org.eclipse.cdt.dsf.debug.service.IProcesses;
-import org.eclipse.cdt.dsf.debug.service.IRegisters;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
-import org.eclipse.cdt.dsf.debug.service.IStack;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
-import org.eclipse.cdt.dsf.mi.service.IMIBackend;
-import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
-import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.IDsfService;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 public class ShutdownSequence extends Sequence {
 
-    String fSessionId;
+	class ServiceShutdownStep extends Step {
+		
+		IDsfService fService;
 
-    String fApplicationName;
+		ServiceShutdownStep( IDsfService service ) {
+			super();
+			fService = service;
+		}
 
-    String fDebugModelId;
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.dsf.concurrent.Sequence.Step#execute(org.eclipse.cdt.dsf.concurrent.RequestMonitor)
+		 */
+		@Override
+		public void execute( final RequestMonitor rm ) {
+			fService.shutdown( new RequestMonitor( getExecutor(), rm ) {
 
-    DsfServicesTracker fTracker;
+				/* (non-Javadoc)
+				 * @see org.eclipse.cdt.dsf.concurrent.RequestMonitor#handleCompleted()
+				 */
+				@Override
+				protected void handleCompleted() {
+					if ( !isSuccess() ) {
+						GdbPlugin.getDefault().getLog().log( getStatus() );
+					}
+					rm.done();
+				}
+			} );
+		}
+	}
+
+    private String fSessionId;
+    
+    private Step[] fSteps;
 
     public ShutdownSequence(DsfExecutor executor, String sessionId, RequestMonitor requestMonitor) {
         super(executor, requestMonitor);
         fSessionId = sessionId;
+        fSteps = createSteps();
     }
 
     @Override
@@ -51,116 +70,38 @@ public class ShutdownSequence extends Sequence {
         return fSteps;
     }
 
-    private final Step[] fSteps = new Step[] { new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            assert GdbPlugin.getBundleContext() != null;
-            fTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fSessionId);
-            requestMonitor.done();
-        }
+	private Step[] createSteps() {
+		IDsfService[] services = getServices();
+		ServiceShutdownStep[] steps = new ServiceShutdownStep[services.length];
+		for ( int i = 0; i < steps.length; ++i )
+			steps[i] = new ServiceShutdownStep( services[i] );
+		return steps;
+	}
+	
+	private IDsfService[] getServices() {
+		IDsfService[] result = new IDsfService[0];
+		try {
+			ServiceReference<?>[] serviceRefs = GdbPlugin.getBundleContext().getServiceReferences( 
+					IDsfService.class.getName(),
+					String.format( "(%s=%s)", IDsfService.PROP_SESSION_ID, fSessionId ).intern() ); //$NON-NLS-1$
+			List<IDsfService> services = new ArrayList<IDsfService>( serviceRefs.length );
+			for ( ServiceReference<?> ref : serviceRefs ) {
+				Object serviceObj = GdbPlugin.getBundleContext().getService( ref );
+				if ( serviceObj instanceof IDsfService ) {
+					services.add( (IDsfService)serviceObj );
+				}
+			}
+			Collections.sort( services, new Comparator<IDsfService>() {
 
-        @Override
-        public void rollBack(RequestMonitor requestMonitor) {
-            fTracker.dispose();
-            fTracker = null;
-            requestMonitor.done();
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(IGDBTraceControl.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(IDisassembly.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(IRegisters.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(MIBreakpointsManager.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(IBreakpoints.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(ISourceLookup.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(IExpressions.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(IStack.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(IModules.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(IMemory.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(IRunControl.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(IProcesses.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(ICommandControl.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            shutdownService(IMIBackend.class, requestMonitor);
-        }
-    }, new Step() {
-        @Override
-        public void execute(RequestMonitor requestMonitor) {
-            fTracker.dispose();
-            fTracker = null;
-            requestMonitor.done();
-        }
-    } };
-
-    @SuppressWarnings("unchecked")
-    private void shutdownService(Class clazz, final RequestMonitor requestMonitor) {
-        IDsfService service = (IDsfService)fTracker.getService(clazz);
-        if (service != null) {
-            service.shutdown(new RequestMonitor(getExecutor(), requestMonitor) {
-                @Override
-                protected void handleCompleted() {
-                    if (!isSuccess()) {
-                        GdbPlugin.getDefault().getLog().log(getStatus());
-                    }
-                    requestMonitor.done();
-                }
-            });
-        } else {
-        	// It is possible that a particular service was not instantiated at all
-        	// depending on our backend
-            requestMonitor.done();
-        }
-    }
+				public int compare( IDsfService o1, IDsfService o2 ) {
+					return o2.getStartupNumber() - o1.getStartupNumber();
+				}
+			} );
+			result = services.toArray( new IDsfService[services.size()] );
+		}
+		catch( InvalidSyntaxException e ) {
+			// Shouldn't happen
+		}
+		return result;
+	}
 }

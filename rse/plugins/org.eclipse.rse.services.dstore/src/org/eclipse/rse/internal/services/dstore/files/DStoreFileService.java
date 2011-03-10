@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,6 +63,7 @@
  * David McKnight   (IBM)        - [284420] nullprogressmonitor is needed
  * David McKnight     (IBM)      - [298440] jar files in a directory can't be pasted to another system properly
  * David McKnight   (IBM)        - [308770] [dstore] Remote Search using old server fails with NPE
+ * David McKnight    (IBM) 		 - [339548] [dstore] shouldn't attempt file conversion on empty files
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -838,7 +839,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 			if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_SUCCESS_TYPE))
 			{
-				if (!isBinary){ // do standard conversion if this is text!
+				if (!isBinary && fileLength > 0){ // do standard conversion if this is text!
 					String localEncoding = SystemEncodingUtil.getInstance().getLocalDefaultEncoding();
 
 					IFileServiceCodePageConverter codePageConverter = CodePageConverterManager.getCodePageConverter(encoding, this);
@@ -1089,7 +1090,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_SUCCESS_TYPE))
 					{
 						// do standard conversion if this is text!
-						if (!isBinaries[j]){ // do standard conversion if this is text!
+						if (!isBinaries[j] && fileLength > 0){ // do standard conversion if this is text! or if the file is empty
 							String localEncoding = SystemEncodingUtil.getInstance().getLocalDefaultEncoding();
 							IFileServiceCodePageConverter codePageConverter = CodePageConverterManager.getCodePageConverter(hostEncodings[j], this);
 

@@ -197,7 +197,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	// This is the version of the manifest and project files
 	private static final Version buildInfoVersion = new Version(4, 0, 0);
 	private static final Version version = new Version(4, 0, 0);
-	private static Map depCalculatorsMap;
 	private static boolean projectTypesLoaded = false;
 	private static boolean projectTypesLoading = false;
 	// Project types defined in the manifest files
@@ -359,17 +358,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	public static Version getVersion(){
 		return version;
-	}
-
-	protected static Map getExtensionDepCalcMap() {
-		try {
-			loadExtensions();
-		} catch (BuildException e) {
-		}
-		if (depCalculatorsMap == null) {
-			depCalculatorsMap = new HashMap();
-		}
-		return depCalculatorsMap;
 	}
 
 	/**

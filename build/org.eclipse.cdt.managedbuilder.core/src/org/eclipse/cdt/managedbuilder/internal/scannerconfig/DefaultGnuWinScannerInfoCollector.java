@@ -30,7 +30,8 @@ public class DefaultGnuWinScannerInfoCollector extends DefaultGCCScannerInfoColl
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#contributeToScannerConfig(java.lang.Object, java.util.Map)
      */
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public void contributeToScannerConfig(Object resource, Map scannerInfo) {
         // check the resource
 //        if (resource != null && resource instanceof IResource &&

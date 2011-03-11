@@ -105,7 +105,8 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 		fPart.addPropertyListener(new IPropertyListener() {			
 			public void propertyChanged(Object source, int propId) {
 				if (IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION == propId) {
-					updatePinContextLabel(fProvider);
+					if (fAction != null && fAction.isChecked())
+						updatePinContextLabel(fProvider);
 				} else if (IWorkbenchPartConstants.PROP_PART_NAME == propId) {
 					PinCloneUtils.setPartTitle(fPart);
 				}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.examples;
 
+import org.eclipse.cdt.codan.examples.uicontrib.ProfileChangeListener;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
@@ -37,6 +38,7 @@ public class Activator extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		ProfileChangeListener.getInstance();
 	}
 
 	/*
@@ -48,6 +50,7 @@ public class Activator extends Plugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
+		ProfileChangeListener.getInstance().dispose();
 	}
 
 	/**

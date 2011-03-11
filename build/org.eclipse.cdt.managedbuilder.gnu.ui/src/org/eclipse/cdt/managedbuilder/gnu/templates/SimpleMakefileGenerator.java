@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.templateengine.TemplateCore;
@@ -76,7 +75,7 @@ public class SimpleMakefileGenerator extends ProcessRunner {
 			throw new ProcessFailureException(getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddFile.2") + MAKEFILE)); //$NON-NLS-1$
 		}
 		
-		Map macros = new HashMap(template.getValueStore());
+		Map<String, String> macros = new HashMap<String, String>(template.getValueStore());
 		macros.put("exe", Platform.getOS().equals(Platform.OS_WIN32) ? ".exe" : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		fileContents = replaceMacros(fileContents, macros);
@@ -98,10 +97,9 @@ public class SimpleMakefileGenerator extends ProcessRunner {
 	private static final String START = "{{"; //$NON-NLS-1$
 	private static final String END = "}}"; //$NON-NLS-1$
 	
-	private String replaceMacros(String fileContents, Map valueStore) {
+	private String replaceMacros(String fileContents, Map<String, String> valueStore) {
 		StringBuffer buffer = new StringBuffer(fileContents);
-		for (Iterator i = valueStore.keySet().iterator(); i.hasNext();) {
-			String key = (String)i.next();
+		for (String key : valueStore.keySet()) {
 			String pattern = START + key +END;
 			if (fileContents.indexOf(pattern)==-1)
 				// Not used
@@ -111,7 +109,7 @@ public class SimpleMakefileGenerator extends ProcessRunner {
 			int len = pattern.length();
 			int pos = 0;
 			while ((pos = buffer.indexOf(pattern, pos)) >= 0) {
-				buffer.replace(pos, pos + len, (String)valueStore.get(key));
+				buffer.replace(pos, pos + len, valueStore.get(key));
 				pos += len;
 			}
 		}

@@ -33,6 +33,7 @@
  *  David McKnight   (IBM)     [318372] [dstore][shells] "export" shell command invalid for certain shells
  *  David McKnight   (IBM)     [323262] [dstore] zos shell does not display [ ]  brackets properly
  *  David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
+ *  David McKnight   (IBM)     [339741] [dstore][shells] consecutive prompt line is ignored
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -1312,7 +1313,7 @@ public class CommandMinerThread extends MinerThread
 		if (size > 0)
 		{
 			DataElement lastObject = _status.get(size - 1);
-			if (!lastObject.getType().equals("prompt")) //$NON-NLS-1$
+			if (!lastObject.getType().equals("prompt") || !lastObject.getName().equals(line)) //$NON-NLS-1$
 			{
 			    line = line.replaceAll("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 			    fileName = fileName.replaceAll("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$

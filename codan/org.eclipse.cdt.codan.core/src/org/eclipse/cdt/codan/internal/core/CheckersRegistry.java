@@ -53,6 +53,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	private static final Object DEFAULT = "DEFAULT"; //$NON-NLS-1$
 	private Collection<IChecker> checkers = new ArrayList<IChecker>();
 	private static CheckersRegistry instance;
+	private static boolean initialized = false;
 	private HashMap<Object, IProblemProfile> profiles = new HashMap<Object, IProblemProfile>();
 	private HashMap<IChecker, Collection<IProblem>> problemList = new HashMap<IChecker, Collection<IProblem>>();
 
@@ -60,6 +61,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 		instance = this;
 		profiles.put(DEFAULT, new ProblemProfile());
 		readCheckersRegistry();
+		initialized = true;
 	}
 
 	private void readCheckersRegistry() {
@@ -235,9 +237,11 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	/**
 	 * @return the singleton checkers registry
 	 */
-	public static CheckersRegistry getInstance() {
+	public static synchronized CheckersRegistry getInstance() {
 		if (instance == null)
 			return new CheckersRegistry();
+		if (initialized == false)
+			throw new IllegalStateException("Registry is not initialized"); //$NON-NLS-1$
 		return instance;
 	}
 

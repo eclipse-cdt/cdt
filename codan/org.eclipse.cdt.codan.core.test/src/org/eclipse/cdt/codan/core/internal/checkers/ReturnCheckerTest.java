@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,5 +155,21 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	public void testGccExtensions() {
 		loadCodeAndRunCpp(getAboveComment());
 		checkErrorLine(4);
+	}
+
+	//	auto f() -> void
+	//	{
+	//	}
+	public void testVoidLateSpecifiedReturnType_Bug337677() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
+	//	auto f() -> void*
+	//	{
+	//	}
+	public void testVoidPointerLateSpecifiedReturnType_Bug337677() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkErrorLine(1);
 	}
 }

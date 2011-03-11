@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009,2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -31,11 +32,14 @@ import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -186,6 +190,10 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 			IASTFunctionDeclarator declarator = func.getDeclarator();
 			if (declarator.getPointerOperators().length == 0)
 				return true;
+		} else if (type == IASTSimpleDeclSpecifier.t_auto) {
+			if (isAutoVoid(func)) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -235,4 +243,39 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 			addPreference(problem, PARAM_IMPLICIT, CheckersMessages.ReturnChecker_Param0, Boolean.FALSE);
 		}
 	}
+	
+	/**
+	 * Checks if a "void" return type is specified using the C++0x late-specified return type
+	 * for a given function definition
+	 * 
+	 * For example, auto f() -> void { } would return true
+	 * 
+	 * @param functionDefinition
+	 * @return True if the function has a void (late-specified) return type, False otherwise
+	 */
+	private boolean isAutoVoid(IASTFunctionDefinition functionDefinition) {
+		IASTFunctionDeclarator declarator = functionDefinition.getDeclarator();
+		if(declarator instanceof ICPPASTFunctionDeclarator) {
+			ICPPASTFunctionDeclarator functionDeclarator = (ICPPASTFunctionDeclarator) declarator;
+			IASTTypeId trailingReturnType = functionDeclarator.getTrailingReturnType();
+			if(trailingReturnType != null) {
+				IASTDeclarator abstractDeclarator = trailingReturnType.getAbstractDeclarator();
+				if(abstractDeclarator != null) {
+					if(abstractDeclarator.getPointerOperators().length > 0) {
+						return false;
+					}
+					
+					IASTDeclSpecifier declSpecifier = trailingReturnType.getDeclSpecifier();
+					if(declSpecifier instanceof ICPPASTSimpleDeclSpecifier) {
+						ICPPASTSimpleDeclSpecifier simpleDeclSpecifier = (ICPPASTSimpleDeclSpecifier) declSpecifier;
+						if(simpleDeclSpecifier.getType() == IASTSimpleDeclSpecifier.t_void) {
+							return true;
+						}
+					}
+				}
+			}
+ 		}
+		
+ 		return false;
+ 	}
 }

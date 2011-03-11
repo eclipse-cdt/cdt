@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -25,7 +24,6 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
-import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
@@ -34,7 +32,6 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
-import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
@@ -314,17 +311,22 @@ public class FinalLaunchSequence extends Sequence {
                 requestMonitor.done();
     		}
     	}},
-    	/*
-    	 * Setup the source paths
-    	 */
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
-            CSourceLookup sourceLookup = fTracker.getService(CSourceLookup.class);
-            CSourceLookupDirector locator = (CSourceLookupDirector)fLaunch.getSourceLocator();
-    		ISourceLookupDMContext sourceLookupDmc = (ISourceLookupDMContext)fCommandControl.getContext();
-
-            sourceLookup.setSourceLookupPath(sourceLookupDmc, locator.getSourceContainers(), requestMonitor);
-        }},
+// -environment-directory with a lot of paths could
+// make setting breakpoint incredibly slow, which makes
+// the debug session un-workable.  We simply stop
+// using it because it's usefulness is unclear.
+// Bug 225805
+//    	/*
+//    	 * Setup the source paths
+//    	 */
+//        new Step() { @Override
+//        public void execute(RequestMonitor requestMonitor) {
+//            CSourceLookup sourceLookup = fTracker.getService(CSourceLookup.class);
+//            CSourceLookupDirector locator = (CSourceLookupDirector)fLaunch.getSourceLocator();
+//    		ISourceLookupDMContext sourceLookupDmc = (ISourceLookupDMContext)fCommandControl.getContext();
+//
+//            sourceLookup.setSourceLookupPath(sourceLookupDmc, locator.getSourceContainers(), requestMonitor);
+//        }},
     	/*
     	 * Specify the core file to be debugged if we are launching such a debug session.
     	 */

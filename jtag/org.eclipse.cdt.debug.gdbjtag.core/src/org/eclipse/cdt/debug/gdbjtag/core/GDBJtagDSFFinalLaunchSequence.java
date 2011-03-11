@@ -335,19 +335,25 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
                     requestMonitor.done();
         		}
         	}},
-    	/*
-    	 * Setup the source paths
-    	 */
-        new Step() { 
-    		@Override
-            public void execute(RequestMonitor requestMonitor) {
-                CSourceLookup sourceLookup = fTracker.getService(CSourceLookup.class);
-                CSourceLookupDirector locator = (CSourceLookupDirector)fLaunch.getSourceLocator();
-        		ISourceLookupDMContext sourceLookupDmc = (ISourceLookupDMContext)fCommandControl.getContext();
 
-                sourceLookup.setSourceLookupPath(sourceLookupDmc, locator.getSourceContainers(), requestMonitor);
-            }},
-            
+// -environment-directory with a lot of paths could
+// make setting breakpoint incredibly slow, which makes
+// the debug session un-workable.  We simply stop
+// using it because it's usefulness is unclear.
+// Bug 225805
+//    	/*
+//    	 * Setup the source paths
+//    	 */
+//        new Step() { 
+//    		@Override
+//            public void execute(RequestMonitor requestMonitor) {
+//                CSourceLookup sourceLookup = fTracker.getService(CSourceLookup.class);
+//                CSourceLookupDirector locator = (CSourceLookupDirector)fLaunch.getSourceLocator();
+//        		ISourceLookupDMContext sourceLookupDmc = (ISourceLookupDMContext)fCommandControl.getContext();
+//
+//                sourceLookup.setSourceLookupPath(sourceLookupDmc, locator.getSourceContainers(), requestMonitor);
+//            }},
+  
             // Below steps are specific to JTag hardware debugging
             
         /*

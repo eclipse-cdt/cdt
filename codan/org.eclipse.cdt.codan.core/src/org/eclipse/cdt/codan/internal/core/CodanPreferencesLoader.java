@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,19 +18,19 @@ import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.service.prefs.Preferences;
 
 /**
  * Helper class to load/save problem profile settings in persistent storage
- * 
+ *
  */
 public class CodanPreferencesLoader {
 	private IProblemProfile baseModel;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param profile - problem profile to work with
 	 */
 	public CodanPreferencesLoader(IProblemProfile profile) {
@@ -45,7 +45,7 @@ public class CodanPreferencesLoader {
 
 	/**
 	 * Sets the profile for this class
-	 * 
+	 *
 	 * @param profile
 	 */
 	public void setInput(IProblemProfile profile) {
@@ -113,7 +113,7 @@ public class CodanPreferencesLoader {
 	/**
 	 * Takes string values from storePreferences and applies them to the problem
 	 * profile
-	 * 
+	 *
 	 * @param storePreferences
 	 */
 	public void load(Preferences storePreferences) {
@@ -131,7 +131,7 @@ public class CodanPreferencesLoader {
 	/**
 	 * Takes string values of the problem preferences from storePreferences
 	 * and applies them to the problem profile
-	 * 
+	 *
 	 * @param problemId
 	 * @param storePreferences
 	 */
@@ -153,14 +153,14 @@ public class CodanPreferencesLoader {
 
 	/**
 	 * Return preference node (osgi preferences) for the project
-	 * 
+	 *
 	 * @param project
 	 * @return project preferences node
 	 */
-	public static Preferences getProjectNode(IProject project) {
+	public static IEclipsePreferences getProjectNode(IProject project) {
 		if (!project.exists())
 			return null;
-		Preferences prefNode = new ProjectScope(project).getNode(CodanCorePlugin.PLUGIN_ID);
+		IEclipsePreferences prefNode = new ProjectScope(project).getNode(CodanCorePlugin.PLUGIN_ID);
 		if (prefNode == null)
 			return null;
 		return prefNode;
@@ -168,11 +168,11 @@ public class CodanPreferencesLoader {
 
 	/**
 	 * Return preference node (osgi preferences) for the workspace
-	 * 
+	 *
 	 * @return project preferences node
 	 */
-	public static Preferences getWorkspaceNode() {
-		Preferences prefNode = new InstanceScope().getNode(CodanCorePlugin.PLUGIN_ID);
+	public static IEclipsePreferences getWorkspaceNode() {
+		IEclipsePreferences prefNode = CodanCorePlugin.getDefault().getStorePreferences();
 		if (prefNode == null)
 			return null;
 		return prefNode;
@@ -181,7 +181,7 @@ public class CodanPreferencesLoader {
 	/**
 	 * Name of the preference key for the root problem preference in the osgi
 	 * preferences
-	 * 
+	 *
 	 * @param id - problem id
 	 * @return top level preference id
 	 */

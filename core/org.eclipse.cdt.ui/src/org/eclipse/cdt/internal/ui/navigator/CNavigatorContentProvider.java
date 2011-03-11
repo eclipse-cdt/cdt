@@ -23,16 +23,22 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
 import org.eclipse.ui.navigator.PipelinedShapeModification;
 import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
@@ -51,6 +57,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/** The input object as supplied in the call to {@link #inputChanged()} */
 	private Object fRealInput;
 	private IPropertyChangeListener fPropertyChangeListener;
+	private IPreferenceChangeListener fPreferenceChangeListener;
 
 	/*
 	 * @see org.eclipse.ui.navigator.ICommonContentProvider#init(org.eclipse.ui.navigator.ICommonContentExtensionSite)
@@ -85,6 +92,21 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 			}
 		};
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPropertyChangeListener);
+		
+		// Note that this listener listens to CCorePlugin preferences
+		fPreferenceChangeListener = new IPreferenceChangeListener() {
+			public void preferenceChange(PreferenceChangeEvent event) {
+				if (event.getKey().equals(CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT)) {
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							getViewer().refresh();
+						}
+					});
+				}
+			}
+		};
+		InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).addPreferenceChangeListener(fPreferenceChangeListener);
+
 		// TLETODO [CN] use extension state model for view options persistence
 //		fStateModel.addPropertyChangeListener(listener);
 	}
@@ -94,6 +116,8 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 */
 	@Override
 	public void dispose() {
+		InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).removePreferenceChangeListener(fPreferenceChangeListener);
+		
 		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyChangeListener);
 		// TLETODO [CN] use extension state model for view options persistence
 //		fStateModel.removePropertyChangeListener(fPropertyChangeListener);

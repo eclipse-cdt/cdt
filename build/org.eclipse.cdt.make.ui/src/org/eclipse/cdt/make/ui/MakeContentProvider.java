@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -41,6 +42,9 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -55,7 +59,9 @@ import org.eclipse.swt.widgets.Display;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class MakeContentProvider implements ITreeContentProvider, IMakeTargetListener, IResourceChangeListener, ICProjectDescriptionListener {
+public class MakeContentProvider implements ITreeContentProvider, IMakeTargetListener,
+		IResourceChangeListener, ICProjectDescriptionListener, IPreferenceChangeListener {
+
 	/** presentation of the content, i.e. for MakeView tree of for BuildTargetDialog table */
 	protected boolean bFlatten;
 
@@ -224,12 +230,14 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		if (oldWorkspace != newWorkspace) {
 			ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 			if (oldWorkspace != null) {
-				oldWorkspace.removeResourceChangeListener(this);
+				InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).removePreferenceChangeListener(this);
 				mngr.removeCProjectDescriptionListener(this);
+				oldWorkspace.removeResourceChangeListener(this);
 			}
 			if (newWorkspace != null) {
 				newWorkspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 				mngr.addCProjectDescriptionListener(this, CProjectDescriptionEvent.APPLIED);
+				InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).addPreferenceChangeListener(this);
 			}
 		}
 	}
@@ -403,6 +411,21 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				}
 			}
 		});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 7.1
+	 */
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (event.getKey().equals(CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT)) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					viewer.refresh();
+				}
+			});
+		}
 	}
 
 	/**

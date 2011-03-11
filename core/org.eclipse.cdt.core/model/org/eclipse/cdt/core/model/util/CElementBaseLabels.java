@@ -776,7 +776,7 @@ public class CElementBaseLabels {
 			buf.append(container.getPath().makeRelative().toString());
 		} else {
 			if (CCorePlugin.showSourceRootsAtTopOfProject()) {
-			buf.append(container.getElementName());
+				buf.append(container.getElementName());
 			}
 			else {
 				String elementName = container.getElementName();

@@ -80,6 +80,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.framework.BundleContext;
 
 import com.ibm.icu.text.MessageFormat;
@@ -1309,6 +1310,7 @@ public class CCorePlugin extends Plugin {
 	 * @since 5.2
 	 */
 	public static boolean showSourceRootsAtTopOfProject() {
-		return getDefault().getPluginPreferences().getBoolean( CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT);
+		return InstanceScope.INSTANCE.getNode(PLUGIN_ID)
+			.getBoolean(CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT, true);
 	}
 }

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigScope;
 import org.eclipse.core.runtime.CoreException;
@@ -42,9 +43,9 @@ public class ScannerConfigProfile {
 		public ScannerInfoCollector(IConfigurationElement configElem) {
 			this.configElem = configElem;
 		}
-		public Object createScannerInfoCollector() {
+		public IScannerInfoCollector createScannerInfoCollector() {
 			try {
-				return configElem.createExecutableExtension("class"); //$NON-NLS-1$
+				return (IScannerInfoCollector) configElem.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
 				MakeCorePlugin.log(e);
 				return null;
@@ -319,9 +320,9 @@ public class ScannerConfigProfile {
 		if(supportsContext == null){
 			ScannerInfoCollector cr = getScannerInfoCollectorElement();
 			if(cr != null){
-				Object o = cr.createScannerInfoCollector();
-				if(o != null){
-					Class clazz = o.getClass();
+				IScannerInfoCollector collector = cr.createScannerInfoCollector();
+				if(collector != null){
+					Class<? extends IScannerInfoCollector> clazz = collector.getClass();
 					try {
 						clazz.getMethod("setInfoContext", new Class[] {InfoContext.class}); //$NON-NLS-1$
 						supportsContext = Boolean.TRUE;

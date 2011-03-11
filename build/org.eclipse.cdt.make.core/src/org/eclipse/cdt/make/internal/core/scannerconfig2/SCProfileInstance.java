@@ -109,7 +109,7 @@ public class SCProfileInstance {
 	public IScannerInfoCollector createScannerInfoCollector() {
 		ScannerInfoCollector collector = profile.getScannerInfoCollectorElement();
 		if (collector != null) {
-			return (IScannerInfoCollector) collector.createScannerInfoCollector();
+			return collector.createScannerInfoCollector();
 		}
 		return null;
 	}

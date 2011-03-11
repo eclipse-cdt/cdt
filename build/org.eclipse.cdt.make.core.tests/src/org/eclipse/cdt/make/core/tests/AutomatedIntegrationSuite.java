@@ -12,6 +12,7 @@
 package org.eclipse.cdt.make.core.tests;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.make.builder.tests.StandardBuildTests;
@@ -22,11 +23,11 @@ public class AutomatedIntegrationSuite extends TestSuite {
 	public AutomatedIntegrationSuite() {
 	}
 
-	public AutomatedIntegrationSuite(Class theClass, String name) {
+	public AutomatedIntegrationSuite(Class<? extends TestCase> theClass, String name) {
 		super(theClass, name);
 	}
 
-	public AutomatedIntegrationSuite(Class theClass) {
+	public AutomatedIntegrationSuite(Class<? extends TestCase> theClass) {
 		super(theClass);
 	}
 

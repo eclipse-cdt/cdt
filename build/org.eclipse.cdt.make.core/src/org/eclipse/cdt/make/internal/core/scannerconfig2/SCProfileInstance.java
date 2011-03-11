@@ -56,7 +56,7 @@ public class SCProfileInstance {
 		collector = createScannerInfoCollector();
         if (collector != null) {
         	// call collector.setProject(project) if class supports it
-        	Class clazz = collector.getClass();
+        	Class<? extends IScannerInfoCollector> clazz = collector.getClass();
         	try {
 //				Method setProjectMethod = clazz.getMethod("setProject", new Class[] {IProject.class});//$NON-NLS-1$
 //				setProjectMethod.invoke(collector, new Object[] {project});

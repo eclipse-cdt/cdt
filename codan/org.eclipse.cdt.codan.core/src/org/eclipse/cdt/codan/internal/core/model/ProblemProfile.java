@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,13 +16,24 @@ import java.util.Collection;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
+import org.eclipse.cdt.codan.core.model.IProblemProfileChangeListener;
+import org.eclipse.cdt.codan.core.model.ProblemProfileChangeEvent;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
 
 /**
  * @author Alena
  * 
  */
 public class ProblemProfile implements IProblemProfile, Cloneable {
-	private IProblemCategory rootCategory = new CodanProblemCategory("root", "root"); //$NON-NLS-1$ //$NON-NLS-2$
+	private CodanProblemCategory rootCategory;
+
+	public ProblemProfile() {
+		rootCategory = new CodanProblemCategory("root", "root"); //$NON-NLS-1$ //$NON-NLS-2$
+		rootCategory.setProfile(this);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -85,7 +96,12 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	public Object clone() {
 		try {
 			ProblemProfile clone = (ProblemProfile) super.clone();
-			clone.rootCategory = (IProblemCategory) ((CodanProblemCategory) this.rootCategory).clone();
+			clone.rootCategory = (CodanProblemCategory) this.rootCategory.clone();
+			CodanProblemCategory cce = clone.rootCategory;
+			boolean fro = cce.isFrozen();
+			cce.setFrozen(false);
+			cce.setProfile(this);
+			cce.setFrozen(fro);
 			return clone;
 		} catch (CloneNotSupportedException e) {
 			return this;
@@ -98,5 +114,67 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	 */
 	public void addCategory(IProblemCategory category, IProblemCategory parent) {
 		((CodanProblemCategory) parent).addChild(category);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.codan.core.model.IProblemElement#getProfile()
+	 */
+	public IProblemProfile getProfile() {
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.codan.core.model.IProblemElement#getParentCategory()
+	 */
+	public IProblemCategory getParentCategory() {
+		return getRoot();
+	}
+	private ListenerList preferenceChangeListeners;
+
+	/**
+	 * @param listener
+	 */
+	public void addProfileChangeListener(IProblemProfileChangeListener listener) {
+		if (preferenceChangeListeners == null)
+			preferenceChangeListeners = new ListenerList();
+		preferenceChangeListeners.add(listener);
+	}
+
+	/**
+	 * @param listener
+	 */
+	public void removeProfileChangeListener(IProblemProfileChangeListener listener) {
+		if (preferenceChangeListeners == null)
+			return;
+		preferenceChangeListeners.remove(listener);
+		if (preferenceChangeListeners.size() == 0)
+			preferenceChangeListeners = null;
+	}
+
+	/*
+	 * Convenience method for notifying preference change listeners.
+	 */
+	protected void fireProfileChangeEvent(IResource resource, String key, Object oldValue, Object newValue) {
+		if (preferenceChangeListeners == null)
+			return;
+		Object[] listeners = preferenceChangeListeners.getListeners();
+		final ProblemProfileChangeEvent event = new ProblemProfileChangeEvent(this, resource, key, oldValue, newValue);
+		for (int i = 0; i < listeners.length; i++) {
+			final IProblemProfileChangeListener listener = (IProblemProfileChangeListener) listeners[i];
+			ISafeRunnable job = new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					// already logged in Platform#run()
+				}
+
+				public void run() throws Exception {
+					listener.profileChange(event);
+				}
+			};
+			SafeRunner.run(job);
+		}
 	}
 }

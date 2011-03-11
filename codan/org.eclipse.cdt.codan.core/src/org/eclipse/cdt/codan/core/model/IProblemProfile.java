@@ -65,4 +65,18 @@ public interface IProblemProfile extends IProblemElement {
 	 * @return array of problems defined in profile
 	 */
 	IProblem[] getProblems();
+
+	/**
+	 * Add a listener for profile changes
+	 * @param listener
+	 * @since 2.0
+	 */
+	public void addProfileChangeListener(IProblemProfileChangeListener listener);
+
+	/**
+	 * Remove a lister for profile changes
+	 * @param listener
+	 * @since 2.0
+	 */
+	public void removeProfileChangeListener(IProblemProfileChangeListener listener);
 }

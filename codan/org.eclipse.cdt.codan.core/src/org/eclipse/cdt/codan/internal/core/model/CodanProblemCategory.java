@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,12 @@ import java.util.Iterator;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemElement;
+import org.eclipse.cdt.codan.core.model.IProblemProfile;
 
-public class CodanProblemCategory implements IProblemCategory, Cloneable {
+/**
+ * TODO: add description
+ */
+public class CodanProblemCategory extends CodanProblemElement implements IProblemCategory, Cloneable {
 	private String id;
 	private String name;
 	private ArrayList<IProblemElement> list = new ArrayList<IProblemElement>();
@@ -47,6 +51,11 @@ public class CodanProblemCategory implements IProblemCategory, Cloneable {
 
 	public void addChild(IProblemElement p) {
 		list.add(p);
+		if (p instanceof CodanProblemElement) {
+			CodanProblemElement cce = (CodanProblemElement) p;
+			cce.setParentCategory(this);
+			cce.setProfile(getProfile());
+		}
 	}
 
 	public static IProblem findProblem(IProblemCategory c, String id) {
@@ -116,15 +125,54 @@ public class CodanProblemCategory implements IProblemCategory, Cloneable {
 	@Override
 	public Object clone() {
 		try {
-			CodanProblemCategory clone = (CodanProblemCategory) super.clone();
-			clone.list = new ArrayList<IProblemElement>();
+			CodanProblemCategory catClone = (CodanProblemCategory) super.clone();
+			catClone.list = new ArrayList<IProblemElement>();
 			for (Iterator<IProblemElement> iterator = this.list.iterator(); iterator.hasNext();) {
 				IProblemElement child = iterator.next();
-				clone.list.add((IProblemElement) child.clone());
+				IProblemElement childClone = (IProblemElement) child.clone();
+				if (childClone instanceof CodanProblemElement) {
+					CodanProblemElement cce = (CodanProblemElement) childClone;
+					boolean fro = cce.isFrozen();
+					cce.setFrozen(false);
+					cce.setParentCategory(catClone);
+					cce.setFrozen(fro);
+				}
+				catClone.list.add(childClone);
 			}
-			return clone;
+			return catClone;
 		} catch (CloneNotSupportedException e) {
 			return this;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.internal.core.model.CodanProblemElement#setProfile
+	 * (org.eclipse.cdt.codan.core.model.IProblemProfile)
+	 */
+	@Override
+	public void setProfile(IProblemProfile profile) {
+		checkSet();
+		super.setProfile(profile);
+		for (Iterator<IProblemElement> iterator = this.list.iterator(); iterator.hasNext();) {
+			IProblemElement child = iterator.next();
+			if (child instanceof CodanProblemElement) {
+				((CodanProblemElement) child).setProfile(profile);
+			}
+		}
+	}
+
+	@Override
+	public void setFrozen(boolean b) {
+		checkSet();
+		super.setFrozen(b);
+		for (Iterator<IProblemElement> iterator = this.list.iterator(); iterator.hasNext();) {
+			IProblemElement child = iterator.next();
+			if (child instanceof CodanProblemElement) {
+				((CodanProblemElement) child).setFrozen(b);
+			}
 		}
 	}
 }

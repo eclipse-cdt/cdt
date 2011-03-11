@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,8 @@
 package org.eclipse.cdt.codan.core.model;
 
 /**
- * Problem category {@link IProblemCategory} or problem {@link IProblem}
+ * Problem element represents problem category {@link IProblemCategory} or
+ * problem {@link IProblem}
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -26,4 +27,18 @@ public interface IProblemElement extends Cloneable {
 	 *         but it should NOT throw it
 	 */
 	Object clone() throws CloneNotSupportedException;
+
+	/**
+	 * @return problem profile where element belongs, can return null if profile
+	 *         is not define for some reason
+	 * @since 2.0
+	 */
+	IProblemProfile getProfile();
+
+	/**
+	 * @return problem category where element belongs for a give profile, can
+	 *         return null if profile is not define
+	 * @since 2.0
+	 */
+	IProblemCategory getParentCategory();
 }

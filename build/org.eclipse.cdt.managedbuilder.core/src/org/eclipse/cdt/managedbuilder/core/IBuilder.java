@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 Intel Corporation and others.
+ * Copyright (c) 2004, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
@@ -332,6 +333,6 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	 * @return build runner
 	 * @since 8.0
 	 */
-	public IBuildRunner getBuildRunner() throws CoreException;
+	public AbstractBuildRunner getBuildRunner() throws CoreException;
 	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Wind River Systems and others.
+ * Copyright (c) 2010, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Wind River Systems - Initial API and implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
@@ -65,7 +66,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * @author dschaefer
  * @since 8.0
  */
-public class ExternalBuildRunner implements IBuildRunner {
+public class ExternalBuildRunner extends AbstractBuildRunner {
 
 	private static final String TYPE_CLEAN = "ManagedMakeBuilder.type.clean";	//$NON-NLS-1$
 	private static final String TYPE_INC = "ManagedMakeBuider.type.incremental";	//$NON-NLS-1$
@@ -74,6 +75,7 @@ public class ExternalBuildRunner implements IBuildRunner {
 	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String PATH = "PATH"; //$NON-NLS-1$
 
+	@Override
 	public boolean invokeBuild(int kind, IProject project, IConfiguration configuration,
 			IBuilder builder, IConsole console, IMarkerGenerator markerGenerator,
 			IncrementalProjectBuilder projectBuilder, IProgressMonitor monitor) throws CoreException {

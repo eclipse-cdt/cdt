@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 Intel Corporation and others.
+ * Copyright (c) 2004, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -40,7 +41,7 @@ import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.ExternalBuildRunner;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
-import org.eclipse.cdt.managedbuilder.core.IBuildRunner;
+import org.eclipse.cdt.managedbuilder.core.AbstractBuildRunner;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
@@ -140,7 +141,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	private ICommandLauncher fCommandLauncher = null;
 	private IConfigurationElement fCommandLauncherElement = null;
 
-	private IBuildRunner fBuildRunner = null;
+	private AbstractBuildRunner fBuildRunner = null;
 	private IConfigurationElement fBuildRunnerElement = null;
 
 	/*
@@ -2639,14 +2640,14 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return fCommandLauncher;
 	}
 
-	public IBuildRunner getBuildRunner() throws CoreException {
+	public AbstractBuildRunner getBuildRunner() throws CoreException {
 		// Already defined
 		if (fBuildRunner != null)
 			return fBuildRunner;
 		
 		// Instantiate from model
 		if (fBuildRunnerElement != null) {
-			fBuildRunner = (IBuildRunner)fBuildRunnerElement.createExecutableExtension(ATTRIBUTE_BUILD_RUNNER);
+			fBuildRunner = (AbstractBuildRunner)fBuildRunnerElement.createExecutableExtension(ATTRIBUTE_BUILD_RUNNER);
 			return fBuildRunner;
 		}
 		

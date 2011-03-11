@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Wind River Systems and others.
+ * Copyright (c) 2010, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Wind River Systems - Initial API and implementation
+ * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
@@ -23,21 +24,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author Doug Schaefer
  * @since 8.0
  */
-public interface IBuildRunner {
+public abstract class AbstractBuildRunner {
 
 	/**
 	 * Perform the build.
-	 * 
+	 *
 	 * @param kind kind from the IncrementalProjectBuilder
 	 * @param project project being built
 	 * @param configuration configuration being built
 	 * @param console console to use for build output
 	 * @param markerGenerator generator to add markers for build problems 
 	 * @param monitor progress monitor
-	 * @throws CoreException standard core exception of something goes wrong
+	 * @throws CoreException standard core exception if something goes wrong
 	 */
-	public boolean invokeBuild(int kind, IProject project, IConfiguration configuration,
+	public abstract boolean invokeBuild(int kind, IProject project, IConfiguration configuration,
 			IBuilder builder, IConsole console, IMarkerGenerator markerGenerator,
 			IncrementalProjectBuilder projectBuilder, IProgressMonitor monitor) throws CoreException;
-	
+
 }

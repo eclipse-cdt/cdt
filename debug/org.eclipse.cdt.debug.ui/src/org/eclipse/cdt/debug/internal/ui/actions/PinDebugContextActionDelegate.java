@@ -39,12 +39,15 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.WorkbenchPart;
 
 /**
  * Pin the selected debug context for the view. 
  */
 public class PinDebugContextActionDelegate implements IViewActionDelegate, IActionDelegate2, IDebugContextListener {
 	private IViewPart fPart;
+	private String fPinnedContextLabel = ""; //$NON-NLS-1$
+	private String fLastKnownDescription = ""; //$NON-NLS-1$
 	private IAction fAction;
 	private IPartListener2 fPartListener;
 	private DebugContextPinProvider fProvider;
@@ -66,14 +69,16 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 		if (action.isChecked()) {
 			fProvider = DebugEventFilterService.getInstance().addDebugEventFilter(fPart, getActiveDebugContext());
 			if (fProvider != null) {
-				updatePinContextColor(fProvider);
-				updatePinContextLabel(fProvider);
-			}			
+				fLastKnownDescription = ((WorkbenchPart) fPart).getContentDescription();
+				fPinnedContextLabel = getPinContextLabel(fProvider);
+				PinCloneUtils.setPartContentDescription(fPart, fPinnedContextLabel);
+				updatePinContextColor(fProvider); 
+			}
 		} else {
 			fProvider = null;
 			DebugEventFilterService.getInstance().removeDebugEventFilter(fPart);
 			updatePinContextColor(fProvider);
-			updatePinContextLabel(fProvider);
+			PinCloneUtils.setPartContentDescription(fPart, fLastKnownDescription);			
 		}
 	}
 
@@ -105,8 +110,17 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 		fPart.addPropertyListener(new IPropertyListener() {			
 			public void propertyChanged(Object source, int propId) {
 				if (IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION == propId) {
-					if (fAction != null && fAction.isChecked())
-						updatePinContextLabel(fProvider);
+					// if the content description is not the pinned context label,
+					// then cache it so that we can set it back when the action is unchecked.
+					String desc = ((WorkbenchPart) fPart).getContentDescription();
+					if (!fPinnedContextLabel.equals(desc)) {
+						fLastKnownDescription = desc;
+					}
+					
+					// if action is checked, than set it back to the pinned context label.
+					if (fAction != null && fAction.isChecked()) {
+						PinCloneUtils.setPartContentDescription(fPart, fPinnedContextLabel);
+					}
 				} else if (IWorkbenchPartConstants.PROP_PART_NAME == propId) {
 					PinCloneUtils.setPartTitle(fPart);
 				}
@@ -153,7 +167,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 		return contextService.getActiveContext();		
 	}
 	
-	private void updatePinContextLabel(DebugContextPinProvider provider) {
+	private String getPinContextLabel(DebugContextPinProvider provider) {
 		String description = ""; //$NON-NLS-1$
 		
 		if (provider != null) {
@@ -174,8 +188,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 				}
 			}
 		}
-				
-		PinCloneUtils.setPartContentDescription(fPart, description);
+		return description;
 	}
 	
 	private String getLabel(IPinElementHandle handle) {

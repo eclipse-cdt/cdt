@@ -18,7 +18,6 @@ import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.core.model.IProblemProfileChangeListener;
 import org.eclipse.cdt.codan.core.model.ProblemProfileChangeEvent;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
@@ -29,8 +28,12 @@ import org.eclipse.core.runtime.SafeRunner;
  */
 public class ProblemProfile implements IProblemProfile, Cloneable {
 	private CodanProblemCategory rootCategory;
+	private Object resource;
 
-	public ProblemProfile() {
+	/**
+	 * @param resource
+	 */
+	public ProblemProfile(Object resource) {
 		rootCategory = new CodanProblemCategory("root", "root"); //$NON-NLS-1$ //$NON-NLS-2$
 		rootCategory.setProfile(this);
 	}
@@ -158,11 +161,11 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	/*
 	 * Convenience method for notifying preference change listeners.
 	 */
-	protected void fireProfileChangeEvent(IResource resource, String key, Object oldValue, Object newValue) {
+	protected void fireProfileChangeEvent(String key, Object oldValue, Object newValue) {
 		if (preferenceChangeListeners == null)
 			return;
 		Object[] listeners = preferenceChangeListeners.getListeners();
-		final ProblemProfileChangeEvent event = new ProblemProfileChangeEvent(this, resource, key, oldValue, newValue);
+		final ProblemProfileChangeEvent event = new ProblemProfileChangeEvent(this, this.resource, key, oldValue, newValue);
 		for (int i = 0; i < listeners.length; i++) {
 			final IProblemProfileChangeListener listener = (IProblemProfileChangeListener) listeners[i];
 			ISafeRunnable job = new ISafeRunnable() {
@@ -176,5 +179,18 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 			};
 			SafeRunner.run(job);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.codan.core.model.IProblemProfile#getResource()
+	 */
+	public Object getResource() {
+		return resource;
+	}
+
+	public void setResource(Object resource) {
+		this.resource = resource;
 	}
 }

@@ -68,6 +68,7 @@ public interface IProblemProfile extends IProblemElement {
 
 	/**
 	 * Add a listener for profile changes
+	 * 
 	 * @param listener
 	 * @since 2.0
 	 */
@@ -75,8 +76,17 @@ public interface IProblemProfile extends IProblemElement {
 
 	/**
 	 * Remove a lister for profile changes
+	 * 
 	 * @param listener
 	 * @since 2.0
 	 */
 	public void removeProfileChangeListener(IProblemProfileChangeListener listener);
+
+	/**
+	 * Get an object associated with profile, usually the resource
+	 * 
+	 * @return resource of another object associated with this profile
+	 * @since 2.0
+	 */
+	public Object getResource();
 }

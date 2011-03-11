@@ -12,8 +12,6 @@ package org.eclipse.cdt.codan.core.model;
 
 import java.util.EventObject;
 
-import org.eclipse.core.resources.IResource;
-
 /**
  * An event object describing the details of a change to a preference
  * in the preference store.
@@ -29,7 +27,7 @@ public final class ProblemProfileChangeEvent extends EventObject {
 	private String key;
 	private Object newValue;
 	private Object oldValue;
-	private IResource resourse;
+	private Object resource;
 	private IProblemProfile profile;
 	public static final String PROBLEM_KEY = "problem"; //$NON-NLS-1$
 	public static final String PROBLEM_PREF_KEY = "problem_params"; //$NON-NLS-1$
@@ -44,13 +42,13 @@ public final class ProblemProfileChangeEvent extends EventObject {
 	 * @param oldValue the old preference value
 	 * @param newValue the new preference value
 	 */
-	public ProblemProfileChangeEvent(IProblemProfile profile, IResource resource, String key, Object oldValue, Object newValue) {
-		super(profile);
+	public ProblemProfileChangeEvent(IProblemProfile profile, Object resource, String key, Object oldValue, Object newValue) {
+		super(resource);
 		this.key = key;
 		this.newValue = newValue;
 		this.oldValue = oldValue;
 		this.profile = profile;
-		this.resourse = resource;
+		this.resource = resource;
 	}
 
 	/**
@@ -59,8 +57,8 @@ public final class ProblemProfileChangeEvent extends EventObject {
 	 * 
 	 * @return the node
 	 */
-	public IResource getResource() {
-		return resourse;
+	public Object getResource() {
+		return resource;
 	}
 
 	/**

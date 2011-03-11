@@ -90,7 +90,7 @@ public class CodanProblemElement implements IProblemElement {
 	 */
 	protected void notifyChanged(String key) {
 		if (getProfile() instanceof ProblemProfile) {
-			((ProblemProfile) getProfile()).fireProfileChangeEvent(null, key, null, this);
+			((ProblemProfile) getProfile()).fireProfileChangeEvent(key, null, this);
 		}
 	}
 }

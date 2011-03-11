@@ -1847,43 +1847,46 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	protected void updateDebugContext() {
 		IAdaptable context = DebugUITools.getPartDebugContext(getSite());
+		IDisassemblyBackend prevBackend = fBackend;
+		IDisassemblyBackend newBackend = null;
+		fDebugSessionId = null;
+		boolean needUpdate = false;
 		if (context != null) {
-			final IDisassemblyBackend prevBackend = fBackend;
-			fDebugSessionId = null;
-			boolean needUpdate = false;
-			if (prevBackend == null || !prevBackend.supportsDebugContext(context)) {
+			if (prevBackend != null && prevBackend.supportsDebugContext(context)) {
+				newBackend = prevBackend;
+			} else {
 				needUpdate = true;
-				fBackend = (IDisassemblyBackend)context.getAdapter(IDisassemblyBackend.class);
-				if (fBackend != null) {
-					if (fBackend.supportsDebugContext(context)) {
-						fBackend.init(this);
+				newBackend = (IDisassemblyBackend)context.getAdapter(IDisassemblyBackend.class);
+				if (newBackend != null) {
+					if (newBackend.supportsDebugContext(context)) {
+						newBackend.init(this);
 					} else {
-						fBackend = null;
+						newBackend = null;
 					}
 				}
 			}
-
-			if (fBackend != null) {
-				IDisassemblyBackend.SetDebugContextResult result = fBackend.setDebugContext(context);
-				if (result != null) {
-					fDebugSessionId = result.sessionId;
-					if (result.contextChanged) {
-						needUpdate = true;
-					}
+		}
+		fBackend = newBackend;
+		if (newBackend != null) {
+			IDisassemblyBackend.SetDebugContextResult result = newBackend.setDebugContext(context);
+			if (result != null) {
+				fDebugSessionId = result.sessionId;
+				if (result.contextChanged) {
+					needUpdate = true;
 				}
 			}
-			if (prevBackend != null && fBackend != prevBackend) {
-				needUpdate = true;
-				prevBackend.clearDebugContext();
-				prevBackend.dispose();
-			}
-			if (needUpdate && fViewer != null) {
-				startUpdate(new Runnable() {
-					public void run() {
-						debugContextChanged();
-					}
-				});
-			}
+		}
+		if (prevBackend != null && newBackend != prevBackend) {
+			needUpdate = true;
+			prevBackend.clearDebugContext();
+			prevBackend.dispose();
+		}
+		if (needUpdate && fViewer != null) {
+			startUpdate(new Runnable() {
+				public void run() {
+					debugContextChanged();
+				}
+			});
 		}
 	}
 

@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.CoreException;
  * This checker is parametrized by the search strings
  */
 public class GrepChecker extends AbstractCheckerWithProblemPreferences {
+	public final static String ID = "org.eclipse.cdt.codan.examples.checkers.GrepCheckerProblemError";
 	private static final String PARAM_STRING_LIST = "searchlist";
 
 	public synchronized boolean processResource(IResource resource) {

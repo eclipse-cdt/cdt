@@ -46,7 +46,7 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
@@ -58,7 +58,6 @@ public class MultiVersionSupportTests extends TestCase {
 	
 	IConfiguration[] cfgs = null;	
 	private IWorkspace worksp;	
-	private boolean windows;
 	
 	public MultiVersionSupportTests() { super(); }
 	public MultiVersionSupportTests(String name) { super(name); }
@@ -107,7 +106,7 @@ public class MultiVersionSupportTests extends TestCase {
 		assertEquals(hasConverters, true);
 		
 		// Get the list of available converters for ths tool chain using generic convenience routine
-		Map converters = ManagedBuildManager.getConversionElements(toolChain);
+		Map<String, IConfigurationElement> converters = ManagedBuildManager.getConversionElements(toolChain);
 		
 		// Expected value for the number of converters available is '1'
 		assertEquals(converters.size(), 1);
@@ -336,7 +335,7 @@ public class MultiVersionSupportTests extends TestCase {
 				fail("Cannot create project: " + e.getLocalizedMessage()); //$NON-NLS-1$
 			}				
 			// Call this function just to avoid init problems in getProjectType();   
-			IProjectType[] projTypes = ManagedBuildManager.getDefinedProjectTypes();
+			ManagedBuildManager.getDefinedProjectTypes();
 			IProjectType projType = ManagedBuildManager.getProjectType(projectTypeId);
 			assertNotNull(projType);
 			try {
@@ -492,7 +491,7 @@ public class MultiVersionSupportTests extends TestCase {
 			}
 		});
 
-		ArrayList projectList = new ArrayList(projectZips.length);
+		ArrayList<IProject> projectList = new ArrayList<IProject>(projectZips.length);
 		assertEquals(projectZips.length, 1);
 
 		try {
@@ -508,9 +507,9 @@ public class MultiVersionSupportTests extends TestCase {
 				fail("No projects found in test 'toolChainConversionProjects' project directory "	//$NON-NLS-1$
 						+ file.getName()
 						+ ".  The .zip file may be missing or corrupt.");	//$NON-NLS-1$
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		// IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		// Path path = (Path) root.getLocation();
-			IPath location = new Path( root.getLocation().toString() );
+		// IPath location = new Path( root.getLocation().toString() );
 			project = ManagedBuildTestHelper.createProject(
 					projectName, projectZips[0], null, null);
 			if (project != null)

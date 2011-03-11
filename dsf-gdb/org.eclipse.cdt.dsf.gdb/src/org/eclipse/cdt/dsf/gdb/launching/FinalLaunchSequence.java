@@ -89,7 +89,15 @@ public class FinalLaunchSequence extends ReflectionSequence {
 					"stepSetNonStop",   //$NON-NLS-1$
 					"stepSetAutoLoadSharedLibrarySymbols",   //$NON-NLS-1$
 					"stepSetSharedLibraryPaths",   //$NON-NLS-1$
-					"stepSetSourceLookupPath",   //$NON-NLS-1$
+					
+					// -environment-directory with a lot of paths could
+					// make setting breakpoint incredibly slow, which makes
+					// the debug session un-workable.  We simply stop
+					// using it because it's usefulness is unclear.
+					// Bug 225805
+					//
+					// "stepSetSourceLookupPath",   //$NON-NLS-1$
+					
 					// For post-mortem launch only
 					"stepSpecifyCoreFile",   //$NON-NLS-1$
 					// For remote-attach launch only

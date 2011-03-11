@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia, Tomasz Wesolowski
+ * Copyright (c) 2009, 2011 Alena Laskavaia, Tomasz Wesolowski
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.cdt.codan.core.cxx;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -238,11 +240,19 @@ public final class CxxAstUtils {
 						}
 					}
 				}
+				HashMap<ITranslationUnit, IASTTranslationUnit> astCache = new HashMap<ITranslationUnit, IASTTranslationUnit>();
 				for (IIndexName decl : declSet) {
 					// for now, just use the first overload found
 					ITranslationUnit tu = getTranslationUnitFromIndexName(decl);
-					IASTName name = (IASTName) tu.getAST(null, ITranslationUnit.AST_SKIP_INDEXED_HEADERS).getNodeSelector(null)
-							.findEnclosingNode(decl.getNodeOffset(), decl.getNodeLength());
+					IASTTranslationUnit ast = null;
+					if(astCache.containsKey(tu)) {
+						ast = astCache.get(tu);
+					} else {
+						ast = tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+						astCache.put(tu, ast);
+					}
+					
+					IASTName name = (IASTName) ast.getNodeSelector(null).findEnclosingNode(decl.getNodeOffset(), decl.getNodeLength());
 					IASTNode fdecl = name;
 					while (fdecl instanceof IASTName) {
 						fdecl = fdecl.getParent();
@@ -304,6 +314,7 @@ public final class CxxAstUtils {
 	public IASTCompositeTypeSpecifier getCompositeTypeFromFunction(final IASTFunctionDefinition function, final IIndex index) {
 		// return value to be set via visitor
 		final IASTCompositeTypeSpecifier returnSpecifier[] = { null };
+		final HashMap<ITranslationUnit, IASTTranslationUnit> astCache = new HashMap<ITranslationUnit, IASTTranslationUnit>();
 		function.accept(new ASTVisitor() {
 			{
 				shouldVisitDeclarators = true;
@@ -329,8 +340,14 @@ public final class CxxAstUtils {
 					// Check the declarations and use first suitable
 					for (IIndexName decl : declarations) {
 						ITranslationUnit tu = getTranslationUnitFromIndexName(decl);
-						IASTNode node = tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS).getNodeSelector(null)
-								.findEnclosingNode(decl.getNodeOffset(), decl.getNodeLength());
+						IASTTranslationUnit ast = null;
+						if(astCache.containsKey(tu)) {
+							ast = astCache.get(tu);
+						} else {
+							ast = tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+							astCache.put(tu, ast);
+						}
+						IASTNode node = ast.getNodeSelector(null).findEnclosingNode(decl.getNodeOffset(), decl.getNodeLength());
 						IASTCompositeTypeSpecifier specifier = getEnclosingCompositeTypeSpecifier(node);
 						if (specifier != null) {
 							returnSpecifier[0] = specifier;

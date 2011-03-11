@@ -30,7 +30,7 @@ public class ProcessPrompterDialog extends TwoPaneElementSelector {
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == NEW_BUTTON_ID) {
-			FileDialog fd = new FileDialog(getShell(), SWT.SAVE);
+			FileDialog fd = new FileDialog(getShell(), SWT.NONE);
 			fBinaryPath = fd.open();
 
 			setReturnCode(OK);

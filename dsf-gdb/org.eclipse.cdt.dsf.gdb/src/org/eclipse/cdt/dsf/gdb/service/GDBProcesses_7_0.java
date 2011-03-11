@@ -79,7 +79,6 @@ import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -754,7 +753,14 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     	rm.done();
     }
 
-    public void attachDebuggerToProcess(final IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> dataRm) {
+    public void attachDebuggerToProcess(IProcessDMContext procCtx, DataRequestMonitor<IDMContext> rm) {
+		attachDebuggerToProcess(procCtx, null, rm);
+	}
+	
+    /**
+	 * @since 4.0
+	 */
+    public void attachDebuggerToProcess(final IProcessDMContext procCtx, final String binaryPath, final DataRequestMonitor<IDMContext> dataRm) {
 		if (procCtx instanceof IMIProcessDMContext) {
 	    	if (!doIsDebuggerAttachSupported()) {
 	            dataRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Attach not supported.", null)); //$NON-NLS-1$
@@ -784,14 +790,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	    						// There is no groupId until we attach, so we can use the default groupId
 	    						fContainerDmc = createContainerContext(procCtx, MIProcesses.UNIQUE_GROUP_ID);
 
-	    				    	if (fBackend.getSessionType() == SessionType.REMOTE) {
-	    				    		final IPath execPath = fBackend.getProgramPath();
-	    				    		if (execPath != null && !execPath.isEmpty()) {
-	    				    			fCommandControl.queueCommand(
-	    				    					fCommandFactory.createMIFileExecAndSymbols(fContainerDmc, execPath.toPortableString()), 
-   				    							new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
-	    				    			return;
-									}
+	    						if (binaryPath != null) {
+    				    			fCommandControl.queueCommand(
+    				    					fCommandFactory.createMIFileExecAndSymbols(fContainerDmc, binaryPath), 
+			    							new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+    				    			return;
 	    						}
 
 	    				    	rm.done();

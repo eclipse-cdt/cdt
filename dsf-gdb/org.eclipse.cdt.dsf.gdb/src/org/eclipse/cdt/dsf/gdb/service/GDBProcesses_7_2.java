@@ -33,7 +33,6 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIAddInferiorInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
@@ -100,7 +99,15 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 	}
 
 	@Override
-    public void attachDebuggerToProcess(final IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> dataRm) {
+    public void attachDebuggerToProcess(IProcessDMContext procCtx, DataRequestMonitor<IDMContext> rm) {
+		attachDebuggerToProcess(procCtx, null, rm);
+	}
+	
+    /**
+	 * @since 4.0
+	 */
+	@Override
+	public void attachDebuggerToProcess(final IProcessDMContext procCtx, final String binaryPath, final DataRequestMonitor<IDMContext> dataRm) {
 		if (procCtx instanceof IMIProcessDMContext) {
 	    	if (!doIsDebuggerAttachSupported()) {
 	            dataRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Attach not supported.", null)); //$NON-NLS-1$
@@ -143,20 +150,14 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		            	        		});
 		                    }
 		                },
-	    				// For remote attach, we must set the binary first
-	    				// For a local attach, GDB can figure out the binary automatically,
-	    				// so we don't specify it.
 	    				new Step() { 
 	    					@Override
 	    					public void execute(RequestMonitor rm) {
-	    				    	if (fBackend.getSessionType() == SessionType.REMOTE) {
-	    				    		final IPath execPath = fBackend.getProgramPath();
-	    				    		if (execPath != null && !execPath.isEmpty()) {
-	    				    			fCommandControl.queueCommand(
-	    				    					fCommandFactory.createMIFileExecAndSymbols(fContainerDmc, execPath.toPortableString()), 
-   				    							new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
-	    				    			return;
-									}
+	    						if (binaryPath != null) {
+    				    			fCommandControl.queueCommand(
+    				    					fCommandFactory.createMIFileExecAndSymbols(fContainerDmc, binaryPath), 
+			    							new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+    				    			return;
 	    						}
 
 	    				    	rm.done();

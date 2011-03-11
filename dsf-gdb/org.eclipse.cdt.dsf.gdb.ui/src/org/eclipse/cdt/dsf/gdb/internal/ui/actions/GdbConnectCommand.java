@@ -34,8 +34,10 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.ProcessPrompter.PrompterInfo;
 import org.eclipse.cdt.dsf.gdb.launching.IProcessExtendedInfo;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
+import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
+import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
-import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
+import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
@@ -45,6 +47,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 public class GdbConnectCommand implements IConnect {
     
@@ -181,7 +188,7 @@ public class GdbConnectCommand implements IConnect {
 														@Override
 														protected void handleSuccess() {
 															// New cycle, look for service again
-															final IMIProcesses procService = fTracker.getService(IMIProcesses.class);
+															final IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
 															if (procService != null) {
 																Object data = getData();
 																if (data instanceof String) {
@@ -192,9 +199,27 @@ public class GdbConnectCommand implements IConnect {
 																			// khouzam, maybe we should at least pass stopOnMain?
 																			new HashMap<String, Object>(), new DataRequestMonitor<IDMContext>(fExecutor, rm));
 																} else if (data instanceof Integer) {
+																	final String[] binaryPath = new String[1];
+																	binaryPath[0] = null;
+																	final IGDBBackend backend = fTracker.getService(IGDBBackend.class);
+																	if (backend != null && backend.getSessionType() == SessionType.REMOTE) {
+																		// For remote attach, we must set the binary first
+																		// For a local attach, GDB can figure out the binary automatically,
+																		// so we don't specify it.
+																		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+																			public void run() {
+																				Shell shell = Display.getCurrent().getActiveShell();
+																				if (shell != null) {
+																					FileDialog fd = new FileDialog(shell, SWT.NONE);
+																					binaryPath[0] = fd.open();
+																				}
+																			}
+																		});
+																	}
+																	
 																	IProcessDMContext procDmc = procService.createProcessContext(controlCtx,
 																			Integer.toString((Integer)getData()));
-																	procService.attachDebuggerToProcess(procDmc, new DataRequestMonitor<IDMContext>(fExecutor, rm));
+																	procService.attachDebuggerToProcess(procDmc, binaryPath[0], new DataRequestMonitor<IDMContext>(fExecutor, rm));
 																} else {
 														            rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Invalid return type for process prompter", null)); //$NON-NLS-1$
 														            rm.done();

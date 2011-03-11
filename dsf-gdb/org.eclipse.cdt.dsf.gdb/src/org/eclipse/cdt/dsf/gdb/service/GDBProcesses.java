@@ -57,7 +57,6 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -224,11 +223,14 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	}
 
 	@Override
-    public void attachDebuggerToProcess(final IProcessDMContext procCtx, final DataRequestMonitor<IDMContext> rm) {
-		// For remote attach, we must set the binary first
-		// For a local attach, GDB can figure out the binary automatically,
-		// so we don't specify it.
-		
+    public void attachDebuggerToProcess(IProcessDMContext procCtx, DataRequestMonitor<IDMContext> rm) {
+		attachDebuggerToProcess(procCtx, null, rm);
+	}
+	
+    /**
+	 * @since 4.0
+	 */
+    public void attachDebuggerToProcess(final IProcessDMContext procCtx, String binaryPath, final DataRequestMonitor<IDMContext> rm) {
 		final IMIContainerDMContext containerDmc = createContainerContext(procCtx, MIProcesses.UNIQUE_GROUP_ID);
 
 		DataRequestMonitor<MIInfo> attachRm = new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm) {
@@ -253,14 +255,11 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 			}
 		};
 		
-		if (fBackend.getSessionType() == SessionType.REMOTE) {
-			final IPath execPath = fBackend.getProgramPath();
-			if (execPath != null && !execPath.isEmpty()) {
-				fGdb.queueCommand(
-					fCommandFactory.createMIFileExecAndSymbols(containerDmc, execPath.toPortableString()), 
-					attachRm);
-				return;
-			}
+		if (binaryPath != null) {
+			fGdb.queueCommand(
+				fCommandFactory.createMIFileExecAndSymbols(containerDmc, binaryPath), 
+				attachRm);
+			return;
 		}
 
 		// If we get here, let's do the attach by completing the requestMonitor

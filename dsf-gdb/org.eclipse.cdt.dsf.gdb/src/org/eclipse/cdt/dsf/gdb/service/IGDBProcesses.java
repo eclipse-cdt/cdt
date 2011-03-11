@@ -14,6 +14,7 @@ package org.eclipse.cdt.dsf.gdb.service;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -90,5 +91,17 @@ public interface IGDBProcesses extends IMIProcesses {
      * @since 4.0
      */
 	void start(IContainerDMContext containerDmc, Map<String, Object> attributes, DataRequestMonitor<IContainerDMContext> rm);
+	
+    /**
+     * Attaches debugger to the given process.     
+     * When attaching to a process, a debugging context can now be used to characterize the process.
+     * This method can optionally choose to return this IDMContext inside the DataRequestMonitor.  
+     * This can be useful for backends that do not have the ability to obtain the different 
+     * debugging IDMContexts through {@link #getProcessesBeingDebugged(IDMContext, DataRequestMonitor)
+     * 
+     * @param file Binary to use for the process.
+     * @since 4.0
+     */    
+    void attachDebuggerToProcess(IProcessDMContext procCtx, String file, DataRequestMonitor<IDMContext> rm);
 
 }

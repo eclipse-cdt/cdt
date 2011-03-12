@@ -14,10 +14,14 @@ package org.eclipse.cdt.codan.core.cxx;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.codan.core.cxx.model.CxxModelsCache;
+import org.eclipse.cdt.codan.core.cxx.model.ICodanCommentMap;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -389,5 +393,53 @@ public final class CxxAstUtils {
 			return false;
 		IASTExpression functionNameExpression = ((IASTFunctionCallExpression) expression).getFunctionNameExpression();
 		return functionNameExpression.getRawSignature().equals("exit"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * @param statement
+	 * @return
+	 */
+	public IASTComment getLeadingComment(IASTStatement statement) {
+		IASTComment comment = null;
+		ICodanCommentMap map = CxxModelsCache.getInstance().getCommentedNodeMap(statement.getTranslationUnit());
+		if (map != null) {
+			List<IASTComment> comms = map.getLeadingCommentsForNode(statement);
+			if (comms.size() > 0) {
+				comment = comms.get(comms.size() - 1);
+			}
+		}
+		return comment;
+	}
+
+	/**
+	 * @param statement
+	 * @return
+	 */
+	public IASTComment getTrailingComment(IASTStatement statement) {
+		IASTComment comment = null;
+		ICodanCommentMap map = CxxModelsCache.getInstance().getCommentedNodeMap(statement.getTranslationUnit());
+		if (map != null) {
+			List<IASTComment> comms = map.getTrailingCommentsForNode(statement);
+			if (comms.size() > 0) {
+				comment = comms.get(0);
+			}
+		}
+		return comment;
+	}
+
+	/**
+	 * @param statement
+	 * @return
+	 */
+	public IASTComment getFreestandingComment(IASTStatement statement) {
+		IASTComment comment = null;
+		ICodanCommentMap map = CxxModelsCache.getInstance().getCommentedNodeMap(statement.getTranslationUnit());
+		if (map != null) {
+			List<IASTComment> comms = map.getFreestandingForNode(statement);
+			if (comms.size() > 0) {
+				comment = comms.get(comms.size() - 1);
+			}
+		}
+		return comment;
 	}
 }

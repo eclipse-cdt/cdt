@@ -12,6 +12,8 @@ package org.eclipse.cdt.codan.core.cxx.model;
 
 import java.util.WeakHashMap;
 
+import org.eclipse.cdt.codan.core.cxx.Activator;
+import org.eclipse.cdt.codan.core.cxx.internal.model.CodanCommentMap;
 import org.eclipse.cdt.codan.core.cxx.internal.model.cfg.CxxControlFlowGraph;
 import org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -21,6 +23,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
@@ -33,6 +36,7 @@ public class CxxModelsCache {
 	private ITranslationUnit tu;
 	private IIndex index;
 	private WeakHashMap<IASTFunctionDefinition, IControlFlowGraph> cfgmap = new WeakHashMap<IASTFunctionDefinition, IControlFlowGraph>(0);
+	private ICodanCommentMap commentMap;
 	private static CxxModelsCache instance = new CxxModelsCache();
 
 	public static CxxModelsCache getInstance() {
@@ -77,6 +81,36 @@ public class CxxModelsCache {
 		}
 	}
 
+
+	public ICodanCommentMap getCommentedNodeMap(IASTTranslationUnit ast) {
+		if (this.ast == ast) {
+			try {
+				index.acquireReadLock();
+				try {
+					commentMap = new CodanCommentMap(ASTCommenter.getCommentedNodeMap(ast));
+				} finally {
+					index.releaseReadLock();
+				}
+				return commentMap;
+			} catch (InterruptedException e) {
+				return null;
+			}
+		}
+		throw new IllegalArgumentException("Not cached");
+	}
+
+	public ICodanCommentMap getCommentedNodeMap(IFile file) {
+		try {
+			IASTTranslationUnit ast = getAst(file);
+			return getCommentedNodeMap(ast);
+		} catch (InterruptedException e) {
+			return null;
+		} catch (CoreException e) {
+			Activator.log(e);
+			return null;
+		}
+	}
+
 	/**
 	 * Clear cash for current file
 	 */
@@ -85,6 +119,7 @@ public class CxxModelsCache {
 		ast = null;
 		tu = null;
 		index = null;
+		commentMap = null;
 	}
 
 	public synchronized IIndex getIndex(IFile file) throws CoreException, InterruptedException {

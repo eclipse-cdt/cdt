@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
+import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
+import org.eclipse.cdt.codan.core.cxx.model.CxxModelsCache;
 import org.eclipse.cdt.codan.core.model.ICheckerWithPreferences;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -118,6 +120,12 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 			_prev_normal_stmnt_offset = 0;
 			_prev_case_stmnt_offset = 0;
 			_prev_case_stmnt = null;
+			//initilize cache
+			try {
+				CxxModelsCache.getInstance().getAst(getFile());
+			} catch (Exception e) {
+				CodanCheckersActivator.log(e);
+			}
 		}
 
 		/**

@@ -303,17 +303,44 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 	private IASTDeclSpecifier getDeclSpecForTemplate(ICPPTemplateInstance type) {
 		IASTName name = getName(type);
 		if (factory instanceof ICPPNodeFactory) {
-			ICPPNodeFactory cppFactory = (ICPPNodeFactory) factory;
-			ICPPASTTemplateId tempId = cppFactory.newTemplateId(name);
-			for (ICPPTemplateArgument arg : type.getTemplateArguments()) {
-				IASTDeclSpecifier argDeclSpec = createDeclSpecFromType(arg.isTypeValue() ? arg
-						.getTypeValue() : arg.getTypeOfNonTypeValue());
-				IASTTypeId typeId = cppFactory.newTypeId(argDeclSpec, null);
-				tempId.addTemplateArgument(typeId);
+
+			if (name instanceof ICPPASTQualifiedName) {
+				ICPPASTQualifiedName fullQualifiedName = (ICPPASTQualifiedName) name;
+				IASTName templateName = fullQualifiedName.getLastName();
+				ICPPASTTemplateId tempId = getTemplateId(type, templateName);
+				
+				ICPPASTQualifiedName newQualifiedName = ((ICPPNodeFactory) factory)
+						.newQualifiedName();
+				int nbQualifiedNames = fullQualifiedName.getNames().length;
+				if (nbQualifiedNames > 1) {
+					for (int i = 0; i < nbQualifiedNames - 1; i++) {
+						newQualifiedName.addName(fullQualifiedName.getNames()[i].copy());
+					}
+				}
+				newQualifiedName.addName(tempId);
+
+				return factory.newTypedefNameSpecifier(newQualifiedName);
+
+			} else {
+				IASTName templateName = getName(type);
+				ICPPASTTemplateId tempId = getTemplateId(type, templateName);
+				return factory.newTypedefNameSpecifier(tempId);
 			}
-			return factory.newTypedefNameSpecifier(tempId);
 		}
+
 		return factory.newTypedefNameSpecifier(name);
+	}
+
+	private ICPPASTTemplateId getTemplateId(ICPPTemplateInstance type, IASTName templateName) {
+		ICPPNodeFactory cppFactory = (ICPPNodeFactory) factory;
+		ICPPASTTemplateId tempId = cppFactory.newTemplateId(templateName.copy());
+		for (ICPPTemplateArgument arg : type.getTemplateArguments()) {
+			IASTDeclSpecifier argDeclSpec = createDeclSpecFromType(arg.isTypeValue() ? arg
+					.getTypeValue() : arg.getTypeOfNonTypeValue());
+			IASTTypeId typeId = cppFactory.newTypeId(argDeclSpec, null);
+			tempId.addTemplateArgument(typeId);
+		}
+		return tempId;
 	}
 
 	private IASTNamedTypeSpecifier getDeclSpecForBinding(IBinding binding) {

@@ -76,7 +76,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 
     public void setTemplateName(IASTName name) {
         assertNotFrozen();
-    	assert !(name instanceof ICPPASTQualifiedName) && !(name instanceof ICPPASTTemplateId);
+    	assert !(name instanceof ICPPASTTemplateId);
         templateName = name;
         if (name != null) {
 			name.setParent(this);

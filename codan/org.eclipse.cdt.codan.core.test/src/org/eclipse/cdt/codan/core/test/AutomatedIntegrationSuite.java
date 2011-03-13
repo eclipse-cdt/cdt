@@ -26,6 +26,7 @@ import org.eclipse.cdt.codan.core.internal.checkers.ReturnStyleCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.StatementHasNoEffectCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.SuggestedParenthesisCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.SuspiciousSemicolonCheckerTest;
+import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CreateLocalVariableQuickFixTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.SuggestedParenthesisQuickFixTest;
 
 public class AutomatedIntegrationSuite extends TestSuite {
@@ -62,6 +63,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(CodanFastTestSuite.suite());
 		// quick fixes
 		suite.addTestSuite(SuggestedParenthesisQuickFixTest.class);
+		suite.addTestSuite(CreateLocalVariableQuickFixTest.class);
 		return suite;
 	}
 }

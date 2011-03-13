@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Tomasz Wesolowski and others
+ * Copyright (c) 2010, 2011 Tomasz Wesolowski and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
+import org.eclipse.cdt.codan.internal.checkers.ProblemBindingChecker;
 import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
 
 /**
@@ -22,14 +23,30 @@ public class CreateLocalVariableQuickFixTest extends QuickFixTestCase {
 		return new QuickFixCreateLocalVariable();
 	}
 
+	@Override
+	public boolean isCpp() {
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.codan.core.test.CodanTestCase#setUp()
+	 */
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+		enableProblems(ProblemBindingChecker.ERR_ID_FieldResolutionProblem, ProblemBindingChecker.ERR_ID_MethodResolutionProblem,
+				ProblemBindingChecker.ERR_ID_VariableResolutionProblem);
+	}
+
 	// void func() {
 	// aChar = 'a';
 	// }
-	@SuppressWarnings("restriction")
 	public void testChar() {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
-		assertContainedIn("char aChar;", result);
+		assertContainedIn("char aChar;", result); //$NON-NLS-1$
 	}
 
 	// void func() {
@@ -38,7 +55,7 @@ public class CreateLocalVariableQuickFixTest extends QuickFixTestCase {
 	public void testDouble() {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
-		assertContainedIn("double aDouble;", result);
+		assertContainedIn("double aDouble;", result); //$NON-NLS-1$
 	}
 
 	// void func() {
@@ -47,7 +64,7 @@ public class CreateLocalVariableQuickFixTest extends QuickFixTestCase {
 	public void testString() {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
-		assertContainedIn("const char *aString;", result);
+		assertContainedIn("const char *aString;", result); //$NON-NLS-1$
 	}
 
 	// void func() {
@@ -56,7 +73,7 @@ public class CreateLocalVariableQuickFixTest extends QuickFixTestCase {
 	public void testWString() {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
-		assertContainedIn("const wchar_t *aWString;", result);
+		assertContainedIn("const wchar_t *aWString;", result); //$NON-NLS-1$
 	}
 
 	// void func() {
@@ -65,6 +82,6 @@ public class CreateLocalVariableQuickFixTest extends QuickFixTestCase {
 	public void testFuncPtr() {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
-		assertContainedIn("void (*aFuncPtr)();", result);
+		assertContainedIn("void (*aFuncPtr)();", result); //$NON-NLS-1$
 	}
 }

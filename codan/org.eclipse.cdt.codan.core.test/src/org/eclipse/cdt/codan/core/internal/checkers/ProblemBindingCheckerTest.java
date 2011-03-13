@@ -14,7 +14,6 @@ import org.eclipse.cdt.codan.core.test.CheckerTestCase;
 import org.eclipse.cdt.codan.internal.checkers.ProblemBindingChecker;
 
 public class ProblemBindingCheckerTest extends CheckerTestCase {
-	//	@Override
 	@Override
 	public boolean isCpp() {
 		return true;

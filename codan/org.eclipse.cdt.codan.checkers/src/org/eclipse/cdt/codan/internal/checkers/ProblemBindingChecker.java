@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Marc-Andre Laperle and others.
+ * Copyright (c) 2010, 2011 Marc-Andre Laperle and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -210,7 +210,13 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 	private void handleMemberProblem(IASTName name, IASTNode parentNode, IProblemBinding problemBinding, String contextFlagsString)
 			throws DOMException {
 		IASTNode parentParentNode = parentNode.getParent();
-		if (parentParentNode instanceof IASTFunctionCallExpression) {
+		
+		// An IASTFieldReference corresponds to a method if it's the first child in the parent function call expression
+		// For example, 
+		//   func(x.y()); the field reference is first in the x.y() function call expression -> y is a method
+		//   func(x.y); the field reference is second in the func(x.y) function call expression, func is first as a Id Expression -> y is a field
+		boolean isMethod = parentParentNode instanceof IASTFunctionCallExpression && parentParentNode.getChildren()[0] == parentNode;
+		if (isMethod) {
 			if (problemBinding.getCandidateBindings().length == 0) {
 				reportProblem(ERR_ID_MethodResolutionProblem, name.getLastName(), name.getRawSignature(), contextFlagsString);
 			} else {

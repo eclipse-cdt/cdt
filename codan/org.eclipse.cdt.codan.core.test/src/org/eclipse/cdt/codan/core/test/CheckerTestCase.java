@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,13 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.param.MapProblemPreference;
+import org.eclipse.cdt.codan.core.param.RootProblemPreference;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblem;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
 import org.eclipse.core.resources.IMarker;
@@ -187,14 +189,22 @@ public class CheckerTestCase extends CodanTestCase {
 		IProblem[] problems = profile.getProblems();
 		for (int i = 0; i < problems.length; i++) {
 			IProblem p = problems[i];
+			boolean enabled = false;
 			for (int j = 0; j < ids.length; j++) {
 				String pid = ids[j];
 				if (p.getId().equals(pid)) {
-					((CodanProblem) p).setEnabled(true);
-				} else {
-					((CodanProblem) p).setEnabled(false);
+					enabled = true;
+					// Force the launch mode to FULL_BUILD to make sure we can test the problem even if by default it
+					// is not set to run on FULL_BUILD
+					IProblemPreference preference = p.getPreference();
+					if (preference instanceof RootProblemPreference) {
+						RootProblemPreference rootProblemPreference = (RootProblemPreference) preference;
+						rootProblemPreference.getLaunchModePreference().enableInLaunchModes(CheckerLaunchMode.RUN_ON_FULL_BUILD);
+					}
+					break;
 				}
 			}
+			((CodanProblem) p).setEnabled(enabled);
 		}
 		CodanRuntime.getInstance().getCheckersRegistry().updateProfile(cproject.getProject(), profile);
 		return;

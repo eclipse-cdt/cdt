@@ -2,7 +2,7 @@
 !*** Project's plugins, features and fragments
 feature@org.eclipse.rse=v201101042155,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse-feature
 feature@org.eclipse.rse.core=v201101042155,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse.core-feature
-feature@org.eclipse.rse.dstore=v201101042155,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse.dstore-feature
+feature@org.eclipse.rse.dstore=v201103141607,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse.dstore-feature
 feature@org.eclipse.rse.examples=v201101042155,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/examples/org.eclipse.rse.examples-feature
 feature@org.eclipse.rse.ftp=v201101261515,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse.ftp-feature
 feature@org.eclipse.rse.local=v201101042155,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse.local-feature

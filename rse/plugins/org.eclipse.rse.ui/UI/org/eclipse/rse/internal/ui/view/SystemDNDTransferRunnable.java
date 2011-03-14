@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@
  * David McKnight   (IBM)        - [248922]  [dnd] display error message when copy operation hits exception
  * Radoslav Gerganov (ProSyst)   - [231428] [files] NPE on canceling copy operation from remote host
  * David McKnight   (IBM)        - [328148] Dropping resource onto Eclipse IFile causes RSEG1003U unexpected exception
+ * David McKnight   (IBM)        - [231971] [dnd] Drag and Drop Filter Displays Error
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -161,7 +162,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				showErrorMessage((SystemMessage) srcObject);
 				return _ok;
 			}
-			else if (srcObject != null)
+			else if (srcObject != null && srcObject != target)
 			{
 				ISystemDragDropAdapter srcAdapter = (ISystemDragDropAdapter) ((IAdaptable) srcObject).getAdapter(ISystemDragDropAdapter.class);
 
@@ -184,7 +185,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 						        srcObject instanceof ISubSystem)
 						{
 				    		SystemRemoteResourceSet set = getSetFor(srcSubSystem, srcAdapter);
-							set.addResource(srcObject);
+				    		set.addResource(srcObject);				    		
 						}
 				    }
 				}

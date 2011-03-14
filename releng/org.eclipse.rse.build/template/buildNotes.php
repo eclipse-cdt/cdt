@@ -29,30 +29,25 @@
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Local Terminal needs CDT Core.</li>
 
-<li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M4-201012140730/index.php">TM 3.3M4</a>:
+<li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M5-201102011100/index.php">TM 3.3M5</a>:
 <ul>
-  <li>TM has upgraded to shipping Commons Net 2.2 for FTP and Telnet. This fixes a couple of issues, especially for IPv6 support
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=335346">335346</a>].</li>
-  <li>The TM project has moved under the Tools TLP, as a result all TM branding has changed (About Dialog, Copyright notices)
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=330336">330336</a>].</li>
-  <li>A number of fixes have been applied to the Terminal: resizing, ANSI escape sequence interpretation, color rendering, middle mouse button paste all work more reliably now
-      [<a href="https://bugs.eclipse.org/bugs/buglist.cgi?bug_id=196465,220971,334969,335021,335059,335358">196465,220971,334969,335021,335059,335358</a>].</li>
-  <li>SSH File download performance has been improved by up to 10 times when accessing multiple files in succession - 
-      thanks Martin Tauber for this contribution
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=256581">256581</a>].</li>
-  <li>The scp service now works reliably also when logging in as root
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=331249">331249</a>].</li>
-  <li>Copying a host in the Remote Systems View no longer loses information in contained PropertySets
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=301075">301075</a>].</li>
+  <li>API: New <code>clonePropertySets()</code> API was added to RSE model object such as ISubSystem in order to fix loss or Property Sets when copying a connection
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=338510">338510</a>].</li>
+  <li>Collapsing the RSE tree when working in multiple Workbench windows at the same time was fixed 
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=238365">238365</a>].</li>
+  <li>File content conflicts on upload are now handled more properly 
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=334839">334839</a>].</li>
+  <li>Tarfile extraction was fixed
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=337612">337612</a>].</li>
 </ul>
 </li>
-<li>At least 24 bugs were resolved: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;value0-0-2=backport;chfieldto=2011-02-09;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.3%20M[34];chfieldfrom=2010-12-12;field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.3%20M5;product=Target%20Management">
+<li>At least 21 bugs were resolved: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;value0-0-2=backport;chfieldto=2011-03-15;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.3%20M[345];chfieldfrom=2011-01-25;field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.3%20M6;product=Target%20Management">
   this query</a> to show the list of bugs fixed since
-  <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M4-201012140730/">
-  TM 3.3M4</a>
-  [<a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M4-201012140730/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M5-201102011100/">
+  TM 3.3M5</a>
+  [<a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M5-201102011100/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see
   <a href="http://dsdp.eclipse.org/dsdp/tm/searchcvs.php">TM SearchCVS</a>, the
   <a href="http://download.eclipse.org/tm/downloads/drops/N-changelog/index.html">

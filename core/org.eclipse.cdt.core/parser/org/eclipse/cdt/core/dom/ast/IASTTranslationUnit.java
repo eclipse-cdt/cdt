@@ -20,7 +20,10 @@ import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * The translation unit represents a compilable unit of source.
- * 
+ *
+ * All existing implementations of IASTTranslationUnit are not thread safe.
+ * Even 'get' methods may cause changes to the underlying object.
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

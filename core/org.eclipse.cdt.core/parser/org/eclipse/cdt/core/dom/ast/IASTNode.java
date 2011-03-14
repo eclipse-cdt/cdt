@@ -16,7 +16,10 @@ import org.eclipse.cdt.core.parser.IToken;
 /**
  * This is the root node in the physical AST. A physical node represents a chunk
  * of text in the source program.
- * 
+ *
+ * Classes implementing this interface are not thread safe.
+ * Even 'get' methods may cause changes to the underlying object.
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */

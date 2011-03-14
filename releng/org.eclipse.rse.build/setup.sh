@@ -48,11 +48,11 @@ esac
 
 # prepare the base Eclipse installation in folder "eclipse"
 ep_rel="S-"
-ep_ver=3.7M5
-ep_date="-201101272034"
+ep_ver=3.7M6
+ep_date="-201103101119"
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.0.v3721b.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.0.v3724c.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -138,7 +138,7 @@ fi
 #CDTVER=201006141710
 CDTREL=8.0.0
 CDTFEAT=8.0.0
-CDTVER=201101311025
+CDTVER=201103111317
 CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
 CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
 if [ ! -f eclipse/plugins/org.eclipse.cdt_${CDTFEAT}.${CDTVER}.jar ]; then
@@ -169,7 +169,7 @@ fi
 
 # checkout the basebuilder
 #baseBuilderTag=R36_RC4
-baseBuilderTag=R37_M4
+baseBuilderTag=R37_M5
 if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.7.0.v20101208.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.6.100.v20101122/pdebuild.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.200.v20100920.jar ]; then

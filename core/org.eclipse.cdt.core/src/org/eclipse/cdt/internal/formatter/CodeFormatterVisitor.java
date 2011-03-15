@@ -2660,8 +2660,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			boolean needSpace= false;
 			final int line= scribe.line;
 			boolean indented= false;
+			int indentationLevel = scribe.indentationLevel;
+			int numberOfIndentations = scribe.numberOfIndentations;
 			try {
-				int[] stringLiterals = { Token.tSTRING, Token.tLSTRING, Token.tRSTRING };
+				final int[] stringLiterals = { Token.tSTRING, Token.tLSTRING, Token.tRSTRING };
 				while (true) {
 					scribe.printNextToken(stringLiterals, needSpace);
 					token= peekNextToken();
@@ -2670,15 +2672,23 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					}
 					scribe.printCommentPreservingNewLines();
 					if (!indented && line != scribe.line) {
-						indented= true;
-						scribe.indentForContinuation();
+						Alignment alignment = scribe.currentAlignment;
+						if (alignment != null && (alignment.mode & Alignment.M_INDENT_ON_COLUMN) != 0) {
+							scribe.indentationLevel= alignment.breakIndentationLevel;
+						} else if (alignment != null && (alignment.mode & Alignment.M_INDENT_BY_ONE) != 0) {
+							indented = true;
+							scribe.indent();
+						} else {
+							indented = true;
+							scribe.indentForContinuation();
+						}
 					}
 					needSpace= true;
 				}
 			} finally {
-				if (indented) {
-					scribe.unIndentForContinuation();
-				}
+				// Restore indentation.
+				scribe.indentationLevel = indentationLevel;
+				scribe.numberOfIndentations = numberOfIndentations;
 			}
 		} else {
 			scribe.printNextToken(peekNextToken());

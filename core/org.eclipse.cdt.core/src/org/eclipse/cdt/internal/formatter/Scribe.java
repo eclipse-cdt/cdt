@@ -1472,7 +1472,7 @@ public class Scribe {
 						buffer.append('\t');
 						indentationsAsTab++;
 						int complement= tabLength - ((column - 1) % tabLength); // amount of space
-						column+= complement;
+						column += complement;
 						needSpace= false;
 					} else {
 						buffer.append(' ');

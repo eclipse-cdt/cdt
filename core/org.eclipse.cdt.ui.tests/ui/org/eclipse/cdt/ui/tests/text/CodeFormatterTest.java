@@ -1059,6 +1059,26 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//void function(const char* s);
+	//
+	//void test() {
+	//function("string literal"
+	//"continuation of the string literal");
+	//}
+
+	//void function(const char* s);
+	//
+	//void test() {
+	//    function("string literal"
+	//             "continuation of the string literal");
+	//}
+	public void testFunctionCallWithMultilineStringLiteral() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		assertFormatterResult();
+	}
+
 	//#define MY_MACRO int a; \
 	//    int b; \
 	//    int c();

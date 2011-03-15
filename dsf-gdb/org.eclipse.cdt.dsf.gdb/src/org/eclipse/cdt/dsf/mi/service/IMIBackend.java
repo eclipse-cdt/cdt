@@ -66,7 +66,7 @@ public interface IMIBackend extends IDsfService {
     public void destroy();
 
     /**
-     * Returns the current state of the backed.
+     * Returns the current state of the backend.
      * @return
      */
     public State getState();

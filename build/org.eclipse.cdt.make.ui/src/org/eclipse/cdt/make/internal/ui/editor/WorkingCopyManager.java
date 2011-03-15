@@ -30,7 +30,7 @@ import org.eclipse.ui.IEditorInput;
 public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyManagerExtension {
 	
 	private IMakefileDocumentProvider fDocumentProvider;
-	private Map fMap;
+	private Map<IEditorInput, IMakefile> fMap;
 	private boolean fIsShuttingDown;
 
 	/**
@@ -90,7 +90,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	public void setWorkingCopy(IEditorInput input, IMakefile workingCopy) {
 		if (fDocumentProvider.getDocument(input) != null) {
 			if (fMap == null)
-				fMap= new HashMap();
+				fMap= new HashMap<IEditorInput, IMakefile>();
 			fMap.put(input, workingCopy);
 		}
 	}

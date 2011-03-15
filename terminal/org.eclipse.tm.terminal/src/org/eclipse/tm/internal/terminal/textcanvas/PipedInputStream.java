@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 1996, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 1996, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  * Douglas Lea (Addison Wesley) - [cq:1552] BoundedBufferWithStateTracking adapted to BoundedByteBuffer 
  * Martin Oberhuber (Wind River) - the waitForAvailable method
  * Martin Oberhuber (Wind River) - [208166] Avoid unnecessary arraycopy in BoundedByteBuffer
- * Pawel Piech (Wind River) - [333613] Avoid "Job still found running" error after shutdown
  *******************************************************************************/
 
 package org.eclipse.tm.internal.terminal.textcanvas;
@@ -73,12 +72,7 @@ public class PipedInputStream extends InputStream {
 		 * Must be called with a lock on this!
 		 */
 		public int available() {
-		    if (fUsedSlots > 0) {
-		        return fUsedSlots;
-		    } else if (fClosed) {
-		        return -1;
-		    }
-		    return 0;
+			return fUsedSlots;
 		}
 		/**
 		 * Writes a single byte to the buffer. Blocks if the buffer is full.
@@ -243,8 +237,7 @@ public class PipedInputStream extends InputStream {
 	} 
 	/**
 	 * Must be called in the Display Thread!
-	 * @return number of characters available for reading.  Returns <code>-1<code> if 
-	 * stream is closed and no characters are left in pipe.
+	 * @return true if a character is available for the terminal to show.
 	 */
 	public int available() {
 		synchronized(fQueue) {
@@ -266,14 +259,12 @@ public class PipedInputStream extends InputStream {
 		}
 	}
     /**
-     * Closing a <tt>PipedInputStream</tt> is the same as closing the output stream. 
-     * The stream will allow reading data that's still in the pipe after which it will
-     * throw an <tt>IOException</tt>.
+     * Closing a <tt>PipedInputStream</tt> has no effect. The methods in
+     * this class can be called after the stream has been closed without
+     * generating an <tt>IOException</tt>.
+     * <p>
      */
 	public void close() throws IOException {
-	    synchronized(fQueue) {
-	        fQueue.close();
-	    }
 	}
 
 	public int read(byte[] cbuf, int off, int len) throws IOException {

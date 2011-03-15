@@ -50,7 +50,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICPPASTCompletionContext {
-
 	private static final ICPPASTFieldReference NOT_INITIALIZED = new CPPASTFieldReference();
 	
 	private IASTName name;
@@ -94,8 +93,8 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
         if (action.shouldVisitExpressions) {
 		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP:  return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
 
@@ -104,8 +103,8 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP:  return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
@@ -195,7 +194,8 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 					if (methodBinding instanceof ICPPMethod && !((ICPPMethod) methodBinding).isStatic()) {
 						IASTName nameDummy= new CPPASTName();
 						nameDummy.setBinding(binding);
-						IASTExpression owner= new CPPASTLiteralExpression(IASTLiteralExpression.lk_this, CharArrayUtils.EMPTY);
+						IASTExpression owner= new CPPASTLiteralExpression(IASTLiteralExpression.lk_this,
+								CharArrayUtils.EMPTY);
 						owner= new CPPASTUnaryExpression(IASTUnaryExpression.op_star, owner);
 						fTransformedExpression= new CPPASTFieldReference(nameDummy, owner);
 						fTransformedExpression.setParent(getParent());

@@ -179,19 +179,19 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 	private static final int MAX_DATA_SIZE = 20;
 	
 	// inner class to hold search data
-	private class RemoteSearchData {
+	protected class RemoteSearchData {
 		
-		private String searchString;
-		private boolean caseSensitive;
-		private boolean stringRegex;
-		private String fileNames;
-		private boolean fileNameCaseSensitive;
-		private boolean fileNameRegex;
-		private String profileName;
-		private String connectionName;
-		private String folderName;
-		private boolean includeArchives;
-		private boolean includeSubfolders;
+		public String searchString;
+		public boolean caseSensitive;
+		public boolean stringRegex;
+		public String fileNames;
+		public boolean fileNameCaseSensitive;
+		public boolean fileNameRegex;
+		public String profileName;
+		public String connectionName;
+		public String folderName;
+		public boolean includeArchives;
+		public boolean includeSubfolders;
 		
 		/**
 		 * Constructor for search data.

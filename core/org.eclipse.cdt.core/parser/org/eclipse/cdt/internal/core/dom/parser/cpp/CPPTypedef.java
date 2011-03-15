@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM Corporation) - Initial API and implementation 
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -31,9 +31,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContainer, ICPPInternalBinding {
-
-	private IASTName[] declarations = null;
-	private IType type = null;
+	private IASTName[] declarations;
+	private IType type;
 
 	public CPPTypedef(IASTName name) {
 		// bug 223020 even though qualified names are not legal, we need to deal with them.
@@ -120,6 +119,7 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
         }
         return t;
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
      */
@@ -162,12 +162,10 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 		if (node instanceof IASTName) {
 	    	if (node.getParent() instanceof ICPPASTQualifiedName) {
 	    		name= (IASTName) node.getParent();
-	    	}
-	    	else {
+	    	} else {
 	    		name= (IASTName) node;
 	    	}
-	    }
-	    else {
+	    } else {
 			return;
 	    }
 
@@ -176,7 +174,7 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 		} else {
 	        // keep the lowest offset declaration in [0]
 			if (declarations.length > 0 &&
-					((ASTNode )node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
+					((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
 				declarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, declarations, name);
 			} else {
 				declarations = (IASTName[]) ArrayUtil.append(IASTName.class, declarations, name);

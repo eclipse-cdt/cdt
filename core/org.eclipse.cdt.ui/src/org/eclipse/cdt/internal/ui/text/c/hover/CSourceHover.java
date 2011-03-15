@@ -218,11 +218,14 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			
 			// in case the binding is a non-explicit specialization we need
 			// to consider the original binding (bug 281396)
-			if (names.length == 0 && binding instanceof ICPPSpecialization) {
-				binding= ((ICPPSpecialization) binding).getSpecializedBinding();
-				if (!(binding instanceof IProblemBinding)) {
-					names= findDefsOrDecls(ast, binding);
+			while (names.length == 0 && binding instanceof ICPPSpecialization) {
+				IBinding specializedBinding = ((ICPPSpecialization) binding).getSpecializedBinding();
+				if (specializedBinding == null || specializedBinding instanceof IProblemBinding) {
+					break;
 				}
+				
+				names = findDefsOrDecls(ast, specializedBinding);
+				binding = specializedBinding;
 			}
 			if (names.length > 0) {
 				for (IName name : names) {

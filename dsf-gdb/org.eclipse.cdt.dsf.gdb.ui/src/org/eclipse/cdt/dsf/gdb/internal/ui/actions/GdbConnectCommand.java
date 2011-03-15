@@ -129,7 +129,9 @@ public class GdbConnectCommand implements IConnect {
     		try {
     			PrompterInfo info = new PrompterInfo(fNewProcessSupported, fProcessList);
     			Object result = prompter.handleStatus(processPromptStatus, info);
-    			if (result instanceof Integer || result instanceof String) {
+    			 if (result == null) {
+ 					fRequestMonitor.cancel();
+ 				} else if (result instanceof Integer || result instanceof String) {
     				fRequestMonitor.setData(result);
     		    } else {
     				fRequestMonitor.setStatus(NO_PID_STATUS);
@@ -185,6 +187,11 @@ public class GdbConnectCommand implements IConnect {
 											new PromptForPidJob(
 													"Prompt for Process", newProcessSupported, procInfoList.toArray(new IProcessExtendedInfo[0]),   //$NON-NLS-1$
 													new DataRequestMonitor<Object>(fExecutor, rm) {
+														@Override
+														protected void handleCancel() {
+															rm.cancel();
+															rm.done();
+														}
 														@Override
 														protected void handleSuccess() {
 															// New cycle, look for service again

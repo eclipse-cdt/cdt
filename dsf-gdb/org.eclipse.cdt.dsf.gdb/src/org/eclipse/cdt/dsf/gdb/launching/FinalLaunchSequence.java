@@ -388,7 +388,9 @@ public class FinalLaunchSequence extends ReflectionSequence {
 
 			try {
 				Object result = prompter.handleStatus(filePrompt, null);
-				if (result instanceof String) {
+				 if (result == null) {
+						fRequestMonitor.cancel();
+				} else if (result instanceof String) {
 					fRequestMonitor.setData((String)result);
 				} else {
 					fRequestMonitor.setStatus(NO_CORE_STATUS);
@@ -421,6 +423,11 @@ public class FinalLaunchSequence extends ReflectionSequence {
 					new PromptForCoreJob(
 							"Prompt for post mortem file",  //$NON-NLS-1$
 							new DataRequestMonitor<String>(getExecutor(), requestMonitor) {
+								@Override
+								protected void handleCancel() {
+									requestMonitor.cancel();
+									requestMonitor.done();
+								}
 								@Override
 								protected void handleSuccess() {
 									String newCoreFile = getData();

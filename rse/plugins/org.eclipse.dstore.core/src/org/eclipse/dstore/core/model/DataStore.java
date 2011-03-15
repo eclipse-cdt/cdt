@@ -36,6 +36,7 @@
  * David McKnight   (IBM) - [331922] [dstore] enable DataElement recycling
  * David McKnight   (IBM) - [336257] [dstore] leading file.searator in DSTORE_LOG_DIRECTORY not handled
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
+ * David McKnight   (IBM) - [340080] [dstore] empty string should not be allowed as a DataElement ID
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -4019,7 +4020,7 @@ public final class DataStore
 			containsKey = _hashMap.containsKey(id);
 		}
 		
-		if (!containsKey)
+		if (!containsKey && id.length() > 0)
 		{
 			return id;
 		}

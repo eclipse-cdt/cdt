@@ -37,7 +37,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -51,12 +50,11 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
  * MakefileContentOutlinePage
  */
-public class MakefileContentOutlinePage extends ContentOutlinePage implements IContentOutlinePage {
+public class MakefileContentOutlinePage extends ContentOutlinePage {
 
 	private class MakefileContentProvider implements ITreeContentProvider {
 
@@ -126,7 +124,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 			} else {
 				directives = new IDirective[0];
 			}
-			List list = new ArrayList(directives.length);
+			List<IDirective> list = new ArrayList<IDirective>(directives.length);
 			for (int i = 0; i < directives.length; i++) {
 				if (showMacroDefinition && directives[i] instanceof IMacroDefinition) {
 					list.add(directives[i]);
@@ -171,7 +169,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 
 	}
 
-	private class MakefileLabelProvider extends LabelProvider implements ILabelProvider {
+	private class MakefileLabelProvider extends LabelProvider {
 
 		/* (non-Javadoc)
 		* @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)

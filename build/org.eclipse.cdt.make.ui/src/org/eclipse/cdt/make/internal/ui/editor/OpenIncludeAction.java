@@ -107,16 +107,17 @@ public class OpenIncludeAction extends Action {
 
 	IInclude[] getIncludeDirective(ISelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
-			List list= ((IStructuredSelection)sel).toList();
+			@SuppressWarnings("unchecked")
+			List<Object> list= ((IStructuredSelection)sel).toList();
 			if (list.size() > 0) {
-				List includes = new ArrayList(list.size());
+				List<IInclude> includes = new ArrayList<IInclude>(list.size());
 				for (int i = 0; i < list.size(); ++i) {
 					Object element= list.get(i);
 					if (element instanceof IInclude) {
-						includes.add(element);
+						includes.add((IInclude) element);
 					}
 				}
-				return (IInclude[]) includes.toArray(new IInclude[includes.size()]);
+				return includes.toArray(new IInclude[includes.size()]);
 			}
 		}
 		return null;

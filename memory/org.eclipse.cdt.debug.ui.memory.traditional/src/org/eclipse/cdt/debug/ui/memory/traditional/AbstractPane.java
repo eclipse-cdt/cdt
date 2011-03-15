@@ -246,7 +246,7 @@ public abstract class AbstractPane extends Canvas
                         break;
                 }
             }
-            else if(ke.keyCode != SWT.SHIFT) 
+            else if(ke.keyCode != SWT.SHIFT && ke.keyCode != SWT.CTRL && ke.keyCode != SWT.COMMAND) 
             // if shift key, keep selection, we might add to it
             {
                 fRendering.getSelection().clear();
@@ -667,7 +667,7 @@ public abstract class AbstractPane extends Canvas
 
                 fSelectionStarted = true;
                 
-                new CopyAction(fRendering, DND.SELECTION_CLIPBOARD).run();
+                new CopyDefaultAction(fRendering, DND.SELECTION_CLIPBOARD).run();
             }
         }
         catch(DebugException e)
@@ -729,7 +729,7 @@ public abstract class AbstractPane extends Canvas
 
             updateCaret();
             
-            new CopyAction(fRendering, DND.SELECTION_CLIPBOARD).run();
+            new CopyDefaultAction(fRendering, DND.SELECTION_CLIPBOARD).run();
         }
         catch(DebugException e)
         {

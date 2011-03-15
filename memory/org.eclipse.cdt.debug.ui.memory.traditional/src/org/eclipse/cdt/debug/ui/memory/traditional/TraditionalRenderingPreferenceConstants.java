@@ -41,5 +41,7 @@ public class TraditionalRenderingPreferenceConstants {
 	public static final String MEM_EDIT_BUFFER_SAVE_ON_ENTER_OR_FOCUS_LOST = "saveOnEnterOrFocusLost";
 	
 	public static final String MEM_HISTORY_TRAILS_COUNT = "memoryHistoryTrailsCount";
-	
+
+	public static final String MEM_DEFAULT_COPY_ACTION = "memoryDefaultCopyAction";
+
 }

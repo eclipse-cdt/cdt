@@ -2314,7 +2314,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			}
 			node.getTypeId().accept(this);
 			scribe.printNextToken(Token.tGT, preferences.insert_space_before_closing_angle_bracket_in_template_arguments);
-			if (preferences.insert_space_after_closing_angle_bracket_in_template_arguments) {
+			if (preferences.insert_space_before_opening_paren_in_method_invocation) {
 				scribe.space();
 			}
 			// operand
@@ -3235,8 +3235,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 		int nextToken= peekNextToken();
 		if (node.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME || nextToken == Token.tGT) {
-			if (preferences.insert_space_after_closing_angle_bracket_in_template_arguments) {
-				// avoid explicit space if followed by pointer operator
+			if (node.getParent().getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME &&
+					preferences.insert_space_before_opening_paren_in_method_invocation) {
+				scribe.space();
+			} else if (node.getParent().getPropertyInParent() != IASTFunctionCallExpression.FUNCTION_NAME &&
+					preferences.insert_space_after_closing_angle_bracket_in_template_arguments) {
+				// Avoid explicit space if followed by '*' or '&'.
 				if (nextToken != Token.tSTAR && nextToken != Token.tAMPER) {
 					scribe.space();
 				}
@@ -3253,12 +3257,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		scribe.printNextToken(Token.t_return);
 		final IASTExpression expression = node.getReturnValue();
 		if (expression != null) {
-//			if (peekNextToken() != Token.tLPAREN) {
-				scribe.space();
-//			}
+			scribe.space();
 			expression.accept(this);
 		}
-		// sometimes the return expression is null, when it should not
+		// Sometimes the return expression is null, when it should not be.
 		if (expression == null && Token.tSEMI != peekNextToken()) {
 			scribe.skipToToken(Token.tSEMI);
 		}

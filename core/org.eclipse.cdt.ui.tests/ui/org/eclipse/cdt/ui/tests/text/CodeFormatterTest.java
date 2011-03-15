@@ -1079,6 +1079,60 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//int x=static_cast < int > ( 0 ) ;
+
+	//int x = static_cast<int>(0);
+	public void testCppCast_1() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
+	//int x=static_cast < int >( 0 ) ;
+
+	//int x = static_cast<int> (0);
+	public void testCppCast_2() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_METHOD_INVOCATION, CCorePlugin.INSERT);
+		assertFormatterResult();
+	}
+
+	//template < typename T >
+	//void foo ( T t ) ;
+	//
+	//void test() {
+	//foo < const char* > ( "" ) ;
+	//}
+
+	//template<typename T>
+	//void foo(T t);
+	//
+	//void test() {
+	//    foo<const char*>("");
+	//}
+	public void testTemplateFunctionCall_1() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
+	//template < typename T >
+	//void foo ( T t ) ;
+	//
+	//void test() {
+	//foo < const char* >( "" ) ;
+	//}
+
+	//template<typename T>
+	//void foo(T t);
+	//
+	//void test() {
+	//    foo<const char*> ("");
+	//}
+	public void testTemplateFunctionCall_2() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_METHOD_INVOCATION, CCorePlugin.INSERT);
+		assertFormatterResult();
+	}
+
 	//#define MY_MACRO int a; \
 	//    int b; \
 	//    int c();

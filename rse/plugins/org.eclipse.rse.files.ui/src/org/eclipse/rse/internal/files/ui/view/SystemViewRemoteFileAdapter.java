@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,6 +70,7 @@
  * David McKnight   (IBM)        - [323299] [files] remote file view adapter needs to use the latest version of IRemoteFile
  * David McKnight   (IBM)        - [324192] Cannot open a renamed file
  * David McKnight     (IBM)      - [228743] [usability][dnd] Paste into read-only folder fails silently
+ * David McKnight   (IBM)        - [284157] [performance] too many jobs kicked off for getting file permissions for table
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -77,6 +78,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -121,6 +123,7 @@ import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
+import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
@@ -265,6 +268,58 @@ public class SystemViewRemoteFileAdapter
 	static final String _uploadMessage = FileResources.MSG_UPLOADING_PROGRESS;
 	static final String _downloadMessage = FileResources.MSG_DOWNLOADING_PROGRESS;
 
+	public HashMap _permissionsJobMap = new HashMap();
+	
+	class MultiFetchPermissionsJob extends Job {
+		private List _files;
+		private IFilePermissionsService _service;
+		private boolean _started = false;
+		
+		public MultiFetchPermissionsJob(IFilePermissionsService service){						
+			super(RSECoreMessages.RSESubSystemOperation_Get_properties_message); 
+			_files = new ArrayList();
+			_service = service;
+		}
+		
+		protected IStatus run(IProgressMonitor monitor) {
+			final ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+			IRemoteFile[] files = null;
+			_started = true;
+			synchronized (_files){
+				files = (IRemoteFile[])_files.toArray(new IRemoteFile[_files.size()]);			
+			}
+			for (int i = 0; i < files.length; i++){			
+				IRemoteFile rFile = files[i];
+
+				try {
+					// service will take care of setting this on the host file
+					_service.getFilePermissions(rFile.getHostFile(), monitor);	
+					registry.fireEvent(new SystemResourceChangeEvent(rFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, rFile));						
+				}
+				catch (Exception e){
+				}
+			}
+						
+			_permissionsJobMap.remove(_service);
+			return Status.OK_STATUS;
+		}
+
+		public int size(){
+			return _files.size();
+		}
+		
+		public boolean isStarted(){
+			return _started;
+		}
+		
+		public void addFile(IRemoteFile file){
+			_files.add(file);
+		}
+		
+		
+	}
+
+	
 	/**
 	 * Constructor
 	 */
@@ -1500,26 +1555,18 @@ public class SystemViewRemoteFileAdapter
 				if (rFile.getHostFile() instanceof IHostFilePermissionsContainer){
 					((IHostFilePermissionsContainer)rFile.getHostFile()).setPermissions(new PendingHostFilePermissions());
 				}
-
-				Job deferredFetch = new Job(NLS.bind(FileResources.MESSAGE_GETTING_PERMISSIONS, file.getAbsolutePath()))
-				{
-					public IStatus run(IProgressMonitor monitor){
-						try
-						{
-							// service will take care of setting this on the host file
-							service.getFilePermissions(rFile.getHostFile(), monitor);
-							ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-							registry.fireEvent(new SystemResourceChangeEvent(rFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, rFile));
-						}
-						catch (Exception e)
-						{
-						}
-						return Status.OK_STATUS;
-					}
-				};
-				deferredFetch.schedule();
-
-
+				
+				MultiFetchPermissionsJob deferredFetch = (MultiFetchPermissionsJob)_permissionsJobMap.get(service);
+				if (deferredFetch == null || deferredFetch.isStarted() || deferredFetch.size() > 50){ // max 50 files per job
+					deferredFetch = new MultiFetchPermissionsJob(service);
+					_permissionsJobMap.put(service, deferredFetch);
+					deferredFetch.addFile(file);
+					deferredFetch.schedule(100);
+				}
+				else {
+					deferredFetch.addFile(file);
+				}
+				
 				return true; // query kicked off
 			}
 		}

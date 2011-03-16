@@ -272,6 +272,12 @@ public class Alignment {
 			case M_COMPACT_SPLIT:
 				i = this.fragmentIndex;
 				do {
+					if (i == 0 && (mode & M_INDENT_ON_COLUMN) != 0 &&
+							name.startsWith(LIST_ELEMENTS_PREFIX)) {
+						// Don't split the line before the first element of the list if the list
+						// elements are indented on column.
+						break;
+					}
 					if (this.fragmentBreaks[i] == NONE) {
 						this.fragmentBreaks[i] = BREAK;
 						this.fragmentIndentations[i] = this.breakIndentationLevel;

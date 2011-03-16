@@ -1080,6 +1080,27 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//void function(int);
+	//int function_with_a_looooooooooooooooooooooooooooooooong_name(int);
+	//
+	//void test() {
+	//function(function_with_a_looooooooooooooooooooooooooooooooong_name(1000000));
+	//}
+
+	//void function(int);
+	//int function_with_a_looooooooooooooooooooooooooooooooong_name(int);
+	//
+	//void test() {
+	//    function(function_with_a_looooooooooooooooooooooooooooooooong_name(
+	//            1000000));
+	//}
+	public void testFunctionCall_3() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		assertFormatterResult();
+	}
+
 	//void function(const char* s);
 	//
 	//void test() {

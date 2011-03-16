@@ -170,7 +170,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private static class ListOptions {
 		final int fMode;
-		boolean fUseFallbackMode;
+		boolean fInsertNewLineBeforeListIfNecessary;
 		boolean fSpaceBeforeComma;
 		boolean fSpaceAfterComma = true;
 		boolean fSpaceAfterOpeningParen;
@@ -1457,7 +1457,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private ListOptions createListOptionsForFunctionDeclarationParameters() {
 		final ListOptions options= new ListOptions(preferences.alignment_for_parameters_in_method_declaration);
-		options.fUseFallbackMode= true;
+		options.fInsertNewLineBeforeListIfNecessary= true;
 		options.fSpaceBeforeOpeningParen= preferences.insert_space_before_opening_paren_in_method_declaration;
 		options.fSpaceAfterOpeningParen= preferences.insert_space_after_opening_paren_in_method_declaration;
 		options.fSpaceBeforeClosingParen= preferences.insert_space_before_closing_paren_in_method_declaration;
@@ -2003,38 +2003,36 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			if (options.fSpaceAfterOpeningParen) {
 				scribe.space();
 			}
-			Alignment retryAlignment = null;
+			Alignment wrapperAlignment = null;
 
-			int fallbackMode = options.fUseFallbackMode ?
-					getFallbackAlignmentMode(options.fMode) : options.fMode;
-			if (fallbackMode != options.fMode) {
-				retryAlignment = scribe.createAlignment(
-						Alignment.LIST_FALLBACK_TRAP,
-						Alignment.M_ONE_PER_LINE_SPLIT,
+			final int continuationIndentation= options.fContinuationIndentation >= 0 ?
+					options.fContinuationIndentation : preferences.continuation_indentation;
+			if (options.fInsertNewLineBeforeListIfNecessary &&
+					(options.fMode & Alignment.M_INDENT_ON_COLUMN) != 0) {
+				wrapperAlignment = scribe.createAlignment(
+						Alignment.LIST_WRAPPER,
+						Alignment.M_COMPACT_FIRST_BREAK_SPLIT,
 						Alignment.R_INNERMOST,
 						1,
 						scribe.scanner.getCurrentPosition(),
-						0,
+						continuationIndentation,
 						false);
-				scribe.enterAlignment(retryAlignment);
+				scribe.enterAlignment(wrapperAlignment);
 			}
 			boolean success = false;
-			int mode = options.fMode;
 			do {
-				if (retryAlignment != null)
-					scribe.alignFragment(retryAlignment, 0);
+				if (wrapperAlignment != null)
+					scribe.alignFragment(wrapperAlignment, 0);
 
 				try {
-					final int continuationIndentation= options.fContinuationIndentation >= 0 ?
-							options.fContinuationIndentation : preferences.continuation_indentation;
 					Alignment alignment = scribe.createAlignment(
 							Alignment.LIST_ELEMENTS_PREFIX +
 									(elements.isEmpty() ? "ellipsis" : elements.get(0).getClass().getSimpleName()), //$NON-NLS-1$
-							mode,
+							options.fMode,
 							options.fTieBreakRule,
 							elementsLength + (addEllipsis ? 1 : 0),
 							scribe.scanner.getCurrentPosition(),
-							continuationIndentation,
+							wrapperAlignment == null ? continuationIndentation : 0,
 							false);
 					scribe.enterAlignment(alignment);
 					boolean ok = false;
@@ -2082,25 +2080,16 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					scribe.exitAlignment(alignment, true);
 					success = true;
 				} catch (AlignmentException e) {
-					if (retryAlignment == null)
+					if (wrapperAlignment == null)
 						throw e;
 					scribe.redoAlignment(e);
 				}
-				mode = fallbackMode;
-			} while (!success);
-			if (retryAlignment != null)
-				scribe.exitAlignment(retryAlignment, true);
+			} while (wrapperAlignment != null && !success);
+			if (wrapperAlignment != null)
+				scribe.exitAlignment(wrapperAlignment, true);
 		} else if (tailFormatter != null) {
 			tailFormatter.run();
 		}
-	}
-
-	private int getFallbackAlignmentMode(int alignmentMode) {
-		switch (alignmentMode & Alignment.SPLIT_MASK) {
-		case Alignment.M_COMPACT_SPLIT:
-			alignmentMode = Alignment.M_COMPACT_FIRST_BREAK_SPLIT | (alignmentMode & ~Alignment.SPLIT_MASK); 
-		}
-		return alignmentMode & ~Alignment.M_INDENT_ON_COLUMN;
 	}
 
 	private int visit(ICPPASTTryBlockStatement node) {
@@ -2256,7 +2245,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			expressions= Collections.emptyList();
 		}
 		final ListOptions options= new ListOptions(preferences.alignment_for_arguments_in_method_invocation);
-		options.fUseFallbackMode= true;
+		options.fInsertNewLineBeforeListIfNecessary= true;
 		options.fSpaceBeforeOpeningParen= preferences.insert_space_before_opening_paren_in_method_invocation;
 		options.fSpaceAfterOpeningParen= preferences.insert_space_after_opening_paren_in_method_invocation;
 		options.fSpaceBeforeClosingParen= preferences.insert_space_before_closing_paren_in_method_invocation;

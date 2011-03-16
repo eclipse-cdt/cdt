@@ -23,6 +23,7 @@
  * David McKnight   (IBM)        - [252708] Saving Profile Job happens when not changing Property Values on Connections
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  * David McKnight     (IBM)   [302724] problems with environment variable substitution
+ * David McKnight   (IBM)        - [338031] Remote Shell view tabs should have close (x) icon
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems;
@@ -1202,13 +1203,6 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		public void performOperation(IProgressMonitor mon) throws InterruptedException, InvocationTargetException,
 				Exception
 		{
-			String msg = null;
-			int totalWorkUnits = IProgressMonitor.UNKNOWN;
-
-			if (!implicitConnect(false, mon, msg, totalWorkUnits)){
-				String msgTxt = NLS.bind(ShellStrings.MSG_CONNECT_FAILED, getHostName());
-				throw new Exception(msgTxt);
-			}
 			internalRemoveShell(_runContext);
 		}
 	}

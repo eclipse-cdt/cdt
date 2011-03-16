@@ -23,6 +23,7 @@
  * David McKnight  (IBM)         - [279307] NPE when select a filter remove search dialog
  * Kit Lo  (IBM)         - [312923]  TVT36:TCT252: JPN: Extra spaces in front of the second Regular expression checkbox  (edit)  
  * David McKnight    (IBM)       - [340069] Change access modifier for SystemSearchPage methods to protected from private
+ * David McKnight    (IBM)       - [340212] Change access modifier for a few more SystemSearchPage methods
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.search;
@@ -1525,7 +1526,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 	/**
 	 * Stores the current configuration to the dialog settings.
 	 */
-	private void writeConfiguration() {
+	protected void writeConfiguration() {
 		IDialogSettings s = getConfigDialogSettings();
 		s.put(STORE_CONFIG_CASE_SENSITIVE, caseButton.getSelection());
 		s.put(STORE_CONFIG_STRING_REGEX, stringRegexButton.getSelection());
@@ -1585,7 +1586,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 	/**
 	 * Writes the data.
 	 */
-	private void writeData() {
+	protected void writeData() {
 		
 		// get the size of data
 		int size = previousSearchData.size();

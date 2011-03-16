@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -289,8 +290,10 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		}
 		if (prefixPath.segmentCount() > 0) {
 			IPath parentPath = parent.getFullPath().append(prefixPath);
-			if (parentPath.segmentCount() > 0) {
-				parent= parent.getFolder(prefixPath);
+			if (parentPath.segmentCount() > 1) {
+				parent = parent.getFolder(prefixPath);
+			} else if (parentPath.segmentCount() == 1) {
+				parent = ResourcesPlugin.getWorkspace().getRoot().getProject(parentPath.lastSegment());
 			} else {
 				return;
 			}

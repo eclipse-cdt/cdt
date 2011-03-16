@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,6 +18,7 @@
  * Kevin Doyle (IBM) - [177587] changed wrapped selection provider in setFocus()
  * Kevin Doyle		(IBM)		 - [212940] Duplicate Help Context Identifiers
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -257,11 +258,10 @@ FocusListener
 		createControl(_tabFolderPage);
 
 		// global actions
-		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
-		_copyAction = new SystemCopyToClipboardAction(_viewer.getShell(), clipboard);
+		_copyAction = new SystemCopyToClipboardAction(_viewer.getShell(), null);
 		_copyAction.setEnabled(false);
 		
-		_pasteAction = new SystemPasteFromClipboardAction(_viewer.getShell(), clipboard);
+		_pasteAction = new SystemPasteFromClipboardAction(_viewer.getShell(), null);
 		_pasteAction.setEnabled(false);
 
 		editorActionHandler.setCopyAction(_copyAction);

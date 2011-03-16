@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Xuan Chen        (IBM) - [223126] [api][breaking] Remove API related to User Actions in RSE Core/UI
+ * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -63,7 +64,7 @@ public class SystemViewScratchpadAdapter extends AbstractSystemViewAdapter imple
 	{
 		if (_pasteToScratchpadAction == null)
 		{
-		    _pasteToScratchpadAction = new SystemPasteFromClipboardAction(shell, RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard());
+		    _pasteToScratchpadAction = new SystemPasteFromClipboardAction(shell, null);
 		}
 		menu.add(menuGroup, _pasteToScratchpadAction);
 	}

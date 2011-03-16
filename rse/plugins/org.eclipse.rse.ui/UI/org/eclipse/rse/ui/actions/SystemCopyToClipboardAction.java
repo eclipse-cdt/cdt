@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  * David McKnight   (IBM)        - [248339] [dnd][encodings] Cannot drag&drop / copy&paste files or folders with turkish or arabic names
+ * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  *******************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -40,6 +41,7 @@ import org.eclipse.rse.internal.ui.view.SystemViewDataDropAdapter;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.internal.model.SystemRegistryUI;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
@@ -62,19 +64,24 @@ import org.eclipse.ui.part.ResourceTransfer;
 public class SystemCopyToClipboardAction extends SystemBaseAction implements  IValidatorRemoteSelection
 {
 	private IStructuredSelection _selection;
-	private Clipboard _clipboard;
 	private boolean  _doResourceTransfer = false; // determines whether or not to download on copy
 
 	/**
 	 * Constructor
+	 * -will deprecate this later since we don't use this clipboard now
 	 */
-	public SystemCopyToClipboardAction(Shell shell, Clipboard clipboard)
+	public SystemCopyToClipboardAction(Shell shell, Clipboard clipboard){
+		this(shell);
+	}
+	
+	/**
+	 * Constructor
+	 */
+	private SystemCopyToClipboardAction(Shell shell)
 	{
 		super(SystemResources.ACTION_COPY_LABEL,
 			  PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY), 
 		      shell);
-
-		_clipboard = clipboard;
 		setToolTipText(SystemResources.ACTION_COPY_TOOLTIP);
 		allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);
@@ -247,9 +254,10 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 			{
 				fn[j] = (String)fileNames.get(j);
 			}
-
-			_clipboard.setContents(new Object[] { data, ft, fn, textStream.toString() }, new Transfer[] { PluginTransfer.getInstance(), ResourceTransfer.getInstance(), FileTransfer.getInstance(), TextTransfer.getInstance()});
-
+			
+			Clipboard clipboard = SystemRegistryUI.getInstance().getSystemClipboard();
+			clipboard.setContents(new Object[] { data, ft, fn, textStream.toString() }, new Transfer[] { PluginTransfer.getInstance(), ResourceTransfer.getInstance(), FileTransfer.getInstance(), TextTransfer.getInstance()});
+			clipboard.dispose();
 		}		
 		else
 		{		
@@ -259,14 +267,17 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 				ft[i] = (String) fileNames.get(i);								
 			}
 
+			Clipboard clipboard = SystemRegistryUI.getInstance().getSystemClipboard();
+
 			if (ft.length > 0)
 			{
-				_clipboard.setContents(new Object[] { data, ft, textStream.toString() }, new Transfer[] { PluginTransfer.getInstance(), FileTransfer.getInstance(), TextTransfer.getInstance()});				
+				clipboard.setContents(new Object[] { data, ft, textStream.toString() }, new Transfer[] { PluginTransfer.getInstance(), FileTransfer.getInstance(), TextTransfer.getInstance()});				
 			}
 			else
 			{
-				_clipboard.setContents(new Object[] { data, textStream.toString() }, new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance()});
+				clipboard.setContents(new Object[] { data, textStream.toString() }, new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance()});
 			}
+			clipboard.dispose();
 		}
 	}
 	

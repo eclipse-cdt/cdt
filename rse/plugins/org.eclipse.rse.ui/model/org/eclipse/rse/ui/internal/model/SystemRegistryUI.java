@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [] Move SystemRegistry impl into Core
  * Martin Oberhuber (Wind River) - [215820] Move SystemRegistry implementation to Core
  * David McKnight   (IBM)        - [248339] [dnd][encodings] Cannot drag&drop / copy&paste files or folders with turkish or arabic names
+ * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  ********************************************************************************/
 package org.eclipse.rse.ui.internal.model;
 
@@ -80,7 +81,6 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 	private Vector previousRunnableContexts = new Vector();
 	private Vector previousRunnableContextShells = new Vector();
 
-	private Clipboard clipboard = null;
 	private SystemScratchpad scratchpad = null;
 
 	/**
@@ -277,22 +277,17 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 	 */
 	public Clipboard getSystemClipboard()
 	{
-		if (clipboard == null)
+		Display display = null;
+		Shell shell = getShell();
+		if (shell == null)
 		{
-			Display display = null;
-			Shell shell = getShell();
-			if (shell == null)
-			{
-				display = Display.getDefault();
-			}
-			else
-			{
-				display = shell.getDisplay();
-			}
-			clipboard = new Clipboard(display);
+			display = Display.getDefault();
 		}
-
-		return clipboard;
+		else
+		{
+			display = shell.getDisplay();
+		}
+		return new Clipboard(display);
 	}
 
 	/**
@@ -442,6 +437,7 @@ public class SystemRegistryUI implements ISystemRegistryUI {
 				srcObjects.add(textData);
 			}
 		}
+		clipboard.dispose();
 		return srcObjects;
 	}
 

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2011 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
@@ -139,11 +140,6 @@ public class SystemCollapsableSection extends Composite implements MouseListener
 
 		super(compositeParent, SWT.NULL);
 
-		if (_colorCollapsable == null)
-		{
-			Display display = Display.getCurrent();
-			_colorCollapsable = new Color(display, 0, 140, 140);
-		}
 
 		setLayout(new RTwisteeLayout());
 
@@ -156,6 +152,14 @@ public class SystemCollapsableSection extends Composite implements MouseListener
 
 		addPaintListener(this);
 		addMouseListener(this);
+	}
+	
+	private static Color getCollapsableColour(){
+		if (_colorCollapsable == null || _colorCollapsable.isDisposed()){
+			Display display = Display.getCurrent();
+			_colorCollapsable = new Color(display, 0, 140, 140);
+		}
+		return _colorCollapsable;
 	}
 
 	/**
@@ -298,13 +302,14 @@ public class SystemCollapsableSection extends Composite implements MouseListener
 		int iY,
 		boolean bCollapsed)
 	{
+		Color ccolour = getCollapsableColour();
 		
 		// Not collapsed: v
 		//-----------------
 
 		if (bCollapsed == false)
 		{
-			gc.setForeground(_colorCollapsable);
+			gc.setForeground(ccolour);
 
 			int iA = iX;
 			int iB = iY + 3;
@@ -333,7 +338,7 @@ public class SystemCollapsableSection extends Composite implements MouseListener
 		//-------------
 		else
 		{
-			gc.setForeground(_colorCollapsable);
+			gc.setForeground(ccolour);
 
 			int iA = iX + 2;
 			int iB = iY;
@@ -355,6 +360,7 @@ public class SystemCollapsableSection extends Composite implements MouseListener
 			iB++;
 			gc.drawLine(iA, iB, iA, iB);
 		}
+		ccolour.dispose();
 	}
 
 	/**

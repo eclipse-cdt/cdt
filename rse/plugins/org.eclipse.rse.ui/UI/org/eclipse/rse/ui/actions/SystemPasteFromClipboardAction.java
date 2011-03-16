@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kenya Ishimoto   (IBM)        - [241197] Paste action causes IllegalArgumentException at Resource.copy
  * Zhou Renjian     (Kortide)    - [282241] "Paste" is enabled on file system when text is in clipboard
+ * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -36,6 +37,7 @@ import org.eclipse.rse.internal.ui.view.SystemDNDTransferRunnable;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.internal.model.SystemRegistryUI;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.swt.dnd.Clipboard;
@@ -54,21 +56,27 @@ import org.eclipse.ui.part.ResourceTransfer;
  */
 public class SystemPasteFromClipboardAction extends SystemBaseAction implements  IValidatorRemoteSelection
 {
-
-
 	private int _srcType;
 	private Object _selection;
-	private Clipboard _clipboard;
+
+	/**
+	 * Constructor
+	 * -will deprecate this later since we don't use this clipboard now
+	 */
+	public SystemPasteFromClipboardAction(Shell shell, Clipboard clipboard)
+	{
+		this(shell);
+	}
+	
 	/**
 	 * Constructor
 	 */
-	public SystemPasteFromClipboardAction(Shell shell, Clipboard clipboard)
+	private SystemPasteFromClipboardAction(Shell shell)
 	{
 		super(SystemResources.ACTION_PASTE_LABEL, 
 			  PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE),
 			  //RSEUIPlugin.getDefault().getImageDescriptor(ISystemConstants.ICON_SYSTEM_PASTE_ID), 
 			  shell);
-		_clipboard = clipboard;
 		_srcType = SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE;
 		setEnabled(false);
 
@@ -113,32 +121,7 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 							rulesList.add(srcObjects.get(i));
 							j++;
 						}
-						/** FIXME - IREmoteFile is systems.core independent now
-						else if (srcObjects.get(i) instanceof IRemoteFile)
-						{
-							rulesList.add(new RemoteFileSchedulingRule((IRemoteFile)srcObjects.get(i)));
-							j++;
-						}
-						**/
 					}
-					/*
-					if (target instanceof ISchedulingRule)
-					{
-						rulesList.add(target);
-					}
-					*/
-					/** FIXME - IREmoteFile is systems.core independent now
-					else if (target instanceof IRemoteFile)
-					{
-						rulesList.add(new RemoteFileSchedulingRule((IRemoteFile)target));
-					}
-					*/
-					/*
-					else
-					{
-						rulesList.add(targetSubSystem);
-					}
-					*/
 					if (rulesList.size() > 0)
 					{
 						ISchedulingRule[] rules = (ISchedulingRule[])rulesList.toArray(new ISchedulingRule[rulesList.size()]);
@@ -150,9 +133,6 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 			runnable.schedule();
 			RSEUIPlugin.getTheSystemRegistryUI().clearRunnableContext();
 		}
-		// clear clipboard
-		// _clipboard.setContents(new Object[] { null }, new Transfer[] { PluginTransfer.getInstance()});
-		// setEnabled(false);
 	}
 
 	
@@ -168,12 +148,13 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 	}
 
 	public boolean hasSource()
-	{
-		synchronized (_clipboard)
+	{	
+		Clipboard clipboard = SystemRegistryUI.getInstance().getSystemClipboard();
+		try
 		{
-			try
+			synchronized (clipboard)
 			{
-				Object object = _clipboard.getContents(PluginTransfer.getInstance());
+				Object object = clipboard.getContents(PluginTransfer.getInstance());
 				if (object != null)
 				{
 					if (object instanceof PluginTransferData)
@@ -191,7 +172,7 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 				{
 					// clipboard must have resources or files
 					ResourceTransfer resTransfer = ResourceTransfer.getInstance();
-					object = _clipboard.getContents(resTransfer);
+					object = clipboard.getContents(resTransfer);
 					if (object != null)
 					{
 						IResource[] resourceData = (IResource[]) object;
@@ -204,7 +185,7 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 					else
 					{
 						FileTransfer fileTransfer = FileTransfer.getInstance();
-						object = _clipboard.getContents(fileTransfer);
+						object = clipboard.getContents(fileTransfer);
 
 						if (object != null)
 						{
@@ -218,7 +199,7 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 						else
 						{
 							TextTransfer textTransfer = TextTransfer.getInstance();
-							object = _clipboard.getContents(textTransfer);
+							object = clipboard.getContents(textTransfer);
 
 							if (object != null)
 							{
@@ -230,9 +211,12 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 					}
 				}
 			}
-			catch (Exception e)
-			{
-			}
+		}
+		catch (Exception e)
+		{
+		}
+		finally {
+			clipboard.dispose();
 		}
 		return false;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@
  * Kevin Doyle (IBM) - [193155] Double Clicking on a String in Scratchpad Errors
  * Kevin Doyle (IBM) - [194867] Remote Scratchpad should have Refresh Action on toolbar
  * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
+ * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -137,12 +138,11 @@ public class SystemScratchpadViewPart extends ViewPart
 
 		// register global edit actions 		
 		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
 
 		CellEditorActionHandler editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
 
-		_copyAction = new SystemCopyToClipboardAction(_viewer.getShell(), clipboard);
-		_pasteAction = new SystemPasteFromClipboardAction(_viewer.getShell(), clipboard);
+		_copyAction = new SystemCopyToClipboardAction(_viewer.getShell(), null);
+		_pasteAction = new SystemPasteFromClipboardAction(_viewer.getShell(), null);
 		_deleteAction = new SystemCommonDeleteAction(_viewer.getShell(), _viewer);
 		_renameAction = new SystemCommonRenameAction(_viewer.getShell(), _viewer);
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [214395] Properties View not updated when clicking on Search Results
  * David McKnight   (IBM)        - [190015] [performance] Remove All Match's from Search Results Takes a while
  * David McKnight   (IBM)        - [296877] Allow user to choose the attributes for remote search result
+ * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.search;
@@ -713,11 +714,10 @@ public class SystemSearchViewPart extends ViewPart
 		tbMgr.add(_selectColumnsAction);
 
 		// clipboard
-		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
 		Shell shell = RSEUIPlugin.getTheSystemRegistryUI().getShell();
 		
-		copyAction = new SystemSearchCopyToClipboardAction(shell, clipboard);
-		pasteAction = new SystemPasteFromClipboardAction(shell, clipboard);
+		copyAction = new SystemSearchCopyToClipboardAction(shell, null);
+		pasteAction = new SystemPasteFromClipboardAction(shell, null);
 
 		CellEditorActionHandler editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
 

@@ -43,6 +43,7 @@
  * Martin Oberhuber (Wind River) - [326910] RSE looses selection when creating a project
  * David McKnight   (IBM)        - [330386] RSE SystemView has Focus Problems with Eclipse SDK 4.1M3
  * David McKnight   (IBM)        - [238365] Collapsing tree in new window collapses tree in Original window
+ * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -386,12 +387,10 @@ public class SystemViewPart
 		}
 
 		// register global edit actions
-		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
-
 		CellEditorActionHandler editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
 
-		_copyAction = new SystemCopyToClipboardAction(systemView.getShell(), clipboard);
-		_pasteAction = new SystemPasteFromClipboardAction(systemView.getShell(), clipboard);
+		_copyAction = new SystemCopyToClipboardAction(systemView.getShell(), null);
+		_pasteAction = new SystemPasteFromClipboardAction(systemView.getShell(), null);
 
 		editorActionHandler.setCopyAction(_copyAction);
 		editorActionHandler.setPasteAction(_pasteAction);

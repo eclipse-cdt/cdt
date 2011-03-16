@@ -42,6 +42,7 @@
  * Kevin Doyle 		(IBM)		 - [242431] Register a new unique context menu id, so contributions can be made to all our views
  * David McKnight   (IBM)        - [260346] RSE view for jobs does not remember resized columns
  * David McKnight   (IBM)        - [333702] Remote Systems details view does not maintain column width settings across sessions
+ * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1274,12 +1275,10 @@ public class SystemTableViewPart extends ViewPart
 		_browsePosition = 0;
 
 		// register global edit actions
-		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
-
 		CellEditorActionHandler editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
 
-		_copyAction = new SystemCopyToClipboardAction(_viewer.getShell(), clipboard);
-		_pasteAction = new SystemPasteFromClipboardAction(_viewer.getShell(), clipboard);
+		_copyAction = new SystemCopyToClipboardAction(_viewer.getShell(), null);
+		_pasteAction = new SystemPasteFromClipboardAction(_viewer.getShell(), null);
 		_deleteAction = new SystemCommonDeleteAction(_viewer.getShell(), _viewer);
 		_renameAction = new SystemCommonRenameAction(_viewer.getShell(), _viewer);
 

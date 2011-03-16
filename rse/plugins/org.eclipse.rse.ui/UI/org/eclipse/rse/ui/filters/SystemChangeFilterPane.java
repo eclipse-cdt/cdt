@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * David McKnight(IBM) - [239257] Tooltip for Filter Pool label is incorrect
  * Kevin Doyle (IBM) - [235223] Duplicate Filter Strings
  * David McKnight   (IBM)        - [252708] Saving Profile Job happens when not changing Property Values on Connections
+ * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  *******************************************************************************/
 
 package org.eclipse.rse.ui.filters;
@@ -48,6 +49,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBaseForm;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.ISystemAction;
+import org.eclipse.rse.ui.internal.model.SystemRegistryUI;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.validators.ISystemValidator;
@@ -98,7 +100,6 @@ public class SystemChangeFilterPane extends SystemBaseForm
 	private   SystemChangeFilterActionMoveStringUp   moveUpAction;
 	private   SystemChangeFilterActionMoveStringDown moveDownAction;
 	private   MenuManager           menuMgr;
-	private   Clipboard             clipboard;
 	private   boolean              menuListenerAdded;
 	
 	// inputs
@@ -1364,12 +1365,12 @@ public class SystemChangeFilterPane extends SystemBaseForm
 	 */
 	public void doCopy()
 	{
-		if (clipboard == null)
-		  clipboard = new Clipboard(getShell().getDisplay());
+		Clipboard clipboard = new Clipboard(getShell().getDisplay());
 		
 		String selection = getCurrentSelection();
 		TextTransfer transfer = TextTransfer.getInstance();
 		clipboard.setContents(new Object[] {selection}, new Transfer[] {transfer});		 
+		clipboard.dispose();
 	}
 	/**
 	 * Decide if we can do the paste or not.
@@ -1377,11 +1378,11 @@ public class SystemChangeFilterPane extends SystemBaseForm
 	 */
 	public boolean canPaste()
 	{
-		 if (clipboard == null)
-		   return false;
-		 TextTransfer textTransfer = TextTransfer.getInstance();
-		 String textData = (String)clipboard.getContents(textTransfer);
-		 return ((textData != null) && (textData.length() > 0));
+		Clipboard clipboard = new Clipboard(getShell().getDisplay());
+		TextTransfer textTransfer = TextTransfer.getInstance();
+		String textData = (String)clipboard.getContents(textTransfer);
+		clipboard.dispose();
+		return ((textData != null) && (textData.length() > 0));
 	}
 	/**
 	 * Actually do the copy of the current filter string to the clipboard.
@@ -1389,8 +1390,7 @@ public class SystemChangeFilterPane extends SystemBaseForm
 	 */
 	public void doPaste()
 	{
-		if (clipboard == null)
-		  return;
+		Clipboard clipboard = SystemRegistryUI.getInstance().getSystemClipboard();
 		TextTransfer textTransfer = TextTransfer.getInstance();
 		String textData = (String)clipboard.getContents(textTransfer);
 		
@@ -1409,6 +1409,7 @@ public class SystemChangeFilterPane extends SystemBaseForm
 		}			        	
         processListSelect(); // defect 45790...
 		setPageComplete(verify(false));
+		clipboard.dispose();
 	}
 	
 	// --------------	

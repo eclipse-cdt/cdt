@@ -71,6 +71,7 @@
  * David McKnight   (IBM)        - [324192] Cannot open a renamed file
  * David McKnight     (IBM)      - [228743] [usability][dnd] Paste into read-only folder fails silently
  * David McKnight   (IBM)        - [284157] [performance] too many jobs kicked off for getting file permissions for table
+ * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -485,18 +486,13 @@ public class SystemViewRemoteFileAdapter
 		if (moveAction == null)
 			moveAction = new SystemMoveRemoteFileAction(shell);
 
-		//ISubSystem subsys = firstFile.getParentRemoteFileSubSystem();
-
-		// DKM - clipboard based copy actions
-		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
-
 		if (pasteClipboardAction == null)
 		{
-			pasteClipboardAction = new SystemPasteFromClipboardAction(shell, clipboard);
+			pasteClipboardAction = new SystemPasteFromClipboardAction(shell, null);
 		}
 		if (copyClipboardAction == null)
 		{
-			copyClipboardAction = new SystemCopyToClipboardAction(shell, clipboard);
+			copyClipboardAction = new SystemCopyToClipboardAction(shell, null);
 		}
 		if (searchAction == null)
 		{

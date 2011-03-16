@@ -324,7 +324,9 @@
 		<chmod perm="g+w" dir="${copyToDir}">
 			<dirset dir="${copyToDir}"/>
 		</chmod>
-		
+		<chmod perm="g+w" dir="${copyToDir}/${buildType}.${buildId}">
+			<dirset dir="${copyToDir}/${buildType}.${buildId}"/>
+		</chmod>
 		<!-- Create symlink to latest build -->
 		<symlink action="delete" link="${copyToDir}/latest" failonerror="false"/>
 		<symlink link="${copyToDir}/latest" resource="${copyToDir}/${buildType}.${buildId}" overwrite="true"/>

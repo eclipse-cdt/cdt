@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
-import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
-import org.eclipse.cdt.codan.core.cxx.model.CxxModelsCache;
 import org.eclipse.cdt.codan.core.model.ICheckerWithPreferences;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -120,12 +118,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 			_prev_normal_stmnt_offset = 0;
 			_prev_case_stmnt_offset = 0;
 			_prev_case_stmnt = null;
-			//initilize cache
-			try {
-				CxxModelsCache.getInstance().getAst(getFile());
-			} catch (Exception e) {
-				CodanCheckersActivator.log(e);
-			}
+			getCommentMap();
 		}
 
 		/**
@@ -215,7 +208,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		 * @return
 		 */
 		public IASTComment getLeadingComment(IASTStatement statement) {
-			return CxxAstUtils.getInstance().getLeadingComment(statement);
+			return getCommentMap().getLastLeadingCommentForNode(statement);
 		}
 
 
@@ -224,7 +217,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		 * @return
 		 */
 		public IASTComment getFreestandingComment(IASTStatement statement) {
-			return CxxAstUtils.getInstance().getFreestandingComment(statement);
+			return getCommentMap().getLastFreestandingCommentForNode(statement);
 		}
 
 		@Override
@@ -265,6 +258,9 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		_checkEmptyCase = (Boolean) getPreference(getProblemById(ER_ID, getFile()), PARAM_EMPTY_CASE);
 		_noBreakComment = (String) getPreference(getProblemById(ER_ID, getFile()), PARAM_NO_BREAK_COMMENT);
 		SwitchFindingVisitor visitor = new SwitchFindingVisitor();
+		
 		ast.accept(visitor);
 	}
+
+
 }

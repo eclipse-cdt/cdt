@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.Path;
 public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblemPreferences implements ICAstChecker,
 		IRunnableInEditorChecker {
 	private IFile file;
+	private ICodanCommentMap commentmap;
 
 	protected IFile getFile() {
 		return file;
@@ -46,6 +47,7 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 	}
 
 	void processFile(IFile file) throws CoreException, InterruptedException {
+		commentmap = null;
 		IASTTranslationUnit ast = CxxModelsCache.getInstance().getAst(file);
 		if (ast == null)
 			return;
@@ -121,7 +123,29 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 			IPath location = new Path(ast.getFilePath());
 			IFile astFile = ResourceLookup.selectFileForLocation(location, getProject());
 			file = astFile;
+			commentmap = null;
 			processAst(ast);
 		}
+	}
+
+	/**
+	 * @return
+	 * 
+	 */
+	protected ICodanCommentMap getCommentMap() {
+		if (commentmap == null) {
+			try {
+				CxxModelsCache cxxcache = CxxModelsCache.getInstance();
+				synchronized (cxxcache) {
+					IASTTranslationUnit ast = cxxcache.getAst(getFile());
+					commentmap = cxxcache.getCommentedNodeMap(ast);
+					return commentmap;
+				}
+
+			} catch (Exception e) {
+				Activator.log(e);
+			}
+		}
+		return commentmap;
 	}
 }

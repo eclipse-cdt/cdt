@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 /**
- * Implementation of ICodanCommentMap. 
+ * Implementation of ICodanCommentMap.
  */
 public class CodanCommentMap implements ICodanCommentMap {
 	private NodeCommentMap commentedNodeMap;
@@ -50,10 +50,53 @@ public class CodanCommentMap implements ICodanCommentMap {
 		return commentedNodeMap.getLeadingCommentsForNode(node);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.codan.core.cxx.model.ICodanCommentMap#getFreestandingForNode(org.eclipse.cdt.core.dom.ast.IASTStatement)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.core.cxx.model.ICodanCommentMap#getFreestandingForNode
+	 * (org.eclipse.cdt.core.dom.ast.IASTStatement)
 	 */
 	public List<IASTComment> getFreestandingForNode(IASTNode node) {
 		return commentedNodeMap.getFreestandingCommentsForNode(node);
+	}
+
+	/**
+	 * @param node
+	 * @return
+	 */
+	public IASTComment getLastLeadingCommentForNode(IASTNode node) {
+		IASTComment comment = null;
+		List<IASTComment> comms = getLeadingCommentsForNode(node);
+		if (comms.size() > 0) {
+			comment = comms.get(comms.size() - 1);
+		}
+		return comment;
+	}
+
+	/**
+	 * @param node
+	 * @return
+	 */
+	public IASTComment getFirstTrailingCommentForNode(IASTNode node) {
+		IASTComment comment = null;
+		List<IASTComment> comms = getTrailingCommentsForNode(node);
+		if (comms.size() > 0) {
+			comment = comms.get(0);
+		}
+		return comment;
+	}
+
+	/**
+	 * @param node
+	 * @return
+	 */
+	public IASTComment getLastFreestandingCommentForNode(IASTNode node) {
+		IASTComment comment = null;
+		List<IASTComment> comms = getFreestandingForNode(node);
+		if (comms.size() > 0) {
+			comment = comms.get(comms.size() - 1);
+		}
+		return comment;
 	}
 }

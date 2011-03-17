@@ -7,8 +7,7 @@
  *
  * Contributors:
  *    QNX Software Systems (Alena Laskavaia)  - initial API and implementation
- *******************************************************************************/ 
-
+ *******************************************************************************/
 package org.eclipse.cdt.codan.core.cxx.model;
 
 import java.util.List;
@@ -21,24 +20,54 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  */
 public interface ICodanCommentMap {
 	/**
-	 * Returns an Collection of comments for the given node (after the node). This list contains all the comments 
-	 * which are assigned to this specific node. If no comments are available an empty
+	 * Returns an Collection of comments for the given node (after the node).
+	 * This list contains all the comments
+	 * which are assigned to this specific node. If no comments are available an
+	 * empty
 	 * collection is returned.
+	 * 
 	 * @param node The key to fetch the associated comments.
 	 * @return list of comments
 	 */
 	public List<IASTComment> getTrailingCommentsForNode(IASTNode node);
+
 	/**
-	 * Returns an Collection of comments for the given node (before the node). This list contains all the comments 
-	 * which are assigned to this specific node. If no comments are available an empty
+	 * Returns an Collection of comments for the given node (before the node).
+	 * This list contains all the comments
+	 * which are assigned to this specific node. If no comments are available an
+	 * empty
 	 * collection is returned.
+	 * 
 	 * @param node The key to fetch the associated comments.
 	 * @return list of comments
 	 */
 	public List<IASTComment> getLeadingCommentsForNode(IASTNode node);
+
+	
 	/**
-	 * @param statement
-	 * @return
+	 * Returns an ArrayList for the given node. This ArrayList contains all the comments 
+	 * which are assigned to this specific node. If no comments are available an empty
+	 * ArrayList is returned.
+	 * @param node The key to fetch the associated comments.
+	 * @return ArrayList
 	 */
 	public List<IASTComment> getFreestandingForNode(IASTNode node);
+
+	/**
+	 * @param node
+	 * @return
+	 */
+	public IASTComment getLastLeadingCommentForNode(IASTNode node);
+
+	/**
+	 * @param node
+	 * @return
+	 */
+	public IASTComment getFirstTrailingCommentForNode(IASTNode node);
+
+	/**
+	 * @param node
+	 * @return
+	 */
+	public IASTComment getLastFreestandingCommentForNode(IASTNode node);
 }

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -27,6 +27,7 @@
  * Noriaki Takatsu  (IBM)        - [288894] CANCEL has to be pressed 3 times in Userid/Password prompt window in Remote System Details view
  * David McKnight   (IBM)        - [329170] Show in table does not work after showing empty folder in table
  * David McKnight   (IBM)        - [308783] Value in Properties view remains "Pending..."
+ * David McKnight   (IBM)        - [215814] [performance] Duplicate Queries between Table and Remote Systems View
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -661,6 +662,17 @@ public class SystemTableView
 		}
 	}
 
+	private Object[] internalGetSampleChildren(){
+		SystemTableViewProvider provider = (SystemTableViewProvider) getContentProvider();
+		Object lastObj = provider._lastObject;
+		if (lastObj != getInput() || provider._lastResults == null){
+			Object[] children = provider.getChildren(_objectInput);
+			return children;
+		}
+		else {
+			return provider._lastResults;
+		}		
+	}
 	/**
 	 * Determines what columns should be shown in this view. The columns may change
 	 * anytime the view input changes.  The columns in the control are modified and
@@ -675,7 +687,7 @@ public class SystemTableView
 			return;
 
 		SystemTableViewProvider provider = (SystemTableViewProvider) getContentProvider();
-		Object[] children = provider.getChildren(_objectInput);
+		Object[] children = internalGetSampleChildren();
 
 		// if no children, don't update
 		if (children == null || children.length == 0)

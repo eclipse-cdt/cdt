@@ -72,6 +72,7 @@
  * David McKnight     (IBM)      - [228743] [usability][dnd] Paste into read-only folder fails silently
  * David McKnight   (IBM)        - [284157] [performance] too many jobs kicked off for getting file permissions for table
  * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
+ * David McKnight   (IBM)        - [215814] [performance] Duplicate Queries between Table and Remote Systems View
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -314,7 +315,9 @@ public class SystemViewRemoteFileAdapter
 		}
 		
 		public void addFile(IRemoteFile file){
-			_files.add(file);
+			if (!_files.contains(file)){
+				_files.add(file);
+			}
 		}
 		
 		
@@ -877,6 +880,9 @@ public class SystemViewRemoteFileAdapter
 				} // message already issued
 			}
 			file.markStale(false);
+			if (originalFile != null && originalFile != file){
+				originalFile.markStale(false);
+			}
 		}
 		return children;
 	}

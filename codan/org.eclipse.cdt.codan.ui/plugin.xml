@@ -74,7 +74,7 @@
       <view
          category="org.eclipse.cdt.ui.views"
             class="org.eclipse.cdt.codan.internal.ui.views.ProblemDetails"
-            icon="icons/problemDetails.gif"
+            icon="icons/edit_bug.gif"
             id="org.eclipse.cdt.codan.internal.ui.views.ProblemDetails"
             name="%view.name">
       </view>
@@ -195,6 +195,29 @@
              super="org.eclipse.ui.workbench.texteditor.info">
        </type>
     </extension>
+      <extension
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+      		annotationType="org.eclipse.cdt.codan.ui.annotation.error"
+            label="%marker.editor.error"
+            icon="icons/error.gif"
+            quickFixIcon="icons/quick_fix_error_obj.gif"
+            presentationLayer="6">
+      </specification>
+            <specification
+      		annotationType="org.eclipse.cdt.codan.ui.annotation.warning"
+            label="%marker.editor.warning"
+            icon="icons/warning.gif"
+            quickFixIcon="icons/quick_fix_warning_obj.gif"
+            presentationLayer="5">
+      </specification>
+            <specification
+      		annotationType="org.eclipse.cdt.codan.ui.annotation.info"
+            label="%marker.editor.info"
+            icon="icons/info.gif"
+            presentationLayer="4">
+      </specification>
+         </extension>
     <extension
           point="org.eclipse.ui.popupMenus">
                 <objectContribution
@@ -204,7 +227,7 @@
          <action
                class="org.eclipse.cdt.codan.internal.ui.actions.OpenProblemPreferences"
                id="org.eclipse.cdt.codan.ui.OpenProblemProperties"
-               label="Customize Problem..."
+               label="%action.customize"
                menubarPath="additions"/>  
                              
            <filter name="type"

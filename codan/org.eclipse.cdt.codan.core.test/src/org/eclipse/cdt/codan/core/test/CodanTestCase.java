@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Plugin;
 
 /**
  * TODO: add description
@@ -171,12 +172,20 @@ public class CodanTestCase extends BaseTestCase {
 
 	protected StringBuffer[] getContents(int sections) {
 		try {
-			CodanCoreTestActivator plugin = CodanCoreTestActivator.getDefault();
-			return TestSourceReader.getContentsForTest(plugin.getBundle(), "src", getClass(), getName(), sections);
+			return TestSourceReader.getContentsForTest(getPlugin().getBundle(), getSourcePrefix(), getClass(), getName(), sections);
 		} catch (IOException e) {
 			fail(e.getMessage());
 			return null;
 		}
+	}
+
+	protected String getSourcePrefix() {
+		return "src";
+	}
+
+	protected Plugin getPlugin() {
+		CodanCoreTestActivator plugin = CodanCoreTestActivator.getDefault();
+		return plugin;
 	}
 
 	public File loadcode(String code, boolean cpp) {

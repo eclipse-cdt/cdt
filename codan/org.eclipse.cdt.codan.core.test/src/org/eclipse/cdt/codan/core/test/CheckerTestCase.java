@@ -28,7 +28,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
- * @author Alena Laskavaia
+ * Base class for tests. If you want to use outside of this plugin, you need
+ * to override {@link #getPlugin()} method and maybe {@link #getSourcePrefix()}
+ * method to get source directory for the tests,
+ * default is "src". To make it read comment from java class, you need to
+ * include this source directory (with test java files) into the build bundle.
+ * 
  */
 @SuppressWarnings("nls")
 public class CheckerTestCase extends CodanTestCase {

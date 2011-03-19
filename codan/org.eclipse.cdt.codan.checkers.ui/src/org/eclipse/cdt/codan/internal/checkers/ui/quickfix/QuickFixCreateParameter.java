@@ -15,6 +15,7 @@ import java.util.HashMap;
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtils.NameFinderVisitor;
 import org.eclipse.cdt.codan.internal.checkers.ui.CheckersUiActivator;
+import org.eclipse.cdt.codan.ui.AbstractAstRewriteQuickFix;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.cxx;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -59,5 +61,35 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static Activator getDefault() {
 		return plugin;
+	}
+	
+	/**
+	 * Logs the specified status with this plug-in's log.
+	 * 
+	 * @param status
+	 *        status to log
+	 */
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
+	}
+
+	/**
+	 * Logs an internal error with the specified throwable
+	 * 
+	 * @param e
+	 *        the exception to be logged
+	 */
+	public static void log(Throwable e) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, 1, "Internal Error", e)); //$NON-NLS-1$
+	}
+
+	/**
+	 * Logs an internal error with the specified message.
+	 * 
+	 * @param message
+	 *        the error message to log
+	 */
+	public static void log(String message) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, 1, message, null));
 	}
 }

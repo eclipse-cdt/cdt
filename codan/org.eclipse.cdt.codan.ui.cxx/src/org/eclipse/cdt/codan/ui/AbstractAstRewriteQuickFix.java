@@ -8,10 +8,9 @@
  * Contributors:
  *    Alena Laskavaia - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
+package org.eclipse.cdt.codan.ui;
 
-import org.eclipse.cdt.codan.internal.checkers.ui.CheckersUiActivator;
-import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
+import org.eclipse.cdt.codan.internal.ui.cxx.Activator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
@@ -23,6 +22,11 @@ import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
+/**
+ * 
+ * Abstract class to simply ast rewrite quick fixers
+ * @since 2.0
+ */
 public abstract class AbstractAstRewriteQuickFix extends AbstractCodanCMarkerResolution {
 	private IDocument document;
 
@@ -35,7 +39,7 @@ public abstract class AbstractAstRewriteQuickFix extends AbstractCodanCMarkerRes
 			try {
 				index = getIndexFromMarker(marker);
 			} catch (CoreException e) {
-				CheckersUiActivator.log(e);
+				Activator.log(e);
 				return;
 			}
 			// lock the index for read access
@@ -50,7 +54,7 @@ public abstract class AbstractAstRewriteQuickFix extends AbstractCodanCMarkerRes
 				index.releaseReadLock();
 			}
 		} catch (Exception e) {
-			CheckersUiActivator.log(e);
+			Activator.log(e);
 		}
 	}
 

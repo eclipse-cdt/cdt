@@ -14,6 +14,7 @@
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
             <command
                   commandId="org.eclipse.cdt.codan.commands.runCodanCommand"
+                  icon="platform:/plugin/org.eclipse.cdt.codan.ui/icons/search_bug.gif"
                   id="org.eclipse.cdt.codan.ui.cxx.menus.runCodanCxxCommand"
                   label="%command.name"
                   mnemonic="%command.mnemonic">

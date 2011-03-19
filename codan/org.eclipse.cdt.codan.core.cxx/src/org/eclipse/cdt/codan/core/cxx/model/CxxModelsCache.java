@@ -82,7 +82,7 @@ public class CxxModelsCache {
 	}
 
 
-	public ICodanCommentMap getCommentedNodeMap(IASTTranslationUnit ast) {
+	public synchronized ICodanCommentMap getCommentedNodeMap(IASTTranslationUnit ast) {
 		if (this.ast == ast) {
 			try {
 				index.acquireReadLock();

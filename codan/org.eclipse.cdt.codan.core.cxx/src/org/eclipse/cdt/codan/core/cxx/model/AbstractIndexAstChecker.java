@@ -13,6 +13,7 @@ package org.eclipse.cdt.codan.core.cxx.model;
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.cxx.Activator;
 import org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences;
+import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
 import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -81,8 +82,22 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 		return true;
 	}
 
-	@SuppressWarnings("restriction")
+
 	public void reportProblem(String id, IASTNode astNode, Object... args) {
+		IProblemLocation loc = getProblemLocation(astNode);
+		if (loc!=null) reportProblem(id, loc, args);
+	}
+	public void reportProblem(IProblem problem, IASTNode astNode, Object... args) {
+		IProblemLocation loc = getProblemLocation(astNode);
+		if (loc!=null) reportProblem(problem, loc, args);
+	}
+
+	/**
+	 * @param astNode
+	 * @return
+	 */
+	@SuppressWarnings("restriction")
+	protected IProblemLocation getProblemLocation(IASTNode astNode) {
 		IASTFileLocation astLocation = astNode.getFileLocation();
 		IPath location = new Path(astLocation.getFileName());
 		IFile astFile = ResourceLookup.selectFileForLocation(location, getProject());
@@ -91,7 +106,7 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 		}
 		if (astFile == null) {
 			Activator.log("Cannot resolve location: " + location); //$NON-NLS-1$
-			return;
+			return null;
 		}
 		IProblemLocation loc;
 		int line = astLocation.getStartingLineNumber();
@@ -100,7 +115,7 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 					astLocation.getNodeOffset() + astLocation.getNodeLength(), line);
 		else
 			loc = getRuntime().getProblemLocationFactory().createProblemLocation(astFile, line);
-		reportProblem(id, loc, args);
+		return loc;
 	}
 
 	@Override

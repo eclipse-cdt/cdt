@@ -51,6 +51,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	private static final String PROBLEM_ELEMENT = "problem"; //$NON-NLS-1$
 	private static final String CATEGORY_ELEMENT = "category"; //$NON-NLS-1$
 	private static final Object DEFAULT = "DEFAULT"; //$NON-NLS-1$
+	public static final String CLONE_SUFFIX = ".COPY"; //$NON-NLS-1$
 	private Collection<IChecker> checkers = new ArrayList<IChecker>();
 	private static CheckersRegistry instance;
 	private static boolean initialized = false;
@@ -190,6 +191,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 			String patt = getAtt(configurationElement, "messagePattern", false); //$NON-NLS-1$
 			String desc = getAtt(configurationElement, "description", false); //$NON-NLS-1$
 			String markerType = getAtt(configurationElement, "markerType", false); //$NON-NLS-1$
+			String smultiple = getAtt(configurationElement, "multiple", false); //$NON-NLS-1$
 			if (enab != null) {
 				p.setEnabled(Boolean.valueOf(enab));
 			}
@@ -205,6 +207,9 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 				p.setMarkerType(markerType);
 			}
 			p.setDescription(desc);
+			if (smultiple != null) {
+				p.setMultiple(Boolean.valueOf(smultiple));
+			}
 			addProblem(p, category);
 			return p;
 		}
@@ -329,15 +334,11 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	public IProblemProfile getWorkspaceProfile() {
 		IProblemProfile wp = profiles.get(ResourcesPlugin.getWorkspace());
 		if (wp == null) {
-			try {
-				wp = (IProblemProfile) getDefaultProfile().clone();
-				((ProblemProfile) wp).setResource(ResourcesPlugin.getWorkspace());
-				// load default values
-				CodanPreferencesLoader loader = new CodanPreferencesLoader(wp);
-				loader.load(CodanPreferencesLoader.getWorkspaceNode());
-			} catch (CloneNotSupportedException e) {
-				wp = getDefaultProfile();
-			}
+			wp = (IProblemProfile) getDefaultProfile().clone();
+			((ProblemProfile) wp).setResource(ResourcesPlugin.getWorkspace());
+			// load default values
+			CodanPreferencesLoader loader = new CodanPreferencesLoader(wp);
+			loader.load(CodanPreferencesLoader.getWorkspaceNode());
 			profiles.put(ResourcesPlugin.getWorkspace(), wp);
 		}
 		return wp;
@@ -363,20 +364,16 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 		IProblemProfile prof = profiles.get(element);
 		if (prof == null) {
 			if (element instanceof IProject) {
-				try {
-					prof = (IProblemProfile) getWorkspaceProfile().clone();
-					((ProblemProfile) prof).setResource(element);
-					// load default values
-					CodanPreferencesLoader loader = new CodanPreferencesLoader(prof);
-					Preferences projectNode = CodanPreferencesLoader.getProjectNode((IProject) element);
-					boolean useWorkspace = projectNode.getBoolean(PreferenceConstants.P_USE_PARENT, false);
-					if (!useWorkspace) {
-						loader.load(projectNode);
-					}
-					profiles.put(element, prof);
-				} catch (CloneNotSupportedException e) {
-					// can't
+				prof = (IProblemProfile) getWorkspaceProfile().clone();
+				((ProblemProfile) prof).setResource(element);
+				// load default values
+				CodanPreferencesLoader loader = new CodanPreferencesLoader(prof);
+				Preferences projectNode = CodanPreferencesLoader.getProjectNode((IProject) element);
+				boolean useWorkspace = projectNode.getBoolean(PreferenceConstants.P_USE_PARENT, false);
+				if (!useWorkspace) {
+					loader.load(projectNode);
 				}
+				profiles.put(element, prof);
 			} else if (element.getParent() != null) {
 				prof = getResourceProfile(element.getParent());
 			} else {
@@ -394,13 +391,8 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	 * getResourceProfileWorkingCopy(org.eclipse.core.resources.IResource)
 	 */
 	public IProblemProfile getResourceProfileWorkingCopy(IResource element) {
-		try {
-			IProblemProfile prof = (IProblemProfile) getResourceProfile(element).clone();
-			return prof;
-		} catch (CloneNotSupportedException e) {
-			// can't
-			return null;
-		}
+		IProblemProfile prof = (IProblemProfile) getResourceProfile(element).clone();
+		return prof;
 	}
 
 	/**
@@ -462,5 +454,44 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	 */
 	public int getCheckersSize() {
 		return checkers.size();
+	}
+
+	/**
+	 * Create a replicated problem - it has same check and same initial values
+	 * as original but user can modify it further
+	 * 
+	 * @param problem
+	 * @param profile
+	 */
+	public void replicateProblem(IProblem problem, IProblemProfile profile) {
+		CodanProblem x = (CodanProblem) problem.clone();
+		x.setId(getNextCloneId(problem, profile));
+		((ProblemProfile) profile).addProblem(x, problem.getParentCategory());
+	}
+
+	/**
+	 * @param problem
+	 * @param profile
+	 * @return
+	 */
+	private String getNextCloneId(IProblem problem, IProblemProfile profile) {
+		IProblem[] problems = profile.getProblems();
+		String prefix = problem.getId() + CLONE_SUFFIX;
+		int max = 0;
+		for (int i = 0; i < problems.length; i++) {
+			IProblem x = problems[i];
+			if (x.getId().startsWith(prefix)) {
+				int num = 0;
+				try {
+					num = Integer.parseInt(x.getId().substring(prefix.length()));
+				} catch (Exception e) {
+					// well...
+				}
+				if (max < num)
+					max = num;
+			}
+		}
+		max++;
+		return prefix + max;
 	}
 }

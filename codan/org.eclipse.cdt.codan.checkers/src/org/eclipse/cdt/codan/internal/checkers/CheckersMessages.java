@@ -22,6 +22,7 @@ public class CheckersMessages extends NLS {
 	public static String CaseBreakChecker_LastCaseDescription;
 	public static String CatchByReference_ReportForUnknownType;
 	public static String NamingConventionFunctionChecker_LabelNamePattern;
+	public static String NamingConventionFunctionChecker_ParameterMethods;
 	public static String ReturnChecker_Param0;
 	public static String GenericParameter_ParameterExceptions;
 	public static String GenericParameter_ParameterExceptionsItem;

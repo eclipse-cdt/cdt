@@ -84,6 +84,7 @@
             description="%problem.description.NamingConventionFunction"
             id="org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionChecker"
             messagePattern="%problem.messagePattern.NamingConventionFunction"
+            multiple="true"
             name="%problem.name.NamingConventionFunction">
       </problem>
       </checker>

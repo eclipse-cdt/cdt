@@ -188,6 +188,13 @@ where xxx what checker would post as an argument for the problem.
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="multiple" type="boolean">
+            <annotation>
+               <documentation>
+                  Can user duplicate this problem to have multiple instances (each instance can have diffrent scope, arguments, severity, etc.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

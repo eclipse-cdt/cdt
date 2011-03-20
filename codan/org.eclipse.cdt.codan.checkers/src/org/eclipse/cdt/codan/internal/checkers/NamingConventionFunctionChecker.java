@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
@@ -36,7 +38,7 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker imp
 	public static final String PARAM_EXCEPT_ARG_LIST = "exceptions"; //$NON-NLS-1$
 
 	public void processAst(IASTTranslationUnit ast) {
-		final IProblem pt = getProblemById(ER_ID, getFile());
+		final List<IProblem> pts = getProblemsByMainId(ER_ID, getFile());
 		try {
 			ast.accept(new ASTVisitor() {
 				{
@@ -45,32 +47,54 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker imp
 
 				public int visit(IASTDeclaration element) {
 					if (element instanceof IASTFunctionDefinition) {
-						String parameter = (String) getPreference(pt, PARAM_KEY);
-						Pattern pattern = Pattern.compile(parameter);
 						IASTName astName = ((IASTFunctionDefinition) element).getDeclarator().getName();
-						String name = astName.toString();
-						if (astName instanceof ICPPASTQualifiedName) {
-							if (!shouldReportCppMethods())
-								return PROCESS_SKIP;
-							ICPPASTQualifiedName cppAstName = (ICPPASTQualifiedName) astName;
-							if (cppAstName.isConversionOrOperator())
-								return PROCESS_SKIP;
-							name = cppAstName.getLastName().toString();
-							if (name.startsWith("~")) // destructor //$NON-NLS-1$
-								return PROCESS_SKIP;
-							IASTName[] names = cppAstName.getNames();
-							if (names.length >= 2) {
-								if (names[names.length - 1].toString().equals(names[names.length - 2].toString())) {
-									// constructor
+						String name = getSearchibleName(astName);
+						if (name != null) {
+							for (Iterator<IProblem> iterator = pts.iterator(); iterator.hasNext();) {
+								IProblem pt = iterator.next();
+								if (!shouldReport(astName, pt))
 									return PROCESS_SKIP;
+								String parameter = (String) getPreference(pt, PARAM_KEY);
+								Pattern pattern = Pattern.compile(parameter);
+								if (!pattern.matcher(name).find() && !isFilteredArg(name, pt)) {
+									reportProblem(pt, astName, name, parameter);
 								}
 							}
-						}
-						if (!pattern.matcher(name).find() && !isFilteredArg(name)) {
-							reportProblem(ER_ID, astName, name, parameter);
+			
 						}
 					}
 					return PROCESS_SKIP;
+				}
+
+				public boolean shouldReport(IASTName astName, IProblem pt) {
+					if (astName instanceof ICPPASTQualifiedName) {
+						return shouldReportCppMethods(pt);
+					}
+					return true;
+				}
+
+				/**
+				 * @param astName
+				 * @return
+				 */
+				public String getSearchibleName(IASTName astName) {
+					String name = astName.toString();
+					if (astName instanceof ICPPASTQualifiedName) {
+						ICPPASTQualifiedName cppAstName = (ICPPASTQualifiedName) astName;
+						if (cppAstName.isConversionOrOperator())
+							return null;
+						name = cppAstName.getLastName().toString();
+						if (name.startsWith("~")) // destructor //$NON-NLS-1$
+							return null;
+						IASTName[] names = cppAstName.getNames();
+						if (names.length >= 2) {
+							if (names[names.length - 1].toString().equals(names[names.length - 2].toString())) {
+								// constructor
+								return null;
+							}
+						}
+					}
+					return name;
 				}
 			});
 		} catch (Exception e) {
@@ -88,17 +112,17 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker imp
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
 		addPreference(problem, PARAM_KEY, CheckersMessages.NamingConventionFunctionChecker_LabelNamePattern, "^[a-z]"); //$NON-NLS-1$
-		addPreference(problem, PARAM_METHODS, "Also check C++ method names", Boolean.TRUE);
+		addPreference(problem, PARAM_METHODS, CheckersMessages.NamingConventionFunctionChecker_ParameterMethods, Boolean.TRUE);
 		addListPreference(problem, PARAM_EXCEPT_ARG_LIST, CheckersMessages.GenericParameter_ParameterExceptions,
 				CheckersMessages.GenericParameter_ParameterExceptionsItem);
 	}
 
-	public boolean shouldReportCppMethods() {
-		return (Boolean) getPreference(getProblemById(ER_ID, getFile()), PARAM_METHODS);
+	public boolean shouldReportCppMethods(IProblem pt) {
+		return (Boolean) getPreference(pt, PARAM_METHODS);
 	}
 
-	public boolean isFilteredArg(String arg) {
-		return isFilteredArg(arg, getProblemById(ER_ID, getFile()), PARAM_EXCEPT_ARG_LIST);
+	public boolean isFilteredArg(String arg, IProblem pt) {
+		return isFilteredArg(arg, pt, PARAM_EXCEPT_ARG_LIST);
 	}
 
 	@Override

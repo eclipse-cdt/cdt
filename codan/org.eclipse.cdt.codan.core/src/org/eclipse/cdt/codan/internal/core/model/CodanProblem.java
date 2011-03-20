@@ -11,15 +11,17 @@
 package org.eclipse.cdt.codan.internal.core.model;
 
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
+import org.eclipse.cdt.codan.core.model.IProblemMultiple;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.model.ProblemProfileChangeEvent;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
+import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
 
 /**
  * A type of problems reported by Codan.
  */
-public class CodanProblem extends CodanProblemElement implements IProblemWorkingCopy, Cloneable {
+public class CodanProblem extends CodanProblemElement implements IProblemWorkingCopy, Cloneable, IProblemMultiple {
 	private String id;
 	private String name;
 	private String messagePattern;
@@ -28,6 +30,11 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 	private IProblemPreference rootPreference;
 	private String description;
 	private String markerType = IProblemReporter.GENERIC_CODE_ANALYSIS_MARKER_TYPE;
+	private boolean multiple;
+
+	public void setMultiple(boolean multiple) {
+		this.multiple = multiple;
+	}
 
 	public CodanSeverity getSeverity() {
 		return severity;
@@ -48,6 +55,14 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 
 	public String getId() {
 		return id;
+	}
+
+	/**
+	 * @param id
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	@Override
@@ -155,5 +170,23 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 	public void setMarkerType(String markerType) {
 		checkSet();
 		this.markerType = markerType;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.codan.core.model.IProblemMultiple#isMultiple()
+	 */
+	public boolean isMultiple() {
+		return multiple;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.codan.core.model.IProblemMultiple#isOriginal()
+	 */
+	public boolean isOriginal() {
+		return !id.contains(CheckersRegistry.CLONE_SUFFIX);
 	}
 }

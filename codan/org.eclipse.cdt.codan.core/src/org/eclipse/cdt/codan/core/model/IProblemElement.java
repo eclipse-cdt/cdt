@@ -23,10 +23,8 @@ public interface IProblemElement extends Cloneable {
 	 * 
 	 * @see {@link Object#clone}
 	 * @return new object which is copy of this one
-	 * @throws CloneNotSupportedException - it is declared with this exception
-	 *         but it should NOT throw it
 	 */
-	Object clone() throws CloneNotSupportedException;
+	Object clone();
 
 	/**
 	 * @return problem profile where element belongs, can return null if profile

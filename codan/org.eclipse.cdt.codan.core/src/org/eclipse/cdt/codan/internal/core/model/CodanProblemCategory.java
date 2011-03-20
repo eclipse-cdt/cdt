@@ -124,25 +124,21 @@ public class CodanProblemCategory extends CodanProblemElement implements IProble
 	 */
 	@Override
 	public Object clone() {
-		try {
-			CodanProblemCategory catClone = (CodanProblemCategory) super.clone();
-			catClone.list = new ArrayList<IProblemElement>();
-			for (Iterator<IProblemElement> iterator = this.list.iterator(); iterator.hasNext();) {
-				IProblemElement child = iterator.next();
-				IProblemElement childClone = (IProblemElement) child.clone();
-				if (childClone instanceof CodanProblemElement) {
-					CodanProblemElement cce = (CodanProblemElement) childClone;
-					boolean fro = cce.isFrozen();
-					cce.setFrozen(false);
-					cce.setParentCategory(catClone);
-					cce.setFrozen(fro);
-				}
-				catClone.list.add(childClone);
+		CodanProblemCategory catClone = (CodanProblemCategory) super.clone();
+		catClone.list = new ArrayList<IProblemElement>();
+		for (Iterator<IProblemElement> iterator = this.list.iterator(); iterator.hasNext();) {
+			IProblemElement child = iterator.next();
+			IProblemElement childClone = (IProblemElement) child.clone();
+			if (childClone instanceof CodanProblemElement) {
+				CodanProblemElement cce = (CodanProblemElement) childClone;
+				boolean fro = cce.isFrozen();
+				cce.setFrozen(false);
+				cce.setParentCategory(catClone);
+				cce.setFrozen(fro);
 			}
-			return catClone;
-		} catch (CloneNotSupportedException e) {
-			return this;
+			catClone.list.add(childClone);
 		}
+		return catClone;
 	}
 
 	/*

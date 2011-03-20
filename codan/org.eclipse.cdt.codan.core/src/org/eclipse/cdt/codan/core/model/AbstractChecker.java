@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.internal.core.CheckerInvocationContext;
 import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
@@ -75,6 +78,27 @@ public abstract class AbstractChecker implements IChecker {
 		if (problem == null)
 			throw new IllegalArgumentException("Id is not registered"); //$NON-NLS-1$
 		return problem;
+	}
+
+	/**
+	 * @param id - main problem id
+	 * @param file - checked resource
+	 * @return - list of problems matching with this id, including duplicates
+	 * @since 2.0
+	 */
+	public List<IProblem> getProblemsByMainId(String id, IResource file) {
+		ArrayList<IProblem> list = new ArrayList<IProblem>();
+		IProblemProfile resourceProfile = CheckersRegistry.getInstance().getResourceProfile(file);
+		IProblem[] problems = resourceProfile.getProblems();
+		for (int i = 0; i < problems.length; i++) {
+			IProblem p = problems[i];
+			if (p.getId().equals(id)) {
+				list.add(p);
+			} else if (p.getId().startsWith(id + CheckersRegistry.CLONE_SUFFIX)) {
+				list.add(p);
+			}
+		}
+		return list;
 	}
 
 	/**

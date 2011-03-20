@@ -2043,24 +2043,64 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//#define B() { if (1+2) b(); }
 	//void g() {
-	//	if (1) {
-	//		B();
-	//	} else {
-	//		x();
-	//	}
-	//	z();
+	//if (1) {
+	//B();
+	//} else {
+	//x();
+	//}
+	//z();
 	//}
 
 	//#define B() { if (1+2) b(); }
 	//void g() {
-	//	if (1) {
-	//		B();
-	//	} else {
-	//		x();
-	//	}
-	//	z();
+	//    if (1) {
+	//        B();
+	//    } else {
+	//        x();
+	//    }
+	//    z();
 	//}
-	public void testBinaryExpressionInMacro() throws Exception {
+	public void testBinaryExpressionInMacro_1() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
+	//class Stream {
+	//Stream& operator <<(const char* s);
+	//};
+	//
+	//class Voidifier {
+	//public:
+	//Voidifier();
+	//void operator &(Stream&);
+	//};
+	//
+	//Stream stream;
+	//#define STREAM Voidifier() & stream
+	//
+	//void test() {
+	//STREAM << "text text test text " << "text text " << "text text text text te";
+	//}
+
+	//class Stream {
+	//    Stream& operator <<(const char* s);
+	//};
+	//
+	//class Voidifier {
+	//public:
+	//    Voidifier();
+	//    void operator &(Stream&);
+	//};
+	//
+	//Stream stream;
+	//#define STREAM Voidifier() & stream
+	//
+	//void test() {
+	//    STREAM << "text text test text " << "text text "
+	//            << "text text text text te";
+	//}
+	public void testBinaryExpressionInMacro_2() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		assertFormatterResult();
 	}
 

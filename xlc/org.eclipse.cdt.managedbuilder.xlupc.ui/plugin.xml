@@ -470,6 +470,9 @@
             id="cdt.managedbuilder.wizard.upc"
             name="%wizard.name.1"
             project="true">
+         <description>
+            %wizard.description
+         </description>
       </wizard>
    </extension>
    <extension

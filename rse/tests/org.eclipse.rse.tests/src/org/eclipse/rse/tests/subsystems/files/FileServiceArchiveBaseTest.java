@@ -890,7 +890,7 @@ public abstract class FileServiceArchiveBaseTest extends FileServiceBaseTest {
 
 
 
-
+	/*
 	public void testOpenFileFromTarArchive() throws Exception {
 		if (isTestDisabled())
 			return;
@@ -951,7 +951,7 @@ public abstract class FileServiceArchiveBaseTest extends FileServiceBaseTest {
 		assertTrue(sameContent);
 	}
 
-
+	*/
 
 
 }

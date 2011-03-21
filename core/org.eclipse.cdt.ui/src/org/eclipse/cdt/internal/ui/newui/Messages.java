@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010, 2010 Andrew Gvozdev and others.
+ *  Copyright (c) 2010, 2011 Andrew Gvozdev and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *  Andrew Gvozdev - Initial API and implementation
+ *  IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.newui;
 
@@ -75,6 +76,8 @@ public class Messages extends NLS {
 	public static String BuildVarListDialog_6;
 	public static String BuildVarListDialog_7;
 	public static String BuildVarListDialog_8;
+	public static String BuildVarListDialog_10;
+	public static String BuildVarListDialog_11;
 	public static String CCProjectWizard_0;
 	public static String CDTCommonProjectWizard_0;
 	public static String CDTCommonProjectWizard_1;

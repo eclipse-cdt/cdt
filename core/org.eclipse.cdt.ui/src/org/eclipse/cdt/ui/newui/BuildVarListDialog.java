@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class BuildVarListDialog extends ElementListSelectionDialog {
 
 	private Text text;
 	private Label type;
-	private static final String LIST_DESCRIPTION = Messages.BuildVarListDialog_1; 
+	private static final String LIST_DESCRIPTION = Messages.BuildVarListDialog_11; 
 	
 	public BuildVarListDialog(Shell parent, Object[] input) {
 		super(parent, new LabelProvider () {
@@ -109,7 +109,7 @@ public class BuildVarListDialog extends ElementListSelectionDialog {
 			}
 		}
 		if (descr == null) 
-			descr = Messages.BuildVarListDialog_0; 
+			descr = Messages.BuildVarListDialog_10; 
 		text.setText(descr);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,9 +44,9 @@ import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.resources.IProject;
@@ -237,8 +237,9 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		// "Clear" button
 		Button clearButton = ControlFactory.createPushButton(autoDiscoveryGroup, Messages.DiscoveryTab_Clear); 
 		GridData gd = (GridData) clearButton.getLayoutData();
-		gd.grabExcessHorizontalSpace = false;
-		gd.widthHint = 80;
+		gd.grabExcessHorizontalSpace = true;
+		//Bug 331783 - NLS: "Clear" button label in Makefile Project preferences truncated
+		//gd.widthHint = 80;
 		gd.horizontalAlignment = SWT.RIGHT;
 		
 		final Shell shell = parent.getShell();

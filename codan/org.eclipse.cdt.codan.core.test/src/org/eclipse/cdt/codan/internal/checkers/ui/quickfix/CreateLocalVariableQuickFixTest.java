@@ -84,4 +84,18 @@ public class CreateLocalVariableQuickFixTest extends QuickFixTestCase {
 		String result = runQuickFixOneFile();
 		assertContainedIn("void (*aFuncPtr)();", result); //$NON-NLS-1$
 	}
+
+	//class Foo {
+	//  void bar(char);
+	//};
+	//void func() {
+	//Foo foo;
+	//foo.bar(aChar);
+	//}
+	public void testInMethodCall() throws Exception {
+		loadcode(getAboveComment());
+		indexFiles();
+		String result = runQuickFixOneFile();
+		assertContainedIn("char aChar", result); //$NON-NLS-1$
+	}
 }

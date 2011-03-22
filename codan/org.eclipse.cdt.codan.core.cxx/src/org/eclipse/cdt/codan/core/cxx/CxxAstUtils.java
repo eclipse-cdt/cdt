@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -73,6 +74,22 @@ public final class CxxAstUtils {
 			return PROCESS_ABORT;
 		}
 	}
+	
+	private class FunctionNameFinderVisitor extends NameFinderVisitor {
+		{
+			shouldVisitExpressions = true;
+		}
+		
+		@Override
+		public int visit(IASTExpression expression) {
+			if(expression instanceof IASTFieldReference) {
+				this.name = ((IASTFieldReference) expression).getFieldName();
+				return PROCESS_ABORT;
+			}
+			return super.visit(expression);
+		}	
+	}
+	
 	private static CxxAstUtils instance;
 
 	private CxxAstUtils() {
@@ -201,7 +218,7 @@ public final class CxxAstUtils {
 		if (astName.getParent() instanceof IASTIdExpression && astName.getParent().getParent() instanceof IASTFunctionCallExpression
 				&& astName.getParent().getPropertyInParent() == IASTFunctionCallExpression.ARGUMENT) {
 			IASTFunctionCallExpression call = (IASTFunctionCallExpression) astName.getParent().getParent();
-			NameFinderVisitor visitor = new NameFinderVisitor();
+			FunctionNameFinderVisitor visitor = new FunctionNameFinderVisitor();
 			call.getFunctionNameExpression().accept(visitor);
 			IASTName funcname = visitor.name;
 			int expectedParametersNum = 0;

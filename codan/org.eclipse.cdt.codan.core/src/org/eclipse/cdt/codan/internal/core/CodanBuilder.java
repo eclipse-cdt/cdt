@@ -15,6 +15,7 @@ import java.util.Map;
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.Messages;
 import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
+import org.eclipse.cdt.codan.core.model.Checkers;
 import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.ICodanBuilder;
 import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
@@ -180,7 +181,7 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 
 	private boolean doesCheckerSupportLaunchMode(IChecker checker, CheckerLaunchMode mode) {
 		if (mode == CheckerLaunchMode.RUN_AS_YOU_TYPE)
-			return checker.runInEditor() && checker instanceof IRunnableInEditorChecker;
+			return Checkers.canCheckerRunAsYouType(checker);
 		return true;
 	}
 

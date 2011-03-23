@@ -11,22 +11,31 @@
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
+import org.eclipse.cdt.codan.core.model.Checkers;
+import org.eclipse.cdt.codan.core.model.IChecker;
+import org.eclipse.cdt.codan.core.model.IProblem;
+import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.PreferenceStore;
 
 public class LaunchModesPropertyPage extends FieldEditorPreferencePage {
-	private ArrayList<FieldEditor> editors;
+	private final List<FieldEditor> editors;
+	private final boolean runInEditor;
 
 	/**
+	 * @param problem
 	 * @param prefStore
-	 * 
 	 */
-	public LaunchModesPropertyPage(PreferenceStore prefStore) {
+	public LaunchModesPropertyPage(IProblem problem, PreferenceStore prefStore) {
 		super(GRID);
+		CheckersRegistry registry = CheckersRegistry.getInstance();
+		IChecker checker = registry.getCheckerForProblem(problem);
+		runInEditor = (checker != null) ? Checkers.canCheckerRunAsYouType(checker) : false;
 		setPreferenceStore(prefStore);
 		editors = new ArrayList<FieldEditor>();
 	}
@@ -48,7 +57,9 @@ public class LaunchModesPropertyPage extends FieldEditorPreferencePage {
 		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_FULL_BUILD.name(), "Run on full build", getFieldEditorParent()));
 		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_INC_BUILD.name(), "Run on incremental build", getFieldEditorParent()));
 		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_DEMAND.name(), "Run on demand", getFieldEditorParent()));
-		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_AS_YOU_TYPE.name(), "Run as you type", getFieldEditorParent()));
+		if (runInEditor) {
+			addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_AS_YOU_TYPE.name(), "Run as you type", getFieldEditorParent()));
+		}
 	}
 
 	/*

@@ -60,7 +60,7 @@ public class LaunchingTabComposite extends Composite {
 		LaunchModeProblemPreference launchModes = ((RootProblemPreference) info).getLaunchModePreference();
 		launchPref = (LaunchModeProblemPreference) launchModes.clone();
 		initPrefStore();
-		page = new LaunchModesPropertyPage(prefStore);
+		page = new LaunchModesPropertyPage(problem, prefStore);
 		page.noDefaultAndApplyButton();
 		page.createControl(parent);
 		page.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));

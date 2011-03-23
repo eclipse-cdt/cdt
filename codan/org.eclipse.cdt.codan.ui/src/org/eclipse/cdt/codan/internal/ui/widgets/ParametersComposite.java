@@ -89,8 +89,8 @@ public class ParametersComposite extends Composite {
 				/*
 				 * Here we are doing 2 things to make a text control "uneditable":
 				 * 1. 'setUneditable(false)' the problem with with just doing this is that
-				 *     the background of the text control doesn't change, and it looks like
-				 *     an editable one. This is confusing to the user.
+				 *    the background of the text control doesn't change, and it looks like
+				 *    an editable one. This is confusing to the user.
 				 * 2. Getting the background of a label control and applying it
 				 *    to the "uneditable" text control. This way it is easier to figure out that
 				 *    the contents of the text control cannot be changed.

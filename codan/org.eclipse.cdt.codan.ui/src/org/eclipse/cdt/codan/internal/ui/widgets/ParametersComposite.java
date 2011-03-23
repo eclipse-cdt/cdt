@@ -31,11 +31,13 @@ import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * Composite to show problem preferences
@@ -74,9 +76,32 @@ public class ParametersComposite extends Composite {
 						{ NO_CHANGE, NO_CHANGE }, //
 				};
 				addField(new ComboFieldEditor(PREF_SEVERITY, CodanUIMessages.ParametersComposite_Severity, entries, getFieldEditorParent()));
-				addField(new StringFieldEditor(PREF_MESSAGE, CodanUIMessages.ParametersComposite_MessagePattern, getFieldEditorParent()));
+				StringFieldEditor messagePatternEditor = new StringFieldEditor(PREF_MESSAGE,
+						CodanUIMessages.ParametersComposite_MessagePattern, getFieldEditorParent());
+				// We are using read-only text field for message pattern to allow copy to clipboard.
+				makeUneditable(messagePatternEditor);
+				addField(messagePatternEditor);
 				IProblemPreference pref = problem.getPreference();
 				createFieldEditorsForParameters(pref);
+			}
+
+			private void makeUneditable(StringFieldEditor editor) {
+				/*
+				 * Here we are doing 2 things to make a text control "uneditable":
+				 * 1. 'setUneditable(false)' the problem with with just doing this is that
+				 *     the background of the text control doesn't change, and it looks like
+				 *     an editable one. This is confusing to the user.
+				 * 2. Getting the background of a label control and applying it
+				 *    to the "uneditable" text control. This way it is easier to figure out that
+				 *    the contents of the text control cannot be changed.
+				 * Why not just setEnable(false)? Because it changes the text of the text control
+				 * to light gray, making it difficult to read. Also, users cannot select and copy
+				 * text from a disabled text field.
+				 */
+				Color background = editor.getLabelControl(getFieldEditorParent()).getBackground();
+				Text text = editor.getTextControl(getFieldEditorParent());
+				text.setBackground(background);
+				text.setEditable(false);
 			}
 
 			@Override

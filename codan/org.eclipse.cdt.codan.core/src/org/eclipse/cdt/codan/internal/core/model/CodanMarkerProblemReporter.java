@@ -10,11 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.AbstractProblemReporter;
@@ -32,6 +27,11 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Problem reported that created eclipse markers
@@ -211,6 +211,9 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter implemen
 				m.setAttribute(IMarker.CHAR_START, loc.getStartingChar());
 			if (m.getAttribute(IMarker.CHAR_END, 0) != loc.getEndingChar())
 				m.setAttribute(IMarker.CHAR_END, loc.getEndingChar());
+			int severity = cm.getProblem().getSeverity().intValue();
+			if (m.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO) != severity)
+				m.setAttribute(IMarker.SEVERITY, severity);
 		} catch (CoreException e) {
 			try {
 				m.delete();
@@ -262,7 +265,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter implemen
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblemReporterSessionPersistent#
 	 * deleteProblems(boolean)
 	 */

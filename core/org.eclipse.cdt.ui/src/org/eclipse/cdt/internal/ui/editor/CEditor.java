@@ -1570,8 +1570,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		} else if (ITemplatesPage.class.equals(required)) {
 			if (fTemplatesPage == null) {
 				fTemplatesPage = new CTemplatesPage(this);
-				return fTemplatesPage;
 			}
+			return fTemplatesPage;
 		}
 		return super.getAdapter(required);
 	}
@@ -3490,7 +3490,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		}
 
 		stores.add(CUIPlugin.getDefault().getPreferenceStore());
-		stores.add(new ScopedPreferenceStore(new InstanceScope(), CCorePlugin.PLUGIN_ID));
+		stores.add(new ScopedPreferenceStore(InstanceScope.INSTANCE, CCorePlugin.PLUGIN_ID));
 		stores.add(EditorsUI.getPreferenceStore());
 
 		return new ChainedPreferenceStore(stores.toArray(new IPreferenceStore[stores.size()]));

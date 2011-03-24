@@ -43,6 +43,7 @@
  * David McKnight   (IBM)        - [260346] RSE view for jobs does not remember resized columns
  * David McKnight   (IBM)        - [333702] Remote Systems details view does not maintain column width settings across sessions
  * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
+ * David McKnight   (IBM)        - [340912] inconsistencies with columns in RSE table viewers
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -118,7 +119,6 @@ import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemTableView;
 import org.eclipse.rse.ui.view.SystemTableViewProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -875,21 +875,29 @@ public class SystemTableViewPart extends ViewPart
 			private Button _removeButton;
 			private Button _upButton;
 			private Button _downButton;
+			
+			private boolean _changed = false;
 
 
-			public SelectColumnsDialog(Shell shell, ISystemViewElementAdapter viewAdapter, ISystemTableViewColumnManager columnManager)
+			public SelectColumnsDialog(Shell shell, ISystemViewElementAdapter viewAdapter, ISystemTableViewColumnManager columnManager, int[] originalOrder)
 			{
 				super(shell, SystemResources.RESID_TABLE_SELECT_COLUMNS_LABEL);
 				setToolTipText(SystemResources.RESID_TABLE_SELECT_COLUMNS_TOOLTIP);
+				setInitialOKButtonEnabledState(_changed);
 				_adapter = viewAdapter;
 				_columnManager = columnManager;
 				_uniqueDescriptors = viewAdapter.getUniquePropertyDescriptors();
 				IPropertyDescriptor[] initialDisplayedDescriptors = _columnManager.getVisibleDescriptors(_adapter);
+								
+				IPropertyDescriptor[] sortedDisplayedDescriptors = new IPropertyDescriptor[initialDisplayedDescriptors.length];
+				for (int i = 0; i < initialDisplayedDescriptors.length; i++){
+					int position = originalOrder[i+1];
+					sortedDisplayedDescriptors[i] = initialDisplayedDescriptors[position-1];
+				}				
 				_currentDisplayedDescriptors = new ArrayList(initialDisplayedDescriptors.length);
-				for (int i = 0; i < initialDisplayedDescriptors.length;i++)
-				{
-					if (!_currentDisplayedDescriptors.contains(initialDisplayedDescriptors[i]))
-				    _currentDisplayedDescriptors.add(initialDisplayedDescriptors[i]);
+				for (int i = 0; i < sortedDisplayedDescriptors.length;i++)
+				{					
+					_currentDisplayedDescriptors.add(sortedDisplayedDescriptors[i]);				
 				}
 				_availableDescriptors = new ArrayList(_uniqueDescriptors.length);
 				for (int i = 0; i < _uniqueDescriptors.length;i++)
@@ -909,23 +917,27 @@ public class SystemTableViewPart extends ViewPart
 			    {
 			        int[] toAdd = _availableList.getSelectionIndices();
 			        addToDisplay(toAdd);
+			        _changed = true;
 			    }
 			    else if (source == _removeButton)
 			    {
 			        int[] toAdd = _displayedList.getSelectionIndices();
 			        removeFromDisplay(toAdd);
+			        _changed = true;
 			    }
 			    else if (source == _upButton)
 			    {
 			        int index = _displayedList.getSelectionIndex();
 			        moveUp(index);
 			        _displayedList.select(index - 1);
+			        _changed = true;
 			    }
 			    else if (source == _downButton)
 			    {
 			        int index = _displayedList.getSelectionIndex();
 			        moveDown(index);
 			        _displayedList.select(index + 1);
+			        _changed = true;
 			    }
 
 			    // update button enable states
@@ -979,7 +991,7 @@ public class SystemTableViewPart extends ViewPart
 			    _removeButton.setEnabled(enableRemove);
 			    _upButton.setEnabled(enableUp);
 			    _downButton.setEnabled(enableDown);
-
+			    enableOkButton(_changed);
 			}
 
 			private void moveUp(int index)
@@ -1151,11 +1163,23 @@ public class SystemTableViewPart extends ViewPart
 		{
 		    ISystemTableViewColumnManager mgr = _viewer.getColumnManager();
 		    ISystemViewElementAdapter adapter = _viewer.getAdapterForContents();
-		    SelectColumnsDialog dlg = new SelectColumnsDialog(getShell(), adapter, mgr);
+		    Table table = _viewer.getTable();
+		    int[] originalOrder = table.getColumnOrder();
+		    SelectColumnsDialog dlg = new SelectColumnsDialog(getShell(), adapter, mgr, originalOrder);
 		    if (dlg.open() == Window.OK)
 		    {
-		        mgr.setCustomDescriptors(adapter, dlg.getDisplayedColumns());
+		    	IPropertyDescriptor[] newDescriptors = dlg.getDisplayedColumns();
+		    	// reset column order
+		    	int n = newDescriptors.length + 1;
+		    	int[] newOrder = new int[n];		    	
+		    	for (int i = 0; i < n; i++){	
+		    		newOrder[i] = i;
+		    	}
+		    			    	
+		    	mgr.setCustomDescriptors(adapter, newDescriptors);	
 		        _viewer.computeLayout(true);
+		        table.setColumnOrder(newOrder);
+
 		        _viewer.refresh();
 		    }
 		}

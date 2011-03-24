@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -22,6 +22,7 @@
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * Zhou Renjian     (Kortide)    - [282239] Monitor view does not update icon according to connection status
  * David McKnight   (IBM)        - [294663] bad cast in monitor view part refresh action
+ * David McKnight   (IBM)        - [340912] inconsistencies with columns in RSE table viewers
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -76,6 +77,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
@@ -327,20 +329,27 @@ class SubSetAction extends BrowseAction
 			private Button _upButton;
 			private Button _downButton;
 			
-
-			public SelectColumnsDialog(Shell shell, ISystemViewElementAdapter viewAdapter, ISystemTableViewColumnManager columnManager)
+			private boolean _changed = false;
+			
+			public SelectColumnsDialog(Shell shell, ISystemViewElementAdapter viewAdapter, ISystemTableViewColumnManager columnManager, int[] originalOrder)
 			{
 				super(shell, SystemResources.RESID_TABLE_SELECT_COLUMNS_LABEL);
 				setToolTipText(SystemResources.RESID_TABLE_SELECT_COLUMNS_TOOLTIP);
+				setInitialOKButtonEnabledState(_changed);
 				_adapter = viewAdapter;
 				_columnManager = columnManager;
 				_uniqueDescriptors = viewAdapter.getUniquePropertyDescriptors();
 				IPropertyDescriptor[] initialDisplayedDescriptors = _columnManager.getVisibleDescriptors(_adapter);
+								
+				IPropertyDescriptor[] sortedDisplayedDescriptors = new IPropertyDescriptor[initialDisplayedDescriptors.length];
+				for (int i = 0; i < initialDisplayedDescriptors.length; i++){
+					int position = originalOrder[i+1];
+					sortedDisplayedDescriptors[i] = initialDisplayedDescriptors[position-1];
+				}				
 				_currentDisplayedDescriptors = new ArrayList(initialDisplayedDescriptors.length);
-				for (int i = 0; i < initialDisplayedDescriptors.length;i++)
-				{
-					if (!_currentDisplayedDescriptors.contains(initialDisplayedDescriptors[i]))
-				    _currentDisplayedDescriptors.add(initialDisplayedDescriptors[i]);
+				for (int i = 0; i < sortedDisplayedDescriptors.length;i++)
+				{					
+					_currentDisplayedDescriptors.add(sortedDisplayedDescriptors[i]);				
 				}
 				_availableDescriptors = new ArrayList(_uniqueDescriptors.length);
 				for (int i = 0; i < _uniqueDescriptors.length;i++)
@@ -353,30 +362,36 @@ class SubSetAction extends BrowseAction
 			}
 
 
+
+
 			public void handleEvent(Event e)
 			{
 			    Widget source = e.widget;
 			    if (source == _addButton)
 			    {
 			        int[] toAdd = _availableList.getSelectionIndices();
-			        addToDisplay(toAdd);	        	        
+			        addToDisplay(toAdd);	    
+			        _changed = true;
 			    }
 			    else if (source == _removeButton)
 			    {
 			        int[] toAdd = _displayedList.getSelectionIndices();
 			        removeFromDisplay(toAdd);	   
+			        _changed = true;
 			    }
 			    else if (source == _upButton)
 			    {
 			        int index = _displayedList.getSelectionIndex();
 			        moveUp(index);
 			        _displayedList.select(index - 1);
+			        _changed = true;
 			    }
 			    else if (source == _downButton)
 			    {
 			        int index = _displayedList.getSelectionIndex();
 			        moveDown(index);
 			        _displayedList.select(index + 1);
+			        _changed = true;
 			    }
 			    
 			    // update button enable states
@@ -430,6 +445,7 @@ class SubSetAction extends BrowseAction
 			    _removeButton.setEnabled(enableRemove);
 			    _upButton.setEnabled(enableUp);
 			    _downButton.setEnabled(enableDown);
+			    enableOkButton(_changed);
 			    
 			}
 			
@@ -603,13 +619,25 @@ class SubSetAction extends BrowseAction
 		public void run()
 		{
 			SystemTableView viewer = getViewer();
+			Table table = viewer.getTable();
+			int[] originalOrder = table.getColumnOrder();
 		    ISystemTableViewColumnManager mgr = viewer.getColumnManager();		    
 		    ISystemViewElementAdapter adapter = viewer.getAdapterForContents();
-		    SelectColumnsDialog dlg = new SelectColumnsDialog(getShell(), adapter, mgr);
+		    SelectColumnsDialog dlg = new SelectColumnsDialog(getShell(), adapter, mgr, originalOrder);
 		    if (dlg.open() == Window.OK)
 		    {
+		    	IPropertyDescriptor[] newDescriptors = dlg.getDisplayedColumns();
+		    	
+		    	// reset column order
+		    	int n = newDescriptors.length + 1;
+		    	int[] newOrder = new int[n];		    	
+		    	for (int i = 0; i < n; i++){	
+		    		newOrder[i] = i;
+		    	}
+		    			
 		        mgr.setCustomDescriptors(adapter, dlg.getDisplayedColumns());
 		        viewer.computeLayout(true);
+		        table.setColumnOrder(newOrder);
 		        viewer.refresh();
 		    }
 		}

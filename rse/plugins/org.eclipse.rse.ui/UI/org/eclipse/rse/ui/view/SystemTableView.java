@@ -28,6 +28,7 @@
  * David McKnight   (IBM)        - [329170] Show in table does not work after showing empty folder in table
  * David McKnight   (IBM)        - [308783] Value in Properties view remains "Pending..."
  * David McKnight   (IBM)        - [215814] [performance] Duplicate Queries between Table and Remote Systems View
+ * David McKnight   (IBM)        - [340912] inconsistencies with columns in RSE table viewers
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -383,7 +384,7 @@ public class SystemTableView
 
 	/**
 	 * @since 3.0 Moved SystemTableViewProvider from internal to API
-	 * @return
+	 * @return returns the table view provider
 	 */
 	protected SystemTableViewProvider getProvider()
 	{
@@ -888,10 +889,20 @@ public class SystemTableView
 		Table table = getTable();
 		if (table != null && !table.isDisposed())
 		{
+			int[] colOrder = table.getColumnOrder();
 			TableColumn[] columns = table.getColumns();
-			for (int i = 0; i < columns.length && i < widths.length; i++)
+			for (int i = 0; i < columns.length; i++)
 			{
-				columns[i].setWidth(widths[i]);
+				TableColumn column = columns[i];
+				int position = colOrder[i];
+				if (position < widths.length){
+					column.setWidth(widths[position]);
+				}
+				else {					
+					if (column.getWidth() == 0){ // don't hide this column						
+						column.setWidth(100);
+					}
+				}
 			}
 		}
 	}

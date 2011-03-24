@@ -16,6 +16,8 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
@@ -214,10 +216,10 @@ public class OptionReference implements IOption {
 						IManagedConfigElement valueElement = valueElements[i];
 						Boolean isBuiltIn = new Boolean(valueElement.getAttribute(LIST_ITEM_BUILTIN));
 						if (isBuiltIn.booleanValue()) {
-							getBuiltInList().add(valueElement.getAttribute(LIST_ITEM_VALUE));
+							getBuiltInList().add(SafeStringInterner.safeIntern(valueElement.getAttribute(LIST_ITEM_VALUE)));
 						}
 						else {
-							valueList.add(valueElement.getAttribute(LIST_ITEM_VALUE));
+							valueList.add(SafeStringInterner.safeIntern(valueElement.getAttribute(LIST_ITEM_VALUE)));
 						}
 					}
 					value = valueList;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 Intel Corporation and others.
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,11 @@
  * Contributors:
  *    Intel Corporation - Initial API and implementation
  *    James Blackburn (Broadcom Corp.)
+ *    IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.core.envvar;
 
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 
 
@@ -27,9 +29,9 @@ public class EnvironmentVariable implements IEnvironmentVariable, Cloneable {
 	protected int fOperation;
 	
 	public EnvironmentVariable(String name, String value, int op, String delimiter) {
-		fName = name;
+		fName = SafeStringInterner.safeIntern(name);
 		fOperation = op;
-		fValue = value;
+		fValue = SafeStringInterner.safeIntern(value);
 		if (delimiter == null)
 			fDelimiter = EnvironmentVariableManager.getDefault().getDefaultDelimiter();
 		else

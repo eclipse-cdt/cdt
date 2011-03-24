@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 Intel Corporation and others.
+ * Copyright (c) 2004, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -17,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
@@ -151,22 +153,22 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		ManagedBuildManager.putConfigElement(this, element);
 		
 		// id
-		setId(element.getAttribute(ID));
+		setId(SafeStringInterner.safeIntern(element.getAttribute(ID)));
 		
 		// Get the name
-		setName(element.getAttribute(NAME));
+		setName(SafeStringInterner.safeIntern(element.getAttribute(NAME)));
 		
 		// version
 		setVersion(getVersionFromId());
 		
 		// superClass
-		superClassId = element.getAttribute(SUPERCLASS);
+		superClassId = SafeStringInterner.safeIntern(element.getAttribute(SUPERCLASS));
 		
-		String props = element.getAttribute(BUILD_PROPERTIES);
+		String props = SafeStringInterner.safeIntern(element.getAttribute(BUILD_PROPERTIES));
 		if(props != null)
 			buildProperties = new BuildObjectProperties(props, this, this);
 
-		String artType = element.getAttribute(BUILD_ARTEFACT_TYPE);
+		String artType = SafeStringInterner.safeIntern(element.getAttribute(BUILD_ARTEFACT_TYPE));
 		if(artType != null){
 			if(buildProperties == null)
 				buildProperties = new BuildObjectProperties(this, this);
@@ -180,7 +182,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 			
 
 		// Get the unused children, if any
-		unusedChildren = element.getAttribute(UNUSED_CHILDREN); 
+		unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(UNUSED_CHILDREN)); 
 		
 		// isAbstract
         String isAbs = element.getAttribute(IS_ABSTRACT);
@@ -212,7 +214,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		}
 
 		// Get the 'convertToId' attribute if it is available
-		convertToId = element.getAttribute(CONVERT_TO_ID);
+		convertToId = SafeStringInterner.safeIntern(element.getAttribute(CONVERT_TO_ID));
 	}
 
 	/*

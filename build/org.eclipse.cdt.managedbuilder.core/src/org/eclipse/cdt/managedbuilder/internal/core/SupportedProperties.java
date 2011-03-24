@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -17,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.core.IBuildPropertiesRestriction;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 
@@ -103,7 +105,7 @@ public class SupportedProperties implements IBuildPropertiesRestriction {
 		for(int i = 0; i < children.length; i++){
 			IManagedConfigElement child = children[i];
 			if(PROPERTY.equals(child.getName())){
-				String id = child.getAttribute(ID);
+				String id = SafeStringInterner.safeIntern(child.getAttribute(ID));
 				if(id == null)
 					continue;
 				
@@ -119,7 +121,7 @@ public class SupportedProperties implements IBuildPropertiesRestriction {
 				for(int k = 0; k < values.length; k++){
 					IManagedConfigElement value = values[k];
 					if(PROPERTY_VALUE.equals(value.getName())){
-						String valueId = value.getAttribute(ID);
+						String valueId = SafeStringInterner.safeIntern(value.getAttribute(ID));
 						if(valueId == null || valueId.length() == 0)
 							continue;
 						

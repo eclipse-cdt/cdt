@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.core.IInputOrder;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
@@ -18,16 +20,16 @@ import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 public class InputOrder implements IInputOrder {
 	//  Superclass
 	//  Parent and children
-	private IInputType parent;
+	private IInputType fParent;
 	//  Managed Build model attributes
-	private String path;
-	private String order;
-	private Boolean excluded;
+	private String fPath;
+	private String fOrder;
+	private Boolean fExcluded;
 	//  Miscellaneous
-	private boolean isExtensionInputOrder = false;
-	private boolean isDirty = false;
-	private boolean resolved = true;
-	private boolean rebuildState; 
+	private boolean fIsExtensionInputOrder = false;
+	private boolean fIsDirty = false;
+	private boolean fResolved = true;
+	private boolean fRebuildState; 
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -42,11 +44,11 @@ public class InputOrder implements IInputOrder {
 	 *                provider
 	 */
 	public InputOrder(IInputType parent, IManagedConfigElement element) {
-		this.parent = parent;
-		isExtensionInputOrder = true;
+		this.fParent = parent;
+		fIsExtensionInputOrder = true;
 		
 		// setup for resolving
-		resolved = false;
+		fResolved = false;
 
 		loadFromManifest(element);
 	}
@@ -59,8 +61,8 @@ public class InputOrder implements IInputOrder {
 	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 */
 	public InputOrder(InputType parent, boolean isExtensionElement) {
-		this.parent = parent;
-		isExtensionInputOrder = isExtensionElement;
+		this.fParent = parent;
+		fIsExtensionInputOrder = isExtensionElement;
 		if (!isExtensionElement) {
 			setDirty(true);
 		}
@@ -74,8 +76,8 @@ public class InputOrder implements IInputOrder {
 	 * @param element The XML element that contains the InputOrder settings.
 	 */
 	public InputOrder(IInputType parent, ICStorageElement element) {
-		this.parent = parent;
-		isExtensionInputOrder = false;
+		this.fParent = parent;
+		fIsExtensionInputOrder = false;
 		
 		// Initialize from the XML attributes
 		loadFromProject(element);
@@ -88,20 +90,20 @@ public class InputOrder implements IInputOrder {
 	 * @param inputOrder The existing InputOrder to clone.
 	 */
 	public InputOrder(IInputType parent, InputOrder inputOrder) {
-		this.parent = parent;
-		isExtensionInputOrder = false;
+		this.fParent = parent;
+		fIsExtensionInputOrder = false;
 		
 		//  Copy the remaining attributes
-		if (inputOrder.path != null) {
-			path = new String(inputOrder.path);
+		if (inputOrder.fPath != null) {
+			fPath = new String(inputOrder.fPath);
 		}
 
-		if (inputOrder.order != null) {
-			order = new String(inputOrder.order);
+		if (inputOrder.fOrder != null) {
+			fOrder = new String(inputOrder.fOrder);
 		}
 
-		if (inputOrder.excluded != null) {
-			excluded = new Boolean(inputOrder.excluded.booleanValue());
+		if (inputOrder.fExcluded != null) {
+			fExcluded = new Boolean(inputOrder.fExcluded.booleanValue());
 		}
 		
 		setDirty(true);
@@ -121,15 +123,15 @@ public class InputOrder implements IInputOrder {
 	protected void loadFromManifest(IManagedConfigElement element) {
 
 		// path
-		path = element.getAttribute(IInputOrder.PATH); 
+		fPath = SafeStringInterner.safeIntern(element.getAttribute(IInputOrder.PATH)); 
 
 		// order
-		order = element.getAttribute(IInputOrder.ORDER); 
+		fOrder = SafeStringInterner.safeIntern(element.getAttribute(IInputOrder.ORDER)); 
 		
 		// excluded
         String isEx = element.getAttribute(IInputOrder.EXCLUDED);
         if (isEx != null){
-    		excluded = new Boolean("true".equals(isEx)); //$NON-NLS-1$
+    		fExcluded = new Boolean("true".equals(isEx)); //$NON-NLS-1$
         }
 	}
 	
@@ -143,19 +145,19 @@ public class InputOrder implements IInputOrder {
 		
 		// path
 		if (element.getAttribute(IInputOrder.PATH) != null) {
-			path = element.getAttribute(IInputOrder.PATH);
+			fPath = SafeStringInterner.safeIntern(element.getAttribute(IInputOrder.PATH));
 		}
 		
 		// order
 		if (element.getAttribute(IInputOrder.ORDER) != null) {
-			order = element.getAttribute(IInputOrder.ORDER);
+			fOrder = SafeStringInterner.safeIntern(element.getAttribute(IInputOrder.ORDER));
 		}
 		
 		// excluded
 		if (element.getAttribute(IInputOrder.EXCLUDED) != null) {
 			String isEx = element.getAttribute(IInputOrder.EXCLUDED);
 			if (isEx != null){
-				excluded = new Boolean("true".equals(isEx)); //$NON-NLS-1$
+				fExcluded = new Boolean("true".equals(isEx)); //$NON-NLS-1$
 			}
 		}
 	}
@@ -165,20 +167,20 @@ public class InputOrder implements IInputOrder {
 	 */
 	public void serialize(ICStorageElement element) {
 
-		if (path != null) {
-			element.setAttribute(IInputOrder.PATH, path);
+		if (fPath != null) {
+			element.setAttribute(IInputOrder.PATH, fPath);
 		}
 
-		if (order != null) {
-			element.setAttribute(IInputOrder.ORDER, order);
+		if (fOrder != null) {
+			element.setAttribute(IInputOrder.ORDER, fOrder);
 		}
 		
-		if (excluded != null) {
-			element.setAttribute(IInputOrder.EXCLUDED, excluded.toString());
+		if (fExcluded != null) {
+			element.setAttribute(IInputOrder.EXCLUDED, fExcluded.toString());
 		}
 		
 		// I am clean now
-		isDirty = false;
+		fIsDirty = false;
 	}
 
 	/*
@@ -189,7 +191,7 @@ public class InputOrder implements IInputOrder {
 	 * @see org.eclipse.cdt.core.build.managed.IInputOrder#getParent()
 	 */
 	public IInputType getParent() {
-		return parent;
+		return fParent;
 	}
 
 	/*
@@ -200,17 +202,17 @@ public class InputOrder implements IInputOrder {
 	 * @see org.eclipse.cdt.core.build.managed.IInputOrder#getPsth()
 	 */
 	public String getPath() {
-		return path;
+		return fPath;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IInputOrder#setPath()
 	 */
 	public void setPath(String newPath) {
-		if (path == null && newPath == null) return;
-		if (path == null || newPath == null || !(path.equals(newPath))) {
-			path = newPath;
-			isDirty = true;
+		if (fPath == null && newPath == null) return;
+		if (fPath == null || newPath == null || !(fPath.equals(newPath))) {
+			fPath = newPath;
+			fIsDirty = true;
 			setRebuildState(true);
 		}
 	}
@@ -219,17 +221,17 @@ public class InputOrder implements IInputOrder {
 	 * @see org.eclipse.cdt.core.build.managed.IInputOrder#getOrder()
 	 */
 	public String getOrder() {
-		return order;
+		return fOrder;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IInputOrder#setOrder()
 	 */
 	public void setOrder(String newOrder) {
-		if (order == null && newOrder == null) return;
-		if (order == null || newOrder == null || !(order.equals(newOrder))) {
-			order = newOrder;
-			isDirty = true;
+		if (fOrder == null && newOrder == null) return;
+		if (fOrder == null || newOrder == null || !(fOrder.equals(newOrder))) {
+			fOrder = newOrder;
+			fIsDirty = true;
 			setRebuildState(true);
 		}
 	}
@@ -238,15 +240,15 @@ public class InputOrder implements IInputOrder {
 	 * @see org.eclipse.cdt.core.build.managed.IInputOrder#getExcluded()
 	 */
 	public boolean getExcluded() {
-		return excluded.booleanValue();
+		return fExcluded.booleanValue();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IInputOrder#setExcluded()
 	 */
 	public void setExcluded(boolean b) {
-		if (excluded == null || !(b == excluded.booleanValue())) {
-			excluded = new Boolean(b);
+		if (fExcluded == null || !(b == fExcluded.booleanValue())) {
+			fExcluded = new Boolean(b);
 			setDirty(true);
 			setRebuildState(true);
 		}
@@ -261,7 +263,7 @@ public class InputOrder implements IInputOrder {
 	 * @see org.eclipse.cdt.managedbuilder.core.IInputOrder#isExtensionElement()
 	 */
 	public boolean isExtensionElement() {
-		return isExtensionInputOrder;
+		return fIsExtensionInputOrder;
 	}
 
 	/* (non-Javadoc)
@@ -269,34 +271,34 @@ public class InputOrder implements IInputOrder {
 	 */
 	public boolean isDirty() {
 		// This shouldn't be called for an extension InputOrder
- 		if (isExtensionInputOrder) return false;
-		return isDirty;
+ 		if (fIsExtensionInputOrder) return false;
+		return fIsDirty;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IInputOrder#setDirty(boolean)
 	 */
 	public void setDirty(boolean isDirty) {
-		this.isDirty = isDirty;
+		this.fIsDirty = isDirty;
 	}
 	
 	/* (non-Javadoc)
 	 *  Resolve the element IDs to interface references
 	 */
 	public void resolveReferences() {
-		if (!resolved) {
-			resolved = true;
+		if (!fResolved) {
+			fResolved = true;
 		}
 	}
 	
 	public boolean needsRebuild(){
-		return rebuildState;
+		return fRebuildState;
 	}
 	
 	public void setRebuildState(boolean rebuild){
 		if(isExtensionElement() && rebuild)
 			return;
 		
-		rebuildState = rebuild;
+		fRebuildState = rebuild;
 	}
 }

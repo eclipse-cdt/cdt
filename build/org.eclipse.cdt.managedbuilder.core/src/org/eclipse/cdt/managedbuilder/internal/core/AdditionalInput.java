@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,13 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
@@ -22,15 +24,15 @@ public class AdditionalInput implements IAdditionalInput {
 
 	//  Superclass
 	//  Parent and children
-	private IInputType parent;
+	private IInputType fParent;
 	//  Managed Build model attributes
-	private String paths;
-	private Integer kind;
+	private String fPaths;
+	private Integer fKind;
 	//  Miscellaneous
-	private boolean isExtensionAdditionalInput = false;
-	private boolean isDirty = false;
-	private boolean resolved = true;
-	private boolean rebuildState;
+	private boolean fIsExtensionAdditionalInput = false;
+	private boolean fIsDirty = false;
+	private boolean fResolved = true;
+	private boolean fRebuildState;
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -45,11 +47,11 @@ public class AdditionalInput implements IAdditionalInput {
 	 *                provider
 	 */
 	public AdditionalInput(IInputType parent, IManagedConfigElement element) {
-		this.parent = parent;
-		isExtensionAdditionalInput = true;
+		this.fParent = parent;
+		fIsExtensionAdditionalInput = true;
 		
 		// setup for resolving
-		resolved = false;
+		fResolved = false;
 
 		loadFromManifest(element);
 	}
@@ -62,8 +64,8 @@ public class AdditionalInput implements IAdditionalInput {
 	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 */
 	public AdditionalInput(InputType parent, boolean isExtensionElement) {
-		this.parent = parent;
-		isExtensionAdditionalInput = isExtensionElement;
+		this.fParent = parent;
+		fIsExtensionAdditionalInput = isExtensionElement;
 		if (!isExtensionElement) {
 			setDirty(true);
 			setRebuildState(true);
@@ -78,8 +80,8 @@ public class AdditionalInput implements IAdditionalInput {
 	 * @param element The XML element that contains the AdditionalInput settings.
 	 */
 	public AdditionalInput(IInputType parent, ICStorageElement element) {
-		this.parent = parent;
-		isExtensionAdditionalInput = false;
+		this.fParent = parent;
+		fIsExtensionAdditionalInput = false;
 		
 		// Initialize from the XML attributes
 		loadFromProject(element);
@@ -92,16 +94,16 @@ public class AdditionalInput implements IAdditionalInput {
 	 * @param additionalInput The existing AdditionalInput to clone.
 	 */
 	public AdditionalInput(IInputType parent, AdditionalInput additionalInput) {
-		this.parent = parent;
-		isExtensionAdditionalInput = false;
+		this.fParent = parent;
+		fIsExtensionAdditionalInput = false;
 		
 		//  Copy the remaining attributes
-		if (additionalInput.paths != null) {
-			paths = new String(additionalInput.paths);
+		if (additionalInput.fPaths != null) {
+			fPaths = new String(additionalInput.fPaths);
 		}
 
-		if (additionalInput.kind != null) {
-			kind = new Integer(additionalInput.kind.intValue());
+		if (additionalInput.fKind != null) {
+			fKind = new Integer(additionalInput.fKind.intValue());
 		}
 		
 		setDirty(true);
@@ -121,16 +123,16 @@ public class AdditionalInput implements IAdditionalInput {
 	protected void loadFromManifest(IManagedConfigElement element) {
 
 		// path
-		paths = element.getAttribute(IAdditionalInput.PATHS); 
+		fPaths = SafeStringInterner.safeIntern(element.getAttribute(IAdditionalInput.PATHS));
 
 		// kind
 		String kindStr = element.getAttribute(IAdditionalInput.KIND);
 		if (kindStr == null || kindStr.equals(ADDITIONAL_INPUT_DEPENDENCY)) {
-			kind = new Integer(KIND_ADDITIONAL_INPUT_DEPENDENCY);
+			fKind = new Integer(KIND_ADDITIONAL_INPUT_DEPENDENCY);
 		} else if (kindStr.equals(ADDITIONAL_INPUT)) {
-			kind = new Integer(KIND_ADDITIONAL_INPUT);
+			fKind = new Integer(KIND_ADDITIONAL_INPUT);
 		} else if (kindStr.equals(ADDITIONAL_DEPENDENCY)) {
-			kind = new Integer(KIND_ADDITIONAL_DEPENDENCY);
+			fKind = new Integer(KIND_ADDITIONAL_DEPENDENCY);
 		}
 	}
 	
@@ -144,18 +146,18 @@ public class AdditionalInput implements IAdditionalInput {
 		
 		// path
 		if (element.getAttribute(IAdditionalInput.PATHS) != null) {
-			paths = element.getAttribute(IAdditionalInput.PATHS);
+			fPaths = SafeStringInterner.safeIntern(element.getAttribute(IAdditionalInput.PATHS));
 		}
 		
 		// kind
 		if (element.getAttribute(IAdditionalInput.KIND) != null) {
 			String kindStr = element.getAttribute(IAdditionalInput.KIND);
 			if (kindStr == null || kindStr.equals(ADDITIONAL_INPUT_DEPENDENCY)) {
-				kind = new Integer(KIND_ADDITIONAL_INPUT_DEPENDENCY);
+				fKind = new Integer(KIND_ADDITIONAL_INPUT_DEPENDENCY);
 			} else if (kindStr.equals(ADDITIONAL_INPUT)) {
-				kind = new Integer(KIND_ADDITIONAL_INPUT);
+				fKind = new Integer(KIND_ADDITIONAL_INPUT);
 			} else if (kindStr.equals(ADDITIONAL_DEPENDENCY)) {
-				kind = new Integer(KIND_ADDITIONAL_DEPENDENCY);
+				fKind = new Integer(KIND_ADDITIONAL_DEPENDENCY);
 			}
 		}
 	}
@@ -165,11 +167,11 @@ public class AdditionalInput implements IAdditionalInput {
 	 */
 	public void serialize(ICStorageElement element) {
 
-		if (paths != null) {
-			element.setAttribute(IAdditionalInput.PATHS, paths);
+		if (fPaths != null) {
+			element.setAttribute(IAdditionalInput.PATHS, fPaths);
 		}
 
-		if (kind != null) {
+		if (fKind != null) {
 			String str;
 			switch (getKind()) {
 				case KIND_ADDITIONAL_INPUT:
@@ -189,7 +191,7 @@ public class AdditionalInput implements IAdditionalInput {
 		}
 		
 		// I am clean now
-		isDirty = false;
+		fIsDirty = false;
 	}
 
 	/*
@@ -200,7 +202,7 @@ public class AdditionalInput implements IAdditionalInput {
 	 * @see org.eclipse.cdt.core.build.managed.IAdditionalInput#getParent()
 	 */
 	public IInputType getParent() {
-		return parent;
+		return fParent;
 	}
 
 	/*
@@ -211,10 +213,10 @@ public class AdditionalInput implements IAdditionalInput {
 	 * @see org.eclipse.cdt.core.build.managed.IAdditionalInput#getPaths()
 	 */
 	public String[] getPaths() {
-		if (paths == null) {
+		if (fPaths == null) {
 			return null;
 		}
-		String[] nameTokens = CDataUtil.stringToArray(paths, ";"); //$NON-NLS-1$
+		String[] nameTokens = CDataUtil.stringToArray(fPaths, ";"); //$NON-NLS-1$
 		return nameTokens;
 	}
 
@@ -222,10 +224,10 @@ public class AdditionalInput implements IAdditionalInput {
 	 * @see org.eclipse.cdt.core.build.managed.IAdditionalInput#setPaths()
 	 */
 	public void setPaths(String newPaths) {
-		if (paths == null && newPaths == null) return;
-		if (paths == null || newPaths == null || !(paths.equals(newPaths))) {
-			paths = newPaths;
-			isDirty = true;
+		if (fPaths == null && newPaths == null) return;
+		if (fPaths == null || newPaths == null || !(fPaths.equals(newPaths))) {
+			fPaths = newPaths;
+			fIsDirty = true;
 			setRebuildState(true);
 		}
 	}
@@ -234,19 +236,19 @@ public class AdditionalInput implements IAdditionalInput {
 	 * @see org.eclipse.cdt.core.build.managed.IAdditionalInput#getKind()
 	 */
 	public int getKind() {
-		if (kind == null) {
+		if (fKind == null) {
 			return KIND_ADDITIONAL_INPUT_DEPENDENCY;
 		}
-		return kind.intValue();
+		return fKind.intValue();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IAdditionalInput#setKind()
 	 */
 	public void setKind(int newKind) {
-		if (kind == null || !(kind.intValue() == newKind)) {
-			kind = new Integer(newKind);
-			isDirty = true;
+		if (fKind == null || !(fKind.intValue() == newKind)) {
+			fKind = new Integer(newKind);
+			fIsDirty = true;
 			setRebuildState(true);
 		}
 	}
@@ -259,7 +261,7 @@ public class AdditionalInput implements IAdditionalInput {
 	 * @see org.eclipse.cdt.managedbuilder.core.IAdditionalInput#isExtensionElement()
 	 */
 	public boolean isExtensionElement() {
-		return isExtensionAdditionalInput;
+		return fIsExtensionAdditionalInput;
 	}
 
 	/* (non-Javadoc)
@@ -267,35 +269,35 @@ public class AdditionalInput implements IAdditionalInput {
 	 */
 	public boolean isDirty() {
 		// This shouldn't be called for an extension AdditionalInput
- 		if (isExtensionAdditionalInput) return false;
-		return isDirty;
+ 		if (fIsExtensionAdditionalInput) return false;
+		return fIsDirty;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IAdditionalInput#setDirty(boolean)
 	 */
 	public void setDirty(boolean isDirty) {
-		this.isDirty = isDirty;
+		this.fIsDirty = isDirty;
 	}
 	
 	/* (non-Javadoc)
 	 *  Resolve the element IDs to interface references
 	 */
 	public void resolveReferences() {
-		if (!resolved) {
-			resolved = true;
+		if (!fResolved) {
+			fResolved = true;
 		}
 	}
 	
 	public boolean needsRebuild(){
-		return rebuildState;
+		return fRebuildState;
 	}
 	
 	public void setRebuildState(boolean rebuild){
 		if(isExtensionElement() && rebuild)
 			return;
 
-		rebuildState = rebuild;
+		fRebuildState = rebuild;
 	}
 
 }

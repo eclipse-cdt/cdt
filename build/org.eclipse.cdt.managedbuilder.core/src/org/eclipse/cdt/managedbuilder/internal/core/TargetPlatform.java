@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 Intel Corporation and others.
+ * Copyright (c) 2004, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -17,6 +18,7 @@ import java.util.List;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
@@ -183,16 +185,16 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		ManagedBuildManager.putConfigElement(this, element);
 		
 		// id
-		setId(element.getAttribute(IBuildObject.ID));
+		setId(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.ID)));
 		
 		// Get the name
-		setName(element.getAttribute(IBuildObject.NAME));
+		setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 		
 		// superClass
-		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
+		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 
 		// Get the unused children, if any
-		unusedChildren = element.getAttribute(IProjectType.UNUSED_CHILDREN); 
+		unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN)); 
 		
 		// isAbstract
         String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
@@ -216,7 +218,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 			archList = new ArrayList<String>();
 			String[] archTokens = arch.split(","); //$NON-NLS-1$
 			for (int j = 0; j < archTokens.length; ++j) {
-				archList.add(archTokens[j].trim());
+				archList.add(SafeStringInterner.safeIntern(archTokens[j].trim()));
 			}
 		}
 		
@@ -226,7 +228,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 			binaryParserList = new ArrayList<String>();
 			String[] bparsTokens = CDataUtil.stringToArray(bpars, ";"); //$NON-NLS-1$
 			for (int j = 0; j < bparsTokens.length; ++j) {
-				binaryParserList.add(bparsTokens[j].trim());
+				binaryParserList.add(SafeStringInterner.safeIntern(bparsTokens[j].trim()));
 			}
 		}
 	}
@@ -239,16 +241,16 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	 */
 	protected void loadFromProject(ICStorageElement element) {
 		
-		// id
+		// id (unique, do not intern)
 		setId(element.getAttribute(IBuildObject.ID));
 
 		// name
 		if (element.getAttribute(IBuildObject.NAME) != null) {
-			setName(element.getAttribute(IBuildObject.NAME));
+			setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 		}
 		
 		// superClass
-		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
+		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 		if (superClassId != null && superClassId.length() > 0) {
 			superClass = ManagedBuildManager.getExtensionTargetPlatform(superClassId);
 			if (superClass == null) {
@@ -258,7 +260,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 
 		// Get the unused children, if any
 		if (element.getAttribute(IProjectType.UNUSED_CHILDREN) != null) {
-				unusedChildren = element.getAttribute(IProjectType.UNUSED_CHILDREN); 
+				unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN)); 
 		}
 		
 		// isAbstract
@@ -276,7 +278,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 				osList = new ArrayList<String>();
 				String[] osTokens = os.split(","); //$NON-NLS-1$
 				for (int i = 0; i < osTokens.length; ++i) {
-					osList.add(osTokens[i].trim());
+					osList.add(SafeStringInterner.safeIntern(osTokens[i].trim()));
 				}
 			}
 		}
@@ -288,7 +290,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 				archList = new ArrayList<String>();
 				String[] archTokens = arch.split(","); //$NON-NLS-1$
 				for (int j = 0; j < archTokens.length; ++j) {
-					archList.add(archTokens[j].trim());
+					archList.add(SafeStringInterner.safeIntern(archTokens[j].trim()));
 				}
 			}
 		}
@@ -300,7 +302,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 				binaryParserList = new ArrayList<String>();
 				String[] bparsTokens = CDataUtil.stringToArray(bpars, ";"); //$NON-NLS-1$
 				for (int j = 0; j < bparsTokens.length; ++j) {
-					binaryParserList.add(bparsTokens[j].trim());
+					binaryParserList.add(SafeStringInterner.safeIntern(bparsTokens[j].trim()));
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -83,7 +84,7 @@ public class CCommandDSC {
 		{
 			String value = option.getValue();
 			value = CygpathTranslator.translateIncludePaths(project, Collections.singletonList(value)).get(0);
-			value = makeRelative(project, new Path(value)).toOSString();
+			value = SafeStringInterner.safeIntern(makeRelative(project, new Path(value)).toOSString());
 			option = new KVStringPair(option.getKey(), value);
 		}
 		compilerCommand.add(option);
@@ -322,8 +323,8 @@ public class CCommandDSC {
             NodeList optionList = descElem.getElementsByTagName(OPTION_ELEM);
             for (int i = 0; i < optionList.getLength(); ++i) {
                 Element optionElem = (Element) optionList.item(i);
-                String key = optionElem.getAttribute(KEY_ATTR);
-                String value = optionElem.getAttribute(VALUE_ATTR);
+                String key = SafeStringInterner.safeIntern(optionElem.getAttribute(KEY_ATTR));
+                String value = SafeStringInterner.safeIntern(optionElem.getAttribute(VALUE_ATTR));
                 KVStringPair option = new KVStringPair(key, value);
                 addSCOption(option);
             }
@@ -340,14 +341,14 @@ public class CCommandDSC {
                 String quote = siItemElem.getAttribute(QUOTE_INCLUDE_ATTR);
                 if (kind.equals("INCLUDE_PATH")) { //$NON-NLS-1$
                     if (quote.equals("true")) { //$NON-NLS-1$
-                        quoteIncludes.add(value);
+                        quoteIncludes.add(SafeStringInterner.safeIntern(value));
                     }
                     else {
                         includes.add(value);
                     }
                 }
                 else if (kind.equals("SYMBOL_DEFINITION")) { //$NON-NLS-1$
-                    symbols.add(value);
+                    symbols.add(SafeStringInterner.safeIntern(value));
                 }
             }
             setDiscovered(true);
@@ -365,13 +366,13 @@ public class CCommandDSC {
     			String key = optionPair.getKey();
     			String value = optionPair.getValue();
     			if (key.equals(SCDOptionsEnum.INCLUDE.toString()) || key.equals(SCDOptionsEnum.ISYSTEM.toString())) {
-    				includes.add(value);
+    				includes.add(SafeStringInterner.safeIntern(value));
     			}
     			else if (key.equals(SCDOptionsEnum.IQUOTE.toString())) {
-    				quoteincludes.add(value);
+    				quoteincludes.add(SafeStringInterner.safeIntern(value));
     			}
     			else if (key.equals(SCDOptionsEnum.DEFINE.toString())) {
-    				symbols.add(value);
+    				symbols.add(SafeStringInterner.safeIntern(value));
     			}
     		}
     		setIncludes(includes);
@@ -411,7 +412,7 @@ public class CCommandDSC {
 		for (Iterator<String> iter=paths.iterator(); iter.hasNext(); ) {
 			String path = iter.next();
 			path = makeRelative(project, new Path(path)).toOSString();
-			list.add(path);
+			list.add(SafeStringInterner.safeIntern(path));
 		}
 		return list;
 	}
@@ -429,7 +430,7 @@ public class CCommandDSC {
 			}
 //			path = new File(project.getLocation().toOSString(), path).getAbsolutePath();
 		}
-		return path;
+		return SafeStringInterner.safeIntern(path);
 	}
 
 	public static List<String> makeAbsolute(IProject project, List<String> paths) {
@@ -437,7 +438,7 @@ public class CCommandDSC {
 		for (Iterator<String> iter=paths.iterator(); iter.hasNext(); ) {
 			String path = iter.next();
 			path = makeAbsolute(project, path);
-			list.add(path);
+			list.add(SafeStringInterner.safeIntern(path));
 		}
 		return list;
 	}

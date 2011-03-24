@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IConfigurationV2;
@@ -77,29 +78,29 @@ public class Target extends BuildObject implements ITarget {
 		resolved = false;
 		
 		// id
-		setId(element.getAttribute(ID));
+		setId(SafeStringInterner.safeIntern(element.getAttribute(ID)));
 		
 		// managedBuildRevision
-		setManagedBuildRevision(managedBuildRevision);
+		setManagedBuildRevision(SafeStringInterner.safeIntern(managedBuildRevision));
 		
 		// hook me up
 		ManagedBuildManager.addExtensionTarget(this);
 		
 		// Get the target name
-		setName(element.getAttribute(NAME));
+		setName(SafeStringInterner.safeIntern(element.getAttribute(NAME)));
 
 		// Get the name of the build artifact associated with target (usually 
 		// in the plugin specification).
-		artifactName = element.getAttribute(ARTIFACT_NAME);
+		artifactName = SafeStringInterner.safeIntern(element.getAttribute(ARTIFACT_NAME));
 		
 		// Get the ID of the binary parser
-		binaryParserId = element.getAttribute(BINARY_PARSER);
+		binaryParserId = SafeStringInterner.safeIntern(element.getAttribute(BINARY_PARSER));
 		
 		// Get the semicolon separated list of IDs of the error parsers
-		errorParserIds = element.getAttribute(ERROR_PARSERS);
+		errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(ERROR_PARSERS));
 
 		// Get the default extension
-		defaultExtension = element.getAttribute(DEFAULT_EXTENSION);
+		defaultExtension = SafeStringInterner.safeIntern(element.getAttribute(DEFAULT_EXTENSION));
 
 		// isAbstract
 		isAbstract = ("true".equals(element.getAttribute(IS_ABSTRACT))); //$NON-NLS-1$
@@ -108,16 +109,16 @@ public class Target extends BuildObject implements ITarget {
 		isTest = ("true".equals(element.getAttribute(IS_TEST))); //$NON-NLS-1$
 		
 		// Get the clean command
-		cleanCommand = element.getAttribute(CLEAN_COMMAND);
+		cleanCommand = SafeStringInterner.safeIntern(element.getAttribute(CLEAN_COMMAND));
 
 		// Get the make command
-		makeCommand = element.getAttribute(MAKE_COMMAND);
+		makeCommand = SafeStringInterner.safeIntern(element.getAttribute(MAKE_COMMAND));
 
 		// Get the make arguments
-		makeArguments = element.getAttribute(MAKE_ARGS);
+		makeArguments = SafeStringInterner.safeIntern(element.getAttribute(MAKE_ARGS));
 		
 		// Get scannerInfoCollectorId
-		scannerInfoCollectorId = element.getAttribute(SCANNER_INFO_COLLECTOR_ID);
+		scannerInfoCollectorId = SafeStringInterner.safeIntern(element.getAttribute(SCANNER_INFO_COLLECTOR_ID));
 		
 		// Get the comma-separated list of valid OS
 		String os = element.getAttribute(OS_LIST);
@@ -125,7 +126,7 @@ public class Target extends BuildObject implements ITarget {
 			targetOSList = new ArrayList<String>();
 			String[] osTokens = os.split(","); //$NON-NLS-1$
 			for (int i = 0; i < osTokens.length; ++i) {
-				targetOSList.add(osTokens[i].trim());
+				targetOSList.add(SafeStringInterner.safeIntern(osTokens[i].trim()));
 			}
 		}
 		
@@ -135,7 +136,7 @@ public class Target extends BuildObject implements ITarget {
 			targetArchList = new ArrayList<String>();
 			String[] archTokens = arch.split(","); //$NON-NLS-1$
 			for (int j = 0; j < archTokens.length; ++j) {
-				targetArchList.add(archTokens[j].trim());
+				targetArchList.add(SafeStringInterner.safeIntern(archTokens[j].trim()));
 			}
 		}
 
@@ -772,7 +773,7 @@ public class Target extends BuildObject implements ITarget {
 			resolved = true;
 			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
 			// parent
-			String parentId = element.getAttribute(PARENT);
+			String parentId = SafeStringInterner.safeIntern(element.getAttribute(PARENT));
 			if (parentId != null) {
 				parent = ManagedBuildManager.getTarget(null, parentId);
 				// should resolve before calling methods on it

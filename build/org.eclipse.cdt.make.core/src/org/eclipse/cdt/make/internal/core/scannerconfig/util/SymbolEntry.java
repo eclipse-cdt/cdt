@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.core.SafeStringInterner;
+
 
 /**
  * Represents a symbol definition with possible multiple values
@@ -31,15 +33,15 @@ public class SymbolEntry {
 	private Map<String, Boolean> values;	// Values can be either in the active (selected) group or in the removed group 
 	
 	public SymbolEntry(String name, String value, boolean active) {
-		this.name = name;
+		this.name = SafeStringInterner.safeIntern(name);
 		if (values == null) {
 			values = new LinkedHashMap<String, Boolean>(1);
 		}
-		values.put(value, Boolean.valueOf(active));
+		values.put(SafeStringInterner.safeIntern(value), Boolean.valueOf(active));
 	}
 
 	public boolean add(String value, boolean active) {
-		Boolean old= values.put(value, Boolean.valueOf(active));
+		Boolean old= values.put(SafeStringInterner.safeIntern(value), Boolean.valueOf(active));
 		return old == null || old.booleanValue() != active;
 	}
 		
@@ -125,6 +127,6 @@ public class SymbolEntry {
 			}
 			buffer.append('\n');
 		}
-		return buffer.toString();
+		return SafeStringInterner.safeIntern(buffer.toString());
 	}
 }

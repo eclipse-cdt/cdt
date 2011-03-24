@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.make.core.scannerconfig;
 
@@ -14,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -40,9 +42,30 @@ public final class PathInfo {
 			IPath[] macroFiles){
 		fIncludePaths = includePaths != null && includePaths.length != 0 ? (IPath[])includePaths.clone() : EMPTY_PATH_ARRAY;
 		fQuoteIncludePaths = quoteIncludePaths != null && quoteIncludePaths.length != 0 ? (IPath[])quoteIncludePaths.clone() : EMPTY_PATH_ARRAY;
-		fSymbols = symbols != null && symbols.size() != 0 ? new HashMap<String, String>(symbols) : new HashMap<String, String>(0);
+		fSymbols = symbols != null && symbols.size() != 0 ? getInternedHashMap(symbols) : new HashMap<String, String>(0);
 		fIncludeFiles = includeFiles != null && includeFiles.length != 0 ? (IPath[])includeFiles.clone() : EMPTY_PATH_ARRAY;
 		fMacroFiles = macroFiles != null && macroFiles.length != 0 ? (IPath[])macroFiles.clone() : EMPTY_PATH_ARRAY;
+	}
+
+	/**
+	 * Returns a new HashMap whereby all the strings used as keys and values are interned.
+	 * 
+	 * @param oldMap
+	 * @return HashMap<String, String>
+	 */
+	protected HashMap<String, String> getInternedHashMap(Map<String, String> oldMap) {
+		if(oldMap ==  null)
+			return null;
+		
+		if(oldMap.isEmpty())
+			return new HashMap<String, String>(oldMap);
+		
+		HashMap<String, String> newMap = new HashMap<String, String>(oldMap.size());
+		for(String key : oldMap.keySet()) {
+			newMap.put(SafeStringInterner.safeIntern(key), SafeStringInterner.safeIntern(oldMap.get(key)));
+		}
+		
+		return newMap;
 	}
 
     /**

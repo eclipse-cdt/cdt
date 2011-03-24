@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.core.IBuildPathResolver;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
@@ -21,11 +23,11 @@ import org.eclipse.core.runtime.IConfigurationElement;
 public class EnvVarBuildPath implements
 		IEnvVarBuildPath {
 	
-	private int type;
-	private String variableNames[];
-	private String pathDelimiter;
-	private IBuildPathResolver buildPathResolver;
-	private IConfigurationElement buildPathResolverElement;
+	private int fType;
+	private String fVariableNames[];
+	private String fPathDelimiter;
+	private IBuildPathResolver fBuildPathResolver;
+	private IConfigurationElement fBuildPathResolverElement;
 
 
 	/**
@@ -47,14 +49,14 @@ public class EnvVarBuildPath implements
 		
 		setType(convertPathTypeToInt(element.getAttribute(TYPE)));
 		
-		setVariableNames(element.getAttribute(LIST));
+		setVariableNames(SafeStringInterner.safeIntern(element.getAttribute(LIST)));
 		
-		setPathDelimiter(element.getAttribute(PATH_DELIMITER));
+		setPathDelimiter(SafeStringInterner.safeIntern(element.getAttribute(PATH_DELIMITER)));
 		
 		// Store the configuration element IFF there is a build path resolver defined 
 		String buildPathResolver = element.getAttribute(BUILD_PATH_RESOLVER); 
 		if (buildPathResolver != null && element instanceof DefaultManagedConfigElement) {
-			buildPathResolverElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+			fBuildPathResolverElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
 		}
 	}
 
@@ -62,22 +64,23 @@ public class EnvVarBuildPath implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath#getType()
 	 */
 	public int getType() {
-		return type;
+		return fType;
 	}
 	
 	public void setType(int type){
-		this.type = type;
+		this.fType = type;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath#getVariableNames()
 	 */
 	public String[] getVariableNames() {
-		return variableNames;
+		return fVariableNames;
 	}
 	
 	public void setVariableNames(String names[]){
-		this.variableNames = names;
+		fVariableNames = names;
+		fVariableNames = SafeStringInterner.safeIntern(fVariableNames);
 	}
 
 	public void setVariableNames(String names){
@@ -94,13 +97,13 @@ public class EnvVarBuildPath implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath#getPathDelimiter()
 	 */
 	public String getPathDelimiter() {
-		return pathDelimiter;
+		return fPathDelimiter;
 	}
 
 	public void setPathDelimiter(String delimiter) {
 		if(delimiter == null)
 			delimiter = ManagedBuildManager.getEnvironmentVariableProvider().getDefaultDelimiter();
-		this.pathDelimiter = delimiter;
+		fPathDelimiter = SafeStringInterner.safeIntern(delimiter);
 	}
 
 	private int convertPathTypeToInt(String pathType){
@@ -123,14 +126,14 @@ public class EnvVarBuildPath implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath#getBuildPathResolver()
 	 */
 	public IBuildPathResolver getBuildPathResolver() {
-		if(buildPathResolver == null && buildPathResolverElement != null){
+		if(fBuildPathResolver == null && fBuildPathResolverElement != null){
 			try {
-				if (buildPathResolverElement.getAttribute(BUILD_PATH_RESOLVER) != null) {
-					buildPathResolver = (IBuildPathResolver) buildPathResolverElement.createExecutableExtension(BUILD_PATH_RESOLVER);
+				if (fBuildPathResolverElement.getAttribute(BUILD_PATH_RESOLVER) != null) {
+					fBuildPathResolver = (IBuildPathResolver) fBuildPathResolverElement.createExecutableExtension(BUILD_PATH_RESOLVER);
 				}
 			} catch (CoreException e) {}
 		}
-		return buildPathResolver;
+		return fBuildPathResolver;
 	}
 
 }

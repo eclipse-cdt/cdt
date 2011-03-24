@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.build.internal.core.scannerconfig2;
 
+import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -56,7 +58,7 @@ public class CfgScannerConfigInfoFactory2 {
 	}
 	private static class CfgInfo implements ICfgScannerConfigBuilderInfo2Set {
 		private Configuration cfg;
-		private IScannerConfigBuilderInfo2Set fContainer;
+		private SoftReference<IScannerConfigBuilderInfo2Set> fContainer;
 //		private HashMap map;
 		
 		CfgInfo(Configuration cfg){
@@ -92,7 +94,8 @@ public class CfgScannerConfigInfoFactory2 {
 		}
 		
 		private IScannerConfigBuilderInfo2Set getContainer() throws CoreException{
-			if(fContainer == null){
+			IScannerConfigBuilderInfo2Set container = fContainer != null ? fContainer.get() : null;
+			if(container == null){
 				if(!cfg.isPreference()){
 					ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(cfg);
 					if(cfgDes != null){
@@ -100,24 +103,28 @@ public class CfgScannerConfigInfoFactory2 {
 						if(projDes != null){
 							ContainerInfo cInfo = (ContainerInfo)projDes.getSessionProperty(CONTAINER_INFO_PROPERTY);
 							if(cInfo != null && cInfo.matches(projDes)){
-								fContainer = cInfo.fContainer;
+								container = cInfo.fContainer;
 							} else {
-								fContainer = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(cfg.getOwner().getProject());
-								cInfo = new ContainerInfo(projDes, fContainer);
+								container = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(cfg.getOwner().getProject());
+								cInfo = new ContainerInfo(projDes, container);
 								projDes.setSessionProperty(CONTAINER_INFO_PROPERTY, cInfo);
 							}
 						}
 					}
 
-					if(fContainer == null){
-						fContainer = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(cfg.getOwner().getProject());
+					if(container == null){
+						container = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(cfg.getOwner().getProject());
 					}
 				} else {
 					Preferences prefs = MakeCorePlugin.getDefault().getPluginPreferences();
-					fContainer = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(prefs, false);
+					container = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(prefs, false);
 				}
 			}
-			return fContainer;
+			
+			if(fContainer == null) {
+				fContainer = new SoftReference<IScannerConfigBuilderInfo2Set>(container);
+			}
+			return container;
 		}
 		
 		private Map<CfgInfoContext, IScannerConfigBuilderInfo2> createMap(){
@@ -326,7 +333,7 @@ public class CfgScannerConfigInfoFactory2 {
 			CfgInfo cfgInfo = new CfgInfo(cfg);
 			cfg.setCfgScannerConfigInfo(cfgInfo);
 			cfgInfo.getInfoMap();
-			cfgInfo.fContainer.save();
+			cfgInfo.getContainer().save();
 			des.setSessionProperty(CONTAINER_INFO_PROPERTY, null);
 		}
 	}
@@ -334,7 +341,7 @@ public class CfgScannerConfigInfoFactory2 {
 	public static void savePreference(IConfiguration cfg) throws CoreException{
 		ICfgScannerConfigBuilderInfo2Set container = ((Configuration)cfg).getCfgScannerConfigInfo();
 		if(container != null){
-			IScannerConfigBuilderInfo2Set baseContainer = ((CfgInfo)container).fContainer;
+			IScannerConfigBuilderInfo2Set baseContainer = ((CfgInfo)container).getContainer();
 			if(baseContainer != null){
 				baseContainer.save();
 			}

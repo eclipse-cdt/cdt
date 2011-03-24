@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 Intel Corporation and others.
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
@@ -215,22 +217,22 @@ public class OutputType extends BuildObject implements IOutputType {
 		ManagedBuildManager.putConfigElement(this, element);
 		
 		// id
-		setId(element.getAttribute(IBuildObject.ID));
+		setId(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.ID)));
 		
 		// Get the name
-		setName(element.getAttribute(IBuildObject.NAME));
+		setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 		
 		// superClass
-		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
+		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 		
 		// outputContentType
-		outputContentTypeId = element.getAttribute(IOutputType.OUTPUT_CONTENT_TYPE); 
+		outputContentTypeId = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.OUTPUT_CONTENT_TYPE)); 
 		
 		// outputs
-		outputs = element.getAttribute(IOutputType.OUTPUTS);
+		outputs = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.OUTPUTS));
 		
 		// option
-		optionId = element.getAttribute(IOutputType.OPTION); 
+		optionId = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.OPTION)); 
 		
 		// multipleOfType
         String isMOT = element.getAttribute(IOutputType.MULTIPLE_OF_TYPE);
@@ -239,7 +241,7 @@ public class OutputType extends BuildObject implements IOutputType {
         }
 		
 		// primaryInputType
-		primaryInputTypeId = element.getAttribute(IOutputType.PRIMARY_INPUT_TYPE);
+		primaryInputTypeId = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.PRIMARY_INPUT_TYPE));
 		
 		// primaryOutput
         String isPO = element.getAttribute(IOutputType.PRIMARY_OUTPUT);
@@ -248,16 +250,16 @@ public class OutputType extends BuildObject implements IOutputType {
         }
 		
 		// outputPrefix
-		outputPrefix = element.getAttribute(IOutputType.OUTPUT_PREFIX);
+		outputPrefix = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.OUTPUT_PREFIX));
 		
 		// outputNames
-		outputNames = element.getAttribute(IOutputType.OUTPUT_NAMES);
+		outputNames = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.OUTPUT_NAMES));
 		
 		// namePattern
-		namePattern = element.getAttribute(IOutputType.NAME_PATTERN);
+		namePattern = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.NAME_PATTERN));
 		
 		// buildVariable
-		buildVariable = element.getAttribute(IOutputType.BUILD_VARIABLE); 
+		buildVariable = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.BUILD_VARIABLE)); 
 
 		// Store the configuration element IFF there is a name provider defined 
 		String nameProvider = element.getAttribute(IOutputType.NAME_PROVIDER); 
@@ -274,16 +276,16 @@ public class OutputType extends BuildObject implements IOutputType {
 	 */
 	protected void loadFromProject(ICStorageElement element) {
 		
-		// id
+		// id (unique, do not intern)
 		setId(element.getAttribute(IBuildObject.ID));
 
 		// name
 		if (element.getAttribute(IBuildObject.NAME) != null) {
-			setName(element.getAttribute(IBuildObject.NAME));
+			setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 		}
 		
 		// superClass
-		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
+		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 		if (superClassId != null && superClassId.length() > 0) {
 			superClass = ManagedBuildManager.getExtensionOutputType(superClassId);
 			if (superClass == null) {
@@ -293,17 +295,17 @@ public class OutputType extends BuildObject implements IOutputType {
 		
 		// outputContentType
 		if (element.getAttribute(IOutputType.OUTPUT_CONTENT_TYPE) != null) {
-			outputContentTypeId = element.getAttribute(IOutputType.OUTPUT_CONTENT_TYPE); 			
+			outputContentTypeId = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.OUTPUT_CONTENT_TYPE)); 			
 		}
 		
 		// outputs
 		if (element.getAttribute(IOutputType.OUTPUTS) != null) {
-			outputs = element.getAttribute(IOutputType.OUTPUTS);			
+			outputs = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.OUTPUTS));			
 		}
 		
 		// option
 		if (element.getAttribute(IOutputType.OPTION) != null) {
-			optionId = element.getAttribute(IOutputType.OPTION);
+			optionId = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.OPTION));
 		}
 		
 		// multipleOfType
@@ -316,7 +318,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		
 		// primaryInputType
 		if (element.getAttribute(IOutputType.PRIMARY_INPUT_TYPE) != null) {
-			primaryInputTypeId = element.getAttribute(IOutputType.PRIMARY_INPUT_TYPE);
+			primaryInputTypeId = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.PRIMARY_INPUT_TYPE));
 			primaryInputType = parent.getInputTypeById(primaryInputTypeId);
 		}
 		
@@ -330,22 +332,22 @@ public class OutputType extends BuildObject implements IOutputType {
 		
 		// outputPrefix
 		if (element.getAttribute(IOutputType.OUTPUT_PREFIX) != null) {
-			outputPrefix = element.getAttribute(IOutputType.OUTPUT_PREFIX);
+			outputPrefix = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.OUTPUT_PREFIX));
 		}
 		
 		// outputNames
 		if (element.getAttribute(IOutputType.OUTPUT_NAMES) != null) {
-			outputNames = element.getAttribute(IOutputType.OUTPUT_NAMES);
+			outputNames = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.OUTPUT_NAMES));
 		}
 		
 		// namePattern
 		if (element.getAttribute(IOutputType.NAME_PATTERN) != null) {
-			namePattern = element.getAttribute(IOutputType.NAME_PATTERN);
+			namePattern = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.NAME_PATTERN));
 		}
 		
 		// buildVariable
 		if (element.getAttribute(IOutputType.BUILD_VARIABLE) != null) {
-			buildVariable = element.getAttribute(IOutputType.BUILD_VARIABLE);
+			buildVariable = SafeStringInterner.safeIntern(element.getAttribute(IOutputType.BUILD_VARIABLE));
 		}
 		
 		// Note: Name Provider cannot be specified in a project file because

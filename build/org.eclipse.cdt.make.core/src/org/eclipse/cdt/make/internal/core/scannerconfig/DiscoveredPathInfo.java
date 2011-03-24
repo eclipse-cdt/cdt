@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig;
 
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredScannerInfoSerializable;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerProjectDiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
@@ -73,7 +75,7 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 	}
 
 	public synchronized void setIncludeMap(LinkedHashMap<String, Boolean> paths) {
-		discoveredPaths = new LinkedHashMap<String, Boolean>(paths);
+		discoveredPaths = SafeStringInterner.safeIntern(new LinkedHashMap<String, Boolean>(paths));
 		activePaths = null;
 	}
 	
@@ -98,7 +100,7 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 	}
 	
 	public synchronized void setSymbolMap(LinkedHashMap<String, SymbolEntry> symbols) {
-		discoveredSymbols = new LinkedHashMap<String, SymbolEntry>(symbols);
+		discoveredSymbols = SafeStringInterner.safeIntern(new LinkedHashMap<String, SymbolEntry>(symbols));
 		activeSymbols = null;
 	}
 	
@@ -109,7 +111,7 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 		Map<String, String> aSymbols = getActiveSymbolsMap();
 		aSymbols.clear();
 		
-		aSymbols.putAll(ScannerConfigUtil.scSymbolEntryMap2Map(discoveredSymbols));
+		aSymbols.putAll(SafeStringInterner.safeIntern(ScannerConfigUtil.scSymbolEntryMap2Map(discoveredSymbols)));
 	}
 
 	private List<Path> getActivePathList() {
@@ -178,10 +180,10 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 		while (child != null) {
 			if (child.getNodeName().equals(INCLUDE_PATH)) {
 				// Add the path to the property list
-				includes.put( ((Element)child).getAttribute(PATH), Boolean.valueOf( ((Element)child).getAttribute(REMOVED)));
+				includes.put( SafeStringInterner.safeIntern(((Element)child).getAttribute(PATH)), Boolean.valueOf( ((Element)child).getAttribute(REMOVED)));
 			} else if (child.getNodeName().equals(DEFINED_SYMBOL)) {
 				// Add the symbol to the symbol list
-				String symbol = ((Element)child).getAttribute(SYMBOL);
+				String symbol = SafeStringInterner.safeIntern(((Element)child).getAttribute(SYMBOL));
 				String removed = ((Element)child).getAttribute(REMOVED);
 				boolean bRemoved = (removed != null && removed.equals("true")); //$NON-NLS-1$
 				ScannerConfigUtil.scAddSymbolString2SymbolEntryMap(symbols, symbol, !bRemoved);

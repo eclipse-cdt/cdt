@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.core.cdtvariables;
 
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 
 /**
@@ -28,13 +30,13 @@ public class CdtVariable implements ICdtVariable {
 	}
 
 	public CdtVariable(String name, int type, String value){
-		fName = name;
+		fName = SafeStringInterner.safeIntern(name);
 		fType = type;
-		fStringValue = value;
+		fStringValue = SafeStringInterner.safeIntern(value);
 	}
 
 	public CdtVariable(String name, int type, String value[]){
-		fName = name;
+		fName = SafeStringInterner.safeIntern(name);
 		fType = type;
 		fStringListValue = value;
 	}

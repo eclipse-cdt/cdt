@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
@@ -254,11 +255,11 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if(rootFolderInfo == null)
 			createRootFolderInfo();
 		
-		String props = element.getAttribute(BUILD_PROPERTIES);
+		String props = SafeStringInterner.safeIntern(element.getAttribute(BUILD_PROPERTIES));
 		if(props != null)
 			buildProperties = new BuildObjectProperties(props, this, this);
 		
-		String artType = element.getAttribute(BUILD_ARTEFACT_TYPE);
+		String artType = SafeStringInterner.safeIntern(element.getAttribute(BUILD_ARTEFACT_TYPE));
 		if(artType != null){
 			if(buildProperties == null)
 				buildProperties = new BuildObjectProperties(this, this);
@@ -761,40 +762,41 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		ManagedBuildManager.putConfigElement(this, element);
 		
 		// id
-		setId(element.getAttribute(IConfiguration.ID));
+		setId(SafeStringInterner.safeIntern(element.getAttribute(IConfiguration.ID)));
 
 		// name
-		name = element.getAttribute(IConfiguration.NAME);
+		name = SafeStringInterner.safeIntern(element.getAttribute(IConfiguration.NAME));
 		
 		// description
-		description = element.getAttribute(IConfiguration.DESCRIPTION);
+		description = SafeStringInterner.safeIntern(element.getAttribute(IConfiguration.DESCRIPTION));
 		
 		// parent
-		parentId = element.getAttribute(IConfiguration.PARENT);
+		parentId = SafeStringInterner.safeIntern(element.getAttribute(IConfiguration.PARENT));
+		
 //		if (parentID != null) {
 //			// Lookup the parent configuration by ID
 //			parent = ManagedBuildManager.getExtensionConfiguration(parentID);
 //		}
 
 		// Get the name of the build artifact associated with configuration
-		artifactName = element.getAttribute(ARTIFACT_NAME);
+		artifactName = SafeStringInterner.safeIntern(element.getAttribute(ARTIFACT_NAME));
 		
 		// Get the semicolon separated list of IDs of the error parsers
-		errorParserIds = element.getAttribute(ERROR_PARSERS);
+		errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(ERROR_PARSERS));
 
 		// Get the artifact extension
-		artifactExtension = element.getAttribute(EXTENSION);
+		artifactExtension = SafeStringInterner.safeIntern(element.getAttribute(EXTENSION));
 		
 		// Get the clean command
-		cleanCommand = element.getAttribute(CLEAN_COMMAND);
+		cleanCommand = SafeStringInterner.safeIntern(element.getAttribute(CLEAN_COMMAND));
                
         // Get the pre-build and post-build commands            
-        prebuildStep = element.getAttribute(PREBUILD_STEP);     
-        postbuildStep = element.getAttribute(POSTBUILD_STEP);           
+        prebuildStep = SafeStringInterner.safeIntern(element.getAttribute(PREBUILD_STEP));     
+        postbuildStep = SafeStringInterner.safeIntern(element.getAttribute(POSTBUILD_STEP));           
                
         // Get the pre-build and post-build announcements               
-        preannouncebuildStep = element.getAttribute(PREANNOUNCEBUILD_STEP); 
-        postannouncebuildStep = element.getAttribute(POSTANNOUNCEBUILD_STEP);
+        preannouncebuildStep = SafeStringInterner.safeIntern(element.getAttribute(PREANNOUNCEBUILD_STEP)); 
+        postannouncebuildStep = SafeStringInterner.safeIntern(element.getAttribute(POSTANNOUNCEBUILD_STEP));
         
         String tmp = element.getAttribute(IS_SYSTEM);
         if(tmp != null)
@@ -810,21 +812,22 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	protected void loadFromProject(ICStorageElement element) {
 		
 		// id
+		// note: IDs are unique so no benefit to intern them
 		setId(element.getAttribute(IConfiguration.ID));
 
 		// name
 		if (element.getAttribute(IConfiguration.NAME) != null)
-			setName(element.getAttribute(IConfiguration.NAME));
+			setName(SafeStringInterner.safeIntern(element.getAttribute(IConfiguration.NAME)));
 		
 		// description
 		if (element.getAttribute(IConfiguration.DESCRIPTION) != null)
-			this.description = element.getAttribute(IConfiguration.DESCRIPTION);
+			description = SafeStringInterner.safeIntern(element.getAttribute(IConfiguration.DESCRIPTION));
 		
 		String props = element.getAttribute(BUILD_PROPERTIES);
 		if(props != null)
 			buildProperties = new BuildObjectProperties(props, this, this);
 		
-		String artType = element.getAttribute(BUILD_ARTEFACT_TYPE);
+		String artType = SafeStringInterner.safeIntern(element.getAttribute(BUILD_ARTEFACT_TYPE));
 		if(artType != null){
 			if(buildProperties == null)
 				buildProperties = new BuildObjectProperties(this, this);
@@ -854,41 +857,40 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		// Get the name of the build artifact associated with target (usually 
 		// in the plugin specification).
 		if (element.getAttribute(ARTIFACT_NAME) != null) {
-			artifactName = element.getAttribute(ARTIFACT_NAME);
+			artifactName = SafeStringInterner.safeIntern(element.getAttribute(ARTIFACT_NAME));
 		}
 		
 		// Get the semicolon separated list of IDs of the error parsers
 		if (element.getAttribute(ERROR_PARSERS) != null) {
-			errorParserIds = element.getAttribute(ERROR_PARSERS);
+			errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(ERROR_PARSERS));
 		}
 
 		// Get the artifact extension
 		if (element.getAttribute(EXTENSION) != null) {
-			artifactExtension = element.getAttribute(EXTENSION);
+			artifactExtension = SafeStringInterner.safeIntern(element.getAttribute(EXTENSION));
 		}
 		
 		// Get the clean command
 		if (element.getAttribute(CLEAN_COMMAND) != null) {
-			cleanCommand = element.getAttribute(CLEAN_COMMAND);
+			cleanCommand = SafeStringInterner.safeIntern(element.getAttribute(CLEAN_COMMAND));
 		}
                
         // Get the pre-build and post-build commands
 		if (element.getAttribute(PREBUILD_STEP) != null) {
-			prebuildStep = element.getAttribute(PREBUILD_STEP);
+			prebuildStep = SafeStringInterner.safeIntern(element.getAttribute(PREBUILD_STEP));
 		}
 
 		if (element.getAttribute(POSTBUILD_STEP) != null) {
-			postbuildStep = element.getAttribute(POSTBUILD_STEP);
+			postbuildStep = SafeStringInterner.safeIntern(element.getAttribute(POSTBUILD_STEP));
 		}
 
 		// Get the pre-build and post-build announcements
 		if (element.getAttribute(PREANNOUNCEBUILD_STEP) != null) {
-			preannouncebuildStep = element.getAttribute(PREANNOUNCEBUILD_STEP);
+			preannouncebuildStep = SafeStringInterner.safeIntern(element.getAttribute(PREANNOUNCEBUILD_STEP));
 		}
 
 		if (element.getAttribute(POSTANNOUNCEBUILD_STEP) != null) {
-			postannouncebuildStep = element
-					.getAttribute(POSTANNOUNCEBUILD_STEP);
+			postannouncebuildStep = SafeStringInterner.safeIntern(element.getAttribute(POSTANNOUNCEBUILD_STEP));
 		}               
 	}
 

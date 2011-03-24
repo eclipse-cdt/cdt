@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildproperties;
 
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
@@ -26,10 +28,10 @@ public class BuildProperty implements IBuildProperty{
 		int index = property.indexOf(BuildPropertyManager.PROPERTY_VALUE_SEPARATOR);
 		String type, value;
 		if(index != -1){
-			type = property.substring(0, index);
-			value = property.substring(index + 1);
+			type = SafeStringInterner.safeIntern(property.substring(0, index));
+			value = SafeStringInterner.safeIntern(property.substring(index + 1));
 		} else {
-			type = property;
+			type = SafeStringInterner.safeIntern(property);
 			value = null;
 		}
 		

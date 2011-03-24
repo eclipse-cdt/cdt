@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
 import org.eclipse.cdt.core.settings.model.ICLibraryFileEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.internal.core.Option;
 
 public final class OptionStringValue {
@@ -46,10 +48,10 @@ public final class OptionStringValue {
 		} else {
 			isBuiltIn = false;
 		}
-		value = el.getAttribute(Option.LIST_ITEM_VALUE);
-		srcPath = el.getAttribute(ATTR_SRC_PATH);
-		srcRootPath = el.getAttribute(ATTR_SRC_ROOT_PATH);
-		srcPrefixMapping = el.getAttribute(ATTR_SRC_PREFIX_MAPPING);
+		value = SafeStringInterner.safeIntern(el.getAttribute(Option.LIST_ITEM_VALUE));
+		srcPath = SafeStringInterner.safeIntern(el.getAttribute(ATTR_SRC_PATH));
+		srcRootPath = SafeStringInterner.safeIntern(el.getAttribute(ATTR_SRC_ROOT_PATH));
+		srcPrefixMapping = SafeStringInterner.safeIntern(el.getAttribute(ATTR_SRC_PREFIX_MAPPING));
 		if(value == null)
 			value = Option.EMPTY_STRING;
 	}

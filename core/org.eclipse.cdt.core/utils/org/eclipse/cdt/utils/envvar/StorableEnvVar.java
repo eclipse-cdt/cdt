@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 Intel Corporation and others.
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,13 @@
  * Contributors:
  *    Intel Corporation - Initial API and implementation
  *    James Blackburn (Broadcom Corp.)
+ *    IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.utils.envvar;
 
 import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.osgi.service.prefs.Preferences;
 
 /**
@@ -54,9 +56,9 @@ public class StorableEnvVar extends EnvironmentVariable {
 	 * @param element
 	 */
 	public StorableEnvVar(ICStorageElement element){
-		fName = element.getAttribute(NAME);
+		fName = SafeStringInterner.safeIntern(element.getAttribute(NAME));
 
-		fValue = element.getAttribute(VALUE);
+		fValue = SafeStringInterner.safeIntern(element.getAttribute(VALUE));
 
 		fOperation = opStringToInt(element.getAttribute(OPERATION));
 			
@@ -72,8 +74,8 @@ public class StorableEnvVar extends EnvironmentVariable {
 	 * @since 5.2
 	 */
 	public StorableEnvVar(String name, Preferences element){
-		fName = name;
-		fValue = element.get(VALUE, null);
+		fName = SafeStringInterner.safeIntern(name);
+		fValue = SafeStringInterner.safeIntern(element.get(VALUE, null));
 		fOperation = opStringToInt(element.get(OPERATION, null));
 		fDelimiter = element.get(DELIMITER, null);
 	}

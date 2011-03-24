@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuildPropertiesRestriction;
@@ -47,7 +48,7 @@ import org.osgi.framework.Version;
 
 public class Option extends BuildObject implements IOption, IBuildPropertiesRestriction {
 	// Static default return values
-	public static final String EMPTY_STRING = new String();
+	public static final String EMPTY_STRING = new String().intern();
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 	public static final OptionStringValue[] EMPTY_LV_ARRAY = new OptionStringValue[0];
 
@@ -330,16 +331,16 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		ManagedBuildManager.putConfigElement(this, element);
 		
 		// id
-		setId(element.getAttribute(IBuildObject.ID));
+		setId(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.ID)));
 		
 		// Get the name
-		setName(element.getAttribute(IBuildObject.NAME));
+		setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 		
 		// superClass
-		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
+		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 
 		// Get the unused children, if any
-		unusedChildren = element.getAttribute(IProjectType.UNUSED_CHILDREN); 
+		unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN)); 
 		
 		// isAbstract
         String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
@@ -348,7 +349,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
         }
 
 		// Get the command defined for the option
-		command = element.getAttribute(COMMAND);
+		command = SafeStringInterner.safeIntern(element.getAttribute(COMMAND));
 		
 		// Get the command-generator, if any
 		String commandGeneratorStr = element.getAttribute(COMMAND_GENERATOR); 
@@ -357,13 +358,13 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 
 		// Get the command defined for a Boolean option when the value is False
-		commandFalse = element.getAttribute(COMMAND_FALSE);
+		commandFalse = SafeStringInterner.safeIntern(element.getAttribute(COMMAND_FALSE));
 		
 		// Get the tooltip for the option
-		tip = element.getAttribute(TOOL_TIP);
+		tip = SafeStringInterner.safeIntern(element.getAttribute(TOOL_TIP));
 		
 		// Get the contextID for the option
-		contextId = element.getAttribute(CONTEXT_ID);
+		contextId = SafeStringInterner.safeIntern(element.getAttribute(CONTEXT_ID));
 			
 		// Options hold different types of values
 		String valueTypeStr = element.getAttribute(VALUE_TYPE);
@@ -392,15 +393,15 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 
 		// Get the browseFilterPath attribute
-		this.browseFilterPath = element.getAttribute(BROWSE_FILTER_PATH);
+		this.browseFilterPath = SafeStringInterner.safeIntern(element.getAttribute(BROWSE_FILTER_PATH));
 		
 		// Get the browseFilterExtensions attribute
 		String browseFilterExtensionsStr = element.getAttribute(BROWSE_FILTER_EXTENSIONS);
 		if (browseFilterExtensionsStr != null) {
-			this.browseFilterExtensions = browseFilterExtensionsStr.split("\\s*,\\s*"); //$NON-NLS-1$
+			this.browseFilterExtensions = SafeStringInterner.safeIntern(browseFilterExtensionsStr.split("\\s*,\\s*")); //$NON-NLS-1$
 		}
 		
-		categoryId = element.getAttribute(CATEGORY);
+		categoryId = SafeStringInterner.safeIntern(element.getAttribute(CATEGORY));
 		
 		// Get the resourceFilter attribute
 		String resFilterStr = element.getAttribute(RESOURCE_FILTER);
@@ -438,7 +439,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			valueHandlerElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
 		}
 		// valueHandlerExtraArgument
-		valueHandlerExtraArgument = element.getAttribute(VALUE_HANDLER_EXTRA_ARGUMENT);
+		valueHandlerExtraArgument = SafeStringInterner.safeIntern(element.getAttribute(VALUE_HANDLER_EXTRA_ARGUMENT));
 
 		// fieldEditor and optional argument
 		fieldEditorId = element.getAttribute(FIELD_EDITOR_ID); 
@@ -453,16 +454,16 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 */
 	protected void loadFromProject(ICStorageElement element) {
 		
-		// id
+		// id (unique, don't intern)
 		setId(element.getAttribute(IBuildObject.ID));
 
 		// name
 		if (element.getAttribute(IBuildObject.NAME) != null) {
-			setName(element.getAttribute(IBuildObject.NAME));
+			setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 		}
 		
 		// superClass
-		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
+		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 		if (superClassId != null && superClassId.length() > 0) {
 			superClass = ManagedBuildManager.getExtensionOption(superClassId);
 			if (superClass == null) {
@@ -472,7 +473,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		// Get the unused children, if any
 		if (element.getAttribute(IProjectType.UNUSED_CHILDREN) != null) {
-				unusedChildren = element.getAttribute(IProjectType.UNUSED_CHILDREN); 
+				unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN)); 
 		}
 		
 		// isAbstract
@@ -485,22 +486,22 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		// Get the command defined for the option
 		if (element.getAttribute(COMMAND) != null) {
-			command = element.getAttribute(COMMAND);
+			command = SafeStringInterner.safeIntern(element.getAttribute(COMMAND));
 		}
 		
 		// Get the command defined for a Boolean option when the value is False
 		if (element.getAttribute(COMMAND_FALSE) != null) {
-			commandFalse = element.getAttribute(COMMAND_FALSE);
+			commandFalse = SafeStringInterner.safeIntern(element.getAttribute(COMMAND_FALSE));
 		}
 		
 		// Get the tooltip for the option
 		if (element.getAttribute(TOOL_TIP) != null) {
-			tip = element.getAttribute(TOOL_TIP);
+			tip = SafeStringInterner.safeIntern(element.getAttribute(TOOL_TIP));
 		}
 		
 		// Get the contextID for the option
 		if (element.getAttribute(CONTEXT_ID) != null) {
-			contextId = element.getAttribute(CONTEXT_ID);
+			contextId = SafeStringInterner.safeIntern(element.getAttribute(CONTEXT_ID));
 		}
 		
 		// Options hold different types of values
@@ -525,18 +526,18 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				case STRING:
 					// Just get the value out of the option directly
 					if (element.getAttribute(VALUE) != null) {
-						value = element.getAttribute(VALUE);
+						value = SafeStringInterner.safeIntern(element.getAttribute(VALUE));
 					}
 					if (element.getAttribute(DEFAULT_VALUE) != null) {
-						defaultValue = element.getAttribute(DEFAULT_VALUE);
+						defaultValue = SafeStringInterner.safeIntern(element.getAttribute(DEFAULT_VALUE));
 					}
 					break;
 				case ENUMERATED:
 					if (element.getAttribute(VALUE) != null) {
-						value = element.getAttribute(VALUE);
+						value = SafeStringInterner.safeIntern(element.getAttribute(VALUE));
 					}
 					if (element.getAttribute(DEFAULT_VALUE) != null) {
-						defaultValue = element.getAttribute(DEFAULT_VALUE);
+						defaultValue = SafeStringInterner.safeIntern(element.getAttribute(DEFAULT_VALUE));
 					}
 	
 					//  Do we have enumeratedOptionValue children?  If so, load them
@@ -546,7 +547,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						ICStorageElement configNode = configElements[i];
 						if (configNode.getName().equals(ENUM_VALUE)) {
 							ICStorageElement configElement = configNode;
-							String optId = configElement.getAttribute(ID);
+							String optId = SafeStringInterner.safeIntern(configElement.getAttribute(ID));
 							if (i == 0) {
 								enumList = new ArrayList<String>();
 								if (defaultValue == null) {
@@ -555,11 +556,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 							}
 							enumList.add(optId);
 							if (configElement.getAttribute(COMMAND) != null) {
-								getEnumCommandMap().put(optId, configElement.getAttribute(COMMAND));
+								getEnumCommandMap().put(optId, SafeStringInterner.safeIntern(configElement.getAttribute(COMMAND)));
 							} else {
 								getEnumCommandMap().put(optId, EMPTY_STRING);
 							}
-							getEnumNameMap().put(optId, configElement.getAttribute(NAME));
+							getEnumNameMap().put(optId, SafeStringInterner.safeIntern(configElement.getAttribute(NAME)));
 							if (configElement.getAttribute(IS_DEFAULT) != null) {
 								Boolean isDefault = new Boolean(configElement.getAttribute(IS_DEFAULT));
 								if (isDefault.booleanValue()) {
@@ -607,8 +608,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					}
 					if(vList != null && vList.size() != 0)
 						value = vList;
+					else
+						value = null;
 					if(biList != null && biList.size() != 0)
 						builtIns = biList;
+					else
+						builtIns = null;
 						
 					break;
 				default :
@@ -639,19 +644,19 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		// Get the browseFilterPath attribute
 		if (element.getAttribute(BROWSE_FILTER_PATH) != null) {
-			this.browseFilterPath = element.getAttribute(BROWSE_FILTER_PATH);
+			this.browseFilterPath = SafeStringInterner.safeIntern(element.getAttribute(BROWSE_FILTER_PATH));
 		}
 
 		// Get the browseFilterExtensions attribute
 		if (element.getAttribute(BROWSE_FILTER_EXTENSIONS) != null) {
 			String browseFilterExtensionsStr = element.getAttribute(BROWSE_FILTER_EXTENSIONS);
 			if (browseFilterExtensionsStr != null) {
-				this.browseFilterExtensions = browseFilterExtensionsStr.split("\\s*,\\s*"); //$NON-NLS-1$
+				this.browseFilterExtensions = SafeStringInterner.safeIntern(browseFilterExtensionsStr.split("\\s*,\\s*")); //$NON-NLS-1$
 			}
 		}
 
 		if (element.getAttribute(CATEGORY) != null) {
-			categoryId = element.getAttribute(CATEGORY);
+			categoryId = SafeStringInterner.safeIntern(element.getAttribute(CATEGORY));
 			if (categoryId != null) {
 				category = holder.getOptionCategory(categoryId);
 			}
@@ -680,7 +685,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		
 		// valueHandlerExtraArgument
 		if (element.getAttribute(VALUE_HANDLER_EXTRA_ARGUMENT) != null) {
-			valueHandlerExtraArgument = element.getAttribute(VALUE_HANDLER_EXTRA_ARGUMENT);
+			valueHandlerExtraArgument = SafeStringInterner.safeIntern(element.getAttribute(VALUE_HANDLER_EXTRA_ARGUMENT));
 		}		
 	}
 
@@ -2219,7 +2224,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						//  to define the valid values and the default value.
 						IManagedConfigElement[] enumElements = element.getChildren(ENUM_VALUE);
 						for (int i = 0; i < enumElements.length; ++i) {
-							String optId = enumElements[i].getAttribute(ID);
+							String optId = SafeStringInterner.safeIntern(enumElements[i].getAttribute(ID));
 							if (i == 0) {
 								enumList = new ArrayList<String>();
 								if (defaultValue == null) {
@@ -2227,8 +2232,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 								}
 							}
 							enumList.add(optId);
-							getEnumCommandMap().put(optId, enumElements[i].getAttribute(COMMAND));
-							getEnumNameMap().put(optId, enumElements[i].getAttribute(NAME));
+							getEnumCommandMap().put(optId, SafeStringInterner.safeIntern(enumElements[i].getAttribute(COMMAND)));
+							getEnumNameMap().put(optId, SafeStringInterner.safeIntern(enumElements[i].getAttribute(NAME)));
 							Boolean isDefault = new Boolean(enumElements[i].getAttribute(IS_DEFAULT));
 							if (isDefault.booleanValue()) {
 								defaultValue = optId; 

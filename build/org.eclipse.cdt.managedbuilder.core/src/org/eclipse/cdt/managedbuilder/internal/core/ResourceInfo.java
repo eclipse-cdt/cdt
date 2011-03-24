@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -17,6 +18,7 @@ import java.util.Set;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -112,10 +114,10 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	private void loadFromManifest(IManagedConfigElement element) {
 	
 		// id
-		setId(element.getAttribute(ID));
+		setId(SafeStringInterner.safeIntern(element.getAttribute(ID)));
 		
 		// Get the name
-		setName(element.getAttribute(NAME));
+		setName(SafeStringInterner.safeIntern(element.getAttribute(NAME)));
 		
 		// resourcePath
 		String tmp = element.getAttribute(RESOURCE_PATH);
@@ -139,12 +141,12 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 
 	private void loadFromProject(ICStorageElement element) {
 		
-		// id
+		// id (unique, do not intern)
 		setId(element.getAttribute(ID));
 
 		// name
 		if (element.getAttribute(NAME) != null) {
-			setName(element.getAttribute(NAME));
+			setName(SafeStringInterner.safeIntern(element.getAttribute(NAME)));
 		}
 		
 		// resourcePath

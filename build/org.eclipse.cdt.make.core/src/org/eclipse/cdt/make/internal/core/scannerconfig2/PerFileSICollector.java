@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector3;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner;
@@ -685,8 +686,8 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 	                List<String> symbols = cmd.getSymbols();
 	                Map<String, String> definedSymbols = new HashMap<String, String>(symbols.size());
 	                for (String symbol : symbols) {
-	                    String key = ScannerConfigUtil.getSymbolKey(symbol);
-	                    String value = ScannerConfigUtil.getSymbolValue(symbol);
+	                    String key = SafeStringInterner.safeIntern(ScannerConfigUtil.getSymbolKey(symbol));
+	                    String value = SafeStringInterner.safeIntern(ScannerConfigUtil.getSymbolValue(symbol));
 	                    definedSymbols.put(key, value);
 	                }
 	                return definedSymbols;
@@ -903,8 +904,8 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
             if (cmd.isDiscovered()) {
                 List<String> discovered = cmd.getSymbols();
                 for (String symbol : discovered) {
-                    String key = ScannerConfigUtil.getSymbolKey(symbol);
-                    String value = ScannerConfigUtil.getSymbolValue(symbol);
+                    String key = SafeStringInterner.safeIntern(ScannerConfigUtil.getSymbolKey(symbol));
+                    String value = SafeStringInterner.safeIntern(ScannerConfigUtil.getSymbolValue(symbol));
                     symbols.put(key, value);
                 }
             }

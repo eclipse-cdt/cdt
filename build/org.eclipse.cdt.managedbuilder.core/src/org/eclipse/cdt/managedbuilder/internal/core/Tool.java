@@ -31,6 +31,7 @@ import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManage
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
@@ -667,25 +668,25 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		ManagedBuildManager.putConfigElement(this, element);
 		
 		// id		
-		setId(element.getAttribute(IBuildObject.ID));
+		setId(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.ID)));
 		
 		// name
-		setName(element.getAttribute(IBuildObject.NAME));
+		setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 
 		// version
 		setVersion(getVersionFromId());
 		
 		// superClass
-		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
+		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 
 		// Get the unused children, if any
-		unusedChildren = element.getAttribute(IProjectType.UNUSED_CHILDREN); 
+		unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN)); 
 		
 		// Get the 'versionsSupported' attribute
-		versionsSupported =element.getAttribute(VERSIONS_SUPPORTED);
+		versionsSupported = SafeStringInterner.safeIntern(element.getAttribute(VERSIONS_SUPPORTED));
 		
 		// Get the 'convertToId' attribute
-		convertToId = element.getAttribute(CONVERT_TO_ID);
+		convertToId = SafeStringInterner.safeIntern(element.getAttribute(CONVERT_TO_ID));
 
 		// isAbstract
         String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
@@ -694,7 +695,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
         }
 		
 		// Get the semicolon separated list of IDs of the error parsers
-		errorParserIds = element.getAttribute(IToolChain.ERROR_PARSERS);
+		errorParserIds = SafeStringInterner.safeIntern(SafeStringInterner.safeIntern(element.getAttribute(IToolChain.ERROR_PARSERS)));
 		
 		// Get the nature filter
 		String nature = element.getAttribute(NATURE);
@@ -715,7 +716,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (inputs != null) {
 			StringTokenizer tokenizer = new StringTokenizer(inputs, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
-				getInputExtensionsList().add((String)tokenizer.nextElement());
+				getInputExtensionsList().add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 			}
 		}
 		
@@ -724,24 +725,24 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (headers != null) {
 			StringTokenizer tokenizer = new StringTokenizer(headers, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
-				getInterfaceExtensionsList().add((String)tokenizer.nextElement());
+				getInterfaceExtensionsList().add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 			}
 		}
 		
 		// Get the output extension
-		outputExtensions = element.getAttribute(ITool.OUTPUTS); 
+		outputExtensions = SafeStringInterner.safeIntern(element.getAttribute(ITool.OUTPUTS)); 
 			
 		// Get the tool invocation command
-		command = element.getAttribute(ITool.COMMAND); 
+		command = SafeStringInterner.safeIntern(element.getAttribute(ITool.COMMAND)); 
 			
 		// Get the flag to control output
-		outputFlag = element.getAttribute(ITool.OUTPUT_FLAG);
+		outputFlag = SafeStringInterner.safeIntern(element.getAttribute(ITool.OUTPUT_FLAG));
 			
 		// Get the output prefix
-		outputPrefix = element.getAttribute(ITool.OUTPUT_PREFIX);
+		outputPrefix = SafeStringInterner.safeIntern(element.getAttribute(ITool.OUTPUT_PREFIX));
 		
 		// Get command line pattern
-		commandLinePattern = element.getAttribute( ITool.COMMAND_LINE_PATTERN );
+		commandLinePattern = SafeStringInterner.safeIntern(element.getAttribute( ITool.COMMAND_LINE_PATTERN ));
 		
 		// Get advancedInputCategory
         String advInput = element.getAttribute(ITool.ADVANCED_INPUT_CATEGORY);
@@ -756,7 +757,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
         }
 		
 		// Get the announcement text
-		announcement = element.getAttribute(ITool.ANNOUNCEMENT);
+		announcement = SafeStringInterner.safeIntern(element.getAttribute(ITool.ANNOUNCEMENT));
 		
 		// Store the configuration element IFF there is a command line generator defined 
 		String commandLineGenerator = element.getAttribute(COMMAND_LINE_GENERATOR); 
@@ -787,7 +788,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if(tmp != null)
 			supportsManagedBuild = Boolean.valueOf(tmp);
 		
-		scannerConfigDiscoveryProfileId = element.getAttribute(IToolChain.SCANNER_CONFIG_PROFILE_ID);
+		scannerConfigDiscoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(IToolChain.SCANNER_CONFIG_PROFILE_ID));
 
         tmp = element.getAttribute(IS_SYSTEM);
         if(tmp != null)
@@ -802,35 +803,23 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 */
 	protected void loadFromProject(ICStorageElement element) {
 		
-		// id
+		// id (unique, do not intern)
 		setId(element.getAttribute(IBuildObject.ID));
 
 		// name
 		if (element.getAttribute(IBuildObject.NAME) != null) {
-			setName(element.getAttribute(IBuildObject.NAME));
+			setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 		}
 
 		// version
 		setVersion(getVersionFromId());
 		
 		// superClass
-		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
-//		if (superClassId != null && superClassId.length() > 0) {
-//			if( getParent() instanceof IResourceConfiguration ) {
-//				IResourceConfiguration resConfig = (IResourceConfiguration) getParent();
-//				setSuperClassInternal( resConfig.getParent().getTool(superClassId) );
-//			} else {
-//				setSuperClassInternal( ManagedBuildManager.getExtensionTool(superClassId) );			
-//			}
-//			
-//			// Check for migration support
-//			checkForMigrationSupport();
-//
-//		}
+		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 
 		// Get the unused children, if any
 		if (element.getAttribute(IProjectType.UNUSED_CHILDREN) != null) {
-			unusedChildren = element.getAttribute(IProjectType.UNUSED_CHILDREN); 
+			unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN)); 
 		}
 		
 		// isAbstract
@@ -843,17 +832,17 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		
 		// Get the 'versionSupported' attribute
 		if (element.getAttribute(VERSIONS_SUPPORTED) != null) {
-			versionsSupported = element.getAttribute(VERSIONS_SUPPORTED);
+			versionsSupported = SafeStringInterner.safeIntern(element.getAttribute(VERSIONS_SUPPORTED));
 		}
 		
 		// Get the 'convertToId' id
 		if (element.getAttribute(CONVERT_TO_ID) != null) {
-			convertToId = element.getAttribute(CONVERT_TO_ID);
+			convertToId = SafeStringInterner.safeIntern(element.getAttribute(CONVERT_TO_ID));
 		}
 		
 		// Get the semicolon separated list of IDs of the error parsers
 		if (element.getAttribute(IToolChain.ERROR_PARSERS) != null) {
-			errorParserIds = element.getAttribute(IToolChain.ERROR_PARSERS);
+			errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(IToolChain.ERROR_PARSERS));
 		}
 		
 		// Get the nature filter
@@ -878,7 +867,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			if (inputs != null) {
 				StringTokenizer tokenizer = new StringTokenizer(inputs, DEFAULT_SEPARATOR);
 				while (tokenizer.hasMoreElements()) {
-					getInputExtensionsList().add((String)tokenizer.nextElement());
+					getInputExtensionsList().add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 				}
 			}
 		}
@@ -889,34 +878,34 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			if (headers != null) {
 				StringTokenizer tokenizer = new StringTokenizer(headers, DEFAULT_SEPARATOR);
 				while (tokenizer.hasMoreElements()) {
-					getInterfaceExtensionsList().add((String)tokenizer.nextElement());
+					getInterfaceExtensionsList().add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 				}
 			}
 		}
 		
 		// Get the output extension
 		if (element.getAttribute(ITool.OUTPUTS) != null) {
-			outputExtensions = element.getAttribute(ITool.OUTPUTS); 
+			outputExtensions = SafeStringInterner.safeIntern(element.getAttribute(ITool.OUTPUTS)); 
 		}
 			
 		// Get the tool invocation command
 		if (element.getAttribute(ITool.COMMAND) != null) {
-			command = element.getAttribute(ITool.COMMAND); 
+			command = SafeStringInterner.safeIntern(element.getAttribute(ITool.COMMAND)); 
 		}
 			
 		// Get the flag to control output
 		if (element.getAttribute(ITool.OUTPUT_FLAG) != null) {
-			outputFlag = element.getAttribute(ITool.OUTPUT_FLAG);
+			outputFlag = SafeStringInterner.safeIntern(element.getAttribute(ITool.OUTPUT_FLAG));
 		}
 			
 		// Get the output prefix
 		if (element.getAttribute(ITool.OUTPUT_PREFIX) != null) {
-			outputPrefix = element.getAttribute(ITool.OUTPUT_PREFIX);
+			outputPrefix = SafeStringInterner.safeIntern(element.getAttribute(ITool.OUTPUT_PREFIX));
 		}
 		
 		// Get command line pattern
 		if( element.getAttribute( ITool.COMMAND_LINE_PATTERN ) != null) {
-			commandLinePattern = element.getAttribute( ITool.COMMAND_LINE_PATTERN );
+			commandLinePattern = SafeStringInterner.safeIntern(element.getAttribute( ITool.COMMAND_LINE_PATTERN ));
 		}
 		
 		// advancedInputCategory
@@ -937,7 +926,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		
 		// Get the announcement text
 		if (element.getAttribute(ITool.ANNOUNCEMENT) != null) {
-			announcement = element.getAttribute(ITool.ANNOUNCEMENT);
+			announcement = SafeStringInterner.safeIntern(element.getAttribute(ITool.ANNOUNCEMENT));
 		}
 		
 		// icon - was saved as URL in string form
@@ -952,7 +941,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			}
 		}
 		
-		scannerConfigDiscoveryProfileId = element.getAttribute(IToolChain.SCANNER_CONFIG_PROFILE_ID);
+		scannerConfigDiscoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(IToolChain.SCANNER_CONFIG_PROFILE_ID));
 	}
 	
 	void resolveProjectReferences(boolean onLoad){

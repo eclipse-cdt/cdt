@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 Intel Corporation and others.
+ * Copyright (c) 2004, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -168,7 +169,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	 * @param element An XML element containing the project information 
 	 */
 	protected boolean loadFromProject(ICStorageElement element) {
-		
+		// note: id and name are unique, so don't intern them
 		// id
 		setId(element.getAttribute(IBuildObject.ID));
 

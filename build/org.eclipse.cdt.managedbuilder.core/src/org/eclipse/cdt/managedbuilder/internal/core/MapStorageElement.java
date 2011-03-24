@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * James Blackburn (Broadcom Corp.)
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -20,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.core.runtime.CoreException;
 
 public class MapStorageElement implements ICStorageElement {
@@ -189,7 +191,7 @@ public class MapStorageElement implements ICStorageElement {
 				}
 				lndx++;
 			}
-			map.put(line.substring(0, lndx), line.substring(lndx + 1));
+			map.put(SafeStringInterner.safeIntern(line.substring(0, lndx)), SafeStringInterner.safeIntern(line.substring(lndx + 1)));
 		}
 		
 		return map;
@@ -233,7 +235,7 @@ public class MapStorageElement implements ICStorageElement {
 						lndx++;
 					}
 */
-					list.add(line.toString());
+					list.add(SafeStringInterner.safeIntern(line.toString()));
 					envStr.delete(0, ndx + 1);
 				}
 			} catch (StringIndexOutOfBoundsException e) {

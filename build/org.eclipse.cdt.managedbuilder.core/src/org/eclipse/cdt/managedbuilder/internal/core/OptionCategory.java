@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
@@ -109,13 +110,13 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		ManagedBuildManager.putConfigElement(this, element);
 		
 		// id
-		setId(element.getAttribute(IOptionCategory.ID));
+		setId(SafeStringInterner.safeIntern(element.getAttribute(IOptionCategory.ID)));
 		
 		// name
-		setName(element.getAttribute(IOptionCategory.NAME));
+		setName(SafeStringInterner.safeIntern(element.getAttribute(IOptionCategory.NAME)));
 		
 		// owner
-		ownerId = element.getAttribute(IOptionCategory.OWNER);
+		ownerId = SafeStringInterner.safeIntern(element.getAttribute(IOptionCategory.OWNER));
 
 		// icon
 		if ( element.getAttribute(IOptionCategory.ICON) != null  && element instanceof DefaultManagedConfigElement)
@@ -133,17 +134,17 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	 */
 	protected void loadFromProject(ICStorageElement element) {
 		
-		// id
+		// id (unique, do not intern)
 		setId(element.getAttribute(IBuildObject.ID));
 
 		// name
 		if (element.getAttribute(IBuildObject.NAME) != null) {
-			setName(element.getAttribute(IBuildObject.NAME));
+			setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 		}
 		
 		// owner
 		if (element.getAttribute(IOptionCategory.OWNER) != null) {
-			ownerId = element.getAttribute(IOptionCategory.OWNER);
+			ownerId = SafeStringInterner.safeIntern(element.getAttribute(IOptionCategory.OWNER));
 		}
 		if (ownerId != null) {
 			owner = holder.getOptionCategory(ownerId);

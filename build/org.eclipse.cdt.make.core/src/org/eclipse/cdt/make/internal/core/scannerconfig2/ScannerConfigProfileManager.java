@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -116,10 +117,12 @@ public final class ScannerConfigProfileManager {
 		synchronized (fLock) {
 	        // is the project's profile already loaded?
 	        Map<InfoContext, Object> map = getProfileMap(project, true);
-	        SCProfileInstance profileInstance = (SCProfileInstance) map.get(context);
+	        SoftReference<SCProfileInstance> profileInstanceReference = (SoftReference<SCProfileInstance>) map.get(context);
+	        SCProfileInstance profileInstance = profileInstanceReference != null ? profileInstanceReference.get() : null;
+	        
 	        if (profileInstance == null || !profileInstance.getProfile().getId().equals(profileId)) {
 	            profileInstance = new SCProfileInstance(project, context, getSCProfileConfiguration(profileId));
-	            map.put(context, profileInstance);
+	            map.put(context, new SoftReference<SCProfileInstance>(profileInstance));
 	        }
 	        return profileInstance;
 		}

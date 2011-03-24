@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
@@ -510,6 +511,7 @@ public class ScannerConfigInfoFactory2 {
 			this.autoDiscoveryEnabled = base.autoDiscoveryEnabled;
 			this.problemReportingEnabled = base.problemReportingEnabled;
 			this.selectedProfile = ScannerConfigProfileManager.NULL_PROFILE_ID.equals(profileId) ? base.selectedProfile : profileId;
+			this.selectedProfile = SafeStringInterner.safeIntern(this.selectedProfile);
 			this.profileOptionsMap.putAll(base.profileOptionsMap);
 			for (Map.Entry<String, ProfileOptions> entry : profileOptionsMap.entrySet()) {
     			ProfileOptions basePo = entry.getValue();
@@ -556,7 +558,7 @@ public class ScannerConfigInfoFactory2 {
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#setSelectedProfileId(java.lang.String)
 		 */
 		public void setSelectedProfileId(String profileId) {
-            selectedProfile = setDirty(selectedProfile, profileId);
+            selectedProfile = SafeStringInterner.safeIntern(setDirty(selectedProfile, profileId));
 //			if (isDirty) {
 //				try {
 //					load();
@@ -897,6 +899,7 @@ public class ScannerConfigInfoFactory2 {
                     selectedProfile = (profileId == ScannerConfigProfileManager.NULL_PROFILE_ID) 
                             ? sc.getAttribute(SELECTED_PROFILE_ID)
                             : profileId;
+                    selectedProfile = SafeStringInterner.safeIntern(selectedProfile);
                     problemReportingEnabled = Boolean.valueOf(
                     		sc.getAttribute(PROBLEM_REPORTING_ENABLED)).booleanValue();
                     performMigration = false;
@@ -925,7 +928,7 @@ public class ScannerConfigInfoFactory2 {
 				autoDiscoveryEnabled = oldInfo.isAutoDiscoveryEnabled();
 				problemReportingEnabled = oldInfo.isSIProblemGenerationEnabled();
 				// effectively a PerProject profile
-				selectedProfile = profileId;
+				selectedProfile = SafeStringInterner.safeIntern(profileId);
                 
                 ProfileOptions po = new ProfileOptions();
 				po.buildOutputFileActionEnabled = false;
@@ -1171,10 +1174,11 @@ public class ScannerConfigInfoFactory2 {
 			selectedProfile = (ScannerConfigProfileManager.NULL_PROFILE_ID.equals(profileId)) ? 
 							  getString(prefix + SCANNER_CONFIG_SELECTED_PROFILE_ID_SUFFIX) : 
 							  profileId;
+			selectedProfile = SafeStringInterner.safeIntern(selectedProfile);				
 			problemReportingEnabled = getBoolean(prefix + SCANNER_CONFIG_PROBLEM_REPORTING_ENABLED_SUFFIX);
             if (ScannerConfigProfileManager.NULL_PROFILE_ID.equals(selectedProfile) && !useDefaults) {
                 // get the default value
-                selectedProfile = prefs.getDefaultString(prefix + SCANNER_CONFIG_SELECTED_PROFILE_ID_SUFFIX);
+                selectedProfile = SafeStringInterner.safeIntern(prefs.getDefaultString(prefix + SCANNER_CONFIG_SELECTED_PROFILE_ID_SUFFIX));
             }
             List<String> profileIds = ScannerConfigProfileManager.getInstance().getProfileIds(context);
             profileOptionsMap = new LinkedHashMap<String, ProfileOptions>(profileIds.size());

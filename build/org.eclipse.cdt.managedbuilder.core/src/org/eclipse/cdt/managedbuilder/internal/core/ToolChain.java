@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 Intel Corporation and others.
+ * Copyright (c) 2004, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -26,6 +27,7 @@ import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManage
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
@@ -523,19 +525,19 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		ManagedBuildManager.putConfigElement(this, element);
 		
 		// id
-		setId(element.getAttribute(IBuildObject.ID));
+		setId(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.ID)));
 		
 		// Get the name
-		setName(element.getAttribute(IBuildObject.NAME));
+		setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 		
 		// version
 		setVersion(getVersionFromId());
 		
 		// superClass
-		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
+		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 
 		// Get the unused children, if any
-		unusedChildren = element.getAttribute(IProjectType.UNUSED_CHILDREN); 
+		unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN)); 
 		
 		// isAbstract
         String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
@@ -544,25 +546,25 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
         }
 		
 		// Get the semicolon separated list of IDs of the error parsers
-		errorParserIds = element.getAttribute(ERROR_PARSERS);
+		errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(ERROR_PARSERS));
 		
 		// Get the semicolon separated list of IDs of the secondary outputs
-		secondaryOutputIds = element.getAttribute(SECONDARY_OUTPUTS);
+		secondaryOutputIds = SafeStringInterner.safeIntern(element.getAttribute(SECONDARY_OUTPUTS));
 		
 		// Get the target tool id
-		targetToolIds = element.getAttribute(TARGET_TOOL);
+		targetToolIds = SafeStringInterner.safeIntern(element.getAttribute(TARGET_TOOL));
 		
 		// Get the scanner config discovery profile id
-        scannerConfigDiscoveryProfileId = element.getAttribute(SCANNER_CONFIG_PROFILE_ID);
+        scannerConfigDiscoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(SCANNER_CONFIG_PROFILE_ID));
         String tmp = element.getAttribute(RESOURCE_TYPE_BASED_DISCOVERY);
         if(tmp != null)
         	isRcTypeBasedDiscovery = Boolean.valueOf(tmp); 
         
 		// Get the 'versionsSupported' attribute
-		versionsSupported =element.getAttribute(VERSIONS_SUPPORTED);
+		versionsSupported = SafeStringInterner.safeIntern(element.getAttribute(VERSIONS_SUPPORTED));
 		
 		// Get the 'convertToId' attribute
-		convertToId = element.getAttribute(CONVERT_TO_ID);
+		convertToId = SafeStringInterner.safeIntern(element.getAttribute(CONVERT_TO_ID));
 		
 		tmp = element.getAttribute(SUPPORTS_MANAGED_BUILD);
 		if(tmp != null)
@@ -579,7 +581,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 			osList = new ArrayList<String>();
 			String[] osTokens = os.split(","); //$NON-NLS-1$
 			for (int i = 0; i < osTokens.length; ++i) {
-				osList.add(osTokens[i].trim());
+				osList.add(SafeStringInterner.safeIntern(osTokens[i].trim()));
 			}
 		}
 		
@@ -589,7 +591,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 			archList = new ArrayList<String>();
 			String[] archTokens = arch.split(","); //$NON-NLS-1$
 			for (int j = 0; j < archTokens.length; ++j) {
-				archList.add(archTokens[j].trim());
+				archList.add(SafeStringInterner.safeIntern(archTokens[j].trim()));
 			}
 		}
 		
@@ -617,7 +619,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 			pathconverterElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
 		}
 		
-		nonInternalBuilderId = element.getAttribute(NON_INTERNAL_BUILDER_ID);
+		nonInternalBuilderId = SafeStringInterner.safeIntern(element.getAttribute(NON_INTERNAL_BUILDER_ID));
 	}
 	
 	
@@ -629,19 +631,19 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 	 */
 	protected void loadFromProject(ICStorageElement element) {
 		
-		// id
+		// id (unique, do not intern)
 		setId(element.getAttribute(IBuildObject.ID));
 
 		// name
 		if (element.getAttribute(IBuildObject.NAME) != null) {
-			setName(element.getAttribute(IBuildObject.NAME));
+			setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 		}
 
 		// version
 		setVersion(getVersionFromId());
 
 		// superClass
-		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
+		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 		if (superClassId != null && superClassId.length() > 0) {
 			setSuperClassInternal( ManagedBuildManager.getExtensionToolChain(superClassId) );
 			// Check for migration support
@@ -650,7 +652,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 
 		// Get the unused children, if any
 		if (element.getAttribute(IProjectType.UNUSED_CHILDREN) != null) {
-				unusedChildren = element.getAttribute(IProjectType.UNUSED_CHILDREN); 
+				unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN)); 
 		}
 		
 		// isAbstract
@@ -663,32 +665,32 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		
 		// Get the semicolon separated list of IDs of the error parsers
 		if (element.getAttribute(ERROR_PARSERS) != null) {
-			errorParserIds = element.getAttribute(ERROR_PARSERS);
+			errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(ERROR_PARSERS));
 		}
 		
 		// Get the semicolon separated list of IDs of the secondary outputs
 		if (element.getAttribute(SECONDARY_OUTPUTS) != null) {
-			secondaryOutputIds = element.getAttribute(SECONDARY_OUTPUTS);
+			secondaryOutputIds = SafeStringInterner.safeIntern(element.getAttribute(SECONDARY_OUTPUTS));
 		}
 		
 		// Get the target tool id
 		if (element.getAttribute(TARGET_TOOL) != null) {
-			targetToolIds = element.getAttribute(TARGET_TOOL);
+			targetToolIds = SafeStringInterner.safeIntern(element.getAttribute(TARGET_TOOL));
 		}
 		
         // Get the scanner config discovery profile id
         if (element.getAttribute(SCANNER_CONFIG_PROFILE_ID) != null) {
-            scannerConfigDiscoveryProfileId = element.getAttribute(SCANNER_CONFIG_PROFILE_ID);
+            scannerConfigDiscoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(SCANNER_CONFIG_PROFILE_ID));
         }
         
 		// Get the 'versionSupported' attribute
 		if (element.getAttribute(VERSIONS_SUPPORTED) != null) {
-			versionsSupported = element.getAttribute(VERSIONS_SUPPORTED);
+			versionsSupported = SafeStringInterner.safeIntern(element.getAttribute(VERSIONS_SUPPORTED));
 		}
 		
 		// Get the 'convertToId' id
 		if (element.getAttribute(CONVERT_TO_ID) != null) {
-			convertToId = element.getAttribute(CONVERT_TO_ID);
+			convertToId = SafeStringInterner.safeIntern(element.getAttribute(CONVERT_TO_ID));
 		}
 		
 		// Get the comma-separated list of valid OS
@@ -698,7 +700,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 				osList = new ArrayList<String>();
 				String[] osTokens = os.split(","); //$NON-NLS-1$
 				for (int i = 0; i < osTokens.length; ++i) {
-					osList.add(osTokens[i].trim());
+					osList.add(SafeStringInterner.safeIntern(osTokens[i].trim()));
 				}
 			}
 		}
@@ -710,7 +712,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 				archList = new ArrayList<String>();
 				String[] archTokens = arch.split(","); //$NON-NLS-1$
 				for (int j = 0; j < archTokens.length; ++j) {
-					archList.add(archTokens[j].trim());
+					archList.add(SafeStringInterner.safeIntern(archTokens[j].trim()));
 				}
 			}
 		}
@@ -727,7 +729,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
         if(tmp != null)
         	isRcTypeBasedDiscovery = Boolean.valueOf(tmp); 
 
-		nonInternalBuilderId = element.getAttribute(NON_INTERNAL_BUILDER_ID);
+		nonInternalBuilderId = SafeStringInterner.safeIntern(element.getAttribute(NON_INTERNAL_BUILDER_ID));
 		
 //		String tmp = element.getAttribute(name)
 	}

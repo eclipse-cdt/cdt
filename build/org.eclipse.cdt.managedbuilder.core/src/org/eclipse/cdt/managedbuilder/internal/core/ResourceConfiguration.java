@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -21,6 +22,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CFileData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
@@ -347,7 +349,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		ManagedBuildManager.putConfigElement(this, element);
 
 		// toolsToInvoke
-		toolsToInvoke = element.getAttribute(IResourceConfiguration.TOOLS_TO_INVOKE);
+		toolsToInvoke = SafeStringInterner.safeIntern(element.getAttribute(IResourceConfiguration.TOOLS_TO_INVOKE));
 
 		// rcbsApplicability
 		String rcbsApplicabilityStr = element.getAttribute(IResourceConfiguration.RCBS_APPLICABILITY);
@@ -371,7 +373,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	protected void loadFromProject(ICStorageElement element) {
 		// toolsToInvoke
 		if (element.getAttribute(IResourceConfiguration.TOOLS_TO_INVOKE) != null) {
-			toolsToInvoke = element.getAttribute(IResourceConfiguration.TOOLS_TO_INVOKE);
+			toolsToInvoke = SafeStringInterner.safeIntern(element.getAttribute(IResourceConfiguration.TOOLS_TO_INVOKE));
 		}
 
 		// rcbsApplicability

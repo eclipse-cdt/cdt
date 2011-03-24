@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  * James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
@@ -38,6 +39,7 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.ExternalBuildRunner;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
@@ -448,28 +450,30 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		ManagedBuildManager.putConfigElement(this, element);
 		
 		// id
-		setId(element.getAttribute(IBuildObject.ID));
+		String idAttribute = SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.ID));;
+		setId(idAttribute);
 		
 		// Get the name
-		setName(element.getAttribute(IBuildObject.NAME));
+		final String nameAttribute = SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME));
+		setName(nameAttribute);
 		
 		// Set the version after extracting from 'id' attribute
 		setVersion(getVersionFromId());
 		
 		// superClass
-		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
+		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 
 		// Get the unused children, if any
-		unusedChildren = element.getAttribute(IProjectType.UNUSED_CHILDREN); 
+		unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN)); 
 		
 		// Get the 'versionsSupported' attribute
-		versionsSupported = element.getAttribute(VERSIONS_SUPPORTED);
+		versionsSupported = SafeStringInterner.safeIntern(element.getAttribute(VERSIONS_SUPPORTED));
 		
 		// Get the 'convertToId' attribute
-		convertToId = element.getAttribute(CONVERT_TO_ID);
+		convertToId = SafeStringInterner.safeIntern(element.getAttribute(CONVERT_TO_ID));
 
 		// get the 'variableFormat' attribute
-		builderVariablePattern = element.getAttribute(VARIABLE_FORMAT);
+		builderVariablePattern = SafeStringInterner.safeIntern(element.getAttribute(VARIABLE_FORMAT));
 		
 		// get the 'isVariableCaseSensitive' attribute
 		String isCS = element.getAttribute(IS_VARIABLE_CASE_SENSITIVE);
@@ -480,6 +484,8 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		String reservedNames = element.getAttribute(RESERVED_MACRO_NAMES);
 		if(reservedNames != null)
 			reservedMacroNames = reservedNames.split(","); //$NON-NLS-1$
+		
+		reservedMacroNames = SafeStringInterner.safeIntern(reservedMacroNames);
 
 		// Get the reservedMacroNameSupplier configuration element
 		String reservedMacroNameSupplier = element.getAttribute(RESERVED_MACRO_NAME_SUPPLIER); 
@@ -495,20 +501,25 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
         }
 
         // command
-		command = element.getAttribute(IBuilder.COMMAND); 
+		command = SafeStringInterner.safeIntern(element.getAttribute(IBuilder.COMMAND)); 
         
         // arguments
-		args = element.getAttribute(IBuilder.ARGUMENTS);
+		args = SafeStringInterner.safeIntern(element.getAttribute(IBuilder.ARGUMENTS));
 		
-		autoBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_AUTO);
+		autoBuildTarget = SafeStringInterner.safeIntern(element.getAttribute(ATTRIBUTE_TARGET_AUTO));
+		
 		String tmp = element.getAttribute(ATTRIBUTE_AUTO_ENABLED);
 		if(tmp != null)
 			autoBuildEnabled = Boolean.valueOf(tmp);
-		incrementalBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_INCREMENTAL);
+		
+		incrementalBuildTarget = SafeStringInterner.safeIntern(element.getAttribute(ATTRIBUTE_TARGET_INCREMENTAL));
+		
 		tmp = element.getAttribute(ATTRIBUTE_AUTO_ENABLED);
 		if(tmp != null)
 			incrementalBuildEnabled = Boolean.valueOf(tmp);
-		cleanBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_CLEAN);
+		
+		cleanBuildTarget = SafeStringInterner.safeIntern(element.getAttribute(ATTRIBUTE_TARGET_CLEAN));
+		
 		tmp = element.getAttribute(ATTRIBUTE_CLEAN_ENABLED);
 		if(tmp != null)
 			cleanBuildEnabled = Boolean.valueOf(tmp);
@@ -522,8 +533,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if(tmp != null)
 			supportsManagedBuild = Boolean.valueOf(tmp);
 		tmp = element.getAttribute(ATTRIBUTE_CUSTOMIZED_ERROR_PARSERS);
+		
 		if(tmp != null)
 			customizedErrorParserIds = CDataUtil.stringToArray(tmp, ";"); //$NON-NLS-1$
+		
+		customizedErrorParserIds = SafeStringInterner.safeIntern(customizedErrorParserIds);
+		
 		tmp = element.getAttribute(ATTRIBUTE_ENVIRONMENT);
 		if(tmp != null)
 			customizedEnvironment = MapStorageElement.decodeMap(tmp);
@@ -535,11 +550,14 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if(tmp != null)
 			customBuildProperties = MapStorageElement.decodeMap(tmp);
 
-		ignoreErrCmd = element.getAttribute(ATTRIBUTE_IGNORE_ERR_CMD);
+		ignoreErrCmd = SafeStringInterner.safeIntern(element.getAttribute(ATTRIBUTE_IGNORE_ERR_CMD));
+		
         tmp = element.getAttribute(ATTRIBUTE_STOP_ON_ERR);
         if(tmp != null)
         	stopOnErr = Boolean.valueOf(tmp);
-        parallelBuildCmd = element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD);
+        
+        parallelBuildCmd = SafeStringInterner.safeIntern(element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD));
+        
         tmp = element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER);
         if(tmp != null){
         	try {
@@ -552,7 +570,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
         	parallelBuildOn = Boolean.valueOf(tmp);
         
 		// Get the semicolon separated list of IDs of the error parsers
-		errorParserIds = element.getAttribute(IToolChain.ERROR_PARSERS);
+		errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(IToolChain.ERROR_PARSERS));
 		
 		// Store the configuration element IFF there is a build file generator defined 
 		String buildfileGenerator = element.getAttribute(BUILDFILEGEN_ID); 
@@ -609,12 +627,13 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	protected void loadFromProject(ICStorageElement element) {
 		
 		// id
+		// note: IDs are unique so no benefit to intern them
 		if(element.getAttribute(IBuildObject.ID) != null)
 			setId(element.getAttribute(IBuildObject.ID));
 
 		// name
 		if (element.getAttribute(IBuildObject.NAME) != null) {
-			setName(element.getAttribute(IBuildObject.NAME));
+			setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 		}
 		
 		// Set the version after extracting from 'id' attribute
@@ -622,7 +641,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 		// superClass
 		if(element.getAttribute(IProjectType.SUPERCLASS) != null){
-			superClassId = element.getAttribute(IProjectType.SUPERCLASS);
+			superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 			if (superClassId != null && superClassId.length() > 0) {
 				superClass = ManagedBuildManager.getExtensionBuilder(superClassId);
 				// Check for migration support
@@ -632,17 +651,17 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 		// Get the 'versionSupported' attribute
 		if (element.getAttribute(VERSIONS_SUPPORTED) != null) {
-			versionsSupported = element.getAttribute(VERSIONS_SUPPORTED);
+			versionsSupported = SafeStringInterner.safeIntern(element.getAttribute(VERSIONS_SUPPORTED));
 		}
 		
 		// Get the 'convertToId' id
 		if (element.getAttribute(CONVERT_TO_ID) != null) {
-			convertToId = element.getAttribute(CONVERT_TO_ID);
+			convertToId = SafeStringInterner.safeIntern(element.getAttribute(CONVERT_TO_ID));
 		}
 		
 		// Get the unused children, if any
 		if (element.getAttribute(IProjectType.UNUSED_CHILDREN) != null) {
-				unusedChildren = element.getAttribute(IProjectType.UNUSED_CHILDREN); 
+				unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN)); 
 		}
 		
 		// isAbstract
@@ -655,30 +674,30 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
         // command
 		if (element.getAttribute(IBuilder.COMMAND) != null) {
-			command = element.getAttribute(IBuilder.COMMAND); 
+			command = SafeStringInterner.safeIntern(element.getAttribute(IBuilder.COMMAND)); 
 		}
         
         // arguments
 		if (element.getAttribute(IBuilder.ARGUMENTS) != null) {
-			args = element.getAttribute(IBuilder.ARGUMENTS);
+			args = SafeStringInterner.safeIntern(element.getAttribute(IBuilder.ARGUMENTS));
 		}
 		
 		if(element.getAttribute(ATTRIBUTE_TARGET_AUTO) != null)
-			autoBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_AUTO);
+			autoBuildTarget = SafeStringInterner.safeIntern(element.getAttribute(ATTRIBUTE_TARGET_AUTO));
 		
 		String tmp = element.getAttribute(ATTRIBUTE_AUTO_ENABLED);
 		if(tmp != null)
 			autoBuildEnabled = Boolean.valueOf(tmp);
 		
 		if(element.getAttribute(ATTRIBUTE_TARGET_INCREMENTAL) != null)
-			incrementalBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_INCREMENTAL);
+			incrementalBuildTarget = SafeStringInterner.safeIntern(element.getAttribute(ATTRIBUTE_TARGET_INCREMENTAL));
 		
 		tmp = element.getAttribute(ATTRIBUTE_INCREMENTAL_ENABLED);
 		if(tmp != null)
 			incrementalBuildEnabled = Boolean.valueOf(tmp);
 		
 		if(element.getAttribute(ATTRIBUTE_TARGET_CLEAN) != null)
-			cleanBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_CLEAN);
+			cleanBuildTarget = SafeStringInterner.safeIntern(element.getAttribute(ATTRIBUTE_TARGET_CLEAN));
 		
 		tmp = element.getAttribute(ATTRIBUTE_CLEAN_ENABLED);
 		if(tmp != null)
@@ -709,7 +728,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			appendEnvironment = Boolean.valueOf(tmp);
 		
 		if(element.getAttribute(ATTRIBUTE_BUILD_PATH) != null)
-			buildPath = element.getAttribute(ATTRIBUTE_BUILD_PATH);
+			buildPath = SafeStringInterner.safeIntern(element.getAttribute(ATTRIBUTE_BUILD_PATH));
 		
 		tmp = element.getAttribute(ATTRIBUTE_CUSTOM_PROPS);
 		if(tmp != null)
@@ -717,7 +736,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 		// Get the semicolon separated list of IDs of the error parsers
 		if (element.getAttribute(IToolChain.ERROR_PARSERS) != null) {
-			errorParserIds = element.getAttribute(IToolChain.ERROR_PARSERS);
+			errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(IToolChain.ERROR_PARSERS));
 		}
 		
 		// Note: build file generator cannot be specified in a project file because
@@ -727,14 +746,14 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		}
 		
 		if(element.getAttribute(ATTRIBUTE_IGNORE_ERR_CMD) != null)
-			ignoreErrCmd = element.getAttribute(ATTRIBUTE_IGNORE_ERR_CMD);
+			ignoreErrCmd = SafeStringInterner.safeIntern(element.getAttribute(ATTRIBUTE_IGNORE_ERR_CMD));
 		
         tmp = element.getAttribute(ATTRIBUTE_STOP_ON_ERR);
         if(tmp != null)
         	stopOnErr = Boolean.valueOf(tmp);
         
         if(element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD) != null)
-        	parallelBuildCmd = element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD);
+        	parallelBuildCmd = SafeStringInterner.safeIntern(element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD));
         
         tmp = element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER);
         if(tmp != null){

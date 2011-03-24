@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IContainerEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
@@ -232,7 +233,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 								if (gChildren != null) {
 									for (int j = 0; j < gChildren.length; ++j) {
 										DiscoveredElement include = (DiscoveredElement) gChildren[j];
-										includes.put(include.getEntry(), Boolean.valueOf(include.isRemoved()));
+										includes.put(SafeStringInterner.safeIntern(include.getEntry()), Boolean.valueOf(include.isRemoved()));
 									}
 								}
 							}

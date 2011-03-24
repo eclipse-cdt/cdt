@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 Intel Corporation and others.
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -18,6 +19,7 @@ import java.util.Vector;
 
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
@@ -308,13 +310,13 @@ public class InputType extends BuildObject implements IInputType {
 		ManagedBuildManager.putConfigElement(this, element);
 
 		// id
-		setId(element.getAttribute(IBuildObject.ID));
+		setId(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.ID)));
 
 		// Get the name
-		setName(element.getAttribute(IBuildObject.NAME));
+		setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 
 		// superClass
-		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
+		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 
 		// sourceContentType
 		List<String> list = new ArrayList<String>();
@@ -322,7 +324,7 @@ public class InputType extends BuildObject implements IInputType {
 		if(ids != null){
 			StringTokenizer tokenizer = new StringTokenizer(ids, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
-				list.add(tokenizer.nextToken());
+				list.add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 			}
 			if(list.size() != 0){
 				sourceContentTypeIds = list.toArray(new String[list.size()]);
@@ -335,7 +337,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (inputs != null) {
 			StringTokenizer tokenizer = new StringTokenizer(inputs, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
-				list.add(tokenizer.nextToken());
+				list.add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 			}
 
 			if(list.size() != 0){
@@ -349,7 +351,7 @@ public class InputType extends BuildObject implements IInputType {
 		if(ids != null){
 			StringTokenizer tokenizer = new StringTokenizer(ids, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
-				list.add(tokenizer.nextToken());
+				list.add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 			}
 			if(list.size() != 0){
 				headerContentTypeIds = list.toArray(new String[list.size()]);
@@ -362,7 +364,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (hs != null) {
 			StringTokenizer tokenizer = new StringTokenizer(hs, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
-				list.add(tokenizer.nextToken());
+				list.add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 			}
 
 			if(list.size() != 0){
@@ -379,15 +381,15 @@ public class InputType extends BuildObject implements IInputType {
 		if (headers != null) {
 			StringTokenizer tokenizer = new StringTokenizer(headers, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
-				getDependencyExtensionsList().add(tokenizer.nextToken());
+				getDependencyExtensionsList().add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 			}
 		}
 
 		// option
-		optionId = element.getAttribute(IInputType.OPTION);
+		optionId = SafeStringInterner.safeIntern(element.getAttribute(IInputType.OPTION));
 
 		// assignToOption
-		assignToOptionId = element.getAttribute(IInputType.ASSIGN_TO_OPTION);
+		assignToOptionId = SafeStringInterner.safeIntern(element.getAttribute(IInputType.ASSIGN_TO_OPTION));
 
 		// multipleOfType
         String isMOT = element.getAttribute(IInputType.MULTIPLE_OF_TYPE);
@@ -402,17 +404,17 @@ public class InputType extends BuildObject implements IInputType {
         }
 
 		// buildVariable
-		buildVariable = element.getAttribute(IInputType.BUILD_VARIABLE);
+		buildVariable = SafeStringInterner.safeIntern(element.getAttribute(IInputType.BUILD_VARIABLE));
 
-		languageId = element.getAttribute(LANGUAGE_ID);
-		languageName = element.getAttribute(LANGUAGE_NAME);
+		languageId = SafeStringInterner.safeIntern(element.getAttribute(LANGUAGE_ID));
+		languageName = SafeStringInterner.safeIntern(element.getAttribute(LANGUAGE_NAME));
 		if (element.getAttribute(LANGUAGE_INFO_CALCULATOR) != null && element instanceof DefaultManagedConfigElement) {
 			languageInfoCalculatorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 		}
 //		else {
 //			languageInfoCalculator = new DefaultLanguageInfoCalculator();
 //		}
-		buildInfoDicsoveryProfileId = element.getAttribute(SCANNER_CONFIG_PROFILE_ID);
+		buildInfoDicsoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(SCANNER_CONFIG_PROFILE_ID));
 
 		// Store the configuration element IFF there is a dependency generator defined
 		String depGenerator = element.getAttribute(ITool.DEP_CALC_ID);
@@ -430,15 +432,16 @@ public class InputType extends BuildObject implements IInputType {
 	protected boolean loadFromProject(ICStorageElement element) {
 
 		// id
+		// note: IDs are unique so no benefit to intern them
 		setId(element.getAttribute(IBuildObject.ID));
 
 		// name
 		if (element.getAttribute(IBuildObject.NAME) != null) {
-			setName(element.getAttribute(IBuildObject.NAME));
+			setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 		}
 
 		// superClass
-		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
+		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 		if (superClassId != null && superClassId.length() > 0) {
 			superClass = ManagedBuildManager.getExtensionInputType(superClassId);
 			if (superClass == null) {
@@ -454,7 +457,7 @@ public class InputType extends BuildObject implements IInputType {
 			if (ids != null) {
 				StringTokenizer tokenizer = new StringTokenizer(ids, DEFAULT_SEPARATOR);
 				while (tokenizer.hasMoreElements()) {
-					list.add(tokenizer.nextToken());
+					list.add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 				}
 
 				if(list.size() != 0){
@@ -483,7 +486,7 @@ public class InputType extends BuildObject implements IInputType {
 			if (inputs != null) {
 				StringTokenizer tokenizer = new StringTokenizer(inputs, DEFAULT_SEPARATOR);
 				while (tokenizer.hasMoreElements()) {
-					list.add(tokenizer.nextToken());
+					list.add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 				}
 
 				if(list.size() != 0){
@@ -499,7 +502,7 @@ public class InputType extends BuildObject implements IInputType {
 			if (ids != null) {
 				StringTokenizer tokenizer = new StringTokenizer(ids, DEFAULT_SEPARATOR);
 				while (tokenizer.hasMoreElements()) {
-					list.add(tokenizer.nextToken());
+					list.add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 				}
 
 				if(list.size() != 0){
@@ -528,7 +531,7 @@ public class InputType extends BuildObject implements IInputType {
 			if (inputs != null) {
 				StringTokenizer tokenizer = new StringTokenizer(inputs, DEFAULT_SEPARATOR);
 				while (tokenizer.hasMoreElements()) {
-					list.add(tokenizer.nextToken());
+					list.add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 				}
 
 				if(list.size() != 0){
@@ -553,19 +556,19 @@ public class InputType extends BuildObject implements IInputType {
 			if (headers != null) {
 				StringTokenizer tokenizer = new StringTokenizer(headers, DEFAULT_SEPARATOR);
 				while (tokenizer.hasMoreElements()) {
-					getDependencyExtensionsList().add(tokenizer.nextToken());
+					getDependencyExtensionsList().add(SafeStringInterner.safeIntern(tokenizer.nextToken()));
 				}
 			}
 		}
 
 		// option
 		if (element.getAttribute(IInputType.OPTION) != null) {
-			optionId = element.getAttribute(IInputType.OPTION);
+			optionId = SafeStringInterner.safeIntern(element.getAttribute(IInputType.OPTION));
 		}
 
 		// assignToOption
 		if (element.getAttribute(IInputType.ASSIGN_TO_OPTION) != null) {
-			assignToOptionId = element.getAttribute(IInputType.ASSIGN_TO_OPTION);
+			assignToOptionId = SafeStringInterner.safeIntern(element.getAttribute(IInputType.ASSIGN_TO_OPTION));
 		}
 
 		// multipleOfType
@@ -586,12 +589,12 @@ public class InputType extends BuildObject implements IInputType {
 
 		// buildVariable
 		if (element.getAttribute(IInputType.BUILD_VARIABLE) != null) {
-			buildVariable = element.getAttribute(IInputType.BUILD_VARIABLE);
+			buildVariable = SafeStringInterner.safeIntern(element.getAttribute(IInputType.BUILD_VARIABLE));
 		}
 
-		languageId = element.getAttribute(LANGUAGE_ID);
-		languageName = element.getAttribute(LANGUAGE_NAME);
-		buildInfoDicsoveryProfileId = element.getAttribute(SCANNER_CONFIG_PROFILE_ID);
+		languageId = SafeStringInterner.safeIntern(element.getAttribute(LANGUAGE_ID));
+		languageName = SafeStringInterner.safeIntern(element.getAttribute(LANGUAGE_NAME));
+		buildInfoDicsoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(SCANNER_CONFIG_PROFILE_ID));
 
 		// Note: dependency generator cannot be specified in a project file because
 		//       an IConfigurationElement is needed to load it!

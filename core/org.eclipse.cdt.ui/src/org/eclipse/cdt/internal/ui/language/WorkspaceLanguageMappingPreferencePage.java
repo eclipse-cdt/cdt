@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -105,8 +106,9 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 	@Override
 	protected void performDefaults() {
 		super.performDefaults();
-		Preferences node = CCorePlugin.getDefault().getPluginPreferences();
-		node.setToDefault(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS);
+		// set to default
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
+		node.remove(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS);
 		try {
 			// remove workspace mappings
 			Map<String,String> currentMappings= fMappings.getWorkspaceMappings();

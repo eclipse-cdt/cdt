@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,12 +15,12 @@ package org.eclipse.cdt.internal.ui.text.spelling;
 import java.net.URL;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.text.spelling.engine.AbstractSpellDictionary;
 
@@ -42,18 +42,18 @@ public class TaskTagDictionary extends AbstractSpellDictionary implements IPrope
 	 */
 	@Override
 	protected synchronized boolean load(final URL url) {
-		final Plugin plugin= CCorePlugin.getDefault();
+		final CUIPlugin plugin= CUIPlugin.getDefault();
 		if (plugin != null) {
-			plugin.getPluginPreferences().addPropertyChangeListener(this);
+			plugin.getCorePreferenceStore().addPropertyChangeListener(this);
 			return updateTaskTags();
 		}
 		return false;
 	}
 
 	/*
-	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
-	public void propertyChange(final PropertyChangeEvent event) {
+	public void propertyChange(PropertyChangeEvent event) {
 		if (CCorePreferenceConstants.TODO_TASK_TAGS.equals(event.getProperty()))
 			updateTaskTags();
 	}
@@ -63,9 +63,9 @@ public class TaskTagDictionary extends AbstractSpellDictionary implements IPrope
 	 */
 	@Override
 	public synchronized void unload() {
-		final Plugin plugin= CCorePlugin.getDefault();
+		final CUIPlugin plugin= CUIPlugin.getDefault();
 		if (plugin != null)
-			plugin.getPluginPreferences().removePropertyChangeListener(this);
+			plugin.getCorePreferenceStore().removePropertyChangeListener(this);
 
 		super.unload();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -244,7 +244,7 @@ public class BuildConsolePage extends Page
 
 		JFaceResources.getFontRegistry().addListener(this);
 		setFont(JFaceResources.getFont(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT));
-		setTabs(CUIPlugin.getDefault().getPluginPreferences().getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
+		setTabs(CUIPlugin.getDefault().getPreferenceStore().getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
 
 		getConsole().addPropertyChangeListener(this);
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
@@ -294,7 +294,7 @@ public class BuildConsolePage extends Page
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT)) {
 			setFont(JFaceResources.getFont(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT));
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH)) {
-			setTabs(CUIPlugin.getDefault().getPluginPreferences().getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
+			setTabs(CUIPlugin.getDefault().getPreferenceStore().getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
 		} else if (IConsoleConstants.P_BACKGROUND_COLOR.equals(property)) {
 			fViewer.getTextWidget().setBackground(fConsole.getBackground());
 		}

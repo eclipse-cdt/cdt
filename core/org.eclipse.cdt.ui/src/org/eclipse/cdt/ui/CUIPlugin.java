@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -276,7 +276,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return MessageFormat.format(getResourceString(key), new Object[] {arg});
 	}
 
-	@SuppressWarnings("cast") // java.text.MessageFormat would require the cast
 	public static String getFormattedString(String key, String[] args) {
 		return MessageFormat.format(getResourceString(key), (Object[]) args);
 	}
@@ -380,6 +379,12 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * @since 3.0
 	 */
 	private IPreferenceStore fCombinedPreferenceStore;
+
+	/**
+	 * The core preference store.
+	 * @since 5.3
+	 */
+	private IPreferenceStore fCorePreferenceStore;
 
 	private CoreModel fCoreModel;
 	private CDocumentProvider fDocumentProvider;
@@ -655,13 +660,25 @@ public class CUIPlugin extends AbstractUIPlugin {
 		if (fCombinedPreferenceStore == null) {
 			fCombinedPreferenceStore= new ChainedPreferenceStore(new IPreferenceStore[] { 
 					getPreferenceStore(), 
-					new ScopedPreferenceStore(new InstanceScope(), PLUGIN_CORE_ID), 
+					getCorePreferenceStore(), 
 					EditorsUI.getPreferenceStore() 
 			});
 		}
 		return fCombinedPreferenceStore;
 	}
-	
+
+	/**
+	 * Returns a preference store for org.eclipse.cdt.core preferences
+	 * @return the preference store
+	 * @since 5.3
+	 */
+	public IPreferenceStore getCorePreferenceStore() {
+		if (fCorePreferenceStore == null) {
+			fCorePreferenceStore= new ScopedPreferenceStore(InstanceScope.INSTANCE, PLUGIN_CORE_ID);
+		}
+		return fCorePreferenceStore;
+	}
+
 	/**
 	 * Returns a section in the C UI plugin's dialog settings. If the section doesn't exist yet, it is created.
 	 *

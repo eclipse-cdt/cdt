@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -198,13 +198,13 @@ public abstract class OptionsConfigurationBlock {
 		if (fProject != null) {
 			fLookupOrder= new IScopeContext[] {
 				new ProjectScope(fProject),
-				new InstanceScope(),
-				new DefaultScope()
+				InstanceScope.INSTANCE,
+				DefaultScope.INSTANCE
 			};
 		} else {
 			fLookupOrder= new IScopeContext[] {
-				new InstanceScope(),
-				new DefaultScope()
+				InstanceScope.INSTANCE,
+				DefaultScope.INSTANCE
 			};
 		}
 		
@@ -256,12 +256,12 @@ public abstract class OptionsConfigurationBlock {
 	}
 	
 	private int getRebuildCount() {
-		return fManager.getWorkingCopy(new DefaultScope().getNode(CUIPlugin.PLUGIN_ID)).getInt(REBUILD_COUNT_KEY, 0);
+		return fManager.getWorkingCopy(DefaultScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID)).getInt(REBUILD_COUNT_KEY, 0);
 	}
 	
 	private void incrementRebuildCount() {
 		fRebuildCount++;
-		fManager.getWorkingCopy(new DefaultScope().getNode(CUIPlugin.PLUGIN_ID)).putInt(REBUILD_COUNT_KEY, fRebuildCount);
+		fManager.getWorkingCopy(DefaultScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID)).putInt(REBUILD_COUNT_KEY, fRebuildCount);
 	}
 	
 	

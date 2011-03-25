@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
@@ -133,18 +132,18 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 	 * @param token the token to return for words recognized as task tags
 	 * @param defaultToken 
 	 * @param preferenceStore
-	 * @param corePreferences
+	 * @param corePreferenceStore
 	 */
 	public TaskTagRule(IToken token, IToken defaultToken, IPreferenceStore preferenceStore,
-			Preferences corePreferences) {
+			IPreferenceStore corePreferenceStore) {
 		super(new TaskTagDetector(), defaultToken);
 		fMatcher = new TaskTagMatcher(token);
 		addWordMatcher(fMatcher);
 		String taskWords= null;
 		if (preferenceStore.contains(TODO_TASK_TAGS)) {
 			taskWords= preferenceStore.getString(TODO_TASK_TAGS);
-		} else if (corePreferences != null) {
-			taskWords= corePreferences.getString(TODO_TASK_TAGS);
+		} else if (corePreferenceStore != null) {
+			taskWords= corePreferenceStore.getString(TODO_TASK_TAGS);
 		}
 		if (taskWords != null) {
 			addTaskTags(taskWords);
@@ -153,8 +152,8 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 		boolean isCaseSensitive= true;
 		if (preferenceStore.contains(TODO_TASK_CASE_SENSITIVE)) {
 			isCaseSensitive= preferenceStore.getBoolean(TODO_TASK_CASE_SENSITIVE);
-		} else if (corePreferences != null) {
-			isCaseSensitive= corePreferences.getBoolean(TODO_TASK_CASE_SENSITIVE);
+		} else if (corePreferenceStore != null) {
+			isCaseSensitive= corePreferenceStore.getBoolean(TODO_TASK_CASE_SENSITIVE);
 		}
 		fMatcher.setCaseSensitive(isCaseSensitive);
 	}

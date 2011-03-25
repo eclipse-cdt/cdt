@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -127,7 +127,7 @@ public class CacheSizeBlock extends AbstractCOptionPage {
     }
 
     private void initializeValues() {
-    	ScopedPreferenceStore prefStore= new ScopedPreferenceStore(new InstanceScope(), CCorePlugin.PLUGIN_ID);
+    	ScopedPreferenceStore prefStore= new ScopedPreferenceStore(InstanceScope.INSTANCE, CCorePlugin.PLUGIN_ID);
 
     	fDBLimitPct.setPreferenceStore(prefStore);
     	fDBLimitPct.setPropertyChangeListener(validityChangeListener);

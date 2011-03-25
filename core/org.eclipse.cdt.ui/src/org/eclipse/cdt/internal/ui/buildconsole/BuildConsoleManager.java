@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -477,7 +477,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	 */
 	public static Preferences getBuildLogPreferences(IProject project) {
 		if (project == null)
-			return new InstanceScope().getNode(QUALIFIER).node(GLOBAL_BUILD_CONSOLE_NODE);
+			return InstanceScope.INSTANCE.getNode(QUALIFIER).node(GLOBAL_BUILD_CONSOLE_NODE);
 		else
 			return new LocalProjectScope(project).getNode(QUALIFIER).node(BUILD_CONSOLE_NODE);
 	}
@@ -488,7 +488,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	 */
 	public static IPreferenceStore getBuildLogPreferenceStore(IProject project) {
 		if (project == null)
-			return new ScopedPreferenceStore(new InstanceScope(), QUALIFIER + "/" + GLOBAL_BUILD_CONSOLE_NODE); //$NON-NLS-1$
+			return new ScopedPreferenceStore(InstanceScope.INSTANCE, QUALIFIER + "/" + GLOBAL_BUILD_CONSOLE_NODE); //$NON-NLS-1$
 		else
 			return new ScopedPreferenceStore(new LocalProjectScope(project), QUALIFIER + "/" + BUILD_CONSOLE_NODE); //$NON-NLS-1$
 	}

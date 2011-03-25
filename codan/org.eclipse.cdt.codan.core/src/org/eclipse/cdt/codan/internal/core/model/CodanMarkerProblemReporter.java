@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.AbstractProblemReporter;
@@ -28,16 +33,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-
 /**
  * Problem reported that created eclipse markers
  */
-public class CodanMarkerProblemReporter extends AbstractProblemReporter implements IProblemReporterPersistent,
-		IProblemReporterSessionPersistent {
+public class CodanMarkerProblemReporter extends AbstractProblemReporter implements
+		IProblemReporterPersistent, IProblemReporterSessionPersistent {
 	private IResource resource;
 	private IChecker checker;
 	private ArrayList<ICodanProblemMarker> toAdd = new ArrayList<ICodanProblemMarker>();
@@ -99,7 +99,8 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter implemen
 
 	public void deleteAllProblems() {
 		try {
-			ResourcesPlugin.getWorkspace().getRoot().deleteMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true, IResource.DEPTH_INFINITE);
+			ResourcesPlugin.getWorkspace().getRoot().deleteMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE,
+					true, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			CodanCorePlugin.log(e);
 		}
@@ -125,12 +126,14 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter implemen
 		Collection<IMarker> res = new ArrayList<IMarker>();
 		IMarker[] markers;
 		if (resource.exists()) {
-			markers = resource.findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true, IResource.DEPTH_INFINITE);
+			markers = resource.findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
+					IResource.DEPTH_INFINITE);
 		} else {
 			if (resource.getProject() == null || !resource.getProject().isAccessible())
 				return res;
 			// non resource markers attached to a project itself
-			markers = resource.getProject().findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true, IResource.DEPTH_ZERO);
+			markers = resource.getProject().findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
+					IResource.DEPTH_ZERO);
 		}
 		ICheckersRegistry reg = CodanRuntime.getInstance().getCheckersRegistry();
 		Collection<IProblem> problems = reg.getRefProblems(checker);
@@ -235,7 +238,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter implemen
 			ICodanProblemMarker cm = iterator.next();
 			if (mcm.equals(cm))
 				return cm;
-			if (similarTo(mcm, cm)) {
+			if (markersAreSimilar(mcm, cm)) {
 				cand.add(cm);
 			}
 		}
@@ -245,17 +248,17 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter implemen
 	}
 
 	/**
-	 * @param mcm
-	 * @param cm
+	 * @param marker1
+	 * @param marker2
 	 * @return
 	 */
-	private boolean similarTo(ICodanProblemMarker mcm, ICodanProblemMarker other) {
-		if (!mcm.getProblem().getId().equals(other.getProblem().getId()))
+	private boolean markersAreSimilar(ICodanProblemMarker marker1, ICodanProblemMarker marker2) {
+		if (!marker1.getProblem().getId().equals(marker2.getProblem().getId()))
 			return false;
-		if (!Arrays.equals(mcm.getArgs(), other.getArgs()))
+		if (!Arrays.equals(marker1.getArgs(), marker2.getArgs()))
 			return false;
-		IProblemLocation loc1 = mcm.getLocation();
-		IProblemLocation loc2 = other.getLocation();
+		IProblemLocation loc1 = marker1.getLocation();
+		IProblemLocation loc2 = marker2.getLocation();
 		if (!loc1.getFile().equals(loc2.getFile()))
 			return false;
 		if (Math.abs(loc1.getLineNumber() - loc2.getLineNumber()) > 2)
@@ -265,14 +268,12 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter implemen
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.codan.core.model.IProblemReporterSessionPersistent#
-	 * deleteProblems(boolean)
+	 *
+	 * @see IProblemReporterSessionPersistent#deleteProblems(boolean)
 	 */
 	public void deleteProblems(boolean all) {
-		if (all == false)
-			deleteProblems(resource, checker);
-		else
+		if (all)
 			throw new UnsupportedOperationException();
+		deleteProblems(resource, checker);
 	}
 }

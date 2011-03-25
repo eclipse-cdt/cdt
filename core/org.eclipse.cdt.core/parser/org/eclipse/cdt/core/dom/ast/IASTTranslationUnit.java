@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileSet;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -325,7 +326,8 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IAdaptabl
 	public IASTTranslationUnit copy();
 
 	/**
-	 * Returns a copy of the AST, however the ILocationResolver and the preprocessor nodes are not copied.
+	 * Returns a copy of the AST, however the ILocationResolver and the preprocessor nodes are not
+	 * copied.
 	 * 
 	 * @see IASTNode#copy()
 	 * 
@@ -333,4 +335,12 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IAdaptabl
 	 * @since 5.3
 	 */
 	public IASTTranslationUnit copy(CopyStyle style);
+
+	/**
+	 * Returns the ITranslationUnit this AST originated from, or <code>null</code> if the AST
+	 * does not correspond to an ITranslationUnit.
+	 * 
+	 * @since 5.3
+	 */
+	public ITranslationUnit getOriginatingTranslationUnit();
 }

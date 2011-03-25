@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileSet;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
@@ -46,9 +47,11 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Abstract base class for all translation units.
+ *
+ * This class and other ASTNode subclasses are not thread safe.
+ * Even 'get' methods may cause changes to the underlying object.
  */
 public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslationUnit, ISkippedIndexedFilesListener {
-
 	private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = new IASTPreprocessorStatement[0];
 	private static final IASTPreprocessorMacroDefinition[] EMPTY_PREPROCESSOR_MACRODEF_ARRAY = new IASTPreprocessorMacroDefinition[0];
 	private static final IASTPreprocessorIncludeStatement[] EMPTY_PREPROCESSOR_INCLUSION_ARRAY = new IASTPreprocessorIncludeStatement[0];
@@ -66,9 +69,9 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private IIndexFileSet fASTFileSet;
 	private INodeFactory fNodeFactory;
 	private boolean fForContentAssist;
-	
-	
-    @Override
+	private ITranslationUnit fOriginatingTranslationUnit;
+
+	@Override
 	public final IASTTranslationUnit getTranslationUnit() {
     	return this;
     }
@@ -77,7 +80,8 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		if (d != null) {
 			d.setParent(this);
 			d.setPropertyInParent(OWNED_DECLARATION);
-			fAllDeclarations = (IASTDeclaration[]) ArrayUtil.append(IASTDeclaration.class, fAllDeclarations, ++fLastDeclaration, d);
+			fAllDeclarations = (IASTDeclaration[]) ArrayUtil.append(IASTDeclaration.class,
+					fAllDeclarations, ++fLastDeclaration, d);
 			fActiveDeclarations= null;
 		}
 	}
@@ -93,7 +97,8 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 
 	public final IASTDeclaration[] getDeclarations(boolean includeInactive) {
 		if (includeInactive) {
-			fAllDeclarations= (IASTDeclaration[]) ArrayUtil.removeNullsAfter(IASTDeclaration.class, fAllDeclarations, fLastDeclaration);
+			fAllDeclarations= (IASTDeclaration[]) ArrayUtil.removeNullsAfter(IASTDeclaration.class,
+					fAllDeclarations, fLastDeclaration);
 			return fAllDeclarations;
 		}
 		return getDeclarations();
@@ -386,8 +391,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	public final IIndexFileSet getASTFileSet() {
 		return fASTFileSet;
 	}
-	
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -408,14 +412,15 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	
 	protected void copyAbstractTU(ASTTranslationUnit copy, CopyStyle style) {
 		copy.setIndex(fIndex);
-		copy.setIsHeaderUnit(fIsHeader);
-		copy.setASTNodeFactory(fNodeFactory);
+		copy.fIsHeader = fIsHeader;
+		copy.fNodeFactory = fNodeFactory;
 		copy.setLocationResolver(fLocationResolver);
-		copy.setIsForContentAssist(fForContentAssist);
+		copy.fForContentAssist = fForContentAssist;
+		copy.fOriginatingTranslationUnit = fOriginatingTranslationUnit;
 		
 		for (IASTDeclaration declaration : getDeclarations())
 			copy.addDeclaration(declaration == null ? null : declaration.copy(style));
-		
+
 		copy.setOffsetAndLength(this);
 	}
 	
@@ -427,5 +432,18 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 				return PROCESS_CONTINUE;
 			}
 		});
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getOriginatingTranslationUnit()
+	 */
+	public ITranslationUnit getOriginatingTranslationUnit() {
+		return fOriginatingTranslationUnit;
+	}
+
+	public void setOriginatingTranslationUnit(ITranslationUnit tu) {
+		this.fOriginatingTranslationUnit = tu;
 	}
 }

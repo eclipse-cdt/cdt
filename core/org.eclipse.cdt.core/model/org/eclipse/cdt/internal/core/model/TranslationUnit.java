@@ -66,6 +66,7 @@ import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.parser.ParserLogService;
@@ -92,7 +93,6 @@ import org.eclipse.core.runtime.content.IContentType;
  * @see ITranslationUnit
  */
 public class TranslationUnit extends Openable implements ITranslationUnit {
-
 	private URI location = null;
 	private String contentTypeId;
 
@@ -775,35 +775,39 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 		
 		FileContent fileContent= FileContent.create(this);
-		if (fileContent != null) {
-			ILanguage language= configureWith.getLanguage();
-			fLanguageOfContext= language;
-			if (language != null) {
-				IncludeFileContentProvider crf= getIncludeFileContentProvider(style, index, language.getLinkageID());
-				int options= 0;
-				if ((style & AST_SKIP_FUNCTION_BODIES) != 0) {
-					options |= ILanguage.OPTION_SKIP_FUNCTION_BODIES;
-				}
-				if ((style & AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
-					options |= ILanguage.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS;
-				}
-				if ((style & AST_PARSE_INACTIVE_CODE) != 0) {
-					options |= ILanguage.OPTION_PARSE_INACTIVE_CODE;
-				}
-				if (isSourceUnit()) {
-					options |= ILanguage.OPTION_IS_SOURCE_UNIT;
-				}
-				final IParserLogService log;
-				if (monitor instanceof ICanceler) {
-					log= new ParserLogService(DebugLogConstants.PARSER, (ICanceler)monitor);
-				} else {
-					log= ParserUtil.getParserLogService();
-				}
-				return ((AbstractLanguage) language).getASTTranslationUnit(fileContent, scanInfo, crf, index,
-						options, log);
-			}
+		if (fileContent == null) {
+			return null;
 		}
-		return null;
+		ILanguage language= configureWith.getLanguage();
+		fLanguageOfContext= language;
+		if (language == null) {
+			return null;
+		}
+
+		IncludeFileContentProvider crf= getIncludeFileContentProvider(style, index, language.getLinkageID());
+		int options= 0;
+		if ((style & AST_SKIP_FUNCTION_BODIES) != 0) {
+			options |= ILanguage.OPTION_SKIP_FUNCTION_BODIES;
+		}
+		if ((style & AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
+			options |= ILanguage.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS;
+		}
+		if ((style & AST_PARSE_INACTIVE_CODE) != 0) {
+			options |= ILanguage.OPTION_PARSE_INACTIVE_CODE;
+		}
+		if (isSourceUnit()) {
+			options |= ILanguage.OPTION_IS_SOURCE_UNIT;
+		}
+		final IParserLogService log;
+		if (monitor instanceof ICanceler) {
+			log= new ParserLogService(DebugLogConstants.PARSER, (ICanceler)monitor);
+		} else {
+			log= ParserUtil.getParserLogService();
+		}
+		ASTTranslationUnit ast = (ASTTranslationUnit) ((AbstractLanguage) language).getASTTranslationUnit(
+				fileContent, scanInfo, crf, index, options, log);
+		ast.setOriginatingTranslationUnit(this);
+		return ast;
 	}
 
 	private IncludeFileContentProvider getIncludeFileContentProvider(int style, IIndex index, int linkageID) {
@@ -897,6 +901,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				final IASTTranslationUnit ast = result.getTranslationUnit();
 				if (ast != null) {
 					ast.setIsHeaderUnit(!isSourceUnit());
+					((ASTTranslationUnit) ast).setOriginatingTranslationUnit(this);
 				}
 			}
 			return result;

@@ -69,12 +69,12 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	private void addBuiltinOperators(CPPScope theScope) {
         // void
         IType cpp_void = new CPPBasicType(Kind.eVoid, 0);
-        // void *
+        // void*
         IType cpp_void_p = new CPPPointerType(new CPPQualifierType(new CPPBasicType(Kind.eVoid, 0), false, false), new CPPASTPointer());
         // size_t // assumed: unsigned long int
         IType cpp_size_t = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG & IBasicType.IS_UNSIGNED);
 
-		// void * operator new (std::size_t);
+		// void* operator new(std::size_t);
         IBinding temp = null;
         IType[] newParms = new IType[1];
         newParms[0] = cpp_size_t;
@@ -84,7 +84,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
         temp = new CPPImplicitFunction(OverloadableOperator.NEW.toCharArray(), theScope, newFunctionType, newTheParms, false);
         theScope.addBinding(temp);
 		
-		// void * operator new[] (std::size_t);
+		// void* operator new[](std::size_t);
 		temp = null;
         temp = new CPPImplicitFunction(OverloadableOperator.NEW_ARRAY.toCharArray(), theScope, newFunctionType, newTheParms, false);
         theScope.addBinding(temp);

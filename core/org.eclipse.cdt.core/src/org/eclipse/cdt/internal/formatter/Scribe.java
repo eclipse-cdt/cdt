@@ -514,13 +514,10 @@ public class Scribe {
 		int indent= someColumn - 1;
 		if (indent == 0)
 			return indentationLevel;
-		if (tabChar == DefaultCodeFormatterOptions.TAB) {
-			if (useTabsOnlyForLeadingIndents) {
-				return indent;
-			}
-			int rem= indent % indentationSize;
-			int addition= rem == 0 ? 0 : indentationSize - rem; // round to superior
-			return indent + addition;
+		if (tabChar == DefaultCodeFormatterOptions.TAB && !useTabsOnlyForLeadingIndents) {
+			// Round up to a multiple of indentationSize.
+			indent += indentationSize - 1;
+			return indent - indent % indentationSize;
 		} else {
 			return indent;
 		}

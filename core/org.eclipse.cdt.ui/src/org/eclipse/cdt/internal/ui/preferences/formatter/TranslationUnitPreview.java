@@ -10,7 +10,6 @@
  *     Sergey Prigogin, Google
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
 import java.util.HashMap;
@@ -31,9 +30,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
 
-
 public class TranslationUnitPreview extends CPreview {
-
     private String fPreviewText;
 	private String fFormatterId;
 

@@ -51,9 +51,9 @@ import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
  * @since 4.0
  */
 public abstract class CPreview {
-    
+
 	private final class CSourcePreviewerUpdater {
-	    
+
 	    final IPropertyChangeListener fontListener= new IPropertyChangeListener() {
 	        public void propertyChange(PropertyChangeEvent event) {
 	            if (event.getProperty().equals(PreferenceConstants.EDITOR_TEXT_FONT)) {
@@ -76,7 +76,6 @@ public abstract class CPreview {
 		};
 		
 		public CSourcePreviewerUpdater() {
-			
 		    JFaceResources.getFontRegistry().addListener(fontListener);
 		    fPreferenceStore.addPropertyChangeListener(propertyListener);
 			
@@ -189,8 +188,6 @@ public abstract class CPreview {
 	    }
 	    return defaultValue;
 	}		
-	
-
 	
 	public Map<String, String> getWorkingValues() {
 		return fWorkingValues;

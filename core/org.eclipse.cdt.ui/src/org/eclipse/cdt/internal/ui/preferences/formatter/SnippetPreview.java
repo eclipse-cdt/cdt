@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
 import java.util.ArrayList;
@@ -28,11 +27,9 @@ import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
 
-
 public class SnippetPreview extends CPreview {
   
     public final static class PreviewSnippet {
-        
         public String header;
         public final String source;
         public final int kind;
@@ -45,7 +42,7 @@ public class SnippetPreview extends CPreview {
     
     private ArrayList<PreviewSnippet> fSnippets;
 
-    public SnippetPreview(Map<String,String> workingValues, Composite parent) {
+    public SnippetPreview(Map<String, String> workingValues, Composite parent) {
         super(workingValues, parent);
         fSnippets= new ArrayList<PreviewSnippet>();
     }
@@ -57,14 +54,15 @@ public class SnippetPreview extends CPreview {
             return;
         }
         
-        //This delimiter looks best for invisible characters
+        // This delimiter looks best for invisible characters
         final String delimiter= "\n"; //$NON-NLS-1$
         
         final StringBuffer buffer= new StringBuffer();
         for (PreviewSnippet snippet: fSnippets) {
             String formattedSource;
             try {
-                TextEdit edit= CodeFormatterUtil.format(snippet.kind, snippet.source, 0, delimiter, fWorkingValues);
+                TextEdit edit= CodeFormatterUtil.format(snippet.kind, snippet.source, 0, delimiter,
+                		fWorkingValues);
         		if (edit == null) {
         			formattedSource= snippet.source;
         		} else {
@@ -73,8 +71,9 @@ public class SnippetPreview extends CPreview {
         			formattedSource= document.get();
         		}
             } catch (Exception e) {
-                final IStatus status= new Status(IStatus.ERROR, CUIPlugin.getPluginId(), ICStatusConstants.INTERNAL_ERROR, 
-                    FormatterMessages.CPreview_formatter_exception, e); 
+                final IStatus status= new Status(IStatus.ERROR, CUIPlugin.getPluginId(),
+                		ICStatusConstants.INTERNAL_ERROR,
+                		FormatterMessages.CPreview_formatter_exception, e); 
                 CUIPlugin.log(status);
                 continue;
             }
@@ -85,9 +84,7 @@ public class SnippetPreview extends CPreview {
         }
         fPreviewDocument.set(buffer.toString());
     }
-    
-    
-    
+
     public void add(PreviewSnippet snippet) {
         fSnippets.add(snippet);
     }
@@ -103,5 +100,4 @@ public class SnippetPreview extends CPreview {
     public void clear() {
         fSnippets.clear();
     }
-
 }

@@ -21,8 +21,7 @@ import org.eclipse.text.edits.TextEdit;
  * @since 3.0
  */
 public abstract class CodeFormatter {
-
-  public static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/**
 	 * Unknown kind.
@@ -66,11 +65,11 @@ public abstract class CodeFormatter {
 
 	/**
 	 * Format <code>source</code>,
-	 * and returns a text edit that correspond to the difference between the given string and the formatted string.
-	 * It returns null if the given string cannot be formatted.
+	 * and returns a text edit that correspond to the difference between the given string and
+	 * the formatted string. It returns null if the given string cannot be formatted.
 	 * 
-	 * If the offset position is matching a whitespace, the result can include whitespaces. It would be up to the
-	 * caller to get rid of preceeding whitespaces.
+	 * If the offset position is matching a whitespace, the result can include whitespaces.
+	 * It would be up to the caller to get rid of preceding whitespaces.
 	 * 
 	 * @param kind Use to specify the kind of the code snippet to format. It can be any of these:
 	 * 		  K_EXPRESSION, K_STATEMENTS, K_CLASS_BODY_DECLARATIONS, K_TRANSLATION_UNIT, K_UNKNOWN
@@ -86,25 +85,26 @@ public abstract class CodeFormatter {
 	 * @throws IllegalArgumentException if offset is lower than 0, length is lower than 0 or
 	 * length is greater than source length.
 	 */
-	public abstract TextEdit format(int kind, String source, int offset, int length, int indentationLevel, String lineSeparator);
+	public abstract TextEdit format(int kind, String source, int offset, int length,
+			int indentationLevel, String lineSeparator);
 	
 	/**
 	 * @param options - general formatter options
 	 */
 	public abstract void setOptions(Map<String, ?> options);
   
-  /**
-   * Answers the string that corresponds to the indentation to the given indentation level or an empty string
-   * if the indentation cannot be computed.
-   * <p>This method needs to be overriden in a subclass.</p>
-   * 
-   * <p>The default implementation returns an empty string.</p>
-   * 
-   * @param indentationLevel the given indentation level
-   * @return the string corresponding to the right indentation level
-   * @exception IllegalArgumentException if the given indentation level is lower than zero
-   */
-  public String createIndentationString(int indentationLevel) {
-    return EMPTY_STRING;
-  }
+	/**
+	 * Answers the string that corresponds to the indentation to the given indentation level,
+	 * or an empty string if the indentation cannot be computed.
+	 * <p>This method needs to be overridden in a subclass.</p>
+	 * 
+	 * <p>The default implementation returns an empty string.</p>
+	 * 
+	 * @param indentationLevel the given indentation level
+	 * @return the string corresponding to the right indentation level
+	 * @exception IllegalArgumentException if the given indentation level is lower than zero
+	 */
+	public String createIndentationString(int indentationLevel) {
+		return EMPTY_STRING;
+	}
 }

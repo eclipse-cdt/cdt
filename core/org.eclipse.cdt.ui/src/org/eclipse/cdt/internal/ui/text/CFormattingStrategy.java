@@ -33,8 +33,6 @@ import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
  * @author AChapiro
  */
 public class CFormattingStrategy extends ContextBasedFormattingStrategy {
-	
-
 	/** Documents to be formatted by this strategy */
 	private final LinkedList<IDocument> fDocuments= new LinkedList<IDocument>();
 	/** Partitions to be formatted by this strategy */
@@ -60,7 +58,7 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 		if (document != null && partition != null) {
 			try {
 				@SuppressWarnings("unchecked")
-				final Map<String,String> preferences = getPreferences();
+				final Map<String, String> preferences = getPreferences();
 				final TextEdit edit = CodeFormatterUtil.format(
 						CodeFormatter.K_TRANSLATION_UNIT, document.get(),
 						partition.getOffset(), partition.getLength(), 0,
@@ -69,13 +67,12 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 
 				if (edit != null)
 					edit.apply(document);
-
-			} catch (MalformedTreeException exception) {
-				CUIPlugin.log(exception);
-			} catch (BadLocationException exception) {
+			} catch (MalformedTreeException e) {
+				CUIPlugin.log(e);
+			} catch (BadLocationException e) {
 				// Can only happen on concurrent document modification - log and
 				// bail out
-				CUIPlugin.log(exception);
+				CUIPlugin.log(e);
 			}
 		}
  	}
@@ -107,5 +104,4 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 		fPartitions.clear();
 		fDocuments.clear();
 	}
-
 }

@@ -146,10 +146,11 @@ public abstract class CPreview {
 		
 		// update the tab size
 		final int tabSize= getPositiveIntValue(fWorkingValues.get(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE), 0);
-		if (tabSize != fTabSize) fSourceViewer.getTextWidget().setTabs(tabSize);
+		if (tabSize != fTabSize)
+			fSourceViewer.getTextWidget().setTabs(tabSize);
 		fTabSize= tabSize;
 		
-		final StyledText widget= (StyledText)fSourceViewer.getControl();
+		final StyledText widget= (StyledText) fSourceViewer.getControl();
 		final int height= widget.getClientArea().height;
 		final int top0= widget.getTopPixel();
 		
@@ -163,7 +164,7 @@ public abstract class CPreview {
 		final int totalPixels1= getHeightOfAllLines(widget);
 		final int topPixelRange1= totalPixels1 > height ? totalPixels1 - height : 0;
 
-		final int top1= topPixelRange0 > 0 ? (int)(topPixelRange1 * top0 / (double)topPixelRange0) : 0;
+		final int top1= topPixelRange0 > 0 ? (int) (topPixelRange1 * top0 / (double) topPixelRange0) : 0;
 		widget.setTopPixel(top1);
 		widget.setRedraw(true);
 	}

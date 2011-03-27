@@ -38,7 +38,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISourceReference, ISourceManipulation {
-	
 	/**
 	 * Style constant for {@link #getAST(IIndex, int)}. 
 	 * Meaning: Skip function and method bodies.
@@ -140,8 +139,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	IInclude createInclude(String name, boolean isStd, ICElement sibling, IProgressMonitor monitor) throws CModelException;
 
 	/**
-	 * Creates and returns a using declaration/directive in this translation unit
-	 *
+	 * Creates and returns a using declaration/directive in this translation unit.
 	 *
 	 * @param name the name of the using
 	 * @param monitor the progress monitor to notify
@@ -154,7 +152,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * <li> The name is not a valid package name (INVALID_NAME)
 	 * </ul>
 	 */
-	IUsing createUsing (String name, boolean isDirective, ICElement sibling, IProgressMonitor monitor) throws CModelException;   
+	IUsing createUsing(String name, boolean isDirective, ICElement sibling, IProgressMonitor monitor) throws CModelException;   
 
 	/**
 	 * Creates and returns a namespace in this translation unit
@@ -171,7 +169,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * <li> The name is not a valid package name (INVALID_NAME)
 	 * </ul>
 	 */
-	INamespace createNamespace (String namespace, ICElement sibling, IProgressMonitor monitor) throws CModelException;   
+	INamespace createNamespace(String namespace, ICElement sibling, IProgressMonitor monitor) throws CModelException;   
 
 	/**
 	 * Returns the shared working copy for this element, using the default <code>IBuffer</code>
@@ -484,7 +482,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	/**
 	 * @deprecated don't use this method.
 	 */
-	@Deprecated	Map<?,?> parse();
+	@Deprecated	Map<?, ?> parse();
 	/**
 	 * @deprecated, use {@link FileContent#create(ITranslationUnit)}, instead.
 	 */

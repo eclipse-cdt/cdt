@@ -495,7 +495,7 @@ public class Scribe {
 
 	public String getNewLine() {
 		if (lastNumberOfNewLines >= 1) {
-			column= 1; // ensure that the scribe is at the beginning of a new line
+			column= 1; // Ensure that the scribe is at the beginning of a new line
 			return EMPTY_STRING;
 		}
 		line++;

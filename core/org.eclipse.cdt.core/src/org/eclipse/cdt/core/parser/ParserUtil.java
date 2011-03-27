@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM Rational Software - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -33,31 +33,25 @@ import org.eclipse.core.runtime.Path;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class ParserUtil
-{
-	
-	public static IParserLogService getParserLogService()
-	{
+public class ParserUtil {
+	private static IParserLogService parserLogService = new ParserLogService(DebugLogConstants.PARSER);
+	private static IParserLogService scannerLogService = new ParserLogService(DebugLogConstants.SCANNER);
+
+	public static IParserLogService getParserLogService() {
 		return parserLogService;
 	}
 		
-	private static IParserLogService parserLogService = new ParserLogService(DebugLogConstants.PARSER );
-	private static IParserLogService scannerLogService = new ParserLogService(DebugLogConstants.SCANNER );
-
 	public static IParserLogService getScannerLogService() {
 		return scannerLogService;
 	}
 	
-	public static char [] findWorkingCopyBuffer( String path, Iterator<IWorkingCopy> workingCopies )
-	{
+	public static char[] findWorkingCopyBuffer(String path, Iterator<IWorkingCopy> workingCopies) {
 		IResource resultingResource = getResourceForFilename(path);
 			
-		if( resultingResource != null && resultingResource.getType() == IResource.FILE )
-		{
-			// this is the file for sure
-			// check the working copy
-			if( workingCopies.hasNext() )
-				return findWorkingCopy( resultingResource, workingCopies );
+		if (resultingResource != null && resultingResource.getType() == IResource.FILE) {
+			// This is the file for sure. Check the working copy.
+			if (workingCopies.hasNext())
+				return findWorkingCopy(resultingResource, workingCopies);
 		}
 		return null;
 	}
@@ -85,26 +79,24 @@ public class ParserUtil
 		return null;
 	}
 
-
 	public static IResource getResourceForFilename(String finalPath) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		if( workspace == null )
+		if (workspace == null)
 			return null;
-		IPath path = new Path( finalPath );
-		IPath initialPath = new Path( finalPath );
+		IPath path = new Path(finalPath);
+		IPath initialPath = new Path(finalPath);
 		
 		IWorkspaceRoot root = workspace.getRoot();
-        if( root.getLocation().isPrefixOf( path ) )
-			path = path.removeFirstSegments(root.getLocation().segmentCount() );
+        if (root.getLocation().isPrefixOf(path))
+			path = path.removeFirstSegments(root.getLocation().segmentCount());
 
-        try
-        {
+        try {
     		IFile file = root.getFile(path);
-    		if( file != null && file.exists() ) 
+    		if (file != null && file.exists()) 
     		    return file;
     		
-            file = root.getFileForLocation( path );
-            if( file != null && file.exists() ) 
+            file = root.getFileForLocation(path);
+            if (file != null && file.exists()) 
                 return file;
 
             // check for linked resources
@@ -113,28 +105,24 @@ public class ParserUtil
             	return file;
             
     		return null;
-        }
-        catch( IllegalArgumentException iae ) //thrown on invalid paths
-        {
+        } catch (IllegalArgumentException e) { // thrown on invalid paths
             return null;
         }
 	}
 
 	protected static char[] findWorkingCopy(IResource resultingResource, Iterator<IWorkingCopy> workingCopies) {
-		if( parserLogService.isTracing() )
-			parserLogService.traceLog( "Attempting to find the working copy for " + resultingResource.getName() ); //$NON-NLS-1$
-		while( workingCopies.hasNext() )
-		{
+		if (parserLogService.isTracing())
+			parserLogService.traceLog("Attempting to find the working copy for " + resultingResource.getName()); //$NON-NLS-1$
+		while (workingCopies.hasNext()) {
 			IWorkingCopy copy = workingCopies.next();
-			if (resultingResource.equals(copy.getResource()))
-			{
-				if( parserLogService.isTracing() )
-					parserLogService.traceLog( "Working copy found!!" ); //$NON-NLS-1$
+			if (resultingResource.equals(copy.getResource())) {
+				if (parserLogService.isTracing())
+					parserLogService.traceLog("Working copy found!!"); //$NON-NLS-1$
 				return copy.getContents();
 			}
 		}
-		if( parserLogService.isTracing() )
-			parserLogService.traceLog( "Working copy not found." ); //$NON-NLS-1$
+		if (parserLogService.isTracing())
+			parserLogService.traceLog("Working copy not found."); //$NON-NLS-1$
 
 		return null;
 	}

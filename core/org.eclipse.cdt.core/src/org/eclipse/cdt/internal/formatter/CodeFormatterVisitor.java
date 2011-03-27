@@ -100,6 +100,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -204,6 +205,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			this.spaceAfterToken = spaceAfterToken;
 		}
 
+		TrailingTokenFormatter(int tokenType, boolean spaceBeforeToken, boolean spaceAfterToken) {
+			this(tokenType, scribe.findToken(tokenType), spaceBeforeToken, spaceAfterToken);
+		}
+
 		public void run() {
 			int offset = scribe.scanner.getCurrentPosition();
 			if (tokenPosition < 0 || offset > tokenPosition)
@@ -222,18 +227,6 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					scribe.space();
 				}
 			}
-		}
-	}
-
-	/*
-	 * Formats a trailing comma.
-	 * @see #formatList(List, ListOptions, boolean, boolean, Runnable)
-	 */
-	class TrailingSeparatorFormatter extends TrailingTokenFormatter {
-		TrailingSeparatorFormatter(int separatorToken, boolean spaceBeforeSeparator,
-				boolean spaceAfterSeparator) {
-			super(separatorToken, scribe.findToken(separatorToken), spaceBeforeSeparator,
-					spaceAfterSeparator);
 		}
 	}
 
@@ -1222,7 +1215,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	private int visit(ICPPASTConstructorInitializer node) {
 		if (!startNode(node)) { return PROCESS_SKIP; }
 		try {
-			// format like a function call
+			// Format like a function call
 			formatFunctionCallArguments(node.getArguments());
 		} finally {
 			endOfNode(node);
@@ -2046,7 +2039,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 								final IASTNode node= elements.get(i);
 								if (i < alignment.fragmentCount - 1) {
 									scribe.setTailFormatter(
-											new TrailingSeparatorFormatter(options.fSeparatorToken,
+											new TrailingTokenFormatter(options.fSeparatorToken,
 													options.fSpaceBeforeSeparator,
 													options.fSpaceAfterSeparator));
 								} else {
@@ -2249,6 +2242,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			expressions= Collections.emptyList();
 		}
 		final ListOptions options= new ListOptions(preferences.alignment_for_arguments_in_method_invocation);
+		options.fSeparatorToken = Token.tCOMMA;
 		options.fInsertNewLineBeforeListIfNecessary= true;
 		options.fSpaceBeforeOpeningParen= preferences.insert_space_before_opening_paren_in_method_invocation;
 		options.fSpaceAfterOpeningParen= preferences.insert_space_after_opening_paren_in_method_invocation;
@@ -2540,6 +2534,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (isAssignment(node)) {
 			return formatAssignment(node);
 		}
+		if (isOverloadedLeftShift(node)) {
+			return formatOverloadedLeftShiftChain(node);
+		}
 
 		Runnable tailFormatter = scribe.getTailFormatter();
 
@@ -2656,6 +2653,100 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			return true;
 		}
 		return false;
+	}
+
+	private int formatOverloadedLeftShiftChain(IASTBinaryExpression binaryExpression) {
+		List<IASTExpression> elements = new ArrayList<IASTExpression>();
+		IASTExpression node;
+		do {
+			elements.add(binaryExpression.getOperand2());
+			node = binaryExpression.getOperand1();
+			if (!(node instanceof IASTBinaryExpression)) {
+				break;
+			}
+			binaryExpression = (IASTBinaryExpression) node;
+		} while (isOverloadedLeftShift(binaryExpression));
+		Collections.reverse(elements);
+
+		node.accept(this);
+		scribe.printComment();
+		if (preferences.insert_space_before_binary_operator) {
+			scribe.space();
+		}
+
+		Runnable tailFormatter = scribe.getTailFormatter();
+		
+		Alignment wrapperAlignment = null;
+		if ((preferences.alignment_for_overloaded_left_shift_chain & Alignment.M_INDENT_ON_COLUMN) != 0) {
+			wrapperAlignment = scribe.createAlignment(
+					Alignment.LIST_WRAPPER,
+					Alignment.M_COMPACT_FIRST_BREAK_SPLIT,
+					Alignment.R_INNERMOST,
+					1,
+					scribe.scanner.getCurrentPosition(),
+					preferences.continuation_indentation,
+					false);
+			scribe.enterAlignment(wrapperAlignment);
+		}
+		boolean success = false;
+		do {
+			if (wrapperAlignment != null)
+				scribe.alignFragment(wrapperAlignment, 0);
+
+			try {
+				Alignment alignment = scribe.createAlignment(
+						Alignment.OVERLOADED_LEFT_SHIFT_CHAIN,
+						preferences.alignment_for_overloaded_left_shift_chain,
+						Alignment.R_OUTERMOST,
+						elements.size(),
+						scribe.scanner.getCurrentPosition(),
+						wrapperAlignment == null ? preferences.continuation_indentation : 0,
+						false);
+				scribe.enterAlignment(alignment);
+				boolean ok = false;
+				do {
+					try {
+						for (int i = 0; i < elements.size(); i++) {
+							scribe.alignFragment(alignment, i);
+							int token= peekNextToken();
+							if (token == Token.tSHIFTL) {
+								scribe.printNextToken(token, preferences.insert_space_before_binary_operator);
+								scribe.printTrailingComment();
+								if (preferences.insert_space_after_binary_operator) {
+									scribe.space();
+								}
+							}
+							node= elements.get(i);
+							if (i == alignment.fragmentCount - 1) {
+								scribe.setTailFormatter(tailFormatter);
+							}
+							node.accept(this);
+						}
+						scribe.runTailFormatter();
+						ok = true;
+					} catch (AlignmentException e) {
+						scribe.redoAlignment(e);
+					} catch (ASTProblemException e) {
+					}
+				} while (!ok);
+				scribe.exitAlignment(alignment, true);
+				success = true;
+			} catch (AlignmentException e) {
+				if (wrapperAlignment == null)
+					throw e;
+				scribe.redoAlignment(e);
+			}
+		} while (wrapperAlignment != null && !success);
+		if (wrapperAlignment != null)
+			scribe.exitAlignment(wrapperAlignment, true);
+
+    	return PROCESS_SKIP;
+	}
+
+	private boolean isOverloadedLeftShift(IASTBinaryExpression node) {
+		return node.getOperator() == IASTBinaryExpression.op_shiftLeft && 
+				node instanceof ICPPASTBinaryExpression &&
+				((ICPPASTBinaryExpression) node).getOverload() != null;
 	}
 
 	private int visit(IASTLiteralExpression node) {

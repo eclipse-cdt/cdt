@@ -32,6 +32,7 @@ import org.eclipse.cdt.internal.ui.ICStatusConstants;
 
 public class TranslationUnitPreview extends CPreview {
     private String fPreviewText;
+    private int fPreviewTextOffset;
 	private String fFormatterId;
 
     /**
@@ -50,6 +51,7 @@ public class TranslationUnitPreview extends CPreview {
         }
         fPreviewDocument.set(fPreviewText);
 		
+		fSourceViewer.setVisibleRegion(fPreviewTextOffset, fPreviewText.length() - fPreviewTextOffset);
 		fSourceViewer.setRedraw(false);
 		final IFormattingContext context = new FormattingContext();
 		try {
@@ -64,8 +66,9 @@ public class TranslationUnitPreview extends CPreview {
 				context.setProperty(FormattingContextProperties.CONTEXT_PREFERENCES, prefs);
 				context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.valueOf(true));
 				extension.format(fPreviewDocument, context);
-			} else
+			} else {
 				formatter.format(fPreviewDocument, new Region(0, fPreviewDocument.getLength()));
+			}
 		} catch (Exception e) {
 			final IStatus status= new Status(IStatus.ERROR, CUIPlugin.getPluginId(), ICStatusConstants.INTERNAL_ERROR, 
 				FormatterMessages.CPreview_formatter_exception, e); 
@@ -77,7 +80,12 @@ public class TranslationUnitPreview extends CPreview {
     }
     
     public void setPreviewText(String previewText) {
+		setPreviewText(previewText, 0);
+	}
+
+	public void setPreviewText(String previewText, int previewTextOffset) {
         fPreviewText= previewText;
+        fPreviewTextOffset = previewTextOffset;
         update();
     }
 

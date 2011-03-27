@@ -65,6 +65,7 @@ public class DefaultCodeFormatterOptions {
 	public int alignment_for_expression_list;
 	public int alignment_for_expressions_in_initializer_list;
 	public int alignment_for_member_access;
+	public int alignment_for_overloaded_left_shift_chain;
 	public int alignment_for_parameters_in_method_declaration;
 	public int alignment_for_throws_clause_in_method_declaration;
 	public int alignment_for_constructor_initializer_list;
@@ -279,6 +280,7 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_INITIALIZER_LIST, getAlignment(this.alignment_for_expressions_in_initializer_list));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSION_LIST, getAlignment(this.alignment_for_expression_list));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_MEMBER_ACCESS, getAlignment(this.alignment_for_member_access));
+		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_OVERLOADED_LEFT_SHIFT_CHAIN, getAlignment(this.alignment_for_overloaded_left_shift_chain));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION, getAlignment(this.alignment_for_parameters_in_method_declaration));
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_SELECTOR_IN_METHOD_INVOCATION, getAlignment(this.alignment_for_selector_in_method_invocation));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BASE_CLAUSE_IN_TYPE_DECLARATION, getAlignment(this.alignment_for_base_clause_in_type_declaration));
@@ -579,6 +581,16 @@ public class DefaultCodeFormatterOptions {
 				this.alignment_for_member_access =  Alignment.M_ONE_PER_LINE_SPLIT;
 			} catch (ClassCastException e) {
 				this.alignment_for_member_access =  Alignment.M_ONE_PER_LINE_SPLIT;
+			}
+		}
+		final Object alignmentForOverloadedLeftShiftChainOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_OVERLOADED_LEFT_SHIFT_CHAIN);
+		if (alignmentForOverloadedLeftShiftChainOption != null) {
+			try {
+				this.alignment_for_overloaded_left_shift_chain = Integer.parseInt((String) alignmentForOverloadedLeftShiftChainOption);
+			} catch (NumberFormatException e) {
+				this.alignment_for_overloaded_left_shift_chain = Alignment.M_COMPACT_SPLIT;
+			} catch (ClassCastException e) {
+				this.alignment_for_overloaded_left_shift_chain = Alignment.M_COMPACT_SPLIT;
 			}
 		}
 		final Object alignmentForParametersInMethodDeclarationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION);
@@ -1477,6 +1489,7 @@ public class DefaultCodeFormatterOptions {
 		this.alignment_for_enumerator_list = Alignment.M_ONE_PER_LINE_SPLIT;
 		this.alignment_for_expressions_in_initializer_list = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_member_access = Alignment.M_NO_ALIGNMENT;
+		this.alignment_for_overloaded_left_shift_chain = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_parameters_in_method_declaration = Alignment.M_COMPACT_SPLIT;
 //		this.alignment_for_selector_in_method_invocation = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_throws_clause_in_method_declaration = Alignment.M_COMPACT_SPLIT;

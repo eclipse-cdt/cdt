@@ -123,19 +123,19 @@ public class CCodeFormatter extends CodeFormatter {
 	@Override
 	public TextEdit format(int kind, String source, int offset, int length, int indentationLevel, String lineSeparator) {
 		TextEdit edit= null;
-		ITranslationUnit tu= (ITranslationUnit)options.get(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT);
+		ITranslationUnit tu= (ITranslationUnit) options.get(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT);
 		if (tu == null) {
-			IFile file= (IFile)options.get(DefaultCodeFormatterConstants.FORMATTER_CURRENT_FILE);
+			IFile file= (IFile) options.get(DefaultCodeFormatterConstants.FORMATTER_CURRENT_FILE);
 			if (file != null) {
-				tu= (ITranslationUnit)CoreModel.getDefault().create(file);
+				tu= (ITranslationUnit) CoreModel.getDefault().create(file);
 			}
 		}
 		if (lineSeparator != null) {
-			this.preferences.line_separator = lineSeparator;
+			preferences.line_separator = lineSeparator;
 		} else {
-			this.preferences.line_separator = System.getProperty("line.separator"); //$NON-NLS-1$
+			preferences.line_separator = System.getProperty("line.separator"); //$NON-NLS-1$
 		}
-		this.preferences.initial_indentation_level = indentationLevel;
+		preferences.initial_indentation_level = indentationLevel;
 
 		if (tu != null) {
 			IIndex index;
@@ -154,7 +154,7 @@ public class CCodeFormatter extends CodeFormatter {
 				} catch (CoreException exc) {
 					throw new AbortFormatting(exc);
 				}
-				CodeFormatterVisitor codeFormatter = new CodeFormatterVisitor(this.preferences, offset, length);
+				CodeFormatterVisitor codeFormatter = new CodeFormatterVisitor(preferences, offset, length);
 				edit= codeFormatter.format(source, ast);
 				IStatus status= codeFormatter.getStatus();
 				if (!status.isOK()) {
@@ -165,22 +165,21 @@ public class CCodeFormatter extends CodeFormatter {
 			}
 		} else {
 			IncludeFileContentProvider contentProvider = IncludeFileContentProvider.getSavedFilesProvider();
-			
 			IScannerInfo scanInfo = new ScannerInfo();
-			
 			FileContent content = FileContent.create("<text>", source.toCharArray()); //$NON-NLS-1$
 			
-			ILanguage language= (ILanguage)options.get(DefaultCodeFormatterConstants.FORMATTER_LANGUAGE);
+			ILanguage language= (ILanguage) options.get(DefaultCodeFormatterConstants.FORMATTER_LANGUAGE);
 			if (language == null) {
 				language= GPPLanguage.getDefault();
 			}
 			IASTTranslationUnit ast;
 			try {
-				ast= language.getASTTranslationUnit(content, scanInfo, contentProvider, null, 0, ParserUtil.getParserLogService());
-				CodeFormatterVisitor codeFormatter = new CodeFormatterVisitor(this.preferences, offset, length);
+				ast= language.getASTTranslationUnit(content, scanInfo, contentProvider, null, 0,
+						ParserUtil.getParserLogService());
+				CodeFormatterVisitor codeFormatter = new CodeFormatterVisitor(preferences, offset, length);
 				edit= codeFormatter.format(source, ast);
-			} catch (CoreException exc) {
-				throw new AbortFormatting(exc);
+			} catch (CoreException e) {
+				throw new AbortFormatting(e);
 			}
 		}
 		return edit;

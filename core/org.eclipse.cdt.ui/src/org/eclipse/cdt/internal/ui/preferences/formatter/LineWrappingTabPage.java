@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
@@ -55,23 +56,29 @@ import org.eclipse.cdt.internal.corext.util.Messages;
 public class LineWrappingTabPage extends FormatterTabPage {
 
     /**
-     * Represents a line wrapping category. All members are final.
+     * Represents a line wrapping category.
      */
 	private final static class Category {
 		public final String key;
 		public final String name;
 		public final String previewText;
-		public final String description; //bug 235453: for categories' labels
+		public final String prologue;
+		public final String description; // bug 235453: for categories' labels
 		public final List<Category> children;
 
 		public int index;
 
-		public Category(String key, String previewText, String name, String description) {
+		public Category(String key, String prologue, String previewText, String name, String description) {
 			this.key= key;
 			this.name= name;
+			this.prologue = prologue;
 			this.previewText= previewText != null ? createPreviewHeader(name) + previewText : null;
 			this.description = description;
 			children= new ArrayList<Category>();
+		}
+		
+		public Category(String key, String previewText, String name, String description) {
+			this(key, null, previewText, name, description);
 		}
 		
 		/**
@@ -165,7 +172,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 				index= 1; // In order to select a category with preview initially
 			}
 			final Category category= fCategoriesList.get(index);
-			fCategoriesViewer.setSelection(new StructuredSelection(new Category[] {category}));
+			fCategoriesViewer.setSelection(new StructuredSelection(new Category[] { category }));
 		}
 
         public void doubleClick(DoubleClickEvent event) {
@@ -187,10 +194,10 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	        fElements.clear();
 	        evaluateElements(selection.iterator());
 	        evaluateMaps(wrappingStyleMap, indentStyleMap, forceWrappingMap);
-	        setPreviewText(getPreviewText(wrappingStyleMap, indentStyleMap, forceWrappingMap));
+            evaluatePreviewText();
 	        refreshControls(wrappingStyleMap, indentStyleMap, forceWrappingMap);
 	    }
-	    
+
 	    public List<Category> getElements() {
 	        return fElements;
 	    }
@@ -206,32 +213,38 @@ public class LineWrappingTabPage extends FormatterTabPage {
             		if (value != null) {
             			if (!fElements.contains(category))
             				fElements.add(category);
-            		}
-            		else {
+            		} else {
             			evaluateElements(category.children.iterator());
             		}
             	}
             }
         }
 	    
-	    private void evaluateMaps(Map<Object, Integer> wrappingStyleMap, Map<Object, Integer> indentStyleMap, Map<Object, Integer> forceWrappingMap) {
-	        Iterator<Category> iterator= fElements.iterator();
-            while (iterator.hasNext()) {
-                insertIntoMap(wrappingStyleMap, indentStyleMap, forceWrappingMap, iterator.next());
+	    private void evaluateMaps(Map<Object, Integer> wrappingStyleMap, Map<Object, Integer> indentStyleMap,
+	    		Map<Object, Integer> forceWrappingMap) {
+            for (Category category : fElements) {
+                insertIntoMap(wrappingStyleMap, indentStyleMap, forceWrappingMap, category);
             }
 	    }
   
-        private String getPreviewText(Map<Object, Integer> wrappingMap, Map<Object, Integer> indentMap, Map<Object, Integer> forceMap) {
-            Iterator<Category> iterator= fElements.iterator();
-            String previewText= ""; //$NON-NLS-1$
-            while (iterator.hasNext()) {
-                Category category= iterator.next();
-                previewText= previewText + category.previewText + "\n\n"; //$NON-NLS-1$
+		private void evaluatePreviewText() {
+			StringBuilder previewText = new StringBuilder();
+            for (Category category : fElements) {
+            	if (category.prologue != null) {
+	                previewText.append(category.prologue);
+	                previewText.append("\n\n"); //$NON-NLS-1$
+            	}
             }
-            return previewText;
-        }
-        
-        private void insertIntoMap(Map<Object, Integer> wrappingMap, Map<Object, Integer> indentMap, Map<Object, Integer> forceMap, Category category) {
+            int offset = previewText.length();
+            for (Category category : fElements) {
+                previewText.append(category.previewText);
+                previewText.append("\n\n"); //$NON-NLS-1$
+            }
+	        setPreviewText(previewText.toString(), offset);
+		}
+	    
+        private void insertIntoMap(Map<Object, Integer> wrappingMap, Map<Object, Integer> indentMap,
+        		Map<Object, Integer> forceMap, Category category) {
             final String value= fWorkingValues.get(category.key);
             Integer wrappingStyle;
             Integer indentStyle;
@@ -260,7 +273,8 @@ public class LineWrappingTabPage extends FormatterTabPage {
                 map.put(type, new Integer(count.intValue() + 1));
         }
                 
-        private void refreshControls(Map<Object, Integer> wrappingStyleMap, Map<Object, Integer> indentStyleMap, Map<Object, Integer> forceWrappingMap) {
+        private void refreshControls(Map<Object, Integer> wrappingStyleMap, Map<Object, Integer> indentStyleMap,
+        		Map<Object, Integer> forceWrappingMap) {
             updateCombos(wrappingStyleMap, indentStyleMap);
             updateButton(forceWrappingMap);
             Integer wrappingStyleMax= getWrappingStyleMax(wrappingStyleMap);
@@ -272,7 +286,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
         
         private Integer getWrappingStyleMax(Map<Object, Integer> wrappingStyleMap) {
             int maxCount= 0, maxStyle= 0;
-            for (int i=0; i<WRAPPING_NAMES.length; i++) {
+            for (int i= 0; i < WRAPPING_NAMES.length; i++) {
                 Integer count= wrappingStyleMap.get(new Integer(i));
                 if (count == null)
                     continue;
@@ -301,7 +315,8 @@ public class LineWrappingTabPage extends FormatterTabPage {
         private String getLabelText(String label, int count, int nElements) {
             if (nElements == 1 || count == 0)
                 return label;
-            return Messages.format(FormatterMessages.LineWrappingTabPage_occurences, new String[] {label, Integer.toString(count), Integer.toString(nElements)}); 
+            return Messages.format(FormatterMessages.LineWrappingTabPage_occurences,
+            		new String[] {label, Integer.toString(count), Integer.toString(nElements)}); 
         }
         
         private int getMax(Integer nrOfTrue, Integer nrOfFalse) {
@@ -478,6 +493,34 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	    	FormatterMessages.LineWrappingTabPage_member_access_lowercase
 		);
 
+	private final Category fStreamOutputExpressionCategory= new Category(
+		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_OVERLOADED_LEFT_SHIFT_CHAIN,
+		    // Invisible code 
+		    "namespace std {\n" +  //$NON-NLS-1$
+		    "class ostream {\n" +  //$NON-NLS-1$
+		    "    ostream& operator<<(int);\n" +  //$NON-NLS-1$
+		    "    ostream& operator<<(char);\n" +  //$NON-NLS-1$
+		    "    ostream& operator<<(const char*);\n" +  //$NON-NLS-1$
+		    "};\n" +  //$NON-NLS-1$
+		    "int setfill(char);\n" +  //$NON-NLS-1$
+		    "int setw(int);\n" +  //$NON-NLS-1$
+		    "extern char endl;\n" +  //$NON-NLS-1$
+		    "extern ostream cout;\n" +  //$NON-NLS-1$
+		    "}", //$NON-NLS-1$
+		    // Visible code
+		    "#include <iostream>\n" + //$NON-NLS-1$
+		    "#include <iomanip>\n" + //$NON-NLS-1$
+		    "\n" + //$NON-NLS-1$
+		    "using namespace std;\n" + //$NON-NLS-1$
+		    "\n" + //$NON-NLS-1$
+		    "void PrintDate(int year, int month, int day) {" + //$NON-NLS-1$
+		    "cout << setfill('0') << setw(4) << year << '/' << setw(2) << month" + //$NON-NLS-1$
+		    " << '/' << setw(2) << day << endl;" + //$NON-NLS-1$
+		    "}", //$NON-NLS-1$
+		    FormatterMessages.LineWrappingTabPage_stream_output,
+	    	FormatterMessages.LineWrappingTabPage_stream_output
+		);
+
 //	private final Category fEnumConstArgumentsCategory= new Category(
 //	    	DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ENUM_CONSTANT,
 //	    	"enum Example {" + //$NON-NLS-1$
@@ -522,7 +565,8 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	/**
 	 * The key to save the user's preview window width in the dialog settings.
 	 */
-	private static final String PREF_PREVIEW_LINE_WIDTH= CUIPlugin.PLUGIN_ID + ".codeformatter.line_wrapping_tab_page.preview_line_width"; //$NON-NLS-1$
+	private static final String PREF_PREVIEW_LINE_WIDTH=
+			CUIPlugin.PLUGIN_ID + ".codeformatter.line_wrapping_tab_page.preview_line_width"; //$NON-NLS-1$
 	
 	/**
 	 * The dialog settings.
@@ -594,8 +638,8 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	 * @return Create the categories tree.
 	 */
 	protected List<Category> createCategories() {
-
-		final Category classDeclarations= new Category(FormatterMessages.LineWrappingTabPage_class_decls,FormatterMessages.LineWrappingTabPage_class_decls_lowercase); 
+		final Category classDeclarations= new Category(FormatterMessages.LineWrappingTabPage_class_decls,
+				FormatterMessages.LineWrappingTabPage_class_decls_lowercase); 
 		classDeclarations.children.add(fTypeDeclarationBaseClauseCategory);
 		
 //		final Category constructorDeclarations= new Category(null, null, FormatterMessages.LineWrappingTabPage_constructor_decls); 
@@ -603,28 +647,33 @@ public class LineWrappingTabPage extends FormatterTabPage {
 //		constructorDeclarations.children.add(fConstructorThrowsClauseCategory);
 //		constructorDeclarations.children.add(fConstructorInitializerListCategory);
 
-		final Category methodDeclarations= new Category(null, null, FormatterMessages.LineWrappingTabPage_function_decls,FormatterMessages.LineWrappingTabPage_function_decls_lowercase); 
+		final Category methodDeclarations= new Category(null, null, FormatterMessages.LineWrappingTabPage_function_decls,
+				FormatterMessages.LineWrappingTabPage_function_decls_lowercase); 
 		methodDeclarations.children.add(fMethodDeclarationsParametersCategory);
 		methodDeclarations.children.add(fMethodThrowsClauseCategory);
 		methodDeclarations.children.add(fConstructorInitializerListCategory);
 
-		final Category enumDeclarations= new Category(FormatterMessages.LineWrappingTabPage_enum_decls,FormatterMessages.LineWrappingTabPage_enum_decls_lowercase); 
+		final Category enumDeclarations= new Category(FormatterMessages.LineWrappingTabPage_enum_decls,
+				FormatterMessages.LineWrappingTabPage_enum_decls_lowercase); 
 		enumDeclarations.children.add(fEnumeratorsCategory);
 //		enumDeclarations.children.add(fEnumDeclInterfacesCategory);
 //		enumDeclarations.children.add(fEnumConstArgumentsCategory);
 		
-		final Category functionCalls= new Category(FormatterMessages.LineWrappingTabPage_function_calls,FormatterMessages.LineWrappingTabPage_function_calls_lowercase); 
+		final Category functionCalls= new Category(FormatterMessages.LineWrappingTabPage_function_calls,
+				FormatterMessages.LineWrappingTabPage_function_calls_lowercase); 
 		functionCalls.children.add(fMessageSendArgumentsCategory);
 //		functionCalls.children.add(fMessageSendSelectorCategory);
 //		functionCalls.children.add(fExplicitConstructorArgumentsCategory);
 //		functionCalls.children.add(fAllocationExpressionArgumentsCategory);
 //		functionCalls.children.add(fQualifiedAllocationExpressionCategory);
 		
-		final Category expressions= new Category(FormatterMessages.LineWrappingTabPage_expressions,FormatterMessages.LineWrappingTabPage_expressions_lowercase); 
+		final Category expressions= new Category(FormatterMessages.LineWrappingTabPage_expressions,
+				FormatterMessages.LineWrappingTabPage_expressions_lowercase); 
 		expressions.children.add(fBinaryExpressionCategory);
 		expressions.children.add(fConditionalExpressionCategory);
-		expressions.children.add(fInitializerListExpressionsCategory);
 		expressions.children.add(fAssignmentCategory);
+		expressions.children.add(fInitializerListExpressionsCategory);
+		expressions.children.add(fStreamOutputExpressionCategory);
 		expressions.children.add(fMemberAccessExpressionCategory);
 		
 //		final Category statements= new Category(FormatterMessages.LineWrappingTabPage_statements); 
@@ -711,8 +760,9 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	protected Composite doCreatePreviewPane(Composite composite, int numColumns) {
 		super.doCreatePreviewPane(composite, numColumns);
 		
-		final NumberPreference previewLineWidth= new NumberPreference(composite, numColumns / 2, fPreviewPreferences, LINE_SPLIT,
-		    0, 9999, FormatterMessages.LineWrappingTabPage_line_width_for_preview_label_text); 
+		final NumberPreference previewLineWidth= new NumberPreference(composite, numColumns / 2,
+				fPreviewPreferences, LINE_SPLIT, 0, 9999,
+				FormatterMessages.LineWrappingTabPage_line_width_for_preview_label_text); 
 		fDefaultFocusManager.add(previewLineWidth);
 		previewLineWidth.addObserver(fUpdater);
 		previewLineWidth.addObserver(new Observer() {
@@ -781,10 +831,14 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		fWorkingValues.put(LINE_SPLIT, normalSetting);
 	}
 	
-	protected void setPreviewText(String text) {
+	 void setPreviewText(String text) {
+		setPreviewText(text, 0);
+	}
+
+	void setPreviewText(String text, int offset) {
 		final String normalSetting= fWorkingValues.get(LINE_SPLIT);
 		fWorkingValues.put(LINE_SPLIT, fPreviewPreferences.get(LINE_SPLIT));
-		fPreview.setPreviewText(text);
+		fPreview.setPreviewText(text, offset);
 		fWorkingValues.put(LINE_SPLIT, normalSetting);
 	}
 	

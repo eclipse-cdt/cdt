@@ -8,6 +8,7 @@
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
  *    Mike Kucera (IBM)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -48,4 +49,11 @@ public interface ICPPASTBinaryExpression extends IASTBinaryExpression, IASTImpli
 	 * @since 5.3
 	 */
 	public ICPPASTBinaryExpression copy(CopyStyle style);
+
+	/**
+	 * Returns the function binding for the overloaded operator, or <code>null</code> if
+	 * the operator is not overloaded.
+	 * @since 5.3
+	 */
+	public ICPPFunction getOverload();
 }

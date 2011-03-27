@@ -201,7 +201,18 @@ public class DefaultCodeFormatterConstants {
 	 * @see #createAlignmentValue(boolean, int, int)
 	 * @since 5.3
 	 */
-	public static final String FORMATTER_ALIGNMENT_FOR_MEMBER_ACCESS  = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_member_access";	 //$NON-NLS-1$
+	public static final String FORMATTER_ALIGNMENT_FOR_MEMBER_ACCESS = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_member_access";	 //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option for alignment of stream output expression consisting of a chain of
+	 * overloaded &lt;&lt; operators.
+	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_overloaded_left_shift_chainn"
+	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
+	 * </pre>
+	 * @see #createAlignmentValue(boolean, int, int)
+	 */
+	public static final String FORMATTER_ALIGNMENT_FOR_OVERLOADED_LEFT_SHIFT_CHAIN = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_overloaded_left_shift_chain"; //$NON-NLS-1$;
 	/**
 	 * <pre>
 	 * FORMATTER / Option for alignment of parameters in method declaration
@@ -211,7 +222,7 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
 	 */
-	public static final String FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_parameters_in_method_declaration";	 //$NON-NLS-1$
+	public static final String FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_parameters_in_method_declaration"; //$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option for alignment of selector in method invocation
@@ -2268,7 +2279,7 @@ public class DefaultCodeFormatterConstants {
 	 * Private constants.
 	 */
 	private static final IllegalArgumentException WRONG_ARGUMENT = new IllegalArgumentException();
-	
+
 	/**
 	 * Create a new alignment value according to the given values. This must be used to set up
 	 * the alignment options.

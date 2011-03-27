@@ -199,9 +199,10 @@ final class FormatterMessages extends NLS {
 	public static String LineWrappingTabPage_enum_decls;
 	public static String LineWrappingTabPage_enumerator_list;
 	public static String LineWrappingTabPage_initializer_list;
-	public static String LineWrappingTabPage_conditionals;
 	public static String LineWrappingTabPage_binary_exprs;
+	public static String LineWrappingTabPage_conditionals;
 	public static String LineWrappingTabPage_member_access;
+	public static String LineWrappingTabPage_stream_output;
 	public static String LineWrappingTabPage_indentation_default;
 	public static String LineWrappingTabPage_indentation_on_column;
 	public static String LineWrappingTabPage_indentation_by_one;
@@ -221,9 +222,10 @@ final class FormatterMessages extends NLS {
 	public static String LineWrappingTabPage_enum_decls_lowercase;
 	public static String LineWrappingTabPage_enumerator_list_lowercase;
 	public static String LineWrappingTabPage_initializer_list_lowercase;
-	public static String LineWrappingTabPage_conditionals_lowercase;
 	public static String LineWrappingTabPage_binary_exprs_lowercase;
+	public static String LineWrappingTabPage_conditionals_lowercase;
 	public static String LineWrappingTabPage_member_access_lowercase;
+	public static String LineWrappingTabPage_stream_output_lowercase;
 	public static String LineWrappingTabPage_indentation_default_lowercase;
 	public static String LineWrappingTabPage_indentation_on_column_lowercase;
 	public static String LineWrappingTabPage_indentation_by_one_lowercase;

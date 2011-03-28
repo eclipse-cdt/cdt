@@ -12,13 +12,15 @@
 package org.eclipse.cdt.dsf.mi.service;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
+import org.eclipse.cdt.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.concurrent.Sequence.Step;
@@ -907,39 +909,69 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 					rm.done();
 		}		
 	}
-	
-	/**
-	 * @since 3.0
-	 */
-	public void executeWithTargetAvailable(IDMContext ctx, Sequence.Step[] steps, RequestMonitor rm) {
-		Vector<Step> totalStepsVector = new Vector<Step>();
-		totalStepsVector.add(new IsTargetAvailableStep(ctx));
-		totalStepsVector.add(new MakeTargetAvailableStep());
-		for (Step step : steps) {
-			totalStepsVector.add(step);
-		}
-		totalStepsVector.add(new RestoreTargetStateStep());
-		
-		final Step[] totalSteps = totalStepsVector.toArray(new Step[totalStepsVector.size()]);
-		getExecutor().execute(new Sequence(getExecutor(), rm) {
-			@Override public Step[] getSteps() { return totalSteps; }
-		});
-	}
 
 	/* ******************************************************************************
-	 * Section to support making operations even when the target is unavailable.
+	 * Section to support operations even when the target is unavailable.
 	 *
 	 * Basically, we must make sure the container is suspended before making
 	 * certain operations (currently breakpoints).  If we don't, we must first 
 	 * suspend the container, then perform the specified operations,
 	 * and finally resume the container.
-	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=242943
-	 * and https://bugs.eclipse.org/bugs/show_bug.cgi?id=282273
+	 * See http://bugs.eclipse.org/242943
+	 * and http://bugs.eclipse.org/282273
+	 * 
+	 * Note that for multi-process, the correct container must be suspended for the
+	 * breakpoint to be inserted on that container.  Not a big deal though, since
+	 * a breakpointDmc is mapped to a specific container.  Also, since we are in
+	 * all-stop mode here, it does not really matter what we stop, everything will
+	 * stop.
+	 * See http://bugs.eclipse.org/337893
 	 * 
 	 * ******************************************************************************/
-	private IContainerDMContext fContainerDmc  = null;
-	private boolean fTargetAvailable = false;
 
+	/**
+	 * Utility class to store the parameters of the executeWithTargetAvailable() operations.
+	 * @since 4.0
+	 */
+	protected static class TargetAvailableOperationInfo {
+		public IDMContext ctx;
+		public Sequence.Step[] steps;
+		public RequestMonitor rm;
+		
+		public TargetAvailableOperationInfo(IDMContext ctx, Step[] steps, RequestMonitor rm) {
+			super();
+			this.ctx = ctx;
+			this.steps = steps;
+			this.rm = rm;
+		}
+	};
+
+	// Keep track of if the target was available or not when we started the operation
+	private boolean fTargetAvailable;
+	// The execution context that need to be available.
+	private IExecutionDMContext fExecutionDmc;
+	// Do we currently have an executeWithTargetAvailable() operation ongoing?
+	private boolean fOngoingOperation;
+	// Are we currently executing steps passed into executeWithTargetAvailable()?
+	// This allows us to know if we can add more steps to execute or if we missed
+	// our opportunity
+	private boolean fCurrentlyExecutingSteps;
+	
+	// MultiRequestMonitor that allows us to track all the different steps we are
+	// executing.  Once all steps are executed, we can complete this MultiRM and
+	// allow the global sequence to continue.
+	// Note that we couldn't use a CountingRequestMonitor because that type of RM
+	// needs to know in advance how many subRms it will track; the MultiRM allows us
+	// to receive more steps to execute continuously, and be able to upate the MultiRM.
+	private MultiRequestMonitor<RequestMonitor> fExecuteQueuedOpsStepMonitor;
+	// The number of batches of steps that are still being executing for potentially
+	// concurrent executeWithTargetAvailable() operations.
+	// Once this gets to zero, we know we have executed all the steps we were aware of
+	// and we can complete the operation.
+	private int fNumStepsStillExecuting;
+	// Queue of executeWithTargetAvailable() operations that need to be processed.
+	private LinkedList<TargetAvailableOperationInfo> fOperationsPending = new LinkedList<TargetAvailableOperationInfo>();
+	
 	/**
 	 * Returns whether the target is available to perform operations
 	 * @since 3.0
@@ -948,15 +980,186 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 		return fTargetAvailable;
 	}
 
+	/** @since 4.0 */
+	protected void setTargetAvailable(boolean available) {
+		fTargetAvailable = available;
+	}
+	
 	/**
-	 * Returns whether the target must be suspended before performing the breakpoint operation
+	 * Returns the execution context that needs to be suspended to perform the
+	 * required operation.
 	 * @since 3.0
 	 */
 	protected IExecutionDMContext getContextToSuspend() {
-		return fContainerDmc;
+		return fExecutionDmc;
+	}
+
+	/** @since 4.0 */
+	protected void setContextToSuspend(IExecutionDMContext context) {
+		fExecutionDmc = context;
+	}
+
+	/** 
+	 * Returns whether there is currently an ExecuteWithTargetAvailable() operation ongoing. 
+	 * @since 4.0 
+	 */
+	protected boolean isTargetAvailableOperationOngoing() {
+		return fOngoingOperation;
+	}
+	
+	/** @since 4.0 */
+	protected void setTargetAvailableOperationOngoing(boolean ongoing) {
+		fOngoingOperation = ongoing;
+	}
+	
+	/**
+	 * Returns whether we are current in the process of executing the steps
+	 * that were passed to ExecuteWithTargetAvailable().
+	 * When this value is true, we can send more steps to be executed.
+	 * @since 4.0 
+	 */
+	protected boolean isCurrentlyExecutingSteps() {
+		return fCurrentlyExecutingSteps;
+	}
+
+	/** @since 4.0 */
+	protected void setCurrentlyExecutingSteps(boolean executing) {
+		fCurrentlyExecutingSteps = executing;
 	}
 
 	/**
+	 * Returns the requestMonitor that will be run once all steps sent to
+	 * ExecuteWithTargetAvailable() have been executed. 
+	 * @since 4.0 
+	 */
+	protected MultiRequestMonitor<RequestMonitor> getExecuteQueuedStepsRM() {
+		return fExecuteQueuedOpsStepMonitor;
+	}
+	
+	/** @since 4.0 */
+	protected void setExecuteQueuedStepsRM(MultiRequestMonitor<RequestMonitor> rm) {
+		fExecuteQueuedOpsStepMonitor = rm;
+	}
+
+
+	/**
+	 * Returns the number of batches of steps sent to ExecuteWithTargetAvailable()
+	 * that are still executing.  Once this number reaches zero, we can complete
+	 * the overall ExecuteWithTargetAvailable() operation.
+	 * @since 4.0 
+	 */
+	protected int getNumStepsStillExecuting() {
+		return fNumStepsStillExecuting;
+	}
+
+	/** @since 4.0 */
+	protected void setNumStepsStillExecuting(int num) {
+		fNumStepsStillExecuting = num;
+	}
+
+	/**
+	 * Returns the queue of executeWithTargetAvailable() operations that still need to be processed
+	 * @since 4.0
+	 */
+	protected LinkedList<TargetAvailableOperationInfo> getOperationsPending() {
+		return fOperationsPending;
+	}
+
+	/**
+	 * This method takes care of executing a batch of steps that were passed to
+	 * ExecuteWithTargetAvailable().  The method is used to track the progress
+	 * of all these batches of steps, so that we know exactly when all of them
+	 * have been completed and the global sequence can be completed.
+	 * @since 4.0
+	 */
+	protected void executeSteps(final TargetAvailableOperationInfo info) {
+		fNumStepsStillExecuting++;
+		
+		// This RM propagates any error to the original rm of the actual steps.
+		// Even in case of errors for these steps, we want to continue the overall sequence
+		RequestMonitor stepsRm = new RequestMonitor(ImmediateExecutor.getInstance(), null) {
+			@Override
+			protected void handleCompleted() {
+				info.rm.setStatus(getStatus());
+				// It is important to call rm.done() right away.
+				// This is because some other operation we are performing might be waiting
+				// for this one to be done.  If we try to wait for the entire sequence to be
+				// done, then we will never finish because one monitor will never show as
+				// done, waiting for the second one.
+				info.rm.done();
+
+				fExecuteQueuedOpsStepMonitor.requestMonitorDone(this);
+				fNumStepsStillExecuting--;
+				if (fNumStepsStillExecuting == 0) {
+					fExecuteQueuedOpsStepMonitor.doneAdding();
+				}
+			}
+		};
+
+		fExecuteQueuedOpsStepMonitor.add(stepsRm);
+
+		getExecutor().execute(new Sequence(getExecutor(), stepsRm) {
+			@Override public Step[] getSteps() { return info.steps; }
+		});	
+	}
+	
+	/**
+	 * @since 3.0
+	 */
+	public void executeWithTargetAvailable(IDMContext ctx, final Sequence.Step[] steps, final RequestMonitor rm) {
+		if (!fOngoingOperation) {
+			// We are the first operation of this kind currently requested
+			// so we need to start the sequence
+			fOngoingOperation = true;
+
+			// We always go through our queue, even if we only have a single call to this method
+			fOperationsPending.add(new TargetAvailableOperationInfo(ctx, steps, rm));
+			
+			// Steps that need to be executed to perform the operation
+			final Step[] sequenceSteps = new Step[] {
+					new IsTargetAvailableStep(ctx),
+					new MakeTargetAvailableStep(),
+					new ExecuteQueuedOperationsStep(),
+					new RestoreTargetStateStep(),
+			};
+			
+			// Once all the sequence is completed, we need to see if we have received
+			// another request that we now need to process
+			RequestMonitor sequenceCompletedRm = new RequestMonitor(getExecutor(), null) {
+				@Override
+				protected void handleCompleted() {
+					 fOngoingOperation = false;
+					 
+					 if (fOperationsPending.size() > 0) {
+						 // Darn, more operations came in.  Trigger their processing
+						 // by calling executeWithTargetAvailable() on the last one
+						 TargetAvailableOperationInfo info = fOperationsPending.removeLast();
+						 executeWithTargetAvailable(info.ctx, info.steps, info.rm);
+					 }
+					 // no other rm.done() needs to be called, they have all been handled already
+				}
+			};
+			
+			getExecutor().execute(new Sequence(getExecutor(), sequenceCompletedRm) {
+				@Override public Step[] getSteps() { return sequenceSteps; }
+			});
+		} else {
+			// We are currently already executing such an operation
+			// If we are still in the process of executing steps, let's include this new set of steps.
+			// This is important because some steps may depend on these new ones.
+			if (fCurrentlyExecutingSteps) {
+				executeSteps(new TargetAvailableOperationInfo(ctx, steps, rm));
+			} else {
+				// Too late to execute the new steps, so queue them for later
+				fOperationsPending.add(new TargetAvailableOperationInfo(ctx, steps, rm));
+			}
+		}
+	}
+	
+	
+	/**
+	 * This part of the sequence verifies if the execution context of interest
+	 * is suspended or not.
 	 * @since 3.0
 	 */
 	protected class IsTargetAvailableStep extends Sequence.Step {
@@ -968,11 +1171,9 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 		
 		@Override
 		public void execute(final RequestMonitor rm) {
-			fContainerDmc = DMContexts.getAncestorOfType(fCtx, IContainerDMContext.class);
-			if (fContainerDmc != null) {
-				// In all-stop, if any process is suspended, then all of them are suspended
-				// so we only need to check this process.
-				fTargetAvailable = isSuspended(fContainerDmc);
+			fExecutionDmc = DMContexts.getAncestorOfType(fCtx, IMIContainerDMContext.class);
+			if (fExecutionDmc != null) {
+				fTargetAvailable = isSuspended(fExecutionDmc);
 				rm.done();
 				return;
 			}
@@ -987,12 +1188,14 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 							assert getData() != null;
 							
 							if (getData().length == 0) {
-								// Happens at startup, starting with GDB 7.0
+								// Happens at startup, starting with GDB 7.0.
 								// This means the target is available
 								fTargetAvailable = true;
 							} else {
-								fContainerDmc = (IContainerDMContext)(getData()[0]);
-								fTargetAvailable = isSuspended(fContainerDmc);
+								// In all-stop, if any process is suspended, then all of them are suspended
+								// so we only need to check the first process.
+								fExecutionDmc = (IExecutionDMContext)(getData()[0]);
+								fTargetAvailable = isSuspended(fExecutionDmc);
 							}
 							rm.done();
 						}
@@ -1001,6 +1204,8 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	};
 
 	/**
+	 * If the execution context of interest is not suspended, this step
+	 * will interrupt it.
 	 * @since 3.0
 	 */
 	protected class MakeTargetAvailableStep extends Sequence.Step {
@@ -1033,6 +1238,44 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	};
 
 	/**
+	 * This step of the sequence takes care of executing all the steps that
+	 * were passed to ExecuteWithTargetAvailable().
+	 * @since 4.0
+	 */
+	protected class ExecuteQueuedOperationsStep extends Sequence.Step {
+		@Override
+		public void execute(final RequestMonitor rm) {
+			fCurrentlyExecutingSteps = true;
+			
+			// It is important to use an ImmediateExecutor for this RM, to make sure we don't risk getting a new
+			// call to ExecuteWithTargetAvailable() when we just finished executing the steps.
+			fExecuteQueuedOpsStepMonitor = new MultiRequestMonitor<RequestMonitor>(ImmediateExecutor.getInstance(), rm) {
+				@Override
+				protected void handleCompleted() {
+					assert fOperationsPending.size() == 0;
+					
+					// We don't handle errors here.  Instead, we have already propagated any
+					// errors to each rm for each set of steps
+					
+					fCurrentlyExecutingSteps = false;
+					// Continue the sequence
+					rm.done();
+				}
+			};
+			// Tell the RM that we need to confirm when we are done adding sub-rms
+			fExecuteQueuedOpsStepMonitor.requireDoneAdding();
+						
+			// All pending operations are independent of each other so we can
+			// run them concurrently.
+			while (fOperationsPending.size() > 0) {
+				executeSteps(fOperationsPending.poll());				
+			}
+		}
+	};
+	
+	/**
+	 * If the sequence had to interrupt the execution context of interest,
+	 * this step will resume it again to reach the same state as when we started.
 	 * @since 3.0
 	 */
 	protected class RestoreTargetStateStep extends Sequence.Step {
@@ -1077,6 +1320,10 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 			}
 		}
 	 };
+
+	 /* ******************************************************************************
+	  * End of section to support operations even when the target is unavailable.
+	  * ******************************************************************************/
 
 	/**
 	 * {@inheritDoc}

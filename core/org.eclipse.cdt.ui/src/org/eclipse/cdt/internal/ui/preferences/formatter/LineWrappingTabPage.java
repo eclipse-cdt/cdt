@@ -469,12 +469,12 @@ public class LineWrappingTabPage extends FormatterTabPage {
 
 	private final Category fBinaryExpressionCategory= new Category(
 		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BINARY_EXPRESSION,
-		    "class Example : AnotherClass {" + //$NON-NLS-1$
 		    "int foo() {" + //$NON-NLS-1$
 		    "  int sum= 100 + 200 + 300 + 400 + 500 + 600 + 700 + 800;" + //$NON-NLS-1$
 		    "  int product= 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10;" + //$NON-NLS-1$
 		    "  bool val= true && false && true && false && true;" +  //$NON-NLS-1$
-		    "  return product / sum;}}", //$NON-NLS-1$
+		    "  return product / sum;" + //$NON-NLS-1$
+		    "}", //$NON-NLS-1$
 		    FormatterMessages.LineWrappingTabPage_binary_exprs,
 	    	FormatterMessages.LineWrappingTabPage_binary_exprs_lowercase
 		);

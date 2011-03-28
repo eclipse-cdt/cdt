@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
@@ -57,7 +58,11 @@ public class CHQueries {
 		boolean done= false;
 		int linkageID= node.getLinkageID();
 		if (linkageID == -1) {
-			final String ct = ((ISourceReference) callee).getTranslationUnit().getContentTypeId();
+			final ITranslationUnit tu = ((ISourceReference) callee).getTranslationUnit();
+			if (tu == null)
+				return EMPTY_NODES;
+			
+			final String ct = tu.getContentTypeId();
 			if (ct.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER)) {
 				// bug 260262: in a header file we need to consider c and c++
 				findCalledBy(callee, ILinkage.C_LINKAGE_ID, index, result);

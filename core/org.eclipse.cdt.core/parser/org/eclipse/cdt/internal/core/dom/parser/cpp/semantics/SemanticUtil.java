@@ -534,6 +534,16 @@ public class SemanticUtil {
 		return false;
 	}
 
+	public static boolean isEmptyParameterList(IType[] parameters) {
+		if (parameters.length == 0) {
+			return true;
+		} 
+		if (parameters.length == 1 && isVoidType(parameters[0])) {
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Calculates the number of edges in the inheritance path of <code>type</code> to
 	 * <code>ancestorToFind</code>, returning -1 if no inheritance relationship is found.

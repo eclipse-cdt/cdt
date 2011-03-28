@@ -5278,4 +5278,18 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testVariadicFunctionTemplate_Bug333389() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template<typename T> void f(T(*)());
+	//	template<typename T> void g(T(*)(void));
+	//	void v1();
+	//	void v2(void);
+	//	void test() {
+	//	  f(v1);
+	//	  f(v2);
+	//	  g(v1);
+	//	  g(v2);
+	//	}
+	public void testFunctionWithVoidParamInTypeDeduction() throws Exception {
+		parseAndCheckBindings();
+	}
 }

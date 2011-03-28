@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,24 +63,21 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 			//constructors & destructors have null return type
 			if ((returnType == null) ^ (ft.getReturnType() == null))
 			    return false;
-			else if (returnType != null && ! returnType.isSameType(ft.getReturnType()))
+			
+			if (returnType != null && ! returnType.isSameType(ft.getReturnType()))
 			    return false;
 			
-			if (parameters.length == 1 && fps.length == 0) {
-				if (!SemanticUtil.isVoidType(parameters[0]))
-					return false;
-			} else if (fps.length == 1 && parameters.length == 0) {
-				if (!SemanticUtil.isVoidType(fps[0]))
-					return false;
-			} else if (parameters.length != fps.length) {
-			    return false;
-			} else {
+			if (parameters.length == fps.length) {
 				for (int i = 0; i < parameters.length; i++) {
-			        if (parameters[i] == null || ! parameters[i].isSameType(fps[i]))
+			        if (parameters[i] == null || !parameters[i].isSameType(fps[i]))
 			            return false;
 			    }
-			}
-                           
+			} else {
+				if (!SemanticUtil.isEmptyParameterList(parameters) 
+					|| !SemanticUtil.isEmptyParameterList(fps)) {
+					return false;
+				}
+			} 
             return true;
         }
         return false;

@@ -816,6 +816,8 @@ public class TemplateArgumentDeduction {
 		IType[] pParams = ftp.getParameterTypes();
 		IType[] aParams = fta.getParameterTypes();
 		if (pParams.length != aParams.length) {
+			if (SemanticUtil.isEmptyParameterList(pParams) && SemanticUtil.isEmptyParameterList(aParams))
+				return true;
 			if (pParams.length == 0 || pParams.length > aParams.length + 1)
 				return false;
 			IType lastPParam= pParams[pParams.length - 1];

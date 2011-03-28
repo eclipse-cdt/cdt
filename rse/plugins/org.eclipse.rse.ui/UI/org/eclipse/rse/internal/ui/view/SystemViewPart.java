@@ -44,6 +44,7 @@
  * David McKnight   (IBM)        - [330386] RSE SystemView has Focus Problems with Eclipse SDK 4.1M3
  * David McKnight   (IBM)        - [238365] Collapsing tree in new window collapses tree in Original window
  * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
+ * David McKnight   (IBM)        - [251654] System View Restore doesn't take into account Expand To Filter
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -118,10 +119,10 @@ import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAllAction;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.view.ContextObject;
+import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.IViewLinker;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
@@ -1523,6 +1524,51 @@ public class SystemViewPart
 
 	protected class RestoreRemoteObjects extends Job
 	{
+	  		class GetExpandToFilter implements Runnable
+  	  		{
+	  			private IWorkbenchPart _part;
+  	  			private String _expandToFilter = null;
+  	  			private Object _remoteObject = null;
+  	  			
+  	  			public GetExpandToFilter(Object remoteObject){
+  	  				_remoteObject = remoteObject;
+  	  			}
+  	  			
+  	  			public void run()
+  	  			{
+  	  				IWorkbenchPart activePart = _part;
+  	  				if (activePart==null) {
+  	  					IWorkbenchWindow win = SystemBasePlugin.getActiveWorkbenchWindow();
+  		  				if (win != null){
+	  	  					IWorkbenchPage page = win.getActivePage();
+  	  						if (page != null){
+  	  							activePart = page.getActivePart();
+  	  							if (activePart != null){
+  	  								_part = activePart;
+  	  							}
+  		  					}
+	  	  				}
+  	  				}
+
+  	  				if (activePart instanceof SystemViewPart){
+  	  					SystemView viewer = ((SystemViewPart)activePart).getSystemView();
+  	  					if (_remoteObject instanceof IContextObject){
+  	  						_expandToFilter = viewer.getExpandToFilter(((IContextObject)_remoteObject).getModelObject());
+  	  					}
+  	  					else {
+  	  						_expandToFilter = viewer.getExpandToFilter(_remoteObject);
+  	  					}
+  	  				}
+  	  			}
+
+  	  			public String getExpandToFilter()
+  	  			{
+  	  				return _expandToFilter;
+  	  			}
+  	  		}
+
+  	
+  	  		
 		private Vector _remoteObjectsToRestore;
 		private Vector _remoteObjectsToSelect;
 
@@ -1602,11 +1648,22 @@ public class SystemViewPart
 								// get the context
 								ContextObject contextObject = new ContextObject(actualObject, ss, fref);
 
-								// get the children
-								Object[] children = adapter.getChildren(contextObject, monitor);
-
-								ShowRestoredRemoteObject showRunnable = new ShowRestoredRemoteObject(actualObject, children);
-								Display.getDefault().asyncExec(showRunnable);
+								Object[] children = null;
+								
+								Display dis = Display.getDefault();
+					  	  		GetExpandToFilter getExpandTo = new GetExpandToFilter(contextObject);
+					  	  		dis.syncExec(getExpandTo);
+					  	  		String expandToFilter = getExpandTo.getExpandToFilter();
+					    	  	if (expandToFilter != null){
+					    	  		children = adapter.getChildrenUsingExpandToFilter(actualObject, expandToFilter);
+					    	  	}
+					    	  	else {	  
+					    	  		// get the children
+					    	  		children = adapter.getChildren(contextObject, monitor);
+					    	  	}
+					    	  	
+					    	  	ShowRestoredRemoteObject showRunnable = new ShowRestoredRemoteObject(actualObject, children);
+					    	  	Display.getDefault().asyncExec(showRunnable);					    	  	
 							}
 
 						}

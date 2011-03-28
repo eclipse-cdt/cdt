@@ -211,6 +211,7 @@ public class DefaultCodeFormatterConstants {
 	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
+	 * @since 5.3
 	 */
 	public static final String FORMATTER_ALIGNMENT_FOR_OVERLOADED_LEFT_SHIFT_CHAIN = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_overloaded_left_shift_chain"; //$NON-NLS-1$;
 	/**

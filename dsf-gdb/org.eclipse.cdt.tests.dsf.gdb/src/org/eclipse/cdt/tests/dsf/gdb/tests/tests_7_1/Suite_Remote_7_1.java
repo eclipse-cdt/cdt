@@ -33,6 +33,7 @@ import org.junit.runners.Suite;
 	GDBRemoteTracepointsTest_7_1.class,
 	MIRegistersTest_7_1.class,
 	MIRunControlTargetAvailableTest_7_1.class,
+	MIRunControlNonStopTargetAvailableTest_7_1.class,
 	MIRunControlTest_7_1.class,
 	MIExpressionsTest_7_1.class,
 	MIMemoryTest_7_1.class,

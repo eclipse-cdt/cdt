@@ -29,6 +29,7 @@ import org.junit.runners.Suite;
 	MIRegistersTest_7_1.class,
 	MIRunControlTest_7_1.class,
 	MIRunControlTargetAvailableTest_7_1.class,
+	MIRunControlNonStopTargetAvailableTest_7_1.class,
 	MIExpressionsTest_7_1.class,
 	MIMemoryTest_7_1.class,
 	MIBreakpointsTest_7_1.class,

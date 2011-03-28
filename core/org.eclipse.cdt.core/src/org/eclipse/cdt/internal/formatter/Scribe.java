@@ -1686,19 +1686,19 @@ public class Scribe {
 			currentAlignment= currentAlignment.enclosing; // pop currentLocation
 			throw e; // rethrow
 		}
-		// reset scribe/scanner to restart at this given location
+		// Reset scribe/scanner to restart at this given location
 		resetAt(currentAlignment.location);
 		scanner.resetTo(currentAlignment.location.inputOffset, scanner.eofPosition - 1);
-		// clean alignment chunkKind so it will think it is a new chunk again
+		// Clean alignment chunkKind so it will think it is a new chunk again
 		currentAlignment.chunkKind= 0;
 		currentAlignmentException= null;
 	}
 
 	void redoMemberAlignment(AlignmentException e) {
-		// reset scribe/scanner to restart at this given location
+		// Reset scribe/scanner to restart at this given location
 		resetAt(memberAlignment.location);
 		scanner.resetTo(memberAlignment.location.inputOffset, scanner.eofPosition - 1);
-		// clean alignment chunkKind so it will think it is a new chunk again
+		// Clean alignment chunkKind so it will think it is a new chunk again
 		memberAlignment.chunkKind= 0;
 		currentAlignmentException= null;
 	}
@@ -1714,14 +1714,15 @@ public class Scribe {
 		line= location.outputLine;
 		column= location.outputColumn;
 		indentationLevel= location.outputIndentationLevel;
-		numberOfIndentations= location.numberOfIndentations;
-		lastNumberOfNewLines= location.lastNumberOfNewLines;
 		needSpace= location.needSpace;
 		pendingSpace= location.pendingSpace;
+		numberOfIndentations= location.numberOfIndentations;
+		lastNumberOfNewLines= location.lastNumberOfNewLines;
 		editsIndex= location.editsIndex;
 		if (editsIndex > 0) {
 			edits[editsIndex - 1]= location.textEdit;
 		}
+		setTailFormatter(location.tailFormatter);
 	}
 
 	private void resize() {

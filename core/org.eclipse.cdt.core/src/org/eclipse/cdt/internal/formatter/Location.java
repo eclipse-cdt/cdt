@@ -34,20 +34,23 @@ public class Location {
 	int editsIndex;
 	OptimizedReplaceEdit textEdit;
 	
+	public Runnable tailFormatter;
+
 	public Location(Scribe scribe, int sourceRestart){
 		update(scribe, sourceRestart);
 	}
 	
 	public void update(Scribe scribe, int sourceRestart){
-		this.outputColumn = scribe.column;
-		this.outputLine = scribe.line;
 		this.inputOffset = sourceRestart;
+		this.outputLine = scribe.line;
+		this.outputColumn = scribe.column;
 		this.outputIndentationLevel = scribe.indentationLevel;
-		this.lastNumberOfNewLines = scribe.lastNumberOfNewLines;
 		this.needSpace = scribe.needSpace;
 		this.pendingSpace = scribe.pendingSpace;
-		this.editsIndex = scribe.editsIndex;
 		this.numberOfIndentations = scribe.numberOfIndentations;
-		textEdit = scribe.getLastEdit();
+		this.lastNumberOfNewLines = scribe.lastNumberOfNewLines;
+		this.editsIndex = scribe.editsIndex;
+		this.textEdit = scribe.getLastEdit();
+		this.tailFormatter = scribe.getTailFormatter();
 	}
 }

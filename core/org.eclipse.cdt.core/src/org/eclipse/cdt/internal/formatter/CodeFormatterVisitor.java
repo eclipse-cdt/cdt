@@ -2668,14 +2668,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		} while (isOverloadedLeftShift(binaryExpression));
 		Collections.reverse(elements);
 
+		Runnable tailFormatter = scribe.takeTailFormatter();
 		node.accept(this);
 		scribe.printComment();
 		if (preferences.insert_space_before_binary_operator) {
 			scribe.space();
 		}
 
-		Runnable tailFormatter = scribe.getTailFormatter();
-		
 		Alignment wrapperAlignment = null;
 		if ((preferences.alignment_for_overloaded_left_shift_chain & Alignment.M_INDENT_ON_COLUMN) != 0) {
 			wrapperAlignment = scribe.createAlignment(
@@ -2751,7 +2750,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTLiteralExpression node) {
 		if (node.getKind() == IASTLiteralExpression.lk_string_literal) {
-			// handle concatenation of string literals
+			// Handle concatenation of string literals
 			int token;
 			boolean needSpace= false;
 			final int line= scribe.line;

@@ -32,6 +32,7 @@ import org.junit.runners.Suite;
 	// We need specific name for the tests of this suite, because of bug https://bugs.eclipse.org/172256
 	MIRegistersTest_6_8.class,
 	MIRunControlTest_6_8.class,
+	MIRunControlTargetAvailableTest_6_8.class,
 	MIExpressionsTest_6_8.class,
 	MIMemoryTest_6_8.class,
 	MIBreakpointsTest_6_8.class,

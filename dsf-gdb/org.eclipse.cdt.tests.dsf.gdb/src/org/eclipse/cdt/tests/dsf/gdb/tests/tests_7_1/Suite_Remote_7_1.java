@@ -32,6 +32,7 @@ import org.junit.runners.Suite;
 	// We need specific name for the tests of this suite, because of bug https://bugs.eclipse.org/172256
 	GDBRemoteTracepointsTest_7_1.class,
 	MIRegistersTest_7_1.class,
+	MIRunControlTargetAvailableTest_7_1.class,
 	MIRunControlTest_7_1.class,
 	MIExpressionsTest_7_1.class,
 	MIMemoryTest_7_1.class,

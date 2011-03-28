@@ -685,7 +685,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 						reason = ' ' + MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.5" ), new String[]{ sigInfo.getName(), sigInfo.getDescription() } ); //$NON-NLS-1$
 					}
 					else if ( info != null && info instanceof ICDIExitInfo ) {
-						reason = ' ' + MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.6" ), new Integer[] { new Integer( ((ICDIExitInfo)info).getCode() ) } ); //$NON-NLS-1$
+						reason = ' ' + MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.6" ), new Integer[] { Integer.valueOf( ((ICDIExitInfo)info).getCode() ) } ); //$NON-NLS-1$
 					}
 					return MessageFormat.format( label, new String[] { target.getName(), reason } );
 				}

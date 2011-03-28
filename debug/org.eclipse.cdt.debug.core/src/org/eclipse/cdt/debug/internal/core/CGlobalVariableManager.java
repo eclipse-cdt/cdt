@@ -143,7 +143,7 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 			return;
 		}
 
-		ICGlobalVariable[] globals = new ICGlobalVariable[0];
+		ICGlobalVariable[] globals;
 		synchronized( fGlobals ) {
 			globals = fGlobals.toArray( new ICGlobalVariable[fGlobals.size()] );
 			fGlobals.clear();

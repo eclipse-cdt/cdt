@@ -47,7 +47,7 @@ public class CModule extends CDebugElement implements ICModule {
 
 	private int fType = 0;
 
-	private ICElement fCElement;
+	private Binary fBinary;
 
 	private ICDIObject fCDIObject;
 	
@@ -70,7 +70,7 @@ public class CModule extends CDebugElement implements ICModule {
 	private CModule( int type, CDebugTarget target, IPath path ) {
 		super( target );
 		fType = type;
-		fCElement = createBinary(path);
+		fBinary = createBinary(path);
 		fCDIObject = null;
 		fImageName = path;
 		fSymbolsFileName = path;
@@ -84,7 +84,7 @@ public class CModule extends CDebugElement implements ICModule {
 		fType = type;
 		if ( cdiObject instanceof ICDISharedLibrary ) {
 			ICDISharedLibrary cdiSharedLib = (ICDISharedLibrary)cdiObject;
-			fCElement = createBinary(new Path(cdiSharedLib.getFileName()));
+			fBinary = createBinary(new Path(cdiSharedLib.getFileName()));
 		}
 		fCDIObject = cdiObject;
 		fImageName = ( ( cdiObject instanceof ICDISharedLibrary ) ) ? new Path( ((ICDISharedLibrary)cdiObject).getFileName() ) : new Path( CoreModelMessages.getString( "CModule.0" ) ); //$NON-NLS-1$
@@ -203,8 +203,8 @@ public class CModule extends CDebugElement implements ICModule {
 		if (fCDIObject instanceof ICDISharedLibrary)
 			return ((ICDISharedLibrary)fCDIObject).areSymbolsLoaded();
 		
-		if (fCElement instanceof IBinary)
-			return ((IBinary)fCElement).hasDebug();
+		if (fBinary != null)
+			return fBinary.hasDebug();
 		
 		return false;
 	}
@@ -227,14 +227,14 @@ public class CModule extends CDebugElement implements ICModule {
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#getPlatform()
 	 */
 	public String getPlatform() {
-		return ( fCElement instanceof IBinary ) ? ((IBinary)fCElement).getCPU() : CoreModelMessages.getString( "CModule.1" ); //$NON-NLS-1$
+		return ( fBinary != null ) ? fBinary.getCPU() : CoreModelMessages.getString( "CModule.1" ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#isLittleEndian()
 	 */
 	public boolean isLittleEndian() {
-		return ( fCElement instanceof IBinary ) ? ((IBinary)fCElement).isLittleEndian() : ((CDebugTarget)getDebugTarget()).isLittleEndian();
+		return ( fBinary != null ) ? fBinary.isLittleEndian() : ((CDebugTarget)getDebugTarget()).isLittleEndian();
 	}
 
 	/* (non-Javadoc)
@@ -248,7 +248,7 @@ public class CModule extends CDebugElement implements ICModule {
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#getCPU()
 	 */
 	public String getCPU() {
-		return ( fCElement instanceof IBinary ) ? ((IBinary)fCElement).getCPU() : null;
+		return ( fBinary != null ) ? fBinary.getCPU() : null;
 	}
 
 	/* (non-Javadoc)
@@ -273,7 +273,7 @@ public class CModule extends CDebugElement implements ICModule {
 	}
 
 	protected ICElement getCElement() {
-		return fCElement;
+		return fBinary;
 	}
 
 	private void loadSymbolsFromFile(IPath path) throws DebugException {

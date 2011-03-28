@@ -41,7 +41,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ResumeAction extends AbstractBreakpointAction {
 
-	final int INCRIMENT_MSEC = 100;
+	final static int INCRIMENT_MSEC = 100;
 	
 	int pauseTime = 0;
 	
@@ -60,7 +60,7 @@ public class ResumeAction extends AbstractBreakpointAction {
 				
 				long currentTime = System.currentTimeMillis();
             	while (!monitor.isCanceled() && currentTime < endTime ){
-            		monitor.setTaskName(MessageFormat.format(Messages.getString("ResumeAction.SummaryResumeTime"), new Object[] { new Long((endTime - currentTime)/1000) })); //$NON-NLS-1$)
+            		monitor.setTaskName(MessageFormat.format(Messages.getString("ResumeAction.SummaryResumeTime"), new Object[] { Long.valueOf((endTime - currentTime)/1000) })); //$NON-NLS-1$)
             		monitor.worked(1);
             		Thread.sleep(INCRIMENT_MSEC);
             		currentTime = System.currentTimeMillis();
@@ -104,7 +104,7 @@ public class ResumeAction extends AbstractBreakpointAction {
 	}
 
 	public String getMemento() {
-		String resumeData = new String(""); //$NON-NLS-1$
+		String resumeData = ""; //$NON-NLS-1$
 
 		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = null;
@@ -139,7 +139,7 @@ public class ResumeAction extends AbstractBreakpointAction {
 	public String getSummary() {
 		if (pauseTime == 0)
 			return Messages.getString("ResumeAction.SummaryImmediately"); //$NON-NLS-1$
-		return MessageFormat.format(Messages.getString("ResumeAction.SummaryResumeTime"), new Object[] { new Integer(pauseTime) }); //$NON-NLS-1$
+		return MessageFormat.format(Messages.getString("ResumeAction.SummaryResumeTime"), new Object[] { Integer.valueOf(pauseTime) }); //$NON-NLS-1$
 	}
 
 	public String getTypeName() {

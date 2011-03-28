@@ -331,7 +331,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 		fSeverity = severity;
 		fMessage = message;
 		if ( fMessage != null )
-			fMessage.trim();
+			fMessage = fMessage.trim();
 	}
 
 	protected void resetStatus() {

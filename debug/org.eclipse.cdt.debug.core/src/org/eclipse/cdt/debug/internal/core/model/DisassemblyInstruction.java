@@ -19,13 +19,11 @@ import org.eclipse.cdt.debug.core.model.IDisassemblyInstruction;
 
 public class DisassemblyInstruction extends CDebugElement implements IDisassemblyInstruction {
 
-    private BigInteger fBaseElement;
     private ICDIInstruction fCDIInstruction;
     private IAddress fAddress;
 
     public DisassemblyInstruction( CDebugTarget target, BigInteger baseElement, ICDIInstruction instruction ) {
         super( target );
-        fBaseElement = baseElement;
         fCDIInstruction = instruction;
         fAddress = target.getAddressFactory().createAddress( fCDIInstruction.getAdress() );
     }

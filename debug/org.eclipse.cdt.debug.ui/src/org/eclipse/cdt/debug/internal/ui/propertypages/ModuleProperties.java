@@ -72,10 +72,10 @@ public class ModuleProperties {
 	 */
 	private ModuleProperties( ICModule module ) {
 		fProperties = new ArrayList( 10 );
-		fProperties.add( new Property( TYPE, new Integer( module.getType() ) ) );
+		fProperties.add( new Property( TYPE, Integer.valueOf(module.getType()) ) );
 		fProperties.add( new Property( CPU, module.getCPU() ) );
 		fProperties.add( new Property( BASE_ADDRESS, module.getBaseAddress() ) );
-		fProperties.add( new Property( SIZE, new Long( module.getSize() ) ) );
+		fProperties.add( new Property( SIZE, Long.valueOf( module.getSize() ) ) );
 		fProperties.add( new Property( SYMBOLS_LOADED, Boolean.valueOf( module.areSymbolsLoaded() ) ) );
 		fProperties.add( new Property( SYMBOLS_FILE, module.getSymbolsFileName() ) );
 	}

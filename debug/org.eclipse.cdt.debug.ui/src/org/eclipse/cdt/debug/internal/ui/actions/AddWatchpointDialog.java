@@ -59,7 +59,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 	private boolean fRangeInitialEnable;
 	private Button fRangeEnableButton;
 	private Text fRangeField;
-	private String fRange = new String();
+	private String fRange = "";  //$NON-NLS-1$
 	
 	private Button fChkBtnWrite;
 	private Button fChkBtnRead;

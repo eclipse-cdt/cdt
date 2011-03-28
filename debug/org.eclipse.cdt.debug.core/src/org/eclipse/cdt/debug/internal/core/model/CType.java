@@ -57,7 +57,7 @@ public class CType implements ICType {
 		ICDIType type = getCDIType();
 		while( type instanceof ICDIArrayType ) {
 			++length;
-			type = ( type instanceof ICDIDerivedType ) ? ((ICDIDerivedType)type).getComponentType() : null;
+			type = ((ICDIDerivedType)type).getComponentType();
 		}
 		int[] dims = new int[length];
 		type = getCDIType();

@@ -111,7 +111,7 @@ public class SoundActionPage extends PlatformObject implements IBreakpointAction
 
 	public String getSummary() {
 		if (soundAction.getSoundFile() == null)
-			return new String(""); //$NON-NLS-1$
+			return ""; //$NON-NLS-1$
 		return soundAction.getSoundFile().getAbsolutePath();
 	}
 
@@ -190,7 +190,7 @@ public class SoundActionPage extends PlatformObject implements IBreakpointAction
 	}
 
 	public void saveRecentSounds() {
-		String recentSoundData = new String(""); //$NON-NLS-1$
+		String recentSoundData = ""; //$NON-NLS-1$
 
 		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = null;

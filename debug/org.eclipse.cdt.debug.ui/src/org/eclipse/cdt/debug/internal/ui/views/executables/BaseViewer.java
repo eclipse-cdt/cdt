@@ -83,14 +83,14 @@ abstract class BaseViewer extends TreeViewer {
 		Tree tree = getTree();
 		
 		// save the column order
-		String columnOrder = ""; //$NON-NLS-1$
+		StringBuilder columnOrder = new StringBuilder(); //$NON-NLS-1$
 		for (int index : tree.getColumnOrder()) {
-			columnOrder += ","; //$NON-NLS-1$
-			columnOrder += Integer.toString(index);
+			columnOrder.append(","); //$NON-NLS-1$
+			columnOrder.append(Integer.toString(index));
 		}
 		// trim the leading comma
-		columnOrder = columnOrder.substring(1);
-		preferences.setValue(getColumnOrderKey(), columnOrder);
+		columnOrder.deleteCharAt(0);
+		preferences.setValue(getColumnOrderKey(), columnOrder.toString());
 
 		// save which column was sorted and in which direction
 		TreeColumn sortedColumn = tree.getSortColumn();

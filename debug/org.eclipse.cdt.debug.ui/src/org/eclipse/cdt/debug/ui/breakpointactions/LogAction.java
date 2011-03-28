@@ -110,7 +110,7 @@ public class LogAction extends AbstractBreakpointAction {
 	}
 
 	public String getMemento() {
-		String logData = new String(""); //$NON-NLS-1$
+		String logData = ""; //$NON-NLS-1$
 
 		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = null;

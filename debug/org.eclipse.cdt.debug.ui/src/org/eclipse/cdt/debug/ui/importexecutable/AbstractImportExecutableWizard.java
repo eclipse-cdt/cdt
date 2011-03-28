@@ -124,7 +124,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 		setConfigurationDefaults(wc, targetProject);
 
 		final IStructuredSelection selection = new StructuredSelection(wc.doSave());
-		final String identifier = new String("org.eclipse.debug.ui.launchGroup.debug"); //$NON-NLS-1$
+		final String identifier = "org.eclipse.debug.ui.launchGroup.debug"; //$NON-NLS-1$
 
 		UIJob openLaunchConfigJob = new UIJob(Messages.AbstractImportExecutableWizard_CreateLaunchConfiguration) {
 
@@ -251,12 +251,12 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	}
 
 	public String getDefaultProjectName() {
-		String defaultName = new String();
+		String defaultName = ""; //$NON-NLS-1$
 		String[] executables = getImportExecutablePage()
 				.getSelectedExecutables();
 		if (executables.length > 0) {
 			String fileName = new File(executables[0]).getName();
-			defaultName = new String(Messages.ImportExecutablePageTwo_DefaultProjectPrefix + fileName);
+			defaultName = Messages.ImportExecutablePageTwo_DefaultProjectPrefix + fileName;
 		}
 		return defaultName;
 	}

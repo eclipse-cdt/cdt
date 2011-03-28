@@ -197,7 +197,7 @@ public class ExternalToolActionComposite extends Composite {
 	public ILaunchConfiguration[] getLaunchConfigurations() {
 		ArrayList onlyExternalTools = new ArrayList();
 		ILaunchManager lcm = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfiguration[] launchConfigurations = new ILaunchConfiguration[0];
+		ILaunchConfiguration[] launchConfigurations;
 		try {
 			launchConfigurations = lcm.getLaunchConfigurations();
 			for (int i = 0; i < launchConfigurations.length; i++) {
@@ -205,11 +205,9 @@ public class ExternalToolActionComposite extends Composite {
 				ILaunchConfiguration config = launchConfigurations[i];
 				ILaunchConfigurationType type = config.getType();
 				boolean priv = false;
-				if (config != null) {
-					try {
-						priv = config.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false);
-					} catch (CoreException e) {
-					}
+				try {
+					priv = config.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false);
+				} catch (CoreException e) {
 				}
 				if (type != null) {
 					if (!priv && type.supportsMode(ILaunchManager.RUN_MODE) && equalCategories(type.getCategory(), "org.eclipse.ui.externaltools") //$NON-NLS-1$

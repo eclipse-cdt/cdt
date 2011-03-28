@@ -89,9 +89,9 @@ public class DisassemblyDisplayModeHandler extends AbstractHandler implements IE
         if ( s instanceof IStructuredSelection ) {
             Object o = ((IStructuredSelection)s).getFirstElement();
             if ( o instanceof DisassemblyEditorInput ) {
-                IDocumentProvider dp = CDebugUIPlugin.getDefault().getDisassemblyEditorManager().getDocumentProvider();
-                if ( dp instanceof DisassemblyDocumentProvider ) {
-                    return (DisassemblyEditorPresentation)((DisassemblyDocumentProvider)dp).getDocumentPresentation( o );
+            	DisassemblyDocumentProvider dp = CDebugUIPlugin.getDefault().getDisassemblyEditorManager().getDocumentProvider();
+                if ( dp != null ) {
+                    return (DisassemblyEditorPresentation)dp.getDocumentPresentation( o );
                 }
             }
         }

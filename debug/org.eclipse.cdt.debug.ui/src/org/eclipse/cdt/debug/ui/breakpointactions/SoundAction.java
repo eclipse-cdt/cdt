@@ -115,7 +115,7 @@ public class SoundAction extends AbstractBreakpointAction {
 
 	public String getSummary() {
 		if (soundFile == null)
-			return new String(""); //$NON-NLS-1$
+			return ""; //$NON-NLS-1$
 		return soundFile.getAbsolutePath();
 	}
 
@@ -124,7 +124,7 @@ public class SoundAction extends AbstractBreakpointAction {
 	}
 
 	public String getMemento() {
-		String soundData = new String(""); //$NON-NLS-1$
+		String soundData = ""; //$NON-NLS-1$
 		if (soundFile != null) {
 			DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = null;

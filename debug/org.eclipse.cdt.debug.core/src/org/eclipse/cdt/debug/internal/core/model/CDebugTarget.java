@@ -1438,7 +1438,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 */
 	public IGlobalVariableDescriptor[] getGlobals() throws DebugException {
 		ICDITarget cdiTarget = getCDITarget();
-		IGlobalVariableDescriptor[] globals = new IGlobalVariableDescriptor[0];
 		// If the backend can give us the globals...
 		boolean hasCDIGlobals = false;
 		ArrayList<IGlobalVariableDescriptor> list = new ArrayList<IGlobalVariableDescriptor>();
@@ -1458,8 +1457,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 				list.addAll(getCFileGlobals(file));
 			}
 		}
-		globals =  list.toArray(new IGlobalVariableDescriptor[list.size()]);			
-		return globals;
+		return list.toArray(new IGlobalVariableDescriptor[list.size()]);			
 	}
 
 	private List<IGlobalVariableDescriptor> getCFileGlobals(IBinaryObject file) {
@@ -1952,7 +1950,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 	
 	protected void stopInMain() throws DebugException {
-		String mainSymbol = new String(ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
+		String mainSymbol = ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT;
 		try {
 			final ICDITarget cdiTarget = getCDITarget();
 			if (cdiTarget != null) {

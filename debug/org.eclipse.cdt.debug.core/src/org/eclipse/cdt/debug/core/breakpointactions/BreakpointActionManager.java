@@ -237,7 +237,7 @@ public class BreakpointActionManager {
 	}
 
 	public void saveActionData() {
-		String actionData = new String(""); //$NON-NLS-1$
+		String actionData = ""; //$NON-NLS-1$
 
 		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = null;

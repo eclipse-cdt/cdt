@@ -194,6 +194,6 @@ public final class ViewIDCounterManager {
 			}
 		}
 		
-		return new Integer(0);
+		return Integer.valueOf(0);
 	}
 }

@@ -159,7 +159,7 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 		GC gc = new GC(fAddressInput);
 		FontMetrics fm = gc.getFontMetrics();
 		// Give enough room for a 64 bit hex address (25 is a guess at the combobox selector) 
-		gridData.minimumWidth = gridData.minimumWidth = 18 * fm.getAverageCharWidth() + 25;
+		gridData.minimumWidth = 18 * fm.getAverageCharWidth() + 25;
 		gc.dispose();
 		fAddressInput.setLayoutData(gridData);
 		fAddressInput.addModifyListener(this);

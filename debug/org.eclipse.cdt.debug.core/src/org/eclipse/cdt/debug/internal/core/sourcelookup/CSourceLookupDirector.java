@@ -103,7 +103,7 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		if (container instanceof CProjectSourceContainer && project.equals(((CProjectSourceContainer) container).getProject())) {
 			return true;
 		}
-		if (container instanceof ProjectSourceContainer && project.equals(((CProjectSourceContainer) container).getProject())) {
+		if (container instanceof ProjectSourceContainer && project.equals(((ProjectSourceContainer) container).getProject())) {
 			return true;
 		}
 		try {

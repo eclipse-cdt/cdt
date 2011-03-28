@@ -64,7 +64,7 @@ public class SelectionButtonDialogFieldGroup extends DialogField {
 			fButtonsSelected[i]= false;
 			fButtonsEnabled[i]= true;
 		}
-		if (fButtonsStyle == SWT.RADIO) {
+		if (buttonsStyle == SWT.RADIO) {
 			fButtonsSelected[0]= true;
 		}
 		

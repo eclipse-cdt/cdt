@@ -455,11 +455,11 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	}
 
 	public IBreakpoint getBreakpoint( ICDIBreakpoint cdiBreakpoint ) {
-		Object b = null;
+		ICBreakpoint b;
 		synchronized ( getBreakpointMap() ) {
 			b = getBreakpointMap().getCBreakpoint( cdiBreakpoint );
 		}
-		return ( b instanceof IBreakpoint ) ? (IBreakpoint)b : null; 
+		return b; 
 	}
 	
 	/**
@@ -781,7 +781,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		
 		ArrayList installedCDIBplist = new ArrayList();
 		ArrayList installedCBplist = new ArrayList();
-		ICBreakpoint[] breakpoints = new ICBreakpoint[0];
+		ICBreakpoint[] breakpoints;
 		synchronized( getBreakpointMap() ) {
 			breakpoints = getBreakpointMap().getAllCBreakpoints();			
 			for ( int i = 0; i < breakpoints.length; ++i ) {

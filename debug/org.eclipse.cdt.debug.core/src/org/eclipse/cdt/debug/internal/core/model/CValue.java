@@ -179,16 +179,17 @@ public class CValue extends AbstractCValue {
 			ICDIValue value = getUnderlyingValue();
 			if ( value != null ) {
 				vars = value.getVariables();
-				// Quick fix.
-				// getVariables should return an empty array instead of null.
-				if ( vars == null ) {
-					vars = new ICDIVariable[0];
-				}
 			}
 		}
 		catch( CDIException e ) {
 			requestFailed( e.getMessage(), e );
 		}
+
+		// getVariables should return an empty array instead of null.
+		if ( vars == null ) {
+			vars = new ICDIVariable[0];
+		}
+		
 		return Arrays.asList( vars );
 	}
 

@@ -43,7 +43,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ExternalToolAction extends AbstractBreakpointAction {
 
-	private String externalToolName = new String(""); //$NON-NLS-1$
+	private String externalToolName = ""; //$NON-NLS-1$
 
 	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
 		IStatus errorStatus = null;
@@ -96,7 +96,7 @@ public class ExternalToolAction extends AbstractBreakpointAction {
 	}
 
 	public String getMemento() {
-		String executeData = new String(""); //$NON-NLS-1$
+		String executeData = ""; //$NON-NLS-1$
 		if (externalToolName != null) {
 			DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = null;

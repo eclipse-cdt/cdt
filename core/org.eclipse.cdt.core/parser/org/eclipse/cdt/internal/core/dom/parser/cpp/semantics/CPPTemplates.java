@@ -220,6 +220,10 @@ public class CPPTemplates {
 				map.put(param, pack);
 			}
 
+			ICPPTemplateInstance prim= getInstance(template, arguments, isDef);
+			if (prim != null && prim.isExplicitSpecialization())
+				return prim;
+
 			IBinding result= CPPTemplates.selectSpecialization(template, arguments, isDef);
 			if (result != null)
 				return result;

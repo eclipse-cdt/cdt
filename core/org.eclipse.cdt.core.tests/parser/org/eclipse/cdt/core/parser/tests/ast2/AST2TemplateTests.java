@@ -5292,4 +5292,26 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testFunctionWithVoidParamInTypeDeduction() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template<typename T, unsigned length> struct Templ {
+	//		Templ(){}
+	//	};
+	//
+	//	template<> struct Templ<int, 5> {
+	//		Templ(){}
+	//      int e;
+	//	};
+	//
+	//	template<unsigned length> struct Templ<int, length> {
+	//		Templ(){}
+	//	};
+	//
+	//	int main() {
+	//		Templ<int, 5> iFive;
+	//      iFive.e= 0;
+	//		return 0;
+	//	}
+	public void testPartialSpecAfterExplicitInst_339475() throws Exception {
+		parseAndCheckBindings();
+	}
 }

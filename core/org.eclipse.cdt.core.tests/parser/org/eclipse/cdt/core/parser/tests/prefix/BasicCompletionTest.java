@@ -337,4 +337,25 @@ public class BasicCompletionTest extends CompletionTestBase {
 		String[] expected= {"fooBar", "foo_bar"};
 		checkCompletion(code, false, expected);
 	}
+	
+	//	void someFunction() {
+	//	    int abc[5];
+	//	    sizeof(ab
+	public void testCompletionInSizeof340664() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"abc"};
+		checkCompletion(code, false, expected);
+		checkCompletion(code, true, expected);
+	}
+	
+	//	typedef int abc;
+	//	struct X {
+	//	  X(ab
+	public void testCompletionInParamlistOfCtor_338949() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"abc"};
+		checkCompletion(code, false, expected);
+		checkCompletion(code, true, expected);
+	}
+
 }

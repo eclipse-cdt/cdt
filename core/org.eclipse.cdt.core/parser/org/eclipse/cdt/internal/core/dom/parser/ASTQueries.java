@@ -103,6 +103,9 @@ public class ASTQueries {
 	 * Searches for the innermost declarator that contributes the the type declared.
 	 */
 	public static IASTDeclarator findTypeRelevantDeclarator(IASTDeclarator declarator) {
+		if (declarator == null)
+			return null;
+		
 		IASTDeclarator result= findInnermostDeclarator(declarator);
 		while (result.getPointerOperators().length == 0 
 				&& !(result instanceof IASTFieldDeclarator)

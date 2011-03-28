@@ -521,7 +521,7 @@ class ImplicitsAnalysis {
 	private static boolean paramHasTypeReferenceToTheAssociatedClassType(IASTParameterDeclaration dec, String name) {
 		boolean result= false;
 		IASTDeclarator pdtor= ASTQueries.findTypeRelevantDeclarator(dec.getDeclarator());
-		if (pdtor.getPointerOperators().length == 1 &&
+		if (pdtor != null && pdtor.getPointerOperators().length == 1 &&
 				pdtor.getPointerOperators()[0] instanceof ICPPASTReferenceOperator &&
 				pdtor.getParent() == dec &&
 				dec.getDeclSpecifier() instanceof ICPPASTNamedTypeSpecifier) {

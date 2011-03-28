@@ -237,7 +237,7 @@ public class Executable extends PlatformObject {
 						// Be careful not to convert a unix path like
 						// "/src/home" to "c:\source\home" on Windows. See
 						// bugzilla 297781
-						URI uri = (sourcePath.toFile().exists()) ? URIUtil.toURI(sourcePath) : URIUtil.toURI(filename);						
+						URI uri = (sourcePath.toFile().exists()) ? URIUtil.toURI(sourcePath) : URIUtil.toURI(filename, true);						
 						tu = new ExternalTranslationUnit(cproject, uri, id);
 					}
 

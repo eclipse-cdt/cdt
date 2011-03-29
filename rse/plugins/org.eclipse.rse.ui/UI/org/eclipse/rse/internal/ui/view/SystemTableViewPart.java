@@ -45,6 +45,7 @@
  * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  * David McKnight   (IBM)        - [340912] inconsistencies with columns in RSE table viewers
  * David McKnight   (IBM)        - [341240] Remote Systems Details view not remembering locked/unlocked state between sessions
+ * David McKnight   (IBM)        - [341244] folder selection input to unlocked Remote Systems Details view sometimes fails
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1340,8 +1341,7 @@ public class SystemTableViewPart extends ViewPart
 				{
 					Object first = ((IStructuredSelection) sel).getFirstElement();
 					if (_lastSelection != first)
-					{
-						_lastSelection = first;
+					{						
 						if (first instanceof IAdaptable)
 						{
 							{
@@ -1352,6 +1352,7 @@ public class SystemTableViewPart extends ViewPart
 									if (va.hasChildren(adapt) && adapt != _viewer.getInput())
 									{
 										setInput(adapt);
+										_lastSelection = first;
 									}
 								}
 							}

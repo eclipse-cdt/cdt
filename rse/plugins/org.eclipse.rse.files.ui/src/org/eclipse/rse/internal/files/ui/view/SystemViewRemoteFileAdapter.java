@@ -74,6 +74,7 @@
  * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  * David McKnight   (IBM)        - [215814] [performance] Duplicate Queries between Table and Remote Systems View
  * David McKnight   (IBM)        - [249031] Last used editor should be set to SystemEditableRemoteFile
+ * David McKnight   (IBM)        - [341244] folder selection input to unlocked Remote Systems Details view sometimes fails
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -939,6 +940,20 @@ public class SystemViewRemoteFileAdapter
 	{
 		IRemoteFile file = (IRemoteFile) element;
 
+		IRemoteFileSubSystem ss = file.getParentRemoteFileSubSystem();
+		
+		// make sure we have the lastest cached version otherwise could be working with a bad file that never got marked as stale
+		IRemoteFile originalFile = file;
+		if (ss instanceof RemoteFileSubSystem){
+			IRemoteFile cachedFile = ((RemoteFileSubSystem)ss).getCachedRemoteFile(file.getAbsolutePath());
+			if (cachedFile != null){
+				file = cachedFile;
+				if (originalFile.isStale()){ // the original file was marked stale, so the cached one should be too
+					file.markStale(true);
+				}
+			}
+		}		
+		
 		if (!file.exists())
 			return false;
 

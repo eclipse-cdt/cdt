@@ -295,7 +295,7 @@ public class RAWBinaryImporter implements IMemoryImporter {
 						BigInteger jobCount = BigInteger.valueOf(actualByteCount).divide(factor);
 						monitor.worked(jobCount.intValue());
 						
-						recordAddress.add(BigInteger.valueOf(actualByteCount));
+						recordAddress = recordAddress.add(BigInteger.valueOf(actualByteCount));
 						actualByteCount = reader.read(byteValues);
 					}
 					

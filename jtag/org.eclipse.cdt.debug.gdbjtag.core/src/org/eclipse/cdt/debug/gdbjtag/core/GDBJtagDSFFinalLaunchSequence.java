@@ -129,8 +129,9 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
                 if (fCommandControl == null) {
             		requestMonitor.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot obtain control service", null)); //$NON-NLS-1$
                 }
-
-                fCommandFactory = fCommandControl.getCommandFactory();
+                else {
+                	fCommandFactory = fCommandControl.getCommandFactory();
+                }
                 
                 requestMonitor.done();
             }},

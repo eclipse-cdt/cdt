@@ -85,17 +85,6 @@ public class CodanRuntime {
 	/**
 	 * Get checkers registry.
 	 * 
-	 * @deprecated (misspelled) use getCheckersRegistry
-	 * @return
-	 */
-	@Deprecated
-	public ICheckersRegistry getChechersRegistry() {
-		return checkers;
-	}
-
-	/**
-	 * Get checkers registry.
-	 * 
 	 * @return
 	 * @since 2.0
 	 */

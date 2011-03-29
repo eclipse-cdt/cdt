@@ -144,8 +144,9 @@ public class Alignment {
 	public int tieBreakRule;
 	
 	// Alignment effects on a per fragment basis
-	public static int NONE = 0;
-	public static int BREAK = 1;
+	public static final int NONE = 0;
+	public static final int BREAK = 1;
+	public static final int BREAK_NOT_ALLOWED = 2;
 	
 	// Chunk kind
 	public static final int CHUNK_FIELD = 1;
@@ -164,8 +165,10 @@ public class Alignment {
 		this.scribe = scribe;
 		this.originalIndentationLevel = this.scribe.indentationLevel;
 		this.wasSplit = false;
-		
-		// initialize the break indentation level, using modes and continuationIndentationLevel preference
+		this.fragmentIndentations = new int[this.fragmentCount];
+		this.fragmentBreaks = new int[this.fragmentCount];
+
+		// Initialize the break indentation level, using modes and continuationIndentationLevel preference
 		final int indentSize = this.scribe.indentationSize;
 		int currentColumn = this.location.outputColumn;
 		if (currentColumn == 1) {
@@ -173,23 +176,23 @@ public class Alignment {
 		}
 		
 		if ((mode & M_INDENT_ON_COLUMN) != 0) {
-			// indent broken fragments at next indentation level, based on current column
+			// Indent broken fragments at next indentation level, based on current column
 			this.breakIndentationLevel = this.scribe.getNextIndentationLevel(currentColumn);
 			if (this.breakIndentationLevel == this.location.outputIndentationLevel) {
 				this.breakIndentationLevel += continuationIndent * indentSize;
 			}
+			if (continuationIndent == 0) {
+				this.fragmentBreaks[0] = BREAK_NOT_ALLOWED;
+			}
 		} else if ((mode & M_INDENT_BY_ONE) != 0) {
-			// indent broken fragments exactly one level deeper than current indentation
+			// Indent broken fragments exactly one level deeper than current indentation
 			this.breakIndentationLevel = this.location.outputIndentationLevel + indentSize;
 		} else {
 			this.breakIndentationLevel = this.location.outputIndentationLevel + continuationIndent * indentSize;
 		}
 		this.shiftBreakIndentationLevel = this.breakIndentationLevel + indentSize;
 
-		this.fragmentIndentations = new int[this.fragmentCount];
-		this.fragmentBreaks = new int[this.fragmentCount];
-
-		// check for forced alignments
+		// Check for forced alignments
 		if ((this.mode & M_FORCE) != 0) {
 			couldBreak();
 		}
@@ -273,12 +276,6 @@ public class Alignment {
 			case M_COMPACT_SPLIT:
 				i = this.fragmentIndex;
 				do {
-					if (i == 0 && (mode & M_INDENT_ON_COLUMN) != 0 &&
-							name.startsWith(LIST_ELEMENTS_PREFIX)) {
-						// Don't split the line before the first element of the list if the list
-						// elements are indented on column.
-						break;
-					}
 					if (this.fragmentBreaks[i] == NONE) {
 						this.fragmentBreaks[i] = BREAK;
 						this.fragmentIndentations[i] = this.breakIndentationLevel;

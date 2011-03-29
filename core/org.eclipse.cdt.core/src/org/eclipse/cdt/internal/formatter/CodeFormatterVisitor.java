@@ -1340,7 +1340,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	private int visit(ICPPASTFunctionDeclarator node) {
 		final List<ICPPASTParameterDeclaration> parameters = Arrays.asList(node.getParameters());
 		final ListOptions options = createListOptionsForFunctionDeclarationParameters();
-		Runnable tailFormatter = scribe.getTailFormatter();
+		Runnable tailFormatter = scribe.takeTailFormatter();
 		formatList(parameters, options, true, node.takesVarArgs(),
 				new CPPFunctionDeclaratorTailFormatter(node, tailFormatter));
 
@@ -2251,7 +2251,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		options.fSpaceBeforeSeparator= preferences.insert_space_before_comma_in_method_invocation_arguments;
 		options.fSpaceAfterSeparator= preferences.insert_space_after_comma_in_method_invocation_arguments;
 		options.fTieBreakRule = Alignment.R_OUTERMOST;
-		formatList(expressions, options, true, false, scribe.getTailFormatter());
+		formatList(expressions, options, true, false, scribe.takeTailFormatter());
 	}
 
 	private int visit(IASTExpressionList node) {
@@ -2538,7 +2538,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			return formatOverloadedLeftShiftChain(node);
 		}
 
-		Runnable tailFormatter = scribe.getTailFormatter();
+		Runnable tailFormatter = scribe.takeTailFormatter();
 
 		Alignment expressionAlignment= scribe.createAlignment(
 				Alignment.BINARY_EXPRESSION,

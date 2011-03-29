@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.cdt.core,
  org.eclipse.cdt.codan.core.cxx,
- org.eclipse.cdt.codan.ui.cxx
+ org.eclipse.cdt.codan.ui.cxx,
+ org.eclipse.cdt.codan.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: %Bundle-Vendor

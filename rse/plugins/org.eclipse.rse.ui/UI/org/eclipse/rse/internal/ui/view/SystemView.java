@@ -77,6 +77,7 @@
  * David McKnight   (IBM)        - [308783] Value in Properties view remains "Pending..."
  * David McKnight   (IBM)        - [241726] Move doesn't select the moved items
  * David McKnight   (IBM)        - [333196] New member filter dialogue keep popping up when creating a shared member filter.
+ * David McKnight   (IBM)        - [341281] amendment to fix for bug 308983
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -5960,22 +5961,14 @@ public class SystemView extends SafeTreeViewer
 		// only fire this event if the view actually has focus
 		if (force || getControl().isFocusControl())
 		{
-			IStructuredSelection parentSelection = null;
+			IStructuredSelection fakeSelection = null;
 			// create events in order to update the property sheet
 			if (selection instanceof IStructuredSelection){
-				Object first = ((IStructuredSelection)selection).getFirstElement();
-				ISystemViewElementAdapter adapter = getViewAdapter(first);
-				if (adapter != null){
-					Object parent = adapter.getParent(first);
-					if (parent != null){
-						parentSelection = new StructuredSelection(parent);
-					}
-				}
+				fakeSelection = new StructuredSelection(new Object());
 			}
-			
-			
-			if (parentSelection != null){
-				SelectionChangedEvent dummyEvent = new SelectionChangedEvent(this, parentSelection);
+						
+			if (fakeSelection != null){
+				SelectionChangedEvent dummyEvent = new SelectionChangedEvent(this, fakeSelection);
 				// first change the selection, then change it back (otherwise the property sheet ignores the event)
 				fireSelectionChanged(dummyEvent);
 			}

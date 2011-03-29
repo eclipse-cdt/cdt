@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.ui;
 
+import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.core.model.IProblem;
+import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
 import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -233,6 +236,16 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 	 */
 	public String getProblemId(IMarker marker) {
 		return CodanProblemMarker.getProblemId(marker);
+	}
+
+	public IProblem getProblem(IMarker marker) {
+		IPath path = marker.getResource().getFullPath();
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		if (file == null)
+			return null;
+		IProblemProfile profile = CodanRuntime.getInstance().getCheckersRegistry().getResourceProfile(file);
+		String id = getProblemId(marker);
+		return profile.findProblem(id);
 	}
 
 	/**

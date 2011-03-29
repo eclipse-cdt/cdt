@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -21,7 +20,8 @@ import org.eclipse.core.runtime.CoreException;
 
 class PDOMCPPConstructor extends PDOMCPPMethod implements ICPPConstructor {
 
-	public PDOMCPPConstructor(PDOMLinkage linkage, PDOMNode parent, ICPPConstructor method) throws CoreException, DOMException {
+	public PDOMCPPConstructor(PDOMLinkage linkage, PDOMNode parent, ICPPConstructor method)
+			throws CoreException, DOMException {
 		super(linkage, parent, method);
 	}
 

@@ -46,8 +46,8 @@ import org.eclipse.core.runtime.CoreException;
  * Deferred class instances collect information about an instantiation until it can be
  * carried out.
  */
-class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPPDeferredClassInstance, IPDOMMemberOwner, IIndexType {
-
+class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization
+		implements ICPPDeferredClassInstance, IPDOMMemberOwner, IIndexType {
 	private static final int MEMBERLIST = PDOMCPPSpecialization.RECORD_SIZE + 0;
 	private static final int ARGUMENTS = PDOMCPPSpecialization.RECORD_SIZE + 4;	
 	/**
@@ -58,8 +58,8 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 
 	private ICPPScope unknownScope;
 	
-	public PDOMCPPDeferredClassInstance(PDOMLinkage linkage, PDOMNode parent, ICPPDeferredClassInstance classType, PDOMBinding instantiated)
-			throws CoreException {
+	public PDOMCPPDeferredClassInstance(PDOMLinkage linkage, PDOMNode parent,
+			ICPPDeferredClassInstance classType, PDOMBinding instantiated) throws CoreException {
 		super(linkage, parent, classType, instantiated);
 
 		final ICPPTemplateArgument[] args= classType.getTemplateArguments();

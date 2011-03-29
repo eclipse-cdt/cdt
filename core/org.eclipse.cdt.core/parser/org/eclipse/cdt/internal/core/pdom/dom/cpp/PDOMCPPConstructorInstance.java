@@ -20,19 +20,16 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
-public class PDOMCPPConstructorInstance extends PDOMCPPMethodInstance implements
-		ICPPConstructor {
-
+public class PDOMCPPConstructorInstance extends PDOMCPPMethodInstance implements ICPPConstructor {
 	/**
 	 * The size in bytes of a PDOMCPPConstructorInstance record in the database.
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPMethodInstance.RECORD_SIZE + 0;
 	
-	public PDOMCPPConstructorInstance(PDOMLinkage linkage, PDOMNode parent, ICPPMethod method, PDOMBinding instantiated)
-			throws CoreException {
+	public PDOMCPPConstructorInstance(PDOMLinkage linkage, PDOMNode parent, ICPPMethod method,
+			PDOMBinding instantiated) throws CoreException {
 		super(linkage, parent, method, instantiated);
 	}
 	

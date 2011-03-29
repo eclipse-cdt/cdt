@@ -19,11 +19,9 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
-class PDOMCPPConstructorTemplateSpecialization extends
-		PDOMCPPMethodTemplateSpecialization implements ICPPConstructor {
-
+class PDOMCPPConstructorTemplateSpecialization extends PDOMCPPMethodTemplateSpecialization
+		implements ICPPConstructor {
 	/**
 	 * The size in bytes of a PDOMCPPConstructorTemplateSpecialization record in the database.
 	 */

@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  */
 class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
-
 	private static final int BASECLASS_SPECIFIER = 0;
 	private static final int NEXTBASE = 4;
 	private static final int FLAGS = 8;
@@ -43,7 +42,8 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		this.record = record;
 	}
 	
-	public PDOMCPPBase(PDOMLinkage linkage, PDOMName baseClassSpec, boolean isVirtual, int visibility) throws CoreException {
+	public PDOMCPPBase(PDOMLinkage linkage, PDOMName baseClassSpec, boolean isVirtual, int visibility)
+			throws CoreException {
 		this.linkage = linkage;
 		Database db = getDB();
 		this.record = db.malloc(RECORD_SIZE);
@@ -97,8 +97,8 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 			PDOMName name= getBaseClassSpecifierName();
 			if (name != null) {
 				PDOMBinding b = name.getBinding();
-		    	while( b instanceof PDOMCPPTypedef && ((PDOMCPPTypedef)b).getType() instanceof PDOMBinding ){
-					b = (PDOMBinding) ((PDOMCPPTypedef)b).getType();
+		    	while (b instanceof PDOMCPPTypedef && ((PDOMCPPTypedef) b).getType() instanceof PDOMBinding) {
+					b = (PDOMBinding) ((PDOMCPPTypedef) b).getType();
 		    	}
 		    	return fCachedBaseClass= b;
 			}				

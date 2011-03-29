@@ -19,10 +19,8 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
-class PDOMCPPConstructorTemplate extends PDOMCPPMethodTemplate implements
-		ICPPConstructor {
+class PDOMCPPConstructorTemplate extends PDOMCPPMethodTemplate implements ICPPConstructor {
 
 	public PDOMCPPConstructorTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPConstructor method) 
 			throws CoreException, DOMException {

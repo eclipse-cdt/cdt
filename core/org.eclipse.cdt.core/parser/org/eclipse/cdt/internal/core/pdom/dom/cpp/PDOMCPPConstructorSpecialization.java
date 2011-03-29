@@ -19,11 +19,8 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
-class PDOMCPPConstructorSpecialization extends
-		PDOMCPPMethodSpecialization implements ICPPConstructor {
-
+class PDOMCPPConstructorSpecialization extends PDOMCPPMethodSpecialization implements ICPPConstructor {
 	/**
 	 * The size in bytes of a PDOMCPPConstructorSpecialization record in the database.
 	 */

@@ -44,6 +44,7 @@
  * David McKnight   (IBM)        - [333702] Remote Systems details view does not maintain column width settings across sessions
  * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  * David McKnight   (IBM)        - [340912] inconsistencies with columns in RSE table viewers
+ * David McKnight   (IBM)        - [341240] Remote Systems Details view not remembering locked/unlocked state between sessions
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -729,13 +730,20 @@ public class SystemTableViewPart extends ViewPart
 					_viewer.setCachedColumnWidths(cachedColumnWidths);
 				}
 			}
-			
-			
+						
 			String profileId = memento.getString(TAG_TABLE_VIEW_PROFILE_ID);
 			String connectionId = memento.getString(TAG_TABLE_VIEW_CONNECTION_ID);
 			String subsystemId = memento.getString(TAG_TABLE_VIEW_SUBSYSTEM_ID);
 			final String filterID = memento.getString(TAG_TABLE_VIEW_FILTER_ID);
 			final String objectID = memento.getString(TAG_TABLE_VIEW_OBJECT_ID);
+			
+			Boolean locked = memento.getBoolean(TAG_TABLE_VIEW_LOCKED_ID);
+			if (locked == null || locked.booleanValue()){
+				_isLocked = true;
+			}
+			else {
+				_isLocked = false;
+			}
 
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 
@@ -1232,6 +1240,7 @@ public class SystemTableViewPart extends ViewPart
 	public static final String TAG_TABLE_VIEW_SUBSYSTEM_ID = "tableViewSubsystemID"; //$NON-NLS-1$
 	public static final String TAG_TABLE_VIEW_OBJECT_ID = "tableViewObjectID"; //$NON-NLS-1$
 	public static final String TAG_TABLE_VIEW_FILTER_ID = "tableViewFilterID"; //$NON-NLS-1$
+	public static final String TAG_TABLE_VIEW_LOCKED_ID = "tableViewLockedID"; //$NON-NLS-1$
 
 	// Subset memento tags
 	public static final String TAG_TABLE_VIEW_SUBSET = "subset"; //$NON-NLS-1$
@@ -1943,6 +1952,8 @@ public class SystemTableViewPart extends ViewPart
 					columnWidths.append(';');
 				}
 				memento.putString(TAG_TABLE_VIEW_COLUMN_WIDTHS_ID, columnWidths.toString());
+								
+				memento.putBoolean(TAG_TABLE_VIEW_LOCKED_ID, _isLocked);
 			}
 		}
 	}

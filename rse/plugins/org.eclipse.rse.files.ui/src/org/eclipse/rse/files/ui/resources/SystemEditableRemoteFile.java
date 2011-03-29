@@ -42,6 +42,7 @@
  * David McKnight   (IBM)        - [324519] SystemEditableRemoteFile throws NPE when used in headless mode
  * David McKnight   (IBM)        - [325502] The default editor for a file is not updated when opened in RSE explorer
  * David McKnight   (IBM)        - [334839] File Content Conflict is not handled properly
+ * David McKnight   (IBM)        - [249031] Last used editor should be set to SystemEditableRemoteFile
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -269,20 +270,20 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		this.root = SystemRemoteEditManager.getInstance().getRemoteEditProjectLocation().makeAbsolute().toOSString();
 		this.localPath = getDownloadPath();
 
-		// dkm - use registered
-		String fileName = remoteFile.getName();
-
-		IEditorRegistry registry = getEditorRegistry();
-
-		if (registry != null){
-			IEditorDescriptor descriptor = registry.getDefaultEditor(fileName);
-			if (descriptor == null)
-			{
-				descriptor = getDefaultTextEditor();
-			}
-			
-			this._editorDescriptor = descriptor;
+		IFile localResource = getLocalResource();
+		
+		// first look for editor corresponding to this particular file
+		IEditorDescriptor descriptor = null;
+		try {
+			descriptor = IDE.getEditorDescriptor(localResource);
+		} catch (PartInitException e) {	
+		}	
+		
+		if (descriptor == null){
+			descriptor = getDefaultTextEditor();
 		}
+			
+		this._editorDescriptor = descriptor;		
 	}
 
 	protected IEditorRegistry getEditorRegistry()

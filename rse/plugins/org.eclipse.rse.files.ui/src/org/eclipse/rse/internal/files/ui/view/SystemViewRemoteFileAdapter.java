@@ -73,6 +73,7 @@
  * David McKnight   (IBM)        - [284157] [performance] too many jobs kicked off for getting file permissions for table
  * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
  * David McKnight   (IBM)        - [215814] [performance] Duplicate Queries between Table and Remote Systems View
+ * David McKnight   (IBM)        - [249031] Last used editor should be set to SystemEditableRemoteFile
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -198,14 +199,16 @@ import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewDropDestination;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.IElementCollector;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -482,6 +485,7 @@ public class SystemViewRemoteFileAdapter
 			}
 			openWithMenu.updateSelection(selection);
 			submenu.add(openWithMenu);
+			menu.add(ISystemContextMenuConstants.GROUP_OPENWITH, action); //test
 			menu.getMenuManager().appendToGroup(ISystemContextMenuConstants.GROUP_OPENWITH, submenu);
 		}
 
@@ -3403,6 +3407,19 @@ public class SystemViewRemoteFileAdapter
 					// open new editor for correct replica
 					editable = getEditableRemoteObject(remoteFile);
 				}											
+				
+				if (editable instanceof SystemEditableRemoteFile){
+					SystemEditableRemoteFile edit = (SystemEditableRemoteFile)editable;
+					IEditorDescriptor oldDescriptor = edit.getEditorDescriptor();
+					IEditorDescriptor curDescriptor;
+					try {
+						curDescriptor = IDE.getEditorDescriptor(editable.getLocalResource());
+						if (oldDescriptor != curDescriptor){
+							edit.setEditorDescriptor(curDescriptor);
+						}
+					} catch (PartInitException e) {
+					}					
+				}
 				
 				try
 				{

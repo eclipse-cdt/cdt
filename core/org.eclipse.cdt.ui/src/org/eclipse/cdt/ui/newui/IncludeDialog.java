@@ -34,9 +34,16 @@ import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
+ * A combined dialog which allows selecting file or folder from workspace or filesystem
+ * and some more features. The dialog is used on "Paths and Symbols" properties page.
+ * Note that currently it is used not only for include files/folders but for library
+ * files/folders as well.
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class IncludeDialog extends AbstractPropertyDialog {
+	static final String[] FILTER_INCLUDE_FILE = new String[] {"*.h;*.hpp", "*"}; //$NON-NLS-1$ //$NON-NLS-2$
+	static final String[] FILTER_LIBRARY_FILE = new String[] {"*.a;*.so;*.dll;*.lib", "*"}; //$NON-NLS-1$ //$NON-NLS-2$
 	public String sdata;
 	private Button b_add2confs;
 	private Button b_add2langs;
@@ -50,6 +57,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 	private Button c_wsp;
 	private ICConfigurationDescription cfgd;
 	private boolean isWsp = false;
+	private int kind = 0;
 	
 	static final int NEW_FILE = 0;
 	static final int NEW_DIR  = 1;
@@ -59,14 +67,24 @@ public class IncludeDialog extends AbstractPropertyDialog {
 	static final int DIR_MASK = 1;	
 	static final int OLD_MASK = 2;	
 	
-	public IncludeDialog(Shell parent, int _mode,
-		String title, String _data, ICConfigurationDescription _cfgd, int flags) {
+	/**
+	 * @since 5.3
+	 */
+	public IncludeDialog(Shell parent, int mode, String title, String data,
+			ICConfigurationDescription cfgd, int flags, int kind) {
+
 		super(parent, title);
-		mode = _mode;
-		sdata = _data;
-		cfgd = _cfgd;
-		if (flags == ICSettingEntry.VALUE_WORKSPACE_PATH)
-			isWsp = true;
+		this.mode = mode;
+		this.sdata = data;
+		this.cfgd = cfgd;
+		this.isWsp = (flags == ICSettingEntry.VALUE_WORKSPACE_PATH);
+		this.kind = kind;
+	}
+
+	public IncludeDialog(Shell parent, int mode, String title, String data,
+			ICConfigurationDescription cfgd, int flags) {
+
+		this(parent, mode, title, data, cfgd, flags, 0);
 	}
 
 	@Override
@@ -193,10 +211,16 @@ public class IncludeDialog extends AbstractPropertyDialog {
 				c_wsp.setImage(getWspImage(c_wsp.getSelection()));
 			}
 		} else if (e.widget.equals(b_file)) {
-			if ((mode & DIR_MASK)== DIR_MASK)
+			if ((mode & DIR_MASK)== DIR_MASK) {
 				s = AbstractCPropertyTab.getFileSystemDirDialog(shell, text.getText());
-			else 
-				s = AbstractCPropertyTab.getFileSystemFileDialog(shell, text.getText());
+			} else {
+				if (kind==ICSettingEntry.INCLUDE_FILE)
+					s = AbstractCPropertyTab.getFileSystemFileDialog(shell, text.getText(), FILTER_INCLUDE_FILE);
+				else if (kind==ICSettingEntry.LIBRARY_FILE)
+					s = AbstractCPropertyTab.getFileSystemFileDialog(shell, text.getText(), FILTER_LIBRARY_FILE);
+				else
+					s = AbstractCPropertyTab.getFileSystemFileDialog(shell, text.getText());
+			}
 			if (s != null) {
 				text.setText(s);
 				c_wsp.setSelection(false);

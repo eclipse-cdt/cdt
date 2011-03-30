@@ -48,8 +48,11 @@ public class LibraryTab extends AbstractLangsListTab implements IPathEntryStoreL
 	public ICLanguageSettingEntry doAdd() {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(), IncludeDialog.NEW_FILE,
-				Messages.LibraryTab_1,  
-				EMPTY_STR, getResDesc().getConfiguration(), 0);
+				Messages.LibraryTab_1,
+				EMPTY_STR,
+				getResDesc().getConfiguration(),
+				0,
+				ICSettingEntry.LIBRARY_FILE);
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
 			toAllCfgs = dlg.check1;
 			toAllLang = dlg.check3;
@@ -64,9 +67,11 @@ public class LibraryTab extends AbstractLangsListTab implements IPathEntryStoreL
 	public ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(), IncludeDialog.OLD_FILE,
-				Messages.LibraryTab_2,  
-				ent.getValue(), getResDesc().getConfiguration(),
-				(ent.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH));
+				Messages.LibraryTab_2,
+				ent.getValue(),
+				getResDesc().getConfiguration(),
+				ent.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH,
+				ICSettingEntry.LIBRARY_FILE);
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
 			int flags = 0;
 			if (dlg.check2) flags = ICSettingEntry.VALUE_WORKSPACE_PATH;

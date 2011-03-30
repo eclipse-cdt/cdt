@@ -282,10 +282,15 @@ public class ExpDialog extends AbstractPropertyDialog {
 			}
 		} else if (e.widget.equals(b_file)) {
 			if (kind == ICSettingEntry.INCLUDE_PATH ||
-				kind == ICSettingEntry.LIBRARY_PATH)
+				kind == ICSettingEntry.LIBRARY_PATH) {
 				s = AbstractCPropertyTab.getFileSystemDirDialog(shell, txt2.getText());
-			else 
+			} else if (kind==ICSettingEntry.INCLUDE_FILE) {
+				s = AbstractCPropertyTab.getFileSystemFileDialog(shell, txt2.getText(), IncludeDialog.FILTER_INCLUDE_FILE);
+			} else if (kind==ICSettingEntry.LIBRARY_FILE) {
+				s = AbstractCPropertyTab.getFileSystemFileDialog(shell, txt2.getText(), IncludeDialog.FILTER_LIBRARY_FILE);
+			} else {
 				s = AbstractCPropertyTab.getFileSystemFileDialog(shell, txt2.getText());
+			}
 			if (s != null) {
 				txt2.setText(s);
 				c_wsp.setSelection(false);

@@ -53,8 +53,14 @@ public class IncludeFileTab extends AbstractLangsListTab {
 
 	@Override
 	public ICLanguageSettingEntry doAdd() {
-		IncludeDialog dlg = new IncludeDialog(usercomp.getShell(), IncludeDialog.NEW_FILE, Messages.IncludeFileTab_1,
-				EMPTY_STR, getResDesc().getConfiguration(), 0);
+		IncludeDialog dlg = new IncludeDialog(
+				usercomp.getShell(),
+				IncludeDialog.NEW_FILE,
+				Messages.IncludeFileTab_1,
+				EMPTY_STR,
+				getResDesc().getConfiguration(),
+				0,
+				ICSettingEntry.INCLUDE_FILE);
 		if (dlg.open() && dlg.text1.trim().length() > 0) {
 			toAllCfgs = dlg.check1;
 			toAllLang = dlg.check3;
@@ -69,10 +75,14 @@ public class IncludeFileTab extends AbstractLangsListTab {
 
 	@Override
 	public ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
-		IncludeDialog dlg = new IncludeDialog(usercomp.getShell(), IncludeDialog.OLD_FILE,
+		IncludeDialog dlg = new IncludeDialog(
+				usercomp.getShell(),
+				IncludeDialog.OLD_FILE,
 				Messages.IncludeFileTab_2, 
-				ent.getValue(), getResDesc().getConfiguration(),
-				(ent.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH));
+				ent.getValue(),
+				getResDesc().getConfiguration(),
+				ent.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH,
+				ICSettingEntry.INCLUDE_FILE);
 		if (dlg.open()) {
 			int flags = 0;
 			if (dlg.check2)

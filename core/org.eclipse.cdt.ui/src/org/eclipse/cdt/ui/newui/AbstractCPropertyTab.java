@@ -414,11 +414,21 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static String getFileSystemFileDialog(Shell shell, String text) {
 		FileDialog dialog = new FileDialog(shell);
 		if(text != null && text.trim().length() != 0) dialog.setFilterPath(text);
-		dialog.setFilterExtensions(new String[] {"*.a;*.so;*.dll;*.lib"}); //$NON-NLS-1$
 		dialog.setText(FILESYSTEM_FILE_DIALOG_TITLE);
 		return dialog.open();
 	}
 
+	/**
+	 * @since 5.3
+	 */
+	public static String getFileSystemFileDialog(Shell shell, String text, String[] filter) {
+		FileDialog dialog = new FileDialog(shell);
+		if(text != null && text.trim().length() != 0) dialog.setFilterPath(text);
+		dialog.setFilterExtensions(filter);
+		dialog.setText(FILESYSTEM_FILE_DIALOG_TITLE);
+		return dialog.open();
+	}
+	
 	public static String getVariableDialog(Shell shell, ICConfigurationDescription cfgd) {
 		
 		ICdtVariableManager vm = CCorePlugin.getDefault().getCdtVariableManager();

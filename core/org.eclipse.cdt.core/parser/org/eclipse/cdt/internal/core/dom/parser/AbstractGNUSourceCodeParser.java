@@ -69,6 +69,7 @@ import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
+import org.eclipse.cdt.core.dom.parser.IExtensionToken;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.parser.AbstractParserLogService;
 import org.eclipse.cdt.core.parser.EndOfFileException;
@@ -2449,7 +2450,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	
 	protected boolean canBeTypeSpecifier() throws EndOfFileException {
 
-		switch (LT(1)) {
+		final int lt1 = LT(1);
+		switch (lt1) {
 		// simple type specifiers:
 		case IToken.tIDENTIFIER:
 		case IToken.tCOLONCOLON:
@@ -2497,7 +2499,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         	return true;
         	
         default:
-        	return false;
+			if (lt1 >= IExtensionToken.t__otherDeclSpecModifierFirst && lt1 <= IExtensionToken.t__otherDeclSpecModifierLast) 
+				return true;
+
+			return false;
 		}
 	}
 	

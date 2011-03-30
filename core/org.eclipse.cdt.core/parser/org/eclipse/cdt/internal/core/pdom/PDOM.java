@@ -56,6 +56,8 @@ import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexMacroContainer;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -75,7 +77,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.MacroContainerCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.MacroContainerPatternCollector;
-import org.eclipse.cdt.internal.core.pdom.dom.NamedNodeCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
@@ -729,35 +730,44 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if (names.length == 0) {
 			return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 		}
-		ArrayList<PDOMBinding> result= new ArrayList<PDOMBinding>();
-		ArrayList<PDOMNamedNode> nodes= new ArrayList<PDOMNamedNode>();
-		for (PDOMLinkage linkage : getLinkageList()) {
-			if (filter.acceptLinkage(linkage)) {
-				nodes.add(linkage);
-				for (int i=0; i < names.length-1; i++) {
-					char[] name= names[i];
-					NamedNodeCollector collector= new NamedNodeCollector(linkage, name, false, false, caseSensitive);
-					for (Iterator<PDOMNamedNode> in = nodes.iterator(); in.hasNext();) {
-						PDOMNode node= in.next();
-						node.accept(collector);
-					}
-					nodes.clear();
-					nodes.addAll(Arrays.asList(collector.getNodes()));
-				}
-				char[] name= names[names.length-1];
-				BindingCollector collector= new BindingCollector(linkage, name, filter, false, false, caseSensitive);
-				for (Iterator<PDOMNamedNode> in = nodes.iterator(); in.hasNext();) {
-					PDOMNode node= in.next();
-					node.accept(collector);
-				}
-				nodes.clear();
-				result.addAll(Arrays.asList(collector.getBindings()));
+		if (names.length == 1) {
+			return findBindings(names[0], true, caseSensitive, filter, monitor);
+		}
+		
+		IIndexFragmentBinding[] candidates = findBindings(names[names.length-1], false, caseSensitive, filter, monitor);
+		int j= 0;
+		for (int i = 0; i < candidates.length; i++) {
+			IIndexFragmentBinding cand = candidates[i];
+			if (matches(cand, names, caseSensitive)) {
+				candidates[j++]= cand;
 			}
 		}
-		return result.toArray(new IIndexFragmentBinding[result.size()]);
+		return ArrayUtil.trimAt(IIndexFragmentBinding.class, candidates, j-1);
+	}
+	
+	private boolean matches(IIndexFragmentBinding cand, char[][] names, boolean caseSensitive) {
+		int i= names.length-1;
+		while(i >= 0) {
+			if (cand == null)
+				return false;
+			
+			char[] name= cand.getNameCharArray();
+			if (!CharArrayUtils.equals(name, 0, name.length, names[i], !caseSensitive)) {
+				if (cand instanceof IEnumeration) {
+					if (cand instanceof ICPPEnumeration && ((ICPPEnumeration) cand).isScoped())
+						return false;
+					// Unscoped enumerations are not part of the qualified name.
+					i++;
+				} else {
+					return false;
+				}
+			}
+			cand= cand.getOwner();
+			i--;
+		}
+		return cand == null;
 	}
 
-	
 	private long getFirstLinkageRecord() throws CoreException {
 		return db.getRecPtr(LINKAGES);
 	}

@@ -15,9 +15,7 @@ import java.util.List;
 
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -52,10 +50,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -1189,24 +1187,23 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	ICPPClassType b1= getBindingFromASTName("B adb", 1, ICPPClassType.class, ICPPSpecialization.class);
     	ICPPClassType b2= getBindingFromASTName("A<C>", 4, ICPPClassType.class, ICPPSpecialization.class);
     	
-    	ICPPClassType b3= (ICPPClassType) getIndex().findBindings("A".toCharArray(), new IndexFilter() {
+    	IIndexBinding[] sr = getIndex().findBindings("A".toCharArray(), new IndexFilter() {
     		@Override
     		public boolean acceptBinding(IBinding binding) throws CoreException {
     			return !(binding instanceof ICPPSpecialization);
     		}
-    	}, npm())[0];
+    	}, npm());
+    	assertTrue(sr.length == 1);
+		ICPPClassType b3= (ICPPClassType) sr[0];
     	
-    	ICPPClassType b4= (ICPPClassType) getIndex().findBindings(new char[][] {"A".toCharArray(), "B".toCharArray()}, new IndexFilter() {
+    	sr = getIndex().findBindings(new char[][] {"A".toCharArray(), "B".toCharArray()}, new IndexFilter() {
     		@Override
     		public boolean acceptBinding(IBinding binding) throws CoreException {
-    			try {
-    				return !(binding.getScope() instanceof CPPClassSpecializationScope); //
-    			} catch(DOMException de) {
-    				CCorePlugin.log(de);
-    				return false;
-    			}
+    			return binding instanceof ICPPSpecialization;
     		}
-    	}, npm())[0];
+    	}, npm());
+    	assertTrue(sr.length == 1);
+		ICPPClassType b4= (ICPPClassType) sr[0];
     	
     	assertFalse(b0 instanceof ICPPSpecialization);
     	
@@ -1217,7 +1214,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	ICPPClassScope cs1= assertInstance(s1, ICPPClassScope.class);
     	assertInstance(cs1.getClassType(), ICPPClassType.class);
     	assertInstance(cs1.getClassType(), ICPPTemplateInstance.class);
-    	assertTrue(((IType)s4.getScopeBinding()).isSameType( (IType) ((IIndexScope)b3.getCompositeScope()).getScopeBinding() ));
+    	assertTrue(((IType)((ICPPClassSpecialization) s4.getScopeBinding()).getSpecializedBinding()).isSameType( (IType) ((IIndexScope)b3.getCompositeScope()).getScopeBinding() ));
     }
     
 	// class A {};

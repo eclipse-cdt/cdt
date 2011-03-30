@@ -457,6 +457,13 @@
 			properties="isGroupDebugContextsVisible,isUngroupDebugContextsVisible"
 			type="org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext">
       </propertyTester>
+      <propertyTester
+            class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyToggleBreakpointTester"
+            id="org.eclipse.cdt.dsf.debug.ui.disassemblyViewToggleBreakpointTester"
+            namespace="org.eclipse.cdt.dsf.debug.ui"
+            properties="isDisassemblyViewSupportsCBreakpoint"
+            type="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyView">
+      </propertyTester>
    </extension>
 	<extension 
 	    point="org.eclipse.debug.ui.detailPaneFactories">
@@ -768,7 +775,9 @@
             class="org.eclipse.cdt.dsf.debug.internal.ui.ToggleBreakpointsTargetFactory">
           <enablement>
             <!-- Enable the breakpoint toggle for DSF Disassembly -->
-            <instanceof value="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart"/>
+             <test
+                   property="org.eclipse.cdt.dsf.debug.ui.isDisassemblyViewSupportsCBreakpoint">
+             </test>
          </enablement>
       </toggleTargetFactory>
    </extension>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
+ *     Patrick Chuong (Texas Instruments) -	Update CDT ToggleBreakpointTargetFactory enablement (340177)
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -43,16 +44,19 @@ import org.eclipse.cdt.debug.internal.core.model.CFloatingPointValue;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.dom.Document;
 
 import com.ibm.icu.text.MessageFormat;
@@ -695,5 +699,61 @@ public class CDebugUtils {
 			return (V)value;
 		}
 		return defaultValue;
+	}
+	
+	/**
+	 * Overrides the standard project ICBreakpoint toggle breakpoint factory with 
+	 * a custom toggle breakpoint factory. The ICBreakpoint toggle breakpoint factory 
+	 * will be disabled and it is up to the client to contribute it's own toggle 
+	 * breakpoint factory. 
+	 * 
+	 * @param project a project
+	 * @param factoryId a breakpoint toggle factory identifier
+	 * @since 7.1
+	 */
+	public static void setToggleBreakpointFactory(IProject project, String factoryId) {
+		try {
+			IEclipsePreferences pref = new ProjectScope(project).getNode(CDebugCorePlugin.PLUGIN_ID);
+			pref.put(ICDebugConstants.PREF_TOGGLE_BREAKPOINT_MODEL_IDENTIFIER, factoryId);
+			pref.flush();
+		} catch (BackingStoreException e) {
+			CDebugCorePlugin.log(e);
+		}		
+	}
+	
+	/**
+	 * Returns the toggle breakpoint factory identifier for the project
+	 * 
+	 * @param project the project
+	 * @return the toggle breakpoint factory identifier, can be {@code null}
+	 * @since 7.1
+	 */
+	public static String getToggleBreakpointFactory(IProject project) {
+		IEclipsePreferences pref = new ProjectScope(project.getProject()).getNode(CDebugCorePlugin.PLUGIN_ID);
+		return pref.get(ICDebugConstants.PREF_TOGGLE_BREAKPOINT_MODEL_IDENTIFIER, null);
+	}
+	
+	/**
+	 * Returns whether the project uses the standard ICBreakpoint toggle breakpoint factory.
+	 * 
+	 * @param project the project
+	 * @return {@code true} if the project uses the standard ICBreakpoint breakpoint toggle factory
+	 * @since 7.1
+	 */
+	public static boolean isStandardCBreakpointFactory(IProject project) {
+		return getToggleBreakpointFactory(project) == null;
+	}
+
+	/**
+	 * Returns whether the custom toggle breakpoint factory should be consider when evaluating the 
+	 * enablement of the standard ICBreakpoint toggle breakpoint factory.
+	 * 
+	 * @return true if the custom model breakpoint system property is set
+	 * @since 7.1
+	 * @see ICDebugConstants#PREF_TOGGLE_BREAKPOINT_MODEL_IDENTIFIER
+	 */
+	public static boolean isCustomToggleBreakpointFactory() {
+		String customModel = System.getProperty(ICDebugConstants.PREF_TOGGLE_BREAKPOINT_MODEL_IDENTIFIER, null);
+		return customModel != null && Boolean.valueOf(customModel);
 	}
 }

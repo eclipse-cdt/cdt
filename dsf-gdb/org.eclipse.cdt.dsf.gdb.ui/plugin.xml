@@ -473,8 +473,10 @@
             <and>   
                <reference
                      definitionId="org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive">
-               </reference>
-               <instanceof value="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart"/>
+               </reference>      
+               <test
+                     property="org.eclipse.cdt.dsf.debug.ui.isCLaunchTypeDisassembly">
+               </test>
             </and>  
          </enablement>
       </toggleTargetFactory>

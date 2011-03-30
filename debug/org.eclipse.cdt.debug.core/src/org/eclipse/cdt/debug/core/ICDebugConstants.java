@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,14 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Ken Ryall (Nokia) - 207675
+ *     Patrick Chuong (Texas Instruments) -	Update CDT ToggleBreakpointTargetFactory enablement (340177)
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
 /**
  * Constant definitions for C/C++ debug plug-in.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface ICDebugConstants {
 
@@ -114,4 +117,14 @@ public interface ICDebugConstants {
     public static final String PREF_VALUE_STEP_MODE_CONTEXT = "context"; //$NON-NLS-1$
     public static final String PREF_VALUE_STEP_MODE_SOURCE = "source"; //$NON-NLS-1$
     public static final String PREF_VALUE_STEP_MODE_INSTRUCTION = "instruction"; //$NON-NLS-1$
+    
+    /**
+     * Preference key for toggle breakpoint model identifier. Debugger that contribute custom
+     * CBreakpoint should set the system property with this key to true. when this system property
+     * is set to true, the standard ICBreakpoint toggle breakpoint factory enablement will take 
+     * into account for non-standard ICElement input.
+     * 
+     * @since 7.1
+     */
+    public static final String PREF_TOGGLE_BREAKPOINT_MODEL_IDENTIFIER = PLUGIN_ID + ".toggleBreakpointModel"; //$NON-NLS-1$    
 }

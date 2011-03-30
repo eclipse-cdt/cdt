@@ -1754,6 +1754,23 @@
      </attribute> 
      </breakpointLabels>
  </extension>
+     <extension
+           point="org.eclipse.core.expressions.propertyTesters">
+        <propertyTester
+              class="org.eclipse.cdt.debug.internal.ui.ToggleCBreakpointTester"
+              id="org.eclipse.cdt.debug.ui.editorToggleBreakpointTester"
+              namespace="org.eclipse.cdt.debug.ui"
+              properties="isCEditorSupportsCBreakpoint,isAsmEditorSupportsCBreakpoint,isDisassemblyEditorSupportsCBreakpoint"
+              type="org.eclipse.ui.IWorkbenchPart">
+        </propertyTester>
+        <propertyTester
+              class="org.eclipse.cdt.debug.internal.ui.ToggleCBreakpointTester"
+              id="org.eclipse.cdt.debug.ui.declarationToggleBreakpointTester"
+              namespace="org.eclipse.cdt.debug.ui"
+              properties="isCDeclarationSupportsCBreakpoint"
+              type="java.util.List">
+        </propertyTester>
+     </extension>
 
    <extension point="org.eclipse.debug.ui.toggleBreakpointsTargetFactories">
       <toggleTargetFactory
@@ -1762,19 +1779,15 @@
             <enablement>
             <!-- Enable the breakpoint toggle for CDT's editors and model elements -->
             <or>
-               <instanceof value="org.eclipse.cdt.internal.ui.editor.CEditor"/>
-               <instanceof value="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor"/>
-               <instanceof value="org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditor"/>
+               <test property="org.eclipse.cdt.debug.ui.isCEditorSupportsCBreakpoint"/>
+               <test property="org.eclipse.cdt.debug.ui.isAsmEditorSupportsCBreakpoint"/>
+               <test
+                     property="org.eclipse.cdt.debug.ui.isDisassemblyEditorSupportsCBreakpoint">
+               </test>                             
                <with variable="selection">
                   <count value="1"/>
-                  <iterate>
-                     <or>
-                        <instanceof value="org.eclipse.cdt.core.model.IFunction"/>
-                        <instanceof value="org.eclipse.cdt.core.model.IMethod"/>
-                        <instanceof value="org.eclipse.cdt.core.model.IVariable"/>
-                     </or>
-                  </iterate>
-               </with>            
+                   <test property="org.eclipse.cdt.debug.ui.isCDeclarationSupportsCBreakpoint"/>
+               </with>
             </or>
          </enablement>
       </toggleTargetFactory>
@@ -1788,19 +1801,12 @@
                      definitionId="org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive">
                </reference>
                <or>
-                  <instanceof value="org.eclipse.cdt.internal.ui.editor.CEditor"/>
-                  <instanceof value="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor"/>
-                  <instanceof value="org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditor"/>
-                  <with variable="selection">
-                     <count value="1"/>
-                     <iterate>
-                        <or>
-                           <instanceof value="org.eclipse.cdt.core.model.IFunction"/>
-                           <instanceof value="org.eclipse.cdt.core.model.IMethod"/>
-                           <instanceof value="org.eclipse.cdt.core.model.IVariable"/>
-                        </or>
-                     </iterate>
-                  </with>
+               <test property="org.eclipse.cdt.debug.ui.isCEditorSupportsCBreakpoint"/>
+               <test property="org.eclipse.cdt.debug.ui.isAsmEditorSupportsCBreakpoint"/>                             
+               <with variable="selection">
+                  <count value="1"/>
+                   <test property="org.eclipse.cdt.debug.ui.isCDeclarationSupportsCBreakpoint"/>
+               </with>
                </or>
             </and>
          </enablement>

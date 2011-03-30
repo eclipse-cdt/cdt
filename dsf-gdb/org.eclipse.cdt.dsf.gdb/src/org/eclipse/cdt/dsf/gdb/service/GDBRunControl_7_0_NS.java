@@ -394,11 +394,16 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		// Container case.  The container is considered suspended as long
 		// as one of its thread is suspended
 		if (context instanceof IContainerDMContext) {
+			boolean hasThread = false;
 			for (IMIExecutionDMContext threadContext : fThreadRunStates.keySet()) {
 				if (DMContexts.isAncestorOf(threadContext, context)) {
+					hasThread = true;
 					if (isSuspended(threadContext)) return true;
 				}
 			}
+			// If this container does not have any threads, it means it wasn't started
+			// yet, so we can consider it suspended
+			if (hasThread == false) return true;
 		}
 
 		// Default case

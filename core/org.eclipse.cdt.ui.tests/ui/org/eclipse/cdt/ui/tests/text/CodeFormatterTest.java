@@ -1005,7 +1005,30 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//    virtual bool function_with_a_looooooong_name(const char* parameter)
 	//            ABSTRACT;
 	//};
-	public void testFunctionDeclarationTrailingMacro() throws Exception {
+	public void testFunctionDeclarationTrailingMacro_1() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		assertFormatterResult();
+	}
+
+	//#define MACRO_WITH_ONE_PARAMETER(p)
+	//
+	//class A {
+	//void method1(int arguuuuuuuuuuuuuuuuuuuuument) MACRO_WITH_ONE_PARAMETER(p) {}
+	//void method2(int arguuuuuuuuuuuuuuuuuuuuuument) MACRO_WITH_ONE_PARAMETER(p) {}
+	//};
+
+	//#define MACRO_WITH_ONE_PARAMETER(p)
+	//
+	//class A {
+	//    void method1(int arguuuuuuuuuuuuuuuuuuuuument) MACRO_WITH_ONE_PARAMETER(p) {
+	//    }
+	//    void method2(int arguuuuuuuuuuuuuuuuuuuuuument)
+	//            MACRO_WITH_ONE_PARAMETER(p) {
+	//    }
+	//};
+	public void testFunctionDeclarationTrailingMacro_2() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_PARAMETERS_IN_METHOD_DECLARATION,
 				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
@@ -2053,7 +2076,6 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//
 	//class Voidifier {
 	//public:
-	//Voidifier();
 	//void operator&(Stream&);
 	//};
 	//
@@ -2070,7 +2092,6 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//
 	//class Voidifier {
 	//public:
-	//    Voidifier();
 	//    void operator&(Stream&);
 	//};
 	//
@@ -2092,7 +2113,6 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//
 	//class Voidifier {
 	//public:
-	//Voidifier();
 	//void operator&(Stream&);
 	//};
 	//
@@ -2110,7 +2130,6 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//
 	//class Voidifier {
 	//public:
-	//    Voidifier();
 	//    void operator&(Stream&);
 	//};
 	//
@@ -2150,6 +2169,38 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//    int i;
 	//}
 	public void testOverloadedLeftShiftChain_3() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_OVERLOADED_LEFT_SHIFT_CHAIN,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		assertFormatterResult();
+	}
+
+	//class Stream {
+	//Stream& operator<<(const char* s);
+	//};
+	//
+	//Stream stream;
+	//int variable_with_a_long_name, another_variable_with_a_long_name;
+	//
+	//void test() {
+    //stream << (variable_with_a_long_name + another_variable_with_a_long_name) * variable_with_a_long_name <<
+	//"01234567890123456789";
+	//}
+
+	//class Stream {
+	//    Stream& operator<<(const char* s);
+	//};
+	//
+	//Stream stream;
+	//int variable_with_a_long_name, another_variable_with_a_long_name;
+	//
+	//void test() {
+	//    stream << (variable_with_a_long_name + another_variable_with_a_long_name)
+	//                   * variable_with_a_long_name
+	//           << "01234567890123456789";
+	//}
+	// TODO(sprigogin): Enable the test when the formatter is fixed.
+	public void _testOverloadedLeftShiftChain_4() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_OVERLOADED_LEFT_SHIFT_CHAIN,
 				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));

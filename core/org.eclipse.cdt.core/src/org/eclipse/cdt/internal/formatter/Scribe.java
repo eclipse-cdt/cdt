@@ -1742,6 +1742,14 @@ public class Scribe {
 		needSpace= false;
 	}
 
+	public void undoSpace() {
+		if (pendingSpace) {
+			pendingSpace = false;
+			needSpace = true;
+			column--;
+		}
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder buffer= new StringBuilder();

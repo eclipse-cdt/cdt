@@ -67,7 +67,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	private void assertFormatterResult(String original, String expected) throws BadLocationException {
 		IDocument document= new Document(original);
-		TextEdit edit= CodeFormatterUtil.format(CodeFormatter.K_TRANSLATION_UNIT, original, 0, TextUtilities.getDefaultLineDelimiter(document), fOptions);
+		TextEdit edit= CodeFormatterUtil.format(CodeFormatter.K_TRANSLATION_UNIT, original, 0,
+				TextUtilities.getDefaultLineDelimiter(document), fOptions);
 		assertNotNull(edit);
 		edit.apply(document);
 		assertEquals(expected, document.get());
@@ -80,7 +81,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//void foo (int arg) {
 	//}
 	public void testInsertSpaceBeforeOpeningParen_Bug190184() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_METHOD_DECLARATION, CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_METHOD_DECLARATION,
+				CCorePlugin.INSERT);
 		assertFormatterResult();
 	}
 
@@ -284,7 +286,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//int verylooooooooooooooooooooooooooooooooooongname =
 	//		0000000000000000000000000000000;
 	public void testLineWrappingOfInitializerExpression_Bug200961() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ASSIGNMENT, Integer.toString(Alignment.M_COMPACT_SPLIT));
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ASSIGNMENT,
+				Integer.toString(Alignment.M_COMPACT_SPLIT));
 		assertFormatterResult();
 	}
 
@@ -308,8 +311,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//    };
 	public void testWhiteSmithsAccessSpecifierIndentation1_Bug204575() throws Exception {
 		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, DefaultCodeFormatterConstants.FALSE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER,
+				DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER,
+				DefaultCodeFormatterConstants.TRUE);
 		assertFormatterResult();
 	}
 
@@ -325,8 +330,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//    };
 	public void testWhiteSmithsAccessSpecifierIndentation2_Bug204575() throws Exception {
 		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, DefaultCodeFormatterConstants.TRUE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER,
+				DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER,
+				DefaultCodeFormatterConstants.FALSE);
 		assertFormatterResult();
 	}
 
@@ -342,8 +349,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//    };
 	public void testWhiteSmithsAccessSpecifierIndentation3_Bug204575() throws Exception {
 		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, DefaultCodeFormatterConstants.TRUE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER,
+				DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER,
+				DefaultCodeFormatterConstants.TRUE);
 		assertFormatterResult();
 	}
 
@@ -553,14 +562,22 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	Bar(); // should not have space between parens
 	//	}
 	public void testSpaceBetweenParen_Bug217918() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION, DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BODY, DefaultCodeFormatterConstants.FALSE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_METHOD_DECLARATION, CCorePlugin.INSERT);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_METHOD_DECLARATION, CCorePlugin.INSERT);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_METHOD_DECLARATION, CCorePlugin.DO_NOT_INSERT);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_METHOD_INVOCATION, CCorePlugin.INSERT);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_METHOD_INVOCATION, CCorePlugin.INSERT);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_METHOD_INVOCATION, CCorePlugin.DO_NOT_INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION,
+				DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BODY,
+				DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_METHOD_DECLARATION,
+				CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_METHOD_DECLARATION,
+				CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_METHOD_DECLARATION,
+				CCorePlugin.DO_NOT_INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_METHOD_INVOCATION,
+				CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_METHOD_INVOCATION,
+				CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_METHOD_INVOCATION,
+				CCorePlugin.DO_NOT_INSERT);
 		assertFormatterResult();
 	}
 
@@ -837,7 +854,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//int a = 0,b = 1,c = 2,d = 3;
 	public void testSpaceAfterCommaInDeclaratorList_Bug234915() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_DECLARATOR_LIST, CCorePlugin.DO_NOT_INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_DECLARATOR_LIST,
+				CCorePlugin.DO_NOT_INSERT);
 		assertFormatterResult();
 	}
 
@@ -845,7 +863,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//int a = 0, b = 1, c = 2, d = 3;
 	public void testSpaceAfterCommaInDeclaratorList2_Bug234915() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_DECLARATOR_LIST, CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_DECLARATOR_LIST,
+				CCorePlugin.INSERT);
 		assertFormatterResult();
 	}
 
@@ -924,8 +943,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	return x or x and not (not x);
 	//}
 	public void testSpaceBeforeAndAfterAlternativeLogicalOperator_Bug239461() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_BINARY_OPERATOR, CCorePlugin.DO_NOT_INSERT);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_BINARY_OPERATOR, CCorePlugin.DO_NOT_INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_BINARY_OPERATOR,
+				CCorePlugin.DO_NOT_INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_BINARY_OPERATOR,
+				CCorePlugin.DO_NOT_INSERT);
 		assertFormatterResult();
 	}
 
@@ -1180,7 +1201,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//int x = static_cast<int> (0);
 	public void testCppCast_2() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_METHOD_INVOCATION, CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_METHOD_INVOCATION,
+				CCorePlugin.INSERT);
 		assertFormatterResult();
 	}
 
@@ -1217,7 +1239,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//}
 	public void testTemplateFunctionCall_2() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_METHOD_INVOCATION, CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_METHOD_INVOCATION,
+				CCorePlugin.INSERT);
 		assertFormatterResult();
 	}
 
@@ -1321,7 +1344,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	}
 	//}
 	public void testSpaceBeforeSemicolonInFor_Bug242232() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_SEMICOLON_IN_FOR, CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_SEMICOLON_IN_FOR,
+				CCorePlugin.INSERT);
 		assertFormatterResult();
 	}
 
@@ -1607,9 +1631,12 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//void foo() throw ( E1, E2 );
 	public void testWhitespaceOptionsForExceptionSpecification_Bug243567() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_EXCEPTION_SPECIFICATION, CCorePlugin.INSERT);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_EXCEPTION_SPECIFICATION, CCorePlugin.INSERT);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_EXCEPTION_SPECIFICATION, CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_EXCEPTION_SPECIFICATION,
+				CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_EXCEPTION_SPECIFICATION,
+				CCorePlugin.INSERT);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_EXCEPTION_SPECIFICATION,
+				CCorePlugin.INSERT);
 		assertFormatterResult();
 	}
 
@@ -1985,7 +2012,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//		{ 1, 2, 3, 4 }
 	//};
 	public void testKeepWrappedLines_Bug322776() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_JOIN_WRAPPED_LINES, DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_JOIN_WRAPPED_LINES,
+				DefaultCodeFormatterConstants.FALSE);
 		assertFormatterResult();
 	}
 
@@ -2007,7 +2035,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	z();
 	//}
 	public void testKeepWrappedLines_Bug322776_2() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_JOIN_WRAPPED_LINES, DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_JOIN_WRAPPED_LINES,
+				DefaultCodeFormatterConstants.FALSE);
 		assertFormatterResult();
 	}
 

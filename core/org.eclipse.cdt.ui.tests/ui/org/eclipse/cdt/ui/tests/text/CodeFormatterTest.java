@@ -2009,6 +2009,30 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//void test() {
+	//int variable1 = 1000000 < 2000000 ? 3000000 + 40000000 : 8000000 + 90000000;
+	//int variable2 = 1000000 < 2000000 ? 3000000 + 40000000 : 8000000 + 900000000;
+	//int variable3 = 1000000 < 2000000 ? 3000000 + 4000000 + 5000000 + 6000000 + 7000000 : 8000000 + 9000000;
+	//int variable4 = 1000000 < 2000000 ? 3000000 + 4000000 + 5000000 + 6000000 + 7000000 : 8000000 + 90000000;
+	//}
+
+	//void test() {
+	//    int variable1 = 1000000 < 2000000 ? 3000000 + 40000000 : 8000000 + 90000000;
+	//    int variable2 = 1000000 < 2000000 ?
+	//            3000000 + 40000000 : 8000000 + 900000000;
+	//    int variable3 = 1000000 < 2000000 ?
+	//            3000000 + 4000000 + 5000000 + 6000000 + 7000000 : 8000000 + 9000000;
+	//    int variable4 = 1000000 < 2000000 ?
+	//            3000000 + 4000000 + 5000000 + 6000000 + 7000000 :
+	//            8000000 + 90000000;
+	//}
+	public void testConditionalExpression() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		assertFormatterResult();
+	}
+
 	//// Breaking at '<=' is preferred to breaking at '+'.
 	//bool x = 1000000 + 2000000 + 3000000 + 4000000 <= 5000000 + 6000000 + 7000000 + 8000000;
 

@@ -23,7 +23,9 @@ public class Alignment {
 	// Alignment names.
 	public static final String ASSIGNMENT_EXPRESSION = "assignmentExpression"; //$NON-NLS-1$
 	public static final String BINARY_EXPRESSION = "binaryExpression"; //$NON-NLS-1$
+	public static final String COLUMN_WRAPPER = "columnWrapper"; //$NON-NLS-1$
 	public static final String COMPACT_IF = "compactIf"; //$NON-NLS-1$
+	public static final String CONDITIONAL_EXPRESSION_WRAPPER = "conditionalExpressionWrapper"; //$NON-NLS-1$
 	public static final String CONDITIONAL_EXPRESSION = "conditionalExpression"; //$NON-NLS-1$
 	public static final String DECLARATION_INITIALIZER = "declarationInitializer"; //$NON-NLS-1$
 	public static final String DESIGNATED_INITIALIZER = "designatedInitializer"; //$NON-NLS-1$
@@ -31,7 +33,6 @@ public class Alignment {
 	public static final String FIELD_REFERENCE = "fieldReference"; //$NON-NLS-1$
 	public static final String FOR = "for"; //$NON-NLS-1$
 	public static final String LIST_ELEMENTS_PREFIX = "listElements_"; //$NON-NLS-1$
-	public static final String LIST_WRAPPER = "listWrapper"; //$NON-NLS-1$
 	public static final String MACRO_ARGUMENTS = "macroArguments"; //$NON-NLS-1$
 	public static final String OVERLOADED_LEFT_SHIFT_CHAIN = "overloadedLeftShiftChain"; //$NON-NLS-1$
 	public static final String TRAILING_TEXT = "trailingText"; //$NON-NLS-1$

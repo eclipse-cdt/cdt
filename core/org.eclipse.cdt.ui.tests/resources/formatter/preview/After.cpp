@@ -47,8 +47,8 @@ int foo(int bar) const {
 int array[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 1000,
 		2000, 3000, 4000, 5000 };
 int compare(int argument, int otherArg) {
-	return argument + otherArg > argument * otherArg + 1000000 ? 100000 + 50000
-			: 200000 - 30000;
+	return argument + otherArg > argument * otherArg + 1000000 ?
+			100000 + 50000 : 200000 - 30000;
 }
 class Other {
 	static void bar(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6,

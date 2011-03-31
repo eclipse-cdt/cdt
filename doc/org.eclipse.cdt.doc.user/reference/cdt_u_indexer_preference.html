@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
 <html lang="en">
 <head>
   <meta http-equiv="Content-Language" content="en-us">
@@ -8,8 +8,8 @@
   <script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
 </head>
 <body>
-<h1>Indexer preferences (C/C++)</h1>
-<p>Use the <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferences.IndexerPreferencePage)")'>Indexer</a> preference panel to select the indexer used by default for new projects and configure its behavior.</p>
+<h1 role="main">Indexer preferences (C/C++)</h1>
+<p>Use the <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferences.IndexerPreferencePage)")'>Indexer</a> preference panel to select the indexer used by default for new projects and configure its behavior.</p>
 <p> <img src="../images/indexer_preference_page.png" alt="Indexer Preferences Window" ><br>
 </p>
 <table width="700" cellpadding="5" cellspacing="0" border="1" bordercolor="#DDDDDD" >
@@ -20,77 +20,77 @@
   </colgroup>
   <tbody>
 	<tr>
-		<th><strong>Option</strong></th>
-		<th><strong>Description</strong></th>
+		<th id="option"><strong>Option</strong></th>
+		<th id="description"><strong>Description</strong></th>
 	</tr>
     <tr valign="top">
-      <td><strong>Select Indexer </strong></td>
-      <td>Select the indexer to use by default for all new projects. </td>
+      <td headers="option"><strong>Select Indexer </strong></td>
+      <td headers="description">Select the indexer to use by default for all new projects. </td>
     </tr>
     
     <tr valign="top">
-      <td><strong>Index source files not included in the build</strong></td>
-      <td>Activate this checkbox to index all source files used by the project.</td>
+      <td headers="option"><strong>Index source files not included in the build</strong></td>
+      <td headers="description">Activate this checkbox to index all source files used by the project.</td>
     </tr>
     <tr valign="top">
-      <td><strong>Index unused headers</strong></td>
-      <td>Activate this checkbox to index unused header files.</td>
+      <td headers="option"><strong>Index unused headers</strong></td>
+      <td headers="description">Activate this checkbox to index unused header files.</td>
     </tr>
     <tr valign="top">
-      <td><strong>Allow heuristic resolution of includes </strong></td>
-      <td>Activate this checkbox to allow the indexer to skip indexing duplicate include files. </td>
+      <td headers="option"><strong>Allow heuristic resolution of includes </strong></td>
+      <td headers="description">Activate this checkbox to allow the indexer to skip indexing duplicate include files. </td>
     </tr>    
     
     <tr valign="top">
-      <td><strong>Skip files larger than</strong></td>
-      <td>Enter the maximum file size to skip when indexing.</td>
+      <td headers="option"><strong>Skip files larger than</strong></td>
+      <td headers="description">Enter the maximum file size to skip when indexing.</td>
     </tr>
     <tr valign="top">
-      <td><strong>Skip all references (Call Hierarchy and Search will not work) </strong></td>
-      <td>Activate this checkbox to not index references to save space and gain performance. This prevents some portions of CDT from working, like Call Hierarchy and search for references. </td>
+      <td headers="option"><strong>Skip all references (Call Hierarchy and Search will not work) </strong></td>
+      <td headers="description">Activate this checkbox to not index references to save space and gain performance. This prevents some portions of CDT from working, like Call Hierarchy and search for references. </td>
     </tr>   
     <tr valign="top">
-      <td><strong>Skip implicit references (e.g. overloaded operators) </strong></td>
-      <td>Activate this checkbox to not index implicit references.</td>
+      <td headers="option"><strong>Skip implicit references (e.g. overloaded operators) </strong></td>
+      <td headers="description">Activate this checkbox to not index implicit references.</td>
     </tr>  
     <tr valign="top">
-      <td><strong>Skip type and macro references (Search for these references will not work) </strong></td>
-      <td>Activate this checkbox to not index macro or type references. This prevents some portions of CDT from working, like Search. </td>
+      <td headers="option"><strong>Skip type and macro references (Search for these references will not work) </strong></td>
+      <td headers="description">Activate this checkbox to not index macro or type references. This prevents some portions of CDT from working, like Search. </td>
     </tr>
     <tr valign="top">
-      <td><strong>Files to index up-front </strong></td>
-      <td>Type a comma separated list of files that should always be indexed immediately. </td>
+      <td headers="option"><strong>Files to index up-front </strong></td>
+      <td headers="description">Type a comma separated list of files that should always be indexed immediately. </td>
     </tr>  
     
     <tr valign="top">
-      <td><strong>Automatically update the index </strong></td>
-      <td>Activate this checkbox to have the index automatically update as it requires. </td>
+      <td headers="option"><strong>Automatically update the index </strong></td>
+      <td headers="description">Activate this checkbox to have the index automatically update as it requires. </td>
     </tr>
     <tr valign="top">
-      <td><strong>Update index immediately after every file change </strong></td>
-      <td>Activate this checkbox to force an index update whenever a file is saved. </td>
-    </tr>
-    
-    <tr valign="top">
-      <td><strong>Use active build configuration </strong></td>
-      <td>Activate to always use the active build configuration indexer settings to build the index. </td>
-    </tr>
-    <tr valign="top">
-      <td><strong>Use the build configuration specified in the project's indexer settings </strong></td>
-      <td>Activate to always use the project's indexer settings to build the index. </td>
+      <td headers="option"><strong>Update index immediately after every file change </strong></td>
+      <td headers="description">Activate this checkbox to force an index update whenever a file is saved. </td>
     </tr>
     
     <tr valign="top">
-      <td><strong>Index database cache: Limit relative to the maximum heap size </strong></td>
-      <td>Specify the relative size limit the index can reach based on the maximum heap size. </td>
+      <td headers="option"><strong>Use active build configuration </strong></td>
+      <td headers="description">Activate to always use the active build configuration indexer settings to build the index. </td>
     </tr>
     <tr valign="top">
-      <td><strong>Index database cache: Absolute limit </strong></td>
-      <td>Specify the  maximum size the index database cache is limited to. </td>
+      <td headers="option"><strong>Use the build configuration specified in the project's indexer settings </strong></td>
+      <td headers="description">Activate to always use the project's indexer settings to build the index. </td>
+    </tr>
+    
+    <tr valign="top">
+      <td headers="option"><strong>Index database cache: Limit relative to the maximum heap size </strong></td>
+      <td headers="description">Specify the relative size limit the index can reach based on the maximum heap size. </td>
     </tr>
     <tr valign="top">
-      <td><strong>Header file cache: Absolute limit </strong></td>
-      <td>Specify the  maximum size the header file cache is limited to. </td>
+      <td headers="option"><strong>Index database cache: Absolute limit </strong></td>
+      <td headers="description">Specify the  maximum size the index database cache is limited to. </td>
+    </tr>
+    <tr valign="top">
+      <td headers="option"><strong>Header file cache: Absolute limit </strong></td>
+      <td headers="description">Specify the  maximum size the header file cache is limited to. </td>
     </tr>
   </tbody>
 </table>

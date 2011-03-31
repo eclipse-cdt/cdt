@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 <head>
   <meta http-equiv="Content-Language" content="en-us">
@@ -7,7 +7,7 @@
   <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <body>
-<h1>C/C++ Folder Properties, Discovery Options</h1>
+<h1 role="main">C/C++ Folder Properties, Discovery Options</h1>
 <p>You can define the discovery options on the Discovery Options page
 of a C/C++ project's properties window.<br>
 </p>
@@ -26,44 +26,48 @@ of a C/C++ project's properties window.<br>
 		<col width="30%" valign="top" >
 		<col width="70%" valign="top" >
 	</colgroup>
-	<tbody> 
+	<tbody>
+		<tr class="hidden">
+			<th id="option">Option</th>
+			<th id="description">Description</th>
+		</tr> 
 		<tr>
-			<td><strong>Configuration</strong></td>
-			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+			<td headers="option"><strong>Configuration</strong></td>
+			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
 		</tr>
 		<tr>
-			<td><strong>Manage configurations</strong></td>
-			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+			<td headers="option"><strong>Manage configurations</strong></td>
+			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
 		</tr>
 		<tr>
-			<td><strong>Exclude resource from build</strong></td>
-			<td>Excludes the selected folder from the build process.</td>
+			<td headers="option"><strong>Exclude resource from build</strong></td>
+			<td headers="description">Excludes the selected folder from the build process.</td>
 		</tr>
 		<tr>
-			<td>Left pane list (language specific)</td>
-			<td>Shows a list of language specific compilers. Select a language from the list.</td>
+			<td headers="option">Left pane list (language specific)</td>
+			<td headers="description">Shows a list of language specific compilers. Select a language from the list.</td>
 		</tr>
 		<tr>
-			<td><strong>Automate discovery of paths and symbols</strong></td>
-			<td>Scans the build output to populate the path and symbol tables, such as symbol definitions, system include directories, local include directories, macros files, and include files. If this option is not selected, the <strong>Discovery profile options</strong> below do not appear.</td>
+			<td headers="option"><strong>Automate discovery of paths and symbols</strong></td>
+			<td headers="description">Scans the build output to populate the path and symbol tables, such as symbol definitions, system include directories, local include directories, macros files, and include files. If this option is not selected, the <strong>Discovery profile options</strong> below do not appear.</td>
 		</tr>
 				<tr>
-			<td><strong>Report path detection problems</strong></td>
-			<td>Sets the notification of diagnostic errors for include paths that the Eclipse CDT is unable to resolve as it parses the build output.</td>
+			<td headers="option"><strong>Report path detection problems</strong></td>
+			<td headers="description">Sets the notification of diagnostic errors for include paths that the Eclipse CDT is unable to resolve as it parses the build output.</td>
 		</tr>
 		<tr>
-			<td><strong>Discovery profile options</strong></td>
-			<td>Indicates the discovery profile to use for paths and symbol detection. The type of <strong>Configuration</strong> and <strong>Discovery Profile Scope</strong> you specify determine what which <strong>Discovery Profile</strong> options display on this tab. This set of controls is profile-specific. It may vary from one profile to another.</td>
+			<td headers="option"><strong>Discovery profile options</strong></td>
+			<td headers="description">Indicates the discovery profile to use for paths and symbol detection. The type of <strong>Configuration</strong> and <strong>Discovery Profile Scope</strong> you specify determine what which <strong>Discovery Profile</strong> options display on this tab. This set of controls is profile-specific. It may vary from one profile to another.</td>
 		</tr>		
 		<tr>
-			<td><strong>Enable generate scanner info command</strong></td>
-			<td>Enables the retrieval of information from the scanner. If it is not selected, the includes will be populated with default gcc system includes; Eclipse gathers the compiler settings based on the specified toolchain. This means that the Eclipse CDT can obtain the default gcc system includes to associate with the project. 
+			<td headers="option"><strong>Enable generate scanner info command</strong></td>
+			<td headers="description">Enables the retrieval of information from the scanner. If it is not selected, the includes will be populated with default gcc system includes; Eclipse gathers the compiler settings based on the specified toolchain. This means that the Eclipse CDT can obtain the default gcc system includes to associate with the project. 
 				<p>When selected, you can specify any required compiler specific commands in the <strong>Compiler invocation command</strong> field.</p>
 			</td>
 		</tr>
 		<tr>
-			<td><strong>Compiler invocation command</strong></td>
-			<td>Indicates the compiler specific command used to invoke the compiler (such as <span class="typewriter">gcc</span>, or more complicated commands used to perform all necessary steps for compiling C/C++ source files into .o files, and linking the object files and libraries into an executable program. For example, the command <strong>gcc -E -P -v hello.c | hello.cpp</strong> reads a compiler's configuration file and prints out information that includes the compiler's internally defined preprocessor symbols and include search paths. The information is complementary to the scanner configuration discovered when the output is parsed (if you've enabled the <strong>Enable build output scanner info discovery</strong> option), and is added to the project's scanner configuration. You can click <strong>Browse</strong> to locate this command, if required.
+			<td headers="option"><strong>Compiler invocation command</strong></td>
+			<td headers="description">Indicates the compiler specific command used to invoke the compiler (such as <span class="typewriter">gcc</span>, or more complicated commands used to perform all necessary steps for compiling C/C++ source files into .o files, and linking the object files and libraries into an executable program. For example, the command <strong>gcc -E -P -v hello.c | hello.cpp</strong> reads a compiler's configuration file and prints out information that includes the compiler's internally defined preprocessor symbols and include search paths. The information is complementary to the scanner configuration discovered when the output is parsed (if you've enabled the <strong>Enable build output scanner info discovery</strong> option), and is added to the project's scanner configuration. You can click <strong>Browse</strong> to locate this command, if required.
 			
 			<p><strong>Note:</strong> The parsing of build output for scanner information is compiler specific. For example, the GNU toolchain compilers (gcc and g++) use -I for include paths, and -D for symbol definitions. Consult your compiler specific documentation for more information about scanner information commands, such as the following gcc commands:</p>
      <ul>
@@ -84,35 +88,39 @@ of a C/C++ project's properties window.<br>
 			</td>
 		</tr>
 			<tr>
-			<td><strong>Browse</strong></td>
-			<td>Click to browse for a file to include in the compiler invocation command. This button is only visible when <strong>Configuration</strong> is set to Release and the <strong>Discovery Profiles Scope</strong> is set to <strong>Configuration-wide</strong>.</td>
+			<td headers="option"><strong>Browse</strong></td>
+			<td headers="description">Click to browse for a file to include in the compiler invocation command. This button is only visible when <strong>Configuration</strong> is set to Release and the <strong>Discovery Profiles Scope</strong> is set to <strong>Configuration-wide</strong>.</td>
 		</tr>
 		</tbody>
 </table>
 
-<p><img src="../images/ngref.gif" alt="Related reference" border="0"
+<p><img src="../images/ngref.gif" alt="Related reference" 
  height="21" width="143"><br>
 
 <ul>
 <li><a href=cdt_u_fprop_resource.htm>Resource</a></li>
-<li>C/C++ Build</li>
+<li>C/C++ Build
 <ul>
    <li><a href=cdt_u_fileprop_discovery.htm>Discovery options</a></li>
-   <li>Settings</li>
+   <li>Settings
    <ul> 
        <li><a href=cdt_u_fileprop_toolsettings.htm>Tool chains setting tab</a></li>
        <li><a href=cdt_u_fileprop_steps.htm>Build Steps tab</a></li>
     </ul>
+    </li>
     <li><a href="cdt_u_prop_build_toolchain.htm">Tool chain editor page</a>
 </ul>
-<li>C/C++ General</li>
+</li>
+<li>C/C++ General
 <ul>
-    <li>Paths and Symbols</li>
+    <li>Paths and Symbols
     <ul>
        <li><a href="cdt_u_fileprop_inc.htm">Includes tab</a>
        <li><a href="cdt_u_fileprop_sym.htm">Symbols tab</a>
     </ul> 
+    </li>
 </ul>
+</li>
 <li><a href="cdt_u_prop_rundebug.htm">Run/Debug Settings page</a>
 </ul>
 <p></p>

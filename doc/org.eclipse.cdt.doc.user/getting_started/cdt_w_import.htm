@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Language" content="en-us">
@@ -13,21 +13,21 @@ function newWin(url) {
 </script>
 </head>
 <body>
-<h2>Tutorial: Importing an existing project</h2>
+<h1 role="main">Tutorial: Importing an existing project</h1>
 
 <p>The following tutorial takes you though the process of importing a 'legacy' application using the CDT.</p>
 
 
 <p>Step 1: You want to create a single project that will reflect all of the components for the existing source tree.<br></p>
 <ol>
-	<li>Select <strong>File &gt; New &gt; Project</strong>.
+	<li>Select <strong>File &gt; New &gt; Project</strong>.</li>
 	<li>For this tutorial, expand <strong>C/C++</strong> and select <strong>C++ project</strong>.
 	<p><br>
 	The <strong>New Project</strong> wizard displays. 
 	<a href="javascript:void(0)" onClick="newWin('../images/cdt_w_import02.png')">Click
 	here to see an illustration (displayed in a separate window)</a>.</p>
-	<br>
-	<li>In the <strong>Project name</strong> field, type a name for the project.
+	<br></li>
+	<li>In the <strong>Project name</strong> field, type a name for the project.</li>
 	<li>Ensure that the <strong>Use default location</strong> option is not selected because here we will specify where the
 	resources reside in the file system, in a location other than your workspace. <br>
 	We assume this directory location already exists, and contains e.g. source files and makefile. If it does not exist, it
@@ -38,19 +38,19 @@ function newWin(url) {
 		<a href="javascript:void(0)" onClick="newWin('../images/cdt_w_importBrandon01.png')">Click
 	here to see an illustration (displayed in a separate window)</a>.</p>
 
-	</p>
-	<li>In the <strong>Location</strong> field, specify the path to the existing files for your project.
+	</li>
+	<li>In the <strong>Location</strong> field, specify the path to the existing files for your project.</li>
 	<li>From the <strong>Project types</strong> list, expand <strong>Makefile Project</strong> and select <strong>Empty Project.</strong>.
 	<ul>
 		<li>To have sample source and a makefile created in your existing directory, select <strong>Hello World C++ Project</strong></li>
-	</ul>
+	</ul></li>
 	<li>Make sure a toolchain is selected.</li>
 
 	<li>Click <strong>Next</strong>.
-	<p>&nbsp;
+	<p>&nbsp;</p></li>
 
 	<li>(Optional) On the <strong>Select Configurations</strong> page, select only the configurations you want created. Configurations
-	display for each toolchain selected on the previous page of the wizard.
+	display for each toolchain selected on the previous page of the wizard.</li>
 	<li>Click <strong>Finish</strong> to close the dialog box.
 	<p>You will see the new project in the Project Explorer view. In addition, new 'dot' files have been created in
 	your legacy project's root directory, these are CDT project files.</p>
@@ -60,11 +60,11 @@ function newWin(url) {
 		The view menu is activated via the small downward-pointing triangle in the upper right of the toolbar of the view.
 		<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_viewMenu.png')">Click here to see an
 		illustration (displayed in a separate window)</a>.</p>
-		<br>
+		<br></li>
 		<li>In the <strong>Available Customizations</strong> window, on the <strong>Filters</strong> tab, uncheck ".* resources."
 		<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_viewMenuFilters.png')">Click here to see an
 		illustration (displayed in a separate window)</a>.</p>
-		<br>
+		<br></li>
 		<li>The formerly hidden 'dot' files are now shown in the <strong>Project Explorer</strong>.
 		<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_viewMenuFilters2.png')">Click here to see an
 		illustration (displayed in a separate window)</a>.</p>
@@ -72,6 +72,7 @@ function newWin(url) {
 		</li>
 		<li>Hit <strong>OK</strong> to close the dialog.</li>
 	</ul>
+	</li>
 </ol>
 
 <p>Step 2: You are now ready to build your project.<br></p>
@@ -79,7 +80,7 @@ function newWin(url) {
 	<li>To build your project, select <strong>Project</strong> &gt; <strong>Build Project</strong>.
 	<br>You can also hit the hammer icon <img src="../images/hammer-icon.png" alt="build icon"> on the toolbar to
 	build the selected project.
-	<br>&nbsp;</br>
+	<br>&nbsp;</br></li>
 	<li>You may see an error e.g. <code> "make: *** no rule to make target 'all'.</code>
 	<p>This is because, in our case, we didn't tell it where the makefile is, or its name.</p>
 	<ul>
@@ -98,11 +99,10 @@ function newWin(url) {
 	or use the hammer icon <img src="../images/hammer-icon.png" alt="build icon">.
 	</li>
 	</ul>
-	</li>
 <p>After the project build completes, the results display in the <strong>Console</strong> view and new objects, such as binaries and includes, show in the <strong>Project Explorer</strong> view.</p>
 	<p>&nbsp;
 		<a href="javascript:void(0)" onClick="newWin('../images/cdt_w_importBrandon03.png')">Click
-	here to see an illustration (displayed in a separate window)</a>.</p>
+	here to see an illustration (displayed in a separate window)</a>.</p><br></li>
 	<li>Review the results to ensure that there are no errors.
 
 <p>&nbsp;
@@ -113,6 +113,7 @@ function newWin(url) {
 
 </br>
 </p>
+</li>
 </ol>
 
 <p>Step 3: You are now ready to run your application.</p>

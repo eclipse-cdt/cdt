@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 
 <head>
@@ -10,7 +10,7 @@
 
 <body>
 
-<h1>Debugging a project</h1>
+<h1 role="main">Debugging a project</h1>
 
 <p>The debugger lets you control the execution of your program by setting 
 breakpoints, suspending executed programs, stepping through your code, and 
@@ -31,7 +31,7 @@ examining the contents of variables.</p>
       <p>If a project is selected in the <a href="../reference/cdt_u_project_explorer_view.htm">Project Explorer</a> view the following data is automatically entered, take a moment to verify its accuracy or change as needed.      <br>
           <br>
       </p>
-      <ol type="a">
+      <ol style="list-style-type: lower-alpha;">
           <li>In the <strong>Name</strong> edit box, type the project name, like <strong>Hello World</strong>.<br>
               <br>
               You can now select this debug launch configuration by name the next time 
@@ -54,31 +54,32 @@ examining the contents of variables.</p>
           </li>
       </ol>
     </li>
-  <li>Click <strong>Debug</strong>.</li>
-  <p>You may be prompted to switch to the <strong>Debug</strong> perspective.  Click <strong>Yes</strong></p>
+  <li>Click <strong>Debug</strong>.<br><br>
+  <p>You may be prompted to switch to the <strong>Debug</strong> perspective.  Click <strong>Yes</strong></p><br>
   <p>The <strong>Debug</strong> perspective appears with the <span class="typewriter">helloworld.exe</span> application window open. 
   The C/C++ editor repositions in the perspective.</p>
-</ol>
-<blockquote>
-    <p><strong>NOTE</strong> If you see the error "<span class="typewriter">Can't find source file</span>"  in the editor view, use the <strong>Locate File</strong> button
+
+<br>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>NOTE:</strong> If you see the error "<span class="typewriter">Can't find source file</span>"  in the editor view, use the <strong>Locate File</strong> button
         to locate your source file.<br>
       </p>
-</blockquote>
-<ol>
+      <br>
+</li>
+
     <li>In the left margin of the <span class="typewriter">main.cpp</span> window, double-click to set a 
         breakpoint on:<br>
         <br>
         &nbsp;<span class="typewriter">cout &lt;&lt; &quot;You just entered&quot;
         </span><br>
         <br>
-        You'll see a blue circle (<img src="../images/icon_breakpoint_obj.gif" alt="Breakpoint" width="16" height="16" align="absmiddle">) there indicating the breakpoint is set.</br>
+        You'll see a blue circle (<img src="../images/icon_breakpoint_obj.gif" alt="Breakpoint" width="16" height="16">) there indicating the breakpoint is set.</br>
         <br>
         <br>
     </li>
     <li>Click <strong>Run  &gt; Resume</strong>.
         <br>
         <br>
-        Or, you can use the <strong>Resume</strong> button (<img src="../images/icon_db_resume.png" alt="Resume" width="19" height="14" align="absmiddle">) on the toolbar of the <strong>Debug</strong> view
+        Or, you can use the <strong>Resume</strong> button (<img src="../images/icon_db_resume.png" alt="Resume" width="19" height="14">) on the toolbar of the <strong>Debug</strong> view
         .<br>
         <br>
     </li>
@@ -93,8 +94,8 @@ examining the contents of variables.</p>
     <li>Click <strong>Run  &gt; Resume</strong>.<br>
         <br>
     </li>
-    <li>When prompted, again type a value other than 'm' in the <a href="../reference/cdt_u_console_view.htm">Console</a> view, and press Enter.</li>
-    <p>The breakpoint will be hit.</p>
+    <li>When prompted, again type a value other than 'm' in the <a href="../reference/cdt_u_console_view.htm">Console</a> view, and press Enter.
+    <p>The breakpoint will be hit.</p></li>
     <li>In the <strong>Variables</strong> view, verify that the variable is not 'm'.<br>
         <br>
     </li>
@@ -102,23 +103,24 @@ examining the contents of variables.</p>
         and type <strong>'m'</strong> <em>between the single quotes</em> and hit <strong>OK</strong>.<br>
         <br>
     </li>
-    <li>Click <strong>Run  &gt; Resume</strong>.</li>
+    <li>Click <strong>Run  &gt; Resume</strong>.
     <p>The output in the <span class="typewriter">helloworld.exe</span> application window is: &nbsp;&quot;<span class="typewriter">You just entered m, you need to enter m to exit.</span>&quot;
+    </p></li>
     <li>The application terminates and the debug session ends. The <strong>Debug</strong>  perspective remains open.</li>
 </ol>
 <p>To learn more about   debugging, see   the related debug conceptual topics.</p>
 
-<p align="left"> <a href="cdt_w_build.htm">
-<img border="0" src="../images/ngback.gif" width="16" height="16" alt="Back icon"></a><strong> <a href="cdt_w_build.htm">Back: Building a project</a></strong>&nbsp;&nbsp;&nbsp; </p>
+<p> <a href="cdt_w_build.htm">
+<img src="../images/ngback.gif" width="16" height="16" alt="Back icon"></a><strong> <a href="cdt_w_build.htm">Back: Building a project</a></strong>&nbsp;&nbsp;&nbsp; </p>
 
-<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
 <br>
 <a href="../concepts/cdt_c_over_dbg.htm">Debug overview</a><br>
 <a href="../concepts/cdt_c_dbg_info.htm">Debug information</a></p>
-<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
 <br>
 <a href="../tasks/cdt_o_debug.htm">Debugging</a></p>
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
 <br>
 <a href="../reference/cdt_u_dbg_view.htm">Debug view</a><br>
 <a href="../reference/cdt_u_dbg_view.htm">Debug launch controls</a><br>

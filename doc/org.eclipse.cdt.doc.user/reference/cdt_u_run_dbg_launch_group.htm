@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 
 <head>
@@ -11,7 +11,7 @@
 </head>
 <body>
 
-<h1>Launch Group</h1>
+<h1 role="main">Launch Group</h1>
 
 <p>The user can launch multiple applications at the same time or in sequential order. This is made possible by the launch configuration type: <em>Launch Group</em>.</p>
 
@@ -26,15 +26,15 @@ It also allows you to temporarily disable, re-order and edit properties of the e
 <p></p>
 
 <table width="580" fgcolor="#DDD" border="1" cellpadding="2" cellspacing="0" >
-<tr ><th>Component</th><th>Description</th></tr>
-<tr><td width="30%"><strong>Name</strong></td><td>Displays the name of the launch configuration and a checkbox for enabling or disabling the configuration.</td></tr>
-<tr><td><strong>Mode</strong></td><td>Displays the mode the configuration will run in when the group is launched.</td></tr>
-<tr><td><strong>Action</strong></td><td>Displays the optional action that will be carried after the configuration is launched.</td></tr>
-<tr><td><strong>Up</strong></td><td>Move selected configuration(s) up</td></tr>
-<tr><td><strong>Down</strong></td><td>Move selected configuration(s) down</td></tr>
-<tr><td><strong>Add...</strong></td><td>Opens a dialog to add a new configuration.</td></tr>
-<tr><td><strong>Edit...</strong></td><td>Opens a dialog to edit values for configuration(s).</td></tr>
-<tr><td><strong>Remove</strong></td><td>Removes selected configuration(s) from the list.</td></tr>
+<tr ><th id="component">Component</th><th id="description">Description</th></tr>
+<tr><td style="width:30%" headers="component"><strong>Name</strong></td><td headers="description">Displays the name of the launch configuration and a checkbox for enabling or disabling the configuration.</td></tr>
+<tr><td headers="component"><strong>Mode</strong></td><td headers="description">Displays the mode the configuration will run in when the group is launched.</td></tr>
+<tr><td headers="component"><strong>Action</strong></td><td headers="description">Displays the optional action that will be carried after the configuration is launched.</td></tr>
+<tr><td headers="component"><strong>Up</strong></td><td headers="description">Move selected configuration(s) up</td></tr>
+<tr><td headers="component"><strong>Down</strong></td><td headers="description">Move selected configuration(s) down</td></tr>
+<tr><td headers="component"><strong>Add...</strong></td><td headers="description">Opens a dialog to add a new configuration.</td></tr>
+<tr><td headers="component"><strong>Edit...</strong></td><td headers="description">Opens a dialog to edit values for configuration(s).</td></tr>
+<tr><td headers="component"><strong>Remove</strong></td><td headers="description">Removes selected configuration(s) from the list.</td></tr>
 
 </table>
 
@@ -49,9 +49,9 @@ The <em>Common</em> tab lets you select where the configuration is stored, see <
 </p>
 
 <table width="580" fgcolor="#DDD" border="1" cellpadding="2" cellspacing="0" >
-<tr ><th>Component</th><th>Description</th></tr>
-<tr><td width="30%"><strong>Launch Mode</strong></td>
-  <td>The Launch Mode combobox at the top of the dialog serves a dual purpose.<br>
+<tr ><th id="component2">Component</th><th id="description2">Description</th></tr>
+<tr><td style="width:30%" headers="component2"><strong>Launch Mode</strong></td>
+  <td headers="description2">The Launch Mode combobox at the top of the dialog serves a dual purpose.<br>
    1. It dictates the desired mode for the launch configuration being added,
 and <br>
    2. It establishes a 'mode' filter for the launch configurations that are
@@ -62,10 +62,10 @@ that support being invoked in 'debug' mode appear. Also, (2) when the launch
 group is invoked, that particular child launch configuration will be invoked in
 'debug' mode.
   </td></tr>
-<tr><td><strong>Filter input</strong></td><td>Type in filter input to filter list of configurations by name</td></tr>
-<tr><td><strong>Configurations tree</strong></td><td>Lists all available launch configurations for the selected Launch Mode, filtered by <em>Filter input</em>.</td></tr>
-<tr><td><strong>Use default mode when launching</strong></td>
-  <td>
+<tr><td headers="component2"><strong>Filter input</strong></td><td headers="description2">Type in filter input to filter list of configurations by name</td></tr>
+<tr><td headers="component2"><strong>Configurations tree</strong></td><td headers="description2">Lists all available launch configurations for the selected Launch Mode, filtered by <em>Filter input</em>.</td></tr>
+<tr><td headers="component2"><strong>Use default mode when launching</strong></td>
+  <td headers="description2">
 This checkbox acts as a sort of override to whatever mode is set in the Launch Mode
 combobox. Checking this option indicates that the child launch configuration
 should be launched in the mode used to initiate the launch group launch. This
@@ -82,11 +82,13 @@ Note that "Use default..." control can allow you to create a launch group
 that will not be successful. For example when one or more launch configurations
 selected cannot be launched in the mode dictated by launch group mode.
   </td></tr>
-<tr><td><strong>Post launch action</strong></td><td>
+<tr><td headers="component2"><strong>Post launch action</strong></td><td headers="description2">
 There are several actions available that control what should be done after each launch:
+<ul>
 <li>Delay - Waits a specified number of second before launching the next configuration in the group</li>
 <li>Wait until terminated - Waits until current launch is terminated</li>
 <li>None - Proceeds to launch next configuration immediately</li>
+</ul>
 </td></tr>
 
 </table>
@@ -99,14 +101,14 @@ There are several actions available that control what should be done after each 
 
 
 
-<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
 <br>
 <a href="../concepts/cdt_c_over_dbg.htm">Debug overview</a><br>
 <a href="../concepts/cdt_c_dbg_info.htm">Debug information</a></p>
-<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
 <br>
 <a href="../tasks/cdt_o_run.htm">Running and debugging</a></p>
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
 <br>
 <a href="cdt_o_run_dbg_pages.htm">Run and Debug dialog box</a></p>
 <img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >

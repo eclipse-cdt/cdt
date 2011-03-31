@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 
 <head>
@@ -10,8 +10,8 @@
 </head>
 <body>
 
-<h1>Search view</h1>
-<p>Any matches are reported in the <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.search.ui.views.SearchView)")'>Search</a> view. </p>
+<h1 role="main">Search view</h1>
+<p>Any matches are reported in the <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.search.ui.views.SearchView)")'>Search</a> view. </p>
 <p><img src="../images/searchView.png" alt="Search View" ></p>
 
 <p>When you have completed a search and have results in the 
@@ -37,61 +37,61 @@ you can put the focus on that view and get more options on the
 <h2>Search view toolbar options</h2>
 
 <table border="1" cellpadding="4" cellspacing="0" bordercolor="#DDDDDD" >
-	<tr><th>Icon</th><th>Command</th><th>Description</th></tr>
+	<tr><th id="icon">Icon</th><th id="command">Command</th><th id="description">Description</th></tr>
 	<tr>
-		<td align="center" valign="top"><img src="../images/icon_next.png" alt="Next icon"></td>	
-		<td valign="top"><strong>Next</strong></td>
-		<td valign="top">Navigates to the next search result.</td>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_next.png" alt="Next icon"></td>	
+		<td valign="top" headers="command"><strong>Next</strong></td>
+		<td valign="top" headers="description">Navigates to the next search result.</td>
 	</tr>
 	<tr>
-		<td align="center" valign="top"><img src="../images/icon_previous.png" alt="Previous icon"></td>	
-		<td valign="top"><strong>Previous</strong></td>
-		<td valign="top">Navigates to the previous search result.</td>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_previous.png" alt="Previous icon"></td>	
+		<td valign="top" headers="command"><strong>Previous</strong></td>
+		<td valign="top" headers="description">Navigates to the previous search result.</td>
 	</tr>
 	<tr>
-		<td align="center" valign="top"><img src="../images/icon_remove.png" alt="Remote the Selected Matches icon"></td>
-		<td valign="top"><strong>Remove Selected Matches (Delete)</strong></td>
-		<td valign="top">Removes user selected matches from the search console.</td>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_remove.png" alt="Remote the Selected Matches icon"></td>
+		<td valign="top" headers="command"><strong>Remove Selected Matches (Delete)</strong></td>
+		<td valign="top" headers="description">Removes user selected matches from the search console.</td>
 	</tr>
 	<tr>
-		<td align="center" valign="top"><img src="../images/icon_con_rem_all_term.png" alt="Remove all Matches icon"></td>
-		<td valign="top"><strong>Remove All Matches</strong></td>
-		<td valign="top">Clears the search console.</td>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_con_rem_all_term.png" alt="Remove all Matches icon"></td>
+		<td valign="top" headers="command"><strong>Remove All Matches</strong></td>
+		<td valign="top" headers="description">Clears the search console.</td>
 	</tr>
 	<tr>
-		<td align="center" valign="top"><img src="../images/icon_expand_all.png" alt="Expand All icon"></td>	
-		<td valign="top"><strong>Expand All</strong></td>
-		<td valign="top">Expands all search results.</td>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_expand_all.png" alt="Expand All icon"></td>	
+		<td valign="top" headers="command"><strong>Expand All</strong></td>
+		<td valign="top" headers="description">Expands all search results.</td>
 	</tr>
 	<tr>
-		<td align="center" valign="top"><img src="../images/icon_collapse_all.png" alt="Collapse All icon"></td>	
-		<td valign="top"><strong>Collapse All</strong></td>
-		<td valign="top">Collapses all search results.</td>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_collapse_all.png" alt="Collapse All icon"></td>	
+		<td valign="top" headers="command"><strong>Collapse All</strong></td>
+		<td valign="top" headers="description">Collapses all search results.</td>
 	</tr>
 	<tr>
-		<td align="center" valign="top"><img src="../images/icon_con_terminate.png" alt="Cancel Search icon"></td>	
-		<td valign="top"><strong>Cancel Current Search</strong></td>
-		<td valign="top">Terminates the current search.</td>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_con_terminate.png" alt="Cancel Search icon"></td>	
+		<td valign="top" headers="command"><strong>Cancel Current Search</strong></td>
+		<td valign="top" headers="description">Terminates the current search.</td>
 	</tr>
 	<tr>
-		<td align="center" valign="top"><img src="../images/icon_repeat_search.png" alt="Repeat Search icon"></td>	
-		<td valign="top"><strong>Run the Current Search Again</strong></td>
-		<td valign="top">Repeat the search using the same criteria.</td>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_repeat_search.png" alt="Repeat Search icon"></td>	
+		<td valign="top" headers="command"><strong>Run the Current Search Again</strong></td>
+		<td valign="top" headers="description">Repeat the search using the same criteria.</td>
 	</tr>
 	<tr>
-		<td align="center" valign="top"><img src="../images/icon_show_prev_search.png" alt="Show Previous Searches icon"></td>
-		<td valign="top"><strong>Show Previous Searches</strong></td>
-		<td valign="top">Shows the list of previously run searches which can be reselected.</td>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_show_prev_search.png" alt="Show Previous Searches icon"></td>
+		<td valign="top" headers="command"><strong>Show Previous Searches</strong></td>
+		<td valign="top" headers="description">Shows the list of previously run searches which can be reselected.</td>
 	</tr>
 	<tr>
-		<td align="center" valign="top"><img src="../images/icon_pin.png" alt="Pin view icon"></td>
-		<td valign="top"><strong>Pin the Search View</strong></td>
-		<td valign="top">Forces the Search view to remain on top of other views in the workbench area.</td>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_pin.png" alt="Pin view icon"></td>
+		<td valign="top" headers="command"><strong>Pin the Search View</strong></td>
+		<td valign="top" headers="description">Forces the Search view to remain on top of other views in the workbench area.</td>
 	</tr>
 	<tr>
-		<td align="center" valign="top"><img src="../images/icon_menu.png" alt="Menu icon"></td>
-		<td valign="top"><strong>Menu</strong></td>
-		<td valign="top">Displays assorted options available for the Search view, including: <br>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_menu.png" alt="Menu icon"></td>
+		<td valign="top" headers="command"><strong>Menu</strong></td>
+		<td valign="top" headers="description">Displays assorted options available for the Search view, including: <br>
 		<ul>
 			<li>Show as List</li>
 			<li>Show as Tree (default)</li>
@@ -103,13 +103,13 @@ you can put the focus on that view and get more options on the
 	</tr>
 </table>
 
-<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
 <a href="../concepts/cdt_o_code_entry.htm">Coding aids</a><br>
 <a href="../concepts/cdt_c_search.htm">C/C++ search</a></p>
-<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21"> <br>
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21"> <br>
 <a href="../tasks/cdt_t_search.htm">Searching for C/C++ elements</a><br>
 <a href="../tasks/cdt_t_cust_cpp_editor.htm">Customizing the C/C++ editor</a></p>
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
 <br>
 <a href="cdt_o_ceditor_pref.htm">C/C++ editor preferences</a><br>
 <a href="cdt_u_m_search.htm">Search action</a><br>

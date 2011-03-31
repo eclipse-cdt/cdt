@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 <head>
   <meta http-equiv="Content-Language" content="en-us">
@@ -7,7 +7,7 @@
   <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <body>
-<h1>Variables properties (C/C++ Project Properties)</h1>
+<h1 role="main">Variables properties (C/C++ Project Properties)</h1>
 Customizes the Eclipse CDT build environment variables for all projects in the workspace; it lets
 you control the environment variables used by the build to for the purposes of building the selected configuration.</p>
 <p><img img="" src="../images/prop_variables.png"
@@ -22,62 +22,66 @@ you control the environment variables used by the build to for the purposes of b
 		<col width="70%" valign="top" >
 	</colgroup>
 	<tbody> 
+		<tr class="hidden">
+			<th id="option">Option</th>
+			<th id="description">Description</th>
+		</tr>
 		<tr>
-			<td><strong>Environment variables to set</strong></td>
-			<td>Shows the current list of environment variables and their corresponding value. These are the environment variable values used when running an application.</td>
+			<td headers="option"><strong>Environment variables to set</strong></td>
+			<td headers="description">Shows the current list of environment variables and their corresponding value. These are the environment variable values used when running an application.</td>
 		</tr>		
 		<tr>
-			<td><strong>Configuration</strong></td>
-			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+			<td headers="option"><strong>Configuration</strong></td>
+			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
 		</tr>
 		<tr>
-			<td><strong>Manage configurations</strong></td>
-			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+			<td headers="option"><strong>Manage configurations</strong></td>
+			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
 		</tr>
 		<tr>
-			<td><strong>(The variables table)</strong></td>
-			<td>Lists the CDT build variables and system variables, by <strong>Name</strong>, <strong>Type</strong>, and the <strong>Value</strong>. Custom Build variables are identified by the name being highlighted using a <strong>bold</strong> font.</td>
+			<td headers="option"><strong>(The variables table)</strong></td>
+			<td headers="description">Lists the CDT build variables and system variables, by <strong>Name</strong>, <strong>Type</strong>, and the <strong>Value</strong>. Custom Build variables are identified by the name being highlighted using a <strong>bold</strong> font.</td>
 		</tr>
 		<tr>
-			<td><strong>Name</strong></td>
-			<td>Indicates the name of the variable, either a user defined variable or a system variable.</td>
+			<td headers="option"><strong>Name</strong></td>
+			<td headers="description">Indicates the name of the variable, either a user defined variable or a system variable.</td>
 		</tr>
 			<tr>
-			<td><strong>Type</strong></td>
-			<td>Shows the type for the variable.</td>
+			<td headers="option"><strong>Type</strong></td>
+			<td headers="description">Shows the type for the variable.</td>
 		</tr>
 			<tr>
-			<td><strong>Value</strong></td>
-			<td>Specifies the value of the variable.</td>
+			<td headers="option"><strong>Value</strong></td>
+			<td headers="description">Specifies the value of the variable.</td>
 		</tr>
 				<tr>
-			<td><strong>Show system variables</strong></td>
-			<td>When selected, system variables are included in the Variables table; otherwise, they are excluded so that only user defined variables appear in the Variables list.</td>
+			<td headers="option"><strong>Show system variables</strong></td>
+			<td headers="description">When selected, system variables are included in the Variables table; otherwise, they are excluded so that only user defined variables appear in the Variables list.</td>
 		</tr>
 		<tr>
-			<td><strong>Add</strong></td>
-            <td>Creates a new variable and corresponding value.</td>
+			<td headers="option"><strong>Add</strong></td>
+            <td headers="description">Creates a new variable and corresponding value.</td>
             </td>
 		</tr>		
 		<tr>
-			<td><strong>Edit</strong></td>
-			<td>Modifies the name and value of the selected variable.</tr>
+			<td headers="option"><strong>Edit</strong></td>
+			<td headers="description">Modifies the name and value of the selected variable.</tr>
 		<tr>
-			<td><strong>Delete</strong></td>
-			<td>Removes the selected variables from the list. <strong>Note:</strong> Some variables are read-only and cannot be removed. 
+			<td headers="option"><strong>Delete</strong></td>
+			<td headers="description">Removes the selected variables from the list. <strong>Note:</strong> Some variables are read-only and cannot be removed. 
 			</td>
 		</tr>
 	</tbody>
 </table>
 
-<p><img border="0" src="../images/ngref.gif" alt="Related reference"
+<p><img src="../images/ngref.gif" alt="Related reference"
  width="143" height="21"><br>
 
 <ul>
 <li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>
 <li><a href="cdt_u_prop_builders.htm">Project Properties, Builders page</a>
 <li><a href="cdt_u_prop_build.htm">Project Properties, C/C++ Build category</a>
-   <ul type="disc">
+   <ul style="list-style-type: disc">
    <li><a href="cdt_u_prop_build_discovery.htm">Discovery options page</a>
    <li><a href="cdt_u_prop_build_environment.htm">Environment page</a>
    <li>Settings page
@@ -92,7 +96,7 @@ you control the environment variables used by the build to for the purposes of b
    <li><a href="cdt_u_prop_build_variables.htm">Variables page</a>
    </ul>
 <li>Project Properties, <a href="cdt_u_prop_general.htm">C/C++ General category</a>
-   <ul type="disc"> 
+   <ul style="list-style-type: disc"> 
    <li><a href="cdt_u_prop_general_doc.htm">Documentation page</a>
    <li><a href="cdt_u_prop_general_typ.htm">File Types page</a>
    <li><a href="cdt_u_prop_general_idx.htm">Indexer page</a>

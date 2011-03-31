@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 
 <head>
@@ -12,9 +12,9 @@
 
 <body>
 
-<h1>Signals view</h1>
+<h1 role="main">Signals view</h1>
 
-<p>The <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.cdt.debug.ui.SignalsView)")'>Signals</a> view of the Debug perspective lets you view the signals defined on the selected debug target and how the 
+<p>The <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.cdt.debug.ui.SignalsView)")'>Signals</a> view of the Debug perspective lets you view the signals defined on the selected debug target and how the 
 debugger handles each one.</p>
   <p><img src="../images/view_signals.png" width="440" height="251"  alt="Signals View"></p>
   
@@ -30,24 +30,28 @@ debugger handles each one.</p>
     <col width="70%" valign="top" >
     </colgroup>
     <tbody>
+		<tr class="hidden">
+			<th id="option">Option</th>
+			<th id="description2">Description</th>
+		</tr>
       <tr>
-        <td width="99"><strong>Name</strong></td>
-        <td width="475">Displays the name of the signal.</td>
+        <td style="width:99" headers="option"><strong>Name</strong></td>
+        <td style="width:475" headers="description2">Displays the name of the signal.</td>
       </tr>
       <tr>
-        <td><strong>Pass</strong></td>
-        <td>Where &quot;yes&quot; is displayed, the debugger  lets your program see the 
+        <td headers="option"><strong>Pass</strong></td>
+        <td headers="description2">Where &quot;yes&quot; is displayed, the debugger  lets your program see the 
   signal. Your program can handle the signal, or else it may terminate if the 
   signal is fatal and not handled.</td>
       </tr>
       <tr>
-        <td><strong>Suspend</strong></td>
-        <td>Where &quot;yes&quot; is displayed, the debugger  suspends your program when this 
+        <td headers="option"><strong>Suspend</strong></td>
+        <td headers="description2">Where &quot;yes&quot; is displayed, the debugger  suspends your program when this 
   signal is handled.</td>
       </tr>
       <tr>
-        <td><strong>Description</strong></td>
-        <td>Displays a description of the signal.</td>
+        <td headers="option"><strong>Description</strong></td>
+        <td headers="description2">Displays a description of the signal.</td>
       </tr>
     </tbody>
   </table>
@@ -61,42 +65,41 @@ debugger handles each one.</p>
     </colgroup>
     <tbody>
       <tr>
-        <td valign="top"><center>
+        <th valign="top" id="icon">
           <strong>Icon</strong>
-        </center>        </td>
-        <td valign="top"><center>
+                </th>
+        <th valign="top" id="name">
           <strong>Name</strong>
-        </center>        </td>
-        <td valign="top"><center>
+                </th>
+        <th valign="top" id="description">
           <strong>Description</strong>
-        </center>        </td>
+                </th>
       </tr>
       <tr>
-        <td width="74" valign="top">&nbsp;</td>
-        <td width="143" valign="top"><strong>Signal Properties... </strong></td>
-        <td width="345" valign="top"><p>Opens the properties window for the selected signal enabling you to:
+        <td style="width:74" valign="top" headers="icon">&nbsp;</td>
+        <td style="width:143" valign="top" headers="name"><strong>Signal Properties... </strong></td>
+        <td style="width:345" valign="top" headers="description"><p>Opens the properties window for the selected signal enabling you to:
           <ul>
               <li>pass or not pass the signal to the program</li>
               <li>suspend the program when the signal occurs</li>
           </ul></p></td>
       </tr>
       <tr>
-        <td valign="top"><center>
+        <td valign="top" headers="icon" style="text-align:center">
           <img src="../images/icon_resume_signal.png" width="17" height="15" alt="Resume with Signal Icon">
-        </center>
         </td>
-        <td valign="top"><strong>Resume With Signal</strong></td>
-        <td valign="top">Resume program execution after receiving the signal. </td>
+        <td valign="top" headers="name"><strong>Resume With Signal</strong></td>
+        <td valign="top" headers="description">Resume program execution after receiving the signal. </td>
       </tr>
     </tbody>
   </table>
-  <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+  <p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
     <br>
     <a href="../concepts/cdt_c_dbg_info.htm">Debug information</a></p>
-  <p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+  <p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
 <br>
 <a href="../tasks/cdt_o_debug.htm">Debugging</a></p>
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
 <br>
 <a href="cdt_o_views.htm">C/C++ Views</a></p>
 <hr >

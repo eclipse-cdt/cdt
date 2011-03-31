@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
 <html lang="en">
 <head>
 <meta name="copyright" content="Copyright (c) IBM Corporation and others 2007,2009 This page is made available under license. For full details, see the LEGAL section in the documentation that contains this page.">
@@ -8,14 +8,14 @@
 <link rel="STYLESHEET" href="../book.css"  type="text/css">
 <style>
 td {border-top: solid thin black;}
-img[alt] {background-color:#ffdddd;}
+img[alt] {}
 tr {vertical-align: top;}
 </style>
 <title>CDT New and Noteworthy</title>
 </head>
 <body>
 
-<h1 id="top">CDT 7.0 - New and Noteworthy</h1>
+<h1 role="main" id="top">CDT 7.0 - New and Noteworthy</h1>
 <p>See <a href="http://wiki.eclipse.org/CDT/User/NewIn70">What's new in CDT 7.0</a> on the CDT wiki
 which may contain more recent information.
 </p>
@@ -28,19 +28,19 @@ which may contain more recent information.
 		<p><!-- ******************** Editor ********************** -->
 		<tr>
 			<td colspan="2"><a name="Editor"></a>
-				<div style="font-size: 20px; font-weight: bold;">Editor</div>
+				<div class="title">Editor</div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Sort Lines</span></p>
+				<p style="text-align:right"><span class="bold">Sort Lines</span></p>
 			</td>
 				<td>The new <strong>Sort Lines</strong> command that sorts selected lines alphabetically.
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Surround with</span></p>
+				<p style="text-align:right"><span class="bold">Surround with</span></p>
 			</td>
 			<td>
 				<p><img src="../images/70/CDT70_Surroundwith.png" alt="Surround with"></img></p>
@@ -48,7 +48,7 @@ which may contain more recent information.
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Templates View support</span></p>
+				<p style="text-align:right"><span class="bold">Templates View support</span></p>
 			</td>
 			<td>Added Templates View support.
 				<p><img src="../images/70/CDT70_Templates.png" alt="Templates View"></img></p>
@@ -56,7 +56,7 @@ which may contain more recent information.
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Outline View Groupings</span></p>
+				<p style="text-align:right"><span class="bold">Outline View Groupings</span></p>
 			</td>
 			<td>Option to group macro definitions in the Outline view.
 				<p><img src="../images/70/CDT70_Outlinegroupmacros.png" alt="Outline View Groupings"></img></p>
@@ -67,12 +67,12 @@ which may contain more recent information.
 		<!-- ******************** Codan ********************** -->
 		<tr>
 			<td colspan="2"><a name="Editor"></a>
-				<div style="font-size: 20px; font-weight: bold;">Codan</div>
+				<div class="title">Codan</div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Code Analysis</span></p>
+				<p style="text-align:right"><span class="bold">Code Analysis</span></p>
 			</td>
 			<td>New code analysis framework is introduced, called Codan. See this
 			  <a href="http://wiki.eclipse.org/CDT/designs/StaticAnalysis">wiki</a> for details.
@@ -84,19 +84,19 @@ which may contain more recent information.
 		<!-- ******************** Refactoring ********************** -->
 		<tr>
 			<td colspan="2"><a name="Refactoring"></a>
-				<div style="font-size: 20px; font-weight: bold;">Refactoring</div>
+				<div class="title">Refactoring</div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Getters and setters</span></p>
+				<p style="text-align:right"><span class="bold">Getters and setters</span></p>
 			</td>
 			<td>Choice where to place getters and setters during refactoring.
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Refactoring History</span></p>
+				<p style="text-align:right"><span class="bold">Refactoring History</span></p>
 			</td>
 			<td>Introduced <strong>Refactoring History</strong> for the CDT Refactorings
 				<p><img src="../images/70/CDT70_Refactoringhistory.png" alt="Getters and setters"></img></p>
@@ -107,19 +107,19 @@ which may contain more recent information.
 		<!-- ******************** Build ********************** -->
 		<tr>
 			<td colspan="2"><a name="Build"></a>
-				<div style="font-size: 20px; font-weight: bold;">Build</div>
+				<div class="title">Build</div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Edit While Building</span></p>
+				<p style="text-align:right"><span class="bold">Edit While Building</span></p>
 			</td>
 			<td>Allow saving files while external Makefile builds are in progress
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Console Error Highlighting</span></p>
+				<p style="text-align:right"><span class="bold">Console Error Highlighting</span></p>
 			</td>
 			<td>Compiler errors and warnings are now highlighted in the build console.
 			  Navigation from errors in build console to location in editor is possible
@@ -129,7 +129,7 @@ which may contain more recent information.
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Regex Error Parser</span></p>
+				<p style="text-align:right"><span class="bold">Regex Error Parser</span></p>
 			</td>
 			<td>Regular Expression Error Parser introduced. The parser is user-configurable and can be used
 			  to parse errors from non-standard compilers
@@ -138,7 +138,7 @@ which may contain more recent information.
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Save Log</span></p>
+				<p style="text-align:right"><span class="bold">Save Log</span></p>
 			</td>
 			<td>Added ability to save build log to a file
 				<p><img src="../images/70/CDT70_SaveLog.png" alt="Save Log"></img></p>
@@ -146,15 +146,15 @@ which may contain more recent information.
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Run Last Target</span></p>
+				<p style="text-align:right"><span class="bold">Run Last Target</span></p>
 			</td>
-			<td>New keyboard bindings "Run Last Make Target" F9/Shift-F9
+			<td>New keyboard bindings <Q>Run Last Make Target</Q> F9/Shift-F9
 				<p><img src="../images/70/CDT70_LastMakeTarget.png" alt="Run Last Target"></img></p>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Project Context Menu</span></p>
+				<p style="text-align:right"><span class="bold">Project Context Menu</span></p>
 			</td>
 			<td>Organized project context menu related to build.
 				<p><img src="../images/70/CDT70_ProjectContextMenu.png" alt="Project Context Menu"></img></p>
@@ -162,15 +162,15 @@ which may contain more recent information.
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Build Selected Configurations</span></p>
+				<p style="text-align:right"><span class="bold">Build Selected Configurations</span></p>
 			</td>
-			<td>Reworked "Build Selected Configurations" dialog.
+			<td>Reworked <Q>Build Selected Configurations</Q> dialog.
 				<p><img src="../images/70/CDT70_BuildSelected.png" alt="Build Selected Configurations"></img></p>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Build Preferences</span></p>
+				<p style="text-align:right"><span class="bold">Build Preferences</span></p>
 			</td>
 			<td>Organized build preferences under <strong>Build</strong> page.
 				<p><img src="../images/70/CDT70_BuildPreferences.png" alt="Build Preferences"></img></p>
@@ -178,7 +178,7 @@ which may contain more recent information.
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">New Icons</span></p>
+				<p style="text-align:right"><span class="bold">New Icons</span></p>
 			</td>
 			<td>New icons and decorations.
 				<p><img src="../images/70/CDT70_NewIcons70.png" alt="New Icons"></img></p>
@@ -186,7 +186,7 @@ which may contain more recent information.
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Import Includes</span></p>
+				<p style="text-align:right"><span class="bold">Import Includes</span></p>
 			</td>
 			<td>Import/Export in Includes and Symbols tabs on the Paths and Symbols project properties.
 				<p><img src="../images/70/CDT70_ImportIncludes.png" alt="Import Includes"></img></p>
@@ -194,7 +194,7 @@ which may contain more recent information.
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">MinGW and Cygwin</span></p>
+				<p style="text-align:right"><span class="bold">MinGW and Cygwin</span></p>
 			</td>
 			<td>Better algorithms to recognize MinGW and Cygwin toolchains, see 
 			  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=303900">bug 303900 (Cygwin 1.7)</a> and
@@ -203,14 +203,14 @@ which may contain more recent information.
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Hello World</span></p>
+				<p style="text-align:right"><span class="bold">Hello World</span></p>
 			</td>
 			<td>When a Hello World project is created, open generated file automatically.
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Headless Builder</span></p>
+				<p style="text-align:right"><span class="bold">Headless Builder</span></p>
 			</td>
 			<td>Headless Builder has been improved: supports configuration selection,
 			  returns error code if built projects have error markers.
@@ -218,7 +218,7 @@ which may contain more recent information.
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">GCC options</span></p>
+				<p style="text-align:right"><span class="bold">GCC options</span></p>
 			</td>
 			<td>ManagedBuild GCC toolchain supports pre included header files, i.e. <strong>-include</strong> switch to gcc
 			</td>
@@ -228,20 +228,24 @@ which may contain more recent information.
 		<!-- ******************** Project/Configuration References ********************** -->
 		<tr>
 			<td>
-				<p align="right"><span class="bold">References</span></p>
+				<p style="text-align:right"><span class="bold">References</span></p>
 			</td>
 			<td>
-				<li>CDT Project References can be ordered. Referenced paths and symbols automatically track this order.</li>
-				<li>References to library projects are automatically linked in.</li>
-				<li>A configuration can reference another configuration in the same project.</li>
+				<ul>
+					<li>CDT Project References can be ordered. Referenced paths and symbols automatically track this order.</li>
+					<li>References to library projects are automatically linked in.</li>
+					<li>A configuration can reference another configuration in the same project.</li>
+				</ul>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">UPC</span></p>
+				<p style="text-align:right"><span class="bold">UPC</span></p>
 			</td>
 			<td>
-				<li>New UPC project wizard supports the Berkeley UPC toolchain.</li>
+				<ul>
+					<li>New UPC project wizard supports the Berkeley UPC toolchain.</li>
+				</ul>
 				<p>&nbsp;</p>
 			</td>
 		</tr>
@@ -249,12 +253,12 @@ which may contain more recent information.
 		<!-- ******************** Debug ********************** -->
 		<tr>
 			<td colspan="2"><a name="Debug"></a>
-				<div style="font-size: 20px; font-weight: bold;">Debug</div>
+				<div class="title">Debug</div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Non-Stop</span></p>
+				<p style="text-align:right"><span class="bold">Non-Stop</span></p>
 			</td>
 			<td>Support for <strong>Non-Stop Debugging</strong> (stopping one or more threads while the others continue to execute).
 			  Requires GDB 7.0 or newer.
@@ -263,9 +267,10 @@ which may contain more recent information.
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Features</span></p>
+				<p style="text-align:right"><span class="bold">Features</span></p>
 			</td>
 			<td>
+				<ul>
 				<li><strong>DSF-GDB</strong>. The default debugger for the CDT is now using a different debugging framework and is called DSF-GDB.
 				  It provides better support for newer GDB versions, such as 6.7, 6.8 and 7.x, for older versions you would
 				  have to edit preferences to use the old framework (CDI) by default.  See full list of DSF-GDB features
@@ -285,6 +290,7 @@ which may contain more recent information.
 				</li>
 				<li><strong>Interrupts on Windows</strong> platform while debugging application got improved support.
 				</li>
+				</ul>
 				<p>&nbsp;</p>
 			</td>
 		</tr>
@@ -292,12 +298,12 @@ which may contain more recent information.
 		<!-- ******************** Bugs fixed ********************** -->
 		<tr>
 			<td colspan="2"><a name="bugs70"></a>
-			<div style="font-size: 20px; font-weight: bold;">Bugs Fixed</div>
+			<div class="title">Bugs Fixed</div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Fixed</span></p>
+				<p style="text-align:right"><span class="bold">Fixed</span></p>
 			</td>
 			<td>All Bugzilla tasks closed in this release: 
 				<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;resolution=FIXED;target_milestone=6.1;target_milestone=7.0;product=CDT;classification=Tools">
@@ -310,12 +316,12 @@ which may contain more recent information.
 		<!-- ******************** Known Limitations ********************** -->
 		<tr>
 			<td colspan="2"><a name="bugs70"></a>
-			<div style="font-size: 20px; font-weight: bold;">Known Limitations</div>
+			<div class="title">Known Limitations</div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<p align="right"><span class="bold">Limitations</span></p>
+				<p style="text-align:right"><span class="bold">Limitations</span></p>
 			</td>
 			<td>Cannot run or debug class in a project with GB18030 characters in workspace/project name.
 			  Most class libraries do not properly support the creation of a system process (via java.lang.Runtime.exec(...))

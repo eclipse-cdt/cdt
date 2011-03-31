@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 
 <head>
@@ -8,82 +8,82 @@
 <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <body>
-<h1>Window Menu actions</h1>
+<h1 role="main">Window Menu actions</h1>
 
 <p><img src="../images/cdt_menu_window.png" alt="Window Menu" ></p>
 <p>
 <table border="1" cellspacing="0" cellpadding="3">
-	<tr><th>Name</th><th>Function</th><th>Keyboard Shortcut</th></tr>
+	<tr><th id="name">Name</th><th id="function">Function</th><th id="keyboard">Keyboard Shortcut</th></tr>
 
 	<tr>
-		<td><strong>New Window</strong></td>
-		<td>Opens new Window </td>
-		<td>&nbsp;</td>
+		<td headers="name"><strong>New Window</strong></td>
+		<td headers="function">Opens new Window </td>
+		<td headers="keyboard">&nbsp;</td>
 	</tr>
 
 	<tr>
-		<td><strong>New Editor</strong></td>
-		<td>This command opens a new empty editor in this Workbench window. </td>
-		<td>&nbsp;</td>
+		<td headers="name"><strong>New Editor</strong></td>
+		<td headers="function">This command opens a new empty editor in this Workbench window. </td>
+		<td headers="keyboard">&nbsp;</td>
 	</tr>
 
 	<tr>
-		<td><strong>Open Perspective</strong></td>
-		<td>This command opens a new perspective in this Workbench window. 
+		<td headers="name"><strong>Open Perspective</strong></td>
+		<td headers="function">This command opens a new perspective in this Workbench window. 
 				This preference can be changed in the <strong>Window &gt; Preferences &gt; Workbench &gt; Perspectives</strong> page. 
 				All of the perspectives that are open within the Workbench window are shown on the shortcut bar. 
 				The perspectives you will likely want to open are listed first.This list is dependent on the current perspective. 
 				From the <strong>Other...</strong> submenu you can open any perspective.</td>
-		<td>&nbsp;</td>
+		<td headers="keyboard">&nbsp;</td>
 	</tr>
 	<tr>
-		<td><strong>Show View</strong></td>
-		<td>This command displays the selected view in the current perspective. 
+		<td headers="name"><strong>Show View</strong></td>
+		<td headers="function">This command displays the selected view in the current perspective. 
 				You can configure how views are opened in the <strong>Window &gt; Preferences &gt; Workbench &gt; Perspectives page</strong>. 
 				Views you are likely to want to open are listed first.This list is dependent on the current perspective. 
 				From the <strong>Other...</strong> submenu you can open any view. 
 				The views are sorted into categories in the Show View dialog.</td>
-		<td>&nbsp;</td>
+		<td headers="keyboard">&nbsp;</td>
 	</tr>
 
 	<tr>
-		<td><strong>Customize Perspective</strong></td>
-		<td>Each perspective includes a predefined set of actions that are accessible from the menu bar and Workbench toolbar.
+		<td headers="name"><strong>Customize Perspective</strong></td>
+		<td headers="function">Each perspective includes a predefined set of actions that are accessible from the menu bar and Workbench toolbar.
 				Related actions are grouped into action sets. 
 				This command allows you to customize the current perspective by showing or hiding various action sets. 
 				The first three (<strong>File &gt; New</strong>, <strong>Window &gt; Open Perspective</strong>, <strong>Window &gt; Show View</strong>) control which actions appear as top level items in their respective menus. 
 				The last category (<strong>Other</strong>) controls which action sets are visible in the perspective.</td>
-		<td>&nbsp;</td>
+		<td headers="keyboard">&nbsp;</td>
 	</tr>
 
 	<tr>
-		<td><strong>Save Perspective As</strong></td>
-		<td>This command allows you to save the current perspective, creating your own custom perspective. 
+		<td headers="name"><strong>Save Perspective As</strong></td>
+		<td headers="function">This command allows you to save the current perspective, creating your own custom perspective. 
 				You can open more perspectives of this type using the <strong>Window &gt; Open Perspective &gt; Other</strong> menu item once you have saved a perspective.</td>
-		<td>&nbsp;</td>
+		<td headers="keyboard">&nbsp;</td>
 	</tr>
 
 	<tr>
-		<td><strong>Reset Perspective</strong></td>
-		<td>This command changes the layout of the current perspective to its original configuration.</td>
-		<td>&nbsp;</td>
+		<td headers="name"><strong>Reset Perspective</strong></td>
+		<td headers="function">This command changes the layout of the current perspective to its original configuration.</td>
+		<td headers="keyboard">&nbsp;</td>
 	</tr>
 
 	<tr>
-		<td><strong>Close Perspective</strong></td>
-		<td>This command closes the active perspective.</td>
-		<td>&nbsp;</td>
+		<td headers="name"><strong>Close Perspective</strong></td>
+		<td headers="function">This command closes the active perspective.</td>
+		<td headers="keyboard">&nbsp;</td>
 	</tr>
 
 	<tr>
-		<td><strong>Close All Perspectives</strong></td>
-<td>This command closes all open perspectives in the Workbench window.</td>
-		<td>&nbsp;</td>
+		<td headers="name"><strong>Close All Perspectives</strong></td>
+<td headers="function">This command closes all open perspectives in the Workbench window.</td>
+		<td headers="keyboard">&nbsp;</td>
 	</tr>
 
 	<tr>
-		<td><strong>Navigation</strong></td>
-		<td>This submenu contains shortcut keys for navigating between the views, perspectives, and editors in the Workbench window.
+		<td headers="name"><strong>Navigation</strong></td>
+		<td headers="function">This submenu contains shortcut keys for navigating between the views, perspectives, and editors in the Workbench window.
 		<ul>
 			<li><strong>Show System Menu</strong>: Shows the menu that is used for resizing, closing or pinning the current view or editor.</li>
 			<li><strong>Show View Menu</strong>: Shows the drop down menu that is available in the toolbar of the active view.</li>
@@ -96,21 +96,21 @@
 			<li><strong>Next Perspective</strong>: Activates the next open perspective in the list of most recently used perspectives.</li>
 			<li><strong>Previous Perspective</strong>: Activates the previous open perspective in the list of most recently used perspectives.</li>
 		</ul>
-		<td>&nbsp;</td>
+		<td headers="keyboard">&nbsp;</td>
 	</tr>
 
 	<tr>
-		<td><strong>Working sets</strong></td>
-		<td>Dialog displayed to edit working sets</td>
-		<td>&nbsp;</td>
+		<td headers="name"><strong>Working sets</strong></td>
+		<td headers="function">Dialog displayed to edit working sets</td>
+		<td headers="keyboard">&nbsp;</td>
 	</tr>
 
 	<tr>
-		<td><strong>Preferences</strong></td>
-		<td>This command allows you to indicate your preferences for using the Workbench.  	
+		<td headers="name"><strong>Preferences</strong></td>
+		<td headers="function">This command allows you to indicate your preferences for using the Workbench.  	
 				There are a wide variety of preferences for configuring the appearance of the Workbench and its views, and for customizing the behavior of all tools that are installed in the Workbench.
 				See the <a href="cdt_u_c_pref.htm">C/C++ Page Preference Window</a> section for more details on the CDT preferences.</td>
-		<td>&nbsp;</td>
+		<td headers="keyboard">&nbsp;</td>
 	</tr>
  </table><p></p>
 

@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 
 <head>
@@ -10,9 +10,9 @@
 </head>
 <body>
 
-<h1>Problems view (C/C++)</h1>
+<h1 role="main">Problems view (C/C++)</h1>
 
-<p>Use the <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.ui.views.ProblemView)")'>Problems</a> view to display any errors encountered during a build.  </p>
+<p>Use the <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.ui.views.ProblemView)")'>Problems</a> view to display any errors encountered during a build.  </p>
 <p><img src="../images/view_problem.png" alt="Problems View" ></p>
 
 <p>Errors are passed up from your C++ compiler. The <strong>Problems</strong> view lists the error, filename and folder.  
@@ -24,11 +24,11 @@ If you select an error the associated file will open in a <strong>C/C++ Editor</
 <p>The table below lists the toolbar options displayed in the Problems view.</p>
 
 <table border="1" cellpadding="4" cellspacing="0" bordercolor="#DDDDDD" width="600px" >
-	<tr><th>Icon</th><th>Command</th><th>Description</th></tr>
+	<tr><th id="icon">Icon</th><th id="command">Command</th><th id="description">Description</th></tr>
 	<tr>
-		<td align="center" valign="top"><img src="../images/icon_menu.png" alt="Menu icon"></td>
-		<td valign="top"><strong>View Menu</strong></td>
-		<td valign="top">Click to open a menu of items specific to the view, including: <br>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_menu.png" alt="Menu icon"></td>
+		<td valign="top" headers="command"><strong>View Menu</strong></td>
+		<td valign="top" headers="description">Click to open a menu of items specific to the view, including: <br>
 		<ul>
 			<li><strong>Show</strong> - specify which errors or warnings are shown</li>
 			<li><strong>Group By</strong> - specify error grouping</li>

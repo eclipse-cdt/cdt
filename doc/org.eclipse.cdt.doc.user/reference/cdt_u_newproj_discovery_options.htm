@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 
 <head>
@@ -10,9 +10,9 @@
 </head>
 <body>
 
-<h1>Makefile Project - Discovery Options page</h1>
+<h1 role="main">Makefile Project - Discovery Options page</h1>
 
-<p>Use the <strong>Discovery Options</strong> page in the <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject)")'>Makefile Projects</a> preference panel to configure various options for the scanner configuration.</p>
+<p>Use the <strong>Discovery Options</strong> page in the <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject)")'>Makefile Projects</a> preference panel to configure various options for the scanner configuration.</p>
 <p><img src="../images/new_make_disc_options.png" width="540" height="516" alt="Makefile project - discovery options page"></p>
 <table width="600px" cellpadding="5" cellspacing="0" border="1" >
   <caption>
@@ -24,52 +24,52 @@
   </colgroup>
 	<thead>
 		<tr>
-			<th><strong>Option</strong></th>
-			<th><strong>Description</strong></th>
+			<th id="option"><strong>Option</strong></th>
+			<th id="description"><strong>Description</strong></th>
 		</tr>
 	</thead>
   <tbody>
     <tr>
-      <td valign="top"><strong>Discovery profiles scope </strong></td>
-      <td valign="top">Define the scope as configuration-wide or per language for this profile. </td>
+      <td valign="top" headers="option"><strong>Discovery profiles scope </strong></td>
+      <td valign="top" headers="description">Define the scope as configuration-wide or per language for this profile. </td>
     </tr>
     <tr>
-      <td width="217" valign="top"><strong>Automate discovery of paths and symbols</strong></td>
-      <td width="357" valign="top">Activate this checkbox to scan the build output to populate the paths and symbol tables.</td>
+      <td style="width:217" valign="top" headers="option"><strong>Automate discovery of paths and symbols</strong></td>
+      <td style="width:357" valign="top" headers="description">Activate this checkbox to scan the build output to populate the paths and symbol tables.</td>
     </tr>
     <tr>
-      <td valign="top"><strong>Report path detection problems </strong></td>
-      <td valign="top">Activate this checkbox to report all path detection problems. </td>
+      <td valign="top" headers="option"><strong>Report path detection problems </strong></td>
+      <td valign="top" headers="description">Activate this checkbox to report all path detection problems. </td>
     </tr>
     <tr>
-      <td valign="top"><strong>Discovery profile </strong></td>
-      <td valign="top">Select the discovery profile to use for paths and symbol detection. </td>
+      <td valign="top" headers="option"><strong>Discovery profile </strong></td>
+      <td valign="top" headers="description">Select the discovery profile to use for paths and symbol detection. </td>
     </tr>
     <tr>
-      <td valign="top"><strong>Enable build output scanner info discovery </strong></td>
-      <td valign="top">Activate this checkbox to configure the scanner to parse the output from a build.</td>
+      <td valign="top" headers="option"><strong>Enable build output scanner info discovery </strong></td>
+      <td valign="top" headers="description">Activate this checkbox to configure the scanner to parse the output from a build.</td>
     </tr>
     <tr>
-      <td valign="top"><strong>Local build output from file </strong></td>
-      <td valign="top">Click <strong>Browse</strong> to select a file from disk or click <strong>Variables</strong> to open the <strong>Select Variables</strong> window to define the build output file. </td>
+      <td valign="top" headers="option"><strong>Local build output from file </strong></td>
+      <td valign="top" headers="description">Click <strong>Browse</strong> to select a file from disk or click <strong>Variables</strong> to open the <strong>Select Variables</strong> window to define the build output file. </td>
     </tr>
     <tr>
-      <td valign="top"><strong>Enable generate scanner info command </strong></td>
-      <td valign="top">Activate this checkbox to specify  use of the default scanner information command</td>
+      <td valign="top" headers="option"><strong>Enable generate scanner info command </strong></td>
+      <td valign="top" headers="description">Activate this checkbox to specify  use of the default scanner information command</td>
     </tr>
     <tr>
-      <td valign="top"><strong>Compiler invocation command </strong></td>
-      <td valign="top">Type the command that invokes the compiler, for example: <span class="userinput">gcc</span>, or click <strong>Browse</strong> to locate it. </td>
+      <td valign="top" headers="option"><strong>Compiler invocation command </strong></td>
+      <td valign="top" headers="description">Type the command that invokes the compiler, for example: <span class="userinput">gcc</span>, or click <strong>Browse</strong> to locate it. </td>
     </tr>
   </tbody>
 </table>
-<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
 <br>
 <a href="../concepts/cdt_c_build_over.htm">Build overview</a></p>
-<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
 <br>
 <a href="../tasks/cdt_t_proj_paths.htm">Including paths and symbols</a></p>
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
 <br>
 <a href="cdt_o_proj_prop_pages.htm">New CDT Project Wizard</a></p>
 <hr>

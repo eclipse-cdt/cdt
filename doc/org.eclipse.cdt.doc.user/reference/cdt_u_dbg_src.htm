@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 
 <head>
@@ -10,9 +10,9 @@
 </head>
 <body>
 
-<h1>Source Lookup Path preference</h1>
+<h1 role="main">Source Lookup Path preference</h1>
 
-<p>Use the <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.debug.ui.SourcePreferencePage)")'>Source Lookup Path</a> preference page to add or remove source containers.</p>
+<p>Use the <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.debug.ui.SourcePreferencePage)")'>Source Lookup Path</a> preference page to add or remove source containers.</p>
 
 <p><img src="../images/debug_src_pref.png" alt="Debug Source Code Locations Preferences" ></p>
 
@@ -25,13 +25,13 @@
       <col width="70%" valign="top" >
     </colgroup>
     <tbody>
-      <tr align="center">
-        <td valign="top"><strong>Options</strong></td>
-        <td><strong>Description</strong></td>
+      <tr style="text-align:center;">
+        <th valign="top" id="option"><strong>Options</strong></th>
+        <th id="description"><strong>Description</strong></th>
       </tr>
       <tr>
-        <td width="99" valign="top"><strong>Add...</strong></td>
-        <td width="475">Opens the <strong>Add Source</strong> dialog to insert a new source container of one of the following types:<br><br>
+        <td style="width:99" valign="top" headers="option"><strong>Add...</strong></td>
+        <td style="width:475" headers="description">Opens the <strong>Add Source</strong> dialog to insert a new source container of one of the following types:<br><br>
           <ul>
 		  <li>Absolute File Path</li>
 		  <li>Compilation Directory</li>
@@ -46,20 +46,20 @@
         </td>
       </tr>
       <tr>
-        <td valign="top"><strong>Edit...</strong></td>
-        <td>Opens the <strong>Edit File System Directory</strong> dialog to modify the currently selected source container.</td>
+        <td valign="top" headers="option"><strong>Edit...</strong></td>
+        <td headers="description">Opens the <strong>Edit File System Directory</strong> dialog to modify the currently selected source container.</td>
       </tr>
       <tr>
-        <td valign="top"><strong>Remove</strong></td>
-        <td>Remove the currently selected source container.</td>
+        <td valign="top" headers="option"><strong>Remove</strong></td>
+        <td headers="description">Remove the currently selected source container.</td>
       </tr>
       <tr>
-        <td valign="top"><strong>Up</strong></td>
-        <td>Move the currently selected source container higher in the list.</td>
+        <td valign="top" headers="option"><strong>Up</strong></td>
+        <td headers="description">Move the currently selected source container higher in the list.</td>
       </tr>
       <tr>
-        <td valign="top"><strong>Down</strong></td>
-        <td>Move the currently selected source container lower in the list.</td>
+        <td valign="top" headers="option"><strong>Down</strong></td>
+        <td headers="description">Move the currently selected source container lower in the list.</td>
       </tr>
     </tbody>
   </table>

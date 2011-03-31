@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 <head>
   <meta http-equiv="Content-Language" content="en-us">
@@ -8,7 +8,7 @@
 </head>
 
 <body>
-<h1>C/C++ Project Properties, Environment</h1>
+<h1 role="main">C/C++ Project Properties, Environment</h1>
 Use the <strong>Environment</strong> property page to customize the build environment for all projects in the workspace; it lets you control the environment variables used by the build.
 <p><img img="" src="../images/prop_environment.png"
  alt="C/C++ Project Properties, Environment"></p>
@@ -21,68 +21,68 @@ Use the <strong>Environment</strong> property page to customize the build enviro
 		<col width="70%" valign="top" >
 	</colgroup>
 	<tbody> 
-		<tr align="center">
-			<td><strong>Group</strong></td>
-			<td><strong>Description</strong></td>
+		<tr style="text-align:center;">
+			<th id="group"><strong>Group</strong></th>
+			<th id="description"><strong>Description</strong></th>
 		</tr>
 		<tr>
-			<td><strong>Configuration</strong></td>
-			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+			<td headers="group"><strong>Configuration</strong></td>
+			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
 		</tr>
 		<tr>
-			<td><strong>Manage Configurations...</strong></td>
-			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+			<td headers="group"><strong>Manage Configurations...</strong></td>
+			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
 		</tr>
 		<tr>
-			<td><strong>Environment variables to set</strong></td>
-			<td>Shows the current list of environment variables and their corresponding value. These are the environment variable values used when building.</td>
+			<td headers="group"><strong>Environment variables to set</strong></td>
+			<td headers="description">Shows the current list of environment variables and their corresponding value. These are the environment variable values used when building.</td>
 		</tr>		
 		<tr>
-			<td><strong>Variable</strong></td>
-			<td>Specifies the name of the environment variable.</td>
+			<td headers="group"><strong>Variable</strong></td>
+			<td headers="description">Specifies the name of the environment variable.</td>
 		</tr>
 		<tr>
-			<td><strong>Value</strong></td>
-			<td>Specifies the value of the environment variable.</td>
+			<td headers="group"><strong>Value</strong></td>
+			<td headers="description">Specifies the value of the environment variable.</td>
 		</tr>
 				<tr>
-			<td><strong>Append variables to native environment</strong></td>
-			<td>Appends the variables to the native environment during its execution.</td>
+			<td headers="group"><strong>Append variables to native environment</strong></td>
+			<td headers="description">Appends the variables to the native environment during its execution.</td>
 		</tr>
 		<tr>
-			<td><strong>Replace native environment with specified one </strong></td>
-			<td>Replaces the native environment with the specified variables, and then restores the native environment upon its completion.</td>
+			<td headers="group"><strong>Replace native environment with specified one </strong></td>
+			<td headers="description">Replaces the native environment with the specified variables, and then restores the native environment upon its completion.</td>
 		</tr>		
 		<tr>
-			<td><strong>Add...</strong></td>
-			<td>Opens the <strong>New variable</strong> dialog to create a new environment variable and value. Custom environment variables that you create appear in bold within the list.
+			<td headers="group"><strong>Add...</strong></td>
+			<td headers="description">Opens the <strong>New variable</strong> dialog to create a new environment variable and value. Custom environment variables that you create appear in bold within the list.
 			<p><img img="" src="../images/cdt_buildenv_newenvvar.png" alt="C/C++ Project Properties, Environment, New environment variable"></p> 
             <p>Click <strong>Variables</strong> to Select variables by name to include in the value. Select <strong>Add to all configurations</strong> to make this new environment variable available to all configurations for the selected project; otherwise, the variable is only available for the currently selected configuration.</p>
 			</td>
 		</tr>
 		<tr>
-			<td><strong>Select...</strong></td>
-			<td>Opens the <strong>Select variables</strong> dialog where you can choose from a list of system variables.
+			<td headers="group"><strong>Select...</strong></td>
+			<td headers="description">Opens the <strong>Select variables</strong> dialog where you can choose from a list of system variables.
 			<p><img img="" src="../images/cdt_buildenv_selectvar.png" alt="C/C++ Project Properties, Environment, New environment variable"></p></td>
             </td>
 		</tr>
 		<tr>
-			<td><strong>Edit...</strong></td>
-			<td>Modifies the name and value of the selected environment variable.</td>
+			<td headers="group"><strong>Edit...</strong></td>
+			<td headers="description">Modifies the name and value of the selected environment variable.</td>
 		</tr>
 		<tr>
-			<td><strong>Remove</strong></td>
-			<td>Removes the selected environment variables from the list.</td>
+			<td headers="group"><strong>Remove</strong></td>
+			<td headers="description">Removes the selected environment variables from the list.</td>
 		</tr>
 		<tr>
-			<td><strong>Undefine</strong></td>
-			<td>Undefines the currently selected variable; however, some variables, such as the PATH variable, cannot be undefined. 
+			<td headers="group"><strong>Undefine</strong></td>
+			<td headers="description">Undefines the currently selected variable; however, some variables, such as the PATH variable, cannot be undefined. 
 			</td>
 		</tr>
 	</tbody>
 </table>
 
-<p style="margin-top: 0pt; margin-bottom: 0pt;"><img border="0"
+<p style="margin-top: 0pt; margin-bottom: 0pt;"><img 
  src="../images/ngref.gif" alt="Related reference" width="143"
  height="21"><br>
 
@@ -91,13 +91,13 @@ Use the <strong>Environment</strong> property page to customize the build enviro
 <li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>
 <li><a href="cdt_u_prop_builders.htm">Project Properties, Builders page</a>
 <li><a href="cdt_u_prop_all.htm">Project Properties, common C/C++ Configurations handling</a>
-   <ul type="disc">
+   <ul style="list-style-type: disc">
    <li><a href="cdt_u_prop_manage_dialog.htm">Manage Configurations dialog</a>
    <li><a href="cdt_u_prop_manage_newdialog.htm">Create Configuration dialog</a>
    <li><a href="cdt_u_prop_manage_rendialog.htm">Rename Configuration dialog</a>
    </ul>
 <li><a href="cdt_u_prop_build.htm">Project Properties, C/C++ Build category</a>
-   <ul type="disc">
+   <ul style="list-style-type: disc">
    <li><a href="cdt_u_prop_build_discovery.htm">Discovery options page</a>
    <li><a href="cdt_u_prop_build_environment.htm">Environment page</a>
    <li>Settings page
@@ -112,7 +112,7 @@ Use the <strong>Environment</strong> property page to customize the build enviro
    <li><a href="cdt_u_prop_build_variables.htm">Variables page</a>
    </ul>
 <li>Project Properties, <a href="cdt_u_prop_general.htm">C/C++ General category</a>
-   <ul type="disc"> 
+   <ul style="list-style-type: disc"> 
    <li><a href="cdt_u_prop_general_doc.htm">Documentation page</a>
    <li><a href="cdt_u_prop_general_exp.htm">Export Settings page</a>
        <!--ul>

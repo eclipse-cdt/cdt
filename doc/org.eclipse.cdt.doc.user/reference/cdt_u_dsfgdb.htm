@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 
 <head>
@@ -10,9 +10,9 @@
 </head>
 <body>
 
-<h1>GDB Debugging Preferences</h1>
+<h1 role="main">GDB Debugging Preferences</h1>
 
-<p>Use the <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.dsf.gdb.ui.preferences)")'>GDB</a> preferences panel to control how the CDT debugger behaves when debugging with GDB, 
+<p>Use the <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.dsf.gdb.ui.preferences)")'>GDB</a> preferences panel to control how the CDT debugger behaves when debugging with GDB, 
 specifically when using a <em>GDB (DSF)</em> launcher. 
 <p><img src="../images/cdt_dsfgdb_preferences_page.png"  alt="GDB preferences panel"></p>
 
@@ -24,26 +24,26 @@ specifically when using a <em>GDB (DSF)</em> launcher.
 		<col width="75%" valign="top" >
 	</colgroup>
  	<tr>
-		<th>Option</th>	
-		<th>Description</th>
+		<th id="option">Option</th>	
+		<th id="description">Description</th>
 	 </tr>
 	<tr>
-		<td valign="top"><strong>Enable GDB traces</strong></td>
-		<td valign="top">When checked, the debug session will produce an additional console which will contain all the gdb/mi activity. Basically, this details the 
+		<td valign="top" headers="option"><strong>Enable GDB traces</strong></td>
+		<td valign="top" headers="description">When checked, the debug session will produce an additional console which will contain all the gdb/mi activity. Basically, this details the 
   interaction between the CDT debugger and GDB. This information is often critical when the debugger is not behaving as you expect. Turn this on and submit
   the console output when submitting a bugzilla report against the CDT debugger.</td>
 	</tr>
 	<tr>
-		<td valign="top"><strong>Terminate GDB when last process exits</strong></td>
-		<td valign="top">When checked, the CDT debugger will terminate the GDB host process after all the target processes it is debugging have terminated. Otherwise it will leave it running.</td>
+		<td valign="top" headers="option"><strong>Terminate GDB when last process exits</strong></td>
+		<td valign="top" headers="description">When checked, the CDT debugger will terminate the GDB host process after all the target processes it is debugging have terminated. Otherwise it will leave it running.</td>
 	</tr>
 	<tr>
-		<td valign="top"><strong>Use enhanced debug hover</strong></td>
-		<td valign="top">When checked, hovering over an expression in the editor during a debug session will bring up an <em>enhanced</em> expression evaluation control. Otherwise, a more basic control is used. This, of course, assumes that you have the debugger's hovering capability turned on in C/C++ > Editor > Hovers. If not, this checkbox has no effect.<br>
+		<td valign="top" headers="option"><strong>Use enhanced debug hover</strong></td>
+		<td valign="top" headers="description">When checked, hovering over an expression in the editor during a debug session will bring up an <em>enhanced</em> expression evaluation control. Otherwise, a more basic control is used. This, of course, assumes that you have the debugger's hovering capability turned on in C/C++ > Editor > Hovers. If not, this checkbox has no effect.<br>
 	<img src="../images/cdt_debug_hover_modes.png"  alt="debug hover modes"></td>
 	</tr>
 </table>
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"> <br>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21"> <br>
 <a href="../reference/cdt_u_gdb_mi.htm">GDB MI Debug preferences</a></p>
 <hr >
 <p><img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" ></p>

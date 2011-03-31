@@ -5,6 +5,8 @@
           <topic label="Creating a simple application" href="getting_started/cdt_w_basic.htm"/>
           <topic label="Creating a Makefile project" href="getting_started/cdt_w_newproj.htm"/>
           <topic label="Importing an existing project" href="getting_started/cdt_w_import.htm"/>
+          <topic href="getting_started/cdt_w_newcpp.htm" label="Creating a C++ file"/>
+          <topic href="getting_started/cdt_w_newmake.htm" label="Creating a makefile"/>
           <topic label="Building a project" href="getting_started/cdt_w_build.htm"/>
           <topic label="Debugging projects" href="getting_started/cdt_w_debug.htm"/>
           <topic label="Importing C/C++ source files into Eclipse" href="getting_started/cdt_w_existing_code.htm"/>

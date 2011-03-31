@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 <head>
   <meta http-equiv="Content-Language" content="en-us">
@@ -7,7 +7,7 @@
   <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <body>
-<h1>C/C++ Project Properties, Configuration management</h1>
+<h1 role="main">C/C++ Project Properties, Configuration management</h1>
 All CDT-specific property pages have unified controls 
 to handle configurations. 
 
@@ -23,27 +23,31 @@ to handle configurations.
 		<col width="70%" valign="top" >
 	</colgroup>
 	<tbody> 
-		<tr>
-			<td><strong>Configuration</strong></td>
-			<td>Specifies the type of configuration(s) for the selected project. A <strong>Debug</strong> configuration lets you see what's going on "inside" a program as it executes. To debug your application, you must use executables compiled for debugging. These executables contain additional debug information that lets the debugger make direct associations between the source code and the binaries generated from the original source. A <strong>Release</strong> configuration provides the tools with options set to create an application with the best performance.</td>
+		<tr class="hidden">
+			<th id="option">Option</th>
+			<th id="description">Description</th>
 		</tr>
 		<tr>
-			<td><strong>Manage configurations</strong></td>
-			<td>Opens the Manage Configurations dialog where you can set which configurations are active based on the toolchain(s) that were specified for the selected project. In addition, you can also create new configurations, rename an existing configuration, or remove ones that are no longer required.
+			<td headers="option"><strong>Configuration</strong></td>
+			<td headers="description">Specifies the type of configuration(s) for the selected project. A <strong>Debug</strong> configuration lets you see what's going on "inside" a program as it executes. To debug your application, you must use executables compiled for debugging. These executables contain additional debug information that lets the debugger make direct associations between the source code and the binaries generated from the original source. A <strong>Release</strong> configuration provides the tools with options set to create an application with the best performance.</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Manage configurations</strong></td>
+			<td headers="description">Opens the Manage Configurations dialog where you can set which configurations are active based on the toolchain(s) that were specified for the selected project. In addition, you can also create new configurations, rename an existing configuration, or remove ones that are no longer required.
 		<p><strong>Note:</strong>The <strong>Configuration</strong> selection that you specify in this dialog (unlike the behavior of CDT 3.x) affects only these property pages. This means that the selected configuration is not made the active configuration (the one used to build project).</p>
 		</td>
 		</tr>
    </tbody>
 </table>
 
-<p><img border="0" src="../images/ngref.gif" alt="Related reference"
+<p><img src="../images/ngref.gif" alt="Related reference"
  width="143" height="21"><br>
 
 <ul>
 <li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>
 <li><a href="cdt_u_prop_builders.htm">Project Properties, Builders page</a>
 <li><a href="cdt_u_prop_build.htm">Project Properties, C/C++ Build category</a>
-   <ul type="disc">
+   <ul style="list-style-type: disc">
    <li><a href="cdt_u_prop_build_discovery.htm">Discovery options page</a>
    <li><a href="cdt_u_prop_build_environment.htm">Environment page</a>
    <li>Settings page
@@ -58,7 +62,7 @@ to handle configurations.
    <li><a href="cdt_u_prop_build_variables.htm">Variables page</a>
    </ul>
 <li>Project Properties, <a href="cdt_u_prop_general.htm">C/C++ General category</a>
-   <ul type="disc"> 
+   <ul style="list-style-type: disc"> 
    <li><a href="cdt_u_prop_general_doc.htm">Documentation page</a>
    <li><a href="cdt_u_prop_general_typ.htm">File Types page</a>
    <li><a href="cdt_u_prop_general_idx.htm">Indexer page</a>

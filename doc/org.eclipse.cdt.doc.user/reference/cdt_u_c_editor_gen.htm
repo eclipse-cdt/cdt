@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 
 <head>
@@ -10,9 +10,9 @@
 </head>
 <body>
 
-<h1>Editor preferences</h1>
+<h1 role="main">Editor preferences</h1>
 
-<p>Use the <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferences.CEditorPreferencePage)")'>Editor</a> preference panel to control the appearance of text highlighting in C/C++ editors.</p>
+<p>Use the <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferences.CEditorPreferencePage)")'>Editor</a> preference panel to control the appearance of text highlighting in C/C++ editors.</p>
 <p><img src="../images/editor_general_preferences.png" alt="Editor Preferences Panel"></p>
 
 <table width="600px" cellpadding="4" cellspacing="0" border="1" fgcolor="DDD">
@@ -22,33 +22,33 @@
 		<col width="70%" valign="top" >
 	</colgroup>
 	<tbody>
-		<tr align="center">
-			<td><strong>Options</strong></td>
-			<td><strong>Description</strong></td>
+		<tr style="text-align:center;">
+			<th id="option"><strong>Option</strong></th>
+			<th id="description"><strong>Description</strong></th>
 		</tr>
 		<tr>
-			<td><strong>Smart caret positioning in identifiers</strong></td>
-			<td>If enabled, there are additional word boundaries inside identifiers.</td>
+			<td headers="option"><strong>Smart caret positioning in identifiers</strong></td>
+			<td headers="description">If enabled, there are additional word boundaries inside identifiers.</td>
 		</tr>
 		<tr>
-			<td><strong>Highlight matching brackets</strong></td>
-			<td>When the cursor is beside a bracket, the matching bracket is highlighted.</td>
+			<td headers="option"><strong>Highlight matching brackets</strong></td>
+			<td headers="description">When the cursor is beside a bracket, the matching bracket is highlighted.</td>
 		</tr>
 		<tr>
-			<td><strong>Highlight inactive code</strong></td>
-			<td>Highlights inactive code when the cursor is positioned inside it.</td>
+			<td headers="option"><strong>Highlight inactive code</strong></td>
+			<td headers="description">Highlights inactive code when the cursor is positioned inside it.</td>
 		</tr>
 		<tr>
-			<td><strong>Appearance color options</strong></td>
-			<td>Lists the items for which you can specify a color.</td>
+			<td headers="option"><strong>Appearance color options</strong></td>
+			<td headers="description">Lists the items for which you can specify a color.</td>
 		</tr>
 		<tr>
-			<td><strong>Color</strong></td>
-			<td>Specifies the color in which to display the selected item.</td>
+			<td headers="option"><strong>Color</strong></td>
+			<td headers="description">Specifies the color in which to display the selected item.</td>
 		</tr>
 		<tr>
-			<td><strong>Documentation tool comments</strong></td>
-			<td>Specifies which documentation tool should be used to determine editor presentation and behaviors. This
+			<td headers="option"><strong>Documentation tool comments</strong></td>
+			<td headers="description">Specifies which documentation tool should be used to determine editor presentation and behaviors. This
 			enables editor features such as content-assist, documentation comment generation and syntax highlighting. The particular
 			tool selected here will be used for files that are not associated with a project, or where no project level preference has
 			been set.</td>
@@ -56,12 +56,12 @@
 	</tbody>
 </table>
 
-<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
 <a href="../concepts/cdt_o_code_entry.htm">Coding aids</a></p>
-<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
 <br>
 <a href="../tasks/cdt_t_cust_cpp_editor.htm">Customizing the C/C++ editor</a></p>
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
 <br>
 <a href="cdt_o_ceditor_pref.htm">C/C++ editor preferences</a></p>
 	<hr>

@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 
 <head>
@@ -10,8 +10,8 @@
 </head>
 <body>
 
-<h1>Multi-Configuration Edit preferences</h1>
-<p>Use the <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_MultiConfig)")'>Multi-Configuration Edit</a> preference panel to simultaneously edit properties for multiple project configurations. Its possible to select one or more configurations for editing.</p>
+<h1 role="main">Multi-Configuration Edit preferences</h1>
+<p>Use the <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_MultiConfig)")'>Multi-Configuration Edit</a> preference panel to simultaneously edit properties for multiple project configurations. Its possible to select one or more configurations for editing.</p>
 <p>But, then we deal with string list property values, it is not obvious how to concatenate them, if they differ.</p>
 <p><img src="../images/cdt_pref-multi-cfg.png" alt="Multi-Configuration Edit preferences tab"></p>
 
@@ -23,14 +23,14 @@
 	</colgroup>
 	<thead>
 		<tr>
-			<th><strong>Option</strong></th>
-			<th><strong>Description</strong></th>
+			<th id="option"><strong>Option</strong></th>
+			<th id="description"><strong>Description</strong></th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr valign="top" >
-			<td><strong>String list Display Mode</strong></td>
-			<td>Specifies how values are shown. The two options are:
+			<td headers="option"><strong>String list Display Mode</strong></td>
+			<td headers="description">Specifies how values are shown. The two options are:
 			  <ul>
 			  <li><strong>Conjunction</strong> shows common elements only, so if 1st configuration has 
 			  value &lt;A, B, C&gt; and 2nd configuration has &lt;B, C, D&gt;, &lt;B, C&gt; will be shown. 
@@ -41,8 +41,8 @@
 			  Result is immediate: data on the tab is refreshed according to selected mode.</td>
 		</tr>
 		<tr valign="top" >
-			<td><strong>String list Write Mode</strong></td>
-			<td>Specifies how values are saved. The two options are:
+			<td headers="option"><strong>String list Write Mode</strong></td>
+			<td headers="description">Specifies how values are saved. The two options are:
 			  <ul>
 			  <li><strong>Modify mode</strong> adds, changes or removes elements affected by user's actions.
 			  Elements which were not touched by user are left unchanged.<br>   
@@ -61,7 +61,7 @@
 	</tbody>
 </table>
 
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
 <a href="cdt_u_pref_prop_pages.htm">Property Pages Settings preferences</a></p>
 </body>
 

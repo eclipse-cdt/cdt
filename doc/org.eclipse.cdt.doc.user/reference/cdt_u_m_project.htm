@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 
 <head>
@@ -9,77 +9,77 @@
 </head>
 <body>
 
-<h1>Project Menu actions</h1>
+<h1 role="main">Project Menu actions</h1>
 
 <p><img src="../images/cdt_menu_project.png" alt="Selecting Project Menu" ></p>
 
 
 <p><table border="1" cellspacing="0">
 
-<tr><th>Name</th><th>Function</th><th>Keyboard Shortcut</th></tr>
+<tr><th id="name">Name</th><th id="function">Function</th><th id="keyboard">Keyboard Shortcut</th></tr>
 <tr>
-  <td><strong>Open Project</strong></td>
-  <td>Shows a dialog that can be used to select a closed project and open it.</td>
-  <td>&nbsp;</td>
+  <td headers="name"><strong>Open Project</strong></td>
+  <td headers="function">Shows a dialog that can be used to select a closed project and open it.</td>
+  <td headers="keyboard">&nbsp;</td>
 </tr>
   <tr>
-  <td><strong>Close Project</strong></td>
-  <td>Closes the currently selected projects.</td>
-  <td>&nbsp;</td>
+  <td headers="name"><strong>Close Project</strong></td>
+  <td headers="function">Closes the currently selected projects.</td>
+  <td headers="keyboard">&nbsp;</td>
 </tr>
 <tr>
-  <td><strong>Build All</strong></td>
-  <td>Builds all projects in the workspace. This is a full build; all files are built.</td>
-    <td>Ctrl+B</td>
+  <td headers="name"><strong>Build All</strong></td>
+  <td headers="function">Builds all projects in the workspace. This is a full build; all files are built.</td>
+    <td headers="keyboard">Ctrl+B</td>
 </tr>
 <tr>
-  <td><strong>Build parallel</strong></td>
-  <td>Builds all (or selected) configurations of given project(s). Each configuration is built as separate parallel task.</td>
-    <td>&nbsp;</td>
+  <td headers="name"><strong>Build parallel</strong></td>
+  <td headers="function">Builds all (or selected) configurations of given project(s). Each configuration is built as separate parallel task.</td>
+    <td headers="keyboard">&nbsp;</td>
 </tr>
 <tr>
-  <td><strong>Build Configurations</strong></td>
-  <td>Submenu which allows to:
+  <td headers="name"><strong>Build Configurations</strong></td>
+  <td headers="function">Submenu which allows to:
     <ul>
       <li>Delete resource configuration for file/folder
       <li>Set active build configuration
       <li>Manage (add, remove, rename) build configurations
     </ul>
     </td>
-    <td>&nbsp;</td>
+    <td headers="keyboard">&nbsp;</td>
 </tr>
 <tr>
-  <td><strong>Build Project</strong></td>
-  <td>Builds the currently selected project. This is a full build; all files in the project are built. </td>
-  <td>&nbsp;</td>
+  <td headers="name"><strong>Build Project</strong></td>
+  <td headers="function">Builds the currently selected project. This is a full build; all files in the project are built. </td>
+  <td headers="keyboard">&nbsp;</td>
 </tr>
 <tr>
-  <td><strong>Build Working Set</strong></td>
-  <td>Builds the current working set.</td>
-  <td>&nbsp;</td>
+  <td headers="name"><strong>Build Working Set</strong></td>
+  <td headers="function">Builds the current working set.</td>
+  <td headers="keyboard">&nbsp;</td>
 </tr>
 <tr>
-  <td><strong>Clean</strong></td>
-  <td>Invokes the make clean defined in the makefile</td>
-  <td>&nbsp;</td>
+  <td headers="name"><strong>Clean</strong></td>
+  <td headers="function">Invokes the make clean defined in the makefile</td>
+  <td headers="keyboard">&nbsp;</td>
 </tr>
 <tr>
-  <td><strong>Build Automatically</strong></td>
-  <td>When checked, the CDT will perform a build whenever a file in a project is saved. You should turn this feature off for very large projects.</td>
-  <td>&nbsp;</td>
+  <td headers="name"><strong>Build Automatically</strong></td>
+  <td headers="function">When checked, the CDT will perform a build whenever a file in a project is saved. You should turn this feature off for very large projects.</td>
+  <td headers="keyboard">&nbsp;</td>
 </tr>
 <tr>
-  <td><strong>Make Target</strong></td>
-  <td>Submenu which allows create or build a target in the <strong>Make Targets</strong> view.</td>
-  <td>&nbsp;</td>
+  <td headers="name"><strong>Make Target</strong></td>
+  <td headers="function">Submenu which allows create or build a target in the <strong>Make Targets</strong> view.</td>
+  <td headers="keyboard">&nbsp;</td>
 </tr>
 <tr>
-  <td><strong>Properties</strong></td>
-  <td>Displays the <strong>Properties</strong> dialog. From that dialog you can display the properties of resources in <strong>Info</strong>, 
+  <td headers="name"><strong>Properties</strong></td>
+  <td headers="function">Displays the <strong>Properties</strong> dialog. From that dialog you can display the properties of resources in <strong>Info</strong>, 
 	<strong>External Tools Builders</strong>, <strong>C/C++ Build</strong> (managed only) <strong>File Types</strong>, <strong>Indexer options</strong>, 
 	<strong>C/C++ Make Project</strong> (standard only), <strong>C/C++ Project Paths</strong> (standard only), 
 	<strong>Include Paths and Symbols</strong> (standard only), and <strong>Project References</strong>. </td>
-  <td>&nbsp;</td>
+  <td headers="keyboard">&nbsp;</td>
 </tr>
 </table><p></p>
 

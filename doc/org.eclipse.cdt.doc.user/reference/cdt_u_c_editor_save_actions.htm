@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 
 <head>
@@ -10,9 +10,9 @@
 </head>
 <body>
 
-<h1>Save actions</h1>
+<h1 role="main">Save actions</h1>
 
-<p>Use the <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferences.SaveActionsPreferencePage)")'>Save Actions</a> preference panel to configure actions performed by the C/C++ editor while saving a file.</p>
+<p>Use the <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferences.SaveActionsPreferencePage)")'>Save Actions</a> preference panel to configure actions performed by the C/C++ editor while saving a file.</p>
 <p><img src="../images/editor_save_actions_preferences.png"  alt="Save Actions Preferences"></p>
 
 <table width="600px" cellpadding="5" cellspacing="0" border="1" >
@@ -23,30 +23,30 @@
 	</colgroup>
 	<thead>
 		<tr>
-			<th><strong>Option</strong></th>
-			<th><strong>Description</strong></th>
+			<th id="option"><strong>Option</strong></th>
+			<th id="description"><strong>Description</strong></th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<td><strong>Remove trailing whitespace</strong></td>
-			<td>While saving a file, C/C++ editor will remove spaces and tab characters from the end of edited
+			<td headers="option"><strong>Remove trailing whitespace</strong></td>
+			<td headers="description">While saving a file, C/C++ editor will remove spaces and tab characters from the end of edited
 			  or all lines.</td>
 		</tr>
 		<tr>
-			<td><strong>Ensure newline at the end of file</strong></td>
-			<td>While saving a file, C/C++ editor will insert a newline at the end of the last line,
+			<td headers="option"><strong>Ensure newline at the end of file</strong></td>
+			<td headers="description">While saving a file, C/C++ editor will insert a newline at the end of the last line,
 			  if the last line does not have it already.</td>
 		</tr>
 	</tbody>
 </table>
 
-<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
 <a href="../concepts/cdt_o_code_entry.htm">Coding aids</a></p>
-<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
 <br>
 <a href="../tasks/cdt_t_cust_cpp_editor.htm">Customizing the C/C++ editor</a></p>
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
 <br>
 <a href="cdt_o_ceditor_pref.htm">C/C++ editor preferences</a></p>
 	<hr>

@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 
 <head>
@@ -11,9 +11,9 @@
 </head>
 <body>
 
-<h1>Debug GDB MI page, Preferences window</h1>
+<h1 role="main">Debug GDB MI page, Preferences window</h1>
 
-<p>Use the <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferneces.CBuildConsolePreferernces)")'>GDB MI</a> preference panel to manipulate certain GDB timeout settings.</p>
+<p>Use the <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferneces.CBuildConsolePreferernces)")'>GDB MI</a> preference panel to manipulate certain GDB timeout settings.</p>
 <p><img src="../images/debug_gdb_pref.png"  alt="Debug GDB MI Preferences"></p>
 
 <table width="700px" cellpadding="5" cellspacing="0" border="1" bordercolor="#DDDDDD" >
@@ -24,30 +24,30 @@
 	</colgroup>
 	<thead>
 		<tr>
-			<th><strong>Option</strong></th>
-			<th><strong>Description</strong></th>
+			<th id="option"><strong>Option</strong></th>
+			<th id="description"><strong>Description</strong></th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr valign="top" >
-			<td><strong>Debugger timeout (ms)</strong></td>
-			<td>Sets the timeout value for the debugger. Default setting is 10000 milliseconds.</td>
+			<td headers="option"><strong>Debugger timeout (ms)</strong></td>
+			<td headers="description">Sets the timeout value for the debugger. Default setting is 10000 milliseconds.</td>
 		</tr>
 		<tr valign="top" >
-			<td><strong>Launch timeout (ms)</strong></td>
-			<td>Sets the Launch timeout for a debug session. Default setting is 30000 milliseconds.</td>
+			<td headers="option"><strong>Launch timeout (ms)</strong></td>
+			<td headers="description">Sets the Launch timeout for a debug session. Default setting is 30000 milliseconds.</td>
 		</tr>
 		<tr valign="top" >
-			<td><strong>Automatically refresh modules</strong></td>
-			<td>Controls the updates of the Modules view.</td>
+			<td headers="option"><strong>Automatically refresh modules</strong></td>
+			<td headers="description">Controls the updates of the Modules view.</td>
 		</tr>
 		<tr valign="top" >
-			<td><strong>Support distinct code and data memory spaces</strong></td>
-			<td>Toggle to swap between showing separate code and data memory spaced or not.</td>
+			<td headers="option"><strong>Support distinct code and data memory spaces</strong></td>
+			<td headers="description">Toggle to swap between showing separate code and data memory spaced or not.</td>
 		</tr>
 	</tbody>
 </table>
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"> <br>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21"> <br>
 <a href="../reference/cdt_u_dsfgdb.htm">GDB Debugging preferences</a></p>
 <hr >
 <p><img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" ></p>

@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 
 <head>
@@ -11,9 +11,9 @@
 
 <body>
 
-<h1>Make Targets preferences</h1>
+<h1 role="main">Make Targets preferences</h1>
 
-<p>Use the <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.make.ui.preferences.MakePreferencePage)")'>Make Targets</a> preference panel in the <strong>Preferences</strong> window to set make target options.</p>
+<p>Use the <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.make.ui.preferences.MakePreferencePage)")'>Make Targets</a> preference panel in the <strong>Preferences</strong> window to set make target options.</p>
 
 <p><img src="../images/make_targets.png" alt="Make Targets Preferences Window"></p>
 <table width="600px" cellpadding="4" cellspacing="0" border="1" fgcolor="DDD">
@@ -23,29 +23,29 @@
 		<col width="65%" valign="top" >
 	</colgroup>
 	<tbody>
-		<tr align="center" >
-			<td width="35%" ><strong>Options</strong></td>
-			<td ><strong>Description</strong></td>
+		<tr style="text-align:center;" >
+			<th style="width:35%" id="option"><strong>Options</strong></th>
+			<th id="description"><strong>Description</strong></th>
 		</tr>
 		<tr>
-			<td width="35%" valign="top"><strong>Build Make target in the background</strong></td>
-			<td valign="top">Select this checkbox to perform builds in the background.</td>
+			<td style="width:35%" valign="top" headers="option"><strong>Build Make target in the background</strong></td>
+			<td valign="top" headers="description">Select this checkbox to perform builds in the background.</td>
 		</tr>
 		<tr>
-			<td width="35%" valign="top"><strong>Rebuild Last Target</strong></td>
-			<td valign="top">This option defines the scope of command "Rebuild Last Target" in Make Targets View.</td>
+			<td style="width:35%" valign="top" headers="option"><strong>Rebuild Last Target</strong></td>
+			<td valign="top" headers="description">This option defines the scope of command "Rebuild Last Target" in Make Targets View.</td>
 		</tr>
 		<tr>
-      <td width="35%" valign="top"><strong>From selected project</strong></td>
-      <td valign="top">Rebuild the same make target as was run last time in the currently selected project.</td>
+      <td style="width:35%" valign="top" headers="option"><strong>From selected project</strong></td>
+      <td valign="top" headers="description">Rebuild the same make target as was run last time in the currently selected project.</td>
     </tr>
 		<tr>
-			<td width="35%" valign="top"><strong>From selected folder</strong></td>
-			<td valign="top">Rebuild the same make target as was run last time in the currently selected folder.</td>
+			<td style="width:35%" valign="top" headers="option"><strong>From selected folder</strong></td>
+			<td valign="top" headers="description">Rebuild the same make target as was run last time in the currently selected folder.</td>
 		</tr>
 		<tr>
-			<td width="35%" valign="top"><strong>From selected root</strong></td>
-			<td valign="top">Rebuild the same make target as was run last time in the project from root folder.</td>
+			<td style="width:35%" valign="top" headers="option"><strong>From selected root</strong></td>
+			<td valign="top" headers="description">Rebuild the same make target as was run last time in the project from root folder.</td>
 		</tr>
 	</tbody>
 </table>
@@ -55,14 +55,14 @@
   <dd></dd>
 </dl>
 
-<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
 <br>
 <a href="../concepts/cdt_c_build_over.htm">Build overview</a></p>
-<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
 <br>
 <a href="../tasks/cdt_t_proj_build_set.htm">Defining Project Build settings</a><br>
 <a href="../tasks/cdt_o_build_task.htm">Building projects</a></p>
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"> <br>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21"> <br>
 <a href="../reference/cdt_o_views.htm">Views</a><br>
 <a href="../reference/cdt_u_make_targets_view.htm">Make Targets View</a>
 </p>

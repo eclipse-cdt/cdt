@@ -1,17 +1,19 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>New CDT Project with generated makefile - Tutorial</title>
 	<link rel="stylesheet" type="text/css" href="../book.css">
+	<!--
 <script language="JavaScript">
 function newWin(url) {
 	window.open(url, 'install_cdt', 'width=900, height=700, menubar=no, toolbar=no, status=no, resizable=yes, location=no, scrollbars=yes');
 }
 </script>
+  -->
 </head>
 <body>
-<h2>Tutorial: Creating a simple application</h2>
+<h1 role="main">Tutorial: Creating a simple application</h1>
 
 <p>In this tutorial, you will use the CDT to create a simple 'Hello World' application.
 This tutorial describes the process of creating a new C++ project where the build is
@@ -29,11 +31,11 @@ Now with CDT, you just select a project type, and that determines what build sys
     <li><a href="#cdt_running">Running the application</a></li>
 </ol>
 <hr>
-<h3> Step 1: <a name="cdt_create"></a>Creating a project</h3>
+<h2> Step 1: <a name="cdt_create"></a>Creating a project</h2>
 <ol>
 	<li>Select <strong>File &gt; New &gt; Project</strong>.<br>
 	    <br>
-	    </p>
+	    
 	    <img src="../images/cdt_w_basic02.png" alt="Select File &gt; New &gt; Project menu option" width="591" height="183">
 	    <p><br>
     </p>
@@ -47,12 +49,12 @@ Now with CDT, you just select a project type, and that determines what build sys
 	<li>
 	    <p>The <strong>C++ Project</strong> wizard opens.<br>
 	        </p>
-        </p>
 	    <p><img src="../images/cdt_w_basic04.png" alt="C++ project wizard" width="525" height="576"><br>
         <br>By default, the CDT filters the <strong>Toolchain</strong> and <strong>Project types</strong> that it displays in those lists based on the language support for the C++ Project wizard you selected for this tutorial.</p>
-    </li>
-	<br>
-    <ol type="a">
+    <br>
+    
+	
+    <ol style="list-style-type: lower-alpha;">
         <li>In the <strong>Project name</strong> field, type a name for the project, such as <strong>HelloWorld</strong>.
             <p><br>
                 </p>
@@ -72,13 +74,16 @@ Now with CDT, you just select a project type, and that determines what build sys
         </li>
         <li>Click <strong>Next</strong>.    </li>
     </ol>
-</ol>
+    <br>
+    </li>
 
-<ol start="4">
+
+
     <li>Specify the <strong>Basic Properties</strong> for the new project, such as your author, copyright, and source information, then click <strong>Next</strong>.<br>
         <br>
         <img src="../images/cdt_w_basic06a.png" alt="Basic properties of a project" width="525" height="576"><br>
         <br>
+        </li>
     <li>
     <p>The <strong>Select Configurations</strong> page displays a list of configurations based on the project type and toolchain(s)  selected earlier. <br>
             <br>
@@ -87,20 +92,20 @@ Now with CDT, you just select a project type, and that determines what build sys
                     <strong>OPTIONAL</strong>: If you want to change the default project settings, click <strong>Advanced Setting</strong> to open the <a href="../reference/cdt_u_prop_all.htm">Project Properties</a> dialog for your new project allowing you change any of the project specific settings,
         such as includes paths, compiler options, and libraries.<br>
         <br>
-    </p>
+    </p></li>
     <li><p>Click <strong>Finish</strong>.<br>
-</p>
+</p></li>
     </ol>
 <p><strong>NOTE</strong> If the <strong>C++ perspective</strong> is not currently set as the default, you are prompted to determined if you would like to this project to be associated with the C/C++ perspective. Click <strong>Yes</strong>.<br>
 </p>
 <p>A project is created with the default settings and a full set of configurations based on the project type and toolchain you selected.
         You should now see the new project in <a href="../reference/cdt_u_project_explorer_view.htm">Project Explorer</a> view.</p>
-<blockquote>
-    <p><img src="../images/cdt_w_basic12.png" alt="New project displayed in the Project Explorer view" width="423" height="283"></p>
-</blockquote>
+
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="../images/cdt_w_basic12.png" alt="New project displayed in the Project Explorer view" width="423" height="283"></p>
+<br>
 <hr>
 <br>
-<h3>Step 2: <a name="cdt_build" id="cdt_build"></a>Reviewing the code and building the project</h3>
+<h2>Step 2: <a name="cdt_build" id="cdt_build"></a>Reviewing the code and building the project</h2>
 <ol>
 	<li>From the  <strong>Project Explorer</strong> view, double-click the .cpp file  created for your project, for example, <span class="typewriter">HelloWorld.cpp</span>. You'll find it within the project  "<span class="typewriter">src</span>" folder.<br>
     <br>
@@ -130,28 +135,28 @@ The project should build successfully.</p>
 <br>
 <p>You will also see the <strong>Outline</strong> view has also been populated
 with objects created from your code. If you select an item from the <strong>Outline</strong> view, the
-corresponding text in the editor is highlighted.</p>
+corresponding text in the editor is highlighted.</p></li>
 </ol>  
 
 <hr>
 <br>
-<h3>Step 3: <a name="cdt_running" id="cdt_running"></a>Running the application</h3>
+<h2>Step 3: <a name="cdt_running" id="cdt_running"></a>Running the application</h2>
 
 <p>To run your application:</p>
 <ol>
 	<li>Within the C/C++ Perspective, click <strong>Run &gt; Run Configurations...</strong>.<p><br></p></li>
 	<li>Select <strong>C/C++ Application</strong>.<p><br></p></li>
     <li>Click <strong>New</strong>.<br>
-    </li>
+    
 
 	<p>A new Run Configuration is created. Its name and path to the executable are provided by the project ('Hello World' in our case). 
-
+	</li>
 	<li>Click <strong>Run</strong>.<p><br></p>
 
 <p>Now, you should see the Hello World application running in the <strong>Console</strong> view.  
 The <strong>Console</strong> also shows which application is running in a title bar.</p><br></li>
 
-	<li>You can click the other views to see the information that they contain.
+	<li>You can click the other views to see the information that they contain.</li>
 </ol> 
 
 

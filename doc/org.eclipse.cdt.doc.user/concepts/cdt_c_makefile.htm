@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 
 <head>
@@ -9,7 +9,7 @@
 </head>
 
 <body>
-<h1>Makefile</h1>
+<h1 role="main">Makefile</h1>
 <p>A makefile is a text file that is referenced by the make command that describes the building of targets, and contains information such as source-level dependencies and build-order dependencies.  </p>
 <p>The CDT can generate a makefile for you, such projects are called Managed Make projects.  Some projects, known as Standard Make projects, allow you to define your own makefile.</p>
 
@@ -102,7 +102,7 @@ Test2.o : Test2.h
 <h2>Frequently Asked Questions:</h2>
 Your Console view can be very useful for debugging a build.
 
-<p><h5><strong>Q1</strong>.  My Console view says <span class="typewriter">"Error launching builder"</span>. What does that mean?<p></h5>
+<p><strong>Q1.  My Console view says <span class="typewriter"><Q>Error launching builder</Q></span>. What does that mean?</strong></p>
 <pre>
 Error launching builder (make -k clean all )
 (Exec error:Launching failed)
@@ -111,7 +111,7 @@ Error launching builder (make -k clean all )
 <p>Most probably, the build command (by default "make") is not on your path. You can put it on your path and restart Eclipse.<br>
 You can also change the build command to something that is on your path. If you are using MinGW tools to compile, you should replace the build command with "mingw32-make".</p>
 
-<p><h5><strong>Q2</strong>. My Console view says <span class="typewriter">"No rule to make target 'X'"</span>.</p></h5>
+<p><strong>Q2. My Console view says <span class="typewriter"><Q>No rule to make target 'X'</Q></span>.</strong></p>
 <pre>
 make -k clean all 
 make: *** No rule to make target 'clean'.
@@ -128,7 +128,7 @@ Or, if your Makefile is named something else (eg. <span class="typewriter">build
 
 <p>If you do not have a valid Makefile, create a new file named Makefile in the root directory.  You can then add the contents of the sample Makefile (above), and modify it as appropriate.</p>
 
-<p><h5><strong>Q3</strong>. My Console view says <span class="typewriter">"missing separator"</span>.</p></h5>
+<p><strong>Q3. My Console view says <span class="typewriter">"missing separator"</span>.</strong></p>
 <pre>
 make -k clean all 
 makefile:12: *** missing separator.  Stop.
@@ -138,7 +138,7 @@ This Tab character is often accidentally replaced with spaces, and because both 
 this problem is easily overlooked.  In the sample provided, the error message can be pinpointed to line 12 of the 
 file "makefile"; to fix the problem, insert a tab at the beginning of that line.</p>
 
-<p><h5><strong>Q4</strong>. My Console view says <span class="typewriter">"Target 'all' not remade because of errors"</span>.</p></h5>
+<p><strong>Q4. My Console view says <span class="typewriter"><Q>Target 'all' not remade because of errors</Q></span>.</strong></p>
 <pre>
 make -k clean all 
 make: *** [clean] Error 255
@@ -155,13 +155,13 @@ make: Target 'all' not remade because of errors.
 <p>The Error 255 is produced by make as a result of its command shell not being able to find a command for a particular rule.<br>
 Messages from the standard error stream (the lines saying Error 255) and standard output stream (all the other lines) are merged in the Console view here.</p>
 
-<p><h5><strong>Q5</strong>. What's with the -k flag?</p></h5>
+<p><strong>Q5. What's with the -k flag?</strong></p>
 
 <p>The -k flag tells make to continue making other independent rules even when one rule fails.
 This is helpful for build large projects.</p>
 <p>You can remove the -k flag by turning on Project Properties > C/C++ Make Project > Make Builder > Stop on first build error</p>
 
-<p><h5><strong>Q6</strong>. My Console view looks like:</p></h5>
+<p><strong>Q6. My Console view looks like:</strong></p>
 <pre>
 mingw32-make clean all 
 process_begin: CreateProcess((null), rm -f Test1.o Test2.o Main.o test_me.exe, ...) failed.

@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 
 <head>
@@ -10,9 +10,9 @@
 </head>
 <body>
 
-<h1>Typing preferences</h1>
+<h1 role="main">Typing preferences</h1>
 
-<p>Use the <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferences.SmartTypingPreferencePage)")'>Typing</a> preference panel to assist in formatting input as you type.</p>
+<p>Use the <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferences.SmartTypingPreferencePage)")'>Typing</a> preference panel to assist in formatting input as you type.</p>
 <p><img src="../images/editor_typing_preferences.png"  alt="Typing Preferences"></p>
 
 <table width="600px" cellpadding="5" cellspacing="0" border="1" >
@@ -23,58 +23,58 @@
 	</colgroup>
 	<thead>
 		<tr>
-			<th><strong>Option</strong></th>
-			<th><strong>Description</strong></th>
+			<th id="option"><strong>Option</strong></th>
+			<th id="description"><strong>Description</strong></th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<td><strong>"Strings"</strong></td>
-			<td>If enabled, automatically close string quotes.</td>
+			<td headers="option"><strong>"Strings"</strong></td>
+			<td headers="description">If enabled, automatically close string quotes.</td>
 		</tr>
 		<tr>
-			<td><strong>(Parenthesis) and [square] brackets</strong></td>
-			<td>If enabled, automatically close parenthesis and square brackets.</td>
+			<td headers="option"><strong>(Parenthesis) and [square] brackets</strong></td>
+			<td headers="description">If enabled, automatically close parenthesis and square brackets.</td>
 		</tr>
 		<tr>
-			<td><strong>&lt;Angle&gt; brackets</strong></td>
-			<td>If enabled, automatically close angle brackets.</td>
+			<td headers="option"><strong>&lt;Angle&gt; brackets</strong></td>
+			<td headers="description">If enabled, automatically close angle brackets.</td>
 		</tr>
 		<tr>
-			<td><strong>{Braces}</strong></td>
-			<td>If enabled, automatically close curly braces.</td>
+			<td headers="option"><strong>{Braces}</strong></td>
+			<td headers="description">If enabled, automatically close curly braces.</td>
 		</tr>
 		<tr>
-			<td><strong>Tab key adjusts indentation of the current line</strong></td>
-			<td>If enabled, indent the current line when the tab key is pressed.</td>
+			<td headers="option"><strong>Tab key adjusts indentation of the current line</strong></td>
+			<td headers="description">If enabled, indent the current line when the tab key is pressed.</td>
 		</tr>
 		<tr>
-			<td><strong>Adjust indentation</strong></td>
-			<td>Adjust the indentation of pasted text to match the current indentation level.</td>
+			<td headers="option"><strong>Adjust indentation</strong></td>
+			<td headers="description">Adjust the indentation of pasted text to match the current indentation level.</td>
 		</tr>
 		<tr>
-			<td><strong>Wrap automatically</strong></td>
-			<td>Enable to automatically wrap string literals when they exceed the max line length.</td>
+			<td headers="option"><strong>Wrap automatically</strong></td>
+			<td headers="description">Enable to automatically wrap string literals when they exceed the max line length.</td>
 		</tr>
 		<tr>
-			<td><strong>Escape text when pasting into a literal string</strong></td>
-			<td>If enabled, special characters in pasted strings are escaped when pasted into an existing string literal.</td>
+			<td headers="option"><strong>Escape text when pasting into a literal string</strong></td>
+			<td headers="description">If enabled, special characters in pasted strings are escaped when pasted into an existing string literal.</td>
 		</tr>
 		<tr>
-			<td><strong>New lines and braces</strong></td>
-			<td>If enabled, a new line or brace will be indented according to the <a href="cdt_u_c_code_style_pref.htm">Code Style preferences</a>. 
+			<td headers="option"><strong>New lines and braces</strong></td>
+			<td headers="description">If enabled, a new line or brace will be indented according to the <a href="cdt_u_c_code_style_pref.htm">Code Style preferences</a>. 
 			If disabled, the default Text Editor indentation strategy is applied (copy indent from previous line)</td>
 		</tr>
 	</tbody>
 </table>
 
-<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
 <a href="../concepts/cdt_o_code_entry.htm">Coding aids</a></p>
-<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
 <br>
 <a href="../tasks/cdt_t_cust_cpp_editor.htm">Customizing the C/C++ editor</a><br>
 <a href="../tasks/cdt_o_con_assist.htm">Working with Content Assist</a></p>
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
 <br>
 <a href="cdt_o_ceditor_pref.htm">C/C++ editor preferences</a></p>
 <a href="cdt_u_c_code_style_pref.htm">Code Style preferences</a><p></p>

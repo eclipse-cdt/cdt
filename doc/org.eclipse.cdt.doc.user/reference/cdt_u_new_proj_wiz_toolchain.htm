@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
   <meta http-equiv="Content-Language" content="en-us">
@@ -7,7 +7,7 @@
   <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <body>
-<h1>New Project Wizard, Select a toolchain</h1>
+<h1 role="main">New Project Wizard, Select a toolchain</h1>
 <p>You can select toolchain(s) from this page of the wizard. A toolchain is a set of tools (such as a compiler, linker, and assembler) intended to build your project.
     Additional tools, such as a debugger, can be associated with a toolchain.
     There can be several toolchains available, depending on the project type you specify, and the compilers installed on your system.</p>
@@ -18,16 +18,16 @@
 <table border="1" cellspacing="0">
   <tbody>
     <tr>
-      <th>Name</th>
-      <th>Function</th>
+      <th id="name">Name</th>
+      <th id="function">Function</th>
     </tr>
     <tr>
-      <td><strong>Toolchain</strong></td>
-      <td>Specifies toolchains available for selected project type.</td>
+      <td headers="name"><strong>Toolchain</strong></td>
+      <td headers="function">Specifies toolchains available for selected project type.</td>
     </tr>
     <tr>
-      <td><strong>Show Project Types and toolchains only if they are supported on the platform</strong></td>
-      <td>When selected (default), the list is filtered so that only toolchains
+      <td headers="name"><strong>Show Project Types and toolchains only if they are supported on the platform</strong></td>
+      <td headers="function">When selected (default), the list is filtered so that only toolchains
         that are buildable on the host system are shown.<br>
         If it is not selected, the list displays all known toolchains.</td>
     </tr>
@@ -35,16 +35,16 @@
 </table>
 <p></p>
 
-<p><img border="0" src="../images/ngconcepts.gif" 
+<p><img src="../images/ngconcepts.gif" 
 ALT="Related concepts" width="143" height="21"><br>
 <a href="../concepts/cdt_c_projects.htm">CDT projects</a><br>
 </p>
 
-<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21"><br>
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21"><br>
 <a href="../getting_started/cdt_w_basic.htm">Tutorial: Creating a simple application</a><br>
 </p>
 
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
 <a href="cdt_u_new_proj_wiz_name.htm">Set Project Name and Location</a><br>
 <a href="cdt_u_new_proj_wiz_type.htm">Select Project type</a><br>
 <a href="cdt_u_new_proj_wiz_toolchain.htm">Select toolchain</a><br>

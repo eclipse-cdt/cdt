@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html lang="en">
 
 <head>
@@ -10,8 +10,8 @@
 </head>
 
 <body>
-<h1>Properties view</h1>
-<p>The <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.ui.views.PropertySheet)")'>Properties</a> view displays property names and values for a selected item such as a resource. </p>
+<h1 role="main">Properties view</h1>
+<p>The <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.ui.views.PropertySheet)")'>Properties</a> view displays property names and values for a selected item such as a resource. </p>
 <p><img src="../images/view_properties.png" alt="Properties View"></p>
 <p>Toolbar buttons allow you to toggle to display properties by category or to filter advanced properties. Another toolbar button allows you to restore the selected property to its default value.</p>
 <p>To see more detailed information about a resource than the Properties view gives you, right-click the resource name in the <a href="cdt_u_project_explorer_view.htm">Project Explorer</a> view and select Properties from the pop-up menu.</p>
@@ -27,24 +27,24 @@
 		<col width="75%" valign="top" >
 	</colgroup>
  	<tr>
-		<th>Icon</th>
-		<th>Name</th>	
-		<th>Description</th>
+		<th id="icon">Icon</th>
+		<th id="name">Name</th>	
+		<th id="description">Description</th>
 	 </tr>
 	<tr>
-	<td align="center" valign="top"><img src="../images/icon_pin.png" alt="Pin Icon"></td>
-		<td valign="top"><strong>Pin Properties View</strong></td>
-		<td valign="top">Forces the Properties view to remain on top of other views in the workbench area.</td>
+	<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_pin.png" alt="Pin Icon"></td>
+		<td valign="top" headers="name"><strong>Pin Properties View</strong></td>
+		<td valign="top" headers="description">Forces the Properties view to remain on top of other views in the workbench area.</td>
 	</tr>
 	<tr>
-		<td align="center" valign="top"><img src="../images/icon_menu.png" alt="Menu Icon"></td>
-		<td valign="top"><strong>View Menu</strong></td>
-		<td valign="top">Click the white upside-down triangle icon to open a menu of items specific to the Properties view.<br>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_menu.png" alt="Menu Icon"></td>
+		<td valign="top" headers="name"><strong>View Menu</strong></td>
+		<td valign="top" headers="description">Click the white upside-down triangle icon to open a menu of items specific to the Properties view.<br><br>
 					<dl>
-						<p><dt>New Properties View</dt>
-							<dd>Create a new pane within the Properties view. Panes can be selected using the names that appear on the left edge.</dd></p>
-						<p><dt>Pin to Selection</dt>
-							<dd>Pin the current selection to remain within the viewable area of the Properties view.</dd></p>
+						<dt>New Properties View</dt>
+							<dd>Create a new pane within the Properties view. Panes can be selected using the names that appear on the left edge.<br><br></dd>
+						<dt>Pin to Selection</dt>
+							<dd>Pin the current selection to remain within the viewable area of the Properties view.<br><br></dd>
 					</dl></td>
 	</tr>	
 

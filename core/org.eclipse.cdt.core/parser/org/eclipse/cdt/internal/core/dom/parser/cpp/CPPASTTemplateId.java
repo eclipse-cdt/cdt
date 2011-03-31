@@ -51,8 +51,8 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 	}
 	
 	public CPPASTTemplateId copy(CopyStyle style) {
-		CPPASTTemplateId copy = new CPPASTTemplateId(templateName == null ? null
-				: templateName.copy(style));
+		CPPASTTemplateId copy = new CPPASTTemplateId(templateName == null ?
+				null : templateName.copy(style));
 		for (IASTNode arg : getTemplateArguments())
 			copy.internalAddTemplateArgument(arg == null ? null : arg.copy(style));
 		copy.setOffsetAndLength(this);
@@ -157,7 +157,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitNames) {
-		    switch(action.visit(this)) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP: return true;
 	            default: break;
@@ -170,7 +170,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
             if (!nodes[i].accept(action)) return false;
         }
         if (action.shouldVisitNames) {
-		    switch(action.leave(this)) {
+		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP: return true;
 	            default: break;

@@ -21,7 +21,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * Type id for c++
  */
 public class CPPASTTypeId extends ASTNode implements ICPPASTTypeId {
-
     private IASTDeclSpecifier declSpec;
     private IASTDeclarator absDecl;
     private boolean isPackExpansion;
@@ -87,23 +86,23 @@ public class CPPASTTypeId extends ASTNode implements ICPPASTTypeId {
 	}
 
 	@Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitTypeIds ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitTypeIds) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
-        if( declSpec != null ) if( !declSpec.accept( action ) ) return false;
-        if( absDecl != null ) if( !absDecl.accept( action ) ) return false;
+        if (declSpec != null && !declSpec.accept(action)) return false;
+        if (absDecl != null && !absDecl.accept(action)) return false;
 
-        if( action.shouldVisitTypeIds ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitTypeIds) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;

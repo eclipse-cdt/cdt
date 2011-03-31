@@ -22,7 +22,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpression {
-
     private int op;
     private IASTTypeId typeId;
 
@@ -71,22 +70,22 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
       
-        if( typeId != null ) if( !typeId.accept( action ) ) return false;
+        if (typeId != null && !typeId.accept(action)) return false;
         
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
@@ -104,7 +103,7 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 	}
 
 	public boolean isLValue() {
-		switch(getOperator()) {
+		switch (getOperator()) {
 		case op_typeid:
 			return true;
 		}

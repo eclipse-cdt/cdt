@@ -143,3 +143,6 @@ int f()
 //http://bugs.eclipse.org/220392
 #define EMPTY
 EMPTY int f();
+
+//http://bugs.eclipse.org/340492
+template< template<class> class U > class myClass {};

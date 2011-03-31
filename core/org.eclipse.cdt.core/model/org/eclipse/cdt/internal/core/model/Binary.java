@@ -362,7 +362,7 @@ public class Binary extends Openable implements IBinary {
 							tu = new ExternalTranslationUnit(this, Path.fromOSString(filename), id);
 						}
 						else {
-							tu = new ExternalTranslationUnit(this, URIUtil.toURI(filename), id);						
+							tu = new ExternalTranslationUnit(this, URIUtil.toURI(filename, true), id);						
 						}
 					}
 	

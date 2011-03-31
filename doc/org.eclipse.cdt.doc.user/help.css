@@ -38,6 +38,9 @@ var	     { font-style: italic}
 div.revision { border-left-style: solid; border-left-width: thin; 
 				   border-left-color: #7B68EE; padding-left:5 }
 th	     { font-weight: bold }
+.hidden {
+	display: none;
+}
 
 /* Mike Behm's addition to the style sheet */
 .userinput { font-family: monospace; }

@@ -1244,6 +1244,24 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//template<typename T>
+	//class A {
+	//};
+	//
+	//A<int> a = new A <int> ();
+	//A<int> b = A <int> ();
+
+	//template<typename T>
+	//class A {
+	//};
+	//
+	//A<int> a = new A<int>();
+	//A<int> b = A<int>();
+	public void testTemplateConstructorCall() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
 	//#define MY_MACRO int a; \
 	//    int b; \
 	//    int c();

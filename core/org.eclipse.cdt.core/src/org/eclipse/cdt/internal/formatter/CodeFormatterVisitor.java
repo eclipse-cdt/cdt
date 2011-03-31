@@ -3384,15 +3384,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 		int nextToken= peekNextToken();
 		if (node.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME || nextToken == Token.tGT) {
-			if (node.getParent().getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME &&
-					preferences.insert_space_before_opening_paren_in_method_invocation) {
-				scribe.space();
-			} else if (node.getParent().getPropertyInParent() != IASTFunctionCallExpression.FUNCTION_NAME &&
-					preferences.insert_space_after_closing_angle_bracket_in_template_arguments) {
-				// Avoid explicit space if followed by '*' or '&'.
-				if (nextToken != Token.tSTAR && nextToken != Token.tAMPER) {
+			if (nextToken == Token.tLPAREN) {
+				if (preferences.insert_space_before_opening_paren_in_method_invocation)
 					scribe.space();
-				}
+			} else if (preferences.insert_space_after_closing_angle_bracket_in_template_arguments) {
+				// Avoid explicit space if followed by '*' or '&'.
+				if (nextToken != Token.tSTAR && nextToken != Token.tAMPER)
+					scribe.space();
 			} else {
 				scribe.printComment();
 				scribe.needSpace= false;

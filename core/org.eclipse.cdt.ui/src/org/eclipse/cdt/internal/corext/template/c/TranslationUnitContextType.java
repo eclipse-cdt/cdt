@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 
 package org.eclipse.cdt.internal.corext.template.c;
 
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.templates.GlobalTemplateVariables;
@@ -61,8 +62,18 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 		@Override
 		public String resolve(TemplateContext context) {
 			ITranslationUnit unit= ((TranslationUnitContext) context).getTranslationUnit();
-			
 			return (unit == null) ? null : unit.getElementName();
+		}
+	}
+
+	protected static class FileBase extends TemplateVariableResolver {
+		public FileBase() {
+			super("file_base", TemplateMessages.CContextType_variable_description_file_base);  //$NON-NLS-1$
+		}
+		@Override
+		public String resolve(TemplateContext context) {
+			ITranslationUnit unit= ((TranslationUnitContext) context).getTranslationUnit();
+			return (unit == null) ? null : new Path(unit.getElementName()).removeFileExtension().lastSegment();
 		}
 	}
 
@@ -186,6 +197,7 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 		
 		// translation unit
 		addResolver(new File());
+		addResolver(new FileBase());
 		addResolver(new ReturnType());
 		addResolver(new Method());
 		addResolver(new Project());
@@ -196,5 +208,3 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 	public abstract TranslationUnitContext createContext(IDocument document, int offset, int length, ITranslationUnit translationUnit);
 	public abstract TranslationUnitContext createContext(IDocument document, Position position, ITranslationUnit translationUnit);
 }
-
-

@@ -84,11 +84,10 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		if (!(node instanceof IASTName))
 			return;
 		IASTName name = (IASTName) node;
-		if (fDeclarations == null) {
+		if (fDeclarations == null || fDeclarations.length == 0) {
 	        fDeclarations = new IASTName[] { name };
 		} else {
-	        //keep the lowest offset declaration in[0]
-			if (fDeclarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)fDeclarations[0]).getOffset()) {
+	        if (isDeclaredBefore((ASTNode)node, (ASTNode)fDeclarations[0])) {
 				fDeclarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, fDeclarations, name);
 			} else {
 				fDeclarations = (IASTName[]) ArrayUtil.append(IASTName.class, fDeclarations, name);
@@ -96,6 +95,14 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	    }
 	}
 	
+	private boolean isDeclaredBefore(ASTNode n1, ASTNode n2) {
+		if (n1.getLength() == 0)
+			return false;
+		if (n2.getLength() == 0)
+			return true;
+		return n1.getOffset() < n2.getOffset();
+	}
+
 	private IASTName getPrimaryDeclaration() {
 	    if (fDeclarations != null) {
 	        for (int i = 0; i < fDeclarations.length && fDeclarations[i] != null; i++) {

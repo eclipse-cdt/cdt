@@ -7302,4 +7302,23 @@ public class AST2Tests extends AST2BaseTest {
 		td= bh.assertNonProblem("size_t", 0);
 		assertEquals("unsigned long int", ASTTypeUtil.getType(td.getType()));
 	}
+	
+	//	void f(int a) {
+	//		int tmp = a;
+	//	}
+	//	void f(int);
+	public void testParameterResolution() throws Exception {
+		final String code = getAboveComment();
+		
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		bh.assertNonProblem("f(int a)", 1);
+		bh.assertNonProblem("f(int)", 1);
+		bh.assertNonProblem("a;", 1);
+
+		bh= new BindingAssertionHelper(code, false);
+		bh.assertNonProblem("f(int a)", 1);
+		bh.assertNonProblem("f(int)", 1);
+		bh.assertNonProblem("a;", 1);
+	}
+
 }

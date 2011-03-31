@@ -237,6 +237,23 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		assertFormatterResult();
 	}
+	
+	//void test() {
+	//if (1000000 + 2000000 < 3000000 + 4000000 && 5000000 + 6000000 <= 7000000) {}
+	//if (1000000 + 2000000 < 3000000 + 4000000 && 5000000 + 6000000 <= 70000000) {}
+	//}
+
+	//void test() {
+	//    if (1000000 + 2000000 < 3000000 + 4000000 && 5000000 + 6000000 <= 7000000) {
+	//    }
+	//    if (1000000 + 2000000 < 3000000 + 4000000
+	//            && 5000000 + 6000000 <= 70000000) {
+	//    }
+	//}
+	public void testIfStatement() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
 
 	//#define MY private:
 	//

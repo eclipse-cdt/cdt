@@ -3209,16 +3209,25 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			scribe.space();
 		}
 		IASTExpression condExpr= node.getConditionExpression();
+		final IASTStatement thenStatement = node.getThenClause();
+		final IASTStatement elseStatement = node.getElseClause();
+		Runnable tailFormatter = null;
+		if (DefaultCodeFormatterConstants.END_OF_LINE.equals(preferences.brace_position_for_block) &&
+				thenStatement instanceof IASTCompoundStatement && !startsWithMacroExpansion(thenStatement)) {
+			tailFormatter = new TrailingTokenFormatter(Token.tLBRACE,
+					thenStatement.getFileLocation().getNodeOffset(),
+					preferences.insert_space_before_opening_brace_in_block, false);
+		}
+		tailFormatter = new ClosingParensesisTailFormatter(
+				preferences.insert_space_before_closing_paren_in_if, tailFormatter);
+		scribe.setTailFormatter(tailFormatter);
 		if (condExpr == null || condExpr instanceof IASTProblemExpression) {
 			scribe.skipToToken(Token.tRPAREN);
 		} else {
 			condExpr.accept(this);
 		}
-		if (peekNextToken() == Token.tRPAREN) {
-			scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_if);
-		}
-		final IASTStatement thenStatement = node.getThenClause();
-		final IASTStatement elseStatement = node.getElseClause();
+		scribe.runTailFormatter();
+		scribe.setTailFormatter(null);
 
 		boolean thenStatementIsBlock = false;
 		if (thenStatement != null) {

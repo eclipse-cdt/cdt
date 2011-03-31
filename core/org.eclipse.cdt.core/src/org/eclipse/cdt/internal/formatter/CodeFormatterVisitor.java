@@ -3236,18 +3236,19 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				thenStatementIsBlock = true;
 				final List<IASTStatement> statements = Arrays.asList(block.getStatements());
 				if (isGuardClause(block, statements) && elseStatement == null && preferences.keep_guardian_clause_on_one_line) {
-					/*
-					 * Need a specific formatting for guard clauses
-					 * guard clauses are block with a single return or throw
-					 * statement
-					 */
-					scribe.printNextToken(Token.tLBRACE, preferences.insert_space_before_opening_brace_in_block);
-					scribe.space();
+					// Specific formatting for guard clauses. A guard clause is a block
+					// with a single return or throw statement.
+					if (scribe.scanner.getCurrentPosition() <= thenStatement.getFileLocation().getNodeOffset()) {
+						scribe.printNextToken(Token.tLBRACE, preferences.insert_space_before_opening_brace_in_block);
+						scribe.space();
+					}
 					statements.get(0).accept(this);
 					scribe.printNextToken(Token.tRBRACE, true);
 					scribe.printTrailingComment();
 				} else {
-					formatLeftCurlyBrace(line, preferences.brace_position_for_block);
+					if (scribe.scanner.getCurrentPosition() <= thenStatement.getFileLocation().getNodeOffset()) {
+						formatLeftCurlyBrace(line, preferences.brace_position_for_block);
+					}
 					thenStatement.accept(this);
 					if (elseStatement != null && preferences.insert_new_line_before_else_in_if_statement) {
 						scribe.startNewLine();

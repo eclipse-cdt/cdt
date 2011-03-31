@@ -14,6 +14,7 @@
     Contributors:
     Anna Dushistova (MontaVista) - [227535] Avoid dependency on files.core
     David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
+    David McKnight (IBM)  - [189353] More file patterns should transfer in text mode by default
  -->
 
 <plugin>
@@ -56,10 +57,22 @@
   <remoteFileTypes extension="tif" type="binary"/>
   <remoteFileTypes extension="txt" type="text"/>
   <remoteFileTypes extension="xls" type="binary"/>
+  <remoteFileTypes extension="zip" type="binary"/>
+  
+  <!-- special handling for XML -->
+  <remoteFileTypes extension="classpath" type="xml"/>  
+  <remoteFileTypes extension="ecore" type="xml"/>
+  <remoteFileTypes extension="exsd" type="xml"/>
+  <remoteFileTypes extension="jardesc" type="xml"/>
+  <remoteFileTypes extension="launch" type="xml"/> 
+  <remoteFileTypes extension="product" type="xml"/>
+  <remoteFileTypes extension="project" type="xml"/>
+  <remoteFileTypes extension="wsdl" type="xml"/>
   <remoteFileTypes extension="xmi" type="xml"/>
   <remoteFileTypes extension="xml" type="xml"/>
-  <remoteFileTypes extension="zip" type="binary"/>
-
+  <remoteFileTypes extension="xsd" type="xml"/>  
+  <!-- end of special handling for XML -->
+  
 </extension>
 
 <!-- ================================================================= -->

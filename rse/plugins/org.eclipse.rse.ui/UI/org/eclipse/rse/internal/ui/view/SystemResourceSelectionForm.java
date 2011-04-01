@@ -21,6 +21,7 @@
  * David McKnight   (IBM)        - [244430] [regression] Incorrect behaviour for SystemSelectRemoteFolderAction
  * David McKnight   (IBM)        - [267061] resource dialog/form to allow custom host combo label
  * David McKnight   (IBM)        - [339282] SystemResourceSelectionForm.selectionChanged() should check for null subsystem
+ * David McKnight   (IBM)        - [341616] SystemResourceSelectionForm needs to check whether selected is an IAdaptable
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -527,7 +528,7 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 			
 		 	_history.put(outputConnection, previousSelection);
 		  }
-		  else
+		  else if (selectedObject instanceof IAdaptable) 
 		  {
 			  ISystemViewElementAdapter elementAdapter = (ISystemViewElementAdapter)((IAdaptable)selectedObject).getAdapter(ISystemViewElementAdapter.class);
 			  if (elementAdapter != null)

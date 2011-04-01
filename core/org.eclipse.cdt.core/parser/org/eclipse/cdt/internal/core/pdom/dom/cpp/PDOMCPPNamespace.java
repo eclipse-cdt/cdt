@@ -62,7 +62,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	private static int INLINE_FLAG= 0x1;
 	
 	private int fFlag= -1;
-	private ICPPNamespaceScope[] fInlineNamespaces;
+	private volatile ICPPNamespaceScope[] fInlineNamespaces;
 
 	public PDOMCPPNamespace(PDOMLinkage linkage, PDOMNode parent, ICPPNamespace namespace) throws CoreException {
 		super(linkage, parent, namespace.getNameCharArray());

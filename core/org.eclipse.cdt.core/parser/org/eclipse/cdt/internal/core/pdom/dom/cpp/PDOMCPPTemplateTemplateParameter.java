@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,9 +60,9 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PARAMETERS + Database.PTR_SIZE;
 	
-	private ICPPScope fUnknownScope;
+	private PDOMCPPUnknownScope fUnknownScope;  // No need for volatile, PDOMCPPUnknownScope protects its fields.
 	private int fCachedParamID= -1;
-	private IPDOMCPPTemplateParameter[] params;
+	private volatile IPDOMCPPTemplateParameter[] params;
 	
 	public PDOMCPPTemplateTemplateParameter(PDOMLinkage linkage, PDOMNode parent, ICPPTemplateTemplateParameter param) 
 			throws CoreException, DOMException {

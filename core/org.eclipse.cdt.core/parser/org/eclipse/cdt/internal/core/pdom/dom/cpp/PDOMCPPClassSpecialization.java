@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 QNX Software Systems and others.
+ * Copyright (c) 2007, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,8 +59,9 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 8;
-	private ICPPClassScope fScope;
-	private ObjectMap specializationMap= null;
+	
+	private volatile ICPPClassScope fScope;
+	private ObjectMap specializationMap= null; // Obtained from the synchronized PDOM cache
 	
 	public PDOMCPPClassSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType, PDOMBinding specialized)
 			throws CoreException {

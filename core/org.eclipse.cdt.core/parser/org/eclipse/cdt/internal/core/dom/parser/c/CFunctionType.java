@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Devin Steffler (IBM Corporation) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -18,8 +19,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.core.runtime.CoreException;
 
 public class CFunctionType implements IFunctionType, ISerializableType {
-    IType[] parameters = null;
-    IType returnType = null;
+    private final IType[] parameters;
+    private final IType returnType;
     
     public CFunctionType( IType returnType, IType []  types ) {
         this.returnType = returnType;

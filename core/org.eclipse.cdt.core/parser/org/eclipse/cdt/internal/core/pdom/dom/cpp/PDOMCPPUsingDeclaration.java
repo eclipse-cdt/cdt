@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Google, Inc and others.
+ * Copyright (c) 2008, 2011 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclara
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 8;
 	
-	private IBinding[] delegates;
+	private volatile IBinding[] delegates;
 	
 	public PDOMCPPUsingDeclaration(PDOMLinkage linkage, PDOMNode parent, ICPPUsingDeclaration using)
 			throws CoreException {

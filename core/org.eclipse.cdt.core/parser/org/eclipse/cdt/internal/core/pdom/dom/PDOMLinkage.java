@@ -70,7 +70,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	// node types
 	protected static final int LINKAGE= 0; // special one for myself
 
-	private BTree fMacroIndex= null;
+	private BTree fMacroIndex= null;  // No need for volatile, all fields of BTree are final.
 	private final PDOM fPDOM;
 	private final Database fDatabase;
 

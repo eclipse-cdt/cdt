@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 QNX Software Systems and others.
+ * Copyright (c) 2007, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,9 +74,8 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	private static final short ANNOT_PARAMETER_PACK = 8;
 	private static final short ANNOT_IS_DELETED = 9;
 
-	private ICPPFunctionType fType;
+	private ICPPFunctionType fType; // No need for volatile, all fields of ICPPFunctionTypes are final.
 	private short fAnnotation= -1;
-
 	private int fRequiredArgCount= -1;
 	
 	public PDOMCPPFunctionSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPFunction astFunction, PDOMBinding specialized) throws CoreException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 QNX Software Systems and others.
+ * Copyright (c) 2005, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,7 +114,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	@SuppressWarnings("hiding")
 	private final static int RECORD_SIZE= FIRST_NAMESPACE_CHILD_OFFSET + Database.PTR_SIZE;
 
-	private LinkedList<Runnable> postProcesses = new LinkedList<Runnable>();
+	// Only used when writing to database, which is single-threaded
+	private LinkedList<Runnable> postProcesses = new LinkedList<Runnable>(); 
 	
 	public PDOMCPPLinkage(PDOM pdom, long record) {
 		super(pdom, record);

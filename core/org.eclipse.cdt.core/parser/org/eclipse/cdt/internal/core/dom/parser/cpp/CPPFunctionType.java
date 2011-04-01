@@ -23,21 +23,17 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Represents c++ function types. Note that we keep typedefs as part of the function type.
+ * For safe usage in index bindings, all fields need to be final.
  */
 public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
-    private IType[] parameters;
-    private IType returnType;
-    private boolean isConst;
-    private boolean isVolatile;
-    private boolean takesVarargs;
+    private final IType[] parameters;
+    private final IType returnType;
+    private final boolean isConst;
+    private final boolean isVolatile;
+    private final boolean takesVarargs;
     
-    /**
-     * @param returnType
-     * @param types
-     */
     public CPPFunctionType(IType returnType, IType[] types) {
-        this.returnType = returnType;
-        this.parameters = types;
+    	this(returnType, types, false, false, false);
     }
 
 	public CPPFunctionType(IType returnType, IType[] types, boolean isConst, boolean isVolatile,

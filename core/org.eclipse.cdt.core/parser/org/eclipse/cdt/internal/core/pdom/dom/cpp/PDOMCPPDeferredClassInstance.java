@@ -56,7 +56,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 8;
 
-	private ICPPScope unknownScope;
+	private PDOMCPPUnknownScope unknownScope; // No need for volatile, PDOMCPPUnknownScope protects its fields. 
 	
 	public PDOMCPPDeferredClassInstance(PDOMLinkage linkage, PDOMNode parent,
 			ICPPDeferredClassInstance classType, PDOMBinding instantiated) throws CoreException {

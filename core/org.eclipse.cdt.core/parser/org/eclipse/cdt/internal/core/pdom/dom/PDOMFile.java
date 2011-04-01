@@ -62,7 +62,7 @@ import org.eclipse.core.runtime.Status;
 public class PDOMFile implements IIndexFragmentFile {
 	private final PDOMLinkage fLinkage;
 	private final long record;
-	private IIndexFileLocation location;
+	private IIndexFileLocation location;  // No need to make volatile, all fields of IIndexFileLocation are final.
 
 	private static final int FIRST_NAME = 0;
 	private static final int FIRST_INCLUDE = 4;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Google, Inc and others.
+ * Copyright (c) 2008, 2011 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 	protected static final int RECORD_SIZE = SIGNATURE_HASH + 4;
 	
 	// Cached values.
-	ICPPTemplateArgument[] arguments;
+	private volatile ICPPTemplateArgument[] arguments;
 
 	public PDOMCPPUnknownClassInstance(PDOMLinkage linkage, PDOMNode parent, ICPPUnknownClassInstance classInstance)
 			throws CoreException {

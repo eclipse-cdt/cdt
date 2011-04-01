@@ -56,6 +56,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Represents the class scope for a class stored in the index.
+ * For safe use, all fields need to be final.
  */
 class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 	private static final class PopulateMap implements IPDOMVisitor {
@@ -93,7 +94,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		}
 	};
 	
-	private IPDOMCPPClassType fBinding;
+	private final IPDOMCPPClassType fBinding;
 
 	public PDOMCPPClassScope(IPDOMCPPClassType binding) {
 		fBinding= binding;

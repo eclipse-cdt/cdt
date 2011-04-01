@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 QNX Software Systems and others.
+ * Copyright (c) 2006, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,10 +51,10 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = OFFSET_FLAGS + 1;
 	
-	private Long fMinValue;
-	private Long fMaxValue;
-	private IType fFixedType= ProblemBinding.NOT_INITIALIZED;
-	private PDOMCPPEnumScope fScope;
+	private Long fMinValue;	// No need for volatile, all fields of Long are final.
+	private Long fMaxValue; // No need for volatile, all fields of Long are final.
+	private volatile IType fFixedType= ProblemBinding.NOT_INITIALIZED;
+	private PDOMCPPEnumScope fScope; // No need for volatile, all fields of PDOMCPPEnumScope are final.
 
 	public PDOMCPPEnumeration(PDOMLinkage linkage, PDOMNode parent, ICPPEnumeration enumeration)
 			throws CoreException {

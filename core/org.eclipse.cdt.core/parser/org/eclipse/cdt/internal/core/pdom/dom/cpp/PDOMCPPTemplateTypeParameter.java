@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 QNX Software Systems and others.
+ * Copyright (c) 2007, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PARAMETERID + 4;
 	
-	private ICPPScope fUnknownScope;
+	private PDOMCPPUnknownScope fUnknownScope; // No need for volatile, PDOMCPPUnknownScope protects its fields.
 	private int fCachedParamID= -1;
 	
 	public PDOMCPPTemplateTypeParameter(PDOMLinkage linkage, PDOMNode parent, ICPPTemplateTypeParameter param) 

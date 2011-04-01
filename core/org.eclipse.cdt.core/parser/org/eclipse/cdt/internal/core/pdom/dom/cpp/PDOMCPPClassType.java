@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 QNX Software Systems and others.
+ * Copyright (c) 2005, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 14;
 
-	private ICPPClassScope fScope;
+	private PDOMCPPClassScope fScope; // No need for volatile, all fields of PDOMCPPClassScope are final.
 
 	public PDOMCPPClassType(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType) throws CoreException {
 		super(linkage, parent, classType.getNameCharArray());

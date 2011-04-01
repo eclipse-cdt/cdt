@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 QNX Software Systems and others.
+ * Copyright (c) 2008, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.CoreException;
  * Base class for specializations and instances of other bindings.
  */
 abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpecialization, IPDOMOverloader {
+
 	private static final int ARGMAP = PDOMCPPBinding.RECORD_SIZE + 0;
 	private static final int SIGNATURE_HASH = PDOMCPPBinding.RECORD_SIZE + 4;
 	private static final int SPECIALIZED = PDOMCPPBinding.RECORD_SIZE + 8;
@@ -40,8 +41,8 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 12;
 	
-	private IBinding fSpecializedCache= null;
-	private ICPPTemplateParameterMap fArgMap;
+	private volatile IBinding fSpecializedCache= null;
+	private volatile ICPPTemplateParameterMap fArgMap;
 	
 	public PDOMCPPSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPSpecialization spec,
 			IPDOMBinding specialized) throws CoreException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 QNX Software Systems and others.
+ * Copyright (c) 2007, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 	protected static final int RECORD_SIZE = DEFAULTVAL + Database.PTR_SIZE;
 
 	private int fCachedParamID= -1;
-	private IType fType;
+	private volatile IType fType;
 
 	public PDOMCPPTemplateNonTypeParameter(PDOMLinkage linkage, PDOMNode parent,
 			ICPPTemplateNonTypeParameter param) throws CoreException {

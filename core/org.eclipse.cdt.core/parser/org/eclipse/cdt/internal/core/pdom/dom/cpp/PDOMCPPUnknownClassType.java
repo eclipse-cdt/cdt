@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Google, Inc and others.
+ * Copyright (c) 2008, 2011 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPUnknownBinding.RECORD_SIZE + 8;
 	
-	private ICPPScope unknownScope;
+	private PDOMCPPUnknownScope unknownScope; // No need for volatile, PDOMCPPUnknownScope protects its fields
 
 	public PDOMCPPUnknownClassType(PDOMLinkage linkage, PDOMNode parent, ICPPUnknownClassType classType) throws CoreException {
 		super(linkage, parent, classType);

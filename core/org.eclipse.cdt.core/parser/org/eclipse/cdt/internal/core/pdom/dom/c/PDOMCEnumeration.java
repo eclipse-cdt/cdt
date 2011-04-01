@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 QNX Software Systems and others.
+ * Copyright (c) 2006, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,8 +42,8 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType {
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = OFFSET_MAX_VALUE + 8;
 
-	private Long fMinValue;
-	private Long fMaxValue;
+	private Long fMinValue;  // No need for volatile, all fields of Long are final.
+	private Long fMaxValue;  // No need for volatile, all fields of Long are final.
 	
 	public PDOMCEnumeration(PDOMLinkage linkage, PDOMNode parent, IEnumeration enumeration)
 			throws CoreException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,9 +38,10 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Represents the enum scope for an enum stored in the index.
+ * For safe use all fields need to be final.
  */
 class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
-	private IPDOMCPPEnumType fBinding;
+	private final IPDOMCPPEnumType fBinding;
 
 	public PDOMCPPEnumScope(IPDOMCPPEnumType binding) {
 		fBinding= binding;

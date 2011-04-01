@@ -35,10 +35,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 /**
  * Models the scope represented by an unknown binding such (e.g.: template type parameter). Used within
  * the context of templates, only.
+ * For safe usage in index bindings, all fields need to be final or used in a thread-safe manner otherwise.
  */
 public class CPPUnknownScope implements ICPPInternalUnknownScope {
     private final ICPPUnknownBinding binding;
     private final IASTName scopeName;
+    /**
+     * This field needs to be protected when used in PDOMCPPUnknownScope, 
+     * don't use it outside of {@link #getOrCreateBinding(IASTName, int)}
+     */
     private CharArrayObjectMap map;
 
     public CPPUnknownScope(ICPPUnknownBinding binding, IASTName name) {
@@ -131,7 +136,14 @@ public class CPPUnknownScope implements ICPPInternalUnknownScope {
     		}
     	}
     	
-        if (map == null)
+    	int idx= type ? 0 : function ? 1 : 2;
+
+    	IBinding result = getOrCreateBinding(name, idx);
+        return result;
+    }
+
+	protected IBinding getOrCreateBinding(final IASTName name, int idx) {
+		if (map == null)
             map = new CharArrayObjectMap(2);
 
         final char[] c = name.getLookupKey();
@@ -141,20 +153,23 @@ public class CPPUnknownScope implements ICPPInternalUnknownScope {
 			map.put(c, o);
 		}
         
-        int idx= type ? 0 : function ? 1 : 2;
         IBinding result= o[idx];
         if (result == null) {
-        	if (type) {
+        	switch (idx) {
+        	case 0:
         		result= new CPPUnknownClass(binding, name.getSimpleID());
-        	} else if (function) {
+        		break;
+        	case 1:
         		result= new CPPUnknownFunction(binding, name.getSimpleID());
-        	} else {
+        		break;
+        	case 2:
         		result= new CPPUnknownBinding(binding, name.getSimpleID());
+        		break;
         	}
         	o[idx]= result;
         }
-        return result;
-    }
+		return result;
+	}
 
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
 		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);

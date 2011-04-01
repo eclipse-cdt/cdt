@@ -32,7 +32,7 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	private final PDOMLinkage fLinkage;
 	protected final long record;
 	
-	private long cachedParentRecord;
+	private volatile long cachedParentRecord;
 	
 	protected PDOMNode(PDOMLinkage linkage, long record) {
 		fLinkage = linkage;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,10 +41,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * Base class for all specialization scopes
+ * For safe usage in index bindings, all fields need to be final or volatile.
  */
 public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializationScope {
 	final private ICPPClassSpecialization specialClass;
-	private ICPPBase[] fBases;
+	private volatile ICPPBase[] fBases; // Used by the pdom bindings, needs to be volatile.
 
 	public AbstractCPPClassSpecializationScope(ICPPClassSpecialization specialization) {
 		this.specialClass= specialization;

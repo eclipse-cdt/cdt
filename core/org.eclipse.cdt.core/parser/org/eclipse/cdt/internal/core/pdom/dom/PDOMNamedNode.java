@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 QNX Software Systems and others.
+ * Copyright (c) 2006, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public abstract class PDOMNamedNode extends PDOMNode {
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 4;
 
-	private char[] fName;
+	private volatile char[] fName;
 	
 	public PDOMNamedNode(PDOMLinkage linkage, long record) {
 		super(linkage, record);

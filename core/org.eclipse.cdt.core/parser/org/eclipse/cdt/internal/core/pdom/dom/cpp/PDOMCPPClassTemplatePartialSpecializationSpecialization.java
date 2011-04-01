@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE= PDOMCPPClassTemplateSpecialization.RECORD_SIZE+12;
 	
-	private ICPPClassTemplate fPrimaryTemplate;
+	private volatile ICPPClassTemplate fPrimaryTemplate;
 
 	public PDOMCPPClassTemplatePartialSpecializationSpecialization(PDOMCPPLinkage linkage,
 			PDOMNode parent, PDOMBinding specialized, ICPPClassTemplatePartialSpecialization partial, 

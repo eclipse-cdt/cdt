@@ -393,7 +393,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
     @Override
     public void initialize(final RequestMonitor rm) {
         super.initialize(
-            new RequestMonitor(getExecutor(), rm) {
+            new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
                 @Override
                 protected void handleSuccess() {
                     doInitialize(rm);

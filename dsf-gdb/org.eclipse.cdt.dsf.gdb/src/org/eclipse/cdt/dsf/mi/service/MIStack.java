@@ -22,6 +22,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -188,7 +189,7 @@ public class MIStack extends AbstractDsfService
     @Override
     public void initialize(final RequestMonitor rm) {
         super.initialize(
-            new RequestMonitor(getExecutor(), rm) { 
+            new RequestMonitor(ImmediateExecutor.getInstance(), rm) { 
                 @Override
                 protected void handleSuccess() {
                     doInitialize(rm);

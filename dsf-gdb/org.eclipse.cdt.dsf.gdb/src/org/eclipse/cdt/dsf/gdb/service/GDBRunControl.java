@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -93,7 +94,7 @@ public class GDBRunControl extends MIRunControl {
     @Override
     public void initialize(final RequestMonitor requestMonitor) {
         super.initialize(
-            new RequestMonitor(getExecutor(), requestMonitor) { 
+            new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) { 
                 @Override
                 public void handleSuccess() {
                     doInitialize(requestMonitor);

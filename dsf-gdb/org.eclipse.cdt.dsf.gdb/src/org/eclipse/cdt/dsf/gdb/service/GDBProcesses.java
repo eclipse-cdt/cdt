@@ -101,7 +101,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 
     @Override
     public void initialize(final RequestMonitor requestMonitor) {
-    	super.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
+    	super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
     		@Override
     		protected void handleSuccess() {
     			doInitialize(requestMonitor);

@@ -21,6 +21,7 @@ import org.eclipse.cdt.debug.core.sourcelookup.CProjectSourceContainer;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
@@ -125,7 +126,7 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
     @Override
     public void initialize(final RequestMonitor requestMonitor) {
         super.initialize(
-        		new RequestMonitor(getExecutor(), requestMonitor) { 
+        		new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) { 
         			@Override
         			protected void handleSuccess() {
         				doInitialize(requestMonitor);

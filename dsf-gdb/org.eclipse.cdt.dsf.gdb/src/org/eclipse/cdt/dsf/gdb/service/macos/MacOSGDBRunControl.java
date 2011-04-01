@@ -14,6 +14,7 @@ package org.eclipse.cdt.dsf.gdb.service.macos;
 import java.util.Hashtable;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
@@ -41,7 +42,7 @@ public class MacOSGDBRunControl extends GDBRunControl {
 	
     @Override
     public void initialize(final RequestMonitor requestMonitor) {
-    	super.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
+    	super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
     		@Override
     		protected void handleSuccess() {
     			doInitialize(requestMonitor);

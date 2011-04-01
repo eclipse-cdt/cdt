@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
@@ -129,7 +130,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 	
     @Override
     public void initialize(final RequestMonitor requestMonitor) {
-        super.initialize( new RequestMonitor(getExecutor(), requestMonitor) {
+        super.initialize( new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
             @Override
             protected void handleSuccess() {
                 doInitialize(requestMonitor);

@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.mi.service;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
@@ -327,7 +328,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
      */
     @Override
     public void initialize(final RequestMonitor requestMonitor) {
-    	super.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
+    	super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
     		@Override
     		protected void handleSuccess() {
     			doInitialize(requestMonitor);

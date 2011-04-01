@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.gdb.service.macos;
 
 import java.util.Hashtable;
 
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
@@ -31,7 +32,7 @@ public class MacOSGDBProcesses extends GDBProcesses {
 	
     @Override
     public void initialize(final RequestMonitor requestMonitor) {
-    	super.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
+    	super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
     		@Override
     		protected void handleSuccess() {
     			doInitialize(requestMonitor);

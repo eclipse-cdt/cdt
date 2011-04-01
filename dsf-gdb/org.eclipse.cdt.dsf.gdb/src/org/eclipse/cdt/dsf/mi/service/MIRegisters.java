@@ -16,6 +16,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -164,7 +165,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
     @Override
     public void initialize(final RequestMonitor requestMonitor) {
         super.initialize(
-            new RequestMonitor(getExecutor(), requestMonitor) { 
+            new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) { 
                 @Override
                 protected void handleSuccess() {
                     doInitialize(requestMonitor);

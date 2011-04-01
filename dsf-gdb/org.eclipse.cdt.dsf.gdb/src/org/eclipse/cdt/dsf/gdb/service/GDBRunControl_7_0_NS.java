@@ -340,7 +340,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 
 	@Override
 	public void initialize(final RequestMonitor rm) {
-		super.initialize(new RequestMonitor(getExecutor(), rm) {
+		super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
 			@Override
 			protected void handleSuccess() {
 				doInitialize(rm);

@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence.Step;
@@ -292,7 +293,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 	 */
 	@Override
 	public void initialize(final RequestMonitor rm) {
-		super.initialize(new RequestMonitor(getExecutor(), rm) {
+		super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
 			@Override
 			protected void handleSuccess() {
 				doInitialize(rm);

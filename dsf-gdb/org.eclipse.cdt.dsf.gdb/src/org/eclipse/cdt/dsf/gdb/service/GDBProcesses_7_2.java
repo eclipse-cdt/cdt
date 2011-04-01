@@ -54,7 +54,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 
 	@Override
 	public void initialize(final RequestMonitor requestMonitor) {
-		super.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
+		super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
 			@Override
 			protected void handleSuccess() {
 				doInitialize(requestMonitor);

@@ -395,7 +395,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 	 */
 	@Override
 	public void initialize(final RequestMonitor requestMonitor) {
-		super.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
+		super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
 			@Override
 			protected void handleSuccess() {
 				doInitialize(requestMonitor);

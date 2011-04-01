@@ -88,9 +88,12 @@ public class Executable extends PlatformObject {
 	private final IResource resource;
 	private final Map<ITranslationUnit, String> remappedPaths;
 	private final ArrayList<ITranslationUnit> sourceFiles;
+	/** see {@link #setRefreshSourceFiles(boolean)} */
 	private boolean refreshSourceFiles;
+	/** see {@link #setRemapSourceFiles(boolean) */
 	private boolean remapSourceFiles;
 	private ISourceFileRemapping[] remappers;
+	/** The (unmapped) file specifications found in the executable */
 	private String[] symReaderSources;
 
 	public IPath getPath() {
@@ -258,6 +261,16 @@ public class Executable extends PlatformObject {
 	}
 
 	/**
+	 * Call this to force a subsequent call to
+	 * {@link #getSourceFiles(IProgressMonitor)} to re-fetch the list of
+	 * source files referenced in the executable. Digging into the binary for
+	 * that list can be expensive, so we cache the results. However, if the
+	 * executable is rebuilt, the cache can no longer be trusted.
+	 * 
+	 * Note that calling this also invalidates any mappings we have cached, so
+	 * there is no need to call both this method and
+	 * {@link #setRemapSourceFiles(boolean)}. That latter is automatic.
+	 * 
 	 * @since 6.0
 	 */
 	public void setRefreshSourceFiles(boolean refreshSourceFiles) {
@@ -272,6 +285,27 @@ public class Executable extends PlatformObject {
 	}
 
 	/**
+	 * Call this to force a subsequent call to
+	 * {@link #getSourceFiles(IProgressMonitor)} to remap the source files
+	 * referenced in the binary. Mapping a source file means running the file
+	 * specification found in the executable through any applicable source
+	 * locators. Source locators are used to convert a file specification found
+	 * in an executable to a usable path on the local machine. E.g., a user
+	 * debugging an executable built by someone else likely needs to configure
+	 * source locator(s) to point Eclipse to his local copy of the sources.
+	 * 
+	 * <p>
+	 * Remapping source paths is expensive, so we cache the results. However, if
+	 * applicable source locators have been added, removed or changed, then the
+	 * cache can no longer be trusted.
+	 * 
+	 * <p>
+	 * Note that we separately cache the (unmapped) file specifications
+	 * referenced in the executable, as that is also expensive to fetch. Calling
+	 * this method does not invalidate that cache. However, that cache can be
+	 * invalidated via {@link #setRefreshSourceFiles(boolean)}, which also ends
+	 * up invalidating any mappings we have cached.
+	 * 
 	 * @since 7.0
 	 */
 	public void setRemapSourceFiles(boolean remapSourceFiles) {

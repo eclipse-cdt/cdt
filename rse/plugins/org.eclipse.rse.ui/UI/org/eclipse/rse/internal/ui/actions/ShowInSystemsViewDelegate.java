@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 IBM Corporation. All rights reserved.
+ * Copyright (c) 2010 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,6 +11,7 @@
  * Contributors:
  * David McKnight     (IBM)  - [160105] [usability] Universal action needed to locate a resource in the Remote Systems View
  * David McKnight     (IBM)  - [218227][usability] Contribute a "Show in RSE" action to Resource Navigator and Project Explorer
+ * David McKnight     (IBM)  - [341573] NPE on Show in Remote Systems view from Remote System Details view
  ********************************************************************************/
 package org.eclipse.rse.internal.ui.actions;
 
@@ -38,6 +39,7 @@ import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.rse.internal.ui.view.SystemViewPart;
 import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.ui.SystemBasePlugin;
+import org.eclipse.rse.ui.model.ISystemPromptableObject;
 import org.eclipse.rse.ui.view.ContextObject;
 import org.eclipse.rse.ui.view.ISystemTree;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -340,23 +342,27 @@ public class ShowInSystemsViewDelegate implements IViewActionDelegate {
 			ISystemViewElementAdapter adapter = getAdapter((IAdaptable)_selectedObject);
 			if (adapter != null){
 				ISubSystem subSystem = adapter.getSubSystem(_selectedObject);
-				if (subSystem.getSubSystemConfiguration().supportsFilters()){
-					// no match, so we will expand from filter
-					// query matching filter in  a job (to avoid main thread)
-					LinkFromFilterJob job = new LinkFromFilterJob((IAdaptable)_selectedObject, systemTree);
-					job.schedule();
-				}
-				else {
-					// no filters so need to directly check children
-					Object[] children = subSystem.getChildren();
+				if (subSystem != null){
+					if (subSystem.getSubSystemConfiguration().supportsFilters()){
+						// no match, so we will expand from filter
+						// query matching filter in  a job (to avoid main thread)
+						LinkFromFilterJob job = new LinkFromFilterJob((IAdaptable)_selectedObject, systemTree);
+						job.schedule();
+					}
+					else {
+						// no filters so need to directly check children
+						Object[] children = subSystem.getChildren();
 
-					// put these items in the tree and look for remote object
-					// if we can't find the remote object under this, the ShowChildrenInTree will recurse
-					Display.getDefault().asyncExec(new ShowChildrenInTree(subSystem, children, null, systemTree, (IAdaptable)_selectedObject));
+						// put these items in the tree and look for remote object
+						// if we can't find the remote object under this, the ShowChildrenInTree will recurse
+						Display.getDefault().asyncExec(new ShowChildrenInTree(subSystem, children, null, systemTree, (IAdaptable)_selectedObject));
+					}
 				}
 			}
 		}
 	}
+	
+	
 
 
 	public SystemViewPart activateSystemView(){
@@ -380,9 +386,15 @@ public class ShowInSystemsViewDelegate implements IViewActionDelegate {
 			_action= action;
 		}
 		IStructuredSelection sel = (IStructuredSelection)selection;
-		if (sel.size() == 1){
-			_action.setEnabled(true);
+		if (sel.size() == 1){			
 			_selectedObject = sel.getFirstElement();
+			if (_selectedObject instanceof ISystemPromptableObject){
+				_selectedObject = null; // promptables not supported here
+				_action.setEnabled(false);
+			}
+			else {
+				_action.setEnabled(true);
+			}
 		}
 		else {
 			_action.setEnabled(false);

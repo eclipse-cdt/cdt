@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Takuya Miyamoto - [185925] Integrate Platform/Team Synchronization
  * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
+ * David McKnight   (IBM)        - [341630] [import/export] destination prompt not cleared after destination chosen
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -728,6 +729,9 @@ class RemoteExportWizardPage1 extends WizardExportResourcesPage implements Liste
 		if (destinationValue.length() == 0) {
 			setMessage(DESTINATION_EMPTY_MESSAGE);
 			return false;
+		} 
+		else {
+			setMessage((String)null); // clear the message when a destination has been chosen
 		}
 		String conflictingContainer = getConflictingContainerNameFor(destinationValue);
 		if (conflictingContainer != null) {

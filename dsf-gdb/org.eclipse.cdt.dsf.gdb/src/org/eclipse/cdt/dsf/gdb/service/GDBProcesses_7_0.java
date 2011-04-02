@@ -301,12 +301,37 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 		@Override
 		public boolean equals(Object obj) {
-			return baseEquals(obj) && 
-			       (((MIProcessDMC)obj).fId == null ? fId == null : ((MIProcessDMC)obj).fId.equals(fId));
+			// We treat the UNKNOWN_PROCESS_ID as a wildcard.  Any processId (except null) will be considered
+			// equal to the UNKNOWN_PROCESS_ID.  This is important because before starting a process, we don't
+			// have a pid yet, but we still need to create a process context, and we must use UNKNOWN_PROCESS_ID.
+			// Bug 336890 
+
+			if (!baseEquals(obj)) {
+				return false;
+			}
+
+			MIProcessDMC other = (MIProcessDMC)obj;
+			if (fId == null || other.fId == null) {
+				return fId == null && other.fId == null;
+			}
+
+			// Now that we know neither is null, check for UNKNOWN_PROCESS_ID wildcard
+			if (fId.equals(MIProcesses.UNKNOWN_PROCESS_ID) || other.fId.equals(MIProcesses.UNKNOWN_PROCESS_ID)) {
+				return true;
+			}
+			
+			return fId.equals(other.fId);
 		}
 
 		@Override
-		public int hashCode() { return baseHashCode() ^ (fId == null ? 0 : fId.hashCode()); }
+		public int hashCode() { 
+			// We cannot use fId in the hashCode.  This is because we support
+			// the wildCard MIProcesses.UNKNOWN_PROCESS_ID which is equal to any other fId.
+			// But we also need the hashCode of the wildCard to be the same
+			// as the one of all other fIds, which is why we need a constant hashCode
+			// See bug 336890
+			return baseHashCode(); 
+		}
     }
     
     /**
@@ -550,6 +575,16 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	}
 
 	/** @since 4.0 */
+	protected int getNumConnected() {
+		return fNumConnected;
+	}
+
+	/** @since 4.0 */
+	protected void setNumConnected(int num) {
+		fNumConnected = num;
+	}
+
+	/** @since 4.0 */
 	protected boolean isInitialProcess() {
 		return fInitialProcess;
 	}
@@ -631,6 +666,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     	
     	String pid = getGroupToPidMap().get(groupId);
     	if (pid == null) {
+    		// For GDB 7.0 and 7.1, the groupId is the pid, so we can use it directly
     		pid = groupId;
     	}
     	IProcessDMContext processDmc = createProcessContext(controlDmc, pid);

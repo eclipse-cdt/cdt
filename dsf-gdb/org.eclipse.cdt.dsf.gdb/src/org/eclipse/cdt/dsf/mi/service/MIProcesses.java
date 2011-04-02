@@ -255,12 +255,37 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 
 		@Override
 		public boolean equals(Object obj) {
-			return super.baseEquals(obj) && 
-			       (((MIProcessDMC)obj).fId == null ? fId == null : ((MIProcessDMC)obj).fId.equals(fId));
+			// We treat the UNKNOWN_PROCESS_ID as a wildcard.  Any processId (except null) will be considered
+			// equal to the UNKNOWN_PROCESS_ID.  This is important because before starting a process, we don't
+			// have a pid yet, but we still need to create a process context, and we must use UNKNOWN_PROCESS_ID.
+			// Bug 336890 
+
+			if (!baseEquals(obj)) {
+				return false;
+			}
+
+			MIProcessDMC other = (MIProcessDMC)obj;
+			if (fId == null || other.fId == null) {
+				return fId == null && other.fId == null;
+			}
+
+			// Now that we know neither is null, check for UNKNOWN_PROCESS_ID wildcard
+			if (fId.equals(UNKNOWN_PROCESS_ID) || other.fId.equals(UNKNOWN_PROCESS_ID)) {
+				return true;
+			}
+			
+			return fId.equals(other.fId);
 		}
 
 		@Override
-		public int hashCode() { return super.baseHashCode() ^ (fId == null ? 0 : fId.hashCode()); }
+		public int hashCode() { 
+			// We cannot use fId in the hashCode.  This is because we support
+			// the wildCard MIProcesses.UNKNOWN_PROCESS_ID which is equal to any other fId.
+			// But we also need the hashCode of the wildCard to be the same
+			// as the one of all other fIds, which is why we need a constant hashCode
+			// See bug 336890
+			return baseHashCode(); 
+		}
     }
     
     /*
@@ -315,6 +340,8 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 	private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 	// The unique id should be an empty string so that the views know not to display the fake id
 	public static final String UNIQUE_GROUP_ID = ""; //$NON-NLS-1$
+	/** @since 4.0 */
+	public static final String UNKNOWN_PROCESS_ID = UNIQUE_GROUP_ID;
 
     public MIProcesses(DsfSession session) {
     	super(session);
@@ -420,7 +447,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     
     /** @since 4.0 */
     public IMIContainerDMContext createContainerContextFromGroupId(ICommandControlDMContext controlDmc, String groupId) {
-    	IProcessDMContext processDmc = createProcessContext(controlDmc, groupId);
+    	IProcessDMContext processDmc = createProcessContext(controlDmc, UNKNOWN_PROCESS_ID);
     	return createContainerContext(processDmc, groupId);
     }
 

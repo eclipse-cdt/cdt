@@ -164,7 +164,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 		if (fProcId != null) {
 			processDmc = createProcessContext(controlDmc, fProcId);
 		} else {
-			processDmc = createProcessContext(controlDmc, groupId);
+			processDmc = createProcessContext(controlDmc, MIProcesses.UNKNOWN_PROCESS_ID);
 		}
     	return createContainerContext(processDmc, groupId);
     }

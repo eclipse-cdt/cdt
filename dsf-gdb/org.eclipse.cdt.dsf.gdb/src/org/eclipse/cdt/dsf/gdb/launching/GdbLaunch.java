@@ -135,7 +135,7 @@ public class GdbLaunch extends DsfLaunch
                                 GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, getLaunchConfiguration(), fSession);
                         fSession.registerModelAdapter(IMemoryBlockRetrieval.class, fMemRetrieval);
                         
-                   		IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
+                   		IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), MIProcesses.UNKNOWN_PROCESS_ID);
                         IMemoryDMContext memoryDmc = (IMemoryDMContext)procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
                         fMemRetrieval.initialize(memoryDmc);
                     }

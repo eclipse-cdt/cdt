@@ -28,6 +28,7 @@ import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
+import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIAddInferiorInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -83,6 +84,17 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		super.shutdown(requestMonitor);
 	}
 	
+	@Override
+    public IMIContainerDMContext createContainerContextFromGroupId(ICommandControlDMContext controlDmc, String groupId) {
+    	String pid = getGroupToPidMap().get(groupId);
+    	if (pid == null) {
+    		// For GDB 7.2, the groupId is no longer the pid, so use our wildcard pid instead
+    		pid = MIProcesses.UNKNOWN_PROCESS_ID;
+    	}
+    	IProcessDMContext processDmc = createProcessContext(controlDmc, pid);
+    	return createContainerContext(processDmc, groupId);
+    }
+    
     @Override
 	protected boolean doIsDebuggerAttachSupported() {
 		// Multi-process is not applicable to post-mortem sessions (core)

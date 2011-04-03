@@ -1138,7 +1138,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//
 	//void test() {
 	//    function_with_a_long_name(function(1000000, 2000000, 3000000, 4000000,
-	//                                       5000000), 6000000);
+	//                                       5000000),
+	//                              6000000);
 	//}
 	public void testFunctionCall_2() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
@@ -1158,8 +1159,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//int function_with_a_looooooooooooooooooooooooooooooooong_name(int);
 	//
 	//void test() {
-	//    function(function_with_a_looooooooooooooooooooooooooooooooong_name(
-	//            1000000));
+	//    function(
+	//            function_with_a_looooooooooooooooooooooooooooooooong_name(1000000));
 	//}
 	public void testFunctionCall_3() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
@@ -2271,6 +2272,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//class Stream {
 	//Stream& operator<<(const char* s);
+	//Stream& operator<<(int i);
 	//};
 	//
 	//Stream stream;
@@ -2283,6 +2285,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//class Stream {
 	//    Stream& operator<<(const char* s);
+	//    Stream& operator<<(int i);
 	//};
 	//
 	//Stream stream;
@@ -2290,11 +2293,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//
 	//void test() {
 	//    stream << (variable_with_a_long_name + another_variable_with_a_long_name)
-	//                   * variable_with_a_long_name
+	//                      * variable_with_a_long_name
 	//           << "01234567890123456789";
 	//}
-	// TODO(sprigogin): Enable the test when the formatter is fixed.
-	public void _testOverloadedLeftShiftChain_4() throws Exception {
+	public void testOverloadedLeftShiftChain_4() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_OVERLOADED_LEFT_SHIFT_CHAIN,
 				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));

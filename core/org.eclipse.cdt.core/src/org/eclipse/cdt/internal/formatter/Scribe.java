@@ -507,8 +507,8 @@ public class Scribe {
 	}
 
 	/**
-	 * Answer next indentation level based on column estimated position (if
-	 * column is not indented, then use indentationLevel)
+	 * Returns next indentation level based on column estimated position (if
+	 * column is not indented, then uses indentationLevel)
 	 */
 	public int getNextIndentationLevel(int someColumn) {
 		int indent= someColumn - 1;

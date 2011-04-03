@@ -135,9 +135,10 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 
 	/**
 	 * Indicates that the given thread has been suspended.
+	 * @since 4.0
 	 */
 	@Immutable
-	private static class SuspendedEvent extends RunControlEvent<IExecutionDMContext, MIStoppedEvent>
+	protected static class SuspendedEvent extends RunControlEvent<IExecutionDMContext, MIStoppedEvent>
 	implements ISuspendedDMEvent
 	{
 		SuspendedEvent(IExecutionDMContext ctx, MIStoppedEvent miInfo) {
@@ -188,10 +189,10 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 
     /**
      * Indicates that the given thread has been suspended on a breakpoint.
-     * @since 3.0
+     * @since 4.0
      */
     @Immutable
-    private static class BreakpointHitEvent extends SuspendedEvent
+    protected static class BreakpointHitEvent extends SuspendedEvent
     implements IBreakpointHitDMEvent
     {
         final private IBreakpointDMContext[] fBreakpoints;
@@ -207,8 +208,11 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
         }
     }
 
+	/**
+	 * @since 4.0
+	 */
 	@Immutable
-	private static class ResumedEvent extends RunControlEvent<IExecutionDMContext, MIRunningEvent>
+	protected static class ResumedEvent extends RunControlEvent<IExecutionDMContext, MIRunningEvent>
 	implements IResumedDMEvent
 	{
 		ResumedEvent(IExecutionDMContext ctx, MIRunningEvent miInfo) {
@@ -235,8 +239,11 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		}
 	}
 
+	/**
+	 * @since 4.0
+	 */
 	@Immutable
-	private static class StartedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadCreatedEvent>
+	protected static class StartedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadCreatedEvent>
 	implements IStartedDMEvent
 	{
 		StartedDMEvent(IMIExecutionDMContext executionDmc, MIThreadCreatedEvent miInfo) {
@@ -244,8 +251,11 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		}
 	}
 
+	/**
+	 * @since 4.0
+	 */
 	@Immutable
-	private static class ExitedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadExitEvent>
+	protected static class ExitedDMEvent extends RunControlEvent<IExecutionDMContext,MIThreadExitEvent>
 	implements IExitedDMEvent
 	{
 		ExitedDMEvent(IMIExecutionDMContext executionDmc, MIThreadExitEvent miInfo) {
@@ -273,7 +283,10 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		String fStateChangeDetails;
 	}
 
-	private static class RunToLineActiveOperation {
+	/**
+	 * @since 4.0
+	 */
+	protected static class RunToLineActiveOperation {
 		private IMIExecutionDMContext fThreadContext;
 		private int fBpId;
 		private String fFileLocation;
@@ -310,6 +323,16 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 
 	private RunToLineActiveOperation fRunToLineActiveOperation = null;
 
+	/** @since 4.0 */
+	protected RunToLineActiveOperation getRunToLineActiveOperation() {
+		return fRunToLineActiveOperation;
+	}
+
+	/** @since 4.0 */
+	protected void setRunToLineActiveOperation(RunToLineActiveOperation operation) {
+		fRunToLineActiveOperation = operation;
+	}
+
 	/** 
 	 * Indicates that the next MIRunning event for this thread should be silenced.
 	 */
@@ -333,6 +356,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	///////////////////////////////////////////////////////////////////////////
 	// Initialization and shutdown
 	///////////////////////////////////////////////////////////////////////////
+
 
 	public GDBRunControl_7_0_NS(DsfSession session) {
 		super(session);
@@ -1180,21 +1204,12 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		
 		@Override
 		public void execute(final RequestMonitor rm) {
-			fContainerDmcToSuspend = DMContexts.getAncestorOfType(fCtx, IMIContainerDMContext.class);
-			if (fContainerDmcToSuspend != null) {
-				String groupId = ((IMIContainerDMContext)fContainerDmcToSuspend).getGroupId();
-				if (groupId != null && groupId.length() > 0) {
-					// If we have a fully formed containerDmc, we can use it directly.
-					fTargetAvailable = isSuspended(fContainerDmcToSuspend);
-					rm.done();
-					return;
-				}
-				// else, the container is not fully formed, so let's fetch it below, since
-				// we know we are running single-process and there is only one process
-			}
-
-			// If we get here, we have to get the list of processes to know if any of
-			// them is suspended.
+			// In non-stop, for single address-space multi-process,
+			// we need any one of the processes to be suspended.
+			// Note that even if we can obtain a container dmc from fCtx
+			// we will have issues because that context is probably not
+			// fully formed (missing groupId and procId).  So, we just
+			// make it easy on ourselves and fetch the containers directly
 			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(fCtx, ICommandControlDMContext.class);
 			IProcesses processControl = getServicesTracker().getService(IProcesses.class);
 			processControl.getProcessesBeingDebugged(

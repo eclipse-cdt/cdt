@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Ericsson and others.
+ * Copyright (c) 2008, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,9 @@ public class GdbDebugServicesFactoryNS extends GdbDebugServicesFactory {
 	
 	@Override
 	protected IRunControl createRunControlService(DsfSession session) {
+		if (GDB_7_2_VERSION.compareTo(getVersion()) <= 0) {
+			return new GDBRunControl_7_2_NS(session);
+		}
 		return new GDBRunControl_7_0_NS(session);
 	}
 }

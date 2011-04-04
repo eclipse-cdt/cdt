@@ -43,6 +43,19 @@ public class MITargetAttach extends MICommand<MIInfo> {
 	 * @since 4.0
 	 */
 	public MITargetAttach(IMIContainerDMContext ctx, String pid) {
-		super(ctx, "-target-attach", new String[] { pid }); //$NON-NLS-1$
+		this(ctx, pid, true);
+	}
+
+	/**
+	 * @param ctx indicates which inferior should be used when doing the attach
+	 * @param id the pid of the process to attach to
+	 * @param interrupt indicates if the process should be interrupted once the attach is done
+	 *                  Leaving the process running is only support with target-async on, which
+	 *                  we currently only use in non-stop mode
+	 * 
+	 * @since 4.0
+	 */
+	public MITargetAttach(IMIContainerDMContext ctx, String pid, boolean interrupt) {
+		super(ctx, "-target-attach", new String[] { pid, interrupt ? "" : "&" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

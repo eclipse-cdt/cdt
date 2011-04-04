@@ -59,6 +59,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl.MIRunMode;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
@@ -840,8 +841,16 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	    				new Step() { 
 	    					@Override
 	    					public void execute(RequestMonitor rm) {
+	    						// For non-stop mode, we do a non-interrupting attach
+	    						// Bug 333284
+	    						boolean shouldInterrupt = true;
+								IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+								if (runControl != null && runControl.getRunMode() == MIRunMode.NON_STOP) {
+									shouldInterrupt = false;
+								}
+
 	    						fCommandControl.queueCommand(
-	    								fCommandFactory.createMITargetAttach(fContainerDmc, ((IMIProcessDMContext)procCtx).getProcId()),
+	    								fCommandFactory.createMITargetAttach(fContainerDmc, ((IMIProcessDMContext)procCtx).getProcId(), shouldInterrupt),
 	    								new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	    					}
 	    				},

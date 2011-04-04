@@ -27,8 +27,10 @@ import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl.MIRunMode;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIAddInferiorInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -179,8 +181,16 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		                new Step() { 
 		                    @Override
 		                    public void execute(RequestMonitor rm) {
-		    					fCommandControl.queueCommand(
-		    							fCommandFactory.createMITargetAttach(fContainerDmc, ((IMIProcessDMContext)procCtx).getProcId()),
+	    						// For non-stop mode, we do a non-interrupting attach
+	    						// Bug 333284
+	    						boolean shouldInterrupt = true;
+								IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+								if (runControl != null && runControl.getRunMode() == MIRunMode.NON_STOP) {
+									shouldInterrupt = false;
+								}
+
+	    						fCommandControl.queueCommand(
+	    								fCommandFactory.createMITargetAttach(fContainerDmc, ((IMIProcessDMContext)procCtx).getProcId(), shouldInterrupt),
 		    							new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
 		                    }
 		                },

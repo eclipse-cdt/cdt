@@ -715,6 +715,11 @@ public class CommandFactory {
 		return new MITargetAttach(ctx, groupId);
 	}
 
+	/** @since 4.0 */
+	public ICommand<MIInfo> createMITargetAttach(IMIContainerDMContext ctx, String groupId, boolean interrupt) {
+		return new MITargetAttach(ctx, groupId, interrupt);
+	}
+
 	public ICommand<MIInfo> createMITargetDetach(ICommandControlDMContext ctx, String groupId) {
 		return new MITargetDetach(ctx, groupId);
 	}

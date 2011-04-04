@@ -166,7 +166,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 						IProject project = b.getMarker().getResource().getProject();
 						// Select the most 'relevant' IFile for an external location
 						file = ResourceLookup.selectFileForLocation(path, project);
-						if (file == null) {
+						if (file == null || !file.isAccessible()) {
 							// Try resolving the path to a real io.File
 							File fsfile = new File( handle );
 							if ( fsfile.isFile() && fsfile.exists() ) {
@@ -470,7 +470,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			}
 		}
 		catch( DebugException e ) {
-			return MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.2" ), new String[] { e.getMessage() } ); //$NON-NLS-1$
+			return MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.2" ), e.getMessage()  ); //$NON-NLS-1$
 		}
 		catch( CoreException e ) {
 			CDebugUIPlugin.log( e );
@@ -682,15 +682,15 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 					String reason = ""; //$NON-NLS-1$
 					if ( info != null && info instanceof ICDISignalExitInfo ) {
 						ICDISignalExitInfo sigInfo = (ICDISignalExitInfo)info;
-						reason = ' ' + MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.5" ), new String[]{ sigInfo.getName(), sigInfo.getDescription() } ); //$NON-NLS-1$
+						reason = ' ' + MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.5" ), sigInfo.getName(), sigInfo.getDescription() ); //$NON-NLS-1$
 					}
 					else if ( info != null && info instanceof ICDIExitInfo ) {
-						reason = ' ' + MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.6" ), new Integer[] { Integer.valueOf( ((ICDIExitInfo)info).getCode() ) } ); //$NON-NLS-1$
+						reason = ' ' + MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.6" ), Integer.valueOf( ((ICDIExitInfo)info).getCode() )  ); //$NON-NLS-1$
 					}
-					return MessageFormat.format( label, new String[] { target.getName(), reason } );
+					return MessageFormat.format( label, target.getName(), reason );
 				}
 				else if ( state.equals( CDebugElementState.SUSPENDED ) ) {
-						return MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.7" ), new String[] { target.getName() } ); //$NON-NLS-1$
+						return MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.7" ), target.getName() ); //$NON-NLS-1$
 				}
 			}
 		}
@@ -718,10 +718,10 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 				Object info = element.getCurrentStateInfo();
 				if ( info instanceof ICDISignalReceived ) {
 					ICDISignal signal = ((ICDISignalReceived)info).getSignal();
-					reason = MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.13" ), new String[]{ signal.getName(), signal.getDescription() } ); //$NON-NLS-1$
+					reason = MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.13" ), signal.getName(), signal.getDescription() ); //$NON-NLS-1$
 				}
 				else if ( info instanceof ICDIWatchpointTrigger ) {
-					reason = MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.14" ), new String[]{ ((ICDIWatchpointTrigger)info).getOldValue(), ((ICDIWatchpointTrigger)info).getNewValue() } ); //$NON-NLS-1$
+					reason = MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.14" ), ((ICDIWatchpointTrigger)info).getOldValue(), ((ICDIWatchpointTrigger)info).getNewValue() ); //$NON-NLS-1$
 				}
 				else if ( info instanceof ICDIWatchpointScope ) {
 					reason = CDebugUIMessages.getString( "CDTDebugModelPresentation.15" ); //$NON-NLS-1$
@@ -733,12 +733,12 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 					reason = CDebugUIMessages.getString( "CDTDebugModelPresentation.17" ); //$NON-NLS-1$
 				}
 				else if ( info instanceof ICDIEventBreakpointHit ) {
-					reason = MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.20" ), new String[]{ ((ICDIEventBreakpointHit)info).getEventBreakpointType() } ); //$NON-NLS-1$					
+					reason = MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.20" ),  ((ICDIEventBreakpointHit)info).getEventBreakpointType()  ); //$NON-NLS-1$					
 				}
 			}
-			return MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.18" ), new String[] { thread.getName(), reason } ); //$NON-NLS-1$
+			return MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.18" ), thread.getName(), reason ); //$NON-NLS-1$
 		}
-		return MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.19" ), new String[] { thread.getName() } ); //$NON-NLS-1$
+		return MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.19" ), thread.getName() ); //$NON-NLS-1$
 	}
 
 	protected String getStackFrameText( IStackFrame f, boolean qualified ) throws DebugException {
@@ -790,7 +790,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	}
 
 	public static String getFormattedString( String string, String[] args ) {
-		return MessageFormat.format( string, args );
+		return MessageFormat.format( string, (Object[]) args );
 	}
 
 }

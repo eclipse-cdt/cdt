@@ -267,7 +267,7 @@ abstract public class AbstractToggleBreakpointAdapter implements IToggleBreakpoi
 				IPath location = provider.getPath( editorInput );
 				if ( location != null ) {
 					IFile[] files = root.findFilesForLocationURI( URIUtil.toURI( location ) );
-					if ( files.length > 0 )
+					if ( files.length > 0 && files[0].isAccessible())
 						return files[0];
 				}
 			}

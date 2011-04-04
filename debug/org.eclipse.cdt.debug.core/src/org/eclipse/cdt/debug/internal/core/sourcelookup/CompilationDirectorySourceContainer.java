@@ -112,9 +112,9 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 		if (!file.isAbsolute()) {
 			file = new File(fDirectory, name);
 		}
-		List<Object> sources;
+		List<Object> sources = new ArrayList<Object>();
 		if (file.exists() && file.isFile()) {
-			sources = Arrays.asList(SourceUtils.findSourceElements(file, getDirector()));
+			sources.addAll(Arrays.asList(SourceUtils.findSourceElements(file, getDirector())));
 		} else {
 			sources = new ArrayList<Object>();
 		}

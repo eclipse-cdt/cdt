@@ -22,6 +22,7 @@
  * David McKnight  (IBM)  - [284787] [dstore] ability to disable RSECOMM_LOGFILE_MAX option
  * David McKnight  (IBM)  - [305272] [dstore][multithread] log close in ServerLogger
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
+ * Noriaki Takatsu (IBM)  - [341578] [dstore] ServerLogger is looped when IOError happens
  ********************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -145,7 +146,9 @@ public class ServerLogger implements IServerLogger
 					logFile.createNewFile();
 					found = true;
 				}
-				catch (IOException e){}
+				catch (IOException e){
+					return null;
+				}
 			}
 			else {
 				// if the file exists, check it's size

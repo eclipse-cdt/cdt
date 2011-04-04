@@ -925,6 +925,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
                 return;
         	}
 
+			IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+			if (runControl != null && !runControl.isTargetAcceptingCommands()) {
+				fBackend.interrupt();
+			}
+
         	fCommandControl.queueCommand(
         			fCommandFactory.createMITargetDetach(controlDmc, procDmc.getProcId()),
     				new DataRequestMonitor<MIInfo>(getExecutor(), rm));

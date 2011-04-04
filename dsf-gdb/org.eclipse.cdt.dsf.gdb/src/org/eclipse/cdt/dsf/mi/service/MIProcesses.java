@@ -547,6 +547,11 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     	ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 
     	if (controlDmc != null) {
+			IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+			if (runControl != null && !runControl.isTargetAcceptingCommands()) {
+				fGdbBackend.interrupt();
+			}
+
     		// This service version cannot use -target-detach because it didn't exist
     		// in versions of GDB up to and including GDB 6.8
     		fCommandControl.queueCommand(

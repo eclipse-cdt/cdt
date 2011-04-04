@@ -259,6 +259,11 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
                 return;
         	}
 
+			IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+			if (runControl != null && !runControl.isTargetAcceptingCommands()) {
+				fBackend.interrupt();
+			}
+
         	fCommandControl.queueCommand(
         			fCommandFactory.createMITargetDetach(controlDmc, containerDmc.getGroupId()),
     				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {

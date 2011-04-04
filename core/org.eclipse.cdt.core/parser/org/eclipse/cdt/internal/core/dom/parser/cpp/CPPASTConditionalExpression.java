@@ -6,8 +6,8 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *     John Camelon (IBM) - Initial API and implementation
- *     Markus Schorn (Wind River Systems)
+ *      John Camelon (IBM) - Initial API and implementation
+ *      Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -48,13 +48,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTConditionalExpression extends ASTNode implements IASTConditionalExpression,
 		IASTAmbiguityParent {
-	
     private IASTExpression fCondition;
     private IASTExpression fPositive;
     private IASTExpression fNegative;
     private IType fType;
     private ValueCategory fValueCategory;
-
     
     public CPPASTConditionalExpression() {
 	}
@@ -65,7 +63,6 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
     	setNegativeResultExpression(negative);
 	}
 
-	
 	public CPPASTConditionalExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
@@ -122,12 +119,12 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         

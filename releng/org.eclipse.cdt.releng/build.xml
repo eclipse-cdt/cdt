@@ -10,6 +10,12 @@
 	<target name="buildcopy" depends="zips,generate.p2.metadata,copy"/>
 	<target name="cdtbuild" depends="tag,zips,test,upload"/>
 	<target name="testpack" depends="zips,sign,pack,generate.p2.metadata,copy"/>
+
+	<target name="update-site" depends="zips,generate.p2.metadata">
+		<unzip src="${zipsdir}/${masterFile}" dest="${updateSiteLocation}.tmp"/>
+		<delete quiet="true" dir="${updateSiteLocation}"/>
+		<move file="${updateSiteLocation}.tmp" tofile="${updateSiteLocation}"/>
+	</target>
 	
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
@@ -43,6 +49,7 @@
 		<property name="tagname" value="v${timestamp}"/>
 		<property name="testReports" value="${zipsdir}/testReports"/>
 		<property name="junit-report-output" value="${testReports}"/>
+		<property name="updateSiteLocation" value="${buildDirectory}/update-site"/>
 		<condition property="onWindows">
 			<os family="windows"/>
 		</condition>

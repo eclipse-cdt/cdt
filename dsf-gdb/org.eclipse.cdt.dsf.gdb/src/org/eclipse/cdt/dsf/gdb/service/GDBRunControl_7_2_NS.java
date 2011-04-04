@@ -34,6 +34,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -47,6 +48,8 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * Version of the non-stop runControl for GDB 7.2
@@ -74,6 +77,8 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 	 * Map that stores the silenced MIStopped event for the specified thread, in case we need to use it for a failure.
 	 */
 	private Map<IMIExecutionDMContext,MIStoppedEvent> fSilencedSignalEvent = new HashMap<IMIExecutionDMContext, MIStoppedEvent>();
+
+	private Map<IDMContext, ExecuteWithTargetAvailableOperation> execWithTargetAvailMap = new HashMap<IDMContext, ExecuteWithTargetAvailableOperation>();
 
 	///////////////////////////////////////////////////////////////////////////
 	// Initialization and shutdown
@@ -114,8 +119,89 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 		super.shutdown(rm);
 	}
 
-	private Map<IDMContext, ExecuteWithTargetAvailableOperation> execWithTargetAvailMap = new HashMap<IDMContext, ExecuteWithTargetAvailableOperation>();
+	@Override
+	public void suspend(final IExecutionDMContext context, final RequestMonitor rm) {
+		assert context != null;
 
+		IMIExecutionDMContext thread = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+		IMIContainerDMContext container = DMContexts.getAncestorOfType(context, IMIContainerDMContext.class);
+		if (thread == null && container == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Invalid context type.", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
+
+		canSuspend(context, new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), rm) {
+			@Override
+			protected void handleSuccess() {
+				if (getData()) {
+					fConnection.queueCommand(fCommandFactory.createMIExecInterrupt(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+				} else {
+					rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
+							"Given context: " + context + ", is already suspended.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+					rm.done();
+				}
+			}
+		});
+	}
+
+	@Override
+	public void resume(final IExecutionDMContext context, final RequestMonitor rm) {
+		assert context != null;
+
+		final IMIExecutionDMContext thread = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+		final IMIContainerDMContext container = DMContexts.getAncestorOfType(context, IMIContainerDMContext.class);
+		if (thread == null && container == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Invalid context type.", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
+
+		canResume(context, new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), rm) {
+			@Override
+			protected void handleSuccess() {
+				if (getData()) {
+					if (thread != null) {
+						doResumeThread(thread, rm);
+						return;
+					}
+
+					if (container != null) {
+						doResumeContainer(container, rm);
+						return;
+					}
+				} else {
+					rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
+							"Given context: " + context + ", is already running.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+					rm.done();
+				}
+			}
+		});
+	}
+
+	private void doResumeThread(IMIExecutionDMContext context, final RequestMonitor rm) {
+		final MIThreadRunState threadState = fThreadRunStates.get(context);
+		if (threadState == null) {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
+                "Given context: " + context + " can't be found.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+			rm.done();
+			return;
+		}
+		
+		threadState.fResumePending = true;
+		fConnection.queueCommand(fCommandFactory.createMIExecContinue(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+			@Override
+			protected void handleFailure() {
+				threadState.fResumePending = false;
+				super.handleFailure();
+			}
+		});
+	}
+
+	private void doResumeContainer(IMIContainerDMContext context, final RequestMonitor rm) {
+		fConnection.queueCommand(fCommandFactory.createMIExecContinue(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+	}
+	
 	@Override
 	public void executeWithTargetAvailable(IDMContext ctx, final Sequence.Step[] steps, final RequestMonitor rm) {
 		ExecuteWithTargetAvailableOperation operation = execWithTargetAvailMap.get(ctx);

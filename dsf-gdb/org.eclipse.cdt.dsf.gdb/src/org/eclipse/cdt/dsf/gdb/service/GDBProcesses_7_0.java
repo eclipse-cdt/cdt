@@ -1175,10 +1175,13 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		// If we will terminate GDB as soon as the last inferior terminates, then let's
 		// just terminate GDB itself if this is the last inferior.  
 		// This is more robust since we actually monitor the success of terminating GDB.
-   		if (fNumConnected == 1 && 
+		// Also, for a core session, there is no concept of killing the inferior,
+		// so lets kill GDB
+   		if (fBackend.getSessionType() == SessionType.CORE ||
+   		   (fNumConnected == 1 && 
    			Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
 				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
-				true, null)) {
+				true, null))) {
    			fCommandControl.terminate(new RequestMonitor(ImmediateExecutor.getInstance(), null));
    		} else if (thread instanceof IMIProcessDMContext) {
 			getDebuggingContext(

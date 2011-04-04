@@ -361,7 +361,10 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 		// If we will terminate GDB as soon as the inferior terminates, then let's
 		// just terminate GDB itself.  This is more robust since we actually monitor
 		// the success of terminating GDB.
-   		if (Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+		// Also, for a core session, there is no concept of killing the inferior,
+		// so lets kill GDB
+   		if (fBackend.getSessionType() == SessionType.CORE ||
+   			Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
 				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
 				true, null)) {
 			fGdb.terminate(new RequestMonitor(ImmediateExecutor.getInstance(), null));

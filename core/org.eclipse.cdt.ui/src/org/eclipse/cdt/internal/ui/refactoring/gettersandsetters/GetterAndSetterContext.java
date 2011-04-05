@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterInsertEditProvider.Type;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
 
-public class GetterAndSetterContext implements ITreeContentProvider{
+public class GetterAndSetterContext implements ITreeContentProvider {
 	public ArrayList<IASTSimpleDeclaration> existingFields = new ArrayList<IASTSimpleDeclaration>();
 	public ArrayList<IASTFunctionDefinition> existingFunctionDefinitions = new ArrayList<IASTFunctionDefinition>();
 	public ArrayList<IASTSimpleDeclaration> existingFunctionDeclarations = new ArrayList<IASTSimpleDeclaration>();
@@ -41,10 +41,10 @@ public class GetterAndSetterContext implements ITreeContentProvider{
 			FieldWrapper wrapper = (FieldWrapper) parentElement;
 			
 			if (wrapper.getChildNodes().isEmpty()) {
-				if (!wrapper.getter.exists()){
+				if (!wrapper.getter.exists()) {
 					wrapper.childNodes.add(createGetterInserter(wrapper.field));
 				}
-				if (!wrapper.setter.exists() && !wrapper.field.getDeclSpecifier().isConst()){
+				if (!wrapper.setter.exists() && !wrapper.field.getDeclSpecifier().isConst()) {
 					wrapper.childNodes.add(createSetterInserter(wrapper.field));
 				}
 			}
@@ -96,12 +96,12 @@ public class GetterAndSetterContext implements ITreeContentProvider{
 	private ArrayList<FieldWrapper> getWrappedFields() {
 		if (wrappedFields == null) {
 			wrappedFields = new ArrayList<FieldWrapper>();
-			for (IASTSimpleDeclaration currentField : existingFields){
+			for (IASTSimpleDeclaration currentField : existingFields) {
 				FieldWrapper wrapper = new FieldWrapper();
 				wrapper.field = currentField;
 				wrapper.getter = getGetterForField(currentField);
 				wrapper.setter = getSetterForField(currentField);
-				if (wrapper.missingGetterOrSetter()){
+				if (wrapper.missingGetterOrSetter()) {
 					wrappedFields.add(wrapper);
 				}
 			}
@@ -136,28 +136,27 @@ public class GetterAndSetterContext implements ITreeContentProvider{
 	}
 
 	private void setFunctionToWrapper(FunctionWrapper wrapper, String getterName) {
-		for (IASTFunctionDefinition currentDefinition : existingFunctionDefinitions){
-			if (currentDefinition.getDeclarator().getName().toString().endsWith(getterName)){
+		for (IASTFunctionDefinition currentDefinition : existingFunctionDefinitions) {
+			if (currentDefinition.getDeclarator().getName().toString().endsWith(getterName)) {
 				wrapper.functionDefinition = currentDefinition;
 			}
 		}
 		
-		for (IASTSimpleDeclaration currentDeclaration : existingFunctionDeclarations){
-			if (getFieldDeclarationName(currentDeclaration).toString().endsWith(getterName)){
+		for (IASTSimpleDeclaration currentDeclaration : existingFunctionDeclarations) {
+			if (getFieldDeclarationName(currentDeclaration).toString().endsWith(getterName)) {
 				wrapper.functionDeclaration = currentDeclaration;
 			}
 		}
 	}
 
-
-	protected class FieldWrapper{
+	protected class FieldWrapper {
 		protected IASTSimpleDeclaration field;
 		protected FunctionWrapper getter;
 		protected FunctionWrapper setter;
 		protected ArrayList<GetterSetterInsertEditProvider> childNodes = new ArrayList<GetterSetterInsertEditProvider>(2);
 		
 		@Override
-		public String toString(){
+		public String toString() {
 			IASTDeclarator declarator = field.getDeclarators()[0];
 			while (declarator.getNestedDeclarator() != null) {
 				declarator = declarator.getNestedDeclarator();
@@ -174,7 +173,7 @@ public class GetterAndSetterContext implements ITreeContentProvider{
 		}
 	}
 	
-	protected class FunctionWrapper{
+	protected class FunctionWrapper {
 		protected IASTSimpleDeclaration functionDeclaration;
 		protected IASTFunctionDefinition functionDefinition;
 		

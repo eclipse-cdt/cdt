@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Bryan Wilkinson (QNX)
- *    Markus Schorn (Wind River Systems)
- *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Bryan Wilkinson (QNX)
+ *     Markus Schorn (Wind River Systems)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -53,13 +53,13 @@ import org.eclipse.core.runtime.Assert;
  * Qualified name, which can contain any other name (unqualified, operator-name, conversion name, 
  * template id).
  */
-public class CPPASTQualifiedName extends CPPASTNameBase 
+public class CPPASTQualifiedName extends CPPASTNameBase
 		implements ICPPASTQualifiedName, ICPPASTCompletionContext {
-
-	private IASTName[] names = null;
+	private IASTName[] names;
 	private int namesPos= -1;
 	private boolean isFullyQualified;
 	private char[] signature;
+
 	public CPPASTQualifiedName() {
 	}
 

@@ -41,12 +41,12 @@ public class DefinitionFinderTest extends RefactoringTest {
 		IFile file = project.getFile(fileName);
 		ICElement element = CCorePlugin.getDefault().getCoreModel().create(file);
 		if (element instanceof ITranslationUnit) {
-			IASTTranslationUnit unit = astCache.getAST((ITranslationUnit) element, null);
-			for (IASTDeclaration declaration : unit.getDeclarations()) {
+			IASTTranslationUnit ast = astCache.getAST((ITranslationUnit) element, null);
+			for (IASTDeclaration declaration : ast.getDeclarations()) {
 				if (declaration instanceof IASTSimpleDeclaration) {
 					assertNotNull(DefinitionFinder2.getDefinition((IASTSimpleDeclaration) declaration, astCache));	
 				}
-			}	
+			}
 		}
 	}
 }

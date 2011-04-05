@@ -8,51 +8,37 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.ui.resources;
 
-import org.eclipse.swt.widgets.Composite;
-import org.w3c.dom.Element;
-
-import org.eclipse.cdt.core.resources.RefreshExclusion;
+package org.eclipse.cdt.core.resources;
 
 /**
+ * Indicates the type of resources that this exclusion can exclude.  Used to determine which type of icon is displayed in
+ * the exclusion UI when this exclusion is present.
+ * 
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will work or
  * that it will remain the same. Please do not use this API without consulting
  * with the CDT team.
  * 
  * @author crecoskie
+ * @since 5.3
  *
  */
-public abstract class RefreshExclusionContributor {
+public enum ExclusionType {
+	/**
+	 * Constant indicating that this exclusion only excludes folders.
+	 */
+	FOLDER,
 	
-	protected String fID;
-	protected String fName;
-	
-	public String getID() {
-		return fID;
-	}
-	
-	public void setID(String id) {
-		fID = id;
-	}
 	
 	/**
-	 * Returns the human-readable name of this exclusion type.
-	 * 
-	 * @return
+	 * Constant indicating that this exclusion only excludes folders.
 	 */
-	public String getName() {
-		return fName;
-	}
+	FILE,
 	
-	public void setName(String name) {
-		fName = name;
-	}
 	
-	abstract public RefreshExclusion createExclusion();
-	abstract public void createProperiesUI(Composite parent);
-	abstract public RefreshExclusion createExclusionFromXML(Element exclusionElement);
-
-
+	/**
+	 * Constant indicating that this exclusion can exclude any resource.
+	 */
+	RESOURCE
 }

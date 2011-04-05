@@ -62,13 +62,18 @@ public class RefreshExclusionContributionManager {
 					if (configElement.getName().equals(EXCLUSION_CONTRIBUTOR)) {
 
 						String id = configElement.getAttribute("id"); //$NON-NLS-1$
+						String name = configElement.getAttribute("name"); //$NON-NLS-1$
 						String utility = configElement.getAttribute("class"); //$NON-NLS-1$
 
 						if (utility != null) {
 							try {
 								Object execExt = configElement.createExecutableExtension("class"); //$NON-NLS-1$
 								if ((execExt instanceof RefreshExclusionContributor) && id != null) {
-									fIDtoContributorsMap.put(id, (RefreshExclusionContributor) execExt);
+									RefreshExclusionContributor exclusionContributor = (RefreshExclusionContributor) execExt;
+									exclusionContributor.setID(id);
+									exclusionContributor.setName(name);
+									fIDtoContributorsMap.put(id, exclusionContributor);
+									
 								}
 							} catch (CoreException e) {
 								CUIPlugin.log(e);
@@ -78,5 +83,9 @@ public class RefreshExclusionContributionManager {
 				}
 			}
 		}
+	}
+	
+	public RefreshExclusionContributor getContributor(String id) {
+		return fIDtoContributorsMap.get(id);
 	}
 }

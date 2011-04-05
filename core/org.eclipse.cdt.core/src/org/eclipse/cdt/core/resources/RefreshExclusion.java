@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.resources;
 
+import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +18,8 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * A RefreshExclusion represents a rule for excluding certain resources from being refreshed.
@@ -34,6 +37,7 @@ import org.w3c.dom.Element;
  */
 public abstract class RefreshExclusion {
 	
+	public static final String CLASS_ATTRIBUTE_NAME = "class"; //$NON-NLS-1$
 	public static final String EXTENSION_DATA_ELEMENT_NAME = "extensionData"; //$NON-NLS-1$
 	public static final String CONTRIBUTOR_ID_ATTRIBUTE_NAME = "contributorId"; //$NON-NLS-1$
 	public static final String INSTANCE_ELEMENT_NAME = "instance"; //$NON-NLS-1$
@@ -44,129 +48,6 @@ public abstract class RefreshExclusion {
 	public static final String FOLDER_VALUE = "FOLDER"; //$NON-NLS-1$
 	public static final String FILE_VALUE = "FILE"; //$NON-NLS-1$
 	public static final String DISPLAY_STRING_ATTRIBUTE_NAME = "displayString"; //$NON-NLS-1$
-
-	/**
-	 * Indicates the type of resources that this exclusion can exclude.  Used to determine which type of icon is displayed in
-	 * the exclusion UI when this exclusion is present.
-	 *
-	 */
-	public enum ExclusionType {
-		/**
-		 * Constant indicating that this exclusion only excludes folders.
-		 */
-		FOLDER,
-		
-		
-		/**
-		 * Constant indicating that this exclusion only excludes folders.
-		 */
-		FILE,
-		
-		
-		/**
-		 * Constant indicating that this exclusion can exclude any resource.
-		 */
-		RESOURCE
-	}
-	
-	/**
-	 * Represents a particular instance of an exclusion.  E.g., if an exclusion allowed
-	 * for the exclusion of a list individual resources, there would be one exclusion instance
-	 * per resource.  Each exclusion instance is presented in the user interface as a child of the exclusion.
-	 * 
-	 * Clients may extend this class to provide custom implementations for their exclusion type.
-	 *
-	 */
-	public class ExclusionInstance {
-		
-		private ExclusionType fInstanceExclusionType;
-		private IResource fResource;
-		private String fDisplayString;
-
-		public ExclusionType getExclusionType() {
-			return fInstanceExclusionType;
-		}
-		
-		public void setExclusionType(ExclusionType type) {
-			fInstanceExclusionType = type;
-		}
-		
-		/**
-		 * If there is a resource directly associated with this exclusion instance, returns the resource.
-		 * 
-		 * @return IResource
-		 */
-		public IResource getResource() {
-			return fResource;
-		}
-		
-		public void setResource(IResource resource) {
-			fResource = resource;
-		}
-		
-		/**
-		 * @return a String corresponding to the human-readable name for this exclusion instance.
-		 * Examples of this would be the resource name for a resource based exclusion, or the file extension
-		 * excluded by a file extension exclusion.
-		 */
-		public String getDisplayString() {
-			return fDisplayString;
-		}
-		
-		public void setDisplayString(String displayString) {
-			fDisplayString = displayString;
-		}
-
-		public void persistInstanceData(Document doc, Element extensionElement) {
-			Element instanceElement = doc.createElement(INSTANCE_ELEMENT_NAME);
-			
-			// persist the exclusion type
-			String exclusionType = null;
-			switch(getExclusionType()) {
-			case FILE:
-				exclusionType = FILE_VALUE;
-				break;
-				
-			case FOLDER:
-				exclusionType = FOLDER_VALUE;
-				break;
-				
-			case RESOURCE:
-				exclusionType = RESOURCE_VALUE;
-				break;
-			}
-			
-			if(exclusionType != null) {
-				instanceElement.setAttribute(EXCLUSION_TYPE_ATTRIBUTE_NAME, exclusionType);
-			}
-			
-			// persist resource path
-			if(fResource != null) {
-				instanceElement.setAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME, fResource.getFullPath().toString());
-			}
-			
-			// persist display string
-			if(fDisplayString != null) {
-				instanceElement.setAttribute(DISPLAY_STRING_ATTRIBUTE_NAME, fDisplayString);
-			}
-			
-			// persist any data from extenders
-			persistExtendedInstanceData(doc, instanceElement);
-			
-		}
-		
-		protected void persistExtendedInstanceData(Document doc, Element instanceElement) {
-			// override to provide extension specific behaviour if desired	
-		}
-
-		public void loadInstanceData(Element extensionElement) {
-			
-		}
-		
-		protected void loadExtendedInstanceData(Element instanceElement) {
-			// override to provide extension specific behaviour if desired
-		}
-	}
 
 	protected List<ExclusionInstance> fExclusionInstanceList = new LinkedList<ExclusionInstance>();
 	protected List<RefreshExclusion> fNestedExclusions = new LinkedList<RefreshExclusion>();
@@ -271,6 +152,9 @@ public abstract class RefreshExclusion {
 		// persist the common data that all RefreshExclusions have
 		Element exclusionElement = doc.createElement(EXCLUSION_ELEMENT_NAME);
 		
+		// persist the type of the object we are
+		exclusionElement.setAttribute(CLASS_ATTRIBUTE_NAME, this.getClass().getName());
+		
 		// persist the exclusion type
 		String exclusionType = null;
 		switch(getExclusionType()) {
@@ -324,8 +208,98 @@ public abstract class RefreshExclusion {
 		// override to provide extension specific behaviour if desired
 	}
 
-	public void loadData(Element parentElement) {
+	@SuppressWarnings("rawtypes")
+	public static RefreshExclusion loadData(Element exclusionElement, RefreshExclusion parent) {
+
 		
+		// create an object of the proper type using zero-argument constructor
+		RefreshExclusion newExclusion = null;
+		String classname = exclusionElement.getAttribute(CLASS_ATTRIBUTE_NAME);
+		Class extensionClass;
+		try {
+			extensionClass = Class.forName(classname);
+
+			Class[] parameterTypes = new Class[0];
+			Constructor constructor = extensionClass.getConstructor(parameterTypes);
+			newExclusion = (RefreshExclusion) constructor.newInstance((Object[]) null);
+		} catch (Exception e) {
+			// error
+			e.printStackTrace();
+			return null;
+		}
+		
+		// load the exclusion type
+		String exclusionTypeString = exclusionElement.getAttribute(EXCLUSION_TYPE_ATTRIBUTE_NAME);
+		if (exclusionTypeString != null) {
+			if (exclusionTypeString.equals(FILE_VALUE)) {
+				newExclusion.fExclusionType = org.eclipse.cdt.core.resources.ExclusionType.FILE;
+			}
+
+			else if (exclusionTypeString.equals(FOLDER_VALUE)) {
+				newExclusion.fExclusionType = org.eclipse.cdt.core.resources.ExclusionType.FOLDER;
+			}
+
+			else if (exclusionTypeString.equals(RESOURCE_VALUE)) {
+				newExclusion.fExclusionType = org.eclipse.cdt.core.resources.ExclusionType.RESOURCE;
+			}
+
+			else {
+				// error
+			}
+		}	
+		
+		// set parent
+		newExclusion.fParent = parent;
+		
+		newExclusion.fContributorId  = exclusionElement.getAttribute(CONTRIBUTOR_ID_ATTRIBUTE_NAME);
+		
+		// get the extension element
+		NodeList extensionList = exclusionElement.getElementsByTagName(EXTENSION_DATA_ELEMENT_NAME);
+		
+		for(int k = 0; k < extensionList.getLength(); k++) {
+			Node node = extensionList.item(k);
+			// the node will be an Element
+			if(node instanceof Element) {
+				Element extensionElement = (Element) node;
+				
+				// load the extension's data
+				newExclusion.loadExtendedData(extensionElement);
+			}
+		}
+		
+		// load instances
+		NodeList instanceList = exclusionElement.getElementsByTagName(INSTANCE_ELEMENT_NAME);
+		
+		for(int k = 0; k < instanceList.getLength(); k++) {
+			Node node = instanceList.item(k);
+			
+			// the node will be an element
+			if(node instanceof Element) {
+				Element instanceElement = (Element) node;
+				
+				// load the instance data
+				ExclusionInstance instance = ExclusionInstance.loadInstanceData(instanceElement);
+				newExclusion.fExclusionInstanceList.add(instance);
+			}
+		}
+		
+		// load nested exclusions
+		NodeList nestedExclusionsList = exclusionElement.getElementsByTagName(EXCLUSION_ELEMENT_NAME);
+		
+		for(int k  = 0; k < nestedExclusionsList.getLength(); k++) {
+			Node node = nestedExclusionsList.item(k);
+			
+			// the node will be an element
+			if(node instanceof Element) {
+				Element nestedExclusionElement = (Element) node;
+				
+				// load the nested exclusion
+				RefreshExclusion nestedExclusion = loadData(nestedExclusionElement, newExclusion);
+				newExclusion.addNestedExclusion(nestedExclusion);
+			}
+		}
+		
+		return newExclusion;
 	}
 
 }

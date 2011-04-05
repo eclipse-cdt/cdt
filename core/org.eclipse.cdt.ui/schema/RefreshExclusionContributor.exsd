@@ -71,6 +71,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The human readable name used to refer to this exclusion type in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -52,8 +52,30 @@ public abstract class RefreshExclusion {
 	protected List<ExclusionInstance> fExclusionInstanceList = new LinkedList<ExclusionInstance>();
 	protected List<RefreshExclusion> fNestedExclusions = new LinkedList<RefreshExclusion>();
 	protected ExclusionType fExclusionType;
-	protected RefreshExclusion fParent;
+	protected RefreshExclusion fParentExclusion;
+	protected IResource fParentResource;
+	
+
 	protected String fContributorId;
+	
+	/**
+	 * If this exclusion is a direct descendant of a resource, returns that resource.
+	 * Otherwise, returns null;
+	 * 
+	 * @return IResource
+	 */
+	public IResource getParentResource() {
+		return fParentResource;
+	}
+
+	/**
+	 * Sets the parent resource of this exclusion.
+	 * 
+	 * @param parentResource the parent resource to set
+	 */
+	public void setParentResource(IResource parentResource) {
+		this.fParentResource = parentResource;
+	}
 	
 	/**
 	 * @return a String corresponding to the ID of the RefreshExclusionContributor that was used to create
@@ -72,12 +94,12 @@ public abstract class RefreshExclusion {
 	 * 
 	 * @return RefreshExclusion
 	 */
-	public RefreshExclusion getParent() {
-		return fParent;
+	public RefreshExclusion getParentExclusion() {
+		return fParentExclusion;
 	}
 
-	public void setParent(RefreshExclusion parent) {
-		fParent = parent;
+	public void setParentExclusion(RefreshExclusion parent) {
+		fParentExclusion = parent;
 	}
 
 	public ExclusionType getExclusionType() {
@@ -114,6 +136,7 @@ public abstract class RefreshExclusion {
 	 * @param exclusionInstance
 	 */
 	public void addExclusionInstance(ExclusionInstance exclusionInstance) {
+		exclusionInstance.setParentExclusion(this);
 		fExclusionInstanceList.add(exclusionInstance);
 	}
 	
@@ -136,7 +159,7 @@ public abstract class RefreshExclusion {
 	
 	public void addNestedExclusion(RefreshExclusion exclusion) {
 		fNestedExclusions.add(exclusion);
-		exclusion.setParent(this);
+		exclusion.setParentExclusion(this);
 	}
 	
 	/**
@@ -249,7 +272,7 @@ public abstract class RefreshExclusion {
 		}	
 		
 		// set parent
-		newExclusion.fParent = parent;
+		newExclusion.fParentExclusion = parent;
 		
 		newExclusion.fContributorId  = exclusionElement.getAttribute(CONTRIBUTOR_ID_ATTRIBUTE_NAME);
 		

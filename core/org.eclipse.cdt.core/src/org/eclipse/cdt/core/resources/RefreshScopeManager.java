@@ -11,15 +11,14 @@
 package org.eclipse.cdt.core.resources;
 
 import java.io.StringWriter;
-import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -64,7 +63,7 @@ public class RefreshScopeManager {
 		
 	}
 	
-	private TreeMap<IProject, Set<IResource>> fProjectToResourcesMap;
+	private TreeMap<IProject, LinkedHashSet<IResource>> fProjectToResourcesMap;
 	private TreeMap<IResource, List<RefreshExclusion>> fResourceToExclusionsMap;
 	
 	private static RefreshScopeManager fInstance;
@@ -89,12 +88,8 @@ public class RefreshScopeManager {
 	 * @param project
 	 * @return Set<IResource>
 	 */
-	public Set<IResource> getResourcesToRefresh(IProject project) {
-		Set<IResource> retval = fProjectToResourcesMap.get(project);
-		
-		if(retval == null) {
-			return Collections.emptySet();
-		}
+	public List<IResource> getResourcesToRefresh(IProject project) {
+		List<IResource> retval = new LinkedList<IResource>(fProjectToResourcesMap.get(project));
 		
 		return retval;
 	}

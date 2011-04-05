@@ -47,9 +47,26 @@ public class ExclusionInstance {
 	public static final String FILE_VALUE = "FILE"; //$NON-NLS-1$
 	public static final String DISPLAY_STRING_ATTRIBUTE_NAME = "displayString"; //$NON-NLS-1$
 	
-	private ExclusionType fInstanceExclusionType;
-	private IResource fResource;
-	private String fDisplayString;
+	protected ExclusionType fInstanceExclusionType;
+	protected IResource fResource;
+	protected String fDisplayString;
+	protected RefreshExclusion fParent;
+
+	/**
+	 * Returns the parent exclusion of this exclusion instance.
+	 * 
+	 * @return RefreshExclusion
+	 */
+	public RefreshExclusion getParentExclusion() {
+		return fParent;
+	}
+
+	/**
+	 * @param parent the RefreshExclusion to set as the parent.
+	 */
+	public void setParentExclusion(RefreshExclusion parent) {
+		fParent = parent;
+	}
 
 	public ExclusionType getExclusionType() {
 		return fInstanceExclusionType;

@@ -7,15 +7,16 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
- * IBM Corporation
+ *     Institute for Software - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -26,7 +27,6 @@ import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
  * Class to verify that an identifier meets the C++ rules for valid names.
  * 
  * @author Thomas Corbat
- *
  */
 public class IdentifierHelper {
 
@@ -34,31 +34,29 @@ public class IdentifierHelper {
 	 * @param identifier to check
 	 * @return an instance of IdentifierResult that holds the outcome of the validation
 	 */
-	public static IdentifierResult checkIdentifierName(String identifier){
-
-		if(identifier == null){
+	public static IdentifierResult checkIdentifierName(String identifier) {
+		if (identifier == null) {
 			return null;
 		}
-		if(isCorrect(identifier)){
-			if(isKeyword(identifier)){
-				return new IdentifierResult(IdentifierResult.KEYWORD, MessageFormat.format(Messages.IdentifierHelper_isKeyword, new Object[] {identifier})); 
+		if (isCorrect(identifier)) {
+			if (isKeyword(identifier)) {
+				return new IdentifierResult(IdentifierResult.KEYWORD, NLS.bind(Messages.IdentifierHelper_isKeyword, identifier)); 
 			}
-			return new IdentifierResult(IdentifierResult.VALID, MessageFormat.format(Messages.IdentifierHelper_isValid, new Object[] {identifier}));
-		} else if(isLeadingADigit(identifier)){
-			return new IdentifierResult(IdentifierResult.DIGIT_FIRST, MessageFormat.format(Messages.IdentifierHelper_leadingDigit, new Object[] {identifier})); 
-		} else if(identifier.length() == 0){
-			return new IdentifierResult(IdentifierResult.EMPTY, Messages.IdentifierHelper_emptyIdentifier ); 
-		} else if(hasIllegalCharacters(identifier)){
-			return new IdentifierResult(IdentifierResult.ILLEGAL_CHARACTER, MessageFormat.format(Messages.IdentifierHelper_illegalCharacter, new Object[] {identifier})); 
+			return new IdentifierResult(IdentifierResult.VALID, NLS.bind(Messages.IdentifierHelper_isValid, identifier));
+		} else if (isLeadingADigit(identifier)) {
+			return new IdentifierResult(IdentifierResult.DIGIT_FIRST, NLS.bind(Messages.IdentifierHelper_leadingDigit, identifier)); 
+		} else if (identifier.length() == 0) {
+			return new IdentifierResult(IdentifierResult.EMPTY, Messages.IdentifierHelper_emptyIdentifier); 
+		} else if (hasIllegalCharacters(identifier)) {
+			return new IdentifierResult(IdentifierResult.ILLEGAL_CHARACTER, NLS.bind(Messages.IdentifierHelper_illegalCharacter, identifier)); 
 		}
 		
-		return new IdentifierResult(IdentifierResult.UNKNOWN, MessageFormat.format(Messages.IdentifierHelper_unidentifiedMistake, new Object[] {identifier})); 
+		return new IdentifierResult(IdentifierResult.UNKNOWN, NLS.bind(Messages.IdentifierHelper_unidentifiedMistake, identifier)); 
 	}
 
 	private static boolean isKeyword(String identifier) {
-		
-		for(String currentKeyword : getKeywords()){
-			if(identifier.equals(currentKeyword)){
+		for (String currentKeyword : getKeywords()) {
+			if (identifier.equals(currentKeyword)) {
 				return true;
 			}
 		}

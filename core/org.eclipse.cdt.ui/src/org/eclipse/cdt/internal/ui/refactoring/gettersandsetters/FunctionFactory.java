@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- *    Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
@@ -41,8 +41,8 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
 
 public class FunctionFactory {
 
-	public static IASTFunctionDefinition createGetterDefinition(String varName, IASTSimpleDeclaration fieldDeclaration, ICPPASTQualifiedName name) {
-		
+	public static IASTFunctionDefinition createGetterDefinition(String varName,
+			IASTSimpleDeclaration fieldDeclaration, ICPPASTQualifiedName name) {
 		IASTFunctionDefinition getter = new CPPASTFunctionDefinition();
 		
 		getter.setDeclSpecifier(fieldDeclaration.getDeclSpecifier().copy(CopyStyle.withLocations));
@@ -52,9 +52,7 @@ public class FunctionFactory {
 			getterDeclarator = getterDeclarator.getNestedDeclarator();
 		}
 		getter.setDeclarator((IASTFunctionDeclarator) getterDeclarator);
-		
 		getter.setBody(getGetterBody(varName));
-		
 		return getter;
 	}
 
@@ -72,7 +70,6 @@ public class FunctionFactory {
 
 	private static IASTDeclarator getGetterDeclarator(String varName,
 			IASTSimpleDeclaration fieldDeclaration, ICPPASTQualifiedName name) {
-		
 		CPPASTName getterName = new CPPASTName();
 		String varPartOfGetterName = NameHelper.makeFirstCharUpper(NameHelper.trimFieldName(varName));
 		getterName.setName("get".concat(varPartOfGetterName).toCharArray()); //$NON-NLS-1$
@@ -89,13 +86,13 @@ public class FunctionFactory {
 		// create a new innermost function declarator basing on the field declarator 
 		CPPASTFunctionDeclarator functionDeclarator = new CPPASTFunctionDeclarator();
 		functionDeclarator.setConst(true);
-		if(name != null) {
+		if (name != null) {
 			name.addName(getterName);
 			functionDeclarator.setName(name);
-		}else {
+		} else {
 			functionDeclarator.setName(getterName);
 		}
-		for(IASTPointerOperator pointer : innermost.getPointerOperators()){
+		for (IASTPointerOperator pointer : innermost.getPointerOperators()){
 			functionDeclarator.addPointerOperator(pointer.copy(CopyStyle.withLocations));
 		}
 		
@@ -107,18 +104,15 @@ public class FunctionFactory {
 			IASTDeclarator parent = (IASTDeclarator) innermost.getParent();
 			parent.setNestedDeclarator(functionDeclarator);
 			return topDeclarator;
-			
 		}
 	}
 	
-	public static IASTFunctionDefinition createSetterDefinition(String varName, IASTSimpleDeclaration fieldDeclaration, ICPPASTQualifiedName name) {
-		
+	public static IASTFunctionDefinition createSetterDefinition(String varName,
+			IASTSimpleDeclaration fieldDeclaration, ICPPASTQualifiedName name) {
 		IASTFunctionDefinition setter = new CPPASTFunctionDefinition();
-		
 		setter.setDeclSpecifier(getVoidDeclSpec());		
 		setter.setDeclarator(getSetterDeclarator(varName, fieldDeclaration, name));
 		setter.setBody(getSetterBody(fieldDeclaration));
-		
 		return setter;
 	}
 
@@ -153,15 +147,14 @@ public class FunctionFactory {
 		String varPartOfSetterName = NameHelper.makeFirstCharUpper(NameHelper.trimFieldName(varName));
 		setterName.setName("set".concat(varPartOfSetterName).toCharArray()); //$NON-NLS-1$
 		CPPASTFunctionDeclarator declarator = new CPPASTFunctionDeclarator();
-		if(name != null) {
+		if (name != null) {
 			name.addName(setterName);
 			declarator.setName(name);
-		}else {
+		} else {
 			declarator.setName(setterName);
 		}
 		CPPASTParameterDeclaration parameterDeclaration = new CPPASTParameterDeclaration();
-		parameterDeclaration
-				.setDeclarator(fieldDeclaration.getDeclarators()[0].copy(CopyStyle.withLocations));
+		parameterDeclaration.setDeclarator(fieldDeclaration.getDeclarators()[0].copy(CopyStyle.withLocations));
 		parameterDeclaration.setDeclSpecifier(fieldDeclaration.getDeclSpecifier().copy(
 				CopyStyle.withLocations));
 		declarator.addParameterDeclaration(parameterDeclaration.copy(CopyStyle.withLocations));
@@ -190,5 +183,4 @@ public class FunctionFactory {
 		setter.addDeclarator(getSetterDeclarator(name, fieldDeclaration, null));
 		return setter;
 	}
-
 }

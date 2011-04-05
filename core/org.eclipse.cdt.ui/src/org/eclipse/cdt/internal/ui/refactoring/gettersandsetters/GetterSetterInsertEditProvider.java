@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 
-public class GetterSetterInsertEditProvider implements Comparable<GetterSetterInsertEditProvider>{
+public class GetterSetterInsertEditProvider implements Comparable<GetterSetterInsertEditProvider> {
 	public enum Type {
 		getter,
 		setter;
@@ -35,7 +35,6 @@ public class GetterSetterInsertEditProvider implements Comparable<GetterSetterIn
 	public GetterSetterInsertEditProvider(String name, IASTSimpleDeclaration fieldDeclaration, Type type) {
 		switch (type) {
 		case getter:
-		
 			this.functionDeclaration = FunctionFactory.createGetterDeclaration(name, fieldDeclaration);
 			break;
 		case setter:
@@ -60,7 +59,7 @@ public class GetterSetterInsertEditProvider implements Comparable<GetterSetterIn
 	public IASTFunctionDefinition getFunctionDefinition(boolean qualifedName) {
 		IASTFunctionDefinition definition = null;
 		ICPPASTQualifiedName qname;
-		if(qualifedName) {
+		if (qualifedName) {
 			qname = getClassname();
 		} else {
 			qname = null;

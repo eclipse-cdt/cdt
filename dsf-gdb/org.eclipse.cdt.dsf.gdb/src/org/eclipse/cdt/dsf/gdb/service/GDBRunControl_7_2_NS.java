@@ -349,6 +349,8 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 							// by calling executeWithTargetAvailable() on the last one
 							TargetAvailableOperationInfo info = fOperationsPending.removeLast();
 							executeWithTargetAvailable(info.steps, info.rm);
+						} else {
+							execWithTargetAvailMap.remove(fCtx);
 						}
 						// no other rm.done() needs to be called, they have all been handled already
 					}

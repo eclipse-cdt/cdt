@@ -200,7 +200,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 
 	private void handleFunctionProblem(IASTName name, IProblemBinding problemBinding, String contextFlagsString) throws DOMException {
 		if (problemBinding.getCandidateBindings().length == 0) {
-			reportProblem(ERR_ID_FunctionResolutionProblem, name.getLastName(), name.getRawSignature(), contextFlagsString);
+			reportProblem(ERR_ID_FunctionResolutionProblem, name.getLastName(), new String(name.getSimpleID()), contextFlagsString);
 		} else {
 			String candidatesString = getCandidatesString(problemBinding);
 			reportProblem(ERR_ID_InvalidArguments, name.getLastName(), candidatesString, contextFlagsString);
@@ -218,7 +218,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 		boolean isMethod = parentParentNode instanceof IASTFunctionCallExpression && parentParentNode.getChildren()[0] == parentNode;
 		if (isMethod) {
 			if (problemBinding.getCandidateBindings().length == 0) {
-				reportProblem(ERR_ID_MethodResolutionProblem, name.getLastName(), name.getRawSignature(), contextFlagsString);
+				reportProblem(ERR_ID_MethodResolutionProblem, name.getLastName(), new String(name.getSimpleID()), contextFlagsString);
 			} else {
 				String candidatesString = getCandidatesString(problemBinding);
 				reportProblem(ERR_ID_InvalidArguments, name.getLastName(), candidatesString, contextFlagsString);

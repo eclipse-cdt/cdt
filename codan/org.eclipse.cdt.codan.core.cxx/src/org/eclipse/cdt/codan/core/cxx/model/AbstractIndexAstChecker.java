@@ -15,8 +15,12 @@ import org.eclipse.cdt.codan.core.cxx.Activator;
 import org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
+import org.eclipse.cdt.codan.core.model.IProblemLocationFactory;
 import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
+import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
@@ -92,10 +96,6 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 		if (loc!=null) reportProblem(problem, loc, args);
 	}
 
-	/**
-	 * @param astNode
-	 * @return
-	 */
 	@SuppressWarnings("restriction")
 	protected IProblemLocation getProblemLocation(IASTNode astNode) {
 		IASTFileLocation astLocation = astNode.getFileLocation();
@@ -108,14 +108,29 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 			Activator.log("Cannot resolve location: " + location); //$NON-NLS-1$
 			return null;
 		}
-		IProblemLocation loc;
+		return getProblemLocation(astNode, astLocation, astFile);
+	}
+
+	private IProblemLocation getProblemLocation(IASTNode astNode, IASTFileLocation astLocation, IFile astFile) {
 		int line = astLocation.getStartingLineNumber();
-		if (line == astLocation.getEndingLineNumber())
-			loc = getRuntime().getProblemLocationFactory().createProblemLocation(astFile, astLocation.getNodeOffset(),
+		IProblemLocationFactory locFactory = getRuntime().getProblemLocationFactory();
+		if (hasMacroLocation(astNode) && astNode instanceof IASTName) {
+			IASTImageLocation imageLocation = ((IASTName) astNode).getImageLocation();
+			if (imageLocation != null) {
+				int start = imageLocation.getNodeOffset();
+				int end = start + imageLocation.getNodeLength();
+				return locFactory.createProblemLocation(astFile, start, end, line);
+			}
+		}
+		if (line == astLocation.getEndingLineNumber()) {
+			return locFactory.createProblemLocation(astFile, astLocation.getNodeOffset(),
 					astLocation.getNodeOffset() + astLocation.getNodeLength(), line);
-		else
-			loc = getRuntime().getProblemLocationFactory().createProblemLocation(astFile, line);
-		return loc;
+		}
+		return locFactory.createProblemLocation(astFile, line);
+	}
+
+	private boolean hasMacroLocation(IASTNode astNode) {
+		return astNode.getNodeLocations().length == 1 && astNode.getNodeLocations()[0] instanceof IASTMacroExpansionLocation;
 	}
 
 	@Override
@@ -143,10 +158,6 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 		}
 	}
 
-	/**
-	 * @return
-	 * 
-	 */
 	protected ICodanCommentMap getCommentMap() {
 		if (commentmap == null) {
 			try {

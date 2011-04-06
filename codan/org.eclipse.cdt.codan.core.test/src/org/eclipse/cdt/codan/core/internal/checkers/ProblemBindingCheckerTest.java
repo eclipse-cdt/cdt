@@ -12,6 +12,7 @@ package org.eclipse.cdt.codan.core.internal.checkers;
 
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
 import org.eclipse.cdt.codan.internal.checkers.ProblemBindingChecker;
+import org.eclipse.core.resources.IMarker;
 
 public class ProblemBindingCheckerTest extends CheckerTestCase {
 	@Override
@@ -73,5 +74,16 @@ public class ProblemBindingCheckerTest extends CheckerTestCase {
 		checkErrorLine(11, ProblemBindingChecker.ERR_ID_MethodResolutionProblem);
 		checkErrorLine(12, ProblemBindingChecker.ERR_ID_FieldResolutionProblem);
 		checkErrorLine(13, ProblemBindingChecker.ERR_ID_MethodResolutionProblem);
+	}
+
+	// #define MACRO(code) code
+	// int main() {
+	//   MACRO(foo());
+	//   return 0;
+	// }
+	public void testBug341089DontUnderlineWholeMacro() {
+		loadCodeAndRun(getAboveComment());
+		IMarker marker = checkErrorLine(3, ProblemBindingChecker.ERR_ID_FunctionResolutionProblem);
+		assertFalse(marker.getAttribute(IMarker.MESSAGE, "").contains("MACRO"));  //$NON-NLS-1$//$NON-NLS-2$
 	}
 }

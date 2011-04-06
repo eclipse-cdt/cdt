@@ -11,6 +11,9 @@
 package org.eclipse.cdt.ui.resources;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -34,11 +37,11 @@ public class RefreshExclusionContributionManager {
 	
 	public static final String EXCLUSION_CONTRIBUTOR = "exclusionContributor"; //$NON-NLS-1$
 	public static final String EXTENSION_ID = "RefreshExclusionContributor"; //$NON-NLS-1$
-	private Map<String, RefreshExclusionContributor> fIDtoContributorsMap;
+	private LinkedHashMap<String, RefreshExclusionContributor> fIDtoContributorsMap;
 	private static RefreshExclusionContributionManager fInstance;
 	
 	private RefreshExclusionContributionManager() {
-		fIDtoContributorsMap = new HashMap<String, RefreshExclusionContributor>();
+		fIDtoContributorsMap = new LinkedHashMap<String, RefreshExclusionContributor>();
 		loadExtensions();
 	}
 	
@@ -87,5 +90,9 @@ public class RefreshExclusionContributionManager {
 	
 	public RefreshExclusionContributor getContributor(String id) {
 		return fIDtoContributorsMap.get(id);
+	}
+	
+	public List<RefreshExclusionContributor> getContributors() {
+		return new LinkedList<RefreshExclusionContributor>(fIDtoContributorsMap.values());
 	}
 }

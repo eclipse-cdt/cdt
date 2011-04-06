@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
+ *    IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
@@ -225,7 +226,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 						toolTip = wrapText(description, wrapLen);
 						toolTip += "\n\n"; //$NON-NLS-1$
 					}
-					toolTip += "Sample Message:";
+					toolTip += CodanUIMessages.ProblemsTreeEditor_ToolTip;
 					toolTip += "\n  "; //$NON-NLS-1$
 					toolTip += wrapText(sampleMessage, wrapLen);
 					return toolTip;

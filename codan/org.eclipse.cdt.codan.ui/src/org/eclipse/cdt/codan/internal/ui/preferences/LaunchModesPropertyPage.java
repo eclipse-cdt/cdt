@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Alena Laskavaia and others.
+ * Copyright (c) 2010, 2011 Alena Laskavaia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alena Laskavaia - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
@@ -18,6 +19,7 @@ import org.eclipse.cdt.codan.core.model.Checkers;
 import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
+import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -54,11 +56,11 @@ public class LaunchModesPropertyPage extends FieldEditorPreferencePage {
 	 */
 	@Override
 	protected void createFieldEditors() {
-		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_FULL_BUILD.name(), "Run on full build", getFieldEditorParent()));
-		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_INC_BUILD.name(), "Run on incremental build", getFieldEditorParent()));
-		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_DEMAND.name(), "Run on demand", getFieldEditorParent()));
+		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_FULL_BUILD.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnFullBuild, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_INC_BUILD.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnIncrementalBuild, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_DEMAND.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnDemand, getFieldEditorParent()));
 		if (runInEditor) {
-			addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_AS_YOU_TYPE.name(), "Run as you type", getFieldEditorParent()));
+			addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_AS_YOU_TYPE.name(), CodanUIMessages.LaunchModesPropertyPage_RunAsYouType, getFieldEditorParent()));
 		}
 	}
 

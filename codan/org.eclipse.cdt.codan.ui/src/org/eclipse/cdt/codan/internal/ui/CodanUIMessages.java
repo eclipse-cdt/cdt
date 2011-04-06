@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009,2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
+ *    IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui;
 
@@ -30,6 +31,7 @@ public class CodanUIMessages extends NLS {
 	public static String ProblemsTreeEditor_NameColumn;
 	public static String ProblemsTreeEditor_Problems;
 	public static String ProblemsTreeEditor_SeverityColumn;
+	public static String ProblemsTreeEditor_ToolTip;
 	public static String OverlayPage_Use_Workspace_Settings;
 	public static String OverlayPage_Use_Project_Settings;
 	public static String OverlayPage_Configure_Workspace_Settings;
@@ -80,6 +82,10 @@ public class CodanUIMessages extends NLS {
 	public static String ExclusionInclusionEntryDialog_ChooseExclusionPattern_description;
 	public static String ExclusionInclusionEntryDialog_ChooseInclusionPattern_title;
 	public static String ExclusionInclusionEntryDialog_ChooseInclusionPattern_description;
+	public static String LaunchModesPropertyPage_RunAsYouType;
+	public static String LaunchModesPropertyPage_RunOnDemand;
+	public static String LaunchModesPropertyPage_RunOnFullBuild;
+	public static String LaunchModesPropertyPage_RunOnIncrementalBuild;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, CodanUIMessages.class);

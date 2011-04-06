@@ -31,6 +31,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * with the CDT team.
  * 
  * @author crecoskie
+ * @since 5.3
  *
  */
 public class RefreshExclusionContributionManager {

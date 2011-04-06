@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.resources.RefreshExclusion;
  * with the CDT team.
  * 
  * @author crecoskie
+ * @since 5.3
  *
  */
 public abstract class RefreshExclusionContributor {

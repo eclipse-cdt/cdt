@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.ui; 
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -105,18 +106,16 @@ public interface IPinProvider {
 	 * that the model has changed for a pinned view and that the view must be
 	 * refreshed.
 	 *
-	 * @noimplement This interface is not intended to be implemented by clients.
+	 * @noimplement This interface is not intended to be implemented by clients. 
 	 */
 	public interface IPinModelListener {
-		static final int RESUMED = 0;	
-		static final int EXITED = 1;
-		
 		/**
 		 * Model changed handler that will cause the view to update.
 		 * 
-		 * @param eventType one of the event type.  
+		 * @param newSelection the new selection, if {@code null} the view will blank out.
+		 * 
 		 */
-		void modelChanged(int eventType);
+		void modelChanged(ISelection newSelection);
 	}
 
 	/**
@@ -135,7 +134,6 @@ public interface IPinProvider {
 	 * @param debugContext the debug context to pin to
 	 * @return a handle for the pinned debug context
 	 */
-
 	IPinElementHandle pin(IWorkbenchPart part, Object debugContext, IPinModelListener listener);
 	
 	/**

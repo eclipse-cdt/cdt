@@ -48,6 +48,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -278,7 +279,7 @@ public class GdbPinProvider implements IPinProvider {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Dispatch the change event for the given DM context.
 	 * 
@@ -341,20 +342,20 @@ public class GdbPinProvider implements IPinProvider {
 	
 	@DsfServiceEventHandler
 	public void handleEvent(final ICommandControlShutdownDMEvent event) {
-		doHandleEvent(event, IPinModelListener.EXITED);
+		handleInvalidModelContext(event);
 	}
 
 	@DsfServiceEventHandler
 	public void handleEvent(final IExitedDMEvent event) {
-		doHandleEvent(event, IPinModelListener.EXITED);
+		handleInvalidModelContext(event);
 	}
 	
 	@DsfServiceEventHandler
 	public void handleEvent(final IResumedDMEvent event) {
-		doHandleEvent(event, IPinModelListener.RESUMED);
+		handleInvalidModelContext(event);
 	}
 	
-	private void doHandleEvent(IDMEvent<?> event, final int notificationId) {
+	private void handleInvalidModelContext(IDMEvent<?> event) {
 		Set<Entry<IPinElementHandle, IPinModelListener>> entries = gsPinnedHandles.entrySet();
 		for (final Entry<IPinElementHandle, IPinModelListener> e : entries) {			
 			final IPinModelListener listener = e.getValue();
@@ -375,7 +376,7 @@ public class GdbPinProvider implements IPinProvider {
 					if (execEventDmc != null && execHandleDmc != null) {
 						// It is a thread event, but is it the same as the pin handle?
 						if (execEventDmc.equals(execHandleDmc)) {
-							fireModleChangeEvent(listener, notificationId);
+							fireModleChangeEvent(listener, null);
 						}
 						continue;
 					}
@@ -386,14 +387,14 @@ public class GdbPinProvider implements IPinProvider {
 					IMIContainerDMContext procHandleDmc = DMContexts.getAncestorOfType(handleDmc, IMIContainerDMContext.class);
 					if (procEventDmc != null && procHandleDmc != null) {
 						if (procEventDmc.equals(procHandleDmc)) {
-							fireModleChangeEvent(listener, notificationId);
+							fireModleChangeEvent(listener, null);
 						}
 						continue;
 					}
 					
 					// If we got a shutdown event 
 					if (eventDmc instanceof ICommandControlDMContext) {
-						fireModleChangeEvent(listener, notificationId);
+						fireModleChangeEvent(listener, null);
 						continue;
 					}
 				}
@@ -401,12 +402,12 @@ public class GdbPinProvider implements IPinProvider {
 		}
 	}
 	
-	private void fireModleChangeEvent(final IPinModelListener listener, final int notificationId) {
+	private void fireModleChangeEvent(final IPinModelListener listener, final ISelection selection) {
 		new Job("Model Changed") { //$NON-NLS-1$
 			{ setSystem(true); }
 			@Override
 			protected IStatus run(IProgressMonitor arg0) {
-				listener.modelChanged(notificationId);
+				listener.modelChanged(selection);
 				return Status.OK_STATUS;
 			}							
 		}.schedule();

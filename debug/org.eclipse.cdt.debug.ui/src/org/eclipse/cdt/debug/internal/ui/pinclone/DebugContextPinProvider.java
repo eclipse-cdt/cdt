@@ -54,14 +54,11 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 		
 		fActiveContext = activeContext;
 		fPinHandles = pin(part, activeContext, new IPinModelListener() {
-			public void modelChanged(int eventType) {
+			public void modelChanged(ISelection selection) {
 				// send a change notification for the view to update			
-				switch (eventType) {
-				case IPinModelListener.EXITED:
-				case IPinModelListener.RESUMED:
-					delegateEvent(new DebugContextEvent(DebugContextPinProvider.this, new StructuredSelection(), DebugContextEvent.ACTIVATED));
-					break;
-				}
+				delegateEvent(new DebugContextEvent(DebugContextPinProvider.this, 
+						selection == null ? new StructuredSelection() : selection, 
+						DebugContextEvent.ACTIVATED));
 			}
 		});
 	}
@@ -118,8 +115,8 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 	 * @param listener pin model listener
 	 * @return a set of pinned handle
 	 */
-	private Set<IPinElementHandle> pin(IWorkbenchPart part, ISelection selection, IPinModelListener listener) {
 		Set<IPinElementHandle> handles = new HashSet<IPinElementHandle>();
+		private Set<IPinElementHandle> pin(IWorkbenchPart part, ISelection selection, IPinModelListener listener) {
 		
 		if (selection instanceof IStructuredSelection) {
 			for (Object element : ((IStructuredSelection)selection).toList()) {

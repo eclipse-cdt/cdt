@@ -450,7 +450,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		ManagedBuildManager.putConfigElement(this, element);
 		
 		// id
-		String idAttribute = SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.ID));;
+		String idAttribute = SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.ID));
 		setId(idAttribute);
 		
 		// Get the name

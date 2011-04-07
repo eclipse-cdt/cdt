@@ -53,8 +53,6 @@
 
    <plugin
          id="org.eclipse.tm.rapi"
-         os="win32"
-         arch="x86"
          download-size="14"
          install-size="26"
          version="0.0.0"

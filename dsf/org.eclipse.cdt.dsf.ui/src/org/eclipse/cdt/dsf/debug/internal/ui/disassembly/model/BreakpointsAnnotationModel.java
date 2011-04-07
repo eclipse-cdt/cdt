@@ -201,24 +201,19 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 						return position;
 					}
 				}
-				if (breakpoint instanceof ICLineBreakpoint) {
+				String fileName= marker.getAttribute(ICLineBreakpoint.SOURCE_HANDLE, null);
+				position= createPositionFromSourceLine(fileName, lineNumber);
+				if (position == null && breakpoint instanceof ICLineBreakpoint) {
 					ICLineBreakpoint cBreakpoint= (ICLineBreakpoint) breakpoint;
-					position= createPositionFromSourceLine(cBreakpoint.getFileName(), lineNumber);
-					if (position == null) {
-						if (breakpoint instanceof ICFunctionBreakpoint) {
-							position= createPositionFromLabel(cBreakpoint.getFunction());
-						} else {
-							position= createPositionFromAddress(decodeAddress(cBreakpoint.getAddress()));
-						}
+					if (breakpoint instanceof ICFunctionBreakpoint) {
+						position= createPositionFromLabel(cBreakpoint.getFunction());
+					} else {
+						position= createPositionFromAddress(decodeAddress(cBreakpoint.getAddress()));
 					}
-				} else {
-					String fileName= marker.getAttribute(ICLineBreakpoint.SOURCE_HANDLE, null);
-					position= createPositionFromSourceLine(fileName, lineNumber);
 				}
 				return position;
 			}
 		}
-		
 		return null;
 	}
 

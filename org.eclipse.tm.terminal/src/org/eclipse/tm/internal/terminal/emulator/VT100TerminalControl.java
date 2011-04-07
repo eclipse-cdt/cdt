@@ -26,6 +26,7 @@
  * Martin Oberhuber (Wind River) - [240745] Pressing Ctrl+F1 in the Terminal should bring up context help
  * Michael Scharf (Wind River) - [240098] The cursor should not blink when the terminal is disconnected
  * Anton Leherbauer (Wind River) - [335021] Middle mouse button copy/paste does not work with the terminal
+ * Max Stepanov (Appcelerator) - [339768] Fix ANSI code for PgUp / PgDn
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -811,11 +812,11 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					break;
 
 				case 0x1000005: // PgUp key.
-					sendString("\u001b[I"); //$NON-NLS-1$
+					sendString("\u001b[5~"); //$NON-NLS-1$
 					break;
 
 				case 0x1000006: // PgDn key.
-					sendString("\u001b[G"); //$NON-NLS-1$
+					sendString("\u001b[6~"); //$NON-NLS-1$
 					break;
 
 				case 0x1000007: // Home key.

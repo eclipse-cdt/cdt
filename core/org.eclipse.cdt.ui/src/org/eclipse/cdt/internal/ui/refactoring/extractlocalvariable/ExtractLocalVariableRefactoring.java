@@ -367,14 +367,14 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 				public int visit(IASTExpression expression) {
 					
 					// If the expression starts with a function call with a name, we should only need to guess this name
-					if(expression == target && expression instanceof ICPPASTFunctionCallExpression) {
+					if (expression == target && expression instanceof ICPPASTFunctionCallExpression) {
 						ICPPASTFunctionCallExpression functionCallExpression = (ICPPASTFunctionCallExpression) expression;
 						IASTExpression functionNameExpression = functionCallExpression.getFunctionNameExpression();
-						if(functionNameExpression instanceof IASTIdExpression) {
+						if (functionNameExpression instanceof IASTIdExpression) {
 							IASTIdExpression idExpression = (IASTIdExpression) functionNameExpression;
-							if(idExpression.getName() != null) {
+							if (idExpression.getName() != null) {
 								addTempName(idExpression.getName().getLastName().toString());
-								if(guessedTempNames.size() > 0) {
+								if (guessedTempNames.size() > 0) {
 									return PROCESS_ABORT;
 								}
 							}

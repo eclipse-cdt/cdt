@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Google and others. All rights reserved. This program and
+ * Copyright (c) 2008, 2011 Google and others. All rights reserved. This program and
  * the accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -48,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
 import org.eclipse.cdt.core.model.ICProject;
@@ -363,6 +365,22 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 
 				@Override
 				public int visit(IASTExpression expression) {
+					
+					// If the expression starts with a function call with a name, we should only need to guess this name
+					if(expression == target && expression instanceof ICPPASTFunctionCallExpression) {
+						ICPPASTFunctionCallExpression functionCallExpression = (ICPPASTFunctionCallExpression) expression;
+						IASTExpression functionNameExpression = functionCallExpression.getFunctionNameExpression();
+						if(functionNameExpression instanceof IASTIdExpression) {
+							IASTIdExpression idExpression = (IASTIdExpression) functionNameExpression;
+							if(idExpression.getName() != null) {
+								addTempName(idExpression.getName().getLastName().toString());
+								if(guessedTempNames.size() > 0) {
+									return PROCESS_ABORT;
+								}
+							}
+						}
+					}
+					
 					if (expression instanceof CPPASTLiteralExpression) {
 						CPPASTLiteralExpression literal = (CPPASTLiteralExpression)expression;
 						String name = null;

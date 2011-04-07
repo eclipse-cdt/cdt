@@ -596,3 +596,73 @@ void bar(){
     get;
 }
 
+//!Bug 335202 Suggested name is wrong for nested function calls - outer function call
+//#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
+//@A.cpp
+
+int getA(){
+    return 0;
+};
+
+int getB(int a){
+    return a;
+}
+
+void bar(){
+    /*$*/getB(getA())/*$$*/;
+}
+
+//=
+
+int getA(){
+    return 0;
+};
+
+int getB(int a){
+    return a;
+}
+
+void bar(){
+    int b = getB(getA());
+    b;
+}
+
+//!Bug 335202 Suggested name is wrong for nested function calls - inner function call
+//#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
+//@A.cpp
+
+int getA(){
+    return 0;
+};
+
+int getB(int a){
+    return a;
+}
+
+int getC(int a){
+    return a;
+}
+
+void bar(){
+    getB(/*$*/getC(getA())/*$$*/);
+}
+
+//=
+
+int getA(){
+    return 0;
+};
+
+int getB(int a){
+    return a;
+}
+
+int getC(int a){
+    return a;
+}
+
+void bar(){
+    int c = getC(getA());
+    getB(c);
+}
+

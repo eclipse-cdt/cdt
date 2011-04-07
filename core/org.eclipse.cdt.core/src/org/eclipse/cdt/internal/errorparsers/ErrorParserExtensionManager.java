@@ -186,7 +186,7 @@ public class ErrorParserExtensionManager {
 	 */
 	synchronized public static void loadDefaultErrorParserIds() {
 		fDefaultErrorParserIds = null;
-		IEclipsePreferences preferences = new InstanceScope().getNode(CCorePlugin.PLUGIN_ID);
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
 		String ids = preferences.get(PREFERENCE_ERRORPARSER_DEFAULT_IDS, NONE);
 		if (ids.equals(NONE)) {
 			return;
@@ -419,7 +419,7 @@ public class ErrorParserExtensionManager {
 	 * @throws BackingStoreException in case of problem storing
 	 */
 	public static void serializeDefaultErrorParserIds() throws BackingStoreException {
-		IEclipsePreferences preferences = new InstanceScope().getNode(CCorePlugin.PLUGIN_ID);
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
 		String ids = NONE;
 		if (fDefaultErrorParserIds!=null) {
 			ids = ErrorParserManager.toDelimitedString(fDefaultErrorParserIds.toArray(new String[0]));

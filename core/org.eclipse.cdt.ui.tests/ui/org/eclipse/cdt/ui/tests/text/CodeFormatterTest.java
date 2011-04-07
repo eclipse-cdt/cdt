@@ -1137,9 +1137,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//int function_with_a_long_name(int, int);
 	//
 	//void test() {
-	//    function_with_a_long_name(function(1000000, 2000000, 3000000, 4000000,
-	//                                       5000000),
-	//                              6000000);
+	//    function_with_a_long_name(
+	//            function(1000000, 2000000, 3000000, 4000000, 5000000), 6000000);
 	//}
 	public void testFunctionCall_2() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
@@ -2089,21 +2088,43 @@ public class CodeFormatterTest extends BaseUITestCase {
 
 	//void test() {
 	//    int variable1 = 1000000 < 2000000 ? 3000000 + 40000000 : 8000000 + 90000000;
-	//    int variable2 = 1000000 < 2000000 ?
-	//            3000000 + 40000000 : 8000000 + 900000000;
-	//    int variable3 = 1000000 < 2000000 ?
-	//            3000000 + 4000000 + 5000000 + 6000000 + 7000000 : 8000000 + 9000000;
-	//    int variable4 = 1000000 < 2000000 ?
-	//            3000000 + 4000000 + 5000000 + 6000000 + 7000000 :
-	//            8000000 + 90000000;
-	//}
+	//    int variable2 =
+	//            1000000 < 2000000 ? 3000000 + 40000000 : 8000000 + 900000000;
+	//    int variable3 =
+	//            1000000 < 2000000 ?
+	//                    3000000 + 4000000 + 5000000 + 6000000 + 7000000 :
+	//                    8000000 + 9000000;
+	//    int variable4 =
+	//            1000000 < 2000000 ?
+	//                    3000000 + 4000000 + 5000000 + 6000000 + 7000000 :
+	//                    8000000 + 90000000;
+    //}
 	public void testConditionalExpression() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION,
-				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
 		assertFormatterResult();
 	}
 
+	//int variable_with_a_long_name, another_variable_with_a_long_name;
+	//
+	//int variable = variable_with_a_long_name < another_variable_with_a_long_name ?
+	//variable_with_a_long_name + another_variable_with_a_long_name :
+	//variable_with_a_long_name * 2 > another_variable_with_a_long_name ?
+	//variable_with_a_long_name + another_variable_with_a_long_name :
+	//variable_with_a_long_name - another_variable_with_a_long_name;
+
+	//int variable_with_a_long_name, another_variable_with_a_long_name;
+	//
+	//int variable =
+	//        variable_with_a_long_name < another_variable_with_a_long_name ?
+	//                variable_with_a_long_name + another_variable_with_a_long_name :
+	//        variable_with_a_long_name * 2 > another_variable_with_a_long_name ?
+	//                variable_with_a_long_name + another_variable_with_a_long_name :
+	//                variable_with_a_long_name - another_variable_with_a_long_name;
+	public void testConditionalExpressionChain() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+	
 	//// Breaking at '<=' is preferred to breaking at '+'.
 	//bool x = 1000000 + 2000000 + 3000000 + 4000000 <= 5000000 + 6000000 + 7000000 + 8000000;
 
@@ -2293,7 +2314,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//
 	//void test() {
 	//    stream << (variable_with_a_long_name + another_variable_with_a_long_name)
-	//                      * variable_with_a_long_name
+	//                   * variable_with_a_long_name
 	//           << "01234567890123456789";
 	//}
 	public void testOverloadedLeftShiftChain_4() throws Exception {

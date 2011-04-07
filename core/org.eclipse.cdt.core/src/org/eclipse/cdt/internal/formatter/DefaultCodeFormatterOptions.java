@@ -59,6 +59,7 @@ public class DefaultCodeFormatterOptions {
 	public int alignment_for_base_clause_in_type_declaration;
 	public int alignment_for_binary_expression;
 	public int alignment_for_compact_if;
+	public int alignment_for_conditional_expression_chain;
 	public int alignment_for_conditional_expression;
 	public int alignment_for_declarator_list;
 	public int alignment_for_enumerator_list;
@@ -275,6 +276,7 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_BINARY_EXPRESSION, getAlignment(this.alignment_for_binary_expression));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_COMPACT_IF, getAlignment(this.alignment_for_compact_if));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION, getAlignment(this.alignment_for_conditional_expression));
+		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION_CHAIN, getAlignment(this.alignment_for_conditional_expression_chain));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_DECLARATOR_LIST, getAlignment(this.alignment_for_declarator_list));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ENUMERATOR_LIST, getAlignment(this.alignment_for_enumerator_list));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_INITIALIZER_LIST, getAlignment(this.alignment_for_expressions_in_initializer_list));
@@ -528,9 +530,19 @@ public class DefaultCodeFormatterOptions {
 			try {
 				this.alignment_for_conditional_expression = Integer.parseInt((String) alignmentForConditionalExpressionOption);
 			} catch (NumberFormatException e) {
-				this.alignment_for_conditional_expression = Alignment.M_ONE_PER_LINE_SPLIT;
+				this.alignment_for_conditional_expression = Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN;
 			} catch (ClassCastException e) {
-				this.alignment_for_conditional_expression = Alignment.M_ONE_PER_LINE_SPLIT;
+				this.alignment_for_conditional_expression = Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN;
+			}
+		}
+		final Object alignmentForConditionalExpressionChainOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION_CHAIN);
+		if (alignmentForConditionalExpressionChainOption != null) {
+			try {
+				this.alignment_for_conditional_expression_chain = Integer.parseInt((String) alignmentForConditionalExpressionChainOption);
+			} catch (NumberFormatException e) {
+				this.alignment_for_conditional_expression_chain = Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN;
+			} catch (ClassCastException e) {
+				this.alignment_for_conditional_expression_chain = Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN;
 			}
 		}
 		final Object alignmentForDeclaratorListOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_DECLARATOR_LIST);
@@ -1484,7 +1496,8 @@ public class DefaultCodeFormatterOptions {
 		this.alignment_for_base_clause_in_type_declaration = Alignment.M_NEXT_PER_LINE_SPLIT;
 		this.alignment_for_binary_expression = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_compact_if = Alignment.M_COMPACT_SPLIT;
-		this.alignment_for_conditional_expression = Alignment.M_NEXT_PER_LINE_SPLIT;
+		this.alignment_for_conditional_expression = Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN;
+		this.alignment_for_conditional_expression_chain = Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN;
 		this.alignment_for_declarator_list = Alignment.M_COMPACT_SPLIT;
 		this.alignment_for_enumerator_list = Alignment.M_ONE_PER_LINE_SPLIT;
 		this.alignment_for_expressions_in_initializer_list = Alignment.M_COMPACT_SPLIT;

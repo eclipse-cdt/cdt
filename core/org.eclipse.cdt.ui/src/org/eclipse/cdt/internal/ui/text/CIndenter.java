@@ -116,8 +116,8 @@ public final class CIndenter {
 			prefBlockIndent= prefBlockIndent();
 			prefArrayIndent= prefArrayIndent();
 			prefArrayDeepIndent= prefArrayDeepIndent();
-			prefTernaryDeepAlign= prefTernaryDeepAlign();
-			prefTernaryIndent= prefTernaryIndent();
+			prefTernaryDeepAlign= false;
+			prefTernaryIndent= prefContinuationIndent();
 			prefCaseIndent= prefCaseIndent();
 			prefCaseBlockIndent= prefCaseBlockIndent();
 			prefAssignmentIndent= prefAssignmentIndent();
@@ -181,30 +181,6 @@ public final class CIndenter {
 			}
 
 			return true;
-		}
-
-		private boolean prefTernaryDeepAlign() {
-			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION);
-			try {
-				return DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_ON_COLUMN;
-			} catch (IllegalArgumentException e) {
-				// ignore and return default
-			}
-			return false;
-		}
-
-		private int prefTernaryIndent() {
-			String option= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION);
-			try {
-				if (DefaultCodeFormatterConstants.getIndentStyle(option) == DefaultCodeFormatterConstants.INDENT_BY_ONE)
-					return 1;
-				else
-					return prefContinuationIndent();
-			} catch (IllegalArgumentException e) {
-				// ignore and return default
-			}
-
-			return prefContinuationIndent();
 		}
 
 		private int prefCaseIndent() {
@@ -1031,7 +1007,7 @@ public final class CIndenter {
 				return skipToPreviousListItemOrListStart();
 			}
 			fPosition= pos;
-			return skipToStatementStart(danglingElse, false);
+			return skipToPreviousListItemOrListStart();
 
 		case Symbols.TokenQUESTIONMARK:
 			if (fPrefs.prefTernaryDeepAlign) {
@@ -1041,7 +1017,7 @@ public final class CIndenter {
 			}
 			return fPosition;
 
-		// indentation for blockless introducers:
+		// Indentation for blockless introducers:
 		case Symbols.TokenDO:
 		case Symbols.TokenWHILE:
 		case Symbols.TokenELSE:

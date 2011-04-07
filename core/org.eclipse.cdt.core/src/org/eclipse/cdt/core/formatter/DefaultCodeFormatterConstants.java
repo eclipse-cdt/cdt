@@ -146,11 +146,22 @@ public class DefaultCodeFormatterConstants {
 	 * FORMATTER / Option for alignment of conditional expression
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_conditional_expression"
 	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
-	 *     - default:           createAlignmentValue(false, WRAP_ONE_PER_LINE, INDENT_DEFAULT)
+	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_ON_COLUMN)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
 	 */
 	public static final String FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_conditional_expression";	 //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option for alignment of a chain of conditional expressions.
+	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_conditional_expression_chain"
+	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_ON_COLUMN)
+	 * </pre>
+	 * @see #createAlignmentValue(boolean, int, int)
+	 * @since 5.3
+	 */
+	public static final String FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION_CHAIN = CCorePlugin.PLUGIN_ID + ".formatter.alignment_for_conditional_expression_chain";	 //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option for alignment of a declarator list

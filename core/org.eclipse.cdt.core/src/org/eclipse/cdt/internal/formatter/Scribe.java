@@ -227,9 +227,7 @@ public class Scribe {
 	}
 
 	public void alignFragment(Alignment alignment, int fragmentIndex) {
-		alignment.fragmentIndex= fragmentIndex;
-		alignment.checkColumn();
-		alignment.performFragmentEffect();
+		alignment.alignFragment(fragmentIndex);
 	}
 
 	public void consumeNextToken() {
@@ -577,11 +575,22 @@ public class Scribe {
 	}
 
 	public void handleLineTooLong() {
-		// Search for closest breakable alignment, using tie break rules
-		// look for outermost breakable one.
+		// Search for closest breakable alignment, using tie break rules.
+		// Look for innermost breakable one.
 		int relativeDepth= 0;
-		int outerMostDepth= -1;
 		Alignment targetAlignment= currentAlignment;
+		while (targetAlignment != null && targetAlignment.tieBreakRule == Alignment.R_INNERMOST) {
+			if (targetAlignment.couldBreak()) {
+				throwAlignmentException(AlignmentException.LINE_TOO_LONG, relativeDepth);
+			}
+			targetAlignment= targetAlignment.enclosing;
+			relativeDepth++;
+		}
+
+		// Look for outermost breakable one.
+		relativeDepth= 0;
+		int outerMostDepth= -1;
+		targetAlignment= currentAlignment;
 		while (targetAlignment != null) {
 			if (targetAlignment.tieBreakRule == Alignment.R_OUTERMOST && targetAlignment.couldBreak()) {
 				outerMostDepth= relativeDepth;
@@ -592,7 +601,8 @@ public class Scribe {
 		if (outerMostDepth >= 0) {
 			throwAlignmentException(AlignmentException.LINE_TOO_LONG, outerMostDepth);
 		}
-		// Look for innermost breakable one
+		// Look for innermost breakable one but don't stop if we encounter a R_OUTERMOST
+		// tie-breaking rule.
 		relativeDepth= 0;
 		targetAlignment= currentAlignment;
 		while (targetAlignment != null) {

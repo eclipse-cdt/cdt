@@ -78,6 +78,7 @@
  * David McKnight   (IBM)        - [241726] Move doesn't select the moved items
  * David McKnight   (IBM)        - [333196] New member filter dialogue keep popping up when creating a shared member filter.
  * David McKnight   (IBM)        - [341281] amendment to fix for bug 308983
+ * David McKnight   (IBM)        - [342208] potential NPE in SystemView$ExpandRemoteObjects.execute()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -287,8 +288,10 @@ public class SystemView extends SafeTreeViewer
 					// if found, re-expand it
 					if (item != null && !item.isDisposed()) {
 						IRSECallback callback = getCallbackForSubChildren(itemToExpand, _toExpand);
-						createChildren(item, callback);
-						((TreeItem) item).setExpanded(true);
+						if (callback != null){
+							createChildren(item, callback);
+							((TreeItem) item).setExpanded(true);
+						}
 					}
 				} else if (itemToExpand.data!=null) {
 					setExpandedState(itemToExpand.data, true);

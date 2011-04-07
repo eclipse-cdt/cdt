@@ -36,7 +36,7 @@ public interface ICProjectDescription  extends ICSettingContainer,
 	/**
 	 * Returns the Project's active configuration. This is the configuration which is built by default
 	 * @see ICProjectDescriptionPreferences#setConfigurationRelations(int)
-	 * @return active {@link ICConfigurationDescription} - the one which is build by default
+	 * @return active {@link ICConfigurationDescription} - the one which is built by default
 	 */
 	ICConfigurationDescription getActiveConfiguration();
 

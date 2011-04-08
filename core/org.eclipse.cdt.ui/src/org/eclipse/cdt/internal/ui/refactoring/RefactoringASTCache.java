@@ -117,8 +117,7 @@ public class RefactoringASTCache implements IDisposable {
 	public synchronized IIndex getIndex() throws CoreException, OperationCanceledException {
         Assert.isTrue(!fDisposed, "RefactoringASTCache is already disposed"); //$NON-NLS-1$
 		if (fIndex == null) {
-			ICProject[] projects;
-			projects = CoreModel.getDefault().getCModel().getCProjects();
+			ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
 			IIndex index = CCorePlugin.getIndexManager().getIndex(projects);
 			try {
 				index.acquireReadLock();

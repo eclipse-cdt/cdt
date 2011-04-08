@@ -262,10 +262,14 @@ public class SourceUtils {
 	 */
 	public static Object[] findSourceElements(File file, ISourceLookupDirector director) {
 		IFile[] wfiles = ResourceLookup.findFilesForLocation(new Path(file.getAbsolutePath()));
-		IProject launchConfigurationProject = getLaunchConfigurationProject(director);
+		IProject lcProject = null;
+		if (director != null) {
+			lcProject = getLaunchConfigurationProject(director);
+		}
+			
 		if (wfiles.length > 0) {
-			ResourceLookup.sortFilesByRelevance(wfiles, launchConfigurationProject);
-			return updateUnavailableResources(wfiles, launchConfigurationProject);
+			ResourceLookup.sortFilesByRelevance(wfiles, lcProject);
+			return updateUnavailableResources(wfiles, lcProject);
 		}
 
 		try {
@@ -273,18 +277,15 @@ public class SourceUtils {
 			// systems like Windows.
 			wfiles = ResourceLookup.findFilesForLocation(new Path(file.getCanonicalPath()));
 			if (wfiles.length > 0) {
-				ResourceLookup.sortFilesByRelevance(wfiles, launchConfigurationProject);
-				return updateUnavailableResources(wfiles, launchConfigurationProject);
+				ResourceLookup.sortFilesByRelevance(wfiles, lcProject);
+				return updateUnavailableResources(wfiles, lcProject);
 			}
 			
 			// The file is not already in the workspace so try to create an external translation unit for it.
-			if (director != null) {
-				String projectName = getLaunchConfigurationProjectName(director);
-				if (projectName != null) {
-					ICProject project = CoreModel.getDefault().getCModel().getCProject(projectName);
-					if (project != null) {
-						return new ITranslationUnit[] { CoreModel.getDefault().createTranslationUnitFrom(project, URIUtil.toURI(file.getCanonicalPath(), true)) };
-					}
+			if (lcProject != null) {
+				ICProject project = CoreModel.getDefault().create(lcProject);
+				if (project != null) {
+					return new ITranslationUnit[] { CoreModel.getDefault().createTranslationUnitFrom(project, URIUtil.toURI(file.getCanonicalPath(), true)) };
 				}
 			}
 		} catch (IOException e) { // ignore if getCanonicalPath throws

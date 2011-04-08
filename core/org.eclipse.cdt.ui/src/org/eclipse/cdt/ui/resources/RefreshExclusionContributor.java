@@ -52,7 +52,7 @@ public abstract class RefreshExclusionContributor {
 	}
 	
 	abstract public RefreshExclusion createExclusion();
-	abstract public void createProperiesUI(Composite parent);
+	abstract public void createProperiesUI(Composite parent, RefreshExclusion exclusion);
 	abstract public RefreshExclusion createExclusionFromXML(Element exclusionElement);
 
 

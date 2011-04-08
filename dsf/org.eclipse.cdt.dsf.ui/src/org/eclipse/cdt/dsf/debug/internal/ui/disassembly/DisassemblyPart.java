@@ -2782,7 +2782,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			}
 			fFile2Storage.put(file, sourceElement);
 		} else if (sourceElement == null) {
-			logWarning(DisassemblyMessages.Disassembly_log_error_locateFile+file, null);
+			if (!fFile2Storage.containsKey(file)) {
+				logWarning(DisassemblyMessages.Disassembly_log_error_locateFile+file, null);
+	            fFile2Storage.put(file, null);
+			}
 		} else {
             fFile2Storage.put(file, null);
             assert false : "missing support for source element of type " + sourceElement.getClass().toString(); //$NON-NLS-1$

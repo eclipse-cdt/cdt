@@ -246,14 +246,12 @@
     	<echo message="Generate p2 Metadata" />
     	<property name="p2site" value="${zipsdir}/p2"/>
     	<property name="launcher" value="${basedir}/tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar"/>
-    	<java jar="${launcher}" fork="true" timeout="10800000" failonerror="true" maxmemory="768m" dir="${buildDirectory}/eclipse">
+    	<java jar="${launcher}" fork="true" timeout="10800000" failonerror="true" maxmemory="768m">
             <arg line="-application org.eclipse.equinox.p2.publisher.UpdateSitePublisher" />
+    		<arg line="-source ${p2site}"/>
         	<arg line="-metadataRepository file:${p2site}"/>
-        	<arg line="-artifactRepository file:${p2site}"/>
-            <arg line="-source ${p2site}"/>
-        	<arg line="-compress"/>
-            <arg line="-publishArtifacts"/>
-        	<arg line="-reusePack200Files"/>
+        	<arg line="-artifactRepository file:${p2site}"/>            
+        	<arg line="-compress -publishArtifacts -reusePack200Files"/>
         </java>
 	</target>
 

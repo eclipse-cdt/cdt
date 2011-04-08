@@ -1943,12 +1943,19 @@ public class Rendering extends Composite implements IDebugEventSetListener
     public String getRadixText(MemoryByte bytes[], int radix,
             boolean isLittleEndian)
     {
-        boolean readable = true;
-        for(int i = 0; i < bytes.length; i++)
-            if(!bytes[i].isReadable())
-                readable = false;
+        boolean readableByte = false; 
+        boolean allBytesReadable = true; 
+        for(int i = 0; i < bytes.length; i++) {
+            if(!bytes[i].isReadable()) {
+            	allBytesReadable = false; 
+            } else {
+        		readableByte = true;
+            }
+        }
 
-        if(readable)
+        // convert byte to character if all bytes are readable or
+        // it is a mixed of readable&non-readable bytes and format is Hex or Binary. Bugzilla 342239        		
+        if (allBytesReadable || readableByte && (radix == Rendering.RADIX_HEX || radix == Rendering.RADIX_BINARY))
         {
         	// bytes from the cache are stored as a sequential byte sequence regardless of target endian.
         	// the endian attribute tells us the recommended endian for display. the user may change this
@@ -1991,8 +1998,13 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	                    {
 	                        for(int i = buf.length - 1; i >= 0; i--)
 	                        {
-	                            buf[i] = hexdigits[(int) (value & 1)];
-	                            value = value >>> 1;
+	                            int byteIndex = needsSwap ? bytes.length - 1 - i/8 : i/8; 
+	                            if (bytes[byteIndex].isReadable()) {
+	                                buf[i] = hexdigits[(int) (value & 1)];
+	                            } else {
+	                                buf[i] = getPaddingCharacter();
+	                            }
+                                value = value >>> 1;
 	                        }
 	                        break;
 	                    }
@@ -2009,7 +2021,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
                         {
                             for(int i = buf.length - 1; i >= 0; i--)
                             {
-                                buf[i] = hexdigits[(int) (value & 15)];
+                            	int byteIndex = needsSwap ? bytes.length - 1 - i/2 : i/2;
+                            	if (bytes[byteIndex].isReadable()) {
+                            		buf[i] = hexdigits[(int) (value & 15)];
+                            	} else {
+                            		buf[i] = getPaddingCharacter();
+                            	}
                                 value = value >>> 4;
                             }
                             break;

@@ -73,7 +73,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 	private static final String CONSOLE_HEADER = "ManagedMakeBuilder.message.console.header";	//$NON-NLS-1$
 	private static final String WARNING_UNSUPPORTED_CONFIGURATION = "ManagedMakeBuilder.warning.unsupported.configuration";	//$NON-NLS-1$
 	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-	private static final String PATH = "PATH"; //$NON-NLS-1$
+	private static final String PATH_ENV = "PATH"; //$NON-NLS-1$
 
 	@Override
 	public boolean invokeBuild(int kind, IProject project, IConfiguration configuration,
@@ -209,16 +209,16 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 					// Launching failed, trying to figure out possible cause
 					String errorPrefix = ManagedMakeMessages.getResourceString("ManagedMakeBuilder.error.prefix"); //$NON-NLS-1$
 					String buildCommandStr = buildCommand.toString();
-					String envPath = envMap.get(PATH);
+					String envPath = envMap.get(PATH_ENV);
 					if (envPath==null) {
-						envPath = System.getenv(PATH);
+						envPath = System.getenv(PATH_ENV);
 					}
 					if (PathUtil.findProgramLocation(buildCommandStr, envPath)==null) {
 						buf.append(errMsg).append(NEWLINE);
 						errMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.program.not.in.path", buildCommandStr); //$NON-NLS-1$
 						buf.append(errorPrefix).append(errMsg).append(NEWLINE);
 						buf.append(NEWLINE);
-						buf.append(PATH+"=["+envPath+"]").append(NEWLINE); //$NON-NLS-1$//$NON-NLS-2$
+						buf.append(PATH_ENV+"=["+envPath+"]").append(NEWLINE); //$NON-NLS-1$//$NON-NLS-2$
 					} else {
 						buf.append(errorPrefix).append(errMsg).append(NEWLINE);
 					}

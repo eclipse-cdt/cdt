@@ -52,7 +52,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 	private String fErrMsg;
 	
 	private static final String BUILDER_MSG_HEADER = "InternalBuilder.msg.header"; //$NON-NLS-1$ 
-	private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
+	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
 
 /*
  * no need in this for now, Spawner is always used
@@ -219,7 +219,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 			if (PathUtil.findProgramLocation(program, envPath)==null) {
 				printMessage(fErrMsg, out);
 				String errMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.program.not.in.path", program); //$NON-NLS-1$
-				printErrorMessage(errMsg + LINE_SEPARATOR, out);
+				printErrorMessage(errMsg + NEWLINE, out);
 				printMessage(null, PATH_ENV+"=["+envPath+"]", out); //$NON-NLS-1$//$NON-NLS-2$
 			} else {
 				printErrorMessage(fErrMsg, out);
@@ -260,7 +260,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 			if (prefix==null) {
 				prefix=""; //$NON-NLS-1$
 			}
-			msg = prefix + msg + LINE_SEPARATOR;
+			msg = prefix + msg + NEWLINE;
 			try {
 				os.write(msg.getBytes());
 				os.flush();
@@ -300,7 +300,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 				buf.append(' ');
 				buf.append(args[i]);
 			}
-			buf.append(LINE_SEPARATOR);
+			buf.append(NEWLINE);
 		}
 		return buf.toString();
 	}

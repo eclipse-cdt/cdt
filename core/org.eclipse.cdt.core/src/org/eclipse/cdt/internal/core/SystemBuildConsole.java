@@ -16,6 +16,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 
+/**
+ * CDT console which redirects output to system console ({@code System.out}, {@code System.err}).
+ * Used by headless builder.
+ *
+ */
 public class SystemBuildConsole implements IConsole {
 	final ConsoleOutputStream out;
 	final ConsoleOutputStream err;

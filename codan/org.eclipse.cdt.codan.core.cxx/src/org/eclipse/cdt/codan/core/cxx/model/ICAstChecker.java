@@ -28,10 +28,10 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
  */
 public interface ICAstChecker extends IChecker {
 	/**
-	 * Run this checker on a given ast.
-	 * Ast locks would be obtained by the framework before calling this method.
+	 * Runs this checker on a given AST.
+	 * AST locks are obtained by the framework before calling this method.
 	 * 
-	 * @param ast
+	 * @param ast the AST.
 	 */
 	void processAst(IASTTranslationUnit ast);
 }

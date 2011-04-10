@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
@@ -143,7 +144,8 @@ public class RefactoringASTCache implements IDisposable {
 
 	@Override
 	protected void finalize() throws Throwable {
-        Assert.isTrue(fDisposed, "RefactoringASTCache was not disposed"); //$NON-NLS-1$
+		if (!fDisposed)
+			CUIPlugin.logError("RefactoringASTCache was not disposed"); //$NON-NLS-1$
 		super.finalize();
 	}
 }

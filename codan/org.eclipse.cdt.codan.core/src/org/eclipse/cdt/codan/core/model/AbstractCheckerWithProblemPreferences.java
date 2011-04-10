@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2009,2010 Alena Laskavaia
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *     Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
@@ -25,12 +25,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * AbstarctChecker that has extra methods to simplify adding problem
+ * AbstractChecker that has extra methods to simplify adding problem
  * preferences.
  * Checker can produce several problems, but preferences are per problem.
  * Sharing preferences between problems is not supported now.
  */
-public abstract class AbstractCheckerWithProblemPreferences extends AbstractChecker implements ICheckerWithPreferences {
+public abstract class AbstractCheckerWithProblemPreferences extends AbstractChecker
+		implements ICheckerWithPreferences {
 	/**
 	 * Checker that actually has parameter must override this
 	 */
@@ -41,13 +42,12 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	/**
 	 * Scope preference - special preference that all file checkers should have,
 	 * it allows user to include/exclude files for this specific problem.
-	 * 
+	 *
 	 * @param problem - problem for which scope preference is need
 	 * @return scope problem preference, null if not defined
 	 */
 	public FileScopeProblemPreference getScopePreference(IProblem problem) {
-		FileScopeProblemPreference scope = getTopLevelPreference(problem).getScopePreference();
-		return scope;
+		return getTopLevelPreference(problem).getScopePreference();
 	}
 
 	/**
@@ -56,8 +56,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	 * @since 2.0
 	 */
 	public LaunchModeProblemPreference getLaunchModePreference(IProblem problem) {
-		LaunchModeProblemPreference launchModes = getTopLevelPreference(problem).getLaunchModePreference();
-		return launchModes;
+		return getTopLevelPreference(problem).getLaunchModePreference();
 	}
 
 	/**
@@ -66,7 +65,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	 * be done within processResource method not in enabledInContext.
 	 * This test uses user "scope" preference for the all problems that this
 	 * checker can produce.
-	 * 
+	 *
 	 * @param res - resource to test on
 	 * @return true if checker should report problems, fails otherwise.
 	 */
@@ -82,16 +81,16 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 
 	/**
 	 * User can scope out some resources for this checker. Checker can use this
-	 * call to test if it should run on this resource at all or produce a
-	 * specific problem on this resource. Test should
+	 * call to test if it should run on this resource at all or produce
+	 * a specific problem on this resource. Test should
 	 * be done within processResource method not in enabledInContext, or just
 	 * before printing of a problem.
 	 * This test uses user "scope" preference for the given problem. If scope is
 	 * not defined preference it returns true.
-	 * 
+	 *
 	 * @param problem - problem to test for
 	 * @param resource - resource to test on
-	 * 
+	 *
 	 * @return true if problem should be report for given resource, fails
 	 *         otherwise.
 	 */
@@ -104,17 +103,19 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 
 	@Override
 	public void reportProblem(String problemId, IProblemLocation loc, Object... args) {
-		if (shouldProduceProblem(getProblemById(problemId, loc.getFile()), loc.getFile().getLocation()))
+		if (shouldProduceProblem(getProblemById(problemId, loc.getFile()),
+				loc.getFile().getLocation())) {
 			super.reportProblem(problemId, loc, args);
+		}
 	}
 
 	/**
-	 * report a problem
-	 * 
+	 * Reports a problem
+	 *
 	 * @param pr - problem (kind) instance
 	 * @param loc - problem location
 	 * @param args - extra problem arguments
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public void reportProblem(IProblem pr, IProblemLocation loc, Object... args) {
@@ -123,8 +124,8 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	}
 
 	/**
-	 * Add a parameter
-	 * 
+	 * Adds a parameter
+	 *
 	 * @param problem
 	 *        - problem that has parameter
 	 * @param key
@@ -135,9 +136,11 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	 *        - parameter default value
 	 * @return - parameter info object
 	 */
-	public IProblemPreference addPreference(IProblemWorkingCopy problem, String key, String label, Object defaultValue) {
+	public IProblemPreference addPreference(IProblemWorkingCopy problem, String key, String label,
+			Object defaultValue) {
 		MapProblemPreference map = getTopLevelPreference(problem);
-		BasicProblemPreference info = new BasicProblemPreference(key, label, PreferenceType.typeOf(defaultValue));
+		BasicProblemPreference info = new BasicProblemPreference(key, label,
+				PreferenceType.typeOf(defaultValue));
 		map.addChildDescriptor(info);
 		setDefaultPreferenceValue(problem, key, defaultValue);
 		return info;
@@ -146,7 +149,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	/**
 	 * Add preference of type list of strings, list is empty by
 	 * default
-	 * 
+	 *
 	 * @param problem
 	 *        - problem
 	 * @param key
@@ -156,25 +159,27 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	 * @param itemLabel
 	 * @return preference instance of of the list, can be used to add default
 	 *         values or set different element type
-	 * 
+	 *
 	 */
-	public ListProblemPreference addListPreference(IProblemWorkingCopy problem, String key, String label, String itemLabel) {
+	public ListProblemPreference addListPreference(IProblemWorkingCopy problem, String key,
+			String label, String itemLabel) {
 		MapProblemPreference map = getTopLevelPreference(problem);
 		ListProblemPreference list = new ListProblemPreference(key, label);
-		list.setChildDescriptor(new BasicProblemPreference(ListProblemPreference.COMMON_DESCRIPTOR_KEY, itemLabel,
-				PreferenceType.TYPE_STRING));
+		list.setChildDescriptor(new BasicProblemPreference(ListProblemPreference.COMMON_DESCRIPTOR_KEY,
+				itemLabel, PreferenceType.TYPE_STRING));
 		return (ListProblemPreference) map.addChildDescriptor(list);
 	}
 
 	/**
-	 * Add preference for the given problem with default value
-	 * 
+	 * Adds preference for the given problem with default value
+	 *
 	 * @param problem
 	 * @param pref - preference
 	 * @param defaultValue - default value of the preference
 	 * @return added preference
 	 */
-	public IProblemPreference addPreference(IProblemWorkingCopy problem, IProblemPreference pref, Object defaultValue) {
+	public IProblemPreference addPreference(IProblemWorkingCopy problem, IProblemPreference pref,
+			Object defaultValue) {
 		MapProblemPreference map = getTopLevelPreference(problem);
 		String key = pref.getKey();
 		pref = map.addChildDescriptor(pref);
@@ -185,24 +190,25 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	/**
 	 * Convenience method for setting default preference value for checker that
 	 * uses "map" as top level problem preference.
-	 * 
-	 * @param problem - problem for which to set default value for a prefence
+	 *
+	 * @param problem - problem for which to set default value for a preference
 	 * @param key - preference key
 	 * @param defaultValue - value of preference to be set
 	 */
-	protected void setDefaultPreferenceValue(IProblemWorkingCopy problem, String key, Object defaultValue) {
+	protected void setDefaultPreferenceValue(IProblemWorkingCopy problem, String key,
+			Object defaultValue) {
 		MapProblemPreference map = getTopLevelPreference(problem);
 		if (map.getChildValue(key) == null)
 			map.setChildValue(key, defaultValue);
 	}
 
 	/**
-	 * Return "map" problem preference for a give problem, if problem
+	 * Returns "map" problem preference for a give problem, if problem
 	 * has preference different than a map, it will throw ClassCastException.
 	 * If top level preference does not exist create a map preference with name
 	 * "params"
 	 * and return it.
-	 * 
+	 *
 	 * @param problem
 	 * @return top level preference if it is a map
 	 * @since 2.0
@@ -221,7 +227,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	/**
 	 * Returns value of the preference for the key in the top level
 	 * preference map for the given problem
-	 * 
+	 *
 	 * @param problem - problem for which to get the preference
 	 * @param key - preference key
 	 * @return value of the preference

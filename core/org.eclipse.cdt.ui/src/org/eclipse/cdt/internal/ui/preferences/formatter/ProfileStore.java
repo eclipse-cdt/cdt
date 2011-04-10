@@ -59,9 +59,7 @@ import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomPr
 import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
 
 
-
 public class ProfileStore {
-
 	/** The default encoding to use */
 	public static final String ENCODING= "UTF-8"; //$NON-NLS-1$
 	
@@ -71,7 +69,6 @@ public class ProfileStore {
 	 * A SAX event handler to parse the xml format for profiles. 
 	 */
 	private final static class ProfileDefaultHandler extends DefaultHandler {
-		
 		private List<Profile> fProfiles;
 		private int fVersion;
 		
@@ -123,7 +120,6 @@ public class ProfileStore {
 		public List<Profile> getProfiles() {
 			return fProfiles;
 		}
-		
 	}
 
 	/**
@@ -229,7 +225,6 @@ public class ProfileStore {
 	 * @throws CoreException
 	 */
 	protected static List<Profile> readProfilesFromStream(InputSource inputSource) throws CoreException {
-		
 		final ProfileDefaultHandler handler= new ProfileDefaultHandler();
 		try {
 		    final SAXParserFactory factory= SAXParserFactory.newInstance();
@@ -274,8 +269,6 @@ public class ProfileStore {
 	 * @throws CoreException
 	 */
 	private static void writeProfilesToStream(Collection<Profile> profiles, OutputStream stream, String encoding, IProfileVersioner profileVersioner) throws CoreException {
-
-
 		try {
 			final DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
 			final DocumentBuilder builder= factory.newDocumentBuilder();		
@@ -305,7 +298,6 @@ public class ProfileStore {
 			throw createException(e, FormatterMessages.CodingStyleConfigurationBlock_error_serializing_xml_message);  
 		}
 	}
-
 	
 	/*
 	 * Create a new profile element in the specified document. The profile is not added
@@ -328,7 +320,7 @@ public class ProfileStore {
 				setting.setAttribute(XML_ATTRIBUTE_VALUE, value);
 				element.appendChild(setting);
 			} else {
-				CUIPlugin.getDefault().logErrorMessage("ProfileStore: Profile does not contain value for key " + key); //$NON-NLS-1$
+				CUIPlugin.logError("ProfileStore: Profile does not contain value for key " + key); //$NON-NLS-1$
 			}
 		}
 		return element;

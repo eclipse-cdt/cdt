@@ -64,7 +64,6 @@ import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 public abstract class OptionsConfigurationBlock {
 	
 	public static final class Key {
-		
 		private String fQualifier;
 		private String fKey;
 		
@@ -118,9 +117,7 @@ public abstract class OptionsConfigurationBlock {
 		public String getQualifier() {
 			return fQualifier;
 		}
-
 	}
-	
 
 	protected static class ControlData {
 		private Key fKey;
@@ -208,7 +205,7 @@ public abstract class OptionsConfigurationBlock {
 			};
 		}
 		
-		testIfOptionsComplete(allKeys);
+		checkIfOptionsComplete(allKeys);
 		if (fProject == null || hasProjectSpecificOptions(fProject)) {
 			fDisabledProjectSettings= null;
 		} else {
@@ -245,12 +242,11 @@ public abstract class OptionsConfigurationBlock {
 	protected final static Key getCDTUIKey(String key) {
 		return getKey(CUIPlugin.PLUGIN_ID, key);
 	}
-	
 		
-	private void testIfOptionsComplete(Key[] allKeys) {
+	private void checkIfOptionsComplete(Key[] allKeys) {
 		for (int i= 0; i < allKeys.length; i++) {
 			if (allKeys[i].getStoredValue(fLookupOrder, false, fManager) == null) {
-				CUIPlugin.getDefault().logErrorMessage("preference option missing: " + allKeys[i] + " (" + this.getClass().getName() +')');  //$NON-NLS-1$//$NON-NLS-2$
+				CUIPlugin.logError("Preference option missing: " + allKeys[i] + " (" + this.getClass().getName() +')');  //$NON-NLS-1$//$NON-NLS-2$
 			}
 		}
 	}
@@ -264,10 +260,8 @@ public abstract class OptionsConfigurationBlock {
 		fManager.getWorkingCopy(DefaultScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID)).putInt(REBUILD_COUNT_KEY, fRebuildCount);
 	}
 	
-	
 	protected void settingsUpdated() {
 	}
-	
 	
 	public void selectOption(String key, String qualifier) {
 		for (int i= 0; i < fAllKeys.length; i++) {
@@ -294,7 +288,6 @@ public abstract class OptionsConfigurationBlock {
 			control.setFocus();
 		}
 	}
-	
 	
 	public boolean hasProjectSpecificOptions(IProject project) {
 		if (project != null) {
@@ -695,7 +688,6 @@ public abstract class OptionsConfigurationBlock {
 	public boolean areSettingsEnabled() {
 		return fDisabledProjectSettings == null || fProject == null;
 	}
-	
 	
 	public boolean performOk() {
 		return processChanges(fContainer);

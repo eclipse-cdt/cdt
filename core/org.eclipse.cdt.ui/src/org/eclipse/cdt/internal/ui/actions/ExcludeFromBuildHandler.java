@@ -243,7 +243,7 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 				try {
 					CoreModel.getDefault().setProjectDescription(p, prjd);
 				} catch (CoreException e) {
-					CUIPlugin.getDefault().logErrorMessage(Messages.AbstractPage_11 + e.getLocalizedMessage()); 
+					CUIPlugin.logError(Messages.AbstractPage_11 + e.getLocalizedMessage()); 
 				}
 				AbstractPage.updateViews(res);
 			}

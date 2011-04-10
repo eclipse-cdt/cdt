@@ -142,7 +142,7 @@ public class CDTPropertyManager {
 		try {
 			CoreModel.getDefault().setProjectDescription(project, prjd);
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().logErrorMessage(Messages.AbstractPage_11 + e.getLocalizedMessage()); 
+			CUIPlugin.logError(Messages.AbstractPage_11 + e.getLocalizedMessage()); 
 		}
 		
 		if (pages.size() == 0) {

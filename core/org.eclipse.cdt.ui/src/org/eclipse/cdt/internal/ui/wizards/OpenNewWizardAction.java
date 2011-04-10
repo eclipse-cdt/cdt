@@ -58,7 +58,7 @@ public class OpenNewWizardAction extends AbstractOpenWizardAction {
 			}
 			return null;
 		} catch (MalformedURLException exception) {
-			CUIPlugin.getDefault().logErrorMessage("Unable to load wizard icon"); //$NON-NLS-1$
+			CUIPlugin.logError("Unable to load wizard icon"); //$NON-NLS-1$
 		}
 		return ImageDescriptor.getMissingImageDescriptor();
 		

@@ -656,7 +656,7 @@ implements
 					else
 						CDTPropertyManager.performOk(AbstractPage.this);
 				} catch (CoreException e) {
-					CUIPlugin.getDefault().logErrorMessage(Messages.AbstractPage_11 + e.getLocalizedMessage()); 
+					CUIPlugin.logError(Messages.AbstractPage_11 + e.getLocalizedMessage()); 
 				}
 				updateViews(internalElement);
 			}

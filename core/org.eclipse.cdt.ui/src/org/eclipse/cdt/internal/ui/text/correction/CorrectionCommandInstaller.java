@@ -53,7 +53,7 @@ public class CorrectionCommandInstaller {
 		}
 		
 		if (fCorrectionHandlerActivations != null) {
-			CUIPlugin.getDefault().logErrorMessage("correction handler activations not released"); //$NON-NLS-1$
+			CUIPlugin.logError("Correction handler activations not released"); //$NON-NLS-1$
 		}
 		fCorrectionHandlerActivations= new ArrayList<IHandlerActivation>();
 		

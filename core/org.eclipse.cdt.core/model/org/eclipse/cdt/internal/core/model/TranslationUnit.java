@@ -800,7 +800,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 		final IParserLogService log;
 		if (monitor instanceof ICanceler) {
-			log= new ParserLogService(DebugLogConstants.PARSER, (ICanceler)monitor);
+			log= new ParserLogService(DebugLogConstants.PARSER, (ICanceler) monitor);
 		} else {
 			log= ParserUtil.getParserLogService();
 		}

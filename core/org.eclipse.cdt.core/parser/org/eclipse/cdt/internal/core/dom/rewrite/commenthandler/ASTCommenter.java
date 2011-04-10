@@ -192,7 +192,7 @@ public class ASTCommenter {
 
 	private static ArrayList<IASTComment> getCommentsInWorkspace(IASTTranslationUnit tu) {
 		IASTComment[] comments = tu.getComments();
-		ArrayList<IASTComment> commentsInWorksapce = new ArrayList<IASTComment>();
+		ArrayList<IASTComment> commentsInWorkspace = new ArrayList<IASTComment>();
 
 		if (comments == null || comments.length == 0) {
 			return null;
@@ -200,15 +200,16 @@ public class ASTCommenter {
 
 		for (IASTComment comment : comments) {
 			if (isInWorkspace(comment)) {
-				commentsInWorksapce.add(comment);
+				commentsInWorkspace.add(comment);
 			}
 		}
-		return commentsInWorksapce;
+		return commentsInWorkspace;
 	}
 
-	private static ArrayList<IASTComment> removeAllPreprocessorComments(IASTTranslationUnit tu, ArrayList<IASTComment> comments) {
+	private static ArrayList<IASTComment> removeAllPreprocessorComments(IASTTranslationUnit tu,
+			ArrayList<IASTComment> comments) {
 		IASTPreprocessorStatement[] preprocessorStatements = tu.getAllPreprocessorStatements();
-		TreeMap<Integer,String> treeOfPreProcessorLines = new TreeMap<Integer,String>();
+		TreeMap<Integer, String> treeOfPreProcessorLines = new TreeMap<Integer,String>();
 		TreeMap<String, ArrayList<Integer>> ppOffsetForFiles = new TreeMap<String, ArrayList<Integer>>();
 
 		for (IASTPreprocessorStatement statement : preprocessorStatements) {
@@ -229,11 +230,11 @@ public class ASTCommenter {
 			int comStartLineNumber = OffsetHelper.getStartingLineNumber(comment);
 			String fileName = comment.getFileLocation().getFileName();
 			if (treeOfPreProcessorLines.containsKey(comStartLineNumber)
-					&& treeOfPreProcessorLines.get(comStartLineNumber).equals(fileName
-					)) {
-					continue;
+					&& treeOfPreProcessorLines.get(comStartLineNumber).equals(fileName)) {
+				continue;
 			}
-			if (commentIsAtTheBeginningBeforePreprocessorStatements(comment, ppOffsetForFiles.get(fileName), tu)) {
+			if (commentIsAtTheBeginningBeforePreprocessorStatements(comment,
+					ppOffsetForFiles.get(fileName), tu)) {
 				continue;
 			}
 			commentsInCode.add(comment);
@@ -284,7 +285,8 @@ public class ASTCommenter {
 		return false;
 	}
 	
-	private static NodeCommentMap addCommentsToCommentMap(IASTTranslationUnit rootNode,	ArrayList<IASTComment> comments){
+	private static NodeCommentMap addCommentsToCommentMap(IASTTranslationUnit rootNode,
+			ArrayList<IASTComment> comments){
 		NodeCommentMap commentMap = new NodeCommentMap();
 		CommentHandler commHandler = new CommentHandler(comments);
 

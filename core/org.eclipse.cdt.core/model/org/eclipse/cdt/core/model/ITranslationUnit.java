@@ -437,8 +437,8 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	/**
 	 * Creates an AST based on the requested style. May return <code>null</code> if the language of
 	 * this translation unit does not support ASTs. If the index was supplied, the caller has to
-	 * hold a read lock on it. The returned AST is valid only while the read lock is being held
-	 * and should not be accessed after releasing the lock. 
+	 * hold a read lock on it. The returned AST is valid only while the index read lock is being
+	 * held and should not be accessed after releasing the lock. 
 	 * @param index	index to back up the parsing of the AST, may be <code>null</code>
 	 * @param style <code>0</code> or a combination of {@link #AST_SKIP_ALL_HEADERS}, 
 	 * {@link #AST_SKIP_IF_NO_BUILD_INFO}, {@link #AST_SKIP_INDEXED_HEADERS}

@@ -327,6 +327,10 @@ public class CUIPlugin extends AbstractUIPlugin {
 		log(message, null);
 	}
 
+	/**
+	 * @deprecated Use {@link #logError(String)}
+	 */
+	@Deprecated
 	public void logErrorMessage(String message) {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, ICStatusConstants.INTERNAL_ERROR, message, null));
 	}

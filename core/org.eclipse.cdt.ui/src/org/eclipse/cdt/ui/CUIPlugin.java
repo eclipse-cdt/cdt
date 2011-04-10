@@ -320,10 +320,16 @@ public class CUIPlugin extends AbstractUIPlugin {
 		getDefault().getLog().log(status);
 	}
 	
-	public void logErrorMessage(String message) {
-		log(new Status(IStatus.ERROR, getPluginId(), ICStatusConstants.INTERNAL_ERROR, message, null));
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static void logError(String message) {
+		log(message, null);
 	}
-	
+
+	public void logErrorMessage(String message) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, ICStatusConstants.INTERNAL_ERROR, message, null));
+	}
 
 	/**
 	* Utility method with conventions

@@ -426,7 +426,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 				}
 			}
 			// If this container does not have any threads, it means it wasn't started
-			// yet, so we can consider it suspended
+			// yet or it was terminated, so we can consider it suspended
 			if (hasThread == false) return true;
 		}
 

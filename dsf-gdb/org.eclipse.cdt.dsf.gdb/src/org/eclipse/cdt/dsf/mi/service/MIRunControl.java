@@ -620,13 +620,25 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	}
 
     /**
-     * Event handler when a thread is destroyed
      * @nooverride This method is not intended to be re-implemented or extended by clients.
      * @noreference This method is not intended to be referenced by clients.
      */
     @DsfServiceEventHandler
-    public void eventDispatched(ExitedDMEvent e) {
-    	fMICommandCache.reset(e.getDMContext());
+    public void eventDispatched(IExitedDMEvent e) {
+    	if (e.getDMContext() instanceof IContainerDMContext) {
+    		// When the process terminates, we should consider it as suspended
+    		// In fact, we did get a stopped event, but our processing of it
+    		// needs some cleaning up.  Until then, let's trigger of this event
+    		// Bug 342358
+            fMICommandCache.setContextAvailable(e.getDMContext(), true);
+            fMICommandCache.reset();
+            
+    		fSuspended = true;
+            fStepping = false;            
+            fResumePending = false;
+    	} else {
+    		fMICommandCache.reset(e.getDMContext());
+    	}
     }
 
     ///////////////////////////////////////////////////////////////////////////

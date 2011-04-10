@@ -147,8 +147,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	}
 
 	/**
-	 * Add preference of type list of strings, list is empty by
-	 * default
+	 * Adds preference of type list of strings, list is empty by default.
 	 *
 	 * @param problem
 	 *        - problem

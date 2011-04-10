@@ -20,6 +20,8 @@ import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
@@ -28,12 +30,13 @@ import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl.MIRunMode;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
-import org.eclipse.cdt.dsf.mi.service.IMIRunControl.MIRunMode;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIAddInferiorInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -314,5 +317,24 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 												  Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
 		return new DebugNewProcessSequence_7_2(executor, isInitial, dmc, file, attributes, rm);
 	}
+	
+    /**
+     * @since 4.0
+      */
+    @DsfServiceEventHandler
+    @Override
+    public void eventDispatched(IExitedDMEvent e) {
+    	IDMContext dmc = e.getDMContext();
+    	if (dmc instanceof IContainerDMContext) {
+    		// A process has died, we should stop tracking its breakpoints
+    		if (fBackend.getSessionType() != SessionType.CORE) {
+    			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
+            	MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
+            	bpmService.stopTrackingBreakpoints(bpTargetDmc, new RequestMonitor(ImmediateExecutor.getInstance(), null));
+    		}
+    	}
+    	
+    	super.eventDispatched(e);
+    }
 }
 

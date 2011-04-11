@@ -462,8 +462,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
     
     /**
-     * If the type of the next token matches, it is consumed and returned. Otherwise a
-     * {@link BacktrackException} will be thrown. 
+     * The next token is consumed. Afterwards its type is checked and a {@link BacktrackException} 
+     * is thrown if the type does not match the expected one. 
      * @param type the expected type of the next token.
      */
     protected final IToken consume(int type) throws EndOfFileException, BacktrackException {
@@ -474,8 +474,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     /**
-     * If the type of the next token matches, it is consumed and returned. Otherwise a
-     * {@link BacktrackException} will be thrown. 
+     * The next token is consumed. Afterwards its type is checked and a {@link BacktrackException} 
+     * is thrown if the type neither matches <code>type1</code> nor <code>type2</code>.
      */
     protected final IToken consume(int type1, int type2) throws EndOfFileException, BacktrackException {
     	final IToken result= consume();

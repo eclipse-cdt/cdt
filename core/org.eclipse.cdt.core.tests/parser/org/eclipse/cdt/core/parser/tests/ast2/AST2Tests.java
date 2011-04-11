@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7102,12 +7102,12 @@ public class AST2Tests extends AST2BaseTest {
 	// void f() {
 	// int a= 
 	public void testLargeExpression_294029() throws Exception {
-		// when running the test in a suite, it cannot handle more than 200 parenthesis.
-		// run as a single test it does > 600.
+		// when running the test in a suite, it cannot handle more than 160 parenthesis.
+		// run as a single test it does > 500.
 		sValidateCopy= false;
         StringBuilder buf= new StringBuilder();
         buf.append(getAboveComment());
-        final int depth= 200;
+        final int depth= 160;
         for (int i = 0; i < depth; i++) {
         	buf.append('(');
         }

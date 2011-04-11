@@ -1069,8 +1069,11 @@ public class CPPVisitor extends ASTQueries {
 					if (qname.isFullyQualified()) {
 						return parent.getTranslationUnit().getScope();
 					} 
-				}
-				if (i > 0) {
+					if (qname.getParent() instanceof ICPPASTFieldReference) {
+						name= qname;
+						parent= name.getParent();
+					}
+				} else if (i > 0) {
 					if (data != null) {
 						data.usesEnclosingScope= false;
 					}
@@ -1111,7 +1114,9 @@ public class CPPVisitor extends ASTQueries {
 						return scope;
 					}
 				} 
-			} else if (parent instanceof ICPPASTFieldReference) {
+			} 
+			
+			if (parent instanceof ICPPASTFieldReference) {
 				if (data != null) {
 					data.usesEnclosingScope= false;
 				}

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
@@ -5312,6 +5313,76 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//		return 0;
 	//	}
 	public void testPartialSpecAfterExplicitInst_339475() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	
+	//	template<bool> struct S {
+	//		static int m();
+	//	};
+	//	template<int> void g(int);
+	//	int f();
+	//	int s;
+	//
+	//	void test() {
+	//		f < 0 > (1);  // Function pointer
+	//		g<0>(1);      // Function call
+	//	    S<1 && 2>::m();        // m is member of S
+	//	    s<1 && 2>::f();        // f is global
+	//	}
+	public void testTemplateIDAmbiguity_341747a() throws Exception {
+		IASTTranslationUnit tu= parseAndCheckBindings();
+		IASTFunctionDefinition fdef= getDeclaration(tu, 4);
+		
+		IASTExpressionStatement stmt;
+		stmt= getStatement(fdef, 0);
+		assertTrue(stmt.getExpression() instanceof IASTBinaryExpression);
+
+		stmt= getStatement(fdef, 1);
+		assertTrue(stmt.getExpression() instanceof IASTFunctionCallExpression);
+
+		stmt= getStatement(fdef, 2);
+		assertTrue(stmt.getExpression() instanceof IASTFunctionCallExpression);
+
+		stmt= getStatement(fdef, 0);
+		assertTrue(stmt.getExpression() instanceof IASTBinaryExpression);
+	}
+	
+	//	const int a=0, b=1;
+	//	template<int> struct A{};
+	//
+	//	template<bool B= a<b> struct S {};
+	//	struct X : S<a<b> {};
+	//
+	//	template<typename B= A<b>> struct T {};
+	//	struct Y : T<A<b>> {};
+	public void testTemplateIDAmbiguity_341747b() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	int a=0, b=1;
+	//	bool bl= false;
+	//	template<bool B> struct S {
+	//		int a;
+	//	};
+	//	void test() {
+	//		S< a<b >::a;
+	//		a < S<bl>::a;
+	//	}
+	public void testTemplateIDAmbiguity_341747c() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	struct S {
+	//		int B;
+	//	};
+	//	template<typename T> struct B {};
+	//	int c;
+	//	void test() {
+	//		S* a=0;
+	//		a->B<c && c>::c;
+	//	}
+	public void testTemplateIDAmbiguity_341747d() throws Exception {
 		parseAndCheckBindings();
 	}
 }

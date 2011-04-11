@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
@@ -21,11 +22,14 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -114,6 +118,18 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	public int leave(IASTDeclaration declaration) {
 		if (fRepopulate.remove(declaration)) {
 			repopulateScope(declaration);
+		}
+		// Explicit and partial class template specializations need to be resolved right away, 
+		// otherwise we fail to correctly resolve qualified names that depend on a partial specialization. 
+		if (declaration instanceof IASTSimpleDeclaration) {
+			IASTSimpleDeclaration sdecl= (IASTSimpleDeclaration) declaration;
+			IASTDeclSpecifier declspec = sdecl.getDeclSpecifier();
+			if (declspec instanceof IASTCompositeTypeSpecifier && sdecl.getDeclarators().length == 0) {
+				IASTName name= ((IASTCompositeTypeSpecifier) declspec).getName().getLastName();
+				if (name instanceof ICPPASTTemplateId) {
+					name.resolveBinding();
+				}
+			}
 		}
 		return PROCESS_CONTINUE;
 	}

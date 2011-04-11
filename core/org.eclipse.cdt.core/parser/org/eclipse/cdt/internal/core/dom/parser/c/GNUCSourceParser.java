@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -467,7 +467,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		int lt1;
 		int conditionCount= 0;
 		BinaryOperator lastOperator= null;
-		IASTExpression lastExpression= castExpression(CastExprCtx.eBExpr);
+		IASTExpression lastExpression= castExpression(CastExprCtx.eDirectlyInBExpr, null);
 		loop: while (true) {
 			lt1= LT(1);
 			switch(lt1) {
@@ -564,7 +564,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 			}
 	         
 			consume(); 											// consume operator
-			lastExpression= castExpression(CastExprCtx.eBExpr); 	// next cast expression
+			lastExpression= castExpression(CastExprCtx.eDirectlyInBExpr, null); 	// next cast expression
 		}
 		
     	// Check for incomplete conditional expression
@@ -581,38 +581,38 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         ((ASTNode) result).setOffsetAndLength(o, lastOffset - o);
         return result;
     }
-
+    
     @Override
-	protected IASTExpression unaryExpression(CastExprCtx ctx) throws EndOfFileException, BacktrackException {
+	protected IASTExpression unaryExpression(CastExprCtx ctx, ITemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
         switch (LT(1)) {
         case IToken.tSTAR:
-            return unaryExpression(IASTUnaryExpression.op_star, ctx);
+            return unaryExpression(IASTUnaryExpression.op_star, ctx, strat);
         case IToken.tAMPER:
-            return unaryExpression(IASTUnaryExpression.op_amper, ctx);
+            return unaryExpression(IASTUnaryExpression.op_amper, ctx, strat);
         case IToken.tPLUS:
-            return unaryExpression(IASTUnaryExpression.op_plus, ctx);
+            return unaryExpression(IASTUnaryExpression.op_plus, ctx, strat);
         case IToken.tMINUS:
-            return unaryExpression(IASTUnaryExpression.op_minus, ctx);
+            return unaryExpression(IASTUnaryExpression.op_minus, ctx, strat);
         case IToken.tNOT:
-            return unaryExpression(IASTUnaryExpression.op_not, ctx);
+            return unaryExpression(IASTUnaryExpression.op_not, ctx, strat);
         case IToken.tBITCOMPLEMENT:
-            return unaryExpression(IASTUnaryExpression.op_tilde, ctx);
+            return unaryExpression(IASTUnaryExpression.op_tilde, ctx, strat);
         case IToken.tINCR:
-            return unaryExpression(IASTUnaryExpression.op_prefixIncr, ctx);
+            return unaryExpression(IASTUnaryExpression.op_prefixIncr, ctx, strat);
         case IToken.tDECR:
-            return unaryExpression(IASTUnaryExpression.op_prefixDecr, ctx);
+            return unaryExpression(IASTUnaryExpression.op_prefixDecr, ctx, strat);
         case IToken.t_sizeof:
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
-        			IASTTypeIdExpression.op_sizeof, IASTUnaryExpression.op_sizeof, ctx);
+        			IASTTypeIdExpression.op_sizeof, IASTUnaryExpression.op_sizeof, ctx, strat);
         case IGCCToken.t___alignof__:
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
-        			IASTTypeIdExpression.op_alignof, IASTUnaryExpression.op_alignOf, ctx);
+        			IASTTypeIdExpression.op_alignof, IASTUnaryExpression.op_alignOf, ctx, strat);
         default:
-            return postfixExpression(ctx);
+            return postfixExpression(ctx, strat);
         }
     }
 
-    protected IASTExpression postfixExpression(CastExprCtx ctx) throws EndOfFileException, BacktrackException {
+    private IASTExpression postfixExpression(CastExprCtx ctx, ITemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
         IASTExpression firstExpression = null;
         switch (LT(1)) {
         case IToken.tLPAREN:
@@ -632,11 +632,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	} catch (BacktrackException bt) {
         	}
         	backup(m); 
-        	firstExpression= primaryExpression(ctx);
+        	firstExpression= primaryExpression(ctx, strat);
         	break;
         	
         default:
-            firstExpression = primaryExpression(ctx);
+            firstExpression = primaryExpression(ctx, strat);
         	break;
         }
 
@@ -748,7 +748,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     @Override
-	protected IASTExpression primaryExpression(CastExprCtx ctx) throws EndOfFileException, BacktrackException {
+	protected IASTExpression primaryExpression(CastExprCtx ctx, ITemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
         IToken t = null;
         IASTLiteralExpression literalExpression = null;
         switch (LT(1)) {
@@ -1114,7 +1114,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     				simpleType= IASTSimpleDeclSpecifier.t_typeof;
     				consume(IGCCToken.t_typeof);
     				typeofExpression = parseTypeidInParenthesisOrUnaryExpression(false, LA(1).getOffset(), 
-    						IASTTypeIdExpression.op_typeof, -1, CastExprCtx.eNotBExpr);
+    						IASTTypeIdExpression.op_typeof, -1, CastExprCtx.eNotInBExpr, null);
 
     				encounteredTypename= true;
     				endOffset= calculateEndOffset(typeofExpression);

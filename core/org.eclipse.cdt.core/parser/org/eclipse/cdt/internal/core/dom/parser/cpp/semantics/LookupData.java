@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -251,15 +251,27 @@ public class LookupData {
 	}
 
 	public boolean qualified() {
-	    if (forceQualified) return true;
-		if (astName == null) return false;
-		if (astName.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return false;
-		IASTNode p1 = astName.getParent();
-		if (p1 instanceof ICPPASTQualifiedName) {
-			final IASTName[] qnames = ((ICPPASTQualifiedName) p1).getNames();
-			return qnames.length == 1 || qnames[0] != astName;
+		if (forceQualified)
+			return true;
+
+		IASTName n= astName;
+		if (n == null || n.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) 
+			return false;
+		
+		IASTNode p = n.getParent();
+		if (p instanceof ICPPASTTemplateId) {
+			n= (IASTName) p;
+			p= p.getParent();
 		}
-		return p1 instanceof ICPPASTFieldReference;
+		if (p instanceof ICPPASTQualifiedName) {
+			final ICPPASTQualifiedName qname = (ICPPASTQualifiedName) p;
+			if (qname.isFullyQualified())
+				return true;
+			final IASTName[] qnames = qname.getNames();
+			if (qnames.length > 0 && qnames[0] != n)
+				return true;
+		}
+		return p instanceof ICPPASTFieldReference;
 	}
 	
 	public boolean isFunctionCall() {

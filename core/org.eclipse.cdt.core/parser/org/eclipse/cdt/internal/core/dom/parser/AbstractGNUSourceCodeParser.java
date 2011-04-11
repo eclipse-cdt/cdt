@@ -89,6 +89,9 @@ import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
  * Base class for the c- and c++ parser.
  */
 public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
+	public interface ITemplateIdStrategy {
+	}
+
 	protected static class FoundAggregateInitializer extends Exception {
 		public final IASTDeclarator fDeclarator;
 		public final IASTDeclSpecifier fDeclSpec;
@@ -154,7 +157,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	 * Information about the context in which a cast-expression is parsed: 
 	 * in a binary expression, in a binary expression in a template-id, or elsewhere. 
 	 */
-	protected static enum CastExprCtx {eBExpr, eBExprInTmplID, eNotBExpr}
+	protected static enum CastExprCtx {eDirectlyInBExpr, eInBExpr, eNotInBExpr}
 	protected static enum ExprKind {eExpression, eAssignment, eConstant}
 
 	protected static final int DEFAULT_DESIGNATOR_LIST_SIZE = 4;
@@ -921,7 +924,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * Models a cast expression followed by an operator. Can be linked into a chain.
      * This is done right to left, such that a tree of variants can be built.
      */
-	protected static class BinaryOperator {
+	public static class BinaryOperator {
 		final int fOperatorToken;
 		final int fLeftPrecedence;
 		final int fRightPrecedence;
@@ -949,9 +952,21 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			fExpression= expr;
 			return e;
 		}
+
+		public IASTInitializerClause getExpression() {
+			return fExpression;
+		}
+		
+		public BinaryOperator getNext() {
+			return fNext;
+		}
+
+		public void setNext(BinaryOperator next) {
+			fNext = next;
+		}
 	}
 	
-	protected final IASTExpression buildExpression(BinaryOperator leftChain, IASTInitializerClause expr) throws BacktrackException {
+	public final IASTExpression buildExpression(BinaryOperator leftChain, IASTInitializerClause expr) {
 		BinaryOperator rightChain= null;
 		for (;;) {
 			if (leftChain == null) {
@@ -973,18 +988,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		}
 	}
 
-	private IASTExpression buildExpression(IASTExpression left, BinaryOperator operator) throws BacktrackException {
+	private IASTExpression buildExpression(IASTExpression left, BinaryOperator operator) {
 		int op, unaryOp= 0;
 		final IASTInitializerClause right= operator.fExpression;
 		switch(operator.fOperatorToken) {
         case IToken.tQUESTION:
         	final IASTInitializerClause negative;
         	if (operator.fNext == null || operator.fNext.fOperatorToken != IToken.tCOLON) {
-        		if (LTcatchEOF(1) != IToken.tEOC || operator.fNext != null) {
-        			assert false;
-    	        	ASTNode node= (ASTNode) left;
-    	        	throwBacktrack(node.getOffset(), node.getLength());
-        		}
         		negative= null;
         	} else {
         		negative= operator.fNext.fExpression;
@@ -1116,25 +1126,26 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             
         default:
         	assert false;
-        	ASTNode node= (ASTNode) left;
-        	throwBacktrack(node.getOffset(), node.getLength());
         	return null;
 		}
 		
 		IASTExpression result= buildBinaryExpression(op, left, right, calculateEndOffset(right));
 		final CastAmbiguityMarker am = operator.fAmbiguityMarker;
 		if (am != null) {
-			assert unaryOp != 0;
-			result = createCastVsBinaryExpressionAmbiguity((IASTBinaryExpression) result, 
-					am.getTypeIdForCast(), unaryOp, am.getUnaryOperatorOffset());
+			if (unaryOp != 0) {
+				result = createCastVsBinaryExpressionAmbiguity((IASTBinaryExpression) result, 
+						am.getTypeIdForCast(), unaryOp, am.getUnaryOperatorOffset());
+			} else {
+				assert false;
+			}
 		}
 		return result;
 	}
 
 	protected abstract IASTExpression expression() throws BacktrackException, EndOfFileException;
 	protected abstract IASTExpression constantExpression() throws BacktrackException, EndOfFileException;
-    protected abstract IASTExpression unaryExpression(CastExprCtx ctx) throws BacktrackException, EndOfFileException;
-    protected abstract IASTExpression primaryExpression(CastExprCtx ctx) throws BacktrackException, EndOfFileException;
+    protected abstract IASTExpression unaryExpression(CastExprCtx ctx, ITemplateIdStrategy strat) throws BacktrackException, EndOfFileException;
+    protected abstract IASTExpression primaryExpression(CastExprCtx ctx, ITemplateIdStrategy strat) throws BacktrackException, EndOfFileException;
     protected abstract IASTTypeId typeId(DeclarationOptions option) throws EndOfFileException, BacktrackException;
 	
 	private final static class CastAmbiguityMarker extends ASTNode implements IASTExpression {
@@ -1186,7 +1197,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		}
 	}
 
-	protected final IASTExpression castExpression(CastExprCtx ctx) throws EndOfFileException, BacktrackException {
+	protected final IASTExpression castExpression(CastExprCtx ctx, ITemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
 		if (LT(1) == IToken.tLPAREN) {
 			final IToken mark= mark();
 			final int startingOffset= mark.getOffset();
@@ -1199,7 +1210,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			if (typeId != null && LT(1) == IToken.tRPAREN) {
 				consume();
 				boolean unaryFailed= false;
-				if (ctx != CastExprCtx.eNotBExpr) {
+				if (ctx == CastExprCtx.eDirectlyInBExpr) {
     				switch (LT(1)){
     				// ambiguity with unary operator
     				case IToken.tPLUS: case IToken.tMINUS: 
@@ -1208,7 +1219,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     					IToken markEnd= mark();
     					backup(mark);
     					try {
-    						IASTExpression unary= unaryExpression(CastExprCtx.eNotBExpr);
+    						IASTExpression unary= unaryExpression(CastExprCtx.eInBExpr, strat);
 							return new CastAmbiguityMarker(unary, typeId, operatorOffset);
     					} catch (BacktrackException bt) {
     						backup(markEnd);
@@ -1218,7 +1229,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 				}
 				try {
 					boolean couldBeFunctionCall= LT(1) == IToken.tLPAREN;
-					IASTExpression rhs= castExpression(ctx);
+					IASTExpression rhs= castExpression(ctx, strat);
 
 					CastAmbiguityMarker ca= null;
 					if (rhs instanceof CastAmbiguityMarker) {
@@ -1226,12 +1237,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 						rhs= ca.getExpression();
 						assert !(rhs instanceof CastAmbiguityMarker);
 					}
-					IASTCastExpression result= buildCastExpression(IASTCastExpression.op_cast, typeId, rhs, startingOffset, calculateEndOffset(rhs));
+					IASTCastExpression result = buildCastExpression(IASTCastExpression.op_cast,
+							typeId, rhs, startingOffset, calculateEndOffset(rhs));
 					if (!unaryFailed && couldBeFunctionCall && rhs instanceof IASTCastExpression == false) {
 						IToken markEnd= mark();
 						backup(mark);
 						try {
-							IASTExpression expr= primaryExpression(ctx);
+							IASTExpression expr= primaryExpression(ctx, strat);
 							IASTFunctionCallExpression fcall = nodeFactory.newFunctionCallExpression(expr, (IASTExpression[]) null);
 							IASTAmbiguousExpression ambiguity = createAmbiguousCastVsFunctionCallExpression(result, fcall);
 							((ASTNode) ambiguity).setOffsetAndLength((ASTNode) result);
@@ -1249,7 +1261,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			}
 			backup(mark);
 		}
-		return unaryExpression(ctx);
+		return unaryExpression(ctx, strat);
     }
 
     protected abstract IASTTranslationUnit getTranslationUnit();
@@ -1363,7 +1375,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     abstract protected IASTExpression buildBinaryExpression(int operator, IASTExpression expr1, IASTInitializerClause expr2, int lastOffset);
 
-	private IASTExpression createCastVsBinaryExpressionAmbiguity(IASTBinaryExpression expr, final IASTTypeId typeid, int unaryOperator, int unaryOpOffset) {
+	private IASTExpression createCastVsBinaryExpressionAmbiguity(IASTBinaryExpression expr,
+			final IASTTypeId typeid, int unaryOperator, int unaryOpOffset) {
 		IASTUnaryExpression unary= nodeFactory.newUnaryExpression(unaryOperator, null);
 		((ASTNode) unary).setOffset(unaryOpOffset);
 		IASTCastExpression castExpr = buildCastExpression(IASTCastExpression.op_cast, typeid, unary, 0, 0);
@@ -1372,9 +1385,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		return result;
 	}
 
-    protected IASTExpression unaryExpression(int operator, CastExprCtx ctx) throws EndOfFileException, BacktrackException {
+    protected IASTExpression unaryExpression(int operator, CastExprCtx ctx, ITemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
     	final IToken operatorToken= consume();
-        IASTExpression operand= castExpression(ctx);
+        IASTExpression operand= castExpression(ctx, strat);
         
 		CastAmbiguityMarker ca= null;
 		if (operand instanceof CastAmbiguityMarker) {
@@ -1814,13 +1827,12 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return result;
     }
 
-
-    protected IASTCastExpression buildCastExpression(int op, IASTTypeId typeId, IASTExpression operand, int offset, int endOffset) {
+	protected IASTCastExpression buildCastExpression(int op, IASTTypeId typeId,
+			IASTExpression operand, int offset, int endOffset) {
         IASTCastExpression result = nodeFactory.newCastExpression(op, typeId, operand);
         ((ASTNode) result).setOffsetAndLength(offset, endOffset - offset);
         return result;
     }
-
     
     /**
      * There are many ambiguities in C and C++ between expressions and declarations.
@@ -2173,7 +2185,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     protected IASTExpression parseTypeidInParenthesisOrUnaryExpression(boolean exprIsLimitedToParenthesis, 
-    		int offset, int typeExprKind, int unaryExprKind, CastExprCtx ctx) throws BacktrackException, EndOfFileException {
+    		int offset, int typeExprKind, int unaryExprKind, CastExprCtx ctx, ITemplateIdStrategy strat) throws BacktrackException, EndOfFileException {
     	IASTTypeId typeid;
     	IASTExpression expr= null;
         IToken typeidLA= null;
@@ -2234,7 +2246,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         		expr= expression();
         		endOffset2= consumeOrEOC(IToken.tRPAREN).getEndOffset();
         	} else {
-        		expr= unaryExpression(ctx); 
+        		expr= unaryExpression(ctx, strat); 
         		if (expr instanceof CastAmbiguityMarker) {
         			ca= (CastAmbiguityMarker) expr;
         			expr= ca.getExpression();

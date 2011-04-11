@@ -100,7 +100,7 @@ public class AddIncludeTest extends TestCase {
 
 		String file= createFileName(".expected");
 		String expected= ResourceTestHelper.read(file).toString();
-		assertEquals(expected, fDocument.get());
+		assertEquals(expected.replace("\r\n", "\n"), fDocument.get().replace("\r\n", "\n"));
 	}
 
 	private String createFileName(String suffix) {

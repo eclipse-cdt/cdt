@@ -26,9 +26,11 @@
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  * David McKnight   (IBM)        - [240699] Problem with moving a file which has been opened in an editor
+ * David McKnight   (IBM)        - [191132] Incorrect error message when trying to edit a file that has been moved
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -37,7 +39,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -358,11 +359,23 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 			try
 			{
 				moveTempFileProperties(oldLocalResource, ss, newRemoteFile);
-				oldLocalResource.move(newLocalResource.getFullPath(), true, null);
+				if (!newLocalResource.exists()){
+					
+					IContainer parent = newLocalResource.getParent();
+					if (!parent.exists()){
+						File p = new File(parent.getLocation().toOSString());				
+						if (!p.exists()){
+							p.mkdirs();
+						}						
+					}	
+					parent.refreshLocal(IResource.DEPTH_ONE, new NullProgressMonitor());
+				}
+				oldLocalResource.move(newLocalResource.getFullPath(), true, new NullProgressMonitor());
 
 			}
 			catch (Exception e)
 			{
+				e.printStackTrace();
 			}
 
 		}

@@ -581,8 +581,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	}
 
 	@Override
-	public void performApply(ICResourceDescription src,
-			ICResourceDescription dst) {
+	public void performApply(ICResourceDescription src,	ICResourceDescription dst) {
 		if (page.isMultiCfg())
 			return;
 		ICfgScannerConfigBuilderInfo2Set cbi1 = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(getCfg(src.getConfiguration()));
@@ -600,7 +599,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 					ManagedBuilderUIPlugin.log(e);
 				}
 			} else {
-				CUIPlugin.getDefault().logErrorMessage(Messages.DiscoveryTab_7); 
+				CUIPlugin.logError(Messages.DiscoveryTab_7); 
 			}
 		}
 

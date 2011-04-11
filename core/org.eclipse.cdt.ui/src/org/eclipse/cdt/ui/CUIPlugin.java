@@ -107,7 +107,6 @@ import org.eclipse.cdt.internal.ui.viewsupport.CDTContextActivator;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CUIPlugin extends AbstractUIPlugin {
-
 	public static final String PLUGIN_ID = "org.eclipse.cdt.ui"; //$NON-NLS-1$
 	public static final String PLUGIN_CORE_ID = "org.eclipse.cdt.core"; //$NON-NLS-1$
 	public static final String EDITOR_ID = PLUGIN_ID + ".editor.CEditor"; //$NON-NLS-1$
@@ -237,8 +236,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	static {
 		try {
 			fgResourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.internal.ui.CPluginResources"); //$NON-NLS-1$
-		}
-		catch (MissingResourceException x) {
+		} catch (MissingResourceException x) {
 			fgResourceBundle = null;
 		}
 	}
@@ -259,11 +257,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static String getResourceString(String key) {
 		try {
 			return fgResourceBundle.getString(key);
-		}
-		catch (MissingResourceException e) {
+		} catch (MissingResourceException e) {
 			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		catch (NullPointerException e) {
+		} catch (NullPointerException e) {
 			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
@@ -652,10 +648,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return EditorsUI.getSharedTextColors();
 	}
 	
-	public void configurePluginDebugOptions(){
-		if(isDebugging()){
+	public void configurePluginDebugOptions() {
+		if (isDebugging()) {
 			String option = Platform.getDebugOption(CONTENTASSIST);
-			if(option != null) Util.VERBOSE_CONTENTASSIST = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			if (option != null)
+				Util.VERBOSE_CONTENTASSIST = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 		}
 	}
 
@@ -1000,5 +997,4 @@ public class CUIPlugin extends AbstractUIPlugin {
 		IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
 		return windows[0].getShell();
 	}
-	
 }

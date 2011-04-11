@@ -53,9 +53,9 @@ public class NodeHelper {
 		} else if (parent instanceof CPPASTNamespaceDefinition) {
 			return ((CPPASTNamespaceDefinition) parent).getDeclarations();
 		}
-		return new IASTDeclaration[0]; 
+		return IASTDeclaration.EMPTY_DECLARATION_ARRAY; 
 	}
-	
+
 	public static IASTNode findFollowingNode(IASTNode currentNode) {
 		if (currentNode == null || currentNode.getParent() == null) {
 			return null;
@@ -71,14 +71,14 @@ public class NodeHelper {
 		}
 		return null;
 	}
-	
+
 	public static IASTNode findTopLevelParent(IASTNode currentNode) {
 		while (currentNode != null && currentNode.getParent() != null && currentNode.getParent().getParent() != null) {
 			return findTopLevelParent(currentNode.getParent());
 		}
 		return currentNode;
 	}
-	
+
 	public static boolean isSameNode(IASTNode node1, IASTNode node2) {
 		if (node1 == null || node2 == null) {
 			return false;
@@ -87,7 +87,7 @@ public class NodeHelper {
 			&& node1.getNodeLocations()[0].getNodeLength() == node2.getNodeLocations()[0].getNodeLength()
 			&& new Path(node1.getFileLocation().getFileName()).equals(new Path(node2.getFileLocation().getFileName()));
 	}
-	
+
 	public static IASTSimpleDeclaration findSimpleDeclarationInParents(IASTNode node) {
 		while (node != null){
 			if (node instanceof IASTSimpleDeclaration) {
@@ -97,7 +97,7 @@ public class NodeHelper {
 		}
 		return null;
 	}
-	
+
 	public static MethodContext findMethodContext(IASTNode node, IIndex index) throws CoreException{
 		IASTTranslationUnit translationUnit = node.getTranslationUnit();
 		boolean found = false;
@@ -171,7 +171,7 @@ public class NodeHelper {
 			context.setMethodQName(qname);
 		}
 	}
-	
+
 	public static IASTCompoundStatement findCompoundStatementInAncestors(IASTNode node) {
 		while (node != null){
 			if (node instanceof IASTCompoundStatement) {
@@ -181,7 +181,7 @@ public class NodeHelper {
 		}
 		return null;
 	}
-	
+
 	public static IASTCompositeTypeSpecifier findClassInAncestors(IASTNode node) {
 		while (!(node instanceof IASTCompositeTypeSpecifier)){
 			if (node instanceof IASTTranslationUnit) {

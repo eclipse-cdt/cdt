@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -41,29 +42,8 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
  */
 public class MethodDefinitionInsertLocationFinder2 {
 	
-	private static IASTNode findFunctionDefinitionInParents(IASTNode node) {
-		if (node == null) {
-			return null;
-		} else if (node instanceof IASTFunctionDefinition) {
-			if (node.getParent() instanceof ICPPASTTemplateDeclaration) {
-				node = node.getParent();
-			}
-			return node;
-		}
-		return findFunctionDefinitionInParents(node.getParent());
-	}
-	
-	private static IASTNode findFirstSurroundingParentFunctionNode(IASTNode definition) {
-		IASTNode functionDefinitionInParents = findFunctionDefinitionInParents(definition);
-		if (functionDefinitionInParents == null ||
-				functionDefinitionInParents.getNodeLocations().length == 0) {
-			return null;
-		}
-		return functionDefinitionInParents;
-	}
-
-	public static InsertLocation2 find(ITranslationUnit declarationTu, IASTFileLocation methodDeclarationLocation, IASTNode parent,
-			RefactoringASTCache astCache) throws CoreException {
+	public static InsertLocation2 find(ITranslationUnit declarationTu, IASTFileLocation methodDeclarationLocation,
+			IASTNode parent, RefactoringASTCache astCache) throws CoreException {
 		IASTDeclaration[] declarations = NodeHelper.getDeclarations(parent);
 		InsertLocation2 insertLocation = new InsertLocation2();
 
@@ -95,6 +75,29 @@ public class MethodDefinitionInsertLocationFinder2 {
 		return insertLocation;
 	}
 
+	private static IASTNode findFunctionDefinitionInParents(IASTNode node) {
+		if (node == null) {
+			return null;
+		} else if (node instanceof IASTFunctionDefinition) {
+			if (node.getParent() instanceof ICPPASTTemplateDeclaration) {
+				node = node.getParent();
+			}
+			return node;
+		}
+		return findFunctionDefinitionInParents(node.getParent());
+	}
+	
+	private static IASTNode findFirstSurroundingParentFunctionNode(IASTNode definition) {
+		IASTNode functionDefinitionInParents = findFunctionDefinitionInParents(definition);
+		if (functionDefinitionInParents == null) {
+			return null;
+		}
+		if (functionDefinitionInParents.getNodeLocations().length == 0) {
+			return null;
+		}
+		return functionDefinitionInParents;
+	}
+
 	/**
 	 * Searches the given class for all IASTSimpleDeclarations occurring before 'method'
 	 * and returns them in reverse order.
@@ -105,29 +108,34 @@ public class MethodDefinitionInsertLocationFinder2 {
 	 */
 	private static Collection<IASTSimpleDeclaration> getAllPreviousSimpleDeclarationsFromClassInReverseOrder(
 			IASTDeclaration[] declarations, IASTFileLocation methodPosition) {
-		ArrayList<IASTSimpleDeclaration> allIASTSimpleDeclarations = new ArrayList<IASTSimpleDeclaration>();
-		for (IASTDeclaration decl : declarations) {
-			if (decl.getFileLocation().getStartingLineNumber() >= methodPosition.getStartingLineNumber()) {
-				return allIASTSimpleDeclarations;
-			}
-			if (isMemberFunctionDeclaration(decl)) {
-				allIASTSimpleDeclarations.add(0, (IASTSimpleDeclaration) decl);
+		ArrayList<IASTSimpleDeclaration> outputDeclarations = new ArrayList<IASTSimpleDeclaration>();
+		if (declarations.length >= 0) {
+			for (IASTDeclaration decl : declarations) {
+				if (decl.getFileLocation().getStartingLineNumber() >= methodPosition.getStartingLineNumber()) {
+					break;
+				}
+				if (isMemberFunctionDeclaration(decl)) {
+					outputDeclarations.add((IASTSimpleDeclaration) decl);
+				}
 			}
 		}
-		return allIASTSimpleDeclarations;
+		Collections.reverse(outputDeclarations);
+		return outputDeclarations;
 	}
 
 	private static Collection<IASTSimpleDeclaration> getAllFollowingSimpleDeclarationsFromClass(
 			IASTDeclaration[] declarations, IASTFileLocation methodPosition) {
-		ArrayList<IASTSimpleDeclaration> allIASTSimpleDeclarations = new ArrayList<IASTSimpleDeclaration>();
+		ArrayList<IASTSimpleDeclaration> outputDeclarations = new ArrayList<IASTSimpleDeclaration>();
 
-		for (IASTDeclaration decl : declarations) {
-			if (isMemberFunctionDeclaration(decl) &&
-					decl.getFileLocation().getStartingLineNumber() > methodPosition.getStartingLineNumber() ) {
-				allIASTSimpleDeclarations.add((IASTSimpleDeclaration) decl);
+		if (declarations.length >= 0) {
+			for (IASTDeclaration decl : declarations) {
+				if (isMemberFunctionDeclaration(decl) &&
+						decl.getFileLocation().getStartingLineNumber() > methodPosition.getStartingLineNumber() ) {
+					outputDeclarations.add((IASTSimpleDeclaration) decl);
+				}
 			}
 		}
-		return allIASTSimpleDeclarations;
+		return outputDeclarations;
 	}
 	
 	private static boolean isMemberFunctionDeclaration(IASTDeclaration decl) {

@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
@@ -59,8 +60,8 @@ public class InsertLocation2 {
 		if (nodeToInsertBefore != null) {
 			return nodeToInsertBefore.getFileLocation().getNodeOffset();
 		} else if (nodeToInsertAfter != null) {
-			return nodeToInsertAfter.getFileLocation().getNodeOffset() +
-					nodeToInsertAfter.getFileLocation().getNodeLength();
+			IASTFileLocation fileLocation = nodeToInsertAfter.getFileLocation();
+			return fileLocation.getNodeOffset() + fileLocation.getNodeLength();
 		}
 		return 0;
 	}

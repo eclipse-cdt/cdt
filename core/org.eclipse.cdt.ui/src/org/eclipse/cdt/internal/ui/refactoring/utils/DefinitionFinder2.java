@@ -45,8 +45,8 @@ public class DefinitionFinder2 {
 
 	public static ASTNameInContext getDefinition(IASTSimpleDeclaration simpleDeclaration,
 			RefactoringASTCache astCache) throws CoreException {
-		IASTDeclarator declarator = simpleDeclaration.getDeclarators()[0];
 		IIndex index = astCache.getIndex();
+		IASTDeclarator declarator = simpleDeclaration.getDeclarators()[0];
 		if (index == null) {
 			return null;
 		}

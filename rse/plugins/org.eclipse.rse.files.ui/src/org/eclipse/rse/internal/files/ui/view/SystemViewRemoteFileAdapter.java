@@ -486,7 +486,6 @@ public class SystemViewRemoteFileAdapter
 			}
 			openWithMenu.updateSelection(selection);
 			submenu.add(openWithMenu);
-			menu.add(ISystemContextMenuConstants.GROUP_OPENWITH, action); //test
 			menu.getMenuManager().appendToGroup(ISystemContextMenuConstants.GROUP_OPENWITH, submenu);
 		}
 

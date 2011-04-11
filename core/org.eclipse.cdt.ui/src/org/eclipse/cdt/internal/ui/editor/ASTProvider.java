@@ -47,7 +47,6 @@ public final class ASTProvider {
 	 * Wait flag.
 	 */
 	public static final class WAIT_FLAG {
-
 		String fName;
 
 		private WAIT_FLAG(String name) {
@@ -97,7 +96,7 @@ public final class ASTProvider {
 	public static int PARSE_MODE_FULL= 0;
 	/** Fast parse mode (use PDOM) */
 	public static int PARSE_MODE_FAST= ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
-	
+
 	/**
 	 * Internal activation listener.
 	 */
@@ -209,7 +208,6 @@ public final class ASTProvider {
 				return false;
 
 			String id= ref.getId();
-
 			return CUIPlugin.EDITOR_ID.equals(id) || ref.getPart(false) instanceof CEditor;
 		}
 	}
@@ -227,7 +225,7 @@ public final class ASTProvider {
 	public static ASTProvider getASTProvider() {
 		return CUIPlugin.getDefault().getASTProvider();
 	}
-	
+
 	/**
 	 * Creates a new AST provider.
 	 */
@@ -243,7 +241,7 @@ public final class ASTProvider {
 			// Create and register activation listener
 			fActivationListener= new ActivationListener();
 			PlatformUI.getWorkbench().addWindowListener(fActivationListener);
-	
+
 			// Ensure existing windows get connected
 			IWorkbenchWindow[] windows= PlatformUI.getWorkbench().getWorkbenchWindows();
 			for (int i= 0, length= windows.length; i < length; i++)
@@ -254,12 +252,12 @@ public final class ASTProvider {
 	private void activeEditorChanged(IWorkbenchPart editor) {
 		ICElement cElement= null;
 		if (editor instanceof CEditor) {
-			cElement= ((CEditor)editor).getInputCElement();
+			cElement= ((CEditor) editor).getInputCElement();
 		}
 		synchronized (this) {
 			fActiveEditor= editor;
 			fTimeStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
-			fCache.setActiveElement((ITranslationUnit)cElement);
+			fCache.setActiveElement((ITranslationUnit) cElement);
 		}
 	}
 
@@ -273,7 +271,7 @@ public final class ASTProvider {
 		if (cElement == null)
 			return;
 		Assert.isTrue(cElement instanceof ITranslationUnit);
-		fCache.aboutToBeReconciled((ITranslationUnit)cElement);
+		fCache.aboutToBeReconciled((ITranslationUnit) cElement);
 		updateModificationStamp();
 	}
 
@@ -333,7 +331,7 @@ public final class ASTProvider {
 		final ITranslationUnit tu = (ITranslationUnit) cElement;
 		if (!tu.isOpen())
 			return Status.CANCEL_STATUS;
-		
+
 		final boolean isActive= fCache.isActiveElement(tu);
 		if (waitFlag == WAIT_ACTIVE_ONLY && !isActive) {
 			return Status.CANCEL_STATUS;

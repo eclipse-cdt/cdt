@@ -8,13 +8,11 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 public class ASTHolderTUInfo extends TranslationUnitInfo {
-
 	public IASTTranslationUnit fAST;
 
 	/**
@@ -23,5 +21,4 @@ public class ASTHolderTUInfo extends TranslationUnitInfo {
 	public ASTHolderTUInfo(TranslationUnit translationUnit) {
 		super(translationUnit);
 	}
-
 }

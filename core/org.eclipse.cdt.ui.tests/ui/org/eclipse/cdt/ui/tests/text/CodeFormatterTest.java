@@ -2084,6 +2084,9 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//int variable2 = 1000000 < 2000000 ? 3000000 + 40000000 : 8000000 + 900000000;
 	//int variable3 = 1000000 < 2000000 ? 3000000 + 4000000 + 5000000 + 6000000 + 7000000 : 8000000 + 9000000;
 	//int variable4 = 1000000 < 2000000 ? 3000000 + 4000000 + 5000000 + 6000000 + 7000000 : 8000000 + 90000000;
+	//int variable5;
+	//variable5 = 10000000 < 2000000 ? 3000000 + 4000000 + 5000000 + 6000000 : 700000;
+	//variable5 = 10000000 < 2000000 ? 3000000 + 4000000 + 5000000 + 6000000 : 7000000;
 	//}
 
 	//void test() {
@@ -2098,6 +2101,12 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//            1000000 < 2000000 ?
 	//                    3000000 + 4000000 + 5000000 + 6000000 + 7000000 :
 	//                    8000000 + 90000000;
+	//    int variable5;
+	//    variable5 =
+	//            10000000 < 2000000 ? 3000000 + 4000000 + 5000000 + 6000000 : 700000;
+	//    variable5 =
+	//            10000000 < 2000000 ?
+	//                    3000000 + 4000000 + 5000000 + 6000000 : 7000000;
     //}
 	public void testConditionalExpression() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);

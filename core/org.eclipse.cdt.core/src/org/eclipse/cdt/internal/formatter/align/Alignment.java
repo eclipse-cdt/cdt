@@ -268,6 +268,15 @@ public class Alignment {
 			 */
 			case M_COMPACT_FIRST_BREAK_SPLIT:
 				if (this.fragmentBreaks[0] == NONE) {
+					if ((this.mode & M_INDENT_ON_COLUMN) != 0) {
+						if (this.breakIndentationLevel <= this.alternativeBreakIndentationLevel) {
+							// Does not make sense to break here unless indentation is reduced.
+							break;
+						}
+						// Change break indentation level and erase previously created breaks.
+						this.breakIndentationLevel = this.alternativeBreakIndentationLevel;
+						eraseExistingBreaks(0);
+					}
 					this.fragmentBreaks[0] = BREAK;
 					this.fragmentIndentations[0] = this.breakIndentationLevel;
 					return wasSplit = true;

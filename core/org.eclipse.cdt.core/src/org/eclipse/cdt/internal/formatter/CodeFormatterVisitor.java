@@ -2622,8 +2622,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int formatAssignment(IASTBinaryExpression node) {
+		Runnable tailFormatter = scribe.takeTailFormatter();
 		final IASTExpression op1= node.getOperand1();
-		// operand 1
+		// Operand 1
 		op1.accept(this);
 
 		// In case of macros we may have already passed the equal sign position.
@@ -2652,10 +2653,11 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
     		try {
     			scribe.alignFragment(expressionAlignment, 0);
 
-   				// operand 2
+    			scribe.setTailFormatter(tailFormatter);
+   				// Operand 2
    				final IASTExpression op2= node.getOperand2();
    				op2.accept(this);
-
+   				scribe.runTailFormatter();
     			ok = true;
     		} catch (AlignmentException e) {
     			scribe.redoAlignment(e);

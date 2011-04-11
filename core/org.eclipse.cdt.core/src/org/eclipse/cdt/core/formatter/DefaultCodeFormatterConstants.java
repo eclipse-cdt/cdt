@@ -146,7 +146,7 @@ public class DefaultCodeFormatterConstants {
 	 * FORMATTER / Option for alignment of conditional expression
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_conditional_expression"
 	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
-	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_ON_COLUMN)
+	 *     - default:           createAlignmentValue(false, WRAP_COMPACT_FIRST_BREAK, INDENT_ON_COLUMN)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
 	 */

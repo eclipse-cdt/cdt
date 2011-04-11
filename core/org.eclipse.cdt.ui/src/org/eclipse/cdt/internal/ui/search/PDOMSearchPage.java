@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 QNX Software Systems and others.
+ * Copyright (c) 2006, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,17 @@
  * Contributors:
  *   QNX - Initial API and implementation
  *   IBM Corporation
+ *   Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.Dialog;
@@ -55,8 +56,11 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -150,16 +154,27 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 	
 	private IStatusLineManager fLineManager;
 
-	private static ICProject getProject(Object object) {
-		if (object instanceof ICElement) {
-			return ((ICElement) object).getCProject();
-		} else if (object instanceof IResource) {
-			return CoreModel.getDefault().create(((IResource) object).getProject());
-		} else {
-			return null;
-		}
+	private static ICProject getProject(String name) {
+		return CoreModel.getDefault().create(ResourcesPlugin.getWorkspace().getRoot().getProject(name));
 	}
 	
+	private ICElement getElement(Object obj) {
+		if (obj instanceof IResource) {
+			return CoreModel.getDefault().create((IResource)obj);
+		} 
+		if (obj instanceof ICElement) {
+			ICElement elem= (ICElement) obj;
+			if (elem instanceof ISourceReference)
+				return ((ISourceReference) elem).getTranslationUnit();
+			if (elem instanceof ITranslationUnit || elem instanceof ICContainer || elem instanceof ICProject)
+				return elem;
+			
+			return elem.getCProject();
+		}
+		return null;
+	}
+
+
 	public boolean performAction() {
 	    fLineManager.setErrorMessage(null);
 
@@ -184,28 +199,54 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 	    }
 	    
 		// get the list of elements for the scope
-		List<Object> elements = new ArrayList<Object>();
+		Set<ICElement> elements = new HashSet<ICElement>();
 		String scopeDescription = ""; //$NON-NLS-1$
 		switch (getContainer().getSelectedScope()) {
 		case ISearchPageContainer.SELECTED_PROJECTS_SCOPE:
-			if (structuredSelection != null) {
-				scopeDescription = CSearchMessages.ProjectScope; 
-				for (Iterator<?> i = structuredSelection.iterator(); i.hasNext();) {
-					ICProject project = getProject(i.next());
-					if (project != null)
-						elements.add(project);
+			final String[] prjNames = getContainer().getSelectedProjectNames();
+			scopeDescription= CSearchMessages.ProjectScope;
+			int ip= 0;
+			for (String prjName: prjNames) {
+				ICProject project = getProject(prjName);
+				if (project != null) {
+					elements.add(project);
+					switch(ip++) {
+					case 0: 
+						scopeDescription+= " '" + prjName + "'";  //$NON-NLS-1$//$NON-NLS-2$
+						break;
+					case 1:
+						scopeDescription= scopeDescription + ", '" + prjName + "'"; //$NON-NLS-1$ //$NON-NLS-2$
+						break;
+					case 2:
+						scopeDescription+= ", ..."; //$NON-NLS-1$
+						break;
+					default:
+						break;
+					} 
 				}
 			}
 			break;
 		case ISearchPageContainer.SELECTION_SCOPE:
 			if (structuredSelection != null) {
 				scopeDescription = CSearchMessages.SelectionScope; 
-				for (Iterator<?> i = structuredSelection.iterator(); i.hasNext();) {
-					Object obj = i.next();
-					if (obj instanceof IResource) {
-						elements.add(CoreModel.getDefault().create((IResource)obj));
-					} else if (obj instanceof ICElement) {
-						elements.add(obj);
+				int ie= 0;
+				for (Object sel : structuredSelection.toList()) {
+					ICElement elem= getElement(sel);
+					if (elem != null) {
+						elements.add(elem);
+						switch(ie++) {
+						case 0: 
+							scopeDescription= " '" + elem.toString() + "'";  //$NON-NLS-1$//$NON-NLS-2$
+							break;
+						case 1:
+							scopeDescription= scopeDescription + ", '" + elem.toString() + "'"; //$NON-NLS-1$ //$NON-NLS-2$
+							break;
+						case 2:
+							scopeDescription+= ", ..."; //$NON-NLS-1$
+							break;
+						default:
+							break;
+						} 
 					}
 				}
 				break;
@@ -221,9 +262,9 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 			for (int i = 0; i < workingSets.length; ++i) {
 				IAdaptable[] wsElements = workingSets[i].getElements();
 				for (int j = 0; j < wsElements.length; ++j) {
-					ICProject project = getProject(wsElements[j]);
-					if (project != null)
-						elements.add(project);
+					ICElement elem = getElement(wsElements[j]);
+					if (elem != null)
+						elements.add(elem);
 				}
 			}
 			break;

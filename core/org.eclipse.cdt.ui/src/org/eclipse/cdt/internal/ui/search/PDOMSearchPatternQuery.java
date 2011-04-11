@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 QNX Software Systems and others.
+ * Copyright (c) 2006, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -197,8 +196,6 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 
 	@Override
 	public String getResultLabel(int numMatches) {
-		String patternInScope = NLS.bind(
-				CSearchMessages.PDOMSearchPatternQuery_PatternQuery_labelPatternInScope, patternStr, scopeDesc);
-		return getResultLabel(patternInScope, numMatches); 
+		return getResultLabel(patternStr, scopeDesc, numMatches); 
 	}
 }

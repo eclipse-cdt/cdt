@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 QNX Software Systems and others.
+ * Copyright (c) 2006, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -89,6 +91,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	
 	protected ICElement[] scope;
 	protected ICProject[] projects;
+	private Set<String> fullPathFilter;
 
 	protected PDOMSearchQuery(ICElement[] scope, int flags) {
 		result = new PDOMSearchResult(this);
@@ -110,15 +113,24 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 				projects = (ICProject[]) ArrayUtil.removeNulls(ICProject.class, allProjects);
 			} else {
 				Map<String, ICProject> projectMap = new HashMap<String, ICProject>();
-				
+				Set<String> pathFilter = new HashSet<String>();
+				boolean needFilter= false;
 				for (int i = 0; i < scope.length; ++i) {
 					ICProject project = scope[i].getCProject();
 					if (project != null && project.getProject().isOpen()) {
+						IResource res= scope[i].getResource();
+						if (res != null) {
+							pathFilter.add(res.getFullPath().toString());
+							needFilter= needFilter || !(res instanceof IProject);
+						}
 						projectMap.put(project.getElementName(), project);
 					}
 				}
 				
 				projects = projectMap.values().toArray(new ICProject[projectMap.size()]);
+				if (needFilter) {
+					fullPathFilter= pathFilter;
+				}
 			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
@@ -149,8 +161,12 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	}
 
 	public abstract String getResultLabel(int matchCount);
-	
+
 	public String getResultLabel(String pattern, int matchCount) {
+		return getResultLabel(pattern, null, matchCount);
+	}
+
+	public String getResultLabel(String pattern, String scope, int matchCount) {
 		// Report pattern and number of matches
 		String label;
 		final int kindFlags= flags & FIND_ALL_OCCURRENCES;
@@ -171,6 +187,10 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 			label = NLS.bind(CSearchMessages.PDOMSearchQuery_occurrences_result_label, pattern);
 			break;
 		}
+
+		if (scope != null) 
+			label= NLS.bind(CSearchMessages.PDOMSearchPatternQuery_PatternQuery_labelPatternInScope, label, scope);
+
 		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(
 				matchCount));
 		return label + " " + countLabel; //$NON-NLS-1$
@@ -355,7 +375,26 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 
 	private void createMatches1(IIndex index, IBinding binding, List<IIndexName> names) throws CoreException {
 		IIndexName[] bindingNames= index.findNames(binding, flags);
-		names.addAll(Arrays.asList(bindingNames));
+		if (fullPathFilter == null) {
+			names.addAll(Arrays.asList(bindingNames));
+		} else {
+			for (IIndexName name : bindingNames) {
+				String fullPath= name.getFile().getLocation().getFullPath();
+				if (accept(fullPath)) 
+					names.add(name);
+			}
+		}
+	}
+
+	private boolean accept(String fullPath) {
+		for(;;) {
+			if (fullPathFilter.contains(fullPath))
+				return true;
+			int idx= fullPath.lastIndexOf('/');
+			if (idx < 0)
+				return false;
+			fullPath= fullPath.substring(0, idx);
+		} 
 	}
 
 	protected void createLocalMatches(IASTTranslationUnit ast, IBinding binding) throws CoreException {

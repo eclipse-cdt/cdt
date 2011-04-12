@@ -15,7 +15,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 
 /**
  * This variant is for non-stop (NS) multi-threaded debugging, a gdb capability
- * introduced in version 6.8.50. We provide a specialized NS implementation of
+ * introduced in version 7.0. We provide a specialized NS implementation of
  * the run control service; that's the only specialization.
  */
 public class GdbDebugServicesFactoryNS extends GdbDebugServicesFactory {

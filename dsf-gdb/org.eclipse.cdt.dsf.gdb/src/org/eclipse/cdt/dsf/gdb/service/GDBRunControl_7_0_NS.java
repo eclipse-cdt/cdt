@@ -13,11 +13,14 @@
 package org.eclipse.cdt.dsf.gdb.service;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
@@ -43,7 +46,6 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.service.command.events.MITracepointSelectedEvent;
@@ -315,6 +317,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 
 	private ICommandControlService fConnection;
 	private CommandFactory fCommandFactory;
+	private IProcesses fProcessService;
 	
 	private boolean fTerminated = false;
 
@@ -334,17 +337,17 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	}
 
 	/** 
-	 * Indicates that the next MIRunning event for this thread should be silenced.
+	 * Set of threads for which the next MIRunning event should be silenced.
 	 */
-	private IMIExecutionDMContext fDisableNextRunningEventDmc;
+	private Set<IMIExecutionDMContext> fDisableNextRunningEventDmcSet = new HashSet<IMIExecutionDMContext>();
 	/** 
-	 * Indicates that the next MISignal (MIStopped) event for this thread should be silenced.
+	 * Set of threads for which the next MISignal (MIStopped) event should be silenced.
 	 */
-	private IMIExecutionDMContext fDisableNextSignalEventDmc;
+	private Set<IMIExecutionDMContext> fDisableNextSignalEventDmcSet = new HashSet<IMIExecutionDMContext>();
 	/** 
-	 * Stores the silenced MIStopped event in case we need to use it for a failure.
+	 * Map that stores the silenced MIStopped event for the specified thread, in case we need to use it for a failure.
 	 */
-	private MIStoppedEvent fSilencedSignalEvent;
+	private Map<IMIExecutionDMContext,MIStoppedEvent> fSilencedSignalEventMap = new HashMap<IMIExecutionDMContext, MIStoppedEvent>();
 
 	/**
 	 * This variable allows us to know if run control operation
@@ -379,6 +382,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
         	     new Hashtable<String,String>());
 		fConnection = getServicesTracker().getService(ICommandControlService.class);
 		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+		fProcessService = getServicesTracker().getService(IProcesses.class);
+		
 		getSession().addServiceEventListener(this, null);
 		rm.done();
 	}
@@ -943,6 +948,22 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	 * and finally resume that thread..
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=242943
 	 * and https://bugs.eclipse.org/bugs/show_bug.cgi?id=282273
+	 * 
+ 	 * Note that for multi-process, we need to interrupt all processes
+ 	 * that share the same binary before doing a breakpoint operation on any of
+ 	 * those processes.  For simplicity, the logic below interrupts one thread of
+ 	 * every process being debugged, without differentiating on the executable.
+ 	 * Although it may seem wasteful to interrupt all processes when not necessary,
+ 	 * in truth it is not so much; when making a breakpoint operation in Eclipse, that
+ 	 * operation is propagated to all processes anyway, so they will all need to be
+ 	 * interrupted.  The case where we are wasteful is when we start or stop debugging
+ 	 * a process (starting a process, attaching to one, auto-attaching to one,
+ 	 * detaching from one, terminating one); in those cases, we only want to apply the
+ 	 * breakpoint operation to that one process and any other using the same binary.
+ 	 * The wastefulness is not such a big deal for that case, and is worth the simpler
+ 	 * solution.
+ 	 * Of course, it can always be improved later on. 
+	 * See http://bugs.eclipse.org/337893
 	 * ******************************************************************************/
 	
 	/**
@@ -962,12 +983,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		}
 	};
 	
-	// Keep track of if the target was available or not when we started the operation
-	private boolean fTargetAvailable;
-	// The container that needs to be suspended to perform the steps of the operation
-	private IContainerDMContext fContainerDmcToSuspend;
-	// The thread that we will actually suspend to make the container suspended.
-	private IMIExecutionDMContext fExecutionDmcToSuspend;
+	// The set of threads that we will actually be suspended to make the containers suspended.
+	private Set<IMIExecutionDMContext> fExecutionDmcToSuspendSet = new HashSet<IMIExecutionDMContext>();
 
 	// Do we currently have an executeWithTargetAvailable() operation ongoing?
 	private boolean fOngoingOperation;
@@ -981,7 +998,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	// allow the global sequence to continue.
 	// Note that we couldn't use a CountingRequestMonitor because that type of RM
 	// needs to know in advance how many subRms it will track; the MultiRM allows us
-	// to receive more steps to execute continuously, and be able to upate the MultiRM.
+	// to receive more steps to execute continuously, and be able to update the MultiRM.
 	private MultiRequestMonitor<RequestMonitor> fExecuteQueuedOpsStepMonitor;
 	// The number of batches of steps that are still being executing for potentially
 	// concurrent executeWithTargetAvailable() operations.
@@ -991,47 +1008,6 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	// Queue of executeWithTargetAvailable() operations that need to be processed.
 	private LinkedList<TargetAvailableOperationInfo> fOperationsPending = new LinkedList<TargetAvailableOperationInfo>();
 	
-	/**
-	 * Returns whether the target is available to perform operations
-	 * @since 4.0
-	 */
-	protected boolean isTargetAvailable() {
-		return fTargetAvailable;
-	}
-
-	/** @since 4.0 */
-	protected void setTargetAvailable(boolean available) {
-		fTargetAvailable = available;
-	}
-
-	/**
-	 * Returns the container context that needs to be suspended to perform the
-	 * required operation.
-	 * @since 4.0
-	 */
-	protected IContainerDMContext getContainerToSuspend() {
-		return fContainerDmcToSuspend;
-	}
-
-	/** @since 4.0 */
-	protected void setContainerToSuspend(IContainerDMContext context) {
-		fContainerDmcToSuspend = context;
-	}
-
-	/**
-	 * Returns the container context that needs to be suspended to perform the
-	 * required operation.
-	 * @since 4.0
-	 */
-	protected IMIExecutionDMContext getExecutionToSuspend() {
-		return fExecutionDmcToSuspend;
-	}
-
-	/** @since 4.0 */
-	protected void setExecutionToSuspend(IMIExecutionDMContext context) {
-		fExecutionDmcToSuspend = context;
-	}
-
 	/** 
 	 * Returns whether there is currently an ExecuteWithTargetAvailable() operation ongoing. 
 	 * @since 4.0 
@@ -1191,8 +1167,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	
 	
 	/**
-	 * This part of the sequence verifies if the execution context of interest
-	 * is suspended or not.
+	 * This part of the sequence looks for all threads that will need to be suspended.
 	 * @since 3.0
 	 */
 	protected class IsTargetAvailableStep extends Sequence.Step {
@@ -1202,86 +1177,91 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			fCtx = ctx;
 		}
 		
+		private void getThreadToSuspend(IContainerDMContext containerDmc, final RequestMonitor rm) {
+			// If the process is running, get its first thread which we will need to suspend
+			fProcessService.getProcessesBeingDebugged(
+					containerDmc,
+					new DataRequestMonitor<IDMContext[]>(ImmediateExecutor.getInstance(), rm) {
+						@Override
+						protected void handleSuccess() {
+							IDMContext[] threads = getData();
+							if (threads != null && threads.length > 0) {
+								// Choose the first thread as the one to suspend
+								fExecutionDmcToSuspendSet.add((IMIExecutionDMContext)threads[0]);
+							}
+							rm.done();
+						}
+					});
+		}
+
 		@Override
 		public void execute(final RequestMonitor rm) {
-			// In non-stop, for single address-space multi-process,
-			// we need any one of the processes to be suspended.
-			// Note that even if we can obtain a container dmc from fCtx
-			// we will have issues because that context is probably not
-			// fully formed (missing groupId and procId).  So, we just
-			// make it easy on ourselves and fetch the containers directly
-			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(fCtx, ICommandControlDMContext.class);
-			IProcesses processControl = getServicesTracker().getService(IProcesses.class);
-			processControl.getProcessesBeingDebugged(
-					controlDmc,
-					new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
+			// Clear any old data before we start
+			fExecutionDmcToSuspendSet.clear();
+			
+			// Get all processes being debugged to see which one are running
+			// and need to be interrupted
+			fProcessService.getProcessesBeingDebugged(
+					fConnection.getContext(),
+					new DataRequestMonitor<IDMContext[]>(ImmediateExecutor.getInstance(), rm) {
 						@Override
 						protected void handleSuccess() {
 							assert getData() != null;
-							
+
 							if (getData().length == 0) {
 								// Happens at startup, starting with GDB 7.0.
-								// This means the target is available
-								fTargetAvailable = true;
+								// This means the target is available.  Nothing to do.
+								rm.done();
 							} else {
-								fTargetAvailable = false;
-								// Choose the first process as the one to suspend if needed
-								fContainerDmcToSuspend = (IContainerDMContext)(getData()[0]);
-								for (IDMContext containerDmc : getData()) {
-									if (isSuspended((IContainerDMContext)containerDmc)) {
-										fTargetAvailable = true;
-										break;
+								// Go through every process to see if it is running.
+								// If it is running, get its first thread so we can interrupt it.
+								CountingRequestMonitor crm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), rm);
+								
+								int numThreadsToSuspend = 0;
+								for (IDMContext dmc : getData()) {
+									IContainerDMContext containerDmc = (IContainerDMContext)dmc;
+									if (!isSuspended(containerDmc)) {
+										numThreadsToSuspend++;
+										getThreadToSuspend(containerDmc, crm);
 									}
 								}
+								crm.setDoneCount(numThreadsToSuspend);
 							}
-							rm.done();
 						}
 					});
 		}
 	};
 
 	/**
-	 * If the execution context of interest is not suspended, this step
-	 * will interrupt it.
+	 * Suspended all the threads we have selected.
 	 * @since 3.0
 	 */
 	protected class MakeTargetAvailableStep extends Sequence.Step {
 		@Override
 		public void execute(final RequestMonitor rm) {
-			if (!isTargetAvailable()) {
-				// Instead of suspending the entire process, let's find its first thread and use that
-				IProcesses processControl = getServicesTracker().getService(IProcesses.class);
-				processControl.getProcessesBeingDebugged(
-						fContainerDmcToSuspend,
-						new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
-							@Override
-							protected void handleSuccess() {
-								assert getData() != null;
-								assert getData().length > 0;
-							
-								fExecutionDmcToSuspend = (IMIExecutionDMContext)getData()[0];
-							
-								assert fDisableNextRunningEventDmc == null;
-								assert fDisableNextSignalEventDmc == null;
-								
-								// Don't broadcast the next stopped signal event
-								fDisableNextSignalEventDmc = fExecutionDmcToSuspend;
-								
-								suspend(fExecutionDmcToSuspend,
-										new RequestMonitor(getExecutor(), rm) {
-									@Override
-									protected void handleFailure() {
-										// We weren't able to suspend, so abort the operation
-										fDisableNextSignalEventDmc = null;
-										super.handleFailure();
-									};
-								});
-							}
-						});
-			} else {
-				rm.done();
+			// Interrupt every first thread of the running processes
+			CountingRequestMonitor crm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), rm);
+			crm.setDoneCount(fExecutionDmcToSuspendSet.size());
+			
+			for (final IMIExecutionDMContext thread : fExecutionDmcToSuspendSet) {
+				assert !fDisableNextRunningEventDmcSet.contains(thread);
+				assert !fDisableNextSignalEventDmcSet.contains(thread);
+
+				// Don't broadcast the next stopped signal event
+				fDisableNextSignalEventDmcSet.add(thread);
+
+				suspend(thread,
+						new RequestMonitor(ImmediateExecutor.getInstance(), crm) {
+					@Override
+					protected void handleFailure() {
+						// We weren't able to suspend, so abort the operation
+						fDisableNextSignalEventDmcSet.remove(thread);
+						super.handleFailure();
+					};
+				});
 			}
 		}
+
 		@Override
 		public void rollBack(RequestMonitor rm) {
 		    Sequence.Step restoreStep = new RestoreTargetStateStep();
@@ -1333,46 +1313,47 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	protected class RestoreTargetStateStep extends Sequence.Step {
 		@Override
 		public void execute(final RequestMonitor rm) {
-			if (!isTargetAvailable()) {
-				assert fDisableNextRunningEventDmc == null;
-				fDisableNextRunningEventDmc = fExecutionDmcToSuspend;
-				
+			// Resume every thread we had interrupted
+			CountingRequestMonitor crm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), rm);
+			crm.setDoneCount(fExecutionDmcToSuspendSet.size());
+			
+			for (final IMIExecutionDMContext thread : fExecutionDmcToSuspendSet) {
+
+				assert !fDisableNextRunningEventDmcSet.contains(thread);
+				fDisableNextRunningEventDmcSet.add(thread);
+
 				// Can't use the resume() call because we 'silently' stopped
 				// so resume() will not know we are actually stopped
 				fConnection.queueCommand(
-						fCommandFactory.createMIExecContinue(fExecutionDmcToSuspend),
-						new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+						fCommandFactory.createMIExecContinue(thread),
+						new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), crm) {
 							@Override
 							protected void handleSuccess() {
-								fSilencedSignalEvent = null;
+								fSilencedSignalEventMap.remove(thread);
 								super.handleSuccess();
 							}
 
 							@Override
 							protected void handleFailure() {
 								// Darn, we're unable to restart the target.  Must cleanup!
-								fDisableNextRunningEventDmc = null;
-								
+								fDisableNextRunningEventDmcSet.remove(thread);
+
 								// We must also sent the Stopped event that we had kept silent
-								if (fSilencedSignalEvent != null) {
-									eventDispatched(fSilencedSignalEvent);
-									fSilencedSignalEvent = null;
+								MIStoppedEvent event = fSilencedSignalEventMap.remove(thread);
+								if (event != null) {
+									eventDispatched(event);
 								} else {
 									// Maybe the stopped event didn't arrive yet.
 									// We don't want to silence it anymore
-									fDisableNextSignalEventDmc = null;
+									fDisableNextSignalEventDmcSet.remove(thread);
 								}
 
 								super.handleFailure();
 							}
 						});
-
-			} else {
-				// We didn't suspend the thread, so we don't need to resume it
-				rm.done();
 			}
 		}
-	 };
+	};
 
 	 /* ******************************************************************************
 	  * End of section to support operations even when the target is unavailable.
@@ -1388,14 +1369,11 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
      */
 	@DsfServiceEventHandler
 	public void eventDispatched(final MIRunningEvent e) {
-		if (fDisableNextRunningEventDmc != null &&
-			fDisableNextRunningEventDmc.equals(e.getDMContext())) {
-
-			fDisableNextRunningEventDmc = null;
-			
+		if (fDisableNextRunningEventDmcSet.remove(e.getDMContext())) {
 			// Don't broadcast the running event
 			return;
 		}
+
         getSession().dispatchEvent(new ResumedEvent(e.getDMContext(), e), getProperties());
 	}
 
@@ -1457,11 +1435,10 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     			}
     		}
     	}
-		if (fDisableNextSignalEventDmc != null && e instanceof MISignalEvent &&
-			fDisableNextSignalEventDmc.equals(e.getDMContext())) {
-			
-			fDisableNextSignalEventDmc = null;
-			fSilencedSignalEvent = e;
+    	
+		IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(e.getDMContext(), IMIExecutionDMContext.class);
+		if (e instanceof MISignalEvent && fDisableNextSignalEventDmcSet.remove(threadDmc)) {			
+			fSilencedSignalEventMap.put(threadDmc, e);
 
 			// Don't broadcast the stopped event
 			return;

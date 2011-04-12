@@ -341,8 +341,10 @@ public class ToggleNodeHelper extends NodeHelper {
 	}
 
 	public static String getFilenameWithoutExtension(String filename) {
-		int index = filename.lastIndexOf('.');
-		return filename.substring(0, index);
+		int indexP = filename.lastIndexOf('.');
+		int indexS = filename.lastIndexOf('/');
+		indexS++;
+		return filename.substring(indexS, indexP);
 	}
 
 	/**

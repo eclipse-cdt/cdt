@@ -2872,7 +2872,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				final IPath location= ((IStorage) sourceElement).getFullPath();
 				if (location != null) {
 					IFile iFile = ResourceLookup.selectFileForLocation(location, null);
-					if (iFile != null) {
+					if (iFile != null && iFile.isAccessible()) {
 						sourceElement = iFile;
 					}
 				}

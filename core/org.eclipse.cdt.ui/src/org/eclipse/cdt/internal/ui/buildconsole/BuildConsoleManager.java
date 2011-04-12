@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -238,12 +239,12 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		}
 	}
 
-	public void startup(String name, String id) {
+	public void startup(String name, String contextId, final URL iconUrl) {
 		infoStream = new BuildConsoleStreamDecorator();
 		outputStream = new BuildConsoleStreamDecorator();
 		errorStream = new BuildConsoleStreamDecorator();
 		fName = name;
-		fContextMenuId = id;
+		fContextMenuId = contextId;
 
 		runUI(new Runnable() {
 
@@ -255,7 +256,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			public void run() {
 				// install colors
 				fGlobalConsole = new GlobalBuildConsole(BuildConsoleManager.this, fName, null);
-				fConsole = new BuildConsole(BuildConsoleManager.this, fName, fContextMenuId);
+				fConsole = new BuildConsole(BuildConsoleManager.this, fName, fContextMenuId, iconUrl);
 				ConsolePlugin.getDefault().getConsoleManager().addConsoles(new org.eclipse.ui.console.IConsole[]{fGlobalConsole, fConsole});
 				infoStream.setConsole(fConsole);
 				infoColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR);

@@ -10,14 +10,22 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
-import org.eclipse.cdt.core.ConsoleOutputStream;
-import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IBuildConsoleManager;
+import java.net.URL;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
-public class CBuildConsole implements IConsole {
+import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IBuildConsoleManager;
+
+import org.eclipse.cdt.internal.core.ICConsole;
+
+/**
+ * CDT console adaptor providing output streams. The adaptor provides means of
+ * access to UI plugin console.
+ */
+public class CBuildConsole implements ICConsole {
 	IProject project;
 	IBuildConsoleManager fConsoleManager;
 	
@@ -25,10 +33,21 @@ public class CBuildConsole implements IConsole {
 	 * Constructor for BuildConsole.
 	 */
 	public CBuildConsole() {
-		fConsoleManager = CUIPlugin.getDefault().getConsoleManager();
 	}
 
-	public void start(IProject project ) {
+	public void init(String contextId, String name, URL iconUrl) {
+		if (contextId==null)
+			fConsoleManager = CUIPlugin.getDefault().getConsoleManager();
+		else
+			fConsoleManager = CUIPlugin.getDefault().getConsoleManager(name, contextId, iconUrl); // careful with order of arguments
+	}
+
+	/**
+	 * Start the console for a given project.
+	 * 
+	 * @param project - the project to start the console.
+	 */
+	public void start(IProject project) {
 		this.project = project;
 		fConsoleManager.getConsole(project).start(project);
 	}

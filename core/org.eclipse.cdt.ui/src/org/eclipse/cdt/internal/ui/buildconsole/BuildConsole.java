@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
+import java.net.URL;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.console.AbstractConsole;
@@ -24,6 +26,10 @@ import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IBuildConsoleManager;
 
+/**
+ * CDT Build console.
+ *
+ */
 public class BuildConsole extends AbstractConsole {
 
 	/**
@@ -47,11 +53,38 @@ public class BuildConsole extends AbstractConsole {
 	private String fConsoleId;
 	private Color fBackground;
 
-	public BuildConsole(IBuildConsoleManager manager, String name, String id) {
+	/**
+	 * Constructor.
+	 * 
+	 * @param manager - build console manager.
+	 * @param name - name of console to appear in the list of consoles in context menu
+	 *    in the Console view.
+	 * @param contextId - context menu id in the Console view.
+	 */
+	public BuildConsole(IBuildConsoleManager manager, String name, String contextId) {
+		this(manager, name, contextId, null);
+	}
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param manager - build console manager.
+	 * @param name - name of console to appear in the list of consoles in context menu
+	 *    in the Console view.
+	 * @param contextId - context menu id in the Console view.
+	 * @param iconUrl - a {@link URL} of the icon for the context menu of the Console
+	 *    view. The url is expected to point to an image in eclipse OSGi bundle.
+	 *    {@code iconUrl} can be <b>null</b>, in that case the default image is used.
+	 */
+	public BuildConsole(IBuildConsoleManager manager, String name, String contextId, URL iconUrl) {
 		super(name, CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_VIEW_BUILD_CONSOLE));
+		if (iconUrl!=null) {
+			CDTSharedImages.register(iconUrl);
+			this.setImageDescriptor(CDTSharedImages.getImageDescriptor(iconUrl.toString()));
+		}
 		fConsoleManager = manager;
 		fConsoleName = name;
-		fConsoleId = id;
+		fConsoleId = contextId;
 	}
 
 	public IPageBookViewPage createPage(IConsoleView view) {

@@ -16,6 +16,7 @@
 package org.eclipse.cdt.ui;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -481,17 +482,39 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Return a console manager specified by id.
-	 * @param name console name
-	 * @param id console id
-	 * @return IBuildConsoleManager
-	 */	
-	public IBuildConsoleManager getConsoleManager(String name, String id) {
-		BuildConsoleManager manager = fBuildConsoleManagers.get(id);
+	 * Obtain a console manager with the given id. If a manager has not been created yet,
+	 * it is created and its console created and activated.
+	 * 
+	 * @param name - console name.
+	 * @param contextId - console id matching context id in the Console view dropdown.
+	 * @return console manager.
+	 * 
+	 * Note that this method is rather internal and should not be referenced by clients.
+	 * To create a build console, use {@link CCorePlugin#getBuildConsole(String, String, URL)}
+	 */
+	public IBuildConsoleManager getConsoleManager(String name, String contextId) {
+		return getConsoleManager(name, contextId, null);
+	}
+
+	/**
+	 * Obtain a console manager with the given id. If a manager has not been created yet,
+	 * it is created and its console created and activated with the given attributes.
+	 * 
+	 * @param name - console name.
+	 * @param contextId - console id matching context id in the Console view dropdown.
+	 * @param iconUrl - a {@link URL} of the icon for the context menu of the Console
+	 *    view. The url is expected to point to an image in eclipse OSGi bundle.
+	 *    {@code iconUrl} can be <b>null</b>, in that case the default image is used.
+	 * @return console manager.
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public IBuildConsoleManager getConsoleManager(String name, String contextId, URL iconUrl) {
+		BuildConsoleManager manager = fBuildConsoleManagers.get(contextId);
 		if (manager == null ) {
 			manager = new BuildConsoleManager();
-			fBuildConsoleManagers.put(id, manager);
-			manager.startup(name, id);
+			fBuildConsoleManagers.put(contextId, manager);
+			manager.startup(name, contextId, iconUrl);
 		}
 		return manager;
 	}

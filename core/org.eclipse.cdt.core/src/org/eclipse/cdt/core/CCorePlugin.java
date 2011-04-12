@@ -16,6 +16,7 @@
 package org.eclipse.cdt.core;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,6 +46,7 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.CContentTypes;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CdtVarPathEntryVariableManager;
+import org.eclipse.cdt.internal.core.ICConsole;
 import org.eclipse.cdt.internal.core.PositionTrackerManager;
 import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
 import org.eclipse.cdt.internal.core.cdtvariables.UserVarSupplier;
@@ -201,11 +203,10 @@ public class CCorePlugin extends Plugin {
 	private static CCorePlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
 
-
 	/**
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-    public CDTLogWriter cdtLog = null;
+	public CDTLogWriter cdtLog = null;
 
 	private volatile CProjectDescriptionManager fNewCProjectDescriptionManager;
 
@@ -214,6 +215,31 @@ public class CCorePlugin extends Plugin {
 	private PDOMManager pdomManager;
 
 	private CdtVarPathEntryVariableManager fPathEntryVariableManager;
+	
+	private final class NullConsole implements IConsole {
+		private ConsoleOutputStream nullStream = new ConsoleOutputStream() {
+			@Override
+			public void write(byte[] b) throws IOException {
+			}
+			@Override
+			public void write(byte[] b, int off, int len) throws IOException {
+			}
+			@Override
+			public void write(int c) throws IOException {
+			}
+		};
+		public void start(IProject project) {
+		}
+		public ConsoleOutputStream getOutputStream() {
+			return nullStream;
+		}
+		public ConsoleOutputStream getInfoStream() {
+			return nullStream; 
+		}
+		public ConsoleOutputStream getErrorStream() {
+			return nullStream;
+		}
+	}
 
 	// -------- static methods --------
 
@@ -482,17 +508,42 @@ public class CCorePlugin extends Plugin {
     }    
     
 
-	public IConsole getConsole(String id) {
+	/**
+	 * Create CDT console adapter for build console defined as an extension.
+	 * See {@code org.eclipse.cdt.core.CBuildConsole} extension point.
+	 * If the console class is instance of {@link ICConsole} it is initialized
+	 * with context id, name and icon to be shown in the list of consoles in the
+	 * Console view.
+	 * 
+	 * @param extConsoleId - console id defined in the extension point.
+	 * @param contextId - context menu id in the Console view. A caller needs to define
+	 *    a distinct one for own use.
+	 * @param name - name of console to appear in the list of consoles in context menu
+	 *    in the Console view.
+	 * @param iconUrl - a {@link URL} of the icon for the context menu of the Console
+	 *    view. The url is expected to point to an image in eclipse OSGi bundle.
+	 *    Here is an example how to retrieve URL:<br/>
+	 *    <code>
+	 *    URL iconUrl = CUIPlugin.getDefault().getBundle().getResource("icons/obj16/flask.png");
+	 *    </code>
+	 * 
+	 * @return CDT console adapter.
+	 */
+	private IConsole getConsole(String extConsoleId, String contextId, String name, URL iconUrl) {
 		try {
-	        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, "CBuildConsole"); //$NON-NLS-1$
-			if (extension != null) {
-				IExtension[] extensions = extension.getExtensions();
-				for (IExtension extension2 : extensions) {
-					IConfigurationElement[] configElements = extension2.getConfigurationElements();
+			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, "CBuildConsole"); //$NON-NLS-1$
+			if (extensionPoint != null) {
+				IExtension[] extensions = extensionPoint.getExtensions();
+				for (IExtension extension : extensions) {
+					IConfigurationElement[] configElements = extension.getConfigurationElements();
 					for (IConfigurationElement configElement : configElements) {
 						String consoleID = configElement.getAttribute("id"); //$NON-NLS-1$
-						if ((id == null && consoleID == null) || (id != null && id.equals(consoleID))) {
-							return (IConsole) configElement.createExecutableExtension("class"); //$NON-NLS-1$
+						if ((extConsoleId == null && consoleID == null) || (extConsoleId != null && extConsoleId.equals(consoleID))) {
+							IConsole console = (IConsole) configElement.createExecutableExtension("class"); //$NON-NLS-1$
+							if (console instanceof ICConsole) {
+								((ICConsole) console).init(contextId, name, iconUrl);
+							}
+							return console;
 						}
 					}
 				}
@@ -500,34 +551,52 @@ public class CCorePlugin extends Plugin {
 		} catch (CoreException e) {
 			log(e);
 		}
-		return new IConsole() { // return a null console
-			private ConsoleOutputStream nullStream = new ConsoleOutputStream() {
-			    @Override
-				public void write(byte[] b) throws IOException {
-			    }			    
-				@Override
-				public void write(byte[] b, int off, int len) throws IOException {
-				}					
-				@Override
-				public void write(int c) throws IOException {
-				}
-			};
-			
-			public void start(IProject project) {
-			}
-		    // this can be a null console....
-			public ConsoleOutputStream getOutputStream() {
-				return nullStream;
-			}
-			public ConsoleOutputStream getInfoStream() {
-				return nullStream; 
-			}
-			public ConsoleOutputStream getErrorStream() {
-				return nullStream;
-			}
-		};
+		return new NullConsole();
 	}
 
+	/**
+	 * Create CDT console adapter.
+	 * The adapter serves as a bridge between core plugin and UI console API in a way that
+	 * a user can create a UI console from plugins having no dependencies to UI.
+	 *  
+	 * @param id - id of the console specified in extension point to instantiate
+	 *    console adapter.
+	 * @return CDT console adapter.
+	 */
+	public IConsole getConsole(String id) {
+		return getConsole(id, null, null, null);
+	}
+
+	/**
+	 * Create CDT console adapter for build console. A new instance of class
+	 * {@code org.eclipse.cdt.internal.ui.buildconsole.CBuildConsole} is created
+	 * and initialized with the parameters.
+	 * 
+	 * @param contextId - context menu id in the Console view. A caller needs to define
+	 *    a distinct one for own use.
+	 * @param name - name of console to appear in the list of consoles in context menu
+	 *    in the Console view.
+	 * @param iconUrl - a {@link URL} of the icon for the context menu of the Console
+	 *    view. The url is expected to point to an image in eclipse OSGi bundle.
+	 *    Here is an example how to retrieve URL:<br/>
+	 *    <code>
+	 *    URL iconUrl = CUIPlugin.getDefault().getBundle().getResource("icons/obj16/flask.png");
+	 *    </code>
+	 *    <br/>
+	 *    {@code iconUrl} can be <b>null</b>, in that case the default image is used.
+	 *    See {@code org.eclipse.cdt.internal.ui.buildconsole.BuildConsole(IBuildConsoleManager, String, String, URL)}
+	 * 
+	 * @return CDT console adapter.
+	 * 
+	 * @since 5.3
+	 */
+	public IConsole getBuildConsole(String contextId, String name, URL iconUrl) {
+		return getConsole(null, contextId, name, iconUrl);
+	}
+
+	/**
+	 * Create CDT console adapter connected to the default build console.
+	 */
 	public IConsole getConsole() {
 		String consoleID = System.getProperty("org.eclipse.cdt.core.console"); //$NON-NLS-1$
 		return getConsole(consoleID);

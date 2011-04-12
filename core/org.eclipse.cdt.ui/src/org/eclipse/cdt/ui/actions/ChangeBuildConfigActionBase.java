@@ -254,24 +254,26 @@ public class ChangeBuildConfigActionBase {
 		if (!badObject && !fProjects.isEmpty()) {
 			Iterator<IProject> iter = fProjects.iterator();
 			ICConfigurationDescription[] firstConfigs = getCfgs(iter.next());
-			for (ICConfigurationDescription firstConfig : firstConfigs) {
-				boolean common = true;
-				Iterator<IProject> iter2 = fProjects.iterator();
-				while (iter2.hasNext()) {
-					ICConfigurationDescription[] currentConfigs = getCfgs(iter2.next());
-					int j = 0;
-					for (; j < currentConfigs.length; j++) {
-						if (firstConfig.getName().equals(currentConfigs[j].getName())) 
+			if (firstConfigs!=null) {
+				for (ICConfigurationDescription firstConfig : firstConfigs) {
+					boolean common = true;
+					Iterator<IProject> iter2 = fProjects.iterator();
+					while (iter2.hasNext()) {
+						ICConfigurationDescription[] currentConfigs = getCfgs(iter2.next());
+						int j = 0;
+						for (; j < currentConfigs.length; j++) {
+							if (firstConfig.getName().equals(currentConfigs[j].getName())) 
+								break;
+						}
+						if (j == currentConfigs.length) {
+							common = false;
 							break;
+						}
 					}
-					if (j == currentConfigs.length) {
-						common = false;
+					if (common) {
+						enable = true;
 						break;
 					}
-				}
-				if (common) {
-					enable = true;
-					break;
 				}
 			}
 		}

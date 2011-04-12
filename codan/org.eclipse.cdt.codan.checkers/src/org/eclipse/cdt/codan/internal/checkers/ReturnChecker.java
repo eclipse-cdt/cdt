@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *     Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -14,7 +14,6 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractAstFunctionChecker;
-import org.eclipse.cdt.codan.core.cxx.model.CxxModelsCache;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.model.cfg.ICfgData;
@@ -156,7 +155,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	 * @return
 	 */
 	protected boolean endsWithNoExitNode(IASTFunctionDefinition func) {
-		IControlFlowGraph graph = CxxModelsCache.getInstance().getControlFlowGraph(func);
+		IControlFlowGraph graph = getModelCache().getControlFlowGraph(func);
 		Iterator<IExitNode> exitNodeIterator = graph.getExitNodeIterator();
 		boolean noexitop = false;
 		for (; exitNodeIterator.hasNext();) {

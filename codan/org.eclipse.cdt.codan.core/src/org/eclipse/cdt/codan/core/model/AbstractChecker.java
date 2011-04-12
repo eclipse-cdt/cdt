@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *     Alena Laskavaia  - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
@@ -14,22 +15,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
-import org.eclipse.cdt.codan.internal.core.CheckerInvocationContext;
 import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  * Convenience implementation of IChecker interface. Has a default
  * implementation for common methods.
- * 
  */
 public abstract class AbstractChecker implements IChecker {
-	protected String name;
 	/**
 	 * @since 2.0
 	 */
-	protected ICheckerInvocationContext context;
+	private ICheckerInvocationContext context;
+	private IProblemReporter problemReporter;
 
 	/**
 	 * Default constructor
@@ -47,7 +47,7 @@ public abstract class AbstractChecker implements IChecker {
 
 	/**
 	 * Reports a simple problem for given file and line
-	 * 
+	 *
 	 * @param id
 	 *        - problem id
 	 * @param file
@@ -66,7 +66,7 @@ public abstract class AbstractChecker implements IChecker {
 	/**
 	 * Finds an instance of problem by given id, in user profile registered for
 	 * specific file
-	 * 
+	 *
 	 * @param id
 	 *        - problem id
 	 * @param file
@@ -104,7 +104,7 @@ public abstract class AbstractChecker implements IChecker {
 	/**
 	 * Reports a simple problem for given file and line, error message comes
 	 * from problem definition
-	 * 
+	 *
 	 * @param id
 	 *        - problem id
 	 * @param file
@@ -121,16 +121,12 @@ public abstract class AbstractChecker implements IChecker {
 	 * @since 2.0
 	 */
 	public IProblemReporter getProblemReporter() {
-		try {
-			return getContext().getProblemReporter();
-		} catch (Exception e) {
-			return CodanRuntime.getInstance().getProblemReporter();
-		}
+		return problemReporter;
 	}
 
 	/**
 	 * Convenience method to return codan runtime
-	 * 
+	 *
 	 * @return
 	 */
 	protected CodanRuntime getRuntime() {
@@ -139,7 +135,7 @@ public abstract class AbstractChecker implements IChecker {
 
 	/**
 	 * Convenience method to create and return instance of IProblemLocation
-	 * 
+	 *
 	 * @param file
 	 *        - file where problem is found
 	 * @param line
@@ -152,7 +148,7 @@ public abstract class AbstractChecker implements IChecker {
 
 	/**
 	 * Convenience method to create and return instance of IProblemLocation
-	 * 
+	 *
 	 * @param file
 	 *        - file where problem is found
 	 * @param startChar
@@ -176,7 +172,7 @@ public abstract class AbstractChecker implements IChecker {
 
 	/**
 	 * report a problem
-	 * 
+	 *
 	 * @param problemId - id of a problem
 	 * @param loc - problem location
 	 * @param args - extra problem arguments
@@ -186,56 +182,72 @@ public abstract class AbstractChecker implements IChecker {
 	}
 
 	/**
-	 * Get invocation context.
-	 * 
+	 * Returns the invocation context.
+	 *
 	 * @return checker invocation context
-	 * 
+	 *
 	 * @since 2.0
 	 */
-	public ICheckerInvocationContext getContext() {
+	protected ICheckerInvocationContext getContext() {
 		return context;
 	}
 
 	/**
-	 * Set the invocation context. Usually called by codan builder.
-	 * Object that calls this should also synchronize of checker object
-	 * to prevent multi-thread access to a running context
-	 * 
 	 * @since 2.0
 	 */
-	public void setContext(ICheckerInvocationContext context) {
+	protected void setContext(ICheckerInvocationContext context) {
 		this.context = context;
 	}
 
 	/**
 	 * @since 2.0
 	 */
-	public boolean before(IResource resource) {
-		IChecker checker = this;
+	public void before(IResource resource) {
 		IProblemReporter problemReporter = CodanRuntime.getInstance().getProblemReporter();
-		IProblemReporter sessionReporter = problemReporter;
+		this.problemReporter = problemReporter;
 		if (problemReporter instanceof IProblemReporterSessionPersistent) {
 			// create session problem reporter
-			sessionReporter = ((IProblemReporterSessionPersistent) problemReporter).createReporter(resource, checker);
-			((IProblemReporterSessionPersistent) sessionReporter).start();
+			this.problemReporter = ((IProblemReporterSessionPersistent) problemReporter).createReporter(resource, this);
+			((IProblemReporterSessionPersistent) this.problemReporter).start();
 		} else if (problemReporter instanceof IProblemReporterPersistent) {
 			// delete markers if checker can possibly run on this
 			// resource  this way if checker is not enabled markers would be
 			// deleted too
-			((IProblemReporterPersistent) problemReporter).deleteProblems(resource, checker);
+			((IProblemReporterPersistent) problemReporter).deleteProblems(resource, this);
 		}
-		((AbstractChecker) checker).setContext(new CheckerInvocationContext(resource, sessionReporter));
-		return true;
 	}
 
 	/**
 	 * @since 2.0
 	 */
-	public boolean after(IResource resource) {
-		if (getContext().getProblemReporter() instanceof IProblemReporterSessionPersistent) {
-			// delete general markers
-			((IProblemReporterSessionPersistent) getContext().getProblemReporter()).done();
+	public void after(IResource resource) {
+		if (problemReporter instanceof IProblemReporterSessionPersistent) {
+			// Delete general markers
+			((IProblemReporterSessionPersistent) problemReporter).done();
 		}
-		return true;
+		problemReporter = null;
+	}
+
+	/**
+	 * @param resource the resource to process.
+	 * @return true if framework should traverse children of the resource and
+	 *      run this checkers on them again.
+	 * @throws OperationCanceledException if the checker was interrupted.
+	 * @since 2.0
+	 */
+	public abstract boolean processResource(IResource resource) throws OperationCanceledException;
+
+	/**
+	 * @see IChecker#processResource(IResource, ICheckerInvocationContext)
+	 * @since 2.0
+	 */
+	public synchronized boolean processResource(IResource resource, ICheckerInvocationContext context)
+			throws OperationCanceledException {
+		this.setContext(context);
+		try {
+			return processResource(resource);
+		} finally {
+			this.setContext(null);
+		}
 	}
 }

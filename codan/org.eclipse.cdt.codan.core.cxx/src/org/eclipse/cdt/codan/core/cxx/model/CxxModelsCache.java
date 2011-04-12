@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *     Alena Laskavaia  - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cxx.model;
 
@@ -15,32 +16,71 @@ import java.util.WeakHashMap;
 import org.eclipse.cdt.codan.core.cxx.Activator;
 import org.eclipse.cdt.codan.core.cxx.internal.model.CodanCommentMap;
 import org.eclipse.cdt.codan.core.cxx.internal.model.cfg.CxxControlFlowGraph;
+import org.eclipse.cdt.codan.core.model.ICodanDisposable;
 import org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  * Cache data models for resource so checkers can share it
  */
-public class CxxModelsCache {
-	private IFile file;
-	private IASTTranslationUnit ast;
-	private ITranslationUnit tu;
-	private IIndex index;
-	private WeakHashMap<IASTFunctionDefinition, IControlFlowGraph> cfgmap = new WeakHashMap<IASTFunctionDefinition, IControlFlowGraph>(0);
-	private ICodanCommentMap commentMap;
-	private static CxxModelsCache instance = new CxxModelsCache();
+public class CxxModelsCache implements ICodanDisposable {
+	private static final int PARSE_MODE = ITranslationUnit.AST_SKIP_ALL_HEADERS
+			| ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT
+			| ITranslationUnit.AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS
+			| ITranslationUnit.AST_PARSE_INACTIVE_CODE;
 
-	public static CxxModelsCache getInstance() {
-		return instance;
+	private final IFile file;
+	private final ITranslationUnit tu;
+	private IASTTranslationUnit ast;
+	private IIndex index;
+	private final WeakHashMap<IASTFunctionDefinition, IControlFlowGraph> cfgmap;
+	private ICodanCommentMap commentMap;
+	private boolean disposed;
+
+	CxxModelsCache(ITranslationUnit tu) {
+		this.tu = tu;
+		this.file = tu != null ? (IFile) tu.getResource() : null;
+		cfgmap = new WeakHashMap<IASTFunctionDefinition, IControlFlowGraph>(0);
+	}
+	
+	CxxModelsCache(IASTTranslationUnit ast) {
+		this(ast.getOriginatingTranslationUnit());
+		this.ast = ast;
+	}
+
+	public IASTTranslationUnit getAST() throws OperationCanceledException, CoreException {
+		return getAST(tu);
+	}
+
+	public IASTTranslationUnit getAST(ITranslationUnit tu)
+			throws OperationCanceledException, CoreException {
+		if (!this.tu.equals(tu)) {
+			throw new IllegalArgumentException();
+		}
+		if (ast == null) {
+			getIndex();
+			ast= tu.getAST(index, PARSE_MODE);
+		}
+		return ast;
+	}
+
+	public ITranslationUnit getTranslationUnit() {
+		return tu;
+	}
+
+	public IFile getFile() {
+		return file;
 	}
 
 	public synchronized IControlFlowGraph getControlFlowGraph(IASTFunctionDefinition func) {
@@ -48,85 +88,67 @@ public class CxxModelsCache {
 		if (cfg != null)
 			return cfg;
 		cfg = CxxControlFlowGraph.build(func);
-		if (cfgmap.size() > 20) { // if too many function better drop the cash XXX should be LRU
+		// TODO(Alena Laskavaia): Change to LRU.
+		if (cfgmap.size() > 20) { // if too many function better drop the cash
 			cfgmap.clear();
 		}
 		cfgmap.put(func, cfg);
 		return cfg;
 	}
 
-	public synchronized IASTTranslationUnit getAst(IFile file) throws CoreException, InterruptedException {
-		if (file.equals(this.file)) {
-			return ast;
+	public synchronized ICodanCommentMap getCommentedNodeMap() {
+		return getCommentedNodeMap(tu);
+	}
+	
+	public synchronized ICodanCommentMap getCommentedNodeMap(ITranslationUnit tu) {
+		if (!this.tu.equals(tu)) {
+			throw new IllegalArgumentException();
 		}
-		// create translation unit and access index
-		ICElement celement = CoreModel.getDefault().create(file);
-		if (!(celement instanceof ITranslationUnit))
-			return null; // not a C/C++ file
-		clearCash();
-		this.file = file;
-		//System.err.println("Making ast for "+file);
-		tu = (ITranslationUnit) celement;
-		index = CCorePlugin.getIndexManager().getIndex(tu.getCProject());
-		// lock the index for read access
-		index.acquireReadLock();
-		try {
-			// create index based ast
-			ast = tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
-			if (ast == null)
-				return null;//
-			return ast;
-		} finally {
+		if (commentMap == null) {
+			if (ast == null) {
+				throw new IllegalStateException("getCommentedNodeMap called before getAST"); //$NON-NLS-1$
+			}
+			commentMap = new CodanCommentMap(ASTCommenter.getCommentedNodeMap(ast));
+		}
+		return commentMap;
+	}
+
+	/**
+	 * Returns the index that can be safely used for reading until the cache is disposed.
+	 * 
+	 * @return The index.
+	 */
+	public synchronized IIndex getIndex() throws CoreException, OperationCanceledException {
+        Assert.isTrue(!disposed, "CxxASTCache is already disposed."); //$NON-NLS-1$
+		if (this.index == null) {
+			ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
+			IIndex index = CCorePlugin.getIndexManager().getIndex(projects);
+			try {
+				index.acquireReadLock();
+			} catch (InterruptedException e) {
+				throw new OperationCanceledException();
+			}
+			this.index = index;
+		}
+		return this.index;
+	}
+
+	/**
+	 * @see IDisposable#dispose()
+	 * This method should not be called concurrently with any other method.
+	 */
+	public void dispose() {
+        Assert.isTrue(!disposed, "CxxASTCache.dispose() called more than once."); //$NON-NLS-1$
+		disposed = true;
+		if (index != null) {
 			index.releaseReadLock();
 		}
 	}
 
-
-	public synchronized ICodanCommentMap getCommentedNodeMap(IASTTranslationUnit ast) {
-		if (this.ast == ast) {
-			try {
-				index.acquireReadLock();
-				try {
-					commentMap = new CodanCommentMap(ASTCommenter.getCommentedNodeMap(ast));
-				} finally {
-					index.releaseReadLock();
-				}
-				return commentMap;
-			} catch (InterruptedException e) {
-				return null;
-			}
-		}
-		throw new IllegalArgumentException("Not cached");
-	}
-
-	public ICodanCommentMap getCommentedNodeMap(IFile file) {
-		try {
-			IASTTranslationUnit ast = getAst(file);
-			return getCommentedNodeMap(ast);
-		} catch (InterruptedException e) {
-			return null;
-		} catch (CoreException e) {
-			Activator.log(e);
-			return null;
-		}
-	}
-
-	/**
-	 * Clear cash for current file
-	 */
-	public void clearCash() {
-		cfgmap.clear();
-		ast = null;
-		tu = null;
-		index = null;
-		commentMap = null;
-	}
-
-	public synchronized IIndex getIndex(IFile file) throws CoreException, InterruptedException {
-		if (file.equals(this.file)) {
-			return index;
-		}
-		getAst(file); // to init variables
-		return index;
+	@Override
+	protected void finalize() throws Throwable {
+		if (!disposed)
+			Activator.log("CxxASTCache was not disposed."); //$NON-NLS-1$
+		super.finalize();
 	}
 }

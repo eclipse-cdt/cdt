@@ -17,9 +17,11 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.IChecker;
+import org.eclipse.cdt.codan.core.model.ICheckerInvocationContext;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
+import org.eclipse.cdt.codan.internal.core.CheckerInvocationContext;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
@@ -71,7 +73,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 
 	/**
 	 * @return
-	 * 
+	 *
 	 */
 	public IASTTranslationUnit parse(String code) {
 		return parse(code, isCpp() ? ParserLanguage.CPP : ParserLanguage.C, true);
@@ -116,7 +118,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 	/**
 	 * Override if any of code that test tried to parse has errors, otherwise
 	 * parse method would assert
-	 * 
+	 *
 	 * @return
 	 */
 	protected boolean hasCodeErrors() {
@@ -153,11 +155,13 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 				codanproblems.add(new ProblemInstance(problemId, loc, args));
 			}
 		});
+		ICheckerInvocationContext context =	new CheckerInvocationContext(null);
 		try {
 			IChecker checker = getChecker();
-			((IRunnableInEditorChecker) checker).processModel(tu);
+			((IRunnableInEditorChecker) checker).processModel(tu, context);
 		} finally {
 			CodanRuntime.getInstance().setProblemReporter(problemReporter);
+			context.dispose();
 		}
 	}
 

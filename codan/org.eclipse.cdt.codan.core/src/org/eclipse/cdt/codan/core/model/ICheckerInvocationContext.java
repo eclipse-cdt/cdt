@@ -1,34 +1,60 @@
 /*******************************************************************************
- * Copyright (c) 2009,2010 QNX Software Systems
+ * Copyright (c) 2009, 2011 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX Software Systems (Alena Laskavaia)  - initial API and implementation
+ *     QNX Software Systems (Alena Laskavaia) - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
 import org.eclipse.core.resources.IResource;
 
 /**
- * Since there is only one instance of checker available this object keeps
- * track of invocation context - which would usually contain resource and some
- * other object that checker require
+ * Context object that can be used to store data shared between different
+ * checkers operating on the same resource. The context and all objects stored
+ * in it are disposed of at the end of processing of a resource. May store
+ * objects of arbitrary types but only a single instance per type.
+ * <p>
+ * Implementations of this interface are guaranteed to be thread-safe.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
  * of a work in progress. There is no guarantee that this API will work or that
  * it will remain the same.
- * </p>
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- * 
+ *
  * @since 2.0
  */
-public interface ICheckerInvocationContext {
+public interface ICheckerInvocationContext extends ICodanDisposable {
+	/**
+	 * @return the resource this context is associated with.
+	 */
 	IResource getResource();
 
-	IProblemReporter getProblemReporter();
+	/**
+	 * Returns the object of the given type. Lookup by an interface or a superclass
+	 * is also possible, but in case when there are multiple objects implementing
+	 * the interface, an arbitrary one will be returned.
+	 *
+	 * @param <T> the type of the object.
+	 * @param objectClass the class of the object to retrieve.
+	 * @return the object of the given type, or <code>null</code> if not present in the context.
+	 */
+	public <T> T get(Class<T> objectClass);
+
+	/**
+	 * Adds an object to the context. The context accepts only a single
+	 * instance of each class.
+	 *
+	 * @param <T> the type of the object.
+	 * @param object the object to add to the context.
+	 * @throws IllegalArgumentException if an attempt is made to add second instance
+	 * 		of the same class.
+	 */
+	public <T extends ICodanDisposable> void add(T object);
 }

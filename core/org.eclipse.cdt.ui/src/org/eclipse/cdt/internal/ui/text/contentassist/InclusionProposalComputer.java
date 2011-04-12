@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,6 +119,10 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		if (context.isContextInformationStyle()) {
 			return;
 		}
+		final ITranslationUnit tu= context.getTranslationUnit();
+		if (tu == null) {
+			return;
+		}
 		String prefix;
 		boolean angleBrackets= false;
 		prefix = computeIncludePrefix(context);
@@ -127,10 +131,9 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 			prefix= prefix.substring(1);
 		}
 		IPath prefixPath= new Path(prefix);
-		final ITranslationUnit tu= context.getTranslationUnit();
 		String[] potentialIncludes= collectIncludeFiles(tu, prefixPath, angleBrackets);
 		if (potentialIncludes.length > 0) {
-			IInclude[] includes= context.getTranslationUnit().getIncludes();
+			IInclude[] includes= tu.getIncludes();
 			Set<String> alreadyIncluded= new HashSet<String>();
 			for (IInclude includeDirective : includes) {
 				alreadyIncluded.add(includeDirective.getElementName());

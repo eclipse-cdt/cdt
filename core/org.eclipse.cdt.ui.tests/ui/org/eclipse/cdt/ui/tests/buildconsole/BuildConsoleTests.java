@@ -20,6 +20,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.console.ConsolePlugin;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -125,5 +126,25 @@ public class BuildConsoleTests extends BaseUITestCase {
 				break;
 		}
 		assertTrue("Global CDT Console is not found", isConsoleFound);
+	}
+	
+	public void testDynamicBuildConsole() throws IOException, CoreException {
+		String id = this.getName();
+		String consoleName = "Test " + this.getName();
+		IConsole testConsole = CCorePlugin.getDefault().getBuildConsole(id, consoleName, null);
+		assertNotNull(testConsole);
+		
+		// the console view
+		org.eclipse.ui.console.IConsole[] consoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
+		org.eclipse.ui.console.IConsole uiConsole=null;
+		for (org.eclipse.ui.console.IConsole console : consoles) {
+			boolean isConsoleFound = console.getName().equals(consoleName);
+			if (isConsoleFound) {
+				uiConsole = console;
+				break;
+			}
+		}
+		assertNotNull("Build Console is not found", uiConsole);
+		assertTrue(uiConsole instanceof BuildConsole);
 	}
 }

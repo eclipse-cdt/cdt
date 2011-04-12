@@ -9379,4 +9379,16 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testOverloadedOperatorWithInheritanceDistance_335387() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	// namespace ns {int a;}
+	// using ns::a;
+	public void testPropertyOfUsingDeclaration() throws Exception {
+		IASTTranslationUnit tu= parseAndCheckBindings();
+		ICPPASTUsingDeclaration udecl= getDeclaration(tu, 1);
+		ICPPASTQualifiedName qn= (ICPPASTQualifiedName) udecl.getName();
+		assertFalse(qn.isDefinition());
+		assertFalse(qn.getLastName().isDefinition());
+		assertTrue(qn.isDeclaration());
+		assertTrue(qn.getLastName().isDeclaration());
+	}
 }

@@ -99,7 +99,7 @@ public class CPPASTUsingDeclaration extends ASTNode
 
 	public int getRoleForName(IASTName n) {
 		if (n == name)
-			return r_definition;
+			return r_declaration;
 		return r_unclear;
 	}
 	

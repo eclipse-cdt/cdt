@@ -300,6 +300,14 @@ public class CdtActionConstants {
 	public static final String EXTRACT_METHOD= "org.eclipse.cdt.ui.actions.ExtractMethod"; //$NON-NLS-1$
 
 	/**
+	 * Refactor menu: name of standard Toggle Function global action (value
+	 * <code>"org.eclipse.cdt.ui.actions.ExtractMethod"</code>).
+	 * 
+	 * @since 5.3
+	 */
+	public static final String TOGGLE_FUNCTION = "org.eclipse.cdt.ui.actions.ToggleFunction"; //$NON-NLS-1$
+
+	/**
 	 * Refactor menu: name of standard Inline global action 
 	 * (value <code>"org.eclipse.cdt.ui.actions.Inline"</code>).
 	 */

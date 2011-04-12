@@ -1,0 +1,113 @@
+//!TestNotSupportedVariableSelection
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+fatalerror=true
+//@A.h
+#include <iostream>
+
+class A {
+public:
+        void foo()
+        {
+        }
+private:
+        int /*$*/x/*$$*/;
+};
+
+//!TestNotSupportedNoDefinition
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+fatalerror=true
+//@A.h
+#include <iostream>
+
+class A {
+public:
+        void /*$*/foo/*$$*/();
+};
+//@A.cpp
+#include "A.h"
+
+int main()
+{
+    return 0;
+}
+
+//!TestNotSupportedNoTranslationunit
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+fatalerror=true
+//@A.h
+#include <iostream>
+
+class A {
+public:
+        void /*$*/foo/*$$*/();
+};
+
+//!TestMultipleDeclarations
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+fatalerror=true
+//@A.h
+#include <iostream>
+
+class A {
+    void /*$*/foo/*$$*/();
+    void foo();
+};
+//@A.cpp
+#include "A.h"
+
+int main()
+{
+    return 0;
+}
+
+//!TestMultipledefinitions  
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+fatalerror=true
+//@A.h
+#include <iostream>
+
+class A {
+        void foo();
+        void /*$*/foo/*$$*/() 
+        {
+            return;
+        }
+};
+
+void blah() 
+{
+
+}
+
+inline void A::foo() 
+{
+    return;
+}
+//@A.cpp
+#include "A.h"
+
+int main()
+{
+    return 0;
+}
+
+//!TestNotSupportedNestedFunctions 
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+fatalerror=true
+//@A.h
+#include <iostream>
+
+class A {
+        void foo() 
+        {
+            void /*$*/bar/*$$*/() {
+            }
+        }
+};

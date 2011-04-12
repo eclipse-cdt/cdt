@@ -1253,6 +1253,13 @@
                retarget="true">
          </action>
          <action
+               definitionId="org.eclipse.cdt.ui.refactor.toggle.function"
+               label="%Refactoring.toggleFunction.label"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
+               id="org.eclipse.cdt.ui.actions.ToggleFunction"
+               retarget="true">
+         </action>
+         <action
                definitionId="org.eclipse.cdt.ui.refactor.extract.constant"
                label="%Refactoring.extractConstant.label"
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
@@ -2065,6 +2072,11 @@
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.refactor.extract.function"/>
      <key
+            sequence="M2+M3+T"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.refactor.toggle.function"/>
+     <key
             platform="carbon"
             sequence="M2+M3+M"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -2493,6 +2505,11 @@
             description="%ActionDefinition.extractFunction.description"
             categoryId="org.eclipse.cdt.ui.category.refactoring"
             id="org.eclipse.cdt.ui.refactor.extract.function"/>
+      <command
+            name="%ActionDefinition.toggleFunction.name"
+            description="%ActionDefinition.toggleFunction.description"
+            categoryId="org.eclipse.cdt.ui.category.refactoring"
+            id="org.eclipse.cdt.ui.refactor.toggle.function"/>
       <command
             name="%ActionDefinition.implementMethod.name"
             description="%ActionDefinition.implementMethod.description"

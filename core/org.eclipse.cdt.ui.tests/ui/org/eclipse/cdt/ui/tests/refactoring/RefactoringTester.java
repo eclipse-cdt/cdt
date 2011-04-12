@@ -144,7 +144,8 @@ public class RefactoringTester extends TestSuite{
 		} catch (ClassNotFoundException e) {
 			throw new Exception("Unknown test class " + className); //$NON-NLS-1$
 		} catch (Exception e) {
-			throw new Exception(e.getClass().getSimpleName() + " diring creation of test " + className, e); //$NON-NLS-1$
+			throw new Exception(e.getClass().getSimpleName()
+					+ " during creation of test " + className, e); //$NON-NLS-1$
 		}
 	}
 

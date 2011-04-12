@@ -1,0 +1,259 @@
+//!TestSimpleNamespaceInClassToInHeader
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#include <iostream>
+#include <exception>
+
+namespace N {
+    class A {
+        void /*$*/foo/*$$*/() {
+            return;
+        }
+    };
+}
+//=
+#include <iostream>
+#include <exception>
+
+namespace N {
+    class A {
+        void foo();
+    };
+    inline void A::foo()
+    {
+        return;
+    }
+}
+//!TestSimpleNamespaceInHeaderToImplementationWithinNSDefinition
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#include <iostream>
+#include <exception>
+
+namespace N {
+    class A {
+        void foo();
+    };
+    inline void A::/*$*/foo/*$$*/()
+    {
+        return;
+    }
+}
+//=
+#include <iostream>
+#include <exception>
+
+namespace N {
+    class A {
+        void foo();
+    };
+}
+//@A.cpp
+#include "A.h"
+
+int main() {
+    return 0;
+}
+//=
+#include "A.h"
+
+int main() {
+    return 0;
+}
+
+namespace N
+{
+    void A::foo()
+    {
+        return;
+    }
+
+}
+
+//!TestSimpleNamespaceInHeaderToImplementationWithNSDefinitionInImpl
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#include <iostream>
+#include <exception>
+
+namespace N {
+    class A {
+        void foo();
+    };
+    inline void A::/*$*/foo/*$$*/()
+    {
+        return;
+    }
+
+}
+//=
+#include <iostream>
+#include <exception>
+
+namespace N {
+    class A {
+        void foo();
+    };
+
+}
+//@A.cpp
+#include "A.h"
+
+int main() {
+    return 0;
+}
+
+namespace N
+{
+}
+//=
+#include "A.h"
+
+int main() {
+    return 0;
+}
+
+namespace N
+{
+    void A::foo()
+    {
+        return;
+    }
+}
+//!TestSimpleNamespaceInHeaderToImplementationWithNamespaceQualifiedName
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#include <iostream>
+#include <exception>
+
+namespace N {
+    class A {
+        void foo();
+    };
+}
+
+inline void /*$*/N::A::foo/*$$*/()
+{
+    return;
+}
+//=
+#include <iostream>
+#include <exception>
+
+namespace N {
+    class A {
+        void foo();
+    };
+}
+
+
+//@A.cpp
+#include "A.h"
+
+int main() {
+    return 0;
+}
+//=
+#include "A.h"
+
+int main() {
+    return 0;
+}
+
+namespace N
+{
+    void A::foo()
+    {
+        return;
+    }
+
+}
+
+//!TestSimpleNamespaceFromImplementationToInHeader
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.cpp
+//@A.cpp
+#include "A.h"
+
+void /*$*/N::A::foo/*$$*/()
+{
+    return;
+}
+
+int main()
+{
+    return 0;
+}
+//=
+#include "A.h"
+
+
+
+int main()
+{
+    return 0;
+}
+//@A.h
+#include <iostream>
+
+namespace N {
+    class A {
+        void foo();
+    };
+}
+//=
+#include <iostream>
+
+namespace N {
+    class A {
+        void foo()
+        {
+            return;
+        }
+    };
+}
+//!TestRemoveEmptyNamespaceFromImplentation
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.cpp
+//@A.cpp
+#include "A.h"
+
+namespace N {
+    void /*$*/A::foo/*$$*/() 
+    {
+        return;
+    }
+}
+//=
+#include "A.h"
+
+
+//@A.h
+#include <iostream>
+
+namespace N {
+    class A {
+        void foo();
+    };
+}
+//=
+#include <iostream>
+
+namespace N {
+    class A {
+        void foo()
+        {
+            return;
+        }
+    };
+}

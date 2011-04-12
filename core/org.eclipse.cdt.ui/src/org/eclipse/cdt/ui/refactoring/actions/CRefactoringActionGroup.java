@@ -116,6 +116,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
     private RefactoringAction fExtractConstantAction;
     private RefactoringAction fExtractLocalVariableAction;
     private RefactoringAction fExtractFunctionAction;
+	private RefactoringAction fToggleFunctionAction;
     private RefactoringAction fHideMethodAction;
 	private IWorkbenchSite fSite;
 	private List<RefactoringAction> fAllActions= new ArrayList<RefactoringAction>();
@@ -160,6 +161,10 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
         	fExtractFunctionAction = new ExtractFunctionAction();
 			fExtractFunctionAction.setActionDefinitionId(ICEditorActionDefinitionIds.EXTRACT_FUNCTION);
 			fAllActions.add(fExtractFunctionAction);
+
+			fToggleFunctionAction = new ToggleFunctionAction();
+			fToggleFunctionAction.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_FUNCTION);
+			fAllActions.add(fToggleFunctionAction);
         }
 
         fHideMethodAction = new HideMethodAction();
@@ -203,6 +208,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 		setActionHandler(actionBar, CdtActionConstants.EXTRACT_CONSTANT, fExtractConstantAction);
 		setActionHandler(actionBar, CdtActionConstants.EXTRACT_LOCAL_VARIABLE, fExtractLocalVariableAction);
 		setActionHandler(actionBar, CdtActionConstants.EXTRACT_METHOD, fExtractFunctionAction);
+		setActionHandler(actionBar, CdtActionConstants.TOGGLE_FUNCTION, fToggleFunctionAction);
 		setActionHandler(actionBar, CdtActionConstants.HIDE_METHOD, fHideMethodAction);		
 	}
 
@@ -234,6 +240,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 			addAction(refactorSubmenu, fExtractConstantAction);
 			addAction(refactorSubmenu, fExtractLocalVariableAction);
 			addAction(refactorSubmenu, fExtractFunctionAction);
+			addAction(refactorSubmenu, fToggleFunctionAction);
 			addAction(refactorSubmenu, fHideMethodAction);
 			refactorSubmenu.add(new Separator(GROUP_REORG2));
 			refactorSubmenu.add(new Separator(GROUP_TYPE));

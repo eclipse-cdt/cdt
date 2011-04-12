@@ -1,0 +1,156 @@
+//!TestZeroLengthSelection
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+class A {
+    void me/*$*//*$$*/mber()
+    {
+        return;
+    }
+};
+//=
+class A {
+    void member();
+};
+
+inline void A::member()
+{
+    return;
+}
+
+
+//!TestSubstringSelection
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+class A {
+    void m/*$*/e/*$$*/mber()
+    {
+        return;
+    }
+};
+//=
+class A {
+    void member();
+};
+
+inline void A::member()
+{
+    return;
+}
+
+
+//!TestBodySelection
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+class A {
+    void member()
+    {
+        r/*$*//*$$*/eturn;
+    }
+};
+//=
+class A {
+    void member();
+};
+
+inline void A::member()
+{
+    return;
+}
+
+
+//!TestBodySelectionWithConfusingName
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+class A {
+    void member()
+    {
+        int /*$*/abcd/*$$*/ = 42;
+        return;
+    }
+};
+//=
+class A {
+    void member();
+};
+
+inline void A::member()
+{
+    int abcd = 42;
+    return;
+}
+
+
+//!TestLeftBorderSelection
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+class A {
+    /*$*//*$$*/void member()
+    {
+        return;
+    }
+};
+//=
+class A {
+    void member();
+};
+
+inline void A::member()
+{
+    return;
+}
+
+
+//!TestRightBorderSelection
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+class A {
+    void member()
+    {
+        return;
+    }/*$*//*$$*/
+};
+//=
+class A {
+    void member();
+};
+
+inline void A::member()
+{
+    return;
+}
+
+
+//!TestOverlappingSelection
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+class A {
+    vo/*$*/id member()
+    {
+        ret/*$$*/urn;
+    }
+};
+//=
+class A {
+    void member();
+};
+
+inline void A::member()
+{
+    return;
+}
+
+

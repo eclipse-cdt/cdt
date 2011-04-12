@@ -111,6 +111,12 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String EXTRACT_FUNCTION = "org.eclipse.cdt.ui.refactor.extract.function"; //$NON-NLS-1$
 
 	/**
+	 * Action definition ID of the refactor -> toggle function action (value
+	 * <code>"org.eclipse.cdt.ui.refactor.toggle.function"</code>).
+	 */
+	public static final String TOGGLE_FUNCTION = "org.eclipse.cdt.ui.refactor.toggle.function"; //$NON-NLS-1$
+
+	/**
 	 * Action definition ID of the refactor -> hide method action
 	 * (value <code>"org.eclipse.cdt.ui.refactor.hide.method"</code>).
 	 */

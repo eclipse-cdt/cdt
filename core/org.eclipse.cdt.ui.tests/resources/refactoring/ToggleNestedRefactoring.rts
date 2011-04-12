@@ -1,0 +1,121 @@
+//!TestNestedClassInClassToInHeader
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#include <iostream>
+
+class A {
+    class B {
+        void /*$*/member/*$$*/(int a, int b) {
+            return;
+        }
+    };
+};
+//=
+#include <iostream>
+
+class A {
+    class B {
+        void member(int a, int b);
+    };
+};
+
+inline void A::B::member(int a, int b)
+{
+    return;
+}
+
+
+//!TestNestedClassInHeaderToImplementation
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#include <iostream>
+
+class A {
+    class B {
+        void member(int a, int b);
+    };
+};
+
+inline void A::B::/*$*/member/*$$*/(int a, int b)
+{
+    return;
+}
+//=
+#include <iostream>
+
+class A {
+    class B {
+        void member(int a, int b);
+    };
+};
+
+
+//@A.cpp
+#include "A.h"
+
+int main()
+{
+    return 0;
+}
+//=
+#include "A.h"
+
+int main()
+{
+    return 0;
+}
+
+void A::B::member(int a, int b)
+{
+    return;
+}
+
+
+//!TestNestedClassInImplementationToClass
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.cpp
+//@A.cpp
+#include "A.h"
+
+int main()
+{
+    return 0;
+}
+
+void A::B::/*$*/member/*$$*/(int a, int b)
+{
+    return;
+}
+//=
+#include "A.h"
+
+int main()
+{
+    return 0;
+}
+
+
+//@A.h
+#include <iostream>
+
+class A {
+    class B {
+        void member(int a, int b);
+    };
+};
+//=
+#include <iostream>
+
+class A {
+    class B {
+        void member(int a, int b)
+        {
+            return;
+        }
+    };
+};

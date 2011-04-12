@@ -1,0 +1,266 @@
+//!TestConstructorToggleInClassToInHeader
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#include <iostream>
+
+class A {
+private:
+    int a;
+    int b;
+public:
+    /*$*/A/*$$*/(int x, int y)
+    :a(x), b(y)
+    {}
+    ~A()
+    {
+    }
+};
+//=
+#include <iostream>
+
+class A {
+private:
+    int a;
+    int b;
+public:
+    A(int x, int y);
+    ~A()
+    {
+    }
+};
+
+inline A::A(int x, int y)
+:a(x), b(y)
+{
+}
+
+
+//!TestConstructorToggleInHeaderToImplementation
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#include <iostream>
+
+class A {
+private:
+    int a;
+    int b;
+public:
+    A(int x, int y);
+    ~A()
+    {
+    }
+};
+
+inline A::/*$*/A/*$$*/(int x, int y)
+:a(x), b(y)
+{
+}
+//=
+#include <iostream>
+
+class A {
+private:
+    int a;
+    int b;
+public:
+    A(int x, int y);
+    ~A()
+    {
+    }
+};
+
+
+//@A.cpp
+#include "A.h"
+
+int main() {
+    return 0;
+}
+//=
+#include "A.h"
+
+int main() {
+    return 0;
+}
+
+A::A(int x, int y)
+:a(x), b(y)
+{
+}
+
+
+//!TestConstructorToggleInImplementationToClass
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.cpp
+//@A.cpp
+#include "A.h"
+
+A::/*$*/A/*$$*/(int x, int y) 
+:a(x), b(y)
+{
+}
+
+int main() {
+    return 0;
+}
+//=
+#include "A.h"
+
+
+
+int main() {
+    return 0;
+}
+//@A.h
+#include <iostream>
+
+class A {
+    A(int x, int y);
+    ~A()
+    {
+    }
+};
+//=
+#include <iostream>
+
+class A {
+    A(int x, int y)
+    :a(x), b(y)
+    {
+    }
+    ~A()
+    {
+    }
+};
+//!TestDestructorToggleInClassToInHeader
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#include <iostream>
+
+class A {
+private:
+    int a;
+    int b;
+public:
+    /*$*/~A/*$$*/()
+    {}
+};
+//=
+#include <iostream>
+
+class A {
+private:
+    int a;
+    int b;
+public:
+    ~A();
+};
+
+inline A::~A()
+{
+}
+
+
+//!TestDestructorToggleInHeaderToImplementation
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#include <iostream>
+
+class A {
+private:
+    int a;
+    int b;
+public:
+    ~A();
+};
+
+inline /*$*/A::~A/*$$*/()
+{
+}
+//=
+#include <iostream>
+
+class A {
+private:
+    int a;
+    int b;
+public:
+    ~A();
+};
+
+
+//@A.cpp
+#include "A.h"
+
+int main() {
+    return 0;
+}
+//=
+#include "A.h"
+
+int main() {
+    return 0;
+}
+
+A::~A()
+{
+}
+
+
+//!TestDestructorToggleInImplementationToClass
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.cpp
+//@A.cpp
+#include "A.h"
+
+/*$*/A::~A/*$$*/()
+{
+    int x;
+    int y;
+    return;
+}
+
+int main() {
+    return 0;
+}
+//=
+#include "A.h"
+
+
+
+int main() {
+    return 0;
+}
+//@A.h
+#include <iostream>
+
+class A {
+    A(int x, int y)
+    :a(x), b(y)
+    {}
+    ~A();
+};
+//=
+#include <iostream>
+
+class A {
+    A(int x, int y)
+    :a(x), b(y)
+    {}
+    ~A()
+    {
+        int x;
+        int y;
+        return;
+    }
+};

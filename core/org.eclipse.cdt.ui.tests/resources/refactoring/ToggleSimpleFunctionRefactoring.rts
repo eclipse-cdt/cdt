@@ -1,0 +1,126 @@
+//!TestSimpleFunctionInClassToInHeader
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#include <iostream>
+
+class A {
+public:
+    int /*$*/function/*$$*/()
+    {
+        return 0;
+    }
+private:
+    int a;
+};
+//=
+#include <iostream>
+
+class A {
+public:
+    int function();
+private:
+    int a;
+};
+
+inline int A::function()
+{
+    return 0;
+}
+
+
+//!TestSimpleFunctionInHeaderToImplementation
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#include <iostream>
+
+class A {
+public:
+    int function();
+private:
+    int a;
+};
+
+inline int A::/*$*/function/*$$*/()
+{
+    return 0;
+}
+//=
+#include <iostream>
+
+class A {
+public:
+    int function();
+private:
+    int a;
+};
+
+
+//@A.cpp
+#include "A.h"
+
+int main() {
+    return 0;
+}
+//=
+#include "A.h"
+
+int main() {
+    return 0;
+}
+
+int A::function()
+{
+    return 0;
+}
+
+
+//!TestSimpleFunctionInImplementationToInClass
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.cpp
+//@A.cpp
+#include "A.h"
+
+int A::/*$*/function/*$$*/()
+{
+    return 0;
+}
+
+int main()
+{
+    return 0;
+}
+//=
+#include "A.h"
+
+
+
+int main()
+{
+    return 0;
+}
+//@A.h
+#include <iostream>
+
+class A {
+public:
+    int function();
+private:
+    int a;
+};
+//=
+#include <iostream>
+
+class A {
+public:
+    int function()
+    {
+        return 0;
+    }
+private:
+    int a;
+};

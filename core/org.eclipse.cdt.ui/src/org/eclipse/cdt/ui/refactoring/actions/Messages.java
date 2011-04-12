@@ -30,6 +30,10 @@ public class Messages extends NLS {
 	public static String HideMethodAction_label;
 	public static String ImplementMethodAction_label;
 	public static String GettersAndSetters_label;
+	/**
+	 * @since 5.3
+	 */
+	public static String ToggleFunctionAction_label;
 
 	static {
 		// initialize resource bundle

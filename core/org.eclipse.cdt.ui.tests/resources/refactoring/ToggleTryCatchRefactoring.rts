@@ -1,0 +1,297 @@
+//!TestTryCatchFromInClassToInHeader
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#include <iostream>
+#include <exception>
+
+class A {
+    void /*$*/member/*$$*/(int a, int b)
+    try 
+    {
+        return;
+    } catch (std::exception & e1) 
+    {
+        return;
+    }
+};
+//=
+#include <iostream>
+#include <exception>
+
+class A {
+    void member(int a, int b);
+};
+
+inline void A::member(int a, int b)
+try
+{
+    return;
+}
+catch(std::exception & e1){
+    return;
+}
+
+
+//!TestTryCatchFromInHeaderToImplementation
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#include <iostream>
+#include <exception>
+
+class A {
+    void member(int a, int b);
+};
+
+inline void /*$*/A::member/*$$*/(int a, int b)
+try
+{
+    return;
+}
+catch(std::exception & e1){
+    return;
+}
+//=
+#include <iostream>
+#include <exception>
+
+class A {
+    void member(int a, int b);
+};
+
+
+//@A.cpp
+#include "A.h"
+
+int main() {
+    return 0;
+}
+//=
+#include "A.h"
+
+int main() {
+    return 0;
+}
+
+void A::member(int a, int b)
+try
+{
+    return;
+}
+catch(std::exception & e1){
+    return;
+}
+
+
+//!TestTryCatchFromInImplementationToClass
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.cpp
+//@A.cpp
+#include <exception>
+#include "A.h"
+
+void A::/*$*/member/*$$*/()
+try
+{
+    return;
+}
+catch(std::exception & e1)
+{
+    return;
+}
+
+int main()
+{
+    return 0;
+}
+//=
+#include <exception>
+#include "A.h"
+
+
+
+int main()
+{
+    return 0;
+}
+//@A.h
+#include <iostream>
+
+class A {
+    void member();
+};
+//=
+#include <iostream>
+
+class A {
+    void member()
+    try
+    {
+        return;
+    }
+    catch(std::exception & e1){
+        return;
+    }
+};
+//!TestMultipleTryCatchFromInClassToInHeader
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#include <iostream>
+#include <exception>
+
+class A {
+    void /*$*/member/*$$*/(int a, int b)
+    try 
+    {
+        return;
+    } catch (std::exception & e1) 
+    {
+        return;
+    } catch (std::exception & e2)
+    {
+        return;
+    }
+};
+//=
+#include <iostream>
+#include <exception>
+
+class A {
+    void member(int a, int b);
+};
+
+inline void A::member(int a, int b)
+try
+{
+    return;
+}
+catch(std::exception & e1){
+    return;
+}
+catch(std::exception & e2){
+    return;
+}
+
+
+//!TestMultipleTryCatchFromInHeaderToImplementation
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+#include <iostream>
+#include <exception>
+
+class A {
+    void member(int a, int b);
+};
+
+inline void /*$*/A::member/*$$*/(int a, int b)
+try
+{
+    return;
+}
+catch(std::exception & e1){
+    return;
+}
+catch(std::exception & e2){
+    return;
+}
+//=
+#include <iostream>
+#include <exception>
+
+class A {
+    void member(int a, int b);
+};
+
+
+//@A.cpp
+#include "A.h"
+
+int main() {
+    return 0;
+}
+//=
+#include "A.h"
+
+int main() {
+    return 0;
+}
+
+void A::member(int a, int b)
+try
+{
+    return;
+}
+catch(std::exception & e1){
+    return;
+}
+catch(std::exception & e2){
+    return;
+}
+
+
+//!TestMultipleTryCatchFromInImplementationToClass
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.cpp
+//@A.cpp
+#include <exception>
+#include "A.h"
+
+void A::/*$*/member/*$$*/()
+try
+{
+    return;
+}
+catch(std::exception & e1)
+{
+    return;
+}
+catch(std::exception & e2)
+{
+    return;
+}
+
+int main()
+{
+    return 0;
+}
+//=
+#include <exception>
+#include "A.h"
+
+
+
+int main()
+{
+    return 0;
+}
+//@A.h
+#include <iostream>
+
+class A {
+    void member();
+};
+//=
+#include <iostream>
+
+class A {
+    void member()
+    try
+    {
+        return;
+    }
+    catch(std::exception & e1){
+        return;
+    }
+    catch(std::exception & e2){
+        return;
+    }
+};

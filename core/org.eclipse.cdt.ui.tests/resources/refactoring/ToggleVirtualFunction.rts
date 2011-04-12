@@ -1,0 +1,105 @@
+//!TestRemoveVirtualSpecifierFromClassToInheader
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+
+class A {
+    virtual int /*$*/foo/*$$*/() 
+    {
+        return 0;
+    }
+};
+//=
+
+class A {
+    virtual int foo();
+};
+
+inline int A::foo()
+{
+    return 0;
+}
+
+
+//!TestVirtualSpecifierFromInHeaderToImplementation
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//%CPP
+//@.config
+filename=A.h
+//@A.h
+
+class A {
+    virtual int /*$*/foo/*$$*/();
+};
+
+inline int A::foo()
+{
+    return 0;
+}
+//=
+
+class A {
+    virtual int foo();
+};
+
+
+//@A.cpp
+#include "A.h"
+
+int main()
+{
+    return 0;
+}
+//=
+#include "A.h"
+
+int main()
+{
+    return 0;
+}
+
+int A::foo()
+{
+    return 0;
+}
+
+
+//!TestVirtualSpecifierFromImplementationToHeader
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+
+class A {
+    virtual int /*$*/foo/*$$*/();
+};
+//=
+
+class A {
+    virtual int foo()
+    {
+        return 0;
+    }
+};
+//@A.cpp
+#include "A.h"
+
+int main()
+{
+    return 0;
+}
+
+int A::foo()
+{
+    return 0;
+}
+//=
+#include "A.h"
+
+int main()
+{
+    return 0;
+}
+
+

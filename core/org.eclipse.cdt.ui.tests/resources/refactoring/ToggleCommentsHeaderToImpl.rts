@@ -1,0 +1,131 @@
+//!HeaderToImplBodyComment
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+class A {
+    void /*$*/member/*$$*/();
+};
+
+inline void A::member() {
+    // body comment
+    return;
+}
+//=
+class A {
+    void member();
+};
+
+
+//@A.cpp
+#include "A.h"
+//=
+#include "A.h"
+
+
+void A::member()
+{
+    // body comment
+    return;
+}
+
+//!HeaderToImplTryCatchComment
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+class A {
+    void /*$*/member/*$$*/();
+};
+
+inline void A::member() try {
+    // body comment
+    return;
+} catch /*1*/ (int e) { /*2*/ }
+catch /*3*/ (int e) { /*4*/ }
+//=
+class A {
+    void member();
+};
+
+
+//@A.cpp
+#include "A.h"
+//=
+#include "A.h"
+
+
+void A::member()
+try
+{
+    // body comment
+    return;
+}
+catch(/*1*/int e){
+    /*2*/
+}
+catch(/*3*/int e){
+    /*4*/
+}
+
+//!HeaderToImplTopComment
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+class A {
+    void /*$*/member/*$$*/();
+};
+
+// Top comment
+inline void A::member() {
+    // body comment
+    return;
+}
+//=
+class A {
+    void member();
+};
+
+
+
+//@A.cpp
+#include "A.h"
+//=
+#include "A.h"
+
+
+// Top comment
+void A::member()
+{
+    // body comment
+    return;
+}
+
+//!HeaderToImplFreeFuncTopComment
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+// Definition comment
+void /*$*/member/*$$*/() {
+    return;
+}
+//=
+// Definition comment
+void member();
+
+//@A.cpp
+#include "A.h"
+
+//=
+#include "A.h"
+
+
+
+// Definition comment
+void member()
+{
+    return;
+}
+

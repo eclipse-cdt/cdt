@@ -1,0 +1,47 @@
+//!FreefunctionFromHeaderToImpl
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.h
+newfilecreation=true
+newfiles=A.cpp
+//@A.h
+void /*$*/freefunction/*$$*/() {
+    return;
+}
+//=
+void freefunction();
+
+//@A.cpp
+//=
+
+
+#include "A.h"
+
+void freefunction()
+{
+    return;
+}
+//!FreefunctionFromImplToHeader
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=A.cpp
+newfilecreation=true
+newfiles=A.h
+//@A.cpp
+void /*$*/freefunction/*$$*/()
+{
+    return;
+}
+//=
+#include "A.h"
+
+
+//@A.h
+//=
+
+
+void freefunction()
+{
+    return;
+}
+

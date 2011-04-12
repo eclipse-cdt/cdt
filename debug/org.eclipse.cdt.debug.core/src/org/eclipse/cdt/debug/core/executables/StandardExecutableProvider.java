@@ -12,15 +12,19 @@
 package org.eclipse.cdt.debug.core.executables;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICOutputEntry;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -52,9 +56,42 @@ public class StandardExecutableProvider implements IProjectExecutablesProvider {
 		
 		ICProject cproject = CModelManager.getDefault().create(project);
 		try {
-			IBinary[] binaries = cproject.getBinaryContainer().getBinaries();
+			// Start out by getting all binaries in all build configurations. If
+			// we can't filter based on the active configuration, we'll use this
+			// complete list
+			IBinary[] allBinaries = cproject.getBinaryContainer().getBinaries();
+			if (allBinaries.length == 0) {
+				return executables; // save ourselves a lot of pointless busy work
+			}
+			
+			// Get the output directories of the active build configuration then
+			// go through the list of all binaries and pick only the ones that
+			// are in these output directories
+			List<IBinary> binaries = null;
+			ICProjectDescription projDesc = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			if (projDesc != null) {
+				ICConfigurationDescription cfg = projDesc.getActiveConfiguration();
+				if (cfg != null) {
+					binaries = new ArrayList<IBinary>(allBinaries.length);
+					ICOutputEntry[] cfgOutDirs = cfg.getBuildSetting().getOutputDirectories();
+					for (IBinary allBinary : allBinaries) { 
+						for (ICOutputEntry outdir : cfgOutDirs) {
+							if (outdir.getFullPath().isPrefixOf(allBinary.getPath())) {
+								binaries.add(allBinary);
+								break;
+							}
+						}
+					}
+				}
+			}
 
-			SubMonitor progress = SubMonitor.convert(monitor, binaries.length);
+			// If we weren't able to filter on the active configuration,
+			// consider binaries from all configurations
+			if (binaries == null) {
+				binaries = Arrays.asList(allBinaries);
+			}
+
+			SubMonitor progress = SubMonitor.convert(monitor, binaries.size());
 
 			for (IBinary binary : binaries) {
 				if (progress.isCanceled()) {
@@ -78,7 +115,8 @@ public class StandardExecutableProvider implements IProjectExecutablesProvider {
 				
 				progress.worked(1);
 			}
-		} catch (CModelException e) {
+		} catch (CoreException e) {
+			CDebugCorePlugin.log(e);
 		}
 		
 		return executables;

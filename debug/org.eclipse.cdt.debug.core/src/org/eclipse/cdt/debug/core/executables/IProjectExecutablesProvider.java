@@ -36,7 +36,8 @@ public interface IProjectExecutablesProvider {
 	List<String> getProjectNatures();	
 	
 	/**
-	 * Get the list of executables for the given project
+	 * Get the list of executables for the active configuration of the given
+	 * project
 	 * @param project the project to get the executables for
 	 * @param monitor progress monitor
 	 * @return the list of executables (which may be empty)

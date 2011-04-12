@@ -89,6 +89,10 @@ ITextSelection selection,
 		}
 		if (node instanceof IASTSimpleDeclaration) {
 			IASTDeclarator[] declarators = ((IASTSimpleDeclaration) node).getDeclarators();
+			if (declarators.length > 1) {
+				throw new NotSupportedException(Messages.DeclaratorFinder_MultipleDeclarators);
+			}
+			
 			if (declarators.length == 1 && 
 					declarators[0] instanceof IASTFunctionDeclarator)
 				return (IASTFunctionDeclarator) declarators[0];

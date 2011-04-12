@@ -17,6 +17,7 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.refactoring.togglefunction.messages"; //$NON-NLS-1$
 	public static String DeclaratorFinder_NestedFunction;
 	public static String DeclaratorFinder_NoDeclarator;
+	public static String DeclaratorFinder_MultipleDeclarators;
 	public static String RefactoringJob_UndoName;
 	public static String ToggleFileCreator_andMove;
 	public static String ToggleFileCreator_CanNotCreateNewFile;

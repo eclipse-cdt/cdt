@@ -335,5 +335,19 @@
                        name="%problem.name.FormatString">
                  </problem>
              </checker>
+             <checker
+                   class="org.eclipse.cdt.codan.internal.checkers.AbstractClassInstantiationChecker"
+                   id="org.eclipse.cdt.codan.internal.checkers.AbstractClassCreation"
+                   name="%checker.name.AbstractClassCreation">
+                <problem
+                      category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
+                      defaultEnabled="true"
+                      defaultSeverity="Error"
+                      description="%problem.description.AbstractClassCreation"
+                      id="org.eclipse.cdt.codan.internal.checkers.AbstractClassCreation"
+                      messagePattern="%problem.messagePattern.AbstractClassCreation"
+                      name="%problem.name.AbstractClassCreation">
+                </problem>
+             </checker>
    </extension>
 </plugin>

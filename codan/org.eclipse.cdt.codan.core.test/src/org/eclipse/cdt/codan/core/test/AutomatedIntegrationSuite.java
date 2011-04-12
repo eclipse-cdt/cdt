@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.codan.core.internal.checkers.AbstractClassInstantiationCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.AssignmentInConditionCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.AssignmentToItselfCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.CaseBreakCheckerTest;
@@ -48,22 +49,23 @@ public class AutomatedIntegrationSuite extends TestSuite {
 	public static Test suite() {
 		final AutomatedIntegrationSuite suite = new AutomatedIntegrationSuite();
 		// checkers
-		suite.addTestSuite(StatementHasNoEffectCheckerTest.class);
-		suite.addTestSuite(SuggestedParenthesisCheckerTest.class);
-		suite.addTestSuite(ReturnCheckerTest.class);
-		suite.addTestSuite(CatchByReferenceTest.class);
+		suite.addTestSuite(AbstractClassInstantiationCheckerTest.class);
 		suite.addTestSuite(AssignmentInConditionCheckerTest.class);
 		suite.addTestSuite(AssignmentToItselfCheckerTest.class);
-		suite.addTestSuite(ReturnStyleCheckerTest.class);
-		suite.addTestSuite(SuspiciousSemicolonCheckerTest.class);
 		suite.addTestSuite(CaseBreakCheckerTest.class);
+		suite.addTestSuite(CatchByReferenceTest.class);
 		suite.addTestSuite(FormatStringCheckerTest.class);
 		suite.addTestSuite(ProblemBindingCheckerTest.class);
+		suite.addTestSuite(ReturnCheckerTest.class);
+		suite.addTestSuite(ReturnStyleCheckerTest.class);
+		suite.addTestSuite(StatementHasNoEffectCheckerTest.class);
+		suite.addTestSuite(SuggestedParenthesisCheckerTest.class);
+		suite.addTestSuite(SuspiciousSemicolonCheckerTest.class);
 		// framework
 		suite.addTest(CodanFastTestSuite.suite());
 		// quick fixes
-		suite.addTestSuite(SuggestedParenthesisQuickFixTest.class);
 		suite.addTestSuite(CreateLocalVariableQuickFixTest.class);
+		suite.addTestSuite(SuggestedParenthesisQuickFixTest.class);
 		return suite;
 	}
 }

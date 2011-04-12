@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,20 @@
  *     Bryan Wilkinson (QNX)
  *     Sergey Prigogin (Google)
  *     Andrew Ferguson (Symbian)
+ *     Anton Gorenkov
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -790,5 +795,84 @@ public class ClassTypeHelper {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Checks whether class is abstract, i.e. has pure virtual functions that were
+	 * not implemented in base after declaration.
+	 * 
+	 * NOTE: The method produces complete results for template instantiations
+	 * but doesn't take into account base classes and methods dependent on unspecified
+	 * template parameters.
+	 */
+	public static ICPPMethod[] getPureVirtualMethods(ICPPClassType classTarget) {
+		Collection<Set<ICPPMethod>> result = collectPureVirtualMethods(classTarget).values();
+		int resultArraySize = 0;
+		for (Set<ICPPMethod> set : result) {
+			resultArraySize += set.size();
+		}
+		ICPPMethod[] resultArray = new ICPPMethod[resultArraySize];
+		int resultArrayIdx = 0;
+		for (Set<ICPPMethod> methodsSet : result) {
+			for (ICPPMethod method : methodsSet) {
+				resultArray[resultArrayIdx] = method;
+				++resultArrayIdx;
+			}
+		}
+		return resultArray;
+	}
+
+	/**
+	 * Returns pure virtual methods of the given class grouped by their names.
+	 * 
+	 * @param classTarget The class to obtain the pure virtual method for.
+	 * @return pure virtual methods grouped by their names.
+	 */
+	private static Map<String, Set<ICPPMethod> > collectPureVirtualMethods(ICPPClassType classTarget) {
+		// Collect pure virtual functions from base classes
+		Map<String, Set<ICPPMethod>> pureVirtualMethods = new HashMap<String, Set<ICPPMethod>>();
+		for (ICPPBase base : classTarget.getBases()) {
+			if (base.getBaseClass() instanceof ICPPClassType) {
+				ICPPClassType baseClass = (ICPPClassType) base.getBaseClass();
+				Map<String, Set<ICPPMethod> > derivedPureVirtualMethods = collectPureVirtualMethods(baseClass);
+				// Merge derived pure virtual methods
+				for (Map.Entry<String, Set<ICPPMethod> > currMethodEntry : derivedPureVirtualMethods.entrySet()) {
+					Set<ICPPMethod> methodsSet = pureVirtualMethods.get(currMethodEntry.getKey());
+					if (methodsSet == null) {
+						pureVirtualMethods.put(currMethodEntry.getKey(), currMethodEntry.getValue());
+					}
+					else {
+						methodsSet.addAll(currMethodEntry.getValue());
+					}						
+				}
+			}
+		}
+		// Remove overridden methods (even if they are pure virtual)
+		for (ICPPMethod declaredMethod : classTarget.getDeclaredMethods()) {
+			Set<ICPPMethod> methodsSet = pureVirtualMethods.get(declaredMethod.getName());
+			if (methodsSet != null) {
+				for (Iterator<ICPPMethod> methodIt = methodsSet.iterator(); methodIt.hasNext();) {
+					ICPPMethod method = methodIt.next();
+					if (functionTypesAllowOverride(declaredMethod.getType(), method.getType())) {
+						methodIt.remove();
+					}
+				}
+				if (methodsSet.isEmpty()) {
+					pureVirtualMethods.remove(declaredMethod.getName());
+				}
+			}
+		}
+		// Add pure virtual methods of current class
+		for (ICPPMethod method : classTarget.getDeclaredMethods()) {
+			if (method.isPureVirtual()) {
+				Set<ICPPMethod> methodsSet = pureVirtualMethods.get(method.getName());
+				if (methodsSet == null) {
+					methodsSet = new HashSet<ICPPMethod>();
+					pureVirtualMethods.put(method.getName(), methodsSet);
+				}
+				methodsSet.add(method);
+			}
+		}
+		return pureVirtualMethods;
 	}
 }

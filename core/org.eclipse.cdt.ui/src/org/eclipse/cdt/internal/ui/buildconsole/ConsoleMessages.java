@@ -35,6 +35,7 @@ public final class ConsoleMessages extends NLS {
 	public static String PreviousErrorAction_Tooltip;
 	public static String NextErrorAction_Tooltip;
 	public static String ShowErrorAction_Tooltip;
+	public static String CBuildConsole_Console_Must_Be_Started_First;
 	public static String CopyLog_ActionTooltip;
 	public static String CopyLog_BuildNotLogged;
 	public static String CopyLog_ChooseDestination;

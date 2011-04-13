@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.buildconsole;
 import java.net.URL;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
@@ -57,14 +58,17 @@ public class CBuildConsole implements ICConsole {
 	 * @see org.eclipse.cdt.core.resources.IConsole#getOutputStream()
 	 */
 	public ConsoleOutputStream getOutputStream() throws CoreException {
+		Assert.isNotNull(project, ConsoleMessages.CBuildConsole_Console_Must_Be_Started_First);
 		return fConsoleManager.getConsole(project).getOutputStream();
 	}
 
 	public ConsoleOutputStream getInfoStream() throws CoreException {
+		Assert.isNotNull(project, ConsoleMessages.CBuildConsole_Console_Must_Be_Started_First);
 		return fConsoleManager.getConsole(project).getInfoStream();
 	}
 
 	public ConsoleOutputStream getErrorStream() throws CoreException {
+		Assert.isNotNull(project, ConsoleMessages.CBuildConsole_Console_Must_Be_Started_First);
 		return fConsoleManager.getConsole(project).getErrorStream();
 	}
 }

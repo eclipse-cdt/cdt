@@ -391,10 +391,10 @@ public final class ASTProvider {
 	 * 		<code>false</code> otherwise.
 	 */
 	private boolean prepareForUsingCache(ITranslationUnit tu, WAIT_FLAG waitFlag) {
-		final boolean isActive= fCache.isActiveElement(tu);
 		if (!tu.isOpen())
 			return false;
 
+		final boolean isActive= fCache.isActiveElement(tu);
 		if (waitFlag == WAIT_ACTIVE_ONLY && !isActive) {
 			return false;
 		}

@@ -30,6 +30,7 @@ import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.ListenerList;
 import org.eclipse.cdt.debug.internal.core.SessionManager;
+import org.eclipse.cdt.debug.internal.core.Trace;
 import org.eclipse.cdt.debug.internal.core.disassembly.DisassemblyContextService;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CommonSourceLookupDirector;
@@ -339,6 +340,8 @@ public class CDebugCorePlugin extends Plugin {
 	@Override
     public void start(BundleContext context) throws Exception {
 		super.start(context);
+
+		Trace.init();
 		initializeCommonSourceLookupDirector();
 		createCommandAdapterFactory();
 		createBreakpointListenersList();

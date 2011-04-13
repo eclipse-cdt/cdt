@@ -32,7 +32,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  */
 public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbiguityParent {
 	private CScope compilationUnit = null;
-	private CStructMapper fStructMapper;
+	private final CStructMapper fStructMapper;
 
 	public CASTTranslationUnit() {
 		fStructMapper= new CStructMapper(this);

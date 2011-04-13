@@ -40,7 +40,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPASTTranslationUnit, IASTAmbiguityParent {
     private CPPNamespaceScope fScope = null;
     private ICPPNamespace fBinding = null;
-	private CPPScopeMapper fScopeMapper= new CPPScopeMapper(this);
+	private final CPPScopeMapper fScopeMapper= new CPPScopeMapper(this);
 	
 	public CPPASTTranslationUnit() {
 	}

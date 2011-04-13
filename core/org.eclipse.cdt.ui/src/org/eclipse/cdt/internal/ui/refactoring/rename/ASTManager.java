@@ -1,5 +1,5 @@
 /******************************************************************************* 
- * Copyright (c) 2005, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2005, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -23,16 +23,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.services.IDisposable;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -101,7 +101,6 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -111,7 +110,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
-import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
@@ -119,12 +117,19 @@ import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 /**
  * Used for refactoring to cache the IASTTranslationUnits.
  * Contains a collection of methods operating on ASTNodes.
+ * The object has to be disposed of after use.
  */
-public class ASTManager {
-    public final static int TRUE= 1;
+public class ASTManager implements IDisposable {
+	private static final int PARSE_MODE = ITranslationUnit.AST_SKIP_ALL_HEADERS
+			| ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT
+			| ITranslationUnit.AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS
+			| ITranslationUnit.AST_PARSE_INACTIVE_CODE;
+
+	public final static int TRUE= 1;
     public final static int FALSE= 0;
     public final static int UNKNOWN= -1;
     
+	private IASTTranslationUnit fSharedAST;
     private Map<IFile, IASTTranslationUnit> fTranslationUnits= new HashMap<IFile, IASTTranslationUnit>();
     private HashSet<String> fProblemUnits= new HashSet<String>();
     private CRefactoringArgument fArgument;
@@ -132,6 +137,7 @@ public class ASTManager {
     private String fRenameTo;
     private HashMap<IBinding, Integer> fKnownBindings;
     private HashSet<IBinding> fConflictingBinding;
+	private boolean fDisposed;
 
     public static String nth_of_m(int n, int m) {
         StringBuilder nofm= new StringBuilder();
@@ -782,7 +788,25 @@ public class ASTManager {
         fArgument= arg;
     }
 
-    void analyzeArgument(IIndex index, IProgressMonitor pm, RefactoringStatus status) {
+	/**
+	 * @see IDisposable#dispose()
+	 */
+	public void dispose() {
+        Assert.isTrue(!fDisposed, "ASTManager.dispose() called more than once"); //$NON-NLS-1$
+		fDisposed = true;
+		if (fSharedAST != null) {
+			ASTProvider.getASTProvider().releaseSharedAST(fSharedAST);
+		}
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		if (!fDisposed)
+			CUIPlugin.logError("ASTManager was not disposed"); //$NON-NLS-1$
+		super.finalize();
+	}
+
+	void analyzeArgument(IIndex index, IProgressMonitor pm, RefactoringStatus status) {
         if (fArgument == null) {
             return;
         }
@@ -881,29 +905,28 @@ public class ASTManager {
             ICElement celem= CoreModel.getDefault().create(sourceFile);
             if (celem instanceof ITranslationUnit) {
             	ITranslationUnit tu= CModelUtil.toWorkingCopy((ITranslationUnit) celem);
-            	// Try to get a shared AST before creating our own.
-            	final IASTTranslationUnit[] ast_holder = new IASTTranslationUnit[1];
-				ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_IF_OPEN, null, new ASTRunnable() {
-					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
-						// Leaking of AST outside of runOnAST method is a dangerous, but it does not cause
-						// harm here since the index remains locked for the life time of the AST.
-						ast_holder[0] = ast;
-						return Status.OK_STATUS;
-					}
-				});
-				ast = ast_holder[0];
-				if (ast == null) {
-	            	int options= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT |
-	            			ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
-	            	try {
-	            		ast= tu.getAST(index, options);
-	            	} catch (CoreException e) {
-	            		status.addError(e.getMessage());
-	            	}
-	            	if (cacheit) {
-	            		fTranslationUnits.put(sourceFile, ast);
-	            	}
-				}
+        		if (fSharedAST != null && tu.equals(fSharedAST.getOriginatingTranslationUnit())) {
+        			ast = fSharedAST;
+        		} else {
+                	// Try to get a shared AST before creating our own.
+    	        	ast = ASTProvider.getASTProvider().acquireSharedAST(tu, index,
+    	        			ASTProvider.WAIT_ACTIVE_ONLY, null);
+    	        	if (ast == null) {
+    					try {
+							ast= tu.getAST(index, PARSE_MODE);
+						} catch (CoreException e) {
+		            		status.addError(e.getMessage());
+						}
+    	            	if (cacheit) {
+    	            		fTranslationUnits.put(sourceFile, ast);
+    	            	}
+    	        	} else {
+    	        		if (fSharedAST != null) {
+    	        			ASTProvider.getASTProvider().releaseSharedAST(fSharedAST);
+    	        		}
+    	        		fSharedAST = ast;
+    	        	}
+        		}
             }
         }
         return ast;

@@ -288,6 +288,9 @@ public class CRenameProcessor extends RenameProcessor {
 	}
 	
 	public void unlockIndex() {
+		if (fAstManager != null) {
+			fAstManager.dispose();
+		}
 		if (fIndex != null) {
 			fIndex.releaseReadLock();
 		}

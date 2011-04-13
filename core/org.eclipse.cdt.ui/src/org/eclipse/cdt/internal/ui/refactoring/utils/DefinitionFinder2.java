@@ -43,7 +43,7 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
  */
 public class DefinitionFinder2 {
 
-	public static ASTNameInContext getDefinition(IASTSimpleDeclaration simpleDeclaration,
+	public static IASTName getDefinition(IASTSimpleDeclaration simpleDeclaration,
 			RefactoringASTCache astCache) throws CoreException {
 		IIndex index = astCache.getIndex();
 		IASTDeclarator declarator = simpleDeclaration.getDeclarators()[0];
@@ -57,10 +57,10 @@ public class DefinitionFinder2 {
 		return getDefinition(binding, astCache, index);
 	}
 
-	private static ASTNameInContext getDefinition(IIndexBinding binding,
+	private static IASTName getDefinition(IIndexBinding binding,
 			RefactoringASTCache astCache, IIndex index) throws CoreException {
 		Set<String> searchedFiles = new HashSet<String>();
-		List<ASTNameInContext> definitions = new ArrayList<ASTNameInContext>();
+		List<IASTName> definitions = new ArrayList<IASTName>();
 		IEditorPart[] dirtyEditors = EditorUtility.getDirtyEditors(true);
 		for (IEditorPart editor : dirtyEditors) {
 			IEditorInput editorInput = editor.getEditorInput();
@@ -85,17 +85,17 @@ public class DefinitionFinder2 {
 	}
 
 	private static void findDefinitionsInTranslationUnit(IIndexBinding binding, ITranslationUnit tu,
-			RefactoringASTCache astCache, List<ASTNameInContext> definitions, IProgressMonitor pm)
+			RefactoringASTCache astCache, List<IASTName> definitions, IProgressMonitor pm)
 			throws OperationCanceledException, CoreException {
 		IASTTranslationUnit ast = astCache.getAST(tu, pm);
 		findDefinitionsInAST(binding, ast, tu, definitions);
 	}
 
 	private static void findDefinitionsInAST(IIndexBinding binding, IASTTranslationUnit ast,
-			ITranslationUnit tu, List<ASTNameInContext> definitions) {
+			ITranslationUnit tu, List<IASTName> definitions) {
 		for (IName definition : ast.getDefinitions(binding)) {
 			if (definition instanceof IASTName) {
-				definitions.add(new ASTNameInContext((IASTName) definition, tu));
+				definitions.add((IASTName) definition);
 			}
 		}
 	}

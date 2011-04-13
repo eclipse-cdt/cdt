@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -29,7 +30,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
-import org.eclipse.cdt.internal.ui.refactoring.utils.ASTNameInContext;
 import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder2;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 
@@ -49,24 +49,25 @@ public class MethodDefinitionInsertLocationFinder2 {
 
 		for (IASTSimpleDeclaration simpleDeclaration : getAllPreviousSimpleDeclarationsFromClassInReverseOrder(
 				declarations, methodDeclarationLocation)) {
-			ASTNameInContext definition = DefinitionFinder2.getDefinition(simpleDeclaration, astCache);
+			IASTName definition = DefinitionFinder2.getDefinition(simpleDeclaration, astCache);
 			if (definition != null) {
-				insertLocation.setNodeToInsertAfter(findFirstSurroundingParentFunctionNode(
-						definition.getName()), definition.getTranslationUnit());
+				insertLocation.setNodeToInsertAfter(findFirstSurroundingParentFunctionNode(definition),
+						definition.getTranslationUnit().getOriginatingTranslationUnit());
 			}
 		}
 
 		for (IASTSimpleDeclaration simpleDeclaration : getAllFollowingSimpleDeclarationsFromClass(
 				declarations, methodDeclarationLocation)) {
-			ASTNameInContext definition = DefinitionFinder2.getDefinition(simpleDeclaration, astCache);
+			IASTName definition = DefinitionFinder2.getDefinition(simpleDeclaration, astCache);
 			if (definition != null) {
-				insertLocation.setNodeToInsertBefore(findFirstSurroundingParentFunctionNode(
-						definition.getName()), definition.getTranslationUnit());
+				insertLocation.setNodeToInsertBefore(findFirstSurroundingParentFunctionNode(definition),
+						definition.getTranslationUnit().getOriginatingTranslationUnit());
 			}
 		}
 		
 		if (insertLocation.getTranslationUnit() == null) {
-			ITranslationUnit partner = SourceHeaderPartnerFinder.getPartnerTranslationUnit(declarationTu, astCache);
+			ITranslationUnit partner = SourceHeaderPartnerFinder.getPartnerTranslationUnit(
+					declarationTu, astCache);
 			if (partner != null) {
 				insertLocation.setParentNode(astCache.getAST(partner, null), partner);
 			}	

@@ -124,7 +124,6 @@ public class RefactoringASTCache implements IDisposable {
 
 	/**
 	 * @see IDisposable#dispose()
-	 * This method should not be called concurrently with any other method.
 	 */
 	public void dispose() {
         Assert.isTrue(!fDisposed, "RefactoringASTCache.dispose() called more than once"); //$NON-NLS-1$

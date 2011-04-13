@@ -11,14 +11,13 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-import java.util.concurrent.Semaphore;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -74,11 +73,6 @@ public class ASTCache {
 	private ITranslationUnit fActiveTU;
 	/** The cached AST if any */
 	private IASTTranslationUnit fAST;
-	/**
-	 * The semaphore controlling exclusive access to the cached AST.
-	 * <code>null</code> when fAST is <code>null</code>.
-	 */
-	private Semaphore fASTSemaphore;
 	/** 
 	 * The timestamp of the last index write access at the time
 	 * the AST got cached. A cached AST becomes invalid on any index
@@ -96,12 +90,11 @@ public class ASTCache {
 	}
 
 	/**
-	 * Returns a shared translation unit AST for the given
-	 * translation unit.
+	 * Returns a shared translation unit AST for the given translation unit.
 	 * <p>
-	 * Clients are not allowed to modify the AST and must
-	 * hold a read lock prior to calling this method and continue
-	 * to hold the lock as long as the AST is being used.
+	 * Clients are not allowed to modify the AST and must hold an index read
+	 * lock prior to calling this method and continue to hold the lock as long
+	 * as the AST is being used.
 	 * </p>
 	 *
 	 * @param tUnit				the translation unit
@@ -110,7 +103,8 @@ public class ASTCache {
 	 * @param progressMonitor	the progress monitor or <code>null</code>
 	 * @return					the AST or <code>null</code> if the AST is not available
 	 */
-	private IASTTranslationUnit getAST(ITranslationUnit tUnit, IIndex index, boolean wait, IProgressMonitor progressMonitor) {
+	private IASTTranslationUnit getAST(ITranslationUnit tUnit, IIndex index, boolean wait,
+			IProgressMonitor progressMonitor) {
 		if (tUnit == null)
 			return null;
 		
@@ -237,35 +231,55 @@ public class ASTCache {
 		}
 	}
 
-	public IASTTranslationUnit acquireSharedAST(ITranslationUnit tUnit, IIndex index, boolean wait,
-			IProgressMonitor monitor) {
-		IASTTranslationUnit ast= getAST(tUnit, index, wait, monitor);
-		if (ast == null)
-			return null;
-		synchronized (fCacheMutex) {
-			if (ast == fAST) {
-				try {
-					fASTSemaphore.acquire();
-				} catch (InterruptedException e) {
-					throw new OperationCanceledException();
-				}
+	/**
+	 * Returns a shared AST for the given translation unit and locks it for
+	 * exclusive access. An AST obtained from this method has to be released
+	 * by calling {@link #releaseSharedAST(IASTTranslationUnit)}.
+	 * Subsequent call to this method will block until the AST is released.
+	 * <p>
+	 * The AST can be released by a thread other than the one that acquired it.
+	 * <p>
+	 * Clients are not allowed to modify the AST and must hold an index read
+	 * lock prior to calling this method and continue to hold the lock as long
+	 * as the AST is being used.
+	 * </p>
+	 *
+	 * @param tUnit				the translation unit
+	 * @param index				the index used to create the AST, needs to be read-locked
+	 * @param wait				if <code>true</code>, wait for AST to be computed
+	 *                          (might compute a new AST)
+	 * @param progressMonitor	the progress monitor or <code>null</code>
+	 * @return					the AST or <code>null</code> if the AST is not available
+	 */
+	public final IASTTranslationUnit acquireSharedAST(ITranslationUnit tUnit, IIndex index,
+			boolean wait, IProgressMonitor progressMonitor) {
+		IASTTranslationUnit ast= getAST(tUnit, index, wait, progressMonitor);
+		if (ast != null) {
+			try {
+				((ASTTranslationUnit) ast).beginExclusiveAccess();
+			} catch (InterruptedException e) {
+				throw new OperationCanceledException();
 			}
 		}
 		return ast;
 	}
 
-	public void releaseSharedAST(IASTTranslationUnit ast) {
-		synchronized (fCacheMutex) {
-			if (ast == fAST) {
-				fASTSemaphore.release();
-			}
-		}
+	/**
+	 * Releases a shared AST previously acquired by calling
+	 * {@link #acquireSharedAST(ITranslationUnit, IIndex, boolean, IProgressMonitor)}.
+	 * <p>
+	 * Can be called by a thread other than the one that acquired the AST.
+	*
+	 * @param ast   the AST to release.
+	 */
+	public final void releaseSharedAST(IASTTranslationUnit ast) {
+		((ASTTranslationUnit) ast).endExclusiveAccess();
 	}
 
 	/**
 	 * Caches the given AST for the given translation unit.
 	 *
-	 * @param ast  the AST
+	 * @param ast    the AST
 	 * @param tUnit  the translation unit
 	 */
 	private void cache(IASTTranslationUnit ast, ITranslationUnit tUnit) {
@@ -283,7 +297,6 @@ public class ASTCache {
 			disposeAST();
 
 		fAST= ast;
-		fASTSemaphore= fAST == null ? null : new Semaphore(1); 
 		fLastWriteOnIndex= fAST == null ? 0 : fAST.getIndex().getLastWriteAccess();
 
 		// Signal AST change
@@ -302,7 +315,6 @@ public class ASTCache {
 				System.out.println(DEBUG_PREFIX + getThreadName() + "disposing AST: " + toString(fAST) + " for: " + toString(fActiveTU)); //$NON-NLS-1$ //$NON-NLS-2$ 
 	
 			fAST= null;
-			fASTSemaphore= null;
 			cache(null, null);
 		}
 	}

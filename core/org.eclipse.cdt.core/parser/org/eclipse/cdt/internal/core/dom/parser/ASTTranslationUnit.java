@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
@@ -70,6 +71,8 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private INodeFactory fNodeFactory;
 	private boolean fForContentAssist;
 	private ITranslationUnit fOriginatingTranslationUnit;
+	/** The semaphore controlling exclusive access to the AST. */
+	private final Semaphore fSemaphore= new Semaphore(1);
 
 	@Override
 	public final IASTTranslationUnit getTranslationUnit() {
@@ -445,5 +448,17 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 
 	public void setOriginatingTranslationUnit(ITranslationUnit tu) {
 		this.fOriginatingTranslationUnit = tu;
+	}
+
+	/**
+	 * Starts exclusive access 
+	 * @throws InterruptedException
+	 */
+	public void beginExclusiveAccess() throws InterruptedException {
+		fSemaphore.acquire();
+	}
+
+	public void endExclusiveAccess() {
+		fSemaphore.release();
 	}
 }

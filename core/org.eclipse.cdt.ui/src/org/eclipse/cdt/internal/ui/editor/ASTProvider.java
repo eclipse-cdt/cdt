@@ -31,10 +31,12 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.ASTCache;
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 
 /**
  * Provides a shared AST for clients. The shared AST is
@@ -325,11 +327,22 @@ public final class ASTProvider {
 		fCache.reconciled(ast, (ITranslationUnit) cElement);
 	}
 
+	/**
+	 * Executes {@link ASTRunnable#runOnAST(ILanguage, IASTTranslationUnit)}
+	 * with the shared AST for the given translation unit. Handles acquiring
+	 * and releasing the index read-lock for the client.
+	 * 
+	 * @param cElement     the translation unit
+	 * @param waitFlag     condition for waiting for the AST to be built.
+	 * @param monitor      a progress monitor, may be <code>null</code>
+	 * @param astRunnable  the runnable taking the AST
+	 * @return the status  returned by the ASTRunnable
+	 */
 	public IStatus runOnAST(ICElement cElement, WAIT_FLAG waitFlag, IProgressMonitor monitor,
 			ASTCache.ASTRunnable astRunnable) {
 		Assert.isTrue(cElement instanceof ITranslationUnit);
 		final ITranslationUnit tu = (ITranslationUnit) cElement;
-		if (!canUseCache(tu, waitFlag))
+		if (!prepareForUsingCache(tu, waitFlag))
 			return Status.CANCEL_STATUS;
 		return fCache.runOnAST(tu, waitFlag != WAIT_NO, monitor, astRunnable);
 	}
@@ -352,7 +365,7 @@ public final class ASTProvider {
 	 */
 	public final IASTTranslationUnit acquireSharedAST(ITranslationUnit tu, IIndex index,
 			WAIT_FLAG waitFlag, IProgressMonitor monitor) {
-		if (!canUseCache(tu, waitFlag))
+		if (!prepareForUsingCache(tu, waitFlag))
 			return null;
 		return fCache.acquireSharedAST(tu, index, waitFlag != WAIT_NO, monitor);
 	}
@@ -369,7 +382,15 @@ public final class ASTProvider {
 		fCache.releaseSharedAST(ast);
 	}
 
-	private synchronized boolean canUseCache(ITranslationUnit tu, WAIT_FLAG waitFlag) {
+	/**
+	 * Prepares the AST cache to be used for the given translation unit.
+	 * 
+	 * @param tu the translation unit.
+	 * @param waitFlag condition for waiting for the AST to be built.
+	 * @return <code>true</code> if the AST cache can be used for the given translation unit,
+	 * 		<code>false</code> otherwise.
+	 */
+	private boolean prepareForUsingCache(ITranslationUnit tu, WAIT_FLAG waitFlag) {
 		final boolean isActive= fCache.isActiveElement(tu);
 		if (!tu.isOpen())
 			return false;

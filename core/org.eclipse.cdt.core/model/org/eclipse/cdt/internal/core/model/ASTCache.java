@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -7,8 +7,11 @@
  * Contributors: 
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
+
+import java.util.concurrent.Semaphore;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -71,6 +74,11 @@ public class ASTCache {
 	private ITranslationUnit fActiveTU;
 	/** The cached AST if any */
 	private IASTTranslationUnit fAST;
+	/**
+	 * The semaphore controlling exclusive access to the cached AST.
+	 * <code>null</code> when fAST is <code>null</code>.
+	 */
+	private Semaphore fASTSemaphore;
 	/** 
 	 * The timestamp of the last index write access at the time
 	 * the AST got cached. A cached AST becomes invalid on any index
@@ -212,18 +220,45 @@ public class ASTCache {
 		}
 		
 		try {
-			IASTTranslationUnit ast= getAST(tUnit, index, wait, monitor);
+			IASTTranslationUnit ast= acquireSharedAST(tUnit, index, wait, monitor);
 			ILanguage lang= (tUnit instanceof TranslationUnit) ? ((TranslationUnit) tUnit).getLanguageOfContext() : tUnit.getLanguage();
 			if (ast == null) {
 				return astRunnable.runOnAST(lang, ast);
 			}
-			synchronized (ast) {
+			try {
 				return astRunnable.runOnAST(lang, ast);
+			} finally {
+				releaseSharedAST(ast);
 			}
 		} catch (CoreException e) {
 			return e.getStatus();
 		} finally {
 			index.releaseReadLock();
+		}
+	}
+
+	public IASTTranslationUnit acquireSharedAST(ITranslationUnit tUnit, IIndex index, boolean wait,
+			IProgressMonitor monitor) {
+		IASTTranslationUnit ast= getAST(tUnit, index, wait, monitor);
+		if (ast == null)
+			return null;
+		synchronized (fCacheMutex) {
+			if (ast == fAST) {
+				try {
+					fASTSemaphore.acquire();
+				} catch (InterruptedException e) {
+					throw new OperationCanceledException();
+				}
+			}
+		}
+		return ast;
+	}
+
+	public void releaseSharedAST(IASTTranslationUnit ast) {
+		synchronized (fCacheMutex) {
+			if (ast == fAST) {
+				fASTSemaphore.release();
+			}
 		}
 	}
 
@@ -248,6 +283,7 @@ public class ASTCache {
 			disposeAST();
 
 		fAST= ast;
+		fASTSemaphore= fAST == null ? null : new Semaphore(1); 
 		fLastWriteOnIndex= fAST == null ? 0 : fAST.getIndex().getLastWriteAccess();
 
 		// Signal AST change
@@ -266,6 +302,7 @@ public class ASTCache {
 				System.out.println(DEBUG_PREFIX + getThreadName() + "disposing AST: " + toString(fAST) + " for: " + toString(fActiveTU)); //$NON-NLS-1$ //$NON-NLS-2$ 
 	
 			fAST= null;
+			fASTSemaphore= null;
 			cache(null, null);
 		}
 	}

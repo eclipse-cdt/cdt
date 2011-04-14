@@ -154,6 +154,7 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 		return project;
 	}
 
+	@Deprecated
 	public org.eclipse.core.runtime.Preferences getPreferences() {
 		throw new UnsupportedOperationException();
 	}

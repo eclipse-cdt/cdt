@@ -81,8 +81,8 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
  */
 public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	
-	private class CodeTemplateAdapter extends ViewerComparator implements ITreeListAdapter<Object>, IDialogFieldListener {
-
+	private class CodeTemplateAdapter extends ViewerComparator
+			implements ITreeListAdapter<Object>, IDialogFieldListener {
 		private final Object[] NO_CHILDREN= new Object[0];
 
 		public void customButtonPressed(TreeListDialogField<Object> field, int index) {
@@ -241,7 +241,6 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 //				}
 //			}
 			return null;
-
 		}
 
 		/*
@@ -764,7 +763,6 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 				openWriteErrorDialog();
 			}
 		}
-		
 	}
 
 	private boolean confirmOverwrite(File file) {

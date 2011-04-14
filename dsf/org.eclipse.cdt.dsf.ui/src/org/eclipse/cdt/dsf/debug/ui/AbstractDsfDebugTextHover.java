@@ -129,6 +129,10 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 	@Override
 	protected String evaluateExpression(String expression) {
 		IFrameDMContext frame = getFrame();
+		if (frame == null) {
+			return null;
+		}
+
 		String sessionId = frame.getSessionId();
 		DsfServicesTracker dsfServicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), sessionId);
 		try {
@@ -191,13 +195,13 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 	public IInformationControlCreator getHoverControlCreator() {
 		if (useExpressionExplorer()) {
 			return createExpressionInformationControlCreator();
-		} else {
-			return new IInformationControlCreator() {
-				public IInformationControl createInformationControl(Shell parent) {
-					return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
-				}
-			};
 		}
+
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
+			}
+		};
 	}
 
 	/*
@@ -214,25 +218,29 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 		text= getExpressionText(textViewer, hoverRegion);
     	if (text != null && text.length() > 0) {
 			final IFrameDMContext frameDmc = getFrame();
-			final DsfSession dsfSession = DsfSession.getSession(frameDmc.getSessionId());
-			Callable<IExpressionDMContext> callable = new Callable<IExpressionDMContext>() {
-				public IExpressionDMContext call() throws Exception {
-					DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), frameDmc.getSessionId());
-					try {
-						IExpressions expressions = tracker.getService(IExpressions.class);
-						if (expressions != null) {
-							return expressions.createExpression(frameDmc, text);
+			if (frameDmc != null) {
+				final DsfSession dsfSession = DsfSession.getSession(frameDmc.getSessionId());
+				if (dsfSession != null) {
+					Callable<IExpressionDMContext> callable = new Callable<IExpressionDMContext>() {
+						public IExpressionDMContext call() throws Exception {
+							DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), frameDmc.getSessionId());
+							try {
+								IExpressions expressions = tracker.getService(IExpressions.class);
+								if (expressions != null) {
+									return expressions.createExpression(frameDmc, text);
+								}
+								return null;
+							} finally {
+								tracker.dispose();
+							}
 						}
-						return null;
-					} finally {
-						tracker.dispose();
+					};
+					try {
+						return dsfSession.getExecutor().submit(callable).get();
+					} catch (InterruptedException e) {
+					} catch (ExecutionException e) {
 					}
 				}
-			};
-			try {
-				return dsfSession.getExecutor().submit(callable).get();
-			} catch (InterruptedException e) {
-			} catch (ExecutionException e) {
 			}
     	}
     	return null;

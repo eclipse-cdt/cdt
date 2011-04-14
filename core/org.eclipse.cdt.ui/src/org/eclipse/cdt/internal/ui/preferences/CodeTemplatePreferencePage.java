@@ -30,7 +30,6 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
  * The page to configure the code templates.
  */
 public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
-
 	public static final String PREF_ID= "org.eclipse.cdt.ui.preferences.CodeTemplatePreferencePage"; //$NON-NLS-1$
 	public static final String PROP_ID= "org.eclipse.cdt.ui.propertyPages.CodeTemplatePreferencePage"; //$NON-NLS-1$
 	
@@ -40,8 +39,7 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 
 	public CodeTemplatePreferencePage() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
-		
-		// only used when page is shown programatically
+		// Only used when page is shown programmatically
 		setTitle(PreferencesMessages.CodeTemplatesPreferencePage_title);		 
 	}
 
@@ -51,10 +49,12 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 	@Override
 	public void createControl(Composite parent) {
 		IWorkbenchPreferenceContainer container= (IWorkbenchPreferenceContainer) getContainer();
-		fCodeTemplateConfigurationBlock= new CodeTemplateBlock(getNewStatusChangedListener(), getProject(), container);
+		fCodeTemplateConfigurationBlock= new CodeTemplateBlock(getNewStatusChangedListener(),
+				getProject(), container);
 		
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.CODE_TEMPLATES_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
+				ICHelpContextIds.CODE_TEMPLATES_PREFERENCE_PAGE);
 	}	
 
 	/* (non-Javadoc)
@@ -162,7 +162,8 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 		if (data instanceof Map<?, ?>) {
 			Object id= ((Map<?, ?>) data).get(DATA_SELECT_TEMPLATE);
 			if (id instanceof String) {
-				final TemplatePersistenceData[] templates= fCodeTemplateConfigurationBlock.fTemplateStore.getTemplateData();
+				final TemplatePersistenceData[] templates=
+						fCodeTemplateConfigurationBlock.fTemplateStore.getTemplateData();
 				for (TemplatePersistenceData template : templates) {
 					if (id.equals(template.getId()) || id.equals(template.getTemplate().getName())) {
 						fCodeTemplateConfigurationBlock.postSetSelection(template);

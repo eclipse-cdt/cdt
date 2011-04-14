@@ -394,6 +394,8 @@ public final class ASTProvider {
 		if (!tu.isOpen())
 			return false;
 
+		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=342506 explains
+		// benign nature of the race conditions in the code below. 
 		final boolean isActive= fCache.isActiveElement(tu);
 		if (waitFlag == WAIT_ACTIVE_ONLY && !isActive) {
 			return false;

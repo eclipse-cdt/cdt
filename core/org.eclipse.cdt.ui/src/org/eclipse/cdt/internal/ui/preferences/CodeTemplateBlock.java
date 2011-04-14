@@ -332,7 +332,6 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			PreferencesMessages.CodeTemplateBlock_templates_import_button, 
 			PreferencesMessages.CodeTemplateBlock_templates_export_button, 
 			PreferencesMessages.CodeTemplateBlock_templates_exportall_button
-
 		};		
 		fCodeTemplateTree= new TreeListDialogField<Object>(adapter, buttonLabels, new CodeTemplateLabelProvider());
 		fCodeTemplateTree.setDialogFieldListener(adapter);

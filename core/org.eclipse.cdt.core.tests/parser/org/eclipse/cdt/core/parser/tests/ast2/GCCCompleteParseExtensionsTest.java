@@ -369,17 +369,18 @@ public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
         writer.write("    __builtin_strstr(\"\", \"\"); \n");//$NON-NLS-1$
         writer.write("    __builtin_strstr(\"\", \"\"); \n");//$NON-NLS-1$
         writer.write("    __builtin_vprintf(a, b);\n");//$NON-NLS-1$
-        writer.write("    __builtin_vsprintf(a, 1, \"\", b);    \n");//$NON-NLS-1$
-        writer.write("    __builtin_isgreater(1,1);      \n");//$NON-NLS-1$
-        writer.write("    __builtin_isgreaterequal(1,1);\n");//$NON-NLS-1$
-        writer.write("    __builtin_isless(1,1);        \n");//$NON-NLS-1$
-        writer.write("    __builtin_islessequal(1,1);   \n");//$NON-NLS-1$
-        writer.write("    __builtin_islessgreater(1,1); \n");//$NON-NLS-1$
-        writer.write("    __builtin_isunordered(1,1);   \n");//$NON-NLS-1$
+        writer.write("    __builtin_vsprintf(a, \"\", b);    \n");//$NON-NLS-1$
+        writer.write("    __builtin_isgreater(1.0,1.0);      \n");//$NON-NLS-1$
+        writer.write("    __builtin_isgreaterequal(1.0,1.0);\n");//$NON-NLS-1$
+        writer.write("    __builtin_isless(1.0,1.0);        \n");//$NON-NLS-1$
+        writer.write("    __builtin_islessequal(1.0,1.0);   \n");//$NON-NLS-1$
+        writer.write("    __builtin_islessgreater(1.0,1.0); \n");//$NON-NLS-1$
+        writer.write("    __builtin_isunordered(1.0,1.0);   \n");//$NON-NLS-1$
         writer.write("}                                 \n"); //$NON-NLS-1$
         
-        parseGCC( writer.toString() );
-        parseGPP( writer.toString() );
+        final String code = writer.toString();
+		parseGCC( code );
+        parseGPP( code );
     }
 	
 	// typedef int size_t;  // will be defined in <stddef.h>

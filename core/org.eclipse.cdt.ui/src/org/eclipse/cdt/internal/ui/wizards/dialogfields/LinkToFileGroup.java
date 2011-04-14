@@ -41,8 +41,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * This class is part of the NewClassWizard
- * It handels the Link to file part 
+ * This class is part of the NewClassWizard.
+ * It handles the Link to file part. 
  */
 public class LinkToFileGroup extends StringButtonDialogField {
 	protected Listener listener;
@@ -108,7 +108,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	}
 	
 	public Button getLinkCheckButtonControl(Composite parent){
-		if(linkButton == null){
+		if (linkButton == null){
 			linkButton = new Button(parent, SWT.CHECK);
 			linkButton.setText(NewWizardMessages.NewClassWizardPage_files_linkFileButton); 
 			linkButton.setSelection(createLink);
@@ -148,7 +148,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	
 	@Override
 	public Text getTextControl(Composite parent){
-		if(linkTargetField == null){
+		if (linkTargetField == null){
 			assertCompositeNotNull(parent);
 			linkTargetField = new Text(parent, SWT.BORDER);
 			linkTargetField.setFont(parent.getFont());
@@ -179,7 +179,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	
 	public Button getBrowseButtonControl(Composite parent){
 		// browse button
-		if(browseButton == null){
+		if (browseButton == null){
 			assertCompositeNotNull(parent);
 			browseButton = new Button(parent, SWT.PUSH);
 			//setButtonLayoutData(browseButton);
@@ -277,7 +277,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	 * Displays the resolved value if the entered value is a variable.
 	 */
 	protected void resolveVariable() {
-		if(!linkTargetField.isEnabled()) {
+		if (!linkTargetField.isEnabled()) {
 			resolvedPathLabelData.setText(""); //$NON-NLS-1$
 			return;
 		}

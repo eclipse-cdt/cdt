@@ -705,7 +705,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
         assertEquals("d", ((IASTName) decl).toString()); //$NON-NLS-1$
-        assertEquals(420, ((ASTNode) decl).getOffset());
+        assertEquals(695, ((ASTNode) decl).getOffset());
         assertEquals(1, ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("N1 = N; // defines N1"); //$NON-NLS-1$

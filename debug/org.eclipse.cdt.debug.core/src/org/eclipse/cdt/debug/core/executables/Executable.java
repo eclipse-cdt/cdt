@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.internal.core.Trace;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
@@ -214,22 +215,28 @@ public class Executable extends PlatformObject {
 				// case than the actual file system path. Even if the file
 				// system is not case sensitive this will confuse the Path
 				// class. So make sure the path is canonical, otherwise
-				// breakpoints won't be resolved, etc.. Also check for relative
-				// path names and attempt to resolve them relative to the
-				// executable.
-
+				// breakpoints won't be resolved, etc. Make sure to do this only
+				// for files that are specified as an absolute path at this
+				// point. Paths that are not absolute can't be trusted to
+				// java.io.File to canonicalize since that class will
+				// arbitrarily give the specification a local context, and we
+				// don't want that. A source file that continues to be
+				// non-absolute after having been run through source lookups
+				// (done in remapSourceFile() above) is effectively ambiguous
+				// and we should leave it that way. Users will need to configure
+				// a source lookup to give the file a local context if in fact
+				// the file is available on his machine.
 				boolean fileExists = false;
-
-				try {
-					File file = new File(filename);
-					fileExists = file.exists();
-					if (fileExists) {
-						filename = file.getCanonicalPath();
-					} else if (filename.startsWith(".")) { //$NON-NLS-1$
-						file = new File(executablePath.removeLastSegments(1).toOSString(), filename);
-						filename = file.getCanonicalPath();
+				boolean isNativeAbsPath = Util.isNativeAbsolutePath(filename);
+				if (isNativeAbsPath) {
+					try {
+						File file = new File(filename);
+						fileExists = file.exists();
+						if (fileExists) {
+							filename = file.getCanonicalPath();
+						}
+					} catch (IOException e) { // Do nothing.
 					}
-				} catch (IOException e) { // Do nothing.
 				}
 
 				IFile wkspFile = null;
@@ -266,7 +273,7 @@ public class Executable extends PlatformObject {
 						// Be careful not to convert a unix path like
 						// "/src/home" to "c:\source\home" on Windows. See
 						// bugzilla 297781
-						URI uri = (sourcePath.toFile().exists()) ? URIUtil.toURI(sourcePath) : URIUtil.toURI(filename, true);						
+						URI uri = (isNativeAbsPath && sourcePath.toFile().exists()) ? URIUtil.toURI(sourcePath) : URIUtil.toURI(filename, true);						
 						tu = new ExternalTranslationUnit(cproject, uri, id);
 					}
 

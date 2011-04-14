@@ -21,6 +21,7 @@ import org.eclipse.cdt.debug.core.executables.ExecutablesManager;
 import org.eclipse.cdt.debug.core.executables.IExecutablesChangeListener;
 import org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditorInput;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.util.LRUCache;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -254,13 +255,31 @@ public class SourceFilesViewer extends BaseViewer {
 			
 			info.location = tu.getLocation();
 			if (info.location != null) {
-				File file = info.location.toFile();
-				info.exists = file.exists();
-				info.fileLength = file.length();
-				info.lastModified = file.lastModified();
+				// A source file with a non-absolute path has no local context;
+				// its location is ambiguous. Converting the IPath to a
+				// java.io.File would be wrong since that class makes arbitrary
+				// assumptions about where the file should be locally. See
+				// similar comment in Executable.getSourceFiles()
+				if (Util.isNativeAbsolutePath(info.location.toOSString()) ) {
+					File file = info.location.toFile();
+					info.exists = file.exists();
+					if (info.exists) {
+						info.fileLength = file.length();
+						info.lastModified = file.lastModified();
+					}
+					else {
+						info.fileLength = 0;
+						info.lastModified = 0;
+					}
+				}
+				else {
+					info.exists = false;
+					info.fileLength = 0;
+					info.lastModified = 0;
+				}
 				
 				info.originalLocation = new Path(executable.getOriginalLocation(tu));
-				info.originalExists = info.originalLocation.toFile().exists();
+				info.originalExists = Util.isNativeAbsolutePath(info.originalLocation.toOSString()) && info.originalLocation.toFile().exists();
 			} else {
 				info.exists = false;
 				info.fileLength = 0;

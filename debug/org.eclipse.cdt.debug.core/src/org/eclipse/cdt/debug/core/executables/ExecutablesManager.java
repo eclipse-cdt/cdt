@@ -11,31 +11,36 @@
 
 package org.eclipse.cdt.debug.core.executables;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.internal.core.Trace;
 import org.eclipse.cdt.debug.internal.core.executables.StandardExecutableImporter;
 import org.eclipse.cdt.debug.internal.core.executables.StandardSourceFileRemappingFactory;
 import org.eclipse.cdt.debug.internal.core.executables.StandardSourceFilesProvider;
+import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -52,9 +57,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.osgi.service.debug.DebugOptions;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationListener;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 
 /**
  * The Executables Manager maintains a collection of executables built by all of
@@ -64,35 +71,119 @@ import org.osgi.framework.ServiceReference;
  * @author Ken Ryall
  * 
  */
-public class ExecutablesManager extends PlatformObject implements IResourceChangeListener, ICProjectDescriptionListener {
+public class ExecutablesManager extends PlatformObject implements ICProjectDescriptionListener, IElementChangedListener {
 
 	private static final String EXECUTABLES_MANAGER_DEBUG_TRACING = CDebugCorePlugin.PLUGIN_ID + "EXECUTABLES_MANAGER_DEBUG_TRACING"; //$NON-NLS-1$
 	
 	private Map<IProject, IProjectExecutablesProvider> executablesProviderMap = new HashMap<IProject, IProjectExecutablesProvider>();
-	private Map<IProject, List<Executable>> executablesMap = new HashMap<IProject, List<Executable>>();
 	private List<IExecutablesChangeListener> changeListeners = Collections.synchronizedList(new ArrayList<IExecutablesChangeListener>());
 	private List<IProjectExecutablesProvider> executableProviders;
 	private List<ISourceFilesProvider> sourceFileProviders;
 	private List<ISourceFileRemappingFactory> sourceFileRemappingFactories;
 	private List<IExecutableImporter> executableImporters;
 	
-	private boolean DEBUG;
 	
-	private Job refreshJob = new Job("Get Executables") { //$NON-NLS-1$
+	/**
+	 * Map of launch config names to the path locator memento string in the
+	 * launch config, recorded in the most recent launch config change
+	 * notification. We use this to ensure we flush source file mappings only
+	 * when the launch config change involves a change to the source locators.
+	 */
+	private Map<String, String> locatorMementos = new HashMap<String,String>();
+	
 
+	/**
+	 * A cache of the executables in the workspace, categorized by project. 
+	 * 
+	 * <p>
+	 * This cache is updated by scheduling an asynchronous search. SearchJob is
+	 * the only class that should <i>modify</i> this collection, including the
+	 * sub collections of Executable objects. The collection can be read from
+	 * any thread at any time. All access (read or write) must be serialized by
+	 * synchronizing on the Map object.
+	 * <p>
+	 * The same Executable may appear more than once.
+	 */
+	private Map<IProject, List<Executable>> executablesMap = new HashMap<IProject, List<Executable>>();
+	
+	/**
+	 * Provide a flat list of the executables in {@link #executablesMap}, with
+	 * duplicates removed. That is effectively the list of all executables in
+	 * the workspace that we know of as of now.
+	 * 
+	 * @return
+	 */
+	private List<Executable> flattenExecutablesMap() {
+		List<Executable> result = new ArrayList<Executable>(executablesMap.size() * 5); // most projects will have less than five executables  
+		synchronized (executablesMap) {
+			for (List<Executable> exes : executablesMap.values()) {
+				for (Executable exe : exes) {
+					if (!result.contains(exe)) {
+						result.add(exe);
+					}
+				}
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Job which searches through CDT projects for executables. Only one thread
+	 * should be running this job at any one time. Running job should be
+	 * cancelled and verified terminated before initiating another.
+	 */
+	class SearchJob extends Job {
+		SearchJob() {
+			super("Executables Search"); //$NON-NLS-1$
+		}
+
+
+		/**
+		 * The projects given to us when scheduled. If null, flush our entire
+		 * cache and search all projects
+		 */
+		private IProject[] projectsToRefresh;
+		
 		@Override
 		public IStatus run(IProgressMonitor monitor) {
-				
-			trace("Get Executables job started at " + getStringFromTimestamp(System.currentTimeMillis())); //$NON-NLS-1$
+			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Search for executables started"); //$NON-NLS-1$
 			
-			List<IProject> projects = getProjectsToCheck();
+			IStatus status = Status.OK_STATUS;
+
+			// The executables we know of now. We'll compare the search results
+			// to this and see if we need to notify change listeners
+			List<Executable> before = flattenExecutablesMap();
+			
+			// Get the CDT projects in the workspace that we have no cached 
+			// results for (are not in 'executablesMap'). Also, we may have been
+			// asked to refresh the cache for some projects we've search before
+			List<IProject> projects = new ArrayList<IProject>();
+			synchronized (executablesMap) {
+				if (projectsToRefresh == null) {
+					executablesMap.clear();
+				}
+				else {
+					for (IProject project : projectsToRefresh) {
+						executablesMap.remove(project);
+					}
+				}
+				
+				// Get the list of projects we plan to search
+				for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+					if (!executablesMap.containsKey(project) && CoreModel.hasCNature(project)) {
+						projects.add(project);
+					}
+				}
+			}
+
 
 			SubMonitor subMonitor = SubMonitor.convert(monitor, projects.size());
 
 			for (IProject project : projects) {
 				if (subMonitor.isCanceled()) {
-					trace("Get Executables job cancelled at " + getStringFromTimestamp(System.currentTimeMillis())); //$NON-NLS-1$
-					return Status.CANCEL_STATUS;
+					if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Search for executables canceled"); //$NON-NLS-1$
+					status = Status.CANCEL_STATUS;
+					break; // we've already changed our model; stop searching but proceed to notify listeners that the model changed
 				}
 				
 				subMonitor.subTask("Checking project: " + project.getName()); //$NON-NLS-1$
@@ -100,36 +191,78 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 				// get the executables provider for this project
 				IProjectExecutablesProvider provider = getExecutablesProviderForProject(project);
 				if (provider != null) {
-					trace("Getting executables for project: " + project.getName() + " using " + provider.toString());  //$NON-NLS-1$//$NON-NLS-2$
+					if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Getting executables for project: " + project.getName() + " using " + provider.toString());					 //$NON-NLS-1$ //$NON-NLS-2$
 
 					List<Executable> executables = provider.getExecutables(project, subMonitor.newChild(1, SubMonitor.SUPPRESS_NONE));
 					// store the list of executables for this project
 					synchronized (executablesMap) {
-						if (!monitor.isCanceled()) {
-							executablesMap.put(project, executables);
-						}
+						executablesMap.put(project, executables);
 					}
 				}
 			}
+
 			
+			// See if, after all that work, there's a net change in the
+			// executables list. If so, notify listeners.
+			List<Executable> after = flattenExecutablesMap();
+			List<Executable> removed = before;
+			List<Executable> added = new ArrayList<Executable>(after.size());
+			for (Executable a : after) {
+				if (!removed.remove(a)) {
+					added.add(a);
+				}
+			}
 			// notify the listeners
 			synchronized (changeListeners) {
-				for (IExecutablesChangeListener listener : changeListeners) {
-					listener.executablesListChanged();
+				if (removed.size() > 0 || added.size() > 0) {
+					for (IExecutablesChangeListener listener : changeListeners) {
+						// New interface
+						if (listener instanceof IExecutablesChangeListener2) {
+							if (removed.size() > 0) {
+								((IExecutablesChangeListener2)listener).executablesRemoved(removed);
+							}
+							if (added.size() > 0) {
+								((IExecutablesChangeListener2)listener).executablesAdded(added);
+							}
+						}
+						// Old interface
+						listener.executablesListChanged();
+					}
 				}
 			}
 
-			trace("Get Executables job finished at " + getStringFromTimestamp(System.currentTimeMillis())); //$NON-NLS-1$
+			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Search for executables finished"); //$NON-NLS-1$			
 
-			return Status.OK_STATUS;
+			return status;
+		}
+
+		/**
+		 * Schedules the search job. Use this, not the standard Job.schedule()
+		 * method.
+		 * 
+		 * @param projectsToRefresh
+		 *            if null, all CDT projects in the workspace are searched.
+		 *            If not null, we search only newly present projects and the
+		 *            projects provided (even if searched before). Empty list
+		 *            can be passed to search only newly present projects.
+		 */
+		public void schedule(IProject[] projectsToRefresh) {
+			this.projectsToRefresh = projectsToRefresh;
+			super.schedule();
 		}
 	};
+	
+	/** The search job. We only let one of these run at any one time */
+	private SearchJob searchJob = new SearchJob();
 
-	private static ExecutablesManager executablesManager = null;
+	/** Lock used to serialize the search jobs */
+	private Object searchSchedulingLock = new Object();
+
+	/** The singleton */
+	private static ExecutablesManager executablesManager;
 
 	/**
-	 * Get the executables manager instance
-	 * @return the executables manager
+	 * @return the singleton manager
 	 */
 	public static ExecutablesManager getExecutablesManager() {
 		if (executablesManager == null)
@@ -138,25 +271,7 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 	}
 
 	public ExecutablesManager() {
-		
-		// check if debugging is enabled
-		BundleContext context = CDebugCorePlugin.getDefault().getBundle().getBundleContext();
-		if (context != null) {
-			ServiceReference reference = CDebugCorePlugin.getDefault().getBundle().getBundleContext().getServiceReference(DebugOptions.class.getName());
-			if (reference != null) {
-				DebugOptions service = (DebugOptions) context.getService(reference);
-				if (service != null) {
-					try {
-						DEBUG = service.getBooleanOption(EXECUTABLES_MANAGER_DEBUG_TRACING, false);
-					} finally {
-						// we have what we want - release the service
-						context.ungetService(reference);
-					}
-				}
-			}
-		}
-
-		refreshJob.setPriority(Job.SHORT);
+		searchJob.setPriority(Job.SHORT);
 		
 		// load the extension points
 		loadExecutableProviderExtensions();
@@ -171,12 +286,101 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 		executableImporters.add(0, new StandardExecutableImporter());
 		
 		// listen for events we're interested in
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.POST_BUILD);
+		CModelManager.getDefault().addElementChangedListener(this);
 		CoreModel.getDefault().getProjectDescriptionManager().addCProjectDescriptionListener(this,
 				CProjectDescriptionEvent.APPLIED);
+	
+		// Listen for changes to the global source locators. These locators
+		// affect how source files are found locally. The Executable objects
+		// cache their local source file paths and rely on us to tell them to
+		// flush those caches when applicable locators change.
+		CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().addParticipants(new ISourceLookupParticipant[] { new ISourceLookupParticipant(){
+
+			public void init(ISourceLookupDirector director) {}
+			public Object[] findSourceElements(Object object) { return new Object[0]; }
+			public String getSourceName(Object object) throws CoreException { return ""; } //$NON-NLS-1$
+			public void dispose() {}
+			public void sourceContainersChanged(ISourceLookupDirector director) {
+				// Unfortunately, it would be extremely difficult/costly to 
+				// determine which binaries are effected by the source locator 
+				// change, so we have to tell all Executables to flush
+				flushExecutablesSourceMappings();
+			}
+		} });
+		
+		// Source locators are also in launch configurations, and those too come
+		// into play when an Executable looks for a source file locally. So,
+		// listen for changes in those locators, too.
+		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(new ILaunchConfigurationListener() {
+			public void launchConfigurationChanged(ILaunchConfiguration configuration) {
+				// Expect lots of noise for working copies. We only care about 
+				// changes to actual configs
+				if (configuration.isWorkingCopy()) {
+					return;
+				}
+				
+				// If the source locators in the launch config were not modified, then no-op   
+				try {
+					String configName = configuration.getName();
+					String mementoBefore = locatorMementos.get(configName);
+					String mementoNow = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, ""); //$NON-NLS-1$
+					if (mementoNow.equals(mementoBefore)) {
+						return; // launch config change had no affect on source locators
+					}
+					locatorMementos.put(configName, mementoNow); 
+				} catch (CoreException e) {
+					CDebugCorePlugin.log(e);
+				}
+
+				// TODO: For now, just tell all Executables to flush. Look 
+				// into identifying which binary the config is associated 
+				// with so we can flush only that Executable
+				flushExecutablesSourceMappings();
+			}
+			public void launchConfigurationRemoved(ILaunchConfiguration configuration) { configAddedOrRemoved(configuration); }
+			public void launchConfigurationAdded(ILaunchConfiguration configuration)  { configAddedOrRemoved(configuration); }
+			private void configAddedOrRemoved(ILaunchConfiguration configuration) {
+				// Expect lots of noise for working copies. We only care about 
+				// changes to actual configs
+				if (configuration.isWorkingCopy()) {
+					return;
+				}
+				
+				// The addition or removal of a launch config could affect 
+				// how files are found. It would be extremely costly to 
+				// determine here whether it will or not, so assume it will. 
+				
+				// TODO: For now, just tell all Executables to flush. Look 
+				// into identifying which binary the config is associated 
+				// with so we can flush only that Executable
+				flushExecutablesSourceMappings();
+			}
+		});
 		
 		// schedule a refresh so we get up to date
-		scheduleRefresh();
+		scheduleExecutableSearch(null);
+	}
+	
+	/**
+	 * Tell all Executable objects to flush their source file mappings, then
+	 * notify our listeners that the executables changed. Even though the
+	 * binaries may not have actually changed, the impact to a client of
+	 * Executable is the same. If the client has cached any of the source file
+	 * information the Executable provided, that info can no longer be trusted.
+	 * The primary purpose of an Executable is to provide source file path
+	 * information--not only the compile paths burned into the executable but
+	 * also the local mappings of those paths. 
+	 */
+	private void flushExecutablesSourceMappings() {
+		List<Executable> exes = flattenExecutablesMap();
+		for (Executable exe : exes) {
+			exe.setRemapSourceFiles(true);
+		}
+		synchronized (changeListeners) {
+			for (IExecutablesChangeListener listener : changeListeners) {
+				listener.executablesChanged(exes);
+			}
+		}
 	}
 
 	/**
@@ -196,44 +400,38 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 	}
 
 	/**
-	 * Gets the list of executables in the workspace.
-	 * @param wait whether or not to wait if the list is being refreshed when this
-	 * method is called.  when true, this call will not return until the list is
-	 * complete.  when false, it will return with the last known list.  if calling
-	 * from any UI, you should not block the UI waiting for this to return, but rather
-	 * register as an {@link IExecutablesChangeListener} to get notifications when the
-	 * list changes.
-	 * @return the list of executables which may be empty
+	 * Gets the list of executables in the workspace. This method doesn't
+	 * initiate a search. It returns the cached results of the most recent
+	 * search, or waits for the ongoing search to complete.
+	 * 
+	 * @param wait
+	 *            Whether or not to wait if the cache is in the process of being
+	 *            updated when this method is called. When true, the call will
+	 *            block until the update is complete. When false, it will return
+	 *            the current cache. Callers on the UI thread should pass false
+	 *            to avoid temporarily freezing the UI. Note that clients can
+	 *            register as a {@link IExecutablesChangeListener} or
+	 *            {@link IExecutablesChangeListener2}to get notifications when
+	 *            the cache changes.
+	 * @return the list of executables; may be empty. List will not have
+	 *         duplicates.
 	 * @since 7.0
 	 */
 	public Collection<Executable> getExecutables(boolean wait) {
+		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, Boolean.valueOf(wait));		
 		
-		trace("getExecutables called at " + getStringFromTimestamp(System.currentTimeMillis())); //$NON-NLS-1$
-
-		List<Executable> executables = new ArrayList<Executable>();
-
-		if (wait && refreshJob.getState() != Job.NONE) {
-			trace("waiting for refresh job to finish at " + getStringFromTimestamp(System.currentTimeMillis())); //$NON-NLS-1$
+		// Wait for running search to finish, if asked to
+		if (wait && searchJob.getState() != Job.NONE) {
+			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Waiting for executable search to finish..."); //$NON-NLS-1$
 			try {
-				refreshJob.join();
+				searchJob.join();
 			} catch (InterruptedException e) {
 			}
-			trace("refresh job finished at " + getStringFromTimestamp(System.currentTimeMillis())); //$NON-NLS-1$
+			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "...executable search finished."); //$NON-NLS-1$
 		}
 		
-		synchronized (executablesMap) {
-			for (List<Executable> exes : executablesMap.values()) {
-				for (Executable exe : exes) {
-					if (!executables.contains(exe)) {
-						executables.add(exe);
-					}
-				}
-			}
-		}
-
-		trace("getExecutables returned at " + getStringFromTimestamp(System.currentTimeMillis())); //$NON-NLS-1$
-
-		return executables;
+		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceExit(null);
+		return flattenExecutablesMap();
 	}
 
 	/**
@@ -300,7 +498,7 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 		}
 		
 		if (handled)
-			scheduleRefresh();
+			scheduleExecutableSearch(null);
 	}
 
 	/**
@@ -329,9 +527,9 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 	 * @return an array of source files which may be empty
 	 */
 	public String[] getSourceFiles(final Executable executable, IProgressMonitor monitor) {
+		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, executable);
+		
 		String[] result = new String[0];
-
-		trace("getSourceFiles called at " + getStringFromTimestamp(System.currentTimeMillis()) + " for " + executable.getPath().toOSString());  //$NON-NLS-1$//$NON-NLS-2$
 
 		synchronized (sourceFileProviders) {
 			Collections.sort(sourceFileProviders, new Comparator<ISourceFilesProvider>() {
@@ -351,17 +549,14 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 				String[] sourceFiles = provider.getSourceFiles(executable, new SubProgressMonitor(monitor, 1000));
 				if (sourceFiles.length > 0) {
 					result = sourceFiles;
-
-					trace("getSourceFiles got " + sourceFiles.length + " files from " + provider.toString()); //$NON-NLS-1$ //$NON-NLS-2$
-
+					if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Got " + sourceFiles.length + " files from " + provider.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 					break;
 				}
 			}
 			monitor.done();
 		}
 
-		trace("getSourceFiles returned at " + getStringFromTimestamp(System.currentTimeMillis())); //$NON-NLS-1$
-
+		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceExit(null, result);
 		return result;
 	}
 
@@ -382,221 +577,119 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 			IProjectExecutablesProvider provider = getExecutablesProviderForProject(executable.getProject());
 			if (provider != null) {
 				IStatus result = provider.removeExecutable(executable, new SubProgressMonitor(monitor, 1));
-				if (result.isOK()) {
-					// remove the exe from the list
-					List<Executable> exes = executablesMap.get(executable.getProject());
-					if (exes != null) {
-						exes.remove(executable);
-					}
-				} else {
+				if (!result.isOK()) {
 					status.add(result);
 				}
 			}
 		}
-
-		// notify listeners that the list has changed.  only do this if at least one delete succeeded.
-		if (status.getChildren().length != executables.length) {
-			synchronized (changeListeners) {
-				for (IExecutablesChangeListener listener : changeListeners) {
-					listener.executablesListChanged();
-				}
-			}
-		}
+		
+		// We don't need to directly call our listeners. The file removal will
+		// cause a C model change, which we will react to by then calling the
+		// listeners
 		
 		return status;
 	}
 
 	/**
-	 * Refresh the list of executables for the given projects
-	 * @param projects the list of projects, or null.  if null or the list
-	 * is empty, all projects will be refreshed.
+	 * Initiates an asynchronous search of workspace CDT projects for
+	 * executables. If a search is ongoing, it's cancelled and a new one is
+	 * started. In all cases, this method returns quickly (does not wait/block).
+	 * 
+	 * <p>
+	 * Listeners are notified when the search is complete and there is a change
+	 * in the collection of found executables. The results of the search can be
+	 * obtained by calling {@link #getExecutables(boolean)}.
+	 * 
+	 * @param projectsToRefresh
+	 *            if null, we discard our entire Executables cache and search
+	 *            all CDT projects in the workspace. If not null, we purge our
+	 *            cache for only the given projects then search in all CDT
+	 *            projects for which we have no cache. Passing a project that we
+	 *            have no cache for is innocuous. In all cases, we search for
+	 *            executables in any newly available projects. This parameter is
+	 *            simply a way to get us to <i>not</i> skip one or more projects
+	 *            we already have the executables list for.
+	 * 
 	 * @since 7.0
 	 */
-	public void refresh(List<IProject> projects) {
-		if (projects == null || projects.size() == 0) {
-			// clear the entire cache
-			executablesMap.clear();
-		} else {
-			for (IProject project : projects) {
-				executablesMap.remove(project);
-			}
-		}
-		
-		scheduleRefresh();
+	public void refresh(List<IProject> projectsToRefresh) {
+		scheduleExecutableSearch(projectsToRefresh != null ? projectsToRefresh.toArray(new IProject[projectsToRefresh.size()]) : null);
 	}
 
 	/**
 	 * @since 7.0
+	 * @deprecated we no longer listen directly for platform resource changes
+	 *             but rather C model changes
 	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-
-		synchronized (executablesMap) {
-			// project needs to be refreshed after a build/clean as the binary may
-			// be added/removed/renamed etc.
-			if (event.getType() == IResourceChangeEvent.POST_BUILD) {
-				Object obj = event.getSource();
-				if (obj != null && obj instanceof IProject) {
-					try {
-						// make sure there's at least one builder for the project.  this gets called even
-						// when there are no builder (e.g. the Executables project for imported executables).
-						IProject project = (IProject)obj;
-						if (project.getDescription().getBuildSpec().length > 0) {
-							if (executablesMap.containsKey(obj)) {
-								List<Executable> executables = executablesMap.remove(obj);
-
-								trace("Scheduling refresh because project " + ((IProject)obj).getName() + " built or cleaned");  //$NON-NLS-1$//$NON-NLS-2$
-								
-								scheduleRefresh();
-
-								// notify the listeners that these executables have possibly changed
-								if (executables != null && executables.size() > 0) {
-									synchronized (changeListeners) {
-										for (IExecutablesChangeListener listener : changeListeners) {
-											listener.executablesChanged(executables);
-										}
-									}
-								}
-							}
-						}
-					} catch (CoreException e) {
-						e.printStackTrace();
-					}
-				}
-				return;
-			}
-			
-			// refresh when projects are opened or closed. note that deleted
-			// projects are handled later in this method. new projects are handled
-			// in handleEvent.  resource changed events always start at the workspace
-			// root, so projects are the next level down
-			boolean refreshNeeded = false;
-			IResourceDelta[] projects = event.getDelta().getAffectedChildren();
-			for (IResourceDelta projectDelta : projects) {
-				if ((projectDelta.getFlags() & IResourceDelta.OPEN) != 0) {
-					if (projectDelta.getKind() == IResourceDelta.CHANGED) {
-						// project was opened or closed
-						if (executablesMap.containsKey(projectDelta.getResource())) {
-							executablesMap.remove(projectDelta.getResource());
-						}
-						refreshNeeded = true;
-					}
-				}
-			}
-			
-			if (refreshNeeded) {
-				trace("Scheduling refresh because project(s) opened or closed"); //$NON-NLS-1$
-
-				scheduleRefresh();
-				return;
-			}
-
-			try {
-				event.getDelta().accept(new IResourceDeltaVisitor() {
-
-					public boolean visit(IResourceDelta delta) throws CoreException {
-						if (delta.getKind() == IResourceDelta.ADDED || delta.getKind() == IResourceDelta.REMOVED) {
-							IResource deltaResource = delta.getResource();
-							if (deltaResource != null) {
-								boolean refresh = false;
-								if (delta.getKind() == IResourceDelta.REMOVED && deltaResource instanceof IProject) {
-									// project deleted
-									if (executablesMap.containsKey(deltaResource)) {
-										executablesMap.remove(deltaResource);
-										refresh = true;
-
-										trace("Scheduling refresh because project " + deltaResource.getName() + " deleted");  //$NON-NLS-1$//$NON-NLS-2$
-									}
-								} else {
-									// see if a binary has been added/removed
-									IPath resourcePath = deltaResource.getLocation();
-									if (resourcePath != null && Executable.isExecutableFile(resourcePath)) {
-										if (executablesMap.containsKey(deltaResource.getProject())) {
-											executablesMap.remove(deltaResource.getProject());
-											refresh = true;
-
-											trace("Scheduling refresh because a binary was added/removed"); //$NON-NLS-1$
-										}
-									}
-								}
-
-								if (refresh) {
-									scheduleRefresh();
-									return false;
-								}
-							}
-						}
-						return true;
-					}
-				});
-			} catch (CoreException e) {
-			}
-		}
-	}
+	@Deprecated
+	public void resourceChanged(IResourceChangeEvent event) {}
 
 	/**
 	 * @since 7.0
 	 */
 	public void handleEvent(CProjectDescriptionEvent event) {
+		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, event);
+		
 		// this handles the cases where the active build configuration changes,
 		// and when new projects are created or loaded at startup.
-		boolean refresh = false;
-
 		int eventType = event.getEventType();
 
 		if (eventType == CProjectDescriptionEvent.APPLIED) {
 			
-			synchronized (executablesMap) {
-				// see if the active build config has changed
-				ICProjectDescription newDesc = event.getNewCProjectDescription();
-				ICProjectDescription oldDesc = event.getOldCProjectDescription();
-				if (oldDesc != null && newDesc != null) {
-					String newConfigName = newDesc.getActiveConfiguration().getName();
-					String oldConfigName = oldDesc.getActiveConfiguration().getName();
-					if (!newConfigName.equals(oldConfigName)) {
-						if (executablesMap.containsKey(newDesc.getProject())) {
-							executablesMap.remove(newDesc.getProject());
-							refresh = true;
+			// see if the active build config has changed
+			ICProjectDescription newDesc = event.getNewCProjectDescription();
+			ICProjectDescription oldDesc = event.getOldCProjectDescription();
+			if (oldDesc != null && newDesc != null) {
+				String newConfigName = newDesc.getActiveConfiguration().getName();
+				String oldConfigName = oldDesc.getActiveConfiguration().getName();
+				if (!newConfigName.equals(oldConfigName)) {
+					if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Scheduling refresh because active build configuration changed");					 //$NON-NLS-1$
+					scheduleExecutableSearch(new IProject[]{newDesc.getProject()});
+				}
+			} else if (newDesc != null && oldDesc == null) {
+				// project just created
+				scheduleExecutableSearch(null);
+				if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Scheduling refresh because project " + newDesc.getProject().getName() + " created");  //$NON-NLS-1$//$NON-NLS-2$
+			}
+		}
+	}
 
-							trace("Scheduling refresh because active build configuration changed"); //$NON-NLS-1$
+	/**
+	 * Initiates an asynchronous search of workspace CDT projects for
+	 * executables. For details, see {@link #refresh(List)}, which is a public
+	 * wrapper for this internal method. This method is more aptly named and
+	 * takes an array instead of a list
+	 */
+	private void scheduleExecutableSearch(final IProject[] projectsToRefresh) {
+		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, projectsToRefresh);
+
+		// Don't schedule multiple search jobs simultaneously. If one is
+		// running, cancel it, wait for it to terminate, then schedule a new
+		// one. However we must not block our caller, so spawn an intermediary
+		// thread to do that leg work. This isn't an efficient design, but these
+		// searches aren't done in high volume.
+		Job job = new Job("Executable search scheduler") { //$NON-NLS-1$
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				synchronized (searchSchedulingLock) {
+					searchJob.cancel();
+					if (searchJob.getState() != Job.NONE) {
+						try {
+							if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Waiting for canceled job to terminate"); //$NON-NLS-1$
+							searchJob.join();
+						} catch (InterruptedException e) {
 						}
 					}
-				} else if (newDesc != null && oldDesc == null) {
-					// project just created
-					refresh = true;
-
-					trace("Scheduling refresh because project " + newDesc.getProject().getName() + " created");  //$NON-NLS-1$//$NON-NLS-2$
+					if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Scheduling new search job"); //$NON-NLS-1$
+					searchJob.schedule(projectsToRefresh);
 				}
+				
+				return Status.OK_STATUS;
 			}
-		}
-
-		if (refresh) {
-			scheduleRefresh();
-		}
-	}
-
-	private List<IProject> getProjectsToCheck() {
-
-		List<IProject> projects = new ArrayList<IProject>();
-		
-		synchronized (executablesMap) {
-			// look for any CDT projects not in our cache
-			for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-				if (!executablesMap.containsKey(project)) {
-					if (CoreModel.hasCNature(project)) {
-						projects.add(project);
-					}
-				}
-			}
-		}
-
-		return projects;
-	}
-
-	private void scheduleRefresh() {
-		trace("scheduleRefresh called at " + getStringFromTimestamp(System.currentTimeMillis())); //$NON-NLS-1$
-
-		refreshJob.cancel();
-		refreshJob.schedule();
+			
+		};
+		job.setPriority(Job.SHORT);
+		job.schedule();
 	}
 
 	private IProjectExecutablesProvider getExecutablesProviderForProject(IProject project) {
@@ -762,14 +855,168 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 		}
 	}
 
-	private void trace(String msg) {
-		if (DEBUG) {
-			// TODO use Logger?
-			System.out.println(msg);
+	/**
+	 * We listen to C model changes and see if they affect what executables are
+	 * in the workspace, and/or if the executables we already know of have
+	 * changed.
+	 * 
+	 * @since 7.1
+	 */
+	public void elementChanged(ElementChangedEvent event) {
+		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null);
+		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "event = \n" + event); // must be done separately because of traceEntry() limitation //$NON-NLS-1$ 
+		
+		// Examine the event and figure out what needs to be done
+		Set<IProject> refreshProjects = new HashSet<IProject>(5); 
+		Set<Executable> executablesChanged = new HashSet<Executable>(5);
+		Set<Executable> executablesRemoved = new HashSet<Executable>(5);
+		processDeltas(event.getDelta().getAddedChildren(), null, refreshProjects, executablesRemoved, executablesChanged);
+		processDeltas(event.getDelta().getChangedChildren(), null, refreshProjects, executablesRemoved, executablesChanged);
+		processDeltas(event.getDelta().getRemovedChildren(), null, refreshProjects, executablesRemoved, executablesChanged);
+		
+		// Schedule executable searches in projects 
+		if (refreshProjects.size() > 0) {
+			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "One or more projects need to be re-searched");  //$NON-NLS-1$
+			scheduleExecutableSearch(refreshProjects.toArray(new IProject[refreshProjects.size()]));
 		}
+		
+		// Invalidate the source file cache in changed Executables and inform
+		// listeners
+		if (executablesChanged.size() > 0) {
+			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "One or more executables changed");  //$NON-NLS-1$			
+			for (Executable exec : executablesChanged) {
+				exec.setRefreshSourceFiles(true);
+			}
+			List<Executable> list = Arrays.asList(executablesChanged.toArray(new Executable[executablesChanged.size()]));
+			synchronized (changeListeners) {
+				for (IExecutablesChangeListener listener : changeListeners) {
+					listener.executablesChanged(list);
+				}
+			}
+		}
+		if (executablesRemoved.size() > 0) {
+			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "One or more executables were removed");  //$NON-NLS-1$			
+			List<Executable> list = Arrays.asList(executablesRemoved.toArray(new Executable[executablesRemoved.size()]));
+			synchronized (changeListeners) {
+				for (IExecutablesChangeListener listener : changeListeners) {
+					if (listener instanceof IExecutablesChangeListener2) {
+						((IExecutablesChangeListener2)listener).executablesRemoved(list);
+					}
+				}
+			}
+		}
+		
+		
+		return;
 	}
 	
-	private String getStringFromTimestamp(long timestamp) {
-		return DateFormat.getTimeInstance(DateFormat.MEDIUM).format(new Date(timestamp));
+	/**
+	 * Drills down a hierarchy of CDT model change events to determine the
+	 * course of action.
+	 * 
+	 * @param deltas
+	 *            CDT model events received by the viewer
+	 * @param cproject
+	 *            the project the resources in [deltas] belong to
+	 * @param projectsToRefresh
+	 *            implementation populates (appends) this list with the projects
+	 *            that need to be searched for executables. Note that Executable
+	 *            objects are created by an async job. The best we can do here
+	 *            is identify the projects that need to be searched. We can't
+	 *            provide a list of added Executables objects since they haven't
+	 *            been created yet.
+	 * @param removedExecutables
+	 *            implementation populates (appends) this list with the
+	 *            Executable objects that have been removed, requiring listeners
+	 *            to be notified.
+	 * @param changedExecutables
+	 *            implementation populates (appends) this list with the
+	 *            Executable objects that have changed, requiring listeners to
+	 *            be notified.
+	 */
+	private void processDeltas(ICElementDelta[] deltas, ICProject cproject, final Set<IProject> projectsToRefresh, final Set<Executable> removedExecutables, final Set<Executable> changedExecutables) {
+		for (ICElementDelta delta : deltas) {
+			ICElement element = delta.getElement();
+			if (element instanceof ICProject) {
+				// When a project is deleted, we get a REMOVED delta for the
+				// project only--none for the elements in the project.  
+				IProject project = ((ICProject)element).getProject();
+				if (delta.getKind() == ICElementDelta.REMOVED) {
+					projectsToRefresh.add(project);
+					List<Executable> execs = null;
+					synchronized (executablesMap) {
+						execs = executablesMap.get(project);
+					}
+					if (execs != null) {
+						for (Executable exec : execs) {
+							if (exec.getResource().equals(delta.getElement().getResource())) {
+								removedExecutables.add(exec);												
+								break;
+							}
+						}
+
+					}
+					// Note that it's not our job to update 'executablesMap'. 
+					// The async exec search job will do that.					
+				}
+			}
+			else if (element instanceof IBinary) {
+				IProject project = cproject.getProject();
+				switch (delta.getKind()) {
+				case ICElementDelta.ADDED:
+					projectsToRefresh.add(project);
+					break;
+				case ICElementDelta.REMOVED: {
+					projectsToRefresh.add(project);
+					List<Executable> execs = null;
+					synchronized (executablesMap) {
+						execs = executablesMap.get(project);
+					}
+					if (execs != null) {
+						for (Executable exec : execs) {
+							if (exec.getResource().equals(delta.getElement().getResource())) {
+								removedExecutables.add(exec);												
+								break;
+							}
+						}
+					}
+					// Note that it's not our job to update 'executablesMap'. 
+					// The async exec search job will do that.					
+					break;
+				}
+					
+				case ICElementDelta.CHANGED: {
+					List<Executable> execs = null;
+					synchronized (executablesMap) {
+						execs = executablesMap.get(project);
+					}
+					if (execs == null) {
+						// Somehow, we missed the addition of the 
+						// project. Request that the project be 
+						// searched for executables
+						projectsToRefresh.add(project);
+					}
+					else {
+						// See if it's one of the executables we
+						// already know is in the project. If
+						// so, then we just need to tell
+						// listeners the executable changed
+						for (Executable exec : execs) {
+							if (exec.getResource().equals(delta.getElement().getResource())) {
+								changedExecutables.add(exec);
+								break;
+							}
+						}
+					}
+					break;
+				}
+				}
+			}
+			if (element instanceof ICProject) {
+				cproject = (ICProject)element;
+			}
+			// recursively call ourselves to handle this delta's children
+			processDeltas(delta.getAffectedChildren(), cproject, projectsToRefresh, removedExecutables, changedExecutables); 
+		}
 	}
 }

@@ -69,10 +69,11 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	 * launch config. This is a heavy operation. As an optimization, we cache
 	 * the locators we create and discard when the launch config changes or is
 	 * disposed. Collection is subject to be changed by listener invocations.
+	 * Map key is the launch configuration name.
 	 * 
 	 * @see CSourceFinder#getLocator(ILaunchConfiguration)
 	 */
-	private Map<ILaunchConfiguration, ISourceLocator> fConfigLocators = Collections.synchronizedMap(new HashMap<ILaunchConfiguration, ISourceLocator>());
+	private Map<String, ISourceLocator> fConfigLocators = Collections.synchronizedMap(new HashMap<String, ISourceLocator>());
 
 	/**
 	 * We use this when we don't have an ILaunch or ILaunchConfiguration
@@ -134,13 +135,15 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 				if (fLaunchLocator == null) {
 					for (ILaunchConfiguration config : lmgr.getLaunchConfigurations()) {
 						if (isMatch(config)) {
+							String configName = config.getName();
+							
 							// Search our cache of locators that we
 							// instantiate for configurations. Create one if
 							// not found
-							ISourceLocator configLocator = fConfigLocators.get(config);
+							ISourceLocator configLocator = fConfigLocators.get(configName);
 							if (configLocator == null) {
 								configLocator = getLocator(config);	// heavy operation
-								fConfigLocators.put(config, configLocator);	// cache to avoid next time
+								fConfigLocators.put(configName, configLocator);	// cache to avoid next time
 							}
 							// In practice, a config's locator is always an ISourceLookupDirector
 							if (configLocator instanceof ISourceLookupDirector) {
@@ -330,14 +333,15 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public void launchConfigurationChanged(ILaunchConfiguration config) {
+	synchronized public void launchConfigurationChanged(ILaunchConfiguration config) {
 		// We don't care if it's a working copy.
 		if (config.isWorkingCopy()) {
 			return;
 		}
+		
 		// the source locator attribute may have changed
-		fConfigLocators.remove(config);
-		if ((fLaunchLocator != null) && (fLaunchLocator.getLaunchConfiguration() == config)) {
+		fConfigLocators.remove(config.getName());
+		if ((fLaunchLocator != null) && (fLaunchLocator.getLaunchConfiguration().getName() == config.getName())) {
 			fLaunchLocator = null;
 		}
 	}
@@ -345,9 +349,14 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public void launchConfigurationRemoved(ILaunchConfiguration config) {
-		fConfigLocators.remove(config);
-		if ((fLaunchLocator != null) && (fLaunchLocator.getLaunchConfiguration() == config)) {
+	synchronized public void launchConfigurationRemoved(ILaunchConfiguration config) {
+		// We don't care if it's a working copy.
+		if (config.isWorkingCopy()) {
+			return;
+		}
+		
+		fConfigLocators.remove(config.getName());
+		if ((fLaunchLocator != null) && (fLaunchLocator.getLaunchConfiguration().getName() == config.getName())) {
 			fLaunchLocator = null;
 		}
 	}
@@ -367,7 +376,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
 	 */
-	synchronized public void launchesAdded(ILaunch[] launches) {
+	public void launchesAdded(ILaunch[] launches) {
 		// If there's a new launch in town, we need to take it into
 		// consideration. E.g., if it targets our binary, and we're currently
 		// searching using an inactive launch configuration's locator, then the
@@ -375,7 +384,9 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 		for (ILaunch launch : launches) {
 			ILaunchConfiguration config = launch.getLaunchConfiguration();
 			if (config != null && isMatch(config)) {
-				fLaunchLocator = null;
+				synchronized(this) {
+					fLaunchLocator = null;
+				}
 			}
 		}
 	}

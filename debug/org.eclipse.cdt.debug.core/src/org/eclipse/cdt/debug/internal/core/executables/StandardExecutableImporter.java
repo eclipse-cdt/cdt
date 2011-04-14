@@ -167,7 +167,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 	}
 
 	private void ensureBinaryType(IPath exectuableFilePath) {
-		if (Executable.isExecutableFile(exectuableFilePath))
+		if (Executable.isBinaryFile(exectuableFilePath))
 			return;
 		String ext = exectuableFilePath.getFileExtension();
 		if (ext != null) {

@@ -58,7 +58,7 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * ExecutablesView displays a list of executable files either in the workspace
@@ -176,6 +176,7 @@ public class ExecutablesView extends ViewPart {
 
 		class ColumnLabelProvider extends LabelProvider {
 
+			@Override
 			public String getText(Object element) {
 				return (String) element;
 			}
@@ -193,6 +194,7 @@ public class ExecutablesView extends ViewPart {
 		 * 
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
+		@Override
 		public void run() {
 			ListSelectionDialog dialog = new ListSelectionDialog(ExecutablesView.this.getExecutablesViewer().getTree().getShell(), this,
 					new ColumnContentProvider(), new ColumnLabelProvider(), Messages.ExecutablesView_SelectColumns);
@@ -250,7 +252,6 @@ public class ExecutablesView extends ViewPart {
 		// Create the two sub viewers.
 		executablesViewer = new ExecutablesViewer(this, sashForm, SWT.FULL_SELECTION | SWT.BORDER | SWT.MULTI);
 		focusedViewer = executablesViewer;
-		ExecutablesManager.getExecutablesManager().addExecutablesChangeListener(executablesViewer);
 		sourceFilesViewer = new SourceFilesViewer(this, sashForm, SWT.BORDER | SWT.MULTI);
 
 		executablesViewer.getTree().addFocusListener(new FocusListener() {
@@ -416,6 +417,7 @@ public class ExecutablesView extends ViewPart {
 	private Action createRemoveAction() {
 		Action action = new Action(Messages.ExecutablesView_Remove) {
 			
+			@Override
 			public void run() {				
 				ISelection selection = getExecutablesViewer().getSelection();
 				if (selection instanceof IStructuredSelection)
@@ -432,8 +434,9 @@ public class ExecutablesView extends ViewPart {
 					
 					if (confirm)
 					{
-						Job removeJob = new UIJob(Messages.ExecutablesView_RemoveExes) {
+						Job removeJob = new WorkbenchJob(Messages.ExecutablesView_RemoveExes) {
 
+						@Override
 						public IStatus runInUIThread(IProgressMonitor monitor) {
 								IStatus result = ExecutablesManager.getExecutablesManager().removeExecutables(selectedExesArray, monitor);					
 								if (result.getSeverity() != IStatus.OK)
@@ -490,6 +493,7 @@ public class ExecutablesView extends ViewPart {
 
 	private Action createImportAction() {
 		Action action = new Action(Messages.ExecutablesView_Import) {
+			@Override
 			public void run() {
 				FileDialog dialog = new FileDialog(getViewSite().getShell(), SWT.NONE);
 				dialog.setText(Messages.ExecutablesView_SelectExeFile);
@@ -515,8 +519,10 @@ public class ExecutablesView extends ViewPart {
 
 	private Action createRefreshAction() {
 		Action action = new Action(Messages.ExecutablesView_Refresh) {
+			@Override
 			public void run() {
 				ExecutablesManager.getExecutablesManager().refresh(null);
+				sourceFilesViewer.restartCanceledExecutableParse();
 			}
 		};
 		action.setToolTipText(Messages.ExecutablesView_RefreshList);
@@ -574,7 +580,6 @@ public class ExecutablesView extends ViewPart {
 
 	@Override
 	public void dispose() {
-		ExecutablesManager.getExecutablesManager().removeExecutablesChangeListener(executablesViewer);
 		super.dispose();
 	}
 

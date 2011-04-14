@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.debug.internal.core.Trace;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
@@ -40,7 +41,29 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 
 public class Executable extends PlatformObject {
 
+	/**
+	 * Poorly named. This does not determine if the the file is an executable
+	 * but rather a binary. Use {@link #isBinaryFile(IPath)} instead. 
+	 * 
+	 * @deprecated use {@link #isBinaryFile(IPath)}
+	 */
+	@Deprecated
 	static public boolean isExecutableFile(IPath path) {
+		return isBinaryFile(path);
+	}
+
+	/**
+	 * Determines if the given file is a binary file. For our purposes, an
+	 * "executable" is a runnable program (an .exe file on Windows, e.g.,) or a
+	 * shared library. A binary can be an executable but it can also be an
+	 * instruction-containing artifact of a build, which typically is linked to
+	 * make an executable (.e.,g .o and .obj files)
+	 * 
+	 * @param path
+	 * @return
+	 * @since 7.1
+	 */
+	static public boolean isBinaryFile(IPath path) {
 		// ignore directories
 		if (path.toFile().isDirectory()) {
 			return false;
@@ -159,9 +182,12 @@ public class Executable extends PlatformObject {
 	 * @since 6.0
 	 */
 	public synchronized ITranslationUnit[] getSourceFiles(IProgressMonitor monitor) {
+		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null);
 		
-		if (!refreshSourceFiles && !remapSourceFiles)
+		if (!refreshSourceFiles && !remapSourceFiles) {
+			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "returning cached result");			 //$NON-NLS-1$
 			return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]) ;
+		}
 		
 		// Try to get the list of source files used to build the binary from the
 		// symbol information.
@@ -274,6 +300,8 @@ public class Executable extends PlatformObject {
 	 * @since 6.0
 	 */
 	public void setRefreshSourceFiles(boolean refreshSourceFiles) {
+		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, refreshSourceFiles);		
+				
 		this.refreshSourceFiles = refreshSourceFiles;
 	}
 
@@ -309,6 +337,7 @@ public class Executable extends PlatformObject {
 	 * @since 7.0
 	 */
 	public void setRemapSourceFiles(boolean remapSourceFiles) {
+		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, remapSourceFiles);		
 		this.remapSourceFiles = remapSourceFiles;
 	}
 

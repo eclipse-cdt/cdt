@@ -11,35 +11,28 @@
 package org.eclipse.cdt.debug.internal.ui.views.executables;
 
 import java.io.File;
+import java.util.List;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.executables.Executable;
+import org.eclipse.cdt.debug.core.executables.ExecutablesManager;
+import org.eclipse.cdt.debug.core.executables.IExecutablesChangeListener;
 import org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditorInput;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.cdt.internal.core.util.LRUCache;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationListener;
-import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IEditorPart;
@@ -50,7 +43,7 @@ import org.eclipse.ui.PartInitException;
  * Displays the list of source files for the executable selected in the
  * ExecutablesViewer.
  */
-public class SourceFilesViewer extends BaseViewer implements ISourceLookupParticipant, ILaunchConfigurationListener {
+public class SourceFilesViewer extends BaseViewer {
 
 	/** Information from an ITranslationUnit for the various displayed columns */
 	static class TranslationUnitInfo {
@@ -100,25 +93,21 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 				openSourceFile(event);
 			}
 		});
-
-		// We implement ISourceLookupParticipant so we can listen for changes to
-		// source lookup as this viewer shows both original and remapped
-		// locations
-		CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().addParticipants(new ISourceLookupParticipant[] { this });
 		
-		// We also look for launch configuration changes, since their source
-		// locators are involved in source path remapping, too
-		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(this);
-	
-		sourceFilesTree.addDisposeListener(new DisposeListener() {
-
-			public void widgetDisposed(DisposeEvent e) {
-				DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(SourceFilesViewer.this);
-				
-				CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().removeParticipants(
-						new ISourceLookupParticipant[] { SourceFilesViewer.this });
+		ExecutablesManager.getExecutablesManager().addExecutablesChangeListener(new IExecutablesChangeListener(){
+			public void executablesListChanged() {
+				// this doesn't directly affect us
 			}
-		});
+
+			public void executablesChanged(List<Executable> executables) {
+				// TODO: be more selective; we don't know what TUs go with which executables yet
+				flushTranslationUnitCache();
+				
+				// Note that we don't invoke a viewer refresh. Our content 
+				// provider needs to also be listening for this notification. 
+				// It's up to him to invoke a refresh on us if the model has 
+				// been affected by the Executable change
+			}});
 	}
 
 	private void openSourceFile(OpenEvent event) {
@@ -198,10 +187,12 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 		typeColumn.addSelectionListener(new ColumnSelectionAdapter(ExecutablesView.TYPE));
 	}
 
+	@Override
 	protected ViewerComparator getViewerComparator(int sortType) {
 		if (sortType == ExecutablesView.ORG_LOCATION) {
 			return new ExecutablesViewerComparator(sortType, column_sort_order[ExecutablesView.ORG_LOCATION]) {
 
+				@Override
 				@SuppressWarnings("unchecked")
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					if (e1 instanceof ITranslationUnit && e2 instanceof ITranslationUnit) {
@@ -217,40 +208,6 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 			};
 		} else
 			return new ExecutablesViewerComparator(sortType, column_sort_order[sortType]);
-	}
-
-	public void dispose() {
-	}
-
-	public Object[] findSourceElements(Object object) throws CoreException {
-		return new Object[0];
-	}
-
-	public String getSourceName(Object object) throws CoreException {
-		return ""; //$NON-NLS-1$
-	}
-
-	public void init(ISourceLookupDirector director) {
-	}
-
-	public void sourceContainersChanged(ISourceLookupDirector director) {
-		refreshContent();
-	}
-
-	private void refreshContent() {
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				Object input = getInput();
-				if (input != null && input instanceof Executable) {
-					((Executable)input).setRemapSourceFiles(true);
-					
-					// TODO: be more selective; we don't know what TUs go with which executables yet
-					flushTranslationUnitCache();
-			
-					refresh(true);
-				}
-			}
-		});
 	}
 
 	@Override
@@ -278,34 +235,6 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 		// default visible columns
 		return "1,1,0,0,0,0"; //$NON-NLS-1$
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
-	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
-		if (!configuration.isWorkingCopy()) {
-			refreshContent();
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
-	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
-		if (!configuration.isWorkingCopy()) {
-			refreshContent();
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
-	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
-		if (!configuration.isWorkingCopy()) {
-			refreshContent();
-		}
-	}
-
 
 	static TranslationUnitInfo fetchTranslationUnitInfo(Executable executable, Object element) {
 		if (!(element instanceof ITranslationUnit)) {
@@ -355,6 +284,19 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 	static void flushTranslationUnitCache() {
 		synchronized (translationUnitInfoCache) {
 			translationUnitInfoCache.flush();
+		}
+		
+	}
+
+	/**
+	 * The view's refresh action calls this to restart an executable parse for
+	 * the current input if the most recent search (for that element) was
+	 * canceled. If it wasn't canceled, this is a no-op.
+	 */
+	public void restartCanceledExecutableParse() {
+		SourceFilesContentProvider provider = (SourceFilesContentProvider)getContentProvider();
+		if (provider != null) {
+			provider.restartCanceledExecutableParse();
 		}
 		
 	}

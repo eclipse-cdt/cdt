@@ -10,19 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views.executables;
 
-import java.util.List;
-
 import org.eclipse.cdt.debug.core.executables.Executable;
 import org.eclipse.cdt.debug.core.executables.ExecutablesManager;
-import org.eclipse.cdt.debug.core.executables.IExecutablesChangeListener;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
@@ -35,12 +28,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * Displays the list of executables gathered by the ExecutablesManager
  */
-public class ExecutablesViewer extends BaseViewer implements IExecutablesChangeListener {
+public class ExecutablesViewer extends BaseViewer {
 
 	private static final String P_COLUMN_ORDER_KEY_EXE = "columnOrderKeyEXE"; //$NON-NLS-1$
 	private static final String P_SORTED_COLUMN_INDEX_KEY_EXE = "sortedColumnIndexKeyEXE"; //$NON-NLS-1$
@@ -155,6 +147,7 @@ public class ExecutablesViewer extends BaseViewer implements IExecutablesChangeL
 	protected ViewerComparator getViewerComparator(int sortType) {
 		if (sortType == ExecutablesView.PROJECT) {
 			return new ExecutablesViewerComparator(sortType, column_sort_order[ExecutablesView.PROJECT]) {
+				@Override
 				@SuppressWarnings("unchecked")
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					Executable entry1 = (Executable) e1;
@@ -191,47 +184,5 @@ public class ExecutablesViewer extends BaseViewer implements IExecutablesChangeL
 	protected String getDefaultVisibleColumnsValue() {
 		// default visible columns
 		return "1,1,1,0,0,0"; //$NON-NLS-1$
-	}
-
-	public void executablesChanged(final List<Executable> executables) {
-		// some executables have been updated.  if one of them is currently
-		// selected, we need to update the source file list
-		UIJob refreshJob = new UIJob(Messages.ExecutablesViewer_RefreshExecutablesView) {
-
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				// if the user has selected an executable, they expect its
-				// list of source files to be refreshed automatically
-				if (getSelection() != null &&
-					getSelection() instanceof IStructuredSelection) {
-					IStructuredSelection selection = (IStructuredSelection)getSelection();
-					
-					Object firstElement = selection.getFirstElement();
-					if (firstElement instanceof Executable) {
-						Executable executable = (Executable) firstElement;
-						if (executables.contains(executable)) {
-							executable.setRefreshSourceFiles(true);
-							setSelection(selection);
-						}
-					}
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		refreshJob.schedule();
-	}
-
-	public void executablesListChanged() {
-		// Executables list has changed so refresh the view.
-		UIJob refreshJob = new UIJob(Messages.ExecutablesViewer_RefreshExecutablesView) {
-
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				refresh(null);
-				packColumns();
-				return Status.OK_STATUS;
-			}
-		};
-		refreshJob.schedule();
 	}
 }

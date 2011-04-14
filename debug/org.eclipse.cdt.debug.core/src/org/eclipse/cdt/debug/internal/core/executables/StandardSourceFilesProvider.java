@@ -45,7 +45,7 @@ public class StandardSourceFilesProvider extends PlatformObject implements ISour
 			return null;
 		}
 
-		if (!Executable.isExecutableFile(executable.getPath()))
+		if (!Executable.isBinaryFile(executable.getPath()))
 			return null;
 
 		File f = new File(path.toOSString());

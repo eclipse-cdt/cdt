@@ -11,10 +11,10 @@
 package org.eclipse.cdt.core.resources;
 
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -63,8 +63,8 @@ public class RefreshScopeManager {
 		
 	}
 	
-	private TreeMap<IProject, LinkedHashSet<IResource>> fProjectToResourcesMap;
-	private TreeMap<IResource, List<RefreshExclusion>> fResourceToExclusionsMap;
+	private HashMap<IProject, LinkedHashSet<IResource>> fProjectToResourcesMap;
+	private HashMap<IResource, List<RefreshExclusion>> fResourceToExclusionsMap;
 	
 	private static RefreshScopeManager fInstance;
 	
@@ -89,22 +89,104 @@ public class RefreshScopeManager {
 	 * @return Set<IResource>
 	 */
 	public List<IResource> getResourcesToRefresh(IProject project) {
+		getProjectToResourcesMap();
 		List<IResource> retval = new LinkedList<IResource>(fProjectToResourcesMap.get(project));
 		
 		return retval;
 	}
 	
+	public void setResourcesToRefresh(IProject project, List<IResource> resources) {
+		getProjectToResourcesMap();
+		LinkedHashSet<IResource> resourceSet = new LinkedHashSet<IResource>(resources);
+		
+		fProjectToResourcesMap.put(project,  resourceSet);
+	}
+	
+	public void addResourceToRefresh(IProject project, IResource resource) {
+		getProjectToResourcesMap();
+		LinkedHashSet<IResource> resourceSet = fProjectToResourcesMap.get(project);
+		
+		if(resourceSet == null) {
+			resourceSet = new LinkedHashSet<IResource>();
+			fProjectToResourcesMap.put(project, resourceSet);
+		}
+		
+		resourceSet.add(resource);
+		
+	}
+	
+	public void deleteResourceToRefresh(IProject project, IResource resource) {
+		getProjectToResourcesMap();
+		LinkedHashSet<IResource> resourceSet = fProjectToResourcesMap.get(project);
+		
+		if(resourceSet == null) {
+			resourceSet = new LinkedHashSet<IResource>();
+			return;
+		}
+		
+		resourceSet.remove(resource);
+	}
+	
+	public void clearResourcesToRefresh(IProject project) {
+		getProjectToResourcesMap();
+		LinkedHashSet<IResource> resourceSet = fProjectToResourcesMap.get(project);
+		
+		if(resourceSet == null) {
+			resourceSet = new LinkedHashSet<IResource>();
+			return;
+		}
+		
+		resourceSet.clear();
+		
+	}
+
+	private HashMap<IProject, LinkedHashSet<IResource>> getProjectToResourcesMap() {
+		if(fProjectToResourcesMap == null) {
+			fProjectToResourcesMap = new HashMap<IProject, LinkedHashSet<IResource>>();
+		}
+		
+		return fProjectToResourcesMap;
+	}
+	
 	public List<RefreshExclusion> getExclusions(IResource resource) {
-		return fResourceToExclusionsMap.get(resource);
+		getResourcesToExclusionsMap();
+		List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
+		if(exclusions == null) {
+			exclusions = new LinkedList<RefreshExclusion>();
+			fResourceToExclusionsMap.put(resource, exclusions);
+		}
+		
+		return exclusions;
 	}
 	
 	public void addExclusion(IResource resource, RefreshExclusion exclusion) {
+		getResourcesToExclusionsMap();
+		
 		List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
+		if(exclusions == null) {
+			exclusions = new LinkedList<RefreshExclusion>();
+			fResourceToExclusionsMap.put(resource, exclusions);
+		}
+		
 		exclusions.add(exclusion);
 	}
 	
+	private HashMap<IResource, List<RefreshExclusion>> getResourcesToExclusionsMap() {
+		if(fResourceToExclusionsMap == null) {
+			fResourceToExclusionsMap = new HashMap<IResource, List<RefreshExclusion>>();
+		}
+		
+		return fResourceToExclusionsMap;
+	}
+
 	public void removeExclusion(IResource resource, RefreshExclusion exclusion) {
+		getResourcesToExclusionsMap();
 		List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
+		if(exclusions == null) {
+			exclusions = new LinkedList<RefreshExclusion>();
+			fResourceToExclusionsMap.put(resource, exclusions);
+		}
+		
 		exclusions.remove(exclusion);
 	}
 	

@@ -205,7 +205,6 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	}
 
 	private static class CodeTemplateLabelProvider extends LabelProvider {
-	
 		/*
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 		 */

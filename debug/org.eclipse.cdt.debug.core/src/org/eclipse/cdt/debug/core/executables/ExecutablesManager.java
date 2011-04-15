@@ -41,6 +41,7 @@ import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -71,7 +72,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
  * @author Ken Ryall
  * 
  */
-public class ExecutablesManager extends PlatformObject implements ICProjectDescriptionListener, IElementChangedListener {
+public class ExecutablesManager extends PlatformObject implements ICProjectDescriptionListener, IElementChangedListener, IResourceChangeListener {
 
 	private static final String EXECUTABLES_MANAGER_DEBUG_TRACING = CDebugCorePlugin.PLUGIN_ID + "EXECUTABLES_MANAGER_DEBUG_TRACING"; //$NON-NLS-1$
 	
@@ -617,6 +618,7 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 	}
 
 	/**
+	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 * @since 7.0
 	 * @deprecated we no longer listen directly for platform resource changes
 	 *             but rather C model changes

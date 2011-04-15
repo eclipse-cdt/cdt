@@ -330,7 +330,9 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
     		if (fBackend.getSessionType() != SessionType.CORE) {
     			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
             	MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
-            	bpmService.stopTrackingBreakpoints(bpTargetDmc, new RequestMonitor(ImmediateExecutor.getInstance(), null));
+            	if (bpmService != null) {
+            		bpmService.stopTrackingBreakpoints(bpTargetDmc, new RequestMonitor(ImmediateExecutor.getInstance(), null));
+            	}
     		}
     	}
     	

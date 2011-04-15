@@ -1,12 +1,12 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *    IBM Rational Software - Initial API and implementation
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
@@ -31,10 +31,6 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
-/**
- * @author jcamelon
- *
- */
 public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
 
 	public GCCCompleteParseExtensionsTest() {
@@ -409,5 +405,28 @@ public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
 		//			  (static_cast<type *> (0)->field))))
 		String code= getAboveComment();
 		parseGPP(code);
+	}
+	
+	//	void test(){
+	//		bool b;
+	//		b= __has_nothrow_assign (int);
+	//		b= __has_nothrow_copy (int);
+	//		b= __has_nothrow_constructor (int);
+	//		b= __has_trivial_assign (int);
+	//		b= __has_trivial_copy (int);
+	//		b= __has_trivial_constructor (int);
+	//		b= __has_trivial_destructor (int);
+	//		b= __has_virtual_destructor (int);
+	//		b= __is_abstract (int);
+	//		b= __is_base_of (char, int);
+	//		b= __is_class (int);
+	//		b= __is_empty (int);
+	//		b= __is_enum (int);
+	//		b= __is_pod (int);
+	//		b= __is_polymorphic (int);
+	//		b= __is_union (int);
+	//	}
+	public void testTypetraits_Bug342683() throws Exception {
+		parseGPP(getAboveComment());
 	}
 }

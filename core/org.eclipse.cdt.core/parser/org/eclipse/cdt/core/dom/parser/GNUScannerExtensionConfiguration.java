@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -70,6 +70,24 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
 		addKeyword(GCCKeywords.cp__TYPEOF, IGCCToken.t_typeof); 
 		addKeyword(GCCKeywords.cp__TYPEOF__, IGCCToken.t_typeof); 
 		addKeyword(GCCKeywords.cpTYPEOF, IGCCToken.t_typeof );
+		
+		// Type-traits
+		addKeyword(GCCKeywords.cp__has_nothrow_assign, IGCCToken.tTT_has_nothrow_assign);
+		addKeyword(GCCKeywords.cp__has_nothrow_constructor, IGCCToken.tTT_has_nothrow_constructor);
+		addKeyword(GCCKeywords.cp__has_nothrow_copy, IGCCToken.tTT_has_nothrow_copy);
+		addKeyword(GCCKeywords.cp__has_trivial_assign, IGCCToken.tTT_has_trivial_assign);
+		addKeyword(GCCKeywords.cp__has_trivial_constructor, IGCCToken.tTT_has_trivial_constructor);
+		addKeyword(GCCKeywords.cp__has_trivial_copy, IGCCToken.tTT_has_trivial_copy);
+		addKeyword(GCCKeywords.cp__has_trivial_destructor, IGCCToken.tTT_has_trivial_destructor);
+		addKeyword(GCCKeywords.cp__has_virtual_destructor, IGCCToken.tTT_has_virtual_destructor);
+		addKeyword(GCCKeywords.cp__is_abstract, IGCCToken.tTT_is_abstract);
+		addKeyword(GCCKeywords.cp__is_base_of, IGCCToken.tTT_is_base_of);
+		addKeyword(GCCKeywords.cp__is_class, IGCCToken.tTT_is_class);
+		addKeyword(GCCKeywords.cp__is_empty, IGCCToken.tTT_is_empty);
+		addKeyword(GCCKeywords.cp__is_enum, IGCCToken.tTT_is_enum);
+		addKeyword(GCCKeywords.cp__is_pod, IGCCToken.tTT_is_pod);
+		addKeyword(GCCKeywords.cp__is_polymorphic, IGCCToken.tTT_is_polymorphic);
+		addKeyword(GCCKeywords.cp__is_union, IGCCToken.tTT_is_union);
 	}
 
     @Override

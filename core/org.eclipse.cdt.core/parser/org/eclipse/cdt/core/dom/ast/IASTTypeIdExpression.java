@@ -40,6 +40,96 @@ public interface IASTTypeIdExpression extends IASTExpression {
 	public static final int op_typeof = 3;
 
 	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.3
+	 */
+	public static final int op_has_nothrow_assign= 4;
+
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.3
+	 */
+	public static final int op_has_nothrow_copy= 5;
+	
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.3
+	 */
+	public static final int op_has_nothrow_constructor= 6;
+	
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.3
+	 */
+	public static final int op_has_trivial_assign= 7;
+	
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.3
+	 */
+	public static final int op_has_trivial_copy= 8;
+	
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.3
+	 */
+	public static final int op_has_trivial_constructor= 9;
+	
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.3
+	 */
+	public static final int op_has_trivial_destructor= 10;
+	
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.3
+	 */
+	public static final int op_has_virtual_destructor= 11;
+	
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.3
+	 */
+	public static final int op_is_abstract= 12;
+	
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.3
+	 */
+	public static final int op_is_class= 13;
+	
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.3
+	 */
+	public static final int op_is_empty= 14;
+	
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.3
+	 */
+	public static final int op_is_enum= 15;
+	
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.3
+	 */
+	public static final int op_is_pod= 16;
+	
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.3
+	 */
+	public static final int op_is_polymorphic=17;
+	
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.3
+	 */
+	public static final int op_is_union= 18;
+			
+	/**
 	 * @deprecated constants should be declared here, to avoid using the same constant in different
 	 * interfaces.
 	 */

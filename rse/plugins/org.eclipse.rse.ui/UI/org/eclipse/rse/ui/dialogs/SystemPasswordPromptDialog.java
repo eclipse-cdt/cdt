@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,6 +17,7 @@
  * David Dykstal (IBM) - [210474] Deny save password function missing
  * David Dykstal (IBM) - [210242] Credentials dialog should look different if password is not supported or optional
  * Richie Yu (IBM) - [241716] Handle change expired password
+ * David McKnight (IBM) - [342615] when user checks "Save password" box, "Save User ID" box should automatically get checked
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -40,6 +41,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -73,6 +75,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	private ISystemValidator passwordValidator;
 	private ICredentialsValidator signonValidator;
 	private IConnectorService connectorService = null;
+	private boolean wasPasswordSaved = false;
 
 	/**
 	 * Constructor for SystemPasswordPromptDialog
@@ -286,6 +289,14 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 			textPassword.setText(password);
 			textPassword.setSelection(0, password.length());
 		}
+		
+		String defaultUserId = connectorService.getHost().getDefaultUserId();
+		wasPasswordSaved = defaultUserId.equals(userId);
+		
+		if (wasPasswordSaved && userIdPermanentCB != null){
+			userIdPermanentCB.setSelection(true);
+		}
+
 	}
 
 	/**
@@ -345,8 +356,8 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		} else {
 			userIdChanged = !userId.equals(originalUserId);
 		}
-		if (userIdPermanentCB != null) {
-			userIdPermanentCB.setEnabled(userIdChanged);
+		if (userIdPermanentCB != null) {		
+			userIdPermanentCB.setEnabled(userIdChanged || !wasPasswordSaved);
 		}
 	}
 	
@@ -511,5 +522,16 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		}
 		boolean closeDialog = (getErrorMessage() == null); 
 		return closeDialog;
+	}
+	
+	// override of super method
+	public void handleEvent(Event e){
+		if (e.widget == savePasswordCB){
+			if (savePasswordCB.getSelection() && userIdPermanentCB != null){
+				// make sure the user is saved too - otherwise uid/password might not be retrieved on restart
+				userIdPermanentCB.setSelection(true);
+			}					
+		}
+		super.handleEvent(e);
 	}
 }

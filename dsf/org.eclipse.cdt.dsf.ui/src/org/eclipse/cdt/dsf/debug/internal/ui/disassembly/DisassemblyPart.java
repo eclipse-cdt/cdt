@@ -658,7 +658,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		parent.setLayout(layout);
 		fVerticalRuler = createVerticalRuler();
 		int styles = SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
-		fViewer = new DisassemblyViewer(parent, fVerticalRuler, getOverviewRuler(), true, styles);
+		fViewer = new DisassemblyViewer(this, parent, fVerticalRuler, getOverviewRuler(), true, styles);
 		SourceViewerConfiguration sourceViewerConfig = new DisassemblyViewerConfiguration(this);
 		fViewer.addTextPresentationListener(this);
 		fViewer.configure(sourceViewerConfig);
@@ -1439,15 +1439,14 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fBackend.gotoSymbol(symbol);
 	}
 
-	private void gotoPosition(Position pos, boolean select) {
+	private void gotoPosition(Position pos, boolean onTop) {
 		if (fViewer == null) {
 			return;
 		}
 		setFocusPosition(pos);
-		fViewer.setSelectedRange(pos.offset, select ? Math.max(pos.length-1, 0) : 0);
+		fViewer.setSelectedRange(pos.offset, 0);
 		int revealOffset = pos.offset;
-		boolean onTop = false;
-		if (/* !fUpdateBeforeFocus && */ pos.offset > 0) {
+		if (pos.offset > 0) {
 			try {
 				AddressRangePosition previousPos = fDocument.getModelPosition(pos.offset - 1);
 				if (previousPos instanceof LabelPosition) {
@@ -3085,5 +3084,55 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 */
 	private static boolean isGuiThread() {
 		return Display.getCurrent() != null;
+	}
+
+	boolean keyScroll(int keyCode) {
+		BigInteger topAddress = getTopAddress();
+		BigInteger bottomAddress = getBottomAddress();
+		BigInteger addressRange = bottomAddress.subtract(topAddress);
+		StyledText styledText = fViewer.getTextWidget();
+		Rectangle clientArea = styledText.getClientArea();
+		int lineRange;
+		if (SWT.PAGE_UP == keyCode || SWT.PAGE_DOWN == keyCode) {
+			lineRange = clientArea.height / styledText.getLineHeight();
+		} else {
+			lineRange = 1;
+		}
+		addressRange = addressRange.min(BigInteger.valueOf(lineRange * fDocument.getMeanSizeOfInstructions()));
+		BigInteger scrollToAddress;
+		switch (keyCode) {
+		case SWT.PAGE_UP:
+		case SWT.ARROW_UP:
+			scrollToAddress = topAddress.subtract(addressRange).max(fStartAddress);
+			break;
+		case SWT.PAGE_DOWN:
+			scrollToAddress = topAddress.add(addressRange).min(bottomAddress);
+			break;
+		case SWT.ARROW_DOWN:
+			scrollToAddress = bottomAddress.add(addressRange).min(bottomAddress);
+			break;
+		default:
+			assert false;	// invalid keycode passed
+			scrollToAddress = fFocusAddress;
+		}
+		AddressRangePosition pos = getPositionOfAddress(scrollToAddress);
+		if (pos != null && pos.fValid) {
+			if (SWT.ARROW_DOWN == keyCode && pos.fAddressOffset.compareTo(bottomAddress) <= 0
+				|| SWT.ARROW_UP == keyCode && pos.fAddressOffset.compareTo(topAddress) >= 0) {
+				return false;
+			}
+			gotoPosition(pos, SWT.ARROW_DOWN != keyCode);
+		} else {
+			gotoAddress(scrollToAddress);
+		}
+		return true;
+	}
+
+	private BigInteger getBottomAddress() {
+		BigInteger bottomAddress = getAddressOfLine(fViewer.getBottomIndex());
+		if (bottomAddress == null || bottomAddress.equals(PC_UNKNOWN)) {
+			bottomAddress = fEndAddress.subtract(BigInteger.ONE);
+		}
+		return bottomAddress;
 	}
 }

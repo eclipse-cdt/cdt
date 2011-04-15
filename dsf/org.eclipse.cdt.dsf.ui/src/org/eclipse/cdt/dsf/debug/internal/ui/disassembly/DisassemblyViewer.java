@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems and others.
+ * Copyright (c) 2007, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,12 +24,15 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -52,13 +55,14 @@ public class DisassemblyViewer extends SourceViewer {
 		public void controlMoved(ControlEvent e) {
 		}
 	}
-	
+
 	private boolean fUserTriggeredScrolling;
 	private int fCachedLastTopPixel;
 	
 	// extra resize listener to workaround bug 171018
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=171018
 	private ResizeListener fResizeListener;
+	private DisassemblyPart fPart;
 
 	/**
 	 * Create a new DisassemblyViewer.
@@ -68,8 +72,9 @@ public class DisassemblyViewer extends SourceViewer {
 	 * @param showsAnnotationOverview
 	 * @param styles
 	 */
-	public DisassemblyViewer(Composite parent, IVerticalRuler ruler, IOverviewRuler overviewRuler, boolean showsAnnotationOverview, int styles) {
+	public DisassemblyViewer(DisassemblyPart part, Composite parent, IVerticalRuler ruler, IOverviewRuler overviewRuler, boolean showsAnnotationOverview, int styles) {
 		super(parent, ruler, overviewRuler, showsAnnotationOverview, styles);
+		fPart = part;
 		// always readonly
 		setEditable(false);
 	}
@@ -80,8 +85,20 @@ public class DisassemblyViewer extends SourceViewer {
 	@Override
 	protected void createControl(Composite parent, int styles) {
 		super.createControl(parent, styles);
+		StyledText textWidget = getTextWidget();
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=171018
-		getTextWidget().addControlListener(fResizeListener= new ResizeListener());
+		textWidget.addControlListener(fResizeListener= new ResizeListener());
+		textWidget.addVerifyKeyListener(new VerifyKeyListener() {
+			public void verifyKey(VerifyEvent event) {
+				switch (event.keyCode) {
+				case SWT.PAGE_UP:
+				case SWT.PAGE_DOWN:
+				case SWT.ARROW_UP:
+				case SWT.ARROW_DOWN:
+					event.doit = !fPart.keyScroll(event.keyCode);
+				}
+			}
+		});
 	}
 
 	/*
@@ -231,7 +248,7 @@ public class DisassemblyViewer extends SourceViewer {
 				if (!onTop && focusLine >= top && focusLine <= bottom - bottomBuffer) {
 					// do not scroll at all as it is already visible
 				} else {
-					if (focusLine > bottom - bottomBuffer && focusLine <= bottom) {
+					if (!onTop && focusLine > bottom - bottomBuffer && focusLine <= bottom) {
 						// focusLine is already in bottom bufferZone
 						// scroll to top of bottom bufferzone - for smooth down-scrolling
 						int scrollDelta = focusLine - (bottom - bottomBuffer);

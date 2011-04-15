@@ -651,13 +651,11 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 
 			fCodeTemplateTree.refresh();
 			updateSourceViewerInput(fCodeTemplateTree.getSelectedElements());
-
 		} catch (FileNotFoundException e) {
 			openReadErrorDialog(e);
 		} catch (IOException e) {
 			openReadErrorDialog(e);
 		}
-
 	}
 	
 	private void updateTemplate(TemplatePersistenceData data) {

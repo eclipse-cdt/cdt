@@ -68,6 +68,11 @@ public class RefreshExclusionContributionManager {
 						String id = configElement.getAttribute("id"); //$NON-NLS-1$
 						String name = configElement.getAttribute("name"); //$NON-NLS-1$
 						String utility = configElement.getAttribute("class"); //$NON-NLS-1$
+						boolean isTest = false;
+						String isTestString = configElement.getAttribute("isTest");
+						if(isTestString != null) {
+							isTest = Boolean.getBoolean(isTestString);
+						}
 
 						if (utility != null) {
 							try {
@@ -76,6 +81,7 @@ public class RefreshExclusionContributionManager {
 									RefreshExclusionContributor exclusionContributor = (RefreshExclusionContributor) execExt;
 									exclusionContributor.setID(id);
 									exclusionContributor.setName(name);
+									exclusionContributor.setIsTest(isTest);
 									fIDtoContributorsMap.put(id, exclusionContributor);
 									
 								}
@@ -94,6 +100,24 @@ public class RefreshExclusionContributionManager {
 	}
 	
 	public List<RefreshExclusionContributor> getContributors() {
-		return new LinkedList<RefreshExclusionContributor>(fIDtoContributorsMap.values());
+		return getContributors(false);
+	}
+	
+	public List<RefreshExclusionContributor> getContributors(boolean returnTestContributors) {
+		List<RefreshExclusionContributor> retVal = new LinkedList<RefreshExclusionContributor>();
+		
+		if(!returnTestContributors) {
+			for(RefreshExclusionContributor contributor : fIDtoContributorsMap.values()) {
+				if(!contributor.isTest()) {
+					retVal.add(contributor);
+				}
+			}
+			
+			return retVal;
+		}
+		
+		else {
+			return new LinkedList<RefreshExclusionContributor>(fIDtoContributorsMap.values());
+		}
 	}
 }

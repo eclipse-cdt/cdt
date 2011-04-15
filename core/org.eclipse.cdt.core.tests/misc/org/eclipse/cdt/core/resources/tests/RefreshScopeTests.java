@@ -16,6 +16,8 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.resources.ExclusionInstance;
+import org.eclipse.cdt.core.resources.ExclusionType;
 import org.eclipse.cdt.core.resources.RefreshExclusion;
 import org.eclipse.cdt.core.resources.RefreshScopeManager;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
@@ -154,22 +156,6 @@ public class RefreshScopeTests extends TestCase {
 		
 	}
 	
-	public class TestExclusion extends RefreshExclusion {
-
-		@Override
-		public String getName() {
-			return "TestExclusion";
-		}
-
-		@Override
-		public boolean testExclusion(IResource resource) {
-			// if the resource name ends in a 2, then we pass
-			String name = resource.getName();
-			return name.endsWith("2");
-		}
-		
-	}
-	
 	public void testAddRemoveExclusion() {
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
 		manager.addResourceToRefresh(fProject, fProject);
@@ -197,6 +183,85 @@ public class RefreshScopeTests extends TestCase {
 		exclusionsArray = exclusionsList.toArray(new RefreshExclusion[0]);
 		assertEquals(exclusionsArray.length, 0);
 		
+	}
+	
+	public void testPersistAndLoad() {
+		RefreshScopeManager manager = RefreshScopeManager.getInstance();
+		manager.addResourceToRefresh(fProject, fProject);
+		
+		RefreshExclusion exclusion1 = new TestExclusion();
+		manager.addExclusion(fProject, exclusion1);
+		RefreshExclusion exclusion2 = new TestExclusion();
+		manager.addExclusion(fProject, exclusion2);
+		
+		// add a nested exclusion to the first exclusion
+		RefreshExclusion exclusion3 = new TestExclusion();
+		exclusion1.addNestedExclusion(exclusion3);
+		
+		// add an instance to the second exclusion
+		ExclusionInstance instance = new ExclusionInstance();
+		instance.setDisplayString("foo");
+		instance.setResource(fFolder2);
+		instance.setExclusionType(ExclusionType.RESOURCE);
+		instance.setParentExclusion(exclusion2);
+		
+		try {
+			manager.persistSettings();
+		} catch (CoreException e) {
+			fail();
+		}
+		
+		// now clear all the settings out of the manager
+		manager.clearAllData();
+		
+		// now load the settings
+		try {
+			manager.loadSettings();
+		} catch (CoreException e) {
+			fail();
+		}
+		
+		// make sure we got the same stuff we saved
+		
+		// the project should be set to refresh its root
+		List<IResource> resources = manager.getResourcesToRefresh(fProject);
+		assertEquals(resources.size(), 1);
+		assertEquals(resources.toArray(new IResource[0])[0], fProject);
+		
+		// there should be 2 top-level exclusions
+		List<RefreshExclusion> exclusions = manager.getExclusions(fProject);
+		assertEquals(exclusions.size(), 2);
+		RefreshExclusion[] exclusionsArray = exclusions.toArray(new RefreshExclusion[0]);
+		
+		// both exclusions should have parent resource set to the project
+		assertEquals(exclusionsArray[0].getParentResource(), fProject);
+		assertEquals(exclusionsArray[1].getParentResource(), fProject);
+		
+		// the first exclusion should have one nested exclusion
+		List<RefreshExclusion> nestedExclusions1 = exclusionsArray[0].getNestedExclusions();
+		assertEquals(nestedExclusions1.size(), 1);
+		RefreshExclusion[] nestedExclusionsArray =  nestedExclusions1.toArray(new RefreshExclusion[0]);
+		// the nested exclusion should have its parent exclusion set properly
+		assertEquals(nestedExclusionsArray[0].getParentExclusion(), exclusionsArray[0]);
+		
+		// the second exclusion should have no nested exclusions
+		List<RefreshExclusion> nestedExclusions2 = exclusionsArray[1].getNestedExclusions();
+		assertEquals(nestedExclusions2.size(), 0);
+		
+		// the second exclusion should have an instance
+		List<ExclusionInstance> instances = exclusionsArray[1].getExclusionInstances();
+		assertEquals(instances.size(), 1);
+		ExclusionInstance[] instancesArray = instances.toArray(new ExclusionInstance[0]);
+		ExclusionInstance loadedInstance = instancesArray[0];
+		
+		// check the contents of the instance
+		assertEquals(exclusionsArray[1], loadedInstance.getParentExclusion());
+		assertEquals("foo", loadedInstance.getDisplayString());
+		assertEquals(fFolder2, loadedInstance.getResource());
+		assertEquals(ExclusionType.RESOURCE, loadedInstance.getExclusionType());
+		
+		// cleanup
+		manager.clearAllData();
 	}
 	
 

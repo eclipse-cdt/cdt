@@ -21,6 +21,7 @@ public class Messages extends NLS {
 	public static String RefreshScopeManager_0;
 	public static String RefreshScopeManager_1;
 	public static String RefreshScopeManager_2;
+	public static String RefreshScopeManager_3;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

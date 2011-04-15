@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.resources;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -27,12 +31,19 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * The RefreshScopeManager provides access to settings pertaining to refreshes performed during
@@ -138,6 +149,15 @@ public class RefreshScopeManager {
 		
 		resourceSet.clear();
 		
+	}
+	
+	public void clearAllResourcesToRefresh() {
+		fProjectToResourcesMap.clear();
+	}
+	
+	public void clearAllData() {
+		clearAllResourcesToRefresh();
+		clearAllExclusions();
 	}
 
 	private HashMap<IProject, LinkedHashSet<IResource>> getProjectToResourcesMap() {
@@ -251,8 +271,101 @@ public class RefreshScopeManager {
 		}
 	}
 	
-	public void loadSettings() {
+	public void loadSettings() throws CoreException {
+		// iterate through all projects in the workspace.  If they are C projects, attempt to load settings from them.
+		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		
+		for(IProject project : workspaceRoot.getProjects()) {
+			if(project.isOpen()) {
+				if(project.hasNature(CProjectNature.C_NATURE_ID)) {
+					String xmlString = project.getPersistentProperty(REFRESH_SCOPE_PROPERTY_NAME);
+					
+					// if there are no settings, then configure the default behaviour of refreshing the entire project,
+					// with no exclusions
+					if (xmlString == null) {
+						addResourceToRefresh(project, project);
+					}
+					
+					else {
+						// convert the XML string to a DOM model
+						
+						DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+				        DocumentBuilder docBuilder = null;
+						try {
+							docBuilder = docBuilderFactory.newDocumentBuilder();
+						} catch (ParserConfigurationException e) {
+							throw new CoreException(CCorePlugin.createStatus(Messages.RefreshScopeManager_0, e));
+						}
+						
+						Document doc = null;
+						
+						try {
+							doc = docBuilder.parse(new InputSource(new StringReader(xmlString)));
+						} catch (SAXException e) {
+							throw new CoreException(CCorePlugin.createStatus(MessageFormat.format(Messages.RefreshScopeManager_3, project.getName()), e));
+						} catch (IOException e) {
+							throw new CoreException(CCorePlugin.createStatus(MessageFormat.format(Messages.RefreshScopeManager_3, project.getName()), e));
+						}
+						
+						// walk the DOM and load the settings
+						
+						// for now ignore the version attribute, as we only have version 1 at this time
+						
+						// iterate through the resource element nodes
+						NodeList nodeList = doc.getElementsByTagName(RESOURCE_ELEMENT_NAME);
+						
+						for(int k = 0; k < nodeList.getLength(); k++) {
+							Node node = nodeList.item(k);
+							
+							// node will be an element
+							if(node instanceof Element) {
+								Element resourceElement = (Element) node;
+								
+								// get the resource path
+								String resourcePath = resourceElement.getAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME);
+								
+								if(resourcePath == null) {
+									// error
+									
+								}
+								
+								else {
+									// find the resource
+									IResource resource = workspaceRoot.findMember(resourcePath);
+									
+									if(resource == null) {
+										// error
+									}
+									
+									else {
+										addResourceToRefresh(project, resource);
+										
+										// load any exclusions
+										List<RefreshExclusion> exclusions = RefreshExclusion.loadData(resourceElement, null);
+										
+										// add them
+										for(RefreshExclusion exclusion : exclusions) {
+											addExclusion(resource, exclusion);
+										}
+									}
+								}
+							}
+						}
+					}		
+					
+				}
+			}
+		}
+	}
+
+	public void clearExclusions(IResource resource) {
+		getResourcesToExclusionsMap();
+		List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
+		exclusions.clear();	
+	}
+	
+	public void clearAllExclusions() {
+		fResourceToExclusionsMap.clear();
 	}
 
 }

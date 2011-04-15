@@ -78,6 +78,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="isTest" type="boolean">
+            <annotation>
+               <documentation>
+                  Attribute indicating this contribution is for testing purposes and hence the given contributor should not be considered for contributions to the UI.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

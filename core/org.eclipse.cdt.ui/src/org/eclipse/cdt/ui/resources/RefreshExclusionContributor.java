@@ -29,6 +29,7 @@ public abstract class RefreshExclusionContributor {
 	
 	protected String fID;
 	protected String fName;
+	protected boolean fIsTest;
 	
 	public String getID() {
 		return fID;
@@ -36,6 +37,14 @@ public abstract class RefreshExclusionContributor {
 	
 	public void setID(String id) {
 		fID = id;
+	}
+	
+	public boolean isTest() {
+		return fIsTest;
+	}
+	
+	public void setIsTest(boolean isTest) {
+		fIsTest = isTest;
 	}
 	
 	/**

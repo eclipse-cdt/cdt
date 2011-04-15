@@ -15,10 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
@@ -32,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -56,8 +52,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  * Unary expression in c++
  */
 public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpression, IASTAmbiguityParent {
-	private static final CPPBasicType BOOLEAN_TYPE = new CPPBasicType(Kind.eBoolean, 0);
-
 	private int op;
     private IASTExpression operand;
 
@@ -275,7 +269,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 
 		switch (op) {
 		case op_not:
-			return BOOLEAN_TYPE;
+			return CPPBasicType.BOOLEAN;
 		case op_postFixDecr:
 		case op_postFixIncr:
 			typeOfOperand= prvalueType(typeOfOperand);

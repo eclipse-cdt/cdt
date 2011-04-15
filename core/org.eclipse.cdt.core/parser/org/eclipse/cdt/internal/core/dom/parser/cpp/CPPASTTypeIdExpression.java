@@ -98,6 +98,21 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 			return CPPVisitor.get_SIZE_T(this);
 		case op_typeid:
 			return CPPVisitor.get_type_info(this);
+		case op_has_nothrow_copy:
+		case op_has_nothrow_constructor:
+		case op_has_trivial_assign:
+		case op_has_trivial_constructor:
+		case op_has_trivial_copy:
+		case op_has_trivial_destructor:
+		case op_has_virtual_destructor:
+		case op_is_abstract:
+		case op_is_class:
+		case op_is_empty:
+		case op_is_enum:
+		case op_is_pod:
+		case op_is_polymorphic:
+		case op_is_union:
+			return CPPBasicType.BOOLEAN;
 		}
 		return CPPVisitor.createType(getTypeId());
 	}

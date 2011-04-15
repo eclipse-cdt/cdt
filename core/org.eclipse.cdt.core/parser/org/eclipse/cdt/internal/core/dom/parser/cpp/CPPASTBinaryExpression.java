@@ -14,10 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -26,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -337,7 +333,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         case IASTBinaryExpression.op_logicalOr:
         case IASTBinaryExpression.op_equals:
         case IASTBinaryExpression.op_notequals:
-        	return new CPPBasicType(Kind.eBoolean, 0, this);
+        	return CPPBasicType.BOOLEAN;
 
         case IASTBinaryExpression.op_plus:
         	if (type1 instanceof IPointerType) {

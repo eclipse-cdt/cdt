@@ -25,6 +25,8 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression.Operator;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -1291,12 +1293,109 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IGCCToken.t___alignof__:
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
         			IASTTypeIdExpression.op_alignof, IASTUnaryExpression.op_alignOf, ctx, strat);
+        	
+        case IGCCToken.tTT_has_nothrow_assign:
+        case IGCCToken.tTT_has_nothrow_constructor:
+        case IGCCToken.tTT_has_nothrow_copy:
+        case IGCCToken.tTT_has_trivial_assign:
+        case IGCCToken.tTT_has_trivial_constructor:
+        case IGCCToken.tTT_has_trivial_copy:
+        case IGCCToken.tTT_has_trivial_destructor:
+        case IGCCToken.tTT_has_virtual_destructor:
+        case IGCCToken.tTT_is_abstract:
+        case IGCCToken.tTT_is_base_of:
+        case IGCCToken.tTT_is_class:
+        case IGCCToken.tTT_is_empty:
+        case IGCCToken.tTT_is_enum:
+        case IGCCToken.tTT_is_pod:
+        case IGCCToken.tTT_is_polymorphic:
+        case IGCCToken.tTT_is_union:
+        	return parseTypeTrait();
+        	
         default:
             return postfixExpression(ctx, strat);
         }
     }
 
-    /**
+	private IASTExpression parseTypeTrait() throws EndOfFileException, BacktrackException {
+		IToken first= consume();
+		final boolean isBinary= isBinaryTrait(first);
+		
+		consume(IToken.tLPAREN);
+		IASTTypeId typeId= typeId(DeclarationOptions.TYPEID);
+		IASTTypeId secondTypeId= null;
+		if (isBinary) {
+			consumeOrEOC(IToken.tCOMMA);
+			if (LT(1) != IToken.tEOC) {
+				secondTypeId= typeId(DeclarationOptions.TYPEID);
+			}
+		}
+		int endOffset= consumeOrEOC(IToken.tRPAREN).getEndOffset();
+		IASTExpression result;
+		if (isBinary) {
+			result= nodeFactory.newBinaryTypeIdExpression(getBinaryTypeTraitOperator(first), typeId, secondTypeId);
+		} else {
+			result= nodeFactory.newTypeIdExpression(getUnaryTypeTraitOperator(first), typeId);
+		}
+		return setRange(result, first.getOffset(), endOffset);
+	}
+
+	private boolean isBinaryTrait(IToken first) {
+		switch(first.getType()) {
+        case IGCCToken.tTT_is_base_of:
+        	return true;
+		}
+		return false;
+	}
+
+	private Operator getBinaryTypeTraitOperator(IToken first) {
+		switch(first.getType()) {
+        case IGCCToken.tTT_is_base_of:
+        	return IASTBinaryTypeIdExpression.Operator.__is_base_of;
+		}
+		
+		assert false;
+		return null;
+	}
+
+	private int getUnaryTypeTraitOperator(IToken first) {
+		switch(first.getType()) {
+        case IGCCToken.tTT_has_nothrow_assign:
+        	return IASTTypeIdExpression.op_has_nothrow_assign;
+        case IGCCToken.tTT_has_nothrow_constructor:
+        	return IASTTypeIdExpression.op_has_nothrow_constructor;
+        case IGCCToken.tTT_has_nothrow_copy:
+        	return IASTTypeIdExpression.op_has_nothrow_copy;
+        case IGCCToken.tTT_has_trivial_assign:
+        	return IASTTypeIdExpression.op_has_trivial_assign;
+        case IGCCToken.tTT_has_trivial_constructor:
+        	return IASTTypeIdExpression.op_has_trivial_constructor;
+        case IGCCToken.tTT_has_trivial_copy:
+        	return IASTTypeIdExpression.op_has_trivial_copy;
+        case IGCCToken.tTT_has_trivial_destructor:
+        	return IASTTypeIdExpression.op_has_trivial_destructor;
+        case IGCCToken.tTT_has_virtual_destructor:
+        	return IASTTypeIdExpression.op_has_virtual_destructor;
+        case IGCCToken.tTT_is_abstract:
+        	return IASTTypeIdExpression.op_is_abstract;
+        case IGCCToken.tTT_is_class:
+        	return IASTTypeIdExpression.op_is_class;
+        case IGCCToken.tTT_is_empty:
+        	return IASTTypeIdExpression.op_is_abstract;
+        case IGCCToken.tTT_is_enum:
+        	return IASTTypeIdExpression.op_is_abstract;
+        case IGCCToken.tTT_is_pod:
+        	return IASTTypeIdExpression.op_is_abstract;
+        case IGCCToken.tTT_is_polymorphic:
+        	return IASTTypeIdExpression.op_is_abstract;
+        case IGCCToken.tTT_is_union:
+        	return IASTTypeIdExpression.op_is_abstract;
+		}
+		assert false;
+		return 0;
+	}
+
+	/**
      * postfix-expression:
      *    [gnu-extension, compound literals in c++]
      *       ( type-name ) { initializer-list }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,6 @@ class BuiltinOperators {
 	private static final ICPPFunction[] EMPTY = {};
 	private static final int FIRST = 0;
 	private static final int SECOND = 1;
-	private static final IType BOOL = new CPPBasicType(Kind.eBoolean, 0);
 	private static final IType PTR_DIFF = new CPPBasicType(Kind.eInt, 0);
 
 	public static ICPPFunction[] create(OverloadableOperator operator, IASTInitializerClause[] args, IASTTranslationUnit tu, Object[] globCandidates) {
@@ -213,11 +212,11 @@ class BuiltinOperators {
 
 		case AND:
 		case OR:
-			addFunction(BOOL, BOOL, BOOL);
+			addFunction(CPPBasicType.BOOLEAN, CPPBasicType.BOOLEAN, CPPBasicType.BOOLEAN);
 			break;
 			
 		case NOT:
-			addFunction(BOOL, BOOL);
+			addFunction(CPPBasicType.BOOLEAN, CPPBasicType.BOOLEAN);
 			break;
 			
 		case CONDITIONAL_OPERATOR:
@@ -393,7 +392,7 @@ class BuiltinOperators {
 				IType rt= null;
 				switch(rstrat) {
 				case USE_BOOL:
-					rt= BOOL;
+					rt= CPPBasicType.BOOLEAN;
 					break;
 				case USE_FIRST:
 					rt= t1;
@@ -475,7 +474,7 @@ class BuiltinOperators {
 			for (IType type : types) {
 				type= SemanticUtil.getNestedType(type, TDEF|REF|CVTYPE);
 				if (isPointer(type) || isEnumeration(type) || (!ordered && isPointerToMember(type))) {
-					addFunction(BOOL, type, type);
+					addFunction(CPPBasicType.BOOLEAN, type, type);
 				}
 			}
 		}

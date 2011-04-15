@@ -112,7 +112,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     		}
     		case lk_true:
     		case lk_false:
-    			return new CPPBasicType(Kind.eBoolean, 0, this);
+    			return CPPBasicType.BOOLEAN;
     		case lk_char_constant:
     			return new CPPBasicType(getCharType(), 0, this);
     		case lk_float_constant: 

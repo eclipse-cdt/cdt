@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression.Operator;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -157,6 +158,10 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return new CPPASTBinaryExpression(op, expr1, expr2);
 	}
 
+	public IASTExpression newBinaryTypeIdExpression(Operator op, IASTTypeId type1, IASTTypeId type2) {
+		return new CPPASTBinaryTypeIdExpression(op, type1, type2);
+	}
+	
 	public IASTBreakStatement newBreakStatement() {
 		return new CPPASTBreakStatement();
 	}

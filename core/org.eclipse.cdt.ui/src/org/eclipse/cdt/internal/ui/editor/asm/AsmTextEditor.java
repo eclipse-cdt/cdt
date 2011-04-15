@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Wind River Systems
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor.asm;
 
@@ -462,66 +463,92 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	 * @param moveCursor if true the editor is scrolled to show the range.
 	 */
 	public void setSelection(ISourceRange element, boolean moveCursor) {
-
-		if (element == null) {
+		if (getSelectionProvider() == null)
 			return;
+
+		ISelection selection= getSelectionProvider().getSelection();
+		if (selection instanceof ITextSelection) {
+			ITextSelection textSelection= (ITextSelection) selection;
+			// PR 39995: [navigation] Forward history cleared after going back in navigation history:
+			// mark only in navigation history if the cursor is being moved (which it isn't if
+			// this is called from a PostSelectionEvent that should only update the magnet)
+			if (moveCursor && (textSelection.getOffset() != 0 || textSelection.getLength() != 0))
+				markInNavigationHistory();
 		}
 
-		try {
-			IRegion alternateRegion = null;
-			int start = element.getStartPos();
-			int length = element.getLength();
+		if (element != null) {
+			
+			StyledText textWidget= null;
+			
+			ISourceViewer sourceViewer= getSourceViewer();
+			if (sourceViewer == null)
+				return;
+			
+			textWidget= sourceViewer.getTextWidget();
+			if (textWidget == null)
+				return;
 
-			// Sanity check sometimes the parser may throw wrong numbers.
-			if (start < 0 || length < 0) {
-				start = 0;
-				length = 0;
-			}
-
-			// 0 length and start and non-zero start line says we know
-			// the line for some reason, but not the offset.
-			if (length == 0 && start == 0 && element.getStartLine() > 0) {
-				// We have the information in term of lines, we can work it out.
-				// Binary elements return the first executable statement so we have to substract -1
-				start = getDocumentProvider().getDocument(getEditorInput()).getLineOffset(element.getStartLine() - 1);
-				if (element.getEndLine() > 0) {
-					length = getDocumentProvider().getDocument(getEditorInput()).getLineOffset(element.getEndLine()) - start;
-				} else {
-					length = start;
+			try {
+				IRegion alternateRegion = null;
+				int start = element.getStartPos();
+				int length = element.getLength();
+	
+				// Sanity check sometimes the parser may throw wrong numbers.
+				if (start < 0 || length < 0) {
+					start = 0;
+					length = 0;
 				}
-				// create an alternate region for the keyword highlight.
-				alternateRegion = getDocumentProvider().getDocument(getEditorInput()).getLineInformation(element.getStartLine() - 1);
-				if (start == length || length < 0) {
-					if (alternateRegion != null) {
+	
+				// 0 length and start and non-zero start line says we know
+				// the line for some reason, but not the offset.
+				if (length == 0 && start == 0 && element.getStartLine() > 0) {
+					// We have the information in term of lines, we can work it out.
+					// Binary elements return the first executable statement so we have to subtract -1
+					start = getDocumentProvider().getDocument(getEditorInput()).getLineOffset(element.getStartLine() - 1);
+					if (element.getEndLine() > 0) {
+						length = getDocumentProvider().getDocument(getEditorInput()).getLineOffset(element.getEndLine()) - start;
+					} else {
+						length = start;
+					}
+					// create an alternate region for the keyword highlight.
+					alternateRegion = getDocumentProvider().getDocument(getEditorInput()).getLineInformation(element.getStartLine() - 1);
+					if (start == length || length < 0) {
+						if (alternateRegion != null) {
+							start = alternateRegion.getOffset();
+							length = alternateRegion.getLength();
+						}
+					}
+				}
+				setHighlightRange(start, length, moveCursor);
+	
+				if (moveCursor) {
+					start = element.getIdStartPos();
+					length = element.getIdLength();
+					if (start == 0 && length == 0 && alternateRegion != null) {
 						start = alternateRegion.getOffset();
 						length = alternateRegion.getLength();
 					}
+					if (start > -1 && length > 0) {
+						try  {
+							textWidget.setRedraw(false);
+							sourceViewer.revealRange(start, length);
+							sourceViewer.setSelectedRange(start, length);
+						} finally {
+							textWidget.setRedraw(true);
+						}
+						markInNavigationHistory();
+					}
+					updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION);
 				}
+			} catch (IllegalArgumentException x) {
+	            // No information to the user
+			} catch (BadLocationException e) {
+	            // No information to the user
 			}
-			setHighlightRange(start, length, moveCursor);
-
-			if (moveCursor) {
-				start = element.getIdStartPos();
-				length = element.getIdLength();
-				if (start == 0 && length == 0 && alternateRegion != null) {
-					start = alternateRegion.getOffset();
-					length = alternateRegion.getLength();
-				}
-				if (start > -1 && getSourceViewer() != null) {
-					getSourceViewer().revealRange(start, length);
-					getSourceViewer().setSelectedRange(start, length);
-				}
-				updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION);
-			}
-			return;
-		} catch (IllegalArgumentException x) {
-            // No information to the user
-		} catch (BadLocationException e) {
-            // No information to the user
-		}
-
-		if (moveCursor)
+		} else if (moveCursor) {
 			resetHighlightRange();
+			markInNavigationHistory();
+		}
 	}
 
 }

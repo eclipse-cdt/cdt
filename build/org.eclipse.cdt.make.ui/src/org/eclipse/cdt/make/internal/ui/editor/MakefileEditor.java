@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -283,7 +283,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	 * 
 	 * @return the find/replace document adapter.
 	 */
-	private FindReplaceDocumentAdapter getFindRepalceDocumentAdapter() {
+	private FindReplaceDocumentAdapter getFindReplaceDocumentAdapter() {
 		if (fFindReplaceDocumentAdapter == null) {
 			IDocument doc = getDocumentProvider().getDocument(getEditorInput());
 			fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(doc);
@@ -314,7 +314,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 				if (len > 0) {
 					var = var.substring(0, len);
 				}
-				IRegion region = getFindRepalceDocumentAdapter().find(start, var, true, true, true, false);
+				IRegion region = getFindReplaceDocumentAdapter().find(start, var, true, true, true, false);
 
 				if (region != null) {
 					len = region.getOffset();
@@ -322,6 +322,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 					getSourceViewer().revealRange(len, length);
 					// Selected region begins one index after offset
 					getSourceViewer().setSelectedRange(len, length);
+					markInNavigationHistory();
 				}
 
 			}

@@ -30,7 +30,6 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
-
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
@@ -58,10 +57,9 @@ public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
 	}
 
 	/*
-	 * reset to default, those constants are no longer maintain int CUIPlugin store.
+	 * Reset to default, those constants that are no longer maintained in CUIPlugin store.
 	 */
 	public static void useTextEditorPreferencePage(IPreferenceStore store) {
-		
 		store.setToDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE);
 		store.setToDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR);
 
@@ -90,5 +88,4 @@ public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setToDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE);
 		store.setToDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SMART_HOME_END);
 	}
-
 }

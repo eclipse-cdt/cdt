@@ -258,7 +258,7 @@ public class DefaultCodeFormatterOptions {
 		// cannot be instantiated
 	}
 
-	public DefaultCodeFormatterOptions(Map<String,String> settings) {
+	public DefaultCodeFormatterOptions(Map<String, String> settings) {
 		setDefaultSettings();
 		if (settings == null) return;
 		set(settings);
@@ -474,7 +474,7 @@ public class DefaultCodeFormatterOptions {
 		return options;
 	}
 
-	public void set(Map<String,String> settings) {
+	public void set(Map<String, String> settings) {
 //		final Object alignmentForArgumentsInAllocationExpressionOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_ALLOCATION_EXPRESSION);
 //		if (alignmentForArgumentsInAllocationExpressionOption != null) {
 //			try {

@@ -26,13 +26,12 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * Definition of a namespace.
  */
-public class CPPASTNamespaceDefinition extends ASTNode implements
-        ICPPASTNamespaceDefinition, IASTAmbiguityParent {
-
+public class CPPASTNamespaceDefinition extends ASTNode
+		implements ICPPASTNamespaceDefinition, IASTAmbiguityParent {
     private IASTName fName;
 	private IASTDeclaration[] fAllDeclarations;
 	private IASTDeclaration[] fActiveDeclarations;
-    private int fLastDeclaration=-1;
+    private int fLastDeclaration= -1;
     private boolean fIsInline;
 
     public CPPASTNamespaceDefinition() {
@@ -47,11 +46,12 @@ public class CPPASTNamespaceDefinition extends ASTNode implements
 	}
 	
 	public CPPASTNamespaceDefinition copy(CopyStyle style) {
-		CPPASTNamespaceDefinition copy = new CPPASTNamespaceDefinition(fName == null ? null
-				: fName.copy(style));
+		CPPASTNamespaceDefinition copy =
+				new CPPASTNamespaceDefinition(fName == null ? null : fName.copy(style));
 		copy.fIsInline = fIsInline;
-		for (IASTDeclaration declaration : getDeclarations())
+		for (IASTDeclaration declaration : getDeclarations()) {
 			copy.addDeclaration(declaration == null ? null : declaration.copy(style));
+		}
 		copy.setOffsetAndLength(this);
 		if (style == CopyStyle.withLocations) {
 			copy.setCopyLocation(this);
@@ -85,7 +85,7 @@ public class CPPASTNamespaceDefinition extends ASTNode implements
 		if (decl != null) {
 			decl.setParent(this);
 			decl.setPropertyInParent(OWNED_DECLARATION);
-			fAllDeclarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, fAllDeclarations, ++fLastDeclaration, decl);
+			fAllDeclarations = (IASTDeclaration[]) ArrayUtil.append(IASTDeclaration.class, fAllDeclarations, ++fLastDeclaration, decl);
 			fActiveDeclarations= null;
 		}
 	}
@@ -115,9 +115,9 @@ public class CPPASTNamespaceDefinition extends ASTNode implements
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitNamespaces) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
@@ -126,7 +126,8 @@ public class CPPASTNamespaceDefinition extends ASTNode implements
 		
         IASTDeclaration [] decls = getDeclarations(action.includeInactiveNodes);
 		for (IASTDeclaration decl : decls) {
-			if (!decl.accept(action)) return false;
+			if (!decl.accept(action))
+				return false;
 		}
 
 		if (action.shouldVisitNamespaces && action.leave(this) == ASTVisitor.PROCESS_ABORT)
@@ -136,7 +137,8 @@ public class CPPASTNamespaceDefinition extends ASTNode implements
     }
 
 	public int getRoleForName(IASTName n) {
-		if( fName == n ) return r_definition;
+		if (fName == n)
+			return r_definition;
 		return r_unclear;
 	}
 

@@ -23,16 +23,14 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
- * If statement in c++
+ * If statement in C++
  */
 public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IASTAmbiguityParent {
-	
     private IASTExpression condition;
     private IASTStatement thenClause;
     private IASTStatement elseClause;
     private IASTDeclaration condDecl;
     private IScope scope;
-    
     
     public CPPASTIfStatement() {
 	}
@@ -119,10 +117,10 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
 	public boolean accept(ASTVisitor action) {
     	N stack= null;
     	ICPPASTIfStatement stmt= this;
-    	loop: for(;;) {
+    	loop: for (;;) {
     		if (action.shouldVisitStatements) {
     			switch (action.visit(stmt)) {
-    			case ASTVisitor.PROCESS_ABORT: 	return false;
+    			case ASTVisitor.PROCESS_ABORT: return false;
     			case ASTVisitor.PROCESS_SKIP: 	
     				stmt= null;
     				break loop;

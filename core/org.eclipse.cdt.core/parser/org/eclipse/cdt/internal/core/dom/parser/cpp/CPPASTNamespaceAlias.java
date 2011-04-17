@@ -19,15 +19,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * @author jcamelon
  */
 public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAlias {
-
     private IASTName alias;
     private IASTName qualifiedName;
-
     
-    public CPPASTNamespaceAlias() {
-    	// default constructor
-	}
-
 	public CPPASTNamespaceAlias(IASTName alias, IASTName qualifiedName) {
 		setAlias(alias);
 		setMappingName(qualifiedName);
@@ -38,9 +32,9 @@ public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAli
 	}
 
 	public CPPASTNamespaceAlias copy(CopyStyle style) {
-		CPPASTNamespaceAlias copy = new CPPASTNamespaceAlias();
-		copy.setAlias(alias == null ? null : alias.copy(style));
-		copy.setMappingName(qualifiedName == null ? null : qualifiedName.copy(style));
+		CPPASTNamespaceAlias copy = new CPPASTNamespaceAlias(
+				alias == null ? null : alias.copy(style),
+				qualifiedName == null ? null : qualifiedName.copy(style));
 		copy.setOffsetAndLength(this);
 		if (style == CopyStyle.withLocations) {
 			copy.setCopyLocation(this);
@@ -75,31 +69,31 @@ public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAli
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclarations ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclarations) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
-        if( alias != null ) if( !alias.accept( action ) ) return false;
-        if( qualifiedName != null ) if( !qualifiedName.accept( action ) ) return false;
+        if (alias != null && !alias.accept(action)) return false;
+        if (qualifiedName != null && !qualifiedName.accept(action)) return false;
         
-        if( action.shouldVisitDeclarations ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitDeclarations) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
     }
 
 	public int getRoleForName(IASTName n) {
-		if( alias == n ) return r_definition;
-		if( qualifiedName == n ) return r_reference;
+		if (alias == n) return r_definition;
+		if (qualifiedName == n) return r_reference;
 		return r_unclear;
 	}
 }

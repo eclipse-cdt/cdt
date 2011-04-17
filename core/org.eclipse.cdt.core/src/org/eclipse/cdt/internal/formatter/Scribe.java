@@ -55,7 +55,7 @@ public class Scribe {
 
 	public Token currentToken;
 
-	// edits management
+	// Edits management
 	private OptimizedReplaceEdit[] edits;
 	public int editsIndex;
 
@@ -1578,7 +1578,7 @@ public class Scribe {
 			return;
 		}
 		if (lastNumberOfNewLines >= 1) {
-			// ensure that the scribe is at the beginning of a new line
+			// Ensure that the scribe is at the beginning of a new line
 			// only if no specific indentation has been previously set
 			if (!preserveLineBreakIndentation) {
 				column = 1; 
@@ -1888,7 +1888,7 @@ public class Scribe {
 						break;
 					}
 				}
-				// step back one token
+				// Step back one token
 				scanner.resetTo(currentTokenStartPosition, scannerEndPosition - 1);
 				return !isFirstModifier;
 			}

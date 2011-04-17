@@ -1319,11 +1319,18 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//#define MY_MACRO(a, b, c)
 	//
 	//MY_MACRO(abcdefghijklmnopqrstuvwxyz,25,"very very very very very very very very very very long text");
+	//namespace ns {
+	//MY_MACRO(abcdefghijklmnopqrstuvwxyz,25,"very very very very very very very very very very long text");
+    //}
 
 	//#define MY_MACRO(a, b, c)
 	//
 	//MY_MACRO(abcdefghijklmnopqrstuvwxyz, 25,
 	//        "very very very very very very very very very very long text");
+	//namespace ns {
+	//MY_MACRO(abcdefghijklmnopqrstuvwxyz, 25,
+	//        "very very very very very very very very very very long text");
+    //}
 	public void testFunctionStyleMacro_1() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		assertFormatterResult();

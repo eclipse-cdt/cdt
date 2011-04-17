@@ -358,6 +358,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private MultiStatus fStatus;
 	private int fOpenAngleBrackets;
+	private IASTTranslationUnit ast;
 
 	public CodeFormatterVisitor(DefaultCodeFormatterOptions preferences, int offset, int length) {
 		localScanner = new Scanner() {
@@ -440,13 +441,20 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 */
 	@Override
 	public int visit(IASTTranslationUnit tu) {
-		// fake new line
+		ast = tu;
+		// Fake new line
 		scribe.lastNumberOfNewLines = 1;
 		scribe.startNewLine();
 		final int indentLevel= scribe.indentationLevel;
-		IASTPreprocessorMacroExpansion[] macroExpansions = tu.getMacroExpansions();
-		int m = 0;
 		IASTDeclaration[] decls= tu.getDeclarations();
+		formatDeclarations(decls, indentLevel);
+		scribe.printEndOfTranslationUnit();
+		return PROCESS_SKIP;
+	}
+
+	private void formatDeclarations(IASTDeclaration[] decls, final int indentLevel) {
+		IASTPreprocessorMacroExpansion[] macroExpansions = ast.getMacroExpansions();
+		int m = 0;
 		for (int i = 0; i < decls.length; i++) {
 			IASTDeclaration declaration = decls[i];
 			if (!declaration.isPartOfTranslationUnitFile()) {
@@ -455,23 +463,42 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			try {
 				int pos = scribe.scanner.getCurrentPosition();
 				IASTFileLocation declarationLocation = declaration.getFileLocation();
-				int declarartionOffset = declarationLocation.getNodeOffset();
-				int declarationEndOffset = declarartionOffset + declarationLocation.getNodeLength();
+				int declarationOffset = declarationLocation.getNodeOffset();
 				for (; m < macroExpansions.length; m++) {
 					IASTPreprocessorMacroExpansion macroExpansion = macroExpansions[m];
 					IASTFileLocation macroLocation = macroExpansion.getFileLocation();
 					int macroOffset = macroLocation.getNodeOffset();
-					if (macroOffset > declarartionOffset) {
+					if (macroOffset > declarationOffset) {
 						break;
 					}
 					int macroEndOffset = macroOffset + macroLocation.getNodeLength();
-					if (isFunctionStyleMacroExpansion(macroExpansion) && macroOffset >= pos &&
-							(macroEndOffset <= declarartionOffset || macroEndOffset >= declarationEndOffset)) {
-						// The function-style macro expansion either doesn't overlap with
-						// the following declaration, or the declaration is completely covered by
-						// the macro expansion. In both cases formatting is driven by the text of
-						// parameters of the macro, not by the expanded code.
-						formatFunctionStyleMacroExpansion(macroExpansion);
+					if (isFunctionStyleMacroExpansion(macroExpansion) && macroOffset >= pos) {
+						// Find the last declaration overlapping with the macro.
+						for (int j = i + 1; j < decls.length; j++) {
+							IASTDeclaration next = decls[j];
+							if (!next.isPartOfTranslationUnitFile()) {
+								continue;
+							}
+							IASTFileLocation nextLocation = next.getFileLocation();
+							int nextOffset = nextLocation.getNodeOffset();
+							if (macroEndOffset <= nextOffset) {
+								break;
+							}
+							i = j;
+							declaration = next;
+							declarationLocation = nextLocation;
+							declarationOffset = declarationLocation.getNodeOffset();
+						}
+						int declarationEndOffset = declarationOffset + declarationLocation.getNodeLength();
+						if (macroEndOffset <= declarationOffset || macroEndOffset >= declarationEndOffset ||
+								macroEndOffset == declarationEndOffset - 1 && scribe.scanner.source[macroEndOffset] == ';') {
+							// The function-style macro expansion either doesn't overlap with
+							// the following declaration, or completely covers, with a possible
+							// exception for the trailing semicolon, one or more declarations.
+							// In both cases formatting is driven by the text of parameters of
+							// the macro, not by the expanded code.
+							formatFunctionStyleMacroExpansion(macroExpansion);
+						}
 					}
 				}
 
@@ -492,8 +519,6 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				}
 			}
 		}
-		scribe.printEndOfTranslationUnit();
-		return PROCESS_SKIP;
 	}
 
 	private boolean isFunctionStyleMacroExpansion(IASTPreprocessorMacroExpansion macroExpansion) {
@@ -1059,10 +1084,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				scribe.indent();
 			}
 			scribe.startNewLine();
-			for (IASTDeclaration declaration : memberDecls) {
-				declaration.accept(this);
-				scribe.startNewLine();
-			}
+			formatDeclarations(memberDecls, scribe.indentationLevel);
 			if (preferences.indent_body_declarations_compare_to_namespace_header) {
 				scribe.unIndent();
 			}
@@ -1328,6 +1350,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 
 		if (tailFormatter != null) {
+			scribe.runTailFormatter();
 			scribe.setTailFormatter(null);
 		}
 		// Body

@@ -150,7 +150,7 @@ public class CPPASTNamespaceDefinition extends ASTNode
 				other.setPropertyInParent(child.getPropertyInParent());
 				fAllDeclarations[i] = (IASTDeclaration) other;
 				fActiveDeclarations= null;
-				return;
+				break;
 			}
 		}
     }

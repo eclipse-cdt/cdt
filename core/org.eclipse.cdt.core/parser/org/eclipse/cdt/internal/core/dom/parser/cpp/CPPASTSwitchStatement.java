@@ -22,16 +22,14 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
- * Switch statement in c++.
+ * Switch statement in C++.
  */
-public class CPPASTSwitchStatement extends ASTNode implements
-        ICPPASTSwitchStatement, IASTAmbiguityParent {
-
+public class CPPASTSwitchStatement extends ASTNode
+		implements ICPPASTSwitchStatement, IASTAmbiguityParent {
 	private IScope scope;
     private IASTExpression controllerExpression;
     private IASTDeclaration controllerDeclaration;
     private IASTStatement body;
-
     
     public CPPASTSwitchStatement() {
 	}
@@ -52,10 +50,10 @@ public class CPPASTSwitchStatement extends ASTNode implements
 
 	public CPPASTSwitchStatement copy(CopyStyle style) {
 		CPPASTSwitchStatement copy = new CPPASTSwitchStatement();
-		copy.setControllerDeclaration(controllerDeclaration == null ? null : controllerDeclaration
-				.copy(style));
-		copy.setControllerExpression(controllerExpression == null ? null : controllerExpression
-				.copy(style));
+		copy.setControllerDeclaration(controllerDeclaration == null ?
+				null : controllerDeclaration.copy(style));
+		copy.setControllerExpression(controllerExpression == null ?
+				null : controllerExpression.copy(style));
 		copy.setBody(body == null ? null : body.copy(style));
 		copy.setOffsetAndLength(this);
 		if (style == CopyStyle.withLocations) {
@@ -92,23 +90,23 @@ public class CPPASTSwitchStatement extends ASTNode implements
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitStatements ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitStatements) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
-        if( controllerExpression != null ) if( !controllerExpression.accept( action ) ) return false;
-        if( controllerDeclaration != null ) if( !controllerDeclaration.accept( action ) ) return false;
-        if( body != null ) if( !body.accept( action ) ) return false;
+        if (controllerExpression != null && !controllerExpression.accept(action)) return false;
+        if (controllerDeclaration != null && !controllerDeclaration.accept(action)) return false;
+        if (body != null && !body.accept(action)) return false;
         
-        if( action.shouldVisitStatements ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitStatements) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
@@ -143,9 +141,8 @@ public class CPPASTSwitchStatement extends ASTNode implements
     }
 
 	public IScope getScope() {
-		if( scope == null )
-            scope = new CPPBlockScope( this );
+		if (scope == null)
+            scope = new CPPBlockScope(this);
         return scope;	
     }
-
 }

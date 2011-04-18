@@ -38,7 +38,7 @@ import org.eclipse.cdt.internal.ui.refactoring.Container;
  * A collection of methods that deal with IASTTranslationUnits.
  * 
  * @author Mirko Stocker
- * @deprecated Use REfactoringASTCache.
+ * @deprecated Use RefactoringASTCache.
  */
 @Deprecated
 public class TranslationUnitHelper {

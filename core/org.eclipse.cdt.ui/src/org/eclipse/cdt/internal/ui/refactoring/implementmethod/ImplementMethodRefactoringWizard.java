@@ -24,24 +24,23 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * @author Mirko Stocker
- *
  */
 public class ImplementMethodRefactoringWizard extends RefactoringWizard {
-
-       private final ImplementMethodRefactoring refactoring;
-       private Map<MethodToImplementConfig, ParameterNamesInputPage>pagesMap = new HashMap<MethodToImplementConfig, ParameterNamesInputPage>();
+   private final ImplementMethodRefactoring refactoring;
+   private Map<MethodToImplementConfig, ParameterNamesInputPage>pagesMap =
+		   new HashMap<MethodToImplementConfig, ParameterNamesInputPage>();
 
 	public ImplementMethodRefactoringWizard(ImplementMethodRefactoring refactoring) {
-    	   super(refactoring, WIZARD_BASED_USER_INTERFACE);
-    	   this.refactoring = refactoring;
-       }
+	   super(refactoring, WIZARD_BASED_USER_INTERFACE);
+	   this.refactoring = refactoring;
+	}
 
 	@Override
 	protected void addUserInputPages() {
 		addPage(new ImplementMethodInputPage(refactoring.getRefactoringData(), this));
 		ImplementMethodData data = refactoring.getRefactoringData();
 		for (MethodToImplementConfig config : data.getMethodDeclarations()) {
-			if(config.getParaHandler().needsAdditionalArgumentNames()) {
+			if (config.getParaHandler().needsAdditionalArgumentNames()) {
 				ParameterNamesInputPage page = new ParameterNamesInputPage(config, this);
 				pagesMap.put(config, page);
 				addPage(page);
@@ -54,11 +53,12 @@ public class ImplementMethodRefactoringWizard extends RefactoringWizard {
 	}
 
 	/**
-	 * - When cancelling the wizard, RefactoringASTCache gets disposed and releases the lock on the index but
-	 * the preview jobs might still be running and access the index or an index based AST so we need to make sure they
-	 * are done before disposing the cache 
-	 * - When proceeding to the last page and finishing the wizard, the
-	 * refactoring will run and possibly use concurrently the same ASTs that the jobs use, so we need to make
+	 * When canceling the wizard, RefactoringASTCache gets disposed and releases the lock on
+	 * the index but the preview jobs might still be running and access the index or an index-based
+	 * AST so we need to make sure they are done before disposing the cache
+	 * <p> 
+	 * When proceeding to the last page and finishing the wizard, the refactoring will run
+	 * and possibly use concurrently the same ASTs that the jobs use, so we need to make
 	 * sure the jobs are joined.
 	 */
 	protected void cancelAndJoinPreviewJobs() {
@@ -67,13 +67,14 @@ public class ImplementMethodRefactoringWizard extends RefactoringWizard {
 			isOnePreviewJobRunning |= parameterNamesInputPage.cancelPreviewJob();
 		}
 		
-		// There are good chances that one job is still running, show a progress bar to the user, join everything
-		if(isOnePreviewJobRunning) {
+		// There are good chances that one job is still running, show a progress bar to the user,
+		// join everything.
+		if (isOnePreviewJobRunning) {
 			try {
 				getContainer().run(false, false, new IRunnableWithProgress() {
-					
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						monitor.beginTask(Messages.ImplementMethodRefactoringWizard_CancelingPreviewGeneration, pagesMap.size() + 1);
+						monitor.beginTask(Messages.ImplementMethodRefactoringWizard_CancelingPreviewGeneration,
+								pagesMap.size() + 1);
 						monitor.worked(1);
 
 						for (ParameterNamesInputPage parameterNamesInputPage : pagesMap.values()) {
@@ -89,10 +90,9 @@ public class ImplementMethodRefactoringWizard extends RefactoringWizard {
 			} catch (InterruptedException e) {
 				// ignore since not cancelable
 			}
-		} 
-		// We don't take any chances, we still join everything. But there are good chances that the jobs are stopped
-		// so we don't show a progress bar.
-		else {
+		} else {
+			// We don't take any chances, we still join everything. But there are good chances that
+			// the jobs are stopped so we don't show a progress bar.
 			for (ParameterNamesInputPage parameterNamesInputPage : pagesMap.values()) {
 				parameterNamesInputPage.joinPreviewJob();
 			}

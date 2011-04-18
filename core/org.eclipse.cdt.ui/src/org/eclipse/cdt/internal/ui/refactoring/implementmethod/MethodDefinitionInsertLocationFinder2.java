@@ -46,25 +46,28 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
  * @author Mirko Stocker, Lukas Felber
  */
 public class MethodDefinitionInsertLocationFinder2 {
-	
-	// We cache DefinitionFinder2.getDefinition results because refactorings like Implement Method might want to find multiple 
-	// insert locations in the same translation unit. This prevents many redundant calls to DefinitionFinder2.getDefinition
-	// and speeds up the process quite a bit. Unfortunately, this has the minor side-effect or having to instantiate this class.
-	Map<IASTSimpleDeclaration, IASTName> cachedDeclarationToDefinition = new HashMap<IASTSimpleDeclaration, IASTName>();
-	
+	// We cache DefinitionFinder2.getDefinition results because refactorings like Implement Method
+	// might want to find multiple insert locations in the same translation unit. This prevents
+	// many redundant calls to DefinitionFinder2.getDefinition and speeds up the process quite
+	//a bit. Unfortunately, this has the minor side-effect or having to instantiate this class.
+	Map<IASTSimpleDeclaration, IASTName> cachedDeclarationToDefinition =
+			new HashMap<IASTSimpleDeclaration, IASTName>();
+
 	public InsertLocation2 find(ITranslationUnit declarationTu, IASTFileLocation methodDeclarationLocation,
 			IASTNode parent, RefactoringASTCache astCache, IProgressMonitor pm) throws CoreException {
 		IASTDeclaration[] declarations = NodeHelper.getDeclarations(parent);
 		InsertLocation2 insertLocation = new InsertLocation2();
-		
-		Collection<IASTSimpleDeclaration> allPreviousSimpleDeclarationsFromClassInReverseOrder = getAllPreviousSimpleDeclarationsFromClassInReverseOrder(declarations, methodDeclarationLocation, pm);
-		Collection<IASTSimpleDeclaration> allFollowingSimpleDeclarationsFromClass = getAllFollowingSimpleDeclarationsFromClass(declarations, methodDeclarationLocation, pm);
+
+		Collection<IASTSimpleDeclaration> allPreviousSimpleDeclarationsFromClassInReverseOrder =
+				getAllPreviousSimpleDeclarationsFromClassInReverseOrder(declarations, methodDeclarationLocation, pm);
+		Collection<IASTSimpleDeclaration> allFollowingSimpleDeclarationsFromClass =
+				getAllFollowingSimpleDeclarationsFromClass(declarations, methodDeclarationLocation, pm);
 
 		for (IASTSimpleDeclaration simpleDeclaration : allPreviousSimpleDeclarationsFromClassInReverseOrder) {
 			if (pm != null && pm.isCanceled()) {
 				throw new OperationCanceledException();
 			}
-			
+
 			IASTName definition = null;
 			if (cachedDeclarationToDefinition.containsKey(simpleDeclaration)) {
 				definition = cachedDeclarationToDefinition.get(simpleDeclaration);
@@ -74,7 +77,7 @@ public class MethodDefinitionInsertLocationFinder2 {
 					cachedDeclarationToDefinition.put(simpleDeclaration, definition);	
 				}
 			}
-			
+
  			if (definition != null) {
  				insertLocation.setNodeToInsertAfter(findFirstSurroundingParentFunctionNode(
  						definition), definition.getTranslationUnit().getOriginatingTranslationUnit());
@@ -95,13 +98,13 @@ public class MethodDefinitionInsertLocationFinder2 {
 					cachedDeclarationToDefinition.put(simpleDeclaration, definition);
 				}
 			}
-				
+
 			if (definition != null) {
 				insertLocation.setNodeToInsertBefore(findFirstSurroundingParentFunctionNode(definition),
 						definition.getTranslationUnit().getOriginatingTranslationUnit());
 			}
 		}
-		
+
 		if (insertLocation.getTranslationUnit() == null) {
 			ITranslationUnit partner = SourceHeaderPartnerFinder.getPartnerTranslationUnit(
 					declarationTu, astCache);
@@ -124,7 +127,7 @@ public class MethodDefinitionInsertLocationFinder2 {
 		}
 		return findFunctionDefinitionInParents(node.getParent());
 	}
-	
+
 	private static IASTNode findFirstSurroundingParentFunctionNode(IASTNode definition) {
 		IASTNode functionDefinitionInParents = findFunctionDefinitionInParents(definition);
 		if (functionDefinitionInParents == null) {

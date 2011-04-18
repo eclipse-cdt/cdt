@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -48,14 +48,14 @@ public class ImplementMethodAction extends RefactoringAction {
 
 	@Override
 	public void run(IShellProvider shellProvider, ICElement elem) {
-		new ImplementMethodRefactoringRunner(null, null, elem, shellProvider, elem.getCProject()).run();
+		new ImplementMethodRefactoringRunner(elem, null, shellProvider, elem.getCProject()).run();
 	}
 
 	@Override
 	public void run(IShellProvider shellProvider, IWorkingCopy wc, ITextSelection selection) {
 		IResource res = wc.getResource();
 		if (res instanceof IFile) {
-			new ImplementMethodRefactoringRunner((IFile) res, selection, null, shellProvider, wc.getCProject()).run();
+			new ImplementMethodRefactoringRunner(wc, selection, shellProvider, wc.getCProject()).run();
 		}
 	}
 

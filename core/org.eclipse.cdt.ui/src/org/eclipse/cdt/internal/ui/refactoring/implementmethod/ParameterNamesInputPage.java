@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,35 +7,38 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
 import java.util.HashMap;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.TextEdit;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 
 import org.eclipse.cdt.internal.ui.preferences.formatter.TranslationUnitPreview;
+import org.eclipse.cdt.internal.ui.refactoring.CCompositeChange;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.dialogs.ValidatingLabeledTextField;
-import org.eclipse.cdt.internal.ui.refactoring.utils.DelayedJobRunner;
 
 /**
  * InputPage used by the ImplementMethod refactoring if its necessary to enter additional parameter names.
@@ -45,9 +48,10 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.DelayedJobRunner;
  */
 public class ParameterNamesInputPage extends UserInputWizardPage {
 
+	private static final int PREVIEW_UPDATE_DELAY = 500;
 	private MethodToImplementConfig config;
 	private TranslationUnitPreview translationUnitPreview;
-	private DelayedJobRunner delayedPreviewUpdater;
+	private Job delayedPreviewUpdater;
 	private ImplementMethodRefactoringWizard wizard;
 
 	public ParameterNamesInputPage(MethodToImplementConfig config, ImplementMethodRefactoringWizard wizard) {
@@ -62,9 +66,8 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 		
 	    superComposite.setLayout(new GridLayout());
 		
-		Label label = new Label(superComposite, SWT.NONE);
-		label.setText(Messages.ParameterNamesInputPage_CompleteMissingMails); 
-		label.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+		setTitle(Messages.ImplementMethodInputPage_PageTitle);
+		setMessage(Messages.ParameterNamesInputPage_CompleteMissingMails);
 	
 		ValidatingLabeledTextField validatingLabeledTextField = new ValidatingLabeledTextField(superComposite);
 		validatingLabeledTextField.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
@@ -101,56 +104,79 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 	}
 	
 	private InsertEdit getInsertEdit(CompositeChange compositeChange) {
-		for(Change actChange : compositeChange.getChildren()) {
-			if(actChange instanceof CompositeChange) {
+		for (Change actChange : compositeChange.getChildren()) {
+			if (actChange instanceof CompositeChange) {
 				return getInsertEdit((CompositeChange) actChange);
 			} else if (actChange instanceof CTextFileChange) {
 				CTextFileChange textFileChange = (CTextFileChange) actChange;
-				MultiTextEdit multiEdit = (MultiTextEdit) textFileChange.getEdit();
-				if(multiEdit.getChildrenSize() == 0) {
-					continue;
+				TextEdit edit = textFileChange.getEdit();
+				if (edit instanceof MultiTextEdit) {
+					MultiTextEdit multiEdit = (MultiTextEdit) edit;
+					if (multiEdit.getChildrenSize() == 0) {
+						continue;
+					}
+					TextEdit textEdit = multiEdit.getChildren()[0];
+					if (textEdit instanceof InsertEdit) {
+						return (InsertEdit) textEdit;
+					}
 				}
-				return (InsertEdit) multiEdit.getChildren()[0];
 			}
 		}
 		return null;
 	}	
 	
-	public String createFunctionDefinitionSignature() {
+	public String createFunctionDefinitionSignature(IProgressMonitor monitor) {
 		try {
 			ModificationCollector collector = new ModificationCollector();
-			((ImplementMethodRefactoring)wizard.getRefactoring()).createDefinition(collector, config, new NullProgressMonitor());
-			InsertEdit insertEdit = getInsertEdit(collector.createFinalChange());
+			ImplementMethodRefactoring implementMethodRefactoring = (ImplementMethodRefactoring)wizard.getRefactoring();
+			CCompositeChange finalChange = null;
+			// We can have multiple preview jobs. We don't
+			// want multiple jobs concurrently using the same ASTs
+			synchronized (implementMethodRefactoring) {
+				implementMethodRefactoring.createDefinition(collector, config, monitor);
+				finalChange = collector.createFinalChange();	
+			}
+			InsertEdit insertEdit = getInsertEdit(finalChange);
+			if (insertEdit == null) {
+				return Messages.ImplementMethodRefactoringPage_PreviewGenerationNotPossible;
+			}
+			
 			return insertEdit.getText().trim();
 		} catch (OperationCanceledException e) {
-			return Messages.PreviewGenerationNotPossible;
+			return Messages.ImplementMethodRefactoringPage_PreviewCanceled;
 		} catch (CoreException e) {
-			return Messages.PreviewGenerationNotPossible;
+			return Messages.ImplementMethodRefactoringPage_PreviewGenerationNotPossible;
 		}
 	}
 
 	private void createPreview(Composite superComposite) {
 		translationUnitPreview = new TranslationUnitPreview(new HashMap<String, String>(), superComposite);
 		translationUnitPreview.getControl().setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
-		Runnable runnable = new Runnable() {
-			public void run() {
+		
+		delayedPreviewUpdater = new Job(Messages.ImplementMethodRefactoringPage_GeneratingPreview) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
 				setPreviewText(Messages.ImplementMethodRefactoringPage_GeneratingPreview);
-				setPreviewText(createFunctionDefinitionSignature());
+				String functionDefinitionSignature = createFunctionDefinitionSignature(monitor);
+				if (monitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
+				setPreviewText(functionDefinitionSignature);
+				return Status.OK_STATUS;
 			}
 			private void setPreviewText(final String text) {
-				getShell().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						translationUnitPreview.setPreviewText(text);
-					}});
+				if (getShell() != null && getShell().getDisplay() != null) {
+					getShell().getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							if (translationUnitPreview.getControl() != null && !translationUnitPreview.getControl().isDisposed()) {
+								translationUnitPreview.setPreviewText(text);
+							}
+						}});
+				}
 			}
 		};
-		delayedPreviewUpdater = new DelayedJobRunner(runnable, 500);
-		delayedPreviewUpdater.start();
-		superComposite.addDisposeListener(new DisposeListener() {
-
-			public void widgetDisposed(DisposeEvent e) {
-				delayedPreviewUpdater.stop();
-			}});
+		
+		delayedPreviewUpdater.schedule(PREVIEW_UPDATE_DELAY);
 	}
 	
 	@Override
@@ -161,10 +187,28 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 	@Override
 	public IWizardPage getNextPage() {
 		MethodToImplementConfig nextConfig = ((ImplementMethodRefactoring)wizard.getRefactoring()).getRefactoringData().getNextConfigNeedingParameterNames(config);
-		if(nextConfig != null) {
+		if (nextConfig != null) {
 			return wizard.getPageForConfig(nextConfig);
-		}else {
+		} else {
+			wizard.cancelAndJoinPreviewJobs();
 			return computeSuccessorPage();
+		}
+	}
+
+	protected boolean cancelPreviewJob() {
+		// We cannot rely on getState being accurate in all cases so we only use this
+		// as a hint to change the preview text
+		if (delayedPreviewUpdater.getState() != Job.NONE) {
+			translationUnitPreview.setPreviewText(Messages.ImplementMethodRefactoringPage_PreviewCanceled);
+		}
+		return !delayedPreviewUpdater.cancel();
+	}
+	
+	protected void joinPreviewJob() {
+		try {
+			delayedPreviewUpdater.join();
+		} catch (InterruptedException e1) {
+			CUIPlugin.log(e1);
 		}
 	}
 
@@ -172,7 +216,6 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 		if (translationUnitPreview == null) {
 			return;
 		}
-		delayedPreviewUpdater.runJob();
-	}	
-	
+		delayedPreviewUpdater.schedule(PREVIEW_UPDATE_DELAY);
+	}
 }

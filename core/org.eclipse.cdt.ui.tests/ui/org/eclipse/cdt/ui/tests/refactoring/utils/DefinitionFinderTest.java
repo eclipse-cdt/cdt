@@ -44,7 +44,7 @@ public class DefinitionFinderTest extends RefactoringTest {
 			IASTTranslationUnit ast = astCache.getAST((ITranslationUnit) element, null);
 			for (IASTDeclaration declaration : ast.getDeclarations()) {
 				if (declaration instanceof IASTSimpleDeclaration) {
-					assertNotNull(DefinitionFinder2.getDefinition((IASTSimpleDeclaration) declaration, astCache));	
+					assertNotNull(DefinitionFinder2.getDefinition((IASTSimpleDeclaration) declaration, astCache, NULL_PROGRESS_MONITOR));	
 				}
 			}
 		}

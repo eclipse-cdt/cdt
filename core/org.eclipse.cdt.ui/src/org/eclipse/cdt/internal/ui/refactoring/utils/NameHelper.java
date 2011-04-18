@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.ui.refactoring.utils;
 
 import java.util.regex.Pattern;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -24,10 +23,13 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
+
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
 
 /**
  * Helps with IASTNames.
@@ -56,19 +58,19 @@ public class NameHelper {
 	 * the namespace at the declaration position and the target namespace at the target position.
 	 * 
 	 * @param declaratorName of the method or function
-	 * @param declarationFile
+	 * @param declarationTu translation unit of the method or function declaration
+	 * @param insertFileTu translation unit of the file where the implementation is being inserted
 	 * @param selectionOffset the offset in the declarationFile, usually the position or selection of the declaration
-	 * @param insertFile the target file in which the definition is inserted
 	 * @param insertLocation 
 	 * @return the correct name for the target
 	 * @throws CoreException 
 	 */
-	public static ICPPASTQualifiedName createQualifiedNameFor(IASTName declaratorName, IFile declarationFile, int selectionOffset, IFile insertFile, int insertLocation) 
+	public static ICPPASTQualifiedName createQualifiedNameFor(IASTName declaratorName, ITranslationUnit declarationTu, int selectionOffset, ITranslationUnit insertFileTu, int insertLocation, RefactoringASTCache astCache) 
 			throws CoreException {
 		ICPPASTQualifiedName qname = new CPPASTQualifiedName();
 		
-		IASTName[] declarationNames = NamespaceHelper.getSurroundingNamespace(declarationFile, selectionOffset).getNames();
-		IASTName[] implementationNames = NamespaceHelper.getSurroundingNamespace(insertFile, insertLocation).getNames();
+		IASTName[] declarationNames = NamespaceHelper.getSurroundingNamespace(declarationTu, selectionOffset, astCache).getNames();
+		IASTName[] implementationNames = NamespaceHelper.getSurroundingNamespace(insertFileTu, insertLocation, astCache).getNames();
 		
 		for (int i = 0; i < declarationNames.length; i++) {
 			if (i >= implementationNames.length) {

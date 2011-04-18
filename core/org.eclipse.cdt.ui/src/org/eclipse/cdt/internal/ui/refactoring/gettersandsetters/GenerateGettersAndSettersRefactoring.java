@@ -122,7 +122,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 			CheckConditionsContext checkContext) throws CoreException, OperationCanceledException {
 		RefactoringStatus result = new RefactoringStatus();
 		if (!context.isImplementationInHeader()) {
-			findDefinitionInsertLocation();
+			findDefinitionInsertLocation(pm);
 			if (definitionInsertLocation == null || tu.equals(definitionInsertLocation.getTranslationUnit())) {
 				result.addInfo(Messages.GenerateGettersAndSettersRefactoring_NoImplFile);
 			}
@@ -238,7 +238,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 			}
 		}
 		if (!context.isImplementationInHeader()) {
-			addDefinition(collector, definitions);
+			addDefinition(collector, definitions, pm);
 		}
 		ICPPASTCompositeTypeSpecifier classDefinition =
 				(ICPPASTCompositeTypeSpecifier) context.existingFields.get(context.existingFields.size() - 1).getParent();
@@ -247,9 +247,9 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 				getterAndSetters, false, collector);
 	}
 
-	private void addDefinition(ModificationCollector collector, List<IASTFunctionDefinition> definitions)
+	private void addDefinition(ModificationCollector collector, List<IASTFunctionDefinition> definitions, IProgressMonitor pm)
 			throws CoreException {
-		findDefinitionInsertLocation();
+		findDefinitionInsertLocation(pm);
 		IASTNode parent = definitionInsertLocation.getParentOfNodeToInsertBefore();
 		IASTTranslationUnit ast = parent.getTranslationUnit();
 		ASTRewrite rewrite = collector.rewriterForTranslationUnit(ast);
@@ -265,14 +265,15 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 		return context;
 	}
 	
-	private void findDefinitionInsertLocation() throws CoreException {
+	private void findDefinitionInsertLocation(IProgressMonitor pm) throws CoreException {
 		if (definitionInsertLocation != null) {
 			return;
 		}
 		
 		IASTSimpleDeclaration decl = context.existingFields.get(0);
-		InsertLocation2 location = MethodDefinitionInsertLocationFinder2.find(
-				tu, decl.getFileLocation(), decl.getParent(), astCache);
+		MethodDefinitionInsertLocationFinder2 methodDefinitionInsertLocationFinder = new MethodDefinitionInsertLocationFinder2();
+		InsertLocation2 location = methodDefinitionInsertLocationFinder.find(
+				tu, decl.getFileLocation(), decl.getParent(), astCache, pm);
 
 		if (location.getFile() == null || NodeHelper.isContainedInTemplateDeclaration(decl)) {
 			location.setNodeToInsertAfter(NodeHelper.findTopLevelParent(decl), tu);

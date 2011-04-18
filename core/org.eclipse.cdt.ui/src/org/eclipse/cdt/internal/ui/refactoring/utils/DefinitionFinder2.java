@@ -44,7 +44,7 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
 public class DefinitionFinder2 {
 
 	public static IASTName getDefinition(IASTSimpleDeclaration simpleDeclaration,
-			RefactoringASTCache astCache) throws CoreException {
+			RefactoringASTCache astCache, IProgressMonitor pm) throws CoreException {
 		IIndex index = astCache.getIndex();
 		IASTDeclarator declarator = simpleDeclaration.getDeclarators()[0];
 		if (index == null) {
@@ -54,15 +54,18 @@ public class DefinitionFinder2 {
 		if (binding == null) {
 			return null;
 		}
-		return getDefinition(binding, astCache, index);
+		return getDefinition(binding, astCache, index, pm);
 	}
 
 	private static IASTName getDefinition(IIndexBinding binding,
-			RefactoringASTCache astCache, IIndex index) throws CoreException {
+			RefactoringASTCache astCache, IIndex index, IProgressMonitor pm) throws CoreException {
 		Set<String> searchedFiles = new HashSet<String>();
 		List<IASTName> definitions = new ArrayList<IASTName>();
 		IEditorPart[] dirtyEditors = EditorUtility.getDirtyEditors(true);
 		for (IEditorPart editor : dirtyEditors) {
+			if (pm != null && pm.isCanceled()) {
+				throw new OperationCanceledException();
+			}
 			IEditorInput editorInput = editor.getEditorInput();
 			if (editorInput instanceof ITranslationUnitEditorInput) {
 				ITranslationUnit tu =
@@ -74,10 +77,13 @@ public class DefinitionFinder2 {
 		
 		IIndexName[] definitionsFromIndex = index.findDefinitions(binding);
 		for (IIndexName name : definitionsFromIndex) {
+			if (pm != null && pm.isCanceled()) {
+				throw new OperationCanceledException();
+			}
 			ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(
 					name.getFile().getLocation(), null);
 			if (searchedFiles.add(tu.getLocation().toOSString())) {
-				findDefinitionsInTranslationUnit(binding, tu, astCache, definitions, null);
+				findDefinitionsInTranslationUnit(binding, tu, astCache, definitions, pm);
 			}
 		}
 

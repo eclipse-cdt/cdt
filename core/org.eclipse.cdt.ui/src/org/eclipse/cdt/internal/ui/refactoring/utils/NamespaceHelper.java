@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
@@ -31,27 +32,30 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleTypeTemplatePara
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
 
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
+
 /**
  * Helper class to find Namespace informations.
  * @author Mirko Stocker
  */
 public class NamespaceHelper {
 	/**
-	 * Returns the qualified name of all namespaces that are defined at the specified file and offset.
+	 * Returns the qualified name of all namespaces that are defined at the specified translation unit and offset.
 	 * 
-	 * @param insertFile
+	 * @param translationUnit
 	 * @param offset
+	 * @param astCache
 	 * @return ICPPASTQualifiedName with the names of all namespaces
 	 * @throws CoreException 
 	 */
-	public static ICPPASTQualifiedName getSurroundingNamespace(final IFile insertFile, final int offset)
+	public static ICPPASTQualifiedName getSurroundingNamespace(final ITranslationUnit translationUnit, final int offset, RefactoringASTCache astCache)
 			throws CoreException {
 		final CPPASTQualifiedName qualifiedName = new CPPASTQualifiedName();
 	
-		TranslationUnitHelper.loadTranslationUnit(insertFile, false).accept(new CPPASTAllVisitor() {
+		astCache.getAST(translationUnit, null).accept(new CPPASTAllVisitor() {
 			@Override
 			public int visit(IASTDeclSpecifier declSpec) {
-				if (declSpec instanceof ICPPASTCompositeTypeSpecifier && checkFileNameAndLocation(insertFile, offset, declSpec)) {
+				if (declSpec instanceof ICPPASTCompositeTypeSpecifier && checkFileNameAndLocation(translationUnit.getLocation(), offset, declSpec)) {
 						qualifiedName.addName(createNameWithTemplates(declSpec));
 					}
 					return super.visit(declSpec);
@@ -59,7 +63,7 @@ public class NamespaceHelper {
 		
 			@Override
 			public int visit(ICPPASTNamespaceDefinition namespace) {
-				if (checkFileNameAndLocation(insertFile, offset, namespace)) {
+				if (checkFileNameAndLocation(translationUnit.getLocation(), offset, namespace)) {
 					qualifiedName.addName((namespace).getName().copy()); 
 				}
 				
@@ -70,8 +74,8 @@ public class NamespaceHelper {
 		return qualifiedName;
 	}
 	
-	private static boolean checkFileNameAndLocation(final IFile insertFile, final int offset, IASTNode namespace) {
-		boolean fileNameOk = namespace.getFileLocation().getFileName().endsWith(insertFile.getLocation().toOSString());
+	private static boolean checkFileNameAndLocation(final IPath path, final int offset, IASTNode namespace) {
+		boolean fileNameOk = namespace.getFileLocation().getFileName().endsWith(path.toOSString());
 		if (!fileNameOk) {
 			return false;
 		}

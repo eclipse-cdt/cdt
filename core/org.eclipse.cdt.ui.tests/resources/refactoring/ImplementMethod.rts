@@ -2,6 +2,7 @@
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
+infos=1
 //@A.h
 class X {
 public:
@@ -24,6 +25,7 @@ inline bool X::a(int int1) const
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
+infos=1
 //@A.h
 class X {
 public:
@@ -46,6 +48,7 @@ inline bool X::xy(int int1, int i) const
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
+infos=1
 //@A.h
 template<class T> class A
 {
@@ -76,6 +79,7 @@ template<class T> inline void A<T>::test()
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
+infos=1
 //@A.h
 template<class T> class A
 {
@@ -137,6 +141,7 @@ void Demo::SubClass::test()
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
+infos=1
 //@A.h
 class A
 {
@@ -431,6 +436,7 @@ int A::foo(int param1, int param2)
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
+infos=1
 //@A.h
 class A
 {
@@ -581,6 +587,7 @@ namespace OuterSpace {
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
+infos=1
 //@A.h
 template<class T, class U> class A
 {
@@ -714,6 +721,7 @@ void Test::doNothing(void)
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=TestClass.h
+infos=1
 //@TestClass.h
 #ifndef TESTCLASS_H_
 #define TESTCLASS_H_

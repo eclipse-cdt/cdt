@@ -9,14 +9,19 @@
  * Contributors: 
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -42,23 +47,55 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
  */
 public class MethodDefinitionInsertLocationFinder2 {
 	
-	public static InsertLocation2 find(ITranslationUnit declarationTu, IASTFileLocation methodDeclarationLocation,
-			IASTNode parent, RefactoringASTCache astCache) throws CoreException {
+	// We cache DefinitionFinder2.getDefinition results because refactorings like Implement Method might want to find multiple 
+	// insert locations in the same translation unit. This prevents many redundant calls to DefinitionFinder2.getDefinition
+	// and speeds up the process quite a bit. Unfortunately, this has the minor side-effect or having to instantiate this class.
+	Map<IASTSimpleDeclaration, IASTName> cachedDeclarationToDefinition = new HashMap<IASTSimpleDeclaration, IASTName>();
+	
+	public InsertLocation2 find(ITranslationUnit declarationTu, IASTFileLocation methodDeclarationLocation,
+			IASTNode parent, RefactoringASTCache astCache, IProgressMonitor pm) throws CoreException {
 		IASTDeclaration[] declarations = NodeHelper.getDeclarations(parent);
 		InsertLocation2 insertLocation = new InsertLocation2();
+		
+		Collection<IASTSimpleDeclaration> allPreviousSimpleDeclarationsFromClassInReverseOrder = getAllPreviousSimpleDeclarationsFromClassInReverseOrder(declarations, methodDeclarationLocation, pm);
+		Collection<IASTSimpleDeclaration> allFollowingSimpleDeclarationsFromClass = getAllFollowingSimpleDeclarationsFromClass(declarations, methodDeclarationLocation, pm);
 
-		for (IASTSimpleDeclaration simpleDeclaration : getAllPreviousSimpleDeclarationsFromClassInReverseOrder(
-				declarations, methodDeclarationLocation)) {
-			IASTName definition = DefinitionFinder2.getDefinition(simpleDeclaration, astCache);
-			if (definition != null) {
-				insertLocation.setNodeToInsertAfter(findFirstSurroundingParentFunctionNode(definition),
-						definition.getTranslationUnit().getOriginatingTranslationUnit());
+		for (IASTSimpleDeclaration simpleDeclaration : allPreviousSimpleDeclarationsFromClassInReverseOrder) {
+			if (pm != null && pm.isCanceled()) {
+				throw new OperationCanceledException();
 			}
+			
+			IASTName definition = null;
+			if (cachedDeclarationToDefinition.containsKey(simpleDeclaration)) {
+				definition = cachedDeclarationToDefinition.get(simpleDeclaration);
+			} else {
+				definition = DefinitionFinder2.getDefinition(simpleDeclaration, astCache, pm);
+				if (definition != null) {
+					cachedDeclarationToDefinition.put(simpleDeclaration, definition);	
+				}
+			}
+			
+ 			if (definition != null) {
+ 				insertLocation.setNodeToInsertAfter(findFirstSurroundingParentFunctionNode(
+ 						definition), definition.getTranslationUnit().getOriginatingTranslationUnit());
+ 			}
 		}
 
-		for (IASTSimpleDeclaration simpleDeclaration : getAllFollowingSimpleDeclarationsFromClass(
-				declarations, methodDeclarationLocation)) {
-			IASTName definition = DefinitionFinder2.getDefinition(simpleDeclaration, astCache);
+		for (IASTSimpleDeclaration simpleDeclaration : allFollowingSimpleDeclarationsFromClass) {
+			if (pm != null && pm.isCanceled()) {
+				throw new OperationCanceledException();
+			}
+
+			IASTName definition = null;
+			if (cachedDeclarationToDefinition.containsKey(simpleDeclaration)) {
+				definition = cachedDeclarationToDefinition.get(simpleDeclaration);
+			} else {
+				definition = DefinitionFinder2.getDefinition(simpleDeclaration, astCache, pm);
+				if (definition != null) {
+					cachedDeclarationToDefinition.put(simpleDeclaration, definition);
+				}
+			}
+				
 			if (definition != null) {
 				insertLocation.setNodeToInsertBefore(findFirstSurroundingParentFunctionNode(definition),
 						definition.getTranslationUnit().getOriginatingTranslationUnit());
@@ -105,13 +142,17 @@ public class MethodDefinitionInsertLocationFinder2 {
 	 * 
 	 * @param declarations to be searched
 	 * @param methodPosition on which the search aborts
+	 * @param pm 
 	 * @return all declarations, sorted in reverse order
 	 */
 	private static Collection<IASTSimpleDeclaration> getAllPreviousSimpleDeclarationsFromClassInReverseOrder(
-			IASTDeclaration[] declarations, IASTFileLocation methodPosition) {
+			IASTDeclaration[] declarations, IASTFileLocation methodPosition, IProgressMonitor pm) {
 		ArrayList<IASTSimpleDeclaration> outputDeclarations = new ArrayList<IASTSimpleDeclaration>();
 		if (declarations.length >= 0) {
 			for (IASTDeclaration decl : declarations) {
+				if (pm != null && pm.isCanceled()) {
+					return outputDeclarations;
+				}
 				if (decl.getFileLocation().getStartingLineNumber() >= methodPosition.getStartingLineNumber()) {
 					break;
 				}
@@ -125,11 +166,14 @@ public class MethodDefinitionInsertLocationFinder2 {
 	}
 
 	private static Collection<IASTSimpleDeclaration> getAllFollowingSimpleDeclarationsFromClass(
-			IASTDeclaration[] declarations, IASTFileLocation methodPosition) {
+			IASTDeclaration[] declarations, IASTFileLocation methodPosition, IProgressMonitor pm) {
 		ArrayList<IASTSimpleDeclaration> outputDeclarations = new ArrayList<IASTSimpleDeclaration>();
 
 		if (declarations.length >= 0) {
 			for (IASTDeclaration decl : declarations) {
+				if (pm != null && pm.isCanceled()) {
+					return outputDeclarations;
+				}
 				if (isMemberFunctionDeclaration(decl) &&
 						decl.getFileLocation().getStartingLineNumber() > methodPosition.getStartingLineNumber() ) {
 					outputDeclarations.add((IASTSimpleDeclaration) decl);

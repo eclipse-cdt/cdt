@@ -57,7 +57,9 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 /**
  * The base class for all other refactorings, provides some common implementations for
  * condition checking, change generating, selection handling and translation unit loading.
+ * @deprecated Use CRefactoring2.
  */
+@Deprecated
 public abstract class CRefactoring extends Refactoring {
 	private static final int AST_STYLE =
 			ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_INDEXED_HEADERS;

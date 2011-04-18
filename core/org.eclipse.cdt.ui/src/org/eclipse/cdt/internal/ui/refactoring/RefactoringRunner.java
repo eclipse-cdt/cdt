@@ -21,8 +21,11 @@ import org.eclipse.cdt.core.model.ICProject;
 /**
  * Base class for all refactoring runners.
  * 
+ * @deprecated Use RfactoringRunner2.
+ * 
  * @author Emanuel Graf
  */
+@Deprecated
 public abstract class RefactoringRunner {
 	protected IFile file;
 	protected ISelection selection;

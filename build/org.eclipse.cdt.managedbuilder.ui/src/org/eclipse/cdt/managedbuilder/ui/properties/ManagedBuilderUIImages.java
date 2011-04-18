@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 Rational Software Corporation and others.
+ * Copyright (c) 2002, 2011 Rational Software Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,34 @@ public class ManagedBuilderUIImages {
 	public static final ImageDescriptor DESC_EDITABLE = createManaged(T_OBJ, IMG_EDITABLE);
 	public static final String IMG_BUILT_IN = NAME_PREFIX + "built_in.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILT_IN = createManaged(T_OBJ, IMG_BUILT_IN);
-		
+	
+	// refresh policy tab
+	/**
+	 * @since 8.0
+	 */
+	public static final String IMG_FILE_OBJ = NAME_PREFIX + "file_obj.gif"; //$NON-NLS-1$
+	/**
+	 * @since 8.0
+	 */
+	public static final ImageDescriptor DESC_FILE_OBJ = createManaged(T_OBJ, IMG_FILE_OBJ);
+	/**
+	 * @since 8.0
+	 */
+	public static final String IMG_TEXTFILE_OBJ = NAME_PREFIX + "textfile_obj.gif"; //$NON-NLS-1$
+	/**
+	 * @since 8.0
+	 */
+	public static final ImageDescriptor DESC_TEXTFILE_OBJ = createManaged(T_OBJ, IMG_TEXTFILE_OBJ);
+	/**
+	 * @since 8.0
+	 */
+	public static final String IMG_FILE_FOLDER_OBJ = NAME_PREFIX + "fileFolder_obj.gif"; //$NON-NLS-1$
+	/**
+	 * @since 8.0
+	 */
+	public static final ImageDescriptor DESC_FILE_FOLDER_OBJ = createManaged(T_OBJ, IMG_FILE_FOLDER_OBJ);
+	
+	
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);
 	}

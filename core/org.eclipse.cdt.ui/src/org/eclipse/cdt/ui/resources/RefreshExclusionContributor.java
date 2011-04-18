@@ -61,6 +61,12 @@ public abstract class RefreshExclusionContributor {
 	}
 	
 	abstract public RefreshExclusion createExclusion();
+	
+	/**
+	 * Creates the UI that allows user to modify the given RefreshExclusion
+	 * @param parent - the parent composite to contain the UI
+	 * @param exclusion - the RefreshExclusion to be modified
+	 */
 	abstract public void createProperiesUI(Composite parent, RefreshExclusion exclusion);
 	abstract public RefreshExclusion createExclusionFromXML(Element exclusionElement);
 

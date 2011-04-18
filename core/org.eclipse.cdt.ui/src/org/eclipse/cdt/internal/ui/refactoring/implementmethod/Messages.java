@@ -6,21 +6,13 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *    IBM - initial API and implementation
+ *      IBM - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
 import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
-
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.refactoring.implementmethod.messages";//$NON-NLS-1$
-
-	private Messages() {
-		// Do not instantiate
-	}
-
 	public static String ParameterNamesInputPage_Title;
 	public static String ParameterNamesInputPage_CompleteMissingMails;
 	public static String ImplementMethodInputPage_PageTitle;
@@ -35,7 +27,11 @@ public final class Messages extends NLS {
 	public static String ImplementMethodRefactoringWizard_CancelingPreviewGeneration;
 	public static String ImplementMethodInputPage_Header;
 
+	private Messages() {
+		// Do not instantiate
+	}
+
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 }

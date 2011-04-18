@@ -38,68 +38,9 @@ import org.eclipse.cdt.internal.ui.refactoring.Container;
  * A collection of methods that deal with IASTTranslationUnits.
  * 
  * @author Mirko Stocker
- * @deprecated Use RefactoringASTCache.
  */
-@Deprecated
 public class TranslationUnitHelper {
 	private static final int AST_STYLE = ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
-
-	/**
-	 * @param filename to load the translation unit from
-	 * @return the translation unit for the file or null
-	 * @throws CoreException 
-	 */
-	public static IASTTranslationUnit loadTranslationUnit(String filename, boolean useIndex) throws CoreException{
-		if (filename != null) {
-			IFile[] tmpFile = null;
-
-			tmpFile = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(
-					URIUtil.toURI(filename));
-
-			return loadTranslationUnit(tmpFile[0], useIndex);
-		}
-
-		return null;
-	}
-	
-	/**
-	 * @param file to load the translation unit from
-	 * @return the translation unit for the file or null
-	 * @throws CoreException 
-	 */
-	public static IASTTranslationUnit loadTranslationUnit(IFile file, boolean useIndex) throws CoreException {
-		if (file == null) {
-			return null;
-		}
-		if (useIndex) {
-			return loadIndexBasedTranslationUnit(file);
-		} else {
-			return loadFileBasedTranslationUnit(file);
-		}
-	}
-
-	private static IASTTranslationUnit loadFileBasedTranslationUnit(IFile file) {
-		try {
-			IASTTranslationUnit fileUnit = CDOM.getInstance().getTranslationUnit(file, CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES), true);
-			return fileUnit;
-		} catch (UnsupportedDialectException e) {
-			return null;
-		}
-	}
-
-	private static IASTTranslationUnit loadIndexBasedTranslationUnit(IFile file) throws CoreException {
-		IIndex index = null;
-		try {
-			index = lockIndex();
-			ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(file);
-			return tu.getAST(index, AST_STYLE);
-		} catch (InterruptedException e) {
-			CUIPlugin.log(e);
-		} finally {
-			unlockIndex(index);
-		}
-		return null;
-	}
 
 	/**
 	 * Visits all names in the TU to find the specified name
@@ -146,6 +87,67 @@ public class TranslationUnitHelper {
 		return firstNode;
 	}
 	
+	/**
+	 * @param filename to load the translation unit from
+	 * @return the translation unit for the file or null
+	 * @throws CoreException 
+	 * @deprecated Use RefactoringASTCache.
+	 */
+	@Deprecated
+	public static IASTTranslationUnit loadTranslationUnit(String filename, boolean useIndex) throws CoreException{
+		if (filename != null) {
+			IFile[] tmpFile = null;
+
+			tmpFile = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(
+					URIUtil.toURI(filename));
+
+			return loadTranslationUnit(tmpFile[0], useIndex);
+		}
+
+		return null;
+	}
+	
+	/**
+	 * @param file to load the translation unit from
+	 * @return the translation unit for the file or null
+	 * @throws CoreException 
+	 * @deprecated Use RefactoringASTCache.
+	 */
+	@Deprecated
+	public static IASTTranslationUnit loadTranslationUnit(IFile file, boolean useIndex) throws CoreException {
+		if (file == null) {
+			return null;
+		}
+		if (useIndex) {
+			return loadIndexBasedTranslationUnit(file);
+		} else {
+			return loadFileBasedTranslationUnit(file);
+		}
+	}
+
+	private static IASTTranslationUnit loadFileBasedTranslationUnit(IFile file) {
+		try {
+			IASTTranslationUnit fileUnit = CDOM.getInstance().getTranslationUnit(file, CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES), true);
+			return fileUnit;
+		} catch (UnsupportedDialectException e) {
+			return null;
+		}
+	}
+
+	private static IASTTranslationUnit loadIndexBasedTranslationUnit(IFile file) throws CoreException {
+		IIndex index = null;
+		try {
+			index = lockIndex();
+			ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(file);
+			return tu.getAST(index, AST_STYLE);
+		} catch (InterruptedException e) {
+			CUIPlugin.log(e);
+		} finally {
+			unlockIndex(index);
+		}
+		return null;
+	}
+
 	private static IIndex lockIndex() throws CoreException, InterruptedException {
 		IIndex index;
 		ICProject[] projects= CoreModel.getDefault().getCModel().getCProjects();

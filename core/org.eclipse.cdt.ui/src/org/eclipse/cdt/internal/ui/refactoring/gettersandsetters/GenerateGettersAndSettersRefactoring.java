@@ -51,8 +51,8 @@ import org.eclipse.cdt.internal.ui.refactoring.AddDeclarationNodeToClassChange;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
-import org.eclipse.cdt.internal.ui.refactoring.implementmethod.InsertLocation2;
-import org.eclipse.cdt.internal.ui.refactoring.implementmethod.MethodDefinitionInsertLocationFinder2;
+import org.eclipse.cdt.internal.ui.refactoring.implementmethod.InsertLocation;
+import org.eclipse.cdt.internal.ui.refactoring.implementmethod.MethodDefinitionInsertLocationFinder;
 import org.eclipse.cdt.internal.ui.refactoring.utils.Checks;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
@@ -90,7 +90,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 
 	private static final String MEMBER_DECLARATION = "MEMBER_DECLARATION"; //$NON-NLS-1$
 	private final GetterAndSetterContext context;
-	private InsertLocation2 definitionInsertLocation;	
+	private InsertLocation definitionInsertLocation;	
 	
 	public GenerateGettersAndSettersRefactoring(ICElement element, ISelection selection,
 			ICProject project, RefactoringASTCache astCache) {
@@ -271,8 +271,8 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 		}
 		
 		IASTSimpleDeclaration decl = context.existingFields.get(0);
-		MethodDefinitionInsertLocationFinder2 methodDefinitionInsertLocationFinder = new MethodDefinitionInsertLocationFinder2();
-		InsertLocation2 location = methodDefinitionInsertLocationFinder.find(
+		MethodDefinitionInsertLocationFinder methodDefinitionInsertLocationFinder = new MethodDefinitionInsertLocationFinder();
+		InsertLocation location = methodDefinitionInsertLocationFinder.find(
 				tu, decl.getFileLocation(), decl.getParent(), astCache, pm);
 
 		if (location.getFile() == null || NodeHelper.isContainedInTemplateDeclaration(decl)) {

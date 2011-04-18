@@ -74,15 +74,15 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 public class ImplementMethodRefactoring extends CRefactoring2 {
 	private ICPPASTFunctionDeclarator createdMethodDeclarator;
 	private ImplementMethodData data;
-	private MethodDefinitionInsertLocationFinder2 methodDefinitionInsertLocationFinder;
-	private Map<IASTSimpleDeclaration, InsertLocation2> insertLocations;
+	private MethodDefinitionInsertLocationFinder methodDefinitionInsertLocationFinder;
+	private Map<IASTSimpleDeclaration, InsertLocation> insertLocations;
 	private static ICPPNodeFactory nodeFactory = ASTNodeFactoryFactory.getDefaultCPPNodeFactory();
 	
 	public ImplementMethodRefactoring(ICElement element, ISelection selection, ICProject project, RefactoringASTCache astCache) {
 		super(element, selection, project, astCache);
 		data = new ImplementMethodData();
-		methodDefinitionInsertLocationFinder = new MethodDefinitionInsertLocationFinder2();
-		insertLocations = new HashMap<IASTSimpleDeclaration, InsertLocation2>();
+		methodDefinitionInsertLocationFinder = new MethodDefinitionInsertLocationFinder();
+		insertLocations = new HashMap<IASTSimpleDeclaration, InsertLocation>();
 	}
 	
 	@Override
@@ -140,7 +140,7 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 			if (binding instanceof ICPPMethod) {
 				ICPPMethod methodBinding = (ICPPMethod) binding;
 				if (methodBinding.isPureVirtual()) {
-					return false; //Êpure virtual not handled for now, see bug 303870
+					return false; //ï¿½pure virtual not handled for now, see bug 303870
 				}
 			}
 			
@@ -174,7 +174,7 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 			throw new OperationCanceledException();
 		}
 		IASTSimpleDeclaration decl = config.getDeclaration();
-		InsertLocation2 insertLocation = findInsertLocation(decl, subMonitor);
+		InsertLocation insertLocation = findInsertLocation(decl, subMonitor);
 		if (subMonitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
@@ -218,11 +218,11 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 		}
 	}
 
-	private InsertLocation2 findInsertLocation(IASTSimpleDeclaration methodDeclaration, IProgressMonitor subMonitor) throws CoreException {
+	private InsertLocation findInsertLocation(IASTSimpleDeclaration methodDeclaration, IProgressMonitor subMonitor) throws CoreException {
 		if (insertLocations.containsKey(methodDeclaration)) {
 			return insertLocations.get(methodDeclaration);
 		}
-		InsertLocation2 insertLocation = methodDefinitionInsertLocationFinder.find(tu, methodDeclaration.getFileLocation(), methodDeclaration.getParent(), astCache, subMonitor);
+		InsertLocation insertLocation = methodDefinitionInsertLocationFinder.find(tu, methodDeclaration.getFileLocation(), methodDeclaration.getParent(), astCache, subMonitor);
 		
 		if (insertLocation.getTranslationUnit() == null || NodeHelper.isContainedInTemplateDeclaration(methodDeclaration)) {
 			insertLocation.setNodeToInsertAfter(NodeHelper.findTopLevelParent(methodDeclaration), tu);
@@ -231,7 +231,7 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 		return insertLocation;
 	}
 
-	private IASTDeclaration createFunctionDefinition(IASTTranslationUnit unit, IASTSimpleDeclaration methodDeclaration, InsertLocation2 insertLocation) throws CoreException {
+	private IASTDeclaration createFunctionDefinition(IASTTranslationUnit unit, IASTSimpleDeclaration methodDeclaration, InsertLocation insertLocation) throws CoreException {
 		IASTDeclSpecifier declSpecifier = methodDeclaration.getDeclSpecifier().copy(CopyStyle.withLocations);
 		ICPPASTFunctionDeclarator functionDeclarator = (ICPPASTFunctionDeclarator) methodDeclaration.getDeclarators()[0];
 		IASTNode declarationParent = methodDeclaration.getParent();
@@ -274,7 +274,7 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 	}
 
 	private ICPPASTQualifiedName createQualifiedNameFor(IASTFunctionDeclarator functionDeclarator,
-			IASTNode declarationParent, InsertLocation2 insertLocation)	throws CoreException {
+			IASTNode declarationParent, InsertLocation insertLocation)	throws CoreException {
 		int insertOffset = insertLocation.getInsertPosition();
 		return NameHelper.createQualifiedNameFor(
 				functionDeclarator.getName(), tu, functionDeclarator.getFileLocation().getNodeOffset(),
@@ -298,7 +298,7 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 			files.add(file);
 		}
 		
-		for (InsertLocation2 insertLocation : insertLocations.values()) {
+		for (InsertLocation insertLocation : insertLocations.values()) {
 			if (insertLocation != null) {
 				file = insertLocation.getFile();
 				if (file != null) {
@@ -331,7 +331,7 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 			return true;
 		}
 		
-		for (InsertLocation2 insertLocation : insertLocations.values()) {
+		for (InsertLocation insertLocation : insertLocations.values()) {
 			if (insertLocation != null && tu.equals(insertLocation.getTranslationUnit())) {
 				return true;
 			}

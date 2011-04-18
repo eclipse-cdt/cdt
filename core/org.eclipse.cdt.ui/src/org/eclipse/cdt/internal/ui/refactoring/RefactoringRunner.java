@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.model.ICProject;
 /**
  * Base class for all refactoring runners.
  * 
- * @deprecated Use RfactoringRunner2.
+ * @deprecated Use RefactoringRunner2.
  * 
  * @author Emanuel Graf
  */

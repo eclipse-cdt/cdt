@@ -38,8 +38,9 @@ import org.eclipse.cdt.internal.ui.refactoring.Container;
  * A collection of methods that deal with IASTTranslationUnits.
  * 
  * @author Mirko Stocker
- *
+ * @deprecated Use REfactoringASTCache.
  */
+@Deprecated
 public class TranslationUnitHelper {
 	private static final int AST_STYLE = ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
 

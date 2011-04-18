@@ -89,7 +89,7 @@ public class NodeHelper {
 	}
 
 	public static IASTSimpleDeclaration findSimpleDeclarationInParents(IASTNode node) {
-		while (node != null){
+		while (node != null) {
 			if (node instanceof IASTSimpleDeclaration) {
 				return (IASTSimpleDeclaration) node;
 			}
@@ -104,13 +104,13 @@ public class NodeHelper {
 		MethodContext context = new MethodContext();
 		context.setType(MethodContext.ContextType.NONE);
 		IASTName name = null;
-		while (node != null && !found){
+		while (node != null && !found) {
 			node = node.getParent();
-			if (node instanceof IASTFunctionDeclarator){
+			if (node instanceof IASTFunctionDeclarator) {
 				name=((IASTFunctionDeclarator)node).getName();
 				found = true;
 				context.setType(MethodContext.ContextType.FUNCTION);
-			} else if (node instanceof IASTFunctionDefinition){
+			} else if (node instanceof IASTFunctionDefinition) {
 				name=CPPVisitor.findInnermostDeclarator(((IASTFunctionDefinition)node).getDeclarator()).getName();
 				found = true;
 				context.setType(MethodContext.ContextType.FUNCTION);
@@ -126,8 +126,8 @@ public class NodeHelper {
 
 	private static void getMethodContex(IASTTranslationUnit translationUnit, MethodContext context,
 			IASTName name) {
-		if (name instanceof ICPPASTQualifiedName){
-			 ICPPASTQualifiedName qname =( ICPPASTQualifiedName )name;
+		if (name instanceof ICPPASTQualifiedName) {
+			 ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
 			 context.setMethodQName(qname);
 			 IBinding bind = qname.resolveBinding();
 			 IASTName[] decl = translationUnit.getDeclarationsInAST(bind);
@@ -166,14 +166,14 @@ public class NodeHelper {
 				}
 			}
 		}
-		if (name instanceof ICPPASTQualifiedName){
-			ICPPASTQualifiedName qname =( ICPPASTQualifiedName )name;
+		if (name instanceof ICPPASTQualifiedName) {
+			ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
 			context.setMethodQName(qname);
 		}
 	}
 
 	public static IASTCompoundStatement findCompoundStatementInAncestors(IASTNode node) {
-		while (node != null){
+		while (node != null) {
 			if (node instanceof IASTCompoundStatement) {
 				return (IASTCompoundStatement) node;
 			}
@@ -183,7 +183,7 @@ public class NodeHelper {
 	}
 
 	public static IASTCompositeTypeSpecifier findClassInAncestors(IASTNode node) {
-		while (!(node instanceof IASTCompositeTypeSpecifier)){
+		while (!(node instanceof IASTCompositeTypeSpecifier)) {
 			if (node instanceof IASTTranslationUnit) {
 				return null;
 			}
@@ -193,7 +193,7 @@ public class NodeHelper {
 	}
 
 	public static IASTFunctionDefinition findFunctionDefinitionInAncestors(IASTNode node) {
-		while (node != null){
+		while (node != null) {
 			if (node instanceof IASTFunctionDefinition) {
 				return (IASTFunctionDefinition) node;
 			}

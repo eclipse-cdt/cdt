@@ -35,7 +35,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
-import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder2;
+import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 
 /**
@@ -72,7 +72,7 @@ public class MethodDefinitionInsertLocationFinder {
 			if (cachedDeclarationToDefinition.containsKey(simpleDeclaration)) {
 				definition = cachedDeclarationToDefinition.get(simpleDeclaration);
 			} else {
-				definition = DefinitionFinder2.getDefinition(simpleDeclaration, astCache, pm);
+				definition = DefinitionFinder.getDefinition(simpleDeclaration, astCache, pm);
 				if (definition != null) {
 					cachedDeclarationToDefinition.put(simpleDeclaration, definition);	
 				}
@@ -93,7 +93,7 @@ public class MethodDefinitionInsertLocationFinder {
 			if (cachedDeclarationToDefinition.containsKey(simpleDeclaration)) {
 				definition = cachedDeclarationToDefinition.get(simpleDeclaration);
 			} else {
-				definition = DefinitionFinder2.getDefinition(simpleDeclaration, astCache, pm);
+				definition = DefinitionFinder.getDefinition(simpleDeclaration, astCache, pm);
 				if (definition != null) {
 					cachedDeclarationToDefinition.put(simpleDeclaration, definition);
 				}

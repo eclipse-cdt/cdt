@@ -41,15 +41,14 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 /**
  * Finds the information that are needed to tell where a method definition of a certain
  * method declaration should be inserted.
- * This class is intended as a replacement for MethodDefinitionInsertLocationFinder. 
  * 
  * @author Mirko Stocker, Lukas Felber
  */
 public class MethodDefinitionInsertLocationFinder {
-	// We cache DefinitionFinder2.getDefinition results because refactorings like Implement Method
+	// We cache DefinitionFinder.getDefinition results because refactorings like Implement Method
 	// might want to find multiple insert locations in the same translation unit. This prevents
-	// many redundant calls to DefinitionFinder2.getDefinition and speeds up the process quite
-	//a bit. Unfortunately, this has the minor side-effect or having to instantiate this class.
+	// many redundant calls to DefinitionFinder.getDefinition and speeds up the process quite
+	// a bit. Unfortunately, this has the minor side-effect or having to instantiate this class.
 	Map<IASTSimpleDeclaration, IASTName> cachedDeclarationToDefinition =
 			new HashMap<IASTSimpleDeclaration, IASTName>();
 

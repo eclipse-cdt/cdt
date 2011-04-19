@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 /**
  * Is returned when using the find method of the MethodDefinitionInsertLocationFinder.
  * Contains all the information needed to insert at the correct position.
- * This class is intended as a replacement for InsertLocation. 
  * 
  * @author Lukas Felber
  */

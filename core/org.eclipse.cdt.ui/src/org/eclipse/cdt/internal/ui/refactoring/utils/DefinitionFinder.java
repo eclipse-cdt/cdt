@@ -39,7 +39,7 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
- * Helper class to find definitions. This class is intended as a replacement for DefinitionFinder.
+ * Helper class for finding definitions.
  */
 public class DefinitionFinder {
 

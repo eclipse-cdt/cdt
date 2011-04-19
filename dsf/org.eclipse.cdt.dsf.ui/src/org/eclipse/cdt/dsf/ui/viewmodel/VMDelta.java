@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - adapted to use in DSF
+ *     Patrick Chuong (Texas Instruments)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel;
 
@@ -299,6 +300,9 @@ public class VMDelta extends ModelDelta {
             }
             if ((flags & IModelDelta.EXPAND) > 0) {
                 buf.append("EXPAND | "); //$NON-NLS-1$
+            }
+            if ((flags & IModelDelta.COLLAPSE) > 0) {
+            	buf.append("COLLAPSE | "); //$NON-NLS-1$
             }
             if ((flags & IModelDelta.INSERTED) > 0) {
                 buf.append("INSERTED | "); //$NON-NLS-1$

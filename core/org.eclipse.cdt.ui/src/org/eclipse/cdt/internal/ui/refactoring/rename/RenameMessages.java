@@ -6,22 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- *    Markus Schorn - initial API and implementation
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import org.eclipse.osgi.util.NLS;
 
 public class RenameMessages extends NLS {
-	static {
-		// Initialize resource bundle.
-		NLS.initializeMessages(RenameMessages.class.getName(), RenameMessages.class);
-	}
-
-    private RenameMessages() {
-    }
-
     public static String ASTManager_error_macro_name_conflict;
 	public static String ASTManager_subtask_analyzing;
 	public static String ASTManager_task_analyze;
@@ -126,4 +118,12 @@ public class RenameMessages extends NLS {
 	public static String RenameSupport_not_available;
 	public static String RenameSupport_dialog_title;
 	public static String TextSearch_monitor_categorizeMatches;
+
+	static {
+		NLS.initializeMessages(RenameMessages.class.getName(), RenameMessages.class);
+	}
+
+	// Do not instantiate
+	private RenameMessages() {
+	}
 }

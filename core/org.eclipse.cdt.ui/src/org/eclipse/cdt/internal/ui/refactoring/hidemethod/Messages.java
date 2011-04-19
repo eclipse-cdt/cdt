@@ -7,20 +7,13 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.hidemethod;
 
 import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
-
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.refactoring.hidemethod.messages";//$NON-NLS-1$
-
-	private Messages() {
-		// Do not instantiate
-	}
-
 	public static String HideMethodRefactoring_HasExternalReferences;
 	public static String HideMethodRefactoring_HIDE_METHOD;
 	public static String HideMethodRefactoring_NoNameSelected;
@@ -31,6 +24,10 @@ public final class Messages extends NLS {
 	public static String HideMethodRefactoring_IsAlreadyPrivate;
 
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
+	}
+
+	// Do not instantiate
+	private Messages() {
 	}
 }

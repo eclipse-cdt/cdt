@@ -7,14 +7,13 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * 		Emanuel Graf IFS - initial API and implementation 
+ * 	   Emanuel Graf IFS - initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.refactoring.togglefunction.messages"; //$NON-NLS-1$
 	public static String DeclaratorFinder_NestedFunction;
 	public static String DeclaratorFinder_NoDeclarator;
 	public static String DeclaratorFinder_MultipleDeclarators;
@@ -43,11 +42,12 @@ public class Messages extends NLS {
 	public static String ToggleRefactoringContext_NoTuFound;
 	public static String ToggleStrategyFactory_NoDefinitionFound;
 	public static String ToggleStrategyFactory_UnsupportedSituation;
+
 	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 
+	// Do not instantiate
 	private Messages() {
 	}
 }

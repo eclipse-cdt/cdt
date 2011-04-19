@@ -7,20 +7,13 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractconstant;
 
 import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
-
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.refactoring.extractconstant.messages";//$NON-NLS-1$
-
-	private Messages() {
-		// Do not instantiate
-	}
-
 	public static String InputPage_ConstName;
 	public static String InputPage_EnterContName;
 	public static String InputPage_NameAlreadyDefined;
@@ -31,7 +24,11 @@ public final class Messages extends NLS {
 	public static String ExtractConstantRefactoring_CreateConstant;
 	public static String ExtractConstantRefactoring_ReplaceLiteral;
 
+	private Messages() {
+		// Do not instantiate
+	}
+
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 }

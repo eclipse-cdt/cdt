@@ -7,14 +7,13 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- *    Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.dialogs;
 
 import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
-
 	public static String CTextEditChangePreviewViewer_OrgSource;
 	public static String CTextEditChangePreviewViewer_RefactoredSource;
 	public static String ExtractInputPage_ReplaceInSubclass;

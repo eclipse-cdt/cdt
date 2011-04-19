@@ -10,14 +10,11 @@
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
 import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.refactoring.utils.messages";//$NON-NLS-1$
-
 	public static String IdentifierHelper_isKeyword;
 	public static String IdentifierHelper_isValid;
 	public static String IdentifierHelper_leadingDigit;
@@ -29,11 +26,11 @@ public final class Messages extends NLS {
 	public static String VisibilityEnum_private;
 	public static String Checks_validateEdit;
 
-	private Messages() {
-		// Do not instantiate
+	static {
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 
-	static {
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+	// Do not instantiate
+	private Messages() {
 	}
 }

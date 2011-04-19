@@ -15,8 +15,6 @@ package org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable;
 import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.messages"; //$NON-NLS-1$
-
 	public static String CheckName;
 	public static String CreateLocalVariable;
 	public static String EnterVariableName;
@@ -29,10 +27,10 @@ public final class Messages extends NLS {
 	public static String VariableName;
 
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 
+	// Do not instantiate
 	private Messages() {
-		// Do not instantiate
 	}
 }

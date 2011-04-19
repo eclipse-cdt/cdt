@@ -27,11 +27,11 @@ public final class Messages extends NLS {
 	public static String ImplementMethodRefactoringWizard_CancelingPreviewGeneration;
 	public static String ImplementMethodInputPage_Header;
 
-	private Messages() {
-		// Do not instantiate
-	}
-
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
+	}
+
+	// Do not instantiate
+	private Messages() {
 	}
 }

@@ -25,11 +25,11 @@ public final class Messages extends NLS {
 	public static String GenerateGettersAndSettersRefactoring_NoImplFile;
 	public static String GettersAndSetters_Name;
 
-	private Messages() {
-		// Do not instantiate
-	}
-
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
+	}
+
+	// Do not instantiate
+	private Messages() {
 	}
 }

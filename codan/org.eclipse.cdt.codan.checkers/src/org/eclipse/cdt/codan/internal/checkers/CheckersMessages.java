@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *     Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -16,7 +16,6 @@ import org.eclipse.osgi.util.NLS;
  * Messages
  */
 public class CheckersMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.codan.internal.checkers.messages"; //$NON-NLS-1$
 	public static String CaseBreakChecker_DefaultNoBreakCommentDescription;
 	public static String CaseBreakChecker_EmptyCaseDescription;
 	public static String CaseBreakChecker_LastCaseDescription;
@@ -30,11 +29,12 @@ public class CheckersMessages extends NLS {
 	public static String SuggestedParenthesisChecker_SuggestParanthesesAroundNot;
 	public static String SuspiciousSemicolonChecker_ParamElse;
 	public static String ProblemBindingChecker_Candidates;
+
 	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, CheckersMessages.class);
+		NLS.initializeMessages(CheckersMessages.class.getName(), CheckersMessages.class);
 	}
 
+	// Do not instantiate
 	private CheckersMessages() {
 	}
 }

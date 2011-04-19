@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Emanuel Graf IFS - Bug 198269
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Emanuel Graf IFS - Bug 198269
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
- * For statement in c++
+ * For statement in C++
  */
 public class CPPASTForStatement extends ASTNode implements ICPPASTForStatement, IASTAmbiguityParent {
     private IScope scope = null;
@@ -33,8 +33,6 @@ public class CPPASTForStatement extends ASTNode implements ICPPASTForStatement, 
     private IASTDeclaration condDeclaration;
     private IASTExpression iterationExpression;
     private IASTStatement body;
-
-
     
     public CPPASTForStatement() {
 	}
@@ -64,8 +62,8 @@ public class CPPASTForStatement extends ASTNode implements ICPPASTForStatement, 
 		copy.setInitializerStatement(init == null ? null : init.copy(style));
 		copy.setConditionDeclaration(condDeclaration == null ? null : condDeclaration.copy(style));
 		copy.setConditionExpression(condition == null ? null : condition.copy(style));
-		copy.setIterationExpression(iterationExpression == null ? null : iterationExpression
-				.copy(style));
+		copy.setIterationExpression(iterationExpression == null ?
+				null : iterationExpression.copy(style));
 		copy.setBody(body == null ? null : body.copy(style));
 		copy.setOffsetAndLength(this);
 		if (style == CopyStyle.withLocations) {
@@ -115,31 +113,31 @@ public class CPPASTForStatement extends ASTNode implements ICPPASTForStatement, 
     }
 
     public IScope getScope() {
-        if( scope == null )
-            scope = new CPPBlockScope( this );
+        if (scope == null)
+            scope = new CPPBlockScope(this);
         return scope;
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitStatements ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitStatements) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
-        if( init != null ) if( !init.accept( action ) ) return false;
-        if( condition != null ) if( !condition.accept( action ) ) return false;
-        if( condDeclaration != null ) if( !condDeclaration.accept( action ) ) return false;
-        if( iterationExpression != null ) if( !iterationExpression.accept( action ) ) return false;
-        if( body != null ) if( !body.accept( action ) ) return false;
+        if (init != null && !init.accept(action)) return false;
+        if (condition != null && !condition.accept(action)) return false;
+        if (condDeclaration != null && !condDeclaration.accept(action)) return false;
+        if (iterationExpression != null && !iterationExpression.accept(action)) return false;
+        if (body != null && !body.accept(action)) return false;
         
-        if( action.shouldVisitStatements ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitStatements) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;

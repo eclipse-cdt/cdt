@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.TestSourceFile;
 
-import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder2;
+import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
 
 public class DefinitionFinderTest extends RefactoringTest {
 
@@ -44,7 +44,7 @@ public class DefinitionFinderTest extends RefactoringTest {
 			IASTTranslationUnit ast = astCache.getAST((ITranslationUnit) element, null);
 			for (IASTDeclaration declaration : ast.getDeclarations()) {
 				if (declaration instanceof IASTSimpleDeclaration) {
-					assertNotNull(DefinitionFinder2.getDefinition((IASTSimpleDeclaration) declaration, astCache, NULL_PROGRESS_MONITOR));	
+					assertNotNull(DefinitionFinder.getDefinition((IASTSimpleDeclaration) declaration, astCache, NULL_PROGRESS_MONITOR));	
 				}
 			}
 		}

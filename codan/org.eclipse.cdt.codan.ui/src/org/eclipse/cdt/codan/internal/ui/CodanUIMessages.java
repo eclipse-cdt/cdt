@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
- *    IBM Corporation
+ *     Alena Laskavaia  - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui;
 
@@ -17,7 +17,6 @@ import org.eclipse.osgi.util.NLS;
  * Externalized messages
  */
 public class CodanUIMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.codan.internal.ui.messages"; //$NON-NLS-1$
 	public static String BuildPropertyPage_RunAsYouType;
 	public static String BuildPropertyPage_RunWithBuild;
 	public static String CheckedTreeEditor_SelectionCannotBeEmpty;
@@ -86,11 +85,12 @@ public class CodanUIMessages extends NLS {
 	public static String LaunchModesPropertyPage_RunOnDemand;
 	public static String LaunchModesPropertyPage_RunOnFullBuild;
 	public static String LaunchModesPropertyPage_RunOnIncrementalBuild;
+
 	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, CodanUIMessages.class);
+		NLS.initializeMessages(CodanUIMessages.class.getName(), CodanUIMessages.class);
 	}
 
+	// Do not instantiate
 	private CodanUIMessages() {
 	}
 }

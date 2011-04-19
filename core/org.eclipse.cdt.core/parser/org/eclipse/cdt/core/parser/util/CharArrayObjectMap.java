@@ -20,14 +20,15 @@ import java.util.List;
  * @author Doug Schaefer
  */
 public class CharArrayObjectMap extends CharTable {
-    public static final CharArrayObjectMap EMPTY_MAP = new CharArrayObjectMap( 0 ){
+    public static final CharArrayObjectMap EMPTY_MAP = new CharArrayObjectMap(0) {
         @Override
-		public Object clone()                         { return this; }
+		public Object clone() { return this; }
         @Override
-		public List<char[]> toList()                		  { return Collections.emptyList(); }
+		public List<char[]> toList() { return Collections.emptyList(); }
         @Override
-		public Object put( char[] key, int start, int length, Object value ) 
-        { throw new UnsupportedOperationException(); }
+		public Object put(char[] key, int start, int length, Object value) {
+        	throw new UnsupportedOperationException();
+        }
     };
 
 	private Object[] valueTable;
@@ -59,8 +60,8 @@ public class CharArrayObjectMap extends CharTable {
 		return get(key, 0, key.length);
 	}
 	
-	final public Object getAt( int i ){
-	    if( i < 0 || i > currEntry )
+	final public Object getAt(int i) {
+	    if (i < 0 || i > currEntry)
 	        return null;
 	    return valueTable[i];
 	}
@@ -83,9 +84,9 @@ public class CharArrayObjectMap extends CharTable {
 	}
 	
 	@Override
-	public Object clone(){
+	public Object clone() {
         CharArrayObjectMap newTable = (CharArrayObjectMap) super.clone();
-        newTable.valueTable = new Object[ capacity() ];
+        newTable.valueTable = new Object[capacity()];
 	    System.arraycopy(valueTable, 0, newTable.valueTable, 0, valueTable.length);
 
 	    return newTable;
@@ -102,23 +103,28 @@ public class CharArrayObjectMap extends CharTable {
 	@Override
 	public void clear() {
 		super.clear();
-		for( int i = 0; i < capacity(); i++ )
+		for (int i = 0; i < capacity(); i++)
 			valueTable[i] = null;
 	}
 
     @Override
-	protected int partition( Comparator<Object> c, int p, int r ){
-        char[] x = keyTable[ p ];
+	protected int partition(Comparator<Object> c, int p, int r) {
+        char[] x = keyTable[p];
         Object temp = null;
         int i = p;
         int j = r;
         
-        while( true ){
-            while( c.compare( keyTable[ j ], x ) > 0 ){ j--; }
-            if( i < j ) 
-                while( c.compare( keyTable[ i ], x ) < 0 ){ i++; }
+        while (true) {
+            while (c.compare(keyTable[j], x) > 0) {
+            	j--;
+            }
+            if (i < j) {
+                while (c.compare(keyTable[i], x) < 0) {
+                	i++;
+                }
+            }
             
-            if( i < j ){
+            if (i < j) {
                 temp = keyTable[j];
                 keyTable[j] = keyTable[i];
                 keyTable[i] = (char[]) temp;
@@ -132,15 +138,15 @@ public class CharArrayObjectMap extends CharTable {
         }
     }
     
-    public Object [] valueArray(){
-	    Object [] values = new Object[ size() ];
-	    System.arraycopy( valueTable, 0, values, 0, values.length );
+    public Object[] valueArray() {
+	    Object[] values = new Object[size()];
+	    System.arraycopy(valueTable, 0, values, 0, values.length);
 	    return values;
 	}
 
-    public Object [] valueArray(Class<?> clazz){
+    public Object[] valueArray(Class<?> clazz) {
 	    Object[] values= (Object[]) Array.newInstance(clazz, size());
-	    System.arraycopy( valueTable, 0, values, 0, values.length );
+	    System.arraycopy(valueTable, 0, values, 0, values.length);
 	    return values;
 	}
 }

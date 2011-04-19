@@ -32,6 +32,7 @@ import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsole;
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsolePage;
 import org.eclipse.cdt.internal.ui.buildconsole.ConsoleMessages;
+import org.eclipse.cdt.internal.ui.buildconsole.GlobalBuildConsoleManager;
 
 /**
  * BuildConsoleTests.
@@ -113,8 +114,7 @@ public class BuildConsoleTests extends BaseUITestCase {
 	}
 
 	public void testGlobalCdtConsole() throws IOException, CoreException {
-		IBuildConsoleManager mgr = CUIPlugin.getDefault().getConsoleManager();
-		IConsole globalConsole = mgr.getGlobalConsole();
+		IConsole globalConsole = GlobalBuildConsoleManager.getGlobalConsole();
 		assertNotNull(globalConsole);
 		
 		// the console view

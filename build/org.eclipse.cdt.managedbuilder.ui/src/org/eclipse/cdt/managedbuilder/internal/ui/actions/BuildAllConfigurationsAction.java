@@ -38,7 +38,7 @@ public class BuildAllConfigurationsAction implements IObjectActionDelegate {
 
 	public void run(IAction action) {
 		// Setup the global build console
-		CUIPlugin.getDefault().getConsoleManager().startGlobalConsole();
+		CUIPlugin.getDefault().startGlobalConsole();
 
 		for (IProject project : projects) {
 			ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(project, false);

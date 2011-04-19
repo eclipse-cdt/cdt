@@ -80,7 +80,7 @@ public class BuildGroup extends CViewActionGroup {
 	    	saveEditors(prjs);
 
 			// Clear the build console, and open a stream
-			CUIPlugin.getDefault().getConsoleManager().startGlobalConsole();
+			CUIPlugin.getDefault().startGlobalConsole();
 
 	    	// Now delegate to the parent
 	    	super.run();

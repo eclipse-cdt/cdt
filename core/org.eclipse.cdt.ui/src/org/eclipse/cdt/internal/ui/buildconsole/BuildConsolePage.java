@@ -163,15 +163,8 @@ public class BuildConsolePage extends Page
 		IProject project = getProject();
 		if (project != null) {
 			IBuildConsoleManager consoleManager = getConsole().getConsoleManager();
-			IDocument document;
-			IConsole console;
-			if (getConsole() instanceof GlobalBuildConsole) {
-				document = consoleManager.getGlobalConsoleDocument();
-				console = consoleManager.getGlobalConsole();
-			} else {
-				document = consoleManager.getConsoleDocument(project);
-				console = consoleManager.getProjectConsole(project);
-			}
+			IDocument document = consoleManager.getConsoleDocument(project);
+			IConsole console = consoleManager.getProjectConsole(project);
 			getViewer().setDocument(document);
 			if (console instanceof BuildConsolePartitioner) {
 				BuildConsolePartitioner par = (BuildConsolePartitioner)console;
@@ -563,13 +556,8 @@ public class BuildConsolePage extends Page
 	 * Get the current CDT IConsole being displayed on the page
 	 */
 	private IConsole getCurrentConsole() {
-		BuildConsoleManager consoleManager = (BuildConsoleManager)CUIPlugin.getDefault().getConsoleManager();
-		if (getConsole() instanceof GlobalBuildConsole)
-			return consoleManager.getGlobalConsole();
-		else if (getProject() == null)
-			return null;
-		else
-			return consoleManager.getProjectConsole(getProject());
+		IBuildConsoleManager consoleManager = fConsole.getConsoleManager();
+		return consoleManager.getProjectConsole(getProject());
 	}
 
 	/**

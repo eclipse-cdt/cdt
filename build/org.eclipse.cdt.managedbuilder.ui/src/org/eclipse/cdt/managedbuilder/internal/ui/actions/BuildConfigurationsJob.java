@@ -69,7 +69,7 @@ public class BuildConfigurationsJob extends Job {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		// Setup the global build console
-		CUIPlugin.getDefault().getConsoleManager().startGlobalConsole();
+		CUIPlugin.getDefault().startGlobalConsole();
 
 		IConfiguration[] cfgs = new IConfiguration[cfgDescriptions.length];
 		for (int i=0; i<cfgDescriptions.length; i++) {

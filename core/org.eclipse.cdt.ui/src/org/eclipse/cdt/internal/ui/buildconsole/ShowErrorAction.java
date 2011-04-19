@@ -18,7 +18,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IBuildConsoleManager;
 
 /**
@@ -45,15 +44,9 @@ public class ShowErrorAction extends Action {
 	public void run() {
 		super.run();
 		if (isChecked()) {
-			IBuildConsoleManager consoleManager = CUIPlugin.getDefault().getConsoleManager();
+			IBuildConsoleManager consoleManager = fConsolePage.getConsole().getConsoleManager();
 			IProject project = fConsolePage.getProject();
-			IConsole console;
-			if (fConsolePage.getConsole() instanceof GlobalBuildConsole)
-				console = consoleManager.getGlobalConsole();
-			else if (project == null)
-				return;
-			else
-				console = consoleManager.getProjectConsole(project);
+			IConsole console = consoleManager.getProjectConsole(project);
 			if (console instanceof BuildConsolePartitioner) {
 				BuildConsolePartitioner par = (BuildConsolePartitioner)console;
 				fConsolePage.showError(par, true);

@@ -23,12 +23,9 @@ import java.util.Vector;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -41,7 +38,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
-import org.osgi.service.prefs.Preferences;
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
@@ -210,27 +206,6 @@ public class BuildConsolePartitioner
 	}
 
 	/**
-	 * @return {@link URI} of build log or {@code null} if not available.
-	 */
-	static private URI getLogURI(IProject project) {
-		URI logURI = null;
-
-		Preferences prefs = BuildConsoleManager.getBuildLogPreferences(project);
-		boolean keepLog = prefs.getBoolean(BuildConsoleManager.KEY_KEEP_LOG, BuildConsoleManager.CONSOLE_KEEP_LOG_DEFAULT);
-		if (keepLog) {
-			String strLocation = prefs.get(BuildConsoleManager.KEY_LOG_LOCATION, BuildConsoleManager.getDefaultConsoleLogLocation(project));
-			if (strLocation.trim().length()>0) {
-				logURI = URIUtil.toURI(strLocation);
-			}
-			if (logURI==null) {
-				IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,"Can't determine URI for location=["+strLocation+"]");  //$NON-NLS-1$ //$NON-NLS-2$
-				CUIPlugin.log(status);
-			}
-		}
-		return logURI;
-	}
-
-	/**
 	 * Adds the new text to the document.
 	 *
 	 * @param text - the text to append.
@@ -308,7 +283,7 @@ public class BuildConsolePartitioner
 			 * @param append Set to true if the log should be opened for appending, false for overwriting.
 			 */
 			private void logOpen(boolean append) {
-				fLogURI = getLogURI(fProject);
+				fLogURI = fManager.getLogURI(fProject);
 				if (fLogURI!=null) {
 					try {
 						IFileStore logStore = EFS.getStore(fLogURI);

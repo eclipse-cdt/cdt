@@ -29,6 +29,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -88,6 +89,7 @@ import org.eclipse.cdt.internal.ui.ICStatusConstants;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
+import org.eclipse.cdt.internal.ui.buildconsole.GlobalBuildConsoleManager;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
@@ -502,6 +504,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * 
 	 * @param name - console name.
 	 * @param contextId - console id matching context id in the Console view dropdown.
+	 *    Can't be {@code null}.
 	 * @param iconUrl - a {@link URL} of the icon for the context menu of the Console
 	 *    view. The url is expected to point to an image in eclipse OSGi bundle.
 	 *    {@code iconUrl} can be <b>null</b>, in that case the default image is used.
@@ -510,6 +513,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public IBuildConsoleManager getConsoleManager(String name, String contextId, URL iconUrl) {
+		Assert.isNotNull(contextId);
+
 		BuildConsoleManager manager = fBuildConsoleManagers.get(contextId);
 		if (manager == null ) {
 			manager = new BuildConsoleManager();
@@ -519,6 +524,12 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return manager;
 	}
 
+	/**
+	 * @since 5.3
+	 */
+	public void startGlobalConsole() {
+		GlobalBuildConsoleManager.startGlobalConsole();
+	}
 	/*
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
@@ -598,6 +609,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 			}
 			fBuildConsoleManagers.clear();
 		}
+		
+		GlobalBuildConsoleManager.stop();
 
 		unregisterAdapters();
 

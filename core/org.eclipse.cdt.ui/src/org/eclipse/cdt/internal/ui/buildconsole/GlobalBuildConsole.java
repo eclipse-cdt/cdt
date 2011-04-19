@@ -10,16 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
+import java.net.URL;
+
 import org.eclipse.cdt.ui.IBuildConsoleManager;
 import org.eclipse.core.resources.IProject;
 
 /**
- * Customised BuildConsole for the global console that displays its title differently
+ * Customized BuildConsole for the global console that displays its title differently
  */
 public class GlobalBuildConsole extends BuildConsole {
-	public GlobalBuildConsole(IBuildConsoleManager manager, String name, String id) {
-		super(manager, name, id);
-		setName(ConsoleMessages.BuildConsole_GlobalConsole);
+	public GlobalBuildConsole(IBuildConsoleManager manager, String name, String contextId, URL iconUrl) {
+		super(manager, name, contextId, iconUrl);
 	}
 
 	@Override

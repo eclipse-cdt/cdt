@@ -52,7 +52,8 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 		IProject project = getProject();
 		isProjectLevel= project != null;
 		if(isProjectLevel) {
-			Preferences prefs = BuildConsoleManager.getBuildLogPreferences(project);
+			BuildConsoleManager consoleManager = getConsoleManager();
+			Preferences prefs = consoleManager.getBuildLogPreferences(project);
 
 			Composite contents = ControlFactory.createCompositeEx(parent, 3, GridData.FILL_BOTH);
 			((GridLayout) contents.getLayout()).makeColumnsEqualWidth = false;
@@ -78,7 +79,7 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 			((GridData) logLocationLabel.getLayoutData()).grabExcessHorizontalSpace = false;
 
 			logLocationText = ControlFactory.createTextField(contents, SWT.SINGLE | SWT.BORDER);
-			String logLocation = prefs.get(BuildConsoleManager.KEY_LOG_LOCATION, BuildConsoleManager.getDefaultConsoleLogLocation(project));
+			String logLocation = prefs.get(BuildConsoleManager.KEY_LOG_LOCATION, consoleManager.getDefaultConsoleLogLocation(project));
 			logLocationText.setText(logLocation);
 			logLocationText.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
@@ -113,15 +114,16 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 	protected void performDefaults() {
 		if(isProjectLevel) {
 			IProject project = getProject();
-			Preferences prefs = BuildConsoleManager.getBuildLogPreferences(project);
-			prefs.put(BuildConsoleManager.KEY_LOG_LOCATION, BuildConsoleManager.getDefaultConsoleLogLocation(project));
+			BuildConsoleManager consoleManager = getConsoleManager();
+			Preferences prefs = consoleManager.getBuildLogPreferences(project);
+			prefs.put(BuildConsoleManager.KEY_LOG_LOCATION, consoleManager.getDefaultConsoleLogLocation(project));
 			prefs.putBoolean(BuildConsoleManager.KEY_KEEP_LOG, BuildConsoleManager.CONSOLE_KEEP_LOG_DEFAULT);
 			try {
 				prefs.flush();
 			} catch (BackingStoreException e) {
 				CUIPlugin.log(e);
 			}
-			logLocationText.setText(prefs.get(BuildConsoleManager.KEY_LOG_LOCATION, BuildConsoleManager.getDefaultConsoleLogLocation(project)));
+			logLocationText.setText(prefs.get(BuildConsoleManager.KEY_LOG_LOCATION, consoleManager.getDefaultConsoleLogLocation(project)));
 			enableLoggingCheckbox.setSelection(prefs.getBoolean(BuildConsoleManager.KEY_KEEP_LOG, BuildConsoleManager.CONSOLE_KEEP_LOG_DEFAULT));
 			updateEnablements();
 		}
@@ -131,7 +133,8 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 	@Override
 	public boolean performOk() {
 		if(isProjectLevel) {
-			Preferences prefs = BuildConsoleManager.getBuildLogPreferences(getProject());
+			BuildConsoleManager consoleManager = getConsoleManager();
+			Preferences prefs = consoleManager.getBuildLogPreferences(getProject());
 			prefs.put(BuildConsoleManager.KEY_LOG_LOCATION, logLocationText.getText());
 			prefs.putBoolean(BuildConsoleManager.KEY_KEEP_LOG, enableLoggingCheckbox.getSelection());
 			try {
@@ -152,6 +155,10 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 			project= (IProject) elem.getAdapter(IProject.class);
 		}
 		return project;
+	}
+
+	private BuildConsoleManager getConsoleManager() {
+		return (BuildConsoleManager)CUIPlugin.getDefault().getConsoleManager();
 	}
 
 	@Deprecated

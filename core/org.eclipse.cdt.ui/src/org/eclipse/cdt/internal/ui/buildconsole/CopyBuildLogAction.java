@@ -48,19 +48,13 @@ public class CopyBuildLogAction extends Action {
 
 	@Override
 	public void run() {
-		IBuildConsoleManager consoleManager = CUIPlugin.getDefault().getConsoleManager();
-		IConsole console;
-		if (fConsolePage.getConsole() instanceof GlobalBuildConsole)
-			console = consoleManager.getGlobalConsole();
-		else {
-			IProject project = fConsolePage.getProject();
-			if (project == null || !project.isAccessible())
-				return;
-			console = consoleManager.getProjectConsole(project);
-		}
+		IBuildConsoleManager consoleManager = fConsolePage.getConsole().getConsoleManager();
+		IProject project = fConsolePage.getProject();
+		IConsole console = consoleManager.getProjectConsole(project);
+
+		Shell shell = Display.getCurrent().getActiveShell();
 
 		if (console instanceof BuildConsolePartitioner) {
-			Shell shell = Display.getCurrent().getActiveShell();
 			URI srcURI = ((BuildConsolePartitioner)console).getLogURI();
 			if (srcURI==null) {
 				MessageDialog.openWarning(shell, ConsoleMessages.CopyLog_UnavailableLog,
@@ -107,6 +101,9 @@ public class CopyBuildLogAction extends Action {
 					ResourcesUtil.refreshWorkspaceFiles(destURI);
 				}
 			}
+		} else {
+			MessageDialog.openWarning(shell, ConsoleMessages.CopyLog_UnavailableLog,
+					ConsoleMessages.CopyLog_BuildNotLogged);
 		}
 	}
 

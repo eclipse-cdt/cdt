@@ -23,6 +23,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
+import org.eclipse.cdt.internal.ui.buildconsole.GlobalBuildConsoleManager;
 
 /**
  * Preference page for build logging options, such as whether the
@@ -31,7 +32,7 @@ import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
 public class GlobalBuildLogPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	public GlobalBuildLogPreferencePage() {
 		super(GRID);
-		setPreferenceStore(BuildConsoleManager.getBuildLogPreferenceStore(null));
+		setPreferenceStore(GlobalBuildConsoleManager.getBuildLogPreferenceStore());
 	}
 
 	/**
@@ -65,12 +66,12 @@ public class GlobalBuildLogPreferencePage extends FieldEditorPreferencePage impl
 	}
 
 	public void init(IWorkbench workbench) {
-		initDefaults(BuildConsoleManager.getBuildLogPreferenceStore(null));
+		initDefaults(GlobalBuildConsoleManager.getBuildLogPreferenceStore());
 	}
 
 	public static void initDefaults(IPreferenceStore prefs) {
 		prefs.setDefault(BuildConsoleManager.KEY_KEEP_LOG, BuildConsoleManager.CONSOLE_KEEP_LOG_DEFAULT);
 		prefs.setDefault(BuildConsoleManager.KEY_LOG_LOCATION,
-				BuildConsoleManager.getDefaultConsoleLogLocation(null));
+				GlobalBuildConsoleManager.getDefaultConsoleLogLocation());
 	}
 }

@@ -31,16 +31,6 @@ public interface IBuildConsoleManager {
 	 */
 	IConsole getProjectConsole(IProject project);
 	/**
-	 * @return the global console
-	 * @since 5.3
-	 */
-	IConsole getGlobalConsole();
-	/**
-	 * @return the document backing the global console
-	 * @since 5.3
-	 */
-	IDocument getGlobalConsoleDocument();
-	/**
 	 * @param project
 	 * @return IDocument backing the console for the given project
 	 */
@@ -49,14 +39,4 @@ public interface IBuildConsoleManager {
 	void addConsoleListener(IBuildConsoleListener listener);
 	void removeConsoleListener(IBuildConsoleListener listener);
 
-	/**
-	 * Setup the the global console at the start of the build
-	 * @since 5.3
-	 */
-	void startGlobalConsole();
-	/**
-	 * Tear down the the global console at the start of the build
-	 * @since 5.3
-	 */
-	void stopGlobalConsole();
 }

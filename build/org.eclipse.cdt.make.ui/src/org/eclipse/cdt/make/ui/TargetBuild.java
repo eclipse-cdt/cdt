@@ -100,7 +100,7 @@ public class TargetBuild {
 
 	static public void buildTargets(Shell shell, final IMakeTarget[] targets) {
 		// Setup the global build console
-		CUIPlugin.getDefault().getConsoleManager().startGlobalConsole();
+		CUIPlugin.getDefault().startGlobalConsole();
 
 		saveAllResources(targets);
 		Job targetJob = new Job(MakeUIPlugin.getResourceString("TargetBuild.backgroundTask.name")) { //$NON-NLS-1$

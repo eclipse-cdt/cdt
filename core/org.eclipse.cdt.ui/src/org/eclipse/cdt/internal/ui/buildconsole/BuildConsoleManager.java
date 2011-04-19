@@ -13,10 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -27,7 +29,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.IDocument;
@@ -45,7 +46,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleView;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.service.prefs.Preferences;
 
 import org.eclipse.cdt.core.resources.IConsole;
@@ -59,24 +59,17 @@ import org.eclipse.cdt.internal.core.LocalProjectScope;
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 
 public class BuildConsoleManager implements IBuildConsoleManager, IResourceChangeListener, IPropertyChangeListener {
-	private static final String QUALIFIER = CUIPlugin.PLUGIN_ID;
-	private static final String BUILD_CONSOLE_NODE = "buildConsole"; //$NON-NLS-1$
-	private static final String GLOBAL_BUILD_CONSOLE_NODE = "globalBuildConsole"; //$NON-NLS-1$
+	/*package*/ static final String PREF_QUALIFIER = CUIPlugin.PLUGIN_ID;
 	public static final String KEY_KEEP_LOG = "keepLog"; //$NON-NLS-1$
 	public static final String KEY_LOG_LOCATION = "logLocation"; //$NON-NLS-1$
 	public static final boolean CONSOLE_KEEP_LOG_DEFAULT = true;
-	private static final String GLOBAL_LOG_FILE = "global-build.log"; //$NON-NLS-1$
+
+	private static final String BUILD_CONSOLE_NODE = "buildConsole"; //$NON-NLS-1$
 	private static final String PROJECT_LOG_EXT = ".build.log"; //$NON-NLS-1$
 
 	private ListenerList listeners = new ListenerList();
 	/** UI console object in which per-project consoles are shown */
 	private BuildConsole fConsole;
-	/**
-	 * UI console object in which the global console is shown (a concatenation of all the
-	 * per project consoles)
-	 */
-	private BuildConsole fGlobalConsole;
-	private BuildConsolePartitioner fGlobalConsolePartitioner;
 	private Map<IProject, BuildConsolePartitioner> fConsoleMap = new HashMap<IProject, BuildConsolePartitioner>();
 	private Color infoColor;
 	private Color outputColor;
@@ -117,10 +110,13 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	static public final int BUILD_STREAM_TYPE_OUTPUT = 1;
 	static public final int BUILD_STREAM_TYPE_ERROR = 2;
 	
-	static public final String DEFAULT_CONTEXT_MENU_ID = CUIPlugin.PLUGIN_ID + ".CBuildConole"; //$NON-NLS-1$
+	static public final String DEFAULT_CONTEXT_MENU_ID = CUIPlugin.PLUGIN_ID + ".CDTBuildConsole"; //$NON-NLS-1$
 
 	private IProject fLastProject;
 
+	/**
+	 * Default constructor.
+	 */
 	public BuildConsoleManager() {
 	}
 
@@ -169,7 +165,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 				}
 				if (consoleView instanceof IConsoleView) {
 					if (BuildConsole.getCurrentPage() == null)
-						((IConsoleView)consoleView).display(fGlobalConsole);
+						((IConsoleView)consoleView).display(fConsole);
 					else
 						((IConsoleView)consoleView).display(BuildConsole.getCurrentPage().getConsole());
 				}
@@ -212,6 +208,9 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		}
 	}
 
+	/**
+	 * Release resources allocated on {@link #startup(String, String, URL)}.
+	 */
 	public void shutdown() {
 		if (infoColor != null) {
 			infoColor.dispose();
@@ -223,7 +222,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			problemInfoBackgroundColor.dispose();
 			problemHighlightedColor.dispose();
 		}
-		ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new org.eclipse.ui.console.IConsole[]{fGlobalConsole, fConsole});
+		ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new org.eclipse.ui.console.IConsole[]{fConsole});
 		CUIPlugin.getWorkspace().removeResourceChangeListener(this);
 		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 	}
@@ -239,7 +238,38 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		}
 	}
 
+	/**
+	 * Create new build console. Subclasses may override to create a specialized
+	 * console.
+	 * 
+	 * @param name - name of console to appear in the list of consoles in context menu
+	 *    in the Console view.
+	 * @param contextId - context menu id in the Console view.
+	 * @param iconUrl - a {@link URL} of the icon for the context menu of the Console
+	 *    view. The url is expected to point to an image in eclipse OSGi bundle.
+	 *    {@code iconUrl} can be <b>null</b>, in that case the default image is used.
+	 * @return newly created build console.
+	 */
+	protected BuildConsole createBuildConsole(String name, String contextId, final URL iconUrl) {
+		return new BuildConsole(this, name, contextId, iconUrl);
+	}
+	
+	/**
+	 * Start console activities. This will create a new console in the Console view,
+	 * create streams, color resources, register listeners etc.
+	 * Most work is done in UI thread.
+	 * 
+	 * Use {@link #shutdown()} after the console activity ends.
+	 * 
+	 * @param name - name of the console to appear in the Console view.
+	 * @param contextId - context menu id in the Console view.
+	 * @param iconUrl - icon to show in the context menu.
+	 */
 	public void startup(String name, String contextId, final URL iconUrl) {
+		// Ensure global console is initialized before any other build console
+		if (!(this instanceof GlobalBuildConsoleManager))
+			GlobalBuildConsoleManager.startup();
+
 		infoStream = new BuildConsoleStreamDecorator();
 		outputStream = new BuildConsoleStreamDecorator();
 		errorStream = new BuildConsoleStreamDecorator();
@@ -254,10 +284,10 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			 * @see java.lang.Runnable#run()
 			 */
 			public void run() {
-				// install colors
-				fGlobalConsole = new GlobalBuildConsole(BuildConsoleManager.this, fName, null);
-				fConsole = new BuildConsole(BuildConsoleManager.this, fName, fContextMenuId, iconUrl);
-				ConsolePlugin.getDefault().getConsoleManager().addConsoles(new org.eclipse.ui.console.IConsole[]{fGlobalConsole, fConsole});
+				// add console to the Console view
+				fConsole = createBuildConsole(fName, fContextMenuId, iconUrl);
+				ConsolePlugin.getDefault().getConsoleManager().addConsoles(new org.eclipse.ui.console.IConsole[]{fConsole});
+
 				infoStream.setConsole(fConsole);
 				infoColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR);
 				infoStream.setColor(infoColor);
@@ -269,7 +299,6 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 				errorStream.setColor(errorColor);
 				backgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR);
 				fConsole.setBackground(backgroundColor);
-				fGlobalConsole.setBackground(backgroundColor);
 				problemHighlightedColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR);
 				problemErrorBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR);
 				problemWarningBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR);
@@ -306,7 +335,6 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR)) {
 			Color newColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR);
 			fConsole.setBackground(newColor);
-			fGlobalConsole.setBackground(newColor);
 			backgroundColor.dispose();
 			backgroundColor = newColor;
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR)) {
@@ -381,26 +409,24 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	}
 
 	/**
-	 * Returns the console for the project, or <code>null</code> if none.
+	 * {@inheritDoc}
 	 */
 	public IConsole getConsole(IProject project) {
-		return new MultiBuildConsoleAdapter(getProjectConsole(project), getGlobalConsole());
+		return new MultiBuildConsoleAdapter(getProjectConsole(project), GlobalBuildConsoleManager.getGlobalConsole());
 	}
 
 	/**
-	 * @return the console for the specified project
+	 * {@inheritDoc}
+	 * 
+	 * @return the console for the specified project. Returns {@code null}
+	 *   if project is {@code null} or not accessible.
 	 */
 	public IConsole getProjectConsole(IProject project) {
-		Assert.isNotNull(project);
+		if (project==null || !project.isAccessible())
+			return null;
+
 		fLastProject = project;
 		return getProjectConsolePartioner(project).getConsole();
-	}
-
-	/**
-	 * @return the global build console
-	 */
-	public IConsole getGlobalConsole() {
-		return getGlobalConsolePartitioner().getConsole();
 	}
 
 	/*
@@ -425,43 +451,11 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	}
 
 	/**
-	 * @return the partitioner for the global build console
-	 */
-	private BuildConsolePartitioner getGlobalConsolePartitioner() {
-		if (fGlobalConsolePartitioner == null)
-			fGlobalConsolePartitioner = new BuildConsolePartitioner(this);
-		return fGlobalConsolePartitioner;
-	}
-
-	/**
-	 * Start the global console; called at the start of the build.
-	 * Clears the contents of the console and sets up the log output stream.
-	 */
-	public void startGlobalConsole() {
-		if (BuildConsolePreferencePage.isClearBuildConsole())
-			getGlobalConsolePartitioner().appendToDocument("", null, null); //$NON-NLS-1$
-		getGlobalConsolePartitioner().setStreamOpened();
-	}
-
-	public void stopGlobalConsole() {
-		// Doesn't do anything currently. This would be a cleaner place to close the global console
-		// log, but there is nowhere in CDT that can invoke it at the end of the entire build.
-		// Instead, the log is repeatedly closed and opened for append by each project build.
-	}
-
-	/**
 	 * @return the document backing the build console for the specified project
 	 */
 	public IDocument getConsoleDocument(IProject project) {
 		Assert.isNotNull(project);
 		return getProjectConsolePartioner(project).getDocument();
-	}
-
-	/**
-	 * @return the document backing the global build console
-	 */
-	public IDocument getGlobalConsoleDocument() {
-		return getGlobalConsolePartitioner().getDocument();
 	}
 
 	public void addConsoleListener(IBuildConsoleListener listener) {
@@ -473,35 +467,50 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	}
 
 	/**
-	 * @return logging preferences for a given project or for the workspace.
-	 * @param project to get logging preferences for; or null for the workspace.
+	 * @return logging preferences for a given project.
+	 * @param project to get logging preferences for, can't be {@code null}.
 	 */
-	public static Preferences getBuildLogPreferences(IProject project) {
-		if (project == null)
-			return InstanceScope.INSTANCE.getNode(QUALIFIER).node(GLOBAL_BUILD_CONSOLE_NODE);
-		else
-			return new LocalProjectScope(project).getNode(QUALIFIER).node(BUILD_CONSOLE_NODE);
+	public Preferences getBuildLogPreferences(IProject project) {
+		return new LocalProjectScope(project).getNode(PREF_QUALIFIER).node(BUILD_CONSOLE_NODE);
 	}
 
 	/**
-	 * @return logging preference store for a given project; or for the workspace.
-	 * @param project to get logging preferences for; or null for the workspace.
+	 * @return default location of logs for a project.
+	 * @param project to get default log location for, can't be {@code null}.
 	 */
-	public static IPreferenceStore getBuildLogPreferenceStore(IProject project) {
-		if (project == null)
-			return new ScopedPreferenceStore(InstanceScope.INSTANCE, QUALIFIER + "/" + GLOBAL_BUILD_CONSOLE_NODE); //$NON-NLS-1$
-		else
-			return new ScopedPreferenceStore(new LocalProjectScope(project), QUALIFIER + "/" + BUILD_CONSOLE_NODE); //$NON-NLS-1$
-	}
-
-	/**
-	 * @return default location of logs for a project or for the workspace.
-	 * @param project to get default log location for; or null for the workspace.
-	 */
-	public static String getDefaultConsoleLogLocation(IProject project) {
-		String name = project == null ? GLOBAL_LOG_FILE : project.getName() + PROJECT_LOG_EXT;
-		IPath defaultLogLocation = CUIPlugin.getDefault().getStateLocation().append(name);
+	public String getDefaultConsoleLogLocation(IProject project) {
+		IPath defaultLogLocation = CUIPlugin.getDefault().getStateLocation().append(project.getName() + PROJECT_LOG_EXT);
 		return defaultLogLocation.toOSString();
+	}
+
+	/**
+	 * Where the log for per-project console is kept.
+	 * 
+	 * @param project - the project. Cannot be {@code null}.
+	 * @return {@link URI} of build log or {@code null} if not available.
+	 */
+	public URI getLogURI(IProject project) {
+		Assert.isNotNull(project);
+
+		if (fContextMenuId!=DEFAULT_CONTEXT_MENU_ID)
+			return null;
+
+		URI logURI = null;
+
+		Preferences prefs = getBuildLogPreferences(project);
+		boolean keepLog = prefs.getBoolean(KEY_KEEP_LOG, CONSOLE_KEEP_LOG_DEFAULT);
+		if (keepLog) {
+			String strLocation;
+			strLocation = prefs.get(KEY_LOG_LOCATION, getDefaultConsoleLogLocation(project));
+			if (strLocation.trim().length()>0) {
+				logURI = URIUtil.toURI(strLocation);
+			}
+			if (logURI==null) {
+				IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,"Can't determine URI for location=["+strLocation+"]");  //$NON-NLS-1$ //$NON-NLS-2$
+				CUIPlugin.log(status);
+			}
+		}
+		return logURI;
 	}
 
 }

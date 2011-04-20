@@ -53,6 +53,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
 /**
+ * The RefreshPolicyTab allows users to modify a project's refresh settings for each build.
  * 
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will work or
@@ -186,14 +187,10 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 			List<ExclusionInstance> exclusionInstancesToAdd = exclusion.getExclusionInstances();
 			Iterator<ExclusionInstance> iterator = exclusionInstancesToAdd.iterator();
 			exclusion_instances.clear();
-//			List<ExclusionInstance> exclusionInstancesToRemove = this.exclusion.getExclusionInstances();
-//			for (int i = 0; i < exclusionInstancesToRemove.size(); i++) {
-//				this.exclusion.removeExclusionInstance(exclusionInstancesToRemove.get(i));
-//			}
+
 			while (iterator.hasNext()) {
 				ExclusionInstance instanceToAdd = iterator.next();
 				exclusion_instances.add(new _Exclusion_Instance(instanceToAdd, this));
-//				this.exclusion.addExclusionInstance(instanceToAdd);
 			}
 		}
 
@@ -223,8 +220,6 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 		}
 
 	}
-	
-
 	
 	class _Exception_Node {
 		_Entry parent;	//can be IResource or RefreshExclusion - must not be null
@@ -590,6 +585,5 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 			List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
 			fManager.setExclusions(resource, exclusions);
 		}
-		
 	}
 }

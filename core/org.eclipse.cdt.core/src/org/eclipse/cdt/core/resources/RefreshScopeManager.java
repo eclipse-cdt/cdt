@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.resources;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.MessageFormat;
@@ -101,7 +100,12 @@ public class RefreshScopeManager {
 	 */
 	public List<IResource> getResourcesToRefresh(IProject project) {
 		getProjectToResourcesMap();
-		List<IResource> retval = new LinkedList<IResource>(fProjectToResourcesMap.get(project));
+		LinkedHashSet<IResource> resources = fProjectToResourcesMap.get(project);
+		List<IResource> retval;
+		if (resources == null)
+			retval= new LinkedList<IResource>();
+		else
+			retval= new LinkedList<IResource>(resources);
 		
 		return retval;
 	}
@@ -361,7 +365,16 @@ public class RefreshScopeManager {
 	public void clearExclusions(IResource resource) {
 		getResourcesToExclusionsMap();
 		List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
-		exclusions.clear();	
+		if(exclusions != null) {
+			exclusions.clear();	
+		}
+	}
+	
+	public void setExclusions(IResource resource, List<RefreshExclusion> newExclusions) {
+		getResourcesToExclusionsMap();
+		List<RefreshExclusion> exclusions = new LinkedList<RefreshExclusion>(newExclusions);
+		
+		fResourceToExclusionsMap.put(resource, exclusions);
 	}
 	
 	public void clearAllExclusions() {

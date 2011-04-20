@@ -233,6 +233,13 @@
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_head_build"
            weight="050"/>
      <tab
+           class="org.eclipse.cdt.managedbuilder.ui.properties.RefreshPolicyTab"
+           helpId="cdt_u_prop_build"
+           icon="icons/elcl16/refresh_nav.gif"
+           name="%Refresh.policy"
+           parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_head_build"
+           weight="050"/>
+     <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.CPropertyVarsTab"
            name="(Single) CDT Vars (macros)"
            helpId="cdt_u_prop_build_variables"

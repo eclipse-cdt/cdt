@@ -3951,5 +3951,13 @@
     </transfer>
 
  </extension>
+ <extension
+       point="org.eclipse.cdt.ui.RefreshExclusionContributor">
+    <exclusionContributor
+          class="org.eclipse.cdt.ui.resources.ResourceExclusionContributor"
+          id="org.eclipse.cdt.ui.ResourceExclusionContributor"
+          name="%RefreshExclusionContributor.name">
+    </exclusionContributor>
+ </extension>
 
 </plugin>

@@ -210,20 +210,18 @@ public class Messages extends NLS {
 	public static String PropertyPageDefsTab_8;
 	public static String PropertyPageDefsTab_9;
 	public static String PropertyPageDefsTab_showIncludeFileTab;
-	public static String RefreshPolicyExceptionDialog_addButtonLabel;
 	public static String RefreshPolicyExceptionDialog_addDialogLabel;
-	public static String RefreshPolicyExceptionDialog_contentTypeDropdownLabel;
-	public static String RefreshPolicyExceptionDialog_deleteButtonLabel;
 	public static String RefreshPolicyExceptionDialog_editDialogLabel;
 	public static String RefreshPolicyExceptionDialog_exceptionPropertiesGroupLabel;
-	public static String RefreshPolicyExceptionDialog_exceptionTypeContentType;
 	public static String RefreshPolicyExceptionDialog_exceptionTypeDropdownLabel;
-	public static String RefreshPolicyExceptionDialog_exceptionTypeResourceNamePattern;
-	public static String RefreshPolicyExceptionDialog_exceptionTypeResources;
-	public static String RefreshPolicyExceptionDialog_patternsGroupLabel;
 	public static String RefreshPolicyTab_addExceptionButtonLabel;
 	public static String RefreshPolicyTab_addResourceButtonLabel;
+	public static String RefreshPolicyTab_addResourceDialogDescription;
+	public static String RefreshPolicyTab_addResourceDialogTitle;
 	public static String RefreshPolicyTab_deleteButtonLabel;
+	public static String RefreshPolicyTab_deleteConfirmationDialog_question_exception;
+	public static String RefreshPolicyTab_deleteConfirmationDialog_question_resource;
+	public static String RefreshPolicyTab_deleteConfirmationDialog_title;
 	public static String RefreshPolicyTab_editButtonLabel;
 	public static String RefreshPolicyTab_exceptionsLabel;
 	public static String RefreshPolicyTab_resourcesGroupLabel;
@@ -277,6 +275,7 @@ public class Messages extends NLS {
 	public static String ToolSettingsTab_0;
 	public static String WizardDefaultsTab_0;
 	public static String WizardDefaultsTab_1;
+	public static String RefreshPolicyTab_resourcesTreeLabel;
 
 	static {
 		// Initialize resource bundle.

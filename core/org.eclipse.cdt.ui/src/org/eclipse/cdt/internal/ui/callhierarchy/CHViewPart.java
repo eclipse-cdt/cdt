@@ -34,7 +34,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.Transfer;
@@ -104,8 +103,6 @@ public class CHViewPart extends ViewPart {
     private int fNavigationDetail;
     
 	private ArrayList<ICElement> fHistoryEntries= new ArrayList<ICElement>(MAX_HISTORY_SIZE);
-
-	private Clipboard fClipboard;
 
     // widgets
     private PageBook fPagebook;
@@ -207,8 +204,6 @@ public class CHViewPart extends ViewPart {
         createViewerPage();
                 
         getSite().setSelectionProvider(new AdaptingSelectionProvider(ICElement.class, fTreeViewer));
-
-        fClipboard = new Clipboard(parent.getDisplay());
 
         initDragAndDrop();
         createActions();
@@ -489,7 +484,7 @@ public class CHViewPart extends ViewPart {
 
         fHistoryAction = new CHHistoryDropDownAction(this);
 
-        fCopyAction= new CopyCallHierarchyAction(this, fClipboard, fTreeViewer);
+        fCopyAction= new CopyCallHierarchyAction(this, fTreeViewer);
 
         // setup action bar
         // global action hooks
@@ -811,9 +806,8 @@ public class CHViewPart extends ViewPart {
 	}
 
 	private static class CopyCallHierarchyAction extends CopyTreeAction {
-		public CopyCallHierarchyAction(ViewPart view, Clipboard clipboard, TreeViewer viewer) {
-			super(CHMessages.CHViewPart_CopyCallHierarchy_label, view, clipboard, viewer);
-//			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.CALL_HIERARCHY_COPY_ACTION);
+		public CopyCallHierarchyAction(ViewPart view, TreeViewer viewer) {
+			super(CHMessages.CHViewPart_CopyCallHierarchy_label, view, viewer);
 		}
 	}
 }

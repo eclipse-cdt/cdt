@@ -17,8 +17,12 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.osgi.util.TextProcessor;
-
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
@@ -26,14 +30,6 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.part.ViewPart;
-
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.cdt.internal.ui.util.SelectionUtil;
 
@@ -45,13 +41,10 @@ public class CopyTreeAction extends Action {
 
 	private ViewPart fView;
 	private TreeViewer fViewer;
-	private final Clipboard fClipboard;
 
-	public CopyTreeAction(String label, ViewPart view, Clipboard clipboard, TreeViewer viewer) {
+	public CopyTreeAction(String label, ViewPart view, TreeViewer viewer) {
 		super(label);
-		Assert.isNotNull(clipboard);
 		fView= view;
-		fClipboard= clipboard;
 		fViewer= viewer;
 	}
 
@@ -79,8 +72,9 @@ public class CopyTreeAction extends Action {
 		addChildren(fViewer.getTree().getSelection()[0], 0, buf);
 
 		TextTransfer plainTextTransfer= TextTransfer.getInstance();
+		Clipboard clipboard= new Clipboard(fView.getSite().getShell().getDisplay());
 		try {
-			fClipboard.setContents(
+			clipboard.setContents(
 					new String[] { convertLineTerminators(buf.toString()) },
 					new Transfer[] { plainTextTransfer });
 		} catch (SWTError e) {
@@ -90,6 +84,8 @@ public class CopyTreeAction extends Action {
 					ActionMessages.CopyTreeAction_problem, ActionMessages.CopyTreeAction_clipboard_busy)) {
 				run();
 			}
+		} finally {
+			clipboard.dispose();
 		}
 	}
 
@@ -110,8 +106,8 @@ public class CopyTreeAction extends Action {
 
 		if (item.getExpanded()) {
 			TreeItem[] items= item.getItems();
-			for (int i= 0; i < items.length; i++) {
-				addChildren(items[i], indent + 1, buf);
+			for (TreeItem item2 : items) {
+				addChildren(item2, indent + 1, buf);
 			}
 		}
 	}

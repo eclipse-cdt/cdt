@@ -51,7 +51,11 @@ public class CrossEnvironmentVariableSupplier implements
 			IToolChain toolchain = configuration.getToolChain();
 			IOption option = toolchain.getOptionBySuperClassId("cdt.managedbuild.option.gnu.cross.path");
 			String path = (String)option.getValue();
-			return new PathEnvironmentVariable(new File(path, "bin"));
+			File sysroot = new File(path);
+			File bin = new File(sysroot, "bin");
+			if (bin.isDirectory())
+				sysroot = bin;
+			return new PathEnvironmentVariable(sysroot);
 		}
 		
 		public static boolean isVar(String name) {

@@ -90,12 +90,12 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 	}
 	
 	private void loadInfo() {
-		fResourcesToRefresh = fManager.getResourcesToRefresh(fProject);
+		fResourcesToRefresh = new LinkedList<IResource>(fManager.getResourcesToRefresh(fProject));
 		if (fResourcesToRefresh != null) {
 			Iterator<IResource> iterator = fResourcesToRefresh.iterator();
 			while (iterator.hasNext()) {
 				IResource resource = iterator.next();				
-				fResourceToExclusionsMap.put(resource, fManager.getExclusions(resource));
+				fResourceToExclusionsMap.put(resource, new LinkedList<RefreshExclusion>(fManager.getExclusions(resource)));
 			}
 		}
 	}
@@ -302,7 +302,11 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 
 		public void remove() {
 			parent.exclusion.removeExclusionInstance(instance);
-			parent.exclusion_instances.remove(this);			
+			parent.exclusion_instances.remove(this);
+			
+			if (parent.exclusion_instances.size() < 1 && parent.exceptions_node == null) {
+				parent.remove();
+			}
 		}	
 	}
 

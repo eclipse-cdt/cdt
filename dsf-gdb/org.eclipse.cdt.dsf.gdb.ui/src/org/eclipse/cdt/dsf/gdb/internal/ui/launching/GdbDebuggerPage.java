@@ -52,6 +52,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	protected Button fNonStopCheckBox;
 	protected Button fReverseCheckBox;
 	protected Button fUpdateThreadlistOnSuspend;
+	protected Button fDebugOnFork;
 
 	private IMILaunchConfigurationComponent fSolibBlock;
 	private boolean fIsInitializing = false;
@@ -79,6 +80,8 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
                 				   IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
 								   IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
+				                   IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_ON_FORK_DEFAULT);
 
 		if (fSolibBlock != null)
 			fSolibBlock.setDefaults(configuration);
@@ -130,6 +133,8 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 									IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
 		boolean updateThreadsOnSuspend = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
 				IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
+		boolean debugOnFork = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
+				IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_ON_FORK_DEFAULT);
 		
 		if (fSolibBlock != null)
 			fSolibBlock.initializeFrom(configuration);
@@ -138,6 +143,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		fNonStopCheckBox.setSelection(nonStopMode);
 		fReverseCheckBox.setSelection(reverseEnabled);
 		fUpdateThreadlistOnSuspend.setSelection(updateThreadsOnSuspend);
+		fDebugOnFork.setSelection(debugOnFork);
 		
 		setInitializing(false); 
 	}
@@ -152,8 +158,9 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
                                    fReverseCheckBox.getSelection());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
-                fUpdateThreadlistOnSuspend.getSelection());
-
+                                   fUpdateThreadlistOnSuspend.getSelection());
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
+				                   fDebugOnFork.getSelection());
 		if (fSolibBlock != null)
 			fSolibBlock.performApply(configuration);
 	}
@@ -303,6 +310,8 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		fUpdateThreadlistOnSuspend = addCheckbox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.update_thread_list_on_suspend")); //$NON-NLS-1$
 		// This checkbox needs an explanation. Attach context help to it.
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fUpdateThreadlistOnSuspend, GdbUIPlugin.PLUGIN_ID + ".update_threadlist_button_context"); //$NON-NLS-1$
+		
+		fDebugOnFork = addCheckbox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.Automatically_debug_forked_processes")); //$NON-NLS-1$
 	}
 
 	public void createSolibTab(TabFolder tabFolder) {

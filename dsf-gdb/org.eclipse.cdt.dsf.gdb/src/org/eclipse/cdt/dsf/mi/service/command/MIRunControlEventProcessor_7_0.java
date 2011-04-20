@@ -211,8 +211,7 @@ public class MIRunControlEventProcessor_7_0
 
     		    		fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
     		    	}
-    			} else if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent) || //$NON-NLS-1$ //$NON-NLS-2$
-    					   "thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
+    			} else if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
     				
     				String groupId = null;
     				String pId = null;
@@ -242,13 +241,29 @@ public class MIRunControlEventProcessor_7_0
     				if (pId != null && procService != null) {
     					IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, pId);
 
-    					MIEvent<?> event = null;
-    					if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
-    						event = new MIThreadGroupCreatedEvent(procDmc, exec.getToken(), groupId);
-    					} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
-    						event = new MIThreadGroupExitedEvent(procDmc, exec.getToken(), groupId);
-    					}
+    					MIEvent<?> event =  new MIThreadGroupCreatedEvent(procDmc, exec.getToken(), groupId);
+   						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+    				}
+    			} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
+    				String groupId = null;
 
+    				MIResult[] results = exec.getMIResults();
+    				for (int i = 0; i < results.length; i++) {
+    					String var = results[i].getVariable();
+    					MIValue val = results[i].getMIValue();
+    					if (var.equals("id")) { //$NON-NLS-1$
+    						if (val instanceof MIConst) {
+    							groupId = ((MIConst) val).getString().trim();
+    						}
+    					}
+    				}
+    				
+					IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+    				if (procService != null) {
+    					IContainerDMContext containerDmc = procService.createContainerContextFromGroupId(fControlDmc, groupId);
+    					IProcessDMContext procDmc = DMContexts.getAncestorOfType(containerDmc, IProcessDMContext.class);
+
+    					MIEvent<?> event = new MIThreadGroupExitedEvent(procDmc, exec.getToken(), groupId);
    						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
     				}
     			}

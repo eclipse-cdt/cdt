@@ -96,6 +96,15 @@ public class IGDBLaunchConfigurationConstants {
 	 */     
 	public static final String ATTR_DEBUGGER_POST_MORTEM_TYPE = GdbPlugin.PLUGIN_ID + ".POST_MORTEM_TYPE"; //$NON-NLS-1$
 	
+	/**
+	 * Launch configuration attribute key. Boolean value to set the 'detach-on-fork' GDB option.
+	 * When detach-on-fork is off, we will automatically attach to forked processes.  This will yield
+	 * a multi-process session, which is supported with GDB >= 7.2 
+	 * Note that detach-on-fork == !ATTR_DEBUGGER_DEBUG_ON_FORK
+	 * @since 4.0
+	 */
+	public static final String ATTR_DEBUGGER_DEBUG_ON_FORK = GdbPlugin.PLUGIN_ID + ".DEBUG_ON_FORK"; //$NON-NLS-1$
+
 	
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUG_NAME.
@@ -159,5 +168,12 @@ public class IGDBLaunchConfigurationConstants {
 	 * @since 3.0
 	 */
 	public static final String DEBUGGER_POST_MORTEM_TYPE_DEFAULT = DEBUGGER_POST_MORTEM_CORE_FILE;
+	
+	/**  
+	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_DEBUG_ON_FORK.
+	 * @since 4.0
+	 */
+	public static final boolean DEBUGGER_DEBUG_ON_FORK_DEFAULT = false;
+
 
 }

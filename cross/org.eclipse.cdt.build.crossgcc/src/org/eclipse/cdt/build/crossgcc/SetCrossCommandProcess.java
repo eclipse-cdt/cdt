@@ -14,12 +14,20 @@ import java.util.Map;
 
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
+import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager;
 import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.process.ProcessArgument;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.core.templateengine.process.ProcessRunner;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner;
+import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
+import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathInfo;
+import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IOption;
@@ -58,19 +66,52 @@ public class SetCrossCommandProcess extends ProcessRunner {
 			
 			ICfgScannerConfigBuilderInfo2Set cbi = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(config);
 			Map<CfgInfoContext, IScannerConfigBuilderInfo2> map = cbi.getInfoMap();
-			IScannerConfigBuilderInfo2 bi = map.values().iterator().next();
-			String providerId = "specsFile";
-			String runCommand = bi.getProviderRunCommand(providerId);
-			bi.setProviderRunCommand(providerId, prefix + runCommand);
-			try {
-				bi.save();
-			} catch (CoreException e) {
-				throw new ProcessFailureException(e);
+			for (CfgInfoContext cfgInfoContext : map.keySet()) {
+				IScannerConfigBuilderInfo2 bi = map.get(cfgInfoContext);
+				String providerId = "specsFile";
+				String runCommand = bi.getProviderRunCommand(providerId);
+				bi.setProviderRunCommand(providerId, prefix + runCommand);
+				try {
+					bi.save();
+				} catch (CoreException e) {
+					throw new ProcessFailureException(e);
+				}
+				
+				// Clear the path info that was captured at project creation time
+				// TODO we need an API to do this to avoid the discouraged access warnings.
+				
+				DiscoveredPathInfo pathInfo = new DiscoveredPathInfo(project);
+				InfoContext infoContext = cfgInfoContext.toInfoContext();
+				
+				// 1. Remove scanner info from .metadata/.plugins/org.eclipse.cdt.make.core/Project.sc
+				DiscoveredScannerInfoStore dsiStore = DiscoveredScannerInfoStore.getInstance();
+				try {
+					dsiStore.saveDiscoveredScannerInfoToState(project, infoContext, pathInfo);
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+				
+				// 2. Remove scanner info from CfgDiscoveredPathManager cache and from the Tool
+				CfgDiscoveredPathManager cdpManager = CfgDiscoveredPathManager.getInstance();
+				cdpManager.removeDiscoveredInfo(project, cfgInfoContext);
+
+				// 3. Remove scanner info from SI collector
+				IScannerConfigBuilderInfo2 buildInfo2 = map.get(cfgInfoContext);
+				if (buildInfo2!=null) {
+					ScannerConfigProfileManager scpManager = ScannerConfigProfileManager.getInstance();
+					String selectedProfileId = buildInfo2.getSelectedProfileId();
+					SCProfileInstance profileInstance = scpManager.getSCProfileInstance(project, infoContext, selectedProfileId);
+					
+					IScannerInfoCollector collector = profileInstance.getScannerInfoCollector();
+					if (collector instanceof IScannerInfoCollectorCleaner) {
+						((IScannerInfoCollectorCleaner) collector).deleteAll(project);
+					}
+					buildInfo2 = null;
+				}
 			}
 		}
 		
 		ManagedBuildManager.saveBuildInfo(project, true);
-		
 	}
 	
 }

@@ -30,7 +30,7 @@
             id="org.eclipse.cdt.msvc.cl"
             name="%compiler.name"
             natureFilter="both"
-            outputFlag="/Fo:">
+            outputFlag="/Fo">
          <supportedProperties>
             <property
                   id="org.eclipse.cdt.build.core.buildType">

@@ -73,7 +73,7 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 	
 	private final static int IDX_ADD_RESOURCE = 0;
 	private final static int IDX_ADD_EXCEPTION = 1;
-	private final static int IDX_EDIT = 2;
+	private final static int IDX_EDIT_EXCEPTION = 2;
 	private final static int IDX_DELETE = 3;
 	
 	private TreeViewer fTree;
@@ -299,7 +299,7 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 			parent.exclusion.removeExclusionInstance(instance);
 			parent.exclusion_instances.remove(this);
 			
-			if (parent.exclusion_instances.size() < 1) {
+			if (parent.exclusion_instances.size() < 1 && parent.exclusion.supportsExclusionInstances()) {
 				parent.remove();
 			}
 		}	
@@ -318,7 +318,7 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 		initButtons(new String[] {
 				Messages.RefreshPolicyTab_addResourceButtonLabel,
 				Messages.RefreshPolicyTab_addExceptionButtonLabel,
-				Messages.RefreshPolicyTab_editButtonLabel,
+				Messages.RefreshPolicyTab_editExceptionButtonLabel,
 				Messages.RefreshPolicyTab_deleteButtonLabel}, 120);
 		usercomp.setLayout(new GridLayout(1, false));
 		
@@ -465,7 +465,7 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 		TreeItem[] sel = fTree.getTree().getSelection();
 		buttonSetEnabled(IDX_ADD_RESOURCE, true);
     	buttonSetEnabled(IDX_ADD_EXCEPTION, sel.length == 1 && sel[0].getData() instanceof _Entry);
-    	buttonSetEnabled(IDX_EDIT, sel.length == 1 && sel[0].getData() instanceof _Entry && ((_Entry) sel[0].getData()).isExclusion());
+    	buttonSetEnabled(IDX_EDIT_EXCEPTION, sel.length == 1 && sel[0].getData() instanceof _Entry && ((_Entry) sel[0].getData()).isExclusion());
     	buttonSetEnabled(IDX_DELETE, sel.length == 1 && (sel[0].getData() instanceof _Entry || sel[0].getData() instanceof _Exclusion_Instance));    		
 	}
 
@@ -519,7 +519,7 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 			fTree.expandAll();
 			break;
 			
-		case IDX_EDIT:	//can only edit a refresh exclusion
+		case IDX_EDIT_EXCEPTION:	//can only edit a refresh exclusion
 			if (selection == null)
 				break;
 			_Entry selectedExclusion = (_Entry) selection.getFirstElement();
@@ -566,7 +566,7 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 			} else { //exclusion instance
 				_Exclusion_Instance sel1 = (_Exclusion_Instance) selection.getFirstElement();
 				boolean remove = false;
-				if (sel1.parent.exclusion_instances.size() == 1 && sel1.parent.exceptions_node != null) {
+				if (sel1.parent.exclusion.supportsExclusionInstances() && sel1.parent.exclusion_instances.size() == 1 && sel1.parent.exceptions_node != null) {
 					//this is the only exclusion instance for an exclusion and the exclusion has nested exclusions
 					if (MessageDialog.openQuestion(shell, Messages.RefreshPolicyTab_deleteConfirmationDialog_title, Messages.RefreshPolicyTab_deleteConfirmationDialog_question_exception)) {
 						remove = true;

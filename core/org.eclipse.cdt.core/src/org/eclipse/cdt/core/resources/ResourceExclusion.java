@@ -33,8 +33,7 @@ public class ResourceExclusion extends RefreshExclusion {
 	 */
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return "Resource Exclusions";
+		return Messages.ResourceExclusion_name;
 	}
 
 	/* (non-Javadoc)
@@ -44,6 +43,11 @@ public class ResourceExclusion extends RefreshExclusion {
 	public boolean testExclusion(IResource resource) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public boolean supportsExclusionInstances() {
+		return true;
 	}
 
 }

@@ -347,4 +347,9 @@ public abstract class RefreshExclusion {
 		return exclusions;
 	}
 
+	/**
+	 * @return true if this exclusion supports exclusion instances
+	 */
+	public abstract boolean supportsExclusionInstances();
+
 }

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import org.eclipse.cdt.core.resources.RefreshExclusion;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
@@ -44,8 +45,9 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class RefreshPolicyExceptionDialog extends Dialog {
 	
-	private Combo exceptionTypeCombo;
-	private Group exceptionPropertiesGroup;
+	private Combo fExceptionTypeCombo;
+	private Group fExceptionPropertiesGroup;
+	private Shell fShell;
 	
 	private IResource fResourceRoot = null;
 	private RefreshExclusion fExclusionRoot = null;
@@ -60,7 +62,7 @@ public class RefreshPolicyExceptionDialog extends Dialog {
 		setShellStyle(getShellStyle());
 		fContrManager = RefreshExclusionContributionManager.getInstance();
 		fAddException = addException;
-		fExclusionContributors = fContrManager.getContributors();
+		fExclusionContributors = new LinkedList<RefreshExclusionContributor>(fContrManager.getContributors());
 	}
 	
 	public RefreshPolicyExceptionDialog(Shell parent, IResource resource, java.util.List<RefreshExclusion> exclusions, boolean addException) {
@@ -68,11 +70,29 @@ public class RefreshPolicyExceptionDialog extends Dialog {
 		
 		//this is only called when an user is adding a RefreshException to a given resource
 		fResourceRoot = resource;
+		if (fAddException) {
+			removeExistingContributors(exclusions);
+		}
 	}
 	
 	public RefreshPolicyExceptionDialog(Shell parent, RefreshExclusion exclusion, boolean addException) {
 		this(parent, addException);
-		fExclusionRoot = exclusion;
+		fExclusionRoot = exclusion;		
+		if (fAddException) {
+			removeExistingContributors(exclusion.getNestedExclusions());
+		}
+	}
+	
+	private void removeExistingContributors(java.util.List<RefreshExclusion> exclusions) {
+		if (exclusions != null) {
+			Iterator<RefreshExclusion> iterator = exclusions.iterator();
+			while (iterator.hasNext()) {
+				RefreshExclusion exclusion = iterator.next();
+				RefreshExclusionContributor contributor = fContrManager.getContributor(exclusion.getContributorId());
+				if (fExclusionContributors.contains(contributor))
+					fExclusionContributors.remove(contributor);
+			}	
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -85,6 +105,7 @@ public class RefreshPolicyExceptionDialog extends Dialog {
 			newShell.setText(Messages.RefreshPolicyExceptionDialog_addDialogLabel);
 		else
 			newShell.setText(Messages.RefreshPolicyExceptionDialog_editDialogLabel);
+		fShell = newShell;
 	}
 
 	/* (non-Javadoc)
@@ -96,55 +117,65 @@ public class RefreshPolicyExceptionDialog extends Dialog {
 		comp.setLayout(new GridLayout(2, false));
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		
-		Label exceptionType = new Label(comp, SWT.NONE);
-		exceptionType.setText(Messages.RefreshPolicyExceptionDialog_exceptionTypeDropdownLabel);
-		
-		exceptionTypeCombo = new Combo(comp, SWT.READ_ONLY);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.grabExcessHorizontalSpace = true;
-		exceptionTypeCombo.setLayoutData(gridData);
-		
-		
-		if (fAddException) {
-			Iterator<RefreshExclusionContributor> iterator = fExclusionContributors.iterator();		
-			while (iterator.hasNext()) {
-				RefreshExclusionContributor contributor = iterator.next();
-				exceptionTypeCombo.add(contributor.getName());
-			}
-		} else {
-			exceptionTypeCombo.add(fContrManager.getContributor(fExclusionRoot.getContributorId()).getName());			
-		}
-		
-		exceptionTypeCombo.select(0);
-		exceptionTypeCombo.addSelectionListener(new SelectionAdapter() {
+		if (fExclusionContributors.size() == 0) {
+			fShell.setText(Messages.RefreshPolicyExceptionDialog_AddExceptionInfoDialog_title);
+			Label information = new Label(comp, SWT.NONE);
+			information.setText(Messages.RefreshPolicyExceptionDialog_AddExceptionInfoDialog_message);
+			information = new Label(comp, SWT.NONE);
+			fNewExclusion = null;
 			
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (exceptionPropertiesGroup != null)
-					exceptionPropertiesGroup.dispose();
-								
-				generateExceptionPropertiesGroup(comp, exceptionTypeCombo.getSelectionIndex());
-				comp.layout();
+		} else {
+		
+			Label exceptionType = new Label(comp, SWT.NONE);
+			exceptionType.setText(Messages.RefreshPolicyExceptionDialog_exceptionTypeDropdownLabel);
+			
+			fExceptionTypeCombo = new Combo(comp, SWT.READ_ONLY);
+			GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+			gridData.grabExcessHorizontalSpace = true;
+			fExceptionTypeCombo.setLayoutData(gridData);
+			
+			
+			if (fAddException) {
+				Iterator<RefreshExclusionContributor> iterator = fExclusionContributors.iterator();		
+				while (iterator.hasNext()) {
+					RefreshExclusionContributor contributor = iterator.next();
+					fExceptionTypeCombo.add(contributor.getName());
+				}
+			} else {
+				fExceptionTypeCombo.add(fContrManager.getContributor(fExclusionRoot.getContributorId()).getName());			
 			}
-		});		
-					
-		generateExceptionPropertiesGroup(comp, exceptionTypeCombo.getSelectionIndex());
+			
+			fExceptionTypeCombo.select(0);
+			fExceptionTypeCombo.addSelectionListener(new SelectionAdapter() {
 				
+				/* (non-Javadoc)
+				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+				 */
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (fExceptionPropertiesGroup != null)
+						fExceptionPropertiesGroup.dispose();
+									
+					generateExceptionPropertiesGroup(comp, fExceptionTypeCombo.getSelectionIndex());
+					comp.layout();
+				}
+			});		
+						
+			generateExceptionPropertiesGroup(comp, fExceptionTypeCombo.getSelectionIndex());
+		
+		}
 		return comp;
 	}
 
 	private void generateExceptionPropertiesGroup(Composite parent, int selectionIndex) {
 		
-		exceptionPropertiesGroup = new Group(parent, SWT.NONE);
-		exceptionPropertiesGroup.setText(Messages.RefreshPolicyExceptionDialog_exceptionPropertiesGroupLabel);
-		exceptionPropertiesGroup.setLayout(new GridLayout(3, false));
+		fExceptionPropertiesGroup = new Group(parent, SWT.NONE);
+		fExceptionPropertiesGroup.setText(Messages.RefreshPolicyExceptionDialog_exceptionPropertiesGroupLabel);
+		fExceptionPropertiesGroup.setLayout(new GridLayout(3, false));
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		gd.verticalAlignment = GridData.FILL;
 		gd.horizontalSpan = 2;
-		exceptionPropertiesGroup.setLayoutData(gd);
+		fExceptionPropertiesGroup.setLayoutData(gd);
 		
 		if (fAddException) {
 			if (fNewExclusion == null || fNewExclusion.getContributorId() != fExclusionContributors.get(selectionIndex).getID()){
@@ -156,11 +187,11 @@ public class RefreshPolicyExceptionDialog extends Dialog {
 				fNewExclusion.setParentExclusion(fExclusionRoot);
 			}
 			
-			fExclusionContributors.get(selectionIndex).createProperiesUI(exceptionPropertiesGroup, fNewExclusion);
+			fExclusionContributors.get(selectionIndex).createProperiesUI(fExceptionPropertiesGroup, fNewExclusion);
 
 		} else { //edit an exception
 
-			fContrManager.getContributor(fExclusionRoot.getContributorId()).createProperiesUI(exceptionPropertiesGroup, fExclusionRoot);
+			fContrManager.getContributor(fExclusionRoot.getContributorId()).createProperiesUI(fExceptionPropertiesGroup, fExclusionRoot);
 		}		
 	}
 

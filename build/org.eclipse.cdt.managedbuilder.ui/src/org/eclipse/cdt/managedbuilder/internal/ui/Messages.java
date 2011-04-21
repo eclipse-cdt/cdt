@@ -211,6 +211,8 @@ public class Messages extends NLS {
 	public static String PropertyPageDefsTab_9;
 	public static String PropertyPageDefsTab_showIncludeFileTab;
 	public static String RefreshPolicyExceptionDialog_addDialogLabel;
+	public static String RefreshPolicyExceptionDialog_AddExceptionInfoDialog_message;
+	public static String RefreshPolicyExceptionDialog_AddExceptionInfoDialog_title;
 	public static String RefreshPolicyExceptionDialog_editDialogLabel;
 	public static String RefreshPolicyExceptionDialog_exceptionPropertiesGroupLabel;
 	public static String RefreshPolicyExceptionDialog_exceptionTypeDropdownLabel;
@@ -222,7 +224,7 @@ public class Messages extends NLS {
 	public static String RefreshPolicyTab_deleteConfirmationDialog_question_exception;
 	public static String RefreshPolicyTab_deleteConfirmationDialog_question_resource;
 	public static String RefreshPolicyTab_deleteConfirmationDialog_title;
-	public static String RefreshPolicyTab_editButtonLabel;
+	public static String RefreshPolicyTab_editExceptionButtonLabel;
 	public static String RefreshPolicyTab_exceptionsLabel;
 	public static String RefreshPolicyTab_resourcesGroupLabel;
 	public static String RefreshPolicyTab_tabLabel;

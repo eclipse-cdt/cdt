@@ -2072,11 +2072,6 @@
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.refactor.extract.function"/>
      <key
-            sequence="M2+M3+T"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            contextId="org.eclipse.cdt.ui.cEditorScope"
-            commandId="org.eclipse.cdt.ui.refactor.toggle.function"/>
-     <key
             platform="carbon"
             sequence="M2+M3+M"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -2088,6 +2083,23 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.refactor.extract.function"/>
+     <key
+            sequence="M2+M3+T"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.refactor.toggle.function"/>
+     <key
+            platform="carbon"
+            sequence="M2+M3+T"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId=""/>
+     <key
+            platform="carbon"
+            sequence="M1+M3+T"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.refactor.toggle.function"/>
      <key
             sequence="M3+C"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"

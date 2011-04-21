@@ -50,7 +50,7 @@ public abstract class RefreshExclusionContributor {
 	/**
 	 * Returns the human-readable name of this exclusion type.
 	 * 
-	 * @return
+	 * @return String.
 	 */
 	public String getName() {
 		return fName;

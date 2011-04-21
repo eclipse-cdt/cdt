@@ -638,6 +638,7 @@
    <extension-point id="templateAssociations" name="%templateAssociations.name" schema="schema/templateAssociations.exsd"/>
    <extension-point id="ScannerInfoProvider2" name="%scannerInfoProvider2.name" schema="schema/ScannerInfoProvider2.exsd"/>
    <extension-point id="EFSExtensionProvider" name="EFSExtensionProvider" schema="schema/EFSExtensionProvider.exsd"/>
+   <extension-point id="RefreshExclusionFactory" name="Refresh Exclusion Factory" schema="schema/RefreshExclusionFactory.exsd"/>
 
    <extension
          point="org.eclipse.cdt.core.templateProcessTypes">

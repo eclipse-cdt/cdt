@@ -36,6 +36,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -67,16 +71,61 @@ public class RefreshScopeManager {
 	public static final String VERSION_NUMBER_ATTRIBUTE_NAME = "versionNumber"; //$NON-NLS-1$
 	public static final String VERSION_ELEMENT_NAME = "version"; //$NON-NLS-1$
 	public static final QualifiedName REFRESH_SCOPE_PROPERTY_NAME = new QualifiedName(CCorePlugin.PLUGIN_ID, "refreshScope"); //$NON-NLS-1$
+	public static final String EXTENSION_ID = "RefreshExclusionFactory"; //$NON-NLS-1$
+	public static final Object EXCLUSION_FACTORY = "exclusionFactory"; //$NON-NLS-1$
+	public static final String EXCLUSION_CLASS = "exclusionClass"; //$NON-NLS-1$
+	public static final String FACTORY_CLASS = "factoryClass"; //$NON-NLS-1$
+	public static final String INSTANCE_CLASS = "instanceClass"; //$NON-NLS-1$
 	private int fVersion = 1;
-	
-	private RefreshScopeManager(){
-		
-	}
 	
 	private HashMap<IProject, LinkedHashSet<IResource>> fProjectToResourcesMap;
 	private HashMap<IResource, List<RefreshExclusion>> fResourceToExclusionsMap;
+	private HashMap<String, RefreshExclusionFactory> fClassnameToExclusionFactoryMap;
 	
 	private static RefreshScopeManager fInstance;
+	
+	private RefreshScopeManager(){
+		fClassnameToExclusionFactoryMap = new HashMap<String, RefreshExclusionFactory>();
+		loadExtensions();
+	}
+	
+	public synchronized void loadExtensions() {
+		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID,
+				EXTENSION_ID);
+		if (extension != null) {
+			IExtension[] extensions = extension.getExtensions();
+			for (IExtension extension2 : extensions) {
+				IConfigurationElement[] configElements = extension2.getConfigurationElements();
+				for (IConfigurationElement configElement : configElements) {
+
+					if (configElement.getName().equals(EXCLUSION_FACTORY)) {
+						String exclusionClassName = configElement.getAttribute(EXCLUSION_CLASS);
+						String factoryClassName = configElement.getAttribute(FACTORY_CLASS);
+						String instanceClassName = configElement.getAttribute(INSTANCE_CLASS);
+
+						if (factoryClassName != null) {
+							try {
+								Object execExt = configElement.createExecutableExtension(FACTORY_CLASS);
+								if ((execExt instanceof RefreshExclusionFactory)) {
+									RefreshExclusionFactory exclusionFactory = (RefreshExclusionFactory) execExt;
+									
+									if(exclusionClassName != null) {
+										fClassnameToExclusionFactoryMap.put(exclusionClassName, exclusionFactory);
+									}
+									
+									if(instanceClassName != null) {
+										fClassnameToExclusionFactoryMap.put(instanceClassName, exclusionFactory);
+									}
+								}
+							} catch (CoreException e) {
+								CCorePlugin.log(e);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 	
 	public static synchronized RefreshScopeManager getInstance() {
 		if(fInstance == null) {
@@ -88,6 +137,22 @@ public class RefreshScopeManager {
 	
 	public int getVersion() {
 		return fVersion;
+	}
+	
+	public RefreshExclusionFactory getFactoryForClassName(String className) {
+		RefreshExclusionFactory factory = fClassnameToExclusionFactoryMap.get(className);
+		
+		return factory;
+	}
+	
+	public RefreshExclusion getExclusionForClassName(String className) {
+		RefreshExclusionFactory factory = getFactoryForClassName(className);
+		
+		if(factory == null) {
+			return null;
+		}
+		
+		return factory.createNewExclusion();
 	}
 	
 	
@@ -276,87 +341,99 @@ public class RefreshScopeManager {
 	}
 	
 	public void loadSettings() throws CoreException {
-		// iterate through all projects in the workspace.  If they are C projects, attempt to load settings from them.
+		// iterate through all projects in the workspace. If they are C projects, attempt to load settings
+		// from them.
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		
-		for(IProject project : workspaceRoot.getProjects()) {
-			if(project.isOpen()) {
-				if(project.hasNature(CProjectNature.C_NATURE_ID)) {
+
+		for (IProject project : workspaceRoot.getProjects()) {
+			if (project.isOpen()) {
+				if (project.hasNature(CProjectNature.C_NATURE_ID)) {
 					String xmlString = project.getPersistentProperty(REFRESH_SCOPE_PROPERTY_NAME);
-					
-					// if there are no settings, then configure the default behaviour of refreshing the entire project,
+
+					// if there are no settings, then configure the default behaviour of refreshing the entire
+					// project,
 					// with no exclusions
 					if (xmlString == null) {
 						addResourceToRefresh(project, project);
 					}
-					
+
 					else {
 						// convert the XML string to a DOM model
-						
-						DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-				        DocumentBuilder docBuilder = null;
+
+						DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
+								.newInstance();
+						DocumentBuilder docBuilder = null;
 						try {
 							docBuilder = docBuilderFactory.newDocumentBuilder();
 						} catch (ParserConfigurationException e) {
-							throw new CoreException(CCorePlugin.createStatus(Messages.RefreshScopeManager_0, e));
+							throw new CoreException(CCorePlugin.createStatus(
+									Messages.RefreshScopeManager_0, e));
 						}
-						
+
 						Document doc = null;
-						
+
 						try {
 							doc = docBuilder.parse(new InputSource(new StringReader(xmlString)));
 						} catch (SAXException e) {
-							throw new CoreException(CCorePlugin.createStatus(MessageFormat.format(Messages.RefreshScopeManager_3, project.getName()), e));
+							throw new CoreException(CCorePlugin.createStatus(
+									MessageFormat.format(Messages.RefreshScopeManager_3,
+											project.getName()), e));
 						} catch (IOException e) {
-							throw new CoreException(CCorePlugin.createStatus(MessageFormat.format(Messages.RefreshScopeManager_3, project.getName()), e));
+							throw new CoreException(CCorePlugin.createStatus(
+									MessageFormat.format(Messages.RefreshScopeManager_3,
+											project.getName()), e));
 						}
-						
+
 						// walk the DOM and load the settings
-						
+
 						// for now ignore the version attribute, as we only have version 1 at this time
-						
-						// iterate through the resource element nodes
-						NodeList nodeList = doc.getElementsByTagName(RESOURCE_ELEMENT_NAME);
-						
-						for(int k = 0; k < nodeList.getLength(); k++) {
+
+						// iterate through the child nodes
+						NodeList nodeList = doc.getDocumentElement().getChildNodes();  // child of the doc is the root
+
+						for (int k = 0; k < nodeList.getLength(); k++) {
 							Node node = nodeList.item(k);
-							
+
 							// node will be an element
-							if(node instanceof Element) {
+							if (node instanceof Element) {
 								Element resourceElement = (Element) node;
-								
-								// get the resource path
-								String resourcePath = resourceElement.getAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME);
-								
-								if(resourcePath == null) {
-									// error
-									
-								}
-								
-								else {
-									// find the resource
-									IResource resource = workspaceRoot.findMember(resourcePath);
-									
-									if(resource == null) {
+
+								if (resourceElement.getNodeName().equals(RESOURCE_ELEMENT_NAME)) {
+
+									// get the resource path
+									String resourcePath = resourceElement
+											.getAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME);
+
+									if (resourcePath == null) {
 										// error
+
 									}
-									
+
 									else {
-										addResourceToRefresh(project, resource);
-										
-										// load any exclusions
-										List<RefreshExclusion> exclusions = RefreshExclusion.loadData(resourceElement, null);
-										
-										// add them
-										for(RefreshExclusion exclusion : exclusions) {
-											addExclusion(resource, exclusion);
+										// find the resource
+										IResource resource = workspaceRoot.findMember(resourcePath);
+
+										if (resource == null) {
+											// error
+										}
+
+										else {
+											addResourceToRefresh(project, resource);
+
+											// load any exclusions
+											List<RefreshExclusion> exclusions = RefreshExclusion.loadData(resourceElement, null, resource);
+
+											// add them
+											for (RefreshExclusion exclusion : exclusions) {
+												addExclusion(resource, exclusion);
+											}
 										}
 									}
 								}
 							}
 						}
-					}		
-					
+					}
+
 				}
 			}
 		}
@@ -379,6 +456,16 @@ public class RefreshScopeManager {
 	
 	public void clearAllExclusions() {
 		fResourceToExclusionsMap.clear();
+	}
+
+	public ExclusionInstance getInstanceForClassName(String className) {
+		RefreshExclusionFactory factory = getFactoryForClassName(className);
+		
+		if(factory == null) {
+			return null;
+		}
+		
+		return factory.createNewExclusionInstance();
 	}
 
 }

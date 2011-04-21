@@ -204,6 +204,7 @@ public class RefreshScopeTests extends TestCase {
 		instance.setResource(fFolder2);
 		instance.setExclusionType(ExclusionType.RESOURCE);
 		instance.setParentExclusion(exclusion2);
+		exclusion2.addExclusionInstance(instance);
 		
 		try {
 			manager.persistSettings();
@@ -234,8 +235,8 @@ public class RefreshScopeTests extends TestCase {
 		RefreshExclusion[] exclusionsArray = exclusions.toArray(new RefreshExclusion[0]);
 		
 		// both exclusions should have parent resource set to the project
-		assertEquals(exclusionsArray[0].getParentResource(), fProject);
-		assertEquals(exclusionsArray[1].getParentResource(), fProject);
+		assertEquals(fProject, exclusionsArray[0].getParentResource());
+		assertEquals(fProject, exclusionsArray[1].getParentResource());
 		
 		// the first exclusion should have one nested exclusion
 		List<RefreshExclusion> nestedExclusions1 = exclusionsArray[0].getNestedExclusions();
@@ -250,12 +251,11 @@ public class RefreshScopeTests extends TestCase {
 		
 		// the second exclusion should have an instance
 		List<ExclusionInstance> instances = exclusionsArray[1].getExclusionInstances();
-		assertEquals(instances.size(), 1);
+		assertEquals(1, instances.size());
 		ExclusionInstance[] instancesArray = instances.toArray(new ExclusionInstance[0]);
 		ExclusionInstance loadedInstance = instancesArray[0];
 		
 		// check the contents of the instance
-		assertEquals(exclusionsArray[1], loadedInstance.getParentExclusion());
 		assertEquals("foo", loadedInstance.getDisplayString());
 		assertEquals(fFolder2, loadedInstance.getResource());
 		assertEquals(ExclusionType.RESOURCE, loadedInstance.getExclusionType());

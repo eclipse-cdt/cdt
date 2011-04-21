@@ -183,4 +183,11 @@
             scheme="EFSExtensionProviderTestsScheme">
       </EFSExtensionProvider>
    </extension>
+   <extension
+         point="org.eclipse.cdt.core.RefreshExclusionFactory">
+      <exclusionFactory
+            exclusionClass="org.eclipse.cdt.core.resources.tests.TestExclusion"
+            factoryClass="org.eclipse.cdt.core.resources.tests.TestExclusionFactory">
+      </exclusionFactory>
+   </extension>
 </plugin>

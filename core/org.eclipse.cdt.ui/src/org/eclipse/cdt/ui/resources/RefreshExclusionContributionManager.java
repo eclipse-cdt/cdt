@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.resources;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -67,14 +65,14 @@ public class RefreshExclusionContributionManager {
 
 						String id = configElement.getAttribute("id"); //$NON-NLS-1$
 						String name = configElement.getAttribute("name"); //$NON-NLS-1$
-						String utility = configElement.getAttribute("class"); //$NON-NLS-1$
+						String contributorClassName = configElement.getAttribute("class"); //$NON-NLS-1$
 						boolean isTest = false;
-						String isTestString = configElement.getAttribute("isTest");
+						String isTestString = configElement.getAttribute("isTest"); //$NON-NLS-1$
 						if(isTestString != null) {
 							isTest = Boolean.getBoolean(isTestString);
 						}
 
-						if (utility != null) {
+						if (contributorClassName != null) {
 							try {
 								Object execExt = configElement.createExecutableExtension("class"); //$NON-NLS-1$
 								if ((execExt instanceof RefreshExclusionContributor) && id != null) {

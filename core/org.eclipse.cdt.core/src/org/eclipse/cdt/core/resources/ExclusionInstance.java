@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.resources;
 
-import java.lang.reflect.Constructor;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.w3c.dom.Document;
@@ -102,12 +100,12 @@ public class ExclusionInstance {
 		fDisplayString = displayString;
 	}
 
-	public void persistInstanceData(Document doc, Element extensionElement) {
+	public void persistInstanceData(Document doc, Element exclusionElement) {
+				
+		Element instanceElement = doc.createElement(INSTANCE_ELEMENT_NAME);
 		
 		// persist the type of the object we are
-		extensionElement.setAttribute(CLASS_ATTRIBUTE_NAME, this.getClass().getName());
-		
-		Element instanceElement = doc.createElement(INSTANCE_ELEMENT_NAME);
+		instanceElement.setAttribute(CLASS_ATTRIBUTE_NAME, this.getClass().getName());
 		
 		// persist the exclusion type
 		String exclusionType = null;
@@ -139,6 +137,8 @@ public class ExclusionInstance {
 			instanceElement.setAttribute(DISPLAY_STRING_ATTRIBUTE_NAME, fDisplayString);
 		}
 		
+		exclusionElement.appendChild(instanceElement);
+		
 		// persist any data from extenders
 		persistExtendedInstanceData(doc, instanceElement);
 		
@@ -148,22 +148,18 @@ public class ExclusionInstance {
 		// override to provide extension specific behaviour if desired	
 	}
 
-	@SuppressWarnings("rawtypes")
 	public static ExclusionInstance loadInstanceData(Element instanceElement) {
 		
-		String classname = instanceElement.getAttribute(CLASS_ATTRIBUTE_NAME);
+		String className = instanceElement.getAttribute(CLASS_ATTRIBUTE_NAME);
 		
 		ExclusionInstance newInstance = null;
-		Class instanceClass;
-		try {
-			instanceClass = Class.forName(classname);
-
-			Class[] parameterTypes = new Class[0];
-			Constructor constructor = instanceClass.getConstructor(parameterTypes);
-			newInstance = (ExclusionInstance) constructor.newInstance((Object[]) null);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+		
+		// see if there is a custom instance class
+		RefreshScopeManager manager = RefreshScopeManager.getInstance();
+		newInstance = manager.getInstanceForClassName(className);
+		
+		if(newInstance == null) {
+			newInstance = new ExclusionInstance();
 		}
 		
 		// load the exclusion type

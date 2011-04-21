@@ -18,6 +18,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.core.resources.messages"; //$NON-NLS-1$
+	public static String RefreshExclusion_0;
 	public static String RefreshScopeManager_0;
 	public static String RefreshScopeManager_1;
 	public static String RefreshScopeManager_2;

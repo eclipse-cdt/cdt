@@ -299,7 +299,7 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 			parent.exclusion.removeExclusionInstance(instance);
 			parent.exclusion_instances.remove(this);
 			
-			if (parent.exclusion_instances.size() < 1 && parent.exceptions_node == null) {
+			if (parent.exclusion_instances.size() < 1) {
 				parent.remove();
 			}
 		}	
@@ -406,6 +406,7 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 		});
 		
 		fTree.setInput(fSrc);
+		fTree.expandAll();
 		updateButtons();
 		
 	}
@@ -492,6 +493,7 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 					fSrc.add(newResource);
 				}
 				fTree.refresh();
+				fTree.expandAll();
 			}
 			break;
 			
@@ -507,12 +509,14 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 			}
 			if (addExceptionDialog.open() == Window.OK) {				
 				RefreshExclusion newExclusion = addExceptionDialog.getResult();
-				
-				//update tree & the working copy of the model elements in this tab
-				sel.addException(newExclusion);
+				if (newExclusion != null)				
+					//update tree & the working copy of the model elements in this tab
+					sel.addException(newExclusion);
 				fTree.refresh();
+				fTree.expandAll();
 			}                                                                                       
 			fTree.refresh();
+			fTree.expandAll();
 			break;
 			
 		case IDX_EDIT:	//can only edit a refresh exclusion
@@ -528,8 +532,10 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 				//update tree
 				selectedExclusion.updateException(updatedExclusion);
 				fTree.refresh();
+				fTree.expandAll();
 			}
 			fTree.refresh();
+			fTree.expandAll();
 			break;
 			
 		case IDX_DELETE:
@@ -543,8 +549,7 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 					if (sel1.isExclusion()) {
 						question = Messages.RefreshPolicyTab_deleteConfirmationDialog_question_exception;
 					} else {
-						question = Messages.RefreshPolicyTab_deleteConfirmationDialog_question_resource;
-								
+						question = Messages.RefreshPolicyTab_deleteConfirmationDialog_question_resource;								
 					}
 					if (MessageDialog.openQuestion(shell, Messages.RefreshPolicyTab_deleteConfirmationDialog_title, question)) {
 						remove = true;
@@ -556,15 +561,25 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 					//update tree & the working copy of the model elements in this tab
 					sel1.remove();
 					fTree.refresh();
+					fTree.expandAll();
 				}		
 			} else { //exclusion instance
 				_Exclusion_Instance sel1 = (_Exclusion_Instance) selection.getFirstElement();
-				
-				//update tree & the working copy of the model elements in this tab
-				sel1.remove();
-				fTree.refresh();		
+				boolean remove = false;
+				if (sel1.parent.exclusion_instances.size() == 1 && sel1.parent.exceptions_node != null) {
+					//this is the only exclusion instance for an exclusion and the exclusion has nested exclusions
+					if (MessageDialog.openQuestion(shell, Messages.RefreshPolicyTab_deleteConfirmationDialog_title, Messages.RefreshPolicyTab_deleteConfirmationDialog_question_exception)) {
+						remove = true;
+					}
+				} else
+					remove = true;
+				if (remove) {
+					//update tree & the working copy of the model elements in this tab
+					sel1.remove();
+					fTree.refresh();
+					fTree.expandAll();
+				}
 			}
-				
 			break;
 			
 		default:

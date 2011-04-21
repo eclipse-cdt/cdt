@@ -1998,7 +1998,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         if (LT(1) != IToken.tEOC)
         	stmt= statement();
     
-        if (stmt instanceof IASTCaseStatement == false) 
+        if (!(stmt instanceof IASTCaseStatement) && !(stmt instanceof IASTDefaultStatement)) 
         	return stmt;
         
         // bug 105334, switch without compound statement

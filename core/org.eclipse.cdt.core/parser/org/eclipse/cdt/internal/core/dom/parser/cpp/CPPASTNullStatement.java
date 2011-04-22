@@ -32,7 +32,7 @@ public class CPPASTNullStatement extends ASTNode implements IASTNullStatement {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default : break;
+	            default: break;
 	        }
 		}
         return true;

@@ -16,5 +16,9 @@ public class TestExclusion extends RefreshExclusion {
 		String name = resource.getName();
 		return name.endsWith("2");
 	}
-	
+
+	@Override
+	public boolean supportsExclusionInstances() {
+		return false;
+	}
 }

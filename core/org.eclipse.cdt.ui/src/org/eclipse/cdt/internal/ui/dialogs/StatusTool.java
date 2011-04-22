@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.DialogPage;
 
 public class StatusTool {
-
 	/**
 	 * Applies the status to the status line of a dialog page
 	 */
@@ -24,6 +23,7 @@ public class StatusTool {
 		messageLine.setErrorMessage(messages[0]);
 		messageLine.setMessage(messages[1]);
 	}
+
 	/**
 	 * Applies the status to the status line of a dialog page
 	 */
@@ -32,6 +32,7 @@ public class StatusTool {
 		page.setErrorMessage(messages[0]);
 		page.setMessage(messages[1]);
 	}
+
 	/**
 	 * Returns error-message / warning-message for a status
 	 */
@@ -45,6 +46,7 @@ public class StatusTool {
 			return new String[] { null, null };
 		}
 	}
+
 	/**
 	 * Compare two IStatus. The more severe is returned:
 	 * An error is more severe than a warning, and a warning is more severe
@@ -56,6 +58,7 @@ public class StatusTool {
 		}
 		return s2;
 	}
+
 	/**
 	 * Finds the most severe status from a array of status
 	 * An error is more severe than a warning, and a warning is more severe

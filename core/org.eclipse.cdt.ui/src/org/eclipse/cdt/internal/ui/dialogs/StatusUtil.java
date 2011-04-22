@@ -19,11 +19,10 @@ import org.eclipse.jface.dialogs.IMessageProvider;
  * A utility class to work with IStatus.
  */
 public class StatusUtil {
-
 	/**
 	 * Compares two instances of <code>IStatus</code>. The more severe is returned:
 	 * An error is more severe than a warning, and a warning is more severe
-	 * than ok. If the two stati have the same severity, the second is returned.
+	 * than ok. If the two statuses have the same severity, the second is returned.
 	 */
 	public static IStatus getMoreSevere(IStatus s1, IStatus s2) {
 		if (s1.getSeverity() > s2.getSeverity()) {
@@ -33,7 +32,7 @@ public class StatusUtil {
 	}
 
 	/**
-	 * Finds the most severe status from a array of stati.
+	 * Finds the most severe status from a array of statuses.
 	 * An error is more severe than a warning, and a warning is more severe
 	 * than ok.
 	 */
@@ -57,25 +56,25 @@ public class StatusUtil {
 	public static void applyToStatusLine(DialogPage page, IStatus status) {
 		String message= status.getMessage();
 		switch (status.getSeverity()) {
-			case IStatus.OK:
-				page.setMessage(message, IMessageProvider.NONE);
-				page.setErrorMessage(null);
-				break;
-			case IStatus.WARNING:
-				page.setMessage(message, IMessageProvider.WARNING);
-				page.setErrorMessage(null);
-				break;				
-			case IStatus.INFO:
-				page.setMessage(message, IMessageProvider.INFORMATION);
-				page.setErrorMessage(null);
-				break;			
-			default:
-				if (message.length() == 0) {
-					message= null;
-				}
-				page.setMessage(null);
-				page.setErrorMessage(message);
-				break;		
+		case IStatus.OK:
+			page.setMessage(message, IMessageProvider.NONE);
+			page.setErrorMessage(null);
+			break;
+		case IStatus.WARNING:
+			page.setMessage(message, IMessageProvider.WARNING);
+			page.setErrorMessage(null);
+			break;				
+		case IStatus.INFO:
+			page.setMessage(message, IMessageProvider.INFORMATION);
+			page.setErrorMessage(null);
+			break;			
+		default:
+			if (message.length() == 0) {
+				message= null;
+			}
+			page.setMessage(null);
+			page.setErrorMessage(message);
+			break;		
 		}
 	}
 }

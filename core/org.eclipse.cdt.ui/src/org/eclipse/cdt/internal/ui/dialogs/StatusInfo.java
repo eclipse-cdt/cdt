@@ -35,7 +35,7 @@ public class StatusInfo implements IStatus {
 	}
 
 	/**
-	 * Creates a status .
+	 * Creates a status.
 	 * @param severity The status severity: ERROR, WARNING, INFO and OK.
 	 * @param message The message of the status. Applies only for ERROR,
 	 * WARNING and INFO.

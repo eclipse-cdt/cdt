@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 public interface IStatusChangeListener {
 	
 	/**
-	 * Called to annonce that the given status has changed
+	 * Called to announce that the given status has changed.
 	 */
 	void statusChanged(IStatus status);
 }

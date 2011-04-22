@@ -20,12 +20,11 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * A message line. It distinguishs between "normal" messages and errors. 
+ * A message line. It distinguishes between "normal" messages and errors. 
  * Setting an error message hides a currently displayed message until 
  * <code>clearErrorMessage</code> is called.
  */
 public class MessageLine extends CLabel {
-
 	private String fMessageText;
 	private String fErrorText;
 
@@ -36,7 +35,7 @@ public class MessageLine extends CLabel {
 	private static RGB fgErrorRGB= new RGB(200, 0, 0);
 
 	/**
-	 * Clears the currently displayed error message and redisplayes
+	 * Clears the currently displayed error message and redisplays
 	 * the message which was active before the error message was set.
 	 */
 	public void clearErrorMessage() {
@@ -63,8 +62,8 @@ public class MessageLine extends CLabel {
 		return fMessageText;
 	}
 	/**
-	 * Creates a new message line as a child of the parent and with the given SWT stylebits.
-	 * Error message will be shown with in the given rgb color.
+	 * Creates a new message line as a child of the parent and with the given SWT style bits.
+	 * Error message will be shown with in the given RGB color.
 	 */
 	public MessageLine(Composite parent, int style, RGB errorRGB) {
 		super(parent, style);
@@ -72,8 +71,8 @@ public class MessageLine extends CLabel {
 		fErrorRGB= errorRGB;
 	}
 	/**
-	 * Creates a new message line as a child of the parent and with the given SWT stylebits.
-	 * Error message will be shown with in the rgb color 200,0,0.
+	 * Creates a new message line as a child of the parent and with the given SWT style bits.
+	 * Error message will be shown with in the RGB color 200,0,0.
 	 */
 	public MessageLine(Composite parent, int style) {
 		super(parent, style);
@@ -82,7 +81,7 @@ public class MessageLine extends CLabel {
 	}
 	/**
 	 * Creates a new message line as a child of the given parent.
-	 * Error message will be shown with in the rgb color 200,0,0.
+	 * Error message will be shown with in the RGB color 200,0,0.
 	 */
 	public MessageLine(Composite parent) {
 		this(parent, SWT.LEFT);

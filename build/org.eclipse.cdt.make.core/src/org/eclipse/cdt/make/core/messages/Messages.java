@@ -18,8 +18,9 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.make.core.messages.messages"; //$NON-NLS-1$
-	public static String SCMarkerGenerator_0;
-	public static String SCMarkerGenerator_1;
+	public static String SCMarkerGenerator_Add_Markers;
+	public static String SCMarkerGenerator_Error_Adding_Markers;
+	public static String SCMarkerGenerator_Discovery_Options_Page;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

@@ -34,123 +34,115 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class SCMarkerGenerator implements IMarkerGenerator {
 
-    /**
-     * 
-     */
-    public SCMarkerGenerator() {
-        super();
-    }
+	/**
+	 * 
+	 */
+	public SCMarkerGenerator() {
+		super();
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.IMarkerGenerator#addMarker(org.eclipse.core.resources.IResource, int, java.lang.String, int, java.lang.String)
-     */
-    public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
-    	ProblemMarkerInfo info = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity, errorVar);
-    	addMarker(info);
-    }
-    
-    
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IMarkerGenerator#addMarker(org.eclipse.core.resources.IResource, int, java.lang.String, int, java.lang.String)
+	 */
+	public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
+		ProblemMarkerInfo info = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity, errorVar);
+		addMarker(info);
+	}
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IMarkerGenerator#addMarker(org.eclipse.cdt.core.ProblemMarkerInfo)
 	 */
 	public void addMarker(final ProblemMarkerInfo problemMarkerInfo) {
-        try {
-            IMarker[] cur = problemMarkerInfo.file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_ONE);
-            /*
-             * Try to find matching markers and don't put in duplicates
-             */
-            if ((cur != null) && (cur.length > 0)) {
-                for (int i = 0; i < cur.length; i++) {
-                    int line = ((Integer) cur[i].getAttribute(IMarker.LINE_NUMBER)).intValue();
-                    int sev = ((Integer) cur[i].getAttribute(IMarker.SEVERITY)).intValue();
-                    String mesg = (String) cur[i].getAttribute(IMarker.MESSAGE);
-                    if (line == problemMarkerInfo.lineNumber && sev == mapMarkerSeverity(problemMarkerInfo.severity) && mesg.equals(problemMarkerInfo.description)) {
-                        return;
-                    }
-                }
-            }
-            
-            // we have to add the marker in the job or we can deadlock other
-            // threads that are responding to a resource delta by doing something
-            // that accesses the project description
-            Job markerJob = new Job(Messages.SCMarkerGenerator_0) {
+		// we have to add the marker in the job or we can deadlock other
+		// threads that are responding to a resource delta by doing something
+		// that accesses the project description
+		Job markerJob = new Job(Messages.SCMarkerGenerator_Add_Markers) {
 
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					IMarker marker;
-					try {
-						marker = problemMarkerInfo.file.createMarker(ICModelMarker.C_MODEL_PROBLEM_MARKER);
-						marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
-			            marker.setAttribute(IMarker.SEVERITY, mapMarkerSeverity(problemMarkerInfo.severity));
-			            marker.setAttribute(IMarker.LINE_NUMBER, problemMarkerInfo.lineNumber);
-			            marker.setAttribute(IMarker.CHAR_START, -1);
-			            marker.setAttribute(IMarker.CHAR_END, -1);
-			            
-			            if (problemMarkerInfo.variableName != null) {
-			                marker.setAttribute(ICModelMarker.C_MODEL_MARKER_VARIABLE, problemMarkerInfo.variableName);
-			            }
-			            if (problemMarkerInfo.externalPath != null) {
-			                marker.setAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, problemMarkerInfo.externalPath.toOSString());
-			            }
-					} catch (CoreException e) {
-						return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), Messages.SCMarkerGenerator_1, e);
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				IMarker marker;
+				try {
+					IMarker[] cur = problemMarkerInfo.file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_ONE);
+					/*
+					 * Try to find matching markers and don't put in duplicates
+					 */
+					if ((cur != null) && (cur.length > 0)) {
+						for (int i = 0; i < cur.length; i++) {
+							int line = ((Integer) cur[i].getAttribute(IMarker.LINE_NUMBER)).intValue();
+							int sev = ((Integer) cur[i].getAttribute(IMarker.SEVERITY)).intValue();
+							String mesg = (String) cur[i].getAttribute(IMarker.MESSAGE);
+							if (line == problemMarkerInfo.lineNumber && sev == mapMarkerSeverity(problemMarkerInfo.severity) && mesg.equals(problemMarkerInfo.description)) {
+								return Status.OK_STATUS;
+							}
+						}
 					}
-		            
-					return Status.OK_STATUS;
+				} catch (CoreException e) {
+					return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), Messages.SCMarkerGenerator_Error_Adding_Markers, e);
 				}
-            	
-            };
+				
+				try {
+					marker = problemMarkerInfo.file.createMarker(ICModelMarker.C_MODEL_PROBLEM_MARKER);
+					marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
+					marker.setAttribute(IMarker.SEVERITY, mapMarkerSeverity(problemMarkerInfo.severity));
+					marker.setAttribute(IMarker.LINE_NUMBER, problemMarkerInfo.lineNumber);
+					marker.setAttribute(IMarker.CHAR_START, -1);
+					marker.setAttribute(IMarker.CHAR_END, -1);
+					
+					if (problemMarkerInfo.variableName != null) {
+						marker.setAttribute(ICModelMarker.C_MODEL_MARKER_VARIABLE, problemMarkerInfo.variableName);
+					}
+					marker.setAttribute(IMarker.LOCATION, Messages.SCMarkerGenerator_Discovery_Options_Page);
+				} catch (CoreException e) {
+					return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), Messages.SCMarkerGenerator_Error_Adding_Markers, e);
+				}
+				
+				return Status.OK_STATUS;
+			}
+		};
 
-            markerJob.setRule(problemMarkerInfo.file);
-            markerJob.schedule();
-            
-        }
-        catch (CoreException e) {
-            MakeCorePlugin.log(e.getStatus());
-        }
- 		
+		markerJob.setRule(problemMarkerInfo.file);
+		markerJob.schedule();
 	}
 
 	public void removeMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
-        IWorkspace workspace = file.getWorkspace();
-        // remove specific marker
-        try {
-            IMarker[] markers = file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_ONE);
-            if (markers != null) {
-                List<IMarker> exactMarkers = new ArrayList<IMarker>();
-                for (int i = 0; i < markers.length; i++) {
-                    IMarker marker = markers[i];
-                    int location = ((Integer) marker.getAttribute(IMarker.LINE_NUMBER)).intValue();
-                    String error = (String) marker.getAttribute(IMarker.MESSAGE);
-                    int sev = ((Integer) marker.getAttribute(IMarker.SEVERITY)).intValue();
-                    if (location == lineNumber &&
-                            errorDesc.equals(error) &&
-                            sev == severity) {
-                        exactMarkers.add(marker);
-                    }
-                }
-                if (exactMarkers.size() > 0) {
-                    workspace.deleteMarkers(exactMarkers.toArray(new IMarker[exactMarkers.size()]));
-                }
-            }
-        }
-        catch (CoreException e) {
-        	MakeCorePlugin.log(e.getStatus());
-        }
-    }
-    
-    int mapMarkerSeverity(int severity) {
-        switch (severity) {
-            case SEVERITY_ERROR_BUILD :
-            case SEVERITY_ERROR_RESOURCE :
-                return IMarker.SEVERITY_ERROR;
-            case SEVERITY_INFO :
-                return IMarker.SEVERITY_INFO;
-            case SEVERITY_WARNING :
-                return IMarker.SEVERITY_WARNING;
-        }
-        return IMarker.SEVERITY_ERROR;
-    }
+		IWorkspace workspace = file.getWorkspace();
+		// remove specific marker
+		try {
+			IMarker[] markers = file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_ONE);
+			if (markers != null) {
+				List<IMarker> exactMarkers = new ArrayList<IMarker>();
+				for (int i = 0; i < markers.length; i++) {
+					IMarker marker = markers[i];
+					int location = ((Integer) marker.getAttribute(IMarker.LINE_NUMBER)).intValue();
+					String error = (String) marker.getAttribute(IMarker.MESSAGE);
+					int sev = ((Integer) marker.getAttribute(IMarker.SEVERITY)).intValue();
+					if (location == lineNumber &&
+							errorDesc.equals(error) &&
+							sev == severity) {
+						exactMarkers.add(marker);
+					}
+				}
+				if (exactMarkers.size() > 0) {
+					workspace.deleteMarkers(exactMarkers.toArray(new IMarker[exactMarkers.size()]));
+				}
+			}
+		}
+		catch (CoreException e) {
+			MakeCorePlugin.log(e.getStatus());
+		}
+	}
+	
+	int mapMarkerSeverity(int severity) {
+		switch (severity) {
+			case SEVERITY_ERROR_BUILD :
+			case SEVERITY_ERROR_RESOURCE :
+				return IMarker.SEVERITY_ERROR;
+			case SEVERITY_INFO :
+				return IMarker.SEVERITY_INFO;
+			case SEVERITY_WARNING :
+				return IMarker.SEVERITY_WARNING;
+		}
+		return IMarker.SEVERITY_ERROR;
+	}
 
 }

@@ -491,12 +491,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 						}
 						int declarationEndOffset = declarationOffset + declarationLocation.getNodeLength();
 						if (macroEndOffset <= declarationOffset || macroEndOffset >= declarationEndOffset ||
-								macroEndOffset == declarationEndOffset - 1 && scribe.scanner.source[macroEndOffset] == ';') {
+								macroEndOffset == declarationEndOffset - 1 &&
+								isSemicolonAtPosition(macroEndOffset)) {
 							// The function-style macro expansion either doesn't overlap with
-							// the following declaration, or completely covers, with a possible
-							// exception for the trailing semicolon, one or more declarations.
-							// In both cases formatting is driven by the text of parameters of
-							// the macro, not by the expanded code.
+							// the following declaration, or completely covers one or more
+							// declarations, with a possible exception for the trailing semicolon
+							// of the last one. In both cases formatting is driven by the text of
+							// parameters of the macro, not by the expanded code.
 							formatFunctionStyleMacroExpansion(macroExpansion);
 						}
 					}
@@ -605,6 +606,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 							needSpace= true;
 						}
 						break;
+					case Token.tBADCHAR:
+						// Avoid infinite loop if something bad happened.
+						scribe.exitAlignment(listAlignment, true);
+						return;
 					default:
 						scribe.printNextToken(token, hasWhitespace);
 					}
@@ -3028,7 +3033,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTNullStatement node) {
-		if (!fInsideFor) {
+		if (!fInsideFor &&
+				node.getFileLocation().getNodeOffset() == scribe.scanner.getCurrentPosition()) {
 			scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
 			scribe.printTrailingComment();
 		}
@@ -3392,11 +3398,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			expression.accept(this);
 		}
 		// Sometimes the return expression is null, when it should not be.
-		if (expression == null && Token.tSEMI != peekNextToken()) {
+		if (expression == null && peekNextToken() != Token.tSEMI) {
 			scribe.skipToToken(Token.tSEMI);
 		}
-		scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
-		scribe.printTrailingComment();
+		if (peekNextToken() == Token.tSEMI) {
+			scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
+			scribe.printTrailingComment();
+		}
 		return PROCESS_SKIP;
 	}
 
@@ -3649,7 +3657,22 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		IASTNodeLocation[] locations= node.getNodeLocations();
 		if (locations.length == 0) {
 		} else if (locations[0] instanceof IASTMacroExpansionLocation) {
-			IASTFileLocation expansionLocation= locations[0].asFileLocation();
+			IASTMacroExpansionLocation location = (IASTMacroExpansionLocation) locations[0];
+			if (locations.length <= 2 && node instanceof IASTStatement) {
+				IASTPreprocessorMacroExpansion macroExpansion = location.getExpansion();
+				IASTFileLocation macroLocation = macroExpansion.getFileLocation();
+				IASTFileLocation nodeLocation = node.getFileLocation();
+				if (macroLocation.getNodeOffset() >= scribe.scanner.getCurrentPosition() &&
+						!scribe.shouldSkip(macroLocation.getNodeOffset()) && 
+						(nodeLocation.getNodeOffset() + nodeLocation.getNodeLength() ==
+						macroLocation.getNodeOffset() + macroLocation.getNodeLength() ||
+						locations.length == 2 && isSemicolonLocation(locations[1])) &&
+						isFunctionStyleMacroExpansion(macroExpansion)) {
+					formatFunctionStyleMacroExpansion(macroExpansion);
+					return false;
+				}
+			}
+			IASTFileLocation expansionLocation= location.asFileLocation();
 			int startOffset= expansionLocation.getNodeOffset();
 			int endOffset= startOffset + expansionLocation.getNodeLength();
 			scribe.skipRange(startOffset, endOffset);
@@ -3713,15 +3736,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				IASTFileLocation expansionLocation= nodeLocation.asFileLocation();
 				int startOffset= expansionLocation.getNodeOffset();
 				int endOffset= startOffset + expansionLocation.getNodeLength();
-				if (currentOffset >= startOffset) {
-					if (currentOffset < endOffset) {
-						scribe.skipRange(startOffset, endOffset);
-						break;
-					} else if (currentOffset == endOffset && i == locations.length - 1) {
-						scribe.skipRange(startOffset, endOffset);
-						break;
-					}
-				} else {
+				if (currentOffset <= startOffset) {
+					break;
+				}
+				if (currentOffset < endOffset ||
+						currentOffset == endOffset && i == locations.length - 1) {
+					scribe.skipRange(startOffset, endOffset);
 					break;
 				}
 			}
@@ -3986,8 +4006,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				if (!startNode(statement)) {
 					continue;
 				}
-				final boolean statementIsNullStmt= statement instanceof IASTNullStatement;
-				if (!statementIsNullStmt) {
+				if (!(statement instanceof IASTNullStatement) &&
+						!doNodeLocationsOverlap(statement, statements.get(i - 1))) {
 					scribe.startNewLine();
 				}
 				try {
@@ -4045,6 +4065,15 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		return 0;
 	}
 
+	private int peekTokenAtPosition(int pos) {
+		localScanner.resetTo(pos, scribe.scannerEndPosition - 1);
+		int token = localScanner.getNextToken();
+		while (token == Token.tBLOCKCOMMENT || token == Token.tLINECOMMENT) {
+			token = localScanner.getNextToken();
+		}
+		return token;
+	}
+
 	private int peekNextToken() {
 		return peekNextToken(false);
 	}
@@ -4055,17 +4084,20 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 		localScanner.resetTo(scribe.scanner.getCurrentPosition(), scribe.scannerEndPosition - 1);
 		int token = localScanner.getNextToken();
-		loop: while (true) {
-			switch (token) {
-			case Token.tBLOCKCOMMENT:
-			case Token.tLINECOMMENT:
-				token = localScanner.getNextToken();
-				continue loop;
-			default:
-				break loop;
-			}
+		while (token == Token.tBLOCKCOMMENT || token == Token.tLINECOMMENT) {
+			token = localScanner.getNextToken();
 		}
 		return token;
+	}
+
+	private boolean isSemicolonLocation(IASTNodeLocation location) {
+		return location instanceof IASTFileLocation && location.getNodeLength() == 1 &&
+				peekTokenAtPosition(location.getNodeOffset()) == Token.tSEMI &&
+				localScanner.getCurrentTokenEndPosition() + 1 == location.getNodeOffset() + location.getNodeLength();
+	}
+
+	private boolean isSemicolonAtPosition(int pos) {
+		return peekTokenAtPosition(pos) == Token.tSEMI && localScanner.getCurrentTokenStartPosition() == pos;
 	}
 
 	private boolean isGuardClause(IASTCompoundStatement block, List<IASTStatement> statements) {

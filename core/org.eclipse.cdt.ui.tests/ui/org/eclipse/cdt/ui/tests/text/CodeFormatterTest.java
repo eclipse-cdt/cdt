@@ -1360,6 +1360,27 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//#define MY_MACRO(x, b) switch (0) default: if (false)
+	//
+	//void func() {
+	//MY_MACRO(1000000 + 2000000 + 3000000 + 4000000 + 5000000, 6000000 + 700000);
+	//MY_MACRO(1000000 + 2000000 + 3000000 + 4000000 + 5000000, 6000000 + 7000000);
+	//}
+
+	//#define MY_MACRO(x, b) switch (0) default: if (false)
+	//
+	//void func() {
+	//    MY_MACRO(1000000 + 2000000 + 3000000 + 4000000 + 5000000, 6000000 + 700000);
+	//    MY_MACRO(1000000 + 2000000 + 3000000 + 4000000 + 5000000,
+	//             6000000 + 7000000);
+	//}
+	public void testFunctionStyleMacro_3() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
+				Integer.toString(Alignment.M_NEXT_PER_LINE_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		assertFormatterResult();
+	}
+
 	//void foo() {
 	//for(int i=0;i<50;++i){}
 	//}

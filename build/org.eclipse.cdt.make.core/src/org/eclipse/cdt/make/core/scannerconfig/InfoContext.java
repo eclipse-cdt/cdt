@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.core.scannerconfig;
 
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.core.resources.IProject;
 
 public final class InfoContext {
 	private IProject fProject;
 	private String fInstanceId;
+	private ILanguage fLanguage;
 
 	public InfoContext(IProject project){
 		this(project, null);
@@ -25,8 +27,24 @@ public final class InfoContext {
 		this.fInstanceId = instanceId != null ? instanceId : "";  //$NON-NLS-1$
 	}
 	
+	/**
+	 * @since 7.1
+	 */
+	public InfoContext(IProject project, String instanceId, ILanguage language){
+		this.fProject = project;
+		this.fInstanceId = instanceId != null ? instanceId : "";  //$NON-NLS-1$
+		this.fLanguage = language;
+	}
+	
 	public String getInstanceId(){
 		return fInstanceId;
+	}
+	
+	/**
+	 * @since 7.1
+	 */
+	public ILanguage getLanguage(){
+		return fLanguage;
 	}
 	
 	@Override

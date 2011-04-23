@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.build.core.scannerconfig;
 
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
@@ -90,7 +92,12 @@ public final class CfgInfoContext{
 			}
 			
 			String instanceId = buf.toString();
-			fContext = new InfoContext(project, instanceId);
+			if (fInType!=null) {
+				ILanguage language = LanguageManager.getInstance().getLanguage(fInType.getSourceContentType());
+				fContext = new InfoContext(project, instanceId, language);
+			} else {
+				fContext = new InfoContext(project, instanceId);
+			}
 		}
 		return fContext;
 	}

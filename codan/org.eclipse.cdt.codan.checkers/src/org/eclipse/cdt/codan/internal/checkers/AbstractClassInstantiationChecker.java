@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Anton Gorenkov 
+ * Copyright (c) 2011 Anton Gorenkov and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     Anton Gorenkov  - initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
+
+import java.util.HashMap;
 
 import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
@@ -46,9 +48,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
  */
 public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.AbstractClassCreation"; //$NON-NLS-1$
+	private HashMap<ICPPClassType, ICPPMethod[]> pureVirtualMethodsCache = new HashMap<ICPPClassType, ICPPMethod[]>(); 
 
 	public void processAst(IASTTranslationUnit ast) {
-		ast.accept(new OnEachClass());
+		try {
+			ast.accept(new OnEachClass());
+		} finally {
+			pureVirtualMethodsCache.clear();
+		}
 	}
 
 	class OnEachClass extends ASTVisitor {
@@ -183,7 +190,15 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 			IType unwindedType = CxxAstUtils.getInstance().unwindTypedef(typeToCheck);
 			if (unwindedType instanceof ICPPClassType) {
 				ICPPClassType classType = (ICPPClassType)unwindedType;
-				for (ICPPMethod method : ClassTypeHelper.getPureVirtualMethods(classType)) {
+				ICPPMethod[] pureVirtualMethods;
+				if (pureVirtualMethodsCache.containsKey(classType)) {
+					pureVirtualMethods = pureVirtualMethodsCache.get(classType);
+				} else {
+					pureVirtualMethods = ClassTypeHelper.getPureVirtualMethods(classType);
+					pureVirtualMethodsCache.put(classType, pureVirtualMethods);
+				}
+				
+				for (ICPPMethod method : pureVirtualMethods) {
 					reportProblem(ER_ID, problemNode, resolveName(classType), resolveName(method));
 				}
 			}

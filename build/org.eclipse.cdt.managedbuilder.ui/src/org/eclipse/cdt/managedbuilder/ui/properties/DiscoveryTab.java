@@ -36,16 +36,17 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.DefaultRunSIProvider;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage;
+import org.eclipse.cdt.make.ui.dialogs.GCCPerProjectSCDProfilePage;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
@@ -539,6 +540,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	 * 
 	 */
 	private void initializeProfilePageMap() {
+		GCCPerProjectSCDProfilePage.isSIConsoleEnabled = DefaultRunSIProvider.isConsoleEnabled();
+		
 		pagesList = new ArrayList<DiscoveryProfilePageConfiguration>(5);
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(NAMESPACE, POINT);
 		if (point == null)
@@ -599,16 +602,20 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 					ManagedBuilderUIPlugin.log(e);
 				}
 			} else {
-				CUIPlugin.logError(Messages.DiscoveryTab_7); 
+				IStatus status = new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(), Messages.DiscoveryTab_7);	
+				ManagedBuilderUIPlugin.log(status);
 			}
 		}
 
 		clearChangedDiscoveredInfos();
+		
+		DefaultRunSIProvider.setConsoleEnabled(GCCPerProjectSCDProfilePage.isSIConsoleEnabled);
 	}
 
 	@Override
 	protected void performOK() {
 		performOK(true);
+		DefaultRunSIProvider.setConsoleEnabled(GCCPerProjectSCDProfilePage.isSIConsoleEnabled);
 	}
 
 	private void performOK(boolean ok) {
@@ -764,6 +771,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			}
 		}
 		updateData();
+		
+		DefaultRunSIProvider.setConsoleEnabled(false);
 	}
 
 	@Override

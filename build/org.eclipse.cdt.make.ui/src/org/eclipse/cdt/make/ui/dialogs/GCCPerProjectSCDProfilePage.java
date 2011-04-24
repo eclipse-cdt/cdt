@@ -59,8 +59,17 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
     private Button sipEnabledButton;
     private Text sipRunCommandText;
     private Text sipRunArgsText;
+    private Button sipConsoleEnabledButton;
     
     private boolean isValid = true;
+
+	/**
+	 * Static variable corresponding to global preference to show scanner
+	 * discovery console.
+	 * 
+	 * @since 7.1
+	 */
+	public static boolean isSIConsoleEnabled = false;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.ui.dialogs.AbstractCOptionPage#createControl(org.eclipse.swt.widgets.Composite)
@@ -213,6 +222,17 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
             }
         });
         
+        // si provider console enabled checkbox
+        String sipConsoleEnabledLabel = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.siProvider.show.console.label"); //$NON-NLS-1$
+        sipConsoleEnabledButton = ControlFactory.createCheckBox(profileGroup, sipConsoleEnabledLabel);
+        ((GridData)sipConsoleEnabledButton.getLayoutData()).horizontalSpan = 3;
+        ((GridData)sipConsoleEnabledButton.getLayoutData()).grabExcessHorizontalSpace = true;
+        sipConsoleEnabledButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+            	isSIConsoleEnabled = sipConsoleEnabledButton.getSelection();
+            }
+        });
 
         setControl(page);
         // set the shell variable; must be after setControl
@@ -298,6 +318,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         sipEnabledButton.setSelection(builderInfo.isProviderOutputParserEnabled(providerId));
         sipRunCommandText.setText(builderInfo.getProviderRunCommand(providerId));
         sipRunArgsText.setText(builderInfo.getProviderRunArguments(providerId));
+        sipConsoleEnabledButton.setSelection(isSIConsoleEnabled);
     }
     
     private String getProviderIDForSelectedProfile() {

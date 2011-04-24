@@ -20,8 +20,9 @@ import java.util.Properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICommandLauncher;
-import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.make.core.MakeBuilder;
@@ -35,8 +36,8 @@ import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.StreamMonitor;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoConsoleParserFactory;
-import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.cdt.utils.EFSExtensionManager;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -44,6 +45,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * New default external scanner info provider of type 'run'
@@ -52,8 +56,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  */
 public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
     private static final String EXTERNAL_SI_PROVIDER_ERROR = "ExternalScannerInfoProvider.Provider_Error"; //$NON-NLS-1$
-    private static final String EXTERNAL_SI_PROVIDER_CONSOLE_ID = MakeCorePlugin.getUniqueIdentifier() + ".ExternalScannerInfoProviderConsole"; //$NON-NLS-1$
+	private static final String GMAKE_ERROR_PARSER_ID = "org.eclipse.cdt.core.GmakeErrorParser"; //$NON-NLS-1$
+	private static final String PREF_CONSOLE_ENABLED = "org.eclipse.cdt.make.core.scanner.discovery.console.enabled"; //$NON-NLS-1$
     private static final String LANG_ENV_VAR = "LANG"; //$NON-NLS-1$
+	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String PATH_ENV = "PATH"; //$NON-NLS-1$
 
     protected IResource resource;
     protected String providerId;
@@ -96,7 +103,16 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
         monitor.beginTask(MakeMessages.getString("ExternalScannerInfoProvider.Reading_Specs"), 100); //$NON-NLS-1$
         
         try {
-            IConsole console = CCorePlugin.getDefault().getConsole(EXTERNAL_SI_PROVIDER_CONSOLE_ID);
+			ILanguage language = context.getLanguage();
+			IConsole console;
+			if (language!=null && isConsoleEnabled()) {
+				String consoleId = MakeCorePlugin.PLUGIN_ID + '.' + providerId + '.' + language.getId();
+				String consoleName =  MakeMessages.getFormattedString("ExternalScannerInfoProvider.Console_Name", language.getName()); //$NON-NLS-1$
+				console = CCorePlugin.getDefault().getBuildConsole(consoleId, consoleName, null);
+			} else {
+				// that looks in extension points registry and won't find the id
+				console = CCorePlugin.getDefault().getConsole(MakeCorePlugin.PLUGIN_ID + ".console.hidden"); //$NON-NLS-1$
+			}
             console.start(currentProject);
             OutputStream cos = console.getOutputStream();
 
@@ -110,17 +126,21 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
             launcher.showCommand(true);
 
             String[] comandLineOptions = getCommandLineOptions();
-            String ca = coligate(comandLineOptions);
+            String params = coligate(comandLineOptions);
 
             monitor.subTask(MakeMessages.getString("ExternalScannerInfoProvider.Invoking_Command")  //$NON-NLS-1$
-                    + getCommandToLaunch() + ca);
-            cos = new StreamMonitor(new SubProgressMonitor(monitor, 70), cos, 100);
-            
-            ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.getESIProviderOutputSniffer(
-                    cos, cos, currentProject, context, providerId, buildInfo, collector, markerGenerator);
+                    + getCommandToLaunch() + params);
+
+			ErrorParserManager epm = new ErrorParserManager(currentProject, markerGenerator, new String[] {GMAKE_ERROR_PARSER_ID});
+			epm.setOutputStream(cos);
+			StreamMonitor streamMon = new StreamMonitor(new SubProgressMonitor(monitor, 70), epm, 100);
+			OutputStream stdout = streamMon;
+			OutputStream stderr = streamMon;
+
+			ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.getESIProviderOutputSniffer(
+					stdout, stderr, currentProject, context, providerId, buildInfo, collector, markerGenerator);
             OutputStream consoleOut = (sniffer == null ? cos : sniffer.getOutputStream());
             OutputStream consoleErr = (sniffer == null ? cos : sniffer.getErrorStream());
-            TraceUtil.outputTrace("Default provider is executing command:", fCompileCommand.toString() + ca, ""); //$NON-NLS-1$ //$NON-NLS-2$
             Process p = launcher.execute(getCommandToLaunch(), comandLineOptions, setEnvironment(launcher, env), fWorkingDirectory, monitor);
             if (p != null) {
                 try {
@@ -138,13 +158,34 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
                 errMsg = launcher.getErrorMessage();
             }
 
-            if (errMsg != null) {
-                String errorDesc = MakeMessages.getFormattedString(EXTERNAL_SI_PROVIDER_ERROR, 
-                        fCompileCommand.toString() + ca);
-                markerGenerator.addMarker(currentProject, -1, errorDesc, IMarkerGenerator.SEVERITY_WARNING, null);
-            }
+			if (errMsg != null) {
+				String errorPrefix = MakeMessages.getString("ExternalScannerInfoProvider.Error_Prefix"); //$NON-NLS-1$
+				String program = fCompileCommand.toString();
 
-            monitor.subTask(MakeMessages.getString("ExternalScannerInfoProvider.Creating_Markers")); //$NON-NLS-1$
+				String msg = MakeMessages.getFormattedString(EXTERNAL_SI_PROVIDER_ERROR, program+params);
+				printLine(consoleErr, errorPrefix + msg + NEWLINE);
+
+				// Launching failed, trying to figure out possible cause
+				Properties envMap = getEnvMap(launcher, env);
+				String envPath = envMap.getProperty(PATH_ENV);
+				if (envPath == null) {
+					envPath = System.getenv(PATH_ENV);
+				}
+				if (!fCompileCommand.isAbsolute() && PathUtil.findProgramLocation(program, envPath) == null) {
+					printLine(consoleErr, errMsg);
+					msg = MakeMessages.getFormattedString("ExternalScannerInfoProvider.Working_Directory", fWorkingDirectory); //$NON-NLS-1$
+					msg = MakeMessages.getFormattedString("ExternalScannerInfoProvider.Program_Not_In_Path", program); //$NON-NLS-1$
+					printLine(consoleErr, errorPrefix + msg + NEWLINE);
+					printLine(consoleErr, PATH_ENV + "=[" + envPath + "]" + NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					printLine(consoleErr, errorPrefix + errMsg);
+					msg = MakeMessages.getFormattedString("ExternalScannerInfoProvider.Working_Directory", fWorkingDirectory); //$NON-NLS-1$
+					printLine(consoleErr, PATH_ENV + "=[" + envPath + "]" + NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+
+				monitor.subTask(MakeMessages.getString("ExternalScannerInfoProvider.Creating_Markers")); //$NON-NLS-1$
+			}
+
             consoleOut.close();
             consoleErr.close();
             cos.close();
@@ -167,6 +208,11 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
         // subclass can change default behavior
         return prepareArguments( 
                 buildInfo.isUseDefaultProviderCommand(providerId));
+    }
+    
+    private void printLine(OutputStream stream, String msg) throws IOException {
+    	stream.write((msg + NEWLINE).getBytes());
+    	stream.flush();
     }
     
     /**
@@ -212,8 +258,8 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
         return ca;
     }
 
-    protected String[] setEnvironment(ICommandLauncher launcher, Properties initialEnv) {
-        // Set the environmennt, some scripts may need the CWD var to be set.
+	private Properties getEnvMap(ICommandLauncher launcher, Properties initialEnv) {
+		// Set the environmennt, some scripts may need the CWD var to be set.
         Properties props = initialEnv != null ? initialEnv : launcher.getEnvironment();
         
         if (fWorkingDirectory != null) {
@@ -229,6 +275,11 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
         if (props.containsKey(LANG_ENV_VAR)) {
             props.put(LANG_ENV_VAR, "en_US.UTF-8"); //$NON-NLS-1$
         }
+		return props;
+	}
+
+    protected String[] setEnvironment(ICommandLauncher launcher, Properties initialEnv) {
+        Properties props = getEnvMap(launcher, initialEnv);
         String[] env = null;
         ArrayList<String> envList = new ArrayList<String>();
         Enumeration<?> names = props.propertyNames();
@@ -242,4 +293,29 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
         return env;
     }
 
+
+	/**
+	 * Set preference to stream output of scanner discovery to a console.
+	 */
+	public static void setConsoleEnabled(boolean value) {
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(MakeCorePlugin.PLUGIN_ID);
+		node.putBoolean(PREF_CONSOLE_ENABLED, value);
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			MakeCorePlugin.log(e);
+		}
+	}
+
+	/**
+	 * Check preference to stream output of scanner discovery to a console.
+	 * 
+	 * @return boolean preference value
+	 */
+	public static boolean isConsoleEnabled() {
+		boolean value = InstanceScope.INSTANCE.getNode(MakeCorePlugin.PLUGIN_ID)
+				.getBoolean(PREF_CONSOLE_ENABLED, false);
+		return value;
+	}
+	
 }

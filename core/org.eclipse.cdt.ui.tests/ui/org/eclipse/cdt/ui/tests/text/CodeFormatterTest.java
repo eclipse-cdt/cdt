@@ -888,19 +888,27 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+    //namespace ns1 {
+	//namespace ns2 {
 	//void foo() {
 	//    int x;        // comment
 	//    int y;        // comment
 	//    		        // continuation of the previous comment
 	////  int z;  <- comments starting from the beginning of line are not indented
 	//}
+	//}// namespace ns2
+	//}// namespace ns1
 
+    //namespace ns1 {
+	//namespace ns2 {
 	//void foo() {
 	//    int x;  // comment
 	//    int y;  // comment
 	//            // continuation of the previous comment
 	////  int z;  <- comments starting from the beginning of line are not indented
 	//}
+	//}  // namespace ns2
+	//}  // namespace ns1
 	public void testLineCommentMinDistanceFromCode() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_MIN_DISTANCE_BETWEEN_CODE_AND_LINE_COMMENT, "2");

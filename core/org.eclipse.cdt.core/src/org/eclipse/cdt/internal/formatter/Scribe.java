@@ -1606,6 +1606,7 @@ public class Scribe {
 		case Token.tRBRACE:
 		case Token.tLBRACE:
 			formatBrace = true;
+			lastLineComment.contiguous = false;
 		}
 		try {
 			printComment();

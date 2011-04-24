@@ -24,6 +24,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.content.IContentType;
 
 public final class CfgInfoContext{
 	private static final String DELIMITER = ";"; //$NON-NLS-1$
@@ -91,13 +92,16 @@ public final class CfgInfoContext{
 				buf.append(fInType.getId());
 			}
 			
-			String instanceId = buf.toString();
+			ILanguage language = null;
 			if (fInType!=null) {
-				ILanguage language = LanguageManager.getInstance().getLanguage(fInType.getSourceContentType());
-				fContext = new InfoContext(project, instanceId, language);
-			} else {
-				fContext = new InfoContext(project, instanceId);
+				IContentType contentType = fInType.getSourceContentType();
+				if (contentType!=null) {
+					language = LanguageManager.getInstance().getLanguage(contentType);
+				}
 			}
+			
+			String instanceId = buf.toString();
+			fContext = new InfoContext(project, instanceId, language);
 		}
 		return fContext;
 	}

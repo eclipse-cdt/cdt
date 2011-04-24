@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -54,7 +55,6 @@ import org.eclipse.cdt.internal.corext.util.Messages;
  * The line wrapping tab page.
  */
 public class LineWrappingTabPage extends FormatterTabPage {
-
     /**
      * Represents a line wrapping category.
      */
@@ -134,7 +134,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		    
 		    fSelectionState.refreshState(fSelection);
 		    
-			final Category category= (Category)fSelection.getFirstElement();
+			final Category category= (Category) fSelection.getFirstElement();
 			fDialogSettings.put(PREF_CATEGORY_INDEX, category.index);
 			
 			fOptionsGroup.setText(getGroupLabel(category));
@@ -143,10 +143,12 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		private String getGroupLabel(Category category) {
 		    if (fSelection.size() == 1) {
 			    if (fSelectionState.getElements().size() == 1)
-			        return Messages.format(FormatterMessages.LineWrappingTabPage_group, category.description); 
-			    return Messages.format(FormatterMessages.LineWrappingTabPage_multi_group, new String[] {category.description, Integer.toString(fSelectionState.getElements().size())}); 
+			        return NLS.bind(FormatterMessages.LineWrappingTabPage_group, category.description); 
+			    return NLS.bind(FormatterMessages.LineWrappingTabPage_multi_group, category.description,
+			    		String.valueOf(fSelectionState.getElements().size())); 
 		    }
-			return Messages.format(FormatterMessages.LineWrappingTabPage_multiple_selections, new String[] {Integer.toString(fSelectionState.getElements().size())}); 
+			return NLS.bind(FormatterMessages.LineWrappingTabPage_multiple_selections,
+					String.valueOf(fSelectionState.getElements().size())); 
 		}
         
         private void disableAll() {
@@ -165,7 +167,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 			int index;
 			try {
 				index= fDialogSettings.getInt(PREF_CATEGORY_INDEX);
-			} catch (NumberFormatException ex) {
+			} catch (NumberFormatException e) {
 				index= -1;
 			}
 			if (index < 0 || index > fCategoriesList.size() - 1) {
@@ -316,7 +318,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
             if (nElements == 1 || count == 0)
                 return label;
             return Messages.format(FormatterMessages.LineWrappingTabPage_occurences,
-            		new String[] {label, Integer.toString(count), Integer.toString(nElements)}); 
+            		new String[] {label, String.valueOf(count), String.valueOf(nElements)}); 
         }
         
         private int getMax(Integer nrOfTrue, Integer nrOfFalse) {
@@ -628,7 +630,8 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		final String previewLineWidth= fDialogSettings.get(PREF_PREVIEW_LINE_WIDTH);
 		
 		fPreviewPreferences= new HashMap<String, String>();
-		fPreviewPreferences.put(LINE_SPLIT, previewLineWidth != null ? previewLineWidth : Integer.toString(DEFAULT_PREVIEW_WINDOW_LINE_WIDTH));
+		fPreviewPreferences.put(LINE_SPLIT, previewLineWidth != null ?
+				previewLineWidth : String.valueOf(DEFAULT_PREVIEW_WINDOW_LINE_WIDTH));
 		
 		fCategories= createCategories();
 		fCategoryListener= new CategoryListener(fCategories);
@@ -706,14 +709,14 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		fCategoriesViewer= new TreeViewer(composite /*categoryGroup*/, SWT.MULTI | SWT.BORDER | SWT.READ_ONLY | SWT.V_SCROLL );
 		fCategoriesViewer.setContentProvider(new ITreeContentProvider() {
 			public Object[] getElements(Object inputElement) {
-				return ((Collection<?>)inputElement).toArray();
+				return ((Collection<?>) inputElement).toArray();
 			}
 			public Object[] getChildren(Object parentElement) {
-				return ((Category)parentElement).children.toArray();
+				return ((Category) parentElement).children.toArray();
 			}
 			public Object getParent(Object element) { return null; }
 			public boolean hasChildren(Object element) {
-				return !((Category)element).children.isEmpty();
+				return !((Category) element).children.isEmpty();
 			}
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 			public void dispose() {}
@@ -729,26 +732,28 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		fOptionsGroup = createGroup(numColumns, composite, "");  //$NON-NLS-1$
 		
 		// label "Select split style:"
-		fWrappingStylePolicy= createLabel(numColumns, fOptionsGroup, FormatterMessages.LineWrappingTabPage_wrapping_policy_label_text); 
+		fWrappingStylePolicy= createLabel(numColumns, fOptionsGroup,
+				FormatterMessages.LineWrappingTabPage_wrapping_policy_label_text); 
 	
 		// combo SplitStyleCombo
 		fWrappingStyleCombo= new Combo(fOptionsGroup, SWT.SINGLE | SWT.READ_ONLY);
 		fWrappingStyleCombo.setItems(WRAPPING_NAMES);
 		fWrappingStyleCombo.setLayoutData(createGridData(numColumns, GridData.HORIZONTAL_ALIGN_FILL, 0));
 		
-		// label "Select indentation style:"
-		fIndentStylePolicy= createLabel(numColumns, fOptionsGroup, FormatterMessages.LineWrappingTabPage_indentation_policy_label_text); 
-		
-		// combo SplitStyleCombo
-		fIndentStyleCombo= new Combo(fOptionsGroup, SWT.SINGLE | SWT.READ_ONLY);
-		fIndentStyleCombo.setItems(INDENT_NAMES);
-		fIndentStyleCombo.setLayoutData(createGridData(numColumns, GridData.HORIZONTAL_ALIGN_FILL, 0));
-		
-		// button "Force split"
+		// checkbox "Force split"
 		fForceSplit= new Button(fOptionsGroup, SWT.CHECK);
 		fForceSplit.setLayoutData(createGridData(numColumns, GridData.HORIZONTAL_ALIGN_FILL, 0));
 		fForceSplit.setText(FormatterMessages.LineWrappingTabPage_force_split_checkbox_text); 
 		
+		// label "Select indentation style:"
+		fIndentStylePolicy= createLabel(numColumns, fOptionsGroup,
+				FormatterMessages.LineWrappingTabPage_indentation_policy_label_text); 
+		
+		// combo IndentStyleCombo
+		fIndentStyleCombo= new Combo(fOptionsGroup, SWT.SINGLE | SWT.READ_ONLY);
+		fIndentStyleCombo.setItems(INDENT_NAMES);
+		fIndentStyleCombo.setLayoutData(createGridData(numColumns, GridData.HORIZONTAL_ALIGN_FILL, 0));
+
 		// selection state object
 		fSelectionState= new SelectionState();
 	}

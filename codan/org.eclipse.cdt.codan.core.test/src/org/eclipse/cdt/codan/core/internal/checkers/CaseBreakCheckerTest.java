@@ -20,7 +20,7 @@ import org.eclipse.cdt.codan.internal.checkers.CaseBreakChecker;
 public class CaseBreakCheckerTest extends CheckerTestCase {
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.test.CodanTestCase#setUp()
 	 */
 	@Override
@@ -375,7 +375,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	// }
 	public void testNestedSwitches() {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(4, 6, 9, 20, 27);
+		checkErrorLines(4, 20, 6, 9, 27);
 	}
 
 	// void foo(void) {
@@ -486,5 +486,38 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		setLast(false);
 		loadCodeAndRun(code);
 		checkNoErrors();
+	}
+
+	// void foo(int a) {
+	//  switch( a ) {
+	//  case 2:
+	//     if (a*2<10)
+	//         return;
+	//     else
+	//         break;
+	//  case 1:
+	//      break;
+	//  }
+	// }
+	public void testIf() {
+		String code = getAboveComment();
+		loadCodeAndRun(code);
+		checkNoErrors();
+	}
+	// void foo(int a) {
+	//  switch( a ) {
+	//  case 2:
+	//     if (a*2<10)
+	//         return;
+	//     else
+	//         a++;
+	//  case 1:
+	//      break;
+	//  }
+	// }
+	public void testIfErr() {
+		String code = getAboveComment();
+		loadCodeAndRun(code);
+		checkErrorLine(3);
 	}
 }

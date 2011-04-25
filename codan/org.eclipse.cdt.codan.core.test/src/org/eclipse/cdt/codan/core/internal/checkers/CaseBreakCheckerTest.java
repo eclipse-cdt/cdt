@@ -536,4 +536,27 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		checkNoErrors();
 	}
 
+
+//	#define MY_MACRO(i)     \
+//	    case i:             \
+//	    {                   \
+//	        break;          \
+//	    }
+//
+//	void f()
+//	{
+//	    int x;
+//	    switch (x)
+//	    {
+//	        MY_MACRO(1)  // WARNING HERE
+//	    }
+//	}
+
+	public void testInMacro() {
+		String code = getAboveComment();
+		loadCodeAndRun(code);
+		checkNoErrors();
+	}
+
+
 }

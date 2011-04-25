@@ -365,7 +365,6 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 
 				@Override
 				public int visit(IASTExpression expression) {
-					
 					// If the expression starts with a function call with a name, we should only need to guess this name
 					if (expression == target && expression instanceof ICPPASTFunctionCallExpression) {
 						ICPPASTFunctionCallExpression functionCallExpression = (ICPPASTFunctionCallExpression) expression;
@@ -382,7 +381,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 					}
 					
 					if (expression instanceof CPPASTLiteralExpression) {
-						CPPASTLiteralExpression literal = (CPPASTLiteralExpression)expression;
+						CPPASTLiteralExpression literal = (CPPASTLiteralExpression) expression;
 						String name = null;
 						char[] value = literal.getValue();
 						switch (literal.getKind()) {
@@ -446,13 +445,13 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		String lower = name.toLowerCase();
 		int start = 0;
 		for (String prefix : getPrefixes()) {
-			if(lower.startsWith(prefix)) {
+			if (lower.startsWith(prefix)) {
 				if (name.length() > prefix.length()) {
 					start = prefix.length();
 				}
 			}
 			prefix = prefix + "_"; //$NON-NLS-1$
-			if(lower.startsWith(prefix)) {
+			if (lower.startsWith(prefix)) {
 				if (name.length() > prefix.length()) {
 					start = prefix.length();
 				}
@@ -460,7 +459,6 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		}
 
 		if (start > 0) {
-
 			String nameWithoutPrefix = name.substring(start);
 			if (Character.isUpperCase(nameWithoutPrefix.charAt(0))) {
 				nameWithoutPrefix = nameWithoutPrefix.substring(0, 1).toLowerCase()

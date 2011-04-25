@@ -520,4 +520,20 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(code);
 		checkErrorLine(3);
 	}
+
+//	#define DEFINE_BREAK {break;}
+//	void foo ( int a )
+//	{
+//	    switch ( a )
+//	    {
+//	        case 1:
+//	            DEFINE_BREAK  // <-- Warning: No break at the end of this case
+//	    }
+//	}
+	public void testBreakInBraces() {
+		String code = getAboveComment();
+		loadCodeAndRun(code);
+		checkNoErrors();
+	}
+
 }

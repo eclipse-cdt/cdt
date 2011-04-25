@@ -177,13 +177,16 @@ public class BaseTestCase {
  		fLaunch = (GdbLaunch)lc.launch(ILaunchManager.DEBUG_MODE, new NullProgressMonitor());
  		DsfSession.removeSessionStartedListener(sessionStartedListener);
 
-		// Wait for the program to hit the breakpoint at main() before
+ 		// If we haven't hit main() yet, 
+ 		// wait for the program to hit the breakpoint at main() before
 		// proceeding. All tests assume that stable initial state. Two
 		// seconds is plenty; we typically get to that state in a few
 		// hundred milliseconds with the tiny test programs we use.
- 		synchronized (fTargetSuspendedSem) {
- 			fTargetSuspendedSem.wait(TestsPlugin.massageTimeout(2000));
- 	 		Assert.assertTrue(fTargetSuspended);
+ 		if (!fTargetSuspended) {
+ 			synchronized (fTargetSuspendedSem) {
+ 				fTargetSuspendedSem.wait(TestsPlugin.massageTimeout(2000));
+ 				Assert.assertTrue(fTargetSuspended);
+ 			}
  		}
 
  		// This should be a given if the above check passes

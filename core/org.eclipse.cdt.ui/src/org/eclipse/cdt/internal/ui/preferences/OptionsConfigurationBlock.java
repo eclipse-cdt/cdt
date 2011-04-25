@@ -181,7 +181,8 @@ public abstract class OptionsConfigurationBlock {
 
 	private int fRebuildCount; // used to prevent multiple dialogs that ask for a rebuild
 
-	public OptionsConfigurationBlock(IStatusChangeListener context, IProject project, Key[] allKeys, IWorkbenchPreferenceContainer container) {
+	public OptionsConfigurationBlock(IStatusChangeListener context, IProject project, Key[] allKeys,
+			IWorkbenchPreferenceContainer container) {
 		fContext= context;
 		fProject= project;
 		fAllKeys= allKeys;
@@ -336,7 +337,8 @@ public abstract class OptionsConfigurationBlock {
 		return checkBox;
 	}
 
-	protected Button addCheckBoxWithLink(Composite parent, String label, Key key, String[] values, int indent, int widthHint, SelectionListener listener) {
+	protected Button addCheckBoxWithLink(Composite parent, String label, Key key, String[] values,
+			int indent, int widthHint, SelectionListener listener) {
 		ControlData data= new ControlData(key, values);
 
 		GridData gd= new GridData(GridData.FILL, GridData.FILL, true, false);
@@ -378,8 +380,9 @@ public abstract class OptionsConfigurationBlock {
 		return checkBox;
 	}
 
-	protected Combo addComboBox(Composite parent, String label, Key key, String[] values, String[] valueLabels, int indent) {
-		GridData gd= new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1);
+	protected Combo addComboBox(Composite parent, String label, Key key, String[] values,
+			String[] valueLabels, int indent) {
+		GridData gd= new GridData(GridData.FILL, GridData.CENTER, false, false, 2, 1);
 		gd.horizontalIndent= indent;
 
 		Label labelControl= new Label(parent, SWT.LEFT);
@@ -395,7 +398,8 @@ public abstract class OptionsConfigurationBlock {
 		return comboBox;
 	}
 
-	protected Combo addInversedComboBox(Composite parent, String label, Key key, String[] values, String[] valueLabels, int indent) {
+	protected Combo addInversedComboBox(Composite parent, String label, Key key, String[] values,
+			String[] valueLabels, int indent) {
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= indent;
 		gd.horizontalSpan= 3;
@@ -439,30 +443,37 @@ public abstract class OptionsConfigurationBlock {
 	}
 
 	protected Text addTextField(Composite parent, String label, Key key, int indent, int widthHint) {
+		return addTextField(parent, label, key, indent, widthHint, SWT.NONE);
+	}
+
+	protected Text addTextField(Composite parent, String label, Key key, int indent, int widthHint,
+			int extraStyle) {
 		Label labelControl= new Label(parent, SWT.WRAP);
 		labelControl.setText(label);
 		labelControl.setFont(JFaceResources.getDialogFont());
-		labelControl.setLayoutData(new GridData());
+		GridData data= new GridData();
+		data.horizontalIndent= indent;
+		labelControl.setLayoutData(data);
 
-		Text textBox= new Text(parent, SWT.BORDER | SWT.SINGLE);
+		Text textBox= new Text(parent, SWT.BORDER | SWT.SINGLE | extraStyle);
 		textBox.setData(key);
-		textBox.setLayoutData(new GridData());
 
 		makeScrollableCompositeAware(textBox);
 
 		fLabels.put(textBox, labelControl);
 
-		String currValue= getValue(key);
-		if (currValue != null) {
-			textBox.setText(currValue);
+		if (key != null) {
+			String currValue= getValue(key);
+			if (currValue != null) {
+				textBox.setText(currValue);
+			}
+			textBox.addModifyListener(getTextModifyListener());
 		}
-		textBox.addModifyListener(getTextModifyListener());
 
-		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		data= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		if (widthHint != 0) {
 			data.widthHint= widthHint;
 		}
-		data.horizontalIndent= indent;
 		data.horizontalSpan= 2;
 		textBox.setLayoutData(data);
 
@@ -570,9 +581,9 @@ public abstract class OptionsConfigurationBlock {
 		ControlData data= (ControlData) widget.getData();
 		String newValue= null;
 		if (widget instanceof Button) {
-			newValue= data.getValue(((Button)widget).getSelection());
+			newValue= data.getValue(((Button) widget).getSelection());
 		} else if (widget instanceof Combo) {
-			newValue= data.getValue(((Combo)widget).getSelectionIndex());
+			newValue= data.getValue(((Combo) widget).getSelectionIndex());
 		} else {
 			return;
 		}
@@ -582,9 +593,11 @@ public abstract class OptionsConfigurationBlock {
 
 	protected void textChanged(Text textControl) {
 		Key key= (Key) textControl.getData();
-		String number= textControl.getText();
-		String oldValue= setValue(key, number);
-		validateSettings(key, oldValue, number);
+		if (key != null) {
+			String newValue= textControl.getText();
+			String oldValue= setValue(key, newValue);
+			validateSettings(key, oldValue, newValue);
+		}
 	}
 
 	protected boolean checkValue(Key key, String value) {
@@ -630,7 +643,6 @@ public abstract class OptionsConfigurationBlock {
 	 * @param changedKey Key that changed, or null, if all changed.
 	 */
 	protected abstract void validateSettings(Key changedKey, String oldValue, String newValue);
-
 
 	protected String[] getTokens(String text, String separator) {
 		StringTokenizer tok= new StringTokenizer(text, separator); 
@@ -815,10 +827,11 @@ public abstract class OptionsConfigurationBlock {
 
 	protected void updateText(Text curr) {
 		Key key= (Key) curr.getData();
-
-		String currValue= getValue(key);
-		if (currValue != null) {
-			curr.setText(currValue);
+		if (key != null) {
+			String currValue= getValue(key);
+			if (currValue != null) {
+				curr.setText(currValue);
+			}
 		}
 	}
 
@@ -869,6 +882,10 @@ public abstract class OptionsConfigurationBlock {
 			return text;
 		}
 		return null;
+	}
+
+	protected Control getLabel(Control control) {
+		return fLabels.get(control);
 	}
 
 	protected void setComboEnabled(Key key, boolean enabled) {

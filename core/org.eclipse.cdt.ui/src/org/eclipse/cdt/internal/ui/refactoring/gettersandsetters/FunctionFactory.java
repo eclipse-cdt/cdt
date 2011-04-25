@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -8,6 +8,7 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
@@ -37,43 +38,40 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 
-import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
-
 public class FunctionFactory {
 
-	public static IASTFunctionDefinition createGetterDefinition(String varName,
+	public static IASTFunctionDefinition createGetterDefinition(IASTName fieldName,
 			IASTSimpleDeclaration fieldDeclaration, ICPPASTQualifiedName name) {
 		IASTFunctionDefinition getter = new CPPASTFunctionDefinition();
 		
 		getter.setDeclSpecifier(fieldDeclaration.getDeclSpecifier().copy(CopyStyle.withLocations));
-		IASTDeclarator getterDeclarator = getGetterDeclarator(varName, fieldDeclaration, name);
+		IASTDeclarator getterDeclarator = getGetterDeclarator(fieldName, fieldDeclaration, name);
 		// IASTFunctionDefinition. expects the outermost IASTFunctionDeclarator in declarator hierarchy
 		while (!(getterDeclarator instanceof IASTFunctionDeclarator)) {
 			getterDeclarator = getterDeclarator.getNestedDeclarator();
 		}
 		getter.setDeclarator((IASTFunctionDeclarator) getterDeclarator);
-		getter.setBody(getGetterBody(varName));
+		getter.setBody(getGetterBody(fieldName));
 		return getter;
 	}
 
-	private static CPPASTCompoundStatement getGetterBody(String varName) {
+	private static CPPASTCompoundStatement getGetterBody(IASTName fieldName) {
 		CPPASTCompoundStatement compound = new CPPASTCompoundStatement();
 		CPPASTReturnStatement returnStatement = new CPPASTReturnStatement();
 		CPPASTIdExpression idExpr = new CPPASTIdExpression();
 		CPPASTName returnVal = new CPPASTName();
-		returnVal.setName(varName.toCharArray());
+		returnVal.setName(fieldName.toCharArray());
 		idExpr.setName(returnVal);
 		returnStatement.setReturnValue(idExpr);
 		compound.addStatement(returnStatement);
 		return compound;
 	}
 
-	private static IASTDeclarator getGetterDeclarator(String varName,
+	private static IASTDeclarator getGetterDeclarator(IASTName fieldName,
 			IASTSimpleDeclaration fieldDeclaration, ICPPASTQualifiedName name) {
 		CPPASTName getterName = new CPPASTName();
-		String varPartOfGetterName = NameHelper.makeFirstCharUpper(NameHelper.trimFieldName(varName));
-		getterName.setName("get".concat(varPartOfGetterName).toCharArray()); //$NON-NLS-1$
-		
+		getterName.setName(GetterSetterNameGenerator.generateGetterName(fieldName).toCharArray());
+
 		// copy declarator hierarchy
 		IASTDeclarator topDeclarator = fieldDeclaration.getDeclarators()[0].copy(CopyStyle.withLocations);
 		
@@ -106,12 +104,12 @@ public class FunctionFactory {
 			return topDeclarator;
 		}
 	}
-	
-	public static IASTFunctionDefinition createSetterDefinition(String varName,
+
+	public static IASTFunctionDefinition createSetterDefinition(IASTName fieldName,
 			IASTSimpleDeclaration fieldDeclaration, ICPPASTQualifiedName name) {
 		IASTFunctionDefinition setter = new CPPASTFunctionDefinition();
 		setter.setDeclSpecifier(getVoidDeclSpec());		
-		setter.setDeclarator(getSetterDeclarator(varName, fieldDeclaration, name));
+		setter.setDeclarator(getSetterDeclarator(fieldName, fieldDeclaration, name));
 		setter.setBody(getSetterBody(fieldDeclaration));
 		return setter;
 	}
@@ -141,11 +139,10 @@ public class FunctionFactory {
 		return compound;
 	}
 
-	private static CPPASTFunctionDeclarator getSetterDeclarator(String varName,
+	private static CPPASTFunctionDeclarator getSetterDeclarator(IASTName fieldName,
 			IASTSimpleDeclaration fieldDeclaration, ICPPASTQualifiedName name) {
 		CPPASTName setterName = new CPPASTName();
-		String varPartOfSetterName = NameHelper.makeFirstCharUpper(NameHelper.trimFieldName(varName));
-		setterName.setName("set".concat(varPartOfSetterName).toCharArray()); //$NON-NLS-1$
+		setterName.setName(GetterSetterNameGenerator.generateSetterName(fieldName).toCharArray());
 		CPPASTFunctionDeclarator declarator = new CPPASTFunctionDeclarator();
 		if (name != null) {
 			name.addName(setterName);
@@ -167,20 +164,19 @@ public class FunctionFactory {
 		return declSpecifier;
 	}
 
-	public static IASTSimpleDeclaration createGetterDeclaration(String name,
+	public static IASTSimpleDeclaration createGetterDeclaration(IASTName fieldName,
 			IASTSimpleDeclaration fieldDeclaration) {
 		IASTSimpleDeclaration getter = new CPPASTSimpleDeclaration();
 		getter.setDeclSpecifier(fieldDeclaration.getDeclSpecifier().copy(CopyStyle.withLocations));
-		getter.addDeclarator(getGetterDeclarator(name, fieldDeclaration, null));
-		
+		getter.addDeclarator(getGetterDeclarator(fieldName, fieldDeclaration, null));
 		return getter;
 	}
 
-	public static IASTSimpleDeclaration createSetterDeclaration(String name,
+	public static IASTSimpleDeclaration createSetterDeclaration(IASTName fieldName,
 			IASTSimpleDeclaration fieldDeclaration) {
 		IASTSimpleDeclaration setter = new CPPASTSimpleDeclaration();
 		setter.setDeclSpecifier(getVoidDeclSpec());		
-		setter.addDeclarator(getSetterDeclarator(name, fieldDeclaration, null));
+		setter.addDeclarator(getSetterDeclarator(fieldName, fieldDeclaration, null));
 		return setter;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -8,12 +8,14 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -22,28 +24,29 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 
 public class GetterSetterInsertEditProvider implements Comparable<GetterSetterInsertEditProvider> {
-	public enum Type {
-		getter,
-		setter;
+	public enum AccessorKind {
+		GETTER,
+		SETTER;
 	}
 	
 	private IASTSimpleDeclaration functionDeclaration;
-	private Type type;
-	private String name;
+	private AccessorKind kind;
+	private IASTName fieldName;
 	private IASTSimpleDeclaration fieldDeclaration;
 	
-	public GetterSetterInsertEditProvider(String name, IASTSimpleDeclaration fieldDeclaration, Type type) {
-		switch (type) {
-		case getter:
-			this.functionDeclaration = FunctionFactory.createGetterDeclaration(name, fieldDeclaration);
+	public GetterSetterInsertEditProvider(IASTName fieldName, IASTSimpleDeclaration fieldDeclaration,
+			AccessorKind kind) {
+		switch (kind) {
+		case GETTER:
+			this.functionDeclaration = FunctionFactory.createGetterDeclaration(fieldName, fieldDeclaration);
 			break;
-		case setter:
-			this.functionDeclaration = FunctionFactory.createSetterDeclaration(name, fieldDeclaration);
+		case SETTER:
+			this.functionDeclaration = FunctionFactory.createSetterDeclaration(fieldName, fieldDeclaration);
 			break;
 		}
 		
-		this.type = type;
-		this.name = name;
+		this.kind = kind;
+		this.fieldName = fieldName;
 		this.fieldDeclaration = fieldDeclaration;
 	}
 	
@@ -65,12 +68,12 @@ public class GetterSetterInsertEditProvider implements Comparable<GetterSetterIn
 			qname = null;
 		}
 		
-		switch (type) {
-		case getter:
-			definition = FunctionFactory.createGetterDefinition(name, fieldDeclaration, qname);
+		switch (kind) {
+		case GETTER:
+			definition = FunctionFactory.createGetterDefinition(fieldName, fieldDeclaration, qname);
 			break;
-		case setter:
-			definition = FunctionFactory.createSetterDefinition(name, fieldDeclaration, qname);
+		case SETTER:
+			definition = FunctionFactory.createSetterDefinition(fieldName, fieldDeclaration, qname);
 			break;
 		}
 		return definition;
@@ -92,8 +95,8 @@ public class GetterSetterInsertEditProvider implements Comparable<GetterSetterIn
 		return functionDeclaration;
 	}
 
-	public Type getType() {
-		return type;
+	public AccessorKind getType() {
+		return kind;
 	}
 
 	public int compareTo(GetterSetterInsertEditProvider o) {

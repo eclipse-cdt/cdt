@@ -1507,6 +1507,298 @@ public class PreferenceConstants {
 	 * @since 5.2
 	 */
 	public static final int CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_PATH = 2;
+
+	/**
+	 * A named preference that controls how capitalization of a constant name.
+	 * <p>
+	 * Value is of type <code>Integer</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_CONSTANT_CAPITALIZATION = "nameStyle.constant.capitalization"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls prefix of a constant name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_CONSTANT_PREFIX = "nameStyle.constant.prefix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls suffix of a constant name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_CONSTANT_SUFFIX = "nameStyle.constant.suffix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls delimiter that is inserted between words
+	 * of a constant name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_CONSTANT_WORD_DELIMITER = "nameStyle.constant.wordDelimiter"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls how capitalization of a field name.
+	 * <p>
+	 * Value is of type <code>Integer</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_FIELD_CAPITALIZATION = "nameStyle.field.capitalization"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls prefix of a field name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_FIELD_PREFIX = "nameStyle.field.prefix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls suffix of a field name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_FIELD_SUFFIX = "nameStyle.field.suffix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls delimiter that is inserted between words
+	 * of a field name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_FIELD_WORD_DELIMITER = "nameStyle.field.wordDelimiter"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls how capitalization of the getter name
+	 * depends on capitalization of the field name.
+	 * <p>
+	 * Value is of type <code>Integer</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_GETTER_CAPITALIZATION = "nameStyle.getter.capitalization"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls prefix of the getter name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_GETTER_PREFIX = "nameStyle.getter.prefix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls prefix of the getter name for a boolean field.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_GETTER_PREFIX_FOR_BOOLEAN = "nameStyle.getter.prefixForBoolean"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls suffix of the getter name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_GETTER_SUFFIX = "nameStyle.getter.suffix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls delimiter that is inserted between words
+	 * when composing the getter name from the field name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_GETTER_WORD_DELIMITER = "nameStyle.getter.wordDelimiter"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls how capitalization of the setter name
+	 * depends on capitalization of the field name.
+	 * <p>
+	 * Value is of type <code>Integer</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_SETTER_CAPITALIZATION = "nameStyle.setter.capitalization"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls prefix of the setter name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_SETTER_PREFIX = "nameStyle.setter.prefix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls suffix of the setter name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_SETTER_SUFFIX = "nameStyle.setter.suffix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls delimiter that is inserted between words
+	 * when composing the setter name from the field name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_SETTER_WORD_DELIMITER = "nameStyle.setter.wordDelimiter"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls how capitalization of the C++ source file name
+	 * depends on capitalization of the class name.
+	 * <p>
+	 * Value is of type <code>Integer</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_CPP_SOURCE_CAPITALIZATION = "nameStyle.cpp.source.capitalization"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls prefix of the C++ source file name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_CPP_SOURCE_PREFIX = "nameStyle.cpp.source.prefix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls suffix of the C++ source file name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_CPP_SOURCE_SUFFIX = "nameStyle.cpp.source.suffix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls delimiter that is inserted between words
+	 * when composing the C++ source file name from the class name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_CPP_SOURCE_WORD_DELIMITER = "nameStyle.cpp.source.wordDelimiter"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls how capitalization of the C++ header file name
+	 * depends on capitalization of the class name.
+	 * <p>
+	 * Value is of type <code>Integer</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_CPP_HEADER_CAPITALIZATION = "nameStyle.cpp.header.capitalization"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls prefix of the C++ header file name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_CPP_HEADER_PREFIX = "nameStyle.cpp.header.prefix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls suffix of the C++ header file name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_CPP_HEADER_SUFFIX = "nameStyle.cpp.header.suffix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls delimiter that is inserted between words
+	 * when composing the C++ header file name from the class name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_CPP_HEADER_WORD_DELIMITER = "nameStyle.cpp.header.wordDelimiter"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls how capitalization of the C++ test file name
+	 * depends on capitalization of the class name.
+	 * <p>
+	 * Value is of type <code>Integer</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_CPP_TEST_CAPITALIZATION = "nameStyle.cpp.test.capitalization"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls prefix of the C++ test file name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_CPP_TEST_PREFIX = "nameStyle.cpp.test.prefix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls suffix of the C++ test file name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_CPP_TEST_SUFFIX = "nameStyle.cpp.test.suffix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls delimiter that is inserted between words
+	 * when composing the C++ test file name from the class name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_CPP_TEST_WORD_DELIMITER = "nameStyle.cpp.test.wordDelimiter"; //$NON-NLS-1$
+
+	/**
+	 * The value of <code>NAME_STYLE_*_CAPITALIZATION</code> specifying that the name
+	 * is to be derived from the class or the variable name without changing
+	 * capitalization.
+	 * 
+	 * @since 5.3
+	 */
+	public static final int NAME_STYLE_CAPITALIZATION_ORIGINAL = 0;
+	/**
+	 * The value of <code>NAME_STYLE_*_CAPITALIZATION</code> specifying that the name
+	 * is to be derived from the class or the variable name by converting it to upper
+	 * case.
+	 * 
+	 * @since 5.3
+	 */
+	public static final int NAME_STYLE_CAPITALIZATION_UPPER_CASE = 1;
+	/**
+	 * The value of <code>NAME_STYLE_*_CAPITALIZATION</code> specifying that the name
+	 * is to be derived from the class or the variable name by converting it to lower
+	 * case.
+	 * 
+	 * @since 5.3
+	 */
+	public static final int NAME_STYLE_CAPITALIZATION_LOWER_CASE = 2;
+	/**
+	 * The value of <code>NAME_STYLE_*_CAPITALIZATION</code> specifying that the name
+	 * is to be derived from the class or the variable name by capitalizing first
+	 * letter of every word.
+	 * 
+	 * @since 5.3
+	 */
+	public static final int NAME_STYLE_CAPITALIZATION_CAMEL_CASE = 3;
+	/**
+	 * The value of <code>NAME_STYLE_*_CAPITALIZATION</code> specifying that the name
+	 * is to be derived from the class or the variable name by capitalizing first
+	 * letter of every word except the first one.
+	 * 
+	 * @since 5.3
+	 */
+	public static final int NAME_STYLE_CAPITALIZATION_LOWER_CAMEL_CASE = 4;
 	
 	/**
 	 * Returns the CDT-UI preference store.
@@ -1682,7 +1974,7 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.SPELLING_PROPOSAL_THRESHOLD, 20);
 		store.setDefault(PreferenceConstants.SPELLING_PROBLEMS_THRESHOLD, 100);
 		/*
-		 * XXX: This is currently disabled because the spelling engine
+		 * TODO: This is currently disabled because the spelling engine
 		 * cannot return word proposals but only correction proposals.
 		 */
 		store.setToDefault(PreferenceConstants.SPELLING_ENABLE_CONTENTASSIST);
@@ -1708,6 +2000,37 @@ public class PreferenceConstants {
 		// Code Templates
 		store.setDefault(PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME,
 				CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME);
+
+		// Name Style
+		store.setDefault(NAME_STYLE_FIELD_CAPITALIZATION, NAME_STYLE_CAPITALIZATION_LOWER_CAMEL_CASE);
+		store.setDefault(NAME_STYLE_FIELD_PREFIX, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_FIELD_SUFFIX, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_FIELD_WORD_DELIMITER, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_CONSTANT_CAPITALIZATION, NAME_STYLE_CAPITALIZATION_UPPER_CASE);
+		store.setDefault(NAME_STYLE_CONSTANT_PREFIX, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_CONSTANT_SUFFIX, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_CONSTANT_WORD_DELIMITER, "_"); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_GETTER_CAPITALIZATION, NAME_STYLE_CAPITALIZATION_CAMEL_CASE);
+		store.setDefault(NAME_STYLE_GETTER_PREFIX, "get"); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_GETTER_PREFIX_FOR_BOOLEAN, "is"); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_GETTER_SUFFIX, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_GETTER_WORD_DELIMITER, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_SETTER_CAPITALIZATION, NAME_STYLE_CAPITALIZATION_CAMEL_CASE);
+		store.setDefault(NAME_STYLE_SETTER_PREFIX, "set"); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_SETTER_SUFFIX, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_SETTER_WORD_DELIMITER, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_CPP_HEADER_CAPITALIZATION, NAME_STYLE_CAPITALIZATION_ORIGINAL);
+		store.setDefault(NAME_STYLE_CPP_HEADER_PREFIX, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_CPP_HEADER_SUFFIX, ".h"); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_CPP_HEADER_WORD_DELIMITER, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_CPP_SOURCE_CAPITALIZATION, NAME_STYLE_CAPITALIZATION_ORIGINAL);
+		store.setDefault(NAME_STYLE_CPP_SOURCE_PREFIX, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_CPP_SOURCE_SUFFIX, ".cpp"); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_CPP_SOURCE_WORD_DELIMITER, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_CPP_TEST_CAPITALIZATION, NAME_STYLE_CAPITALIZATION_ORIGINAL);
+		store.setDefault(NAME_STYLE_CPP_TEST_PREFIX, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_CPP_TEST_SUFFIX, "_test.cpp"); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_CPP_TEST_WORD_DELIMITER, ""); //$NON-NLS-1$
     }
 
     /**

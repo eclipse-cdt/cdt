@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -8,6 +8,7 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
@@ -23,8 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 
-import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterInsertEditProvider.Type;
-import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
+import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterInsertEditProvider.AccessorKind;
 
 public class GetterAndSetterContext implements ITreeContentProvider {
 	public ArrayList<IASTSimpleDeclaration> existingFields = new ArrayList<IASTSimpleDeclaration>();
@@ -54,13 +54,13 @@ public class GetterAndSetterContext implements ITreeContentProvider {
 	}
 
 	public GetterSetterInsertEditProvider createGetterInserter(IASTSimpleDeclaration simpleDeclaration) {
-		String varName = getFieldDeclarationName(simpleDeclaration).toString();
-		return new GetterSetterInsertEditProvider(varName, simpleDeclaration, Type.getter);
+		IASTName fieldName = getFieldDeclarationName(simpleDeclaration);
+		return new GetterSetterInsertEditProvider(fieldName, simpleDeclaration, AccessorKind.GETTER);
 	}
 
 	public GetterSetterInsertEditProvider createSetterInserter(IASTSimpleDeclaration simpleDeclaration) {
-		String varName = getFieldDeclarationName(simpleDeclaration).toString();
-		return new GetterSetterInsertEditProvider(varName, simpleDeclaration, Type.setter);
+		IASTName fieldName = getFieldDeclarationName(simpleDeclaration);
+		return new GetterSetterInsertEditProvider(fieldName, simpleDeclaration, AccessorKind.SETTER);
 	}
 
 	public Object getParent(Object element) {
@@ -111,10 +111,8 @@ public class GetterAndSetterContext implements ITreeContentProvider {
 
 	private FunctionWrapper getGetterForField(IASTSimpleDeclaration currentField) {
 		FunctionWrapper wrapper = new FunctionWrapper();
-		String trimmedName = NameHelper.trimFieldName(getFieldDeclarationName(currentField).toString());
-		String getterName = "get" + NameHelper.makeFirstCharUpper(trimmedName); //$NON-NLS-1$
-		
-		setFunctionToWrapper(wrapper, getterName);
+		String name = GetterSetterNameGenerator.generateGetterName(getFieldDeclarationName(currentField));
+		setFunctionToWrapper(wrapper, name);
 		return wrapper;
 	}
 
@@ -128,10 +126,8 @@ public class GetterAndSetterContext implements ITreeContentProvider {
 	
 	private FunctionWrapper getSetterForField(IASTSimpleDeclaration currentField) {
 		FunctionWrapper wrapper = new FunctionWrapper();
-		String trimmedName = NameHelper.trimFieldName(getFieldDeclarationName(currentField).toString());
-		String setterName = "set" + NameHelper.makeFirstCharUpper(trimmedName); //$NON-NLS-1$
-		
-		setFunctionToWrapper(wrapper, setterName);
+		String name = GetterSetterNameGenerator.generateSetterName(getFieldDeclarationName(currentField));
+		setFunctionToWrapper(wrapper, name);
 		return wrapper;
 	}
 

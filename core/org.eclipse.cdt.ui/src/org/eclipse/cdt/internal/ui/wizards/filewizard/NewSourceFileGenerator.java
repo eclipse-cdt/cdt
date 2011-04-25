@@ -15,6 +15,10 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+
+import org.eclipse.cdt.internal.ui.util.NameComposer;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -23,23 +27,55 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 
 public class NewSourceFileGenerator {
 
-    //TODO these should all be configurable in prefs
-    private static final String HEADER_EXT = ".h"; //$NON-NLS-1$
-    private static final String SOURCE_EXT = ".cpp"; //$NON-NLS-1$
-
+    /**
+     * Creates a header file name from the given class name. This is the file name
+     * to be used when the class is created. eg. "MyClass" -> "MyClass.h"
+     * 
+     * @param className the class name
+     * @return the header file name for the given class
+     */
     public static String generateHeaderFileNameFromClass(String className) {
-        //TODO eventually make this a prefs option - filename pattern
-        return className + HEADER_EXT;
+    	IPreferencesService preferences = Platform.getPreferencesService();
+    	int capitalization = preferences.getInt(CUIPlugin.PLUGIN_ID,
+    			PreferenceConstants.NAME_STYLE_CPP_HEADER_CAPITALIZATION,
+    			PreferenceConstants.NAME_STYLE_CAPITALIZATION_ORIGINAL, null);
+    	String wordDelimiter = preferences.getString(CUIPlugin.PLUGIN_ID,
+    			PreferenceConstants.NAME_STYLE_CPP_HEADER_WORD_DELIMITER, "", null); //$NON-NLS-1$
+    	String prefix = preferences.getString(CUIPlugin.PLUGIN_ID,
+    			PreferenceConstants.NAME_STYLE_CPP_HEADER_PREFIX, "", null); //$NON-NLS-1$
+    	String suffix = preferences.getString(CUIPlugin.PLUGIN_ID,
+    			PreferenceConstants.NAME_STYLE_CPP_HEADER_SUFFIX, ".h", null); //$NON-NLS-1$
+    	NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);
+    	return composer.compose(className);
     }
 
+    /**
+     * Creates a source file name from the given class name. This is the file name
+     * to be used when the class is created. e.g. "MyClass" -> "MyClass.cpp"
+     * 
+     * @param className the class name
+     * @return the source file name for the given class
+     */
     public static String generateSourceFileNameFromClass(String className) {
-        //TODO eventually make this a prefs option - filename pattern
-        return className + SOURCE_EXT;
+    	IPreferencesService preferences = Platform.getPreferencesService();
+    	int capitalization = preferences.getInt(CUIPlugin.PLUGIN_ID,
+    			PreferenceConstants.NAME_STYLE_CPP_SOURCE_CAPITALIZATION,
+    			PreferenceConstants.NAME_STYLE_CAPITALIZATION_ORIGINAL, null);
+    	String wordDelimiter = preferences.getString(CUIPlugin.PLUGIN_ID,
+    			PreferenceConstants.NAME_STYLE_CPP_SOURCE_WORD_DELIMITER, "", null); //$NON-NLS-1$
+    	String prefix = preferences.getString(CUIPlugin.PLUGIN_ID,
+    			PreferenceConstants.NAME_STYLE_CPP_SOURCE_PREFIX, "", null); //$NON-NLS-1$
+    	String suffix = preferences.getString(CUIPlugin.PLUGIN_ID,
+    			PreferenceConstants.NAME_STYLE_CPP_SOURCE_SUFFIX, ".cpp", null); //$NON-NLS-1$
+    	NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);
+    	return composer.compose(className);
     }
 
     public static IFile createHeaderFile(IPath filePath, boolean force, IProgressMonitor monitor) throws CoreException {

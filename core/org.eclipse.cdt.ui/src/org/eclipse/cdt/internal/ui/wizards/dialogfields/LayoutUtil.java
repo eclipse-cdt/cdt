@@ -16,6 +16,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
 
 public class LayoutUtil {
 	
@@ -23,11 +24,20 @@ public class LayoutUtil {
 	 * Calculates the number of columns needed by field editors
 	 */
 	public static int getNumberOfColumns(DialogField[] editors) {
-		int nCulumns= 0;
+		int nColumns= 0;
 		for (int i= 0; i < editors.length; i++) {
-			nCulumns= Math.max(editors[i].getNumberOfControls(), nCulumns);
+			nColumns= Math.max(editors[i].getNumberOfControls(), nColumns);
 		}
-		return nCulumns;
+		return nColumns;
+	}
+
+	/**
+	 * Returns the number of columns in the layout of a composite,
+	 * or 1 if the composite doesn't have a grid layout.
+	 */
+	public static int getNumberOfColumns(Composite composite) {
+		Layout layout = composite.getLayout();
+		return layout instanceof GridLayout ? ((GridLayout) layout).numColumns : 1;
 	}
 	
 	/**
@@ -44,7 +54,8 @@ public class LayoutUtil {
 	 * @param minWidth The minimal width of the composite
 	 * @param minHeight The minimal height of the composite 
 	 */
-	public static void doDefaultLayout(Composite parent, DialogField[] editors, boolean labelOnTop, int minWidth, int minHeight) {
+	public static void doDefaultLayout(Composite parent, DialogField[] editors, boolean labelOnTop,
+			int minWidth, int minHeight) {
 		doDefaultLayout(parent, editors, labelOnTop, minWidth, minHeight, 0, 0);
 	}
 
@@ -55,10 +66,9 @@ public class LayoutUtil {
 	 * @param minHeight The minimal height of the composite
 	 * @param marginWidth The margin width to be used by the composite
 	 * @param marginHeight The margin height to be used by the composite
-	 * @deprecated
 	 */	
-	@Deprecated
-	public static void doDefaultLayout(Composite parent, DialogField[] editors, boolean labelOnTop, int minWidth, int minHeight, int marginWidth, int marginHeight) {
+	private static void doDefaultLayout(Composite parent, DialogField[] editors, boolean labelOnTop,
+			int minWidth, int minHeight, int marginWidth, int marginHeight) {
 		int nCulumns= getNumberOfColumns(editors);
 		Control[][] controls= new Control[editors.length][];
 		for (int i= 0; i < editors.length; i++) {
@@ -91,7 +101,7 @@ public class LayoutUtil {
 	public static void setHorizontalSpan(Control control, int span) {
 		Object ld= control.getLayoutData();
 		if (ld instanceof GridData) {
-			((GridData)ld).horizontalSpan= span;
+			((GridData) ld).horizontalSpan= span;
 		} else if (span != 1) {
 			GridData gd= new GridData();
 			gd.horizontalSpan= span;
@@ -105,7 +115,7 @@ public class LayoutUtil {
 	public static void setWidthHint(Control control, int widthHint) {
 		Object ld= control.getLayoutData();
 		if (ld instanceof GridData) {
-			((GridData)ld).widthHint= widthHint;
+			((GridData) ld).widthHint= widthHint;
 		}
 	}
 	
@@ -115,7 +125,7 @@ public class LayoutUtil {
 	public static void setHeightHint(Control control, int heigthHint) {
 		Object ld= control.getLayoutData();
 		if (ld instanceof GridData) {
-			((GridData)ld).heightHint= heigthHint;
+			((GridData) ld).heightHint= heigthHint;
 		}
 	}	
 	
@@ -125,18 +135,27 @@ public class LayoutUtil {
 	public static void setHorizontalIndent(Control control, int horizontalIndent) {
 		Object ld= control.getLayoutData();
 		if (ld instanceof GridData) {
-			((GridData)ld).horizontalIndent= horizontalIndent;
+			((GridData) ld).horizontalIndent= horizontalIndent;
 		}
 	}
 	
 	/**
-	 * Sets the horizontal indent of a control. Assumes that GridData is used.
+	 * Sets the horizontal alignment of a control. Assumes that GridData is used.
+	 */
+	public static void setHorizontalAlignment(Control control, int horizontalAlignment) {
+		Object ld= control.getLayoutData();
+		if (ld instanceof GridData) {
+			((GridData) ld).horizontalAlignment= horizontalAlignment;
+		}
+	}		
+
+	/**
+	 * Makes a control grab all available horizontal space. Assumes that GridData is used.
 	 */
 	public static void setHorizontalGrabbing(Control control) {
 		Object ld= control.getLayoutData();
 		if (ld instanceof GridData) {
-			((GridData)ld).grabExcessHorizontalSpace= true;
+			((GridData) ld).grabExcessHorizontalSpace= true;
 		}
-	}		
-
+	}
 }

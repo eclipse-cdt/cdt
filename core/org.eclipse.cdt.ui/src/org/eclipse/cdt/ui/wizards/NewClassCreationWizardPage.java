@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,6 @@ import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
@@ -103,9 +102,9 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogFie
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
+import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
 
 public class NewClassCreationWizardPage extends NewElementWizardPage {
-
     protected final static String PAGE_NAME = "NewClassWizardPage"; //$NON-NLS-1$
     protected static final int MAX_FIELD_CHARS = 50;
 	
@@ -141,9 +140,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	protected IStatus fSourceFileStatus;
 	protected final IStatus STATUS_OK = new StatusInfo();
 
-    protected IFile fCreatedSourceFile = null;
-    protected IFile fCreatedHeaderFile = null;
-    protected ICElement fCreatedClass = null;
+    protected IFile fCreatedSourceFile;
+    protected IFile fCreatedHeaderFile;
+    protected ICElement fCreatedClass;
     
     /**
      * This flag isFirstTime is used to keep a note
@@ -1307,20 +1306,20 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         String sourceName = null;
         
         if (folder == null) {
-            headerName = NewClassWizardUtil.createHeaderFileName(className);
-            sourceName = NewClassWizardUtil.createSourceFileName(className);
+            headerName = NewSourceFileGenerator.generateHeaderFileNameFromClass(className);
+            sourceName = NewSourceFileGenerator.generateSourceFileNameFromClass(className);
         } else {
             // make sure the file names are unique
             String currName = className;
             int count = 0;
             String separator = ""; //$NON-NLS-1$
-            if (Character.isDigit(className.charAt(className.length()-1)))
+            if (Character.isDigit(className.charAt(className.length() - 1)))
                 separator = "_"; //$NON-NLS-1$
             while (count < MAX_UNIQUE_CLASSNAME) {
-                String header = NewClassWizardUtil.createHeaderFileName(currName);
+                String header = NewSourceFileGenerator.generateHeaderFileNameFromClass(currName);
                 IPath path = folder.append(header);
                 if (!path.toFile().exists()) {
-                    String source = NewClassWizardUtil.createSourceFileName(currName);
+                    String source = NewSourceFileGenerator.generateSourceFileNameFromClass(currName);
                     path = folder.append(source);
                     if (!path.toFile().exists()) {
                         headerName = header;

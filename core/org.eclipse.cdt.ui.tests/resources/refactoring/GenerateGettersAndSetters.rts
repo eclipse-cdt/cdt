@@ -592,8 +592,8 @@ int gooo = 1;
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=GaS.h
-getters=i,isOk
-setters=i,isOk
+getters=i,ok
+setters=i,ok
 inHeader=true
 //@GaS.cpp
 #include "Getters.h"
@@ -612,8 +612,8 @@ class GaS {
 public:
 	GaS();
 	virtual ~GaS();
-	bool /*$*/isOk/*$$*/;
-	void methode2();
+	bool /*$*/ok/*$$*/;
+	void method2();
 
 private:
 	int i;
@@ -629,16 +629,16 @@ class GaS {
 public:
 	GaS();
 	virtual ~GaS();
-	bool isOk;
-	void methode2();
+	bool ok;
+	void method2();
     int getI() const
     {
         return i;
     }
 
-    bool getIsOk() const
+    bool isOk() const
     {
-        return isOk;
+        return ok;
     }
 
     void setI(int i)
@@ -646,9 +646,9 @@ public:
         this->i = i;
     }
 
-    void setIsOk(bool isOk)
+    void setOk(bool ok)
     {
-        this->isOk = isOk;
+        this->ok = ok;
     }
 
 private:

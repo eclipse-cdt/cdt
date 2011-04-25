@@ -8,6 +8,7 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.utils;
 
@@ -27,6 +28,7 @@ public class UtilTestSuite extends TestSuite {
 		suite.addTest(RefactoringTester.suite("TranslationUnitHelperTest", "resources/refactoring/TranslationunitHelper.rts")); //$NON-NLS-1$ //$NON-NLS-2$
 		suite.addTest(RefactoringTester.suite("DefinitionFinderTest", "resources/refactoring/DefinitionFinder.rts")); //$NON-NLS-1$ //$NON-NLS-2$
 		suite.addTestSuite(PseudoNameGeneratorTest.class);
+		suite.addTestSuite(NameComposerTest.class);
 		return suite;
 	}
 }

@@ -20,13 +20,6 @@ package org.eclipse.cdt.internal.ui.preferences;
 import org.eclipse.osgi.util.NLS;
 
 public final class PreferencesMessages extends NLS {
-
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.preferences.PreferencesMessages";//$NON-NLS-1$
-
-	private PreferencesMessages() {
-		// Do not instantiate
-	}
-
 	public static String CodeAssistAdvancedConfigurationBlock_default_table_category_column_title;
 	public static String CodeAssistAdvancedConfigurationBlock_default_table_description;
 	public static String CodeAssistAdvancedConfigurationBlock_default_table_keybinding_column_title;
@@ -377,6 +370,40 @@ public final class PreferencesMessages extends NLS {
 	public static String CodeTemplateBlock_export_error_hidden;
 	public static String CodeTemplateBlock_export_error_canNotWrite;
 
+	public static String NameStylePreferencePage_title;
+	public static String NameStyleBlock_code_node;
+	public static String NameStyleBlock_files_node;
+	public static String NameStyleBlock_constant_node;
+	public static String NameStyleBlock_constant_node_description;
+	public static String NameStyleBlock_field_node;
+	public static String NameStyleBlock_field_node_description;
+	public static String NameStyleBlock_getter_node;
+	public static String NameStyleBlock_getter_node_description;
+	public static String NameStyleBlock_setter_node;
+	public static String NameStyleBlock_setter_node_description;
+	public static String NameStyleBlock_cpp_source_node;
+	public static String NameStyleBlock_cpp_source_node_description;
+	public static String NameStyleBlock_cpp_header_node;
+	public static String NameStyleBlock_cpp_header_node_description;
+	public static String NameStyleBlock_cpp_test_node;
+	public static String NameStyleBlock_cpp_test_node_description;
+	public static String NameStyleBlock_categories_label;
+	public static String NameStyleBlock_capitalization_label;
+	public static String NameStyleBlock_capitalization_original;
+	public static String NameStyleBlock_capitalization_upper_case;
+	public static String NameStyleBlock_capitalization_lower_case;
+	public static String NameStyleBlock_capitalization_camel_case;
+	public static String NameStyleBlock_capitalization_lower_camel_case;
+	public static String NameStyleBlock_word_delimiter_label;
+	public static String NameStyleBlock_prefix_label;
+	public static String NameStyleBlock_prefix_for_boolean_label;
+	public static String NameStyleBlock_suffix_label;
+	public static String NameStyleBlock_preview_label;
+	public static String NameStyleBlock_select_concrete_category;
+	public static String NameStyleBlock_invalid_prefix;
+	public static String NameStyleBlock_invalid_word_delimiter;
+	public static String NameStyleBlock_invalid_suffix;
+
 	public static String EditTemplateDialog_error_noname;
 	public static String EditTemplateDialog_error_invalidName;
 	public static String EditTemplateDialog_title_new;
@@ -417,7 +444,11 @@ public final class PreferencesMessages extends NLS {
 	public static String ScalabilityPreferencePage_preferenceOnlyForNewEditors;
 	public static String ScalabilityPreferencePage_contentAssist_autoActivation;
 	
+	private PreferencesMessages() {
+		// Do not instantiate
+	}
+
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, PreferencesMessages.class);
+		NLS.initializeMessages(PreferencesMessages.class.getName(), PreferencesMessages.class);
 	}
 }

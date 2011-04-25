@@ -63,7 +63,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.viewsupport.IViewPartInputProvider;
-import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
 
 public class NewClassWizardUtil {
 
@@ -258,28 +257,6 @@ public class NewClassWizardUtil {
     }
     
     /**
-     * Creates a header file name from the given class name. This is the file name
-     * to be used when the class is created. eg. "MyClass" -> "MyClass.h"
-     * 
-     * @param className the class name
-     * @return the header file name for the given class
-     */
-    public static String createHeaderFileName(String className) {
-        return NewSourceFileGenerator.generateHeaderFileNameFromClass(className);
-    }
-    
-    /**
-     * Creates a source file name from the given class name. This is the file name
-     * to be used when the class is created. eg. "MyClass" -> "MyClass.cpp"
-     * 
-     * @param className the class name
-     * @return the source file name for the given class
-     */
-    public static String createSourceFileName(String className) {
-        return NewSourceFileGenerator.generateSourceFileNameFromClass(className);
-    }
-    
-    /**
      * Returns the workspace root.
      * 
      * @return the workspace root
@@ -289,7 +266,7 @@ public class NewClassWizardUtil {
     }
     
     /**
-     * Resolve the location of the given class.
+     * Resolves the location of the given class.
      * 
      * @param type the class to resolve
      * @param context the runnable context

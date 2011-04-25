@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.utils;
 
@@ -16,7 +16,6 @@ import junit.framework.TestSuite;
 
 /**
  * @author Thomas Corbat
- * 
  */
 public class IdentifierHelperTest extends TestSuite {
 
@@ -31,7 +30,7 @@ public class IdentifierHelperTest extends TestSuite {
 		suite.addTest(new EmptyCaseTest());
 		suite.addTest(new IllegalCharCaseTest());
 		suite.addTest(new KeywordCaseTest());
-		suite.addTestSuite(NameHelperTest.class);
+		suite.addTestSuite(AccessorNameGeneratorTest.class);
 		return suite;
 	}
 }

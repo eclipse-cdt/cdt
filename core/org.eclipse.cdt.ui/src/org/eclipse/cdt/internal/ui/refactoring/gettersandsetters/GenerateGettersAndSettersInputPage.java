@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterAndSetterContext.FieldWrapper;
-import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterInsertEditProvider.Type;
+import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterInsertEditProvider.AccessorKind;
 
 public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
 	private GetterAndSetterContext context;
@@ -115,7 +115,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
 		selectGetter.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				selectMethods(Type.getter);
+				selectMethods(AccessorKind.GETTER);
 			}
 		});
 		
@@ -124,14 +124,14 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
 		selectSetter.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				selectMethods(Type.setter);
+				selectMethods(AccessorKind.SETTER);
 			}
 		});
 		
 		return btComp;
 	}
 	
-	private void selectMethods(Type type) {
+	private void selectMethods(AccessorKind type) {
 		Object[] items = context.getElements(null);
 		Set<GetterSetterInsertEditProvider> checked = context.selectedFunctions;
 		for (Object treeItem : items) {

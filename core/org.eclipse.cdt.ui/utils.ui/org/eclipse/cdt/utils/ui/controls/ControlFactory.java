@@ -93,7 +93,7 @@ public class ControlFactory {
 	 *
 	 * @param parent  the parent of the new composite
 	 * @param color the separator color
-	 * @return preferedThickness - the  prefered thickness of separator (or 2 if SWT.DEFAULT)
+	 * @return preferedThickness - the  preferred thickness of separator (or 2 if SWT.DEFAULT)
 	 */
 	public static Composite createCompositeSeparator(Composite parent, Color color, int preferedHeight) {
 		Composite separator = createComposite(parent, 1);
@@ -206,8 +206,8 @@ public class ControlFactory {
 	 * @param style - control style
 	 * @return the new label
 	 */ 
-	public static Label createLabel(Composite parent, String text, int widthHint, int heightHint, int style) {
-
+	public static Label createLabel(Composite parent, String text, int widthHint, int heightHint,
+			int style) {
 		Label label = new Label(parent, style);		
 		label.setFont(parent.getFont());
 		label.setText(text);
@@ -241,11 +241,11 @@ public class ControlFactory {
 	 * @return the new label
 	 */
 	public static Label createBoldLabel(Composite parent, String text) {
-		Label label = createLabel( parent, text );
+		Label label = createLabel(parent, text);
         FontData[] fd = label.getFont().getFontData();
-        fd[0].setStyle( SWT.BOLD );
-        Font font = new Font( Display.getCurrent(), fd[0] );
-        label.setFont( font );
+        fd[0].setStyle(SWT.BOLD);
+        Font font = new Font(Display.getCurrent(), fd[0]);
+        label.setFont(font);
 		return label;
 	}
 
@@ -310,7 +310,8 @@ public class ControlFactory {
 	 * @param value  the string to identify radiobutton
 	 * @return the new checkbox
 	 */ 
-	public static Button createRadioButton(Composite group, String label, String value, SelectionListener listener) {
+	public static Button createRadioButton(Composite group, String label, String value,
+			SelectionListener listener) {
 		Button button = new Button(group, SWT.RADIO | SWT.LEFT);
 		button.setFont(group.getFont());
 		button.setText(label);
@@ -574,7 +575,8 @@ public class ControlFactory {
 		return createSelectCCombo(parent, strdata, selData, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 	}
 	
-	public static CCombo createSelectCCombo(Composite parent, String[] strdata, String selData, int style) {
+	public static CCombo createSelectCCombo(Composite parent, String[] strdata, String selData,
+			int style) {
 		CCombo combo = new CCombo(parent, style);
 		combo.setFont(parent.getFont());
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -657,7 +659,7 @@ public class ControlFactory {
 		int n_sel = combo.indexOf(selData);
 		if (0 > n_sel) {
 			if ((combo.getStyle() & SWT.READ_ONLY) == 0) {
-				combo.setText( selData );
+				combo.setText(selData);
 				return;
 			}
 			n_sel = 0;
@@ -668,39 +670,36 @@ public class ControlFactory {
     /**
 	 * Create a dialog shell, child to the top level workbench shell.
 	 *
-	 * @return The new Shell useable for a dialog.
-     *
+	 * @return The new Shell usable for a dialog.
 	 */
     public static Shell createDialogShell() {
-        Shell parent = PlatformUI.getWorkbench()
-                                 .getActiveWorkbenchWindow()
-                                 .getShell();
-        return new Shell( parent, SWT.DIALOG_TRIM );
+        Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        return new Shell(parent, SWT.DIALOG_TRIM);
     }
 
 	public static Composite insertSpace(Composite parent, int nSpan, int height) {
 		Composite space = ControlFactory.createCompositeSeparator(parent, parent.getBackground(),
 			 (SWT.DEFAULT != height ? height : 5));
-		((GridData)space.getLayoutData()).horizontalSpan = nSpan;
+		((GridData) space.getLayoutData()).horizontalSpan = nSpan;
 		return space;
 	}
 
-    public static MessageBox createDialog( String title, String message, int style ) {
-        MessageBox box = new MessageBox( createDialogShell(), style | SWT.APPLICATION_MODAL );
-        box.setText( title );
-        box.setMessage( message );
+    public static MessageBox createDialog(String title, String message, int style) {
+        MessageBox box = new MessageBox(createDialogShell(), style | SWT.APPLICATION_MODAL);
+        box.setText(title);
+        box.setMessage(message);
         return box;
     }
 
-    public static MessageBox createYesNoDialog( String title, String message ) {
-        return createDialog( title, message, SWT.YES | SWT.NO | SWT.ICON_QUESTION );
+    public static MessageBox createYesNoDialog(String title, String message) {
+        return createDialog(title, message, SWT.YES | SWT.NO | SWT.ICON_QUESTION);
     }
 
-    public static MessageBox createOkDialog( String title, String message ) {
-        return createDialog( title, message, SWT.OK | SWT.ICON_INFORMATION );
+    public static MessageBox createOkDialog(String title, String message) {
+        return createDialog(title, message, SWT.OK | SWT.ICON_INFORMATION);
     }
 
-    public static MessageBox createOkCancelDialog( String title, String message ) {
-        return createDialog( title, message, SWT.OK | SWT.CANCEL | SWT.ICON_INFORMATION );
+    public static MessageBox createOkCancelDialog(String title, String message) {
+        return createDialog(title, message, SWT.OK | SWT.CANCEL | SWT.ICON_INFORMATION);
     }
 }

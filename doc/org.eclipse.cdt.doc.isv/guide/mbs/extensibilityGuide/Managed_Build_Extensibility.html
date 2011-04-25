@@ -93,7 +93,7 @@ managed build system and how to extend it.</td>
   <td width="50%"><a href="mailto:recoskie@ca.ibm.com">Chris Recoskie</a></td>
   </tr>
   <tr>
-    <td width="50%" rowspan="7">Revision Date</td>
+    <td width="50%" rowspan="8">Revision Date</td>
     <td width="50%">10/21/2003 - Version: 0.1.0</td>
   </tr>
   <tr>
@@ -115,7 +115,10 @@ managed build system and how to extend it.</td>
     <td width="50%">06/22/07 - Version 4.0</td>
   </tr>
   <tr>
-    <td width="50%" rowspan="7">Change History</td>
+    <td width="50%">02/23/11 - Version 4.0.1</td>
+  </tr>
+  <tr>
+    <td width="50%" rowspan="8">Change History</td>
     <td width="50%" height="22">0.1.0 - Document Creation</td>
   </tr>
   <tr>
@@ -134,9 +137,12 @@ managed build system and how to extend it.</td>
     <td width="50%">3.1 - Updated for CDT 3.1</td>
   </tr>
 	<tr>
-    <td width="50%">4.0 Added link to
+    <td width="50%">4.0 - Added link to
 	<a href="../../cdt_build_system/whats_new/4.0/whats_new_CBS_40.html">&quot;what's 
 	new in 4.0&quot; document</a></td>
+  </tr>
+    <tr>
+    <td width="50%">4.0.1 - Added Option/Category Enablement as of CDT 8.0</td>
   </tr>
 </table>
 <br>
@@ -170,7 +176,8 @@ managed build system and how to extend it.</td>
 <div class="indent"><a href="#_TocSectionGrammar_16">3.16 Resource Configuration</a></div>
 <div class="indent"><a href="#_TocSectionGrammar_17">3.17 Environment Variable Build Path</a></div>
 <div class="indent"><a href="#_TocSectionGrammar_18">3.18 Managed Build Revision</a></div>
-<div class="indent"><a href="#_TocSectionGrammar_19">3.19 Dynamic Element Provider</a></div>
+<div class="indent"><a href="#_TocSectionGrammar_19">3.19 Option/Category Enablement</a></div>
+<div class="indent"><a href="#_TocSectionGrammar_20">3.20 Dynamic Element Provider</a></div>
 </div>
 <div class="indent"><a href="#_TocSectionUIElements">4 UI Representation</a>
 <div class="indent"><a href="#_TocSectionUIElements_1">4.1 New Project Wizard</a></div>
@@ -223,7 +230,9 @@ managed build system and how to extend it.</td>
 </strong>the document describes the CDT Managed Build System (MBS) 3.x functionality. 
 Although there have been lots of significant changes made to the Build System in 
 the 4.0, the document still remains valid since all the 4.0 build system changes 
-were made by extending the MBS functionality described in this document.</p>
+were made by extending the MBS functionality described in this document.
+As of CDT 8.0, MBS 4.0 is still used although with a number of improvements
+not necessarily reflected in this document.</p>
 <p style="margin-top: 0; margin-bottom: 0">Please refer to the
 <a href="../../cdt_build_system/whats_new/4.0/whats_new_CBS_40.html">&quot;What's new 
 in the CDT Build System 4.0&quot; document</a> for the list and description of 
@@ -3640,7 +3649,7 @@ list.</p>
   </tbody>
 </table>
 <p class="subsection">3.13.4 <span style="background-color: #FFFF00">Option 
-Enablement/Applicability</span></p>
+Applicability</span></p>
 <p>This section will be provided in a future version of the document.</p>
 <p class="subsection">3.13.5 Schema</p>
 <table
@@ -4311,13 +4320,95 @@ string containing the three version tokens </td>
   </tbody>
 </table>
 </a>
-<p class="subsection"><a name="_TocSectionGrammar_19">3.19 Dynamic Element Provider</a></p>
+<p class="subsection"><a name="_TocSectionGrammar_19">3.19 Option/Category Enablement</a></p>
+<p>Tool integrators may supply element <i>enablement</i> to make an element (such as option and option categories) conditionally available</p>
+<p>3.19.1 Schema</p>
+<table
+ style="border: medium none ; width: 670px; border-collapse: collapse;"
+ border="1" cellpadding="0" cellspacing="0" id="table5">
+  <tbody>
+    <tr>
+      <th
+ style="border-left:1.5pt double windowtext; border-right:1pt solid windowtext; border-top:1.5pt double windowtext; border-bottom:1.5pt double windowtext; width: 17%; vertical-align: top; text-align: left; padding-left:5.4pt; padding-right:5.4pt; padding-top:0in; padding-bottom:0in">
+      Attribute</th>
+      <th
+ style="border-top: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; width: 62%; vertical-align: top; text-align: left; border-left-style:none; border-left-width:medium; padding-left:5.4pt; padding-right:5.4pt; padding-top:0in; padding-bottom:0in">
+      Description</th>
+      <th
+ style="border-style: double double double none; border-width: 1.5pt 1.5pt 1.5pt medium; border-top: 1.5pt double windowtext; border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt; width: 15%; vertical-align: top;">
+      Required</th>
+    </tr>
+    <tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      type</td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
+	<p class="MsoNormal">represents the applicability type for this enablement.
+Can contain the following values:</p>
+<p>UI_VISIBILITY - the given enablement expression specifies whether the option is to be visible in UI</p>
+<p>UI_ENABLEMENT - the given enablement expression specifies the enable state of the controls that represent the option in UI</p>
+<p>CMD_USAGE - the given enablement expression specifies whether the option is to be used in command line</p>
+<p>CONTAINER_ATTRIBUTE - the given enablement expressions specifies the container attribute value</p>
+<p>ALL - the combination of all the above values</p>
+Several types could be specified simultaneously using the &quot;|&quot; as a delimiter, e.g.:
+type=&quot;UI_VISIBILITY|CMD_USAGE&quot;
+</td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
+      yes</td>
+    </tr>
+    <tr>
+      <td style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">attribute
+      </td>
+      <td style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <p class="MsoNormal">used with the CONTAINER_ATTRIBUTE enablement to specify the name of the attribute for which this enablement applies. Currently the following option attributes are supported:
+&quot;command&quot;
+&quot;commandFalse&quot;
+&quot;defaultValue&quot;
+&quot;value&quot;
+&quot;artifactExtension&quot;
+	  </td>
+	  <td style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">no</td>
+    </tr>
+    <tr>
+      <td style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">value
+      </td>
+      <td style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <p class="MsoNormal">used with the CONTAINER_ATTRIBUTE enablement to specify the value of the attribute specified in the attribute for which this enablement applies. 
+	  </td>
+	  <td style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">no</td>
+	  </td>
+    </tr>
+    <tr>
+      <td style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">extensionAdjustment
+      </td>
+      <td style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <p class="MsoNormal">used with the CONTAINER_ATTRIBUTE enablement.  true specifies the enablement is defined for adjusting extension elements. false specifies the enablement is defined for non-extension element adjustment. Default value is true.
+      
+	  </td>
+	  <td style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">no</td>
+	  </td>
+  </tbody>
+</table>
+
+<p class="subsection"><a name="_TocSectionGrammar_20">3.20 Dynamic Element Provider</a></p>
 <p>Tool integrators may supply this element to dynamically provide the definitions that are otherwise specified in the buildDefinitions extension point.&nbsp; 
 Each configuration element returned from this IManagedConfigElementProvider 
 interface is treated as if it were a direct sub-child of a buildDefinitions 
 extension. As such it should conform to buildDefinitions.exsd. The only 
 exception is it should not contain nested dynamicElementProvider elements.</p>
-<p class="subsection">3.19.1 Schema</p>
+<p class="subsection">3.20.1 Schema</p>
 <table
  style="border: medium none ; width: 670px; border-collapse: collapse;"
  border="1" cellpadding="0" cellspacing="0" id="table10">

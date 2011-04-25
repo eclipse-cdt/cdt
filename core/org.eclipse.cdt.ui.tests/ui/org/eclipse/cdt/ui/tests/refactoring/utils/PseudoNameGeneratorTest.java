@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.utils;
 
@@ -17,10 +17,8 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.PseudoNameGenerator;
 
 /**
  * @author Mirko Stocker
- *
  */
 public class PseudoNameGeneratorTest extends TestCase {
-
 	private static final String CHAR2 = "char2"; //$NON-NLS-1$
 	private static final String INT3 = "int3"; //$NON-NLS-1$
 	private static final String INT2 = "int2"; //$NON-NLS-1$

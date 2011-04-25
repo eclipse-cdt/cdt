@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM - Initial API and implementation
  *     Baltasar Belyavsky (Texas Instruments) - [279633] Custom option command-generator support
+ *     Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -49,6 +50,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.IOptionCategoryApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCommandGenerator;
 import org.eclipse.cdt.managedbuilder.core.IOptionPathConverter;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
@@ -2499,6 +2501,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 
 			// check to see if the option has an applicability calculator
 			IOptionApplicability applicabilityCalculator = option.getApplicabilityCalculator();
+			IOptionCategory cat = option.getCategory();
+			IOptionCategoryApplicability catApplicabilityCalculator = cat.getApplicabilityCalculator();
+			
 			IBuildObject config = null;
 			IBuildObject parent = getParent();
 			if ( parent instanceof IResourceConfiguration ) {
@@ -2507,7 +2512,8 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				config = ((IToolChain)parent).getParent();
 			}
 
-			if (applicabilityCalculator == null || applicabilityCalculator.isOptionUsedInCommandLine(config, this, option)) {
+			if ((catApplicabilityCalculator==null || catApplicabilityCalculator.isOptionCategoryVisible(config, this, cat))
+			 && (applicabilityCalculator == null || applicabilityCalculator.isOptionUsedInCommandLine(config, this, option))) {
 
 				// update option in case when its value changed.
 				// This code is added to fix bug #219684 and
@@ -4040,5 +4046,15 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 
 	public boolean isExtensionBuildObject() {
 		return isExtensionElement();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.managedbuilder.core.IOptionCategory#getApplicabilityCalculator()
+	 */
+	public IOptionCategoryApplicability getApplicabilityCalculator() {
+		// Tool does not have any ApplicabilityCalculator.
+		return null;
 	}
 }

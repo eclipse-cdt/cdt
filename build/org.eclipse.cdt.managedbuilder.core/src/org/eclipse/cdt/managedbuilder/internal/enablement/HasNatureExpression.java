@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,15 @@
  * 
  * Contributors: 
  *     QNX Software Systems - Initial API and implementation
- **********************************************************************/
+ * Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability)
+**********************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.enablement;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -37,6 +39,15 @@ public class HasNatureExpression implements IBooleanExpression {
 	
 	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder,
 			IOption option) {
+		return evaluate(rcInfo);
+	}
+
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder,
+			IOptionCategory category) {
+		return evaluate(rcInfo);
+	}
+	
+	private boolean evaluate(IResourceInfo rcInfo) {
 		// All null checks returns false to keep this expression
 		// from accidentally turning things on. Although
 		// a 'z' value would be better to avoid having any affect.
@@ -60,5 +71,4 @@ public class HasNatureExpression implements IBooleanExpression {
 		}
 		return false;
 	}
-
 }

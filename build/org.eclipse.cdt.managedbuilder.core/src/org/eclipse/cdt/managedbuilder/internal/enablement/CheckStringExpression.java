@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 Intel Corporation and others.
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.enablement;
 
@@ -16,6 +17,7 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
@@ -66,6 +68,39 @@ public class CheckStringExpression implements IBooleanExpression {
 					delimiter,
 					IBuildMacroProvider.CONTEXT_OPTION,
 					new OptionContextData(option,holder)
+					);
+			
+			if(fIsRegex){
+				Pattern pattern = Pattern.compile(resolvedValue);
+				Matcher matcher = pattern.matcher(resolvedString);
+				return matcher.matches();
+			}
+			return resolvedString.equals(resolvedValue);
+		} catch (BuildMacroException e) {
+		}
+		return false;
+	}
+	
+	public boolean evaluate(IResourceInfo rcInfo, 
+            IHoldsOptions holder, 
+            IOptionCategory category) {
+		
+		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
+		IEnvironmentVariableProvider env = ManagedBuildManager.getEnvironmentVariableProvider();
+		String delimiter = env.getDefaultDelimiter();
+		try {
+			String resolvedString = provider.resolveValue(fString,
+					" ",	//$NON-NLS-1$
+					delimiter,
+					IBuildMacroProvider.CONTEXT_OPTION,
+					new OptionContextData(category,holder)
+					);
+			
+			String resolvedValue =  provider.resolveValue(fValue,
+					" ",	//$NON-NLS-1$
+					delimiter,
+					IBuildMacroProvider.CONTEXT_OPTION,
+					new OptionContextData(category,holder)
 					);
 			
 			if(fIsRegex){

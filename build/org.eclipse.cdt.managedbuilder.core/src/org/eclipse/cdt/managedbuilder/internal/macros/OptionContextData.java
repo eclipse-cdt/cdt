@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability) 
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.macros;
 
@@ -16,22 +17,32 @@ import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
 
 /**
- * This is a trivial implementation of the IOptionContextData used internaly by the MBS
+ * This is a trivial implementation of the IOptionContextData used internally by the MBS
  * 
  * @since 3.0
  */
 public class OptionContextData implements IOptionContextData {
 	private IOption fOption;
+	private IOptionCategory fCategory;
 	private IBuildObject fParent;
 
 	public OptionContextData(IOption option, IBuildObject parent){
 		fOption = option;
+		fParent = parent;
+	}
+	
+	/*
+	 * @since 8.0
+	 */
+	public OptionContextData(IOptionCategory category, IBuildObject parent){
+		fCategory = category;
 		fParent = parent;
 	}
 	/* (non-Javadoc)
@@ -39,6 +50,13 @@ public class OptionContextData implements IOptionContextData {
 	 */
 	public IOption getOption() {
 		return fOption;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.macros.IOptionContextData#getOptionCategory()
+	 */
+	public IOptionCategory getOptionCategory() {
+		return fCategory;
 	}
 
 	/* (non-Javadoc)

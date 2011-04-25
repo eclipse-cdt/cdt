@@ -133,6 +133,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 
 			propertyObject = page.getElement();
 			setValues();
+			specificResize();
 		}
 
 		private void specificResize() {
@@ -433,7 +434,6 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 					optionList.setSelection(new StructuredSelection(selectedElement), true);
 				}
 			}
-			specificResize();
 		}
 
 		private ToolListElement matchSelectionElement(ToolListElement currentElement, ToolListElement[] elements) {
@@ -514,8 +514,11 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			}
 			// Reset the category or tool selection and run selection event handler
 			selectedElement = null;
-			handleOptionSelection();
 			setDirty(true);
+			
+			fInfo = getResCfg(getResDesc());
+			setValues();
+			handleOptionSelection();
 		}
 
 		/*
@@ -712,9 +715,10 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 
 	@Override
 	public void updateData(ICResourceDescription cfgd) {
-			fInfo = getResCfg(cfgd);
-			setValues();
-			handleOptionSelection();
+		fInfo = getResCfg(cfgd);
+		setValues();
+		specificResize();
+		handleOptionSelection();
 	}
 
 	@Override
@@ -737,6 +741,8 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			copyHoldsOptions(pair.getKey(), pair.getValue(), ri2);
 		}
 		setDirty(false);
+		
+		updateData(getResDesc());
 	}
 
 	/**

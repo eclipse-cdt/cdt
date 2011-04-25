@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
@@ -119,4 +120,10 @@ public interface IOptionCategory extends IBuildObject {
 	 * Sets the element's "dirty" (have I been modified?) flag.
 	 */
 	public void setDirty(boolean isDirty);
+	
+	/**
+	 * @return an instance of the class that calculates whether the option category is visible.
+	 * @since 8.0
+	 */
+	public IOptionCategoryApplicability getApplicabilityCalculator();
 }

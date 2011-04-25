@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability)
+
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -23,6 +25,8 @@ import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
+import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.IOptionCategoryApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
@@ -30,7 +34,7 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.internal.enablement.AdjustmentContext;
 import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpression;
 
-public class BooleanExpressionApplicabilityCalculator implements IOptionApplicability {
+public class BooleanExpressionApplicabilityCalculator implements IOptionApplicability, IOptionCategoryApplicability {
 	private OptionEnablementExpression fExpressions[];
 
 	private Map<String, Set<String>> fRefPropsMap;
@@ -230,5 +234,18 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 		Set<String> set = map.get(propertyId);
 		return set.toArray(new String[set.size()]);
 	}
+
+	public boolean isOptionCategoryVisible(IBuildObject configuration, IHoldsOptions optHolder,
+			IOptionCategory category) {
+		return evaluateCategory(rcInfoFromConfiguration(configuration), optHolder, category);
+	}
+	
+	private boolean evaluateCategory(IResourceInfo rcInfo, IHoldsOptions holder, IOptionCategory category) {
+		for(int i = 0; i < fExpressions.length; i++){
+			if(!fExpressions[i].evaluate(rcInfo, holder, category))
+				return false;
+		}
+		return true;
+}
 
 }

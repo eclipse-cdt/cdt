@@ -782,6 +782,9 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 				return EMPTY_STRING;
 			IncludeDefaultsSubstitutor sub = new IncludeDefaultsSubstitutor(parent);
 			IOption option = parent.getOption();
+			if (option==null)
+				return null;
+
 			String str = null;
 			String strL[] = null;
 			try{
@@ -831,6 +834,9 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 				return new String[]{EMPTY_STRING};
 			IncludeDefaultsSubstitutor sub = new IncludeDefaultsSubstitutor(parent);
 			IOption option = parent.getOption();
+			if (option==null)
+				return null;
+
 			String str = null;
 			String strL[] = null;
 			try{
@@ -894,83 +900,85 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			fType = 0;
 			if(parentOptionContextData != null){
 				IOption option = parentOptionContextData.getOption();
-				try{
-					switch (option.getValueType()) {
-					case IOption.BOOLEAN:
-						break;
-					case IOption.STRING:
-						fType = IBuildMacro.VALUE_TEXT;
-						fStringValue = option.getStringValue();
-						break;
-					case IOption.ENUMERATED:
-						break;
-					case IOption.STRING_LIST:
-						fType = IBuildMacro.VALUE_TEXT_LIST;
-						fStringListValue = option.getStringListValue();
-						break;
-					case IOption.INCLUDE_PATH:
-						fType = IBuildMacro.VALUE_PATH_DIR_LIST;
-						fStringListValue = option.getIncludePaths();
-						break;
-					case IOption.PREPROCESSOR_SYMBOLS:
-						fType = IBuildMacro.VALUE_TEXT_LIST;
-						fStringListValue = option.getDefinedSymbols();
-						break;
-					case IOption.LIBRARIES:
-						fType = IBuildMacro.VALUE_TEXT_LIST;
-						fStringListValue = option.getLibraries();
-						break;
-					case IOption.OBJECTS:
-						fType = IBuildMacro.VALUE_PATH_FILE_LIST;
-						fStringListValue = option.getUserObjects();
-						break;
-					case IOption.INCLUDE_FILES:
-						fType = IBuildMacro.VALUE_PATH_FILE_LIST;
-						fStringListValue = option.getBasicStringListValue();
-						break;
-					case IOption.LIBRARY_PATHS:
-						fType = IBuildMacro.VALUE_PATH_DIR_LIST;
-						fStringListValue = option.getBasicStringListValue();
-						break;
-					case IOption.LIBRARY_FILES:
-						fType = IBuildMacro.VALUE_PATH_FILE_LIST;
-						fStringListValue = option.getBasicStringListValue();
-						break;
-					case IOption.MACRO_FILES:
-						fType = IBuildMacro.VALUE_PATH_FILE_LIST;
-						fStringListValue = option.getBasicStringListValue();
-						break;
-					case IOption.UNDEF_INCLUDE_PATH:
-						fType = IBuildMacro.VALUE_PATH_DIR_LIST;
-						fStringListValue = option.getBasicStringListValue();
-						break;
-					case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
-						fType = IBuildMacro.VALUE_TEXT_LIST;
-						fStringListValue = option.getBasicStringListValue();
-						break;
-					case IOption.UNDEF_INCLUDE_FILES:
-						fType = IBuildMacro.VALUE_PATH_FILE_LIST;
-						fStringListValue = option.getBasicStringListValue();
-						break;
-					case IOption.UNDEF_LIBRARY_PATHS:
-						fType = IBuildMacro.VALUE_PATH_DIR_LIST;
-						fStringListValue = option.getBasicStringListValue();
-						break;
-					case IOption.UNDEF_LIBRARY_FILES:
-						fType = IBuildMacro.VALUE_PATH_FILE_LIST;
-						fStringListValue = option.getBasicStringListValue();
-						break;
-					case IOption.UNDEF_MACRO_FILES:
-						fType = IBuildMacro.VALUE_PATH_FILE_LIST;
-						fStringListValue = option.getBasicStringListValue();
-						break;
+				if (option!=null) {
+					try{
+						switch (option.getValueType()) {
+						case IOption.BOOLEAN:
+							break;
+						case IOption.STRING:
+							fType = IBuildMacro.VALUE_TEXT;
+							fStringValue = option.getStringValue();
+							break;
+						case IOption.ENUMERATED:
+							break;
+						case IOption.STRING_LIST:
+							fType = IBuildMacro.VALUE_TEXT_LIST;
+							fStringListValue = option.getStringListValue();
+							break;
+						case IOption.INCLUDE_PATH:
+							fType = IBuildMacro.VALUE_PATH_DIR_LIST;
+							fStringListValue = option.getIncludePaths();
+							break;
+						case IOption.PREPROCESSOR_SYMBOLS:
+							fType = IBuildMacro.VALUE_TEXT_LIST;
+							fStringListValue = option.getDefinedSymbols();
+							break;
+						case IOption.LIBRARIES:
+							fType = IBuildMacro.VALUE_TEXT_LIST;
+							fStringListValue = option.getLibraries();
+							break;
+						case IOption.OBJECTS:
+							fType = IBuildMacro.VALUE_PATH_FILE_LIST;
+							fStringListValue = option.getUserObjects();
+							break;
+						case IOption.INCLUDE_FILES:
+							fType = IBuildMacro.VALUE_PATH_FILE_LIST;
+							fStringListValue = option.getBasicStringListValue();
+							break;
+						case IOption.LIBRARY_PATHS:
+							fType = IBuildMacro.VALUE_PATH_DIR_LIST;
+							fStringListValue = option.getBasicStringListValue();
+							break;
+						case IOption.LIBRARY_FILES:
+							fType = IBuildMacro.VALUE_PATH_FILE_LIST;
+							fStringListValue = option.getBasicStringListValue();
+							break;
+						case IOption.MACRO_FILES:
+							fType = IBuildMacro.VALUE_PATH_FILE_LIST;
+							fStringListValue = option.getBasicStringListValue();
+							break;
+						case IOption.UNDEF_INCLUDE_PATH:
+							fType = IBuildMacro.VALUE_PATH_DIR_LIST;
+							fStringListValue = option.getBasicStringListValue();
+							break;
+						case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+							fType = IBuildMacro.VALUE_TEXT_LIST;
+							fStringListValue = option.getBasicStringListValue();
+							break;
+						case IOption.UNDEF_INCLUDE_FILES:
+							fType = IBuildMacro.VALUE_PATH_FILE_LIST;
+							fStringListValue = option.getBasicStringListValue();
+							break;
+						case IOption.UNDEF_LIBRARY_PATHS:
+							fType = IBuildMacro.VALUE_PATH_DIR_LIST;
+							fStringListValue = option.getBasicStringListValue();
+							break;
+						case IOption.UNDEF_LIBRARY_FILES:
+							fType = IBuildMacro.VALUE_PATH_FILE_LIST;
+							fStringListValue = option.getBasicStringListValue();
+							break;
+						case IOption.UNDEF_MACRO_FILES:
+							fType = IBuildMacro.VALUE_PATH_FILE_LIST;
+							fStringListValue = option.getBasicStringListValue();
+							break;
+						}
+						if(fStringValue != null)
+							fStringValue = CdtVariableResolver.resolveToString(fStringValue,new IncludeDefaultsSubstitutor(parentOptionContextData));
+						else if(fStringListValue != null)
+							fStringListValue = CdtVariableResolver.resolveStringListValues(fStringListValue,new IncludeDefaultsSubstitutor(parentOptionContextData), true);
+					}catch(Exception e){
+						fType = 0;
 					}
-					if(fStringValue != null)
-						fStringValue = CdtVariableResolver.resolveToString(fStringValue,new IncludeDefaultsSubstitutor(parentOptionContextData));
-					else if(fStringListValue != null)
-						fStringListValue = CdtVariableResolver.resolveStringListValues(fStringListValue,new IncludeDefaultsSubstitutor(parentOptionContextData), true);
-				}catch(Exception e){
-					fType = 0;
 				}
 			}
 			

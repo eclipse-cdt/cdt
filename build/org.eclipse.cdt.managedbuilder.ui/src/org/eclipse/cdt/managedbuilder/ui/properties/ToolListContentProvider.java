@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Timesys - Initial API and implementation 
  * IBM Rational Software
+ * Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
@@ -18,6 +19,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.IOptionCategoryApplicability;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
@@ -66,7 +68,7 @@ public class ToolListContentProvider implements ITreeContentProvider{
 			for (int i=0; i<filteredTools.length; i++) {
 				ToolListElement e = new ToolListElement(filteredTools[i]);
 				elementList.add(e);
-				createChildElements(e);
+				createChildElements(e,config);
 			}
 		}
 		return elementList.toArray(new ToolListElement[elementList.size()]);		
@@ -93,11 +95,15 @@ public class ToolListContentProvider implements ITreeContentProvider{
 		}
 		return elementList.toArray(new ToolListElement[elementList.size()]);		
 	}
-
 	private void createChildElements(ToolListElement parentElement) {
+		createChildElements(parentElement,null);
+	}
+
+	private void createChildElements(ToolListElement parentElement, IConfiguration config) {
 
 		IOptionCategory parent = parentElement.getOptionCategory();
 		IHoldsOptions optHolder = parentElement.getHoldOptions();
+		IOptionCategoryApplicability applicabilityCalculator = null;
 		if (parent == null) {
 			parent = parentElement.getTool().getTopOptionCategory();	//  Must be an ITool
 			optHolder = parentElement.getTool();
@@ -106,8 +112,11 @@ public class ToolListContentProvider implements ITreeContentProvider{
 		//  Create an element for each one
 		for (int i=0; i<cats.length; i++) {
 			ToolListElement e = new ToolListElement(parentElement, optHolder, cats[i]);
-			parentElement.addChildElement(e);
-			createChildElements(e);
+			applicabilityCalculator = e.getOptionCategory().getApplicabilityCalculator();
+			if (applicabilityCalculator == null || applicabilityCalculator.isOptionCategoryVisible(config, optHolder, parent)) {
+				parentElement.addChildElement(e);
+				createChildElements(e,config);
+			}
 		}
 	}
 	

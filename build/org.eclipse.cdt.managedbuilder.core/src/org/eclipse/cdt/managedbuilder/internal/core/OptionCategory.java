@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -23,11 +24,16 @@ import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.IOptionCategoryApplicability;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpression;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Version;
 
@@ -46,6 +52,13 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	private IOptionCategory owner;	// The logical Option Category parent
 	private String ownerId;
 	private URL    iconPathURL;
+	
+	private IConfigurationElement applicabilityCalculatorElement = null;
+	private IOptionCategoryApplicability applicabilityCalculator = null;
+	private BooleanExpressionApplicabilityCalculator booleanExpressionCalculator = null;
+
+	public static final String APPLICABILITY_CALCULATOR = "applicabilityCalculator"; //$NON-NLS-1$
+	
 	//  Miscellaneous
 	private boolean isExtensionOptionCategory = false;
 	private boolean isDirty = false;
@@ -63,7 +76,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	 * This constructor is called to create an option category defined by an extension point in 
 	 * a plugin manifest file, or returned by a dynamic element provider
 	 * 
-	 * @param parent  The IHoldsOptions parent of this catgeory, or <code>null</code> if
+	 * @param parent  The IHoldsOptions parent of this category, or <code>null</code> if
 	 *                defined at the top level
 	 * @param element The category definition from the manifest file or a dynamic element
 	 *                provider
@@ -123,6 +136,19 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		{
 		    String icon = element.getAttribute(IOptionCategory.ICON);
 			iconPathURL = ManagedBuildManager.getURLInBuildDefinitions( (DefaultManagedConfigElement)element, new Path(icon) );
+		}
+		
+		//get enablements
+		IManagedConfigElement enablements[] = element.getChildren(OptionEnablementExpression.NAME);
+		if(enablements.length > 0)
+			booleanExpressionCalculator = new BooleanExpressionApplicabilityCalculator(enablements);
+
+		// get the applicability calculator, if any
+		String applicabilityCalculatorStr = element.getAttribute(APPLICABILITY_CALCULATOR); 
+		if (applicabilityCalculatorStr != null && element instanceof DefaultManagedConfigElement) {
+			applicabilityCalculatorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+		} else {
+			applicabilityCalculator = booleanExpressionCalculator;
 		}
 	}
 	
@@ -535,5 +561,25 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 			}
 		}
 		return primary;
-	}	
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.managedbuilder.core.IOptionCategory#getApplicabilityCalculator()
+	 */
+	public IOptionCategoryApplicability getApplicabilityCalculator() {
+		if (applicabilityCalculator == null) {
+			if (applicabilityCalculatorElement != null) {
+				try {
+					if (applicabilityCalculatorElement.getAttribute(APPLICABILITY_CALCULATOR) != null)
+						applicabilityCalculator = (IOptionCategoryApplicability) applicabilityCalculatorElement
+							.createExecutableExtension(APPLICABILITY_CALCULATOR);
+				} catch (CoreException e) {
+					ManagedBuilderCorePlugin.log(e);
+				}
+			}
+		} 
+		return applicabilityCalculator;
+	}
 }

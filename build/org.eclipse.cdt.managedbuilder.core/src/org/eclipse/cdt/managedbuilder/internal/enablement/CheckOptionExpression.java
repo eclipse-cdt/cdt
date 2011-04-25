@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.enablement;
 
@@ -22,6 +23,7 @@ import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
@@ -79,7 +81,21 @@ public class CheckOptionExpression implements IBooleanExpression {
 							(IOption)otherHo[1],((IHoldsOptions)otherHo[0]));
 			}
 		}
+		return result;
+	}
+	
+	public boolean evaluate(IResourceInfo rcInfo, 
+            IHoldsOptions holder, 
+            IOptionCategory category) {
+		boolean result = false;
+		IBuildObject ho[] = getHolderAndOption(fOptionId, fHolderId,
+				rcInfo, holder);
 		
+		if(ho != null){
+			if(fValue != null)
+				result = evaluate((IOption)ho[1],((IHoldsOptions)ho[0]),fValue);
+			// otherOptionId shouldn't be set when enabling optionCategory 
+		}	
 		return result;
 	}
 	
@@ -244,6 +260,29 @@ public class CheckOptionExpression implements IBooleanExpression {
 			else
 				hld = getHolder(holderId,rcInfo);
 			
+			if(hld != null) {
+				IOption opt = getOption(optionId,hld);
+				if(opt != null)
+					result = new IBuildObject[]{hld,opt};
+			}
+		}
+		return result;
+	}
+	
+	/* This is called for optionCategory */
+	protected IBuildObject[] getHolderAndOption(String optionId,
+			String holderId,
+			IResourceInfo rcInfo, 
+			IHoldsOptions holder
+	){
+		IBuildObject result[] = null;
+		if(optionId != null) {
+			IHoldsOptions hld = null;
+			if(holderId == null)
+				hld = holder;
+			else
+				hld = getHolder(holderId,rcInfo);
+
 			if(hld != null) {
 				IOption opt = getOption(optionId,hld);
 				if(opt != null)

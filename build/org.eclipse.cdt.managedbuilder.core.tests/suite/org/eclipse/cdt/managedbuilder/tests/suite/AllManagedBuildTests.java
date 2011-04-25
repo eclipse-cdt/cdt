@@ -34,6 +34,7 @@ import org.eclipse.cdt.managedbuilder.core.tests.ManagedProject21MakefileTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedProject30MakefileTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedProjectUpdateTests;
 import org.eclipse.cdt.managedbuilder.core.tests.MultiVersionSupportTests;
+import org.eclipse.cdt.managedbuilder.core.tests.OptionCategoryEnablementTests;
 import org.eclipse.cdt.managedbuilder.core.tests.OptionEnablementTests;
 import org.eclipse.cdt.managedbuilder.core.tests.PathConverterTest;
 import org.eclipse.cdt.managedbuilder.core.tests.ResourceBuildCoreTests;
@@ -74,6 +75,7 @@ public class AllManagedBuildTests {
 		suite.addTest(ManagedBuildTCSupportedTest.suite());
 		suite.addTest(MultiVersionSupportTests.suite());
 		suite.addTest(OptionEnablementTests.suite());
+		suite.addTest(OptionCategoryEnablementTests.suite());
 		suite.addTest(ManagedBuildDependencyCalculatorTests.suite());
 		suite.addTest(BuildDescriptionModelTests.suite());
 		suite.addTest(PathConverterTest.suite());

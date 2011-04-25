@@ -189,7 +189,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	 */
 	@Override
 	protected void createFieldEditors() {
-		// true if he user selected "Display tool option tips at a fixed location" in Preferences AND  
+		// true if the user selected "Display tool option tips at a fixed location" in Preferences AND  
 		// and we are displaying the tool tip box on this page because one or more option has non-empty tool tip.
 		boolean pageHasToolTipBox = isToolTipBoxNeeded();
 		

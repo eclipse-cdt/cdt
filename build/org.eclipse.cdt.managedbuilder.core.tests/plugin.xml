@@ -5114,7 +5114,20 @@
                   <tool
                       id="enablement.this.child_1.2.3"
                       superClass="enablement.this">
-			  	      <option
+					  <optionCategory
+						  id="enablement.category"
+						  name="enablement category"
+						  owner="enablement.this.child_1.2.3">
+						  <enablement type="ALL">
+							  <checkOption
+								  optionId="enablement.trigger"
+								  value="true">
+							  </checkOption>
+						  </enablement>
+					  </optionCategory>
+					  <option
+						  owner="enablement.this.child_1.2.3"
+						  category="enablement.category"
         		          id="enablement.macro.test.string"
         		          defaultValue="000"
                 		  superClass="gnu.c.compiler.option30.optimization.flags"
@@ -5130,6 +5143,12 @@
             			   <listOptionValue value="y"/>
 			               <listOptionValue value="z"/>
             		  </option>
+					  <option
+							  owner="enablement.this.child_1.2.3"
+							  name="trigger"
+							  valueType="boolean"
+							  id="enablement.trigger">
+					  </option>
 	                  <envVarBuildPath
         	                  pathType="buildpathInclude"
                 	          variableList="CFGI,CFG0,PRJI">

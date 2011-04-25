@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 Intel Corporation and others.
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability) 
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.macros;
 
@@ -209,6 +210,7 @@ public class BuildMacroProvider implements IBuildMacroProvider, IMacroContextInf
 			String listDelimiter, int contextType, Object contextData)
 			throws BuildMacroException {
 		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
+		
 		if(info != null){
 			try {
 				return CdtVariableResolver.resolveToString(value,

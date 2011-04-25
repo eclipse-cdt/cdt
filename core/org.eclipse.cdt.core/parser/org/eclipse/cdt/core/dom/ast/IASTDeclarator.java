@@ -68,8 +68,8 @@ public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 	public void addPointerOperator(IASTPointerOperator operator);
 
 	/**
-	 * If the declarator is nested in parenthesis, this returns the declarator
-	 * as found in those parenethesis.
+	 * If the declarator is nested in parentheses, this returns the declarator
+	 * as found in those parentheses.
 	 * 
 	 * @return the nested declarator or null
 	 */
@@ -117,5 +117,4 @@ public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 	 * @since 5.3
 	 */
 	public IASTDeclarator copy(CopyStyle style);
-
 }

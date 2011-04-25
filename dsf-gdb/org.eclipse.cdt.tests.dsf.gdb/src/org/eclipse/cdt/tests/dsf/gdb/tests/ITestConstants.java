@@ -18,4 +18,5 @@ public interface ITestConstants {
 	public static final String SUFFIX_GDB_7_0 = "7.0";
 	public static final String SUFFIX_GDB_7_1 = "7.1";
 	public static final String SUFFIX_GDB_7_2 = "7.2";
+	public static final String SUFFIX_GDB_7_3 = "7.3";
 }

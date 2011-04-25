@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,19 +8,20 @@
  * Contributors:
  *     Ericsson	AB		  - Initial implementation of Test cases
  *******************************************************************************/
-package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_2;
+package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_3;
 
 
+import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_1.MIRunControlTest_7_1;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class MIRunControlTest_7_2 extends MIRunControlTest_7_1 {
+public class MIRunControlNonStopTargetAvailableTest_7_3 extends MIRunControlTargetAvailableTest_7_3 {
 	@BeforeClass
-	public static void beforeClassMethod_7_2() {
-		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_2);		
+    public static void beforeClassMethod_7_3() {
+		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_3);
+    	setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP, true);
 	}
 }

@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
@@ -31,7 +31,6 @@ import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterAndSetter
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterInsertEditProvider.Type;
 
 public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
-
 	private GetterAndSetterContext context;
 	private ContainerCheckedTreeViewer variableSelectionView;
 	private GetterSetterLabelProvider labelProvider;
@@ -42,7 +41,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
 	}
 
 	public void createControl(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE );
+		Composite comp = new Composite(parent, SWT.NONE);
 		
 		setTitle(Messages.GettersAndSetters_Name);
 		setMessage(Messages.GenerateGettersAndSettersInputPage_header);
@@ -63,12 +62,10 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
 		placeImplemetation.setLayoutData(gd);
 		placeImplemetation.setSelection(context.isImplementationInHeader());
 		placeImplemetation.addSelectionListener(new SelectionAdapter() {
-
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				context.setImplementationInHeader(placeImplemetation.getSelection());
 			}
-			
 		});
 
 		setControl(comp);
@@ -96,7 +93,6 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
 							checkedFunctions.add(editProvider);
 						}
 					}
-					
 				}
 			}
 		});

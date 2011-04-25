@@ -30,7 +30,7 @@ import org.eclipse.cdt.ui.tests.refactoring.RefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.TestSourceFile;
 
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GenerateGettersAndSettersRefactoring;
-import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterAndSetterContext;
+import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterContext;
 
 /**
  * @author Thomas Corbat
@@ -86,7 +86,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTest {
 	}
 
 	private void selectFields() {
-		GetterAndSetterContext context = refactoring.getContext();
+		GetterSetterContext context = refactoring.getContext();
 	
 		for (IASTSimpleDeclaration currentDecl : context.existingFields) {
 			String name = currentDecl.getDeclarators()[0].getName().getRawSignature();

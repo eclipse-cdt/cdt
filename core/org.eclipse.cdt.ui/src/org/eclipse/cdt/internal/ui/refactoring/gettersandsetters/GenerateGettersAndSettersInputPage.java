@@ -27,15 +27,15 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 
-import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterAndSetterContext.FieldWrapper;
+import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterContext.FieldWrapper;
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterInsertEditProvider.AccessorKind;
 
 public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
-	private GetterAndSetterContext context;
+	private GetterSetterContext context;
 	private ContainerCheckedTreeViewer variableSelectionView;
 	private GetterSetterLabelProvider labelProvider;
 
-	public GenerateGettersAndSettersInputPage(GetterAndSetterContext context) {
+	public GenerateGettersAndSettersInputPage(GetterSetterContext context) {
 		super(Messages.GettersAndSetters_Name); 
 		this.context = context;
 	}

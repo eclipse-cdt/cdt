@@ -116,9 +116,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     protected static final int METHOD_STUBS_ID = 16;
     protected static final int HEADER_FILE_ID = 32;
     protected static final int SOURCE_FILE_ID = 64;
+//    protected static final int TEST_FILE_ID = 128; XXX
     protected static final int ALL_FIELDS = SOURCE_FOLDER_ID | NAMESPACE_ID
             | CLASS_NAME_ID | BASE_CLASSES_ID | METHOD_STUBS_ID
-            | HEADER_FILE_ID | SOURCE_FILE_ID;
+            | HEADER_FILE_ID | SOURCE_FILE_ID/* | TEST_FILE_ID*/;
 	protected int fLastFocusedField = 0;
 
     protected StringButtonDialogField fSourceFolderDialogField;
@@ -130,6 +131,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     protected SelectionButtonDialogField fUseDefaultSelection;
     protected StringButtonDialogField fHeaderFileDialogField;
     protected StringButtonDialogField fSourceFileDialogField;
+//    protected StringButtonDialogField fTestFileDialogField; XXX
 
 	protected IStatus fSourceFolderStatus;
 	protected IStatus fNamespaceStatus;

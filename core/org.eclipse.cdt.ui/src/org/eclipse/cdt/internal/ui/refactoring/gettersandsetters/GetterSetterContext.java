@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterInsertEditProvider.AccessorKind;
 
-public class GetterAndSetterContext implements ITreeContentProvider {
+public class GetterSetterContext implements ITreeContentProvider {
 	public ArrayList<IASTSimpleDeclaration> existingFields = new ArrayList<IASTSimpleDeclaration>();
 	public ArrayList<IASTFunctionDefinition> existingFunctionDefinitions = new ArrayList<IASTFunctionDefinition>();
 	public ArrayList<IASTSimpleDeclaration> existingFunctionDeclarations = new ArrayList<IASTSimpleDeclaration>();

@@ -89,13 +89,13 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 	}
 
 	private static final String MEMBER_DECLARATION = "MEMBER_DECLARATION"; //$NON-NLS-1$
-	private final GetterAndSetterContext context;
+	private final GetterSetterContext context;
 	private InsertLocation definitionInsertLocation;	
 	
 	public GenerateGettersAndSettersRefactoring(ICElement element, ISelection selection,
 			ICProject project, RefactoringASTCache astCache) {
 		super(element, selection, project, astCache);
-		context = new GetterAndSetterContext();
+		context = new GetterSetterContext();
 	}
 	
 	@Override
@@ -261,7 +261,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 		rewrite = rewrite.insertBefore(parent, nodeToInsertBefore, cont, null);
 	}
 
-	public GetterAndSetterContext getContext() {
+	public GetterSetterContext getContext() {
 		return context;
 	}
 	

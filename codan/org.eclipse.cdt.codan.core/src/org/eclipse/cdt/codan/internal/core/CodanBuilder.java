@@ -129,6 +129,7 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 		// System.err.println("processing " + resource);
 		monitor.beginTask(Messages.CodanBuilder_Code_Analysis_On + resource, checkers + memsize * tick);
 		try {
+			CheckersTimeStats.getInstance().checkerStart(CheckersTimeStats.ALL);
 			ICheckerInvocationContext context = new CheckerInvocationContext(resource);
 			try {
 				for (IChecker checker : chegistry) {
@@ -142,15 +143,16 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 								try {
 									checker.before(resource);
 									if (chegistry.isCheckerEnabled(checker, resource)) {
-										//long time = System.currentTimeMillis();
-										if (checkerLaunchMode == CheckerLaunchMode.RUN_AS_YOU_TYPE) {
-											((IRunnableInEditorChecker) checker).processModel(model, context);
-										} else {
-											checker.processResource(resource, context);
+										try {
+											CheckersTimeStats.getInstance().checkerStart(checker.getClass().getName());
+											if (checkerLaunchMode == CheckerLaunchMode.RUN_AS_YOU_TYPE) {
+												((IRunnableInEditorChecker) checker).processModel(model, context);
+											} else {
+												checker.processResource(resource, context);
+											}
+										} finally {
+											CheckersTimeStats.getInstance().checkerStop(checker.getClass().getName());
 										}
-										//	System.err.println("Checker "
-										//	+ checker.getClass() + " worked "
-										//	+ (System.currentTimeMillis() - time));
 									}
 								} finally {
 									checker.after(resource);
@@ -166,6 +168,8 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 				}
 			} finally {
 				context.dispose();
+				CheckersTimeStats.getInstance().checkerStop(CheckersTimeStats.ALL);
+				//CheckersTimeStats.getInstance().printStats();
 			}
 			if (resource instanceof IContainer
 					&& (checkerLaunchMode == CheckerLaunchMode.RUN_ON_FULL_BUILD || checkerLaunchMode == CheckerLaunchMode.RUN_ON_DEMAND)) {

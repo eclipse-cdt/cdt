@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2010, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.commands;
 
+import java.util.Hashtable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.gdb.internal.commands.ISelectPrevTraceRecordHandler;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
+import org.eclipse.cdt.dsf.gdb.service.GDBTraceControl_7_2.TraceRecordSelectedChangedEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceStatusDMData;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
@@ -38,13 +42,16 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
  * 
  * @since 2.1
  */
+@SuppressWarnings("restriction")
 public class GdbSelectPrevTraceRecordCommand extends AbstractDebugCommand implements ISelectPrevTraceRecordHandler {
 	private final DsfExecutor fExecutor;
 	private final DsfServicesTracker fTracker;
+	private final DsfSession fSession;
 
 	public GdbSelectPrevTraceRecordCommand(DsfSession session) {
 		fExecutor = session.getExecutor();
 		fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
+		fSession = session;
 	}    
 
 	public void dispose() {
@@ -73,8 +80,14 @@ public class GdbSelectPrevTraceRecordCommand extends AbstractDebugCommand implem
        						new DataRequestMonitor<ITraceRecordDMContext>(fExecutor, rm) {
        							@Override
        							protected void handleSuccess() {
-       								ITraceRecordDMContext prevDmc = traceControl.createPrevRecordContext(getData());
-   				       				traceControl.selectTraceRecord(prevDmc, rm);
+       							 final ITraceRecordDMContext prevDmc = traceControl.createPrevRecordContext(getData());
+       							 traceControl.selectTraceRecord(prevDmc, new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+       							     @Override
+       							     protected void handleSuccess() {
+       							         fSession.dispatchEvent(new TraceRecordSelectedChangedEvent(prevDmc), new Hashtable<String, String>());
+       							         rm.done();
+       							     }
+       							 });
        							};
        						});
        			} else {

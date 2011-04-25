@@ -684,8 +684,15 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     							// Workaround for GDB pre-release where we don't get the details
     							// of the frame when we load a trace file.
     							// To get around this, we can force a select of record 0
-    							ITraceRecordDMContext initialRecord = createTraceRecordContext(context, "0"); //$NON-NLS-1$
-    							selectTraceRecord(initialRecord, rm);
+    							final ITraceRecordDMContext initialRecord = createTraceRecordContext(context, "0"); //$NON-NLS-1$
+    							selectTraceRecord(initialRecord, new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+    							    @Override
+    							    protected void handleSuccess() {
+    							        // This event will indicate to the other services that we are visualizing trace data.
+    							        getSession().dispatchEvent(new TraceRecordSelectedChangedEvent(initialRecord), getProperties());
+    							        rm.done();
+    							    }
+    							});
     						}
     					});
     		}
@@ -910,9 +917,6 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 
     						fCurrentRecordDmc = context;
     						fTracepointIndexForTraceRecord = getData().getTraceRecord().getTracepointId();
-
-    						// This event will indicate to the other services that we are visualizing trace data.
-    						getSession().dispatchEvent(new TraceRecordSelectedChangedEvent(context), getProperties());
 
     						// We could rely on the TraceRecordSelectedChangedEvent to update all the views, but this
     						// would require a lot of changes.

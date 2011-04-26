@@ -150,6 +150,9 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		}
 	}
 
+	public CaseBreakChecker() {
+	}
+
 	/**
 	 * @param comment
 	 * @return
@@ -178,12 +181,6 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 	 */
 	public IASTComment getFreestandingComment(IASTStatement statement) {
 		return getCommentMap().getLastFreestandingCommentForNode(statement);
-	}
-
-	/************************************************
-	 * "CaseBreakChecker" functions...
-	 ************************************************/
-	public CaseBreakChecker() {
 	}
 
 	public void initPreferences(IProblemWorkingCopy problem) {

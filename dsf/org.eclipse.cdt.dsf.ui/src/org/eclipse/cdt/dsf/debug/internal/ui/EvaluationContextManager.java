@@ -15,7 +15,6 @@ package org.eclipse.cdt.dsf.debug.internal.ui;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelection;
@@ -42,8 +41,13 @@ import org.eclipse.ui.PlatformUI;
  */
 public class EvaluationContextManager implements IWindowListener, IPageListener, ISelectionListener, IPartListener2 {
 
+    // Avoid referencing the cdt.debug.ui plugin for this constnat so that the 
+    // cdt.debug.ui is not automatically activated
+    // Bug 343867.
+    private static final String CDT_DEBUG_UI_PLUGIN_ID = "org.eclipse.cdt.debug.ui"; //$NON-NLS-1$
+    
 	// Must use the same ID than the base CDT uses since we want to enable actions that are registered by base CDT. 
-	private final static String DEBUGGER_ACTIVE = CDebugUIPlugin.getUniqueIdentifier() + ".debuggerActive"; //$NON-NLS-1$
+	private final static String DEBUGGER_ACTIVE = CDT_DEBUG_UI_PLUGIN_ID + ".debuggerActive"; //$NON-NLS-1$
 
 	protected static EvaluationContextManager fgManager;
 

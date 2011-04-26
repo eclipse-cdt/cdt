@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 /**
  * @version 	1.0
- * @author
  */
 public class WizardCheckboxTablePart extends CheckboxTablePart {
 	public static final String KEY_SELECT_ALL = MakeUIPlugin.getResourceString("WizardCheckboxTablePart.WizardCheckboxTablePart.selectAll"); //$NON-NLS-1$
@@ -37,7 +36,6 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 
 	/**
 	 * Constructor for WizardCheckboxTablePart.
-	 * @param buttonLabels
 	 */
 	public WizardCheckboxTablePart(String tableName, String[] buttonLabels) {
 		super(buttonLabels);
@@ -120,7 +118,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 	protected void updateCounterLabel() {
 		String number = EMPTY_STRING + getSelectionCount();
 		String totalNumber = EMPTY_STRING + getTotalCount();
-		String message = MessageFormat.format(MakeUIPlugin.getResourceString(KEY_COUNTER), new String[] { number, totalNumber });
+		String message = MessageFormat.format(MakeUIPlugin.getResourceString(KEY_COUNTER), new Object[] { number, totalNumber });
 		counterLabel.setText(message);
 	}
 

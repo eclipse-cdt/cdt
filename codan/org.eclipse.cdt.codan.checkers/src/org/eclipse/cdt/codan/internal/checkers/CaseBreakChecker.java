@@ -42,7 +42,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 
 	/**
 	 * This visitor looks for "switch" statements and invokes "SwitchVisitor" on
-	 * them
+	 * them.
 	 */
 	class SwitchFindingVisitor extends ASTVisitor {
 		SwitchFindingVisitor() {
@@ -91,10 +91,10 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 						// next is case or end of switch - means this one is the last
 						if (prevCase != null && (isCaseStatement(next) || next == null)) {
 							// check that current statement end with break or any other exit statement
-							if (_checkEmptyCase == false && isCaseStatement(curr) && next != null) {
+							if (!_checkEmptyCase && isCaseStatement(curr) && next != null) {
 								continue; // empty case & we don't care
 							}
-							if (_checkLastCase == false && next == null) {
+							if (!_checkLastCase && next == null) {
 								continue; // last case and we don't care
 							}
 							if (isFallThroughStamement(curr)) {
@@ -103,7 +103,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 									comment = getLeadingComment(next);
 								} else {
 									comment = getFreestandingComment(statement);
-									if (comment==null)
+									if (comment == null)
 										comment = getFreestandingComment(body);
 								}
 								if (comment != null) {
@@ -134,7 +134,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		 * @return
 		 */
 		public boolean isFallThroughStamement(IASTStatement body) {
-			if (body==null) return true;
+			if (body == null) return true;
 			if (body instanceof IASTCompoundStatement) {
 				IASTStatement[] statements = ((IASTCompoundStatement) body).getStatements();
 				return isFallThroughStamement(statements[statements.length - 1]);

@@ -69,7 +69,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.URIUtil;
 
 /**
  * This is the incremental builder associated with a managed build project. It dynamically 
@@ -287,7 +286,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	private static final String ERROR_HEADER = "GeneratedmakefileBuilder error [";	//$NON-NLS-1$
 	private static final String MAKE = "ManagedMakeBuilder.message.make";	//$NON-NLS-1$
 	private static final String MARKERS = "ManagedMakeBuilder.message.creating.markers";	//$NON-NLS-1$
-	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
+	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String NOTHING_BUILT = "ManagedMakeBuilder.message.no.build";	//$NON-NLS-1$
 	private static final String REFRESH = "ManagedMakeBuilder.message.updating";	//$NON-NLS-1$
 	private static final String REFRESH_ERROR = BUILD_ERROR + ".refresh";	//$NON-NLS-1$
@@ -364,12 +363,10 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			}			
 			consoleHeader[1] = configName;
 			consoleHeader[2] = getProject().getName();
-			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-			buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
-			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-			buf.append(status.getMessage());
-			buf.append(System.getProperty("line.separator", "\n"));  //$NON-NLS-1$//$NON-NLS-2$
+			buf.append(NEWLINE);
+			buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader)).append(NEWLINE);
+			buf.append(NEWLINE);
+			buf.append(status.getMessage()).append(NEWLINE);
 			consoleOutStream.write(buf.toString().getBytes());
 			consoleOutStream.flush();
 			consoleOutStream.close();
@@ -615,16 +612,14 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_CLEAN);
 			consoleHeader[1] = info.getConfigurationName();
 			consoleHeader[2] = getProject().getName();
-			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-			buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
-			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+			buf.append(NEWLINE);
+			buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader)).append(NEWLINE);
 			consoleOutStream.write(buf.toString().getBytes());
 			consoleOutStream.flush();
 			buf = new StringBuffer();
 			// Report a successful clean
 			String successMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());
-			buf.append(successMsg);
-			buf.append(System.getProperty("line.separator", "\n"));  //$NON-NLS-1$//$NON-NLS-2$
+			buf.append(successMsg).append(NEWLINE);
 			consoleOutStream.write(buf.toString().getBytes());
 			consoleOutStream.flush();
 			consoleOutStream.close();
@@ -932,16 +927,15 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						
 				consoleHeader[1] = info.getConfigurationName();
 				consoleHeader[2] = currentProject.getName();
-				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-				buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
-				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+				buf.append(NEWLINE);
+				buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader)).append(NEWLINE);
+				buf.append(NEWLINE);
 				
 				IConfiguration cfg = info.getDefaultConfiguration();
 				if(!cfg.isSupported()){
-					buf.append(ManagedMakeMessages.getFormattedString(WARNING_UNSUPPORTED_CONFIGURATION,new String[] {cfg.getName(),cfg.getToolChain().getName()}));
-					buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-					buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+					String msg = ManagedMakeMessages.getFormattedString(WARNING_UNSUPPORTED_CONFIGURATION,new String[] {cfg.getName(),cfg.getToolChain().getName()});
+					buf.append(msg).append(NEWLINE);
+					buf.append(NEWLINE);
 				}
 				consoleOutStream.write(buf.toString().getBytes());
 				consoleOutStream.flush();
@@ -1043,12 +1037,10 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 								// If the status value returned from "make -q" is 0, then the build state is up-to-date
 								isuptodate = true;
 								// Report that the build was up to date, and thus nothing needs to be built
-								String uptodateMsg = ManagedMakeMessages
-										.getFormattedString(NOTHING_BUILT, currentProject.getName());
+								String uptodateMsg = ManagedMakeMessages.getFormattedString(NOTHING_BUILT, currentProject.getName());
 								buf = new StringBuffer();
-								buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-								buf.append(uptodateMsg);
-								buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+								buf.append(NEWLINE);
+								buf.append(uptodateMsg).append(NEWLINE);
 								// Write message on the console 
 								consoleOutStream.write(buf.toString().getBytes());
 								consoleOutStream.flush();
@@ -1125,18 +1117,14 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					// Report either the success or failure of our mission 
 					buf = new StringBuffer();
 					if (errMsg != null && errMsg.length() > 0) {
-						String errorDesc = ManagedMakeMessages
-								.getResourceString(BUILD_ERROR);
-						buf.append(errorDesc);
-						buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+						String errorDesc = ManagedMakeMessages.getResourceString(BUILD_ERROR);
+						buf.append(errorDesc).append(NEWLINE);
 						buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$ 
 					} else {
 						// Report a successful build 
-						String successMsg = ManagedMakeMessages
-								.getFormattedString(BUILD_FINISHED,
-										currentProject.getName());
-						buf.append(successMsg);
-						buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+						String successMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED,
+								currentProject.getName());
+						buf.append(successMsg).append(NEWLINE);
 					}
 
 					// Write message on the console 
@@ -1145,8 +1133,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					epmOutputStream.close();
 
 					// Generate any error markers that the build has discovered 
-					monitor.subTask(ManagedMakeMessages
-							.getResourceString(MARKERS));
+					monitor.subTask(ManagedMakeMessages.getResourceString(MARKERS));
 					addBuilderMarkers(epm);
 					consoleOutStream.close();
 				}
@@ -1245,18 +1232,17 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						
 			consoleHeader[1] = cfg.getName();
 			consoleHeader[2] = currentProject.getName();
-			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-			buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
-			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+			buf.append(NEWLINE);
+			buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader)).append(NEWLINE);
+			buf.append(NEWLINE);
 			
 			buf.append(ManagedMakeMessages.getResourceString(INTERNAL_BUILDER_HEADER_NOTE));
 			buf.append("\n"); //$NON-NLS-1$
 			
 			if(!cfg.isSupported()){
-				buf.append(ManagedMakeMessages.getFormattedString(WARNING_UNSUPPORTED_CONFIGURATION,new String[] {cfg.getName(),cfg.getToolChain().getName()}));
-				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+				String msg = ManagedMakeMessages.getFormattedString(WARNING_UNSUPPORTED_CONFIGURATION,new String[] {cfg.getName(),cfg.getToolChain().getName()});
+				buf.append(msg).append(NEWLINE);
+				buf.append(NEWLINE);
 			}
 			consoleOutStream.write(buf.toString().getBytes());
 			consoleOutStream.flush();
@@ -1307,7 +1293,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 							.getResourceString(BUILD_FAILED_ERR));
 					break;
 				}
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+				buf.append(NEWLINE);
 				
 				// Report time and number of threads used
 //				buf.append("Time consumed: ");
@@ -1327,7 +1313,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					buf.append(ManagedMakeMessages.getFormattedString("CommonBuilder.7", Integer.toString(ParallelBuilder.lastThreadsUsed))); //$NON-NLS-1$
 //					buf.append(ParallelBuilder.lastThreadsUsed);
 				}
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
+				buf.append(NEWLINE);
 
 				// Write message on the console 
 				consoleOutStream.write(buf.toString().getBytes());
@@ -1339,8 +1325,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				addBuilderMarkers(epm);
 			} else {
 				buf = new StringBuffer();
-				buf.append(ManagedMakeMessages.getFormattedString(NOTHING_BUILT, getProject().getName()));
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+				buf.append(ManagedMakeMessages.getFormattedString(NOTHING_BUILT, getProject().getName())).append(NEWLINE);
 				consoleOutStream.write(buf.toString().getBytes());
 				consoleOutStream.flush();
 			}
@@ -1348,12 +1333,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		} catch (Exception e) {
 			if(consoleOutStream != null){
 				StringBuffer buf = new StringBuffer();
-				String errorDesc = ManagedMakeMessages
-							.getResourceString(BUILD_ERROR);
-				buf.append(errorDesc);
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-				buf.append("(").append(e.getLocalizedMessage()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+				String errorDesc = ManagedMakeMessages.getResourceString(BUILD_ERROR);
+				buf.append(errorDesc).append(NEWLINE);
+				buf.append("(").append(e.getLocalizedMessage()).append(")").append(NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
 
 				try {
 					consoleOutStream.write(buf.toString().getBytes());
@@ -1402,6 +1384,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			boolean initNewConsole,
 			boolean printFinishedMessage,
 			IProgressMonitor monitor) {
+		
+		OutputStream epmOutputStream = null;
 		// Get the project and make sure there's a monitor to cancel the build
 		IProject currentProject = cfg.getOwner().getProject();
 		if (monitor == null) {
@@ -1428,25 +1412,23 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			StringBuffer buf = new StringBuffer();
 			
 			if (initNewConsole) {
-				if (buildIncrementaly)
-					buf.append(ManagedMakeMessages.getResourceString("GeneratedMakefileBuilder.buildSelectedIncremental")); //$NON-NLS-1$
-				else
-					buf.append(ManagedMakeMessages.getResourceString("GeneratedMakefileBuilder.buildSelectedRebuild")); //$NON-NLS-1$
-				
+				String msg;
+				if (buildIncrementaly) {
+					msg = ManagedMakeMessages.getResourceString("GeneratedMakefileBuilder.buildSelectedIncremental"); //$NON-NLS-1$
+				} else {
+					msg = ManagedMakeMessages.getResourceString("GeneratedMakefileBuilder.buildSelectedRebuild"); //$NON-NLS-1$
+				}
 
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$	//$NON-NLS-2$
-				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$	//$NON-NLS-2$
+				buf.append(msg).append(NEWLINE);
+				buf.append(NEWLINE);
 
-				buf.append(ManagedMakeMessages
-						.getResourceString(INTERNAL_BUILDER_HEADER_NOTE));
-				buf.append("\n"); //$NON-NLS-1$
+				buf.append(ManagedMakeMessages.getResourceString(INTERNAL_BUILDER_HEADER_NOTE)).append(NEWLINE);
 			}
 			
-			
 			if(!cfg.isSupported()){
-				buf.append(ManagedMakeMessages.getFormattedString(WARNING_UNSUPPORTED_CONFIGURATION,new String[] {cfg.getName(),cfg.getToolChain().getName()}));
-				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+				String msg = ManagedMakeMessages.getFormattedString(WARNING_UNSUPPORTED_CONFIGURATION,new String[] {cfg.getName(),cfg.getToolChain().getName()});
+				buf.append(msg).append(NEWLINE);
+				buf.append(NEWLINE);
 			}
 			consoleOutStream.write(buf.toString().getBytes());
 			consoleOutStream.flush();
@@ -1463,7 +1445,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			epm.setOutputStream(consoleOutStream);
 			// This variable is necessary to ensure that the EPM stream stay open
 			// until we explicitly close it. See bug#123302.
-			OutputStream epmOutputStream = epm.getOutputStream();
+			epmOutputStream = epm.getOutputStream();
 			
 			boolean errorsFound = false;
 			
@@ -1547,39 +1529,51 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			// Report either the success or failure of our mission
 			buf = new StringBuffer();
 
-			
-			buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+			buf.append(NEWLINE);
 			
 			if (printFinishedMessage) {
 				if (errorsFound) {
-					buf.append(ManagedMakeMessages
-							.getResourceString(BUILD_FAILED_ERR));
+					buf.append(ManagedMakeMessages.getResourceString(BUILD_FAILED_ERR));
 				} else {
-					buf
-							.append(ManagedMakeMessages
-									.getResourceString("GeneratedMakefileBuilder.buildResourcesFinished")); //$NON-NLS-1$
+					buf.append(ManagedMakeMessages.getResourceString("GeneratedMakefileBuilder.buildResourcesFinished")); //$NON-NLS-1$
 				}
 			}
 			
 			// Write message on the console 
 			consoleOutStream.write(buf.toString().getBytes());
 			consoleOutStream.flush();
-			epmOutputStream.close();
 
 			// Generate any error markers that the build has discovered 
 			addBuilderMarkers(epm);
-			consoleOutStream.close();
 		} catch (Exception e) {
-			StringBuffer buf = new StringBuffer();
-			String errorDesc = ManagedMakeMessages
-						.getResourceString(BUILD_ERROR);
-			buf.append(errorDesc);
-			buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-			buf.append("(").append(e.getLocalizedMessage()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			if(consoleOutStream != null){
+				StringBuffer buf = new StringBuffer();
+				String errorDesc = ManagedMakeMessages.getResourceString(BUILD_ERROR);
+				buf.append(errorDesc).append(NEWLINE);
+				buf.append("(").append(e.getLocalizedMessage()).append(")").append(NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
 
+				try {
+					consoleOutStream.write(buf.toString().getBytes());
+					consoleOutStream.flush();
+				} catch (IOException e1) {
+				}
+			}
 			forgetLastBuiltState();
 		} finally {
+			if(epmOutputStream != null){
+				try {
+					epmOutputStream.close();
+				} catch (IOException e) {
+				} 
+			}
+			if(consoleOutStream != null){
+				try {
+					consoleOutStream.close();
+				} catch (IOException e) {
+				}
+			}
 			getGenerationProblems().clear();
+			monitor.done();												
 		}
 	}
 	

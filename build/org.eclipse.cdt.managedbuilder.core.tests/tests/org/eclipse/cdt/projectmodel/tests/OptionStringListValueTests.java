@@ -80,7 +80,7 @@ public class OptionStringListValueTests extends TestCase {
 		list.addAll(ls.getSettingEntriesList(ICSettingEntry.INCLUDE_PATH));
 		ls.setSettingEntries(ICSettingEntry.INCLUDE_PATH, list);
 		
-		List returned = ls.getSettingEntriesList(ICSettingEntry.INCLUDE_PATH);
+		List<ICLanguageSettingEntry> returned = ls.getSettingEntriesList(ICSettingEntry.INCLUDE_PATH);
 		assertEquals(list.size(), returned.size());
 		assertTrue(Arrays.equals(list.toArray(), returned.toArray()));
 		
@@ -169,19 +169,12 @@ public class OptionStringListValueTests extends TestCase {
 		assertTrue(Arrays.equals(list.toArray(), returned.toArray()));
 	}
 	
-	private Set[] diff(List<ICLanguageSettingEntry> list1, List list2){
+	private void checkEntriesMatch(List<ICLanguageSettingEntry> list1, List<ICLanguageSettingEntry> list2){
 		Set<ICLanguageSettingEntry> set1 = new LinkedHashSet<ICLanguageSettingEntry>(list1);
 		set1.removeAll(list2);
-		Set set2 = new LinkedHashSet(list2);
+		Set<ICLanguageSettingEntry> set2 = new LinkedHashSet<ICLanguageSettingEntry>(list2);
 		set2.removeAll(list1);
-		if(set1.size() == 0 && set2.size() == 0)
-			return null;
-		return new Set[]{set1, set2};
-	}
-	
-	private void checkEntriesMatch(List<ICLanguageSettingEntry> list1, List list2){
-		Set[] diff = diff(list1, list2);
-		if(diff != null){
+		if(set1.size() != 0 || set2.size() != 0) {
 			fail("entries diff");
 		}
 	}
@@ -195,8 +188,9 @@ public class OptionStringListValueTests extends TestCase {
 	}
 	
 	private static void checkOptionValues(IOption option) throws Exception {
-		List list = (List)option.getValue();
-		String values[] = (String[])list.toArray(new String[list.size()]);
+		@SuppressWarnings("unchecked")
+		List<String> list = (List<String>)option.getValue();
+		String values[] = list.toArray(new String[list.size()]);
 		String[] values2 = option.getBasicStringListValue();
 		OptionStringValue[] values3 = option.getBasicStringListValueElements();
 		assertTrue(Arrays.equals(values, values2));

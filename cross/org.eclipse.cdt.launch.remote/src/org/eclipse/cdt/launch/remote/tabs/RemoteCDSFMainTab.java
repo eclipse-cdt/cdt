@@ -22,6 +22,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.launch.remote.tabs;
 
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab;
 import org.eclipse.cdt.internal.launch.remote.Messages;
 import org.eclipse.cdt.launch.remote.IRemoteConnectionConfigurationConstants;
@@ -506,9 +507,9 @@ public class RemoteCDSFMainTab extends CMainTab {
 		}
 
 		if (programName.length() != 0 && bUpdateRemote) {
-			IProject project = getCProject().getProject();
 			IPath exePath = new Path(programName);
 			if (!exePath.isAbsolute()) {
+				IProject project = getCProject().getProject();
 				exePath = project.getFile(programName).getLocation();
 
 				IPath wsRoot = project.getWorkspace().getRoot().getLocation();

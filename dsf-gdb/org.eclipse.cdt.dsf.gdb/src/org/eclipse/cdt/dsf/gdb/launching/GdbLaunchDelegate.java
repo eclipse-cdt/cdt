@@ -39,7 +39,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugException;
@@ -64,7 +63,9 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	private boolean fIsPostMortemTracingSession;
 	
 	public GdbLaunchDelegate() {
-		super();
+		// We now fully support project-less debugging
+		// See bug 343861
+		this(false);
 	}
 
 	/**
@@ -118,7 +119,6 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
             monitor.subTask( LaunchMessages.getString("GdbLaunchDelegate.3") );  //$NON-NLS-1$
         }
         
-        IPath exePath = new Path(""); //$NON-NLS-1$
         // An attach session does not need to necessarily have an
         // executable specified.  This is because:
         // - In remote multi-process attach, there will be more than one executable
@@ -127,13 +127,8 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         //   the path of any executable we can attach to.
         // - In local single process, GDB has the ability to find the executable
         //   automatically.
-        //
-        // An attach session also does not need to necessarily have a project
-        // specified.  This is because we can perform source lookup towards
-        // code that is outside the workspace.
-        // See bug 244567
         if (!attach) {
-        	exePath = checkBinaryDetails(config);
+        	checkBinaryDetails(config);
         }
     	
         monitor.worked( 1 );

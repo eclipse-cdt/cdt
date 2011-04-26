@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.launching; 
 
-import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
  
 /**
@@ -55,7 +53,11 @@ public class TestLaunchDelegate extends GdbLaunchDelegate
     
     @Override
     protected IPath checkBinaryDetails(ILaunchConfiguration config) throws CoreException {
-    	return new Path(config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "")); 
+    	// Now that GdbLaunchDelegate supports project-less debugging, we don't need to
+    	// override this method.  In fact, we should not override it so that we test
+    	// that project-less debugging keeps on working.
+    	// See bug 343861
+    	return super.checkBinaryDetails(config); 
     }
 
 }

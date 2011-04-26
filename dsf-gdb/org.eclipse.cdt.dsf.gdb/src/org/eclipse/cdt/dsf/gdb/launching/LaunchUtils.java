@@ -138,16 +138,19 @@ public class LaunchUtils {
 	 * @return An object representing the binary file. 
 	 */
 	public static IBinaryObject verifyBinary(ILaunchConfiguration configuration, IPath exePath) throws CoreException {
-		ICConfigExtensionReference[] parserRefs = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(getCProject(configuration).getProject());
-		for (ICConfigExtensionReference parserRef : parserRefs) {
-			try {
-				IBinaryParser parser = CoreModelUtil.getBinaryParser(parserRef);
-				IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
-				if (exe != null) {
-					return exe;
+		ICProject cproject = getCProject(configuration); 
+		if (cproject != null) {
+			ICConfigExtensionReference[] parserRefs = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(cproject.getProject());
+			for (ICConfigExtensionReference parserRef : parserRefs) {
+				try {
+					IBinaryParser parser = CoreModelUtil.getBinaryParser(parserRef);
+					IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
+					if (exe != null) {
+						return exe;
+					}
+				} catch (ClassCastException e) {
+				} catch (IOException e) {
 				}
-			} catch (ClassCastException e) {
-			} catch (IOException e) {
 			}
 		}
 

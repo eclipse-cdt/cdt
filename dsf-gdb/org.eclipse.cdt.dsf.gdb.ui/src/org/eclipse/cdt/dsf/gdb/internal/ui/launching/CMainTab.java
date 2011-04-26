@@ -432,39 +432,40 @@ public class CMainTab extends CAbstractMainTab {
 		setMessage(null);
 
 		if (!fDontCheckProgram) {
-			String name = fProjText.getText().trim();
-			if (name.length() == 0) {
-				setErrorMessage(LaunchMessages.getString("CMainTab.Project_not_specified")); //$NON-NLS-1$
-				return false;
-			}
-			if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
-				setErrorMessage(LaunchMessages.getString("Launch.common.Project_does_not_exist")); //$NON-NLS-1$
-				return false;
-			}
-			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-			if (!project.isOpen()) {
-				setErrorMessage(LaunchMessages.getString("CMainTab.Project_must_be_opened")); //$NON-NLS-1$
-				return false;
-			}
-
-			name = fProgText.getText().trim();
-			if (name.length() == 0) {
+			String programName = fProgText.getText().trim();
+			if (programName.length() == 0) {
 				setErrorMessage(LaunchMessages.getString("CMainTab.Program_not_specified")); //$NON-NLS-1$
 				return false;
 			}
-			if (name.equals(".") || name.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
+			if (programName.equals(".") || programName.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
 				setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
 				return false;
 			}
-			IPath exePath = new Path(name);
-			if (!exePath.isAbsolute()) {
-				if (!project.getFile(name).exists()) {
+			IPath exePath = new Path(programName);
+			if (exePath.isAbsolute()) {
+				// For absolute paths, we don't need a project, we can debug the binary directly
+				// as long as it exists
+				if (!exePath.toFile().exists()) {
 					setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
 					return false;
 				}
-				exePath = project.getFile(name).getLocation();
 			} else {
-				if (!exePath.toFile().exists()) {
+				// For relative paths, we need a proper project
+				String projectName = fProjText.getText().trim();
+				if (projectName.length() == 0) {
+					setErrorMessage(LaunchMessages.getString("CMainTab.Project_not_specified")); //$NON-NLS-1$
+					return false;
+				}
+				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+				if (!project.exists()) {
+					setErrorMessage(LaunchMessages.getString("Launch.common.Project_does_not_exist")); //$NON-NLS-1$
+					return false;
+				}
+				if (!project.isOpen()) {
+					setErrorMessage(LaunchMessages.getString("CMainTab.Project_must_be_opened")); //$NON-NLS-1$
+					return false;
+				}
+				if (!project.getFile(programName).exists()) {
 					setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
 					return false;
 				}

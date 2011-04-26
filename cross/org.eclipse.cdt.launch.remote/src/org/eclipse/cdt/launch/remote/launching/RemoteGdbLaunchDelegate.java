@@ -48,7 +48,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 			}
 		}
 
-		IPath exePath = CDebugUtils.verifyProgramPath(config);
+		IPath exePath = checkBinaryDetails(config);
 		if (exePath != null) {
 			// 1.Download binary if needed
 			String remoteExePath = config.getAttribute(

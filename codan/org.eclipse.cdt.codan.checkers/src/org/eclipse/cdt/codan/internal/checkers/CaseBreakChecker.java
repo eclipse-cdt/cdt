@@ -25,6 +25,8 @@ import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
@@ -70,7 +72,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 
 		@Override
 		public int visit(IASTStatement statement) {
-			if (statement instanceof IASTSwitchStatement) {
+			if (statement instanceof IASTSwitchStatement && !isProducedMyMacroExpansion(statement)) {
 				IASTSwitchStatement switchStmt = (IASTSwitchStatement) statement;
 				IASTStatement body = switchStmt.getBody();
 				if (body instanceof IASTCompoundStatement) {
@@ -147,6 +149,19 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 				return isFallThroughStamement(ifs.getThenClause()) || isFallThroughStamement(ifs.getElseClause()) ;
 			}
 			return true; // TODO
+		}
+
+		/**
+		 * Checks if the given statement is a result of macro expansion with a possible
+		 * exception for the trailing semicolon.
+		 * 
+		 * @param statement the statement to check. 
+		 * @return <code>true</code> if the statement is a result of macro expansion
+		 */
+		private boolean isProducedMyMacroExpansion(IASTStatement statement) {
+			IASTNodeLocation[] locations = statement.getNodeLocations();
+			return locations.length > 0 && locations[0] instanceof IASTMacroExpansionLocation &&
+					(locations.length == 1 || locations.length == 2 && locations[1].getNodeLength() == 1);
 		}
 	}
 

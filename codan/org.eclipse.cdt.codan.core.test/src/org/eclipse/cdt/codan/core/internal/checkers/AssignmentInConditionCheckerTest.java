@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,12 +16,13 @@ import org.eclipse.core.resources.IMarker;
 
 /**
  * Test for {@see AssignmentInConditionChecker} class
- * 
+ *
  */
+@SuppressWarnings("nls")
 public class AssignmentInConditionCheckerTest extends CheckerTestCase {
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.test.CodanTestCase#setUp()
 	 */
 	@Override
@@ -33,7 +34,7 @@ public class AssignmentInConditionCheckerTest extends CheckerTestCase {
 	//	 main() {
 	//	   int a=1,b=3;
 	//	   if (a=b) b=4; // error here on line 3
-	//	 }	
+	//	 }
 	public void test_basic() {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
@@ -41,7 +42,7 @@ public class AssignmentInConditionCheckerTest extends CheckerTestCase {
 
 	//	 main() {
 	//	   int a=1,b=3;
-	//	   
+	//
 	//	   if ((a=b)) b--; // no error
 	//	 }
 	public void test_fixed() {
@@ -99,7 +100,7 @@ public class AssignmentInConditionCheckerTest extends CheckerTestCase {
 	//	 main() {
 	//	   int a=1,b=3;
 	//	   if (a=b) b=4; // error here on line 3
-	//	 }	
+	//	 }
 	public void test_basic_params() {
 		loadCodeAndRun(getAboveComment());
 		IMarker marker = checkErrorLine(3);

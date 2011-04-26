@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.core.resources.IMarker;
 
 /**
  * Test for {@see StatementHasNoEffectChecker} class
- * 
+ *
  */
 public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	@Override
@@ -147,9 +147,8 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	//#define FUNC(a) a
 	// main() {
 	// int a;
-	//   FUNC(a); // error by default 
+	//   FUNC(a); // error by default
 	// }
-	@SuppressWarnings("restriction")
 	public void testInMacro() {
 		IProblemPreference macro = getPreference(StatementHasNoEffectChecker.ER_ID, StatementHasNoEffectChecker.PARAM_MACRO_ID);
 		macro.setValue(Boolean.TRUE);
@@ -173,7 +172,6 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// int a;
 	//   FUNC(a); // no error if macro exp turned off
 	// }
-	@SuppressWarnings("restriction")
 	public void testInMacroParamOff() {
 		IProblemPreference macro = getPreference(StatementHasNoEffectChecker.ER_ID, StatementHasNoEffectChecker.PARAM_MACRO_ID);
 		macro.setValue(Boolean.FALSE);

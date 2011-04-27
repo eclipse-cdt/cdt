@@ -120,6 +120,7 @@ public abstract class RefreshExclusion {
 	
 	/**
 	 * Tests a given resource to see if this exclusion should exclude it from being refreshed.
+	 * This should consult any nested exclusions to see if they in turn ought to exclude the resource.
 	 * 
 	 * @param resource the resource to be tested.
 	 * @return true if the resource should be excluded, false otherwise.

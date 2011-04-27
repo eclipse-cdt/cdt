@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,14 +32,17 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.w3c.dom.Document;
@@ -466,6 +470,54 @@ public class RefreshScopeManager {
 		}
 		
 		return factory.createNewExclusionInstance();
+	}
+	
+	public IWorkspaceRunnable getRefreshRunnable(final IProject project) {
+		
+		
+		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+
+			public void run(IProgressMonitor monitor) throws CoreException {	
+				
+				List<IResource> resourcesToRefresh  = getResourcesToRefresh(project);
+				for(IResource resource : resourcesToRefresh) {
+					List<RefreshExclusion> exclusions = getExclusions(resource);
+					refreshResources(resource, exclusions, monitor);
+				}
+				
+			}
+
+			/**
+			 * @param q
+			 * @param resource
+			 * @throws CoreException 
+			 */
+			private void refreshResources(IResource resource, List<RefreshExclusion> exclusions, IProgressMonitor monitor) throws CoreException {
+				if (resource instanceof IContainer) {
+					IContainer container = (IContainer) resource;
+
+					// get any exclusions
+					boolean isExcluded = false;
+					
+					for (RefreshExclusion exclusion : exclusions) {
+						if (exclusion.testExclusion(resource)) {
+							isExcluded = true;
+							break;
+						}
+					}
+
+					if (!isExcluded) {
+						resource.refreshLocal(IResource.DEPTH_ONE, monitor);
+
+						for (IResource child : container.members()) {
+							refreshResources(child, exclusions, monitor);
+						}
+					}
+				}
+			}
+		};
+		
+		return runnable;
 	}
 
 }

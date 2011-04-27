@@ -11,6 +11,11 @@
 
 package org.eclipse.cdt.core.resources;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 
 /**
@@ -25,8 +30,6 @@ import org.eclipse.core.resources.IResource;
  *
  */
 public class ResourceExclusion extends RefreshExclusion {
-
-	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.resources.RefreshExclusion#getName()
@@ -41,7 +44,25 @@ public class ResourceExclusion extends RefreshExclusion {
 	 */
 	@Override
 	public boolean testExclusion(IResource resource) {
-		// TODO Auto-generated method stub
+		//TODO: will need to change this for Phase 2 implementation
+		List<IResource> excludedResources = new LinkedList<IResource>();
+		List<ExclusionInstance> exclusionInstances = getExclusionInstances();
+		Iterator<ExclusionInstance> iterator = exclusionInstances.iterator();
+		while (iterator.hasNext()) {
+			ExclusionInstance instance = iterator.next();
+			excludedResources.add(instance.getResource());
+		}
+		
+		if (resource instanceof IFolder) {
+			return excludedResources.contains(resource);
+		} else {
+			Iterator<IResource> resources = excludedResources.iterator();
+			while (resources.hasNext()) {
+				IFolder excludedResource = (IFolder) resources.next();
+				if (excludedResource.exists(resource.getFullPath()))
+					return true;
+			}			
+		}
 		return false;
 	}
 

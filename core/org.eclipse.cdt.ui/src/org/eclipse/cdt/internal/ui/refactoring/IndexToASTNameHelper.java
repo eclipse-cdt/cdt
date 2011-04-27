@@ -141,10 +141,10 @@ class BindingToAstNameMatcher extends ASTVisitor {
 	}
 
 	private boolean isEquivalent(IASTName candidate) {
-		return CharArrayUtils.equals(candidate.getLookupKey(), toFindName) && bindingToFind.equals(index.adaptBinding(candidate.resolveBinding()));
+		return CharArrayUtils.equals(candidate.getSimpleID(), toFindName) && bindingToFind.equals(index.adaptBinding(candidate.resolveBinding()));
 	}
 
 	public List<IASTName> getMatches() {
 		return results;
 	}
-};
+}

@@ -55,10 +55,6 @@ public class SafeStringInterner {
 	
 	/**
 	 * Returns a new version of the map such that all string keys and values are interned.
-	 * 
-	 * @param <T>
-	 * @param <M>
-	 * @param map
 	 * @return The map, after modification.
 	 */
 	@SuppressWarnings("unchecked")

@@ -44,7 +44,20 @@ public class ResourceExclusion extends RefreshExclusion {
 	 */
 	@Override
 	public boolean testExclusion(IResource resource) {
-		//TODO: will need to change this for Phase 2 implementation
+		
+		//First, check to see if the given resource is an exception to this exclusion
+		List<RefreshExclusion> nestedExclusions = getNestedExclusions();			
+		if (nestedExclusions != null) {
+			Iterator<RefreshExclusion> exclusions = nestedExclusions.iterator();
+			while (exclusions.hasNext()) {
+				RefreshExclusion exclusion = exclusions.next();
+				if (exclusion.testExclusion(resource)) {
+					return false;
+				}
+			}
+		}
+		
+		//Populate the resources to be excluded by this exclusion
 		List<IResource> excludedResources = new LinkedList<IResource>();
 		List<ExclusionInstance> exclusionInstances = getExclusionInstances();
 		Iterator<ExclusionInstance> iterator = exclusionInstances.iterator();
@@ -53,15 +66,17 @@ public class ResourceExclusion extends RefreshExclusion {
 			excludedResources.add(instance.getResource());
 		}
 		
-		if (resource instanceof IFolder) {
-			return excludedResources.contains(resource);
-		} else {
+		if (excludedResources.contains(resource)) {
+			return true;
+		} else { //check to see if the given resource is part of this exclusion
 			Iterator<IResource> resources = excludedResources.iterator();
 			while (resources.hasNext()) {
+				//TODO: need to update this for Phase 2 implementation
 				IFolder excludedResource = (IFolder) resources.next();
-				if (excludedResource.exists(resource.getFullPath()))
+				if (excludedResource.exists(resource.getFullPath())) {
 					return true;
-			}			
+				}
+			}
 		}
 		return false;
 	}

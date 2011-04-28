@@ -524,7 +524,7 @@ public class CCorePlugin extends Plugin {
 	 *    view. The url is expected to point to an image in eclipse OSGi bundle.
 	 *    Here is an example how to retrieve URL:<br/>
 	 *    <code>
-	 *    URL iconUrl = CUIPlugin.getDefault().getBundle().getResource("icons/obj16/flask.png");
+	 *    URL iconUrl = CUIPlugin.getDefault().getBundle().getEntry("icons/obj16/flask.png");
 	 *    </code>
 	 * 
 	 * @return CDT console adapter.

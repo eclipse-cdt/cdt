@@ -124,3 +124,81 @@ public:
 private:
     int a;
 };
+//!TestDifferentParameterNames
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=MyClass.cpp
+//@MyClass.cpp
+#include "MyClass.h"
+
+myClass::/*$*/myClass/*$$*/(int implname) : fVal(implname) {}
+
+int main()
+{
+    return 0;
+}
+//=
+#include "MyClass.h"
+
+
+
+int main()
+{
+    return 0;
+}
+//@MyClass.h
+
+struct myClass {
+  int fVal;
+  myClass(int headername);
+};
+
+//=
+
+struct myClass {
+  int fVal;
+  myClass(int implname)
+    :fVal(implname)
+    {
+    }
+};
+
+//!TestMissingParameterNames
+//#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
+//@.config
+filename=MyClass.cpp
+//@MyClass.cpp
+#include "MyClass.h"
+
+myClass::/*$*/myClass/*$$*/(int implname) : fVal(implname) {}
+
+int main()
+{
+    return 0;
+}
+//=
+#include "MyClass.h"
+
+
+
+int main()
+{
+    return 0;
+}
+//@MyClass.h
+
+struct myClass {
+  int fVal;
+  myClass(int);
+};
+
+//=
+
+struct myClass {
+  int fVal;
+  myClass(int implname)
+    :fVal(implname)
+    {
+    }
+};
+

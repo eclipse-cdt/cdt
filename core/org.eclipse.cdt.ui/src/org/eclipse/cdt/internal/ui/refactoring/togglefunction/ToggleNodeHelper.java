@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
@@ -107,6 +108,7 @@ public class ToggleNodeHelper extends NodeHelper {
 			IASTDeclSpecifier newDeclSpec, IASTFunctionDeclarator newFuncDecl, 
 			IASTFunctionDefinition oldDefinition) {
 		ICPPASTFunctionDefinition newFunc = null;
+		newFuncDecl = adjustParamNames(newFuncDecl, oldDefinition);
 		if (oldDefinition instanceof ICPPASTFunctionWithTryBlock) {
 			newFunc = new CPPASTFunctionWithTryBlock(newDeclSpec, newFuncDecl, 
 					new CPPASTCompoundStatement());
@@ -118,6 +120,19 @@ public class ToggleNodeHelper extends NodeHelper {
 		return newFunc;
 	}
 	
+	private static IASTFunctionDeclarator adjustParamNames(IASTFunctionDeclarator newFuncDecl,
+			IASTFunctionDefinition oldDefinition) {
+		if (oldDefinition.getDeclarator() instanceof IASTStandardFunctionDeclarator) {
+			IASTStandardFunctionDeclarator oldStdDec = (IASTStandardFunctionDeclarator) oldDefinition.getDeclarator();
+			IASTParameterDeclaration[] definitionParams = oldStdDec.getParameters();
+			IASTParameterDeclaration[] declarationParams = ((IASTStandardFunctionDeclarator)newFuncDecl).getParameters();
+			for(int i = 0; i < declarationParams.length; ++i) {
+				declarationParams[i].getDeclarator().setName(definitionParams[i].getDeclarator().getName().copy(CopyStyle.withLocations));
+			}
+		}
+		return newFuncDecl;
+	}
+
 	private static void copyInitializerList(ICPPASTFunctionDefinition newFunc, 
 			IASTFunctionDefinition oldFunc) {
 		for (ICPPASTConstructorChainInitializer initializer : getInitializerList(oldFunc)) {

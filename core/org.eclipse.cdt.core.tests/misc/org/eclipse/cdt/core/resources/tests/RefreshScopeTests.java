@@ -357,6 +357,31 @@ public class RefreshScopeTests extends TestCase {
 		List<RefreshExclusion> exclusions = manager.getExclusions(fProject);
 		assertEquals(0, exclusions.size());
 		
+		// now try persisting the data and loading it
+		try {
+			manager.persistSettings();
+		} catch (CoreException e) {
+			fail();
+		}
+		
+		manager.clearAllData();
+		
+		try {
+			manager.loadSettings();
+		} catch (CoreException e) {
+			fail();
+		}
+		
+		// test the defaults again
+		// by default, a project should refresh its root
+		resourcesToRefresh = manager.getResourcesToRefresh(fProject);
+		assertEquals(1, resourcesToRefresh.size());
+		resourceArray = resourcesToRefresh.toArray(new IResource[0]);
+		assertEquals(fProject, resourceArray[0]);
+		// there should be no exclusions
+		exclusions = manager.getExclusions(fProject);
+		assertEquals(0, exclusions.size());
+		
 	}
 	
 

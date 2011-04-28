@@ -163,18 +163,20 @@ public class RefreshScopeManager {
 	 * These resources might have associated exclusions.
 	 * 
 	 * @param project
-	 * @return Set<IResource>
+	 * @return List<IResource>
 	 */
 	public List<IResource> getResourcesToRefresh(IProject project) {
 		getProjectToResourcesMap();
 		LinkedHashSet<IResource> resources = fProjectToResourcesMap.get(project);
-		List<IResource> retval;
-		if (resources == null)
-			retval= new LinkedList<IResource>();
-		else
-			retval= new LinkedList<IResource>(resources);
 		
-		return retval;
+		if (resources == null) {
+			resources = new LinkedHashSet<IResource>();
+			resources.add(project);
+			fProjectToResourcesMap.put(project, resources);
+			
+		}	
+		
+		return new LinkedList<IResource>(resources);
 	}
 	
 	public void setResourcesToRefresh(IProject project, List<IResource> resources) {

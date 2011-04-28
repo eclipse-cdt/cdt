@@ -344,5 +344,20 @@ public class RefreshScopeTests extends TestCase {
 
 	}
 	
+	public void testDefaults() {
+		RefreshScopeManager manager = RefreshScopeManager.getInstance();
+		
+		// by default, a project should refresh its root
+		List<IResource> resourcesToRefresh = manager.getResourcesToRefresh(fProject);
+		assertEquals(1, resourcesToRefresh.size());
+		IResource[] resourceArray = resourcesToRefresh.toArray(new IResource[0]);
+		assertEquals(fProject, resourceArray[0]);
+		
+		// there should be no exclusions
+		List<RefreshExclusion> exclusions = manager.getExclusions(fProject);
+		assertEquals(0, exclusions.size());
+		
+	}
+	
 
 }

@@ -75,10 +75,10 @@ import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerIncludeResolutio
 import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
 import org.eclipse.cdt.internal.core.util.ICanceler;
 import org.eclipse.cdt.internal.core.util.MementoTokenizer;
+import org.eclipse.cdt.utils.UNCPathConverter;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -319,7 +319,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				return null;
 			}
 		}
-		return URIUtil.toPath(location);
+		return UNCPathConverter.toPath(location);
 	}
 	
 	@Override

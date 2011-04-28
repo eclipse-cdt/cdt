@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,9 +59,13 @@ public class ScannerUtility {
 		originalPath.getChars(0, len, ein, 0);
 		
 		// allow double backslash at beginning for windows UNC paths, bug 233511
-		if(ein.length >= 2 && ein[0] == BSLASH && ein[1] == BSLASH && 
-		   File.separatorChar == BSLASH) {
-		    aus[j++] = BSLASH;
+		// also allow Unix UNC paths
+		if (ein.length >= 2) {
+			if (ein[0] == BSLASH && ein[1] == BSLASH && File.separatorChar == BSLASH) {
+				aus[j++] = BSLASH;
+			} else if (ein[0] == SLASH && ein[1] == SLASH && File.separatorChar == SLASH) {
+				aus[j++] = SLASH;
+			}
 		}
 
 		

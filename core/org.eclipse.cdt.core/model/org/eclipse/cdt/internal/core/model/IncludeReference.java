@@ -26,9 +26,13 @@ import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.cdt.utils.PathUtil;
+import org.eclipse.cdt.utils.UNCPathConverter;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -93,7 +97,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	 */
 	@Override
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource) throws CModelException {
-		return computeChildren(info, underlyingResource);
+		return computeChildren(info, pm, underlyingResource);
 	}
 
 	/* (non-Javadoc)
@@ -106,35 +110,61 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CContainer#computeChildren(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.resources.IResource)
 	 */
-	protected boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
+	protected boolean computeChildren(OpenableInfo info, IProgressMonitor pm, IResource res) throws CModelException {
 		ArrayList<ICElement> vChildren = new ArrayList<ICElement>();
-		File file = null;
+		IPath filePath = null;
 		if (fPath != null) {
-			file = fPath.toFile();
+			filePath = fPath;
 		} else if (fIncludeEntry != null) {
-			file = fIncludeEntry.getFullIncludePath().toFile();
+			filePath = fIncludeEntry.getFullIncludePath();
 		}
-		String[] names = null;
-		if (file != null && file.isDirectory()) {
-			names = file.list();
-
-			if (names != null) {
-				IPath path = new Path(file.getAbsolutePath());
-				for (String name : names) {
-					File child = new File(file, name);
-					ICElement celement = null;
-					if (child.isDirectory()) {
-						celement = new IncludeReference(this, fIncludeEntry, new Path(child.getAbsolutePath()));
-					} else if (child.isFile()){
-						String id = CoreModel.getRegistedContentTypeId(getCProject().getProject(), name);
-						if (id != null) {
-							// TODO:  should use URI
-							celement = new ExternalTranslationUnit(this, URIUtil.toURI(path.append(name)), id);
+		if (filePath != null) {
+			if (!filePath.isUNC()) {
+				File file = filePath.toFile();
+				String[] names = null;
+				if (file != null && file.isDirectory()) {
+					names = file.list();
+		
+					if (names != null) {
+						IPath path = new Path(file.getAbsolutePath());
+						for (String name : names) {
+							File child = new File(file, name);
+							ICElement celement = null;
+							if (child.isDirectory()) {
+								celement = new IncludeReference(this, fIncludeEntry, new Path(child.getAbsolutePath()));
+							} else if (child.isFile()){
+								String id = CoreModel.getRegistedContentTypeId(getCProject().getProject(), name);
+								if (id != null) {
+									// TODO:  should use URI
+									celement = new ExternalTranslationUnit(this, URIUtil.toURI(path.append(name)), id);
+								}
+							}
+							if (celement != null) {
+								vChildren.add(celement);
+							}
 						}
 					}
-					if (celement != null) {
-						vChildren.add(celement);
+				}
+			} else {
+				try {
+					IFileStore store = EFS.getStore(UNCPathConverter.getInstance().toURI(filePath));
+					IFileStore children[] = store.childStores(EFS.NONE, pm);
+					for (IFileStore child : children) {
+						ICElement celement = null;
+						if (child.fetchInfo().isDirectory()) {
+							celement = new IncludeReference(this, fIncludeEntry, filePath.append(child.getName()));
+						} else {
+							String id = CoreModel.getRegistedContentTypeId(getCProject().getProject(), child.getName());
+							if (id != null) {
+								// TODO:  should use URI
+								celement = new ExternalTranslationUnit(this, child.toURI(), id);
+							}
+						}
+						if (celement != null) {
+							vChildren.add(celement);
+						}
 					}
+				} catch (CoreException e) {
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.pdom.IndexerInputAdapter;
 import org.eclipse.cdt.internal.core.pdom.indexer.FileExistsCache;
+import org.eclipse.cdt.utils.UNCPathConverter;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -102,7 +103,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 				// use the original
 			}
 			//Standalone indexing stores the absolute paths of files being indexed
-			result = new IndexFileLocation(URIUtil.toURI(astPath), null);
+			result = new IndexFileLocation(UNCPathConverter.getInstance().toURI(astPath), null);
 			fIflCache.put(astPath, result);
 		}
 		return result;
@@ -128,7 +129,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 				// use the original
 			}
 			//Stand-alone indexing stores the absolute paths of files being indexed
-			result = new IndexFileLocation(URIUtil.toURI(includePath),null);
+			result = new IndexFileLocation(UNCPathConverter.getInstance().toURI(includePath),null);
 			fIflCache.put(includePath, result);
 		}
 		return result;

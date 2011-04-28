@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,6 +96,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.UNCPathConverter;
 
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
@@ -421,6 +422,9 @@ public class EditorUtility {
 		IFile resource= getWorkspaceFileAtLocation(location, context);
 		if (resource != null) {
 			return new FileEditorInput(resource);
+		}
+		if (location.isUNC()) {
+			return getEditorInputForLocation(UNCPathConverter.getInstance().toURI(location), context);
 		}
 
 		if (context == null) {
@@ -780,12 +784,11 @@ public class EditorUtility {
 		List<IEditorPart> result= new ArrayList<IEditorPart>(0);
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
-		for (int i= 0; i < windows.length; i++) {
-			IWorkbenchPage[] pages= windows[i].getPages();
-			for (int x= 0; x < pages.length; x++) {
-				IEditorPart[] editors= pages[x].getDirtyEditors();
-				for (int z= 0; z < editors.length; z++) {
-					IEditorPart ep= editors[z];
+		for (IWorkbenchWindow window : windows) {
+			IWorkbenchPage[] pages= window.getPages();
+			for (IWorkbenchPage page : pages) {
+				IEditorPart[] editors= page.getDirtyEditors();
+				for (IEditorPart ep : editors) {
 					IEditorInput input= ep.getEditorInput();
 					if (inputs.add(input)) {
 						if (!skipNonResourceEditors || isResourceEditorInput(input)) {
@@ -801,8 +804,8 @@ public class EditorUtility {
 	private static boolean isResourceEditorInput(IEditorInput input) {
 		if (input instanceof MultiEditorInput) {
 			IEditorInput[] inputs= ((MultiEditorInput) input).getInput();
-			for (int i= 0; i < inputs.length; i++) {
-				if (inputs[i].getAdapter(IResource.class) != null) {
+			for (IEditorInput input2 : inputs) {
+				if (input2.getAdapter(IResource.class) != null) {
 					return true;
 				}
 			}
@@ -825,12 +828,12 @@ public class EditorUtility {
 		List<IEditorPart> result= new ArrayList<IEditorPart>(0);
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
-		for (int i= 0; i < windows.length; i++) {
-			IWorkbenchPage[] pages= windows[i].getPages();
-			for (int x= 0; x < pages.length; x++) {
-				IEditorPart[] editors= pages[x].getDirtyEditors();
-				for (int z= 0; z < editors.length; z++) {
-					IEditorPart ep= editors[z];
+		for (IWorkbenchWindow window : windows) {
+			IWorkbenchPage[] pages= window.getPages();
+			for (IWorkbenchPage page : pages) {
+				IEditorPart[] editors= page.getDirtyEditors();
+				for (IEditorPart editor : editors) {
+					IEditorPart ep= editor;
 					IEditorInput input= ep.getEditorInput();
 					if (!mustSaveDirtyEditor(ep, input, saveUnknownEditors))
 						continue;

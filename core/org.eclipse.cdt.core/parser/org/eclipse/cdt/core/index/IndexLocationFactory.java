@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Symbian Software Ltd. and others.
+ * Copyright (c) 2006, 2011 Symbian Software Ltd. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
-import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.cdt.utils.UNCPathConverter;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -56,12 +56,12 @@ public class IndexLocationFactory {
 	
 	/**
 	 * Returns the absolute file path of a location, or {@code null}
-	 * if the location is not a filesystem path.
+	 * if the location is not a file-system path.
 	 * @return the absolute file path of a location, or {@code null}
-	 * if the location is not a filesystem path.
+	 * if the location is not a file-system path.
 	 */
 	public static IPath getAbsolutePath(IIndexFileLocation location) {
-		return URIUtil.toPath(location.getURI());
+		return UNCPathConverter.toPath(location.getURI());
 	}
 	
 	/**
@@ -113,7 +113,7 @@ public class IndexLocationFactory {
 	 * @return an IIndexFileLocation for the specified absolute path, with no associated full path.
 	 */
 	public static IIndexFileLocation getExternalIFL(IPath absolutePath) {
-		return new IndexFileLocation(URIUtil.toURI(absolutePath), null);	
+		return new IndexFileLocation(UNCPathConverter.getInstance().toURI(absolutePath), null);	
 	}
 	
 	/**

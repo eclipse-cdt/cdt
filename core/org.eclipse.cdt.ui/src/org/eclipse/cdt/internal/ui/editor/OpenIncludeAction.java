@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -51,6 +53,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.PathUtil;
+import org.eclipse.cdt.utils.UNCPathConverter;
 
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
@@ -91,9 +94,14 @@ public class OpenIncludeAction extends Action {
 			ArrayList<IPath> filesFound = new ArrayList<IPath>(4);
 			String fullFileName= include.getFullFileName();
 			if (fullFileName != null) {
-				IPath fullPath= new Path(fullFileName);
+				IPath fullPath = new Path(fullFileName);
 				if (fullPath.isAbsolute() && fullPath.toFile().exists()) {
 					filesFound.add(fullPath);
+				} else if (fullPath.isUNC()) {
+					IFileStore store = EFS.getStore(UNCPathConverter.getInstance().toURI(fullPath));
+					if (store.fetchInfo().exists()) {
+						filesFound.add(fullPath);
+					}
 				}
 			}
 			if (filesFound.isEmpty() && res != null) {

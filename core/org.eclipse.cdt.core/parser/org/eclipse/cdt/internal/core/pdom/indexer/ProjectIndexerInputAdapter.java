@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.pdom.IndexerInputAdapter;
 import org.eclipse.cdt.internal.core.resources.PathCanonicalizationStrategy;
+import org.eclipse.cdt.utils.UNCPathConverter;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -114,7 +115,7 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 		IIndexFileLocation result= fIflCache.get(includePath);
 		if (result == null) {
 			result = doResolveASTPath(includePath);
-			if (result.getFullPath() == null) {
+			if (result.getFullPath() == null && !UNCPathConverter.isUNC(includePath)) {
 				File location= new File(includePath);
 				String canonicalPath= PathCanonicalizationStrategy.getCanonicalPath(location);
 				if (!includePath.equals(canonicalPath)) {

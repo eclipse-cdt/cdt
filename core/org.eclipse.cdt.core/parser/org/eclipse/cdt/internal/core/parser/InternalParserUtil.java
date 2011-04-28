@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,9 @@ import org.eclipse.cdt.internal.core.parser.scanner.AbstractCharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.FileCharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.resources.PathCanonicalizationStrategy;
+import org.eclipse.cdt.utils.UNCPathConverter;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -132,6 +135,14 @@ public class InternalParserUtil extends ParserFactory {
 			IResource res= ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(fullPath));
 			if (res instanceof IFile)
 				return createWorkspaceFileContent((IFile) res);
+		} 
+		/*
+		 * If URI refers to a remote resource, use the full URI to retrieve the file content
+		 * Otherwise, assume it is in the local filesystem somewhere
+		 */
+		String scheme = ifl.getURI().getScheme();
+		if (!scheme.equals(EFS.SCHEME_FILE)) {
+			return createExternalFileContent(UNCPathConverter.toPath(ifl.getURI()).toString(), SYSTEM_DEFAULT_ENCODING);
 		}
 		return createExternalFileContent(ifl.getURI().getPath(), SYSTEM_DEFAULT_ENCODING);
 	}
@@ -171,12 +182,23 @@ public class InternalParserUtil extends ParserFactory {
 	 * canonical path. 
 	 */
 	public static InternalFileContent createExternalFileContent(String externalLocation, String encoding) {
-		File includeFile = new File(externalLocation);
-		if (includeFile.isFile()) {
+		File includeFile = null;
+		String path = null;
+		if (!UNCPathConverter.isUNC(externalLocation)) {
+			includeFile = new File(externalLocation);
 		    // Use the canonical path so that in case of non-case-sensitive OSs
 		    // the CodeReader always has the same name as the file on disk with
 		    // no differences in case.
-			final String path = PathCanonicalizationStrategy.getCanonicalPath(includeFile);
+			path = PathCanonicalizationStrategy.getCanonicalPath(includeFile);
+		} else {
+			try {
+				IFileStore store = EFS.getStore(UNCPathConverter.getInstance().toURI(externalLocation));
+				includeFile = store.toLocalFile(EFS.CACHE, null);
+				path = externalLocation;
+			} catch (CoreException e) {
+			}
+		}
+		if (includeFile != null && includeFile.isFile()) {
 			FileInputStream in;
 			try {
 				in = new FileInputStream(includeFile);

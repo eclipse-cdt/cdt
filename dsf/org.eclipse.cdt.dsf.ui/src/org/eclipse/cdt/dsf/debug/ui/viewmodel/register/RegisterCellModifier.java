@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Winnie Lai (Texas Instruments) - Individual Element Number Format in editing (Bug 343021)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.register;
 
@@ -17,17 +18,16 @@ import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.WatchExpressionCellModifier;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueVMUtil;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.AbstractCachingVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.UserEditEvent;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 public class RegisterCellModifier extends WatchExpressionCellModifier {
     
     private AbstractCachingVMProvider fProvider; 
     private SyncRegisterDataAccess fDataAccess = null;
+    protected String formatInEditing;
     
     public RegisterCellModifier(AbstractCachingVMProvider provider, SyncRegisterDataAccess access) 
     {
@@ -87,20 +87,15 @@ public class RegisterCellModifier extends WatchExpressionCellModifier {
             /*
              *  We let the Model provider supply the current format.
              */
-            String formatId;
+            String formatId = null;
             
             if ( element instanceof IVMContext) {
-                /*
-                 *  Find the presentation context and then use it to get the current desired format.
-                 */
-                IVMContext ctx = (IVMContext) element;
-                IPresentationContext presCtx = ctx.getVMNode().getVMProvider().getPresentationContext();
-                formatId = FormattedValueVMUtil.getPreferredFormat(presCtx);
+            	formatId = queryFormat((IVMContext) element);
             }
             else {
                 formatId = IFormattedValues.NATURAL_FORMAT;
             }
-            
+            formatInEditing = formatId;
             String value = 
                 
                 fDataAccess.getFormattedRegisterValue(element, formatId);
@@ -125,15 +120,12 @@ public class RegisterCellModifier extends WatchExpressionCellModifier {
                 /*
                  *  We let the Model provider supply the current format.
                  */
-                String formatId;
+                String formatId = formatInEditing;
                 
                 if ( element instanceof IVMContext) {
-                    /*
-                     *  Find the presentation context and then use it to get the current desired format.
-                     */
-                    IVMContext ctx = (IVMContext) element;
-                    IPresentationContext presCtx = ctx.getVMNode().getVMProvider().getPresentationContext();
-                    formatId = FormattedValueVMUtil.getPreferredFormat(presCtx);
+                	if (formatId == null) {
+                		formatId = queryFormat((IVMContext) element);
+                	}
                 }
                 else {
                     formatId = IFormattedValues.NATURAL_FORMAT;

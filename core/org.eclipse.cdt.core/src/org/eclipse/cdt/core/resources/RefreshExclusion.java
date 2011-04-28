@@ -119,13 +119,45 @@ public abstract class RefreshExclusion {
 	public abstract String getName();
 	
 	/**
-	 * Tests a given resource to see if this exclusion should exclude it from being refreshed.
-	 * This should consult any nested exclusions to see if they in turn ought to exclude the resource.
+	 * Tests a given resource to see if this exclusion applies to it.
 	 * 
 	 * @param resource the resource to be tested.
-	 * @return true if the resource should be excluded, false otherwise.
+	 * @return true if the resource triggers the exclusion, false otherwise (including if this
+	 * exclusion does not apply).
 	 */
 	public abstract boolean testExclusion(IResource resource);
+	
+	/**
+	 * Tests this exclusion and recursively test all of its nested exclusions to determine whether this
+	 * exclusion should be triggered or not.
+	 * 
+	 * @param resource the resource to be tested
+	 * @return true if the exclusion is triggered, false otherwise (including if this exclusion does not apply)
+	 */
+	public boolean testExclusionChain(IResource resource) {
+		// first check and see if this exclusion would be triggered in the first place
+		boolean currentValue = testExclusion(resource);
+		
+		if (currentValue) {
+			List<RefreshExclusion> nestedExclusions = getNestedExclusions();
+			for (RefreshExclusion exclusion : nestedExclusions) {
+
+				boolean nestedValue = exclusion.testExclusionChain(resource);
+				
+				if(nestedValue) {
+					// the nested exclusion says to do the opposite of what we originally thought, so negate the current value
+					currentValue = (!currentValue);
+
+					// since the first exclusion chain to trump us wins, then, break out of the loop
+					break;
+				}
+				
+			}
+		}
+		
+		return currentValue;
+				
+	}
 	
 	/**
 	 * @return an unmodifiable list of all the instance of this exclusion

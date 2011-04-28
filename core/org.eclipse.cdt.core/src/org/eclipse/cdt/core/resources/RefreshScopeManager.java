@@ -498,7 +498,7 @@ public class RefreshScopeManager {
 					boolean isExcluded = false;
 					
 					for (RefreshExclusion exclusion : exclusions) {
-						if (exclusion.testExclusion(resource)) {
+						if (exclusion.testExclusionChain(resource)) {
 							isExcluded = true;
 							break;
 						}
@@ -516,6 +516,49 @@ public class RefreshScopeManager {
 		};
 		
 		return runnable;
+	}
+	
+	public boolean shouldResourceBeRefreshed(IResource resource) {
+		IProject project = resource.getProject();
+		List<IResource> resourcesToRefresh = getResourcesToRefresh(project);
+		boolean isInSomeTree = false;
+		IResource topLevelResource = null;
+		
+		for(IResource resourceToRefresh : resourcesToRefresh) {
+			if(resourceToRefresh.equals(resource)) {
+				isInSomeTree = true;
+				topLevelResource = resource;
+				break;
+			}
+			
+			// see if the resource is a child of our top level resources
+			if(resourceToRefresh instanceof IContainer) {
+				IContainer container = (IContainer) resourceToRefresh;
+				if(container.getFullPath().isPrefixOf(resource.getFullPath())) {
+					isInSomeTree = true;
+					topLevelResource = resourceToRefresh;
+					break;
+				}
+			}
+			
+		}
+		
+		if(!isInSomeTree) {
+			return false;
+		}
+		
+		// get any exclusions
+		boolean isExcluded = false;
+
+		for (RefreshExclusion exclusion : getExclusions(topLevelResource)) {
+			if (exclusion.testExclusionChain(resource)) {
+				isExcluded = true;
+				break;
+			}
+		}
+		
+		return !isExcluded;
+
 	}
 
 }

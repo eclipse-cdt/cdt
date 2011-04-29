@@ -322,6 +322,8 @@ public class RefreshScopeManager {
 	}
 	
 	public void persistSettings() throws CoreException {
+		getProjectToResourcesMap();
+		getResourcesToExclusionsMap();
 		for(IProject project : fProjectToResourcesMap.keySet()) {
 			// serialize all settings for the project to an XML document which we will use to persist
 			// the data to a persistent resource property

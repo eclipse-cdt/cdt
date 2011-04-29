@@ -17,13 +17,19 @@ import java.util.Map;
 
 import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
+import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
+import org.eclipse.cdt.codan.core.param.ListProblemPreference;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -44,23 +50,31 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 	public static final String ER_UNUSED_VARIABLE_DECLARATION_ID = "org.eclipse.cdt.codan.internal.checkers.UnusedVariableDeclarationProblem"; //$NON-NLS-1$
 	public static final String ER_UNUSED_FUNCTION_DECLARATION_ID = "org.eclipse.cdt.codan.internal.checkers.UnusedFunctionDeclarationProblem"; //$NON-NLS-1$
 	public static final String ER_UNUSED_STATIC_FUNCTION_ID = "org.eclipse.cdt.codan.internal.checkers.UnusedStaticFunctionProblem"; //$NON-NLS-1$
+	public static final String PARAM_EXCEPT_ARG_LIST = "exceptions"; //$NON-NLS-1$
 
 	private Map<IBinding, IASTDeclarator> externFunctionDeclarations = new HashMap<IBinding, IASTDeclarator>();
 	private Map<IBinding, IASTDeclarator> staticFunctionDeclarations = new HashMap<IBinding, IASTDeclarator>();
 	private Map<IBinding, IASTDeclarator> staticFunctionDefinitions = new HashMap<IBinding, IASTDeclarator>();
 	private Map<IBinding, IASTDeclarator> externVariableDeclarations = new HashMap<IBinding, IASTDeclarator>();
 	private Map<IBinding, IASTDeclarator> staticVariableDeclarations = new HashMap<IBinding, IASTDeclarator>();
+	private IProblemWorkingCopy unusedVariableProblem = null;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.ICheckerWithPreferences#initParameters
-	 * (org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
-	 */
+	@Override
+	public boolean runInEditor() {
+		return true;
+	}
+	
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
+		if (problem.getId().equals(ER_UNUSED_VARIABLE_DECLARATION_ID)) {
+			unusedVariableProblem = problem;
+			ListProblemPreference pref = addListPreference(problem, PARAM_EXCEPT_ARG_LIST,
+					CheckersMessages.UnusedSymbolInFileScopeChecker_Exceptions,
+					CheckersMessages.UnusedSymbolInFileScopeChecker_CharacterSequence);
+			pref.addChildValue("@(#)"); //$NON-NLS-1$
+			pref.addChildValue("$Id"); //$NON-NLS-1$
+		}
 	}
 
 	private void clearCandidates() {
@@ -125,6 +139,18 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 										IType type = ((IVariable) binding).getType();
 										// account for class constructor and avoid possible false positive
 										if (!(type instanceof ICPPClassType) && !(type instanceof IProblemType)) {
+											IASTInitializer initializer = decl.getInitializer();
+											if (initializer instanceof IASTEqualsInitializer) {
+												IASTEqualsInitializer equalsInitializer = (IASTEqualsInitializer) initializer;
+												IASTInitializerClause clause = equalsInitializer.getInitializerClause();
+												if (clause instanceof IASTLiteralExpression) {
+													IASTLiteralExpression literalExpression = (IASTLiteralExpression) clause;
+													String literal = literalExpression.toString();
+													if (isFilteredOut(literal, unusedVariableProblem, PARAM_EXCEPT_ARG_LIST))
+														continue;
+												}
+											}
+											
 											staticVariableDeclarations.put(binding, decl);
 										}
 									}
@@ -248,8 +274,14 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 		clearCandidates(); // release memory
 	}
 
-	@Override
-	public boolean runInEditor() {
-		return true;
+	public boolean isFilteredOut(String arg, IProblem problem, String exceptionListParamId) {
+		Object[] arr = (Object[]) getPreference(problem, exceptionListParamId);
+		for (int i = 0; i < arr.length; i++) {
+			String str = (String) arr[i];
+			if (arg.contains(str))
+				return true;
+		}
+		return false;
 	}
+
 }

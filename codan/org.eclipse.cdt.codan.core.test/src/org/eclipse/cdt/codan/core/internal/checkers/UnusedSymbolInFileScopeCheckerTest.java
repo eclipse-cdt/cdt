@@ -244,4 +244,16 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 		checkNoErrors();
 	}
 
+	// static char* test_var="$Id: file.c,v 1.1 2000/01/01 11:11:11 agvozdev Exp $";
+	public void testExternVariable_Declaration_cvs_ident() throws IOException {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	// static char* test_var="@(#) $Header: /src/file.c,v 1.1 2000/01/01 11:11:11 agvozdev Exp $";
+	public void testExternVariable_Declaration_sccs_ident() throws IOException {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
 }

@@ -30,6 +30,9 @@ public class CheckersMessages extends NLS {
 	public static String SuspiciousSemicolonChecker_ParamElse;
 	public static String ProblemBindingChecker_Candidates;
 
+	public static String UnusedSymbolInFileScopeChecker_CharacterSequence;
+	public static String UnusedSymbolInFileScopeChecker_Exceptions;
+
 	static {
 		NLS.initializeMessages(CheckersMessages.class.getName(), CheckersMessages.class);
 	}

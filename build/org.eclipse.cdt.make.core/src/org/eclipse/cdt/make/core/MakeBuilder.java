@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.resources.RefreshScopeManager;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.StreamMonitor;
@@ -295,7 +296,11 @@ public class MakeBuilder extends ACBuilder {
 			// Do not allow the cancel of the refresh, since the builder is external
 			// to Eclipse, files may have been created/modified and we will be out-of-sync.
 			// The caveat is for huge projects, it may take sometimes at every build.
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+			// project.refreshLocal(IResource.DEPTH_INFINITE, null);
+			
+			// use the refresh scope manager to refresh
+			IWorkspaceRunnable runnable = RefreshScopeManager.getInstance().getRefreshRunnable(project);
+			ResourcesPlugin.getWorkspace().run(runnable, null);
 		} catch (CoreException e) {
 			MakeCorePlugin.log(e);
 		}

@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.resources.RefreshScopeManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
@@ -58,7 +59,9 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -1104,8 +1107,11 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						monitor.subTask(ManagedMakeMessages
 								.getResourceString(REFRESH));
 						try {
-							currentProject.refreshLocal(
-									IResource.DEPTH_INFINITE, null);
+							//currentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
+							
+							// use the refresh scope manager to refresh
+							IWorkspaceRunnable runnable = RefreshScopeManager.getInstance().getRefreshRunnable(currentProject);
+							ResourcesPlugin.getWorkspace().run(runnable, null);
 						} catch (CoreException e) {
 							monitor.subTask(ManagedMakeMessages
 									.getResourceString(REFRESH_ERROR));

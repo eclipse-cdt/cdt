@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.resources.RefreshScopeManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
@@ -51,7 +52,9 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -196,7 +199,11 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 						// The caveat is for huge projects, it may take sometimes at every build.
 						
 						// TODO should only refresh output folders
-						project.refreshLocal(IResource.DEPTH_INFINITE, null);
+						//project.refreshLocal(IResource.DEPTH_INFINITE, null);
+						
+						// use the refresh scope manager to refresh
+						IWorkspaceRunnable runnable = RefreshScopeManager.getInstance().getRefreshRunnable(project);
+						ResourcesPlugin.getWorkspace().run(runnable, null);
 					} catch (CoreException e) {
 					}
 				} else {

@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.resources.tests;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.resources.ExclusionInstance;
@@ -28,7 +32,9 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -38,8 +44,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class RefreshScopeTests extends TestCase {
 	
 	private IProject fProject;
-	private IResource fFolder1;
-	private IResource fFolder2;
+	private IFolder fFolder1;
+	private IFolder fFolder2;
 	private IFolder fFolder3;
 	private IFolder fFolder4;
 	private IFolder fFolder5;
@@ -133,9 +139,11 @@ public class RefreshScopeTests extends TestCase {
 	}
 	
 	public void testAddDeleteResource() throws CoreException {
-		
+
 		
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
+		manager.clearAllData();
+		
 		manager.addResourceToRefresh(fProject, fFolder1);
 		
 		IResource[] resources = manager.getResourcesToRefresh(fProject).toArray(new IResource[0]);
@@ -170,6 +178,8 @@ public class RefreshScopeTests extends TestCase {
 	
 	public void testSetResourcesToRefresh() {
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
+		manager.clearAllData();
+		
 		List<IResource> resources = new LinkedList<IResource>();
 		resources.add(fFolder1);
 		resources.add(fFolder2);
@@ -186,6 +196,8 @@ public class RefreshScopeTests extends TestCase {
 	
 	public void testAddRemoveExclusion() {
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
+		manager.clearAllData();
+		
 		manager.addResourceToRefresh(fProject, fProject);
 		RefreshExclusion exclusion1 = new TestExclusion();
 		manager.addExclusion(fProject, exclusion1);
@@ -215,6 +227,8 @@ public class RefreshScopeTests extends TestCase {
 	
 	public void testPersistAndLoad() {
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
+		manager.clearAllData();
+		
 		manager.addResourceToRefresh(fProject, fProject);
 		
 		RefreshExclusion exclusion1 = new TestExclusion();
@@ -294,6 +308,8 @@ public class RefreshScopeTests extends TestCase {
 	
 	public void testResourceExclusion() {
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
+		manager.clearAllData();
+		
 		manager.addResourceToRefresh(fProject, fProject);
 		
 		// create a series of nested exclusions that include/exclude certain folders
@@ -340,12 +356,73 @@ public class RefreshScopeTests extends TestCase {
 		assertEquals(true, manager.shouldResourceBeRefreshed(fFolder5));
 		assertEquals(false, manager.shouldResourceBeRefreshed(fFolder6));
 		
+		// now let's create a bunch of files in these directories using java.io.File (so that we don't get
+		// resource deltas happening), and refresh the project according to the policy.  We should only see the files
+		// in the same folders above when consulting the resource system
+		IPath path = fProject.getLocation();
+		createTestFile(path);
+		
+		path = fFolder1.getLocation();
+		createTestFile(path);
+		
+		path = fFolder2.getLocation();
+		createTestFile(path);
+		
+		path = fFolder3.getLocation();
+		createTestFile(path);
+		
+		path = fFolder4.getLocation();
+		createTestFile(path);
+		
+		path = fFolder5.getLocation();
+		createTestFile(path);
+		
+		path = fFolder6.getLocation();
+		createTestFile(path);
+		
+		// now refresh
+		IWorkspaceRunnable runnable = manager.getRefreshRunnable(fProject);
+		try {
+			ResourcesPlugin.getWorkspace().run(runnable, null);
+		} catch (CoreException e) {
+			fail();
+		}
+		
+		// check if the proper resources exist in the workspace
+		IResource resource = fProject.getFile("foo.cpp");
+		assertEquals(true, resource.exists());
+		resource = fFolder1.getFile("foo.cpp");
+		assertEquals(false, resource.exists());
+		resource = fFolder2.getFile("foo.cpp");
+		assertEquals(false, resource.exists());
+		resource = fFolder3.getFile("foo.cpp");
+		assertEquals(true, resource.exists());
+		resource = fFolder4.getFile("foo.cpp");
+		assertEquals(false, resource.exists());
+		resource = fFolder5.getFile("foo.cpp");
+		assertEquals(true, resource.exists());
+		resource = fFolder6.getFile("foo.cpp");
+		assertEquals(false, resource.exists());
+		
 		manager.clearAllData();
+
+	}
+
+	private void createTestFile(IPath path) {
+		path = path.append("foo.cpp");
+		File file = new File(path.toOSString());
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			fail();
+		}
+		
 
 	}
 	
 	public void testDefaults() {
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
+		manager.clearAllData();
 		
 		// by default, a project should refresh its root
 		List<IResource> resourcesToRefresh = manager.getResourcesToRefresh(fProject);
@@ -382,6 +459,10 @@ public class RefreshScopeTests extends TestCase {
 		exclusions = manager.getExclusions(fProject);
 		assertEquals(0, exclusions.size());
 		
+	}
+
+	public static Test suite() {
+		return new TestSuite(RefreshScopeTests.class);
 	}
 	
 

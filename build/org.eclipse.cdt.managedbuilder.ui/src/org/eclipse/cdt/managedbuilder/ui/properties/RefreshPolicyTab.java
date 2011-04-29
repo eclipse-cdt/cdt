@@ -28,6 +28,7 @@ import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -599,6 +600,13 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 			fManager.clearExclusions(resource);
 			List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
 			fManager.setExclusions(resource, exclusions);
+		}
+		
+		try {
+			fManager.persistSettings();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

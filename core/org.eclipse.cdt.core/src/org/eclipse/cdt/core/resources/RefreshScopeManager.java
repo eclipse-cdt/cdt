@@ -33,6 +33,10 @@ import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -89,6 +93,40 @@ public class RefreshScopeManager {
 	private RefreshScopeManager(){
 		fClassnameToExclusionFactoryMap = new HashMap<String, RefreshExclusionFactory>();
 		loadExtensions();
+		try {
+			loadSettings();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		
+		// add a resource change listener that will try to load settings for projects when they open
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
+
+			public void resourceChanged(IResourceChangeEvent event) {
+				IResourceDelta delta = event.getDelta();
+				try {
+					delta.accept(new IResourceDeltaVisitor() {
+
+						public boolean visit(IResourceDelta delta) throws CoreException {
+							if(delta.getResource() instanceof IProject && delta.getKind() == IResourceDelta.ADDED) {
+								IProject project = (IProject) delta.getResource();
+								loadSettings(ResourcesPlugin.getWorkspace().getRoot(), project);
+								return false;
+							}
+							
+							return true;
+						}
+
+					}
+					);
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+			
+		}, IResourceChangeEvent.POST_CHANGE);
 	}
 	
 	public synchronized void loadExtensions() {
@@ -350,95 +388,104 @@ public class RefreshScopeManager {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 
 		for (IProject project : workspaceRoot.getProjects()) {
-			if (project.isOpen()) {
-				if (project.hasNature(CProjectNature.C_NATURE_ID)) {
-					String xmlString = project.getPersistentProperty(REFRESH_SCOPE_PROPERTY_NAME);
+			loadSettings(workspaceRoot, project);
+		}
+	}
 
-					// if there are no settings, then configure the default behaviour of refreshing the entire
-					// project,
-					// with no exclusions
-					if (xmlString == null) {
-						addResourceToRefresh(project, project);
+	/**
+	 * @param workspaceRoot
+	 * @param project
+	 * @throws CoreException
+	 */
+	private void loadSettings(IWorkspaceRoot workspaceRoot, IProject project) throws CoreException {
+		if (project.isOpen()) {
+			if (project.hasNature(CProjectNature.C_NATURE_ID)) {
+				String xmlString = project.getPersistentProperty(REFRESH_SCOPE_PROPERTY_NAME);
+
+				// if there are no settings, then configure the default behaviour of refreshing the entire
+				// project,
+				// with no exclusions
+				if (xmlString == null) {
+					addResourceToRefresh(project, project);
+				}
+
+				else {
+					// convert the XML string to a DOM model
+
+					DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
+							.newInstance();
+					DocumentBuilder docBuilder = null;
+					try {
+						docBuilder = docBuilderFactory.newDocumentBuilder();
+					} catch (ParserConfigurationException e) {
+						throw new CoreException(CCorePlugin.createStatus(
+								Messages.RefreshScopeManager_0, e));
 					}
 
-					else {
-						// convert the XML string to a DOM model
+					Document doc = null;
 
-						DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
-								.newInstance();
-						DocumentBuilder docBuilder = null;
-						try {
-							docBuilder = docBuilderFactory.newDocumentBuilder();
-						} catch (ParserConfigurationException e) {
-							throw new CoreException(CCorePlugin.createStatus(
-									Messages.RefreshScopeManager_0, e));
-						}
+					try {
+						doc = docBuilder.parse(new InputSource(new StringReader(xmlString)));
+					} catch (SAXException e) {
+						throw new CoreException(CCorePlugin.createStatus(
+								MessageFormat.format(Messages.RefreshScopeManager_3,
+										project.getName()), e));
+					} catch (IOException e) {
+						throw new CoreException(CCorePlugin.createStatus(
+								MessageFormat.format(Messages.RefreshScopeManager_3,
+										project.getName()), e));
+					}
 
-						Document doc = null;
+					// walk the DOM and load the settings
 
-						try {
-							doc = docBuilder.parse(new InputSource(new StringReader(xmlString)));
-						} catch (SAXException e) {
-							throw new CoreException(CCorePlugin.createStatus(
-									MessageFormat.format(Messages.RefreshScopeManager_3,
-											project.getName()), e));
-						} catch (IOException e) {
-							throw new CoreException(CCorePlugin.createStatus(
-									MessageFormat.format(Messages.RefreshScopeManager_3,
-											project.getName()), e));
-						}
+					// for now ignore the version attribute, as we only have version 1 at this time
 
-						// walk the DOM and load the settings
+					// iterate through the child nodes
+					NodeList nodeList = doc.getDocumentElement().getChildNodes();  // child of the doc is the root
 
-						// for now ignore the version attribute, as we only have version 1 at this time
+					for (int k = 0; k < nodeList.getLength(); k++) {
+						Node node = nodeList.item(k);
 
-						// iterate through the child nodes
-						NodeList nodeList = doc.getDocumentElement().getChildNodes();  // child of the doc is the root
+						// node will be an element
+						if (node instanceof Element) {
+							Element resourceElement = (Element) node;
 
-						for (int k = 0; k < nodeList.getLength(); k++) {
-							Node node = nodeList.item(k);
+							if (resourceElement.getNodeName().equals(RESOURCE_ELEMENT_NAME)) {
 
-							// node will be an element
-							if (node instanceof Element) {
-								Element resourceElement = (Element) node;
+								// get the resource path
+								String resourcePath = resourceElement
+										.getAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME);
 
-								if (resourceElement.getNodeName().equals(RESOURCE_ELEMENT_NAME)) {
+								if (resourcePath == null) {
+									// error
 
-									// get the resource path
-									String resourcePath = resourceElement
-											.getAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME);
+								}
 
-									if (resourcePath == null) {
+								else {
+									// find the resource
+									IResource resource = workspaceRoot.findMember(resourcePath);
+
+									if (resource == null) {
 										// error
-
 									}
 
 									else {
-										// find the resource
-										IResource resource = workspaceRoot.findMember(resourcePath);
+										addResourceToRefresh(project, resource);
 
-										if (resource == null) {
-											// error
-										}
+										// load any exclusions
+										List<RefreshExclusion> exclusions = RefreshExclusion.loadData(resourceElement, null, resource);
 
-										else {
-											addResourceToRefresh(project, resource);
-
-											// load any exclusions
-											List<RefreshExclusion> exclusions = RefreshExclusion.loadData(resourceElement, null, resource);
-
-											// add them
-											for (RefreshExclusion exclusion : exclusions) {
-												addExclusion(resource, exclusion);
-											}
+										// add them
+										for (RefreshExclusion exclusion : exclusions) {
+											addExclusion(resource, exclusion);
 										}
 									}
 								}
 							}
 						}
 					}
-
 				}
+
 			}
 		}
 	}
@@ -459,7 +506,8 @@ public class RefreshScopeManager {
 	}
 	
 	public void clearAllExclusions() {
-		fResourceToExclusionsMap.clear();
+		if(fResourceToExclusionsMap != null)
+			fResourceToExclusionsMap.clear();
 	}
 
 	public ExclusionInstance getInstanceForClassName(String className) {
@@ -496,22 +544,13 @@ public class RefreshScopeManager {
 				if (resource instanceof IContainer) {
 					IContainer container = (IContainer) resource;
 
-					// get any exclusions
-					boolean isExcluded = false;
-					
-					for (RefreshExclusion exclusion : exclusions) {
-						if (exclusion.testExclusionChain(resource)) {
-							isExcluded = true;
-							break;
-						}
-					}
-
-					if (!isExcluded) {
+					if (shouldResourceBeRefreshed(resource)) {
 						resource.refreshLocal(IResource.DEPTH_ONE, monitor);
 
-						for (IResource child : container.members()) {
-							refreshResources(child, exclusions, monitor);
-						}
+					}
+					
+					for (IResource child : container.members()) {
+						refreshResources(child, exclusions, monitor);
 					}
 				}
 			}

@@ -9,7 +9,6 @@
  *     QNX - initial API and implementation,  @author Doug Schaefer
  *     Warren Paul (Nokia) - Bug 178124, have processLine return true if processed.
  *******************************************************************************/
-
 package org.eclipse.cdt.core.errorparsers;
 
 import org.eclipse.cdt.core.ErrorParserManager;
@@ -20,7 +19,6 @@ import org.eclipse.cdt.core.IErrorParser;
  * @since 5.1
  */
 public class AbstractErrorParser implements IErrorParser {
-
 	private ErrorPattern[] patterns;
 	
 	protected AbstractErrorParser(ErrorPattern[] patterns) {
@@ -29,13 +27,14 @@ public class AbstractErrorParser implements IErrorParser {
 	
 	/**
 	 * @param line - line of the input
-	 * @param epManager - error parsers manager
+	 * @param manager - error parsers manager
 	 * @return true if error parser recognized and accepted line, false otherwise
 	 */
-	public boolean processLine(String line, ErrorParserManager epManager) {
-		for (int i = 0; i < patterns.length; ++i)
-			if (patterns[i].processLine(line, epManager))
+	public boolean processLine(String line, ErrorParserManager manager) {
+		for (int i = 0; i < patterns.length; ++i) {
+			if (patterns[i].processLine(line, manager))
 				return true;
+		}
 		return false;
 	}
 }

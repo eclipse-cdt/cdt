@@ -12,8 +12,10 @@ package org.eclipse.cdt.codan.internal.checkers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
@@ -36,9 +38,11 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -134,23 +138,34 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 									}
 								} else if (binding instanceof IVariable) {
 									if (storageClass == IASTDeclSpecifier.sc_extern) {
-										externVariableDeclarations.put(binding, decl);
+										IASTInitializer initializer = decl.getInitializer();
+										// initializer makes "extern" declaration to become definition do not count these
+										if (initializer==null) {
+											externVariableDeclarations.put(binding, decl);
+										}
 									} else if (storageClass == IASTDeclSpecifier.sc_static) {
 										IType type = ((IVariable) binding).getType();
 										// account for class constructor and avoid possible false positive
 										if (!(type instanceof ICPPClassType) && !(type instanceof IProblemType)) {
+											// check if initializer disqualifies it
 											IASTInitializer initializer = decl.getInitializer();
+											IASTInitializerClause clause = null;
 											if (initializer instanceof IASTEqualsInitializer) {
 												IASTEqualsInitializer equalsInitializer = (IASTEqualsInitializer) initializer;
-												IASTInitializerClause clause = equalsInitializer.getInitializerClause();
-												if (clause instanceof IASTLiteralExpression) {
-													IASTLiteralExpression literalExpression = (IASTLiteralExpression) clause;
-													String literal = literalExpression.toString();
-													if (isFilteredOut(literal, unusedVariableProblem, PARAM_EXCEPT_ARG_LIST))
-														continue;
-												}
+												clause = equalsInitializer.getInitializerClause();
+											} else if (initializer instanceof ICPPASTConstructorInitializer) {
+												ICPPASTConstructorInitializer constructorInitializer = (ICPPASTConstructorInitializer) initializer;
+												IASTInitializerClause[] args = constructorInitializer.getArguments();
+												if (args.length==1)
+													clause = args[0];
 											}
-											
+											if (clause instanceof IASTLiteralExpression) {
+												IASTLiteralExpression literalExpression = (IASTLiteralExpression) clause;
+												String literal = literalExpression.toString();
+												if (isFilteredOut(literal, unusedVariableProblem, PARAM_EXCEPT_ARG_LIST))
+													continue;
+											}
+
 											staticVariableDeclarations.put(binding, decl);
 										}
 									}
@@ -200,6 +215,16 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 					if (binding instanceof ICPPMethod)
 						return PROCESS_CONTINUE;
 
+					if (binding instanceof IProblemBinding) {
+						// avoid false positives related to unresolved names
+						String plainName = name.toString();
+						filterOutByPlainName(externFunctionDeclarations, plainName);
+						filterOutByPlainName(staticFunctionDeclarations, plainName);
+						filterOutByPlainName(staticFunctionDefinitions, plainName);
+						filterOutByPlainName(externVariableDeclarations, plainName);
+						filterOutByPlainName(staticVariableDeclarations, plainName);
+					}
+
 					IASTNode parentNode = name.getParent();
 
 					if (!(parentNode instanceof IASTFunctionDefinition || parentNode instanceof IASTFunctionDeclarator)) {
@@ -216,6 +241,17 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 						return PROCESS_ABORT;
 
 					return PROCESS_CONTINUE;
+				}
+
+				private void filterOutByPlainName(Map<IBinding, IASTDeclarator> declarators, String id) {
+					Iterator<Entry<IBinding, IASTDeclarator>> iter = declarators.entrySet().iterator();
+					while (iter.hasNext()) {
+						Entry<IBinding, IASTDeclarator> entry = iter.next();
+						IASTDeclarator decl = entry.getValue();
+						IASTName astName = getAstName(decl);
+						if (id.equals(astName.toString()))
+							iter.remove();
+					}
 				}
 
 			});

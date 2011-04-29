@@ -161,6 +161,29 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 		checkErrorLine(1);
 	}
 
+	// static int test_fun(int i) {}
+	// int i = test_fun(X);
+	public void testStaticFunction_Definition_UnknownParameterType() throws IOException {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
+	// static void test_fun(void) {}
+	// void Class::fun() {
+	//   test_fun();
+	// }
+	public void testStaticFunction_Definition_InQualifiedFunction() throws IOException {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
+	// static int test_fun(X) {}
+	// int i = test_fun(X);
+	public void testStaticFunction_Definition_UnknownArgumentType() throws IOException {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
 	////////////////////////////////////////////////////////////////////////////
 	// Extern variables declaration
 	////////////////////////////////////////////////////////////////////////////
@@ -194,6 +217,12 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 
 	// int test_var;
 	// int test_var2=0;
+	public void testGlobalVariable_Definition() throws IOException {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	// extern int test_var=0; // not quite legal but some compilers allow that
 	public void testExternVariable_Definition() throws IOException {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
@@ -231,6 +260,15 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 		checkNoErrors();
 	}
 
+	// static int test_var;
+	// void Class::fun() {
+	//   test_var = 0;
+	// }
+	public void testStaticVariable_Used_InQualifiedFunction() throws IOException {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
 	// class Class;
 	// static Class test_var; // constructor is called here
 	public void testStaticVariable_Used_Constructor() throws IOException {
@@ -244,15 +282,21 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 		checkNoErrors();
 	}
 
-	// static char* test_var="$Id: file.c,v 1.1 2000/01/01 11:11:11 agvozdev Exp $";
-	public void testExternVariable_Declaration_cvs_ident() throws IOException {
+	// static char* test_var="$Id: UnusedSymbolInFileScopeCheckerTest.java,v 1.2 2011/04/29 11:17:42 agvozdev Exp $";
+	public void testExternVariable_Declaration_CvsIdent() throws IOException {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
 
-	// static char* test_var="@(#) $Header: /src/file.c,v 1.1 2000/01/01 11:11:11 agvozdev Exp $";
-	public void testExternVariable_Declaration_sccs_ident() throws IOException {
+	// static char* test_var="@(#) $Header: /cvsroot/tools/org.eclipse.cdt/codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/internal/checkers/UnusedSymbolInFileScopeCheckerTest.java,v 1.2 2011/04/29 11:17:42 agvozdev Exp $";
+	public void testExternVariable_Declaration_SccsIdent() throws IOException {
 		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	// static char test_var[]("@(#) $Id: UnusedSymbolInFileScopeCheckerTest.java,v 1.2 2011/04/29 11:17:42 agvozdev Exp $");
+	public void testExternVariable_Declaration_CvsIdentInitializer() throws IOException {
+		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
 

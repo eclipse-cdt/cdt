@@ -12,7 +12,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.core,
  org.eclipse.cdt.debug.core,
  org.eclipse.core.variables,
- org.eclipse.jface,
  org.eclipse.cdt.launch;bundle-version="6.1.0",
  org.eclipse.cdt.gdb;bundle-version="7.0.0"
 Bundle-ActivationPolicy: lazy

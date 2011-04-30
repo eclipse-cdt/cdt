@@ -473,6 +473,14 @@ public class GDBProcesses_7_0 extends AbstractDsfService
      * Keeps track if we are dealing with the very first process of GDB.
      */  
     private boolean fInitialProcess = true;
+    
+    /**
+     * Keeps track of the fact that we are restarting a process or not.
+     * This is important so that we know if we should automatically terminate
+     * GDB or not.  If the process is being restarted, we have to make sure
+     * not to kill GDB.
+     */
+    private boolean fProcRestarting;
 
     public GDBProcesses_7_0(DsfSession session) {
     	super(session);
@@ -1236,7 +1244,15 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	
 	/** @since 4.0 */
 	public void restart(IContainerDMContext containerDmc, Map<String, Object> attributes, DataRequestMonitor<IContainerDMContext> rm) {
-		startOrRestart(containerDmc, attributes, true, rm);
+		fProcRestarting = true;
+		startOrRestart(containerDmc, attributes, true, new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm) {
+			@Override
+			protected void handleFailure() {
+				fProcRestarting = false;
+				setData(getData());
+				super.handleFailure();
+			};
+		});
 	}
 	
 	/** @since 4.0 */
@@ -1337,14 +1353,16 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     		if (Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
     				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
     				true, null)) {
-    			if (fNumConnected == 0) {
-    				// If the last process we are debugging finishes, let's terminate GDB
+    			if (fNumConnected == 0 && !fProcRestarting) {
+    				// If the last process we are debugging finishes, and we are not restarting it, 
+    				// let's terminate GDB.
     				// We also do this for a remote attach session, since the 'auto terminate' preference
     				// is enabled.  If users want to keep the session alive to attach to another process,
     				// they can simply disable that preference
     				fCommandControl.terminate(new RequestMonitor(ImmediateExecutor.getInstance(), null));
     			}
     		}
+    		fProcRestarting = false;
     	} else {
     		fThreadCommandCache.reset();
     	}

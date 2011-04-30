@@ -325,6 +325,9 @@ public class RefreshScopeManager {
 		getProjectToResourcesMap();
 		getResourcesToExclusionsMap();
 		for(IProject project : fProjectToResourcesMap.keySet()) {
+			if (!project.exists()) {
+				continue;
+			}
 			// serialize all settings for the project to an XML document which we will use to persist
 			// the data to a persistent resource property
 			 DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -352,8 +355,11 @@ public class RefreshScopeManager {
 	            root.appendChild(resourceElement);
 	            
 	            // populate the node with any exclusions
-	            for(RefreshExclusion exclusion : fResourceToExclusionsMap.get(resource)) {
-	            	exclusion.persistData(doc, resourceElement);
+	            List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
+	            if (exclusions != null) {
+					for(RefreshExclusion exclusion : exclusions) {
+		            	exclusion.persistData(doc, resourceElement);
+		            }
 	            }
 
 			}

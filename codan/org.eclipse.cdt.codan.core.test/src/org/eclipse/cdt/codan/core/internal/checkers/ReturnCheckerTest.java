@@ -210,4 +210,39 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1);
 	}
+
+	//int bar(int foo)
+	//{
+	//    if(foo)
+	//        return 0;
+	//    else
+	//        return 0;
+	//}
+	public void testBranches_Bug343767() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+//	int f()
+//	{
+//	    switch (g()) {
+//	      case 1: return 1;
+//	      case 2:
+//	        return 0;
+//	}
+	public void testBranchesSwitch_Bug343767() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+	//int bar(int foo)
+	//{
+	//    if(foo)
+	//        return 0;
+	//    else
+	//        if (g()) return 0;
+	//        else return 1;
+	//}
+	public void testBranches2_Bug343767() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
 }

@@ -77,14 +77,14 @@ public class ControlFlowGraphBuilder {
 		exits = new ArrayList<IExitNode>();
 		dead = new ArrayList<IBasicBlock>();
 		IBasicBlock last = createSubGraph(start, body);
-		if (!(last instanceof IExitNode)) {
-			returnExit = (CxxExitNode) factory.createExitNode(null);
+		if (!(last instanceof IExitNode) && !deadConnector(last)) {
+			returnExit = factory.createExitNode(null);
 			returnExit.setStartNode(start);
 			addOutgoing(last, returnExit);
 			exits.add(returnExit);
 			if (dead.size() > 0) {
-				for (Iterator iterator = dead.iterator(); iterator.hasNext();) {
-					IBasicBlock ds = (IBasicBlock) iterator.next();
+				for (Iterator<IBasicBlock> iterator = dead.iterator(); iterator.hasNext();) {
+					IBasicBlock ds = iterator.next();
 					IBasicBlock dl = findLast(ds);
 					if (dl != null && dl.getOutgoingSize() == 0 && dl != returnExit) {
 						((AbstractBasicBlock) dl).addOutgoing(returnExit);
@@ -95,6 +95,31 @@ public class ControlFlowGraphBuilder {
 		CxxControlFlowGraph graph = new CxxControlFlowGraph(start, exits);
 		graph.setUnconnectedNodes(dead);
 		return graph;
+	}
+
+	/**
+	 * @param last
+	 * @return
+	 */
+	private boolean deadConnector(IBasicBlock conn) {
+		if (conn instanceof IJumpNode || conn instanceof IConnectorNode) {
+			if (conn.getIncomingSize() == 0) {
+				return true;
+			}
+			if (conn instanceof IJumpNode) {
+				IJumpNode jm = (IJumpNode) conn;
+				if (jm.isBackwardArc())
+					return false;
+			}
+			IBasicBlock[] conns = conn.getIncomingNodes();
+			for (int i = 0; i < conns.length; i++) {
+				IBasicBlock bb = conns[i];
+				if (!deadConnector(bb))
+					return false;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	public IBasicBlock findLast(IBasicBlock node) {

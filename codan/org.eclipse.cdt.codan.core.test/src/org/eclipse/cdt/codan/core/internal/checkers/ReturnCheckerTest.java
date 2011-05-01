@@ -245,4 +245,14 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
+	//int bar(int foo)
+	//{
+	//    while(foo) {
+	//        return 0;
+	//    }
+	//}
+	public void testWhile() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkErrorLine(1);
+	}
 }

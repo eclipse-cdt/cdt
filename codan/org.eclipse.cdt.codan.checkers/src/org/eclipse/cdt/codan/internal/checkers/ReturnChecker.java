@@ -81,18 +81,20 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 				return PROCESS_SKIP; // skip inner functions
 			return PROCESS_CONTINUE;
 		}
+
 		public int visit(IASTExpression expr) {
 			if (expr instanceof ICPPASTLambdaExpression) {
 				return PROCESS_SKIP;
 			}
 			return PROCESS_CONTINUE;
 		}
+
 		public int visit(IASTStatement stmt) {
 			if (stmt instanceof IASTReturnStatement) {
 				IASTReturnStatement ret = (IASTReturnStatement) stmt;
 				boolean hasValue = ret.getReturnValue() != null;
-				if (hasret==false && hasValue) {
-					hasret=true;
+				if (hasret == false && hasValue) {
+					hasret = true;
 				}
 				if (!isVoid(func) && !isConstructorDestructor()) {
 					if (checkImplicitReturn(RET_NO_VALUE_ID) || isExplicitReturn(func)) {
@@ -141,28 +143,37 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		func.accept(visitor);
 		boolean nonVoid = !isVoid(func);
 		if (nonVoid) {
-			if (!visitor.hasret) {
-				// no return at all
-				if (checkImplicitReturn(RET_NORET_ID) || isExplicitReturn(func)) {
-					if (endsWithNoExitNode(func))
-						reportProblem(RET_NORET_ID, func.getDeclSpecifier());
-				}
-			} else {
-				// there a return but maybe it is only on one branch
-				IASTStatement body = func.getBody();
-				if (body instanceof IASTCompoundStatement) {
-					IASTStatement[] statements = ((IASTCompoundStatement) body).getStatements();
-					if (statements.length > 0) {
-						IASTStatement last = statements[statements.length - 1];
-						// now check if last statement if complex (for optimization reasons, building CFG is expensive)
-						if (isCompoundStatement(last)) {
-							if (endsWithNoExitNode(func))
-								reportProblem(RET_NORET_ID, func.getDeclSpecifier());
-						}
+			// there a return but maybe it is only on one branch
+			IASTStatement body = func.getBody();
+			if (body instanceof IASTCompoundStatement) {
+				IASTStatement[] statements = ((IASTCompoundStatement) body).getStatements();
+				if (statements.length > 0) {
+					IASTStatement last = statements[statements.length - 1];
+					// now check if last statement if complex (for optimization reasons, building CFG is expensive)
+					if (isCompoundStatement(last)) {
+						if (endsWithNoExitNode(func))
+							reportNoRet(func, visitor.hasret);
+					} else if (!isFuncExitStatement(last)) {
+						reportNoRet(func, visitor.hasret);
 					}
+				} else {
+					reportNoRet(func, false);
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param func
+	 */
+	protected void reportNoRet(IASTFunctionDefinition func, boolean hasRet) {
+		if (!hasRet) {
+			// no return at all
+			if (checkImplicitReturn(RET_NORET_ID) == false && isExplicitReturn(func) == false) {
+				return;
+			}
+		}
+		reportProblem(RET_NORET_ID, func.getDeclSpecifier());
 	}
 
 	/**
@@ -172,6 +183,11 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	private boolean isCompoundStatement(IASTStatement last) {
 		return last instanceof IASTIfStatement || last instanceof IASTWhileStatement || last instanceof IASTDoStatement
 				|| last instanceof IASTForStatement || last instanceof IASTSwitchStatement;
+	}
+
+	protected boolean isFuncExitStatement(IASTStatement statement) {
+		CxxAstUtils utils = CxxAstUtils.getInstance();
+		return statement instanceof IASTReturnStatement || utils.isThrowStatement(statement) || utils.isExitStatement(statement);
 	}
 
 	/**
@@ -275,39 +291,39 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 			addPreference(problem, PARAM_IMPLICIT, CheckersMessages.ReturnChecker_Param0, Boolean.FALSE);
 		}
 	}
-	
+
 	/**
-	 * Checks if a "void" return type is specified using the C++0x late-specified return type
+	 * Checks if a "void" return type is specified using the C++0x
+	 * late-specified return type
 	 * for a given function definition
 	 * 
 	 * For example, auto f() -> void { } would return true
 	 * 
 	 * @param functionDefinition
-	 * @return True if the function has a void (late-specified) return type, False otherwise
+	 * @return True if the function has a void (late-specified) return type,
+	 *         False otherwise
 	 */
 	private boolean isAutoVoid(IASTFunctionDefinition functionDefinition) {
 		IASTFunctionDeclarator declarator = functionDefinition.getDeclarator();
-		if(declarator instanceof ICPPASTFunctionDeclarator) {
+		if (declarator instanceof ICPPASTFunctionDeclarator) {
 			ICPPASTFunctionDeclarator functionDeclarator = (ICPPASTFunctionDeclarator) declarator;
 			IASTTypeId trailingReturnType = functionDeclarator.getTrailingReturnType();
-			if(trailingReturnType != null) {
+			if (trailingReturnType != null) {
 				IASTDeclarator abstractDeclarator = trailingReturnType.getAbstractDeclarator();
-				if(abstractDeclarator != null) {
-					if(abstractDeclarator.getPointerOperators().length > 0) {
+				if (abstractDeclarator != null) {
+					if (abstractDeclarator.getPointerOperators().length > 0) {
 						return false;
 					}
-					
 					IASTDeclSpecifier declSpecifier = trailingReturnType.getDeclSpecifier();
-					if(declSpecifier instanceof ICPPASTSimpleDeclSpecifier) {
+					if (declSpecifier instanceof ICPPASTSimpleDeclSpecifier) {
 						ICPPASTSimpleDeclSpecifier simpleDeclSpecifier = (ICPPASTSimpleDeclSpecifier) declSpecifier;
-						if(simpleDeclSpecifier.getType() == IASTSimpleDeclSpecifier.t_void) {
+						if (simpleDeclSpecifier.getType() == IASTSimpleDeclSpecifier.t_void) {
 							return true;
 						}
 					}
 				}
 			}
- 		}
-		
- 		return false;
- 	}
+		}
+		return false;
+	}
 }

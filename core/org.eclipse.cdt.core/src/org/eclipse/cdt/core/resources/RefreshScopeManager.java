@@ -103,30 +103,54 @@ public class RefreshScopeManager {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
 
 			public void resourceChanged(IResourceChangeEvent event) {
-				IResourceDelta delta = event.getDelta();
-				try {
-					delta.accept(new IResourceDeltaVisitor() {
-
-						public boolean visit(IResourceDelta delta) throws CoreException {
-							if(delta.getResource() instanceof IProject && delta.getKind() == IResourceDelta.ADDED) {
-								IProject project = (IProject) delta.getResource();
-								loadSettings(ResourcesPlugin.getWorkspace().getRoot(), project);
-								return false;
-							}
-							
-							return true;
+				
+				if(event.getType() == IResourceChangeEvent.PRE_CLOSE || event.getType() == IResourceChangeEvent.PRE_DELETE) {
+					IProject project = event.getResource().getProject();
+					
+					try {
+						if(project.exists() && project.isOpen() && project.hasNature(CProjectNature.C_NATURE_ID)) {
+							clearDataForProject(project);
 						}
-
+					} catch (CoreException e) {
+						// should never happen due to checks above
 					}
-					);
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					
+					return;
 				}
+				
+				IResourceDelta delta = event.getDelta();
+				
+						if (delta != null) {
+							try {
+								delta.accept(new IResourceDeltaVisitor() {
+
+									public boolean visit(IResourceDelta delta) throws CoreException {
+										if (delta.getResource() instanceof IProject) {
+											IProject project = (IProject) delta.getResource();
+
+											if (delta.getKind() == IResourceDelta.ADDED
+													|| (delta.getKind() == IResourceDelta.CHANGED && (delta
+															.getFlags() & IResourceDelta.OPEN) != 0)) {
+												loadSettings(ResourcesPlugin.getWorkspace()
+														.getRoot(), project);
+												return false;
+											}
+
+										}
+
+										return true;
+									}
+
+								});
+							} catch (CoreException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
 
 			}
 			
-		}, IResourceChangeEvent.POST_CHANGE);
+		}, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);
 	}
 	
 	public synchronized void loadExtensions() {
@@ -255,6 +279,7 @@ public class RefreshScopeManager {
 		
 		if(resourceSet == null) {
 			resourceSet = new LinkedHashSet<IResource>();
+			fProjectToResourcesMap.put(project, resourceSet);
 			return;
 		}
 		
@@ -516,6 +541,20 @@ public class RefreshScopeManager {
 	public void clearAllExclusions() {
 		if(fResourceToExclusionsMap != null)
 			fResourceToExclusionsMap.clear();
+	}
+	
+	public void clearExclusionsForProject(IProject project) {
+		for(IResource resource : fResourceToExclusionsMap.keySet()) {
+			IProject project2 = resource.getProject();
+			if(project2.equals(project)) {
+				fResourceToExclusionsMap.remove(resource);
+			}
+		}
+	}
+	
+	private void clearDataForProject(IProject project) {
+		clearResourcesToRefresh(project);
+		clearExclusionsForProject(project);
 	}
 
 	public ExclusionInstance getInstanceForClassName(String className) {

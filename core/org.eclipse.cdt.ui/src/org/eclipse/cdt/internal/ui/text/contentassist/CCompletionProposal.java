@@ -50,9 +50,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
 
-import org.eclipse.cdt.core.parser.util.ContentAssistMatcherFactory;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
+
+import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 

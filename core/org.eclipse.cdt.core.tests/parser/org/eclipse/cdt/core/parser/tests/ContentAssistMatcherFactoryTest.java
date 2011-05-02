@@ -14,22 +14,18 @@ package org.eclipse.cdt.core.parser.tests;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.parser.util.ContentAssistMatcherFactory;
 import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 
 public class ContentAssistMatcherFactoryTest extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).remove(
-				CCorePreferenceConstants.SHOW_CAMEL_CASE_MATCHES);
+		ContentAssistMatcherFactory.getInstance().setShowCamelCaseMatches(true);
 		super.tearDown();
 	}
 
-	public void testCamelCasePreference() {
+	public void testConfiguration() {
 		// Default is show camel case matches on
 		assertTrue(match("foo", "fooBar"));
 		assertTrue(match("fB", "fooBar"));
@@ -64,8 +60,7 @@ public class ContentAssistMatcherFactoryTest extends TestCase {
 	}
 
 	private void setShowCamelCaseMatches(boolean enabled) {
-		InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).putBoolean(
-				CCorePreferenceConstants.SHOW_CAMEL_CASE_MATCHES, enabled);
+		ContentAssistMatcherFactory.getInstance().setShowCamelCaseMatches(enabled);
 	}
 
 	private boolean match(String pattern, String name) {

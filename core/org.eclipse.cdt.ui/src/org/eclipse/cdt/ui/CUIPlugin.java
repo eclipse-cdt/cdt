@@ -97,6 +97,7 @@ import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.internal.ui.refactoring.CTextFileChangeFactory;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 import org.eclipse.cdt.internal.ui.text.doctools.EditorReopener;
 import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistry;
@@ -557,6 +558,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 		
 		// A workaround for black console bug 320723.
 		BuildConsolePreferencePage.initDefaults(getPreferenceStore());
+		//initialize ContentAssistMatcherPreference
+		ContentAssistPreference.getInstance();
 
 		// start make-ui plugin, such that it can check for project conversions.
 		Job job= new Job(Messages.CUIPlugin_jobStartMakeUI) {
@@ -623,6 +626,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 			fDocumentProvider.shutdown();
 			fDocumentProvider= null;
 		}
+		
+		ContentAssistPreference.shutdown();
 
 		// Do this last.
 		super.stop(context);

@@ -230,7 +230,7 @@ public class SegmentMatcher {
 	 *         name survived a binary search using the prefix returned by
 	 *         @{@link #getPrefixForBinarySearch()} as key.
 	 */
-	boolean matchRequiredAfterBinarySearch() {
+	public boolean matchRequiredAfterBinarySearch() {
 		return !singleSegment;
 	}
 }

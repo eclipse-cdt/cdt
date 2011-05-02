@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,6 +12,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
@@ -19,14 +26,9 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.IColorManager;
 
-import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.contentassist.ContentAssistant;
-import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
 
 
 
@@ -70,6 +72,9 @@ public class ContentAssistPreference {
 	public final static String PROJECT_SEARCH_SCOPE= "content_assist_project_search_scope";	 //$NON-NLS-1$
 	/** Preference key for completion filtering */
 	public final static String PROPOSALS_FILTER= "content_assist_proposal_filter"; //$NON-NLS-1$
+	
+	/** Key for boolean preference telling whether camel case/underscore matches are to be shown by content assist features or not*/
+	public static final String SHOW_CAMEL_CASE_MATCHES = "contentAssist.showCamelCaseMatches"; //$NON-NLS-1$
 
 	private static Color getColor(IPreferenceStore store, String key, IColorManager manager) {
 		RGB rgb= PreferenceConverter.getColor(store, key);
@@ -258,5 +263,54 @@ public class ContentAssistPreference {
 		}
 		
 		changeCProcessor(assistant, store, p);
+	}
+	
+	private static ContentAssistPreference instance = null;
+	
+	private final IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
+			
+		public void propertyChange(PropertyChangeEvent event) {
+			String prop = event.getProperty();
+			if (prop.equals(ContentAssistPreference.SHOW_CAMEL_CASE_MATCHES)) {
+				updateOnPreferences();
+			}
+			
+		}
+	};
+	
+	private ContentAssistPreference() {
+		getPreferences().addPropertyChangeListener(
+				propertyListener);
+		updateOnPreferences();
+	}
+	
+	public static synchronized ContentAssistPreference getInstance() {
+		if (instance == null) {
+			instance = new ContentAssistPreference();
+		}
+		
+		return instance;
+	}
+	
+	private static IPreferenceStore getPreferences() {
+		return CUIPlugin.getDefault().getPreferenceStore();
+	}
+	
+	private synchronized void updateOnPreferences() {
+		boolean showCamelCaseMatches = getPreferences().getBoolean(ContentAssistPreference.SHOW_CAMEL_CASE_MATCHES);
+		ContentAssistMatcherFactory.getInstance().setShowCamelCaseMatches(showCamelCaseMatches);
+	}
+	
+	private void shutdownInternal() {
+		getPreferences().removePropertyChangeListener(propertyListener);
+	}
+	
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static synchronized void shutdown() {
+		if (instance != null) {
+			instance.shutdownInternal();
+		}
 	}
 }

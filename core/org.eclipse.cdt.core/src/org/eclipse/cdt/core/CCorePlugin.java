@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.core.parser.util.ContentAssistMatcherFactory;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
@@ -324,9 +323,7 @@ public class CCorePlugin extends Plugin {
             fNewCProjectDescriptionManager.shutdown();
             ResourceLookup.shutdown();
             
-            ContentAssistMatcherFactory.shutdown();
-            
-			savePluginPreferences();
+            savePluginPreferences();
 		} finally {
 			super.stop(context);
 		}

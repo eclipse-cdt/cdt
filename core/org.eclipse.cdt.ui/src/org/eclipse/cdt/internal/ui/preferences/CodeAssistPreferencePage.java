@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.core.CCorePreferenceConstants;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
@@ -35,7 +34,7 @@ import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 /**
  * CodeAssistPreferencePage
  */
-public class CodeAssistPreferencePage extends AbstractMixedPreferencePage {
+public class CodeAssistPreferencePage extends AbstractPreferencePage {
 
 	/**
 	 * 
@@ -59,6 +58,7 @@ public class CodeAssistPreferencePage extends AbstractMixedPreferencePage {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW));
 //		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.SHOW_DOCUMENTED_PROPOSALS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ORDER_PROPOSALS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.SHOW_CAMEL_CASE_MATCHES));
 //		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ADD_INCLUDE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE));        
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.PROJECT_SEARCH_SCOPE));
@@ -69,18 +69,7 @@ public class CodeAssistPreferencePage extends AbstractMixedPreferencePage {
 		return keys;
 
 	}
-	
-	@Override
-	protected OverlayPreferenceStore.OverlayKey[] createCorePrefsOverlayStoreKeys() {
-		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
-
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CCorePreferenceConstants.SHOW_CAMEL_CASE_MATCHES));
-
-        OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
-		overlayKeys.toArray(keys);
-		return keys;
-	}
-	
+		
 	/*
 	 * @see PreferencePage#createControl(Composite)
 	 */
@@ -97,9 +86,7 @@ public class CodeAssistPreferencePage extends AbstractMixedPreferencePage {
 	protected Control createContents(Composite parent) {
 		fOverlayStore.load();
 		fOverlayStore.start();
-		corePrefsOverlayStore.load();
-		corePrefsOverlayStore.start();
-		
+				
 		Composite contentAssistComposite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -140,7 +127,7 @@ public class CodeAssistPreferencePage extends AbstractMixedPreferencePage {
 		addComboBox(sortingGroup, label, ContentAssistPreference.PROPOSALS_FILTER, NO_TEXT_LIMIT, 0);
 
 		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_showCamelCaseMatches;
-		addCorePrefsCheckBox(sortingGroup, label, CCorePreferenceConstants.SHOW_CAMEL_CASE_MATCHES, 0);
+		addCheckBox(sortingGroup, label, ContentAssistPreference.SHOW_CAMEL_CASE_MATCHES, 0);
 
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// The following items are grouped for Auto Activation
@@ -189,7 +176,8 @@ public class CodeAssistPreferencePage extends AbstractMixedPreferencePage {
 		store.setDefault(ContentAssistPreference.PREFIX_COMPLETION, true);
 		store.setDefault(ContentAssistPreference.ORDER_PROPOSALS, false);
 		store.setDefault(ContentAssistPreference.PROPOSALS_FILTER, ProposalFilterPreferencesUtil.getProposalFilternamesAsString());  // $NON_NLS 1$
-
+		store.setDefault(ContentAssistPreference.SHOW_CAMEL_CASE_MATCHES, true);
+		
 	}
 
 }

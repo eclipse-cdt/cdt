@@ -7,18 +7,13 @@
  *
  * Contributors:
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     IBM Corporation
  *******************************************************************************/
-package org.eclipse.cdt.core.parser.util;
+package org.eclipse.cdt.internal.core.parser.util;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
+import org.eclipse.cdt.core.parser.util.SegmentMatcher;
 
 /**
  * The facade to the pattern matching algorithms of content assist.
@@ -32,18 +27,8 @@ public class ContentAssistMatcherFactory {
 
 	private static ContentAssistMatcherFactory instance = null;
 	
-	private boolean showCamelCaseMatches;
-	
-	private final IPreferenceChangeListener preferencesListener = new IPreferenceChangeListener() {
+	private boolean showCamelCaseMatches = true;
 		
-		public void preferenceChange(PreferenceChangeEvent event) {
-			String prop = event.getKey();
-			if (prop.equals(CCorePreferenceConstants.SHOW_CAMEL_CASE_MATCHES)) {
-				updateOnPreferences();
-			}
-		}
-	};
-	
 	private static class CamelCaseMatcher implements IContentAssistMatcher {
 
 		private final SegmentMatcher matcher;
@@ -88,9 +73,7 @@ public class ContentAssistMatcherFactory {
 	}
 	
 	private ContentAssistMatcherFactory() {
-		getPreferences().addPreferenceChangeListener(
-				preferencesListener);
-		updateOnPreferences();
+		
 	}
 
 	public static synchronized ContentAssistMatcherFactory getInstance() {
@@ -101,28 +84,22 @@ public class ContentAssistMatcherFactory {
 		return instance;
 	}
 	
-	private void shutdownInternal() {
-		getPreferences().removePreferenceChangeListener(
-				preferencesListener);
+	/**
+     * This function is not supposed to be called from any functions except
+     * for ContentAssistMatcherPreference.updateOnPreferences.
+     *  
+     * @param showCamelCaseMatches
+     */
+	public synchronized  void setShowCamelCaseMatches(boolean showCamelCaseMatches) {
+		this.showCamelCaseMatches = showCamelCaseMatches;
 	}
 	
 	/**
-	 * @noreference This method is not intended to be referenced by clients.
+	 * 
+	 * @return <code>true</code> if showCamelCaseMatches is set from the content assist preference page.
 	 */
-	public static synchronized void shutdown() {
-		if (instance != null) {
-			instance.shutdownInternal();
-		}
-	}
-	
-	private static IEclipsePreferences getPreferences() {
-		return InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
-	}
-	
-	private synchronized void updateOnPreferences() {
-		IPreferencesService prefs = Platform.getPreferencesService();
-		showCamelCaseMatches = prefs.getBoolean(CCorePlugin.PLUGIN_ID,
-				CCorePreferenceConstants.SHOW_CAMEL_CASE_MATCHES, true, null);
+	public boolean getShowCamelCaseMatches() {
+		return showCamelCaseMatches;
 	}
 	
 	/**

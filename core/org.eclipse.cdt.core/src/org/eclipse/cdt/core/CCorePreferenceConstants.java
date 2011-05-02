@@ -165,10 +165,5 @@ public class CCorePreferenceConstants {
 	 */
 	public static final String PREF_BUILD_CONFIGS_RESOURCE_CHANGES = "build.proj.ref.configs.enabled"; //$NON-NLS-1$
 	
-	/**
-	 * Key for boolean preference telling whether camel case/underscore matches are to be shown by content assist features or not.
-	 * 
-	 * @since 5.3
-	 */
-	public static final String SHOW_CAMEL_CASE_MATCHES = "contentAssist.showCamelCaseMatches"; //$NON-NLS-1$
+	
 }

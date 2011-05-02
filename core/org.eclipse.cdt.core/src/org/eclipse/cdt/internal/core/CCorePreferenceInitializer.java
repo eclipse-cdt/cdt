@@ -70,7 +70,6 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 		// indexer defaults
 		IndexerPreferences.initializeDefaultPreferences(defaultPreferences);
 
-		// content assist defaults
-		defaultPreferences.putBoolean(CCorePreferenceConstants.SHOW_CAMEL_CASE_MATCHES, true);
+		
 	}
 }

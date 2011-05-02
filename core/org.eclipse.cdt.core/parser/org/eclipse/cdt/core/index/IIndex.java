@@ -329,14 +329,7 @@ public interface IIndex {
 	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean fileScopeOnly, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Searches for all bindings that are valid completions to the given prefix.
-	 * @param prefix the text to be completed.
-	 * @param fileScopeOnly if true, only bindings at file scope are returned
-	 * @param filter a filter that allows for skipping parts of the index
-	 * @param monitor a monitor for progress reporting and cancellation, may be <code>null</code>
-	 * @return an array of bindings that complete the given text
-	 * @throws CoreException
-	 * @since 5.3
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public IIndexBinding[] findBindingsForContentAssist(char[] prefix, boolean fileScopeOnly, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 

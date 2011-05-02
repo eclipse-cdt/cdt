@@ -35,6 +35,7 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
+import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -177,7 +178,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	 */
     @Immutable
 	private static class MIContainerDMC extends AbstractDMContext
-	implements IMIContainerDMContext, IBreakpointsTargetDMContext
+	implements IMIContainerDMContext, IBreakpointsTargetDMContext, IDisassemblyDMContext
 	{
 		/**
 		 * String ID that is used to identify the thread group in the GDB/MI protocol.

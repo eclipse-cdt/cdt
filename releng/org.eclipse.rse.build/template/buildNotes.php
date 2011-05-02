@@ -31,14 +31,9 @@
 
 <li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M6-201103142031/index.php">TM 3.3M6</a>:
 <ul>
-  <li>API: New <code>clonePropertySets()</code> API was added to RSE model object such as ISubSystem in order to fix loss or Property Sets when copying a connection
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=338510">338510</a>].</li>
-  <li>Collapsing the RSE tree when working in multiple Workbench windows at the same time was fixed 
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=238365">238365</a>].</li>
-  <li>File content conflicts on upload are now handled more properly 
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=334839">334839</a>].</li>
-  <li>Tarfile extraction was fixed
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=337612">337612</a>].</li>
+  <li>Performance improvements were made to reduce the number of queries when an RSE Tableview is open
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=215814">215814</a>]
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=284157">284157</a>].</li>
 </ul>
 </li>
 <li>At least 22 bugs were resolved: Use 

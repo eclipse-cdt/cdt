@@ -512,17 +512,16 @@ fi
 
 echo "Creating P2 metadata (no download stats)..."
 java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
-    -application org.eclipse.equinox.p2.metadata.generator.EclipseGenerator \
-    -updateSite ${SITE}/ \
-    -site file:${SITE}/site.xml \
-    -metadataRepository file:${SITE}/ \
-    -metadataRepositoryName "${TPVERSION} Update Site" \
-    -artifactRepository file:${SITE}/ \
-    -artifactRepositoryName "${TPVERSION} Artifacts" \
-    -compress \
+    -application org.eclipse.equinox.p2.publisher.UpdateSitePublisher \
+	-metadataRepository file:${SITE}/ \
+	-artifactRepository file:${SITE} \
+	-source ${SITE} \
+	-compress \
     -reusePack200Files \
-    -noDefaultIUs \
     -vmargs -Xmx256M
+    
+#	-configs any.linux.x86 \
+#	-publishArtifacts \
 
 if [ x${DO_CATEGORIES} = x1 ]; then
   echo "Adding Categories..."

@@ -141,10 +141,10 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 			
 			// Get current project. Unlike CDI, DSF supports debugging
 			// executables that are not in an Eclipse project, so this may be
-			// null for a DSF session. See bugzilla 304433.
+			// null or empty for a DSF session. See bugzilla 304433 and 344408.
 			ICProject project = null;
 			String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
-			if (projectName != null) {
+			if (projectName != null && projectName.length() != 0) {
 				project = CoreModel.getDefault().getCModel().getCProject(projectName);
 				if (project == null || !project.exists()) {
 					return fProgramPath; // return empty path

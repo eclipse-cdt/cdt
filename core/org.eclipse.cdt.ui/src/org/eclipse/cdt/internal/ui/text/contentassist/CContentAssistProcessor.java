@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -300,6 +300,11 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 					}
 				}
 			}
+			if (context != null && isAutoActivated() && !fCContentAutoActivationCharacters.contains(activationChar)) {
+				// auto-replace, but not auto-content-assist - bug 344387
+				context.dispose();
+				context = null;
+			}
 		}
 
 		return context;
@@ -311,21 +316,15 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		try {
 			doc.replace(offset - 1, 1, "->"); //$NON-NLS-1$
 			context.dispose();
+			context = null;
 			// if user turned on activation only for replacement characters,
 			// setting the context to null will skip the proposals popup later
 			if (!isAutoActivated() || fCContentAutoActivationCharacters.contains(activationChar)) {
 				context = new CContentAssistInvocationContext(viewer, offset + 1, fEditor,
 						isCompletion, isAutoActivated());
-			} else {
-				context = null;
 			}
 		} catch (BadLocationException e) {
-			if (isAutoActivated() && !fCContentAutoActivationCharacters.contains(activationChar)) {
-				if (context != null) {
-					context.dispose(); // XXX dang false positives null deref warnings
-					context = null;
-				}
-			}
+			// ignore
 		}
 		return context;
 	}

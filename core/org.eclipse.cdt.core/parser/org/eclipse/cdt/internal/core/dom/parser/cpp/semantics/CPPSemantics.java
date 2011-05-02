@@ -2738,16 +2738,38 @@ public class CPPSemantics {
     		}
     	} else if (prop == ICPPASTConstructorInitializer.ARGUMENT) {
     		ICPPASTConstructorInitializer init = (ICPPASTConstructorInitializer) parent;
-    		if (init.getArguments().length == 1) {
-    			final IASTNode parentOfInit = init.getParent();
-    			if (parentOfInit instanceof IASTDeclarator) {
-    				IASTDeclarator dtor = (IASTDeclarator) parentOfInit;
-    				targetType= CPPVisitor.createType(dtor);
-    			} else if (parentOfInit instanceof ICPPASTConstructorChainInitializer) {
-    				ICPPASTConstructorChainInitializer memInit= (ICPPASTConstructorChainInitializer) parentOfInit;
-    				IBinding var= memInit.getMemberInitializerId().resolveBinding();
-    				if (var instanceof IVariable) {
-    					targetType= ((IVariable) var).getType();
+			final IASTNode parentOfInit = init.getParent();
+			if (parentOfInit instanceof IASTDeclarator) {
+				IASTDeclarator dtor = (IASTDeclarator) parentOfInit;
+				targetType= CPPVisitor.createType(dtor);
+			} else if (parentOfInit instanceof ICPPASTConstructorChainInitializer) {
+				ICPPASTConstructorChainInitializer memInit= (ICPPASTConstructorChainInitializer) parentOfInit;
+				IBinding var= memInit.getMemberInitializerId().resolveBinding();
+				if (var instanceof IVariable) {
+					targetType= ((IVariable) var).getType();
+				}
+			}
+			targetType= getNestedType(targetType, TDEF | REF | CVTYPE | PTR | MPTR);
+    		if (init.getArguments().length != 1 || !(targetType instanceof ICPPFunctionType)) {
+    			if (targetType instanceof ICPPClassType) {
+    				LookupData data= new LookupData(name);
+    				data.setFunctionArguments(false, init.getArguments());
+    				try {
+    					IBinding ctor = CPPSemantics.resolveFunction(data, ((ICPPClassType) targetType).getConstructors(), true);
+    					if (ctor instanceof ICPPConstructor) {
+    						int i= 0;
+    						for (IASTNode arg : init.getArguments()) {
+    							if (arg == node) {
+    								IType[] params= ((ICPPConstructor) ctor).getType().getParameterTypes();
+    								if (params.length > i) {
+    									targetType= params[i];
+    								}
+    								break;
+    							}
+    							i++;
+    						}
+    					}
+    				} catch (DOMException e) {
     				}
     			}
     		}

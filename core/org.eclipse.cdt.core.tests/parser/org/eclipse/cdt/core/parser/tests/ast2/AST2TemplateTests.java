@@ -5385,4 +5385,21 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testTemplateIDAmbiguity_341747d() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template<typename T> void ft(void (T::* function)()) {}
+	//	struct Bar {
+	//	    template<typename T> Bar(void (T::*function)()) {}
+	//	};
+	//	struct Foo {
+	//	    void function() {}
+	//	    void function(int) {}
+	//	};
+	//	int test2() {
+	//	    Bar test(&Foo::function); // Invalid overload of 'Foo::func tion'
+	//	    ft(&Foo::function);
+	//	    return 0;
+	//	}
+	public void testAddressOfMethodForInstantiation_Bug344310() throws Exception {
+		parseAndCheckBindings();
+	}
 }

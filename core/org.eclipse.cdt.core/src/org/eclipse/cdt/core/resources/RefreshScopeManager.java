@@ -538,18 +538,24 @@ public class RefreshScopeManager {
 		fResourceToExclusionsMap.put(resource, exclusions);
 	}
 	
-	public void clearAllExclusions() {
+	public synchronized void clearAllExclusions() {
 		if(fResourceToExclusionsMap != null)
 			fResourceToExclusionsMap.clear();
 	}
 	
 	public synchronized void clearExclusionsForProject(IProject project) {
 		getResourcesToExclusionsMap();
+		List<IResource> resourcesToRemove = new LinkedList<IResource>();
+		
 		for(IResource resource : fResourceToExclusionsMap.keySet()) {
 			IProject project2 = resource.getProject();
 			if(project2.equals(project)) {
-				fResourceToExclusionsMap.remove(resource);
+				resourcesToRemove.add(resource);
 			}
+		}
+		
+		for(IResource resource : resourcesToRemove) {
+			fResourceToExclusionsMap.remove(resource);
 		}
 	}
 	

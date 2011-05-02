@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,8 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
+
+import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 
 
 public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
@@ -101,8 +103,11 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 					if (ast == null || canceled) {
 						((ICReconcilingListener)fEditor).reconciled(null, forced, fProgressMonitor);
 					} else {
-						synchronized (ast) {
+						((ASTTranslationUnit) ast).beginExclusiveAccess();
+						try {
 							((ICReconcilingListener)fEditor).reconciled(ast, forced, fProgressMonitor);
+						} finally {
+							((ASTTranslationUnit) ast).endExclusiveAccess();
 						}
 					}
 					if (canceled) {

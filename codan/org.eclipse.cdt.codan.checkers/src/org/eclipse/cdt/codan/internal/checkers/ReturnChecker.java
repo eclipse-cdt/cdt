@@ -96,7 +96,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 				if (hasret == false && hasValue) {
 					hasret = true;
 				}
-				if (!isVoid(func) && !isConstructorDestructor()) {
+				if (!isVoid(func) && !isConstructorDestructor(func)) {
 					if (checkImplicitReturn(RET_NO_VALUE_ID) || isExplicitReturn(func)) {
 						if (!hasValue)
 							reportProblem(RET_NO_VALUE_ID, ret);
@@ -113,20 +113,21 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 			}
 			return PROCESS_CONTINUE;
 		}
+	}
 
-		/**
-		 * @return
-		 * 
-		 */
-		public boolean isConstructorDestructor() {
-			if (func instanceof ICPPASTFunctionDefinition) {
-				IBinding method = func.getDeclarator().getName().resolveBinding();
-				if (method instanceof ICPPConstructor || method instanceof ICPPMethod && ((ICPPMethod) method).isDestructor()) {
-					return true;
-				}
+	/**
+	 * @param func
+	 * @return
+	 * 
+	 */
+	public boolean isConstructorDestructor(IASTFunctionDefinition func) {
+		if (func instanceof ICPPASTFunctionDefinition) {
+			IBinding method = func.getDeclarator().getName().resolveBinding();
+			if (method instanceof ICPPConstructor || method instanceof ICPPMethod && ((ICPPMethod) method).isDestructor()) {
+				return true;
 			}
-			return false;
 		}
+		return false;
 	}
 
 	/*
@@ -157,7 +158,8 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 						reportNoRet(func, visitor.hasret);
 					}
 				} else {
-					reportNoRet(func, false);
+
+						reportNoRet(func, false);
 				}
 			}
 		}
@@ -170,6 +172,9 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		if (!hasRet) {
 			// no return at all
 			if (checkImplicitReturn(RET_NORET_ID) == false && isExplicitReturn(func) == false) {
+				return;
+			}
+			if (isConstructorDestructor(func)) {
 				return;
 			}
 		}

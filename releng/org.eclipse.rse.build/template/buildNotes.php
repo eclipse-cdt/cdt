@@ -29,7 +29,7 @@
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Local Terminal needs CDT Core.</li>
 
-<li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M5-201102011100/index.php">TM 3.3M5</a>:
+<li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M6-201103142031/index.php">TM 3.3M6</a>:
 <ul>
   <li>API: New <code>clonePropertySets()</code> API was added to RSE model object such as ISubSystem in order to fix loss or Property Sets when copying a connection
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=338510">338510</a>].</li>
@@ -41,15 +41,14 @@
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=337612">337612</a>].</li>
 </ul>
 </li>
-<li>At least 21 bugs were resolved: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;value0-0-2=backport;chfieldto=2011-03-15;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.3%20M[345];chfieldfrom=2011-01-25;field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.3%20M6;product=Target%20Management">
+<li>At least 22 bugs were resolved: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;value0-0-2=backport;chfieldto=2011-05-04;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.3%20M[3456];chfieldfrom=2011-03-12;field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.3%20M7;product=Target%20Management">
   this query</a> to show the list of bugs fixed since
-  <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M5-201102011100/">
-  TM 3.3M5</a>
-  [<a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M5-201102011100/buildNotes.php">build notes</a>].</li>
-<li>For details on checkins, see
-  <a href="http://dsdp.eclipse.org/dsdp/tm/searchcvs.php">TM SearchCVS</a>, the
+  <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M6-201103142031/">
+  TM 3.3M6</a>
+  [<a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M6-201103142031/buildNotes.php">build notes</a>].</li>
+<li>For details on checkins, see the
   <a href="http://download.eclipse.org/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
   <a href="http://download.eclipse.org/tm/downloads/drops/N-changelog/core/index.html">
@@ -70,7 +69,7 @@
 </table>
 <table><tbody><tr><td>
 <p>The RSE User Documentation has a
-<a href="http://dsdp.eclipse.org/help/latest/index.jsp?topic=/org.eclipse.rse.doc.user/gettingstarted/g_start.html">
+<a href="http://help.eclipse.org/helios/index.jsp?topic=/org.eclipse.rse.doc.user/gettingstarted/g_start.html">
 Tutorial</a> that guides you through installation, first steps,
 connection setup and important tasks.</p>
 <p>

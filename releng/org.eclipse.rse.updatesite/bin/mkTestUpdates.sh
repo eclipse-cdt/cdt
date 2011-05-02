@@ -508,22 +508,28 @@ if [ x${DO_STATS} = x1 ]; then
   $CMD
   result=$?
   echo "result: ${result}"
-fi
 
-echo "Creating P2 metadata (no download stats)..."
-java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+else
+
+  echo "Creating P2 metadata (no download stats)..."
+  CMD="java -jar ${tgtlauncher} \
     -application org.eclipse.equinox.p2.publisher.UpdateSitePublisher \
-	-metadataRepository file:${SITE}/ \
+	-metadataRepository file:${SITE} \
 	-artifactRepository file:${SITE} \
 	-source ${SITE} \
 	-compress \
     -reusePack200Files \
-    -vmargs -Xmx256M
-    
+    -vmargs -Xmx256M"
+
 #	-configs any.linux.x86 \
 #	-publishArtifacts \
-
-if [ x${DO_CATEGORIES} = x1 ]; then
+  echo $CMD
+  $CMD
+  result=$?
+  echo "result: ${result}"
+fi
+    
+sif [ x${DO_CATEGORIES} = x1 ]; then
   echo "Adding Categories..."
   CMD="java -jar ${tgtlauncher} \
     -application org.eclipse.equinox.p2.publisher.CategoryPublisher \

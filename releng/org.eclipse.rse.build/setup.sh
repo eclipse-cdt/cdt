@@ -48,11 +48,11 @@ esac
 
 # prepare the base Eclipse installation in folder "eclipse"
 ep_rel="S-"
-ep_ver=3.7M6
-ep_date="-201103101119"
+ep_ver=3.7M7
+ep_date="-201104280848"
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.0.v3724c.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.0.v3730b.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -138,7 +138,7 @@ fi
 #CDTVER=201006141710
 CDTREL=8.0.0
 CDTFEAT=8.0.0
-CDTVER=201103111317
+CDTVER=201104290807
 CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
 CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
 if [ ! -f eclipse/plugins/org.eclipse.cdt_${CDTFEAT}.${CDTVER}.jar ]; then
@@ -167,9 +167,10 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt_${CDTFEAT}.${CDTVER}.jar ]; then
   rm ${CDTNAME}
 fi
 
-# checkout the basebuilder
+# checkout the basebuilder - 
+# http://wiki.eclipse.org/Platform-releng-basebuilder#Current_build_tag_for_3.7_stream_builds_.28Indigo.29
 #baseBuilderTag=R36_RC4
-baseBuilderTag=R37_M5
+baseBuilderTag=R37_M6
 if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.7.0.v20110124-1800.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.6.100.v20110121-1730/pdebuild.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.300.v20101213-2340.jar ]; then

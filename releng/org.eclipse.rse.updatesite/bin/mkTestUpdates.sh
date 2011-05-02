@@ -529,7 +529,7 @@ else
   echo "result: ${result}"
 fi
     
-sif [ x${DO_CATEGORIES} = x1 ]; then
+if [ x${DO_CATEGORIES} = x1 ]; then
   echo "Adding Categories..."
   CMD="java -jar ${tgtlauncher} \
     -application org.eclipse.equinox.p2.publisher.CategoryPublisher \

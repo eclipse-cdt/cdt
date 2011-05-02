@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.SuspiciousSemicolonProblem"; //$NON-NLS-1$
 	public static final String PARAM_ELSE = "else"; //$NON-NLS-1$
+	public static final String PARAM_ALFTER_ELSE = "afterelse"; //$NON-NLS-1$
 
 	public void processAst(IASTTranslationUnit ast) {
 		ast.accept(new ASTVisitor() {
@@ -37,11 +38,15 @@ public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 				if (statement instanceof IASTIfStatement) {
 					IASTStatement thenStmt = ((IASTIfStatement) statement).getThenClause();
 					IASTStatement elseStmt = ((IASTIfStatement) statement).getElseClause();
+					if (elseStmt instanceof IASTNullStatement && noMacroInvolved(elseStmt) && doReportAfterElse()) {
+						reportProblem(ER_ID, elseStmt);
+					}
 					if (elseStmt != null && doNotReportIfElse() == true)
 						return PROCESS_CONTINUE;
 					if (thenStmt instanceof IASTNullStatement && noMacroInvolved(thenStmt)) {
-						reportProblem(ER_ID, thenStmt, (Object) null);
+						reportProblem(ER_ID, thenStmt);
 					}
+
 				}
 				return PROCESS_CONTINUE;
 			}
@@ -51,6 +56,10 @@ public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 	protected boolean doNotReportIfElse() {
 		final IProblem pt = getProblemById(ER_ID, getFile());
 		return (Boolean) getPreference(pt, PARAM_ELSE);
+	}
+	protected boolean doReportAfterElse() {
+		final IProblem pt = getProblemById(ER_ID, getFile());
+		return (Boolean) getPreference(pt, PARAM_ALFTER_ELSE);
 	}
 
 	protected boolean noMacroInvolved(IASTStatement node) {
@@ -63,5 +72,6 @@ public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
 		addPreference(problem, PARAM_ELSE, CheckersMessages.SuspiciousSemicolonChecker_ParamElse, Boolean.FALSE);
+		addPreference(problem, PARAM_ALFTER_ELSE, CheckersMessages.SuspiciousSemicolonChecker_ParamAfterElse, Boolean.FALSE);
 	}
 }

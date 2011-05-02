@@ -11,6 +11,7 @@
 package org.eclipse.cdt.codan.core.internal.checkers;
 
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
+import org.eclipse.cdt.codan.internal.checkers.SuspiciousSemicolonChecker;
 
 public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	@Override
@@ -149,5 +150,17 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 	public void testMacro() {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
+	}
+
+	// main() {
+	//	   if (false)
+	//	        ; // only this one is reported
+	//	    else
+	//	        ;
+	// }
+	public void testIfElse() {
+		setPreferenceValue(SuspiciousSemicolonChecker.ER_ID, SuspiciousSemicolonChecker.PARAM_ALFTER_ELSE, Boolean.TRUE);
+		loadCodeAndRun(getAboveComment());
+		checkErrorLines(3, 5);
 	}
 }

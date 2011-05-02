@@ -13,12 +13,12 @@
                defaultSeverity="Warning"
                description="%problem.description.AssignmentInCondition"
                id="org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionProblem"
+               markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
                messagePattern="%problem.messagePattern.AssignmentInCondition"
                name="%problem.name.AssignmentInCondition">
          </problem>
-      
-      
       </checker>
+
       <checker
             class="org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectChecker"
             id="org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectChecker"

@@ -15,6 +15,8 @@ import java.util.HashMap;
 import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
+import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
+import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -44,11 +46,18 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
  * functions).
  * 
  * @author Anton Gorenkov
- * 
  */
 public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.AbstractClassCreation"; //$NON-NLS-1$
 	private HashMap<ICPPClassType, ICPPMethod[]> pureVirtualMethodsCache = new HashMap<ICPPClassType, ICPPMethod[]>(); 
+
+	@Override
+	public void initPreferences(IProblemWorkingCopy problem) {
+		super.initPreferences(problem);
+		// These checkers should not run on full or incremental build.
+		getLaunchModePreference(problem).enableInLaunchModes(CheckerLaunchMode.RUN_AS_YOU_TYPE,
+				CheckerLaunchMode.RUN_ON_DEMAND);
+	}
 
 	public void processAst(IASTTranslationUnit ast) {
 		try {
@@ -67,7 +76,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 		}
 
 		public int visit(IASTDeclaration declaration) {
-			// Looking for the variables declarations
+			// Looking for the variables declarations.
 			if (declaration instanceof IASTSimpleDeclaration) {
 				// If there is at least one non-pointer and non-reference type...
 				IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration)declaration;
@@ -75,7 +84,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 				if (declSpec.getStorageClass() != IASTDeclSpecifier.sc_typedef) {
 					for (IASTDeclarator declarator : simpleDecl.getDeclarators()) {
 						if (!hasPointerOrReference(declarator)) {
-							// ... check whether type is an abstract class
+							// ... check whether type is an abstract class.
 							checkClass(declSpec);
 							break;
 						}
@@ -103,7 +112,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 		private void checkClass(IASTDeclSpecifier declSpec) {
 			if (declSpec instanceof ICPPASTNamedTypeSpecifier) {
 				IASTName className = ((ICPPASTNamedTypeSpecifier)declSpec).getName();
-				IBinding binding = getOrResolveBinding(className);
+				IBinding binding = className.resolveBinding();
 				if (binding instanceof IType) {
 					// Resolve class and check whether it is abstract
 					reportProblemsIfAbstract((IType)binding, className);
@@ -124,7 +133,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 					}				
 				}
 			}
-			// Looking for direct class constructor call and check it
+			// Looking for direct class constructor call and check it.
 			else if (expression instanceof ICPPASTFunctionCallExpression) {
 				ICPPASTFunctionCallExpression functionCall = (ICPPASTFunctionCallExpression)expression;
 				IASTExpression functionName = functionCall.getFunctionNameExpression();
@@ -141,25 +150,14 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 		 *  and check whether it is abstract. If it is - report problems 
 		 */
 		private void checkClassConstructor(IASTName constructorName) {
-			IBinding binding = getOrResolveBinding(constructorName);
+			IBinding binding = constructorName.resolveBinding();
 			if (binding instanceof ICPPConstructor) {
-				// Resolve class and check whether it is abstract
+				// Resolve class and check whether it is abstract.
 				reportProblemsIfAbstract(((ICPPConstructor)binding).getClassOwner(), constructorName);
 			}
 			else if (binding instanceof IType) {
 				reportProblemsIfAbstract((IType)binding, constructorName);
 			}
-		}
-		
-		/**
-		 *  Tries to get binding by AST Name. If it is not available - tries to resolve it 
-		 */
-		private IBinding getOrResolveBinding(IASTName name) {
-			IBinding binding = name.getBinding();
-			if (binding == null) {
-				binding = name.resolveBinding();
-			}
-			return binding;
 		}
 		
 		/**

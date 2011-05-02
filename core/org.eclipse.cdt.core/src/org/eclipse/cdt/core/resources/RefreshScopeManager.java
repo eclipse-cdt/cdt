@@ -544,6 +544,7 @@ public class RefreshScopeManager {
 	}
 	
 	public void clearExclusionsForProject(IProject project) {
+		getResourcesToExclusionsMap();
 		for(IResource resource : fResourceToExclusionsMap.keySet()) {
 			IProject project2 = resource.getProject();
 			if(project2.equals(project)) {

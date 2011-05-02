@@ -67,7 +67,7 @@ public abstract class RefreshExclusion {
 	 * 
 	 * @return IResource
 	 */
-	public IResource getParentResource() {
+	public synchronized IResource getParentResource() {
 		return fParentResource;
 	}
 
@@ -76,7 +76,7 @@ public abstract class RefreshExclusion {
 	 * 
 	 * @param parentResource the parent resource to set
 	 */
-	public void setParentResource(IResource parentResource) {
+	public synchronized void setParentResource(IResource parentResource) {
 		this.fParentResource = parentResource;
 	}
 	
@@ -84,11 +84,11 @@ public abstract class RefreshExclusion {
 	 * @return a String corresponding to the ID of the RefreshExclusionContributor that was used to create
 	 * this exclusion.
 	 */
-	public String getContributorId() {
+	public synchronized String getContributorId() {
 		return fContributorId;
 	}
 	
-	public void setContributorId(String id) {
+	public synchronized void setContributorId(String id) {
 		fContributorId = id;
 	}
 	
@@ -97,19 +97,19 @@ public abstract class RefreshExclusion {
 	 * 
 	 * @return RefreshExclusion
 	 */
-	public RefreshExclusion getParentExclusion() {
+	public synchronized RefreshExclusion getParentExclusion() {
 		return fParentExclusion;
 	}
 
-	public void setParentExclusion(RefreshExclusion parent) {
+	public synchronized void setParentExclusion(RefreshExclusion parent) {
 		fParentExclusion = parent;
 	}
 
-	public ExclusionType getExclusionType() {
+	public synchronized ExclusionType getExclusionType() {
 		return fExclusionType;
 	}
 
-	public void setExclusionType(ExclusionType exclusionType) {
+	public synchronized void setExclusionType(ExclusionType exclusionType) {
 		fExclusionType = exclusionType;
 	}
 
@@ -134,7 +134,7 @@ public abstract class RefreshExclusion {
 	 * @param resource the resource to be tested
 	 * @return true if the exclusion is triggered, false otherwise (including if this exclusion does not apply)
 	 */
-	public boolean testExclusionChain(IResource resource) {
+	public synchronized boolean testExclusionChain(IResource resource) {
 		// first check and see if this exclusion would be triggered in the first place
 		boolean currentValue = testExclusion(resource);
 		
@@ -162,7 +162,7 @@ public abstract class RefreshExclusion {
 	/**
 	 * @return an unmodifiable list of all the instance of this exclusion
 	 */
-	public List<ExclusionInstance> getExclusionInstances() {
+	public synchronized List<ExclusionInstance> getExclusionInstances() {
 		return Collections.unmodifiableList(fExclusionInstanceList);
 	}
 	
@@ -171,7 +171,7 @@ public abstract class RefreshExclusion {
 	 * 
 	 * @param exclusionInstance
 	 */
-	public void addExclusionInstance(ExclusionInstance exclusionInstance) {
+	public synchronized void addExclusionInstance(ExclusionInstance exclusionInstance) {
 		exclusionInstance.setParentExclusion(this);
 		fExclusionInstanceList.add(exclusionInstance);
 	}
@@ -181,7 +181,7 @@ public abstract class RefreshExclusion {
 	 * 
 	 * @param exclusionInstance
 	 */
-	public void removeExclusionInstance(ExclusionInstance exclusionInstance) {
+	public synchronized void removeExclusionInstance(ExclusionInstance exclusionInstance) {
 		fExclusionInstanceList.remove(exclusionInstance);
 	}
 	
@@ -189,11 +189,11 @@ public abstract class RefreshExclusion {
 	 * 
 	 * @return an unmodifiable list of exclusions to this exclusion.
 	 */
-	public List<RefreshExclusion> getNestedExclusions() {
+	public synchronized List<RefreshExclusion> getNestedExclusions() {
 		return Collections.unmodifiableList(fNestedExclusions);
 	}
 	
-	public void addNestedExclusion(RefreshExclusion exclusion) {
+	public synchronized void addNestedExclusion(RefreshExclusion exclusion) {
 		fNestedExclusions.add(exclusion);
 		exclusion.setParentExclusion(this);
 	}
@@ -203,11 +203,11 @@ public abstract class RefreshExclusion {
 	 * 
 	 * @param exclusion
 	 */
-	public void removeNestedExclusion(RefreshExclusion exclusion) {
+	public synchronized void removeNestedExclusion(RefreshExclusion exclusion) {
 		fNestedExclusions.remove(exclusion);
 	}
 	
-	public void persistData(Document doc, Element parentElement) {
+	public synchronized void persistData(Document doc, Element parentElement) {
 		// persist the common data that all RefreshExclusions have
 		Element exclusionElement = doc.createElement(EXCLUSION_ELEMENT_NAME);
 		
@@ -259,15 +259,15 @@ public abstract class RefreshExclusion {
 		}
 	}
 	
-	protected void persistExtendedData(Document doc, Element extensionElement) {
+	protected synchronized void persistExtendedData(Document doc, Element extensionElement) {
 		// override to provide extension specific behaviour if desired	
 	}
 	
-	protected void loadExtendedData(Element parentElement) {
+	protected synchronized void loadExtendedData(Element parentElement) {
 		// override to provide extension specific behaviour if desired
 	}
 
-	public static List<RefreshExclusion> loadData(Element parentElement, RefreshExclusion parentExclusion, IResource parentResource) throws CoreException {
+	public synchronized static List<RefreshExclusion> loadData(Element parentElement, RefreshExclusion parentExclusion, IResource parentResource) throws CoreException {
 		
 		List<RefreshExclusion> exclusions = new LinkedList<RefreshExclusion>();
 

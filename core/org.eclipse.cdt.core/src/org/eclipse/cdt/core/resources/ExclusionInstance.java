@@ -55,22 +55,22 @@ public class ExclusionInstance {
 	 * 
 	 * @return RefreshExclusion
 	 */
-	public RefreshExclusion getParentExclusion() {
+	public synchronized RefreshExclusion getParentExclusion() {
 		return fParent;
 	}
 
 	/**
 	 * @param parent the RefreshExclusion to set as the parent.
 	 */
-	public void setParentExclusion(RefreshExclusion parent) {
+	public synchronized void setParentExclusion(RefreshExclusion parent) {
 		fParent = parent;
 	}
 
-	public ExclusionType getExclusionType() {
+	public synchronized ExclusionType getExclusionType() {
 		return fInstanceExclusionType;
 	}
 	
-	public void setExclusionType(ExclusionType type) {
+	public synchronized void setExclusionType(ExclusionType type) {
 		fInstanceExclusionType = type;
 	}
 	
@@ -79,11 +79,11 @@ public class ExclusionInstance {
 	 * 
 	 * @return IResource
 	 */
-	public IResource getResource() {
+	public synchronized IResource getResource() {
 		return fResource;
 	}
 	
-	public void setResource(IResource resource) {
+	public synchronized void setResource(IResource resource) {
 		fResource = resource;
 	}
 	
@@ -92,15 +92,15 @@ public class ExclusionInstance {
 	 * Examples of this would be the resource name for a resource based exclusion, or the file extension
 	 * excluded by a file extension exclusion.
 	 */
-	public String getDisplayString() {
+	public synchronized String getDisplayString() {
 		return fDisplayString;
 	}
 	
-	public void setDisplayString(String displayString) {
+	public synchronized void setDisplayString(String displayString) {
 		fDisplayString = displayString;
 	}
 
-	public void persistInstanceData(Document doc, Element exclusionElement) {
+	public synchronized void persistInstanceData(Document doc, Element exclusionElement) {
 				
 		Element instanceElement = doc.createElement(INSTANCE_ELEMENT_NAME);
 		
@@ -144,11 +144,11 @@ public class ExclusionInstance {
 		
 	}
 	
-	protected void persistExtendedInstanceData(Document doc, Element instanceElement) {
+	protected synchronized void persistExtendedInstanceData(Document doc, Element instanceElement) {
 		// override to provide extension specific behaviour if desired	
 	}
 
-	public static ExclusionInstance loadInstanceData(Element instanceElement) {
+	public synchronized static ExclusionInstance loadInstanceData(Element instanceElement) {
 		
 		String className = instanceElement.getAttribute(CLASS_ATTRIBUTE_NAME);
 		
@@ -200,7 +200,7 @@ public class ExclusionInstance {
 		return newInstance;
 	}
 	
-	protected void loadExtendedInstanceData(Element instanceElement) {
+	protected synchronized void loadExtendedInstanceData(Element instanceElement) {
 		// override to provide extension specific behaviour if desired
 	}
 }

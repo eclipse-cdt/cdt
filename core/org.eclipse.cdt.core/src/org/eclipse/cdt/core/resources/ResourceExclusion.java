@@ -34,7 +34,7 @@ public class ResourceExclusion extends RefreshExclusion {
 	 * @see org.eclipse.cdt.core.resources.RefreshExclusion#getName()
 	 */
 	@Override
-	public String getName() {
+	public synchronized String getName() {
 		return Messages.ResourceExclusion_name;
 	}
 
@@ -42,7 +42,7 @@ public class ResourceExclusion extends RefreshExclusion {
 	 * @see org.eclipse.cdt.core.resources.RefreshExclusion#testExclusion(org.eclipse.core.resources.IResource)
 	 */
 	@Override
-	public boolean testExclusion(IResource resource) {
+	public synchronized boolean testExclusion(IResource resource) {
 		
 		//Populate the resources to be excluded by this exclusion
 		List<IResource> excludedResources = new LinkedList<IResource>();

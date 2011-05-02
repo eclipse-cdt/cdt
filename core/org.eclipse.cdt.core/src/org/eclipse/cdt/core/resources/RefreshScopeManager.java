@@ -203,13 +203,13 @@ public class RefreshScopeManager {
 		return fVersion;
 	}
 	
-	public RefreshExclusionFactory getFactoryForClassName(String className) {
+	public synchronized RefreshExclusionFactory getFactoryForClassName(String className) {
 		RefreshExclusionFactory factory = fClassnameToExclusionFactoryMap.get(className);
 		
 		return factory;
 	}
 	
-	public RefreshExclusion getExclusionForClassName(String className) {
+	public synchronized RefreshExclusion getExclusionForClassName(String className) {
 		RefreshExclusionFactory factory = getFactoryForClassName(className);
 		
 		if(factory == null) {
@@ -227,7 +227,7 @@ public class RefreshScopeManager {
 	 * @param project
 	 * @return List<IResource>
 	 */
-	public List<IResource> getResourcesToRefresh(IProject project) {
+	public synchronized List<IResource> getResourcesToRefresh(IProject project) {
 		getProjectToResourcesMap();
 		LinkedHashSet<IResource> resources = fProjectToResourcesMap.get(project);
 		
@@ -241,14 +241,14 @@ public class RefreshScopeManager {
 		return new LinkedList<IResource>(resources);
 	}
 	
-	public void setResourcesToRefresh(IProject project, List<IResource> resources) {
+	public synchronized void setResourcesToRefresh(IProject project, List<IResource> resources) {
 		getProjectToResourcesMap();
 		LinkedHashSet<IResource> resourceSet = new LinkedHashSet<IResource>(resources);
 		
 		fProjectToResourcesMap.put(project,  resourceSet);
 	}
 	
-	public void addResourceToRefresh(IProject project, IResource resource) {
+	public synchronized void addResourceToRefresh(IProject project, IResource resource) {
 		getProjectToResourcesMap();
 		LinkedHashSet<IResource> resourceSet = fProjectToResourcesMap.get(project);
 		
@@ -261,7 +261,7 @@ public class RefreshScopeManager {
 		
 	}
 	
-	public void deleteResourceToRefresh(IProject project, IResource resource) {
+	public synchronized void deleteResourceToRefresh(IProject project, IResource resource) {
 		getProjectToResourcesMap();
 		LinkedHashSet<IResource> resourceSet = fProjectToResourcesMap.get(project);
 		
@@ -273,7 +273,7 @@ public class RefreshScopeManager {
 		resourceSet.remove(resource);
 	}
 	
-	public void clearResourcesToRefresh(IProject project) {
+	public synchronized void clearResourcesToRefresh(IProject project) {
 		getProjectToResourcesMap();
 		LinkedHashSet<IResource> resourceSet = fProjectToResourcesMap.get(project);
 		
@@ -287,11 +287,11 @@ public class RefreshScopeManager {
 		
 	}
 	
-	public void clearAllResourcesToRefresh() {
+	public synchronized void clearAllResourcesToRefresh() {
 		fProjectToResourcesMap.clear();
 	}
 	
-	public void clearAllData() {
+	public synchronized void clearAllData() {
 		clearAllResourcesToRefresh();
 		clearAllExclusions();
 	}
@@ -304,7 +304,7 @@ public class RefreshScopeManager {
 		return fProjectToResourcesMap;
 	}
 	
-	public List<RefreshExclusion> getExclusions(IResource resource) {
+	public synchronized List<RefreshExclusion> getExclusions(IResource resource) {
 		getResourcesToExclusionsMap();
 		List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
 		if(exclusions == null) {
@@ -315,7 +315,7 @@ public class RefreshScopeManager {
 		return exclusions;
 	}
 	
-	public void addExclusion(IResource resource, RefreshExclusion exclusion) {
+	public synchronized void addExclusion(IResource resource, RefreshExclusion exclusion) {
 		getResourcesToExclusionsMap();
 		
 		List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
@@ -335,7 +335,7 @@ public class RefreshScopeManager {
 		return fResourceToExclusionsMap;
 	}
 
-	public void removeExclusion(IResource resource, RefreshExclusion exclusion) {
+	public synchronized void removeExclusion(IResource resource, RefreshExclusion exclusion) {
 		getResourcesToExclusionsMap();
 		List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
 		if(exclusions == null) {
@@ -346,7 +346,7 @@ public class RefreshScopeManager {
 		exclusions.remove(exclusion);
 	}
 	
-	public void persistSettings() throws CoreException {
+	public synchronized void persistSettings() throws CoreException {
 		getProjectToResourcesMap();
 		getResourcesToExclusionsMap();
 		for(IProject project : fProjectToResourcesMap.keySet()) {
@@ -415,7 +415,7 @@ public class RefreshScopeManager {
 		}
 	}
 	
-	public void loadSettings() throws CoreException {
+	public synchronized void loadSettings() throws CoreException {
 		// iterate through all projects in the workspace. If they are C projects, attempt to load settings
 		// from them.
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
@@ -430,7 +430,7 @@ public class RefreshScopeManager {
 	 * @param project
 	 * @throws CoreException
 	 */
-	private void loadSettings(IWorkspaceRoot workspaceRoot, IProject project) throws CoreException {
+	private synchronized void loadSettings(IWorkspaceRoot workspaceRoot, IProject project) throws CoreException {
 		if (project.isOpen()) {
 			if (project.hasNature(CProjectNature.C_NATURE_ID)) {
 				String xmlString = project.getPersistentProperty(REFRESH_SCOPE_PROPERTY_NAME);
@@ -523,7 +523,7 @@ public class RefreshScopeManager {
 		}
 	}
 
-	public void clearExclusions(IResource resource) {
+	public synchronized void clearExclusions(IResource resource) {
 		getResourcesToExclusionsMap();
 		List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
 		if(exclusions != null) {
@@ -531,7 +531,7 @@ public class RefreshScopeManager {
 		}
 	}
 	
-	public void setExclusions(IResource resource, List<RefreshExclusion> newExclusions) {
+	public synchronized void setExclusions(IResource resource, List<RefreshExclusion> newExclusions) {
 		getResourcesToExclusionsMap();
 		List<RefreshExclusion> exclusions = new LinkedList<RefreshExclusion>(newExclusions);
 		
@@ -543,7 +543,7 @@ public class RefreshScopeManager {
 			fResourceToExclusionsMap.clear();
 	}
 	
-	public void clearExclusionsForProject(IProject project) {
+	public synchronized void clearExclusionsForProject(IProject project) {
 		getResourcesToExclusionsMap();
 		for(IResource resource : fResourceToExclusionsMap.keySet()) {
 			IProject project2 = resource.getProject();
@@ -553,12 +553,12 @@ public class RefreshScopeManager {
 		}
 	}
 	
-	private void clearDataForProject(IProject project) {
+	private synchronized void clearDataForProject(IProject project) {
 		clearResourcesToRefresh(project);
 		clearExclusionsForProject(project);
 	}
 
-	public ExclusionInstance getInstanceForClassName(String className) {
+	public synchronized ExclusionInstance getInstanceForClassName(String className) {
 		RefreshExclusionFactory factory = getFactoryForClassName(className);
 		
 		if(factory == null) {
@@ -607,7 +607,7 @@ public class RefreshScopeManager {
 		return runnable;
 	}
 	
-	public boolean shouldResourceBeRefreshed(IResource resource) {
+	public synchronized boolean shouldResourceBeRefreshed(IResource resource) {
 		IProject project = resource.getProject();
 		List<IResource> resourcesToRefresh = getResourcesToRefresh(project);
 		boolean isInSomeTree = false;

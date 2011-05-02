@@ -64,9 +64,13 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.UIJob;
@@ -168,7 +172,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     private void setRenderingPadding(String padding)
     {
     	if(padding == null || padding.length() == 0)
-			padding = "?";
+			padding = "?"; //$NON-NLS-1$
 		TraditionalRendering.this.fRendering.setPaddingString(padding);
     }
     
@@ -302,6 +306,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     // FIXME
     private static final String ID_GO_TO_ADDRESS_COMMAND = "org.eclipse.debug.ui.command.gotoaddress"; //$NON-NLS-1$
     private AbstractHandler fGoToAddressHandler;
+	private IAction fSavedActionHandler; // When we set the global copy action handler we save off the existing so we can restore it.
     
     public void activated() 
     {
@@ -325,6 +330,21 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 			}
 			gotoCommand.setHandler(fGoToAddressHandler);
 		}
+		
+		// Set the action handler for the global copy action
+        final Action defaultAction = new CopyDefaultAction(this.fRendering, DND.CLIPBOARD);
+        
+    	IWorkbenchPartSite site = getMemoryRenderingContainer().getMemoryRenderingSite().getSite();
+		if (site instanceof IViewSite)
+		{
+			IActionBars actionBars = ((IViewSite) site).getActionBars();
+			if (actionBars != null)
+			{
+				fSavedActionHandler = actionBars.getGlobalActionHandler(ActionFactory.COPY.getId());
+				actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), defaultAction);
+			}
+		}
+  	
 
 	}
 
@@ -339,7 +359,18 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 			Command command = commandSupport.getCommand(ID_GO_TO_ADDRESS_COMMAND);
 			command.setHandler(null);
 		}
-		
+
+		// Restore the saved action handler for the memory view.
+    	IWorkbenchPartSite site = getMemoryRenderingContainer().getMemoryRenderingSite().getSite();
+		if (site instanceof IViewSite)
+		{
+			IActionBars actionBars = ((IViewSite) site).getActionBars();
+			if (actionBars != null)
+			{
+				actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), fSavedActionHandler);
+			}
+		}
+
 		super.deactivated();
 	}
 	
@@ -550,27 +581,12 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             super.createPopupMenu(renderingControls[i]);
         super.createPopupMenu(this.fRendering);
 
-        // copy
+        // Create the copy actions
 
-        final Action copyAction = new CopyAction(this.fRendering);
-        
-        // copy address
-        
-        final Action copyAddressAction = new Action(
-                TraditionalRenderingMessages
-                    .getString("TraditionalRendering.COPY_ADDRESS")) //$NON-NLS-1$
-            {
-   				public void run()
-                {
-                    Display.getDefault().asyncExec(new Runnable()
-                    {
-                        public void run()
-                        {
-                            TraditionalRendering.this.fRendering.copyAddressToClipboard();
-                        }
-                    });
-                }
-            };
+        final CopyAction copyBinaryAction = new CopyBinaryAction(this.fRendering);
+        final CopyAction copyTextAction = new CopyTextAction(this.fRendering);
+        final CopyAction copyAddressAction = new CopyAddressAction(this.fRendering);
+        final CopyAction copyAllAction = new CopyAllAction(this.fRendering);
 
         // reset to base address
         
@@ -607,7 +623,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                     	// For compatibility with DSF update modes (hopefully this will either be replaced by an enhanced
                     	// platform interface or the caching will move out of the data layer
                     	try {
-							Method m = fRendering.getMemoryBlock().getClass().getMethod("clearCache", new Class[0]);
+							Method m = fRendering.getMemoryBlock().getClass().getMethod("clearCache", new Class[0]); //$NON-NLS-1$
 							if(m != null)
 	                    		m.invoke(fRendering.getMemoryBlock(), new Object[0]);
 						} 
@@ -904,7 +920,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             displayColumnCounts[i].setChecked(fRendering.getColumnsSetting() == finali);
         }
 
-        final Action displayColumnCountCustomValue = new Action("", IAction.AS_RADIO_BUTTON)
+        final Action displayColumnCountCustomValue = new Action("", IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
         {
             public void run()
             {
@@ -1097,11 +1113,21 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 
                 BigInteger start = fRendering.getSelection().getStart();
                 BigInteger end = fRendering.getSelection().getEnd();
-				copyAction.setEnabled(start != null && end != null);
-				
-                manager.add(copyAction);
-                manager.add(copyAddressAction);
-                
+				copyBinaryAction.setEnabled(start != null && end != null);
+				copyTextAction.setEnabled(start != null && end != null);
+
+                sub = new MenuManager(TraditionalRenderingMessages.getString("TraditionalRendering.COPY")); //$NON-NLS-1$
+                    sub.add(copyBinaryAction);
+                    sub.add(copyTextAction);
+                    sub.add(copyAddressAction);
+                    sub.add(copyAllAction);
+                   manager.add(sub);
+                   
+                copyBinaryAction.checkStatus();
+                copyTextAction.checkStatus();
+                copyAddressAction.checkStatus();
+                copyAllAction.checkStatus();
+
                 manager.add(gotoBaseAddressAction);
                 manager.add(refreshAction);
                 manager.add(new Separator());
@@ -1274,34 +1300,95 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	}
 }
 
-class CopyAction extends Action
+class CopyBinaryAction extends CopyAction
+{
+
+	public CopyBinaryAction(Rendering rendering) {
+		super(rendering, CopyType.BINARY, DND.CLIPBOARD);
+        setText(TraditionalRenderingMessages.getString("TraditionalRendering.BINARY")); //$NON-NLS-1$
+        setToolTipText(TraditionalRenderingMessages.getString("TraditionalRendering.COPY_SELECTED_DATA")); //$NON-NLS-1$
+	}
+}
+
+class CopyTextAction extends CopyAction
+{
+
+	public CopyTextAction(Rendering rendering) {
+		super(rendering, CopyType.TEXT, DND.CLIPBOARD);
+        setText(TraditionalRenderingMessages.getString("TraditionalRendering.TEXT")); //$NON-NLS-1$
+        setToolTipText(TraditionalRenderingMessages.getString("TraditionalRendering.COPY_SELECTED_DATA_TEXT")); //$NON-NLS-1$
+	}
+}
+
+class CopyAddressAction extends CopyAction
+{
+
+	public CopyAddressAction(Rendering rendering) {
+		super(rendering, CopyType.ADDRESS, DND.CLIPBOARD);
+        setText(TraditionalRenderingMessages.getString("TraditionalRendering.ADDRESS")); //$NON-NLS-1$
+        setToolTipText(TraditionalRenderingMessages.getString("TraditionalRendering.COPY_SELECTED_ADDDESS")); //$NON-NLS-1$
+	}
+}
+
+class CopyAllAction extends CopyAction
+{
+
+	public CopyAllAction(Rendering rendering) {
+		super(rendering, CopyType.ALL, DND.CLIPBOARD);
+        setText(TraditionalRenderingMessages.getString("TraditionalRendering.ALL")); //$NON-NLS-1$
+        setToolTipText(TraditionalRenderingMessages.getString("TraditionalRendering.COPY_ALL")); //$NON-NLS-1$
+	}
+}
+
+class CopyDefaultAction extends CopyAction
+{
+
+	public CopyDefaultAction(Rendering rendering, int clipType) {
+		super(rendering, CopyType.DEFAULT, clipType);
+        setText(TraditionalRenderingMessages.getString("TraditionalRendering.DEFAULT")); //$NON-NLS-1$
+	}
+}
+
+abstract class CopyAction extends Action
 {
     // TODO for the sake of large copies, this action should probably read in
     // blocks on a Job.
+	public enum CopyType {UNDEFINED, BINARY, TEXT, ADDRESS, ALL, DEFAULT};
 
     private Rendering fRendering;
-    private int fType = DND.CLIPBOARD;
-
-    public CopyAction(Rendering rendering)
-    {
-    	this(rendering, DND.CLIPBOARD);
-    }
+    private int fClipboardType = DND.CLIPBOARD;
+    private CopyType fCopyType = CopyType.ALL;
+    static private CopyType fDefaultCopyType = CopyType.UNDEFINED;
     
-    @SuppressWarnings("restriction") // using platform's labels and images; acceptable build risk
-	public CopyAction(Rendering rendering, int clipboardType)
+	public CopyAction(Rendering rendering, CopyType copyType, int clipboardType)
     {
         super();
-        fType = clipboardType;
+    	fCopyType = copyType;
+    	fClipboardType = clipboardType;
         fRendering = rendering;
-        setText(DebugUIMessages.CopyViewToClipboardAction_title);
-        setToolTipText(DebugUIMessages.CopyViewToClipboardAction_tooltip);
-        setImageDescriptor(DebugPluginImages
-            .getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_COPY_VIEW_TO_CLIPBOARD));
-        setHoverImageDescriptor(DebugPluginImages
-            .getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_COPY_VIEW_TO_CLIPBOARD));
-        setDisabledImageDescriptor(DebugPluginImages
-            .getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_COPY_VIEW_TO_CLIPBOARD));
+        
+        if (fDefaultCopyType == CopyType.UNDEFINED)
+        {
+        	IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
+        	String defaultString = store.getString(TraditionalRenderingPreferenceConstants.MEM_DEFAULT_COPY_ACTION);
+        	if (defaultString.length() > 0)
+        	{
+        		try {
+					fDefaultCopyType = Enum.valueOf(CopyType.class, defaultString);
+				} catch (Exception e) {
+	        		fDefaultCopyType = CopyType.ALL;
+				}
+        	}
+        	else
+        		fDefaultCopyType = CopyType.ALL;
+        }
+
     }
+	
+	public void checkStatus()
+	{
+        setChecked(fDefaultCopyType == fCopyType);
+	}
     
     public void run()
     {
@@ -1310,13 +1397,34 @@ class CopyAction extends Action
         Clipboard clip = null;
         try
         {
+        	if (fCopyType == CopyType.DEFAULT)
+        		fCopyType = fDefaultCopyType;
+        	
+        	if (fCopyType != fDefaultCopyType)
+        	{
+            	IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
+            	store.putValue(TraditionalRenderingPreferenceConstants.MEM_DEFAULT_COPY_ACTION, fCopyType.name());
+        	}
+        	fDefaultCopyType = fCopyType;
+ 
+            boolean copyAddress = fRendering.getPaneVisible(Rendering.PANE_ADDRESS)
+    		&& (fCopyType == CopyType.ADDRESS || fCopyType == CopyType.ALL);
+            boolean copyBinary = fRendering.getPaneVisible(Rendering.PANE_BINARY)
+    		&& (fCopyType == CopyType.BINARY || fCopyType == CopyType.ALL);
+            boolean copyText = fRendering.getPaneVisible(Rendering.PANE_TEXT)
+    		&& (fCopyType == CopyType.TEXT || fCopyType == CopyType.ALL);
+
             clip = new Clipboard(fRendering.getDisplay());
 
             BigInteger start = fRendering.getSelection().getStart();
             BigInteger end = fRendering.getSelection().getEnd();
             // end will be null when there is nothing selected
             if (end == null)
+            {
+            	if (fCopyType == CopyType.ADDRESS)
+            		fRendering.copyAddressToClipboard();
             	return;
+            }
             
             if(start.compareTo(end) > 0)
             {
@@ -1351,7 +1459,7 @@ class CopyAction extends Action
 
             if(rows * columns * bytesPerColumn < lengthToRead.intValue())
                 rows++;
-
+            
             StringBuffer buffer = new StringBuffer();
 
             for(int row = 0; row < rows; row++)
@@ -1359,13 +1467,13 @@ class CopyAction extends Action
                 BigInteger rowAddress = start.add(BigInteger.valueOf(row
                     * columns * bytesPerColumn));
 
-                if(fRendering.getPaneVisible(Rendering.PANE_ADDRESS))
+                if(copyAddress)
                 {
                     buffer.append(fRendering.getAddressString(rowAddress));
                     buffer.append(PANE_SPACING);
                 }
 
-                if(fRendering.getPaneVisible(Rendering.PANE_BINARY))
+                if(copyBinary)
                 {
                     for(int col = 0; col < columns; col++)
                     {
@@ -1402,13 +1510,12 @@ class CopyAction extends Action
                     }
                 }
 
-                if(fRendering.getPaneVisible(Rendering.PANE_BINARY)
-                    && fRendering.getPaneVisible(Rendering.PANE_TEXT))
+                if(copyBinary && copyText)
                 {
                     buffer.append(PANE_SPACING);
                 }
 
-                if(fRendering.getPaneVisible(Rendering.PANE_TEXT))
+                if(copyText)
                 {
                     for(int col = 0; col < columns; col++)
                     {
@@ -1448,11 +1555,12 @@ class CopyAction extends Action
             {
                 TextTransfer plainTextTransfer = TextTransfer.getInstance();
                 clip.setContents(new Object[] { buffer.toString() },
-                    new Transfer[] { plainTextTransfer }, fType);
+                    new Transfer[] { plainTextTransfer }, fClipboardType);
             }
         }
         finally
         {
+        	checkStatus();
             if(clip != null)
             {
                 clip.dispose();

@@ -19,6 +19,7 @@ import java.math.BigInteger;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
@@ -27,8 +28,8 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContex
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IInstruction;
 import org.eclipse.cdt.dsf.debug.service.IMixedInstruction;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.mi.service.MIDisassembly;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -95,10 +96,6 @@ public class MIDisassemblyTest extends BaseTestCase {
                // Get a reference to the memory service
                 fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
                 assert(fServicesTracker != null);
-
-        		ICommandControlService commandControl = fServicesTracker.getService(ICommandControlService.class);
-           		fDisassemblyDmc = (IDisassemblyDMContext)commandControl.getContext();
-                assert(fDisassemblyDmc != null);
                     
                 fDisassembly = fServicesTracker.getService(MIDisassembly.class);
                 assert(fDisassembly != null);
@@ -108,6 +105,11 @@ public class MIDisassemblyTest extends BaseTestCase {
             }
         };
         fSession.getExecutor().submit(runnable).get();
+        
+        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+        fDisassemblyDmc = DMContexts.getAncestorOfType(containerDmc, IDisassemblyDMContext.class);
+        assert(fDisassemblyDmc != null);
+
     }
 
     @After

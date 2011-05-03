@@ -45,9 +45,10 @@ rm -rf "${buildDirectory}"
 
 # default value of the bootclasspath attribute used in ant javac calls.
 # these pathes are valid on build.eclipse.org  
-bootclasspath="/shared/tools/tm/JDKs/win32/j2sdk1.4.2_19/jre/lib/rt.jar:/shared/tools/tm/JDKs/win32/j2sdk1.4.2_19/jre/lib/jsse.jar"
+bootclasspath_14="/shared/tools/tm/JDKs/win32/j2sdk1.4.2_19/jre/lib/rt.jar:/shared/tools/tm/JDKs/win32/j2sdk1.4.2_19/jre/lib/jsse.jar"
 bootclasspath_15="/shared/common/jdk-1.5.0-22.x86_64/jre/lib/rt.jar"
 #bootclasspath_16="$builderDir/jdk/win32_16/jdk6/jre/lib/rt.jar"
+bootclasspath_16="/shared/tools/tm/jdk-1.6/jre/lib/rt.jar"
 #bootclasspath_foundation="/shared/common/Java_ME_platform_SDK_3.0_EA/runtimes/cdc-hi/lib/rt.jar"
 bootclasspath_foundation11="/shared/tools/tm/JDKs/win32/j9_cdc11/lib/jclFoundation11/classes.zip"
 
@@ -69,8 +70,8 @@ command="$command -DfetchTag=HEAD "
 command="$command -DskipFetch "
 command="$command -Dmydstamp=${mydstamp} "
 command="$command -Dmytstamp=${mytstamp} "
-#command="$command -Dbootclasspath=${bootclasspath} "
-#command="$command -DJ2SE-1.4=${bootclasspath} "
+#command="$command -Dbootclasspath=${bootclasspath_16} "
+#command="$command -DJ2SE-1.4=${bootclasspath_14} "
 #command="$command -DJ2SE-1.5=${bootclasspath_15} "
 #command="$command -DCDC-1.1/Foundation-1.1=${bootclasspath_foundation11} "
 #command="$command -DJ2SE-1.2=../jres/1.2.2/lib/rt.jar "

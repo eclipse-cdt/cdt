@@ -59,8 +59,8 @@ public class CIndex implements IIndex {
 	 */
 	private static final boolean SPECIALCASE_SINGLES = true;
 
-	final private IIndexFragment[] fFragments;
-	final private int fPrimaryFragmentCount;
+	private final IIndexFragment[] fFragments;
+	private final int fPrimaryFragmentCount;
 	private int fReadLock;
 	private ICompositesFactory cppCF, cCF, fCF;
 
@@ -371,7 +371,8 @@ public class CIndex implements IIndex {
 		return result;
 	}
 
-	public IIndexBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+	public IIndexBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor)
+			throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
 			try {
 				return fFragments[0].findBindings(names, filter, monitor);
@@ -391,7 +392,8 @@ public class CIndex implements IIndex {
 					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
 					for (int i = 0; i < fPrimaryFragmentCount; i++) {
 						try {
-							IBinding[] part = fFragments[i].findBindings(names, retargetFilter(linkage, filter), new SubProgressMonitor(monitor, 1));
+							IBinding[] part = fFragments[i].findBindings(names, retargetFilter(linkage, filter),
+									new SubProgressMonitor(monitor, 1));
 							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
 							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
 						} catch (CoreException e) {
@@ -427,7 +429,8 @@ public class CIndex implements IIndex {
 		return null;
 	}
 
-	public IIndexBinding[] findBindings(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+	public IIndexBinding[] findBindings(char[] name, IndexFilter filter, IProgressMonitor monitor)
+			throws CoreException {
 		return findBindings(name, true, filter, monitor);
 	}
 
@@ -505,7 +508,8 @@ public class CIndex implements IIndex {
 		};
 	}
 
-	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
 			return fFragments[0].findBindingsForPrefix(prefix, filescope, filter, monitor);
 		} else {
@@ -516,7 +520,8 @@ public class CIndex implements IIndex {
 					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
 					for (int i = 0; i < fPrimaryFragmentCount; i++) {
 						try {
-							IBinding[] part = fFragments[i].findBindingsForPrefix(prefix, filescope, retargetFilter(linkage, filter), monitor);
+							IBinding[] part = fFragments[i].findBindingsForPrefix(prefix, filescope,
+									retargetFilter(linkage, filter), monitor);
 							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
 							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
 						} catch (CoreException e) {
@@ -544,7 +549,8 @@ public class CIndex implements IIndex {
 					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
 					for (int i = 0; i < fPrimaryFragmentCount; i++) {
 						try {
-							IBinding[] part = fFragments[i].findBindingsForContentAssist(prefix, filescope, retargetFilter(linkage, filter), monitor);
+							IBinding[] part = fFragments[i].findBindingsForContentAssist(prefix,
+									filescope, retargetFilter(linkage, filter), monitor);
 							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
 							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
 						} catch (CoreException e) {
@@ -560,7 +566,8 @@ public class CIndex implements IIndex {
 		}
 	}
 
-	public IIndexBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+	public IIndexBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor)
+			throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
 			return fFragments[0].findBindings(name, filescope, filter, monitor);
 		} else {
@@ -571,7 +578,8 @@ public class CIndex implements IIndex {
 					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
 					for (int i = 0; i < fPrimaryFragmentCount; i++) {
 						try {
-							IBinding[] part = fFragments[i].findBindings(name, filescope, retargetFilter(linkage, filter), monitor);
+							IBinding[] part = fFragments[i].findBindings(name, filescope,
+									retargetFilter(linkage, filter), monitor);
 							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
 							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
 						} catch (CoreException e) {
@@ -591,11 +599,13 @@ public class CIndex implements IIndex {
 		return findMacros(name, false, true, filter, monitor);
 	}
 
-	public IIndexMacro[] findMacrosForPrefix(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+	public IIndexMacro[] findMacrosForPrefix(char[] name, IndexFilter filter, IProgressMonitor monitor)
+			throws CoreException {
 		return findMacros(name, true, false, filter, monitor);
 	}
 
-	private IIndexMacro[] findMacros(char[] name, boolean isPrefix, boolean caseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+	private IIndexMacro[] findMacros(char[] name, boolean isPrefix, boolean caseSensitive,
+			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		// macros can be represented multiple times when a header is parsed in c- and c++ context,
 		// so there is no special case for indexes with single fragments.
 		if (monitor == null) {
@@ -607,7 +617,8 @@ public class CIndex implements IIndex {
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			HashSet<IIndexFile> allowedFiles= new HashSet<IIndexFile>();
 			try {
-				IIndexMacro[] macros= fFragments[i].findMacros(name, isPrefix, caseSensitive, filter, new SubProgressMonitor(monitor, 1));
+				IIndexMacro[] macros= fFragments[i].findMacros(name, isPrefix, caseSensitive, filter,
+						new SubProgressMonitor(monitor, 1));
 				for (IIndexMacro indexMacro : macros) {
 					IIndexFile file= indexMacro.getFile();
 					if (!allowedFiles.contains(file)) {

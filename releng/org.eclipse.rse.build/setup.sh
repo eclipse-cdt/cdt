@@ -138,7 +138,7 @@ fi
 #CDTVER=201006141710
 CDTREL=8.0.0
 CDTFEAT=8.0.0
-CDTVER=201104290807
+CDTVER=201105021546
 CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
 CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
 if [ ! -f eclipse/plugins/org.eclipse.cdt_${CDTFEAT}.${CDTVER}.jar ]; then

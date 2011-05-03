@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  * David McKnight   (IBM)        - [264607] Unable to delete a broken symlink
  * David McKnight   (IBM)        - [321026][dstore] Broken symbolic link can't be removed
+ * David McKnight   (IBM)        - [342450][dstore] Real files should not be deleted when deleting a symbolic link
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -129,15 +130,15 @@ public class DeleteThread extends SecuredThread implements ICancellableHandler {
 				+ File.separatorChar + subject.getName());
 		DataElement deObj = null;
 
+		String attributes = subject.getSource();
+		String classification = "file"; //$NON-NLS-1$
+		String[] str = attributes.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
+		if (str.length > 11){ // 11 is classification index
+			classification = str[11];
+		}
 		boolean exists = deleteObj.exists();
 		if (!exists){
 			// special case for broken symbolic link
-			String attributes = subject.getSource();
-			String classification = "file"; //$NON-NLS-1$
-			String[] str = attributes.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
-			if (str.length > 11){ // 11 is classification index
-				classification = str[11];
-			}
 			if (classification.startsWith("broken symbolic link")){ //$NON-NLS-1$
 				exists = true;
 			}
@@ -149,7 +150,11 @@ public class DeleteThread extends SecuredThread implements ICancellableHandler {
 					"The object to delete does not exist", null, _dataStore); //$NON-NLS-1$
 		} else {
 			try {
-				if (deleteObj.isFile()) {
+				if (classification != null && classification.startsWith("symbolic link")){ //$NON-NLS-1$
+					// only delete the link - no the actual file or folder contents
+					deleteObj.delete();
+				}
+				else if (deleteObj.isFile()) {
 					if (deleteObj.delete() == false) {
 						thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
 					} else {

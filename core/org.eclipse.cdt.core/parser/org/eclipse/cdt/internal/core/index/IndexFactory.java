@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Andrew Ferguson (Symbian)
+ *     Markus Schorn - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.index;
@@ -166,8 +166,7 @@ public class IndexFactory {
 			if (project.isOpen()) {
 				map.put(project, markWith);
 				projectsToSearch.add(project);
-			}
-			else {
+			} else {
 				map.put(project, new Integer(0));
 			}
 		}
@@ -189,11 +188,10 @@ public class IndexFactory {
 				} finally {
 					fragment.releaseReadLock();
 				}
-
-			} catch(CoreException ce) {
-				CCorePlugin.log(ce);
-			} catch(InterruptedException ie) {
-				CCorePlugin.log(ie);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			} catch (InterruptedException e) {
+				CCorePlugin.log(e);
 			}
 		}
 	}
@@ -215,8 +213,8 @@ public class IndexFactory {
 					for (IIndexFragment fragment : pFragments) {
 						safeAddFragment(fragments, fragment);
 					}
-				} catch(CoreException ce) {
-					CCorePlugin.log(ce);
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
 				}
 			}
 		}

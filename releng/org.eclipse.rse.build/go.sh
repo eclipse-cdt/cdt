@@ -77,5 +77,6 @@ command="$command -Dmytstamp=${mytstamp} "
 #command="$command -DJ2SE-1.2=../jres/1.2.2/lib/rt.jar "
 #command="$command postBuild "
 
+which java
 echo "$command"
 exec $command

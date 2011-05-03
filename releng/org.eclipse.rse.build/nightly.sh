@@ -103,5 +103,6 @@ command="$command -DJ2SE-1.5=${bootclasspath_15} "
 command="$command -DCDC-1.1/Foundation-1.1=${bootclasspath_foundation11} "
 #command="$command postBuild "
 
+which java
 echo "$command"
 exec $command

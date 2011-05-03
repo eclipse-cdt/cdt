@@ -514,22 +514,22 @@ else
   echo "Creating P2 metadata (no download stats)..."
   CMD="java -jar ${tgtlauncher} \
     -application org.eclipse.equinox.p2.publisher.UpdateSitePublisher \
-	-metadataRepository file:${SITE} \
-	-artifactRepository file:${SITE} \
-	-source ${SITE} \
-	-compress \
+    -metadataRepository file:${SITE} \
+    -artifactRepository file:${SITE} \
+    -source ${SITE} \
+    -compress \
+    -publishArtifacts \
     -reusePack200Files \
     -vmargs -Xmx256M"
 
 #	-configs any.linux.x86 \
-#	-publishArtifacts \
   echo $CMD
   $CMD
   result=$?
   echo "result: ${result}"
 fi
     
-if [ x${DO_CATEGORIES} = x1 ]; then
+	if [ x${DO_CATEGORIES} = x1 ]; then
   echo "Adding Categories..."
   CMD="java -jar ${tgtlauncher} \
     -application org.eclipse.equinox.p2.publisher.CategoryPublisher \

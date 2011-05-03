@@ -6,18 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Andrew Ferguson (Symbian)
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *     Andrew Ferguson (Symbian)
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.core.runtime.CoreException;
 
 public interface IIndexFragmentName extends IIndexName {
-	
-	public static final IIndexFragmentName[] EMPTY_NAME_ARRAY = new IIndexFragmentName[0];
+	public static final IIndexFragmentName[] EMPTY_NAME_ARRAY = {};
 
 	/**
 	 * Returns the fragment that owns this name.

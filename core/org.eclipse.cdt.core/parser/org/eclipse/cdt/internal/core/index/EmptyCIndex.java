@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Bryan Wilkinson (QNX)
- *    Andrew Ferguson (Symbian)
- *    Sergey Prigogin (Google)
- *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
- *******************************************************************************/ 
+ *     Markus Schorn - initial API and implementation
+ *     Bryan Wilkinson (QNX)
+ *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.index;
 
@@ -34,10 +34,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 final public class EmptyCIndex implements IIndex {
 	public static IIndex INSTANCE= new EmptyCIndex();
-	
+
 	private EmptyCIndex() {
 	}
-	
+
 	public IIndexName[] findDeclarations(IBinding binding) {
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
@@ -57,7 +57,7 @@ final public class EmptyCIndex implements IIndex {
 	public IIndexFile getFile(int linkageID, IIndexFileLocation location) {
 		return null;
 	}
-	
+
 	public IIndexFile[] getFiles(IIndexFileLocation location) {
 		return IIndexFile.EMPTY_FILE_ARRAY;
 	}
@@ -100,11 +100,13 @@ final public class EmptyCIndex implements IIndex {
 		return null;
 	}
 
-	public IIndexBinding[] findBindings(Pattern pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) {
+	public IIndexBinding[] findBindings(Pattern pattern, boolean isFullyQualified,
+			IndexFilter filter, IProgressMonitor monitor) {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
-	public IIndexBinding[] findBindings(Pattern[] pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+	public IIndexBinding[] findBindings(Pattern[] pattern, boolean isFullyQualified,
+			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
@@ -112,14 +114,16 @@ final public class EmptyCIndex implements IIndex {
 		return null;
 	}
 
-	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) {
+	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean filescope,
+			IndexFilter filter, IProgressMonitor monitor) {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
-	
-	public IIndexBinding[] findBindingsForContentAssist(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) {
+
+	public IIndexBinding[] findBindingsForContentAssist(char[] prefix, boolean filescope,
+			IndexFilter filter, IProgressMonitor monitor) {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
-	
+
 	public IIndexBinding[] findBindings(char[][] names, IndexFilter filter,
 			IProgressMonitor monitor) {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;

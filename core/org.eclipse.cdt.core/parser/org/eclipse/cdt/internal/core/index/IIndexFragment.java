@@ -6,11 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Markus Schorn - initial API and implementation
- *     Bryan Wilkinson (QNX)
- *     Andrew Ferguson (Symbian)
- *     Sergey Prigogin (Google)
- *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *      Markus Schorn - initial API and implementation
+ *      Bryan Wilkinson (QNX)
+ *      Andrew Ferguson (Symbian)
+ *      Sergey Prigogin (Google)
+ *      Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 

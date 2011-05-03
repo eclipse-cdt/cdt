@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Sergey Prigogin (Google)
- *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
- *******************************************************************************/ 
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.HashMap;
@@ -87,7 +87,7 @@ public class PDOMProxy implements IPDOM {
 			IProgressMonitor monitor) throws CoreException {
 		if (fDelegate != null)
 			return fDelegate.findBindings(names, filter, monitor);
-		
+
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
@@ -119,10 +119,10 @@ public class PDOMProxy implements IPDOM {
 			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		if (fDelegate != null)
 			return fDelegate.findBindingsForContentAssist(prefix, filescope, filter, monitor);
-		
+
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
-	
+
 	public synchronized IIndexFragmentInclude[] findIncludedBy(IIndexFragmentFile file) throws CoreException {
 		if (fDelegate != null)
 			return fDelegate.findIncludedBy(file);
@@ -226,7 +226,7 @@ public class PDOMProxy implements IPDOM {
 	public synchronized PDOMLinkage[] getLinkageImpls() {
 		if (fDelegate != null)
 			return fDelegate.getLinkageImpls();
-		
+
 		return new PDOMLinkage[0];
 	}
 
@@ -237,14 +237,14 @@ public class PDOMProxy implements IPDOM {
 			fListeners.remove(listener);
 		}
 	}
-	
+
 	public synchronized void setDelegate(WritablePDOM pdom) {
 		fDelegate= pdom;
 		try {
 			while (fReadLockCount > 0) {
 				pdom.acquireReadLock();
 				fReadLockCount--;
-			} 
+			}
 			if (PDOM.sDEBUG_LOCKS) {
 				pdom.adjustThreadForReadLock(fLockDebugging);
 			}
@@ -299,7 +299,7 @@ public class PDOMProxy implements IPDOM {
 	public IIndexScope[] getInlineNamespaces() throws CoreException {
 		if (fDelegate != null)
 			return fDelegate.getInlineNamespaces();
-		
+
 		return IIndexScope.EMPTY_INDEX_SCOPE_ARRAY;
 	}
 }

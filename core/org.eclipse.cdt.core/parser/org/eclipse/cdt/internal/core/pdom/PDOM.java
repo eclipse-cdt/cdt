@@ -6,13 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    IBM Corporation
- *    Andrew Ferguson (Symbian)
- *    Anton Leherbauer (Wind River Systems)
- *    Sergey Prigogin (Google)
- *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
+ *     Andrew Ferguson (Symbian)
+ *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -108,19 +108,19 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 * @see IIndexFragment#PROPERTY_FRAGMENT_FORMAT_ID
 	 */
 	public static final String FRAGMENT_PROPERTY_VALUE_FORMAT_ID= "org.eclipse.cdt.internal.core.pdom.PDOM"; //$NON-NLS-1$
-	
-	/* 
+
+	/*
 	 * PDOM internal format history
-	 * 
+	 *
 	 *    #x# = the version was used in an official release
-	 * 
+	 *
 	 *   0 - the beginning of it all
 	 *   1 - first change to kick off upgrades
-	 *   2 - added file inclusions  
+	 *   2 - added file inclusions
 	 *   3 - added macros and change string implementation
 	 *   4 - added parameters in C++
 	 *   5 - added types and restructured nodes a bit
-	 *   6 - function style macros	 
+	 *   6 - function style macros
 	 * # 7#- class key - <<CDT 3.1>>
 	 *   8 - enumerators
 	 *   9 - base classes
@@ -129,7 +129,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  12 - one more change for members (is-a list -> has-a list)
 	 *  13 - CV-qualifiers, storage class specifiers, function/method annotations
 	 *  14 - added timestamps for files (bug 149571)
-	 *  15 - fixed offsets for pointer types and qualifier types and PDOMCPPVariable (bug 160540). 
+	 *  15 - fixed offsets for pointer types and qualifier types and PDOMCPPVariable (bug 160540).
 	 *  16 - have PDOMCPPField store type information, and PDOMCPPNamespaceAlias store what it is aliasing
 	 *  17 - use single linked list for names in file, adds a link to enclosing definition name.
 	 *  18 - distinction between c-unions and c-structs.
@@ -154,7 +154,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 * #37#- added index for nested bindings (189811), compatible with version 36 - <<CDT 4.0.1>>
 	 *  38 - added b-tree for macros (193056), compatible with version 36 and 37
 	 * #39#- added flag for function-style macros (208558), compatible with version 36,37,38 - <<CDT 4.0.2>>
-	 *  
+	 *
 	 *  50 - support for complex, imaginary and long long (bug 209049).
 	 *  51 - modeling extern "C" (bug 191989)
 	 *  52 - files per linkage (bug 191989)
@@ -167,7 +167,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  59.0 - changed modeling of deferred class instances (bug 229218)
 	 *  60.0 - store integral values with basic types (bug 207871)
 	 *  #61.0# - properly insert macro undef statements into macro-containers (bug 234591) - <<CDT 5.0>>
-	 *  
+	 *
 	 *  CDT 6.0 development
 	 *  70.0 - cleaned up templates, fixes bug 236197
 	 *  71.0 - proper support for anonymous unions, bug 206450
@@ -185,7 +185,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  82.0 - offsets for using directives, bug 270806
 	 *  #83.0# - unconditionally store name in PDOMInclude, bug 272815 - <<CDT 6.0>>
 	 *  #84.0# - storing free record pointers as (ptr>>3), bug 279620 - <<CDT 6.0.1>>
-	 *  
+	 *
 	 *  CDT 7.0 development (versions not supported on the 6.0.x branch)
 	 *  90.0 - support for array sizes, bug 269926
 	 *  91.0 - storing unknown bindings other than unknown class types, bug 284686.
@@ -197,7 +197,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  97.0 - storing file contents hash in PDOMFile, bug 302083.
 	 *  #98.0# - strongly typed enums, bug 305975.  <<CDT 7.0.0>>
 	 *  99.0 - correct marshalling of basic types, bug 319186.
-	 *  
+	 *
 	 *  CDT 8.0 development (versions not supported on the 7.0.x branch)
 	 *  110.0 - update index on encoding change, bug 317435.
 	 *  111.0 - correct marshalling of basic types, bug 319186.
@@ -210,7 +210,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private static final int MIN_SUPPORTED_VERSION= version(114, 0);
 	private static final int MAX_SUPPORTED_VERSION= version(114, Short.MAX_VALUE);
 	private static final int DEFAULT_VERSION = version(114, 0);
-	
+
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;
 	}
@@ -221,7 +221,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public static int getDefaultVersion() {
 		return DEFAULT_VERSION;
 	}
-	
+
 	public static boolean isSupportedVersion(int vers) {
 		return vers >= MIN_SUPPORTED_VERSION && vers <= MAX_SUPPORTED_VERSION;
 	}
@@ -236,7 +236,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		final int minor= version & 0xffff;
 		return "" + major + '.' + minor; //$NON-NLS-1$
 	}
-	
+
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
 	public static final int PROPERTIES = Database.DATA_AREA + 8;
@@ -244,7 +244,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	static {
 		assert END <= Database.CHUNK_SIZE;
 	}
-	
+
 	public static class ChangeEvent {
 		public Set<IIndexFileLocation> fClearedFiles= new HashSet<IIndexFileLocation>();
 		public Set<IIndexFileLocation> fFilesWritten= new HashSet<IIndexFileLocation>();
@@ -304,7 +304,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public PDOM(File dbPath, IIndexLocationConverter locationConverter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
 		this(dbPath, locationConverter, ChunkCache.getSharedInstance(), linkageFactoryMappings);
 	}
-	
+
 	public PDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache, Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
 		fPDOMLinkageFactoryCache = linkageFactoryMappings;
 		loadDatabase(dbPath, cache);
@@ -314,21 +314,21 @@ public class PDOM extends PlatformObject implements IPDOM {
 			System.out.println("Debugging PDOM Locks"); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Returns whether this PDOM can never be written to. Writable subclasses should return false.
 	 */
 	protected boolean isPermanentlyReadOnly() {
 		return true;
-	}  
+	}
 
 	private void loadDatabase(File dbPath, ChunkCache cache) throws CoreException {
 		fPath= dbPath;
 		final boolean lockDB= db == null || lockCount != 0;
-		
+
 		clearCaches();
 		db = new Database(fPath, cache, getDefaultVersion(), isPermanentlyReadOnly());
-		
+
 		db.setLocked(lockDB);
 		if (isSupportedVersion()) {
 			readLinkages();
@@ -362,14 +362,14 @@ public class PDOM extends PlatformObject implements IPDOM {
 		PDOMLinkage pdomLinkage= fLinkageIDCache.get(linkageID);
 		if (pdomLinkage == null) {
 			final String linkageName= Linkage.getLinkageName(linkageID);
-			IPDOMLinkageFactory factory= fPDOMLinkageFactoryCache.get(linkageName);			
+			IPDOMLinkageFactory factory= fPDOMLinkageFactoryCache.get(linkageName);
 			if (factory != null) {
 				return factory.createLinkage(this);
 			}
 		}
 		return pdomLinkage;
 	}
-	
+
 	public PDOMLinkage getLinkage(int linkageID) throws CoreException {
 		return fLinkageIDCache.get(linkageID);
 	}
@@ -399,7 +399,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private void fireChange(ChangeEvent event) {
 		if (listeners == null || event.isTrivial())
 			return;
-		
+
 		Iterator<IListener> i = listeners.iterator();
 		while (i.hasNext())
 			i.next().handleChange(this, event);
@@ -421,7 +421,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			return null;
 		return PDOMFile.findFile(linkage, getFileIndex(), location, locationConverter);
 	}
-	
+
 	public PDOMFile getFile(PDOMLinkage linkage, IIndexFileLocation location) throws CoreException {
 		return PDOMFile.findFile(linkage, getFileIndex(), location, locationConverter);
 	}
@@ -444,7 +444,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		});
 		return locations.toArray(new IIndexFragmentFile[locations.size()]);
 	}
-	
+
 	protected IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location) throws CoreException {
 		PDOMLinkage linkage= createLinkage(linkageID);
 		IIndexFragmentFile file = getFile(linkage, location);
@@ -459,19 +459,19 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	protected void clearFileIndex() throws CoreException {
 		db.putRecPtr(FILE_INDEX, 0);
-		fileIndex = null;	
+		fileIndex = null;
 	}
-	
+
 	protected void clear() throws CoreException {
 		assert lockCount < 0; // needs write-lock.
-		
+
 		// Clear out the database, everything is set to zero.
 		int vers = getDefaultVersion();
 		db.clear(vers);
 		clearCaches();
 		fEvent.setCleared();
 	}
-	
+
 	void reloadFromFile(File file) throws CoreException {
 		assert lockCount < 0;	// must have write lock.
 		File oldFile= fPath;
@@ -485,7 +485,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		db.setExclusiveLock();
 		oldFile.delete();
 		fEvent.fReloaded= true;
-	}		
+	}
 
 	public boolean isEmpty() throws CoreException {
 		return getFirstLinkageRecord() == 0;
@@ -613,7 +613,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 				return findBindingsForPrefix(prefix, isFullyQualified, caseSensitive, filter, monitor);
 			}
 		}
-		
+
 		BindingFinder finder = new BindingFinder(patterns, isFullyQualified, filter, monitor);
 		for (PDOMLinkage linkage : getLinkageList()) {
 			if (filter.acceptLinkage(linkage)) {
@@ -671,7 +671,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private char[] extractPrefix(Pattern[] pattern) {
 		if (pattern.length != 1)
 			return null;
-		
+
 		String p= pattern[0].pattern();
 		if (p.endsWith(".*")) { //$NON-NLS-1$
 			char[] input= p.substring(0, p.length()-2).toCharArray();
@@ -684,12 +684,12 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 		return null;
 	}
-	
+
 	public IIndexFragmentBinding[] findMacroContainers(Pattern pattern, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}
-		
+
 		Pattern[] patterns= new Pattern[]{pattern};
 		Boolean caseSensitive= getCaseSensitive(patterns);
 		if (caseSensitive != null) {
@@ -697,7 +697,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			if (simpleNames != null && simpleNames.length == 1) {
 				return findMacroContainers(simpleNames[0], false, caseSensitive, filter, monitor);
 			}
-			
+
 			char[] prefix= extractPrefix(patterns);
 			if (prefix != null) {
 				return findMacroContainers(prefix, true, caseSensitive, filter, monitor);
@@ -725,7 +725,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public IIndexFragmentBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		return findBindings(names, true, filter, monitor);
 	}
-	
+
 	public IIndexFragmentBinding[] findBindings(char[][] names, boolean caseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		if (names.length == 0) {
 			return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
@@ -733,7 +733,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if (names.length == 1) {
 			return findBindings(names[0], true, caseSensitive, filter, monitor);
 		}
-		
+
 		IIndexFragmentBinding[] candidates = findBindings(names[names.length-1], false, caseSensitive, filter, monitor);
 		int j= 0;
 		for (int i = 0; i < candidates.length; i++) {
@@ -744,13 +744,13 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 		return ArrayUtil.trimAt(IIndexFragmentBinding.class, candidates, j-1);
 	}
-	
+
 	private boolean matches(IIndexFragmentBinding cand, char[][] names, boolean caseSensitive) {
 		int i= names.length-1;
 		while(i >= 0) {
 			if (cand == null)
 				return false;
-			
+
 			char[] name= cand.getNameCharArray();
 			if (!CharArrayUtils.equals(name, 0, name.length, names[i], !caseSensitive)) {
 				if (cand instanceof IEnumeration) {
@@ -776,7 +776,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		Collection<PDOMLinkage> values = getLinkageList();
 		return values.toArray(new IIndexLinkage[values.size()]);
 	}
-	
+
 	public PDOMLinkage[] getLinkageImpls() {
 		Collection<PDOMLinkage> values = getLinkageList();
 		return values.toArray(new PDOMLinkage[values.size()]);
@@ -827,7 +827,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			if (sDEBUG_LOCKS) {
 				decReadLock(fLockDebugging);
 			}
-			
+
 			lastReadAccess= System.currentTimeMillis();
 			if (lockCount > 0)
 				--lockCount;
@@ -890,7 +890,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	final public void releaseWriteLock() {
 		releaseWriteLock(0, true);
 	}
-	
+
 	@SuppressWarnings("nls")
 	public void releaseWriteLock(int establishReadLocks, boolean flush) {
 		// When all locks are released we can clear the result cache.
@@ -928,11 +928,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 			return waitingReaders > 0;
 		}
 	}
-	
+
 	public long getLastWriteAccess() {
 		return lastWriteAccess;
 	}
-	 
+
 	public long getLastReadAccess() {
 		return lastReadAccess;
 	}
@@ -1121,7 +1121,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public IIndexFragmentBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		return findBindings(name, filescope, true, filter, monitor);
 	}
-	
+
 	public IIndexFragmentBinding[] findBindings(char[] name, boolean filescope, boolean isCaseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IIndexFragmentBinding> result= new ArrayList<IIndexFragmentBinding>();
 		try {
@@ -1134,21 +1134,21 @@ public class PDOM extends PlatformObject implements IPDOM {
 								result.add(binding);
 							}
 						}
-					} 
-					
+					}
+
 					if (!isCaseSensitive || !filescope) {
 						BindingCollector visitor= new BindingCollector(linkage, name, filter, false, false, isCaseSensitive);
 						visitor.setMonitor(monitor);
-					
+
 						if (!isCaseSensitive)
 							linkage.accept(visitor);
-						
+
 						if (!filescope) {
 							// Avoid adding unscoped enumerator items twice
 							visitor.setSkipGlobalEnumerators(true);
 							linkage.getNestedBindingsIndex().accept(visitor);
 						}
-						
+
 						PDOMBinding[] bindings = visitor.getBindings();
 						for (PDOMBinding binding : bindings) {
 							result.add(binding);
@@ -1177,7 +1177,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 		return result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
-	
+
 	public IIndexMacro[] findMacros(char[] prefix, boolean isPrefix, boolean isCaseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IIndexMacro> result= new ArrayList<IIndexMacro>();
 		try {
@@ -1256,7 +1256,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public void putCachedResult(Object key, Object result) {
 		putCachedResult(key, result, true);
 	}
-	
+
 	public Object putCachedResult(Object key, Object result, boolean replace) {
 		synchronized (fResultCache) {
 			Object old= fResultCache.put(key, result);
@@ -1266,13 +1266,13 @@ public class PDOM extends PlatformObject implements IPDOM {
 			}
 			return result;
 		}
-	}		
+	}
 
 	public void removeCachedResult(Object key) {
 		synchronized (fResultCache) {
 			fResultCache.remove(key);
 		}
-	}		
+	}
 
 	public String createKeyForCache(long record, char[] name) {
 		return new StringBuilder(name.length + 2).append((char) (record >> 16)).append((char) record).append(name).toString();
@@ -1281,7 +1281,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public boolean hasLastingDefinition(PDOMBinding binding) throws CoreException {
 		return binding.hasDefinition();
 	}
-	
+
 	private PDOMBinding[] getCrossLanguageBindings(IBinding binding) throws CoreException {
 		switch(binding.getLinkage().getLinkageID()) {
 		case ILinkage.C_LINKAGE_ID:
@@ -1330,13 +1330,13 @@ public class PDOM extends PlatformObject implements IPDOM {
 						var.getNameCharArray(), new int[] { IIndexCBindingConstants.CVARIABLE }, 0);
 			}
 		} else if (binding instanceof IEnumeration) {
-			result= FindBinding.findBinding(c.getIndex(), c, 
+			result= FindBinding.findBinding(c.getIndex(), c,
 					binding.getNameCharArray(), new int[] {IIndexCBindingConstants.CENUMERATION }, 0);
 		} else if (binding instanceof IEnumerator) {
-			result= FindBinding.findBinding(c.getIndex(), c, 
+			result= FindBinding.findBinding(c.getIndex(), c,
 					binding.getNameCharArray(), new int[] {IIndexCBindingConstants.CENUMERATOR }, 0);
 		} else if (binding instanceof ITypedef) {
-			result= FindBinding.findBinding(c.getIndex(), c, 
+			result= FindBinding.findBinding(c.getIndex(), c,
 					binding.getNameCharArray(), new int[] {IIndexCBindingConstants.CTYPEDEF }, 0);
 		} else if (binding instanceof ICompositeType) {
 			final int key= ((ICompositeType) binding).getKey();
@@ -1423,7 +1423,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public IIndexFragmentFileSet createFileSet() {
 		return new PDOMFileSet();
 	}
-	
+
 	// For debugging lock issues
 	static class DebugLockInfo {
 		int fReadLocks;
@@ -1440,7 +1440,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			for (StackTraceElement[] trace : fTraces) {
 				System.out.println("  Stacktrace:");
 				for (StackTraceElement ste : trace) {
-					System.out.println("    " + ste); 
+					System.out.println("    " + ste);
 				}
 			}
 		}
@@ -1457,7 +1457,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	// For debugging lock issues
 	private static DebugLockInfo getLockInfo(Map<Thread, DebugLockInfo> lockDebugging) {
 		assert sDEBUG_LOCKS;
-		
+
 		Thread key = Thread.currentThread();
 		DebugLockInfo result= lockDebugging.get(key);
 		if (result == null) {
@@ -1475,7 +1475,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			outputReadLocks(lockDebugging);
 		}
 	}
-	
+
 	// For debugging lock issues
 	@SuppressWarnings("nls")
 	static void decReadLock(Map<Thread, DebugLockInfo> lockDebugging) throws AssertionError {
@@ -1504,7 +1504,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			throw new AssertionError("write lock with " + giveupReadLocks + " readlocks, expected " + info.fReadLocks);
 		}
 		if (info.fWriteLocks != 0)
-			throw new AssertionError("Duplicate write lock"); 
+			throw new AssertionError("Duplicate write lock");
 		info.fWriteLocks++;
 	}
 
@@ -1545,7 +1545,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 		System.out.println("---------------------------------------------------------------");
 	}
-	
+
 	// For debugging lock issues
 	public void adjustThreadForReadLock(Map<Thread, DebugLockInfo> lockDebugging) {
 		for (Thread th : lockDebugging.keySet()) {

@@ -30,8 +30,8 @@ echo ${mydir}
 
 #Use Java5 on build.eclipse.org
 #export PATH=/shared/tools/tm/jdk-1.5/bin:$PATH
-#export PATH=/shared/tools/tm/jdk-1.5/jre/bin:/shared/tools/tm/jdk-1.5/bin:$PATH
-export PATH=/shared/tools/tm/jdk-1.6/jre/bin:/shared/tools/tm/jdk-1.6/bin:$PATH
+export PATH=/shared/tools/tm/jdk-1.5/jre/bin:/shared/tools/tm/jdk-1.5/bin:$PATH
+#export PATH=/shared/tools/tm/jdk-1.6/jre/bin:/shared/tools/tm/jdk-1.6/bin:$PATH
 #export PATH=${HOME}/ws2/IBMJava2-ppc-142/bin:$PATH
 
 

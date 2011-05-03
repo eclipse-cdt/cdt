@@ -20,11 +20,13 @@ import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -233,7 +235,13 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	}
 
 	public IBinding getOwner() {
-		return node instanceof IASTName ? CPPVisitor.findNameOwner((IASTName) node, true) : null;
+		if (node instanceof IASTName) {
+			IASTTranslationUnit tu= node.getTranslationUnit();
+			if (tu instanceof ICPPASTTranslationUnit) {
+				return CPPVisitor.findNameOwner((IASTName) node, true);
+			}
+		}
+		return null;
 	}
 
 	public void setASTNode(IASTName name) {

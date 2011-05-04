@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Intel Corporation and others.
+ * Copyright (c) 2006, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,9 +21,11 @@ import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands;
+import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * This dependency calculator uses the GCC -MMD -MF -MP -MT options in order to
@@ -83,8 +85,10 @@ public class DefaultGCCDependencyCalculator2Commands implements
 			project = rcInfo.getParent().getOwner().getProject();
 		}
 		
-		sourceLocation = (source.isAbsolute() ? source : project.getLocation().append(source));
-		outputLocation = project.getLocation().append(topBuildDirectory).append(getDependencyFiles()[0]);
+		IPath projectPath = new Path(EFSExtensionManager.getDefault().getPathFromURI(project.getLocationURI()));
+		
+		sourceLocation = (source.isAbsolute() ? source : projectPath.append(source));
+		outputLocation = projectPath.append(topBuildDirectory).append(getDependencyFiles()[0]);
 
 		// A separate rule is needed for the resource in the case where explicit file-specific macros
 		// are referenced, or if the resource contains special characters in its path (e.g., whitespace)

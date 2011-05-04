@@ -736,16 +736,6 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 // Update the mappings
                 platformBPs.remove(breakpoint);
                 threadsIDs.remove(breakpoint);
-
-                Vector<IBreakpointDMContext> contexts = breakpointIDs.get(breakpoint);
-                if (contexts != null) {
-                    for (IBreakpointDMContext context : contexts)
-                        targetBPs.remove(context);
-                }
-
-                breakpointIDs.get(breakpoint).clear();
-                breakpointIDs.remove(breakpoint);
-
                 fPendingRequests.remove(breakpoint);
 
 				rm.done();
@@ -753,10 +743,14 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         };
 
         // Remove the back-end breakpoints
-        Vector<IBreakpointDMContext> list = breakpointIDs.get(breakpoint);
+        // Remove the entry from the breakpointIDs map right away to indicate that we have already
+        // taken care of this breakpoint.  This avoids race conditions with the shutdown
+        // which would also try to decrement the install count (bug 344635)
+        Vector<IBreakpointDMContext> list = breakpointIDs.remove(breakpoint);
         int count = 0;
-        if (list != null) {
+        if (list != null) {       			
             for (final IBreakpointDMContext bp : list) {
+            	targetBPs.remove(bp);
             	decrementInstallCount(bp, breakpoint, new RequestMonitor(getExecutor(), removeRM) {
                 	@Override
                 	protected void handleCompleted() {
@@ -765,6 +759,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 });
             }
             count = list.size();
+            list.clear();  // probably not necessary
         }
         removeRM.setDoneCount(count);
     }

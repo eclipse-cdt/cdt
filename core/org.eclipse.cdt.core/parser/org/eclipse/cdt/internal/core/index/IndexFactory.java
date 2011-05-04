@@ -57,7 +57,8 @@ public class IndexFactory {
 		boolean skipProvided= (options & SKIP_PROVIDED) != 0;
 
 		HashMap<IProject, Integer> map= new HashMap<IProject, Integer>();
-		Collection<ICProject> selectedProjects= getProjects(projects, addDependencies, addDependent, map, new Integer(1));
+		Collection<ICProject> selectedProjects= getProjects(projects, addDependencies, addDependent,
+				map, new Integer(1));
 
 		HashMap<String, IIndexFragment> fragments= new LinkedHashMap<String, IIndexFragment>();
 		for (ICProject cproject : selectedProjects) {
@@ -100,11 +101,13 @@ public class IndexFactory {
 		IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(project);
 		if (pdom == null) {
 			throw new CoreException(CCorePlugin.createStatus(
-					MessageFormat.format(Messages.IndexFactory_errorNoSuchPDOM0, new Object[]{project.getElementName()})));
+					MessageFormat.format(Messages.IndexFactory_errorNoSuchPDOM0,
+							new Object[] { project.getElementName() })));
 		}
 		safeAddProvidedFragments(project, readOnlyFrag);
 
-		Collection<ICProject> selectedProjects= getProjects(new ICProject[] {project}, true, false, new HashMap<IProject, Integer>(), new Integer(1));
+		Collection<ICProject> selectedProjects= getProjects(new ICProject[] {project}, true, false,
+				new HashMap<IProject, Integer>(), new Integer(1));
 		selectedProjects.remove(project);
 
 		for (ICProject cproject : selectedProjects) {
@@ -115,7 +118,8 @@ public class IndexFactory {
 		return new WritableCIndex(pdom, roPdoms.toArray(new IIndexFragment[roPdoms.size()]) );
 	}
 
-	private Collection<ICProject> getProjects(ICProject[] projects, boolean addDependencies, boolean addDependent, HashMap<IProject, Integer> map, Integer markWith) {
+	private Collection<ICProject> getProjects(ICProject[] projects, boolean addDependencies,
+			boolean addDependent, HashMap<IProject, Integer> map, Integer markWith) {
 		List<IProject> projectsToSearch= new ArrayList<IProject>();
 
 		for (ICProject cproject : projects) {
@@ -125,7 +129,7 @@ public class IndexFactory {
 		}
 
 		if (addDependencies || addDependent) {
-			for (int i=0; i<projectsToSearch.size(); i++) {
+			for (int i= 0; i < projectsToSearch.size(); i++) {
 				IProject project= projectsToSearch.get(i);
 				IProject[] nextLevel;
 				try {
@@ -161,7 +165,8 @@ public class IndexFactory {
 		return result;
 	}
 
-	private void checkAddProject(IProject project, HashMap<IProject, Integer> map, List<IProject> projectsToSearch, Integer markWith) {
+	private void checkAddProject(IProject project, HashMap<IProject, Integer> map,
+			List<IProject> projectsToSearch, Integer markWith) {
 		if (map.get(project) == null) {
 			if (project.isOpen()) {
 				map.put(project, markWith);

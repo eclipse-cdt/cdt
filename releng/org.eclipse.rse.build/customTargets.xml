@@ -447,17 +447,26 @@
 		<replace file="${buildDirectory}/message.txt">
 			<replacefilter token="@dropDir@" value="${dropDir}"/>
 		</replace>
+		<!--
+		DISABLE mail target due to Eclipse bug 344518 (mail fails due to missing extra jars)
 		<mail subject="RSE Build ${buildId} completed"
  			tolist="${mailto}" from="martin.oberhuber@windriver.com">
 			<message src="${buildDirectory}/message.txt"/>
 		</mail>
+		-->
+		<echo message="RSE build PASSED!" />
 	</target>
 
 	<target name="mailFail" if="hasErrors">
+		<!--
+		DISABLE mail target due to Eclipse bug 344518 (mail fails due to missing extra jars)
 		<mail subject="RSE Build ${buildId} failed"
 			tolist="${mailto}" from="martin.oberhuber@windriver.com">
 			<message src="${packageDirectory}/${dropDir}/compilelog.txt"/>
 		</mail>
+		-->
+		<echo message="ERROR: RSE build FAILED!" />
+		<echo message="See ${packageDirectory}/${dropDir}/compilelog.txt" />
 	</target>
 
 	<!-- ===================================================================== -->

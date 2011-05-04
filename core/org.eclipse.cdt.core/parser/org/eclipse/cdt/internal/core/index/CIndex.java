@@ -152,7 +152,7 @@ public class CIndex implements IIndex {
 	public IIndexName[] findNames(IBinding binding, int flags) throws CoreException {
 		LinkedList<IIndexFragmentName> result= new LinkedList<IIndexFragmentName>();
 		if (binding instanceof ICPPUsingDeclaration) {
-			IBinding[] bindings= ((ICPPUsingDeclaration)binding).getDelegates();
+			IBinding[] bindings= ((ICPPUsingDeclaration) binding).getDelegates();
 			if (bindings == null || bindings.length == 0) {
 				return new IIndexName[0];
 			}

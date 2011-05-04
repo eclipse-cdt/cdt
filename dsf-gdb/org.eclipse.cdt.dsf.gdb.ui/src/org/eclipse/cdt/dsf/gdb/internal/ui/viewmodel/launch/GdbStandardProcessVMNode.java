@@ -12,7 +12,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.StandardProcessVMNode;
-import org.eclipse.cdt.dsf.gdb.launching.GDBProcess;
+import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.debug.core.DebugEvent;
@@ -30,15 +30,10 @@ import org.eclipse.jface.viewers.TreePath;
  * It does not implement the label provider functionality, so the default 
  * adapters should be used to retrieve the label.
  * 
- * This version is specific to DSF-GDB to only show the GDB process.
+ * This version is specific to DSF-GDB to no longer show the inferiors.
  */
 public class GdbStandardProcessVMNode extends StandardProcessVMNode {
     
-	// We only want to show the GDB process and not the inferiors.
-	// The inferior was not considered valuable and would waste space
-	// especially in multi-process debugging
-	private final static Class<?> fProcessType = GDBProcess.class;
-	
     public GdbStandardProcessVMNode(AbstractVMProvider provider) {
         super(provider);
     }
@@ -66,7 +61,7 @@ public class GdbStandardProcessVMNode extends StandardProcessVMNode {
              */
             int count = 0;
             for (IProcess process : launch.getProcesses()) {
-            	if (fProcessType.isAssignableFrom(process.getClass())) {
+            	if (!(process instanceof InferiorRuntimeProcess)) {
             		update.setChild(process, count++);
             	}
             }
@@ -88,7 +83,7 @@ public class GdbStandardProcessVMNode extends StandardProcessVMNode {
     
             int count = 0;
             for (IProcess process : launch.getProcesses()) {
-            	if (fProcessType.isAssignableFrom(process.getClass())) {
+            	if (!(process instanceof InferiorRuntimeProcess)) {
             		count++;
             	}
             }
@@ -111,7 +106,7 @@ public class GdbStandardProcessVMNode extends StandardProcessVMNode {
     
             boolean hasChildren = false;
             for (IProcess process : launch.getProcesses()) {
-            	if (fProcessType.isAssignableFrom(process.getClass())) {
+            	if (!(process instanceof InferiorRuntimeProcess)) {
             		hasChildren = true;
             		break;
             	}
@@ -140,7 +135,7 @@ public class GdbStandardProcessVMNode extends StandardProcessVMNode {
         int myFlags = 0;
         if (e instanceof DebugEvent) {
             DebugEvent de = (DebugEvent)e;
-            if (fProcessType.isAssignableFrom(de.getSource().getClass()) && 
+        	if (!(de.getSource() instanceof InferiorRuntimeProcess) && 
                  (de.getKind() == DebugEvent.CHANGE || 
                   de.getKind() == DebugEvent.CREATE || 
                   de.getKind() == DebugEvent.TERMINATE) )
@@ -153,7 +148,7 @@ public class GdbStandardProcessVMNode extends StandardProcessVMNode {
     
     @Override
     public void buildDelta(Object e, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor) {
-        if (e instanceof DebugEvent && fProcessType.isAssignableFrom(((DebugEvent)e).getSource().getClass())) {
+        if (e instanceof DebugEvent && !(((DebugEvent)e).getSource() instanceof InferiorRuntimeProcess)) {
             DebugEvent de = (DebugEvent)e;
             if (de.getKind() == DebugEvent.CHANGE) {
                 handleChange(de, parent);

@@ -125,7 +125,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
         });
     }
 
-    public void doInitialize(final RequestMonitor requestMonitor) {
+    private void doInitialize(final RequestMonitor requestMonitor) {
         fMIBackend = getServicesTracker().getService(IGDBBackend.class);
     	
         // getId uses the MIBackend service, which is why we must wait until we

@@ -138,7 +138,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
         });
     }
 
-    public void doInitialize(final RequestMonitor requestMonitor) {
+    private void doInitialize(final RequestMonitor requestMonitor) {
 
         final Sequence.Step[] initializeSteps = new Sequence.Step[] {
                 new GDBProcessStep(InitializationShutdownStep.Direction.INITIALIZING),

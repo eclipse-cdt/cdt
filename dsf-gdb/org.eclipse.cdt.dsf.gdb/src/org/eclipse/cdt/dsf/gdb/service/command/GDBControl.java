@@ -121,7 +121,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         });
     }
 
-    public void doInitialize(final RequestMonitor requestMonitor) {
+    private void doInitialize(final RequestMonitor requestMonitor) {
 
         fMIBackend = getServicesTracker().getService(IGDBBackend.class);
     	

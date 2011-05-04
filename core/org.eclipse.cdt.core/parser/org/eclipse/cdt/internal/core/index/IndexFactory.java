@@ -113,8 +113,8 @@ public class IndexFactory {
 			safeAddFragment(readOnlyFrag, fPDOMManager.getPDOM(cproject));
 		}
 
-		Collection<IIndexFragment> roPdoms= readOnlyFrag.values();
-		return new WritableCIndex(pdom, roPdoms.toArray(new IIndexFragment[roPdoms.size()]) );
+		Collection<IIndexFragment> readOnlyFragments= readOnlyFrag.values();
+		return new WritableCIndex(pdom, readOnlyFragments.toArray(new IIndexFragment[readOnlyFragments.size()]));
 	}
 
 	private Collection<ICProject> getProjects(ICProject[] projects, boolean addDependencies,

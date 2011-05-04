@@ -429,8 +429,8 @@ public class CIndex implements IIndex {
 					}
 				}
 			}
-		} catch(CoreException ce) {
-			CCorePlugin.log(ce);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
 		}
 		return null;
 	}

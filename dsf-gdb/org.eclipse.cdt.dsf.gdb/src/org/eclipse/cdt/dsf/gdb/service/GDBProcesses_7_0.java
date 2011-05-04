@@ -1248,10 +1248,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		fProcRestarting = true;
 		startOrRestart(containerDmc, attributes, true, new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm) {
 			@Override
-			protected void handleFailure() {
-				fProcRestarting = false;
+			protected void handleCompleted() {
+				if (!isSuccess()) {
+					fProcRestarting = false;
+				}
 				setData(getData());
-				super.handleFailure();
+				super.handleCompleted();
 			};
 		});
 	}

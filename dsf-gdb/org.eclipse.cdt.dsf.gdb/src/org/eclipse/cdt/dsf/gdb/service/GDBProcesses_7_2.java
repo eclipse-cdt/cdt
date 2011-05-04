@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -53,6 +55,13 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
     private CommandFactory fCommandFactory;
     private IGDBControl fCommandControl;
     private IGDBBackend fBackend;
+
+    /**
+     * Set of processes that are currently being restarted.
+     * We use this set for such things as not removing breakpoints
+     * because we know the process will be restarted.
+     */
+	private Set<IContainerDMContext> fProcRestarting = new HashSet<IContainerDMContext>();
 
 	public GDBProcesses_7_2(DsfSession session) {
 		super(session);
@@ -318,6 +327,23 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		return new DebugNewProcessSequence_7_2(executor, isInitial, dmc, file, attributes, rm);
 	}
 	
+	
+	@Override
+	public void restart(final IContainerDMContext containerDmc, Map<String, Object> attributes,
+            			DataRequestMonitor<IContainerDMContext> rm) {
+		fProcRestarting.add(containerDmc);
+		super.restart(containerDmc, attributes, new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm) {
+			@Override
+			protected void handleCompleted() {
+				if (!isSuccess()) {
+					fProcRestarting.remove(containerDmc);
+				}
+				setData(getData());
+				super.handleCompleted();
+			}
+		});
+	}
+	
     /**
      * @since 4.0
       */
@@ -326,13 +352,15 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
     public void eventDispatched(IExitedDMEvent e) {
     	IDMContext dmc = e.getDMContext();
     	if (dmc instanceof IContainerDMContext) {
-    		// A process has died, we should stop tracking its breakpoints
-    		if (fBackend.getSessionType() != SessionType.CORE) {
-    			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
-            	MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
-            	if (bpmService != null) {
-            		bpmService.stopTrackingBreakpoints(bpTargetDmc, new RequestMonitor(ImmediateExecutor.getInstance(), null));
-            	}
+    		// A process has died, we should stop tracking its breakpoints, but only if it is not restarting
+    		if (!fProcRestarting.remove(dmc)) {
+    			if (fBackend.getSessionType() != SessionType.CORE) {
+    				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
+    				MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
+    				if (bpmService != null) {
+    					bpmService.stopTrackingBreakpoints(bpTargetDmc, new RequestMonitor(ImmediateExecutor.getInstance(), null));
+    				}
+    			}
     		}
     	}
     	

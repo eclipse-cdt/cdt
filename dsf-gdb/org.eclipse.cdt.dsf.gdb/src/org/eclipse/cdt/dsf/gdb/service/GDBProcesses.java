@@ -268,7 +268,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 
 	@Override
     public void canDetachDebuggerFromProcess(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
-	    if (fBackend.getIsAttachSession() && fConnected) {
+	    if (fConnected) {
 	    	rm.setData(true);
 	    } else {
 	    	rm.setData(false);

@@ -914,7 +914,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
     /** @since 4.0 */
     protected boolean doCanDetachDebuggerFromProcess() {
-   		return fBackend.getIsAttachSession() && fNumConnected > 0;
+   		return fNumConnected > 0;
     }
     
     public void canDetachDebuggerFromProcess(IDMContext dmc, DataRequestMonitor<Boolean> rm) {

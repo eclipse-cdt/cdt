@@ -12,7 +12,6 @@
 
 package org.eclipse.cdt.internal.core.index;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,6 +32,7 @@ import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Class that creates indexes based on PDOMs
@@ -80,7 +80,7 @@ public class IndexFactory {
 		if (!addDependencies) {
 			projects= selectedProjects.toArray(new ICProject[selectedProjects.size()]);
 			selectedProjects.clear();
-			// don't clear the map, so projects are not selected again
+			// Don't clear the map, so projects are not selected again.
 			selectedProjects= getProjects(projects, true, false, map, new Integer(2));
 			for (ICProject cproject : selectedProjects) {
 				IIndexFragment pdom= fPDOMManager.getPDOM(cproject);
@@ -101,8 +101,7 @@ public class IndexFactory {
 		IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(project);
 		if (pdom == null) {
 			throw new CoreException(CCorePlugin.createStatus(
-					MessageFormat.format(Messages.IndexFactory_errorNoSuchPDOM0,
-							new Object[] { project.getElementName() })));
+					NLS.bind(Messages.IndexFactory_errorNoSuchPDOM0, project.getElementName())));
 		}
 		safeAddProvidedFragments(project, readOnlyFrag);
 

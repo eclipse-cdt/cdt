@@ -647,7 +647,7 @@ public class CIndex implements IIndex {
 	public long getCacheHits() {
 		long result= 0;
 		for (IIndexFragment fragment : fFragments) {
-			result+= fragment.getCacheHits();
+			result += fragment.getCacheHits();
 		}
 		return result;
 	}
@@ -655,7 +655,7 @@ public class CIndex implements IIndex {
 	public long getCacheMisses() {
 		long result= 0;
 		for (IIndexFragment fragment : fFragments) {
-			result+= fragment.getCacheMisses();
+			result += fragment.getCacheMisses();
 		}
 		return result;
 	}

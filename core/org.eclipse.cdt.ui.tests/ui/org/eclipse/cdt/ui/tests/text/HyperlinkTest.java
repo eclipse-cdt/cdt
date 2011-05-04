@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,9 +65,12 @@ public class HyperlinkTest extends TestCase {
 		"  private: \n" +
 		"    int x, y; \n" +
 		"}; \n" +
+		"#define SOMEMACROFUNCTION(a) function(a) \n" +
 		"int test(Point p) {  \n" +
 		"    char* str = \"STRING LITERAL\"; \n" +
 		"    p + p;" +
+		"    int arg;" +
+		"    SOMEMACROFUNCTION(arg);" +
 		"} \n";
 	
 	private static final String C_FILE_NAME_1 = "hyperlink_test_c_1.c";
@@ -162,6 +165,8 @@ public class HyperlinkTest extends TestCase {
 		// see bug 259015
 		assertHyperlink(CPP_CODE.indexOf("macro_token1"), CPP_CODE.indexOf("macro_token1"), "macro_token1".length());
 		assertHyperlink(CPP_CODE.indexOf("macro_token2"), CPP_CODE.indexOf("macro_token2"), "macro_token2".length());
+		// see bug 344604
+		assertHyperlink(CPP_CODE.indexOf("arg);"), CPP_CODE.indexOf("arg);"), "arg".length());
 		
 		// no hyperlinks for comments
 		assertNotHyperlink(CPP_CODE.indexOf("//") + 1);
@@ -216,6 +221,8 @@ public class HyperlinkTest extends TestCase {
 		// see bug 259015
 		assertHyperlink(CPP_CODE.indexOf("macro_token1"), CPP_CODE.indexOf("macro_token1"), "macro_token1".length());
 		assertHyperlink(CPP_CODE.indexOf("macro_token2"), CPP_CODE.indexOf("macro_token2"), "macro_token2".length());
+		// see bug 344604
+		assertHyperlink(CPP_CODE.indexOf("arg);"), CPP_CODE.indexOf("arg);"), "arg".length());
 		
 		// no hyperlinks for comments
 		assertNotHyperlink(CPP_CODE.indexOf("//") + 1);

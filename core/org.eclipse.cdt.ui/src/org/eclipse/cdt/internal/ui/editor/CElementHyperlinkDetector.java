@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,9 +27,10 @@ import org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -75,27 +76,43 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 				final int offset= region.getOffset();
 				final int length= Math.max(1, region.getLength());
 				final IASTNodeSelector nodeSelector= ast.getNodeSelector(null);
+				IASTNode linkASTNode = null;
+				IASTNodeLocation linkLocation = null;
+				
 				IASTName selectedName= nodeSelector.findEnclosingName(offset, length);
-				IASTFileLocation linkLocation= null;
 				if (selectedName != null) { // found a name
 					// Prefer include statement over the include name
 					if (selectedName.getParent() instanceof IASTPreprocessorIncludeStatement) {
-						linkLocation= selectedName.getParent().getFileLocation();
+						linkASTNode = selectedName.getParent();
 					} else {
-						linkLocation= selectedName.getFileLocation();
+						linkASTNode = selectedName;
 					}
 				} else { 
 					final IASTNode implicit = nodeSelector.findEnclosingImplicitName(offset, length);
 					if (implicit != null) {
-						linkLocation = implicit.getFileLocation();
+						linkASTNode = implicit;
 					} else {
 						// Search for include statement
 						final IASTNode cand= nodeSelector.findEnclosingNode(offset, length);
 						if (cand instanceof IASTPreprocessorIncludeStatement) {
-							linkLocation= cand.getFileLocation();
+							linkASTNode = cand;
 						}
 					}
 				}
+				
+				if (linkASTNode != null) {
+					if (linkASTNode instanceof IASTName) {
+						IASTName astName = (IASTName) linkASTNode;
+						IASTImageLocation imageLocation = astName.getImageLocation();
+						if (imageLocation != null) {
+							linkLocation = imageLocation;
+						}
+					}
+					if (linkLocation == null) {
+						linkLocation = linkASTNode.getFileLocation();
+					}
+				}
+				
 				if (linkLocation == null) {
 					// Consider a fallback way of finding the hyperlink
 					// (see http://bugs.eclipse.org/bugs/show_bug.cgi?id=333050).

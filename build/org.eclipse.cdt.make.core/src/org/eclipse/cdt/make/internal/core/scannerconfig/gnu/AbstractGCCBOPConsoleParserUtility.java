@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Vector;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
+import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -41,7 +42,7 @@ public abstract class AbstractGCCBOPConsoleParserUtility {
         fDirectoryStack = new Vector<IPath>();
         fErrors = new ArrayList<Problem>();
         this.project = project;
-        fBaseDirectory = project.getLocation();
+        fBaseDirectory = new Path(EFSExtensionManager.getDefault().getPathFromURI(project.getLocationURI()));
         if (workingDirectory != null) {
             pushDirectory(workingDirectory);
         }

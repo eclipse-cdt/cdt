@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2010 IBM Corporation and others.
+ *  Copyright (c) 2003, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -69,6 +69,7 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyPreBuild;
+import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -463,7 +464,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 //			ToolInfoHolder h = getToolInfo(fo.getPath());
 			updateMonitor(ManagedMakeMessages.getFormattedString("GnuMakefileGenerator.message.postproc.dep.file", depFile.getName()));	//$NON-NLS-1$
 			if (postProcessors != null) {
-				IPath absolutePath = depFile.getLocation();
+				IPath absolutePath = new Path(EFSExtensionManager.getDefault().getPathFromURI(depFile.getLocationURI()));
 				// Convert to build directory relative
 				IPath depPath = ManagedBuildManager.calculateRelativePath(getTopBuildDir(), absolutePath);
 				for (int i=0; i<postProcessors.length; i++) {

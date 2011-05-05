@@ -439,13 +439,15 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
      * This method can be overridden to allow for customization.
      */
     protected boolean useContinueCommand() {
-    	// When doing remote debugging, we use -exec-continue instead of -exec-run
-    	// Restart does not apply to remote sessions
+    	// Note that restart does not apply to remote sessions
     	IGDBBackend backend = fTracker.getService(IGDBBackend.class);
 		if (backend == null) {
 			return false;
 		}
-    	return backend.getSessionType() == SessionType.REMOTE;
+    	// When doing remote non-attach debugging, we use -exec-continue instead of -exec-run
+		// For remote attach, if we get here it is that we are starting a new process
+		// (multi-process), so we want to use -exec-run
+    	return backend.getSessionType() == SessionType.REMOTE && !backend.getIsAttachSession();
     }
 
 }

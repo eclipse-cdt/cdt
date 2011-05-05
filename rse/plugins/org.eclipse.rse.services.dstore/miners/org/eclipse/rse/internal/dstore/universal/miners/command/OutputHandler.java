@@ -23,6 +23,7 @@
  * David McKnight   (IBM)     [309338] [dstore] z/OS USS - invocation of 'env' shell command returns inconsistently organized output
  * David McKnight   (IBM)     [312415] [dstore] shell service interprets &lt; and &gt; sequences - handle old client/new server case
  * David McKnight   (IBM)     [341366] [dstore][shells] codepage IBM-1141 has faulty display of \ character
+ * David McKnight   (IBM)     [343421] [dstore] Man page was not displayed properly in the shell
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -143,10 +144,14 @@ public class OutputHandler extends Handler {
 				switch (currChar)
 				{
 				case '&' :
-					output.append("&#38;");
+					output.append("&#38;"); //$NON-NLS-1$
 					break;
 				case ';' :
-					output.append("&#59;");
+					output.append("&#59;"); //$NON-NLS-1$
+					break;
+				case '\b': // special case for backspace control char
+					int len = output.length()-1;
+					if (len>=0) output.deleteCharAt(len);
 					break;
 				default :
 					output.append(currChar);

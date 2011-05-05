@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
@@ -268,6 +269,11 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	@Execute
 	public void stepStartExecution(final RequestMonitor rm) {
 		if (fBackend.getSessionType() != SessionType.CORE) {
+			// Overwrite the program name to use the binary name that was specified.
+			// This is important for multi-process
+			// Bug 342351
+			fAttributes.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, fBinaryName);
+			
 			fProcService.start(getContainerContext(), fAttributes, new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm) {
 				@Override
 				protected void handleSuccess() {

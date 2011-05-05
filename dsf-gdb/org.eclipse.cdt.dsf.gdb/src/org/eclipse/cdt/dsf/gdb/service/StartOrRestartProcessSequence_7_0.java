@@ -41,6 +41,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -321,9 +322,18 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 				final ILaunch launch = (ILaunch)getContainerContext().getAdapter(ILaunch.class);
 				final String groupId = ((IMIContainerDMContext)getContainerContext()).getGroupId();
 
+				// For multi-process, we cannot simply use the name given by the backend service
+				// because we may not be starting that process, but another one.
+				// Instead, we can look in the attributes for the binary name, which we stored
+				// there for this case, specifically.
+				// Bug 342351
 				IGDBBackend backend = fTracker.getService(IGDBBackend.class);
-				final String pathLabel = backend.getProgramPath().lastSegment();
-				
+				String progPathName =
+						CDebugUtils.getAttribute(fAttributes,
+								ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
+								backend.getProgramPath().lastSegment());
+				final String pathLabel = new Path(progPathName).lastSegment();    			 
+
 				// Add the inferior to the launch.  
 				// This cannot be done on the executor or things deadlock.
 				DebugPlugin.getDefault().asyncExec(new Runnable() {

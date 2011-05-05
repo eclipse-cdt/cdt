@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems and others.
+ * Copyright (c) 2007, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 
 /**
  * DisassemblyPreferenceConstants
@@ -52,7 +51,6 @@ public class DisassemblyPreferenceConstants {
 	 * @param store
 	 */
 	public static void initializeDefaults(IPreferenceStore store) {
-		TextEditorPreferenceConstants.initializeDefaultValues(store);
 		store.setDefault(START_ADDRESS, 0x0L);
 		store.setDefault(END_ADDRESS, "0x" + BigInteger.ONE.shiftLeft(64).toString(16)); //$NON-NLS-1$
 		store.setDefault(PC_HISTORY_SIZE, 4);

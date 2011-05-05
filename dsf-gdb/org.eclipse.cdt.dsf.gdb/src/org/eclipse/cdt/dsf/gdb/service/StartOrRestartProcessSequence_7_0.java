@@ -126,25 +126,6 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	@Override
 	protected String[] getExecutionOrder(String group) {
 		if (GROUP_TOP_LEVEL.equals(group)) {
-
-			DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fContainerDmc.getSessionId());
-			IGDBBackend backend = tracker.getService(IGDBBackend.class);
-			tracker.dispose();
-			
-			if (backend.getIsAttachSession()) {
-	   			// Restart does not apply to attach sessions, so we are only dealing with the
-				// Start case.
-	   			//
-	   			// When attaching to a running process, we do not need to set a breakpoint or
-	   			// start the program; it is left up to the user.
-	   			// We only need to turn on Reverse Debugging if requested.
-
-				return new String[] {
-						"stepInitializeBaseSequence",  //$NON-NLS-1$
-						"stepEnableReverse",   //$NON-NLS-1$
-						"stepCleanupBaseSequence",   //$NON-NLS-1$
-				};
-			} else {
 				return new String[] {
 						"stepInitializeBaseSequence",  //$NON-NLS-1$
 						"stepInsertStopOnMainBreakpoint",  //$NON-NLS-1$
@@ -157,7 +138,6 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 						"stepContinue",   //$NON-NLS-1$
 						"stepCleanupBaseSequence",   //$NON-NLS-1$
 				};
-			}
 		}
 		return null;
 	}
@@ -272,18 +252,21 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	
     /**
      * This method does the necessary work to setup the input/output streams for the
-     * inferior process, by either preparing the PTY to be used, to simply leaving
+     * inferior process, by either preparing the PTY to be used, or by simply leaving
      * the PTY null, which indicates that the input/output streams of the CLI should
      * be used instead; this decision is based on the type of session.
      */
 	@Execute
     public void stepInitializeInputOutput(final RequestMonitor rm) {
-    	if (fBackend.getSessionType() == SessionType.REMOTE || fBackend.getIsAttachSession()) {
-    		// These types do not use a PTY
+    	if (fBackend.getSessionType() == SessionType.REMOTE && !fBackend.getIsAttachSession()) {
+    		// Remote non-attach sessions don't support multi-process and therefore will not
+    		// start new processes.  Those sessions will only start the one process, which should
+    		// not have a console, because it's output is handled by GDB server.
     		fPty = null;
     		rm.done();
     	} else {
-    		// These types always use a PTY
+    		// Every other type of session that can get to this code, is starting a new process
+    		// and requires a pty for it.
     		try {
     			fPty = new PTY();
 
@@ -328,10 +311,14 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 				// there for this case, specifically.
 				// Bug 342351
 				IGDBBackend backend = fTracker.getService(IGDBBackend.class);
+				String defaultPathName = backend.getProgramPath().lastSegment();
+				if (defaultPathName == null) {
+					defaultPathName = ""; //$NON-NLS-1$
+				}
 				String progPathName =
 						CDebugUtils.getAttribute(fAttributes,
 								ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
-								backend.getProgramPath().lastSegment());
+								defaultPathName);
 				final String pathLabel = new Path(progPathName).lastSegment();    			 
 
 				// Add the inferior to the launch.  

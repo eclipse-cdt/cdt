@@ -204,19 +204,14 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepRemoteConnection(RequestMonitor rm) {
-		// If we are dealing with a remote session, it is now time to connect
+		// If we are dealing with a non-attach remote session, it is now time to connect
 		// to the remote side.  Note that this is the 'target remote' case
 		// and not the 'target extended-remote' case (remote attach session)
-		// We know this because a remote attach session does not start a new
-		// process, so we wouldn't be in this sequence
 		// This step is actually global for GDB.  However, we have to do it after
 		// we have specified the executable, so we have to do it here.
 		// It is safe to do it here because a 'target remote' does not support
 		// multi-process so this step will not be executed more than once.
-		
-		assert fBackend.getIsAttachSession() == false;
-		
-		if (fBackend.getSessionType() == SessionType.REMOTE) {
+		if (fBackend.getSessionType() == SessionType.REMOTE && !fBackend.getIsAttachSession()) {
 			boolean isTcpConnection = CDebugUtils.getAttribute(
 					fAttributes,
 					IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,

@@ -327,6 +327,12 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 			return false;
 		}
 
+		// We don't yet support starting a new process on a remote target
+		// Bug 344890
+		if (type == SessionType.REMOTE && fBackend.getIsAttachSession()) {
+			return false;
+		}
+
 		return true;
 	}
 

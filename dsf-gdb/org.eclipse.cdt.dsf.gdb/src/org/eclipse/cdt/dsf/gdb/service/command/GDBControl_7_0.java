@@ -103,6 +103,8 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     
     private List<String> fFeatures = new ArrayList<String>();
 
+    private boolean fTerminated;
+    
     /**
      * @since 3.0
      */
@@ -181,7 +183,13 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     }
     
     public void terminate(final RequestMonitor rm) {
-    	// To fix bug 234467:
+        if (fTerminated) {
+            rm.done();
+            return;
+        }
+        fTerminated = true;
+        
+        // To fix bug 234467:
     	// Interrupt GDB in case the inferior is running.
     	// That way, the inferior will also be killed when we exit GDB.
     	//

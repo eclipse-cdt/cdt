@@ -99,6 +99,8 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     private CLIEventProcessor fCLICommandProcessor;
     private AbstractCLIProcess fCLIProcess;
 
+    private boolean fTerminated;
+
     /**
      * @since 3.0
      */
@@ -176,6 +178,12 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     }
     
     public void terminate(final RequestMonitor rm) {
+        if (fTerminated) {
+            rm.done();
+            return;
+        }
+        fTerminated = true;
+ 
        // To fix bug 234467:
        // Interrupt GDB in case the inferior is running.
        // That way, the inferior will also be killed when we exit GDB.

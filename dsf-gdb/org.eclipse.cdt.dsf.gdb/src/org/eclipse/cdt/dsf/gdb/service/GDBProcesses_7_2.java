@@ -374,7 +374,13 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
     				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
     				MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
     				if (bpmService != null) {
-    					bpmService.stopTrackingBreakpoints(bpTargetDmc, new RequestMonitor(ImmediateExecutor.getInstance(), null));
+    					bpmService.stopTrackingBreakpoints(bpTargetDmc, new RequestMonitor(ImmediateExecutor.getInstance(), null) {
+    						@Override
+    						protected void handleCompleted() {
+    							// Ok, no need to report any error because we may have already shutdown.
+    							// We need to override handleCompleted to avoid risking having a error printout in the log
+    						}
+    					});
     				}
     			}
     		}

@@ -18,7 +18,6 @@ import org.eclipse.cdt.ui.CodeGeneration;
 
 
 public final class ConstructorMethodStub extends AbstractMethodStub {
-
     private static String NAME = NewClassWizardMessages.NewClassCodeGeneration_stub_constructor_name; 
     
     public ConstructorMethodStub() {

@@ -738,6 +738,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 */
 	@Override
 	public void dispose() {
+		fUpdateCount++;
 		IWorkbenchPartSite site = getSite();
 		site.setSelectionProvider(null);
 		site.getPage().removePartListener(fPartListener);
@@ -1890,6 +1891,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	}
 
 	private void startUpdate(final Runnable update) {
+		if (fViewer == null)
+			return;
+			
 	    final int updateCount = fUpdateCount;
 	    final SafeRunnable safeUpdate = new SafeRunnable() {
 	        public void run() {

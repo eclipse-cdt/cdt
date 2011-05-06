@@ -1191,7 +1191,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
    			Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
 				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
 				true, null))) {
-   			fCommandControl.terminate(new RequestMonitor(ImmediateExecutor.getInstance(), null));
+   			fCommandControl.terminate(rm);
    		} else if (thread instanceof IMIProcessDMContext) {
 			getDebuggingContext(
 					thread, 

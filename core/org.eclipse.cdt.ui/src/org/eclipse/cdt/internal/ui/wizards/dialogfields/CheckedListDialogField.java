@@ -27,12 +27,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 
 /**
- * A list with checkboxes and a button bar. Typical buttons are 'Check All' and 'Uncheck All'.
- * List model is independend of widget creation.
+ * A list with check boxes and a button bar. Typical buttons are 'Check All' and 'Uncheck All'.
+ * List model is independent of widget creation.
  * DialogFields controls are: Label, List and Composite containing buttons.
  */
 public class CheckedListDialogField<T> extends ListDialogField<T> {
-	
 	private int fCheckAllButtonIndex;
 	private int fUncheckAllButtonIndex;
 	
@@ -180,11 +179,10 @@ public class CheckedListDialogField<T> extends ListDialogField<T> {
 			fCheckElements.clear();
 		}
 		if (fTable != null) {
-			((CheckboxTableViewer)fTable).setAllChecked(state);
+			((CheckboxTableViewer) fTable).setAllChecked(state);
 		}
 		checkStateChanged();
 	}
-	
 			
 	void doCheckStateChanged(CheckStateChangedEvent e) {
 		if (e.getChecked()) {

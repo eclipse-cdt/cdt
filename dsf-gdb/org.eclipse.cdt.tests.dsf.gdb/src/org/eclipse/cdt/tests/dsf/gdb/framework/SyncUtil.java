@@ -47,6 +47,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIRunningEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MISignalEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
@@ -587,7 +588,7 @@ public class SyncUtil {
     /**
      * Restart the program.
      */
-	public static void restart(final GdbLaunch launch) throws Throwable {	
+	public static MIStoppedEvent restart(final GdbLaunch launch) throws Throwable {	
 		final IContainerDMContext containerDmc = getContainerContext();
 
 		// Check if restart is allowed
@@ -636,6 +637,12 @@ public class SyncUtil {
         fGdbControl.getExecutor().execute(query2);
         query2.get(500, TimeUnit.MILLISECONDS);
         
- 		eventWaitor.waitForEvent(DefaultTimeouts.get(ETimeout.waitForStop));
+        
+ 		MIStoppedEvent event = eventWaitor.waitForEvent(DefaultTimeouts.get(ETimeout.waitForStop));
+ 		if (event instanceof MISignalEvent) {
+ 			// This is not the stopped event we were waiting for.  Get the next one.
+ 	 		event = eventWaitor.waitForEvent(DefaultTimeouts.get(ETimeout.waitForStop));
+ 		}
+ 		return event;
     }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2009, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
+import org.eclipse.cdt.dsf.mi.service.command.commands.Suite_Sessionless_Tests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -27,6 +28,7 @@ import org.junit.runners.Suite;
 	LaunchUtilsTest.class,
 	MIRegistersTest.class,
 	MIRunControlTest.class,
+	MIRunControlTargetAvailableTest.class,
 	MIExpressionsTest.class,
 	MIMemoryTest.class,
 	MIBreakpointsTest.class,
@@ -34,6 +36,8 @@ import org.junit.runners.Suite;
 	MIDisassemblyTest.class,
 	GDBProcessesTest.class,
 	LaunchConfigurationAndRestartTest.class,
+	OperationsWhileTargetIsRunningTest.class,
+	Suite_Sessionless_Tests.class,
 	/* Add your suite class here */
 })
 

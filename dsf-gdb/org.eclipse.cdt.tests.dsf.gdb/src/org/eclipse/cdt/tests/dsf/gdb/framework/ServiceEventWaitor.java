@@ -157,7 +157,14 @@ public class ServiceEventWaitor<V> {
 			}
 		}
 		
-		return fEvent;
+		// Mark that we have consumed the event.
+		// This will allow to wait for the next similar event.
+		// For example, for a restart, there could be more than one
+		// stopped event, and we need to wait for the second one.
+		V event = fEvent;
+		fEvent = null;
+		
+		return event;
 	}
 
 	/*

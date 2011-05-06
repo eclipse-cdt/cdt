@@ -37,6 +37,8 @@ import org.junit.runners.Suite;
 	MIDisassemblyTest_7_3.class,
 	GDBProcessesTest_7_3.class,
 	LaunchConfigurationAndRestartTest_7_3.class,
+	OperationsWhileTargetIsRunningTest_7_3.class,
+	OperationsWhileTargetIsRunningNonStopTest_7_3.class,
 	Suite_Sessionless_Tests.class	
 	/* Add your test class here */
 })

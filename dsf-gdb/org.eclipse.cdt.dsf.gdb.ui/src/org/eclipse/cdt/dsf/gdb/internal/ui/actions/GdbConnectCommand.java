@@ -145,6 +145,46 @@ public class GdbConnectCommand implements IConnect {
     	}
     };
     
+    // Need a job to free the executor while we prompt the user for a binary path
+    // Bug 344892
+    private class PromptAndAttachToProcessJob extends Job {
+    	private final String fPid;
+    	private final RequestMonitor fRm;
+    	
+    	public PromptAndAttachToProcessJob(String pid, RequestMonitor rm) {
+    		super(""); //$NON-NLS-1$
+    		fPid = pid;
+    		fRm = rm;
+    	}
+
+    	@Override
+    	protected IStatus run(IProgressMonitor monitor) {
+    		final String[] binaryPath = new String[1];
+    		binaryPath[0] = null;
+    		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+    			public void run() {
+    				Shell shell = Display.getCurrent().getActiveShell();
+    				if (shell != null) {
+    					FileDialog fd = new FileDialog(shell, SWT.NONE);
+    					binaryPath[0] = fd.open();
+    				}
+    			}
+    		});
+			
+        	fExecutor.execute(new DsfRunnable() {
+        		public void run() {
+        			IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
+        			ICommandControlService commandControl = fTracker.getService(ICommandControlService.class);
+
+        			IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), fPid);
+        			procService.attachDebuggerToProcess(procDmc, binaryPath[0], new DataRequestMonitor<IDMContext>(fExecutor, fRm));
+        		}
+        	});
+			
+    		return Status.OK_STATUS;
+    	}
+    }
+
     public void connect(RequestMonitor requestMonitor)
     {
     	// Create a fake rm to avoid null pointer exceptions
@@ -206,27 +246,20 @@ public class GdbConnectCommand implements IConnect {
 																			// khouzam, maybe we should at least pass stopOnMain?
 																			new HashMap<String, Object>(), new DataRequestMonitor<IDMContext>(fExecutor, rm));
 																} else if (data instanceof Integer) {
-																	final String[] binaryPath = new String[1];
-																	binaryPath[0] = null;
+																	String pidStr = Integer.toString((Integer)data);
 																	final IGDBBackend backend = fTracker.getService(IGDBBackend.class);
 																	if (backend != null && backend.getSessionType() == SessionType.REMOTE) {
-																		// For remote attach, we must set the binary first
+																		// For remote attach, we must set the binary first so we need to prompt the user.
+																		// Because the prompt is a very long operation, we need to run outside the
+																		// executor, so we don't lock it.
+																		// Bug 344892
+																		new PromptAndAttachToProcessJob(pidStr, rm).schedule();
+																	} else {
 																		// For a local attach, GDB can figure out the binary automatically,
-																		// so we don't specify it.
-																		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-																			public void run() {
-																				Shell shell = Display.getCurrent().getActiveShell();
-																				if (shell != null) {
-																					FileDialog fd = new FileDialog(shell, SWT.NONE);
-																					binaryPath[0] = fd.open();
-																				}
-																			}
-																		});
+																		// so we don't need to prompt for it.
+																		IProcessDMContext procDmc = procService.createProcessContext(controlCtx, pidStr);
+																		procService.attachDebuggerToProcess(procDmc, null, new DataRequestMonitor<IDMContext>(fExecutor, rm));
 																	}
-																	
-																	IProcessDMContext procDmc = procService.createProcessContext(controlCtx,
-																			Integer.toString((Integer)getData()));
-																	procService.attachDebuggerToProcess(procDmc, binaryPath[0], new DataRequestMonitor<IDMContext>(fExecutor, rm));
 																} else {
 														            rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Invalid return type for process prompter", null)); //$NON-NLS-1$
 														            rm.done();

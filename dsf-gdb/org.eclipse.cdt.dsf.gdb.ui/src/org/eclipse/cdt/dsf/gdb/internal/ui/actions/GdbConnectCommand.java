@@ -51,7 +51,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 public class GdbConnectCommand implements IConnect {
     
@@ -147,7 +147,7 @@ public class GdbConnectCommand implements IConnect {
     
     // Need a job to free the executor while we prompt the user for a binary path
     // Bug 344892
-    private class PromptAndAttachToProcessJob extends Job {
+    private class PromptAndAttachToProcessJob extends UIJob {
     	private final String fPid;
     	private final RequestMonitor fRm;
     	
@@ -158,19 +158,16 @@ public class GdbConnectCommand implements IConnect {
     	}
 
     	@Override
-    	protected IStatus run(IProgressMonitor monitor) {
+    	public IStatus runInUIThread(IProgressMonitor monitor) {
     		final String[] binaryPath = new String[1];
     		binaryPath[0] = null;
-    		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-    			public void run() {
-    				Shell shell = Display.getCurrent().getActiveShell();
-    				if (shell != null) {
-    					FileDialog fd = new FileDialog(shell, SWT.NONE);
-    					binaryPath[0] = fd.open();
-    				}
-    			}
-    		});
-			
+    		
+    		Shell shell = Display.getCurrent().getActiveShell();
+    		if (shell != null) {
+    			FileDialog fd = new FileDialog(shell, SWT.NONE);
+    			binaryPath[0] = fd.open();
+    		}
+
         	fExecutor.execute(new DsfRunnable() {
         		public void run() {
         			IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);

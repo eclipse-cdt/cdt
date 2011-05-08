@@ -128,7 +128,7 @@ public class TodoTaskInputDialog extends StatusDialog {
 		fNameDialogField.doFillIntoGrid(inner, 2);
 		fPriorityDialogField.doFillIntoGrid(inner, 2);
 		
-		LayoutUtil.setHorizontalGrabbing(fNameDialogField.getTextControl(null));
+		LayoutUtil.setHorizontalGrabbing(fNameDialogField.getTextControl(null), true);
 		LayoutUtil.setWidthHint(fNameDialogField.getTextControl(null), convertWidthInCharsToPixels(45));
 		
 		fNameDialogField.postSetFocusOnDialogField(parent.getDisplay());

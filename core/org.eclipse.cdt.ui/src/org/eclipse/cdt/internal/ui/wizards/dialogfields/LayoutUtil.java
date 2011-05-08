@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2008 IBM Corporation and others.
+ * Copyright (c) 2001, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Rational Software - initial implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.dialogfields;
 
@@ -19,7 +20,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 
 public class LayoutUtil {
-	
 	/**
 	 * Calculates the number of columns needed by field editors
 	 */
@@ -153,9 +153,28 @@ public class LayoutUtil {
 	 * Makes a control grab all available horizontal space. Assumes that GridData is used.
 	 */
 	public static void setHorizontalGrabbing(Control control) {
+		setHorizontalGrabbing(control, true);
+	}
+
+	/**
+	 * Makes a control grab all available horizontal space. Assumes that GridData is used.
+	 * @param value <code>true</code> to grab, <code>false</code> not to grab
+	 */
+	public static void setHorizontalGrabbing(Control control, boolean value) {
 		Object ld= control.getLayoutData();
 		if (ld instanceof GridData) {
-			((GridData) ld).grabExcessHorizontalSpace= true;
+			((GridData) ld).grabExcessHorizontalSpace= value;
+		}
+	}
+
+	/**
+	 * Makes a control grab all available horizontal space. Assumes that GridData is used.
+	 * @param value <code>true</code> to grab, <code>false</code> not to grab
+	 */
+	public static void setVerticalGrabbing(Control control, boolean value) {
+		Object ld= control.getLayoutData();
+		if (ld instanceof GridData) {
+			((GridData) ld).grabExcessVerticalSpace= value;
 		}
 	}
 }

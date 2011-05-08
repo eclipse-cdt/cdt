@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Composite;
  */
 @Deprecated
 public class CPathContainerDefaultPage extends NewElementWizardPage implements IPathEntryContainerPage {
-
 	private StringDialogField fEntryField;
 	private ArrayList<IPath> fUsedPaths;
 
@@ -90,7 +89,7 @@ public class CPathContainerDefaultPage extends NewElementWizardPage implements I
 		composite.setLayout(layout);
 		
 		fEntryField.doFillIntoGrid(composite, 2);
-		LayoutUtil.setHorizontalGrabbing(fEntryField.getTextControl(null));
+		LayoutUtil.setHorizontalGrabbing(fEntryField.getTextControl(null), true);
 		
 		fEntryField.setFocus();
 		

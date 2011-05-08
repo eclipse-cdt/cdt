@@ -63,7 +63,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
  */
 @Deprecated
 public class CPathLibraryEntryPage extends CPathBasePage {
-
 	private ListDialogField<CPElement> fCPathList;
 	private ICProject fCurrCProject;
 	private IPath fProjPath;
@@ -172,7 +171,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		Composite composite = new Composite(parent, SWT.NONE);
 
 		LayoutUtil.doDefaultLayout(composite, new DialogField[] {fLibrariesList}, true);
-		LayoutUtil.setHorizontalGrabbing(fLibrariesList.getTreeControl(null));
+		LayoutUtil.setHorizontalGrabbing(fLibrariesList.getTreeControl(null), true);
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
 		fLibrariesList.setButtonsMinWidth(buttonBarWidth);
@@ -185,7 +184,6 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	}
 
 	private class LibrariesAdapter implements IDialogFieldListener, ITreeListAdapter<CPElement> {
-		
 		private final Object[] EMPTY_ARR= new Object[0];
 		
 		// -------- IListAdapter --------
@@ -559,5 +557,4 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		}
 		return false;
 	}
-
 }

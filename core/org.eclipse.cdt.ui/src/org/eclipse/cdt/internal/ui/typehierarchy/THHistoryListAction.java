@@ -40,7 +40,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 public class THHistoryListAction extends Action {
 	
 	private class HistoryListDialog extends StatusDialog {
-		
 		private ListDialogField<ICElement> fHistoryList;
 		private IStatus fHistoryStatus;
 		private ICElement fResult;
@@ -81,7 +80,6 @@ public class THHistoryListAction extends Action {
 			
 			fHistoryList.selectElements(sel);
 		}
-
 			
 		/*
 		 * @see Dialog#createDialogArea(Composite)
@@ -99,7 +97,7 @@ public class THHistoryListAction extends Action {
 
 			LayoutUtil.doDefaultLayout(inner, new DialogField[] { fHistoryList }, true, 0, 0);
 			LayoutUtil.setHeightHint(fHistoryList.getListControl(null), convertHeightInCharsToPixels(12));
-			LayoutUtil.setHorizontalGrabbing(fHistoryList.getListControl(null));
+			LayoutUtil.setHorizontalGrabbing(fHistoryList.getListControl(null), true);
 
 			applyDialogFont(composite);		
 			return composite;
@@ -117,8 +115,7 @@ public class THHistoryListAction extends Action {
 				okPressed();
 			}
 		}
-		
-		
+
 		private void doSelectionChanged() {
 			StatusInfo status= new StatusInfo();
 			List<?> selected= fHistoryList.getSelectedElements();
@@ -159,7 +156,6 @@ public class THHistoryListAction extends Action {
 			setShellStyle(getShellStyle() | SWT.RESIZE);
 			super.create();
 		}
-
 	}
 	
 	private THViewPart fView;
@@ -181,6 +177,5 @@ public class THHistoryListAction extends Action {
 			fView.setInput(dialog.getResult(), null);
 		}
 	}
-
 }
 

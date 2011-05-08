@@ -43,7 +43,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
 public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
-
 	private static final String PREFIX = "ErrorParserBlock"; //$NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$
 	private static final String DESC = PREFIX + ".desc"; //$NON-NLS-1$
@@ -280,7 +279,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 		fErrorParserList.setUncheckAllButtonIndex(4);
 
 		LayoutUtil.doDefaultLayout(composite, new DialogField[]{fErrorParserList}, true);
-		LayoutUtil.setHorizontalGrabbing(fErrorParserList.getListControl(null));
+		LayoutUtil.setHorizontalGrabbing(fErrorParserList.getListControl(null), true);
 
 		initializeValues();
 	}

@@ -47,7 +47,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
  */
 @Deprecated
 public class CPathContainerEntryPage extends CPathBasePage {
-
 	private ListDialogField<CPElement> fCPathList;
 	private ICProject fCurrCProject;
 
@@ -115,7 +114,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		Composite composite = new Composite(parent, SWT.NONE);
 
 		LayoutUtil.doDefaultLayout(composite, new DialogField[]{fContainersList}, true);
-		LayoutUtil.setHorizontalGrabbing(fContainersList.getTreeControl(null));
+		LayoutUtil.setHorizontalGrabbing(fContainersList.getTreeControl(null), true);
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
 		fContainersList.setButtonsMinWidth(buttonBarWidth);

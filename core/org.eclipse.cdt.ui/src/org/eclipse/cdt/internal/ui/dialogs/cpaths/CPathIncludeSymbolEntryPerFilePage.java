@@ -257,7 +257,7 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         LayoutUtil.doDefaultLayout(composite, new DialogField[]{fIncludeSymPathsList, fShowInheritedPaths}, true);
-        LayoutUtil.setHorizontalGrabbing(fIncludeSymPathsList.getTreeControl(null));
+        LayoutUtil.setHorizontalGrabbing(fIncludeSymPathsList.getTreeControl(null), true);
 
         int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
         fIncludeSymPathsList.setButtonsMinWidth(buttonBarWidth);

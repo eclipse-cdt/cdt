@@ -53,7 +53,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ExPatternEntryDialog extends StatusDialog {
-
 	private StringButtonDialogField fExclusionPatternDialog;
 	private StatusInfo fExclusionPatternStatus;
 
@@ -124,7 +123,7 @@ public class ExPatternEntryDialog extends StatusDialog {
 		LayoutUtil.setHorizontalSpan(fExclusionPatternDialog.getLabelControl(null), 2);
 
 		LayoutUtil.setWidthHint(fExclusionPatternDialog.getTextControl(null), widthHint);
-		LayoutUtil.setHorizontalGrabbing(fExclusionPatternDialog.getTextControl(null));
+		LayoutUtil.setHorizontalGrabbing(fExclusionPatternDialog.getTextControl(null), true);
 
 		fExclusionPatternDialog.postSetFocusOnDialogField(parent.getDisplay());
 		applyDialogFont(composite);
@@ -237,5 +236,4 @@ public class ExPatternEntryDialog extends StatusDialog {
 		}
 		return null;
 	}
-
 }

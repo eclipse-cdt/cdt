@@ -96,10 +96,10 @@ public class FileScopePreferencePage extends PreferencePage {
 		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fInclusionPatternList.doFillIntoGrid(inner, 3);
 		LayoutUtil.setHorizontalSpan(fInclusionPatternList.getLabelControl(null), 2);
-		LayoutUtil.setHorizontalGrabbing(fInclusionPatternList.getListControl(null));
+		LayoutUtil.setHorizontalGrabbing(fInclusionPatternList.getListControl(null), true);
 		fExclusionPatternList.doFillIntoGrid(inner, 3);
 		LayoutUtil.setHorizontalSpan(fExclusionPatternList.getLabelControl(null), 2);
-		LayoutUtil.setHorizontalGrabbing(fExclusionPatternList.getListControl(null));
+		LayoutUtil.setHorizontalGrabbing(fExclusionPatternList.getListControl(null), true);
 		setControl(inner);
 		Dialog.applyDialogFont(inner);
 		return inner;

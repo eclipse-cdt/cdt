@@ -134,7 +134,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		Composite composite = new Composite(parent, SWT.NONE);
 
 		LayoutUtil.doDefaultLayout(composite, new DialogField[]{fFoldersList}, true);
-		LayoutUtil.setHorizontalGrabbing(fFoldersList.getTreeControl(null));
+		LayoutUtil.setHorizontalGrabbing(fFoldersList.getTreeControl(null), true);
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
 		fFoldersList.setButtonsMinWidth(buttonBarWidth);

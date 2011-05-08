@@ -136,7 +136,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		Composite composite = new Composite(parent, SWT.NONE);
 
 		LayoutUtil.doDefaultLayout(composite, new DialogField[]{fOutputList}, true);
-		LayoutUtil.setHorizontalGrabbing(fOutputList.getTreeControl(null));
+		LayoutUtil.setHorizontalGrabbing(fOutputList.getTreeControl(null), true);
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
 		fOutputList.setButtonsMinWidth(buttonBarWidth);

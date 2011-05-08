@@ -41,7 +41,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 public class IBHistoryListAction extends Action {
 	
 	private class HistoryListDialog extends StatusDialog {
-		
 		private ListDialogField<ITranslationUnit> fHistoryList;
 		private IStatus fHistoryStatus;
 		private ITranslationUnit fResult;
@@ -82,7 +81,6 @@ public class IBHistoryListAction extends Action {
 			
 			fHistoryList.selectElements(sel);
 		}
-
 			
 		/*
 		 * @see Dialog#createDialogArea(Composite)
@@ -100,7 +98,7 @@ public class IBHistoryListAction extends Action {
 
 			LayoutUtil.doDefaultLayout(inner, new DialogField[] { fHistoryList }, true, 0, 0);
 			LayoutUtil.setHeightHint(fHistoryList.getListControl(null), convertHeightInCharsToPixels(12));
-			LayoutUtil.setHorizontalGrabbing(fHistoryList.getListControl(null));
+			LayoutUtil.setHorizontalGrabbing(fHistoryList.getListControl(null), true);
 
 			applyDialogFont(composite);		
 			return composite;
@@ -118,7 +116,6 @@ public class IBHistoryListAction extends Action {
 				okPressed();
 			}
 		}
-		
 		
 		private void doSelectionChanged() {
 			StatusInfo status= new StatusInfo();
@@ -160,7 +157,6 @@ public class IBHistoryListAction extends Action {
 			setShellStyle(getShellStyle() | SWT.RESIZE);
 			super.create();
 		}
-
 	}
 	
 	private IBViewPart fView;
@@ -182,6 +178,5 @@ public class IBHistoryListAction extends Action {
 			fView.setInput(dialog.getResult());
 		}
 	}
-
 }
 

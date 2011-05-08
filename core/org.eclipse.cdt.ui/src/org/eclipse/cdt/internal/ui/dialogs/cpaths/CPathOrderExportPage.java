@@ -56,7 +56,7 @@ public class CPathOrderExportPage extends CPathBasePage {
 		setControl(composite);
 
 		LayoutUtil.doDefaultLayout(composite, new DialogField[]{fCPathList}, true);
-		LayoutUtil.setHorizontalGrabbing(fCPathList.getListControl(null));
+		LayoutUtil.setHorizontalGrabbing(fCPathList.getListControl(null), true);
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
 		fCPathList.setButtonsMinWidth(buttonBarWidth);

@@ -106,7 +106,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 		setControl(composite);
 
 		LayoutUtil.doDefaultLayout(composite, new DialogField[] { fProjectsList}, true);
-		LayoutUtil.setHorizontalGrabbing(fProjectsList.getListControl(null));
+		LayoutUtil.setHorizontalGrabbing(fProjectsList.getListControl(null), true);
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
 		fProjectsList.setButtonsMinWidth(buttonBarWidth);

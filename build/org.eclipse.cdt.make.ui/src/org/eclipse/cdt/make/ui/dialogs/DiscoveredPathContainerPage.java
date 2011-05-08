@@ -379,8 +379,8 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 
 		Composite composite = new Composite(parent, SWT.NONE);
 
-		LayoutUtil.doDefaultLayout(composite, new DialogField[]{fDiscoveredContainerList}, true);
-		LayoutUtil.setHorizontalGrabbing(fDiscoveredContainerList.getTreeControl(null));
+		LayoutUtil.doDefaultLayout(composite, new DialogField[] { fDiscoveredContainerList }, true);
+		LayoutUtil.setHorizontalGrabbing(fDiscoveredContainerList.getTreeControl(null), true);
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
 		fDiscoveredContainerList.setButtonsMinWidth(buttonBarWidth);

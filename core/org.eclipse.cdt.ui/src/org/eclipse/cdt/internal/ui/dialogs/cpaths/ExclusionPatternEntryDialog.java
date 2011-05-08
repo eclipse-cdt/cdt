@@ -124,7 +124,7 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 		LayoutUtil.setHorizontalSpan(fExclusionPatternDialog.getLabelControl(null), 2);
 
 		LayoutUtil.setWidthHint(fExclusionPatternDialog.getTextControl(null), widthHint);
-		LayoutUtil.setHorizontalGrabbing(fExclusionPatternDialog.getTextControl(null));
+		LayoutUtil.setHorizontalGrabbing(fExclusionPatternDialog.getTextControl(null), true);
 
 		fExclusionPatternDialog.postSetFocusOnDialogField(parent.getDisplay());
 		applyDialogFont(composite);

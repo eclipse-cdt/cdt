@@ -82,7 +82,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogFie
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 
 public class NewSourceFolderWizardPage extends NewElementWizardPage {
-		
 	private static final String PAGE_NAME= "NewSourceFolderWizardPage"; //$NON-NLS-1$
 
 	private StringButtonDialogField fProjectField;
@@ -185,7 +184,6 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		fProjectField.setText(projPath);
 		fRootDialogField.setText("");		 //$NON-NLS-1$
 	}
-	
 
 	// -------- UI Creation ---------
 
@@ -209,7 +207,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		
 		int maxFieldWidth= convertWidthInCharsToPixels(40);
 		LayoutUtil.setWidthHint(fProjectField.getTextControl(null), maxFieldWidth);
-		LayoutUtil.setHorizontalGrabbing(fProjectField.getTextControl(null));	
+		LayoutUtil.setHorizontalGrabbing(fProjectField.getTextControl(null), true);	
 		LayoutUtil.setWidthHint(fRootDialogField.getTextControl(null), maxFieldWidth);	
 			
 		// Bug #220003 : consistency between New Source Folder dialog and Source Location Property tab.
@@ -245,6 +243,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 			packRootDialogFieldChanged(field);
 		}
 	}
+
 	protected void packRootChangeControlPressed(DialogField field) {
 		if (field == fRootDialogField) {
 			IPath initialPath= new Path(fRootDialogField.getText());
@@ -275,8 +274,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		}
 		updateStatus(new IStatus[] { fProjectStatus, fRootStatus });
 	}
-	
-	
+
 	private void updateProjectStatus() {
 		fCurrCProject= null;
 		fIsProjectAsSourceFolder= false;
@@ -522,5 +520,4 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		}			
 		return null;		
 	}
-				
 }

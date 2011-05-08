@@ -76,7 +76,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
  */
 @Deprecated
 public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage {
-
 	private TreeListDialogField<CPElementGroup> fIncludeSymPathsList;
 	private SelectionButtonDialogField fShowInheritedPaths;
 	private ICProject fCurrCProject;
@@ -115,7 +114,6 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 	private CPElementGroup fTopGroup;
 
 	private class IncludeSymbolAdapter implements IDialogFieldListener, ITreeListAdapter<CPElementGroup> {
-
 		private final Object[] EMPTY_ARR = new Object[0];
 
 		// -------- IListAdapter --------
@@ -210,7 +208,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		LayoutUtil.doDefaultLayout(composite, new DialogField[]{fIncludeSymPathsList, fShowInheritedPaths}, true);
-		LayoutUtil.setHorizontalGrabbing(fIncludeSymPathsList.getTreeControl(null));
+		LayoutUtil.setHorizontalGrabbing(fIncludeSymPathsList.getTreeControl(null), true);
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
 		fIncludeSymPathsList.setButtonsMinWidth(buttonBarWidth);
@@ -324,7 +322,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 	private void addPathToResourceGroup(CPElement element, CPElementGroup parent, CPElementGroup group) {
 		IPath resPath = element.getPath();
 		IPath[] exclusions = (IPath[])element.getAttribute(CPElement.EXCLUSION);
-		if ( (group != parent || !group.getResource().equals(element.getResource()))
+		if ((group != parent || !group.getResource().equals(element.getResource()))
 				&& resPath.isPrefixOf(group.getPath())
 				&& (resPath.equals(group.getPath()) || !CoreModelUtil.isExcludedPath(
 						group.getResource().getFullPath().removeFirstSegments(resPath.segmentCount()), exclusions))) {
@@ -436,7 +434,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 		} else if (elem instanceof CPElementAttribute) {
 			CPElementAttribute attrib = (CPElementAttribute)elem;
 			if (attrib.getKey().equals(CPElement.EXCLUSION)) {
-				if ( ((IPath[])attrib.getValue()).length > 0) {
+				if (((IPath[])attrib.getValue()).length > 0) {
 					return true;
 				}
 			}
@@ -451,7 +449,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 			CPElement element = (CPElement)elem;
 			CPElementGroup parent = element.getParent();
 			if (removePathFromResourceGroups(element, fIncludeSymPathsList.getElements()) == null) {
-				updatePathOnResourceGroups( element.getInherited(), fIncludeSymPathsList.getElements());
+				updatePathOnResourceGroups(element.getInherited(), fIncludeSymPathsList.getElements());
 			}
 			fIncludeSymPathsList.refresh();
 			fIncludeSymPathsList.selectElements(new StructuredSelection(parent));

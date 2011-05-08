@@ -111,7 +111,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 			fUseProjectSettings.setDialogFieldListener(listener);
 			fUseProjectSettings.setLabelText(PreferencesMessages.PropertyAndPreferencePage_useprojectsettings_label);
 			fUseProjectSettings.doFillIntoGrid(composite, 1);
-			LayoutUtil.setHorizontalGrabbing(fUseProjectSettings.getSelectionButton(null));
+			LayoutUtil.setHorizontalGrabbing(fUseProjectSettings.getSelectionButton(null), true);
 			
 			if (offerLink()) {
 				fChangeWorkspaceSettings= createLink(composite, PreferencesMessages.PropertyAndPreferencePage_useworkspacesettings_change);

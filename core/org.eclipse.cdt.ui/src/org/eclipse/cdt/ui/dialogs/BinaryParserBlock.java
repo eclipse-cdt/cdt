@@ -58,7 +58,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
  */
 @Deprecated
 public class BinaryParserBlock extends AbstractBinaryParserPage {
-
 	private static final int DEFAULT_HEIGHT = 160;
 	private static final String PREFIX = "BinaryParserBlock"; //$NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$
@@ -75,8 +74,8 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 	protected List<BinaryParserConfiguration> initialSelected;
 
 	protected class BinaryParserConfiguration {
-
 		IExtension fExtension;
+
 		public BinaryParserConfiguration(IExtension extension) {
 			fExtension = extension;
 		}
@@ -104,7 +103,6 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 	}
 
 	protected class BinaryParserLabelProvider extends LabelProvider {
-
 		@Override
 		public String getText(Object element) {
 			return ((BinaryParserConfiguration) element).getName();
@@ -129,7 +127,6 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 			public void doubleClicked(ListDialogField<BinaryParserConfiguration> field) {
 			}
-
 		};
 
 		binaryList = new CheckedListDialogField<BinaryParserConfiguration>(listAdapter, buttonLabels, new BinaryParserLabelProvider()) {
@@ -198,7 +195,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 		Composite listComposite = ControlFactory.createComposite(composite, 1);
 		LayoutUtil.doDefaultLayout(listComposite, new DialogField[]{binaryList}, true);
-		LayoutUtil.setHorizontalGrabbing(binaryList.getListControl(null));
+		LayoutUtil.setHorizontalGrabbing(binaryList.getListControl(null), true);
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(15);
 		binaryList.setButtonsMinWidth(buttonBarWidth);
@@ -218,7 +215,6 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		// fire a change event, to quick start.
 		handleBinaryParserChanged();
 		parent.layout(true);
-
 	}
 
 	@Override

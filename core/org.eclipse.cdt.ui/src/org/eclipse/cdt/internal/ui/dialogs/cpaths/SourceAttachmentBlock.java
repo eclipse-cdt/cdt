@@ -75,7 +75,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
  */
 @Deprecated
 public class SourceAttachmentBlock {
-
 	private IStatusChangeListener fContext;
 
 	private StringButtonDialogField fFileNameField;
@@ -203,7 +202,7 @@ public class SourceAttachmentBlock {
 		// archive name field
 		fFileNameField.doFillIntoGrid(composite, 4);
 		LayoutUtil.setWidthHint(fFileNameField.getTextControl(null), widthHint);
-		LayoutUtil.setHorizontalGrabbing(fFileNameField.getTextControl(null));
+		LayoutUtil.setHorizontalGrabbing(fFileNameField.getTextControl(null), true);
 
 		// aditional 'browse workspace' button for normal jars
 		DialogField.createEmptySpace(composite, 3);
@@ -219,7 +218,6 @@ public class SourceAttachmentBlock {
 	}
 
 	private class SourceAttachmentAdapter implements IStringButtonAdapter, IDialogFieldListener {
-
 		// -------- IStringButtonAdapter --------
 		public void changeControlPressed(DialogField field) {
 			attachmentChangeControlPressed(field);
@@ -482,5 +480,4 @@ public class SourceAttachmentBlock {
 		});
 		return result[0];
 	}
-
 }

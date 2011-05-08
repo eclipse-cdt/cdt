@@ -50,7 +50,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
  */
 public class CHelpConfigurationPropertyPage extends PropertyPage implements
 		IWorkbenchPreferencePage {
-
 	private CHelpSettingsDisplay fCHelpSettingsDisplay;
 	
 	private class CHelpBookListLabelProvider extends LabelProvider {
@@ -103,7 +102,7 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 			Composite composite= new Composite(parent, SWT.NONE);
 			
 			LayoutUtil.doDefaultLayout(composite, new DialogField[] { fCHelpBookList }, true);
-			LayoutUtil.setHorizontalGrabbing(fCHelpBookList.getListControl(null));
+			LayoutUtil.setHorizontalGrabbing(fCHelpBookList.getListControl(null), true);
 
 			int buttonBarWidth= converter.convertWidthInCharsToPixels(24);
 			fCHelpBookList.setButtonsMinWidth(buttonBarWidth);
@@ -189,5 +188,4 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 		// TODO Auto-generated method stub
 
 	}
-
 }

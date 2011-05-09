@@ -712,6 +712,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
                 	getExecutor().submit(
                             new DsfRunnable() {
                                 public void run() { 
+                                	destroy();
                                 	fBackendState = State.TERMINATED; 
                                 	getSession().dispatchEvent(
                                 			new BackendStateChangedEvent(getSession().getId(), getId(), State.TERMINATED), 

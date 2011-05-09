@@ -314,6 +314,10 @@ public class LaunchUtils {
         } catch (IOException e) {
         	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
         			"Error reading GDB STDOUT after sending: " + cmd, e.getCause()));//$NON-NLS-1$
+        } finally {
+        	// Cleanup to avoid leaking pipes
+        	// Bug 345164
+        	process.destroy();
         }
 
         return getGDBVersionFromText(cmdOutput.toString());

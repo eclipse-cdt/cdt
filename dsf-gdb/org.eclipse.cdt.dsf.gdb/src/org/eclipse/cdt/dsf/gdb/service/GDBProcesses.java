@@ -437,6 +437,15 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	
 	/** @since 4.0 */
 	public void restart(IContainerDMContext containerDmc, Map<String, Object> attributes, DataRequestMonitor<IContainerDMContext> rm) {
+		// Before performing the restart, check if the process is properly suspended.
+		// Don't need to worry about non-stop before GDB 7.0, so we can simply
+		// interrupt the backend, if needed
+		// Bug 246740
+		IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+		if (runControl != null && !runControl.isTargetAcceptingCommands()) {
+			fBackend.interrupt();
+		}
+
 		startOrRestart(containerDmc, attributes, true, rm);
 	}
 	

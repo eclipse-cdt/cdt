@@ -38,6 +38,7 @@ import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
@@ -1244,18 +1245,46 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	}
 	
 	/** @since 4.0 */
-	public void restart(IContainerDMContext containerDmc, Map<String, Object> attributes, DataRequestMonitor<IContainerDMContext> rm) {
+	public void restart(final IContainerDMContext containerDmc, final Map<String, Object> attributes, final DataRequestMonitor<IContainerDMContext> rm) {
 		fProcRestarting = true;
-		startOrRestart(containerDmc, attributes, true, new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm) {
+		
+		// Before performing the restart, check if the process is properly suspended.
+		// For such a case, we usually use IMIRunControl.isTargetAcceptingCommands().
+		// However, in non-stop, although the target is accepting command, a restart
+		// won't work because it needs to be able to set breakpoints.  So, to allow
+		// for breakpoints to be set, we make sure process is actually suspended.
+		//
+		// The other way to make this work is to have the restart code set the breakpoints
+		// using the breakpoint service, instead of sending the breakpoint command directly.
+		// This required more changes than suspending the process, so it was not done
+		// just yet.
+		// Bug 246740
+		
+		// This request monitor actually performs the restart
+		RequestMonitor restartRm = new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
 			@Override
-			protected void handleCompleted() {
-				if (!isSuccess()) {
-					fProcRestarting = false;
-				}
-				setData(getData());
-				super.handleCompleted();
+			protected void handleSuccess() {
+				startOrRestart(containerDmc, attributes, true, new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm) {
+					@Override
+					protected void handleCompleted() {
+						if (!isSuccess()) {
+							fProcRestarting = false;
+						}
+						setData(getData());
+						super.handleCompleted();
+					};
+				});
 			};
-		});
+		};
+
+		IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+		if (runControl != null && !runControl.isSuspended(containerDmc)) {
+			// The process is running.  Let's suspended it before doing the restart
+			runControl.suspend(containerDmc, restartRm);
+		} else {
+			// The process is already suspended, we can just trigger the restart
+			restartRm.done();
+		}
 	}
 	
 	/** @since 4.0 */

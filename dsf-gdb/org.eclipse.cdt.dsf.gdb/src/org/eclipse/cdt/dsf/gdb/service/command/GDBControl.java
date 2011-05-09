@@ -228,21 +228,6 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         );
     }
 
-    /*
-     * This method creates a new inferior process object based on the current Pty or output stream.
-     */
-    private void createInferiorProcess() {
-// khouzam BROKEN because no one does the below when we restart
-    	
-    	// Create the CLI event processor each time this method is called
-    	// to reset the internal thread id count
-    	// Bug 313372
-    	if (fCLICommandProcessor != null) {
-    		fCLICommandProcessor.dispose();
-    	}
-    	fCLICommandProcessor = new CLIEventProcessor(GDBControl.this, fControlDmc);
-    }
- 
     public AbstractCLIProcess getCLIProcess() { 
         return fCLIProcess; 
     }

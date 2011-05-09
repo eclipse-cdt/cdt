@@ -202,15 +202,21 @@ public class Spawner extends Process {
 		while (!isDone) {
 			wait();
 		}
-		try {
-			if(null == err)
-				getErrorStream().close();
-			if(null == in)
-				getInputStream().close();
-			if(null == out)
-				getOutputStream().close();
-		} catch (IOException e) {
-		}
+		// Close the streams on this side.
+		// If the stream was never used
+		// we still want to create it, so that we can close
+		// the pipe on the other side.
+		//
+		// Technically, we shouldn't close the streams here but
+		// should rely on destroy() being called properly.
+		// However, since we did close the streams here, we
+		// cannot remove this code or we would break anyone who
+		// does not call destroy() properly and relies on this
+		// code instead.
+		// Bug 345164
+		try { getErrorStream().close(); } catch (IOException e) {}
+		try { getInputStream().close(); } catch (IOException e) {}
+		try { getOutputStream().close();} catch (IOException e) {}
 		return status;
 	}
 
@@ -233,15 +239,14 @@ public class Spawner extends Process {
 		// Sends the TERM
 		terminate();
 		// Close the streams on this side.
-		try {
-			if(null == err)
-				getErrorStream().close();
-			if(null == in)
-				getInputStream().close();
-			if(null == out)
-				getOutputStream().close();
-		} catch (IOException e) {
-		}
+		// If the stream was never used
+		// we still want to create it, so that we can close
+		// the pipe on the other side.
+		// Bug 345164
+		try { getErrorStream().close(); } catch (IOException e) {}
+		try { getInputStream().close(); } catch (IOException e) {}
+		try { getOutputStream().close();} catch (IOException e) {}
+
 		// Grace before using the heavy gone.
 		if (!isDone) {
 			try {

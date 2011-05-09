@@ -159,22 +159,22 @@ public class GdbConnectCommand implements IConnect {
 
     	@Override
     	public IStatus runInUIThread(IProgressMonitor monitor) {
-    		final String[] binaryPath = new String[1];
-    		binaryPath[0] = null;
+    		String binaryPath = null;
     		
     		Shell shell = Display.getCurrent().getActiveShell();
     		if (shell != null) {
     			FileDialog fd = new FileDialog(shell, SWT.NONE);
-    			binaryPath[0] = fd.open();
+    			binaryPath = fd.open();
     		}
 
+    		final String finalBinaryPath = binaryPath;
         	fExecutor.execute(new DsfRunnable() {
         		public void run() {
         			IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
         			ICommandControlService commandControl = fTracker.getService(ICommandControlService.class);
 
         			IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), fPid);
-        			procService.attachDebuggerToProcess(procDmc, binaryPath[0], new DataRequestMonitor<IDMContext>(fExecutor, fRm));
+        			procService.attachDebuggerToProcess(procDmc, finalBinaryPath, new DataRequestMonitor<IDMContext>(fExecutor, fRm));
         		}
         	});
 			

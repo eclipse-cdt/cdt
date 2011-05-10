@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
  * @since 5.0
  */
 public class CodeTemplateContext extends FileTemplateContext {
-	
 	private ICProject fProject;
 
 	public CodeTemplateContext(String contextTypeId, ICProject project, String lineDelimiter) {
@@ -35,10 +34,9 @@ public class CodeTemplateContext extends FileTemplateContext {
 	}
 
 	public void setTranslationUnitVariables(ITranslationUnit tu) {
-		IFile file= (IFile)tu.getResource();
+		IFile file= (IFile) tu.getResource();
 		if (file != null) {
 			super.setResourceVariables(file);
 		}
 	}
-
 }

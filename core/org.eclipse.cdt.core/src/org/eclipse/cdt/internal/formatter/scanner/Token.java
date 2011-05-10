@@ -17,8 +17,13 @@ public class Token {
     public String text;
     public int offset;
 
+    public Token(int t, String i) {
+        type = t;
+        text = i;
+    }
+    
     public Token(int t, String i, ScannerContext context) {
-        set(t,i,context);
+        set(t, i, context);
     }
 
     public void set(int t, String i, ScannerContext context) {
@@ -27,11 +32,6 @@ public class Token {
         offset = context.getOffset() - text.length() - context.undoStackSize();
     }
 
-    public Token(int t, String i) {
-        type = t;
-        text = i;
-    }
-    
     @Override
 	public String toString() {
         return "Token type=" + type + "  image =" + text + " offset=" + offset; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

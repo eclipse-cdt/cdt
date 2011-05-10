@@ -172,6 +172,19 @@ public class MIProcessAdapter implements MIProcess {
 	}
 
 	public void destroy() {
+    	// We are responsible for closing the streams we have used or else
+    	// we will leak pipes.  
+    	// Bug 345164
+    	try {
+    		getErrorStream().close();
+		} catch (IOException e) {}
+    	try {
+    		getInputStream().close();
+		} catch (IOException e) {}
+    	try {
+    		getOutputStream().close();
+		} catch (IOException e) {}
+
 		fGDBProcess.destroy();
 	}
 

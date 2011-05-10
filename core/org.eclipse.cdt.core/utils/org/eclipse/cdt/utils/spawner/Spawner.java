@@ -143,6 +143,7 @@ public class Spawner extends Process {
 
 	/**
 	 * See java.lang.Process#getInputStream ();
+	 * The client is responsible for closing the stream explicitly.
 	 **/
 	@Override
 	public InputStream getInputStream() {
@@ -158,6 +159,7 @@ public class Spawner extends Process {
 
 	/**
 	 * See java.lang.Process#getOutputStream ();
+	 * The client is responsible for closing the stream explicitly.
 	 **/
 	@Override
 	public OutputStream getOutputStream() {
@@ -173,6 +175,7 @@ public class Spawner extends Process {
 
 	/**
 	 * See java.lang.Process#getErrorStream ();
+	 * The client is responsible for closing the stream explicitly.
 	 **/
 	@Override
 	public InputStream getErrorStream() {
@@ -202,21 +205,28 @@ public class Spawner extends Process {
 		while (!isDone) {
 			wait();
 		}
-		// Close the streams on this side.
-		// If the stream was never used
-		// we still want to create it, so that we can close
-		// the pipe on the other side.
+		
+		// For situations where the user does not call destroy(),
+		// we try to kill the streams that were not used here.
+		// We check for streams that were not created, we create
+		// them to attach to the pipes, and then we close them
+		// to release the pipes.
+		// Streams that were created by the client need to be
+		// closed by the client itself.
 		//
-		// Technically, we shouldn't close the streams here but
-		// should rely on destroy() being called properly.
-		// However, since we did close the streams here, we
-		// cannot remove this code or we would break anyone who
-		// does not call destroy() properly and relies on this
-		// code instead.
-		// Bug 345164
-		try { getErrorStream().close(); } catch (IOException e) {}
-		try { getInputStream().close(); } catch (IOException e) {}
-		try { getOutputStream().close();} catch (IOException e) {}
+		// But 345164
+		try {
+			if(null == err)
+				getErrorStream().close();
+		} catch (IOException e) {}
+		try {
+			if(null == in)
+				getInputStream().close();
+		} catch (IOException e) {}
+		try {
+			if(null == out)
+				getOutputStream().close();
+		} catch (IOException e) {}
 		return status;
 	}
 
@@ -233,20 +243,47 @@ public class Spawner extends Process {
 
 	/**
 	 * See java.lang.Process#destroy ();
+	 * 
+	 * Clients are responsible for explicitly closing any streams
+	 * that they have requested through
+	 *   getErrorStream(), getInputStream() or getOutputStream()
 	 **/
 	@Override
 	public synchronized void destroy() {
 		// Sends the TERM
 		terminate();
+		
 		// Close the streams on this side.
-		// If the stream was never used
-		// we still want to create it, so that we can close
-		// the pipe on the other side.
-		// Bug 345164
-		try { getErrorStream().close(); } catch (IOException e) {}
-		try { getInputStream().close(); } catch (IOException e) {}
-		try { getOutputStream().close();} catch (IOException e) {}
-
+		//
+		// We only close the streams that were
+		// never used by any client.
+		// So, if the stream was not created yet,
+		// we create it ourselves and close it
+		// right away, so as to release the pipe.
+		// Note that even if the stream was never
+		// created, the pipe has been allocated in
+		// native code, so we need to create the
+		// stream and explicitly close it.
+		//
+		// We don't close streams the clients have
+		// created because we don't know when the
+		// client will be finished using them.
+		// It is up to the client to close those
+		// streams.
+		//
+		// But 345164
+		try {
+			if(null == err)
+				getErrorStream().close();
+		} catch (IOException e) {}
+		try {
+			if(null == in)
+				getInputStream().close();
+		} catch (IOException e) {}
+		try {
+			if(null == out)
+				getOutputStream().close();
+		} catch (IOException e) {}
 		// Grace before using the heavy gone.
 		if (!isDone) {
 			try {

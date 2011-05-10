@@ -301,9 +301,10 @@ public class LaunchUtils {
         			"Error while launching command: " + cmd, e.getCause()));//$NON-NLS-1$
         }
 
+        InputStream stream = null;
         StringBuilder cmdOutput = new StringBuilder(200);
         try {
-        	InputStream stream = process.getInputStream();
+        	stream = process.getInputStream();
         	Reader r = new InputStreamReader(stream);
         	BufferedReader reader = new BufferedReader(r);
         	
@@ -316,7 +317,13 @@ public class LaunchUtils {
         			"Error reading GDB STDOUT after sending: " + cmd, e.getCause()));//$NON-NLS-1$
         } finally {
         	// Cleanup to avoid leaking pipes
+        	// Close the stream we used, and then destroy the process
         	// Bug 345164
+        	if (stream != null) {
+				try { 
+					stream.close(); 
+				} catch (IOException e) {}
+        	}
         	process.destroy();
         }
 

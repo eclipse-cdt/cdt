@@ -228,4 +228,20 @@ public class AbstractClassInstantiationCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(4);
 	}
+
+	// class A {
+	// public:
+	//   virtual ~A() = 0;
+	// };
+	//
+	// class B : public A {
+	// public:
+	//   virtual ~B() {}
+	// };
+	//
+	// B b;
+	public void testPureVirtualDestructorOverride() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
 }

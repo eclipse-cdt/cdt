@@ -822,6 +822,15 @@ public class ClassTypeHelper {
 		return resultArray;
 	}
 
+	private static String getMethodNameForOverrideKey(ICPPMethod method) {
+		if (method.isDestructor()) {
+			// Destructor's names may differ but they will override each other.
+			return "~"; //$NON-NLS-1$
+		} else {
+			return method.getName();
+		}
+	}
+
 	/**
 	 * Returns pure virtual methods of the given class grouped by their names.
 	 * 
@@ -849,7 +858,7 @@ public class ClassTypeHelper {
 		}
 		// Remove overridden methods (even if they are pure virtual)
 		for (ICPPMethod declaredMethod : classTarget.getDeclaredMethods()) {
-			Set<ICPPMethod> methodsSet = pureVirtualMethods.get(declaredMethod.getName());
+			Set<ICPPMethod> methodsSet = pureVirtualMethods.get(getMethodNameForOverrideKey(declaredMethod));
 			if (methodsSet != null) {
 				for (Iterator<ICPPMethod> methodIt = methodsSet.iterator(); methodIt.hasNext();) {
 					ICPPMethod method = methodIt.next();
@@ -858,17 +867,17 @@ public class ClassTypeHelper {
 					}
 				}
 				if (methodsSet.isEmpty()) {
-					pureVirtualMethods.remove(declaredMethod.getName());
+					pureVirtualMethods.remove(getMethodNameForOverrideKey(declaredMethod));
 				}
 			}
 		}
 		// Add pure virtual methods of current class
 		for (ICPPMethod method : classTarget.getDeclaredMethods()) {
 			if (method.isPureVirtual()) {
-				Set<ICPPMethod> methodsSet = pureVirtualMethods.get(method.getName());
+				Set<ICPPMethod> methodsSet = pureVirtualMethods.get(getMethodNameForOverrideKey(method));
 				if (methodsSet == null) {
 					methodsSet = new HashSet<ICPPMethod>();
-					pureVirtualMethods.put(method.getName(), methodsSet);
+					pureVirtualMethods.put(getMethodNameForOverrideKey(method), methodsSet);
 				}
 				methodsSet.add(method);
 			}

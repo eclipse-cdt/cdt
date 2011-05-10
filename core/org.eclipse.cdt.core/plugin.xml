@@ -743,5 +743,12 @@
             version="5.0.0">
       </CProjectStorageType>
    </extension>
+   <extension
+         point="org.eclipse.cdt.core.RefreshExclusionFactory">
+      <exclusionFactory
+            exclusionClass="org.eclipse.cdt.internal.core.resources.ResourceExclusion"
+            factoryClass="org.eclipse.cdt.internal.core.resources.ResourceExclusionFactory">
+      </exclusionFactory>
+   </extension>
 
 </plugin>

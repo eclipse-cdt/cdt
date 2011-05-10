@@ -15,12 +15,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -207,9 +204,9 @@ public abstract class RefreshExclusion {
 		fNestedExclusions.remove(exclusion);
 	}
 	
-	public synchronized void persistData(Document doc, Element parentElement) {
+	public synchronized void persistData(ICStorageElement parentElement) {
 		// persist the common data that all RefreshExclusions have
-		Element exclusionElement = doc.createElement(EXCLUSION_ELEMENT_NAME);
+		ICStorageElement exclusionElement = parentElement.createChild(EXCLUSION_ELEMENT_NAME);
 		
 		// persist the type of the object we are
 		exclusionElement.setAttribute(CLASS_ATTRIBUTE_NAME, this.getClass().getName());
@@ -238,145 +235,113 @@ public abstract class RefreshExclusion {
 		// the structure of the XML tree
 		
 		exclusionElement.setAttribute(CONTRIBUTOR_ID_ATTRIBUTE_NAME, getContributorId());
-		
-        parentElement.appendChild(exclusionElement);
         
         // persist instances
         for(ExclusionInstance instance : fExclusionInstanceList) {
-        	instance.persistInstanceData(doc, exclusionElement);
+        	instance.persistInstanceData(exclusionElement);
         }
 		
 		// provide a place for extenders to store their own data
-        Element extensionElement = doc.createElement(EXTENSION_DATA_ELEMENT_NAME);
-        exclusionElement.appendChild(extensionElement);
+        ICStorageElement extensionElement = exclusionElement.createChild(EXTENSION_DATA_ELEMENT_NAME);
 		
 		// call extender to store any extender-specific data
-		persistExtendedData(doc, extensionElement);
+		persistExtendedData(extensionElement);
 		
 		// persist nested exclusions
 		for(RefreshExclusion exclusion : fNestedExclusions) {
-			exclusion.persistData(doc, exclusionElement);
+			exclusion.persistData(exclusionElement);
 		}
 	}
 	
-	protected synchronized void persistExtendedData(Document doc, Element extensionElement) {
+	protected synchronized void persistExtendedData(ICStorageElement extensionElement) {
 		// override to provide extension specific behaviour if desired	
 	}
 	
-	protected synchronized void loadExtendedData(Element parentElement) {
+	protected synchronized void loadExtendedData(ICStorageElement grandchild) {
 		// override to provide extension specific behaviour if desired
 	}
 
-	public synchronized static List<RefreshExclusion> loadData(Element parentElement, RefreshExclusion parentExclusion, IResource parentResource) throws CoreException {
-		
+	public synchronized static List<RefreshExclusion> loadData(ICStorageElement parentElement,
+			RefreshExclusion parentExclusion, IResource parentResource, RefreshScopeManager manager) throws CoreException {
+
 		List<RefreshExclusion> exclusions = new LinkedList<RefreshExclusion>();
 
 		// the parent element might contain any number of exclusions... iterate through the list
-		NodeList childNodes = parentElement.getChildNodes();
+		ICStorageElement[] children = parentElement.getChildren();
 
-		for (int i = 0; i < childNodes.getLength(); i++) {
-			Node node = childNodes.item(i);
+		for (ICStorageElement child : children) {
 
-			// node should be an element
-			if (node instanceof Element) {
-				Element exclusionElement = (Element) node;
+			if (child.getName().equals(EXCLUSION_ELEMENT_NAME)) {
 
-				if (exclusionElement.getNodeName().equals(EXCLUSION_ELEMENT_NAME)) {
+				// create an object of the proper type
+				String className = child.getAttribute(CLASS_ATTRIBUTE_NAME);
+				RefreshExclusion newExclusion = manager.getExclusionForClassName(className);
 
-					// create an object of the proper type
-					String className = exclusionElement.getAttribute(CLASS_ATTRIBUTE_NAME);
-					RefreshScopeManager manager = RefreshScopeManager.getInstance();
-					RefreshExclusion newExclusion = manager.getExclusionForClassName(className);
-
-					if (newExclusion == null) {
-						throw new CoreException(CCorePlugin.createStatus(MessageFormat.format(
-								Messages.RefreshExclusion_0, className)));
-					}
-
-					// load the exclusion type
-					String exclusionTypeString = exclusionElement
-							.getAttribute(EXCLUSION_TYPE_ATTRIBUTE_NAME);
-					if (exclusionTypeString != null) {
-						if (exclusionTypeString.equals(FILE_VALUE)) {
-							newExclusion.fExclusionType = org.eclipse.cdt.core.resources.ExclusionType.FILE;
-						}
-
-						else if (exclusionTypeString.equals(FOLDER_VALUE)) {
-							newExclusion.fExclusionType = org.eclipse.cdt.core.resources.ExclusionType.FOLDER;
-						}
-
-						else if (exclusionTypeString.equals(RESOURCE_VALUE)) {
-							newExclusion.fExclusionType = org.eclipse.cdt.core.resources.ExclusionType.RESOURCE;
-						}
-
-						else {
-							// error
-						}
-					}
-
-					// set parent if nested
-					newExclusion.fParentExclusion = parentExclusion;
-					
-					// set parent resource if there is one
-					newExclusion.fParentResource = parentResource;
-
-					newExclusion.fContributorId = exclusionElement
-							.getAttribute(CONTRIBUTOR_ID_ATTRIBUTE_NAME);
-
-					// get the extension element
-					NodeList extensionList = exclusionElement
-							.getElementsByTagName(EXTENSION_DATA_ELEMENT_NAME);
-
-					for (int k = 0; k < extensionList.getLength(); k++) {
-						Node node1 = extensionList.item(k);
-						// the node will be an Element
-						if (node1 instanceof Element) {
-							Element extensionElement = (Element) node1;
-
-							// load the extension's data
-							newExclusion.loadExtendedData(extensionElement);
-						}
-					}
-
-					// load instances
-					NodeList exclusionChildNodes = exclusionElement.getChildNodes();
-
-					for (int k = 0; k < exclusionChildNodes.getLength(); k++) {
-						Node node1 = exclusionChildNodes.item(k);
-
-						// the node will be an element
-						if (node1 instanceof Element) {
-							Element instanceElement = (Element) node1;
-							
-							// is the node an instance?
-							if (instanceElement.getNodeName().equals(INSTANCE_ELEMENT_NAME)) {
-
-								// load the instance data
-								ExclusionInstance instance = ExclusionInstance
-										.loadInstanceData(instanceElement);
-								newExclusion.fExclusionInstanceList.add(instance);
-							}
-						}
-					}
-
-					// load nested exclusions
-					List<RefreshExclusion> nestedExclusions = loadData(exclusionElement,
-							newExclusion, null);
-
-					// add to parent
-					for (RefreshExclusion nestedExclusion : nestedExclusions) {
-						newExclusion.addNestedExclusion(nestedExclusion);
-					}
-
-					// add the new exclusion to the list of exclusions to return
-					exclusions.add(newExclusion);
+				if (newExclusion == null) {
+					throw new CoreException(CCorePlugin.createStatus(MessageFormat.format(
+							Messages.RefreshExclusion_0, className)));
 				}
 
+				// load the exclusion type
+				String exclusionTypeString = child.getAttribute(EXCLUSION_TYPE_ATTRIBUTE_NAME);
+				if (exclusionTypeString != null) {
+					if (exclusionTypeString.equals(FILE_VALUE)) {
+						newExclusion.fExclusionType = org.eclipse.cdt.core.resources.ExclusionType.FILE;
+					}
+
+					else if (exclusionTypeString.equals(FOLDER_VALUE)) {
+						newExclusion.fExclusionType = org.eclipse.cdt.core.resources.ExclusionType.FOLDER;
+					}
+
+					else if (exclusionTypeString.equals(RESOURCE_VALUE)) {
+						newExclusion.fExclusionType = org.eclipse.cdt.core.resources.ExclusionType.RESOURCE;
+					}
+
+					else {
+						// error
+					}
+				}
+
+				// set parent if nested
+				newExclusion.fParentExclusion = parentExclusion;
+
+				// set parent resource if there is one
+				newExclusion.fParentResource = parentResource;
+
+				newExclusion.fContributorId = child.getAttribute(CONTRIBUTOR_ID_ATTRIBUTE_NAME);
+
+				// get the extension element
+				ICStorageElement[] grandchildren = child.getChildren();
+
+				for (ICStorageElement grandchild : grandchildren) {
+
+					if (grandchild.getName().equals(RefreshExclusion.EXTENSION_DATA_ELEMENT_NAME)) {
+
+						// load the extension's data
+						newExclusion.loadExtendedData(grandchild);
+					}
+
+					else if (grandchild.getName().equals(INSTANCE_ELEMENT_NAME)) {
+
+						// load the instance data
+						ExclusionInstance instance = ExclusionInstance.loadInstanceData(grandchild, manager);
+						newExclusion.fExclusionInstanceList.add(instance);
+					}
+				}
+
+				// load nested exclusions
+				List<RefreshExclusion> nestedExclusions = loadData(child, newExclusion, null, manager);
+
+				// add to parent
+				for (RefreshExclusion nestedExclusion : nestedExclusions) {
+					newExclusion.addNestedExclusion(nestedExclusion);
+				}
+
+				// add the new exclusion to the list of exclusions to return
+				exclusions.add(newExclusion);
 			}
 		}
-		
-		
-		
+
 		return exclusions;
 	}
 

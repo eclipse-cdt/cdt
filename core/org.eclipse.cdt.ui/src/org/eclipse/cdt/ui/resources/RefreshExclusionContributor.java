@@ -11,7 +11,6 @@
 package org.eclipse.cdt.ui.resources;
 
 import org.eclipse.swt.widgets.Composite;
-import org.w3c.dom.Element;
 
 import org.eclipse.cdt.core.resources.RefreshExclusion;
 
@@ -68,7 +67,5 @@ public abstract class RefreshExclusionContributor {
 	 * @param exclusion - the RefreshExclusion to be modified
 	 */
 	abstract public void createProperiesUI(Composite parent, RefreshExclusion exclusion);
-	abstract public RefreshExclusion createExclusionFromXML(Element exclusionElement);
-
 
 }

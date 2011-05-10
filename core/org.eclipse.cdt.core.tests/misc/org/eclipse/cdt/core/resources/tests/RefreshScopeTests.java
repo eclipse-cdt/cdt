@@ -19,16 +19,19 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.resources.ExclusionInstance;
 import org.eclipse.cdt.core.resources.ExclusionType;
 import org.eclipse.cdt.core.resources.RefreshExclusion;
 import org.eclipse.cdt.core.resources.RefreshScopeManager;
-import org.eclipse.cdt.core.resources.ResourceExclusion;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
+import org.eclipse.cdt.internal.core.resources.ResourceExclusion;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -60,20 +63,8 @@ public class RefreshScopeTests extends TestCase {
 		// create project
 		CTestPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IWorkspaceRoot root = CTestPlugin.getWorkspace().getRoot();
-				IProject project = root.getProject("testRefreshScope");
-				if (!project.exists()) {
-					project.create(null);
-				} else {
-					project.refreshLocal(IResource.DEPTH_INFINITE, null);
-				}
-				if (!project.isOpen()) {
-					project.open(null);
-				}
-				if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
-					addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
-				}
-				fProject = project;
+				ICProject cProject = CProjectHelper.createNewStileCProject("testRefreshScope", IPDOMManager.ID_NO_INDEXER, false);
+				fProject = cProject.getProject();
 			}
 		}, null);
 		
@@ -120,16 +111,6 @@ public class RefreshScopeTests extends TestCase {
 		
 	}
 
-	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
-		IProjectDescription description = proj.getDescription();
-		String[] prevNatures = description.getNatureIds();
-		String[] newNatures = new String[prevNatures.length + 1];
-		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-		newNatures[prevNatures.length] = natureId;
-		description.setNatureIds(newNatures);
-		proj.setDescription(description, monitor);
-	}
-	
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
@@ -248,8 +229,11 @@ public class RefreshScopeTests extends TestCase {
 		instance.setParentExclusion(exclusion2);
 		exclusion2.addExclusionInstance(instance);
 		
+		ICProjectDescription projectDescription = CCorePlugin.getDefault().getProjectDescription(fProject, true);
+		
 		try {
-			manager.persistSettings();
+			manager.persistSettings(projectDescription);
+			CCorePlugin.getDefault().setProjectDescription(fProject, projectDescription);
 		} catch (CoreException e) {
 			fail();
 		}
@@ -273,7 +257,7 @@ public class RefreshScopeTests extends TestCase {
 		
 		// there should be 2 top-level exclusions
 		List<RefreshExclusion> exclusions = manager.getExclusions(fProject);
-		assertEquals(exclusions.size(), 2);
+		assertEquals(2, exclusions.size());
 		RefreshExclusion[] exclusionsArray = exclusions.toArray(new RefreshExclusion[0]);
 		
 		// both exclusions should have parent resource set to the project
@@ -434,9 +418,11 @@ public class RefreshScopeTests extends TestCase {
 		List<RefreshExclusion> exclusions = manager.getExclusions(fProject);
 		assertEquals(0, exclusions.size());
 		
+		ICProjectDescription projectDescription = CCorePlugin.getDefault().getProjectDescription(fProject);
+		
 		// now try persisting the data and loading it
 		try {
-			manager.persistSettings();
+			manager.persistSettings(projectDescription);
 		} catch (CoreException e) {
 			fail();
 		}

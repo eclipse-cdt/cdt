@@ -9,11 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.core.resources;
+package org.eclipse.cdt.internal.core.resources;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.core.resources.ExclusionInstance;
+import org.eclipse.cdt.core.resources.Messages;
+import org.eclipse.cdt.core.resources.RefreshExclusion;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 

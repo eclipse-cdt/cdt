@@ -161,7 +161,7 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 		
 		public Object[] getChildren() {
 			if (isExclusion()) {
-				List children = new ArrayList(exclusion_instances);
+				List<Object> children = new ArrayList<Object>(exclusion_instances);
 				if (exceptions_node != null)
 					children.add(exceptions_node);
 				return children.toArray();
@@ -603,7 +603,7 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 		}
 		
 		try {
-			fManager.persistSettings();
+			fManager.persistSettings(getResDesc().getConfiguration().getProjectDescription());
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

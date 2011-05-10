@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.resources;
 
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * Represents a particular instance of an exclusion.  E.g., if an exclusion allowed
@@ -100,9 +99,9 @@ public class ExclusionInstance {
 		fDisplayString = displayString;
 	}
 
-	public synchronized void persistInstanceData(Document doc, Element exclusionElement) {
+	public synchronized void persistInstanceData(ICStorageElement exclusionElement) {
 				
-		Element instanceElement = doc.createElement(INSTANCE_ELEMENT_NAME);
+		ICStorageElement instanceElement = exclusionElement.createChild(INSTANCE_ELEMENT_NAME);
 		
 		// persist the type of the object we are
 		instanceElement.setAttribute(CLASS_ATTRIBUTE_NAME, this.getClass().getName());
@@ -137,25 +136,22 @@ public class ExclusionInstance {
 			instanceElement.setAttribute(DISPLAY_STRING_ATTRIBUTE_NAME, fDisplayString);
 		}
 		
-		exclusionElement.appendChild(instanceElement);
-		
 		// persist any data from extenders
-		persistExtendedInstanceData(doc, instanceElement);
+		persistExtendedInstanceData(instanceElement);
 		
 	}
 	
-	protected synchronized void persistExtendedInstanceData(Document doc, Element instanceElement) {
+	protected synchronized void persistExtendedInstanceData(ICStorageElement instanceElement) {
 		// override to provide extension specific behaviour if desired	
 	}
 
-	public synchronized static ExclusionInstance loadInstanceData(Element instanceElement) {
+	public synchronized static ExclusionInstance loadInstanceData(ICStorageElement instanceElement, RefreshScopeManager manager) {
 		
 		String className = instanceElement.getAttribute(CLASS_ATTRIBUTE_NAME);
 		
 		ExclusionInstance newInstance = null;
 		
 		// see if there is a custom instance class
-		RefreshScopeManager manager = RefreshScopeManager.getInstance();
 		newInstance = manager.getInstanceForClassName(className);
 		
 		if(newInstance == null) {
@@ -200,7 +196,7 @@ public class ExclusionInstance {
 		return newInstance;
 	}
 	
-	protected synchronized void loadExtendedInstanceData(Element instanceElement) {
+	protected synchronized void loadExtendedInstanceData(ICStorageElement child) {
 		// override to provide extension specific behaviour if desired
 	}
 }

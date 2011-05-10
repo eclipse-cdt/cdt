@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.ui.resources;
+package org.eclipse.cdt.internal.ui.resources;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,12 +37,14 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.w3c.dom.Element;
 
 import org.eclipse.cdt.core.resources.ExclusionInstance;
 import org.eclipse.cdt.core.resources.ExclusionType;
 import org.eclipse.cdt.core.resources.RefreshExclusion;
-import org.eclipse.cdt.core.resources.ResourceExclusion;
+import org.eclipse.cdt.ui.resources.Messages;
+import org.eclipse.cdt.ui.resources.RefreshExclusionContributor;
+
+import org.eclipse.cdt.internal.core.resources.ResourceExclusion;
 
 /**
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -277,14 +279,5 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 			}
 			
 		});
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.resources.RefreshExclusionContributor#createExclusionFromXML(org.w3c.dom.Element)
-	 */
-	@Override
-	public RefreshExclusion createExclusionFromXML(Element exclusionElement) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

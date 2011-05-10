@@ -12,9 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.formatter.scanner;
 
-
 public class Token {
-
     public int type;
     public String text;
     public int offset;
@@ -214,6 +212,7 @@ public class Token {
     public boolean isAssignmentOperator() {
         return isAssignmentOperator(type);
     }
+
     public static boolean isAssignmentOperator(int type) {
         switch (type) {
             case tASSIGN:

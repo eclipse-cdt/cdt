@@ -299,8 +299,9 @@ public class MakeBuilder extends ACBuilder {
 			// project.refreshLocal(IResource.DEPTH_INFINITE, null);
 			
 			// use the refresh scope manager to refresh
-			IWorkspaceRunnable runnable = RefreshScopeManager.getInstance().getRefreshRunnable(project);
-			ResourcesPlugin.getWorkspace().run(runnable, null);
+			RefreshScopeManager refreshManager = RefreshScopeManager.getInstance();
+			IWorkspaceRunnable runnable = refreshManager.getRefreshRunnable(project);
+			ResourcesPlugin.getWorkspace().run(runnable, refreshManager.getRefreshSchedulingRule(project), IWorkspace.AVOID_UPDATE, null);
 		} catch (CoreException e) {
 			MakeCorePlugin.log(e);
 		}

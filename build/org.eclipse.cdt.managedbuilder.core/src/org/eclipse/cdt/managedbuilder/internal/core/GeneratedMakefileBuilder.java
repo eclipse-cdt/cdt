@@ -1110,8 +1110,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 							//currentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
 							
 							// use the refresh scope manager to refresh
-							IWorkspaceRunnable runnable = RefreshScopeManager.getInstance().getRefreshRunnable(currentProject);
-							ResourcesPlugin.getWorkspace().run(runnable, null);
+							RefreshScopeManager refreshManager = RefreshScopeManager.getInstance();
+							IWorkspaceRunnable runnable = refreshManager.getRefreshRunnable(currentProject);
+							ResourcesPlugin.getWorkspace().run(runnable, refreshManager.getRefreshSchedulingRule(currentProject), IWorkspace.AVOID_UPDATE, null);
 						} catch (CoreException e) {
 							monitor.subTask(ManagedMakeMessages
 									.getResourceString(REFRESH_ERROR));

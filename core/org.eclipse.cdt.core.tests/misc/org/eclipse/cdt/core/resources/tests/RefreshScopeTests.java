@@ -33,6 +33,7 @@ import org.eclipse.cdt.internal.core.resources.ResourceExclusion;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -367,7 +368,7 @@ public class RefreshScopeTests extends TestCase {
 		// now refresh
 		IWorkspaceRunnable runnable = manager.getRefreshRunnable(fProject);
 		try {
-			ResourcesPlugin.getWorkspace().run(runnable, null);
+			ResourcesPlugin.getWorkspace().run(runnable, manager.getRefreshSchedulingRule(fProject), IWorkspace.AVOID_UPDATE, null);
 		} catch (CoreException e) {
 			fail();
 		}

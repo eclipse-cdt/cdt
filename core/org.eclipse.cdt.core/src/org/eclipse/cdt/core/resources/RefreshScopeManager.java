@@ -36,6 +36,10 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The RefreshScopeManager provides access to settings pertaining to refreshes performed during
@@ -114,8 +118,8 @@ public class RefreshScopeManager {
 											IProject project = (IProject) delta.getResource();
 
 											if (delta.getKind() == IResourceDelta.ADDED
-													|| (delta.getKind() == IResourceDelta.CHANGED && (delta
-															.getFlags() & IResourceDelta.OPEN) != 0)) {
+													|| (delta.getKind() == IResourceDelta.CHANGED && ((delta.getFlags() & IResourceDelta.OPEN) != 0)
+													&& ((delta.getFlags() & IResourceDelta.REMOVED) != 0))) /* don't load for deleted projects */{
 												loadSettings(ResourcesPlugin.getWorkspace()
 														.getRoot(), project);
 												return false;
@@ -399,6 +403,11 @@ public class RefreshScopeManager {
 			if (project.hasNature(CProjectNature.C_NATURE_ID)) {
 				ICProjectDescription projectDescription = CProjectDescriptionManager.getInstance()
 						.getProjectDescription(project, false);
+				
+				if(projectDescription == null) {
+					throw new CoreException(CCorePlugin.createStatus(MessageFormat.format(Messages.RefreshScopeManager_4, project.getName())));
+				}
+				
 				ICStorageElement storageElement = projectDescription.getStorage(
 						REFRESH_SCOPE_STORAGE_NAME, true);
 
@@ -499,8 +508,11 @@ public class RefreshScopeManager {
 		return factory.createNewExclusionInstance();
 	}
 	
+	public synchronized ISchedulingRule getRefreshSchedulingRule(IProject project) {
+		return new MultiRule(getResourcesToRefresh(project).toArray(new ISchedulingRule[0]));
+	}
+	
 	public IWorkspaceRunnable getRefreshRunnable(final IProject project) {
-		
 		
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 

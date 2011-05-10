@@ -23,7 +23,6 @@ import java.util.HashMap;
  * @since 4.0
  */
 public class SimpleScanner {
-
 	private static final int EOFCHAR= -1;
 	protected static HashMap<String, Integer> fgKeywords= new HashMap<String, Integer>();
 
@@ -242,14 +241,10 @@ public class SimpleScanner {
 	            } while ((c == ' ') || (c == '\r') || (c == '\t') || (c == '\n'));
 	            ungetChar(c);
 	            return newToken(Token.tWHITESPACE);
-	            
 	        } else if (c == '"') {
-	
 	            matchStringLiteral();
 	            return newToken(Token.tSTRING);
-
 	        } else if (c == 'L' && !madeMistake) {
-	        	
                 int oldChar = c;
                 c = getChar();
                 if (c != '"') {
@@ -262,9 +257,7 @@ public class SimpleScanner {
 	
 	            matchStringLiteral();
 	            return newToken(Token.tLSTRING);
-
 	        } else if (c == 'R' && !madeMistake) {
-	        	
                 int oldChar = c;
                 c = getChar();
                 if (c != '"') {
@@ -277,9 +270,7 @@ public class SimpleScanner {
 	
 	            matchRawStringLiteral();
 	            return newToken(Token.tRSTRING);
-
 	        } else if (((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || (c == '_') || (c > 255 && Character.isUnicodeIdentifierStart(c))) {
-	
 	            madeMistake = false;
 	
 	            c = getChar();
@@ -305,9 +296,7 @@ public class SimpleScanner {
 	                tokenType = ((Integer)tokenTypeObject).intValue();
 	
 	            return newToken(tokenType);
-	
 	        } else if ((c >= '0') && (c <= '9') || c == '.') {
-	
 	            boolean hex = false;
 	            boolean floatingPoint = c == '.';
 	            boolean firstCharZero = c == '0';
@@ -401,18 +390,13 @@ public class SimpleScanner {
 	                tokenType = floatingPoint ? Token.tFLOATINGPT : Token.tINTEGER;
 	
 	            return newToken(tokenType);
-	
 	        } else if (c == '#') {
-	
 	            return matchPPDirective();
-	
 	        } else {
-	
 	            switch (c) {
 	            case '\'':
 					matchCharLiteral();
 	                return newToken(Token.tCHAR);
-	
 	
 	            case ':':
 	                c = getChar();
@@ -653,8 +637,7 @@ public class SimpleScanner {
 	    boolean escaped= false;
 	    int c = getChar(true);
 	
-	    LOOP:
-	    for (;;) {
+	    LOOP: for (;;) {
 	        if (c == EOFCHAR)
 	            break;
 	        if (escaped) {
@@ -664,8 +647,7 @@ public class SimpleScanner {
 	                nc= getChar(true);
 	            }
 	            c= nc;
-	        }
-	        else {
+	        } else {
 	            switch(c) {
 	                case '\\':
 	                    escaped= true;
@@ -718,7 +700,7 @@ public class SimpleScanner {
 	}
 
 	/**
-	 * Matches a preprocesser directive.
+	 * Matches a preprocessor directive.
 	 * 
 	 * @return a preprocessor token
 	 */

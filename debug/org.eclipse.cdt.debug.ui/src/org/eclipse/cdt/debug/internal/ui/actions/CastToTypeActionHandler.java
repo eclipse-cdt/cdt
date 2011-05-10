@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.cdt.debug.core.model.ICastToType;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -74,7 +78,7 @@ public class CastToTypeActionHandler extends AbstractHandler {
 		}
 	}
 
-	private ICastToType fCastToType = null;
+	private ICastToType[] fCastableItems = new ICastToType[0];
 
 	private IStatus fStatus = null;
 
@@ -87,7 +91,7 @@ public class CastToTypeActionHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 	    fTargetPart = HandlerUtil.getActivePartChecked(event);
 	    
-		if ( getCastToType() == null )
+		if ( getCastToType() == null || getCastToType().length == 0  )
 			return null;
 		
 		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
@@ -117,30 +121,36 @@ public class CastToTypeActionHandler extends AbstractHandler {
 	
 	@Override
 	public void setEnabled(Object evaluationContext) {
-		ICastToType castToType = getCastToType(evaluationContext);
-		setBaseEnabled( castToType != null );
-		setCastToType(castToType);
+		ICastToType[] castableItems = getCastToType(evaluationContext);
+		setBaseEnabled(castableItems.length > 0);
+		setCastToType(castableItems);
 	}
 	
-	private ICastToType getCastToType(Object evaluationContext) {
+	private ICastToType[] getCastToType(Object evaluationContext) {
+        List<ICastToType> castableItems = new ArrayList<ICastToType>();
 	    if (evaluationContext instanceof IEvaluationContext) {
 	        Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
 	        if (s instanceof IStructuredSelection) {
-	            IStructuredSelection ss = (IStructuredSelection)s;
-	            if (!ss.isEmpty()) {
-	   	            return (ICastToType)DebugPlugin.getAdapter(ss.getFirstElement(), ICastToType.class);
-	            }
-	        }
+	        	Iterator<?> iter = ((IStructuredSelection)s).iterator();
+	        	while(iter.hasNext()) {
+	        		Object element = DebugPlugin.getAdapter(iter.next(), ICastToType.class);
+	        		if (element instanceof ICastToType) {
+	        			if (((ICastToType)element).canCast()) {
+		        		    castableItems.add((ICastToType)element);
+	        			}
+                    }
+                }
+            }
 	    }
-	    return null;
+	    return castableItems.toArray(new ICastToType[castableItems.size()]);
 	}
 
-	protected ICastToType getCastToType() {
-		return fCastToType;
+	protected ICastToType[] getCastToType() {
+		return fCastableItems;
 	}
 
-	protected void setCastToType( ICastToType castToType ) {
-		fCastToType = castToType;
+	protected void setCastToType( ICastToType[] castableItems ) {
+		fCastableItems = castableItems;
 	}
 
 	public IStatus getStatus() {
@@ -151,14 +161,16 @@ public class CastToTypeActionHandler extends AbstractHandler {
 		fStatus = status;
 	}
 
-	protected void doAction( ICastToType castToType ) throws DebugException {
-		String currentType = castToType.getCurrentType().trim();
+	protected void doAction( ICastToType[] castableItems ) throws DebugException {
+		String currentType = castableItems[0].getCurrentType().trim();
 		CastToTypeDialog dialog = new CastToTypeDialog( CDebugUIPlugin.getActiveWorkbenchShell(), currentType );
 		if ( dialog.open() == Window.OK ) {
 			String newType = dialog.getValue().trim();
-			castToType.cast( newType );
+			for ( ICastToType castableItem : castableItems ) {
+				castableItem.cast( newType );
+			}
 			if ( getSelectionProvider() != null )
-				getSelectionProvider().setSelection( new StructuredSelection( castToType ) );
+				getSelectionProvider().setSelection( new StructuredSelection( castableItems ) );
 		}
 	}
 

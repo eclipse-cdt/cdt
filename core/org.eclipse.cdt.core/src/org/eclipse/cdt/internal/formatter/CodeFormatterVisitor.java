@@ -787,7 +787,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			}
 			IASTName name= node.getName();
 			if (name != null && name.getSimpleID().length != 0) {
-				if (isFirstDeclarator(node)) {
+				if (node.getPropertyInParent() != IASTDeclarator.NESTED_DECLARATOR &&
+						isFirstDeclarator(node)) {
 					// Preserve non-space between pointer operator and name
 					if (pointerOperators.length == 0 || scribe.printComment()) {
 						scribe.space();

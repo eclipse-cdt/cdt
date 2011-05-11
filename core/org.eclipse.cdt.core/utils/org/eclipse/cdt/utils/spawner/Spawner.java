@@ -61,7 +61,7 @@ public class Spawner extends Process {
 
 	int pid = 0;
 	int status;
-	int[] fChannels = new int[3];
+	final int[] fChannels = new int[3];
 	boolean isDone;
 	OutputStream out;
 	InputStream in;
@@ -400,6 +400,9 @@ public class Spawner extends Process {
 		if (pid == -1) {
 			throw new IOException("Exec error"); //$NON-NLS-1$
 		}
+		fChannels[0] = -1;
+		fChannels[1] = -1;
+		fChannels[2] = -1;
 	}
 
 	/**

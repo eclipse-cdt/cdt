@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,14 +14,9 @@ package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.osgi.util.NLS;
 
+
 public final class CSearchMessages extends NLS {
-
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.search.CSearchMessages";//$NON-NLS-1$
-
-	private CSearchMessages() {
-		// Do not instantiate
-	}
-
+    private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.search.CSearchMessages"; //$NON-NLS-1$
 	public static String group_declarations;
 	public static String group_references;
 	public static String CSearchResultCollector_matches;
@@ -40,6 +35,8 @@ public final class CSearchMessages extends NLS {
 	public static String CSearchPage_searchFor_macro;
 	public static String CSearchPage_searchFor_any;
 	public static String CSearchPage_searchFor_classStruct;
+    public static String CSearchPage_label_note;
+    public static String CSearchPage_label_activeCodeRemark;
 	public static String CSearchPage_limitTo_label;
 	public static String CSearchPage_limitTo_declarations;
 	public static String CSearchPage_limitTo_definitions;
@@ -77,7 +74,6 @@ public final class CSearchMessages extends NLS {
 	public static String SelectionParseAction_SelectedTextNotSymbol_message;
 	public static String SelectionParseAction_SymbolNotFoundInIndex_format;
 	public static String SelectionParseAction_IncludeNotFound_format;
-
 	public static String OccurrencesFinder_no_element;
 	public static String OccurrencesFinder_no_binding;
 	public static String OccurrencesFinder_searchfor;
@@ -85,7 +81,6 @@ public final class CSearchMessages extends NLS {
 	public static String OccurrencesFinder_label_plural;
 	public static String OccurrencesFinder_occurrence_description;
 	public static String OccurrencesFinder_occurrence_write_description;
-
 	public static String PDOMSearchListContentProvider_IndexerNotEnabledMessageFormat;
 	public static String PDOMSearchListContentProvider_ProjectClosedMessageFormat;
 	public static String CSearchMessages_IndexRunningIncompleteWarning;
@@ -104,4 +99,8 @@ public final class CSearchMessages extends NLS {
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CSearchMessages.class);
 	}
+
+    private CSearchMessages() {
+        // Do not instantiate
+    }
 }

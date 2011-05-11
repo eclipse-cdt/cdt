@@ -6,8 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   QNX - Initial API and implementation
- *   IBM Corporation
+ *   Doug Schaefer (QNX) - Initial API and implementation
  *   Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
@@ -24,6 +23,8 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -37,6 +38,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -338,6 +340,8 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		layouter.perform(createExpression(result));
 		layouter.perform(createSearchFor(result), createLimitTo(result), -1);
 		
+		createNote(result);
+		
 		setControl(result);
 		
 		fLineManager = getStatusLineManager();
@@ -346,6 +350,54 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(result, ICHelpContextIds.C_SEARCH_PAGE);	
 	}
 
+	private void createNote(Composite result) {
+		// Create a note that tells the user that this search only processes the active code (not grayed out in editor)
+		GridData gd;
+		String noteTitle= CSearchMessages.CSearchPage_label_note;
+		String noteMessage= CSearchMessages.CSearchPage_label_activeCodeRemark; 
+		Composite noteControl= createNoteComposite(JFaceResources.getDialogFont(), result, noteTitle, noteMessage);
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 2;
+		noteControl.setLayoutData(gd);
+	}
+
+    /**
+     * Creates a composite with a highlighted Note entry and a message text.
+     * This is designed to take up the full width of the page.<br>
+     * This method has been copied from class {@link PreferencePage}
+     * 
+     * @param font the font to use
+     * @param composite the parent composite
+     * @param title the title of the note
+     * @param message the message for the note
+     * @return the composite for the note
+     */
+    protected Composite createNoteComposite(Font font, Composite composite,
+            String title, String message) {
+        Composite messageComposite = new Composite(composite, SWT.NONE);
+        GridLayout messageLayout = new GridLayout();
+        messageLayout.numColumns = 2;
+        messageLayout.marginWidth = 0;
+        messageLayout.marginHeight = 0;
+        messageComposite.setLayout(messageLayout);
+        messageComposite.setLayoutData(new GridData(
+                GridData.HORIZONTAL_ALIGN_FILL));
+        messageComposite.setFont(font);
+
+        final Label noteLabel = new Label(messageComposite, SWT.BOLD);
+        noteLabel.setText(title);
+        noteLabel.setFont(JFaceResources.getFontRegistry().getBold(
+				JFaceResources.DIALOG_FONT));
+        noteLabel
+                .setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+
+        Label messageLabel = new Label(messageComposite, SWT.WRAP);
+        messageLabel.setText(message);
+        messageLabel.setFont(font);
+        return messageComposite;
+    }
+	
+	
 	private IStatusLineManager getStatusLineManager(){
 		
 		IWorkbenchWindow wbWindow= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -555,24 +607,39 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 	}
 	
 	private void setPerformActionEnabled() {
-		boolean enable = true;
-		
 		// Need a text string to search
-		if (patternCombo.getText().length() == 0)
-			enable = false;
+		if (this.patternCombo.getText().length() == 0) {
+			getContainer().setPerformActionEnabled(false);
+			return;
+		}
 		
 		// Need a type
 		boolean any = false;
-		for (int i = 0; i < searchForButtons.length; ++i) {
-			if (searchForButtons[i].getSelection()) {
+		for (int i = 0; i < this.searchForButtons.length; ++i) {
+			if (this.searchForButtons[i].getSelection()) {
 				any = true;
 				break;
 			}
 		}
-		if (!any)
-			enable = false;
+		if (!any) {
+			getContainer().setPerformActionEnabled(false);
+			return;
+		}
 		
-		getContainer().setPerformActionEnabled(enable);
+		// Set limit to
+		any = false;
+
+		for (int i = 0; i < this.limitToButtons.length; ++i) {
+			if (this.limitToButtons[i].getSelection()) {
+				any = true;
+				break;
+			}
+		}
+		if (!any) {
+			getContainer().setPerformActionEnabled(false);
+			return;
+		}
+		getContainer().setPerformActionEnabled(true);
 	}
 	
 	private IDialogSettings getDialogSettings() {

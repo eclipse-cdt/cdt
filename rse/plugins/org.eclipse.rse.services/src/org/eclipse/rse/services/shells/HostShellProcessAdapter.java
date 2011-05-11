@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 PalmSource, Inc. and others.
+ * Copyright (c) 2006, 2011, PalmSource, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -12,6 +12,7 @@
  * Martin Oberhuber (Wind River) - renamed from HostShellAdapter (bug 161777)
  * Martin Oberhuber (Wind River) - improved Javadoc
  * Greg Watson      (IBM)        - patch for bug #252060
+ * Yufen Kuo        (MontaVista) - [274153] Fix pipe closed with RSE
  *******************************************************************************/
 
 package org.eclipse.rse.services.shells;
@@ -84,6 +85,7 @@ IHostShellOutputListener {
 	public synchronized int exitValue() {
 		if(hostShell.isActive())
 			throw new IllegalThreadStateException();
+		hostShell.exit();
 		// No way to tell what the exit value was.
 		// TODO it would be possible to get the exit value
 		// when the remote process is started like this:
@@ -136,7 +138,7 @@ IHostShellOutputListener {
 			// Allow for the data from the stream to be read if it's available
 			if (inputStream.available() != 0 || errorStream.available() != 0)
 				throw new InterruptedException();
-	
+	        hostShell.exit();
 			hostShellInput.close();
 			hostShellError.close();
 			inputStream.close();

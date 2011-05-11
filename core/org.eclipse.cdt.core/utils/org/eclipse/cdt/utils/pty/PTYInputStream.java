@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,6 +79,11 @@ class PTYInputStream extends InputStream {
 //		if (status == -1)
 //			throw new IOException(CCorePlugin.getResourceString("Util.exception.closeError")); //$NON-NLS-1$
 		master.setFD(-1);
+	}
+
+	@Override
+	protected void finalize() throws IOException {
+		close();
 	}
 
 	private native int read0(int fd, byte[] buf, int len) throws IOException;

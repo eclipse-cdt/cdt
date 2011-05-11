@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,12 +141,17 @@ public class Spawner extends Process {
 		exec(cmdarray, envp, dirpath);
 	}
 
+	@Override
+	protected void finalize() throws Throwable {
+		closeUnusedStreams();
+	}
+	
 	/**
 	 * See java.lang.Process#getInputStream ();
 	 * The client is responsible for closing the stream explicitly.
 	 **/
 	@Override
-	public InputStream getInputStream() {
+	public synchronized InputStream getInputStream() {
 		if(null == in) {
 			if (fPty != null) {
 				in = fPty.getInputStream();
@@ -162,7 +167,7 @@ public class Spawner extends Process {
 	 * The client is responsible for closing the stream explicitly.
 	 **/
 	@Override
-	public OutputStream getOutputStream() {
+	public synchronized OutputStream getOutputStream() {
 		if(null == out) {
 			if (fPty != null) {
 				out = fPty.getOutputStream();
@@ -178,7 +183,7 @@ public class Spawner extends Process {
 	 * The client is responsible for closing the stream explicitly.
 	 **/
 	@Override
-	public InputStream getErrorStream() {
+	public synchronized InputStream getErrorStream() {
 		if(null == err) {
 			if (fPty != null && !fPty.isConsole()) {
 				// If PTY is used and it's not in "Console" mode, then stderr is
@@ -215,18 +220,7 @@ public class Spawner extends Process {
 		// closed by the client itself.
 		//
 		// But 345164
-		try {
-			if(null == err)
-				getErrorStream().close();
-		} catch (IOException e) {}
-		try {
-			if(null == in)
-				getInputStream().close();
-		} catch (IOException e) {}
-		try {
-			if(null == out)
-				getOutputStream().close();
-		} catch (IOException e) {}
+		closeUnusedStreams();
 		return status;
 	}
 
@@ -272,18 +266,8 @@ public class Spawner extends Process {
 		// streams.
 		//
 		// But 345164
-		try {
-			if(null == err)
-				getErrorStream().close();
-		} catch (IOException e) {}
-		try {
-			if(null == in)
-				getInputStream().close();
-		} catch (IOException e) {}
-		try {
-			if(null == out)
-				getOutputStream().close();
-		} catch (IOException e) {}
+		closeUnusedStreams();
+		
 		// Grace before using the heavy gone.
 		if (!isDone) {
 			try {
@@ -416,6 +400,24 @@ public class Spawner extends Process {
 		if (pid == -1) {
 			throw new IOException("Exec error"); //$NON-NLS-1$
 		}
+	}
+
+	/**
+	 * Close any streams not used by clients.
+	 */
+	private synchronized void closeUnusedStreams() {
+		try {
+			if(null == err)
+				getErrorStream().close();
+		} catch (IOException e) {}
+		try {
+			if(null == in)
+				getInputStream().close();
+		} catch (IOException e) {}
+		try {
+			if(null == out)
+				getOutputStream().close();
+		} catch (IOException e) {}
 	}
 
 	/**

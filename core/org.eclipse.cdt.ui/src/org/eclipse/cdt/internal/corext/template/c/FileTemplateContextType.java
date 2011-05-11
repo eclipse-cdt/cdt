@@ -233,12 +233,15 @@ public class FileTemplateContextType extends TemplateContextType {
 	public static String contextTypeIdForContentType(IContentType contentType) {
 		return contentType.getId() + CONTEXTTYPE_SUFFIX;
 	}
+
 	public static boolean isFileTemplateContextType(String contextTypeId) {
 		return contextTypeId.endsWith(CONTEXTTYPE_SUFFIX);
 	}
+
 	public static boolean isContextTypeForContentType(String contextTypeId, String contentTypeId) {
 		return contextTypeId.endsWith(CONTEXTTYPE_SUFFIX) && contextTypeId.startsWith(contentTypeId);
 	}
+
 	public static String contentTypeIdForContextType(String contextTypeId) {
 		return contextTypeId.substring(0, contextTypeId.length() - CONTEXTTYPE_SUFFIX.length());
 	}

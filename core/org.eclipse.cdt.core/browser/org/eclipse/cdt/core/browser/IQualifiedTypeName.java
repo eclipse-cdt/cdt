@@ -15,7 +15,6 @@ package org.eclipse.cdt.core.browser;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IQualifiedTypeName extends Comparable<IQualifiedTypeName> {
-
 	public final static String QUALIFIER = "::"; //$NON-NLS-1$
 
 	public String getName();

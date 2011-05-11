@@ -39,7 +39,6 @@ import org.eclipse.cdt.internal.corext.util.Messages;
  * @since 5.0
  */
 public class FileTemplateContextType extends TemplateContextType {
-
 	public static final String CONTEXTTYPE_SUFFIX= ".contenttype_context"; //$NON-NLS-1$
 
 	public static final String CONTENTTYPE_TEXT= "org.eclipse.core.runtime.text"; //$NON-NLS-1$
@@ -147,7 +146,6 @@ public class FileTemplateContextType extends TemplateContextType {
 				return expr.toString();
 			}
 		}
-		
 	}
 
 	public FileTemplateContextType(String contextTypeId) {
@@ -258,5 +256,4 @@ public class FileTemplateContextType extends TemplateContextType {
 		}
 		return isTextContentType(contentType.getBaseType());
 	}
-
 }

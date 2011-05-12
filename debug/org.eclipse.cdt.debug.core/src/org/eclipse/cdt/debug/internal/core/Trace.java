@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 201 Freescale Semiconductor and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Freescale Semiconductor - Initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -11,10 +21,13 @@ import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Class for getting a singleton instance of DebugTrace, an extremely useful
- * utility for tracing multithreaded code, as each trace statement prints out
- * the thread and the time (in millisecond granularity). For performance
- * reasons, trace statements should explicitly check a trace flag before calling
- * into a DebugTrace method. E.g.,
+ * utility for troubleshooting race condition bugs. Each trace statement
+ * contains the thread and the time (in millisecond granularity). The trace goes
+ * to the file: {workspace}/.metadata/trace.log
+ * 
+ * <p>
+ * For performance reasons, trace statements should explicitly check a trace
+ * flag before calling into a DebugTrace method. E.g.,
  * 
  * <p>
  * <code>

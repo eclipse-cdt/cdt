@@ -10,7 +10,6 @@
  *     Markus Schorn (Wind River Systems)
  *     Marc-Andre Laperle - Extracted Util class from ToggleSourceHeaderAction
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.HashMap;
@@ -286,7 +285,8 @@ public final class SourceHeaderPartnerFinder {
 					String partnerFileBasename= partnerBasePath.addFileExtension(ext).lastSegment();
 					
 					IFile partnerFile= null;
-					IContainer container = tu.getResource().getParent();
+					IResource resource = tu.getResource();
+					IContainer container = resource != null ? resource.getParent() : null;
 					while (container != null && partnerFile == null && !(container instanceof IWorkspaceRoot)) {
 						partnerFile= findInContainer(container, partnerFileBasename);
 						container = container.getParent();
@@ -299,7 +299,7 @@ public final class SourceHeaderPartnerFinder {
 						}
 					}
 					// External translation unit - try in same directory
-					if (tu.getResource() == null) {
+					if (resource == null) {
 						IPath partnerFileLoation= partnerBasePath.removeLastSegments(1).append(partnerFileBasename);
 						ITranslationUnit partnerUnit= CoreModel.getDefault().createTranslationUnitFrom(
 								tu.getCProject(), partnerFileLoation);

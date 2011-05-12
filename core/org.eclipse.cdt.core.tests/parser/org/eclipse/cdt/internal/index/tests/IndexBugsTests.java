@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import junit.framework.TestSuite;
@@ -89,10 +91,18 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 public class IndexBugsTests extends BaseTestCase {
 	private static final int INDEX_WAIT_TIME = 8000;
@@ -2317,4 +2327,77 @@ public class IndexBugsTests extends BaseTestCase {
 		
 		assertTrue(offset1 != offset2);
 	}
+
+	public void testUpdateOnFolderRemove_343538() throws Exception {
+		IIndexBinding[] r;
+		
+		final IProject prj = fCProject.getProject();
+		final IFolder root= prj.getFolder("root");
+		root.create(true, false, null);
+		assertTrue(root.exists());
+		IFolder child1 = root.getFolder("child1");
+		child1.create(true, false, null);
+		assertTrue(child1.exists());
+		IFolder child2 = root.getFolder("child2");
+		child2.create(true, false, null);
+		assertTrue(child2.exists());
+
+		TestSourceReader.createFile(child1, "a.c", "void bug343538() {}");
+		TestSourceReader.createFile(child2, "b.c", "void bug343538();");
+		waitForIndexer(fCProject);
+		
+		final IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			r = index.findBindings("bug343538".toCharArray(), IndexFilter.ALL, null);
+			assertEquals(1, r.length);
+			IIndexName[] names = index.findNames(r[0], IIndex.FIND_DECLARATIONS_DEFINITIONS);
+			assertEquals(2, names.length);
+		} finally {
+			index.releaseReadLock();
+		}
+		
+	    // Collect files and folders
+	    final Set<IFile> files = new HashSet<IFile>();
+	    final Set<IFolder> folders = new HashSet<IFolder>();
+	    folders.add(root);
+    	root.accept(new IResourceVisitor() {
+    		public boolean visit(final IResource resource) throws CoreException {
+    			if (resource instanceof IFile) {
+    				files.add((IFile) resource);
+    			} else if (resource instanceof IFolder) {
+    				folders.add((IFolder) resource);
+    			}
+    			return true;
+    		}
+    	});
+
+	    Job job = new WorkspaceJob("Delete folder") {
+	      @Override
+	      public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
+	        IWorkspace ws = ResourcesPlugin.getWorkspace();
+			ws.delete(files.toArray(new IResource[files.size()]), IResource.FORCE, null);
+	        ws.delete(folders.toArray(new IResource[folders.size()]), IResource.FORCE, null);
+	        return Status.OK_STATUS;
+	      }
+	    };
+	    job.schedule();
+		job.join();
+		Thread.sleep(1000);
+		waitForIndexer(fCProject);
+
+		index.acquireReadLock();
+		try {
+			r = index.findBindings("bug343538".toCharArray(), IndexFilter.ALL, null);
+			if (r.length == 1) {
+				IIndexName[] names = index.findNames(r[0], IIndex.FIND_DECLARATIONS_DEFINITIONS);
+				assertEquals(0, names.length);
+			} else {
+				assertEquals(0, r.length);
+			}
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+
 }

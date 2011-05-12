@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,11 +51,11 @@ public class DeltaAnalyzer {
 		}
 
 		final ICElement element = delta.getElement();
-		handled.add(element.getResource());
 		switch (element.getElementType()) {
 		case ICElement.C_UNIT:
 			ITranslationUnit tu = (ITranslationUnit)element;
 			if (!tu.isWorkingCopy()) {
+				handled.add(element.getResource());
 				switch (delta.getKind()) {
 				case ICElementDelta.CHANGED:
 					if ((flags & ICElementDelta.F_CONTENT) != 0) {
@@ -74,22 +74,21 @@ public class DeltaAnalyzer {
 		case ICElement.C_CCONTAINER:
 			ICContainer folder= (ICContainer) element;
 			if (delta.getKind() == ICElementDelta.ADDED) {
+				handled.add(element.getResource());
 				collectSources(folder, fChanged);
 			}
 			break;
 		}
 		
 		if (!sSuppressPotentialTUs) {
-			// If the cmodel delta does not have children, also look at the children of the
-			// resource delta.
-			final boolean checkChildren = !hasChildren;
+			// Always look at the children of the resource delta (bug 343538)
 			final IResourceDelta[] rDeltas= delta.getResourceDeltas();
-			processResourceDelta(rDeltas, element, handled, checkChildren);
+			processResourceDelta(rDeltas, element, handled);
 		}
 	}
 
 	public void processResourceDelta(final IResourceDelta[] rDeltas, final ICElement element,
-			Set<IResource> handled, boolean checkChildren) {
+			Set<IResource> handled) {
 		if (rDeltas != null) {
 			for (IResourceDelta rd: rDeltas) {
 				final int rdkind = rd.getKind();
@@ -108,9 +107,7 @@ public class DeltaAnalyzer {
 						}
 					}
 				}
-				if (rdkind == IResourceDelta.CHANGED && checkChildren) {
-					processResourceDelta(rd.getAffectedChildren(), element, handled, checkChildren);
-				}
+				processResourceDelta(rd.getAffectedChildren(IResourceDelta.CHANGED | IResourceDelta.REMOVED), element, handled);
 			}
 		}
 	}

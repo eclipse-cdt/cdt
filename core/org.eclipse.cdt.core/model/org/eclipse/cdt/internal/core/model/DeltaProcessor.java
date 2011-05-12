@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -423,25 +423,21 @@ final class DeltaProcessor {
 	 * relevant <code>CModel</code>s.
 	 */
 	public ICElementDelta[] processResourceDelta(IResourceDelta changes) {
-
-		try {
-			ICElement root = CModelManager.getDefault().getCModel();			
-			// get the workspace delta, and start processing there.
-			IResourceDelta[] deltas = changes.getAffectedChildren();
-			ICElementDelta[] translatedDeltas = new CElementDelta[deltas.length];
-			//System.out.println("delta.length: " + deltas.length);
-			for (int i = 0; i < deltas.length; i++) {
-				IResourceDelta delta = deltas[i];
-				fCurrentDelta = new CElementDelta(root);
-				traverseDelta(root, delta); // traverse delta
-				translatedDeltas[i] = fCurrentDelta;
-			}
-			ICElementDelta[] filteredDeltas= filterRealDeltas(translatedDeltas);
-			// release deltas
-			fCurrentDelta= null;
-			return filteredDeltas;
-		} finally {
+		ICElement root = CModelManager.getDefault().getCModel();			
+		// get the workspace delta, and start processing there.
+		IResourceDelta[] deltas = changes.getAffectedChildren();
+		ICElementDelta[] translatedDeltas = new CElementDelta[deltas.length];
+		//System.out.println("delta.length: " + deltas.length);
+		for (int i = 0; i < deltas.length; i++) {
+			IResourceDelta delta = deltas[i];
+			fCurrentDelta = new CElementDelta(root);
+			traverseDelta(root, delta); // traverse delta
+			translatedDeltas[i] = fCurrentDelta;
 		}
+		ICElementDelta[] filteredDeltas= filterRealDeltas(translatedDeltas);
+		// release deltas
+		fCurrentDelta= null;
+		return filteredDeltas;
 	}
 	
 	/**
@@ -457,12 +453,9 @@ final class DeltaProcessor {
 			IResource resource = delta.getResource();
 			ICElement current = createElement(resource);
 			updateChildren = updateCurrentDeltaAndIndex(current, delta);
-			if (current == null) {
+			if (current == null || current instanceof ICContainer) {
 				if (parent != null)
-				nonCResourcesChanged(parent, delta);
-			} else if (current instanceof ISourceRoot) {
-				if (parent != null)
-				nonCResourcesChanged(parent, delta);
+					nonCResourcesChanged(parent, delta);
 			} else if (current instanceof ICProject) {
 				ICProject cprj = (ICProject)current;
 				CModel cModel = CModelManager.getDefault().getCModel();
@@ -487,7 +480,7 @@ final class DeltaProcessor {
 	 * @param delta
 	 */
 	protected void nonCResourcesChanged(ICElement parent, IResourceDelta delta) throws CModelException {
-		if (parent instanceof Openable && ((Openable)parent).isOpen()) {			
+		if (parent instanceof Openable && ((Openable)parent).isOpen()) {
 			CElementInfo info = ((Openable)parent).getElementInfo();
 			switch (parent.getElementType()) {
 			case ICElement.C_MODEL:

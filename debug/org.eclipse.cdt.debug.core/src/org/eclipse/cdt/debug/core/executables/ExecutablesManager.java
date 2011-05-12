@@ -74,8 +74,6 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
  */
 public class ExecutablesManager extends PlatformObject implements ICProjectDescriptionListener, IElementChangedListener, IResourceChangeListener {
 
-	private static final String EXECUTABLES_MANAGER_DEBUG_TRACING = CDebugCorePlugin.PLUGIN_ID + "EXECUTABLES_MANAGER_DEBUG_TRACING"; //$NON-NLS-1$
-	
 	private Map<IProject, IProjectExecutablesProvider> executablesProviderMap = new HashMap<IProject, IProjectExecutablesProvider>();
 	private List<IExecutablesChangeListener> changeListeners = Collections.synchronizedList(new ArrayList<IExecutablesChangeListener>());
 	private List<IProjectExecutablesProvider> executableProviders;
@@ -897,18 +895,29 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 			}
 		}
 		if (executablesRemoved.size() > 0) {
+			// Update our model (i.e., our collection of Executables) and inform listeners
 			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "One or more executables were removed");  //$NON-NLS-1$			
-			List<Executable> list = Arrays.asList(executablesRemoved.toArray(new Executable[executablesRemoved.size()]));
-			synchronized (changeListeners) {
-				for (IExecutablesChangeListener listener : changeListeners) {
-					if (listener instanceof IExecutablesChangeListener2) {
-						((IExecutablesChangeListener2)listener).executablesRemoved(list);
+			synchronized (executablesMap) {
+				for (Executable executableRemoved : executablesRemoved) {
+					List<Executable> execs = executablesMap.get(executableRemoved.getProject());
+					assert execs != null : "considering the list was used in populating 'executablesRemoved', how could it be gone now?"; //$NON-NLS-1$
+					if (execs != null) {
+						execs.remove(executableRemoved);
 					}
 				}
 			}
+			List<Executable> list = Arrays.asList(executablesRemoved.toArray(new Executable[executablesRemoved.size()]));
+			synchronized (changeListeners) {
+				for (IExecutablesChangeListener listener : changeListeners) {
+					// call newer interface if supported
+					if (listener instanceof IExecutablesChangeListener2) {
+						((IExecutablesChangeListener2)listener).executablesRemoved(list);
+					}
+					// and call older interface, which is less informative
+					listener.executablesListChanged();
+				}
+			}
 		}
-		
-		
 		return;
 	}
 	
@@ -964,49 +973,35 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 			}
 			else if (element instanceof IBinary) {
 				IProject project = cproject.getProject();
-				switch (delta.getKind()) {
+				int deltaKind = delta.getKind();
+				switch (deltaKind) {
 				case ICElementDelta.ADDED:
 					projectsToRefresh.add(project);
 					break;
-				case ICElementDelta.REMOVED: {
-					projectsToRefresh.add(project);
-					List<Executable> execs = null;
-					synchronized (executablesMap) {
-						execs = executablesMap.get(project);
-					}
-					if (execs != null) {
-						for (Executable exec : execs) {
-							if (exec.getResource().equals(delta.getElement().getResource())) {
-								removedExecutables.add(exec);												
-								break;
-							}
-						}
-					}
-					// Note that it's not our job to update 'executablesMap'. 
-					// The async exec search job will do that.					
-					break;
-				}
-					
+				case ICElementDelta.REMOVED: 
 				case ICElementDelta.CHANGED: {
 					List<Executable> execs = null;
 					synchronized (executablesMap) {
 						execs = executablesMap.get(project);
-					}
-					if (execs == null) {
-						// Somehow, we missed the addition of the 
-						// project. Request that the project be 
-						// searched for executables
-						projectsToRefresh.add(project);
-					}
-					else {
-						// See if it's one of the executables we
-						// already know is in the project. If
-						// so, then we just need to tell
-						// listeners the executable changed
-						for (Executable exec : execs) {
-							if (exec.getResource().equals(delta.getElement().getResource())) {
-								changedExecutables.add(exec);
-								break;
+						if (execs == null) {
+							// Somehow, we missed the addition of the project. 
+							// Request that the project be researched for 
+							// executables
+							projectsToRefresh.add(project);
+						}
+						else {
+							// See if it's one of the executables we already know
+							// is in the project. If so, we'll update our 
+							// executables map (if removed) and notifying
+							// listeners
+							for (Executable exec : execs) {
+								if (exec.getResource().equals(delta.getElement().getResource())) {
+									if (deltaKind == ICElementDelta.REMOVED)
+										removedExecutables.add(exec);
+									else
+										changedExecutables.add(exec);
+									break;
+								}
 							}
 						}
 					}

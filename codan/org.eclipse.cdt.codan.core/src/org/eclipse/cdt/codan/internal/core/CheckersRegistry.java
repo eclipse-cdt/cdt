@@ -381,7 +381,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 				// load default values
 				CodanPreferencesLoader loader = new CodanPreferencesLoader(prof);
 				Preferences projectNode = CodanPreferencesLoader.getProjectNode((IProject) element);
-				boolean useWorkspace = projectNode.getBoolean(PreferenceConstants.P_USE_PARENT, false);
+				boolean useWorkspace = projectNode.getBoolean(PreferenceConstants.P_USE_PARENT, true);
 				if (!useWorkspace) {
 					loader.load(projectNode);
 				}

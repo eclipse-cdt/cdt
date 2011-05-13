@@ -33,6 +33,7 @@ import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
+import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
@@ -303,7 +304,11 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 
 		    	final Process inferior = inferiorProcess;
 				final ILaunch launch = (ILaunch)getContainerContext().getAdapter(ILaunch.class);
-				final String groupId = ((IMIContainerDMContext)getContainerContext()).getGroupId();
+				
+				// This is the groupId of the current process.
+				// In the case of a restart for GDB 7.0 or 7.1, this groupId will _not_ be the one
+				// of the new process, since the pid is used for groupId.
+				final String currentGroupId = ((IMIContainerDMContext)getContainerContext()).getGroupId();
 
 				// For multi-process, we cannot simply use the name given by the backend service
 				// because we may not be starting that process, but another one.
@@ -326,17 +331,38 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 				DebugPlugin.getDefault().asyncExec(new Runnable() {
 					public void run() {
 						String label = pathLabel;
+						String groupId = currentGroupId;
+						
 						if (fRestart) {
 							// For a restart, remove the old inferior
 							IProcess[] launchProcesses = launch.getProcesses();
 							for (IProcess process : launchProcesses) {
-								String groupAttribute = process.getAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR);
-								if (groupId.equals(groupAttribute)) {
-									launch.removeProcess(process);
-									// Use the exact same label as before
-									label = process.getLabel();
-									break;
-								}
+			        			if (process instanceof InferiorRuntimeProcess) {
+			        				String groupAttribute = process.getAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR);
+
+			        				// if the groupAttribute is not set in the process we know we are dealing
+			        				// with single process debugging so the one process is the one we want.
+			        				// If the groupAttribute is set, then we must make sure it is the proper inferior
+			        				if (groupAttribute == null || groupAttribute.equals(MIProcesses.UNIQUE_GROUP_ID) ||
+			        						groupAttribute.equals(groupId)) {
+			        					
+			        					// For GDB 7.0 and 7.1, the groupId of the new process will not be the same as
+			        					// the groupId of the old process, after the restart; we cannot know the new
+			        					// groupId yet since it will be the process pid, so we should use 
+			        					// MIProcesses.UNIQUE_GROUP_ID.  Starting with GDB 7.2, the groupId stays
+			        					// the same after a restart.  We can use the groupId that was stored with
+			        					// the previous inferior to make sure we have the proper value.
+			        					// Note that in the case of an attach, where the groupId is already set
+			        					// even for GDB 7.0 and 7.1, but won't stay the same, we don't have an inferior 
+			        					// at all, so we don't need to worry about that case.
+			        					groupId = groupAttribute;
+			        					
+			        					launch.removeProcess(process);
+			        					// Use the exact same label as before
+			        					label = process.getLabel();
+			        					break;
+			        				}
+			        			}
 							}
 						}
 

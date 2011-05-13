@@ -67,10 +67,10 @@ public abstract class AbstractCLIProcess extends Process
 	private final OutputStream fOutputStream = new CLIOutputStream();
     
     // Client process console stream.
-    private final PipedInputStream fMIInConsolePipe;
-    private final PipedOutputStream fMIOutConsolePipe;
-    private final PipedInputStream fMIInLogPipe;
-    private final PipedOutputStream fMIOutLogPipe;
+    private PipedInputStream fMIInConsolePipe;
+    private PipedOutputStream fMIOutConsolePipe;
+    private PipedInputStream fMIInLogPipe;
+    private PipedOutputStream fMIOutLogPipe;
 
     private boolean fDisposed = false;
     
@@ -142,11 +142,26 @@ public abstract class AbstractCLIProcess extends Process
 	
     @ConfinedToDsfExecutor("fSession#getExecutor")
     public void dispose() {
+    	if (fDisposed) return;
+    	
         fCommandControl.removeEventListener(this);
         fCommandControl.removeCommandListener(this);
         
         closeIO();
         fDisposed = true;
+
+        // We have memory leaks that prevent this class from being
+        // GCed.  The problem becomes bad because we are holding
+        // two LargePipedInputStream and eventually, the JUnit tests
+        // run out of memory.  To address this particular problem,
+        // before the actual causes of the leaks are fixed, lets
+        // make sure we release all our four streams which all have
+        // a reference to a LargePipedInputStream
+        // Bug 323071
+        fMIInConsolePipe = null;
+        fMIInLogPipe = null;
+        fMIOutConsolePipe = null;
+        fMIOutLogPipe = null;
     }
     
     private void closeIO() {
@@ -213,8 +228,10 @@ public abstract class AbstractCLIProcess extends Process
 
                 setPrompt(str);
                 try {
-                    fMIOutConsolePipe.write(str.getBytes());
-                    fMIOutConsolePipe.flush();
+                	if (fMIOutConsolePipe != null) {
+                		fMIOutConsolePipe.write(str.getBytes());
+                		fMIOutConsolePipe.flush();
+                	}
                 } catch (IOException e) {
                 }
             } else if (oobr instanceof MILogStreamOutput) {
@@ -222,8 +239,10 @@ public abstract class AbstractCLIProcess extends Process
                 String str = out.getString();
                 if (str != null) {
                     try {
+                    	if (fMIOutLogPipe != null) {
 	                        fMIOutLogPipe.write(str.getBytes());
 	                        fMIOutLogPipe.flush();
+                    	}
                     } catch (IOException e) {
                     }
                 }
@@ -299,8 +318,10 @@ public abstract class AbstractCLIProcess extends Process
                 	// Add a space for readability
                 	String str = SECONDARY_PROMPT + ' ';
     				try {
-    					fMIOutConsolePipe.write(str.getBytes());
-    					fMIOutConsolePipe.flush();
+                    	if (fMIOutConsolePipe != null) {
+                    		fMIOutConsolePipe.write(str.getBytes());
+                    		fMIOutConsolePipe.flush();
+                    	}
     				} catch (IOException e) {
     				}
     			}

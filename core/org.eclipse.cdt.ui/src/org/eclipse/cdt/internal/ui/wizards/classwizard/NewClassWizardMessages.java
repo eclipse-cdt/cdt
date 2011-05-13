@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,13 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import org.eclipse.osgi.util.NLS;
 
 public final class NewClassWizardMessages extends NLS {
-
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardMessages";//$NON-NLS-1$
-
-	private NewClassWizardMessages() {
-		// Do not instantiate
-	}
-
 	public static String NewClassCreationWizard_title;
 	public static String NewClassCreationWizardPage_title;
 	public static String NewClassCreationWizardPage_description;
@@ -58,7 +52,7 @@ public final class NewClassWizardMessages extends NLS {
 	public static String NewClassCreationWizardPage_methodStubs_label;
 	public static String NewClassCreationWizardPage_error_NotAFile;
 	public static String NewClassCreationWizardPage_error_FolderDoesNotExist;
-	public static String NewClassCreationWizardPage_useDefaultLocation_label;
+	public static String NewClassCreationWizardPage_error_LocationUnknown;
 	public static String NewClassCreationWizardPage_headerFile_label;
 	public static String NewClassCreationWizardPage_headerFile_button;
 	public static String NewClassCreationWizardPage_ChooseHeaderFileDialog_title;
@@ -75,7 +69,14 @@ public final class NewClassWizardMessages extends NLS {
 	public static String NewClassCreationWizardPage_warning_SourceFileNameDiscouraged;
 	public static String NewClassCreationWizardPage_warning_SourceFileExists;
 	public static String NewClassCreationWizardPage_error_InvalidSourceFileName;
-	public static String NewClassCreationWizardPage_error_LocationUnknown;
+	public static String NewClassCreationWizardPage_testFile_label;
+	public static String NewClassCreationWizardPage_testFile_button;
+	public static String NewClassCreationWizardPage_ChooseTestFileDialog_title;
+	public static String NewClassCreationWizardPage_error_EnterTestFileName;
+	public static String NewClassCreationWizardPage_error_TestFileNotInSourceFolder;
+	public static String NewClassCreationWizardPage_warning_TestFileNameDiscouraged;
+	public static String NewClassCreationWizardPage_warning_TestFileExists;
+	public static String NewClassCreationWizardPage_error_InvalidTestFileName;
 	public static String BaseClassesListDialogField_buttons_add;
 	public static String BaseClassesListDialogField_buttons_remove;
 	public static String BaseClassesListDialogField_buttons_up;
@@ -124,6 +125,10 @@ public final class NewClassWizardMessages extends NLS {
 	public static String NewClassCodeGeneration_stub_destructor_name;
 
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, NewClassWizardMessages.class);
+		NLS.initializeMessages(NewClassWizardMessages.class.getName(), NewClassWizardMessages.class);
+	}
+
+	// Do not instantiate
+	private NewClassWizardMessages() {
 	}
 }

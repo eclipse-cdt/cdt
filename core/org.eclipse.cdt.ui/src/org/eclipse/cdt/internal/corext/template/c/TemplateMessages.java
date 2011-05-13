@@ -9,19 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *     QnX Software System
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.template.c;
 
 import org.eclipse.osgi.util.NLS;
 
 public final class TemplateMessages extends NLS {
-
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.corext.template.c.TemplateMessages";//$NON-NLS-1$
-
-	private TemplateMessages() {
-		// Do not instantiate
-	}
-
 	public static String CContextType_variable_description_file;
 	public static String CContextType_variable_description_file_base;
 	public static String CContextType_variable_description_enclosing_method;
@@ -32,11 +26,18 @@ public final class TemplateMessages extends NLS {
 	
 	public static String CodeTemplateContextType_variable_description_todo;
 	public static String CodeTemplateContextType_variable_description_typedeclaration;
+	public static String CodeTemplateContextType_variable_description_class_members;
 	public static String CodeTemplateContextType_variable_description_fieldname;
 	public static String CodeTemplateContextType_variable_description_fieldtype;
 	public static String CodeTemplateContextType_variable_description_typecomment;
 	public static String CodeTemplateContextType_variable_description_enclosingtype;
+	public static String CodeTemplateContextType_variable_description_includes;
+	public static String CodeTemplateContextType_variable_description_namespace_begin;
+	public static String CodeTemplateContextType_variable_description_namespace_end;
+	public static String CodeTemplateContextType_variable_description_namespace_name;
 	public static String CodeTemplateContextType_variable_description_typename;
+	public static String CodeTemplateContextType_variable_description_class_name;
+	public static String CodeTemplateContextType_variable_description_base_classes;
 	public static String CodeTemplateContextType_variable_description_include_guard_symbol;
 	public static String CodeTemplateContextType_variable_description_enclosingmethod;
 	public static String CodeTemplateContextType_variable_description_bodystatement;
@@ -60,6 +61,10 @@ public final class TemplateMessages extends NLS {
 	public static String FileTemplateContextType_variable_description_projectname;
 
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, TemplateMessages.class);
+		NLS.initializeMessages(TemplateMessages.class.getName(), TemplateMessages.class);
+	}
+
+	// Do not instantiate.
+	private TemplateMessages() {
 	}
 }

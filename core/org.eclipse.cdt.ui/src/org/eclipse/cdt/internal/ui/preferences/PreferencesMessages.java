@@ -336,9 +336,13 @@ public final class PreferencesMessages extends NLS {
 	public static String CodeTemplateBlock_templates_comment_node;
 	public static String CodeTemplateBlock_templates_code_node;
 	public static String CodeTemplateBlock_templates_file_node;
-	public static String CodeTemplateBlock_methodstub_label;
+
+	public static String CodeTemplateBlock_namespace_begin_label;
+	public static String CodeTemplateBlock_namespace_end_label;
+	public static String CodeTemplateBlock_class_body_label;
 	public static String CodeTemplateBlock_constructorstub_label;
 	public static String CodeTemplateBlock_destructorstub_label;
+	public static String CodeTemplateBlock_methodstub_label;
 	public static String CodeTemplateBlock_typecomment_label;
 	public static String CodeTemplateBlock_fieldcomment_label;
 	public static String CodeTemplateBlock_filecomment_label;

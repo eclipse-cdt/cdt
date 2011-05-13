@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -112,7 +113,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			} else if (element == FILE_NODE) {
 				return getFileTemplateContextTypes();
 			} else if (element instanceof TemplateContextType) {
-				return getTemplatesOfContextType(((TemplateContextType)element).getId());
+				return getTemplatesOfContextType(((TemplateContextType) element).getId());
 			}
 			return NO_CHILDREN;
 		}
@@ -147,7 +148,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		}
 		
 		/*
-		 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
+		 * @see org.eclipse.jface.viewers.ViewerComparator#category(java.lang.Object)
 		 */
 		@Override
 		public int category(Object element) {
@@ -181,12 +182,18 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			
 			if (CodeTemplateContextType.ASMSOURCEFILE_CONTEXTTYPE.equals(id)) {
 				return 105;
-			} else if (CodeTemplateContextType.METHODSTUB_ID.equals(id)) {
+			} else if (CodeTemplateContextType.NAMESPACE_BEGIN_ID.equals(id)) {
 				return 106;
-			} else if (CodeTemplateContextType.CONSTRUCTORSTUB_ID.equals(id)) {
+			} else if (CodeTemplateContextType.NAMESPACE_END_ID.equals(id)) {
 				return 107;
-			} else if (CodeTemplateContextType.DESTRUCTORSTUB_ID.equals(id)) {
+			} else if (CodeTemplateContextType.CLASS_BODY_ID.equals(id)) {
 				return 108;
+			} else if (CodeTemplateContextType.METHODSTUB_ID.equals(id)) {
+				return 109;
+			} else if (CodeTemplateContextType.CONSTRUCTORSTUB_ID.equals(id)) {
+				return 110;
+			} else if (CodeTemplateContextType.DESTRUCTORSTUB_ID.equals(id)) {
+				return 111;
 			} else if (CodeTemplateContextType.FILECOMMENT_ID.equals(id)) {
 				return 1;
 			} else if (CodeTemplateContextType.TYPECOMMENT_ID.equals(id)) {
@@ -251,18 +258,24 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 				return (String) element;
 			}
 			if (element instanceof TemplateContextType) {
-				return ((TemplateContextType)element).getName();
+				return ((TemplateContextType) element).getName();
 			}
 			TemplatePersistenceData data= (TemplatePersistenceData) element;
 			String id= data.getId();
 			if (FileTemplateContextType.isFileTemplateContextType(data.getTemplate().getContextTypeId())) {
 				return data.getTemplate().getName();
-			} else if (CodeTemplateContextType.METHODSTUB_ID.equals(id)) {
-				return PreferencesMessages.CodeTemplateBlock_methodstub_label;
+			} else if (CodeTemplateContextType.NAMESPACE_BEGIN_ID.equals(id)) {
+				return PreferencesMessages.CodeTemplateBlock_namespace_begin_label;
+			} else if (CodeTemplateContextType.NAMESPACE_END_ID.equals(id)) {
+				return PreferencesMessages.CodeTemplateBlock_namespace_end_label;
+			} else if (CodeTemplateContextType.CLASS_BODY_ID.equals(id)) {
+				return PreferencesMessages.CodeTemplateBlock_class_body_label;
 			} else if (CodeTemplateContextType.CONSTRUCTORSTUB_ID.equals(id)) {
 				return PreferencesMessages.CodeTemplateBlock_constructorstub_label;
 			} else if (CodeTemplateContextType.DESTRUCTORSTUB_ID.equals(id)) {
 				return PreferencesMessages.CodeTemplateBlock_destructorstub_label;
+			} else if (CodeTemplateContextType.METHODSTUB_ID.equals(id)) {
+				return PreferencesMessages.CodeTemplateBlock_methodstub_label;
 			} else if (CodeTemplateContextType.FILECOMMENT_ID.equals(id)) {
 				return PreferencesMessages.CodeTemplateBlock_filecomment_label;
 			} else if (CodeTemplateContextType.TYPECOMMENT_ID.equals(id)) {
@@ -310,7 +323,8 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	private TemplateVariableProcessor fTemplateProcessor;
 	private ContextTypeRegistry fFileTemplateContextTypes;
 	
-	public CodeTemplateBlock(IStatusChangeListener context, IProject project, IWorkbenchPreferenceContainer container) {
+	public CodeTemplateBlock(IStatusChangeListener context, IProject project,
+			IWorkbenchPreferenceContainer container) {
 		super(context, project, getAllKeys(), container);
 		
 		fTemplateStore= new ProjectTemplateStore(project);
@@ -387,7 +401,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 		
 		fCodeTemplateTree.doFillIntoGrid(composite, 3);
 		LayoutUtil.setHorizontalSpan(fCodeTemplateTree.getLabelControl(null), 2);
-		LayoutUtil.setHorizontalGrabbing(fCodeTemplateTree.getTreeControl(null));
+		LayoutUtil.setHorizontalGrabbing(fCodeTemplateTree.getTreeControl(null), true);
 		
 		fPatternViewer= createViewer(composite, 2);
 		

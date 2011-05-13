@@ -9,6 +9,7 @@
  *     Rational Software - initial implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Jens Elmenthaler (Verigy) - http://bugs.eclipse.org/235586
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.codemanipulation;
 
@@ -24,7 +25,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -67,7 +67,7 @@ import org.eclipse.cdt.internal.corext.util.Strings;
 import org.eclipse.cdt.internal.ui.viewsupport.ProjectTemplateStore;
 
 public class StubUtility {
-	private static final String[] EMPTY= new String[0];
+	private static final String[] EMPTY= {};
 	
 	private StubUtility() {
 	}
@@ -76,57 +76,110 @@ public class StubUtility {
 	 * Don't use this method directly, use CodeGeneration.
 	 * @see org.eclipse.cdt.ui.CodeGeneration#getHeaderFileContent(ITranslationUnit, String, String, String)
 	 */	
-	public static String getHeaderFileContent(ITranslationUnit tu, String fileComment, String typeComment, String declarations, String lineDelimiter) throws CoreException {
-		return getHeaderFileContent(getDefaultFileTemplate(tu), tu, fileComment, typeComment, declarations, lineDelimiter);
+	public static String getHeaderFileContent(ITranslationUnit tu, String declarations,
+			String fileComment, String includes, String namespaceBegin,	String namespaceEnd,
+			String namespaceName, String typeComment, String typeName,
+			String lineDelimiter) throws CoreException {
+		return getHeaderFileContent(getDefaultFileTemplate(tu), tu, declarations, fileComment,
+				includes, namespaceBegin, namespaceEnd, namespaceName, typeComment, typeName,
+				lineDelimiter);
 	}
 
 	/*
 	 * Don't use this method directly, use CodeGeneration.
 	 * @see org.eclipse.cdt.ui.CodeGeneration#getHeaderFileContent(Template, ITranslationUnit, String, String, String)
 	 */	
-	public static String getHeaderFileContent(Template template, ITranslationUnit tu, String fileComment, String typeComment, String declarations, String lineDelimiter) throws CoreException {
+	public static String getHeaderFileContent(Template template, ITranslationUnit tu,
+			String declarations, String fileComment, String includes, String namespaceBegin,
+			String namespaceEnd, String namespaceName, String typeComment, String typeName,
+			String lineDelimiter) throws CoreException {
 		if (template == null) {
 			return null;
 		}
 		ICProject project= tu.getCProject();
 		CodeTemplateContext context= new CodeTemplateContext(template.getContextTypeId(), project, lineDelimiter);
 		context.setTranslationUnitVariables(tu);
-		context.setVariable(CodeTemplateContextType.TYPE_COMMENT, typeComment != null ? typeComment : ""); //$NON-NLS-1$
-		context.setVariable(CodeTemplateContextType.FILE_COMMENT, fileComment != null ? fileComment : ""); //$NON-NLS-1$
-		context.setVariable(CodeTemplateContextType.DECLARATIONS, declarations != null ? declarations : ""); //$NON-NLS-1$
-		context.setVariable(CodeTemplateContextType.TYPENAME, new Path(tu.getElementName()).removeFileExtension().toString());
 		String includeGuardSymbol= generateIncludeGuardSymbol(tu.getResource(), project);
+		context.setVariable(CodeTemplateContextType.DECLARATIONS, declarations != null ? declarations : ""); //$NON-NLS-1$
+		context.setVariable(CodeTemplateContextType.FILE_COMMENT, fileComment != null ? fileComment : ""); //$NON-NLS-1$
 		context.setVariable(CodeTemplateContextType.INCLUDE_GUARD_SYMBOL, includeGuardSymbol != null ? includeGuardSymbol : ""); //$NON-NLS-1$
-		
-		String[] fullLine= { CodeTemplateContextType.FILE_COMMENT, CodeTemplateContextType.TYPE_COMMENT, CodeTemplateContextType.DECLARATIONS };
-		return evaluateTemplate(context, template, fullLine);
+		context.setVariable(CodeTemplateContextType.INCLUDES, includes != null ? includes : ""); //$NON-NLS-1$
+		context.setVariable(CodeTemplateContextType.NAMESPACE_BEGIN, namespaceBegin != null ? namespaceBegin : ""); //$NON-NLS-1$
+		context.setVariable(CodeTemplateContextType.NAMESPACE_END, namespaceEnd != null ? namespaceEnd : ""); //$NON-NLS-1$
+		context.setVariable(CodeTemplateContextType.NAMESPACE_NAME, namespaceName != null ? namespaceName : ""); //$NON-NLS-1$
+		context.setVariable(CodeTemplateContextType.TYPE_COMMENT, typeComment != null ? typeComment : ""); //$NON-NLS-1$
+		context.setVariable(CodeTemplateContextType.TYPENAME, typeName != null ? typeName : ""); //$NON-NLS-1$
+		String[] fullLine= {
+				CodeTemplateContextType.DECLARATIONS, CodeTemplateContextType.FILE_COMMENT,
+				CodeTemplateContextType.INCLUDES,
+				CodeTemplateContextType.NAMESPACE_BEGIN, CodeTemplateContextType.NAMESPACE_END,
+				CodeTemplateContextType.TYPE_COMMENT
+			};
+
+		String text = evaluateTemplate(context, template, fullLine);
+		if (!text.endsWith(lineDelimiter))
+			text += lineDelimiter;
+		return text;
 	}
 
 	/*
 	 * Don't use this method directly, use CodeGeneration.
-	 * @see org.eclipse.cdt.ui.CodeGeneration#getBodyFileContent(ITranslationUnit, String, String, String)
+	 * @see org.eclipse.cdt.ui.CodeGeneration#getBodyFileContent(ITranslationUnit, String, String, String, String, String, String, String, String, String)
 	 */	
-	public static String getBodyFileContent(ITranslationUnit tu, String fileComment, String typeComment, String declarations, String lineDelimiter) throws CoreException {
-		return getBodyFileContent(getDefaultFileTemplate(tu), tu, fileComment, typeComment, declarations, lineDelimiter);
+	public static String getBodyFileContent(ITranslationUnit tu,
+			String declarations, String fileComment, String includes, String namespaceBegin,
+			String namespaceEnd, String namespaceName, String typeComment, String typeName,
+			String lineDelimiter) throws CoreException {
+		return getBodyFileContent(getDefaultFileTemplate(tu), tu, declarations, fileComment,
+				includes, namespaceBegin, namespaceEnd, namespaceName, typeComment, typeName,
+				lineDelimiter);
 	}
 
 	/*
 	 * Don't use this method directly, use CodeGeneration.
-	 * @see org.eclipse.cdt.ui.CodeGeneration#getBodyFileContent(Template, ITranslationUnit, String, String, String)
+	 * @see org.eclipse.cdt.ui.CodeGeneration#getBodyFileContent(Template, ITranslationUnit, String, String, String, String, String, String, String, String, String)
 	 */	
-	public static String getBodyFileContent(Template template, ITranslationUnit tu, String fileComment, String typeComment, String declarations, String lineDelimiter) throws CoreException {
+	public static String getBodyFileContent(Template template, ITranslationUnit tu,
+			String declarations, String fileComment, String includes, String namespaceBegin,
+			String namespaceEnd, String namespaceName, String typeComment, String typeName,
+			String lineDelimiter) throws CoreException {
 		if (template == null) {
 			return null;
 		}
 		ICProject project= tu.getCProject();
 		CodeTemplateContext context= new CodeTemplateContext(template.getContextTypeId(), project, lineDelimiter);
 		context.setTranslationUnitVariables(tu);
-		context.setVariable(CodeTemplateContextType.TYPE_COMMENT, typeComment != null ? typeComment : ""); //$NON-NLS-1$
-		context.setVariable(CodeTemplateContextType.FILE_COMMENT, fileComment != null ? fileComment : ""); //$NON-NLS-1$
 		context.setVariable(CodeTemplateContextType.DECLARATIONS, declarations != null ? declarations : ""); //$NON-NLS-1$
-		
-		String[] fullLine= { CodeTemplateContextType.FILE_COMMENT, CodeTemplateContextType.TYPE_COMMENT, CodeTemplateContextType.DECLARATIONS };
-		return evaluateTemplate(context, template, fullLine);
+		context.setVariable(CodeTemplateContextType.FILE_COMMENT, fileComment != null ? fileComment : ""); //$NON-NLS-1$
+		context.setVariable(CodeTemplateContextType.INCLUDES, includes != null ? includes : ""); //$NON-NLS-1$
+		context.setVariable(CodeTemplateContextType.NAMESPACE_BEGIN, namespaceBegin != null ? namespaceBegin : ""); //$NON-NLS-1$
+		context.setVariable(CodeTemplateContextType.NAMESPACE_END, namespaceEnd != null ? namespaceEnd : ""); //$NON-NLS-1$
+		context.setVariable(CodeTemplateContextType.NAMESPACE_NAME, namespaceName != null ? namespaceName : ""); //$NON-NLS-1$
+		context.setVariable(CodeTemplateContextType.TYPE_COMMENT, typeComment != null ? typeComment : ""); //$NON-NLS-1$
+		context.setVariable(CodeTemplateContextType.TYPENAME, typeName != null ? typeName : ""); //$NON-NLS-1$
+		String[] fullLine= {
+				CodeTemplateContextType.DECLARATIONS, CodeTemplateContextType.FILE_COMMENT,
+				CodeTemplateContextType.INCLUDES,
+				CodeTemplateContextType.NAMESPACE_BEGIN, CodeTemplateContextType.NAMESPACE_END,
+				CodeTemplateContextType.TYPE_COMMENT
+			};
+		String text = evaluateTemplate(context, template, fullLine);
+		if (!text.endsWith(lineDelimiter))
+			text += lineDelimiter;
+		return text;
+	}
+
+	/*
+	 * Don't use this method directly, use CodeGeneration.
+	 * @see org.eclipse.cdt.ui.CodeGeneration#getTestFileContent(ITranslationUnit, String, String, String)
+	 */	
+	public static String getTestFileContent(ITranslationUnit tu, String declarations,
+			String fileComment, String includes, String namespaceBegin, String namespaceEnd,
+			String namespaceName, String typeName, String lineDelimiter)
+					throws CoreException {
+		return getBodyFileContent(getTestFileTemplate(tu), tu, declarations, fileComment,
+				includes, namespaceBegin, namespaceEnd, namespaceName, null, typeName,
+				lineDelimiter);
 	}
 
 	public static String getFileContent(Template template, IFile file, String lineDelimiter) throws CoreException {
@@ -147,7 +200,31 @@ public class StubUtility {
 		context.setVariable(CodeTemplateContextType.INCLUDE_GUARD_SYMBOL, includeGuardSymbol != null ? includeGuardSymbol : ""); //$NON-NLS-1$
 		context.setResourceVariables(file);
 		String[] fullLine= { CodeTemplateContextType.FILE_COMMENT };
-		return evaluateTemplate(context, template, fullLine);
+		
+		String text = evaluateTemplate(context, template, fullLine);
+		if (!text.endsWith(lineDelimiter))
+			text += lineDelimiter;
+		return text;
+	}
+
+	/*
+	 * Don't use this method directly, use CodeGeneration.
+	 */
+	public static String getClassBodyContent(ICProject project, String className,
+			String classMemberDeclarations, String lineDelimiter) throws CoreException {
+		Template template= getCodeTemplate(CodeTemplateContextType.CLASS_BODY_ID, project);
+		if (template == null) {
+			return classMemberDeclarations;
+		}
+		CodeTemplateContext context= new CodeTemplateContext(template.getContextTypeId(), project, lineDelimiter);
+		context.setVariable(CodeTemplateContextType.ENCLOSING_TYPE, className);
+		context.setVariable(CodeTemplateContextType.DECLARATIONS, classMemberDeclarations != null ? classMemberDeclarations : ""); //$NON-NLS-1$
+		String str= evaluateTemplate(context, template,
+				new String[] { CodeTemplateContextType.DECLARATIONS });
+		if (str == null && classMemberDeclarations != null && !Strings.containsOnlyWhitespaces(classMemberDeclarations)) {
+			return classMemberDeclarations;
+		}
+		return str;
 	}
 
 	/*
@@ -156,6 +233,26 @@ public class StubUtility {
 	public static String getMethodBodyContent(ICProject project, String typeName, String methodName, String bodyStatement, String lineDelimiter) throws CoreException {
 		String templateId= CodeTemplateContextType.METHODSTUB_ID;
 		return getMethodBodyContent(templateId, project, typeName, methodName, bodyStatement, lineDelimiter);
+	}
+
+	/*
+	 * Don't use this method directly, use CodeGeneration.
+	 */
+	public static String getMethodBodyContent(String templateId, ICProject project, String typeName,
+			String methodName, String bodyStatement, String lineDelimiter) throws CoreException {
+		Template template= getCodeTemplate(templateId, project);
+		if (template == null) {
+			return bodyStatement;
+		}
+		CodeTemplateContext context= new CodeTemplateContext(template.getContextTypeId(), project, lineDelimiter);
+		context.setVariable(CodeTemplateContextType.ENCLOSING_METHOD, methodName);
+		context.setVariable(CodeTemplateContextType.ENCLOSING_TYPE, typeName);
+		context.setVariable(CodeTemplateContextType.BODY_STATEMENT, bodyStatement != null ? bodyStatement : ""); //$NON-NLS-1$
+		String str= evaluateTemplate(context, template, new String[] { CodeTemplateContextType.BODY_STATEMENT });
+		if (str == null && bodyStatement != null && !Strings.containsOnlyWhitespaces(bodyStatement)) {
+			return bodyStatement;
+		}
+		return str;
 	}
 
 	/*
@@ -177,20 +274,29 @@ public class StubUtility {
 	/*
 	 * Don't use this method directly, use CodeGeneration.
 	 */
-	public static String getMethodBodyContent(String templateId, ICProject project, String typeName, String methodName, String bodyStatement, String lineDelimiter) throws CoreException {
-		Template template= getCodeTemplate(templateId, project);
+	public static String getNamespaceBeginContent(ICProject project, String namespaceName,
+			String lineDelimiter) throws CoreException {
+		Template template= getCodeTemplate(CodeTemplateContextType.NAMESPACE_BEGIN_ID, project);
 		if (template == null) {
-			return bodyStatement;
+			return null;
 		}
 		CodeTemplateContext context= new CodeTemplateContext(template.getContextTypeId(), project, lineDelimiter);
-		context.setVariable(CodeTemplateContextType.ENCLOSING_METHOD, methodName);
-		context.setVariable(CodeTemplateContextType.ENCLOSING_TYPE, typeName);
-		context.setVariable(CodeTemplateContextType.BODY_STATEMENT, bodyStatement != null ? bodyStatement : ""); //$NON-NLS-1$
-		String str= evaluateTemplate(context, template, new String[] { CodeTemplateContextType.BODY_STATEMENT });
-		if (str == null && bodyStatement != null && !Strings.containsOnlyWhitespaces(bodyStatement)) {
-			return bodyStatement;
+		context.setVariable(CodeTemplateContextType.NAMESPACE_NAME, namespaceName);
+		return evaluateTemplate(context, template, EMPTY);
+	}
+
+	/*
+	 * Don't use this method directly, use CodeGeneration.
+	 */
+	public static String getNamespaceEndContent(ICProject project, String namespaceName,
+			String lineDelimiter) throws CoreException {
+		Template template= getCodeTemplate(CodeTemplateContextType.NAMESPACE_END_ID, project);
+		if (template == null) {
+			return null;
 		}
-		return str;
+		CodeTemplateContext context= new CodeTemplateContext(template.getContextTypeId(), project, lineDelimiter);
+		context.setVariable(CodeTemplateContextType.NAMESPACE_NAME, namespaceName);
+		return evaluateTemplate(context, template, EMPTY);
 	}
 
 	/*
@@ -508,6 +614,14 @@ public class StubUtility {
 			} else {
 				templateId= CodeTemplateContextType.C_SOURCEFILE_ID;
 			}
+		}
+		return getCodeTemplate(templateId, tu.getCProject());
+	}
+
+	private static Template getTestFileTemplate(ITranslationUnit tu) {
+		String templateId= null;
+		if (tu.isCXXLanguage() && !tu.isHeaderUnit()) {
+			templateId= CodeTemplateContextType.CPP_TESTFILE_ID;
 		}
 		return getCodeTemplate(templateId, tu.getCProject());
 	}

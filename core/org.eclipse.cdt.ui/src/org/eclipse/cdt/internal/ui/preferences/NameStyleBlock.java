@@ -186,14 +186,6 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 				.setSeedNameGenerator(fieldCategory)
 				.setNameValidator(IDENTIFIER_VALIDATOR);
 		Category fileCategory = new Category(PreferencesMessages.NameStyleBlock_files_node);
-		new Category(PreferencesMessages.NameStyleBlock_cpp_source_node,
-				PreferencesMessages.NameStyleBlock_cpp_source_node_description, EXAMPLE_CLASS_NAME,
-				fileCategory)
-				.setCapitalizationKey(KEY_CPP_SOURCE_CAPITALIZATION)
-				.setWordDelimiterKey(KEY_CPP_SOURCE_WORD_DELIMITER)
-				.setPrefixKey(KEY_CPP_SOURCE_PREFIX)
-				.setSuffixKey(KEY_CPP_SOURCE_SUFFIX)
-				.setNameValidator(FILENAME_VALIDATOR);
 		new Category(PreferencesMessages.NameStyleBlock_cpp_header_node,
 				PreferencesMessages.NameStyleBlock_cpp_header_node_description, EXAMPLE_CLASS_NAME,
 				fileCategory)
@@ -202,10 +194,17 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 				.setPrefixKey(KEY_CPP_HEADER_PREFIX)
 				.setSuffixKey(KEY_CPP_HEADER_SUFFIX)
 				.setNameValidator(FILENAME_VALIDATOR);
-		// TODO(sprigogin): Unhide the test name style category
+		new Category(PreferencesMessages.NameStyleBlock_cpp_source_node,
+				PreferencesMessages.NameStyleBlock_cpp_source_node_description, EXAMPLE_CLASS_NAME,
+				fileCategory)
+				.setCapitalizationKey(KEY_CPP_SOURCE_CAPITALIZATION)
+				.setWordDelimiterKey(KEY_CPP_SOURCE_WORD_DELIMITER)
+				.setPrefixKey(KEY_CPP_SOURCE_PREFIX)
+				.setSuffixKey(KEY_CPP_SOURCE_SUFFIX)
+				.setNameValidator(FILENAME_VALIDATOR);
 		new Category(PreferencesMessages.NameStyleBlock_cpp_test_node,
 				PreferencesMessages.NameStyleBlock_cpp_test_node_description, EXAMPLE_CLASS_NAME,
-				null)  // Hidden for now.
+				fileCategory)
 				.setCapitalizationKey(KEY_CPP_TEST_CAPITALIZATION)
 				.setWordDelimiterKey(KEY_CPP_TEST_WORD_DELIMITER)
 				.setPrefixKey(KEY_CPP_TEST_PREFIX)

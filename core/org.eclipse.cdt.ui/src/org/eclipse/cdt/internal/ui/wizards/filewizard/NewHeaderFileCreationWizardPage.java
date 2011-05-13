@@ -158,7 +158,8 @@ public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardP
 	            	fNewFileTU = (ITranslationUnit) CoreModel.getDefault().create(newFile);
 	            	if (fNewFileTU != null) {
 	            		String lineDelimiter= StubUtility.getLineDelimiterUsed(fNewFileTU);
-						String content= CodeGeneration.getHeaderFileContent(getTemplate(), fNewFileTU, null, null, lineDelimiter);
+						String content= CodeGeneration.getHeaderFileContent(getTemplate(),
+								fNewFileTU, lineDelimiter);
 						if (content != null) {
 							fNewFileTU.getBuffer().setContents(content.toCharArray());
 							fNewFileTU.save(monitor, true);

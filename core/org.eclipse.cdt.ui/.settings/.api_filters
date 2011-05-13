@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.ui" version="2">
+    <resource path="src/org/eclipse/cdt/ui/wizards/NewClassCreationWizardPage.java" type="org.eclipse.cdt.ui.wizards.NewClassCreationWizardPage">
+        <filter id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.ui.wizards.NewClassCreationWizardPage"/>
+                <message_argument value="DEFAULT_METHOD_STUBS"/>
+            </message_arguments>
+        </filter>
+        <filter id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.ui.wizards.NewClassCreationWizardPage"/>
+                <message_argument value="fUseDefaultSelection"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.ui.wizards.NewClassCreationWizardPage"/>
+                <message_argument value="isUseDefaultSelected()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.ui.wizards.NewClassCreationWizardPage"/>
+                <message_argument value="setUseDefaultSelection(boolean, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.ui.wizards.NewClassCreationWizardPage"/>
+                <message_argument value="ALL_FIELDS"/>
+                <message_argument value="127"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

@@ -218,7 +218,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		public int hashCode() { return baseHashCode() ^ (fId == null ? 0 : fId.hashCode()); }
 	}
 
-	private class GDBContainerDMC extends MIContainerDMC 
+	private static class GDBContainerDMC extends MIContainerDMC 
 	implements IMemoryDMContext 
 	{
 		public GDBContainerDMC(String sessionId, IProcessDMContext processDmc, String groupId) {

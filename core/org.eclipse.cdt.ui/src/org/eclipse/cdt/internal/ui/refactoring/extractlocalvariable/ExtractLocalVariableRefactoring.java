@@ -6,6 +6,7 @@
  *
  * Contributors:
  *     Google - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable;
@@ -19,7 +20,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
@@ -53,6 +56,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarationStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTEqualsInitializer;
@@ -68,6 +73,7 @@ import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
+import org.eclipse.cdt.internal.ui.util.NameComposer;
 
 /**
  * The main class for the Extract Local Variable refactoring. This refactoring
@@ -365,7 +371,8 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 
 				@Override
 				public int visit(IASTExpression expression) {
-					// If the expression starts with a function call with a name, we should only need to guess this name
+					// If the expression starts with a function call with a name, we should only
+					// need to guess this name
 					if (expression == target && expression instanceof ICPPASTFunctionCallExpression) {
 						ICPPASTFunctionCallExpression functionCallExpression = (ICPPASTFunctionCallExpression) expression;
 						IASTExpression functionNameExpression = functionCallExpression.getFunctionNameExpression();
@@ -410,17 +417,21 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 				}
 
 				private void addTempName(String name) {
-					char[] tmpName = new char[name.length()];
-					int len = 0;
-					for (int i = 0; i < name.length(); i++) {
-						char c = name.charAt(i);
-						if (len == 0 && Character.isJavaIdentifierStart(c)) {
-							tmpName[len++] = Character.toLowerCase(c);
-						} else if (Character.isJavaIdentifierPart(c)) {
-							tmpName[len++] = c;
-						}
-					}
-					name = trimPrefixes(new String(tmpName, 0, len));
+					name = trimPrefixes(name);
+
+			    	IPreferencesService preferences = Platform.getPreferencesService();
+			    	int capitalization = preferences.getInt(CUIPlugin.PLUGIN_ID,
+			    			PreferenceConstants.NAME_STYLE_VARIABLE_CAPITALIZATION,
+			    			PreferenceConstants.NAME_STYLE_CAPITALIZATION_LOWER_CAMEL_CASE, null);
+			    	String wordDelimiter = preferences.getString(CUIPlugin.PLUGIN_ID,
+			    			PreferenceConstants.NAME_STYLE_VARIABLE_WORD_DELIMITER, "", null); //$NON-NLS-1$
+			    	String prefix = preferences.getString(CUIPlugin.PLUGIN_ID,
+									PreferenceConstants.NAME_STYLE_VARIABLE_PREFIX, "", null); //$NON-NLS-1$
+			    	String suffix = preferences.getString(CUIPlugin.PLUGIN_ID,
+			    			PreferenceConstants.NAME_STYLE_VARIABLE_SUFFIX, "", null); //$NON-NLS-1$
+			    	NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);
+			    	name = composer.compose(name);
+					
 					if (name.length() > 0) {
 						if (nameAvailable(name, guessedTempNames, scope)) {
 							guessedTempNames.add(name);
@@ -438,7 +449,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 				guessedTempNames.add(name);
 			}
 		}
-		return guessedTempNames.toArray(new String[0]);
+		return guessedTempNames.toArray(new String[guessedTempNames.size()]);
 	}
 
 	private String trimPrefixes(String name) {

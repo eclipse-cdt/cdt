@@ -379,6 +379,8 @@ public final class PreferencesMessages extends NLS {
 	public static String NameStyleBlock_files_node;
 	public static String NameStyleBlock_constant_node;
 	public static String NameStyleBlock_constant_node_description;
+	public static String NameStyleBlock_variable_node;
+	public static String NameStyleBlock_variable_node_description;
 	public static String NameStyleBlock_field_node;
 	public static String NameStyleBlock_field_node_description;
 	public static String NameStyleBlock_getter_node;

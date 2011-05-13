@@ -48,9 +48,10 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
  * The preference block for configuring styles of names.
  */
 public class NameStyleBlock extends OptionsConfigurationBlock {
-//	private static final String EXAMPLE_CONSTANT_NAME = "MY_CONSTANT"; //$NON-NLS-1$
-	private static final String EXAMPLE_CLASS_NAME = "MyClass"; //$NON-NLS-1$
+	private static final String EXAMPLE_CONSTANT_NAME = "MY_CONSTANT"; //$NON-NLS-1$
+	private static final String EXAMPLE_VARIABLE_NAME = "myVariable"; //$NON-NLS-1$
 	private static final String EXAMPLE_FIELD_NAME = "myField"; //$NON-NLS-1$
+	private static final String EXAMPLE_CLASS_NAME = "MyClass"; //$NON-NLS-1$
 
 	private final String[] CAPITALIZATION_VALUES = {
 			String.valueOf(PreferenceConstants.NAME_STYLE_CAPITALIZATION_ORIGINAL),
@@ -72,6 +73,10 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 	private static final Key KEY_CONSTANT_WORD_DELIMITER = getCDTUIKey(PreferenceConstants.NAME_STYLE_CONSTANT_WORD_DELIMITER);
 	private static final Key KEY_CONSTANT_PREFIX = getCDTUIKey(PreferenceConstants.NAME_STYLE_CONSTANT_PREFIX);
 	private static final Key KEY_CONSTANT_SUFFIX = getCDTUIKey(PreferenceConstants.NAME_STYLE_CONSTANT_SUFFIX);
+	private static final Key KEY_VARIABLE_CAPITALIZATION = getCDTUIKey(PreferenceConstants.NAME_STYLE_VARIABLE_CAPITALIZATION);
+	private static final Key KEY_VARIABLE_WORD_DELIMITER = getCDTUIKey(PreferenceConstants.NAME_STYLE_VARIABLE_WORD_DELIMITER);
+	private static final Key KEY_VARIABLE_PREFIX = getCDTUIKey(PreferenceConstants.NAME_STYLE_VARIABLE_PREFIX);
+	private static final Key KEY_VARIABLE_SUFFIX = getCDTUIKey(PreferenceConstants.NAME_STYLE_VARIABLE_SUFFIX);
 	private static final Key KEY_FIELD_CAPITALIZATION = getCDTUIKey(PreferenceConstants.NAME_STYLE_FIELD_CAPITALIZATION);
 	private static final Key KEY_FIELD_WORD_DELIMITER = getCDTUIKey(PreferenceConstants.NAME_STYLE_FIELD_WORD_DELIMITER);
 	private static final Key KEY_FIELD_PREFIX = getCDTUIKey(PreferenceConstants.NAME_STYLE_FIELD_PREFIX);
@@ -107,6 +112,10 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 				KEY_CONSTANT_WORD_DELIMITER,
 				KEY_CONSTANT_PREFIX,
 				KEY_CONSTANT_SUFFIX,
+				KEY_VARIABLE_CAPITALIZATION,
+				KEY_VARIABLE_WORD_DELIMITER,
+				KEY_VARIABLE_PREFIX,
+				KEY_VARIABLE_SUFFIX,
 				KEY_FIELD_CAPITALIZATION,
 				KEY_FIELD_WORD_DELIMITER,
 				KEY_FIELD_PREFIX,
@@ -149,18 +158,25 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 
 	private static Category[] createCategories() {
 		Category codeCategory = new Category(PreferencesMessages.NameStyleBlock_code_node); 
-//		new Category(PreferencesMessages.NameStyleBlock_constant_node,
-//				PreferencesMessages.NameStyleBlock_constant_node_description, EXAMPLE_CONSTANT_NAME,
-//				null)
-//				.setCapitalizationKey(KEY_CONSTANT_CAPITALIZATION)
-//				.setWordDelimiterKey(KEY_CONSTANT_WORD_DELIMITER)
-//				.setPrefixKey(KEY_CONSTANT_PREFIX)
-//				.setSuffixKey(KEY_CONSTANT_SUFFIX)
-//				.setNameValidator(IDENTIFIER_VALIDATOR);
-		// TODO(sprigogin): Unhide the field name style category
+		new Category(PreferencesMessages.NameStyleBlock_constant_node,
+				PreferencesMessages.NameStyleBlock_constant_node_description, EXAMPLE_CONSTANT_NAME,
+				codeCategory)
+				.setCapitalizationKey(KEY_CONSTANT_CAPITALIZATION)
+				.setWordDelimiterKey(KEY_CONSTANT_WORD_DELIMITER)
+				.setPrefixKey(KEY_CONSTANT_PREFIX)
+				.setSuffixKey(KEY_CONSTANT_SUFFIX)
+				.setNameValidator(IDENTIFIER_VALIDATOR);
+		new Category(PreferencesMessages.NameStyleBlock_variable_node,
+				PreferencesMessages.NameStyleBlock_variable_node_description, EXAMPLE_VARIABLE_NAME,
+				codeCategory)
+				.setCapitalizationKey(KEY_VARIABLE_CAPITALIZATION)
+				.setWordDelimiterKey(KEY_VARIABLE_WORD_DELIMITER)
+				.setPrefixKey(KEY_VARIABLE_PREFIX)
+				.setSuffixKey(KEY_VARIABLE_SUFFIX)
+				.setNameValidator(IDENTIFIER_VALIDATOR);
 		Category fieldCategory = new Category(PreferencesMessages.NameStyleBlock_field_node,
 				PreferencesMessages.NameStyleBlock_field_node_description, EXAMPLE_FIELD_NAME,
-				null)  // Hidden for now.
+				codeCategory)
 				.setCapitalizationKey(KEY_FIELD_CAPITALIZATION)
 				.setWordDelimiterKey(KEY_FIELD_WORD_DELIMITER)
 				.setPrefixKey(KEY_FIELD_PREFIX)

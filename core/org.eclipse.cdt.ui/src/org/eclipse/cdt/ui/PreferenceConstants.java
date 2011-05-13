@@ -1543,6 +1543,40 @@ public class PreferenceConstants {
 	public static final String NAME_STYLE_CONSTANT_WORD_DELIMITER = "nameStyle.constant.wordDelimiter"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls how capitalization of a variable name.
+	 * <p>
+	 * Value is of type <code>Integer</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_VARIABLE_CAPITALIZATION = "nameStyle.variable.capitalization"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls prefix of a variable name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_VARIABLE_PREFIX = "nameStyle.variable.prefix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls suffix of a variable name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_VARIABLE_SUFFIX = "nameStyle.variable.suffix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls delimiter that is inserted between words
+	 * of a variable name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.3
+	 */
+	public static final String NAME_STYLE_VARIABLE_WORD_DELIMITER = "nameStyle.variable.wordDelimiter"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that controls how capitalization of a field name.
 	 * <p>
 	 * Value is of type <code>Integer</code>.
@@ -2002,14 +2036,18 @@ public class PreferenceConstants {
 				CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME);
 
 		// Name Style
-		store.setDefault(NAME_STYLE_FIELD_CAPITALIZATION, NAME_STYLE_CAPITALIZATION_LOWER_CAMEL_CASE);
-		store.setDefault(NAME_STYLE_FIELD_PREFIX, ""); //$NON-NLS-1$
-		store.setDefault(NAME_STYLE_FIELD_SUFFIX, ""); //$NON-NLS-1$
-		store.setDefault(NAME_STYLE_FIELD_WORD_DELIMITER, ""); //$NON-NLS-1$
 		store.setDefault(NAME_STYLE_CONSTANT_CAPITALIZATION, NAME_STYLE_CAPITALIZATION_UPPER_CASE);
 		store.setDefault(NAME_STYLE_CONSTANT_PREFIX, ""); //$NON-NLS-1$
 		store.setDefault(NAME_STYLE_CONSTANT_SUFFIX, ""); //$NON-NLS-1$
 		store.setDefault(NAME_STYLE_CONSTANT_WORD_DELIMITER, "_"); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_VARIABLE_CAPITALIZATION, NAME_STYLE_CAPITALIZATION_LOWER_CAMEL_CASE);
+		store.setDefault(NAME_STYLE_VARIABLE_PREFIX, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_VARIABLE_SUFFIX, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_VARIABLE_WORD_DELIMITER, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_FIELD_CAPITALIZATION, NAME_STYLE_CAPITALIZATION_LOWER_CAMEL_CASE);
+		store.setDefault(NAME_STYLE_FIELD_PREFIX, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_FIELD_SUFFIX, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_FIELD_WORD_DELIMITER, ""); //$NON-NLS-1$
 		store.setDefault(NAME_STYLE_GETTER_CAPITALIZATION, NAME_STYLE_CAPITALIZATION_CAMEL_CASE);
 		store.setDefault(NAME_STYLE_GETTER_PREFIX, "get"); //$NON-NLS-1$
 		store.setDefault(NAME_STYLE_GETTER_PREFIX_FOR_BOOLEAN, "is"); //$NON-NLS-1$

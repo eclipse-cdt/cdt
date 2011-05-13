@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -8,6 +8,7 @@
  *  
  * Contributors: 
  *    Institute for Software - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractconstant;
 
@@ -23,7 +24,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
@@ -52,6 +55,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTEqualsInitializer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
@@ -65,9 +70,11 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescription;
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
+import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterNameGenerator;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.TranslationUnitHelper;
+import org.eclipse.cdt.internal.ui.util.NameComposer;
 
 /**
  * The central class of the Extract Constant Refactoring. Does all the work like checking pre- and 
@@ -154,16 +161,26 @@ public class ExtractConstantRefactoring extends CRefactoring {
 			}
 			final int len= nameString.length();
 			if (beginIndex < len && len > 0) {
-				nameString = nameString.substring(beginIndex, len-1);
+				nameString = nameString.substring(beginIndex, len - 1);
 			}
 			break;
 
 		default:
 			break;
 		}
-		
-		nameString = nameString.replaceAll("[\\W]", "_");   //$NON-NLS-1$//$NON-NLS-2$
-		return '_' + nameString;
+
+    	IPreferencesService preferences = Platform.getPreferencesService();
+    	int capitalization = preferences.getInt(CUIPlugin.PLUGIN_ID,
+    			PreferenceConstants.NAME_STYLE_CONSTANT_CAPITALIZATION,
+    			PreferenceConstants.NAME_STYLE_CAPITALIZATION_UPPER_CASE, null);
+    	String wordDelimiter = preferences.getString(CUIPlugin.PLUGIN_ID,
+    			PreferenceConstants.NAME_STYLE_CONSTANT_WORD_DELIMITER, "_", null); //$NON-NLS-1$
+    	String prefix = preferences.getString(CUIPlugin.PLUGIN_ID,
+						PreferenceConstants.NAME_STYLE_CONSTANT_PREFIX, "", null); //$NON-NLS-1$
+    	String suffix = preferences.getString(CUIPlugin.PLUGIN_ID,
+    			PreferenceConstants.NAME_STYLE_CONSTANT_SUFFIX, "", null); //$NON-NLS-1$
+    	NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);
+    	return composer.compose(nameString);
 	}
 
 	private ArrayList<String> findAllDeclaredNames() {
@@ -302,7 +319,7 @@ public class ExtractConstantRefactoring extends CRefactoring {
 					}
 				}
 
-				//Create all Changes for literals
+				// Create all Changes for literals
 				String constName = info.getName();
 				createLiteralToConstantChanges(constName, locLiteralsToReplace, collector);
 

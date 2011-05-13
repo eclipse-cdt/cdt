@@ -1139,7 +1139,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 			// another request that we now need to process
 			RequestMonitor sequenceCompletedRm = new RequestMonitor(getExecutor(), null) {
 				@Override
-				protected void handleCompleted() {
+				protected void handleSuccess() {
 					 fOngoingOperation = false;
 					 
 					 if (fOperationsPending.size() > 0) {
@@ -1149,6 +1149,15 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 						 executeWithTargetAvailable(info.ctx, info.steps, info.rm);
 					 }
 					 // no other rm.done() needs to be called, they have all been handled already
+				}
+				@Override
+				protected void handleFailure() {
+					// If the sequence failed, we have to give up on the operation(s).
+					// If we don't, we risk an infinite loop where we try, over and over
+					// to perform an operation that keeps on failing.
+					fOngoingOperation = false;
+					fOperationsPending.clear();
+					super.handleFailure();
 				}
 			};
 			

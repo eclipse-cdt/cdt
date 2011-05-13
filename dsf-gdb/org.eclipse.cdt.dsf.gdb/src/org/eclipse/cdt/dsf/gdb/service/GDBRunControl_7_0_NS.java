@@ -1153,7 +1153,13 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 					// If we don't, we risk an infinite loop where we try, over and over
 					// to perform an operation that keeps on failing.
 					fOngoingOperation = false;
-					fOperationsPending.clear();
+
+					// Complete each rm of the cancelled operations
+					while (fOperationsPending.size() > 0) {
+						RequestMonitor rm = fOperationsPending.poll().rm;
+						rm.setStatus(getStatus());
+						rm.done();
+					}
 					super.handleFailure();
 				}
 			};

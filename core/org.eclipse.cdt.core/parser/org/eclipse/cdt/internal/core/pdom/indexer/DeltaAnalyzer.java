@@ -94,7 +94,10 @@ public class DeltaAnalyzer {
 				final int rdkind = rd.getKind();
 				if (rdkind != IResourceDelta.ADDED) {
 					IResource res= rd.getResource();
-					if (res instanceof IFile && handled.add(res)) {
+					if (!handled.add(res)) {
+						continue;
+					}
+					if (res instanceof IFile) {
 						switch (rdkind) {
 						case IResourceDelta.CHANGED:
 							if ((rd.getFlags() & IResourceDelta.CONTENT) != 0) {

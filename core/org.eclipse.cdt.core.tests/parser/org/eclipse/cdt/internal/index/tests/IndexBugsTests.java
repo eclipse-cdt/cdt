@@ -2383,7 +2383,7 @@ public class IndexBugsTests extends BaseTestCase {
 	    };
 	    job.schedule();
 		job.join();
-		Thread.sleep(1000);
+		Thread.sleep(100);
 		waitForIndexer(fCProject);
 
 		index.acquireReadLock();

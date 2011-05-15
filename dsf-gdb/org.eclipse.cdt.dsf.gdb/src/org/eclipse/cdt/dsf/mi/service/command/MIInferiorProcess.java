@@ -36,6 +36,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
@@ -68,6 +69,13 @@ public class MIInferiorProcess extends Process
     implements IEventListener, ICommandListener 
 {
     
+	// Indicates that the inferior has been started
+	// This is important for the case of a restart
+	// where we need to make sure not to terminate
+	// the new inferior, which was not started yet.
+	private boolean fStarted;
+	
+	// Indicates that the inferior has been terminated
     private boolean fTerminated;
 
     private final OutputStream fOutputStream;
@@ -109,7 +117,7 @@ public class MIInferiorProcess extends Process
      * Creates an inferior process object which uses the given output stream 
      * to write the user standard input into.
      *  
-     * @param session The DsfSession this inferior belongs to
+     * @param container The process that this inferior represents
      * @param gdbOutputStream The output stream to use to write user IO into.
      * @since 4.0
      */
@@ -122,7 +130,7 @@ public class MIInferiorProcess extends Process
      * Creates an inferior process object which uses the given terminal 
      * to write the user standard input into.
      *  
-     * @param session The DsfSession this inferior belongs to
+     * @param container The process that this inferior represents
      * @param p The terminal to use to write user IO into.
      * @since 4.0
      */
@@ -411,16 +419,46 @@ public class MIInferiorProcess extends Process
     	if (e.getDMContext() instanceof IMIContainerDMContext) {
     		// For multi-process, make sure the exited event
     		// is actually for this inferior.
-    		// We must compare the groupId and not the full context
-    		// because the container that we hold is incomplete.
-    		String inferiorGroup = ((IMIContainerDMContext)fContainerDMContext).getGroupId();
-    		if (inferiorGroup == null || inferiorGroup.length() == 0) {
-    			// Single process case, so we know we have terminated
-    			setTerminated();
-    		} else {
-    			String terminatedGroup = ((IMIContainerDMContext)e.getDMContext()).getGroupId();
-    			if (inferiorGroup.equals(terminatedGroup)) {
-        			setTerminated();    				
+    		if (e.getDMContext().equals(fContainerDMContext)) {
+    			if (fStarted) {
+    				// Only mark this process as terminated if it was already
+    				// started.  This is to protect ourselves in the case of
+    				// a restart, where the new inferior is already created
+    				// and gets the exited event for the old inferior.
+    				setTerminated();
+    			}
+    		}
+    	}
+    }
+    
+    /**
+	 * @since 4.0
+	 */
+    @DsfServiceEventHandler
+    public void eventDispatched(IStartedDMEvent e) {
+    	if (e.getDMContext() instanceof IMIContainerDMContext) {
+    		// Mark the inferior started if the event is for this inferior.
+    		// We may get other started events in the cases of a restarts
+    		if (!fStarted) {
+    			// For multi-process, make sure the started event
+    			// is actually for this inferior.
+    			// We must compare the groupId and not the full context
+    			// because the container that we currently hold is incomplete
+    			// because the pid was not determined yet.
+    			String inferiorGroup = ((IMIContainerDMContext)fContainerDMContext).getGroupId();
+
+    			if (inferiorGroup == null || inferiorGroup.length() == 0) {
+    				// Single process case, so we know we have started
+    				fStarted = true;
+    				// Store the fully-formed container
+    				fContainerDMContext = (IMIContainerDMContext)e.getDMContext();
+    			} else {
+    				String startedGroup = ((IMIContainerDMContext)e.getDMContext()).getGroupId();
+    				if (inferiorGroup.equals(startedGroup)) {
+    					fStarted = true;
+        				// Store the fully-formed container
+        				fContainerDMContext = (IMIContainerDMContext)e.getDMContext();
+    				}
     			}
     		}
     	}

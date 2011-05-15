@@ -446,7 +446,13 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 			fBackend.interrupt();
 		}
 
-		startOrRestart(containerDmc, attributes, true, rm);
+		// For a restart, we are given the container context of the original process.  However, we want to start
+		// a new process with a new pid, so we should create a container for it, and not use the old container with the old pid.
+		// We must create the process dmc explicitly because using createContainerContextFromGroupId() may automatically insert
+		// the old pid.
+    	IProcessDMContext processDmc = createProcessContext(fGdb.getContext(), MIProcesses.UNKNOWN_PROCESS_ID);
+    	IContainerDMContext newContainerDmc = createContainerContext(processDmc, MIProcesses.UNIQUE_GROUP_ID);
+		startOrRestart(newContainerDmc, attributes, true, rm);
 	}
 	
 	/** @since 4.0 */

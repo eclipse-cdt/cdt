@@ -1244,8 +1244,24 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     	rm.done();
 	}
 	
+	/** 
+	 * Creates the container context that is to be used for the new process that will
+	 * be created by the restart operation.
+	 * This container does not have its pid yet, while the container of the process
+	 * that is being restarted does have its pid.
+	 * Also, for GDB 7.0 and 7.1, the groupId being the pid, we cannot use the old
+	 * container's groupId, but must use the default groupId until the pid is created.
+	 * 
+	 * @since 4.0
+	 */
+	protected IMIContainerDMContext createContainerContextForRestart(String groupId) {
+    	IProcessDMContext processDmc = createProcessContext(fCommandControl.getContext(), MIProcesses.UNKNOWN_PROCESS_ID);
+    	// Don't use the groupId passed in, since it is the old pid.
+		return createContainerContext(processDmc, MIProcesses.UNIQUE_GROUP_ID);
+	}
+	
 	/** @since 4.0 */
-	public void restart(final IContainerDMContext containerDmc, final Map<String, Object> attributes, final DataRequestMonitor<IContainerDMContext> rm) {
+	public void restart(IContainerDMContext containerDmc, final Map<String, Object> attributes, final DataRequestMonitor<IContainerDMContext> rm) {
 		fProcRestarting = true;
 		
 		// Before performing the restart, check if the process is properly suspended.
@@ -1259,12 +1275,19 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		// This required more changes than suspending the process, so it was not done
 		// just yet.
 		// Bug 246740
+
+		final String groupId = ((IMIContainerDMContext)containerDmc).getGroupId();
 		
 		// This request monitor actually performs the restart
 		RequestMonitor restartRm = new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
 			@Override
 			protected void handleSuccess() {
-				startOrRestart(containerDmc, attributes, true, new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm) {
+				// For a restart, we are given the container context of the original process.  However, we want to start
+				// a new process with a new pid, so we should create a container for it, and not use the old container with the old pid.
+				// Pass in the groupId because starting with GDB 7.2, we must re-use the same groupId.
+				IContainerDMContext newContainerDmc = createContainerContextForRestart(groupId);
+
+				startOrRestart(newContainerDmc, attributes, true, new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm) {
 					@Override
 					protected void handleCompleted() {
 						if (!isSuccess()) {

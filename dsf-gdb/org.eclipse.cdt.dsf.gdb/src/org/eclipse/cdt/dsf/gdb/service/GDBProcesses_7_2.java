@@ -343,7 +343,23 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		return new DebugNewProcessSequence_7_2(executor, isInitial, dmc, file, attributes, rm);
 	}
 	
-	
+	/** 
+	 * Creates the container context that is to be used for the new process that will
+	 * be created by the restart operation.
+	 * This container does not have its pid yet, while the container of the process
+	 * that is being restarted does have its pid.
+	 * Starting with GDB 7.2, the groupId stays the same when restarting a process, so
+	 * we should re-use it; this is particularly important since we support multi-process
+	 * and we need the proper groupId
+	 * 
+	 * @since 4.0
+	 */
+	@Override
+	protected IMIContainerDMContext createContainerContextForRestart(String groupId) {
+    	IProcessDMContext processDmc = createProcessContext(fCommandControl.getContext(), MIProcesses.UNKNOWN_PROCESS_ID);
+		return createContainerContext(processDmc, groupId);
+	}
+
 	@Override
 	public void restart(final IContainerDMContext containerDmc, Map<String, Object> attributes,
             			DataRequestMonitor<IContainerDMContext> rm) {
@@ -360,9 +376,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		});
 	}
 	
-    /**
-     * @since 4.0
-      */
+    /** @since 4.0 */
     @DsfServiceEventHandler
     @Override
     public void eventDispatched(IExitedDMEvent e) {

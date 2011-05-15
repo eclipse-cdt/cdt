@@ -68,7 +68,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	private DsfServicesTracker fTracker;
 
 	// This variable will be used to store the original container context,
-	// but once the new process is start (restarted), it will contain the new
+	// but once the new process is started (restarted), it will contain the new
 	// container context.  This new container context has for parent the process
 	// context, which holds the new pid.
 	private IContainerDMContext fContainerDmc;
@@ -305,10 +305,9 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		    	final Process inferior = inferiorProcess;
 				final ILaunch launch = (ILaunch)getContainerContext().getAdapter(ILaunch.class);
 				
-				// This is the groupId of the current process.
-				// In the case of a restart for GDB 7.0 or 7.1, this groupId will _not_ be the one
-				// of the new process, since the pid is used for groupId.
-				final String currentGroupId = ((IMIContainerDMContext)getContainerContext()).getGroupId();
+				// This is the groupId of the new process that will be started, even in the
+				// case of a restart.
+				final String groupId = ((IMIContainerDMContext)getContainerContext()).getGroupId();
 
 				// For multi-process, we cannot simply use the name given by the backend service
 				// because we may not be starting that process, but another one.
@@ -331,7 +330,6 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 				DebugPlugin.getDefault().asyncExec(new Runnable() {
 					public void run() {
 						String label = pathLabel;
-						String groupId = currentGroupId;
 						
 						if (fRestart) {
 							// For a restart, remove the old inferior
@@ -344,19 +342,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 			        				// with single process debugging so the one process is the one we want.
 			        				// If the groupAttribute is set, then we must make sure it is the proper inferior
 			        				if (groupAttribute == null || groupAttribute.equals(MIProcesses.UNIQUE_GROUP_ID) ||
-			        						groupAttribute.equals(groupId)) {
-			        					
-			        					// For GDB 7.0 and 7.1, the groupId of the new process will not be the same as
-			        					// the groupId of the old process, after the restart; we cannot know the new
-			        					// groupId yet since it will be the process pid, so we should use 
-			        					// MIProcesses.UNIQUE_GROUP_ID.  Starting with GDB 7.2, the groupId stays
-			        					// the same after a restart.  We can use the groupId that was stored with
-			        					// the previous inferior to make sure we have the proper value.
-			        					// Note that in the case of an attach, where the groupId is already set
-			        					// even for GDB 7.0 and 7.1, but won't stay the same, we don't have an inferior 
-			        					// at all, so we don't need to worry about that case.
-			        					groupId = groupAttribute;
-			        					
+			        						groupAttribute.equals(groupId)) {			        					
 			        					launch.removeProcess(process);
 			        					// Use the exact same label as before
 			        					label = process.getLabel();

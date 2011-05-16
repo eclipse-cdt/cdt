@@ -30,6 +30,8 @@ cp /home/data/httpd/download.eclipse.org/technology/subversive/0.7/pde-update-si
 	org.eclipse.releng.basebuilder/plugins
 cd ..
 
+export CDT_BUILD_VMARGS=-Xms512M -Xmx1024M
+
 # Let's go!
 java $CDT_BUILD_VMARGS -jar tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar \
 	-Djvm1.5=/opt/public/common/jdk-1.5.0_16/bin/java \

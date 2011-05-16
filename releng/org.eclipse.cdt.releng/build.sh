@@ -25,7 +25,7 @@ cd `dirname $0`
 # Checkout basebuilder to run the build
 mkdir -p tools
 cd tools
-cvs -d /cvsroot/eclipse	co -r r36x_v20101125 org.eclipse.releng.basebuilder
+cvs -d /cvsroot/eclipse	co -r R37_M7 org.eclipse.releng.basebuilder
 cp /home/data/httpd/download.eclipse.org/technology/subversive/0.7/pde-update-site/plugins/org.eclipse.team.svn.pde.build_*.jar \
 	org.eclipse.releng.basebuilder/plugins
 cd ..

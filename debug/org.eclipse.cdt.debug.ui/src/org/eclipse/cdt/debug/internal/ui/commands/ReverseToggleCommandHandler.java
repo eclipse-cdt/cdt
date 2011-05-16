@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2010, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,6 +85,7 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
             fContextService.removePostDebugContextListener(this);
         }
         fTargetAdapter = null;
+        fActiveContext = null;
         super.dispose();
     }
 
@@ -94,6 +95,7 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
 
     private void refresh(ISelection selection) {
        fTargetAdapter = null;
+       fActiveContext = null;
         if (selection instanceof IStructuredSelection) {
             IStructuredSelection ss = (IStructuredSelection) selection;
             if (!ss.isEmpty()) {

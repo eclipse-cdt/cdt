@@ -140,7 +140,7 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 			if (binding instanceof ICPPMethod) {
 				ICPPMethod methodBinding = (ICPPMethod) binding;
 				if (methodBinding.isPureVirtual()) {
-					return false; //�pure virtual not handled for now, see bug 303870
+					return false; // Pure virtual not handled for now, see bug 303870
 				}
 			}
 			

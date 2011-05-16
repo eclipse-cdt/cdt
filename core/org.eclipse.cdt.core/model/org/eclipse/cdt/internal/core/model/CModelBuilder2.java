@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -592,10 +592,6 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		
 		// add to parent
 		parent.addChild(element);
-		final IASTEnumerator[] enumerators= enumSpecifier.getEnumerators();
-		for (final IASTEnumerator enumerator : enumerators) {
-			createEnumerator(element, enumerator);
-		}
 		EnumerationInfo info= (EnumerationInfo) getElementInfo(element);
 		// set enumeration position
 		if (astEnumName != null && enumName.length() > 0) {
@@ -603,6 +599,11 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		} else {
 			final IASTFileLocation enumLocation= enumSpecifier.getFileLocation();
 			info.setIdPos(enumLocation.getNodeOffset(), type.length());
+		}
+		// add enumerators 
+		final IASTEnumerator[] enumerators= enumSpecifier.getEnumerators();
+		for (final IASTEnumerator enumerator : enumerators) {
+			createEnumerator(element, enumerator);
 		}
 		setBodyPosition(info, enumSpecifier);
 		info.setTypeName(type);

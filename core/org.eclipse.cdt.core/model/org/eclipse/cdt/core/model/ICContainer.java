@@ -42,7 +42,7 @@ public interface ICContainer extends ICElement, IParent, IOpenable {
 	ITranslationUnit[] getTranslationUnits() throws CModelException;
 
 	/**
-	 * Returns the tranlation unit with the specified name
+	 * Returns the translation unit with the specified name
 	 * in this container (for example, <code>"foobar.c"</code>).
 	 * The name has to be a valid translation unit name.
 	 * This is a handle-only operation.  The celement

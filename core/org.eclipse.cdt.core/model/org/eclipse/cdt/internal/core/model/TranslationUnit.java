@@ -111,7 +111,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public TranslationUnit(ICElement parent, URI uri, String idType) {
-		super(parent, (IResource)null, uri.toString(), ICElement.C_UNIT);
+		super(parent, (IResource) null, uri.toString(), ICElement.C_UNIT);
 		location= uri;
 		setContentTypeID(idType);
 	}
@@ -120,8 +120,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return this;
 	}
 
-	public IInclude createInclude(String includeName, boolean isStd, ICElement sibling, IProgressMonitor monitor)
-		throws CModelException {
+	public IInclude createInclude(String includeName, boolean isStd, ICElement sibling,
+			IProgressMonitor monitor) throws CModelException {
 		CreateIncludeOperation op = new CreateIncludeOperation(includeName, isStd, this);
 		if (sibling != null) {
 			op.createBefore(sibling);
@@ -130,7 +130,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return getInclude(includeName);
 	}
 
-	public IUsing createUsing(String usingName, boolean isDirective, ICElement sibling, IProgressMonitor monitor) throws CModelException {
+	public IUsing createUsing(String usingName, boolean isDirective, ICElement sibling,
+			IProgressMonitor monitor) throws CModelException {
 		CreateIncludeOperation op = new CreateIncludeOperation(usingName, isDirective, this);
 		if (sibling != null) {
 			op.createBefore(sibling);
@@ -139,7 +140,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return getUsing(usingName);
 	}
 
-	public INamespace createNamespace(String namespace, ICElement sibling, IProgressMonitor monitor) throws CModelException {
+	public INamespace createNamespace(String namespace, ICElement sibling,
+			IProgressMonitor monitor) throws CModelException {
 		CreateNamespaceOperation op = new CreateNamespaceOperation(namespace, this);
 		if (sibling != null) {
 			op.createBefore(sibling);

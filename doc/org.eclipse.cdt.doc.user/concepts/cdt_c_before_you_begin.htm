@@ -12,7 +12,7 @@
 
 <p>Depending on how you obtained the CDT, you might have also received
 a toolchain with a built-in CDT integration.
-However, if you downloaded the CDT from the Eclipse repository, then you will require a toolchain before
+However, if you downloaded the CDT from the Eclipse web site, then you will require a toolchain before
 you can build and debug any projects.</p>
 
 <p>The standard CDT supports integration with the GNU toolchain.
@@ -27,19 +27,27 @@ is the best choice to get started.
 It is important to understand the difference between them.
 Cygwin produces executables that use the Cygwin POSIX runtime. Note that this runtime is GPL licensed.
 MinGW produces native Windows executables that do not require a separate runtime.</p>
+
 <ul>
-<li><p>For <strong>MinGW</strong>, the recommended method to get the toolchain is to install it
-from the Wascana project at Eclipse Labs,
-<a href="http://www.eclipselabs.org/p/wascana">http://www.eclipselabs.org/p/wascana</a>.
-Wascana includes the MinGW toolchain as well as a number of open source libraries that can be used
-for Windows development.
-See the Wascana site for installation instructions.</p><br>
-<p>As an alternative, the MinGW site itself, <a href="http://www.mingw.org">http://www.mingw.org</a>
-also has an installer. The CDT will find that install if it is placed in the default C:\MinGW
-directory.</p><br></li>
+<li><p>For <strong>MinGW</strong>, it is recommended to use the MinGW installer, mingw-get, to manage your
+MinGW installation. Download and run the lateset mingw-get-inst package from the
+<a href="http://sourceforge.net/projects/mingw/files">MinGW Downloads page.</a>
+The CDT MinGW toolchain will find this install if it is located in the default C:\MinGW directory, the MinGW bin
+directory is placed in your path, or if the MinGW location is stored in the MINGW_HOME environment variable.</p>
+<p>Note that the Wascana IDE has been discontinued.</p>
+</li>
+
 <li><p><strong>Cygwin</strong> can be install from the Cygwin site at
 <a href="http://www.cygwin.com">http://www.cygwin.com</a>. You need to manually select
-the gcc, gdb, and make packages to install the toolchain.</p></li>
+the gcc, gdb, and make packages to install the toolchain.</p>
+</li>
+
+<li><p>The <strong>Windows SDK</strong> provides the Visual C++ compiler and header files and libraries required
+to create Windows applications. The CDT Visual C++ build integration will find these files based on where you installed
+the SDK. No other setup is required.</p>
+<p><i>Note:</i> For this release, the integration should be considered beta quality. It is not recommended for
+production use.</p>
+</li>
 </ul>
 
 <h2>Linux</h2>

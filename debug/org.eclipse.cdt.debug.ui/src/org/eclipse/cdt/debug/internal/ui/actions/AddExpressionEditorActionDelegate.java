@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ public class AddExpressionEditorActionDelegate extends ActionDelegate implements
 		fEditorPart = editorPart;
 	}
 
+	@Override
 	public void run( IAction action ) {
 		String text = getSelectedText();
 		ExpressionDialog dlg = new ExpressionDialog( getShell(), text );
@@ -66,7 +67,7 @@ public class AddExpressionEditorActionDelegate extends ActionDelegate implements
 	private String getSelectedText() {
 		ISelection selection = getTargetSelection();
 		if ( selection != null && selection instanceof ITextSelection ) {
-			return ((ITextSelection)selection).getText().trim();
+			return ((ITextSelection)selection).getText().replaceAll("(\\r\\n|\\n|\\t| )+", " ").trim(); //$NON-NLS-1$ //$NON-NLS-2$;
 		}
 		return ""; //$NON-NLS-1$
 	}

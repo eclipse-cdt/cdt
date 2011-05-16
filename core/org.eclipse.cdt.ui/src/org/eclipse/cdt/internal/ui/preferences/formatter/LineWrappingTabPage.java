@@ -520,7 +520,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		    " << '/' << setw(2) << day << endl;" + //$NON-NLS-1$
 		    "}", //$NON-NLS-1$
 		    FormatterMessages.LineWrappingTabPage_stream_output,
-	    	FormatterMessages.LineWrappingTabPage_stream_output
+	    	FormatterMessages.LineWrappingTabPage_stream_output_lowercase
 		);
 
 //	private final Category fEnumConstArgumentsCategory= new Category(

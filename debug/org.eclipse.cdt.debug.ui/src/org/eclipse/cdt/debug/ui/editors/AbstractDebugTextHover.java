@@ -451,7 +451,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 			job.join();
 		} catch (InterruptedException exc) {
 			job.cancel();
-			Thread.currentThread().interrupt();
+			return ""; //$NON-NLS-1$
 		}
 		if (!job.getResult().isOK()) {
 			// indeterminate result

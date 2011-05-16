@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 QNX Software Systems and others.
+ * Copyright (c) 2005, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - initial API and implementation
  *     Sergey Prigogin, Google
  *     Anton Leherbauer (Wind River Systems)
+ *     Patrick Hofer (bug #345809)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -24,6 +25,7 @@ import org.eclipse.swt.widgets.Tree;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.ui.editor.CContentOutlinerProvider;
 import org.eclipse.cdt.internal.ui.editor.LexicalSortingAction;
@@ -76,7 +78,10 @@ public class COutlineInformationControl extends AbstractInformationControl {
         treeViewer.setContentProvider(fOutlineContentProvider);
         fSortingAction= new LexicalSortingAction(treeViewer, ".isChecked"); //$NON-NLS-1$
 		treeViewer.addFilter(new NamePatternFilter());
-		treeViewer.setLabelProvider(new DecoratingCLabelProvider(new AppearanceAwareLabelProvider(TEXT_FLAGS,
+		long textFlags = TEXT_FLAGS;
+		if (PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS))
+			textFlags = textFlags | CElementLabels.M_SIMPLE_NAME | CElementLabels.F_SIMPLE_NAME;
+		treeViewer.setLabelProvider(new DecoratingCLabelProvider(new AppearanceAwareLabelProvider(textFlags,
 				IMAGE_FLAGS), true));
         treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
         return treeViewer;

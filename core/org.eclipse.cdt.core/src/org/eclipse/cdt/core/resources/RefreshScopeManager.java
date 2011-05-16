@@ -21,6 +21,8 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -35,11 +37,10 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The RefreshScopeManager provides access to settings pertaining to refreshes performed during
@@ -59,6 +60,10 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class RefreshScopeManager {
 
+	public static final String PROJECT_VALUE = "PROJECT"; //$NON-NLS-1$
+	public static final String FOLDER_VALUE = "FOLDER"; //$NON-NLS-1$
+	public static final String FILE_VALUE = "FILE"; //$NON-NLS-1$
+	public static final String RESOURCE_TYPE_ATTRIBUTE_NAME = "resourceType"; //$NON-NLS-1$
 	public static final String WORKSPACE_PATH_ATTRIBUTE_NAME = "workspacePath"; //$NON-NLS-1$
 	public static final String RESOURCE_ELEMENT_NAME = "resource"; //$NON-NLS-1$
 	public static final String VERSION_NUMBER_ATTRIBUTE_NAME = "versionNumber"; //$NON-NLS-1$
@@ -69,6 +74,7 @@ public class RefreshScopeManager {
 	public static final String EXCLUSION_CLASS = "exclusionClass"; //$NON-NLS-1$
 	public static final String FACTORY_CLASS = "factoryClass"; //$NON-NLS-1$
 	public static final String INSTANCE_CLASS = "instanceClass"; //$NON-NLS-1$
+	public static final String OTHER_VALUE = "OTHER"; //$NON-NLS-1$
 	private int fVersion = 1;
 	
 	private HashMap<IProject, LinkedHashSet<IResource>> fProjectToResourcesMap;
@@ -79,7 +85,7 @@ public class RefreshScopeManager {
 	private boolean fIsLoading = false;
 	private boolean fIsLoaded = false;
 	
-	private RefreshScopeManager(){
+	private RefreshScopeManager() {
 		fClassnameToExclusionFactoryMap = new HashMap<String, RefreshExclusionFactory>();
 		loadExtensions();
 		try {
@@ -87,28 +93,32 @@ public class RefreshScopeManager {
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		
-		// add a resource change listener that will try to load settings for projects when they open
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
 
-			public void resourceChanged(IResourceChangeEvent event) {
-				
-				if(event.getType() == IResourceChangeEvent.PRE_CLOSE || event.getType() == IResourceChangeEvent.PRE_DELETE) {
-					IProject project = event.getResource().getProject();
-					
-					try {
-						if(project.exists() && project.isOpen() && project.hasNature(CProjectNature.C_NATURE_ID)) {
-							clearDataForProject(project);
+		// Add a resource change listener that will try to load settings for projects when they open
+		// and delete settings when projects are deleted or closed.
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+				new IResourceChangeListener() {
+
+					public void resourceChanged(IResourceChangeEvent event) {
+
+						if (event.getType() == IResourceChangeEvent.PRE_CLOSE
+								|| event.getType() == IResourceChangeEvent.PRE_DELETE) {
+							IProject project = event.getResource().getProject();
+
+							try {
+								if (project.exists() && project.isOpen()
+										&& project.hasNature(CProjectNature.C_NATURE_ID)) {
+									clearDataForProject(project);
+								}
+							} catch (CoreException e) {
+								// should never happen due to checks above
+							}
+
+							return;
 						}
-					} catch (CoreException e) {
-						// should never happen due to checks above
-					}
-					
-					return;
-				}
-				
-				IResourceDelta delta = event.getDelta();
-				
+
+						IResourceDelta delta = event.getDelta();
+
 						if (delta != null) {
 							try {
 								delta.accept(new IResourceDeltaVisitor() {
@@ -118,16 +128,20 @@ public class RefreshScopeManager {
 											IProject project = (IProject) delta.getResource();
 
 											if (delta.getKind() == IResourceDelta.ADDED
-													|| (delta.getKind() == IResourceDelta.CHANGED && ((delta.getFlags() & IResourceDelta.OPEN) != 0)
-													&& ((delta.getFlags() & IResourceDelta.REMOVED) != 0))) /* don't load for deleted projects */{
-												loadSettings(ResourcesPlugin.getWorkspace()
-														.getRoot(), project);
+													|| (delta.getKind() == IResourceDelta.CHANGED && ((delta.getFlags() & IResourceDelta.OPEN) != 0) ) ) {
+												
+												loadSettings(ResourcesPlugin.getWorkspace().getRoot(), project);
 												return false;
+												
 											}
 
 										}
 
-										return true;
+										else if (delta.getResource() instanceof IWorkspaceRoot) {
+											return true;
+										}
+											
+										return false;
 									}
 
 								});
@@ -137,9 +151,11 @@ public class RefreshScopeManager {
 							}
 						}
 
-			}
-			
-		}, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);
+					}
+
+				},
+				IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_CLOSE
+						| IResourceChangeEvent.PRE_DELETE);
 	}
 	
 	public synchronized void loadExtensions() {
@@ -221,10 +237,10 @@ public class RefreshScopeManager {
 		LinkedHashSet<IResource> resources = fProjectToResourcesMap.get(project);
 		
 		if (resources == null) {
+			// there are no settings yet for the project, setup the defaults
 			resources = new LinkedHashSet<IResource>();
 			resources.add(project);
 			fProjectToResourcesMap.put(project, resources);
-			
 		}	
 		
 		return new LinkedList<IResource>(resources);
@@ -264,16 +280,9 @@ public class RefreshScopeManager {
 	
 	public synchronized void clearResourcesToRefresh(IProject project) {
 		getProjectToResourcesMap();
-		LinkedHashSet<IResource> resourceSet = fProjectToResourcesMap.get(project);
+		LinkedHashSet<IResource> resourceSet = null;
 		
-		if(resourceSet == null) {
-			resourceSet = new LinkedHashSet<IResource>();
-			fProjectToResourcesMap.put(project, resourceSet);
-			return;
-		}
-		
-		resourceSet.clear();
-		
+		fProjectToResourcesMap.put(project, resourceSet);
 	}
 	
 	public synchronized void clearAllResourcesToRefresh() {
@@ -337,43 +346,67 @@ public class RefreshScopeManager {
 		exclusions.remove(exclusion);
 	}
 	
-	public synchronized void persistSettings(ICProjectDescription projectDescription) throws CoreException {
+	public synchronized void persistSettings(ICProjectDescription projectDescription)
+			throws CoreException {
 		getProjectToResourcesMap();
 		getResourcesToExclusionsMap();
-		for (IProject project : fProjectToResourcesMap.keySet()) {
-			if (!project.exists()) {
-				continue;
-			}
+		IProject project = projectDescription.getProject();
 
-			// serialize all settings for the project to the C Project Description
-			if (project.isOpen()) {
-				if (project.hasNature(CProjectNature.C_NATURE_ID)) {
-					
-					ICStorageElement storageElement = projectDescription.getStorage(REFRESH_SCOPE_STORAGE_NAME, true);
-					storageElement.clear();
-					
-					storageElement.setAttribute(VERSION_NUMBER_ATTRIBUTE_NAME, Integer.toString(fVersion));
+		if (!project.exists()) {
+			return;
+		}
 
-					for (IResource resource : fProjectToResourcesMap.get(project)) {
+		// serialize all settings for the project to the C Project Description
+		if (project.isOpen()) {
+			if (project.hasNature(CProjectNature.C_NATURE_ID)) {
 
-						// create a resource node
-						ICStorageElement resourceElement = storageElement.createChild(RESOURCE_ELEMENT_NAME);
-						resourceElement.setAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME, resource
-								.getFullPath().toString());
+				ICStorageElement storageElement = projectDescription.getStorage(
+						REFRESH_SCOPE_STORAGE_NAME, true);
+				storageElement.clear();
+
+				storageElement.setAttribute(VERSION_NUMBER_ATTRIBUTE_NAME,
+						Integer.toString(fVersion));
+
+				for (IResource resource : fProjectToResourcesMap.get(project)) {
+
+					// create a resource node
+					ICStorageElement resourceElement = storageElement
+							.createChild(RESOURCE_ELEMENT_NAME);
+					resourceElement.setAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME, resource
+							.getFullPath().toString());
 					
-						// populate the node with any exclusions
-						List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
-						if (exclusions != null) {
-							for (RefreshExclusion exclusion : exclusions) {
-								exclusion.persistData(resourceElement);
-							}
+					String resourceTypeString = null;
+					
+					if(resource instanceof IFile) {
+						resourceTypeString = FILE_VALUE;
+					}
+					
+					else if(resource instanceof IFolder) {
+						resourceTypeString = FOLDER_VALUE;
+					}
+					
+					else if(resource instanceof IProject) {
+						resourceTypeString = PROJECT_VALUE;
+					}
+					
+					else {
+						resourceTypeString = OTHER_VALUE;
+					}
+					resourceElement.setAttribute(RESOURCE_TYPE_ATTRIBUTE_NAME, resourceTypeString);
+
+					// populate the node with any exclusions
+					List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
+					if (exclusions != null) {
+						for (RefreshExclusion exclusion : exclusions) {
+							exclusion.persistData(resourceElement);
 						}
-
 					}
 
 				}
+
 			}
 		}
+
 	}
 	
 	public synchronized void loadSettings() throws CoreException {
@@ -397,15 +430,18 @@ public class RefreshScopeManager {
 	 * @param project
 	 * @throws CoreException
 	 */
-	private synchronized void loadSettings(IWorkspaceRoot workspaceRoot, IProject project)
+	public synchronized void loadSettings(IWorkspaceRoot workspaceRoot, IProject project)
 			throws CoreException {
 		if (project.isOpen()) {
 			if (project.hasNature(CProjectNature.C_NATURE_ID)) {
-				ICProjectDescription projectDescription = CProjectDescriptionManager.getInstance()
-						.getProjectDescription(project, false);
+				CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
+				ICProjectDescription projectDescription = descriptionManager.getProjectDescription(project, false);
 				
-				if(projectDescription == null) {
-					throw new CoreException(CCorePlugin.createStatus(MessageFormat.format(Messages.RefreshScopeManager_4, project.getName())));
+				if (projectDescription == null) {
+					// then there's nothing to load... could be an old project that pre-dates the project description's
+					// existence, or the project could have been just created but the project description hasn't been
+					// created yet.  Either way, just do nothing, because there's nothing to load.
+					return;
 				}
 				
 				ICStorageElement storageElement = projectDescription.getStorage(
@@ -426,16 +462,51 @@ public class RefreshScopeManager {
 						String resourcePath = child.getAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME);
 
 						if (resourcePath == null) {
-							// error
+							// error... skip this resource
+							continue;
 
 						}
 
 						else {
+							String resourceTypeString = child.getAttribute(RESOURCE_TYPE_ATTRIBUTE_NAME);
+							
+							if(resourceTypeString == null) {
+								// we'll do our best, but we won't be able to create handles to non-existent resources
+								resourceTypeString = OTHER_VALUE;
+							}
+							
 							// find the resource
-							IResource resource = workspaceRoot.findMember(resourcePath);
+							IResource resource = null;
+
+							
+
+							if (resourceTypeString.equals(PROJECT_VALUE)) {
+								resource = workspaceRoot.getProject(resourcePath);
+							}
+
+							else if (resourceTypeString.equals(FILE_VALUE)) {
+								resource = workspaceRoot.getFile(new Path(resourcePath));
+							}
+
+							else if (resourceTypeString.equals(FOLDER_VALUE)) {
+								resource = workspaceRoot.getFolder(new Path(resourcePath));
+							}
+
+							else {
+								// Find arbitrary resource.
+								// The only way to do this is to ask the workspace root to find
+								// it, if it exists. If it doesn't exist, we have no way of
+								// creating a handle to the right type of object, so we must
+								// give up. In practice, this would likely happen if we had
+								// a virtual group resource that has been deleted somehow since
+								// the settings were created, and since the resource is virtual,
+								// it's impossible to refresh it if it doesn't exist anyway.
+								resource = workspaceRoot.findMember(resourcePath);
+							}
 
 							if (resource == null) {
-								// error
+								// error.. skip this resource
+								continue;
 							}
 
 							else {

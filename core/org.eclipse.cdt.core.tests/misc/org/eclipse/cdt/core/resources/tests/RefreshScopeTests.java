@@ -368,7 +368,7 @@ public class RefreshScopeTests extends TestCase {
 		// now refresh
 		IWorkspaceRunnable runnable = manager.getRefreshRunnable(fProject);
 		try {
-			ResourcesPlugin.getWorkspace().run(runnable, manager.getRefreshSchedulingRule(fProject), IWorkspace.AVOID_UPDATE, null);
+			ResourcesPlugin.getWorkspace().run(runnable, null, IWorkspace.AVOID_UPDATE, null);
 		} catch (CoreException e) {
 			fail();
 		}

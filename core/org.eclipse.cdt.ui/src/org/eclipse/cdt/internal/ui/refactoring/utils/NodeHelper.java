@@ -107,11 +107,11 @@ public class NodeHelper {
 		while (node != null && !found) {
 			node = node.getParent();
 			if (node instanceof IASTFunctionDeclarator) {
-				name=((IASTFunctionDeclarator)node).getName();
+				name = ((IASTFunctionDeclarator) node).getName();
 				found = true;
 				context.setType(MethodContext.ContextType.FUNCTION);
 			} else if (node instanceof IASTFunctionDefinition) {
-				name=CPPVisitor.findInnermostDeclarator(((IASTFunctionDefinition)node).getDeclarator()).getName();
+				name = CPPVisitor.findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator()).getName();
 				found = true;
 				context.setType(MethodContext.ContextType.FUNCTION);
 			} 
@@ -160,7 +160,8 @@ public class NodeHelper {
 				IASTName declName = DeclarationFinder.findDeclarationInTranslationUnit(locTu, tmpname);
 				if (declName != null) {
 					IASTNode methoddefinition = declName.getParent().getParent();
-					if (methoddefinition instanceof IASTSimpleDeclaration || methoddefinition instanceof IASTFunctionDefinition) {
+					if (methoddefinition instanceof IASTSimpleDeclaration ||
+							methoddefinition instanceof IASTFunctionDefinition) {
 						context.setMethodDeclarationName(declName);
 					}
 				}
@@ -206,7 +207,8 @@ public class NodeHelper {
 		if (simpleDeclaration == null) {
 			return false;
 		}
-		return simpleDeclaration.getDeclarators().length == 1 && simpleDeclaration.getDeclarators()[0] instanceof ICPPASTFunctionDeclarator;
+		return simpleDeclaration.getDeclarators().length == 1 &&
+				simpleDeclaration.getDeclarators()[0] instanceof ICPPASTFunctionDeclarator;
 	}
 
 	public static boolean isContainedInTemplateDeclaration(IASTNode node) {

@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
@@ -31,7 +31,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 /**
  * Represents a function or method and adds some useful helper methods to
  * determine if methods are in the same class.
- *
  */
 public class MethodContext {
 	public enum ContextType{ NONE, FUNCTION, METHOD }
@@ -204,7 +203,8 @@ public class MethodContext {
 
 	private static ICPPClassType getClassBinding(IASTName declName1) {
 		if (declName1.getParent().getParent().getParent() instanceof ICPPASTCompositeTypeSpecifier) {
-			ICPPASTCompositeTypeSpecifier compTypeSpec = (ICPPASTCompositeTypeSpecifier) declName1.getParent().getParent().getParent();
+			ICPPASTCompositeTypeSpecifier compTypeSpec =
+					(ICPPASTCompositeTypeSpecifier) declName1.getParent().getParent().getParent();
 			return (ICPPClassType) compTypeSpec.getName().resolveBinding();
 		}
 		return null;

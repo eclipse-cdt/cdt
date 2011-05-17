@@ -132,7 +132,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 */
 	@Override
 	public boolean exists() {
-		// working copy always exists in the model until it is detroyed
+		// working copy always exists in the model until it is destroyed
 		return this.useCount != 0;
 	}
 
@@ -141,7 +141,6 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 */
 	@Override
 	public IBufferFactory getBufferFactory(){
-
 		return this.bufferFactory;
 	}
 
@@ -255,8 +254,8 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			return false;
 		}
 		try {
-			// if resource got deleted, then #getModificationStamp() will answer IResource.NULL_STAMP, which is always different from the cached
-			// timestamp
+			// If resource got deleted, then #getModificationStamp() will answer
+			// IResource.NULL_STAMP, which is always different from the cached timestamp.
 			return ((TranslationUnitInfo) getElementInfo()).fTimestamp == ((IFile) resource).getModificationStamp();
 		} catch (CModelException e) {
 			return false;
@@ -374,7 +373,8 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		if (isReadOnly()) {
 			throw new CModelException(new CModelStatus(ICModelStatusConstants.READ_ONLY, this));
 		}
-		// computes fine-grain deltas in case the working copy is being reconciled already (if not it would miss one iteration of deltas).
+		// computes fine-grain deltas in case the working copy is being reconciled already
+		// (if not it would miss one iteration of deltas).
 		this.reconcile();   
 	}
 

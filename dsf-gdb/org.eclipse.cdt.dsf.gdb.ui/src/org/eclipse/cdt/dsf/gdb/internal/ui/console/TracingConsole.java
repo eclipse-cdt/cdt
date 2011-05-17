@@ -82,11 +82,15 @@ public class TracingConsole extends IOConsole {
 			fTracingStream.close();
 		} catch (IOException e) {
 		}
-        fSession.getExecutor().submit(new DsfRunnable() {
-        	public void run() {
-        		fSession.removeServiceEventListener(TracingConsole.this);
-        	}
-        });
+        try {
+        	fSession.getExecutor().submit(new DsfRunnable() {
+        		public void run() {
+        			fSession.removeServiceEventListener(TracingConsole.this);
+        		}
+        	});
+		} catch (RejectedExecutionException e) {
+			// Session already disposed
+		}
 		super.dispose();
 	}
 	

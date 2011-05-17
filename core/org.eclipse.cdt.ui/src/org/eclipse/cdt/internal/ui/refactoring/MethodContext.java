@@ -33,7 +33,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
  * determine if methods are in the same class.
  */
 public class MethodContext {
-	public enum ContextType{ NONE, FUNCTION, METHOD }
+	public enum ContextType { NONE, FUNCTION, METHOD }
 
 	private ContextType type;
 	private IASTName declarationName;
@@ -48,14 +48,14 @@ public class MethodContext {
 	}
 
 	public void setMethodDeclarationName(IASTName tmpname) {
-		this.declarationName=tmpname;
+		this.declarationName = tmpname;
 	}
 
-	public IASTName getMethodDeclarationName(){
+	public IASTName getMethodDeclarationName() {
 		return declarationName;
 	}
 	
-	public IASTDeclaration getMethodDeclaration(){
+	public IASTDeclaration getMethodDeclaration() {
 		IASTNode parent = declarationName.getParent().getParent();
 		if (parent instanceof IASTDeclaration) {
 			return (IASTDeclaration) parent;
@@ -63,15 +63,14 @@ public class MethodContext {
 		return null;
 	}
 	
-	public ICPPASTVisibilityLabel getMethodDeclarationASTVisibility(){
+	public ICPPASTVisibilityLabel getMethodDeclarationASTVisibility() {
 		ICPPASTVisibilityLabel label = new CPPASTVisibilityLabel();
-		ICPPMember member = ((ICPPMember)qname.resolveBinding());			
-
+		ICPPMember member = (ICPPMember) qname.resolveBinding();			
 		label.setVisibility(member.getVisibility());
 		return label;
 	}
 	
-	public Visibility getMethodDeclarationVisibility(){
+	public Visibility getMethodDeclarationVisibility() {
 		return Visibility.getVisibility(declarationName);
 	}
 
@@ -92,7 +91,7 @@ public class MethodContext {
 	public static boolean isSameOrSubClass(MethodContext context1, MethodContext contextOfSameOrSubclass) {
 		ICPPInternalBinding bind1 = getICPPInternalBinding(context1);
 		ICPPInternalBinding subclassBind = getICPPInternalBinding(contextOfSameOrSubclass);
-		if(isSameClass(bind1,subclassBind)){
+		if (isSameClass(bind1,subclassBind)) {
 			return true;
 		}
 		return isSubclass(bind1,subclassBind);
@@ -104,7 +103,7 @@ public class MethodContext {
 			ICPPBase[] bases;
 			bases = classType.getBases();
 			for (ICPPBase base : bases) {
-				if(isSameClass(base,bind1)){
+				if (isSameClass(base,bind1)) {
 					return true;
 				}
 			}
@@ -115,7 +114,6 @@ public class MethodContext {
 	public static boolean isSameClass(MethodContext context1, MethodContext context2) {
 		ICPPInternalBinding bind1 = getICPPInternalBinding(context1);
 		ICPPInternalBinding bind2 = getICPPInternalBinding(context2);
-
 		return isSameClass(bind1,bind2);
 	}
 	
@@ -123,16 +121,16 @@ public class MethodContext {
 		try {
 			IBinding bind1 = base.getBaseClass();
 			IScope scope1 = bind1.getScope();
-			if(scope1 == null)
+			if (scope1 == null)
 				return false;
 			IASTNode node1 = ASTInternal.getPhysicalNodeOfScope(scope1);
 			
 			IScope scope2 = bind2.getScope();
-			if(scope2 == null)
+			if (scope2 == null)
 				return false;
 			IASTNode node2 = ASTInternal.getPhysicalNodeOfScope(scope2);
 			
-			if( node1.equals(node2) ){
+			if (node1.equals(node2)) {
 				if (bind1 instanceof ICPPInternalBinding) {
 					ICPPInternalBinding bind1int = (ICPPInternalBinding) bind1;
 					return bind1int.getDefinition().equals(bind2.getDefinition());
@@ -148,16 +146,16 @@ public class MethodContext {
 	private static boolean isSameClass(ICPPInternalBinding bind1, ICPPInternalBinding bind2) {
 		try {
 			IScope scope1 = bind1.getScope();
-			if(scope1 == null)
+			if (scope1 == null)
 				return false;
 			IASTNode node1 = ASTInternal.getPhysicalNodeOfScope(scope1);
 			
 			IScope scope2 = bind2.getScope();
-			if(scope2 == null)
+			if (scope2 == null)
 				return false;
 			IASTNode node2 = ASTInternal.getPhysicalNodeOfScope(scope2);
 			
-			if( node1.equals(node2) ){
+			if (node1.equals(node2)) {
 				return bind1.getDefinition().equals(bind2.getDefinition());
 			}
 			return false;
@@ -169,15 +167,12 @@ public class MethodContext {
 	public static ICPPInternalBinding getICPPInternalBinding(MethodContext context) {
 		IASTName decl = context.getMethodDeclarationName();
 		IASTNode node = decl;
-		while(node != null){
+		while (node != null) {
 			if (node instanceof ICPPASTCompositeTypeSpecifier) {
 				ICPPASTCompositeTypeSpecifier type = (ICPPASTCompositeTypeSpecifier) node;
 				IASTName classname = type.getName();
-				ICPPInternalBinding bind = (ICPPInternalBinding)classname.resolveBinding();
-				 
-				return bind;
+				return (ICPPInternalBinding)classname.resolveBinding();
 			}
-			
 			node = node.getParent();
 		}
 		
@@ -188,14 +183,13 @@ public class MethodContext {
 		return qname == null;
 	}
 	
-	private static ICPPClassType getClassBinding(ICPPASTQualifiedName qname){
+	private static ICPPClassType getClassBinding(ICPPASTQualifiedName qname) {
 		IASTName classname = qname.getNames()[qname.getNames().length - 2];
 		ICPPClassType bind = (ICPPClassType)classname.resolveBinding(); 
 		return bind;
 	}
 
-	public static boolean isSameClass(IASTName declName1,
-			IASTName declName2) {
+	public static boolean isSameClass(IASTName declName1, IASTName declName2) {
 		ICPPClassType bind1 = getClassBinding(declName1);
 		ICPPClassType bind2 = getClassBinding(declName2);
 		return bind1.equals(bind2);

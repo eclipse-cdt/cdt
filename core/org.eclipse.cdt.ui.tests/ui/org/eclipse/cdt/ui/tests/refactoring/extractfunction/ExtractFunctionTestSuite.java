@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.extractfunction;
 
@@ -18,7 +18,6 @@ import org.eclipse.cdt.ui.tests.refactoring.RefactoringTester;
 
 /**
  * @author Emanuel Graf
- * 
  */
 public class ExtractFunctionTestSuite extends TestSuite {
 
@@ -33,5 +32,4 @@ public class ExtractFunctionTestSuite extends TestSuite {
 		suite.addTest(RefactoringTester.suite("Extract Function Dublicates Test", "resources/refactoring/ExtractMethodDuplicates.rts"));
 		return suite;
 	}
-
 }

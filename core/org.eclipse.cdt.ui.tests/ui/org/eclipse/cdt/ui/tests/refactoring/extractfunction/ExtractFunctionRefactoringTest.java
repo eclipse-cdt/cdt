@@ -53,20 +53,17 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 	protected void runTest() throws Throwable {
 		IFile refFile = project.getFile(fileName);
 		ExtractFunctionInformation info = new ExtractFunctionInformation();
-		CRefactoring refactoring = new ExtractFunctionRefactoring( refFile, selection, info, cproject);
+		CRefactoring refactoring = new ExtractFunctionRefactoring(refFile, selection, info, cproject);
 		RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
 		
-		if(fatalError){
+		if (fatalError) {
 			assertConditionsFatalError(checkInitialConditions);
 			return;
-		}
-		else{
+		} else {
 			assertConditionsOk(checkInitialConditions);
 			setValues(info);
 			executeRefactoring(refactoring);
 		}
-		
-		
 	}
 
 	protected void executeRefactoring(CRefactoring refactoring) throws CoreException, Exception {
@@ -80,25 +77,24 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 	private void setValues(ExtractFunctionInformation info) {
 		info.setMethodName(methodName);
 		info.setReplaceDuplicates(replaceDuplicates);
-		if(info.getInScopeDeclaredVariable() == null){
-			if(returnValue) {
+		if (info.getInScopeDeclaredVariable() == null) {
+			if (returnValue) {
 				info.setReturnVariable(info.getAllAfterUsedNames().get(returnParameterIndex));
 				info.getAllAfterUsedNames().get(returnParameterIndex).setUserSetIsReference(false);
 			}
 		} else {
-			info.setReturnVariable( info.getInScopeDeclaredVariable() );
+			info.setReturnVariable(info.getInScopeDeclaredVariable());
 		}
 		info.setVisibility(visibility);
 		info.setVirtual(virtual);
 		
 		for (NameInformation name : info.getAllAfterUsedNames()) {
-			if(!name.isUserSetIsReturnValue()){
+			if (!name.isUserSetIsReturnValue()) {
 				name.setUserSetIsReference(name.isReference());
 			}
 		}
 	}
 
-	
 	@Override
 	protected void configureRefactoring(Properties refactoringProperties) {
 		methodName = refactoringProperties.getProperty("methodname", "exp"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -109,5 +105,4 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 		visibility = VisibilityEnum.getEnumForStringRepresentation(refactoringProperties.getProperty("visibility", VisibilityEnum.v_private.toString())); //$NON-NLS-1$
 		virtual = Boolean.valueOf(refactoringProperties.getProperty("virtual", "false")).booleanValue(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-
 }

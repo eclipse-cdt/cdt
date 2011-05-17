@@ -62,19 +62,13 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 
 	public WorkingCopy(ICElement parent, IFile file, String id, IBufferFactory bufferFactory, IProblemRequestor requestor) {
 		super(parent, file, id);
-		this.bufferFactory = 
-			bufferFactory == null ? 
-				getBufferManager() :
-				bufferFactory;
+		this.bufferFactory = bufferFactory == null ? getBufferManager() : bufferFactory;
 		problemRequestor = requestor;
 	}
 
 	public WorkingCopy(ICElement parent, URI uri, String id, IBufferFactory bufferFactory) {
 		super(parent, uri, id);
-		this.bufferFactory = 
-			bufferFactory == null ? 
-				getBufferManager() :
-				bufferFactory;
+		this.bufferFactory = bufferFactory == null ? getBufferManager() : bufferFactory;
 	}
 
 	/**

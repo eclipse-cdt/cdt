@@ -37,6 +37,7 @@ public final class TracepointsMessages extends NLS {
 	public static String TraceControlView_create_variable_error;
 	public static String TraceControlView_create_variable_empty_name_error;
 	public static String TraceControlView_action_exit_visualization_mode;
+	public static String TraceControlView_refresh_variable_error;
 	
 	static {
 		NLS.initializeMessages(TracepointsMessages.class.getName(), TracepointsMessages.class);

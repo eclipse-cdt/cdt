@@ -250,6 +250,17 @@ public final class TraceVarDetailsDialog extends Dialog {
 
 	protected void handleRefresh() {
 		ITraceVariableDMData[] vars = fView.getTraceVarList();
+		if (vars == null) {
+			setWarningVisible(TracepointsMessages.TraceControlView_refresh_variable_error);
+			createButton.setEnabled(false);
+			return;
+		}
+		
+		// Remove the warning and re-enable the create button, since we now
+		// have a list of trace variables.
+		setWarningVisible(false);
+		createButton.setEnabled(true);
+
 		table.removeAll();
 		for (ITraceVariableDMData var : vars) {
 			String currentVal = var.getValue();

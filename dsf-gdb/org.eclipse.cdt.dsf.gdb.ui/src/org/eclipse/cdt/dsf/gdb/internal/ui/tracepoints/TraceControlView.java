@@ -14,10 +14,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -282,25 +285,16 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 			return;
 		}
 		
-		Query<Object> query = new Query<Object>() {
-			@Override
-			protected void execute(DataRequestMonitor<Object> rm) {
-				final IGDBTraceControl traceControl = getService(IGDBTraceControl.class);
-				if (traceControl != null) {
-					ITraceRecordDMContext emptyDmc = traceControl.createTraceRecordContext(ctx, "-1"); //$NON-NLS-1$
-       				traceControl.selectTraceRecord(emptyDmc, rm);
-				} else {
-					rm.setData(null);
-					rm.done();
-				}
-			}
-		};
-		try {
-			getSession().getExecutor().execute(query);
-			query.get();
-		} catch (InterruptedException exc) {
-		} catch (ExecutionException exc) {
-		}
+		getSession().getExecutor().execute(
+				new DsfRunnable() {	
+					public void run() {
+						final IGDBTraceControl traceControl = getService(IGDBTraceControl.class);
+						if (traceControl != null) {
+							ITraceRecordDMContext emptyDmc = traceControl.createTraceRecordContext(ctx, "-1"); //$NON-NLS-1$
+							traceControl.selectTraceRecord(emptyDmc, new RequestMonitor(ImmediateExecutor.getInstance(), null));
+						}
+					}
+				});
 	}
 	
 	protected void updateDebugContext() {
@@ -513,9 +507,10 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 		};
 		try {
 			getSession().getExecutor().execute(query);
-			return query.get();
+			return query.get(1, TimeUnit.SECONDS);
 		} catch (InterruptedException exc) {
 		} catch (ExecutionException exc) {
+		} catch (TimeoutException e) {
 		}
 
 		return null;

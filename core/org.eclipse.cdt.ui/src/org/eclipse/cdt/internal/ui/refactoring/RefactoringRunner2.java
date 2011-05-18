@@ -27,8 +27,8 @@ public abstract class RefactoringRunner2 {
 	protected final ICProject project;
 	protected final RefactoringStarter starter;
 
-	public RefactoringRunner2(ICElement element, ISelection selection,
-			IShellProvider shellProvider, ICProject cProject) {
+	public RefactoringRunner2(ICElement element, ISelection selection, IShellProvider shellProvider,
+			ICProject cProject) {
 		this.selection = selection;
 		this.element= element;
 		this.shellProvider= shellProvider;

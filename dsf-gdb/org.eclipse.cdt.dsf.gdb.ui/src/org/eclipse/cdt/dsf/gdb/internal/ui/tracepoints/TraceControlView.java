@@ -266,7 +266,9 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 			}
 		}
 		
-		fStatusText.setText(EMPTY_STRING);
+		if (fStatusText != null) {
+			fStatusText.setText(EMPTY_STRING);
+		}
 		updateActionEnablement();
 	}
 		

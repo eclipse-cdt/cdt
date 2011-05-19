@@ -54,17 +54,17 @@ public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 		});
 	}
 
-	protected boolean doNotReportIfElse() {
+	private boolean doNotReportIfElse() {
 		final IProblem pt = getProblemById(ER_ID, getFile());
 		return (Boolean) getPreference(pt, PARAM_ELSE);
 	}
 
-	protected boolean doReportAfterElse() {
+	private boolean doReportAfterElse() {
 		final IProblem pt = getProblemById(ER_ID, getFile());
 		return (Boolean) getPreference(pt, PARAM_ALFTER_ELSE);
 	}
 
-	protected boolean macroInvolved(IASTStatement node) {
+	private static boolean macroInvolved(IASTStatement node) {
 		if (includesMacroExpansion(node)) {
 			return true;
 		}

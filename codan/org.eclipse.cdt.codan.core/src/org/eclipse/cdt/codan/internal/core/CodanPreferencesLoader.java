@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *     Alena Laskavaia  - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core;
 
@@ -18,7 +19,10 @@ import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.Preferences;
 
 /**
@@ -112,7 +116,7 @@ public class CodanPreferencesLoader {
 
 	/**
 	 * Takes string values from storePreferences and applies them to the problem
-	 * profile
+	 * profile.
 	 *
 	 * @param storePreferences
 	 */
@@ -129,8 +133,27 @@ public class CodanPreferencesLoader {
 	}
 
 	/**
+	 * Takes string values from storePreferences and applies them to the problem
+	 * profile
+	 *
+	 * @param storePreferences
+	 */
+	public void load(Preferences[] storePreferences) {
+    	IPreferencesService prefService = Platform.getPreferencesService();
+		IProblem[] probs = getProblems();
+		for (int i = 0; i < probs.length; i++) {
+			String id = probs[i].getId();
+			String s = prefService.get(id, null, storePreferences);
+			if (s != null) {
+				setProperty(id, s);
+				setProblemPreferenceValues(id, storePreferences);
+			}
+		}
+	}
+
+	/**
 	 * Takes string values of the problem preferences from storePreferences
-	 * and applies them to the problem profile
+	 * and applies them to the problem profile.
 	 *
 	 * @param problemId
 	 * @param storePreferences
@@ -152,6 +175,29 @@ public class CodanPreferencesLoader {
 	}
 
 	/**
+	 * Takes string values of the problem preferences from storePreferences
+	 * and applies them to the problem profile.
+	 *
+	 * @param problemId
+	 * @param storePreferences
+	 */
+	private void setProblemPreferenceValues(String problemId, Preferences[] storePreferences) {
+    	IPreferencesService prefService = Platform.getPreferencesService();
+		IProblem prob = baseModel.findProblem(problemId);
+		String prefKey = getPreferencesKey(problemId);
+		if (prefKey == null)
+			return;
+		String exported = prefService.get(prefKey, null, storePreferences);
+		if (exported != null) {
+			try {
+				prob.getPreference().importValue(exported);
+			} catch (IllegalArgumentException e) {
+				CodanCorePlugin.log(e);
+			}
+		}
+	}
+
+	/**
 	 * Return preference node (osgi preferences) for the project
 	 *
 	 * @param project
@@ -160,10 +206,7 @@ public class CodanPreferencesLoader {
 	public static IEclipsePreferences getProjectNode(IProject project) {
 		if (!project.exists())
 			return null;
-		IEclipsePreferences prefNode = new ProjectScope(project).getNode(CodanCorePlugin.PLUGIN_ID);
-		if (prefNode == null)
-			return null;
-		return prefNode;
+		return new ProjectScope(project).getNode(CodanCorePlugin.PLUGIN_ID);
 	}
 
 	/**
@@ -172,10 +215,7 @@ public class CodanPreferencesLoader {
 	 * @return project preferences node
 	 */
 	public static IEclipsePreferences getWorkspaceNode() {
-		IEclipsePreferences prefNode = CodanCorePlugin.getDefault().getStorePreferences();
-		if (prefNode == null)
-			return null;
-		return prefNode;
+		return InstanceScope.INSTANCE.getNode(CodanCorePlugin.PLUGIN_ID);
 	}
 
 	/**

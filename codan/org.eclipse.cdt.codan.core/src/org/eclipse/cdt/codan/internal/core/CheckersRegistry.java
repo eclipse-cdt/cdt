@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alena Laskavaia  - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core;
 
@@ -39,6 +40,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.Preferences;
 
 /**
@@ -350,7 +354,12 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 			((ProblemProfile) wp).setResource(ResourcesPlugin.getWorkspace());
 			// load default values
 			CodanPreferencesLoader loader = new CodanPreferencesLoader(wp);
-			loader.load(CodanPreferencesLoader.getWorkspaceNode());
+	    	Preferences[] preferences = {
+					InstanceScope.INSTANCE.getNode(CodanCorePlugin.PLUGIN_ID),
+					ConfigurationScope.INSTANCE.getNode(CodanCorePlugin.PLUGIN_ID),
+					DefaultScope.INSTANCE.getNode(CodanCorePlugin.PLUGIN_ID),
+				};
+			loader.load(preferences);
 			profiles.put(ResourcesPlugin.getWorkspace(), wp);
 		}
 		return wp;
@@ -391,7 +400,6 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 			} else {
 				prof = getResourceProfile(element.getProject());
 			}
-		} else {
 		}
 		return prof;
 	}

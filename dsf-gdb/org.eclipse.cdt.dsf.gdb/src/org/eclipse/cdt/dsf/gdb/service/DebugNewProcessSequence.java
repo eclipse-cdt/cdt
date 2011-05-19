@@ -27,6 +27,8 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
@@ -36,8 +38,12 @@ import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IStatusHandler;
 
 /** 
  * This sequence is used to start debugging a new process.
@@ -87,7 +93,12 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 					"stepSetEnvironmentVariables",   //$NON-NLS-1$
 					"stepSetExecutable",   //$NON-NLS-1$
 					"stepSetArguments",   //$NON-NLS-1$
+					
+					// For remote non-attach only
 					"stepRemoteConnection",   //$NON-NLS-1$
+					// For post-mortem launch only
+					"stepSpecifyCoreFile",   //$NON-NLS-1$
+					
 					"stepStartTrackingBreakpoints", //$NON-NLS-1$
 					"stepStartExecution",   //$NON-NLS-1$
 					"stepCleanupBaseSequence",   //$NON-NLS-1$
@@ -243,6 +254,131 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 		}
 	}
 
+	/** @since 4.0 */
+	protected static class PromptForCoreJob extends Job {
+		protected DataRequestMonitor<String> fRequestMonitor;
+
+		public PromptForCoreJob(String name, DataRequestMonitor<String> rm) {
+			super(name);
+			fRequestMonitor = rm;
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			final IStatus promptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200/*STATUS_HANDLER_PROMPT*/, "", null); //$NON-NLS-1$//$NON-NLS-2$
+			final IStatus filePrompt = new Status(IStatus.INFO, "org.eclipse.cdt.dsf.gdb.ui", 1001, "", null); //$NON-NLS-1$//$NON-NLS-2$
+			// consult a status handler
+			final IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+
+			final Status NO_CORE_STATUS = new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1,
+					LaunchMessages.getString("LocalCDILaunchDelegate.6"), //$NON-NLS-1$
+					null);
+
+			if (prompter == null) {
+				fRequestMonitor.setStatus(NO_CORE_STATUS);
+				fRequestMonitor.done();
+				return Status.OK_STATUS;
+			} 				
+
+			try {
+				Object result = prompter.handleStatus(filePrompt, null);
+				 if (result == null) {
+						fRequestMonitor.cancel();
+				} else if (result instanceof String) {
+					fRequestMonitor.setData((String)result);
+				} else {
+					fRequestMonitor.setStatus(NO_CORE_STATUS);
+				}
+			} catch (CoreException e) {
+				fRequestMonitor.setStatus(NO_CORE_STATUS);
+			}
+			fRequestMonitor.done();
+
+			return Status.OK_STATUS;
+		}
+	};
+	
+	/** 
+	 * If we are dealing with a postmortem session, connect to the core/trace file.
+	 * @since 4.0
+	 */
+	@Execute
+	public void stepSpecifyCoreFile(final RequestMonitor rm) {
+		// If we are dealing with a postmortem session, it is now time to connect
+		// to the core/trace file.  We have to do this step after
+		// we have specified the executable, so we have to do it here.
+		// It is safe to do it here because a postmortem session does not support
+		// multi-process so this step will not be executed more than once.
+		// Bug 338730
+		if (fBackend.getSessionType() == SessionType.CORE) {
+			String coreFile = CDebugUtils.getAttribute(
+					fAttributes,
+					ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, ""); //$NON-NLS-1$
+			final String coreType = CDebugUtils.getAttribute(
+					fAttributes,
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
+					IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
+			
+				if (coreFile.length() == 0) {
+					new PromptForCoreJob(
+							"Prompt for post mortem file",  //$NON-NLS-1$
+							new DataRequestMonitor<String>(getExecutor(), rm) {
+								@Override
+								protected void handleCancel() {
+									rm.cancel();
+									rm.done();
+								}
+								@Override
+								protected void handleSuccess() {
+									String newCoreFile = getData();
+									if (newCoreFile == null || newCoreFile.length()== 0) {
+										rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get post mortem file path", null)); //$NON-NLS-1$
+										rm.done();
+									} else {
+										if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
+											fCommandControl.queueCommand(
+													fCommandFactory.createMITargetSelectCore(fCommandControl.getContext(), newCoreFile), 
+													new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+										} else if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE)) {
+											IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
+											if (traceControl != null) {
+												ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(fCommandControl.getContext(), ITraceTargetDMContext.class);
+												traceControl.loadTraceData(targetDmc, newCoreFile, rm);
+											} else {
+												rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Tracing not supported", null));
+												rm.done();                                  
+											}
+										} else {
+											rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Invalid post-mortem type", null));
+											rm.done();
+										}
+									}
+								}
+							}).schedule();
+				} else {
+					if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
+						fCommandControl.queueCommand(
+								fCommandFactory.createMITargetSelectCore(fCommandControl.getContext(), coreFile),
+								new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+					} else if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE)) {
+						IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
+						if (traceControl != null) {
+							ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(fCommandControl.getContext(), ITraceTargetDMContext.class);
+							traceControl.loadTraceData(targetDmc, coreFile, rm);
+						} else {
+							rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Tracing not supported", null));
+							rm.done();
+						}
+					} else {
+						rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Invalid post-mortem type", null));
+						rm.done();
+					}
+				}
+		} else {
+			rm.done();
+		}
+	}
+	
 	/**
 	 * Start tracking the breakpoints.  Note that for remote debugging
 	 * we should first connect to the target.

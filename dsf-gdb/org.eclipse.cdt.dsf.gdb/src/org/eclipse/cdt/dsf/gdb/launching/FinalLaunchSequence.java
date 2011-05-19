@@ -24,7 +24,6 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ReflectionSequence;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
-import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
@@ -33,8 +32,6 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
-import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
-import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
@@ -45,14 +42,10 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.IStatusHandler;
 
 public class FinalLaunchSequence extends ReflectionSequence {
 
@@ -98,8 +91,6 @@ public class FinalLaunchSequence extends ReflectionSequence {
 					//
 					// "stepSetSourceLookupPath",   //$NON-NLS-1$
 					
-					// For post-mortem launch only
-					"stepSpecifyCoreFile",   //$NON-NLS-1$
 					// For remote-attach launch only
 					"stepRemoteConnection",   //$NON-NLS-1$
 					// For all launches except attach ones
@@ -360,125 +351,6 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		sourceLookup.setSourceLookupPath(sourceLookupDmc, locator.getSourceContainers(), requestMonitor);
 	}
 
-	/** @since 4.0 */
-	protected class PromptForCoreJob extends Job {
-		protected DataRequestMonitor<String> fRequestMonitor;
-
-		public PromptForCoreJob(String name, DataRequestMonitor<String> rm) {
-			super(name);
-			fRequestMonitor = rm;
-		}
-
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-			final IStatus promptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200/*STATUS_HANDLER_PROMPT*/, "", null); //$NON-NLS-1$//$NON-NLS-2$
-			final IStatus filePrompt = new Status(IStatus.INFO, "org.eclipse.cdt.dsf.gdb.ui", 1001, "", null); //$NON-NLS-1$//$NON-NLS-2$
-			// consult a status handler
-			final IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-
-			final Status NO_CORE_STATUS = new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1,
-					LaunchMessages.getString("LocalCDILaunchDelegate.6"), //$NON-NLS-1$
-					null);
-
-			if (prompter == null) {
-				fRequestMonitor.setStatus(NO_CORE_STATUS);
-				fRequestMonitor.done();
-				return Status.OK_STATUS;
-			} 				
-
-			try {
-				Object result = prompter.handleStatus(filePrompt, null);
-				 if (result == null) {
-						fRequestMonitor.cancel();
-				} else if (result instanceof String) {
-					fRequestMonitor.setData((String)result);
-				} else {
-					fRequestMonitor.setStatus(NO_CORE_STATUS);
-				}
-			} catch (CoreException e) {
-				fRequestMonitor.setStatus(NO_CORE_STATUS);
-			}
-			fRequestMonitor.done();
-
-			return Status.OK_STATUS;
-		}
-	};
-
-	/**
-	 * If we are dealing with a post-mortem debug session, specify the core file.
-	 * @since 4.0
-	 */
-	@Execute
-	public void stepSpecifyCoreFile(final RequestMonitor requestMonitor) {
-		if (fGDBBackend.getSessionType() == SessionType.CORE) {
-			String coreFile = CDebugUtils.getAttribute(
-					fAttributes,
-					ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, ""); //$NON-NLS-1$
-			final String coreType = CDebugUtils.getAttribute(
-					fAttributes,
-					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
-					IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
-			
-				if (coreFile.length() == 0) {
-					new PromptForCoreJob(
-							"Prompt for post mortem file",  //$NON-NLS-1$
-							new DataRequestMonitor<String>(getExecutor(), requestMonitor) {
-								@Override
-								protected void handleCancel() {
-									requestMonitor.cancel();
-									requestMonitor.done();
-								}
-								@Override
-								protected void handleSuccess() {
-									String newCoreFile = getData();
-									if (newCoreFile == null || newCoreFile.length()== 0) {
-										requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get post mortem file path", null)); //$NON-NLS-1$
-										requestMonitor.done();
-									} else {
-										if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
-											fCommandControl.queueCommand(
-													fCommandFactory.createMITargetSelectCore(fCommandControl.getContext(), newCoreFile), 
-													new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
-										} else if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE)) {
-											IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
-											if (traceControl != null) {
-												ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(fCommandControl.getContext(), ITraceTargetDMContext.class);
-												traceControl.loadTraceData(targetDmc, newCoreFile, requestMonitor);
-											} else {
-												requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Tracing not supported", null));
-												requestMonitor.done();                                  
-											}
-										} else {
-											requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Invalid post-mortem type", null));
-											requestMonitor.done();
-										}
-									}
-								}
-							}).schedule();
-				} else {
-					if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
-						fCommandControl.queueCommand(
-								fCommandFactory.createMITargetSelectCore(fCommandControl.getContext(), coreFile),
-								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
-					} else if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE)) {
-						IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
-						if (traceControl != null) {
-							ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(fCommandControl.getContext(), ITraceTargetDMContext.class);
-							traceControl.loadTraceData(targetDmc, coreFile, requestMonitor);
-						} else {
-							requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Tracing not supported", null));
-							requestMonitor.done();
-						}
-					} else {
-						requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Invalid post-mortem type", null));
-						requestMonitor.done();
-					}
-				}
-		} else {
-			requestMonitor.done();
-		}
-	}
-	
 	private final static String INVALID = "invalid";   //$NON-NLS-1$
 	/** 
 	 * If we are dealing with a remote-attach debugging session, connect to the target.

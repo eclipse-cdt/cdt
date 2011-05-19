@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2010 Marc-Andre Laperle and others.
+ * Copyright (c) 2010, 2011 Marc-Andre Laperle and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Marc-Andre Laperle - Initial API and implementation
+ *     Marc-Andre Laperle - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -38,15 +39,15 @@ public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 				if (statement instanceof IASTIfStatement) {
 					IASTStatement thenStmt = ((IASTIfStatement) statement).getThenClause();
 					IASTStatement elseStmt = ((IASTIfStatement) statement).getElseClause();
-					if (elseStmt instanceof IASTNullStatement && noMacroInvolved(elseStmt) && doReportAfterElse()) {
+					if (elseStmt instanceof IASTNullStatement && doReportAfterElse() &&
+							!macroInvolved(elseStmt)) {
 						reportProblem(ER_ID, elseStmt);
 					}
-					if (elseStmt != null && doNotReportIfElse() == true)
+					if (elseStmt != null && doNotReportIfElse())
 						return PROCESS_CONTINUE;
-					if (thenStmt instanceof IASTNullStatement && noMacroInvolved(thenStmt)) {
+					if (thenStmt instanceof IASTNullStatement && !macroInvolved(thenStmt)) {
 						reportProblem(ER_ID, thenStmt);
 					}
-
 				}
 				return PROCESS_CONTINUE;
 			}
@@ -57,16 +58,20 @@ public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 		final IProblem pt = getProblemById(ER_ID, getFile());
 		return (Boolean) getPreference(pt, PARAM_ELSE);
 	}
+
 	protected boolean doReportAfterElse() {
 		final IProblem pt = getProblemById(ER_ID, getFile());
 		return (Boolean) getPreference(pt, PARAM_ALFTER_ELSE);
 	}
 
-	protected boolean noMacroInvolved(IASTStatement node) {
+	protected boolean macroInvolved(IASTStatement node) {
+		if (includesMacroExpansion(node)) {
+			return true;
+		}
 		IASTNodeSelector nodeSelector = node.getTranslationUnit().getNodeSelector(node.getTranslationUnit().getFilePath());
 		IASTFileLocation fileLocation = node.getFileLocation();
 		IASTPreprocessorMacroExpansion macro = nodeSelector.findEnclosingMacroExpansion(fileLocation.getNodeOffset() - 1, 1);
-		return macro == null;
+		return macro != null;
 	}
 
 	public void initPreferences(IProblemWorkingCopy problem) {

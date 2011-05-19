@@ -144,10 +144,19 @@ public class SuspiciousSemicolonCheckerTest extends CheckerTestCase {
 
 	// #define OP
 	// void foo() {
-	// if(0)
-	//   OP;
+	//   if(0)
+	//     OP;
 	// }
 	public void testMacro() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	// #define MACRO(cond) if (cond) ;
+	// void foo() {
+	//   MACRO(true);
+	// }
+	public void testMacroExpansion() {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}

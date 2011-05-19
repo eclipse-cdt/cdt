@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -132,7 +133,7 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 	private IProblemLocation getProblemLocation(IASTNode astNode, IASTFileLocation astLocation) {
 		int line = astLocation.getStartingLineNumber();
 		IProblemLocationFactory locFactory = getRuntime().getProblemLocationFactory();
-		if (hasMacroLocation(astNode) && astNode instanceof IASTName) {
+		if (enclosedInMacroExpansion(astNode) && astNode instanceof IASTName) {
 			IASTImageLocation imageLocation = ((IASTName) astNode).getImageLocation();
 			if (imageLocation != null) {
 				int start = imageLocation.getNodeOffset();
@@ -147,9 +148,17 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 		return locFactory.createProblemLocation(getFile(), line);
 	}
 
-	private boolean hasMacroLocation(IASTNode astNode) {
-		return astNode.getNodeLocations().length == 1 &&
-				astNode.getNodeLocations()[0] instanceof IASTMacroExpansionLocation;
+	protected static boolean enclosedInMacroExpansion(IASTNode node) {
+		IASTNodeLocation[] nodeLocations = node.getNodeLocations();
+		return nodeLocations.length == 1 && nodeLocations[0] instanceof IASTMacroExpansionLocation;
+	}
+
+	protected static boolean includesMacroExpansion(IASTNode node) {
+		for (IASTNodeLocation nodeLocation : node.getNodeLocations()) {
+			if (nodeLocation instanceof IASTMacroExpansionLocation)
+				return true;
+		}
+		return false;
 	}
 
 	protected IFile getFile() {

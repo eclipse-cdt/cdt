@@ -25,12 +25,12 @@ cd `dirname $0`
 # Checkout basebuilder to run the build
 mkdir -p tools
 cd tools
-cvs -d /cvsroot/eclipse	co -r r36x_v20101125 org.eclipse.releng.basebuilder
+cvs -d /cvsroot/eclipse	co -r R37_M7 org.eclipse.releng.basebuilder
 cp /home/data/httpd/download.eclipse.org/technology/subversive/0.7/pde-update-site/plugins/org.eclipse.team.svn.pde.build_*.jar \
 	org.eclipse.releng.basebuilder/plugins
 cd ..
 
 # Let's go!
-java $CDT_BUILD_VMARGS -jar tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar \
+java -Xms512m -Xmx1024m -jar tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar \
 	-Djvm1.5=/opt/public/common/jdk-1.5.0_16/bin/java \
 	-ws gtk -arch x86 -os linux -application org.eclipse.ant.core.antRunner $*

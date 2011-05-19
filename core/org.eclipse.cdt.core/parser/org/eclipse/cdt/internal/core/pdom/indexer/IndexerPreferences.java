@@ -289,16 +289,16 @@ public class IndexerPreferences {
 		};
 	}
 
-	private static Preferences getDefaultPreferences() {
-		return DefaultScope.INSTANCE.getNode(QUALIFIER).node(INDEXER_NODE);
+	private static Preferences getInstancePreferences() {
+		return InstanceScope.INSTANCE.getNode(QUALIFIER).node(INDEXER_NODE);
 	}
 
 	private static Preferences getConfigurationPreferences() {
 		return ConfigurationScope.INSTANCE.getNode(QUALIFIER).node(INDEXER_NODE);
 	}
 
-	private static Preferences getInstancePreferences() {
-		return InstanceScope.INSTANCE.getNode(QUALIFIER).node(INDEXER_NODE);
+	private static Preferences getDefaultPreferences() {
+		return DefaultScope.INSTANCE.getNode(QUALIFIER).node(INDEXER_NODE);
 	}
 
 	public static Preferences getProjectPreferences(IProject project) {

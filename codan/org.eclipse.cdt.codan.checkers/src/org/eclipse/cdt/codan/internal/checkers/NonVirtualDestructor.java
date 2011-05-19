@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *     Alena Laskavaia  - initial API and implementation
+ *     Patrick Hofer [bug 315528]
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -20,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
@@ -27,8 +29,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 /**
  * Checker to find that class has virtual method and non virtual destructor
  * 
- * @author Alena
- * 
+ * @author Alena Laskavaia
  */
 public class NonVirtualDestructor extends AbstractIndexAstChecker {
 	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"; //$NON-NLS-1$
@@ -115,14 +116,14 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 					}
 				}
 				boolean hasVirDestructor = false;
-				// class has own virtual method and own non-virtual destructor
+				// Class has own virtual method and own non-virtual destructor.
 				if (hasOwnVirtualMethod && hasOwnNonVirDestructor) {
-					return true;
+					// Check if one of its base classes has a virtual destructor.
+					return !hasVirtualDtorInBaseClass(type);
 				}
-				// class does not have virtual methods but has virtual
-				// destructor
+				// Class does not have virtual methods but has virtual destructor
 				// - not an error
-				if (hasOwnVirtualMethod == false && hasDestructor == true && hasOwnNonVirDestructor == false) {
+				if (!hasOwnVirtualMethod && hasDestructor && !hasOwnNonVirDestructor) {
 					return false;
 				}
 				ICPPMethod[] allDeclaredMethods = type.getAllDeclaredMethods();
@@ -144,18 +145,35 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 					}
 				}
 				if (hasOwnVirtualMethod) {
-					// class has own virtual method and base non-virtual
-					// destructor
-					if (hasDestructor == true && hasVirDestructor == false) {
+					// Class has own virtual method and base non-virtual destructor.
+					if (hasDestructor && !hasVirDestructor) {
 						return true;
 					}
 				} else if (hasVirtualMethod) {
-					// class has base virtual method and own non-virtual
-					// destructor
-					if (hasOwnNonVirDestructor == true) {
+					// Class has base virtual method and own non-virtual destructor.
+					if (hasOwnNonVirDestructor) {
 						return true;
 					}
 				}
+			}
+			return false;
+		}
+
+		private boolean hasVirtualDtorInBaseClass(ICPPClassType classType) {
+			ICPPBase[] bases = classType.getBases();   
+			for (ICPPBase base : bases) {
+				if (!(base.getBaseClass() instanceof ICPPClassType)) {
+					continue;
+				}
+				ICPPClassType testedBaseClass = (ICPPClassType) base.getBaseClass();
+				ICPPMethod[] declaredBaseMethods = testedBaseClass.getDeclaredMethods();
+				for (ICPPMethod method : declaredBaseMethods) {
+					if (method.isDestructor() && method.isVirtual()) {
+						return true;
+					}
+				}
+				if (hasVirtualDtorInBaseClass(testedBaseClass))
+					return true;
 			}
 			return false;
 		}

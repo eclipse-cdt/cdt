@@ -451,6 +451,13 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
     	try {
     		getMIInputStream().close();
 		} catch (IOException e) {}
+    	
+    	// We do access GDB's error stream and must
+    	// close it.
+    	// Bug 327617
+    	try {
+    		fProcess.getErrorStream().close();
+		} catch (IOException e) {}
 
     	// destroy() should be supported even if it's not spawner. 
     	if (getState() == State.STARTED) {

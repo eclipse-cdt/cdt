@@ -40,6 +40,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.GDBBackend;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -79,6 +80,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
 
 	private TxThread fTxThread;
     private RxThread fRxThread;
+    private ErrorThread fErrorThread;
     
     // MI did not always support the --thread/--frame options
     // This boolean is used to know if we should use -thread-select and -stack-select-frame instead
@@ -213,8 +215,13 @@ public abstract class AbstractMIControl extends AbstractDsfService
     	
         fTxThread = new TxThread(outStream);
         fRxThread = new RxThread(inStream);
+        
+        GDBBackend backend = getServicesTracker().getService(GDBBackend.class);
+        fErrorThread = new ErrorThread(backend.getProcess().getErrorStream());
+        
         fTxThread.start();
         fRxThread.start();
+        fErrorThread.start();
     }
     
     /**
@@ -977,6 +984,57 @@ public abstract class AbstractMIControl extends AbstractDsfService
         }
     }
 
+    /**
+     * A thread that will read GDB's stderr stream.
+     * When a PTY is not being used for the inferior, everything
+     * the inferior writes to stderr will be output on GDB's stderr.
+     * If we don't read it, gdb eventually blocks, when the sream is
+     * full.
+     * 
+     * Although we could write this error output to the inferior
+     * console, we actually write it to the GDB console.  This is
+     * because we cannot differentiate between inferior errors printouts
+     * and GDB error printouts.
+     * 
+     * See bug 327617 for details.
+     */
+    private class ErrorThread extends Thread {
+        private final InputStream fErrorStream;
+        private final MIParser fMiParser = new MIParser();
+
+        public ErrorThread(InputStream errorStream) {
+            super("MI Error Thread"); //$NON-NLS-1$
+            fErrorStream = errorStream;
+        }
+
+        @Override
+        public void run() {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fErrorStream));
+            try {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                	// Create an error MI out-of-band record so that our gdb console prints it.
+            		final MIOOBRecord oob = fMiParser.parseMIOOBRecord("&"+line+"\n");  //$NON-NLS-1$//$NON-NLS-2$
+                    final MIOutput response = new MIOutput(oob, new MIStreamRecord[0]);
+                    getExecutor().execute(new DsfRunnable() {
+                        public void run() {
+                            processEvent(response);
+                        }
+                        @Override
+                        public String toString() {
+                            return "MI error output received: " + response; //$NON-NLS-1$
+                        }
+                    });
+                }
+            } catch (IOException e) {
+                // Socket is shut down.
+            } catch (RejectedExecutionException e) {
+                // Dispatch thread is down.
+            }
+            // The backend service will close the stream
+        }
+    }
+    
     // we keep track of currentStackLevel and currentThreadId because in
     // some cases we must use -thread-select and -stack-select-frame
     public void resetCurrentThreadLevel(){

@@ -41,7 +41,7 @@ public class IndexUpdatePolicy {
 	}
 
 	private int getLegalPolicy(int kind) {
-		switch(kind) {
+		switch (kind) {
 		case POST_BUILD:
 		case POST_CHANGE:
 		case MANUAL:
@@ -81,7 +81,7 @@ public class IndexUpdatePolicy {
 			return null;
 		}
 
-		switch(fKind) {
+		switch (fKind) {
 		case MANUAL:
 			return null;
 		case POST_CHANGE:

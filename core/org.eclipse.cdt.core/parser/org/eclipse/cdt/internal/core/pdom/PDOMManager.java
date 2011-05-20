@@ -287,7 +287,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		int cacheMax= prefs.getInt(CCorePlugin.PLUGIN_ID, CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB, 64, null);
 		cachePct= Math.max(1, Math.min(50, cachePct));   // 1%-50%
 		cacheMax= Math.max(1, cacheMax);                 // >= 1mb
-		long m1= Runtime.getRuntime().maxMemory()/100L * cachePct;
+		long m1= Runtime.getRuntime().maxMemory() / 100L * cachePct;
 		long m2= Math.min(m1, cacheMax * 1024L * 1024L);
 		ChunkCache.getSharedInstance().setMaxSize(m2);
 	}

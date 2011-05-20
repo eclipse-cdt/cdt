@@ -1323,7 +1323,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	/**
-	 * computes a map from projects to a collection containing the minimal
+	 * Computes a map from projects to a collection containing the minimal
 	 * set of folders and files specifying the selection.
 	 */
 	private Map<ICProject, List<ICElement>> splitSelection(ICElement[] tuSelection) {

@@ -1387,14 +1387,14 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 		getDocumentProvider().connect(input);
 		try {
-			// uninstall & unregister preference store listener
+			// Uninstall & unregister preference store listener
 			getSourceViewerDecorationSupport(sourceViewer).uninstall();
 			((ISourceViewerExtension2) sourceViewer).unconfigure();
 
 			setPreferenceStore(createCombinedPreferenceStore(input));
 			updateScalabilityMode(input);
 
-			// install & register preference store listener
+			// Install & register preference store listener
 			sourceViewer.configure(getSourceViewerConfiguration());
 			getSourceViewerDecorationSupport(sourceViewer).install(getPreferenceStore());
 

@@ -90,7 +90,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 		// -id
 		fragmentId= getSingleString(OPT_FRAGMENT_ID);
 
-		return createCCProject("__"+System.currentTimeMillis(), source, includeFiles); //$NON-NLS-1$
+		return createCCProject("__" + System.currentTimeMillis(), source, includeFiles); //$NON-NLS-1$
 	}
 
 	/**
@@ -109,18 +109,15 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	 * @return a new project
 	 * @throws CoreException
 	 */
-	private ICProject createCCProject(
-			final String projectName,
-			final File location,
-			final List<String> includeFiles
-	) throws CoreException {
+	private ICProject createCCProject(final String projectName, final File location,
+			final List<String> includeFiles) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final ICProject newProject[] = new ICProject[1];
 
 		ws.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IWorkspace workspace= ResourcesPlugin.getWorkspace();
-				IProject project= workspace.getRoot().getProject("__prebuilt_index_temp__"+System.currentTimeMillis()); //$NON-NLS-1$
+				IProject project= workspace.getRoot().getProject("__prebuilt_index_temp__" + System.currentTimeMillis()); //$NON-NLS-1$
 				IProjectDescription description = workspace.newProjectDescription(project.getName());
 				CCorePlugin.getDefault().createCProject(description, project, NPM, PREBUILT_PROJECT_OWNER);
 				CCorePlugin.getDefault().convertProjectFromCtoCC(project, NPM);
@@ -175,7 +172,8 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	}
 
 	private ICConfigurationDescription newCfg(ICProjectDescription des, String project, String config) throws CoreException {
-		CDefaultConfigurationData data= new CDefaultConfigurationData(project+"."+config, project+" "+config+" name", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		CDefaultConfigurationData data= new CDefaultConfigurationData(project + "." + config, //$NON-NLS-1$
+				project + " " + config + " name", null); //$NON-NLS-1$ //$NON-NLS-2$
 		data.initEmptyData();
 		return des.createConfiguration(CCorePlugin.DEFAULT_PROVIDER_ID, data);		
 	}
@@ -190,12 +188,12 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	/*
 	 * @see org.eclipse.cdt.core.index.export.IExportProjectProvider#getExportProperties()
 	 */
-	public Map<String,String> getExportProperties() {
-		Map<String,String> properties= new HashMap<String,String>();
+	public Map<String, String> getExportProperties() {
+		Map<String, String> properties= new HashMap<String, String>();
 		Date now= Calendar.getInstance().getTime();
 		properties.put(ORG_ECLIPSE_CDT_CORE_INDEX_EXPORT_DATESTAMP,
 				DateFormat.getDateInstance().format(now)
-				+" "+DateFormat.getTimeInstance().format(now)); //$NON-NLS-1$
+				+ " " + DateFormat.getTimeInstance().format(now)); //$NON-NLS-1$
 		properties.put(IIndexFragment.PROPERTY_FRAGMENT_ID, fragmentId);
 		return properties;
 	}

@@ -467,7 +467,7 @@ public class IndexUI {
 			if (props == null || !"true".equals(props.get(IndexerPreferences.KEY_INDEX_ALL_FILES)) || //$NON-NLS-1$
 					(!"true".equals(props.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG)) && //$NON-NLS-1$
 					 !"true".equals(props.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG)))) { //$NON-NLS-1$
-				msg= msg+ " " + Messages.IndexUI_infoSelectIndexAllFiles; //$NON-NLS-1$
+				msg= msg + " " + Messages.IndexUI_infoSelectIndexAllFiles; //$NON-NLS-1$
 			} 
 		}
 		return msg;

@@ -1438,7 +1438,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		boolean wasEnabled = fEnableScalablilityMode;
 		fEnableScalablilityMode = lines > getPreferenceStore().getInt(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES);
 		if (fEnableScalablilityMode && !wasEnabled) {
-			//Alert users that scalability mode should be turned on
+			// Alert users that scalability mode should be turned on
 			if (getPreferenceStore().getBoolean(PreferenceConstants.SCALABILITY_ALERT)) {
 				MessageDialogWithToggle dialog = new MessageDialogWithToggle(
 						Display.getCurrent().getActiveShell(),
@@ -3620,7 +3620,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 		if (model == null)
 			return;
-		
+
 		fOverrideIndicatorManager= new OverrideIndicatorManager(model);
 		
 		addReconcileListener(fOverrideIndicatorManager);

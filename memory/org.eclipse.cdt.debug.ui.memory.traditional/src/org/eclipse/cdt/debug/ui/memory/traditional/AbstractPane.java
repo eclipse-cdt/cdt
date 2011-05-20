@@ -520,21 +520,20 @@ public abstract class AbstractPane extends Canvas
     protected void ensureCaretWithinViewport() // TODO getAddressableSize() > 1 ?
     {
         BigInteger vpStart = fRendering.getViewportStartAddress();
-        BigInteger vpEnd = fRendering.getViewportEndAddress();
+        BigInteger vpEnd   = fRendering.getViewportEndAddress();
         
-        //Rectangle paneBounds = null;
-        Rectangle vpBounds   = fRendering.getBounds();
-        Rectangle apBounds   = fRendering.fAddressPane.getBounds();
-        Rectangle dpBounds   = fRendering.fBinaryPane.getBounds();
-        Rectangle tpBounds   = fRendering.fTextPane.getBounds();
+        Rectangle vpBounds = fRendering.getBounds();
+        Rectangle apBounds = fRendering.fAddressPane.getBounds();
+        Rectangle dpBounds = fRendering.fBinaryPane.getBounds();
+        Rectangle tpBounds = fRendering.fTextPane.getBounds();
         
         ScrollBar hBar = fRendering.getHorizontalBar();
         
-        Point adjustedCaret  = null;
+        Point adjustedCaret = null;
         
         int leftPaneEdge  = 0; 
         int rightPaneEdge = 0;
-        int eolComparison = 0;
+        int eolLocation   = 0;
         int bolSelection  = 0;
         int eolSelection  = 0;
         
@@ -550,7 +549,7 @@ public abstract class AbstractPane extends Canvas
             rightPaneEdge = vpBounds.x + vpBounds.width;
             bolSelection  = hBar.getMinimum();
             eolSelection  = apBounds.width + dpBounds.width - (vpBounds.width/2);
-            eolComparison = apBounds.width + dpBounds.width - 10;
+            eolLocation   = apBounds.width + dpBounds.width - 10;
             adjustedCaret = new Point(fCaret.getLocation().x + dpBounds.x + 16, fCaret.getLocation().y);
         }
         else if (this instanceof TextPane)
@@ -559,7 +558,7 @@ public abstract class AbstractPane extends Canvas
             rightPaneEdge = leftPaneEdge + (vpBounds.width - tpBounds.x);
             bolSelection  = apBounds.width + dpBounds.width - 36;
             eolSelection  = hBar.getMaximum();
-            eolComparison = apBounds.width + dpBounds.width + tpBounds.width - 22;
+            eolLocation   = apBounds.width + dpBounds.width + tpBounds.width - 22;
             adjustedCaret = new Point(fCaret.getLocation().x + apBounds.width + dpBounds.width, fCaret.getLocation().y);
         }
         else
@@ -567,18 +566,37 @@ public abstract class AbstractPane extends Canvas
 
         if (fCaretAddress.compareTo(vpStart) < 0 || fCaretAddress.compareTo(vpEnd) >= 0)
         {
-            // Up or Down arrow:  Scroll the viewport up or down by one row.
+            // The caret was moved outside the viewport bounds:  Scroll the
+            // viewport up or down by a row, depending on where the caret is
             
-        	ScrollBar vBar = fRendering.getVerticalBar();
-        	vBar.setSelection(vBar.getSelection() + (fCaretAddress.compareTo(vpStart) <= 0 ? -1 : 1));
-        	vBar.notifyListeners(SWT.Selection, new Event());
-        	ensureCaretWithinViewport();
+            boolean upArrow = fCaretAddress.compareTo(vpStart) <= 0;
+            ScrollBar vBar = fRendering.getVerticalBar();
+            vBar.setSelection(vBar.getSelection() + (upArrow ? -1 : 1));
+            vBar.notifyListeners(SWT.Selection, new Event());
+            
+            // Check to see if we're at the beginning or end of a line, and
+            // move the scrollbar, if necessary, to keep the caret in view.
+            
+            int currentCaretLocation = fCaret.getLocation().x + dpBounds.x + 16;
+            int lowEolLimit  = eolLocation - 1;
+            int highEolLimit = eolLocation + 1;
+            
+            if (fCaret.getLocation().x == 2)
+            {
+                hBar.setSelection(bolSelection);
+                hBar.notifyListeners(SWT.Selection, new Event());
+            }
+            else if (upArrow && ((currentCaretLocation >= lowEolLimit && currentCaretLocation <= highEolLimit))) 
+            {
+                hBar.setSelection(eolSelection);
+                hBar.notifyListeners(SWT.Selection, new Event());
+            }
         }
         else if (!vpBounds.contains(adjustedCaret))
         {
             // Left or Right arrow:  The caret is now outside the viewport and beyond the pane.  Calculate
-        	// a new pane position at [up to] 33% left or right in the viewport, to center the caret; use a
-        	// positive or negative offset depending on which direction we're scrolling.
+            // a new pane position at [up to] 33% left or right in the viewport, to center the caret; use a
+            // positive or negative offset depending on which direction we're scrolling.
             
             int hBarOffset = (rightPaneEdge - leftPaneEdge) / 3;
             int newHBarSel = hBar.getSelection() + (adjustedCaret.x > rightPaneEdge ? hBarOffset : -hBarOffset);
@@ -588,10 +606,10 @@ public abstract class AbstractPane extends Canvas
                 // Beginning of a line
               hBar.setSelection(bolSelection);
             }
-            else if (adjustedCaret.x == eolComparison)
+            else if (adjustedCaret.x == eolLocation)
             {
-            	// End of a line
-            	hBar.setSelection(eolSelection);
+                // End of a line
+                hBar.setSelection(eolSelection);
             }
             else if (adjustedCaret.x > rightPaneEdge)
             {
@@ -610,7 +628,7 @@ public abstract class AbstractPane extends Canvas
         }
         else
         {
-        	// Caret is inside the viewport
+            // Caret is inside the viewport
             return;
         }
         

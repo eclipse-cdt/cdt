@@ -166,7 +166,6 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	
 	private IndexFactory fIndexFactory= new IndexFactory(this);
     private IndexProviderManager fIndexProviderManager = new IndexProviderManager();
-
     
 	/**
 	 * Serializes creation of new indexer, when acquiring the lock you are 
@@ -341,8 +340,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				if (!dbFile.exists()) {
 					dbFile= null;
 					dbName= null;
-				}
-				else {
+				} else {
 					ICProject currentCOwner= fFileToProject.get(dbFile);
 					if (currentCOwner != null) {
 						IProject currentOwner= currentCOwner.getProject();
@@ -373,8 +371,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				}
 				if (fromScratch) {
 					pdom.setCreatedFromScratch(true);
-				}
-				else {
+				} else {
 					pdom.clear();
 					pdom.setClearedBecauseOfVersionMismatch(true);
 				}
@@ -444,14 +441,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	protected void onPreferenceChange(ICProject cproject, PreferenceChangeEvent event) {
 		if (IndexerPreferences.KEY_UPDATE_POLICY.equals(event.getKey())) {
 			changeUpdatePolicy(cproject);
-		}
-		else {
+		} else {
 			IProject project= cproject.getProject();
 			if (project.exists() && project.isOpen()) {
 				try {
 					changeIndexer(cproject);
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					CCorePlugin.log(e);
 				}
 			}
@@ -955,7 +950,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				// don't attempt to hold lock on indexerMutex while canceling
 				cancelIndexerJobs(indexer);
 
-				synchronized(fUpdatePolicies) {
+				synchronized (fUpdatePolicies) {
 					indexer= getIndexer(project);
 					if (indexer != null) {
 						createPolicy(project).clearTUs();
@@ -995,7 +990,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			protected IStatus run(IProgressMonitor monitor) {
 				while(true) {
 					final Runnable r;
-					synchronized(fChangeEvents) {
+					synchronized (fChangeEvents) {
 						if (fChangeEvents.isEmpty()) {
 							return Status.OK_STATUS;
 						}
@@ -1021,7 +1016,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 
     void fireStateChange(final int state) {
-    	synchronized(fStateListeners) {
+    	synchronized (fStateListeners) {
     		if (fLastNotifiedState == state) {
     			return;
     		}
@@ -1093,8 +1088,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					try {
 						Thread.sleep(waitMaxMillis);
 						monitor.setCanceled(true);
-					}
-					catch (InterruptedException e) {
+					} catch (InterruptedException e) {
 					}
 				}
 			};
@@ -1232,9 +1226,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			} finally {
 				newPDOM.releaseWriteLock();
 			}
-		} catch(IOException ioe) {
+		} catch (IOException ioe) {
 			throw new CoreException(CCorePlugin.createStatus(ioe.getMessage()));
-		} catch(InterruptedException ie) {
+		} catch (InterruptedException ie) {
 			throw new CoreException(CCorePlugin.createStatus(ie.getMessage()));
 		}
 	}
@@ -1313,7 +1307,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	public boolean isIndexerSetupPostponed(ICProject proj) {
-		synchronized(fSetupParticipants) {
+		synchronized (fSetupParticipants) {
 			return fPostponedProjects.contains(proj);
 		}
 	}
@@ -1347,8 +1341,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					ICElement other= set.get(j);
 					if (contains(other, element)) {
 						continue allElements;
-					}
-					else if (contains(element, other)) {
+					} else if (contains(element, other)) {
 						set.set(j, element);
 						continue allElements;
 					}					
@@ -1395,7 +1388,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	protected boolean postponeSetup(final ICProject cproject) {
-		synchronized(fSetupParticipants) {
+		synchronized (fSetupParticipants) {
 			for (IndexerSetupParticipant sp : fSetupParticipants) {
 				if (sp.postponeIndexerSetup(cproject)) {
 					fPostponedProjects.add(cproject);
@@ -1430,7 +1423,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	public void notifyIndexerSetup(IndexerSetupParticipant participant,	ICProject project) {
 		if (fInShutDown)
 			return;
-		synchronized(fSetupParticipants) {
+		synchronized (fSetupParticipants) {
 			if (fPostponedProjects.contains(project)) {
 				setupProject(project);
 			}
@@ -1491,8 +1484,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			} finally {
 				index.releaseReadLock();
 			}
-		} catch(InterruptedException ie) {
-			CCorePlugin.log(ie);
+		} catch (InterruptedException e) {
+			CCorePlugin.log(e);
 		}
 
 		return true;

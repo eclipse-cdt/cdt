@@ -3186,11 +3186,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @since 5.0
 	 */
 	class OccurrencesAnnotationUpdaterJob extends Job {
-
 		private final IDocument fDocument;
 		private final ISelection fSelection;
 		private final ISelectionValidator fPostSelectionValidator;
-		private boolean fCanceled= false;
+		private boolean fCanceled;
 		private final OccurrenceLocation[] fLocations;
 
 		public OccurrencesAnnotationUpdaterJob(IDocument document, OccurrenceLocation[] locations, ISelection selection, ISelectionValidator validator) {
@@ -3342,7 +3341,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				return;
 			newInput.addDocumentListener(this);
 		}
-}
+	}
 
 	/**
 	 * Updates the occurrences annotations based

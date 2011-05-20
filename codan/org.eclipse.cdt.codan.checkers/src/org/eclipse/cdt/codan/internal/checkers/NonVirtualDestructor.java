@@ -84,81 +84,79 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 		private boolean hasErrorCondition(IASTDeclSpecifier decl) throws DOMException {
 			ICPPASTCompositeTypeSpecifier spec = (ICPPASTCompositeTypeSpecifier) decl;
 			className = spec.getName();
-			IBinding binding = className.getBinding();
-			if (binding == null) {
-				binding = className.resolveBinding();
-			}
+			IBinding binding = className.resolveBinding();
 			if (binding instanceof ICPPClassType) {
-				ICPPClassType classType = (ICPPClassType) binding;
-				virtualMethod = null;
-				destructor = null;
-				// check for the following conditions:
-				// class has own virtual method and own non-virtual destructor
-				// class has own virtual method and base non-virtual destructor
-				// class has base virtual method and own non-virtual destructor
-				ICPPMethod[] declaredMethods = classType.getDeclaredMethods();
-				boolean hasOwnVirtualMethod = false;
-				boolean hasOwnNonVirDestructor = false;
-				boolean hasDestructor = false;
-				boolean hasVirtualMethod = false;
-				for (ICPPMethod method : declaredMethods) {
-					if (method.isVirtual() && !method.isDestructor()) {
-						hasOwnVirtualMethod = true;
+				return false;
+			}
+			ICPPClassType classType = (ICPPClassType) binding;
+			virtualMethod = null;
+			destructor = null;
+			// check for the following conditions:
+			// class has own virtual method and own non-virtual destructor
+			// class has own virtual method and base non-virtual destructor
+			// class has base virtual method and own non-virtual destructor
+			ICPPMethod[] declaredMethods = classType.getDeclaredMethods();
+			boolean hasOwnVirtualMethod = false;
+			boolean hasOwnNonVirDestructor = false;
+			boolean hasDestructor = false;
+			boolean hasVirtualMethod = false;
+			for (ICPPMethod method : declaredMethods) {
+				if (method.isVirtual() && !method.isDestructor()) {
+					hasOwnVirtualMethod = true;
+					virtualMethod = method;
+				}
+				if (method.isDestructor()) {
+					hasDestructor = true;
+					if (!method.isVirtual()) {
+						hasOwnNonVirDestructor = true;
+						destructor = method;
+					}
+				}
+			}
+			boolean hasVirtualDestructor = false;
+			// Class has own virtual method and own non-virtual destructor.
+			if (hasOwnVirtualMethod && hasOwnNonVirDestructor) {
+				if (destructor instanceof ICPPMethod) {
+					// Check if dtor is public or is accessible by friends.
+					if (((ICPPMethod) destructor).getVisibility() != ICPPASTVisibilityLabel.v_public &&
+							classType.getFriends().length == 0) {
+						return false;
+					}
+				}
+				// Check if one of its base classes has a virtual destructor.
+				return !hasVirtualDtorInBaseClass(classType);
+			}
+			// Class does not have virtual methods but has virtual destructor
+			// - not an error
+			if (!hasOwnVirtualMethod && hasDestructor && !hasOwnNonVirDestructor) {
+				return false;
+			}
+			ICPPMethod[] allDeclaredMethods = classType.getAllDeclaredMethods();
+			for (ICPPMethod method : allDeclaredMethods) {
+				if (method.isVirtual() && !method.isDestructor()) {
+					hasVirtualMethod = true;
+					if (virtualMethod == null)
 						virtualMethod = method;
-					}
-					if (method.isDestructor()) {
-						hasDestructor = true;
-						if (!method.isVirtual()) {
-							hasOwnNonVirDestructor = true;
+				}
+				if (method.isDestructor()) {
+					hasDestructor = true;
+					if (method.isVirtual()) {
+						hasVirtualDestructor = true;
+					} else {
+						if (destructor == null)
 							destructor = method;
-						}
 					}
 				}
-				boolean hasVirtualDestructor = false;
-				// Class has own virtual method and own non-virtual destructor.
-				if (hasOwnVirtualMethod && hasOwnNonVirDestructor) {
-					if (destructor instanceof ICPPMethod) {
-						// Check if dtor is public or is accessible by friends.
-						if (((ICPPMethod) destructor).getVisibility() != ICPPASTVisibilityLabel.v_public &&
-								classType.getFriends().length == 0) {
-							return false;
-						}
-					}
-					// Check if one of its base classes has a virtual destructor.
-					return !hasVirtualDtorInBaseClass(classType);
+			}
+			if (hasOwnVirtualMethod) {
+				// Class has own virtual method and base non-virtual destructor.
+				if (hasDestructor && !hasVirtualDestructor) {
+					return true;
 				}
-				// Class does not have virtual methods but has virtual destructor
-				// - not an error
-				if (!hasOwnVirtualMethod && hasDestructor && !hasOwnNonVirDestructor) {
-					return false;
-				}
-				ICPPMethod[] allDeclaredMethods = classType.getAllDeclaredMethods();
-				for (ICPPMethod method : allDeclaredMethods) {
-					if (method.isVirtual() && !method.isDestructor()) {
-						hasVirtualMethod = true;
-						if (virtualMethod == null)
-							virtualMethod = method;
-					}
-					if (method.isDestructor()) {
-						hasDestructor = true;
-						if (method.isVirtual()) {
-							hasVirtualDestructor = true;
-						} else {
-							if (destructor == null)
-								destructor = method;
-						}
-					}
-				}
-				if (hasOwnVirtualMethod) {
-					// Class has own virtual method and base non-virtual destructor.
-					if (hasDestructor && !hasVirtualDestructor) {
-						return true;
-					}
-				} else if (hasVirtualMethod) {
-					// Class has base virtual method and own non-virtual destructor.
-					if (hasOwnNonVirDestructor) {
-						return true;
-					}
+			} else if (hasVirtualMethod) {
+				// Class has base virtual method and own non-virtual destructor.
+				if (hasOwnNonVirDestructor) {
+					return true;
 				}
 			}
 			return false;

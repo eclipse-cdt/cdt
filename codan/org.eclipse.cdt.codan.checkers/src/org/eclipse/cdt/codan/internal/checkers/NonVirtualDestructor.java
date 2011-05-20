@@ -36,14 +36,14 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"; //$NON-NLS-1$
 
 	public void processAst(IASTTranslationUnit ast) {
-		// traverse the ast using the visitor pattern.
+		// Traverse the ast using the visitor pattern.
 		ast.accept(new OnEachClass());
 	}
 
 	class OnEachClass extends ASTVisitor {
 		private IASTName className;
-		private IBinding virMethodName;
-		private IBinding destructorName;
+		private IBinding virtualMethod;
+		private IBinding destructor;
 
 		OnEachClass() {
 			// shouldVisitDeclarations = true;
@@ -56,20 +56,19 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 					boolean err = hasErrorCondition(decl);
 					if (err) {
 						String clazz = className.toString();
-						String method = virMethodName.getName();
+						String method = virtualMethod.getName();
 						IASTNode ast = decl;
-						if (destructorName != null) {
-							if (destructorName instanceof ICPPInternalBinding) {
-								ICPPInternalBinding bin = (ICPPInternalBinding) destructorName;
-								IASTNode[] decls = bin.getDeclarations();
+						if (destructor != null) {
+							if (destructor instanceof ICPPInternalBinding) {
+								IASTNode[] decls = ((ICPPInternalBinding) destructor).getDeclarations();
 								if (decls != null && decls.length > 0)
 									ast = decls[0];
 							}
-							reportProblem(ER_ID, ast, clazz, method, destructorName.getName());
+							reportProblem(ER_ID, ast, clazz, method, destructor.getName());
 						}
 					}
 				} catch (DOMException e) {
-					// ignore, no error
+					// Ignore, not an error.
 				} catch (Exception e) {
 					CodanCheckersActivator.log(e);
 				}
@@ -91,8 +90,8 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 			}
 			if (binding instanceof ICPPClassType) {
 				ICPPClassType classType = (ICPPClassType) binding;
-				virMethodName = null;
-				destructorName = null;
+				virtualMethod = null;
+				destructor = null;
 				// check for the following conditions:
 				// class has own virtual method and own non-virtual destructor
 				// class has own virtual method and base non-virtual destructor
@@ -102,26 +101,25 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 				boolean hasOwnNonVirDestructor = false;
 				boolean hasDestructor = false;
 				boolean hasVirtualMethod = false;
-				for (int i = 0; i < declaredMethods.length; i++) {
-					ICPPMethod icppMethod = declaredMethods[i];
-					if (icppMethod.isVirtual() && !icppMethod.isDestructor()) {
+				for (ICPPMethod method : declaredMethods) {
+					if (method.isVirtual() && !method.isDestructor()) {
 						hasOwnVirtualMethod = true;
-						virMethodName = icppMethod;
+						virtualMethod = method;
 					}
-					if (icppMethod.isDestructor()) {
+					if (method.isDestructor()) {
 						hasDestructor = true;
-						if (!icppMethod.isVirtual()) {
+						if (!method.isVirtual()) {
 							hasOwnNonVirDestructor = true;
-							destructorName = icppMethod;
+							destructor = method;
 						}
 					}
 				}
 				boolean hasVirtualDestructor = false;
 				// Class has own virtual method and own non-virtual destructor.
 				if (hasOwnVirtualMethod && hasOwnNonVirDestructor) {
-					if (destructorName instanceof ICPPMethod) {
+					if (destructor instanceof ICPPMethod) {
 						// Check if dtor is public or is accessible by friends.
-						if (((ICPPMethod) destructorName).getVisibility() != ICPPASTVisibilityLabel.v_public &&
+						if (((ICPPMethod) destructor).getVisibility() != ICPPASTVisibilityLabel.v_public &&
 								classType.getFriends().length == 0) {
 							return false;
 						}
@@ -135,20 +133,19 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 					return false;
 				}
 				ICPPMethod[] allDeclaredMethods = classType.getAllDeclaredMethods();
-				for (int i = 0; i < allDeclaredMethods.length; i++) {
-					ICPPMethod icppMethod = allDeclaredMethods[i];
-					if (icppMethod.isVirtual() && !icppMethod.isDestructor()) {
+				for (ICPPMethod method : allDeclaredMethods) {
+					if (method.isVirtual() && !method.isDestructor()) {
 						hasVirtualMethod = true;
-						if (virMethodName == null)
-							virMethodName = icppMethod;
+						if (virtualMethod == null)
+							virtualMethod = method;
 					}
-					if (icppMethod.isDestructor()) {
+					if (method.isDestructor()) {
 						hasDestructor = true;
-						if (icppMethod.isVirtual()) {
+						if (method.isVirtual()) {
 							hasVirtualDestructor = true;
 						} else {
-							if (destructorName == null)
-								destructorName = icppMethod;
+							if (destructor == null)
+								destructor = method;
 						}
 					}
 				}

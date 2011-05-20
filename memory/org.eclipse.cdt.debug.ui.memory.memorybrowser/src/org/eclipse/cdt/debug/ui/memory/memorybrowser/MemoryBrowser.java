@@ -257,6 +257,9 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			public void widgetDefaultSelected(SelectionEvent e) {
 				performGo(false);
 			}
+			public void widgetSelected(SelectionEvent e) {
+				performGo(false);
+			}
 		});
 		
 		fGotoMemorySpaceControl.addSelectionListener(new SelectionAdapter() {

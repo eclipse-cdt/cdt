@@ -91,7 +91,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 			ICPPClassType classType = (ICPPClassType) binding;
 			virtualMethod = null;
 			destructor = null;
-			// check for the following conditions:
+			// Check for the following conditions:
 			// class has own virtual method and own non-virtual destructor
 			// class has own virtual method and base non-virtual destructor
 			// class has base virtual method and own non-virtual destructor

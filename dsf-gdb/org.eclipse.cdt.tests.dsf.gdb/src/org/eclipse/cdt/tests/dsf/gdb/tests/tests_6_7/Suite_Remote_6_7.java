@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_7;
 
-import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.mi.service.command.commands.Suite_Sessionless_Tests;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
-import org.junit.BeforeClass;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseRemoteSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -44,10 +41,5 @@ import org.junit.runners.Suite;
 	/* Add your test class here */
 })
 
-public class Suite_Remote_6_7 {
-	@BeforeClass
-    public static void beforeClassMethod() {
-		BaseTestCase.setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
-				                        IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
-	}
+public class Suite_Remote_6_7 extends BaseRemoteSuite {
 }

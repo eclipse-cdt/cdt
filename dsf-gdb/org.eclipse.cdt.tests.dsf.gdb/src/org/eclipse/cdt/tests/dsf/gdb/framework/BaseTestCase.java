@@ -59,8 +59,20 @@ public class BaseTestCase {
 	private static final String DEFAULT_TEST_APP = "data/launch/bin/GDBMIGenericTestApp";
 	
     private static GdbLaunch fLaunch;
-	private static Map<String, Object> attrs;
-    private static Process gdbserverProc;
+
+    // The set of attributes used for the launch
+    // These are seset to their default whenever a new class
+    // of tests is started.
+	private static Map<String, Object> launchAttributes;
+	
+	// A set of global launch attributes which are not
+	// reset when we load a new class of tests.
+	// This allows a Suite to set an attribute
+	// The suite is reponsible for clearing those attributes
+	// once it is finished
+	private static Map<String, Object> globalLaunchAttributes;
+
+	private static Process gdbserverProc;
     
 	/** The MI event associated with the breakpoint at main() */
 	private MIStoppedEvent fInitialStoppedEvent;
@@ -74,7 +86,20 @@ public class BaseTestCase {
     public GdbLaunch getGDBLaunch() { return fLaunch; }
     
     public static void setLaunchAttribute(String key, Object value) { 
-    	attrs.put(key, value);
+    	launchAttributes.put(key, value);
+    }
+
+    public static void setGlobalLaunchAttribute(String key, Object value) {
+    	if (globalLaunchAttributes == null) {
+    		globalLaunchAttributes = new HashMap<String, Object>();
+    	}
+    	globalLaunchAttributes.put(key, value);
+    }
+
+    public static void removeGlobalLaunchAttribute(String key) {
+    	if (globalLaunchAttributes != null) {
+    		globalLaunchAttributes.remove(key);
+    	}
     }
     
     public synchronized MIStoppedEvent getInitialStoppedEvent() { return fInitialStoppedEvent; }
@@ -119,31 +144,34 @@ public class BaseTestCase {
    
     @BeforeClass
     public static void baseBeforeClassMethod() {
-    	// Must clear all the attributes, because some tests change them.
-    	attrs = new HashMap<String, Object>();
+    	// Clear all launch attributes before starting a new class of tests
+    	launchAttributes = new HashMap<String, Object>();
     	
 		// Setup information for the launcher
-   		attrs.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, DEFAULT_TEST_APP);
+   		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, DEFAULT_TEST_APP);
 
-		attrs.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
-		attrs.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
-		attrs.put(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
+		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
+		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
+		launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
 
-    	if (attrs.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE) == null) {
-    		attrs.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
+    	if (launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE) == null) {
+    		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
     	}
 		
 		// Set these up in case we will be running Remote tests.  They will be ignored if we don't
-    	attrs.put(ATTR_DEBUG_SERVER_NAME, "gdbserver");
-    	attrs.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
-    	attrs.put(IGDBLaunchConfigurationConstants.ATTR_HOST, "localhost");
-    	attrs.put(IGDBLaunchConfigurationConstants.ATTR_PORT, "9999");
+    	launchAttributes.put(ATTR_DEBUG_SERVER_NAME, "gdbserver");
+    	launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
+    	launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_HOST, "localhost");
+    	launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_PORT, "9999");
+    	
+    	// Set the global launch attributes
+    	launchAttributes.putAll(globalLaunchAttributes);
     }
     
     @Before
  	public void baseBeforeMethod() throws Exception {
     	System.out.println("====================================================================================================");
-		System.out.println("Running test: " + testName.getMethodName() + " using GDB: " + attrs.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME));
+		System.out.println("Running test: " + testName.getMethodName() + " using GDB: " + launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME));
     	System.out.println("====================================================================================================");
 		
  		// First check if we should launch gdbserver in the case of a remote session
@@ -157,7 +185,7 @@ public class BaseTestCase {
  				null, 
  				launchMgr.generateLaunchConfigurationName("Test Launch")); //$NON-NLS-1$
  		assert lcWorkingCopy != null;
- 		lcWorkingCopy.setAttributes(attrs);
+ 		lcWorkingCopy.setAttributes(launchAttributes);
 
  		final ILaunchConfiguration lc = lcWorkingCopy.doSave();
  		
@@ -221,12 +249,12 @@ public class BaseTestCase {
  	 * If the user specified a different host, things won't work.
  	 */
  	private static void launchGdbServer() {
- 		if (attrs.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
+ 		if (launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
  				              .equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
- 			if (attrs.get(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP).equals(Boolean.TRUE)) {
- 				String server = (String)attrs.get(ATTR_DEBUG_SERVER_NAME);
- 				String port = (String)attrs.get(IGDBLaunchConfigurationConstants.ATTR_PORT);
- 				String program = (String)attrs.get(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME);
+ 			if (launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP).equals(Boolean.TRUE)) {
+ 				String server = (String)launchAttributes.get(ATTR_DEBUG_SERVER_NAME);
+ 				String port = (String)launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_PORT);
+ 				String program = (String)launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME);
  				String commandLine = server + " :" + port + " " + program;
  				try {
                     System.out.println("Staring gdbserver with command: " + commandLine);

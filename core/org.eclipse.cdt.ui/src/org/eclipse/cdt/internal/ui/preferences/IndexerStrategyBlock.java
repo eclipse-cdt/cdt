@@ -38,13 +38,12 @@ import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
  * various parsing related caches.
  */
 public class IndexerStrategyBlock extends AbstractCOptionPage {
-
     private Button fAutoUpdateButton;
 	private Button fImmediateUpdateButton;
 	private Button fUseActiveBuildButton;
 	private Button fUseFixedBuildConfig;
 
-	public IndexerStrategyBlock(ICOptionContainer container){
+	public IndexerStrategyBlock(ICOptionContainer container) {
     	setContainer(container);
     }
 
@@ -117,20 +116,18 @@ public class IndexerStrategyBlock extends AbstractCOptionPage {
 		int updatePolicy;
 		if (!fAutoUpdateButton.getSelection()) {
 			updatePolicy= IndexerPreferences.UPDATE_POLICY_MANUAL;
-		}
-		else if (fImmediateUpdateButton.getSelection()) {
+		} else if (fImmediateUpdateButton.getSelection()) {
 			updatePolicy= IndexerPreferences.UPDATE_POLICY_IMMEDIATE;
-		}
-		else {
+		} else {
 			updatePolicy= IndexerPreferences.UPDATE_POLICY_LAZY;
 		}			
 		IndexerPreferences.setUpdatePolicy(null, updatePolicy);
 
     	if (fUseActiveBuildButton != null) {
     		boolean useActive= fUseActiveBuildButton.getSelection();
-    		int relation=  useActive
-    		? ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE
-    				: ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT;
+    		int relation= useActive ?
+    				ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE :
+    				ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT;
     		ICProjectDescriptionManager prjDescMgr= CCorePlugin.getDefault().getProjectDescriptionManager();
     		ICProjectDescriptionWorkspacePreferences prefs= prjDescMgr.getProjectDescriptionWorkspacePreferences(true);
     		prefs.setConfigurationRelations(relation);

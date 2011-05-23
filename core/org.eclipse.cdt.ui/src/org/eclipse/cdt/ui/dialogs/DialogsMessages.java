@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *      Markus Schorn - initial API and implementation
  *      IBM Corporation
  *      Andrew Ferguson (Symbian)
+ *      Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
@@ -31,6 +32,8 @@ public class DialogsMessages extends NLS {
 	public static String AbstractIndexerPage_indexAllHeadersC;
 	/** @since 5.1 */
 	public static String AbstractIndexerPage_indexAllHeadersCpp;
+	/** @since 5.3 */
+	public static String AbstractIndexerPage_indexOpenedFiles;
 	public static String AbstractIndexerPage_indexUpFront;
 	public static String AbstractIndexerPage_skipAllReferences;
 	/** @since 5.1 */
@@ -41,6 +44,8 @@ public class DialogsMessages extends NLS {
 	public static String AbstractIndexerPage_skipMacroReferences;
 	public static String CacheSizeBlock_MB;
 	public static String IndexerBlock_fixedBuildConfig;
+	/** @since 5.3 */
+	public static String IndexerBlock_indexerOptions;
 	public static String IndexerStrategyBlock_activeBuildConfig;
 	public static String IndexerStrategyBlock_autoUpdate;
 	public static String IndexerStrategyBlock_buildConfigGroup;

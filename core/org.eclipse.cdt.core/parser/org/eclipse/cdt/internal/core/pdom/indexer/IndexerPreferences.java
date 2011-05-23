@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
@@ -47,6 +48,7 @@ public class IndexerPreferences {
 	public static final String KEY_INDEX_ALL_FILES= "indexAllFiles"; //$NON-NLS-1$
 	public static final String KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG= "indexUnusedHeadersWithDefaultLang"; //$NON-NLS-1$
 	public static final String KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG= "indexUnusedHeadersWithAlternateLang"; //$NON-NLS-1$
+	public static final String KEY_INDEX_ON_OPEN= "indexOnOpen"; //$NON-NLS-1$
 	public static final String KEY_INCLUDE_HEURISTICS= "useHeuristicIncludeResolution"; //$NON-NLS-1$
 	public static final String KEY_FILES_TO_PARSE_UP_FRONT= "filesToParseUpFront"; //$NON-NLS-1$
 	public static final String KEY_SKIP_ALL_REFERENCES= "skipReferences"; //$NON-NLS-1$
@@ -330,6 +332,7 @@ public class IndexerPreferences {
 		prefs.putBoolean(KEY_INDEX_ALL_FILES, true);
 		prefs.putBoolean(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, false);
 		prefs.putBoolean(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, false);
+		prefs.putBoolean(KEY_INDEX_ON_OPEN, false);
 		prefs.putBoolean(KEY_INCLUDE_HEURISTICS, true);
 		prefs.putInt(KEY_SKIP_FILES_LARGER_THAN_MB, DEFAULT_FILE_SIZE_LIMIT);
 		prefs.putBoolean(KEY_SKIP_ALL_REFERENCES, false);

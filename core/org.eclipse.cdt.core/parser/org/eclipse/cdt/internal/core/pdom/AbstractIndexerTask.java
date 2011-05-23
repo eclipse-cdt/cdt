@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -465,6 +465,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		final boolean checkTimestamps= (fUpdateFlags & IIndexManager.UPDATE_CHECK_TIMESTAMPS) != 0;
 		final boolean checkFileContentsHash = (fUpdateFlags & IIndexManager.UPDATE_CHECK_CONTENTS_HASH) != 0;
 		final boolean checkConfig= (fUpdateFlags & IIndexManager.UPDATE_CHECK_CONFIGURATION) != 0;
+		final boolean forceInclusion= (fUpdateFlags & IIndexManager.FORCE_INDEX_INCLUSION) != 0;
 
 		int count= 0;
 		int forceFirst= fForceNumberFiles;
@@ -482,8 +483,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				final boolean isSourceUnit= fResolver.isSourceUnit(tu);
 				final boolean isExcludedSource= isSourceUnit && !fIndexFilesWithoutConfiguration && !fResolver.isFileBuildConfigured(tu);
 
-				if ((isSourceUnit && !isExcludedSource) || fIndexHeadersWithoutContext != UnusedHeaderStrategy.skip) {
-					// headers or sources required with a specific linkage
+				if ((isSourceUnit && !isExcludedSource) || fIndexHeadersWithoutContext != UnusedHeaderStrategy.skip ||
+						forceInclusion) {
+					// Headers or sources required with a specific linkage
 					AbstractLanguage[] langs= fResolver.getLanguages(tu, fIndexHeadersWithoutContext == UnusedHeaderStrategy.useBoth);
 					for (AbstractLanguage lang : langs) {
 						int linkageID = lang.getLinkageID();

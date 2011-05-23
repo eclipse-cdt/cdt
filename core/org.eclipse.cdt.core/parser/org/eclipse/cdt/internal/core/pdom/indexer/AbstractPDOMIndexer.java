@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
@@ -20,7 +21,6 @@ import org.eclipse.cdt.core.model.ICProject;
  * Abstract base class for all indexers.
  */
 public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
-	
 	protected ICProject project;
 	protected Properties fProperties= new Properties();
 		
@@ -28,7 +28,7 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 		fProperties.put(IndexerPreferences.KEY_INDEX_ALL_FILES, String.valueOf(true));
 		fProperties.put(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, String.valueOf(false));
 		fProperties.put(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, String.valueOf(false));
-		fProperties.put(IndexerPreferences.KEY_INDEX_ALL_FILES, String.valueOf(false));
+		fProperties.put(IndexerPreferences.KEY_INDEX_ON_OPEN, String.valueOf(false));
 		fProperties.put(IndexerPreferences.KEY_INCLUDE_HEURISTICS, String.valueOf(true));
 		fProperties.put(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB, String.valueOf(IndexerPreferences.DEFAULT_FILE_SIZE_LIMIT));
 		fProperties.put(IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT, ""); //$NON-NLS-1$

@@ -72,7 +72,6 @@ public class IndexerBlock extends AbstractCOptionPage {
 
 	private static final String INDEXER_LABEL = CUIPlugin.getResourceString("BaseIndexerBlock.label" ); //$NON-NLS-1$
 	private static final String INDEXER_DESCRIPTION = CUIPlugin.getResourceString("BaseIndexerBlock.desc"); //$NON-NLS-1$
-	private static final String INDEXER_COMBO_LABEL = CUIPlugin.getResourceString("BaseIndexerBlock.comboLabel"); //$NON-NLS-1$
 	
 	private PreferenceScopeBlock    fPrefScopeBlock;
 	private Button					fEnableIndexer;
@@ -187,7 +186,6 @@ public class IndexerBlock extends AbstractCOptionPage {
 		layout.marginWidth= 0;
 		gd= (GridData) fPreferenceContent.getLayoutData();
 		gd.horizontalIndent= 0; 
-		
 
 		// add option to enable indexer
 		final SelectionAdapter indexerChangeListener = new SelectionAdapter() {
@@ -199,13 +197,13 @@ public class IndexerBlock extends AbstractCOptionPage {
 		fEnableIndexer= ControlFactory.createCheckBox(fPreferenceContent, CUIPlugin.getResourceString("IndexerBlock.enable")); //$NON-NLS-1$
 		fEnableIndexer.addSelectionListener(indexerChangeListener);
 
-		// add combo to select indexer
-		Group group= ControlFactory.createGroup(fPreferenceContent, INDEXER_COMBO_LABEL, 1);
+		// Add a group for indexer options.
+		Group group= ControlFactory.createGroup(fPreferenceContent, DialogsMessages.IndexerBlock_indexerOptions, 1);
 		gd= (GridData) group.getLayoutData();
 		gd.grabExcessHorizontalSpace= true;
 
 		if (fIndexerConfigMap.size() > 2) {
-			fIndexersComboBox = ControlFactory.createSelectCombo(group,"", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			fIndexersComboBox = ControlFactory.createSelectCombo(group, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			fIndexersComboBox.addSelectionListener(indexerChangeListener);
 		}
 

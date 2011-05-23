@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Bogdan Gheorghe (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Bogdan Gheorghe (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
@@ -15,6 +16,7 @@ import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -34,6 +36,8 @@ import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+
 /**
  * Configuration for indexer.
  */
@@ -44,6 +48,7 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	private Button fAllSources;
 	private Button fAllHeadersDefault;
 	private Button fAllHeadersAlt;
+	private Button fIndexOnOpen;
 	private Button fIncludeHeuristics;
 	private IntegerFieldEditor fFileSizeLimit;
 	private Text fFilesToParseUpFront;
@@ -58,6 +63,8 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			}
         }
     };
+	/** @since 5.3 */
+	protected PixelConverter pixelConverter;
 
 	protected AbstractIndexerPage() {
 		super();
@@ -73,8 +80,14 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 
 	@Override
 	public void createControl(Composite parent) {
+    	pixelConverter = new PixelConverter(parent);
 		GridLayout gl;
-		Composite page = ControlFactory.createComposite(parent, 1);
+		Composite page = new Composite(parent, SWT.NULL);
+		page.setFont(parent.getFont());
+		page.setLayout(gl= new GridLayout(1, true));
+		gl.marginHeight = 0;
+		gl.marginWidth = 0;
+		page.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Composite group= new Composite(page, SWT.NONE);
 		
 		fAllSources= createAllFilesButton(group);
@@ -85,17 +98,19 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			fAllHeadersDefault= createAllCppHeadersButton(group);
 			fAllHeadersAlt= createAllCHeadersButton(group);
 		}
+		fIndexOnOpen= createIndexOnOpenButton(group);
 
 		fIncludeHeuristics= createIncludeHeuristicsButton(group);
 		fFileSizeLimit= createFileSizeLimit(group);
 
 		group.setLayout(gl= new GridLayout(3, false));
+		gl.marginHeight = 0;
 		gl.marginWidth= 0;
 		group.setLayoutData(new GridData());
-		
 
 		group= new Composite(page, SWT.NONE);
 		group.setLayout(gl= new GridLayout(1, false));
+		gl.marginHeight = 0;
 		gl.marginWidth= 0;
 		group.setLayoutData(new GridData());
 		fSkipReferences= createSkipReferencesButton(group);
@@ -132,6 +147,10 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		if (fAllHeadersAlt != null) {
 			boolean indexAllFiles= TRUE.equals(properties.get(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG));
 			fAllHeadersAlt.setSelection(indexAllFiles);
+		}
+		if (fIndexOnOpen != null) {
+			boolean indexOnOpen= TRUE.equals(properties.get(IndexerPreferences.KEY_INDEX_ON_OPEN));
+			fIndexOnOpen.setSelection(indexOnOpen);
 		}
 		if (fIncludeHeuristics != null) {
 			Object prop= properties.get(IndexerPreferences.KEY_INCLUDE_HEURISTICS);
@@ -186,6 +205,9 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		}
 		if (fAllHeadersAlt != null) {
 			props.put(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, String.valueOf(fAllHeadersAlt.getSelection()));
+		}
+		if (fIndexOnOpen != null) {
+			props.put(IndexerPreferences.KEY_INDEX_ON_OPEN, String.valueOf(fIndexOnOpen.getSelection()));
 		}
 		if (fIncludeHeuristics != null) {
 			props.put(IndexerPreferences.KEY_INCLUDE_HEURISTICS, String.valueOf(fIncludeHeuristics.getSelection()));
@@ -289,6 +311,12 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		return result;
 	}
 
+	private Button createIndexOnOpenButton(Composite page) {
+		Button result= ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexOpenedFiles);
+		((GridData) result.getLayoutData()).horizontalSpan= 3;
+		return result;
+	}
+
 	private Button createIncludeHeuristicsButton(Composite page) {
 		Button result= ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_heuristicIncludes);
 		((GridData) result.getLayoutData()).horizontalSpan= 3;
@@ -299,10 +327,10 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		IntegerFieldEditor result= new IntegerFieldEditor(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB, DialogsMessages.AbstractIndexerPage_fileSizeLimit, group, 5);
 		result.setValidRange(1, 100000);
 		ControlFactory.createLabel(group, DialogsMessages.CacheSizeBlock_MB); 
-		GridData gd = new GridData();
-		gd.grabExcessHorizontalSpace= true;
-		gd.horizontalAlignment= GridData.FILL;
-		result.getLabelControl(group).setLayoutData(gd);
+		Text control = result.getTextControl(group);
+		LayoutUtil.setWidthHint(control, pixelConverter.convertWidthInCharsToPixels(10));
+		LayoutUtil.setHorizontalGrabbing(control, false); 
+
 		result.setPropertyChangeListener(validityChangeListener);
 		return result;
 	}

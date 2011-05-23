@@ -29,6 +29,7 @@ import java.util.Stack;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -175,7 +176,13 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -194,6 +201,7 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -237,7 +245,6 @@ import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
  * C/C++ source editor.
  */
 public class CEditor extends TextEditor implements ISelectionChangedListener, ICReconcilingListener {
-
 	/** Marker used for synchronization from Problems View to the editor on double-click. */
 	private IMarker fSyncProblemsViewMarker = null;
 
@@ -1427,9 +1434,56 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		}
 		ICElement element= getInputCElement();
 		if (element instanceof ITranslationUnit) {
-			fBracketMatcher.configure(((ITranslationUnit) element).getLanguage());
+			ITranslationUnit tu = (ITranslationUnit) element;
+			addToIndexIfNecessary(tu);
+			fBracketMatcher.configure(tu.getLanguage());
 		} else {
 			fBracketMatcher.configure(null);
+		}
+	}
+
+	private void addToIndexIfNecessary(ITranslationUnit tu) {
+		IProject project = tu.getCProject().getProject();
+		if (String.valueOf(true).equals(IndexerPreferences.get(project, IndexerPreferences.KEY_INDEX_ON_OPEN, null))) {
+			IndexUpdateRequestorJob job = new IndexUpdateRequestorJob(tu);
+			job.schedule();
+		}
+	}
+
+	private static class IndexUpdateRequestorJob extends Job {
+		private final ITranslationUnit tu;
+
+		IndexUpdateRequestorJob(ITranslationUnit tu) {
+			super(CEditorMessages.CEditor_index_expander_job_name);
+			this.tu = tu; 
+			setSystem(true);
+			setPriority(Job.DECORATE);
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			ICProject[] projects;
+			try {
+				projects = CoreModel.getDefault().getCModel().getCProjects();
+				IIndexManager indexManager = CCorePlugin.getIndexManager();
+				IIndex index = indexManager.getIndex(projects);
+				index.acquireReadLock();
+				try {
+					IIndexFileLocation ifl = IndexLocationFactory.getIFL(tu);
+					IIndexFile file = index.getFile(tu.getLanguage().getLinkageID(), ifl);
+					if (file != null) {
+						return Status.OK_STATUS; // Already indexed.
+					}
+					indexManager.update(new ICElement[] { tu },
+							IIndexManager.FORCE_INDEX_INCLUSION | IIndexManager.UPDATE_CHECK_TIMESTAMPS);
+				} finally {
+					index.releaseReadLock();
+				}
+			} catch (CModelException e) {
+			} catch (CoreException e) {
+			} catch (InterruptedException e) {
+			}
+			return Status.OK_STATUS;
 		}
 	}
 

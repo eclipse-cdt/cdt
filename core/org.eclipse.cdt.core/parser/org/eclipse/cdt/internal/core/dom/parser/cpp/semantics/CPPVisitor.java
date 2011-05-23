@@ -232,7 +232,7 @@ public class CPPVisitor extends ASTQueries {
 			    if (ns[ns.length - 1] != name) 
 			    	return binding;
 				
-			    if (ns.length > 1 && ns[ns.length-2].getBinding() instanceof IProblemBinding)
+			    if (ns.length > 1 && ns[ns.length - 2].getBinding() instanceof IProblemBinding)
 			    	return binding;
 			    
 				parent = parent.getParent();

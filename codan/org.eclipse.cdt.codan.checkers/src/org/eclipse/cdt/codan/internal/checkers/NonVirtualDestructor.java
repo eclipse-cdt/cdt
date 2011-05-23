@@ -33,7 +33,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
  * @author Alena Laskavaia
  */
 public class NonVirtualDestructor extends AbstractIndexAstChecker {
-	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"; //$NON-NLS-1$
+	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"; //$NON-NLS-1$
 
 	public void processAst(IASTTranslationUnit ast) {
 		// Traverse the ast using the visitor pattern.

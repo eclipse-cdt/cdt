@@ -6,14 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    IBM Corporation
+ *     Markus Schorn - initial API and implementation
+ *     IBM Corporation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.ui.dialogs;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -23,6 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -31,6 +34,8 @@ import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.parser.CodeReaderCache;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 
 /**
  * This OptionPage is used in the IndexerPreference page to allow for adjusting
@@ -42,7 +47,7 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 	private IntegerFieldEditor fDBLimitPct;
 	private IntegerFieldEditor fDBAbsoluteLimit;
 	private IntegerFieldEditor fCodeReaderLimit;
-    
+	
     private IPropertyChangeListener validityChangeListener = new IPropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent event) {
             if (event.getProperty().equals(FieldEditor.IS_VALID)) {
@@ -57,12 +62,11 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 
     @Override
 	public void createControl(Composite parent) {
+    	PixelConverter pixelConverter =  new PixelConverter(parent);
     	GridData gd;
     	GridLayout gl;
         Composite composite = ControlFactory.createComposite(parent, 1);
 		gl=  (GridLayout)composite.getLayout();
-		int hindent= gl.marginWidth + gl.marginLeft;
-		int vindent= gl.marginHeight + gl.marginTop;
 		gl.marginWidth= 0;
 		
 		gd= (GridData) composite.getLayoutData();
@@ -81,15 +85,24 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 		Label dbCacheLabel= ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_indexDatabaseCache);
 		fDBLimitPct= new IntegerFieldEditor(CCorePreferenceConstants.INDEX_DB_CACHE_SIZE_PCT, DialogsMessages.CacheSizeBlock_limitRelativeToMaxHeapSize, cacheComp, 3);
 		fDBLimitPct.setValidRange(1, 75);
+		Text control = fDBLimitPct.getTextControl(cacheComp);
+		LayoutUtil.setWidthHint(control, pixelConverter.convertWidthInCharsToPixels(10));
+		LayoutUtil.setHorizontalGrabbing(control, false); 
 		ControlFactory.createLabel(cacheComp, "%"); //$NON-NLS-1$
 
 		fDBAbsoluteLimit= new IntegerFieldEditor(CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB, DialogsMessages.CacheSizeBlock_absoluteLimit, cacheComp, 4);
 		fDBAbsoluteLimit.setValidRange(1, 10000);
+		control = fDBAbsoluteLimit.getTextControl(cacheComp);
+		LayoutUtil.setWidthHint(control, pixelConverter.convertWidthInCharsToPixels(10));
+		LayoutUtil.setHorizontalGrabbing(control, false); 
 		ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_MB);
 		
 		Label codeReaderLabel= ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_headerFileCache);
 		fCodeReaderLimit= new IntegerFieldEditor(CodeReaderCache.CODE_READER_BUFFER, DialogsMessages.CacheSizeBlock_absoluteLimit, cacheComp, 4);
 		fCodeReaderLimit.setValidRange(1, 10000);
+		control = fCodeReaderLimit.getTextControl(cacheComp);
+		LayoutUtil.setWidthHint(control, pixelConverter.convertWidthInCharsToPixels(10));
+		LayoutUtil.setHorizontalGrabbing(control, false); 
 		ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_MB);
 		
 		gl= (GridLayout) cacheComp.getLayout();
@@ -101,24 +114,23 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 		gd= (GridData) dbCacheLabel.getLayoutData();
 		gd.horizontalSpan= 3;
 
+		int vindent= pixelConverter.convertHeightInCharsToPixels(1) / 2;
 		gd= (GridData) codeReaderLabel.getLayoutData();
 		gd.verticalIndent= vindent;
 		gd.horizontalSpan= 3;
 
+		int hindent= pixelConverter.convertWidthInCharsToPixels(2);
 		gd= new GridData();
-		gd.grabExcessHorizontalSpace= true;
 		gd.horizontalAlignment= GridData.FILL;
 		gd.horizontalIndent= hindent;
 		fDBLimitPct.getLabelControl(cacheComp).setLayoutData(gd);
 
 		gd= new GridData();
-		gd.grabExcessHorizontalSpace= true;
 		gd.horizontalAlignment= GridData.FILL;
 		gd.horizontalIndent= hindent;
 		fDBAbsoluteLimit.getLabelControl(cacheComp).setLayoutData(gd);
 
 		gd= new GridData();
-		gd.grabExcessHorizontalSpace= true;
 		gd.horizontalAlignment= GridData.FILL;
 		gd.horizontalIndent= hindent;
 		fCodeReaderLimit.getLabelControl(cacheComp).setLayoutData(gd);
@@ -150,7 +162,7 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 		// code reader cache does not listen for pref-changes, help out:
 		ICodeReaderCache cache = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES).getCodeReaderCache();
 		if (cache instanceof CodeReaderCache) {
-			((CodeReaderCache)cache).setCacheSize(fCodeReaderLimit.getIntValue());
+			((CodeReaderCache) cache).setCacheSize(fCodeReaderLimit.getIntValue());
 		}
     }
 
@@ -160,21 +172,18 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 		fDBAbsoluteLimit.loadDefault();
 		fCodeReaderLimit.loadDefault();
     }
-    
+
     private void updateValidState() {
     	if (!fDBLimitPct.isValid()) {
     		setErrorMessage(fDBLimitPct.getErrorMessage());
     		setValid(false);
-    	}
-    	else if (!fDBAbsoluteLimit.isValid()) {
+    	} else if (!fDBAbsoluteLimit.isValid()) {
     		setErrorMessage(fDBAbsoluteLimit.getErrorMessage());
     		setValid(false);
-    	}
-    	else if (!fCodeReaderLimit.isValid()) {
+    	} else if (!fCodeReaderLimit.isValid()) {
     		setErrorMessage(fCodeReaderLimit.getErrorMessage());
     		setValid(false);
-    	}
-    	else {
+    	} else {
     		setValid(true);
     	}
         getContainer().updateContainer();

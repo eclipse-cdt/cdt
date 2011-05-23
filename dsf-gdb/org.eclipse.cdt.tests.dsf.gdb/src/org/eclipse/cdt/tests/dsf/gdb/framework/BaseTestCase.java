@@ -70,7 +70,7 @@ public class BaseTestCase {
 	// This allows a Suite to set an attribute
 	// The suite is reponsible for clearing those attributes
 	// once it is finished
-	private static Map<String, Object> globalLaunchAttributes;
+	private static Map<String, Object> globalLaunchAttributes = new HashMap<String, Object>();
 
 	private static Process gdbserverProc;
     
@@ -90,16 +90,11 @@ public class BaseTestCase {
     }
 
     public static void setGlobalLaunchAttribute(String key, Object value) {
-    	if (globalLaunchAttributes == null) {
-    		globalLaunchAttributes = new HashMap<String, Object>();
-    	}
     	globalLaunchAttributes.put(key, value);
     }
 
     public static void removeGlobalLaunchAttribute(String key) {
-    	if (globalLaunchAttributes != null) {
-    		globalLaunchAttributes.remove(key);
-    	}
+   		globalLaunchAttributes.remove(key);
     }
     
     public synchronized MIStoppedEvent getInitialStoppedEvent() { return fInitialStoppedEvent; }
@@ -174,6 +169,9 @@ public class BaseTestCase {
 		System.out.println("Running test: " + testName.getMethodName() + " using GDB: " + launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME));
     	System.out.println("====================================================================================================");
 		
+ 		boolean postMortemLaunch = launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
+	                                               .equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
+ 		
  		// First check if we should launch gdbserver in the case of a remote session
 		launchGdbServer();
 		
@@ -210,7 +208,7 @@ public class BaseTestCase {
 		// proceeding. All tests assume that stable initial state. Two
 		// seconds is plenty; we typically get to that state in a few
 		// hundred milliseconds with the tiny test programs we use.
- 		if (!fTargetSuspended) {
+ 		if (!postMortemLaunch && !fTargetSuspended) {
  			synchronized (fTargetSuspendedSem) {
  				fTargetSuspendedSem.wait(TestsPlugin.massageTimeout(2000));
  				Assert.assertTrue(fTargetSuspended);
@@ -218,8 +216,10 @@ public class BaseTestCase {
  		}
 
  		// This should be a given if the above check passes
- 		synchronized(this) {
- 			Assert.assertNotNull(fInitialStoppedEvent);
+ 		if (!postMortemLaunch) {
+ 			synchronized(this) {
+ 				Assert.assertNotNull(fInitialStoppedEvent);
+ 			}
  		}
  		 		
  		// If we started a gdbserver add it to the launch to make sure it is killed at the end

@@ -12,3 +12,6 @@ all:
 		target=`basename $$target .cc` ; \
 		g++ $(GCCFLAGS) $$file -o $(destDir)/$$target.exe ; \
 	done
+# Now generate the core file that we need for the post-mortem core-file tests
+	@gdb --nx --batch -ex "b testLocals" -ex run -ex "next 16" -ex "gcore ../bin/core" \
+	../bin/ExpressionTestApp.exe > /dev/null

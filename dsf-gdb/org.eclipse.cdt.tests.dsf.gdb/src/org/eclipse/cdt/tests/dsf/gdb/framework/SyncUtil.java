@@ -584,7 +584,49 @@ public class SyncUtil {
 		}
 		return null;
 	}
-    
+
+	/**
+	 * Utility method to return the execution DM context.
+	 */
+	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
+	public static IMIExecutionDMContext getExecutionContext(final int threadIndex) throws InterruptedException {
+		assert !fProcessesService.getExecutor().isInExecutorThread();
+
+        final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+
+		Query<IMIExecutionDMContext> query = new Query<IMIExecutionDMContext>() {
+			@Override
+			protected void execute(final DataRequestMonitor<IMIExecutionDMContext> rm) {
+				fProcessesService.getProcessesBeingDebugged(
+            			containerDmc, 
+            			new DataRequestMonitor<IDMContext[]>(ImmediateExecutor.getInstance(), null) {
+                    @Override
+                    protected void handleCompleted() {
+                    	if (isSuccess()) {
+                    		IDMContext[] threads = getData();
+                    		Assert.assertNotNull("invalid return value from service", threads);
+                    		Assert.assertTrue("unexpected number of threads", threadIndex < threads.length);
+                    		IDMContext thread = threads[threadIndex];    
+                    		Assert.assertNotNull("unexpected thread context type ", thread);
+                    		rm.setData((IMIExecutionDMContext)thread);
+                    	} else {
+                            rm.setStatus(getStatus());
+                    	}
+                    	rm.done();
+                    }
+            	});
+			}
+		};
+		
+		fGdbControl.getExecutor().execute(query);
+		try {
+			return query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		return null;
+	}
+
     /**
      * Restart the program.
      */

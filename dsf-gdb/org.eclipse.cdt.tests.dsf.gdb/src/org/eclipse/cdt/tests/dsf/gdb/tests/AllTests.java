@@ -37,6 +37,7 @@ import org.junit.runners.Suite;
 	GDBProcessesTest.class,
 	LaunchConfigurationAndRestartTest.class,
 	OperationsWhileTargetIsRunningTest.class,
+	PostMortemCoreTest.class,
 	Suite_Sessionless_Tests.class,
 	/* Add your suite class here */
 })

@@ -31,13 +31,13 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	Suite_Remote_6_6.class,
-	Suite_Remote_6_7.class,
-	Suite_Remote_6_8.class,
-	Suite_Remote_7_0.class,
-	Suite_Remote_7_1.class,
-	Suite_Remote_7_2.class,
 	Suite_Remote_7_3.class,
+	Suite_Remote_7_2.class,
+	Suite_Remote_7_1.class,
+	Suite_Remote_7_0.class,
+	Suite_Remote_6_8.class,
+	Suite_Remote_6_7.class,
+	Suite_Remote_6_6.class,
 	/* Add your suite class here */
 })
 

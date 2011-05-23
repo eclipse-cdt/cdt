@@ -27,6 +27,7 @@
  * Michael Scharf (Wind River) - [240098] The cursor should not blink when the terminal is disconnected
  * Anton Leherbauer (Wind River) - [335021] Middle mouse button copy/paste does not work with the terminal
  * Max Stepanov (Appcelerator) - [339768] Fix ANSI code for PgUp / PgDn
+ * Pawel Piech (Wind River) - [333613] "Job found still running" after shutdown
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -346,27 +347,33 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	public void disconnectTerminal() {
 		Logger.log("entered."); //$NON-NLS-1$
 
+        //Ensure that a new Job can be started; then clean up old Job.
+        //TODO not sure whether the fInputStream needs to be cleaned too,
+        //or whether the Job could actually cancel in case the fInputStream is closed.
+        Job job;
+        synchronized(this) {
+            job = fJob;
+            fJob = null;
+        }
+        if (job!=null) {
+            job.cancel();
+            // Join job to avoid leaving job running after workbench shutdown (333613).
+            try {
+                fInputStream.close();
+                job.join();
+            } catch (IOException e1) {
+            } catch (InterruptedException e) {
+            }
+//            Thread t = job.getThread();
+//            if(t!=null) t.interrupt();
+        }
+		
 		if (getState()==TerminalState.CLOSED) {
 			return;
 		}
 		if(getTerminalConnector()!=null) {
 			getTerminalConnector().disconnect();
 		}
-  		//Ensure that a new Job can be started; then clean up old Job.
- 		//TODO not sure whether the fInputStream needs to be cleaned too,
- 		//or whether the Job could actually cancel in case the fInputStream is closed.
- 		Job job;
- 		synchronized(this) {
- 			job = fJob;
- 			fJob = null;
- 		}
- 		if (job!=null) {
- 			job.cancel();
- 			//There's not really a need to interrupt, since the job will
- 			//check its cancel status after 500 msec latest anyways...
- 			//Thread t = job.getThread();
- 			//if(t!=null) t.interrupt();
- 		}
 	}
 
 	// TODO

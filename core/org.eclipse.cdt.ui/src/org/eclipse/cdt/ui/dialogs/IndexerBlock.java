@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
@@ -77,7 +77,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 	private PreferenceScopeBlock    fPrefScopeBlock;
 	private Button					fEnableIndexer;
     private Combo 					fIndexersComboBox;
-    private HashMap<String, IndexerConfig> 				fIndexerConfigMap;
+    private HashMap<String, IndexerConfig> fIndexerConfigMap;
     private String					fTheOneIndexerID;
 	private Composite 				fIndexerPageComposite;
     private AbstractIndexerPage 	fCurrentPage;
@@ -95,13 +95,11 @@ public class IndexerBlock extends AbstractCOptionPage {
 		setDescription(INDEXER_DESCRIPTION);
 		initializeIndexerConfigMap();
     }
-
     
 	@Override
 	public boolean isValid() {
 		return super.isValid() && (fCurrentPage == null || fCurrentPage.isValid());
 	}
-
 	
 	@Override
 	public String getErrorMessage() {
@@ -111,7 +109,6 @@ public class IndexerBlock extends AbstractCOptionPage {
 		}
 		return msg;
 	}
-
 
 	/**
      * Create a profile page only on request
@@ -133,8 +130,7 @@ public class IndexerBlock extends AbstractCOptionPage {
             if (fPage == null) {
             	try {
             		fPage= (AbstractIndexerPage) fElement.createExecutableExtension(ATTRIB_CLASS);
-            	}
-            	catch (Exception e) {
+            	} catch (Exception e) {
             		CUIPlugin.log(e);
             	}
             	if (fPage == null) {
@@ -204,7 +200,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 		fEnableIndexer.addSelectionListener(indexerChangeListener);
 
 		// add combo to select indexer
-		Group group= ControlFactory.createGroup(fPreferenceContent,INDEXER_COMBO_LABEL, 1);
+		Group group= ControlFactory.createGroup(fPreferenceContent, INDEXER_COMBO_LABEL, 1);
 		gd= (GridData) group.getLayoutData();
 		gd.grabExcessHorizontalSpace= true;
 
@@ -294,8 +290,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 		    	ICProjectDescription prefs= prjDescMgr.getProjectDescription(getProject(), false);
 		    	selectBuildConfigInCombo(prefs.getActiveConfiguration().getName());
 				fBuildConfigComboBox.setEnabled(false);
-			}
-			else {
+			} else {
 				// independent of the scope
 				fBuildConfigComboBox.setEnabled(true);
 			}
@@ -310,8 +305,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 		}
 		if (enable) {
 			fEnableState= null;
-		}
-		else {
+		} else {
 			fEnableState= ControlEnableState.disable(fPreferenceContent);
 		}
 	}
@@ -345,7 +339,6 @@ public class IndexerBlock extends AbstractCOptionPage {
 					names[j++]= fIndexerConfigMap.get(id).getName();
 				}
 			}
-			@SuppressWarnings("unchecked")
 			final Comparator<Object> collator = Collator.getInstance();
 			Arrays.sort(names, collator);
 			fIndexersComboBox.setItems(names);
@@ -371,7 +364,6 @@ public class IndexerBlock extends AbstractCOptionPage {
 				ICConfigurationDescription config = configs[i];
 				names[i]= config.getName();
 			}
-			@SuppressWarnings("unchecked")
 			final Comparator<Object> collator = Collator.getInstance();
 			Arrays.sort(names, collator);
 			fBuildConfigComboBox.setItems(names);
@@ -382,7 +374,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 	private void selectBuildConfigInCombo(String useName) {
 		String[] names= fBuildConfigComboBox.getItems();
 		int selectedIndex = 0;
-		for (int i=0; i<names.length; i++){
+		for (int i = 0; i < names.length; i++){
 			if (names[i].equals(useName))
 				selectedIndex = i;
 		}
@@ -398,8 +390,7 @@ public class IndexerBlock extends AbstractCOptionPage {
     		if (getIndexerName(indexerId) == null) {
     			if (fCurrentProperties != null) {
     				props= fCurrentProperties;
-    			}
-    			else {
+    			} else {
     				props= IndexerPreferences.getProperties(getProject(), IndexerPreferences.SCOPE_INSTANCE);
     			}
     		}
@@ -419,7 +410,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 				String indexerName = getIndexerName(indexerId);
 				String[] indexerList = fIndexersComboBox.getItems();
 				int selectedIndex = 0;
-				for (int i=0; i<indexerList.length; i++){
+				for (int i = 0; i < indexerList.length; i++){
 					if (indexerList[i].equals(indexerName))
 						selectedIndex = i;
 				}
@@ -478,7 +469,6 @@ public class IndexerBlock extends AbstractCOptionPage {
         
         fCurrentPage= page;
 	}
-
 
 	/**
      * Adds all the contributed Indexer Pages to a map
@@ -552,11 +542,10 @@ public class IndexerBlock extends AbstractCOptionPage {
 	    	ICProjectDescription prefs= prjDescMgr.getProjectDescription(getProject(), true);
     		if (scope == IndexerPreferences.SCOPE_INSTANCE) {
 		    	prefs.useDefaultConfigurationRelations();
-    		}
-    		else {
-    			prefs.setConfigurationRelations(useActive
-    					? ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE 
-    				    : ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT);
+    		} else {
+    			prefs.setConfigurationRelations(useActive ?
+    					ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE :
+    					ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT);
     		}
     		if (!useActive) {
     			final ICConfigurationDescription config= prefs.getConfigurationByName(fBuildConfigComboBox.getText());
@@ -575,8 +564,7 @@ public class IndexerBlock extends AbstractCOptionPage {
     	if (fPrefScopeBlock != null) {
     		fPrefScopeBlock.setInstanceScope();
         	onPreferenceScopeChange();
-    	}
-    	else {
+    	} else {
     		fCurrentProperties= IndexerPreferences.getDefaultIndexerProperties();
     		updateForNewProperties(IndexerPreferences.SCOPE_INSTANCE);
     	}
@@ -612,8 +600,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 			if (container instanceof ICOptionContainerExtension) {
 				try {
 					return ((ICOptionContainerExtension) container).getProjectHandle();
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					return null;
 				}
 			}

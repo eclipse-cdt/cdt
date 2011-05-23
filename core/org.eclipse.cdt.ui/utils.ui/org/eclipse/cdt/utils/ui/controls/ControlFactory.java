@@ -97,7 +97,7 @@ public class ControlFactory {
 	 */
 	public static Composite createCompositeSeparator(Composite parent, Color color, int preferedHeight) {
 		Composite separator = createComposite(parent, 1);
-		GridData gd = (GridData)separator.getLayoutData();
+		GridData gd = (GridData) separator.getLayoutData();
 		gd.heightHint = ((SWT.DEFAULT == preferedHeight) ? 2 : preferedHeight);
 		separator.setLayoutData(gd);
 		separator.setBackground(color);

@@ -14,6 +14,7 @@
  * Uwe Stieber (Wind River) - [205486] Fix ScrollLock always moving to line 1
  * Anton Leherbauer (Wind River) - [219589] Copy an entire line selection
  * Anton Leherbauer (Wind River) - [196465] Resizing Terminal changes Scroller location
+ * Anton Leherbauer (Wind River) - [324608] Terminal has strange scrolling behaviour
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
@@ -97,8 +98,10 @@ public class TextCanvas extends GridCanvas {
 				if(isDisposed())
 					return;
 				// scroll to end (unless scroll lock is active)
-				if (!fResizing)
+				if (!fResizing) {
+					calculateGrid();
 					scrollToEnd();
+				}
 			}
 		});
 		// let the cursor blink if the text canvas gets the focus...
@@ -257,14 +260,16 @@ public class TextCanvas extends GridCanvas {
 
 	private void calculateGrid() {
 		Rectangle virtualBounds = getVirtualBounds();
-		setVirtualExtend(getCols()*getCellWidth(),getRows()*getCellHeight());
 		setRedraw(false);
 		try {
-			// scroll to end if view port was near last line
-			Rectangle viewRect = getViewRectangle();
-			if (virtualBounds.height - (viewRect.y + viewRect.height) < getCellHeight() * 2)
-				scrollToEnd();
+			setVirtualExtend(getCols()*getCellWidth(),getRows()*getCellHeight());
 			getParent().layout();
+			if (fResizing) {
+				// scroll to end if view port was near last line
+				Rectangle viewRect = getViewRectangle();
+				if (virtualBounds.height - (viewRect.y + viewRect.height) < getCellHeight() * 2)
+					scrollToEnd();
+			}
 		} finally {
 			setRedraw(true);
 		}

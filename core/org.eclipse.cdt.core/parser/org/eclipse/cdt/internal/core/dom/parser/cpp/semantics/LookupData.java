@@ -308,7 +308,6 @@ public class LookupData {
     	} else {
     		return false;
     	}
-
         
         for (; node != null; node= node.getParent()) {
         	// 3.3.7-5
@@ -376,11 +375,11 @@ public class LookupData {
     }
 
     public boolean hasTypeOrMemberFunctionResult() {
-    	if(foundItems == null)
+    	if (foundItems == null)
     		return false;
-    	if(foundItems instanceof Object[]) {
-    		for(Object item : (Object[]) foundItems) {
-    			if(item instanceof ICPPMethod || item instanceof IType) {
+    	if (foundItems instanceof Object[]) {
+    		for (Object item : (Object[]) foundItems) {
+    			if (item instanceof ICPPMethod || item instanceof IType) {
     				return true;
     			}
     		}

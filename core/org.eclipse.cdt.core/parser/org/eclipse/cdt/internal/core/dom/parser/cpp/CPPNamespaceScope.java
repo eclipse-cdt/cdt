@@ -76,7 +76,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 		if (fUsingDirectives == null) {
 			fUsingDirectives= new ArrayList<ICPPUsingDirective>(1);
 			// Insert a using directive for every inline namespace found in the index
-			for(ICPPInternalNamespaceScope inline: getIndexInlineNamespaces()) {
+			for (ICPPInternalNamespaceScope inline: getIndexInlineNamespaces()) {
 				if (!(inline instanceof CPPNamespaceScope)) {
 					fUsingDirectives.add(new InlineNamespaceDirective(this, inline));
 				}
@@ -99,7 +99,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 	public IName getScopeName() {
         IASTNode node = getPhysicalNode();
         if (node instanceof ICPPASTNamespaceDefinition) {
-            return ((ICPPASTNamespaceDefinition)node).getName();
+            return ((ICPPASTNamespaceDefinition) node).getName();
         }
         return null;
     }

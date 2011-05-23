@@ -46,7 +46,6 @@ class SmartTypingConfigurationBlock extends AbstractConfigurationBlock {
 
 	public SmartTypingConfigurationBlock(OverlayPreferenceStore store) {
 		super(store);
-		
 		store.addKeys(createOverlayStoreKeys());
 	}
 	

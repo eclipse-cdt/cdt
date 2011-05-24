@@ -443,13 +443,13 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	
 	public PathEntryResolveInfo getResolveInfo(ICProject cproject, boolean useCache) throws CModelException{
 		PathEntryResolveInfo info = resolvedInfoMap.get(cproject);
-		if(info == null && useCache){
+		if (info == null && useCache){
 			getResolvedPathEntries(cproject);
 			info = resolvedInfoMap.get(cproject);
 		}
-		if(info == null || !useCache || !getResolveInfoValidState(cproject)){
+		if (info == null || !useCache || !getResolveInfoValidState(cproject)){
 			Object[] resolved = getResolvedPathEntries(cproject, false, false);
-			if(resolved != null)
+			if (resolved != null)
 				info = (PathEntryResolveInfo)resolved[1]; 
 		}
 		return info;
@@ -532,7 +532,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	@SuppressWarnings("unchecked")
 	private ArrayList<IPathEntry> getResolvedPathEntries(ICProject cproject, boolean generateMarkers) throws CModelException {
 		Object[] result = getResolvedPathEntries(cproject, generateMarkers, true);
-		if(result != null)
+		if (result != null)
 			return (ArrayList<IPathEntry>)result[0];
 		return null;
 	}
@@ -540,7 +540,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	private Object[] getResolvedPathEntries(ICProject cproject, boolean generateMarkers, boolean useCache) throws CModelException {
 		ArrayList<IPathEntry> resolvedEntries = null;
 		PathEntryResolveInfo rInfo = null;
-		if(useCache){
+		if (useCache){
 			resolvedEntries = resolvedMap.get(cproject);
 			rInfo = resolvedInfoMap.get(cproject);
 		}
@@ -619,7 +619,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			}
 
 			rInfo = new PathEntryResolveInfo(resolveInfoList);
-			if(useCache){
+			if (useCache){
 				resolvedMap.put(cproject, resolvedEntries);
 				resolvedInfoMap.put(cproject, rInfo);
 			}
@@ -1053,7 +1053,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	public ICElementDelta[] generatePathEntryDeltas(ICProject cproject, IPathEntry[] oldEntries, IPathEntry[] newEntries) {
-		if(!needDelta(cproject))
+		if (!needDelta(cproject))
 			return new ICElementDelta[0];
 
 		ArrayList<ICElementDelta> list = new ArrayList<ICElementDelta>();
@@ -1243,7 +1243,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		synchronized (storeMap){
 			IPathEntryStore store = storeMap.get(project);
 			if (store == null) {
-				if(create == true){
+				if (create == true){
 					store = createPathEntryStore(project);
 					storeMap.put(project, store);
 					store.addPathEntryStoreListener(this);
@@ -1286,7 +1286,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 	
 //	private IPathEntryStore createDefaultStore(IProject project){
-//		if(CProjectDescriptionManager.getInstance().isNewStyleIndexCfg(project)){
+//		if (CProjectDescriptionManager.getInstance().isNewStyleIndexCfg(project)){
 //			return new ConfigBasedPathEntryStore(project);
 //		}
 //		return  new DefaultPathEntryStore(project);

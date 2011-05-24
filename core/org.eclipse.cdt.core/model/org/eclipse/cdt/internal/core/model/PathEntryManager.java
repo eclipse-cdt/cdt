@@ -533,7 +533,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	private ArrayList<IPathEntry> getResolvedPathEntries(ICProject cproject, boolean generateMarkers) throws CModelException {
 		Object[] result = getResolvedPathEntries(cproject, generateMarkers, true);
 		if (result != null)
-			return (ArrayList<IPathEntry>)result[0];
+			return (ArrayList<IPathEntry>) result[0];
 		return null;
 	}
 

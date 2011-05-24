@@ -12,6 +12,7 @@
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -29,7 +30,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -51,7 +51,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
+import org.eclipse.ui.internal.ide.misc.ContainerContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * The RefreshPolicyTab allows users to modify a project's refresh settings for each build.
@@ -64,6 +66,7 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
  * @author vkong
  * @since 8.0
  */
+@SuppressWarnings("restriction")
 public class RefreshPolicyTab extends AbstractCPropertyTab {
 
 	private final Image IMG_FOLDER = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_FOLDER);
@@ -469,6 +472,23 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
     	buttonSetEnabled(IDX_EDIT_EXCEPTION, sel.length == 1 && sel[0].getData() instanceof _Entry && ((_Entry) sel[0].getData()).isExclusion());
     	buttonSetEnabled(IDX_DELETE, sel.length == 1 && (sel[0].getData() instanceof _Entry || sel[0].getData() instanceof _Exclusion_Instance));    		
 	}
+	
+	class FilteredContainerContentProvider extends ContainerContentProvider {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.internal.ide.misc.ContainerContentProvider#getChildren(java.lang.Object)
+		 */
+		@Override
+		public Object[] getChildren(Object element) {
+			ArrayList<Object> filteredChildren = new ArrayList<Object>(Arrays.asList(super.getChildren(element)));
+			Iterator<IResource> iterator = fResourcesToRefresh.iterator();
+			while (iterator.hasNext()) {
+				filteredChildren.remove(iterator.next());
+			}
+			return filteredChildren.toArray();
+		}
+		
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.newui.AbstractCPropertyTab#buttonPressed(int)
@@ -481,12 +501,16 @@ public class RefreshPolicyTab extends AbstractCPropertyTab {
 		switch (x) {
 		case IDX_ADD_RESOURCE:
 			//TODO: Phase one implementation - folders only - need to change this for Phase two
-			ContainerSelectionDialog addResourceDialog = new ContainerSelectionDialog(shell, null, true, Messages.RefreshPolicyTab_addResourceDialogDescription);
+			fResourcesToRefresh.size();
+			CheckedTreeSelectionDialog addResourceDialog = new CheckedTreeSelectionDialog(shell, new WorkbenchLabelProvider(), 
+					new FilteredContainerContentProvider());
+			addResourceDialog.setInput(ResourcesPlugin.getWorkspace());
 			addResourceDialog.setTitle(Messages.RefreshPolicyTab_addResourceDialogTitle);
+			addResourceDialog.setMessage(Messages.RefreshPolicyTab_addResourceDialogDescription);
 			if (addResourceDialog.open() == Window.OK) {
 				Object[] result = addResourceDialog.getResult();
 				for (int i = 0; i < result.length; i++) {
-					 IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember((IPath) result[i]);
+					 IResource resource = (IResource) result[i];
 					_Entry newResource = new _Entry(resource);
 					//update the model element in this tab
 					fResourcesToRefresh.add(resource);

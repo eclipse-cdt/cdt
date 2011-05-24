@@ -24,9 +24,7 @@ import org.eclipse.core.runtime.Status;
 /**
  * @see ICModelStatus
  */
-
 public class CModelStatus extends Status implements ICModelStatus, ICModelStatusConstants {
-
 	/**
 	 * The elements related to the failure, or <code>null</code> if no
 	 * elements are involved.
@@ -49,7 +47,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	/**
 	 * Empty children
 	 */
-	protected final static IStatus[] fgEmptyChildren = new IStatus[]{};
+	protected final static IStatus[] fgEmptyChildren = {};
 	protected IStatus[] fChildren = fgEmptyChildren;
 	protected final static String DEFAULT_STRING = "CModelStatus"; //$NON-NLS-1$;
 
@@ -181,107 +179,106 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 		}
 		if (exception == null) {
 			switch (getCode()) {
-				case CORE_EXCEPTION :
-					return CoreModelMessages.getFormattedString("status.coreException"); //$NON-NLS-1$
+			case CORE_EXCEPTION:
+				return CoreModelMessages.getFormattedString("status.coreException"); //$NON-NLS-1$
 
-				case DEVICE_PATH :
-					return CoreModelMessages.getFormattedString("status.cannotUseDeviceOnPath", getPath().toString()); //$NON-NLS-1$
+			case DEVICE_PATH:
+				return CoreModelMessages.getFormattedString("status.cannotUseDeviceOnPath", getPath().toString()); //$NON-NLS-1$
 
-				case PARSER_EXCEPTION :
-					return CoreModelMessages.getFormattedString("status.ParserError"); //$NON-NLS-1$
+			case PARSER_EXCEPTION:
+				return CoreModelMessages.getFormattedString("status.ParserError"); //$NON-NLS-1$
 
-				case ELEMENT_DOES_NOT_EXIST :
-					return CoreModelMessages.getFormattedString("status.elementDoesNotExist", getFirstElementName()); //$NON-NLS-1$
+			case ELEMENT_DOES_NOT_EXIST:
+				return CoreModelMessages.getFormattedString("status.elementDoesNotExist", getFirstElementName()); //$NON-NLS-1$
 
-				case EVALUATION_ERROR :
-					return CoreModelMessages.getFormattedString("status.evaluationError", getString()); //$NON-NLS-1$
+			case EVALUATION_ERROR:
+				return CoreModelMessages.getFormattedString("status.evaluationError", getString()); //$NON-NLS-1$
 
-				case INDEX_OUT_OF_BOUNDS :
-					return CoreModelMessages.getFormattedString("status.indexOutOfBounds"); //$NON-NLS-1$
+			case INDEX_OUT_OF_BOUNDS:
+				return CoreModelMessages.getFormattedString("status.indexOutOfBounds"); //$NON-NLS-1$
 
-				case INVALID_CONTENTS :
-					return CoreModelMessages.getFormattedString("status.invalidContents"); //$NON-NLS-1$
+			case INVALID_CONTENTS:
+				return CoreModelMessages.getFormattedString("status.invalidContents"); //$NON-NLS-1$
 
-				case INVALID_DESTINATION :
-					return CoreModelMessages.getFormattedString("status.invalidDestination", getFirstElementName()); //$NON-NLS-1$
+			case INVALID_DESTINATION:
+				return CoreModelMessages.getFormattedString("status.invalidDestination", getFirstElementName()); //$NON-NLS-1$
 
-				case INVALID_ELEMENT_TYPES :
-					StringBuffer buff = new StringBuffer(CoreModelMessages.getFormattedString("operation.notSupported")); //$NON-NLS-1$
-					for (int i = 0; i < fElements.length; i++) {
-						if (i > 0) {
-							buff.append(", "); //$NON-NLS-1$
-						}
-						buff.append( (fElements[i]).toString());
+			case INVALID_ELEMENT_TYPES:
+				StringBuffer buff = new StringBuffer(CoreModelMessages.getFormattedString("operation.notSupported")); //$NON-NLS-1$
+				for (int i = 0; i < fElements.length; i++) {
+					if (i > 0) {
+						buff.append(", "); //$NON-NLS-1$
 					}
-					return buff.toString();
+					buff.append( (fElements[i]).toString());
+				}
+				return buff.toString();
 
-				case INVALID_NAME :
-					return CoreModelMessages.getFormattedString("status.invalidName", getString()); //$NON-NLS-1$
+			case INVALID_NAME:
+				return CoreModelMessages.getFormattedString("status.invalidName", getString()); //$NON-NLS-1$
 
-				case INVALID_PATH :
-					String path = getPath() == null ? "null" : getPath().toString(); //$NON-NLS-1$
-					return CoreModelMessages.getFormattedString("status.invalidPath", new Object[]{path, getString()}); //$NON-NLS-1$
+			case INVALID_PATH:
+				String path = getPath() == null ? "null" : getPath().toString(); //$NON-NLS-1$
+				return CoreModelMessages.getFormattedString("status.invalidPath", new Object[]{path, getString()}); //$NON-NLS-1$
 
-				case INVALID_PATHENTRY :
-					return CoreModelMessages.getFormattedString("status.invalidPathEntry", getString()); //$NON-NLS-1$
+			case INVALID_PATHENTRY:
+				return CoreModelMessages.getFormattedString("status.invalidPathEntry", getString()); //$NON-NLS-1$
 
-				case INVALID_PROJECT :
-					return CoreModelMessages.getFormattedString("status.invalidProject", getString()); //$NON-NLS-1$
+			case INVALID_PROJECT:
+				return CoreModelMessages.getFormattedString("status.invalidProject", getString()); //$NON-NLS-1$
 
-				case INVALID_RESOURCE :
-					return CoreModelMessages.getFormattedString("status.invalidResource", getString()); //$NON-NLS-1$
+			case INVALID_RESOURCE:
+				return CoreModelMessages.getFormattedString("status.invalidResource", getString()); //$NON-NLS-1$
 
-				case INVALID_RESOURCE_TYPE :
-					return CoreModelMessages.getFormattedString("status.invalidResourceType", getString()); //$NON-NLS-1$
+			case INVALID_RESOURCE_TYPE:
+				return CoreModelMessages.getFormattedString("status.invalidResourceType", getString()); //$NON-NLS-1$
 
-				case INVALID_SIBLING :
-					if (fString != null) {
-						return CoreModelMessages.getFormattedString("status.invalidSibling", getString()); //$NON-NLS-1$
-					}
-					return CoreModelMessages.getFormattedString("status.invalidSibling", getFirstElementName()); //$NON-NLS-1$
+			case INVALID_SIBLING:
+				if (fString != null) {
+					return CoreModelMessages.getFormattedString("status.invalidSibling", getString()); //$NON-NLS-1$
+				}
+				return CoreModelMessages.getFormattedString("status.invalidSibling", getFirstElementName()); //$NON-NLS-1$
 
-				case IO_EXCEPTION :
-					return CoreModelMessages.getFormattedString("status.IOException"); //$NON-NLS-1$
+			case IO_EXCEPTION:
+				return CoreModelMessages.getFormattedString("status.IOException"); //$NON-NLS-1$
 
-				case NAME_COLLISION :
-					StringBuffer sb = new StringBuffer();
-					if (fElements != null && fElements.length > 0) {
-						ICElement element = fElements[0];
-						sb.append(element.getElementName()).append(' ');
-					}
-					if (fString != null) {
-						return fString;
-					}
-					return CoreModelMessages.getFormattedString("status.nameCollision", sb.toString()); //$NON-NLS-1$
+			case NAME_COLLISION:
+				StringBuffer sb = new StringBuffer();
+				if (fElements != null && fElements.length > 0) {
+					ICElement element = fElements[0];
+					sb.append(element.getElementName()).append(' ');
+				}
+				if (fString != null) {
+					return fString;
+				}
+				return CoreModelMessages.getFormattedString("status.nameCollision", sb.toString()); //$NON-NLS-1$
 
-				case NO_ELEMENTS_TO_PROCESS :
-					return CoreModelMessages.getFormattedString("operation.needElements"); //$NON-NLS-1$
+			case NO_ELEMENTS_TO_PROCESS:
+				return CoreModelMessages.getFormattedString("operation.needElements"); //$NON-NLS-1$
 
-				case NULL_NAME :
-					return CoreModelMessages.getFormattedString("operation.needName"); //$NON-NLS-1$
+			case NULL_NAME:
+				return CoreModelMessages.getFormattedString("operation.needName"); //$NON-NLS-1$
 
-				case NULL_PATH :
-					return CoreModelMessages.getFormattedString("operation.needPath"); //$NON-NLS-1$
+			case NULL_PATH:
+				return CoreModelMessages.getFormattedString("operation.needPath"); //$NON-NLS-1$
 
-				case NULL_STRING :
-					return CoreModelMessages.getFormattedString("operation.needString"); //$NON-NLS-1$
+			case NULL_STRING:
+				return CoreModelMessages.getFormattedString("operation.needString"); //$NON-NLS-1$
 
-				case PATH_OUTSIDE_PROJECT :
-					return CoreModelMessages.getFormattedString(
-							"operation.pathOutsideProject", new String[]{getString(), getFirstElementName()}); //$NON-NLS-1$
+			case PATH_OUTSIDE_PROJECT:
+				return CoreModelMessages.getFormattedString(
+						"operation.pathOutsideProject", new String[]{getString(), getFirstElementName()}); //$NON-NLS-1$
 
-				case READ_ONLY :
-					return CoreModelMessages.getFormattedString("status.readOnly", getFirstElementName()); //$NON-NLS-1$
+			case READ_ONLY:
+				return CoreModelMessages.getFormattedString("status.readOnly", getFirstElementName()); //$NON-NLS-1$
 
-				case RELATIVE_PATH :
-					return CoreModelMessages.getFormattedString("operation.needAbsolutePath", getPath().toString()); //$NON-NLS-1$
+			case RELATIVE_PATH:
+				return CoreModelMessages.getFormattedString("operation.needAbsolutePath", getPath().toString()); //$NON-NLS-1$
 
-				case UPDATE_CONFLICT :
-					return CoreModelMessages.getFormattedString("status.updateConflict"); //$NON-NLS-1$
+			case UPDATE_CONFLICT:
+				return CoreModelMessages.getFormattedString("status.updateConflict"); //$NON-NLS-1$
 
-				case NO_LOCAL_CONTENTS :
-					return CoreModelMessages.getFormattedString("status.noLocalContents", getPath().toString()); //$NON-NLS-1$
-
+			case NO_LOCAL_CONTENTS:
+				return CoreModelMessages.getFormattedString("status.noLocalContents", getPath().toString()); //$NON-NLS-1$
 			}
 			return getString();
 		}

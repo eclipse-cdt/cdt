@@ -45,14 +45,6 @@
          </enabledWhen>
       </page>
    </extension>
-   
-   
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="org.eclipse.cdt.codan.internal.ui.preferences.PreferenceInitializer">
-      </initializer>
-   </extension>
 
    <extension
          point="org.eclipse.ui.commands">

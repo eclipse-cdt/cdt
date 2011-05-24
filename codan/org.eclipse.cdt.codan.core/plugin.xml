@@ -63,6 +63,9 @@
    
    <extension
          point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.cdt.codan.internal.core.PreferenceInitializer">
+      </initializer>
    </extension>
 
       <extension

@@ -76,9 +76,8 @@ public class PathEntryUtil {
 											IIncludeEntry refEntry = (IIncludeEntry) pathEntry;
 											if (refEntry.getIncludePath().equals(includePath)) {
 												IPath newBasePath = refEntry.getBasePath();
-												// If the includePath is
-												// relative give a new basepath
-												// if none
+												// If the includePath is relative, give a new base
+												// path if none.
 												if (!newBasePath.isAbsolute() && !includePath.isAbsolute()) {
 													IResource refRes;
 													if (!newBasePath.isEmpty()) {
@@ -241,8 +240,7 @@ public class PathEntryUtil {
 	}
 
 	public static IPathEntry cloneEntryAndExpand(IPath rpath, IPathEntry entry) {
-
-		// get the path
+		// Get the path
 		IPath entryPath = entry.getPath();
 		if (entryPath == null) {
 			entryPath = Path.EMPTY;
@@ -334,7 +332,6 @@ public class PathEntryUtil {
 	}
 
 	public static ICModelStatus validatePathEntry(ICProject cProject, IPathEntry[] entries) {
-
 		// Check duplication.
 		Set<IPathEntry> entrySet = new HashSet<IPathEntry>(entries.length);
 		for (IPathEntry entry : entries) {
@@ -349,7 +346,7 @@ public class PathEntryUtil {
 			}
 		}
 
-		// check duplication of sources
+		// Check duplication of sources
 		List<IPathEntry> dups = checkForDuplication(Arrays.asList(entries), IPathEntry.CDT_SOURCE);
 		if (dups.size() > 0) {
 			ICModelStatus[] cmodelStatus = new ICModelStatus[dups.size()];
@@ -360,7 +357,7 @@ public class PathEntryUtil {
 			return CModelStatus.newMultiStatus(ICModelStatusConstants.INVALID_PATHENTRY, cmodelStatus);
 		}
 
-		// check duplication of Outputs
+		// Check duplication of outputs
 		dups = checkForDuplication(Arrays.asList(entries), IPathEntry.CDT_OUTPUT);
 		if (dups.size() > 0) {
 			ICModelStatus[] cmodelStatus = new ICModelStatus[dups.size()];
@@ -371,7 +368,7 @@ public class PathEntryUtil {
 			return CModelStatus.newMultiStatus(ICModelStatusConstants.INVALID_PATHENTRY, cmodelStatus);
 		}
 
-		// allow nesting source entries in each other as long as the outer entry
+		// Allow nesting source entries in each other as long as the outer entry
 		// excludes the inner one
 		for (IPathEntry entry : entries) {
 			if (entry == null) {
@@ -504,7 +501,7 @@ public class PathEntryUtil {
 			return false;
 		}
 		IWorkspaceRoot workspaceRoot = project.getWorkspace().getRoot();
-		// We accept empy path as the project
+		// We accept empty path as the project
 		IResource res = null;
 		if (path.isAbsolute()) {
 			res = workspaceRoot.findMember(path);
@@ -558,7 +555,7 @@ public class PathEntryUtil {
 	}
 
 	/**
-	 * Record a new marker denoting a pathentry problem
+	 * Record a new marker denoting a path entry problem
 	 */
 	public static void createPathEntryProblemMarker(IProject project, ICModelStatus status) {
 		int severity = code2Severity(status);
@@ -575,7 +572,7 @@ public class PathEntryUtil {
 	}
 
 	/**
-	 * Remove all markers denoting pathentry problems
+	 * Remove all markers denoting path entry problems
 	 */
 	public static void flushPathEntryProblemMarkers(IProject project) {
 		IWorkspace workspace = project.getWorkspace();
@@ -590,7 +587,7 @@ public class PathEntryUtil {
 	}
 
 	/**
-	 * get all markers denoting pathentry problems
+	 * get all markers denoting path entry problems
 	 */
 	public static IMarker[] getPathEntryProblemMarkers(IProject project) {
 

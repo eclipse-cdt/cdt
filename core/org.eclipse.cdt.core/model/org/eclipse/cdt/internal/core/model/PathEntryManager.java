@@ -81,10 +81,8 @@ import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @author alain
- *  
  */
 public class PathEntryManager implements IPathEntryStoreListener, IElementChangedListener {
-
 	// PathEntry extension
 	public final static String PATHENTRY_STORE_ID = "PathEntryStore"; //$NON-NLS-1$
 	public final static String PATHENTRY_STORE_UNIQ_ID = CCorePlugin.PLUGIN_ID + "." + PATHENTRY_STORE_ID; //$NON-NLS-1$
@@ -395,10 +393,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		int count = resPath.segmentCount();
 		for (int i = 0; i < count; i++) {
 			IPath newPath = resPath.removeLastSegments(i);
-			for (IPathEntry entrie : entries) {
-				IPath otherPath = entrie.getPath();
+			for (IPathEntry entry : entries) {
+				IPath otherPath = entry.getPath();
 				if (newPath.equals(otherPath)) {
-					entryList.add(entrie);
+					entryList.add(entry);
 				}
 			}
 		}
@@ -482,9 +480,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	private IPathEntry[] getCachedResolvedPathEntries(ArrayList<IPathEntry> resolvedListEntries, ICProject cproject) throws CModelException {
 		IPathEntry[] entries = resolvedListEntries.toArray(NO_PATHENTRIES);
 		boolean hasContainerExtension = false;
-		for (IPathEntry entrie : entries) {
-			if (entrie.getEntryKind() == IPathEntry.CDT_CONTAINER) {
-				IContainerEntry centry = (IContainerEntry)entrie;
+		for (IPathEntry entry : entries) {
+			if (entry.getEntryKind() == IPathEntry.CDT_CONTAINER) {
+				IContainerEntry centry = (IContainerEntry)entry;
 				IPathEntryContainer container = getPathEntryContainer(centry, cproject);
 				if (container instanceof IPathEntryContainerExtension) {
 					hasContainerExtension = true;
@@ -502,8 +500,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					if (container != null) {
 						IPathEntry[] containerEntries = container.getPathEntries();
 						if (containerEntries != null) {
-							for (IPathEntry containerEntrie : containerEntries) {
-								IPathEntry newEntry = PathEntryUtil.cloneEntryAndExpand(projectPath, containerEntrie);
+							for (IPathEntry containerEntry : containerEntries) {
+								IPathEntry newEntry = PathEntryUtil.cloneEntryAndExpand(projectPath, containerEntry);
 								listEntries.add(newEntry);
 							}
 						}
@@ -563,8 +561,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 							IPathEntry[] containerEntries = container.getPathEntries();
 							List<IPathEntry> resolvedList = new ArrayList<IPathEntry>();
 							if (containerEntries != null) {
-								for (IPathEntry containerEntrie : containerEntries) {
-									IPathEntry newEntry = PathEntryUtil.cloneEntryAndExpand(projectPath, containerEntrie);
+								for (IPathEntry containerEntry : containerEntries) {
+									IPathEntry newEntry = PathEntryUtil.cloneEntryAndExpand(projectPath, containerEntry);
 									resolvedEntries.add(newEntry);
 									resolvedList.add(newEntry);
 								}
@@ -594,8 +592,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				if (!status.isOK()) {
 					problemList.add(status);
 				}
-				for (IPathEntry finalEntrie : finalEntries) {
-					status = PathEntryUtil.validatePathEntry(cproject, finalEntrie, true, false);
+				for (IPathEntry finalEntry : finalEntries) {
+					status = PathEntryUtil.validatePathEntry(cproject, finalEntry, true, false);
 					if (!status.isOK()) {
 						problemList.add(status);
 					}
@@ -866,10 +864,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	public String[] projectPrerequisites(IPathEntry[] entries) throws CModelException {
 		if (entries != null) {
 			ArrayList<String> prerequisites = new ArrayList<String>();
-			for (IPathEntry entrie : entries) {
-				if (entrie.getEntryKind() == IPathEntry.CDT_PROJECT) {
-					IProjectEntry entry = (IProjectEntry)entrie;
-					prerequisites.add(entry.getPath().lastSegment());
+			for (IPathEntry entry : entries) {
+				if (entry.getEntryKind() == IPathEntry.CDT_PROJECT) {
+					IProjectEntry projectEntry = (IProjectEntry) entry;
+					prerequisites.add(projectEntry.getPath().lastSegment());
 				}
 			}
 			int size = prerequisites.size();
@@ -890,13 +888,11 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 		ArrayList<IPathEntry> list = new ArrayList<IPathEntry>(entries.length);
 		IPath projectPath = cproject.getPath();
-		for (IPathEntry entrie : entries) {
-			IPathEntry entry;
-
-			int kind = entrie.getEntryKind();
+		for (IPathEntry pathEntry : entries) {
+			int kind = pathEntry.getEntryKind();
 
 			// translate the project prefix.
-			IPath resourcePath = entrie.getPath();
+			IPath resourcePath = pathEntry.getPath();
 			if (resourcePath == null) {
 				resourcePath = Path.EMPTY;
 			}
@@ -918,9 +914,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			}
 
 			// Specifics to the entries
+			IPathEntry entry;
 			switch (kind) {
-				case IPathEntry.CDT_INCLUDE : {
-					IIncludeEntry include = (IIncludeEntry)entrie;
+				case IPathEntry.CDT_INCLUDE: {
+					IIncludeEntry include = (IIncludeEntry)pathEntry;
 					IPath baseRef = include.getBaseReference();
 					if (baseRef == null || baseRef.isEmpty()) {
 						entry = CoreModel.newIncludeEntry(resourcePath, include.getBasePath(), include.getIncludePath(),
@@ -930,15 +927,15 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					}
 					break;
 				}
-				case IPathEntry.CDT_INCLUDE_FILE : {
-					IIncludeFileEntry includeFile = (IIncludeFileEntry)entrie;
+				case IPathEntry.CDT_INCLUDE_FILE: {
+					IIncludeFileEntry includeFile = (IIncludeFileEntry)pathEntry;
 					entry = CoreModel.newIncludeFileEntry(resourcePath, includeFile.getBasePath(),
 							includeFile.getBaseReference(), includeFile.getIncludeFilePath(),
 							includeFile.getExclusionPatterns(), includeFile.isExported());
 					break;
 				}
-				case IPathEntry.CDT_LIBRARY : {
-					ILibraryEntry library = (ILibraryEntry)entrie;
+				case IPathEntry.CDT_LIBRARY: {
+					ILibraryEntry library = (ILibraryEntry)pathEntry;
 					IPath sourcePath = library.getSourceAttachmentPath();
 					if (sourcePath != null) {
 						// translate to project relative from absolute
@@ -959,8 +956,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					}
 					break;
 				}
-				case IPathEntry.CDT_MACRO : {
-					IMacroEntry macro = (IMacroEntry)entrie;
+				case IPathEntry.CDT_MACRO: {
+					IMacroEntry macro = (IMacroEntry)pathEntry;
 					IPath baseRef = macro.getBaseReference();
 					if (baseRef == null || baseRef.isEmpty()) {
 						entry = CoreModel.newMacroEntry(resourcePath, macro.getMacroName(), macro.getMacroValue(),
@@ -970,33 +967,33 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					}
 					break;
 				}
-				case IPathEntry.CDT_MACRO_FILE : {
-					IMacroFileEntry macro = (IMacroFileEntry)entrie;
+				case IPathEntry.CDT_MACRO_FILE: {
+					IMacroFileEntry macro = (IMacroFileEntry)pathEntry;
 					entry = CoreModel.newMacroFileEntry(resourcePath, macro.getBasePath(),
 							macro.getBaseReference(), macro.getMacroFilePath(),
 							macro.getExclusionPatterns(), macro.isExported());
 					break;
 				}
-				case IPathEntry.CDT_OUTPUT : {
-					IOutputEntry out = (IOutputEntry)entrie;
+				case IPathEntry.CDT_OUTPUT: {
+					IOutputEntry out = (IOutputEntry)pathEntry;
 					entry = CoreModel.newOutputEntry(resourcePath, out.getExclusionPatterns());
 					break;
 				}
-				case IPathEntry.CDT_PROJECT : {
-					IProjectEntry projEntry = (IProjectEntry)entrie;
+				case IPathEntry.CDT_PROJECT: {
+					IProjectEntry projEntry = (IProjectEntry)pathEntry;
 					entry = CoreModel.newProjectEntry(projEntry.getPath(), projEntry.isExported());
 					break;
 				}
-				case IPathEntry.CDT_SOURCE : {
-					ISourceEntry source = (ISourceEntry)entrie;
+				case IPathEntry.CDT_SOURCE: {
+					ISourceEntry source = (ISourceEntry)pathEntry;
 					entry = CoreModel.newSourceEntry(resourcePath, source.getExclusionPatterns());
 					break;
 				}
-				case IPathEntry.CDT_CONTAINER :
-					entry = CoreModel.newContainerEntry(entrie.getPath(), entrie.isExported());
+				case IPathEntry.CDT_CONTAINER:
+					entry = CoreModel.newContainerEntry(pathEntry.getPath(), pathEntry.isExported());
 					break;
-				default :
-					entry = entrie;
+				default:
+					entry = pathEntry;
 			}
 			list.add(entry);
 		}
@@ -1071,17 +1068,17 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 
 		// Check the removed entries.
-		for (IPathEntry oldEntrie : oldEntries) {
+		for (IPathEntry oldEntry : oldEntries) {
 			boolean found = false;
 			for (IPathEntry newEntrie : newEntries) {
-				if (oldEntrie.equals(newEntrie)) {
+				if (oldEntry.equals(newEntrie)) {
 					found = true;
 					break;
 				}
 			}
 			// Was it deleted.
 			if (!found) {
-				ICElementDelta delta = makePathEntryDelta(cproject, oldEntrie, true);
+				ICElementDelta delta = makePathEntryDelta(cproject, oldEntry, true);
 				if (delta != null) {
 					list.add(delta);
 				}
@@ -1089,17 +1086,17 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 
 		// Check the new entries.
-		for (IPathEntry newEntrie : newEntries) {
+		for (IPathEntry newEntry : newEntries) {
 			boolean found = false;
-			for (IPathEntry oldEntrie : oldEntries) {
-				if (newEntrie.equals(oldEntrie)) {
+			for (IPathEntry oldEntry : oldEntries) {
+				if (newEntry.equals(oldEntry)) {
 					found = true;
 					break;
 				}
 			}
 			// is it new?
 			if (!found) {
-				ICElementDelta delta = makePathEntryDelta(cproject, newEntrie, false);
+				ICElementDelta delta = makePathEntryDelta(cproject, newEntry, false);
 				if (delta != null) {
 					list.add(delta);
 				}
@@ -1141,25 +1138,25 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		} else {
 			int kind = entry.getEntryKind();
 			switch (kind) {
-				case IPathEntry.CDT_SOURCE : {
+				case IPathEntry.CDT_SOURCE: {
 					ISourceEntry source = (ISourceEntry)entry;
 					IPath path = source.getPath();
 					celement = CoreModel.getDefault().create(path);
 					flag = (removed) ? ICElementDelta.F_REMOVED_PATHENTRY_SOURCE : ICElementDelta.F_ADDED_PATHENTRY_SOURCE;
 					break;
 				}
-				case IPathEntry.CDT_LIBRARY : {
+				case IPathEntry.CDT_LIBRARY: {
 					celement = cproject;
 					flag = (removed) ? ICElementDelta.F_REMOVED_PATHENTRY_LIBRARY : ICElementDelta.F_ADDED_PATHENTRY_LIBRARY;
 					break;
 				}
-				case IPathEntry.CDT_PROJECT : {
+				case IPathEntry.CDT_PROJECT: {
 					//IProjectEntry pentry = (IProjectEntry) entry;
 					celement = cproject;
 					flag = ICElementDelta.F_CHANGED_PATHENTRY_PROJECT;
 					break;
 				}
-				case IPathEntry.CDT_INCLUDE : {
+				case IPathEntry.CDT_INCLUDE: {
 					IIncludeEntry include = (IIncludeEntry)entry;
 					IPath path = include.getPath();
 					celement = CoreModel.getDefault().create(path);
@@ -1173,7 +1170,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					flag = ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE;
 					break;
 				}
-				case IPathEntry.CDT_MACRO : { 
+				case IPathEntry.CDT_MACRO: { 
 					IMacroEntry macro = (IMacroEntry)entry;
 					IPath path = macro.getPath();
 					celement = CoreModel.getDefault().create(path);
@@ -1187,7 +1184,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					flag = ICElementDelta.F_CHANGED_PATHENTRY_MACRO;
 					break;
 				}
-				case IPathEntry.CDT_CONTAINER : {
+				case IPathEntry.CDT_CONTAINER: {
 					//IContainerEntry container = (IContainerEntry) entry;
 					//celement = cproject;
 					//SHOULD NOT BE HERE Container are resolved.
@@ -1345,8 +1342,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 							IMarker[] markers = project.findMarkers(ICModelMarker.PATHENTRY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
 							if (markers != null && markers.length > 0) {
 								ArrayList<ICModelStatus> problemList = new ArrayList<ICModelStatus>();
-								for (IPathEntry entrie : entries) {
-									ICModelStatus status = PathEntryUtil.validatePathEntry(project2, entrie, true, false);
+								for (IPathEntry entry : entries) {
+									ICModelStatus status = PathEntryUtil.validatePathEntry(project2, entry, true, false);
 									if (!status.isOK()) {
 										problemList.add(status);
 									}
@@ -1426,7 +1423,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	/**
-	 * The sourceroot been deleted update the path entries
+	 * The source root been deleted update the path entries
 	 * @param sourceRoot
 	 * @throws CModelException
 	 */
@@ -1466,7 +1463,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 	}
 		
-
 	public ICModelStatus validatePathEntry(ICProject cProject, IPathEntry[] entries) {
 		return PathEntryUtil.validatePathEntry(cProject, entries);
 	}
@@ -1475,5 +1471,4 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			boolean recurseInContainers) {
 		return PathEntryUtil.validatePathEntry(cProject, entry, checkSourceAttachment, recurseInContainers);
 	}
-
 }

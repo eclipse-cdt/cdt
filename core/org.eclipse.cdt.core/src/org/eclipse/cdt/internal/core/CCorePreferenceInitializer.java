@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import java.util.HashSet;
 import java.util.Map;
 
-
 public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 
 	/* (non-Javadoc)
@@ -69,7 +68,5 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 
 		// indexer defaults
 		IndexerPreferences.initializeDefaultPreferences(defaultPreferences);
-
-		
 	}
 }

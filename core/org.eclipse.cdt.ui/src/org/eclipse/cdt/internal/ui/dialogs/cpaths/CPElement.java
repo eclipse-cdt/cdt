@@ -574,7 +574,7 @@ public class CPElement {
 							fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.CPElement_status_notOnSourcePath, null); 
 						}
 					}
-					if (!((IIncludeEntry)entry).getFullIncludePath().toFile().exists()) {
+					if (!((IIncludeEntry) entry).getFullIncludePath().toFile().exists()) {
 						fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.CPElement_status_includePathNotFound, null); 
 					}
 					break;

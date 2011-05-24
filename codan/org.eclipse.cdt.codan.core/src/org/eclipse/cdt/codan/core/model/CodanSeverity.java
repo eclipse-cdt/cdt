@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,18 @@
  *
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
+ *    IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
+import org.eclipse.cdt.codan.core.Messages;
 import org.eclipse.core.resources.IMarker;
 
 /**
- * 
+ *
  * Represents Severity of the codan problem. It is directly mapped to markers
  * severity.
- * 
+ *
  */
 public enum CodanSeverity {
 	/**
@@ -52,7 +54,7 @@ public enum CodanSeverity {
 		String[] svalues = new String[values.length];
 		for (int i = 0; i < values.length; i++) {
 			CodanSeverity sev = values[i];
-			svalues[i] = sev.toString();
+			svalues[i] = sev.toTranslatableString();
 		}
 		return svalues;
 	}
@@ -70,5 +72,23 @@ public enum CodanSeverity {
 		if (intValue == IMarker.SEVERITY_ERROR)
 			return Error;
 		return null;
+	}
+
+	/**
+	 * @return translated string value of this CodanSeverity
+	 * @since 2.0
+	 */
+	public String toTranslatableString() {
+		switch (this) {
+			case Info:
+			return Messages.CodanSeverity_Info;
+
+			case Warning:
+				return Messages.CodanSeverity_Warning;
+
+			case Error:
+			default:
+				return Messages.CodanSeverity_Error;
+		}
 	}
 }

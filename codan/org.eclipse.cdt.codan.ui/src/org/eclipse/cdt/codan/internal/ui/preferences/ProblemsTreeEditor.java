@@ -273,7 +273,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 			public String getText(Object element) {
 				if (element instanceof IProblem) {
 					IProblem p = (IProblem) element;
-					return p.getSeverity().toString();
+					return p.getSeverity().toTranslatableString();
 				}
 				return null;
 			}

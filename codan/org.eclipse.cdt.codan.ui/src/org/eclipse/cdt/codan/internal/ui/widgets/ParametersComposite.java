@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
+ *    IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.widgets;
 
@@ -70,9 +71,9 @@ public class ParametersComposite extends Composite {
 				noDefaultAndApplyButton();
 				((GridLayout) getFieldEditorParent().getLayout()).numColumns = 2;
 				addField(new BooleanFieldEditor(PREF_ENABLED, CodanUIMessages.ParametersComposite_IsEnabled, getFieldEditorParent()));
-				String[][] entries = { { CodanSeverity.Error.toString(), CodanSeverity.Error.toString() }, //
-						{ CodanSeverity.Warning.toString(), CodanSeverity.Warning.toString() }, //
-						{ CodanSeverity.Info.toString(), CodanSeverity.Info.toString() }, //
+				String[][] entries = { { CodanSeverity.Error.toTranslatableString(), CodanSeverity.Error.toString() }, //
+						{ CodanSeverity.Warning.toTranslatableString(), CodanSeverity.Warning.toString() }, //
+						{ CodanSeverity.Info.toTranslatableString(), CodanSeverity.Info.toString() }, //
 						{ NO_CHANGE, NO_CHANGE }, //
 				};
 				addField(new ComboFieldEditor(PREF_SEVERITY, CodanUIMessages.ParametersComposite_Severity, entries, getFieldEditorParent()));

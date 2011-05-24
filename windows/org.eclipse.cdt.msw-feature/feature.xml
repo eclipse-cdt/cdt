@@ -3,7 +3,9 @@
       id="org.eclipse.cdt.msw"
       label="CDT Visual C++ Support"
       version="1.0.0.qualifier"
-      provider-name="Eclipse CDT">
+      provider-name="Eclipse CDT"
+      license-feature="org.eclipse.cdt.license"
+      license-feature-version="1.0.0.qualifier">
 
    <description>
       %description

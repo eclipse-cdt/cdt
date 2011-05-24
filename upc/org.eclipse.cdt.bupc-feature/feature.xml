@@ -4,7 +4,9 @@
       label="%featureName"
       version="1.0.3.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.cdt.managedbuilder.bupc.ui">
+      plugin="org.eclipse.cdt.managedbuilder.bupc.ui"
+      license-feature="org.eclipse.cdt.license"
+      license-feature-version="1.0.0.qualifier">
 
    <description>
       %description

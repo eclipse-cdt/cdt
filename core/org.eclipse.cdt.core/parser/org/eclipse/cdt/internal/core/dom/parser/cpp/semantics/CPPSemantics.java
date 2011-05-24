@@ -965,7 +965,7 @@ public class CPPSemantics {
 			
 			if (friendInLocalClass && !(scope instanceof ICPPClassScope))
 				return;			
-			if (!data.contentAssist && data.hasResultOrProblem()) 
+			if (!data.contentAssist && hasReachableResult(data))
 				return;
 			
 			// Lookup in base classes
@@ -981,13 +981,27 @@ public class CPPSemantics {
 				data.usingDirectivesOnly = true;
 			}
 			
-			// compute next scopes
+			// Compute next scopes
 			if (useTemplScope && nextTmplScope != null) {
 				nextTmplScope= enclosingTemplateScope(nextTmplScope.getTemplateDeclaration());
 			} else {
 				nextScope= getParentScope(scope, data.tu);
 			}
 		}
+	}
+
+	private static boolean hasReachableResult(LookupData data) {
+    	if (data.foundItems instanceof Object[]) {
+    		for (Object item : (Object[]) data.foundItems) {
+    			if (item instanceof IBinding) {
+    				IBinding binding = (IBinding) item;
+    				if (!isFromIndex(binding) || data.tu == null || isReachableFromAst(data.tu, binding)) {
+    					return true;
+    				}
+    			}
+    		}
+    	}
+    	return false;
 	}
 
 	private static void lookupInlineNamespaces(LookupData data, IIndexFileSet fileSet, ICPPNamespaceScope namespace) throws DOMException {

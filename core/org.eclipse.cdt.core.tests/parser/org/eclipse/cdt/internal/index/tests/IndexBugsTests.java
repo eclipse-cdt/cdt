@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Andrew Ferguson (Symbian)
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation
+ *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.index.tests;
 
@@ -404,7 +404,7 @@ public class IndexBugsTests extends BaseTestCase {
     	String varName= "arrayDataSize";
     	StringBuffer content= new StringBuffer();
     	content.append("unsigned char arrayData[] = {\n");
-    	for (int i= 0; i< 1024 * 250 - 1; i++) {
+    	for (int i= 0; i < 1024 * 250 - 1; i++) {
     		content.append("0x00,");
     	}
     	content.append("0x00};\n");
@@ -2011,6 +2011,39 @@ public class IndexBugsTests extends BaseTestCase {
 		try {
 			IASTTranslationUnit ast = TestSourceReader.createIndexBasedAST(index, fCProject, test);
 			getBindingFromASTName(ast, testData[1], "m(e1)", 1, ICPPMethod.class);
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+
+	//  // header.h
+	//	namespace ns2 { class A {}; }
+	
+	//  #include "header.h"
+	//	namespace ns1 {
+	//	class B : public ns2::A {};
+	//	}
+
+	//	namespace ns1 {
+	//	namespace ns2 {
+	//	typedef int A;
+	//	}
+	//	}
+	public void testNamespaceReachability_319632() throws Exception {
+		waitForIndexer();
+
+		String[] testData = getContentsForTest(3);
+		TestSourceReader.createFile(fCProject.getProject(), "header.h", testData[0]);
+		IFile test= TestSourceReader.createFile(fCProject.getProject(), "test.cpp", testData[1]);
+		TestSourceReader.createFile(fCProject.getProject(), "unrelated.cpp", testData[2]);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndex index= indexManager.getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			BindingAssertionHelper helper = new BindingAssertionHelper(test, testData[1], index);
+			helper.assertNonProblem("A", 1, ICPPClassType.class);
 		} finally {
 			index.releaseReadLock();
 		}

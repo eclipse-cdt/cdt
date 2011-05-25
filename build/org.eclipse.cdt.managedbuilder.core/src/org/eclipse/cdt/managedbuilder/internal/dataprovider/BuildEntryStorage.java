@@ -590,12 +590,14 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 
 	private static PathInfo optionPathValueToEntry(String str, SupplierBasedCdtVariableSubstitutor subst) {
 		String unresolvedStr = ManagedBuildManager.locationToFullPath(str);
-		boolean isWorkspacePath;
-		if (unresolvedStr != null) {
-			isWorkspacePath = true;
-		} else {
+		boolean isWorkspacePath = false;
+		if (unresolvedStr == null) {
 			unresolvedStr = str;
-			isWorkspacePath = false;
+		} else {
+			// A path starting from "${workspace_loc}" is always a filesystem path.
+			if (!unresolvedStr.startsWith("${workspace_loc}")) { //$NON-NLS-1$
+				isWorkspacePath = true;
+			}
 		}
 		return new PathInfo(unresolvedStr, isWorkspacePath, subst);
 	}

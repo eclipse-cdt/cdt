@@ -134,7 +134,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 
 	@Override
 	protected void obtainEntriesFromLevel(int levelNum, SettingLevel level) {
-		switch(levelNum) {
+		switch (levelNum) {
 		case USER_ENTRIES_LEVEL:
 			if (level == null) {
 				restoreDefaults();
@@ -173,7 +173,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 
 	@Override
 	protected void putEntriesToLevel(int levelNum, SettingLevel level) {
-		switch(levelNum) {
+		switch (levelNum) {
 		case USER_ENTRIES_LEVEL:
 			List<EmptyEntryInfo> emptyEntryInfos = new ArrayList<EmptyEntryInfo>();
 			for (UserEntryInfo userEntry : getUserEntries(level.getFlags(0), true, emptyEntryInfos)) {
@@ -366,7 +366,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	private ICLanguageSettingEntry[] getEnvEntries(int flags) {
 		String paths[] = null;
 		int kind = getKind();
-		switch(kind) {
+		switch (kind) {
 		case ICSettingEntry.INCLUDE_PATH:{
 				IEnvironmentVariableProvider provider = ManagedBuildManager.getEnvironmentVariableProvider();
 				paths = provider.getBuildPaths(fLangData.getConfiguration(), IEnvVarBuildPath.BUILDPATH_INCLUDE);

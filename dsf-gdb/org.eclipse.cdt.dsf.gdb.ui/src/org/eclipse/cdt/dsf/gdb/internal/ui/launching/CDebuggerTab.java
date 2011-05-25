@@ -53,7 +53,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class CDebuggerTab extends CLaunchConfigurationTab {
-	
     /**
      * Tab identifier used for ordering of tabs added using the 
      * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
@@ -194,7 +193,6 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
 					ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_DEFAULT);
 		}
-		
 	}
 
 	public void initializeFrom(ILaunchConfiguration config) {
@@ -308,7 +306,6 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		if (!fAttachMode && !fCoreMode) {
 			fStopInMain = createCheckButton(optionsComp, LaunchMessages.getString("CDebuggerTab.Stop_at_main_on_startup")); //$NON-NLS-1$
 			fStopInMain.addSelectionListener(new SelectionAdapter() {
-
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					fStopInMainSymbol.setEnabled(fStopInMain.getSelection());
@@ -328,7 +325,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 				new AccessibleAdapter() {                       
 					@Override
 					public void getName(AccessibleEvent e) {
-                            e.result = LaunchMessages.getString("CDebuggerTab.Stop_at_main_on_startup"); //$NON-NLS-1$
+						e.result = LaunchMessages.getString("CDebuggerTab.Stop_at_main_on_startup"); //$NON-NLS-1$
 					}
 				}
 			);
@@ -483,10 +480,10 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 	protected void handleDebuggerChanged() {
 		loadDynamicDebugArea();
 
-		// always set the newly created area with defaults
+		// Always set the newly created area with defaults
 		ILaunchConfigurationWorkingCopy wc = getLaunchConfigurationWorkingCopy();
 		if (getDynamicTab() == null) {
-			// remove any debug specfic args from the config
+			// Remove any debug specific args from the config
 			if (wc == null) {
 				if (getLaunchConfiguration().isWorkingCopy()) {
 					wc = (ILaunchConfigurationWorkingCopy)getLaunchConfiguration();

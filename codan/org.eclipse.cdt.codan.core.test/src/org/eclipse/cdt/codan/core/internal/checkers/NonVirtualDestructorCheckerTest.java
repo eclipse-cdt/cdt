@@ -51,7 +51,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	//   virtual void f() = 0;
 	//   ~A(); // warn! public non-virtual dtor.
 	// };
-	public void _testPublicVirtualDtorInClass() {
+	public void testPublicVirtualDtorInClass() {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(3);
 	}
@@ -60,7 +60,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	//   virtual void f() = 0;
 	//   // warn! implicit public non-virtual dtor.
 	// };
-	public void _testImplicitPublicNonVirtualDtorInClass() {
+	public void testImplicitPublicNonVirtualDtorInClass() {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(1);
 	}
@@ -73,7 +73,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	//   friend class F;
 	//   ~A(); // warn! can be called from class F.
 	// };
-	public void _testPublicNonVirtualDtorCanBeCalledFromFriendClass() {
+	public void testPublicNonVirtualDtorCanBeCalledFromFriendClass() {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(7);
 	}

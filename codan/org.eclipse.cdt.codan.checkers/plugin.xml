@@ -34,15 +34,15 @@
       
       <checker
             class="org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructor"
-            id="org.eclipse.cdt.codan.internal.checkers.NonVirtualDescructor"
-            name="%checker.name.NonVirtualDescructor">
+            id="org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructor"
+            name="%checker.name.NonVirtualDestructor">
          <problem
                category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
                defaultSeverity="Warning"
-               description="%problem.description.NonVirtualDescructor"
+               description="%problem.description.NonVirtualDestructor"
                id="org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"
-               messagePattern="%problem.messagePattern.NonVirtualDescructor"
-               name="%problem.name.NonVirtualDescructor">
+               messagePattern="%problem.messagePattern.NonVirtualDestructor"
+               name="%problem.name.NonVirtualDestructor">
          </problem>
       </checker>
 

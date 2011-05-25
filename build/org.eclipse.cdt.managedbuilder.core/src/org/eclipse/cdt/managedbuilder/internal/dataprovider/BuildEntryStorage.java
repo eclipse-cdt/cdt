@@ -337,7 +337,6 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	}
 
 //	private String[] resolve(String v, IOption option, IPath[] buildLocation) {
-//
 //	}
 
 	private String[] resolve(String v, IOption option, SupplierBasedCdtVariableSubstitutor sub) {
@@ -552,7 +551,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		int i = pathName.indexOf(' ') + pathName.indexOf('\\')
 			+ pathName.indexOf("${"); //$NON-NLS-1$
 
-		/* If indexof didn't fail all three times, double-quote path */
+		/* If indexOf didn't fail all three times, double-quote path */
 		if (i != -3) {
 			if (!bStartsWithQuote) {
 				pathName = "\"" + pathName; //$NON-NLS-1$
@@ -585,8 +584,8 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 //	private static Object[] optionPathValueToEntry(String value) {
 //		String wspPath = ManagedBuildManager.locationToFullPath(value);
 //		if (wspPath != null)
-//			return new Object[]{wspPath, Boolean.valueOf(true)};
-//		return new Object[]{value, Boolean.valueOf(false)};
+//			return new Object[] { wspPath, Boolean.valueOf(true) };
+//		return new Object[] { value, Boolean.valueOf(false) };
 //	}
 
 	private static PathInfo optionPathValueToEntry(String str, SupplierBasedCdtVariableSubstitutor subst) {

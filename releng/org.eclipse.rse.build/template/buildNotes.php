@@ -29,20 +29,22 @@
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Local Terminal needs CDT Core.</li>
 
-<li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M6-201103142031/index.php">TM 3.3M6</a>:
+<!--
+<li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M7-201105022200/index.php">TM 3.3M7</a>:
 <ul>
   <li>Performance improvements were made to reduce the number of queries when an RSE Tableview is open
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=215814">215814</a>]
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=284157">284157</a>].</li>
 </ul>
 </li>
-<li>At least 22 bugs were resolved: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;value0-0-2=backport;chfieldto=2011-05-04;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.3%20M[3456];chfieldfrom=2011-03-12;field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.3%20M7;product=Target%20Management">
+-->
+<li>At least 4 bugs were resolved: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;value0-0-2=backport;chfieldto=2011-06-30;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.3%20M[34567];chfieldfrom=2011-04-28;field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.3%20RC1;target_milestone=3.3%20RC2;target_milestone=3.3%20RC3;target_milestone=3.3%20RC4;target_milestone=3.3;product=Target%20Management">
   this query</a> to show the list of bugs fixed since
-  <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M6-201103142031/">
-  TM 3.3M6</a>
-  [<a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M6-201103142031/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M7-201105022200/">
+  TM 3.3M7</a>
+  [<a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M7-201105022200/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the

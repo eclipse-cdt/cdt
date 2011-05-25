@@ -103,7 +103,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	private String getStringAttr(ILaunchConfiguration config, String attributeName, String defaultValue) {
 		try {
 			return config.getAttribute(attributeName, defaultValue);
-		} catch (CoreException exc) {
+		} catch (CoreException e) {
 			return defaultValue;
 		}
 	}
@@ -111,7 +111,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	private boolean getBooleanAttr(ILaunchConfiguration config, String attributeName, boolean defaultValue) {
 		try {
 			return config.getAttribute(attributeName, defaultValue);
-		} catch (CoreException exc) {
+		} catch (CoreException e) {
 			return defaultValue;
 		}
 	}

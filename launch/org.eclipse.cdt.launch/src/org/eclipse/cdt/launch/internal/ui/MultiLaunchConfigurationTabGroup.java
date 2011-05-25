@@ -448,9 +448,10 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		}
 
 		public void initializeFrom(ILaunchConfiguration configuration) {
-			MultiLaunchConfigurationDelegate.createLaunchElements(configuration, input);
+			// replace the input from previously shown launch configurations 
+			input = MultiLaunchConfigurationDelegate.createLaunchElements(configuration, new ArrayList<LaunchElement>());
 			if (treeViewer != null) {
-				treeViewer.refresh(true);
+				treeViewer.setInput(input);
 			}
 		}
 

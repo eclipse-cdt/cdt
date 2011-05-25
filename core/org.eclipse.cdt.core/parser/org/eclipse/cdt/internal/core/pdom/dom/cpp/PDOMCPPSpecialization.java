@@ -48,7 +48,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		super(linkage, parent, spec.getNameCharArray());
 		getDB().putRecPtr(record + SPECIALIZED, specialized.getRecord());
 
-		// specializations that are not instances have the same map as their owner.
+		// Specializations that are not instances have the same map as their owner.
 		if (this instanceof ICPPTemplateInstance) {
 			long rec= PDOMCPPTemplateParameterMap.putMap(this, spec.getTemplateParameterMap());
 			getDB().putRecPtr(record + ARGMAP, rec);

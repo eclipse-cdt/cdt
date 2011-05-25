@@ -45,7 +45,6 @@ import org.eclipse.ui.PlatformUI;
  * The dynamic tab for gdb-based debugger implementations.
  */
 public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
-
 	protected TabFolder fTabFolder;
 	protected Text fGDBCommandText;
 	protected Text fGDBInitText;
@@ -75,13 +74,13 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, defaultGdbInit);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
-				                   IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
+				IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
-                				   IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
+				IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
-								   IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
+				IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
-				                   IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_ON_FORK_DEFAULT);
+				IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_ON_FORK_DEFAULT);
 
 		if (fSolibBlock != null)
 			fSolibBlock.setDefaults(configuration);
@@ -93,8 +92,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		if (valid) {
 			setErrorMessage(null);
 			setMessage(null);
-		}
-		else {
+		} else {
 			setErrorMessage(LaunchUIMessages.getString("GDBDebuggerPage.gdb_executable_not_specified")); //$NON-NLS-1$
 			setMessage(null);
 		}
@@ -103,39 +101,37 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 	/** utility method to cut down on clutter */
 	private String getStringAttr(ILaunchConfiguration config, String attributeName, String defaultValue) {
-		try { 
+		try {
 			return config.getAttribute(attributeName, defaultValue);
-		}
-		catch (CoreException exc) {
+		} catch (CoreException exc) {
 			return defaultValue;
 		}
 	}
 	/** utility method to cut down on clutter */
 	private boolean getBooleanAttr(ILaunchConfiguration config, String attributeName, boolean defaultValue) {
-		try { 
+		try {
 			return config.getAttribute(attributeName, defaultValue);
-		}
-		catch (CoreException exc) {
+		} catch (CoreException exc) {
 			return defaultValue;
 		}
 	}
-	
+
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setInitializing(true);
 		IPreferenceStore preferenceStore = GdbUIPlugin.getDefault().getPreferenceStore();
 		String defaultGdbCommand = preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND);
 		String defaultGdbInit = preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT);
 		String gdbCommand = getStringAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand);
-		String gdbInit = getStringAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, defaultGdbInit); 
+		String gdbInit = getStringAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, defaultGdbInit);
 		boolean nonStopMode = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
-                				IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
+                IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
 		boolean reverseEnabled = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
-									IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
+				IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
 		boolean updateThreadsOnSuspend = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
 				IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
 		boolean debugOnFork = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
 				IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_ON_FORK_DEFAULT);
-		
+
 		if (fSolibBlock != null)
 			fSolibBlock.initializeFrom(configuration);
 		fGDBCommandText.setText(gdbCommand);
@@ -144,23 +140,23 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		fReverseCheckBox.setSelection(reverseEnabled);
 		fUpdateThreadlistOnSuspend.setSelection(updateThreadsOnSuspend);
 		fDebugOnFork.setSelection(debugOnFork);
-		
-		setInitializing(false); 
+
+		setInitializing(false);
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, 
-				                   fGDBCommandText.getText().trim());
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME,
+				fGDBCommandText.getText().trim());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT,
-				                   fGDBInitText.getText().trim());
+				fGDBInitText.getText().trim());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
-				                   fNonStopCheckBox.getSelection());
+				fNonStopCheckBox.getSelection());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
-                                   fReverseCheckBox.getSelection());
+                fReverseCheckBox.getSelection());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
-                                   fUpdateThreadlistOnSuspend.getSelection());
+                fUpdateThreadlistOnSuspend.getSelection());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
-				                   fDebugOnFork.getSelection());
+				fDebugOnFork.getSelection());
 		if (fSolibBlock != null)
 			fSolibBlock.performApply(configuration);
 	}
@@ -187,7 +183,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	public void update(Observable o, Object arg) {
@@ -196,7 +192,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	}
 
 	public IMILaunchConfigurationComponent createSolibBlock(Composite parent) {
-		IMILaunchConfigurationComponent block = new GDBSolibBlock( new SolibSearchPathBlock(), true, true); 
+		IMILaunchConfigurationComponent block = new GDBSolibBlock( new SolibSearchPathBlock(), true, true);
 		block.createControl(parent);
 		return block;
 	}
@@ -210,11 +206,11 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText(LaunchUIMessages.getString("GDBDebuggerPage.main_tab_name")); //$NON-NLS-1$
 		Composite comp = ControlFactory.createCompositeEx(tabFolder, 1, GridData.FILL_BOTH);
-		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
+		((GridLayout) comp.getLayout()).makeColumnsEqualWidth = false;
 		comp.setFont(tabFolder.getFont());
 		tabItem.setControl(comp);
 		Composite subComp = ControlFactory.createCompositeEx(comp, 3, GridData.FILL_HORIZONTAL);
-		((GridLayout)subComp.getLayout()).makeColumnsEqualWidth = false;
+		((GridLayout) subComp.getLayout()).makeColumnsEqualWidth = false;
 		subComp.setFont(tabFolder.getFont());
 		Label label = ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.gdb_debugger")); //$NON-NLS-1$
 		GridData gd = new GridData();
@@ -230,7 +226,6 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		});
 		Button button = createPushButton(subComp, LaunchUIMessages.getString("GDBDebuggerPage.gdb_browse"), null); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
-
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleGDBButtonSelected();
@@ -268,7 +263,6 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		});
 		button = createPushButton(subComp, LaunchUIMessages.getString("GDBDebuggerPage.gdb_cmdfile_browse"), null); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
-
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleGDBInitButtonSelected();
@@ -298,19 +292,19 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		gd.horizontalSpan = 3;
 		gd.widthHint = 200;
 		label.setLayoutData(gd);
-		
+
 		// TODO: Ideally, this field should be disabled if the back-end doesn't support non-stop debugging
-		// TODO: Find a way to determine if non-stop is supported (i.e. find the GDB version) then grey out the check box if necessary 
+		// TODO: Find a way to determine if non-stop is supported (i.e. find the GDB version) then grey out the check box if necessary
 		fNonStopCheckBox = addCheckbox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.nonstop_mode")); //$NON-NLS-1$
 
 		// TODO: Ideally, this field should be disabled if the back-end doesn't support reverse debugging
-		// TODO: Find a way to determine if reverse is supported (i.e. find the GDB version) then grey out the check box if necessary 
+		// TODO: Find a way to determine if reverse is supported (i.e. find the GDB version) then grey out the check box if necessary
 		fReverseCheckBox = addCheckbox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debugging")); //$NON-NLS-1$
 
 		fUpdateThreadlistOnSuspend = addCheckbox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.update_thread_list_on_suspend")); //$NON-NLS-1$
 		// This checkbox needs an explanation. Attach context help to it.
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fUpdateThreadlistOnSuspend, GdbUIPlugin.PLUGIN_ID + ".update_threadlist_button_context"); //$NON-NLS-1$
-		
+
 		fDebugOnFork = addCheckbox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.Automatically_debug_forked_processes")); //$NON-NLS-1$
 	}
 
@@ -322,7 +316,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		tabItem.setControl(comp);
 		fSolibBlock = createSolibBlock(comp);
 		if (fSolibBlock instanceof Observable)
-			((Observable)fSolibBlock).addObserver(this);
+			((Observable) fSolibBlock).addObserver(this);
 	}
 
 	/** Used to add a checkbox to the tab. Each checkbox has its own line. */
@@ -337,20 +331,20 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		button.setLayoutData(gd);
-		
+
 		return button;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	@Override
 	public void dispose() {
 		if (fSolibBlock != null) {
 			if (fSolibBlock instanceof Observable)
-				((Observable)fSolibBlock).deleteObserver(this);
+				((Observable) fSolibBlock).deleteObserver(this);
 			fSolibBlock.dispose();
 		}
 		super.dispose();

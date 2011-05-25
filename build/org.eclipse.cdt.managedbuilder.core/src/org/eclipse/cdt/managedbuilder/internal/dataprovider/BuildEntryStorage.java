@@ -367,12 +367,12 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		String paths[] = null;
 		int kind = getKind();
 		switch (kind) {
-		case ICSettingEntry.INCLUDE_PATH:{
+		case ICSettingEntry.INCLUDE_PATH: {
 				IEnvironmentVariableProvider provider = ManagedBuildManager.getEnvironmentVariableProvider();
 				paths = provider.getBuildPaths(fLangData.getConfiguration(), IEnvVarBuildPath.BUILDPATH_INCLUDE);
 			}
 			break;
-		case ICSettingEntry.LIBRARY_PATH:{
+		case ICSettingEntry.LIBRARY_PATH: {
 				IEnvironmentVariableProvider provider = ManagedBuildManager.getEnvironmentVariableProvider();
 				paths = provider.getBuildPaths(fLangData.getConfiguration(), IEnvVarBuildPath.BUILDPATH_LIBRARY);
 			}

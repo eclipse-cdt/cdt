@@ -624,7 +624,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				resolvedInfoMap.put(cproject, rInfo);
 			}
 		}
-		return new Object[]{resolvedEntries, rInfo};
+		return new Object[] { resolvedEntries, rInfo };
 	}
 
 	public void setRawPathEntries(ICProject cproject, IPathEntry[] newEntries, IProgressMonitor monitor) throws CModelException {
@@ -639,8 +639,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 	public IPathEntry[] getRawPathEntries(ICProject cproject) throws CModelException {
 		IProject project = cproject.getProject();
-		// Check if the Project is accesible.
-		if (! (CoreModel.hasCNature(project) || CoreModel.hasCCNature(project))) {
+		// Check if the Project is accessible.
+		if (!CoreModel.hasCNature(project) && !CoreModel.hasCCNature(project)) {
 			throw new CModelException(new CModelStatus(ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST));
 		}
 		IPathEntry[] pathEntries;
@@ -657,11 +657,13 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		boolean foundSource = false;
 		boolean foundOutput = false;
 		for (IPathEntry rawEntry : pathEntries) {
-			if (rawEntry.getEntryKind() == IPathEntry.CDT_SOURCE) {
+			switch (rawEntry.getEntryKind()) {
+			case IPathEntry.CDT_SOURCE:
 				foundSource = true;
-			}
-			if (rawEntry.getEntryKind() == IPathEntry.CDT_OUTPUT) {
+				break;
+			case IPathEntry.CDT_OUTPUT:
 				foundOutput = true;
+				break;
 			}
 		}
 

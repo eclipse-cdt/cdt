@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ * 	   QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui; 
 
@@ -17,8 +17,7 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
  * Common function for debugger pages.
  * @since 3.1
  */
-abstract public class AbstractCDebuggerPage 
-    extends AbstractLaunchConfigurationTab 
+abstract public class AbstractCDebuggerPage extends AbstractLaunchConfigurationTab 
     implements ICDebuggerPage, ICDebuggerPageExtension {
 
 	private String fDebuggerID = null;
@@ -32,7 +31,7 @@ abstract public class AbstractCDebuggerPage
     /* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.ui.ICDebuggerPage#init(java.lang.String)
 	 */
-	public void init( String debuggerID ) {
+	public void init(String debuggerID) {
 		fDebuggerID = debuggerID;
 	}
 
@@ -56,16 +55,16 @@ abstract public class AbstractCDebuggerPage
      * @see org.eclipse.cdt.debug.ui.ICDebuggerPageExtension#addContentChangeListener(org.eclipse.cdt.debug.ui.ICDebuggerPageExtension.IContentChangeListener)
      */
     /** @since 7.0 */
-    public void addContentChangeListener( IContentChangeListener listener ) {
-        fContentListeners.add( listener );
+    public void addContentChangeListener(IContentChangeListener listener) {
+        fContentListeners.add(listener);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.ui.ICDebuggerPageExtension#removeContentChangeListener(org.eclipse.cdt.debug.ui.ICDebuggerPageExtension.IContentChangeListener)
      */
     /** @since 7.0 */
-    public void removeContentChangeListener( IContentChangeListener listener ) {
-        fContentListeners.remove( listener );
+    public void removeContentChangeListener(IContentChangeListener listener) {
+        fContentListeners.remove(listener);
     }
 
     /**
@@ -74,7 +73,7 @@ abstract public class AbstractCDebuggerPage
      * @since 7.0
      */
     protected void contentChanged() {
-        for ( Object l : fContentListeners.getListeners() )
-            ((IContentChangeListener)l).contentChanged();
+        for (Object listener : fContentListeners.getListeners())
+            ((IContentChangeListener) listener).contentChanged();
     }
 }

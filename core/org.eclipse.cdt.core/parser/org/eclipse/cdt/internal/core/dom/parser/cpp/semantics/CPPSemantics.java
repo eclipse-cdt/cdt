@@ -990,6 +990,14 @@ public class CPPSemantics {
 		}
 	}
 
+	/**
+	 * Checks if lookup data contains result bindings reachable through includes
+	 * from the translation unit where lookup started. Any binding is considered reachable
+	 * if the lookup is not done in a context of a translation unit.
+	 * 
+	 * @param data the LookupData object.
+	 * @return {@code true} if the lookup data contains at least one reachable binding.
+	 */
 	private static boolean hasReachableResult(LookupData data) {
     	if (data.foundItems instanceof Object[]) {
     		for (Object item : (Object[]) data.foundItems) {

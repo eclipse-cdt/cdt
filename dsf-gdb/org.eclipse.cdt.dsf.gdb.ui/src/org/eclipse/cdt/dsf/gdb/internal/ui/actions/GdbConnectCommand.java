@@ -167,16 +167,26 @@ public class GdbConnectCommand implements IConnect {
     			binaryPath = fd.open();
     		}
 
-    		final String finalBinaryPath = binaryPath;
-        	fExecutor.execute(new DsfRunnable() {
-        		public void run() {
-        			IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
-        			ICommandControlService commandControl = fTracker.getService(ICommandControlService.class);
+    		if (binaryPath == null) {
+    			// The user pressed the cancel button, so we cancel the attach gracefully
+    			fRm.done();
+    		} else {
+    			final String finalBinaryPath = binaryPath;
+    			fExecutor.execute(new DsfRunnable() {
+    				public void run() {
+    					IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
+    					ICommandControlService commandControl = fTracker.getService(ICommandControlService.class);
 
-        			IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), fPid);
-        			procService.attachDebuggerToProcess(procDmc, finalBinaryPath, new DataRequestMonitor<IDMContext>(fExecutor, fRm));
-        		}
-        	});
+    					if (procService != null && commandControl != null) {
+    						IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), fPid);
+    						procService.attachDebuggerToProcess(procDmc, finalBinaryPath, new DataRequestMonitor<IDMContext>(fExecutor, fRm));
+    					} else {
+    						fRm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Cannot find services", null)); //$NON-NLS-1$
+    						fRm.done();
+    					}
+    				}
+    			});
+    		}
 			
     		return Status.OK_STATUS;
     	}

@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
- * Ken Ryall (Nokia) - bug 178731
- * Ken Ryall (Nokia) - bug 246201
+ *     QNX Software Systems - Initial API and implementation
+ *     Ken Ryall (Nokia) - bug 178731
+ *     Ken Ryall (Nokia) - bug 246201
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.launch;
 
@@ -91,7 +91,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	/**
 	 * Locate a configuration to relaunch for the given type.  If one cannot be found, create one.
 	 * 
-	 * @return a re-useable config or <code>null</code> if none
+	 * @return a re-usable config or <code>null</code> if none
 	 */
 	protected ILaunchConfiguration findLaunchConfiguration(IBinary bin, String mode) {
 		ILaunchConfiguration configuration = null;
@@ -142,7 +142,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
        			}
 			}
 
-			if ( debugConfig == null ) {
+			if (debugConfig == null) {
 				// Prompt the user if more then 1 debugger.
 				String programCPU = bin.getCPU();
 				String os = Platform.getOS();
@@ -202,8 +202,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, debugConfig.getID());
 
 			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(bin.getCProject().getProject());
-			if (projDes != null)
-			{
+			if (projDes != null) {
 				String buildConfigID = projDes.getActiveConfiguration().getId();
 				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, buildConfigID);				
 			}

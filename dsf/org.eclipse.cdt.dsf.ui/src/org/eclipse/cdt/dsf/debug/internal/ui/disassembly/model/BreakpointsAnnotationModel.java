@@ -133,6 +133,9 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 	}
 
 	private void addBreakpointAnnotation(IBreakpoint breakpoint, boolean fireEvent) {
+		if (fDocument == null) {
+			return;
+		}
 		final IMarker marker= breakpoint.getMarker();
 		if (marker == null) {
 			return;

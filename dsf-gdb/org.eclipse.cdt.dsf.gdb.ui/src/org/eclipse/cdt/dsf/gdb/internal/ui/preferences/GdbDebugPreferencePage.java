@@ -44,11 +44,8 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 	 */
 	private class ListenableBooleanFieldEditor extends BooleanFieldEditor {
 
-		public ListenableBooleanFieldEditor(
-			String name,
-			String labelText,
-			int style,
-			Composite parent) {
+		public ListenableBooleanFieldEditor(String name, String labelText, int style,
+				Composite parent) {
 			super(name, labelText, style, parent);
 		}
 
@@ -71,7 +68,8 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), GdbUIPlugin.PLUGIN_ID + ".dsfgdb_preference_page"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
+				GdbUIPlugin.PLUGIN_ID + ".dsfgdb_preference_page"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -141,7 +139,8 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 				IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES,
 				MessagesForPreferences.GdbDebugPreferencePage_maxGdbTraces_label,
 				group);
-		// Instead of using Integer.MAX_VALUE which is some obscure number, using 2 billion is nice and readable
+		// Instead of using Integer.MAX_VALUE which is some obscure number,
+		// using 2 billion is nice and readable.
 		maxCharactersField.setValidRange(10000, 2000000000);
 
 		maxCharactersField.fillIntoGrid(group, 3);
@@ -156,7 +155,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 			}
 		});
 
-		// need to set layout again
+		// Need to set layout again.
 		group.setLayout(groupLayout);
 
 		group= new Group(parent, SWT.NONE);
@@ -172,7 +171,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 
 		boolField.fillIntoGrid(group, 3);
 		addField(boolField);
-		// need to set layout again
+		// Need to set layout again.
 		group.setLayout(groupLayout);
 
 		group= new Group(parent, SWT.NONE);
@@ -222,8 +221,8 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		childCountLimitField.fillIntoGrid(indentHelper, 3);
 
 		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
-		boolean prettyPrintingEnabled = store
-				.getBoolean(IGdbDebugPreferenceConstants.PREF_ENABLE_PRETTY_PRINTING);
+		boolean prettyPrintingEnabled =
+				store.getBoolean(IGdbDebugPreferenceConstants.PREF_ENABLE_PRETTY_PRINTING);
 		childCountLimitField.setEnabled(prettyPrintingEnabled, indentHelper);
 
 		addField(childCountLimitField);

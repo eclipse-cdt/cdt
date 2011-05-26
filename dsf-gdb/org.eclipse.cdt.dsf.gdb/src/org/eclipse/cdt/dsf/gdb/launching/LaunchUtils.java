@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Ericsson   - Initial API and implementation
- * Ericsson   - Added support for Mac OS
+ *     Ericsson   - Initial API and implementation
+ *     Ericsson   - Added support for Mac OS
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -57,7 +57,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class LaunchUtils {
-
 	/**
 	 * A prefix that we use to indicate that a GDB version is for MAC OS
 	 * @since 3.0
@@ -82,8 +81,7 @@ public class LaunchUtils {
 		if (cproject == null && name.length() > 0) {
 			IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			if (!proj.exists()) {
-				abort(
-						LaunchMessages.getFormattedString("AbstractCLaunchDelegate.Project_NAME_does_not_exist", name), null, //$NON-NLS-1$
+				abort(LaunchMessages.getFormattedString("AbstractCLaunchDelegate.Project_NAME_does_not_exist", name), null, //$NON-NLS-1$
 						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 			} else if (!proj.isOpen()) {
 				abort(LaunchMessages.getFormattedString("AbstractCLaunchDelegate.Project_NAME_is_closed", name), null, //$NON-NLS-1$
@@ -95,7 +93,6 @@ public class LaunchUtils {
 		return cproject;
 	}
 	
-
 	/**
 	 * Verify that program name of the configuration can be found as a file.
 	 * 
@@ -130,7 +127,6 @@ public class LaunchUtils {
 		
 		return programPath;
 	}
-
 
 	/**
 	 * Verify that the executable path points to a valid binary file.
@@ -458,7 +454,7 @@ public class LaunchUtils {
 		if (sessionType == SessionType.CORE) {
 			try {
 				String coreType = config.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
-						                              IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
+						IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
 				return coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE);
 			} catch (CoreException e) {    		
 			}

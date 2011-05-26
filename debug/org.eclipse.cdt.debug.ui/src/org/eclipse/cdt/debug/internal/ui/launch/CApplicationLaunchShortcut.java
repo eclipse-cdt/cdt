@@ -96,10 +96,10 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	protected ILaunchConfiguration findLaunchConfiguration(IBinary bin, String mode) {
 		ILaunchConfiguration configuration = null;
 		ILaunchConfigurationType configType = getCLaunchConfigType();
-		List candidateConfigs = Collections.EMPTY_LIST;
+		List<ILaunchConfiguration> candidateConfigs = Collections.emptyList();
 		try {
 			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(configType);
-			candidateConfigs = new ArrayList(configs.length);
+			candidateConfigs = new ArrayList<ILaunchConfiguration>(configs.length);
 			for (int i = 0; i < configs.length; i++) {
 				ILaunchConfiguration config = configs[i];
 				IPath programPath = CDebugUtils.getProgramPath(config);
@@ -147,7 +147,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				String programCPU = bin.getCPU();
 				String os = Platform.getOS();
 				debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
-				List debugList = new ArrayList(debugConfigs.length);
+				List<ICDebugConfiguration> debugList = new ArrayList<ICDebugConfiguration>(debugConfigs.length);
 				for (int i = 0; i < debugConfigs.length; i++) {
 					String platform = debugConfigs[i].getPlatform();
 					if (debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
@@ -157,7 +157,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 						}
 					}
 				}
-				debugConfigs = (ICDebugConfiguration[]) debugList.toArray(new ICDebugConfiguration[0]);
+				debugConfigs = debugList.toArray(new ICDebugConfiguration[0]);
 				if (debugConfigs.length == 1) {
 					debugConfig = debugConfigs[0];
 				} else if (debugConfigs.length > 1) {
@@ -169,11 +169,11 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				configuration = createConfiguration(bin, debugConfig, mode);
 			}
 		} else if (candidateCount == 1) {
-			configuration = (ILaunchConfiguration) candidateConfigs.get(0);
+			configuration = candidateConfigs.get(0);
 		} else {
 			// Prompt the user to choose a config.  A null result means the user
 			// cancelled the dialog, in which case this method returns null,
-			// since cancelling the dialog should also cancel launching anything.
+			// since canceling the dialog should also cancel launching anything.
 			configuration = chooseConfiguration(candidateConfigs, mode);
 		}
 		return configuration;
@@ -190,15 +190,14 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			String projectName = bin.getResource().getProjectRelativePath().toString();
 			ILaunchConfigurationType configType = getCLaunchConfigType();
 			ILaunchConfigurationWorkingCopy wc =
-				configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(bin.getElementName()));
+					configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(bin.getElementName()));
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, projectName);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, bin.getCProject().getElementName());
 			wc.setMappedResources(new IResource[] {bin.getResource().getProject()});
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
-			wc.setAttribute(
-				ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
-				ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
+			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, debugConfig.getID());
 
 			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(bin.getCProject().getProject());
@@ -235,7 +234,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	 * Convenience method to get the window that owns this action's Shell.
 	 */
 	protected Shell getShell() {
-       IWorkbenchWindow w = CDebugUIPlugin.getDefault().getActiveWorkbenchWindow();
+       IWorkbenchWindow w = CDebugUIPlugin.getActiveWorkbenchWindow();
         if (w != null) {
             return w.getShell();
         }
@@ -290,13 +289,12 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		return LaunchMessages.getString("CApplicationLaunchShortcut.Invalid_launch_mode_1"); //$NON-NLS-1$
 	}
 
-
 	/**
 	 * Show a selection dialog that allows the user to choose one of the specified
 	 * launch configurations.  Return the chosen config, or <code>null</code> if the
 	 * user cancelled the dialog.
 	 */
-	protected ILaunchConfiguration chooseConfiguration(List configList, String mode) {
+	protected ILaunchConfiguration chooseConfiguration(List<ILaunchConfiguration> configList, String mode) {
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setElements(configList.toArray());
@@ -311,11 +309,11 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		return null;
 	}
 
-	protected String getLaunchSelectionDialogTitleString(List configList, String mode) {
+	protected String getLaunchSelectionDialogTitleString(List<ILaunchConfiguration> configList, String mode) {
 		return LaunchMessages.getString("CApplicationLaunchShortcut.LaunchConfigSelection");  //$NON-NLS-1$
 	}
 	
-	protected String getLaunchSelectionDialogMessageString(List binList, String mode) {
+	protected String getLaunchSelectionDialogMessageString(List<ILaunchConfiguration> binList, String mode) {
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseLaunchConfigToDebug");  //$NON-NLS-1$
 		} else if (mode.equals(ILaunchManager.RUN_MODE)) {
@@ -329,7 +327,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	 * 
 	 * @return the selected binary or <code>null</code> if none.
 	 */
-	protected IBinary chooseBinary(List binList, String mode) {
+	protected IBinary chooseBinary(List<IBinary> binList, String mode) {
 		ILabelProvider programLabelProvider = new CElementLabelProvider() {
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
@@ -370,11 +368,11 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		return null;
 	}
 	
-	protected String getBinarySelectionDialogTitleString(List binList, String mode) {
+	protected String getBinarySelectionDialogTitleString(List<IBinary> binList, String mode) {
 		return LaunchMessages.getString("CApplicationLaunchShortcut.CLocalApplication");  //$NON-NLS-1$
 	}
 	
-	protected String getBinarySelectionDialogMessageString(List binList, String mode) {
+	protected String getBinarySelectionDialogMessageString(List<IBinary> binList, String mode) {
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseLocalAppToDebug");  //$NON-NLS-1$
 		} else if (mode.equals(ILaunchManager.RUN_MODE)) {
@@ -394,7 +392,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			if (elements.length == 1 && elements[0] instanceof IBinary) {
 				bin = (IBinary)elements[0];
 			} else {
-				final List results = new ArrayList();
+				final List<IBinary> results = new ArrayList<IBinary>();
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 				IRunnableWithProgress runnable = new IRunnableWithProgress() {
 					public void run(IProgressMonitor pm) throws InterruptedException {
@@ -445,7 +443,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				} else if (count > 1) {
 					bin = chooseBinary(results, mode);
 				} else {
-					bin = (IBinary)results.get(0);
+					bin = results.get(0);
 				}
 			}
 			if (bin != null) {
@@ -473,19 +471,15 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		// be used for the launch.
 		if (selection instanceof IStructuredSelection) {
 			Object firstElement = ((IStructuredSelection) selection).getFirstElement();
-			if (firstElement != null)
-			{
-				if (firstElement instanceof IFile)
-				{
+			if (firstElement != null) {
+				if (firstElement instanceof IFile) {
 					IFile file = (IFile) firstElement;
 					return file.getProject();
 				}
-				if (firstElement instanceof Executable)
-				{
+				if (firstElement instanceof Executable) {
 					return ((Executable)firstElement).getProject();
 				}
-				if (firstElement instanceof IBinary)
-				{
+				if (firstElement instanceof IBinary) {
 					return ((IBinary)firstElement).getResource().getProject();
 				}
 			}
@@ -528,7 +522,6 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				for (Iterator<?> iter = structuredSelection.iterator(); iter.hasNext();) {
 					Object element = iter.next();
 					if (element != null) {
-
 						if (element instanceof ICProject) {
 							projects.add(((ICProject)element).getProject());
 						} else if (element instanceof IResource) {
@@ -572,5 +565,4 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		}
 		return null;
 	}
-
 }

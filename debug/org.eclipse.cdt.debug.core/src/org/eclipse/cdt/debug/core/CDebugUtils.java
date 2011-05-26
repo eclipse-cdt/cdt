@@ -696,7 +696,7 @@ public class CDebugUtils {
 	public static <V> V getAttribute(Map<String, ?> attributes, String key, V defaultValue) {
 		Object value = attributes.get(key);
 		if (defaultValue.getClass().isInstance(value)) {
-			return (V)value;
+			return (V) value;
 		}
 		return defaultValue;
 	}

@@ -6,7 +6,7 @@
 	
 	<target name="build" depends="zips,test"/>
 	<target name="nightly" depends="tag,zips,sign,generate.p2.metadata,test,update.index.html,copy"/>
-	<target name="testbuild" depends="zips,test,copy"/>
+	<target name="testbuild" depends="zips,generate.p2.metadata,test,copy"/>
 	<target name="buildcopy" depends="zips,generate.p2.metadata,copy"/>
 	<target name="cdtbuild" depends="tag,zips,test,upload"/>
 	<target name="testpack" depends="zips,sign,pack,generate.p2.metadata,copy"/>

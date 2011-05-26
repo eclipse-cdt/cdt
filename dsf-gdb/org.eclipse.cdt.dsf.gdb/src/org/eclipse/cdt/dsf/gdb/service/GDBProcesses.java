@@ -65,12 +65,9 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 import org.osgi.framework.BundleContext;
 
-
 public class GDBProcesses extends MIProcesses implements IGDBProcesses {
     
-	private class GDBContainerDMC extends MIContainerDMC
-	implements IMemoryDMContext 
-	{
+	private class GDBContainerDMC extends MIContainerDMC implements IMemoryDMContext {
 		public GDBContainerDMC(String sessionId, IProcessDMContext processDmc, String groupId) {
 			super(sessionId, processDmc, groupId);
 		}
@@ -188,7 +185,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 			
 			String name = fProcessNames.get(pid);
 			if (name == null) {
-				// Hm. Strange. But if the pid is our inferior's, we can just use the binary name
+				// Hmm. Strange. But if the pid is our inferior's, we can just use the binary name
 				if (fProcId != null && Integer.parseInt(fProcId) == pid) {
 					name = fBackend.getProgramPath().lastSegment();
 				}
@@ -561,7 +558,6 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
     	createConsole(containerDmc, restart, new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
     		@Override
     		protected void handleSuccess() {
-
     			final DataRequestMonitor<MIInfo> execMonitor = new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
     				@Override
     				protected void handleSuccess() {
@@ -653,14 +649,12 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	 */
     @DsfServiceEventHandler
     public void eventDispatched(MIStoppedEvent e) {
-
-// Post-poned because 'info program' yields different result on different platforms.
+// Postponed because 'info program' yields different result on different platforms.
 // https://bugs.eclipse.org/bugs/show_bug.cgi?id=305385#c20
 //
 //    	// Get the PID of the inferior through gdb (if we don't have it already) 
 //    	
 //    	
 //    	fGdb.getInferiorProcess().update();
-    	
     }
 }

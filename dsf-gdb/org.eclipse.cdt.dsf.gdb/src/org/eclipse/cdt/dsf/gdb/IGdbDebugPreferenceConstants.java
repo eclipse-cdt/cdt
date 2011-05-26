@@ -8,12 +8,11 @@
  * Contributors:
  *     Ericsson - initial implementation
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb;
 
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-
-
 
 /**
  * @noimplement This interface is not intended to be implemented by clients.
@@ -68,6 +67,24 @@ public interface IGdbDebugPreferenceConstants {
 	 * @since 4.0
 	 */
 	public static final String PREF_DEFAULT_GDB_INIT = "defaultGdbInit"; //$NON-NLS-1$
+
+	/**
+	 * The value is a boolean specifying the default for whether to stop at main().
+	 * @since 4.0
+	 */
+	public static final String PREF_DEFAULT_STOP_AT_MAIN = "defaultStopAtMain"; //$NON-NLS-1$
+
+	/**
+	 * The value is a string specifying the default symbol to use for the main breakpoint.
+	 * @since 4.0
+	 */
+	public static final String PREF_DEFAULT_STOP_AT_MAIN_SYMBOL = "defaultStopAtMainSymbol"; //$NON-NLS-1$
+
+	/**
+	 * The value is a boolean specifying the default for the non-stop debugger mode.
+	 * @since 4.0
+	 */
+	public static final String PREF_DEFAULT_NON_STOP = "defaultNonStop"; //$NON-NLS-1$
 
 	/**
      * Help prefixes.

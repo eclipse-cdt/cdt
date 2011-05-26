@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 QNX Software Systems and others.
+ * Copyright (c) 2008, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Ken Ryall (Nokia) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=118894
  *     IBM Corporation
  *     Ericsson
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
@@ -23,6 +24,7 @@ import org.eclipse.cdt.debug.ui.ICDebuggerPage;
 import org.eclipse.cdt.debug.ui.ICDebuggerPageExtension;
 import org.eclipse.cdt.debug.ui.ICDebuggerPageExtension.IContentChangeListener;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
@@ -30,6 +32,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -103,8 +106,8 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		
 		ICDebugConfiguration dc = CDebugCorePlugin.getDefault().getDefaultDefaultDebugConfiguration();
 		if (dc == null) {
-			CDebugCorePlugin.getDefault().getPluginPreferences().setDefault(ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE,
-					                                                        LOCAL_DEBUGGER_ID);
+			CDebugCorePlugin.getDefault().getPluginPreferences().setDefault(
+					ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE, LOCAL_DEBUGGER_ID);
 		}
 	}
 
@@ -124,7 +127,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		setControl(fContainer);
 		GdbUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
 				ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_DEBBUGER_TAB);
-		int numberOfColumns = (fAttachMode) ? 2 : 1;
+		int numberOfColumns = fAttachMode ? 2 : 1;
 		GridLayout layout = new GridLayout(numberOfColumns, false);
 		fContents.setLayout(layout);
 		GridData gd = new GridData(GridData.BEGINNING, GridData.CENTER, true, false);
@@ -190,8 +193,9 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		}
 
 		if (!fAttachMode && !fCoreMode) {
+			IPreferenceStore preferences = GdbUIPlugin.getDefault().getPreferenceStore();
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
-					ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_DEFAULT);
+					preferences.getBoolean(IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN));
 		}
 	}
 
@@ -354,10 +358,11 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 	protected void initializeCommonControls(ILaunchConfiguration config) {
 		try {
 			if (!fAttachMode && !fCoreMode) {
+				IPreferenceStore preferences = GdbUIPlugin.getDefault().getPreferenceStore();
 				fStopInMain.setSelection(config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
-						ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_DEFAULT));
+						preferences.getBoolean(IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN)));
 				fStopInMainSymbol.setText(config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
-						ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT));
+						preferences.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN_SYMBOL)));
 				fStopInMainSymbol.setEnabled(fStopInMain.getSelection());
 			} else if (fAttachMode) {
 				// In attach mode, figure out if we are doing a remote connect based on

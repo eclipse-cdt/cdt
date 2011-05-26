@@ -8,11 +8,13 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.preferences;
 
 import java.io.File;
 
+import org.eclipse.cdt.dsf.debug.internal.ui.preferences.StringWithBooleanFieldEditor;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.LaunchUIMessages;
@@ -37,6 +39,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * A preference page for settings that are currently only supported in GDB.
  */
+@SuppressWarnings("restriction")
 public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	/**
 	 * A vehicle in order to be able to register a selection listener with
@@ -79,20 +82,20 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		layout.marginWidth= 0;
 		parent.setLayout(layout);
 
-		Group group = new Group(parent, SWT.NONE);
-		group.setText(MessagesForPreferences.GdbDebugPreferencePage_defaults_label);
+		final Group group1 = new Group(parent, SWT.NONE);
+		group1.setText(MessagesForPreferences.GdbDebugPreferencePage_defaults_label);
 		GridLayout groupLayout = new GridLayout(3, false);
-		group.setLayout(groupLayout);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		group1.setLayout(groupLayout);
+		group1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		final StringFieldEditor stringFieldEditorCommand = new StringFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND,
 				LaunchUIMessages.getString("GDBDebuggerPage.gdb_debugger"), //$NON-NLS-1$
-				group);
+				group1);
 
-		stringFieldEditorCommand.fillIntoGrid(group, 2);
+		stringFieldEditorCommand.fillIntoGrid(group1, 2);
 		addField(stringFieldEditorCommand);
-		Button browsebutton = new Button(group, SWT.PUSH);
+		Button browsebutton = new Button(group1, SWT.PUSH);
 		browsebutton.setText(LaunchUIMessages.getString("GDBDebuggerPage.gdb_browse")); //$NON-NLS-1$
 		browsebutton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -105,11 +108,11 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		final StringFieldEditor stringFieldEditorGdbInit = new StringFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT,
 				LaunchUIMessages.getString("GDBDebuggerPage.gdb_command_file"), //$NON-NLS-1$
-				group);
+				group1);
 
-		stringFieldEditorGdbInit.fillIntoGrid(group, 2);
+		stringFieldEditorGdbInit.fillIntoGrid(group1, 2);
 		addField(stringFieldEditorGdbInit);
-		browsebutton = new Button(group, SWT.PUSH);
+		browsebutton = new Button(group1, SWT.PUSH);
 		browsebutton.setText(LaunchUIMessages.getString("GDBDebuggerPage.gdb_browse")); //$NON-NLS-1$
 		browsebutton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -119,46 +122,74 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 			}
 		});
 
-		group.setLayout(groupLayout);
+		final StringWithBooleanFieldEditor enableStopAtMain = new StringWithBooleanFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN,
+				IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN_SYMBOL,
+				LaunchUIMessages.getString("CDebuggerTab.Stop_at_main_on_startup"), //$NON-NLS-1$
+				group1);
+		enableStopAtMain.fillIntoGrid(group1, 2);
+		addField(enableStopAtMain);
 
-		group= new Group(parent, SWT.NONE);
-		group.setText(MessagesForPreferences.GdbDebugPreferencePage_traces_label);
+//		final StringFieldEditor stopAtMainSymbol = new StringFieldEditor(
+//				IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN_SYMBOL,
+//				"",	group1); //$NON-NLS-1$
+//		stopAtMainSymbol.fillIntoGrid(group1, 2);
+//		addField(stopAtMainSymbol);
+//
+//		enableStopAtMain.getChangeControl(group1).addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				boolean enabled = enableStopAtMain.getBooleanValue();
+//				stopAtMainSymbol.setEnabled(enabled, group1);
+//			}
+//		});
+
+		final ListenableBooleanFieldEditor enableNonStop= new ListenableBooleanFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_DEFAULT_NON_STOP,
+				LaunchUIMessages.getString("GDBDebuggerPage.nonstop_mode"), //$NON-NLS-1$
+				SWT.NONE, group1);
+		enableNonStop.fillIntoGrid(group1, 3);
+		addField(enableNonStop);
+
+		group1.setLayout(groupLayout);
+
+		final Group group2= new Group(parent, SWT.NONE);
+		group2.setText(MessagesForPreferences.GdbDebugPreferencePage_traces_label);
 		groupLayout= new GridLayout(3, false);
-		group.setLayout(groupLayout);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		group2.setLayout(groupLayout);
+		group2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		final ListenableBooleanFieldEditor enableGdbTracesField = new ListenableBooleanFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_TRACES_ENABLE,
 				MessagesForPreferences.GdbDebugPreferencePage_enableTraces_label,
-				SWT.NONE, group);
+				SWT.NONE, group2);
 
-		enableGdbTracesField.fillIntoGrid(group, 3);
+		enableGdbTracesField.fillIntoGrid(group2, 3);
 		addField(enableGdbTracesField);
 
 		final IntegerFieldEditor maxCharactersField = new IntegerFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES,
 				MessagesForPreferences.GdbDebugPreferencePage_maxGdbTraces_label,
-				group);
+				group2);
 		// Instead of using Integer.MAX_VALUE which is some obscure number,
 		// using 2 billion is nice and readable.
 		maxCharactersField.setValidRange(10000, 2000000000);
 
-		maxCharactersField.fillIntoGrid(group, 3);
+		maxCharactersField.fillIntoGrid(group2, 3);
 		addField(maxCharactersField);
 
-		final Group finalGroup = group;
-		enableGdbTracesField.getChangeControl(group).addSelectionListener(new SelectionAdapter() {
+		enableGdbTracesField.getChangeControl(group2).addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = enableGdbTracesField.getBooleanValue();
-				maxCharactersField.setEnabled(enabled, finalGroup);
+				maxCharactersField.setEnabled(enabled, group2);
 			}
 		});
 
 		// Need to set layout again.
-		group.setLayout(groupLayout);
+		group2.setLayout(groupLayout);
 
-		group= new Group(parent, SWT.NONE);
+		Group group= new Group(parent, SWT.NONE);
 		group.setText(MessagesForPreferences.GdbDebugPreferencePage_termination_label);
 		groupLayout= new GridLayout(3, false);
 		group.setLayout(groupLayout);

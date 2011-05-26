@@ -46,7 +46,6 @@ import org.eclipse.swt.widgets.Text;
  * @since 2.0
  */
 public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observer {
-
 	protected TabFolder fTabFolder;
 	protected Text fGDBCommandText;
 	protected Text fGDBInitText;
@@ -82,8 +81,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 		if (valid) {
 			setErrorMessage(null);
 			setMessage(null);
-		}
-		else {
+		} else {
 			setErrorMessage(LaunchUIMessages.getString("GDBDebuggerPage.gdb_executable_not_specified")); //$NON-NLS-1$
 			setMessage(null);
 		}
@@ -101,15 +99,12 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 		
 		try {
 			gdbCommand = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand);
-		}
-		catch(CoreException e) {
+		} catch(CoreException e) {
 		}
 		try {
 			gdbInit = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, defaultGdbInit);
+		} catch(CoreException e) {
 		}
-		catch(CoreException e) {
-		}
-
 
 		if (fSolibBlock != null)
 			fSolibBlock.initializeFrom(configuration);
@@ -194,7 +189,6 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 		});
 		Button button = createPushButton(subComp, LaunchUIMessages.getString("GDBDebuggerPage.gdb_browse"), null); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
-
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleGDBButtonSelected();
@@ -232,7 +226,6 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 		});
 		button = createPushButton(subComp, LaunchUIMessages.getString("GDBDebuggerPage.gdb_cmdfile_browse"), null); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
-
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleGDBInitButtonSelected();

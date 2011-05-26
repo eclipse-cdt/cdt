@@ -58,7 +58,6 @@ import org.eclipse.debug.core.model.IProcess;
  * @since 4.0
  */
 public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
-		
 	private IGDBControl fCommandControl;
 	private CommandFactory fCommandFactory;
 	private IGDBProcesses fProcService;
@@ -92,7 +91,6 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	// Although we can access this through Sequence.getRequestMonitor(), we would loose the type-checking.
 	// Therefore, doing it like this is more future-proof.
 	private final DataRequestMonitor<IContainerDMContext> fDataRequestMonitor;
-
 	
 	protected IContainerDMContext getContainerContext() {
 		return fContainerDmc;
@@ -107,8 +105,8 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	}
 
 	    
-	public StartOrRestartProcessSequence_7_0(DsfExecutor executor, IContainerDMContext containerDmc, Map<String, Object> attributes, 
-										 boolean restart, DataRequestMonitor<IContainerDMContext> rm) {
+	public StartOrRestartProcessSequence_7_0(DsfExecutor executor, IContainerDMContext containerDmc,
+			Map<String, Object> attributes, boolean restart, DataRequestMonitor<IContainerDMContext> rm) {
 		super(executor, rm);
 		
 		assert executor != null;
@@ -127,18 +125,18 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	@Override
 	protected String[] getExecutionOrder(String group) {
 		if (GROUP_TOP_LEVEL.equals(group)) {
-				return new String[] {
-						"stepInitializeBaseSequence",  //$NON-NLS-1$
-						"stepInsertStopOnMainBreakpoint",  //$NON-NLS-1$
-						"stepSetBreakpointForReverse",   //$NON-NLS-1$
-						"stepInitializeInputOutput",   //$NON-NLS-1$
-						"stepCreateConsole",    //$NON-NLS-1$
-						"stepRunProgram",   //$NON-NLS-1$
-						"stepSetReverseOff",   //$NON-NLS-1$
-						"stepEnableReverse",   //$NON-NLS-1$
-						"stepContinue",   //$NON-NLS-1$
-						"stepCleanupBaseSequence",   //$NON-NLS-1$
-				};
+			return new String[] {
+					"stepInitializeBaseSequence",  //$NON-NLS-1$
+					"stepInsertStopOnMainBreakpoint",  //$NON-NLS-1$
+					"stepSetBreakpointForReverse",   //$NON-NLS-1$
+					"stepInitializeInputOutput",   //$NON-NLS-1$
+					"stepCreateConsole",    //$NON-NLS-1$
+					"stepRunProgram",   //$NON-NLS-1$
+					"stepSetReverseOff",   //$NON-NLS-1$
+					"stepEnableReverse",   //$NON-NLS-1$
+					"stepContinue",   //$NON-NLS-1$
+					"stepCleanupBaseSequence",   //$NON-NLS-1$
+			};
 		}
 		return null;
 	}
@@ -167,8 +165,8 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 			// it if we actually have a reverse debugging service.  There is no point
 			// in trying to handle reverse debugging if it is not available.
 			fReverseEnabled = CDebugUtils.getAttribute(fAttributes, 
-													   IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
-													   IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
+					IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
 		}
 
 		rm.done();
@@ -191,13 +189,13 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	@Execute
 	public void stepInsertStopOnMainBreakpoint(final RequestMonitor rm) {
 		boolean userRequestedStop = CDebugUtils.getAttribute(fAttributes, 
-															 ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
-															 false);
+				ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
+				false);
 
 		if (userRequestedStop) {
 			String userStopSymbol = CDebugUtils.getAttribute(fAttributes, 
-															 ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
-															 ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
+					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
+					ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
 
 			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(getContainerContext(), IBreakpointsTargetDMContext.class);
 
@@ -233,7 +231,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 
 			fCommandControl.queueCommand(
 					fCommandFactory.createMIBreakInsert(bpTargetDmc, true, false, null, 0, 
-							                            ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT, 0),
+							ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT, 0),
 					new DataRequestMonitor<MIBreakInsertInfo>(ImmediateExecutor.getInstance(), rm) {
 						@Override
 						public void handleSuccess() {
@@ -295,71 +293,71 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepCreateConsole(final RequestMonitor rm) {
-				Process inferiorProcess;
-		    	if (fPty == null) {
-		    		inferiorProcess = new MIInferiorProcess(fContainerDmc, fBackend.getMIOutputStream());
-		    	} else {
-		    		inferiorProcess = new MIInferiorProcess(fContainerDmc, fPty);
-		    	}
+		Process inferiorProcess;
+		if (fPty == null) {
+			inferiorProcess = new MIInferiorProcess(fContainerDmc, fBackend.getMIOutputStream());
+		} else {
+			inferiorProcess = new MIInferiorProcess(fContainerDmc, fPty);
+		}
 
-		    	final Process inferior = inferiorProcess;
-				final ILaunch launch = (ILaunch)getContainerContext().getAdapter(ILaunch.class);
-				
-				// This is the groupId of the new process that will be started, even in the
-				// case of a restart.
-				final String groupId = ((IMIContainerDMContext)getContainerContext()).getGroupId();
+		final Process inferior = inferiorProcess;
+		final ILaunch launch = (ILaunch)getContainerContext().getAdapter(ILaunch.class);
 
-				// For multi-process, we cannot simply use the name given by the backend service
-				// because we may not be starting that process, but another one.
-				// Instead, we can look in the attributes for the binary name, which we stored
-				// there for this case, specifically.
-				// Bug 342351
-				IGDBBackend backend = fTracker.getService(IGDBBackend.class);
-				String defaultPathName = backend.getProgramPath().lastSegment();
-				if (defaultPathName == null) {
-					defaultPathName = ""; //$NON-NLS-1$
-				}
-				String progPathName =
-						CDebugUtils.getAttribute(fAttributes,
-								ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
-								defaultPathName);
-				final String pathLabel = new Path(progPathName).lastSegment();    			 
+		// This is the groupId of the new process that will be started, even in the
+		// case of a restart.
+		final String groupId = ((IMIContainerDMContext)getContainerContext()).getGroupId();
 
-				// Add the inferior to the launch.  
-				// This cannot be done on the executor or things deadlock.
-				DebugPlugin.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						String label = pathLabel;
-						
-						if (fRestart) {
-							// For a restart, remove the old inferior
-							IProcess[] launchProcesses = launch.getProcesses();
-							for (IProcess process : launchProcesses) {
-			        			if (process instanceof InferiorRuntimeProcess) {
-			        				String groupAttribute = process.getAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR);
+		// For multi-process, we cannot simply use the name given by the backend service
+		// because we may not be starting that process, but another one.
+		// Instead, we can look in the attributes for the binary name, which we stored
+		// there for this case, specifically.
+		// Bug 342351
+		IGDBBackend backend = fTracker.getService(IGDBBackend.class);
+		String defaultPathName = backend.getProgramPath().lastSegment();
+		if (defaultPathName == null) {
+			defaultPathName = ""; //$NON-NLS-1$
+		}
+		String progPathName =
+				CDebugUtils.getAttribute(fAttributes,
+						ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
+						defaultPathName);
+		final String pathLabel = new Path(progPathName).lastSegment();    			 
 
-			        				// if the groupAttribute is not set in the process we know we are dealing
-			        				// with single process debugging so the one process is the one we want.
-			        				// If the groupAttribute is set, then we must make sure it is the proper inferior
-			        				if (groupAttribute == null || groupAttribute.equals(MIProcesses.UNIQUE_GROUP_ID) ||
-			        						groupAttribute.equals(groupId)) {			        					
-			        					launch.removeProcess(process);
-			        					// Use the exact same label as before
-			        					label = process.getLabel();
-			        					break;
-			        				}
-			        			}
+		// Add the inferior to the launch.  
+		// This cannot be done on the executor or things deadlock.
+		DebugPlugin.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				String label = pathLabel;
+
+				if (fRestart) {
+					// For a restart, remove the old inferior
+					IProcess[] launchProcesses = launch.getProcesses();
+					for (IProcess process : launchProcesses) {
+						if (process instanceof InferiorRuntimeProcess) {
+							String groupAttribute = process.getAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR);
+
+							// if the groupAttribute is not set in the process we know we are dealing
+							// with single process debugging so the one process is the one we want.
+							// If the groupAttribute is set, then we must make sure it is the proper inferior
+							if (groupAttribute == null || groupAttribute.equals(MIProcesses.UNIQUE_GROUP_ID) ||
+									groupAttribute.equals(groupId)) {			        					
+								launch.removeProcess(process);
+								// Use the exact same label as before
+								label = process.getLabel();
+								break;
 							}
 						}
-
-						// Add the inferior
-			            InferiorRuntimeProcess runtimeInferior = new InferiorRuntimeProcess(launch, inferior, label, null);
-			            runtimeInferior.setAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR, groupId);
-			            launch.addProcess(runtimeInferior);
-
-						rm.done();
 					}
-				});
+				}
+
+				// Add the inferior
+				InferiorRuntimeProcess runtimeInferior = new InferiorRuntimeProcess(launch, inferior, label, null);
+				runtimeInferior.setAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR, groupId);
+				launch.addProcess(runtimeInferior);
+
+				rm.done();
+			}
+		});
 	}
 	
 	/**
@@ -461,5 +459,4 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		// (multi-process), so we want to use -exec-run
     	return backend.getSessionType() == SessionType.REMOTE && !backend.getIsAttachSession();
     }
-
 }

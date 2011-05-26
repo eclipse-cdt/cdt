@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Mentor Graphics Corporation and others.
+ * Copyright (c) 2010, 2011 Mentor Graphics Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.launch.remote.launching;
 
-import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
@@ -49,6 +48,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 		}
 
 		IPath exePath = checkBinaryDetails(config);
+		Process remoteShellProcess = null;
 		if (exePath != null) {
 			// 1.Download binary if needed
 			String remoteExePath = config.getAttribute(
@@ -77,7 +77,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 			if (arguments != null && !arguments.equals("")) //$NON-NLS-1$
 				commandArguments += " " + arguments; //$NON-NLS-1$
 			monitor.setTaskName(Messages.RemoteRunLaunchDelegate_9);
-			Process remoteShellProcess = RSEHelper.remoteShellExec(config,
+			remoteShellProcess = RSEHelper.remoteShellExec(config,
 					prelaunchCmd, gdbserverCommand, commandArguments,
 					new SubProgressMonitor(monitor, 5));
 
@@ -96,8 +96,19 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 			wc.doSave();
 
 		}
-
-		super.launch(config, mode, launch, monitor);
+		try{
+			super.launch(config, mode, launch, monitor);
+		} catch(CoreException ex) {
+			//launch failed, need to kill gdbserver
+			if (remoteShellProcess != null) {
+				remoteShellProcess.destroy();
+			}
+			
+			//report failure further	
+			throw ex;
+		} finally {
+			monitor.done();
+		}
 	}
 
 	protected String getProgramArguments(ILaunchConfiguration config)

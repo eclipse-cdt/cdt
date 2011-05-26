@@ -38,13 +38,12 @@ import org.eclipse.ui.PlatformUI;
  * A preference page for settings that are currently only supported in GDB.
  */
 public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-
 	/**
 	 * A vehicle in order to be able to register a selection listener with
 	 * a {@link BooleanFieldEditor}.
 	 */
 	private class ListenableBooleanFieldEditor extends BooleanFieldEditor {
-		
+
 		public ListenableBooleanFieldEditor(
 			String name,
 			String labelText,
@@ -63,7 +62,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		super(FLAT);
 		IPreferenceStore store= GdbUIPlugin.getDefault().getPreferenceStore();
 		setPreferenceStore(store);
-		setDescription(MessagesForPreferences.GdbDebugPreferencePage_description); 
+		setDescription(MessagesForPreferences.GdbDebugPreferencePage_description);
 	}
 
 	public void init(IWorkbench workbench) {
@@ -81,13 +80,13 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		final GridLayout layout= new GridLayout();
 		layout.marginWidth= 0;
 		parent.setLayout(layout);
-		
+
 		Group group = new Group(parent, SWT.NONE);
 		group.setText(MessagesForPreferences.GdbDebugPreferencePage_defaults_label);
 		GridLayout groupLayout = new GridLayout(3, false);
 		group.setLayout(groupLayout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		final StringFieldEditor stringFieldEditorCommand = new StringFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND,
 				LaunchUIMessages.getString("GDBDebuggerPage.gdb_debugger"), //$NON-NLS-1$
@@ -104,7 +103,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 						stringFieldEditorCommand);
 			}
 		});
-		
+
 		final StringFieldEditor stringFieldEditorGdbInit = new StringFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT,
 				LaunchUIMessages.getString("GDBDebuggerPage.gdb_command_file"), //$NON-NLS-1$
@@ -121,7 +120,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 						stringFieldEditorGdbInit);
 			}
 		});
-		
+
 		group.setLayout(groupLayout);
 
 		group= new Group(parent, SWT.NONE);
@@ -144,7 +143,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 				group);
 		// Instead of using Integer.MAX_VALUE which is some obscure number, using 2 billion is nice and readable
 		maxCharactersField.setValidRange(10000, 2000000000);
-		
+
 		maxCharactersField.fillIntoGrid(group, 3);
 		addField(maxCharactersField);
 
@@ -152,14 +151,14 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		enableGdbTracesField.getChangeControl(group).addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				boolean enabled = enableGdbTracesField.getBooleanValue();				
+				boolean enabled = enableGdbTracesField.getBooleanValue();
 				maxCharactersField.setEnabled(enabled, finalGroup);
 			}
 		});
-		
+
 		// need to set layout again
 		group.setLayout(groupLayout);
-		
+
 		group= new Group(parent, SWT.NONE);
 		group.setText(MessagesForPreferences.GdbDebugPreferencePage_termination_label);
 		groupLayout= new GridLayout(3, false);
@@ -206,19 +205,19 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 
 		enablePrettyPrintingField.fillIntoGrid(group, 3);
 		addField(enablePrettyPrintingField);
-		
+
 		final Composite indentHelper = new Composite(group, SWT.NONE);
 		GridLayout helperLayout = new GridLayout(3, false);
 		indentHelper.setLayout(helperLayout);
 		GridData helperData = new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1);
 		helperData.horizontalIndent = 20;
 		indentHelper.setLayoutData(helperData);
-		
+
 		final IntegerFieldEditor childCountLimitField = new IntegerFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS,
 				MessagesForPreferences.GdbDebugPreferencePage_initialChildCountLimitForCollections_label,
 				indentHelper);
-		
+
 		childCountLimitField.setValidRange(1, 10000);
 		childCountLimitField.fillIntoGrid(indentHelper, 3);
 
@@ -226,23 +225,22 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		boolean prettyPrintingEnabled = store
 				.getBoolean(IGdbDebugPreferenceConstants.PREF_ENABLE_PRETTY_PRINTING);
 		childCountLimitField.setEnabled(prettyPrintingEnabled, indentHelper);
-		
+
 		addField(childCountLimitField);
-		
+
 		enablePrettyPrintingField.getChangeControl(group).addSelectionListener(new SelectionAdapter() {
-			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				boolean enabled = enablePrettyPrintingField.getBooleanValue();				
+				boolean enabled = enablePrettyPrintingField.getBooleanValue();
 				childCountLimitField.setEnabled(enabled, indentHelper);
 			}
 		});
-		
+
 		// need to set layouts again
 		indentHelper.setLayout(helperLayout);
 		group.setLayout(groupLayout);
 	}
-	
+
 	private void handleBrowseButtonSelected(final String dialogTitle, final StringFieldEditor stringFieldEditor) {
 		FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
 		dialog.setText(dialogTitle);

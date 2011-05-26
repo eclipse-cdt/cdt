@@ -72,7 +72,7 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 
 	public void launch(IEditorPart editor, String mode) {
-		searchAndLaunch(new Object[] { editor.getEditorInput()}, mode);
+		searchAndLaunch(new Object[] { editor.getEditorInput() }, mode);
 	}
 
 	public void launch(ISelection selection, String mode) {
@@ -234,7 +234,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	 * Convenience method to get the window that owns this action's Shell.
 	 */
 	protected Shell getShell() {
-       IWorkbenchWindow w = CDebugUIPlugin.getActiveWorkbenchWindow();
+		IWorkbenchWindow w = CDebugUIPlugin.getActiveWorkbenchWindow();
         if (w != null) {
             return w.getShell();
         }

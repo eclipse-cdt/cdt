@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,7 +92,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private static final int PROTECT_DEFINED 	 = 0x02;
 	private static final int STOP_AT_NL 		 = 0x04;
 	private static final int CHECK_NUMBERS 		 = 0x08;
-	private static final Token END_OF_INPUT = new Token(IToken.tEND_OF_INPUT, null, 0, 0);
 
 	private interface IIncludeFileTester<T> {
     	T checkFile(String path, boolean isHeuristicMatch, IncludeSearchPathElement onPath);
@@ -135,7 +134,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
        			t= lexer.currentToken();
        		}
        		if (fStopAtNewline && t.getType() == Lexer.tNEWLINE)
-       			return END_OF_INPUT;
+       			return new Token(IToken.tEND_OF_INPUT, null, 0, 0);
        		
        		return t;
 		}
@@ -145,7 +144,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		public Token currentToken() {
 			Token t= fCurrentContext.currentLexerToken();
        		if (fStopAtNewline && t.getType() == Lexer.tNEWLINE)
-       			return END_OF_INPUT;
+       			return new Token(IToken.tEND_OF_INPUT, null, 0, 0);
        		
        		return t;
 		}
@@ -570,6 +569,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		
     	case IToken.tEND_OF_INPUT:
     		if (fContentAssistLimit < 0) {
+    			fPrefetchedTokens= t1;
     			throw new EndOfFileException(t1.getOffset());
     		}
     		int useType= fHandledCompletion ? IToken.tEOC : IToken.tCOMPLETION;

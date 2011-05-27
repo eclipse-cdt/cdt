@@ -191,12 +191,12 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	public void stepInsertStopOnMainBreakpoint(final RequestMonitor rm) {
 		boolean userRequestedStop = CDebugUtils.getAttribute(fAttributes, 
 				ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
-				LaunchUtils.getStopInMainDefault());
+				LaunchUtils.getStopAtMainDefault());
 
 		if (userRequestedStop) {
 			String userStopSymbol = CDebugUtils.getAttribute(fAttributes, 
 					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
-					LaunchUtils.getStopInMainSymbolDefault());
+					LaunchUtils.getStopAtMainSymbolDefault());
 
 			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(getContainerContext(),
 					IBreakpointsTargetDMContext.class);

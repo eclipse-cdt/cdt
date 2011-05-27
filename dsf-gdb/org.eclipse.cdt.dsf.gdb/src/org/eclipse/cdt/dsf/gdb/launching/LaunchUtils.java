@@ -457,22 +457,22 @@ public class LaunchUtils {
     }
 	
 	/**
-	 * Returns workspace-level default for the Stop in main option.
+	 * Returns workspace-level default for the stop at main option.
 	 * 
 	 * @since 4.0
 	 */
-	public static boolean getStopInMainDefault() {
+	public static boolean getStopAtMainDefault() {
 		return Platform.getPreferencesService().getBoolean(GDB_UI_PLUGIN_ID,
 				IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN,
 				ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_DEFAULT, null);
     }
 	
 	/**
-	 * Returns workspace-level default for the Stop in main symbol.
+	 * Returns workspace-level default for the stop at main symbol.
 	 * 
 	 * @since 4.0
 	 */
-	public static String getStopInMainSymbolDefault() {
+	public static String getStopAtMainSymbolDefault() {
 		return Platform.getPreferencesService().getString(GDB_UI_PLUGIN_ID,
 				IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN_SYMBOL,
 				ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT, null);

@@ -39,6 +39,7 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
+import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
@@ -581,7 +582,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 
     			boolean stopInMain = CDebugUtils.getAttribute(attributes, 
     					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
-    					false);
+    					LaunchUtils.getStopAtMainDefault());
 
     			if (!stopInMain) {
     				// Just start the program.
@@ -589,7 +590,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
     			} else {
     				String stopSymbol = CDebugUtils.getAttribute(attributes, 
     						ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
-    						ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
+    						LaunchUtils.getStopAtMainSymbolDefault());
 
     				// Insert a breakpoint at the requested stop symbol.
     				IBreakpointsTargetDMContext bpTarget = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);

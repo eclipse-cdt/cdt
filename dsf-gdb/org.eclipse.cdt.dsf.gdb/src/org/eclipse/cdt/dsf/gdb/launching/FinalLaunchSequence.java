@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Ericsson and others.
+ * Copyright (c) 2008, 2011 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Nokia - create and use backend service. 
  *     IBM Corporation 
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -48,7 +49,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 
 public class FinalLaunchSequence extends ReflectionSequence {
-
 	// The launchConfiguration attributes
 	private Map<String, Object> fAttributes;
 
@@ -256,7 +256,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		boolean isNonStop = CDebugUtils.getAttribute(
 				fAttributes,
 				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
-				IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
+				LaunchUtils.getIsNonStopModeDefault());
 
 		// GDBs that don't support non-stop don't allow you to set it to false.
 		// We really should set it to false when GDB supports it though.

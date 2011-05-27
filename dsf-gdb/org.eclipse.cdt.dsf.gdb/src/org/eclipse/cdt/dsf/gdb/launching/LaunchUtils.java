@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson   - Initial API and implementation
  *     Ericsson   - Added support for Mac OS
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -57,6 +58,8 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class LaunchUtils {
+	private static final String GDB_UI_PLUGIN_ID = "org.eclipse.cdt.dsf.gdb.ui"; //$NON-NLS-1$
+
 	/**
 	 * A prefix that we use to indicate that a GDB version is for MAC OS
 	 * @since 3.0
@@ -210,7 +213,7 @@ public class LaunchUtils {
 	}
 	
     public static IPath getGDBPath(ILaunchConfiguration configuration) {
-		String defaultGdbCommand = Platform.getPreferencesService().getString("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+		String defaultGdbCommand = Platform.getPreferencesService().getString(GDB_UI_PLUGIN_ID,
                 IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND,
                 IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT, null);
 
@@ -428,24 +431,56 @@ public class LaunchUtils {
 	}
 	
 	/**
-	 * This methods return true if the launch is meant to be in Non-Stop mode.
-	 * Returns false otherwise.
+	 * Returns <code>true</code> if the launch is meant to be in Non-Stop mode.
+	 * Returns <code>false</code> otherwise.
 	 * 
 	 * @since 4.0
 	 */
 	public static boolean getIsNonStopMode(ILaunchConfiguration config) {
 		try {
-			boolean nonStopMode = config.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
-                    IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
-    		return nonStopMode;
+			return config.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
+					getIsNonStopModeDefault());
     	} catch (CoreException e) {    		
     	}
     	return false;
     }
 	
 	/**
-	 * This methods return true if the launch is meant to be for post-mortem
-	 * tracing.  Returns false otherwise.
+	 * Returns workspace-level default for the Non-Stop mode.
+	 * 
+	 * @since 4.0
+	 */
+	public static boolean getIsNonStopModeDefault() {
+		return Platform.getPreferencesService().getBoolean(GDB_UI_PLUGIN_ID,
+				IGdbDebugPreferenceConstants.PREF_DEFAULT_NON_STOP,
+				IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT, null);
+    }
+	
+	/**
+	 * Returns workspace-level default for the Stop in main option.
+	 * 
+	 * @since 4.0
+	 */
+	public static boolean getStopInMainDefault() {
+		return Platform.getPreferencesService().getBoolean(GDB_UI_PLUGIN_ID,
+				IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN,
+				ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_DEFAULT, null);
+    }
+	
+	/**
+	 * Returns workspace-level default for the Stop in main symbol.
+	 * 
+	 * @since 4.0
+	 */
+	public static String getStopInMainSymbolDefault() {
+		return Platform.getPreferencesService().getString(GDB_UI_PLUGIN_ID,
+				IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN_SYMBOL,
+				ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT, null);
+    }
+	
+	/**
+	 * Returns <code>true</code> if the launch is meant to be for post-mortem
+	 * tracing.  Returns <code>false</code> otherwise.
 	 * 
 	 * @since 4.0
 	 */

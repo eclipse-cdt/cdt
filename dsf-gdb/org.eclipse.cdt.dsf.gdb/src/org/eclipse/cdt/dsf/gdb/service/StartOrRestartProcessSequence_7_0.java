@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -30,6 +31,7 @@ import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
+import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
@@ -103,7 +105,6 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	protected boolean getUserBreakpointIsOnMain() {
 		return fUserBreakpointIsOnMain;
 	}
-
 	    
 	public StartOrRestartProcessSequence_7_0(DsfExecutor executor, IContainerDMContext containerDmc,
 			Map<String, Object> attributes, boolean restart, DataRequestMonitor<IContainerDMContext> rm) {
@@ -183,21 +184,22 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	}
 	
 	/**
-	 * If the user requested a 'stopOnMain', let's set the temporary breakpoint
+	 * If the user requested a 'stopAtMain', let's set the temporary breakpoint
 	 * where the user specified.
 	 */
 	@Execute
 	public void stepInsertStopOnMainBreakpoint(final RequestMonitor rm) {
 		boolean userRequestedStop = CDebugUtils.getAttribute(fAttributes, 
 				ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
-				false);
+				LaunchUtils.getStopInMainDefault());
 
 		if (userRequestedStop) {
 			String userStopSymbol = CDebugUtils.getAttribute(fAttributes, 
 					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
-					ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
+					LaunchUtils.getStopInMainSymbolDefault());
 
-			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(getContainerContext(), IBreakpointsTargetDMContext.class);
+			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(getContainerContext(),
+					IBreakpointsTargetDMContext.class);
 
 			fCommandControl.queueCommand(
 					fCommandFactory.createMIBreakInsert(bpTargetDmc, true, false, null, 0, userStopSymbol, 0),

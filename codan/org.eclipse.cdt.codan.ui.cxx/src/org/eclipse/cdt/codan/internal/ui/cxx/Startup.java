@@ -22,8 +22,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * @author Alena
- * 
+ * @author Alena Laskavaia
  */
 public class Startup implements IStartup {
 	/*

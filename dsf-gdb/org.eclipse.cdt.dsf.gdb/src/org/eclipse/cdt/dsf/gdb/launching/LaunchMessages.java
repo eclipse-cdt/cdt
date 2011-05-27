@@ -24,8 +24,7 @@ public class LaunchMessages {
 	static {
         try {
         	RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
-        }
-        catch (MissingResourceException x) {
+        } catch (MissingResourceException x) {
         }
 	}
 

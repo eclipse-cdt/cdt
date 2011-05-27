@@ -654,6 +654,12 @@ public abstract class AbstractMIControl extends AbstractDsfService
                     break;
                 }
             }
+            // Must close the stream here to avoid leaking
+            // Bug 345164 and Bug 339379
+            try {
+                if (fOutputStream != null) fOutputStream.close();
+			} catch (IOException e) {
+			}
         }
     }
 
@@ -715,6 +721,13 @@ public abstract class AbstractMIControl extends AbstractDsfService
             } catch (RejectedExecutionException e) {
                 // Dispatch thread is down.
             }
+            // Must close the stream here to avoid leaking and
+            // to give enough time to read all the data
+            // Bug 345164 and Bug 339379
+            try {
+				fInputStream.close();
+			} catch (IOException e) {
+			}
         }
         
         private MIResult findResultRecord(MIResult[] results, String variable) {
@@ -1031,7 +1044,12 @@ public abstract class AbstractMIControl extends AbstractDsfService
             } catch (RejectedExecutionException e) {
                 // Dispatch thread is down.
             }
-            // The backend service will close the stream
+            // Must close the stream here to avoid leaking
+            // Bug 345164 and Bug 339379
+            try {
+            	fErrorStream.close();
+			} catch (IOException e) {
+			}
         }
     }
     

@@ -442,23 +442,10 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
     }
 
     public void destroy() {
-    	// We are responsible for closing the streams we have used or else
-    	// we will leak pipes.  
-    	// Bug 345164
-    	try {
-			getMIOutputStream().close();
-		} catch (IOException e) {}
-    	try {
-    		getMIInputStream().close();
-		} catch (IOException e) {}
+    	// Don't close the streams ourselves as it may be too early.
+    	// Wait for the actual user of the streams to close it.
+    	// Bug 339379
     	
-    	// We do access GDB's error stream and must
-    	// close it.
-    	// Bug 327617
-    	try {
-    		fProcess.getErrorStream().close();
-		} catch (IOException e) {}
-
     	// destroy() should be supported even if it's not spawner. 
     	if (getState() == State.STARTED) {
     		fProcess.destroy();

@@ -34,15 +34,19 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.FinalLaunchSequence;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
+import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend.BackendStateChangedEvent;
+import org.eclipse.cdt.dsf.mi.service.MIProcesses.ContainerExitedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
+import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl;
 import org.eclipse.cdt.dsf.mi.service.command.CLIEventProcessor;
@@ -308,8 +312,16 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	
     @DsfServiceEventHandler 
     public void eventDispatched(ICommandControlShutdownDMEvent e) {
-        // Handle our "GDB Exited" event and stop processing commands.
-        stopCommandProcessing();
+    	// Handle our "GDB Exited" event and stop processing commands.
+    	stopCommandProcessing();
+
+    	// Before GDB 7.0, we have to send the containerExited event ourselves
+    	IGDBProcesses procService = getServicesTracker().getService(IGDBProcesses.class);
+        if (procService != null) {
+    		IContainerDMContext processContainerDmc = procService.createContainerContextFromGroupId(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
+    		getSession().dispatchEvent(
+    				new ContainerExitedDMEvent(processContainerDmc), getProperties());
+        }
     }
     
     @DsfServiceEventHandler 

@@ -8,6 +8,7 @@
  * Contributors:
  *    Intel Corporation - Initial API and implementation
  *    James Blackburn (Broadcom Corp.)
+ *    IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.envvar;
 

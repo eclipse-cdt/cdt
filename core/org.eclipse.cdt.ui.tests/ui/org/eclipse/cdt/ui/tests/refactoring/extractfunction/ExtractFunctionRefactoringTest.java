@@ -15,8 +15,8 @@ import java.util.Collection;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTest;
@@ -66,7 +66,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 		}
 	}
 
-	protected void executeRefactoring(CRefactoring refactoring) throws CoreException, Exception {
+	protected void executeRefactoring(Refactoring refactoring) throws Exception {
 		RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
 		assertConditionsOk(finalConditions);
 		Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);

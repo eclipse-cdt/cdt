@@ -18,14 +18,13 @@ import java.util.Properties;
 
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
 import org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest;
-
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 
 /**
  * @author Emanuel Graf IFS
@@ -41,7 +40,6 @@ public class RefactoringHistoryTest extends	ExtractFunctionRefactoringTest {
 	protected void configureRefactoring(Properties refactoringProperties) {
 		scriptFile = fileMap.get(refactoringProperties.getProperty(
 				"scriptFile", "refScript.xml"));
-
 	}
 
 	@Override
@@ -49,27 +47,21 @@ public class RefactoringHistoryTest extends	ExtractFunctionRefactoringTest {
 		String xmlSource = scriptFile.getSource();
 		URI uri= URIUtil.toURI(project.getLocation());
 		xmlSource = xmlSource.replaceAll("\\$\\$projectPath\\$\\$", uri.getPath());
-		RefactoringHistory refHist = RefactoringHistoryService.getInstance()
-				.readRefactoringHistory(
-						new ByteArrayInputStream(xmlSource
-								.getBytes()), 0);
+		RefactoringHistory refHist = RefactoringHistoryService.getInstance().readRefactoringHistory(
+				new ByteArrayInputStream(xmlSource.getBytes()), 0);
 		for (RefactoringDescriptorProxy proxy : refHist.getDescriptors()) {
 			RefactoringStatus status = new RefactoringStatus();
-			CRefactoring ref = (CRefactoring) proxy
-					.requestDescriptor(new NullProgressMonitor())
-					.createRefactoring(status);
+			Refactoring ref = proxy.requestDescriptor(new NullProgressMonitor()).createRefactoring(status);
 			assertTrue(status.isOK());
 			RefactoringStatus checkInitialConditions = ref.checkInitialConditions(NULL_PROGRESS_MONITOR);
 			
-			if(fatalError){
+			if (fatalError) {
 				assertConditionsFatalError(checkInitialConditions);
 				return;
-			}
-			else{
+			} else {
 				assertConditionsOk(checkInitialConditions);
 				executeRefactoring(ref);
 			}
 		}
 	}
-
 }

@@ -8,6 +8,7 @@
  * Contributors:
  *     Alena Laskavaia  - initial API and implementation
  *     IBM Corporation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui;
 
@@ -17,6 +18,7 @@ import org.eclipse.osgi.util.NLS;
  * Externalized messages
  */
 public class CodanUIMessages extends NLS {
+	public static String BuildPropertyPage_Description;
 	public static String BuildPropertyPage_RunAsYouType;
 	public static String BuildPropertyPage_RunWithBuild;
 	public static String CheckedTreeEditor_SelectionCannotBeEmpty;

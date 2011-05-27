@@ -32,7 +32,7 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements IWor
 
 	@Override
 	protected void createFieldEditors() {
-		addField(new LabelFieldEditor("Set launch method for checkers, you can override this by editing individual problem settings",
+		addField(new LabelFieldEditor(CodanUIMessages.BuildPropertyPage_Description,
 				getFieldEditorParent()));
 		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_ON_BUILD, CodanUIMessages.BuildPropertyPage_RunWithBuild,
 				getFieldEditorParent()));

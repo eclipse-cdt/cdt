@@ -23,33 +23,59 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the CDT team.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There
+ * is no guarantee that this API will work or that it will remain the same. Please do not use this API without
+ * consulting with the CDT team.
  * 
  * @author crecoskie
  * @since 5.3
- *
+ * 
  */
 public class RefreshExclusionContributionManager {
-	
+
 	public static final String EXCLUSION_CONTRIBUTOR = "exclusionContributor"; //$NON-NLS-1$
 	public static final String EXTENSION_ID = "RefreshExclusionContributor"; //$NON-NLS-1$
-	private LinkedHashMap<String, RefreshExclusionContributor> fIDtoContributorsMap;
 	private static RefreshExclusionContributionManager fInstance;
-	
+
+	public static synchronized RefreshExclusionContributionManager getInstance() {
+		if (fInstance == null) {
+			fInstance = new RefreshExclusionContributionManager();
+		}
+
+		return fInstance;
+	}
+
+	private LinkedHashMap<String, RefreshExclusionContributor> fIDtoContributorsMap;
+
 	private RefreshExclusionContributionManager() {
 		fIDtoContributorsMap = new LinkedHashMap<String, RefreshExclusionContributor>();
 		loadExtensions();
 	}
-	
-	public static synchronized RefreshExclusionContributionManager getInstance() {
-		if(fInstance == null) {
-			fInstance = new RefreshExclusionContributionManager();
+
+	public RefreshExclusionContributor getContributor(String id) {
+		return fIDtoContributorsMap.get(id);
+	}
+
+	public List<RefreshExclusionContributor> getContributors() {
+		return getContributors(false);
+	}
+
+	public List<RefreshExclusionContributor> getContributors(boolean returnTestContributors) {
+		List<RefreshExclusionContributor> retVal = new LinkedList<RefreshExclusionContributor>();
+
+		if (!returnTestContributors) {
+			for (RefreshExclusionContributor contributor : fIDtoContributorsMap.values()) {
+				if (!contributor.isTest()) {
+					retVal.add(contributor);
+				}
+			}
+
+			return retVal;
 		}
-		
-		return fInstance;
+
+		else {
+			return new LinkedList<RefreshExclusionContributor>(fIDtoContributorsMap.values());
+		}
 	}
 
 	public synchronized void loadExtensions() {
@@ -68,7 +94,7 @@ public class RefreshExclusionContributionManager {
 						String contributorClassName = configElement.getAttribute("class"); //$NON-NLS-1$
 						boolean isTest = false;
 						String isTestString = configElement.getAttribute("isTest"); //$NON-NLS-1$
-						if(isTestString != null) {
+						if (isTestString != null) {
 							isTest = Boolean.getBoolean(isTestString);
 						}
 
@@ -81,7 +107,7 @@ public class RefreshExclusionContributionManager {
 									exclusionContributor.setName(name);
 									exclusionContributor.setIsTest(isTest);
 									fIDtoContributorsMap.put(id, exclusionContributor);
-									
+
 								}
 							} catch (CoreException e) {
 								CUIPlugin.log(e);
@@ -90,32 +116,6 @@ public class RefreshExclusionContributionManager {
 					}
 				}
 			}
-		}
-	}
-	
-	public RefreshExclusionContributor getContributor(String id) {
-		return fIDtoContributorsMap.get(id);
-	}
-	
-	public List<RefreshExclusionContributor> getContributors() {
-		return getContributors(false);
-	}
-	
-	public List<RefreshExclusionContributor> getContributors(boolean returnTestContributors) {
-		List<RefreshExclusionContributor> retVal = new LinkedList<RefreshExclusionContributor>();
-		
-		if(!returnTestContributors) {
-			for(RefreshExclusionContributor contributor : fIDtoContributorsMap.values()) {
-				if(!contributor.isTest()) {
-					retVal.add(contributor);
-				}
-			}
-			
-			return retVal;
-		}
-		
-		else {
-			return new LinkedList<RefreshExclusionContributor>(fIDtoContributorsMap.values());
 		}
 	}
 }

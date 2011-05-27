@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.resources.RefreshExclusionFactory;
 
 /**
  * @author crecoskie
- *
+ * 
  */
 public class ResourceExclusionFactory extends RefreshExclusionFactory {
 
@@ -27,7 +27,9 @@ public class ResourceExclusionFactory extends RefreshExclusionFactory {
 		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.resources.RefreshExclusionFactory#createNewExclusion()
 	 */
 	@Override
@@ -35,7 +37,9 @@ public class ResourceExclusionFactory extends RefreshExclusionFactory {
 		return new ResourceExclusion();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.resources.RefreshExclusionFactory#createNewExclusionInstance()
 	 */
 	@Override
@@ -44,7 +48,9 @@ public class ResourceExclusionFactory extends RefreshExclusionFactory {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.resources.RefreshExclusionFactory#getExclusionClassname()
 	 */
 	@Override
@@ -52,7 +58,9 @@ public class ResourceExclusionFactory extends RefreshExclusionFactory {
 		return ResourceExclusion.class.getName();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.resources.RefreshExclusionFactory#getInstanceClassname()
 	 */
 	@Override

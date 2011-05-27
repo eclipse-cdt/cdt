@@ -22,18 +22,19 @@ import org.eclipse.core.resources.IResource;
 
 /**
  * 
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the CDT team.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There
+ * is no guarantee that this API will work or that it will remain the same. Please do not use this API without
+ * consulting with the CDT team.
  * 
  * @author vkong
  * @since 5.3
- *
+ * 
  */
 public class ResourceExclusion extends RefreshExclusion {
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.resources.RefreshExclusion#getName()
 	 */
 	@Override
@@ -41,26 +42,34 @@ public class ResourceExclusion extends RefreshExclusion {
 		return Messages.ResourceExclusion_name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.resources.RefreshExclusion#testExclusion(org.eclipse.core.resources.IResource)
+	@Override
+	public boolean supportsExclusionInstances() {
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.core.resources.RefreshExclusion#testExclusion(org.eclipse.core.resources.IResource)
 	 */
 	@Override
 	public synchronized boolean testExclusion(IResource resource) {
-		
-		//Populate the resources to be excluded by this exclusion
+
+		// Populate the resources to be excluded by this exclusion
 		List<IResource> excludedResources = new LinkedList<IResource>();
 		List<ExclusionInstance> exclusionInstances = getExclusionInstances();
-		
-		for(ExclusionInstance instance : exclusionInstances) {
+
+		for (ExclusionInstance instance : exclusionInstances) {
 			excludedResources.add(instance.getResource());
 		}
-		
+
 		if (excludedResources.contains(resource)) {
 			return true;
-		} else { //check to see if the given resource is part of this exclusion
-			
-			for(IResource excludedResource : excludedResources) {
-				//TODO: need to update this for Phase 2 implementation
+		} else { // check to see if the given resource is part of this exclusion
+
+			for (IResource excludedResource : excludedResources) {
+				// TODO: need to update this for Phase 2 implementation
 				if (excludedResource instanceof IContainer) {
 					IContainer container = (IContainer) excludedResource;
 					if (container.getFullPath().isPrefixOf(resource.getFullPath())) {
@@ -70,11 +79,6 @@ public class ResourceExclusion extends RefreshExclusion {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public boolean supportsExclusionInstances() {
-		return true;
 	}
 
 }

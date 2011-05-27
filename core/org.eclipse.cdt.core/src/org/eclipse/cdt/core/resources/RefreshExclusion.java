@@ -26,243 +26,31 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * Clients should extend this class to provide support for their own custom exclusions.
  * 
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the CDT team.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There
+ * is no guarantee that this API will work or that it will remain the same. Please do not use this API without
+ * consulting with the CDT team.
  * 
  * @author crecoskie
  * @since 5.3
- *
+ * 
  */
 public abstract class RefreshExclusion {
-	
+
 	public static final String CLASS_ATTRIBUTE_NAME = "class"; //$NON-NLS-1$
-	public static final String EXTENSION_DATA_ELEMENT_NAME = "extensionData"; //$NON-NLS-1$
 	public static final String CONTRIBUTOR_ID_ATTRIBUTE_NAME = "contributorId"; //$NON-NLS-1$
-	public static final String INSTANCE_ELEMENT_NAME = "instance"; //$NON-NLS-1$
-	public static final String WORKSPACE_PATH_ATTRIBUTE_NAME = "workspacePath"; //$NON-NLS-1$
-	public static final String EXCLUSION_TYPE_ATTRIBUTE_NAME = "exclusionType"; //$NON-NLS-1$
-	public static final String EXCLUSION_ELEMENT_NAME = "exclusion"; //$NON-NLS-1$
-	public static final String RESOURCE_VALUE = "RESOURCE"; //$NON-NLS-1$
-	public static final String FOLDER_VALUE = "FOLDER"; //$NON-NLS-1$
-	public static final String FILE_VALUE = "FILE"; //$NON-NLS-1$
 	public static final String DISPLAY_STRING_ATTRIBUTE_NAME = "displayString"; //$NON-NLS-1$
-
-	protected List<ExclusionInstance> fExclusionInstanceList = new LinkedList<ExclusionInstance>();
-	protected List<RefreshExclusion> fNestedExclusions = new LinkedList<RefreshExclusion>();
-	protected ExclusionType fExclusionType = ExclusionType.RESOURCE;
-	protected RefreshExclusion fParentExclusion;
-	protected IResource fParentResource;
-	
-
-	protected String fContributorId = ""; //$NON-NLS-1$
-	
-	/**
-	 * If this exclusion is a direct descendant of a resource, returns that resource.
-	 * Otherwise, returns null;
-	 * 
-	 * @return IResource
-	 */
-	public synchronized IResource getParentResource() {
-		return fParentResource;
-	}
-
-	/**
-	 * Sets the parent resource of this exclusion.
-	 * 
-	 * @param parentResource the parent resource to set
-	 */
-	public synchronized void setParentResource(IResource parentResource) {
-		this.fParentResource = parentResource;
-	}
-	
-	/**
-	 * @return a String corresponding to the ID of the RefreshExclusionContributor that was used to create
-	 * this exclusion.
-	 */
-	public synchronized String getContributorId() {
-		return fContributorId;
-	}
-	
-	public synchronized void setContributorId(String id) {
-		fContributorId = id;
-	}
-	
-	/**
-	 * If this is a nested exclusion, returns the exclusion which is the direct parent of this one.
-	 * 
-	 * @return RefreshExclusion
-	 */
-	public synchronized RefreshExclusion getParentExclusion() {
-		return fParentExclusion;
-	}
-
-	public synchronized void setParentExclusion(RefreshExclusion parent) {
-		fParentExclusion = parent;
-	}
-
-	public synchronized ExclusionType getExclusionType() {
-		return fExclusionType;
-	}
-
-	public synchronized void setExclusionType(ExclusionType exclusionType) {
-		fExclusionType = exclusionType;
-	}
-
-	/**
-	 * @return a String corresponding to the human-readable name for this exclusion.
-	 */
-	public abstract String getName();
-	
-	/**
-	 * Tests a given resource to see if this exclusion applies to it.
-	 * 
-	 * @param resource the resource to be tested.
-	 * @return true if the resource triggers the exclusion, false otherwise (including if this
-	 * exclusion does not apply).
-	 */
-	public abstract boolean testExclusion(IResource resource);
-	
-	/**
-	 * Tests this exclusion and recursively test all of its nested exclusions to determine whether this
-	 * exclusion should be triggered or not.
-	 * 
-	 * @param resource the resource to be tested
-	 * @return true if the exclusion is triggered, false otherwise (including if this exclusion does not apply)
-	 */
-	public synchronized boolean testExclusionChain(IResource resource) {
-		// first check and see if this exclusion would be triggered in the first place
-		boolean currentValue = testExclusion(resource);
-		
-		if (currentValue) {
-			List<RefreshExclusion> nestedExclusions = getNestedExclusions();
-			for (RefreshExclusion exclusion : nestedExclusions) {
-
-				boolean nestedValue = exclusion.testExclusionChain(resource);
-				
-				if(nestedValue) {
-					// the nested exclusion says to do the opposite of what we originally thought, so negate the current value
-					currentValue = (!currentValue);
-
-					// since the first exclusion chain to trump us wins, then, break out of the loop
-					break;
-				}
-				
-			}
-		}
-		
-		return currentValue;
-				
-	}
-	
-	/**
-	 * @return an unmodifiable list of all the instance of this exclusion
-	 */
-	public synchronized List<ExclusionInstance> getExclusionInstances() {
-		return Collections.unmodifiableList(fExclusionInstanceList);
-	}
-	
-	/**
-	 * Adds an instance to the list of instances of this exclusion.
-	 * 
-	 * @param exclusionInstance
-	 */
-	public synchronized void addExclusionInstance(ExclusionInstance exclusionInstance) {
-		exclusionInstance.setParentExclusion(this);
-		fExclusionInstanceList.add(exclusionInstance);
-	}
-	
-	/**
-	 * Removes an exclusion instance from the list of instances of this exclusion.
-	 * 
-	 * @param exclusionInstance
-	 */
-	public synchronized void removeExclusionInstance(ExclusionInstance exclusionInstance) {
-		fExclusionInstanceList.remove(exclusionInstance);
-	}
-	
-	/**
-	 * 
-	 * @return an unmodifiable list of exclusions to this exclusion.
-	 */
-	public synchronized List<RefreshExclusion> getNestedExclusions() {
-		return Collections.unmodifiableList(fNestedExclusions);
-	}
-	
-	public synchronized void addNestedExclusion(RefreshExclusion exclusion) {
-		fNestedExclusions.add(exclusion);
-		exclusion.setParentExclusion(this);
-	}
-	
-	/**
-	 * Removes the given nested exclusion.  The exclusion must be a direct child of this exclusion.
-	 * 
-	 * @param exclusion
-	 */
-	public synchronized void removeNestedExclusion(RefreshExclusion exclusion) {
-		fNestedExclusions.remove(exclusion);
-	}
-	
-	public synchronized void persistData(ICStorageElement parentElement) {
-		// persist the common data that all RefreshExclusions have
-		ICStorageElement exclusionElement = parentElement.createChild(EXCLUSION_ELEMENT_NAME);
-		
-		// persist the type of the object we are
-		exclusionElement.setAttribute(CLASS_ATTRIBUTE_NAME, this.getClass().getName());
-		
-		// persist the exclusion type
-		String exclusionType = null;
-		switch(getExclusionType()) {
-		case FILE:
-			exclusionType = FILE_VALUE;
-			break;
-			
-		case FOLDER:
-			exclusionType = FOLDER_VALUE;
-			break;
-			
-		case RESOURCE:
-			exclusionType = RESOURCE_VALUE;
-			break;
-		}
-		
-		if(exclusionType != null) {
-			exclusionElement.setAttribute(EXCLUSION_TYPE_ATTRIBUTE_NAME, exclusionType);
-		}
-		
-		// note: no need to persist parent, the parent relationship will be determined on load by
-		// the structure of the XML tree
-		
-		exclusionElement.setAttribute(CONTRIBUTOR_ID_ATTRIBUTE_NAME, getContributorId());
-        
-        // persist instances
-        for(ExclusionInstance instance : fExclusionInstanceList) {
-        	instance.persistInstanceData(exclusionElement);
-        }
-		
-		// provide a place for extenders to store their own data
-        ICStorageElement extensionElement = exclusionElement.createChild(EXTENSION_DATA_ELEMENT_NAME);
-		
-		// call extender to store any extender-specific data
-		persistExtendedData(extensionElement);
-		
-		// persist nested exclusions
-		for(RefreshExclusion exclusion : fNestedExclusions) {
-			exclusion.persistData(exclusionElement);
-		}
-	}
-	
-	protected synchronized void persistExtendedData(ICStorageElement extensionElement) {
-		// override to provide extension specific behaviour if desired	
-	}
-	
-	protected synchronized void loadExtendedData(ICStorageElement grandchild) {
-		// override to provide extension specific behaviour if desired
-	}
+	public static final String EXCLUSION_ELEMENT_NAME = "exclusion"; //$NON-NLS-1$
+	public static final String EXCLUSION_TYPE_ATTRIBUTE_NAME = "exclusionType"; //$NON-NLS-1$
+	public static final String EXTENSION_DATA_ELEMENT_NAME = "extensionData"; //$NON-NLS-1$
+	public static final String FILE_VALUE = "FILE"; //$NON-NLS-1$
+	public static final String FOLDER_VALUE = "FOLDER"; //$NON-NLS-1$
+	public static final String INSTANCE_ELEMENT_NAME = "instance"; //$NON-NLS-1$
+	public static final String RESOURCE_VALUE = "RESOURCE"; //$NON-NLS-1$
+	public static final String WORKSPACE_PATH_ATTRIBUTE_NAME = "workspacePath"; //$NON-NLS-1$
 
 	public synchronized static List<RefreshExclusion> loadData(ICStorageElement parentElement,
-			RefreshExclusion parentExclusion, IResource parentResource, RefreshScopeManager manager) throws CoreException {
+			RefreshExclusion parentExclusion, IResource parentResource, RefreshScopeManager manager)
+			throws CoreException {
 
 		List<RefreshExclusion> exclusions = new LinkedList<RefreshExclusion>();
 
@@ -324,13 +112,15 @@ public abstract class RefreshExclusion {
 					else if (grandchild.getName().equals(INSTANCE_ELEMENT_NAME)) {
 
 						// load the instance data
-						ExclusionInstance instance = ExclusionInstance.loadInstanceData(grandchild, manager);
+						ExclusionInstance instance = ExclusionInstance.loadInstanceData(grandchild,
+								manager);
 						newExclusion.fExclusionInstanceList.add(instance);
 					}
 				}
 
 				// load nested exclusions
-				List<RefreshExclusion> nestedExclusions = loadData(child, newExclusion, null, manager);
+				List<RefreshExclusion> nestedExclusions = loadData(child, newExclusion, null,
+						manager);
 
 				// add to parent
 				for (RefreshExclusion nestedExclusion : nestedExclusions) {
@@ -345,9 +135,226 @@ public abstract class RefreshExclusion {
 		return exclusions;
 	}
 
+	protected String fContributorId = ""; //$NON-NLS-1$
+	protected List<ExclusionInstance> fExclusionInstanceList = new LinkedList<ExclusionInstance>();
+	protected ExclusionType fExclusionType = ExclusionType.RESOURCE;
+	protected List<RefreshExclusion> fNestedExclusions = new LinkedList<RefreshExclusion>();
+
+	protected RefreshExclusion fParentExclusion;
+
+	protected IResource fParentResource;
+
+	/**
+	 * Adds an instance to the list of instances of this exclusion.
+	 * 
+	 * @param exclusionInstance
+	 */
+	public synchronized void addExclusionInstance(ExclusionInstance exclusionInstance) {
+		exclusionInstance.setParentExclusion(this);
+		fExclusionInstanceList.add(exclusionInstance);
+	}
+
+	public synchronized void addNestedExclusion(RefreshExclusion exclusion) {
+		fNestedExclusions.add(exclusion);
+		exclusion.setParentExclusion(this);
+	}
+
+	/**
+	 * @return a String corresponding to the ID of the RefreshExclusionContributor that was used to create
+	 *         this exclusion.
+	 */
+	public synchronized String getContributorId() {
+		return fContributorId;
+	}
+
+	/**
+	 * @return an unmodifiable list of all the instance of this exclusion
+	 */
+	public synchronized List<ExclusionInstance> getExclusionInstances() {
+		return Collections.unmodifiableList(fExclusionInstanceList);
+	}
+
+	public synchronized ExclusionType getExclusionType() {
+		return fExclusionType;
+	}
+
+	/**
+	 * @return a String corresponding to the human-readable name for this exclusion.
+	 */
+	public abstract String getName();
+
+	/**
+	 * 
+	 * @return an unmodifiable list of exclusions to this exclusion.
+	 */
+	public synchronized List<RefreshExclusion> getNestedExclusions() {
+		return Collections.unmodifiableList(fNestedExclusions);
+	}
+
+	/**
+	 * If this is a nested exclusion, returns the exclusion which is the direct parent of this one.
+	 * 
+	 * @return RefreshExclusion
+	 */
+	public synchronized RefreshExclusion getParentExclusion() {
+		return fParentExclusion;
+	}
+
+	/**
+	 * If this exclusion is a direct descendant of a resource, returns that resource. Otherwise, returns null;
+	 * 
+	 * @return IResource
+	 */
+	public synchronized IResource getParentResource() {
+		return fParentResource;
+	}
+
+	protected synchronized void loadExtendedData(ICStorageElement grandchild) {
+		// override to provide extension specific behaviour if desired
+	}
+
+	public synchronized void persistData(ICStorageElement parentElement) {
+		// persist the common data that all RefreshExclusions have
+		ICStorageElement exclusionElement = parentElement.createChild(EXCLUSION_ELEMENT_NAME);
+
+		// persist the type of the object we are
+		exclusionElement.setAttribute(CLASS_ATTRIBUTE_NAME, this.getClass().getName());
+
+		// persist the exclusion type
+		String exclusionType = null;
+		switch (getExclusionType()) {
+		case FILE:
+			exclusionType = FILE_VALUE;
+			break;
+
+		case FOLDER:
+			exclusionType = FOLDER_VALUE;
+			break;
+
+		case RESOURCE:
+			exclusionType = RESOURCE_VALUE;
+			break;
+		}
+
+		if (exclusionType != null) {
+			exclusionElement.setAttribute(EXCLUSION_TYPE_ATTRIBUTE_NAME, exclusionType);
+		}
+
+		// note: no need to persist parent, the parent relationship will be determined on load by
+		// the structure of the XML tree
+
+		exclusionElement.setAttribute(CONTRIBUTOR_ID_ATTRIBUTE_NAME, getContributorId());
+
+		// persist instances
+		for (ExclusionInstance instance : fExclusionInstanceList) {
+			instance.persistInstanceData(exclusionElement);
+		}
+
+		// provide a place for extenders to store their own data
+		ICStorageElement extensionElement = exclusionElement
+				.createChild(EXTENSION_DATA_ELEMENT_NAME);
+
+		// call extender to store any extender-specific data
+		persistExtendedData(extensionElement);
+
+		// persist nested exclusions
+		for (RefreshExclusion exclusion : fNestedExclusions) {
+			exclusion.persistData(exclusionElement);
+		}
+	}
+
+	protected synchronized void persistExtendedData(ICStorageElement extensionElement) {
+		// override to provide extension specific behaviour if desired
+	}
+
+	/**
+	 * Removes an exclusion instance from the list of instances of this exclusion.
+	 * 
+	 * @param exclusionInstance
+	 */
+	public synchronized void removeExclusionInstance(ExclusionInstance exclusionInstance) {
+		fExclusionInstanceList.remove(exclusionInstance);
+	}
+
+	/**
+	 * Removes the given nested exclusion. The exclusion must be a direct child of this exclusion.
+	 * 
+	 * @param exclusion
+	 */
+	public synchronized void removeNestedExclusion(RefreshExclusion exclusion) {
+		fNestedExclusions.remove(exclusion);
+	}
+
+	public synchronized void setContributorId(String id) {
+		fContributorId = id;
+	}
+
+	public synchronized void setExclusionType(ExclusionType exclusionType) {
+		fExclusionType = exclusionType;
+	}
+
+	public synchronized void setParentExclusion(RefreshExclusion parent) {
+		fParentExclusion = parent;
+	}
+
+	/**
+	 * Sets the parent resource of this exclusion.
+	 * 
+	 * @param parentResource
+	 *            the parent resource to set
+	 */
+	public synchronized void setParentResource(IResource parentResource) {
+		this.fParentResource = parentResource;
+	}
+
 	/**
 	 * @return true if this exclusion supports exclusion instances
 	 */
 	public abstract boolean supportsExclusionInstances();
+
+	/**
+	 * Tests a given resource to see if this exclusion applies to it.
+	 * 
+	 * @param resource
+	 *            the resource to be tested.
+	 * @return true if the resource triggers the exclusion, false otherwise (including if this exclusion does
+	 *         not apply).
+	 */
+	public abstract boolean testExclusion(IResource resource);
+
+	/**
+	 * Tests this exclusion and recursively test all of its nested exclusions to determine whether this
+	 * exclusion should be triggered or not.
+	 * 
+	 * @param resource
+	 *            the resource to be tested
+	 * @return true if the exclusion is triggered, false otherwise (including if this exclusion does not
+	 *         apply)
+	 */
+	public synchronized boolean testExclusionChain(IResource resource) {
+		// first check and see if this exclusion would be triggered in the first place
+		boolean currentValue = testExclusion(resource);
+
+		if (currentValue) {
+			List<RefreshExclusion> nestedExclusions = getNestedExclusions();
+			for (RefreshExclusion exclusion : nestedExclusions) {
+
+				boolean nestedValue = exclusion.testExclusionChain(resource);
+
+				if (nestedValue) {
+					// the nested exclusion says to do the opposite of what we originally thought, so negate
+					// the current value
+					currentValue = (!currentValue);
+
+					// since the first exclusion chain to trump us wins, then, break out of the loop
+					break;
+				}
+
+			}
+		}
+
+		return currentValue;
+
+	}
 
 }

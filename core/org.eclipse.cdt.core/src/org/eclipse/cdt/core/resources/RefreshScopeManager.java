@@ -43,48 +43,55 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 
 /**
- * The RefreshScopeManager provides access to settings pertaining to refreshes performed during
- * a build.  Each project may have a set of resources associated with it that are the set of resources
- * to be refreshed.  An exclusion mechanism exists that allows for one to specify arbitrarily complicated,
- * nested logic that determines whether or not a given resource is refreshed according to previously
- * specified rules.
+ * The RefreshScopeManager provides access to settings pertaining to refreshes performed during a build. Each
+ * project may have a set of resources associated with it that are the set of resources to be refreshed. An
+ * exclusion mechanism exists that allows for one to specify arbitrarily complicated, nested logic that
+ * determines whether or not a given resource is refreshed according to previously specified rules.
  * 
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the CDT team.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There
+ * is no guarantee that this API will work or that it will remain the same. Please do not use this API without
+ * consulting with the CDT team.
  * 
  * @author crecoskie
  * @since 5.3
- *
+ * 
  */
 public class RefreshScopeManager {
 
-	public static final String PROJECT_VALUE = "PROJECT"; //$NON-NLS-1$
-	public static final String FOLDER_VALUE = "FOLDER"; //$NON-NLS-1$
-	public static final String FILE_VALUE = "FILE"; //$NON-NLS-1$
-	public static final String RESOURCE_TYPE_ATTRIBUTE_NAME = "resourceType"; //$NON-NLS-1$
-	public static final String WORKSPACE_PATH_ATTRIBUTE_NAME = "workspacePath"; //$NON-NLS-1$
-	public static final String RESOURCE_ELEMENT_NAME = "resource"; //$NON-NLS-1$
-	public static final String VERSION_NUMBER_ATTRIBUTE_NAME = "versionNumber"; //$NON-NLS-1$
-	public static final String VERSION_ELEMENT_NAME = "version"; //$NON-NLS-1$
-	public static final String REFRESH_SCOPE_STORAGE_NAME = "refreshScope"; //$NON-NLS-1$
-	public static final String EXTENSION_ID = "RefreshExclusionFactory"; //$NON-NLS-1$
-	public static final Object EXCLUSION_FACTORY = "exclusionFactory"; //$NON-NLS-1$
 	public static final String EXCLUSION_CLASS = "exclusionClass"; //$NON-NLS-1$
+	public static final Object EXCLUSION_FACTORY = "exclusionFactory"; //$NON-NLS-1$
+	public static final String EXTENSION_ID = "RefreshExclusionFactory"; //$NON-NLS-1$
 	public static final String FACTORY_CLASS = "factoryClass"; //$NON-NLS-1$
+	public static final String FILE_VALUE = "FILE"; //$NON-NLS-1$
+	private static RefreshScopeManager fInstance;
+	public static final String FOLDER_VALUE = "FOLDER"; //$NON-NLS-1$
 	public static final String INSTANCE_CLASS = "instanceClass"; //$NON-NLS-1$
 	public static final String OTHER_VALUE = "OTHER"; //$NON-NLS-1$
-	private int fVersion = 1;
-	
+	public static final String PROJECT_VALUE = "PROJECT"; //$NON-NLS-1$
+	public static final String REFRESH_SCOPE_STORAGE_NAME = "refreshScope"; //$NON-NLS-1$
+	public static final String RESOURCE_ELEMENT_NAME = "resource"; //$NON-NLS-1$
+	public static final String RESOURCE_TYPE_ATTRIBUTE_NAME = "resourceType"; //$NON-NLS-1$
+	public static final String VERSION_ELEMENT_NAME = "version"; //$NON-NLS-1$
+	public static final String VERSION_NUMBER_ATTRIBUTE_NAME = "versionNumber"; //$NON-NLS-1$
+	public static final String WORKSPACE_PATH_ATTRIBUTE_NAME = "workspacePath"; //$NON-NLS-1$
+
+	public static synchronized RefreshScopeManager getInstance() {
+		if (fInstance == null) {
+			fInstance = new RefreshScopeManager();
+		}
+
+		return fInstance;
+	}
+
+	private HashMap<String, RefreshExclusionFactory> fClassnameToExclusionFactoryMap;
+	private boolean fIsLoaded = false;
+
+	private boolean fIsLoading = false;
 	private HashMap<IProject, LinkedHashSet<IResource>> fProjectToResourcesMap;
 	private HashMap<IResource, List<RefreshExclusion>> fResourceToExclusionsMap;
-	private HashMap<String, RefreshExclusionFactory> fClassnameToExclusionFactoryMap;
-	
-	private static RefreshScopeManager fInstance;
-	private boolean fIsLoading = false;
-	private boolean fIsLoaded = false;
-	
+
+	private int fVersion = 1;
+
 	private RefreshScopeManager() {
 		fClassnameToExclusionFactoryMap = new HashMap<String, RefreshExclusionFactory>();
 		loadExtensions();
@@ -128,11 +135,13 @@ public class RefreshScopeManager {
 											IProject project = (IProject) delta.getResource();
 
 											if (delta.getKind() == IResourceDelta.ADDED
-													|| (delta.getKind() == IResourceDelta.CHANGED && ((delta.getFlags() & IResourceDelta.OPEN) != 0) ) ) {
-												
-												loadSettings(ResourcesPlugin.getWorkspace().getRoot(), project);
+													|| (delta.getKind() == IResourceDelta.CHANGED && ((delta
+															.getFlags() & IResourceDelta.OPEN) != 0))) {
+
+												loadSettings(ResourcesPlugin.getWorkspace()
+														.getRoot(), project);
 												return false;
-												
+
 											}
 
 										}
@@ -140,7 +149,7 @@ public class RefreshScopeManager {
 										else if (delta.getResource() instanceof IWorkspaceRoot) {
 											return true;
 										}
-											
+
 										return false;
 									}
 
@@ -157,10 +166,220 @@ public class RefreshScopeManager {
 				IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_CLOSE
 						| IResourceChangeEvent.PRE_DELETE);
 	}
-	
+
+	public synchronized void addExclusion(IResource resource, RefreshExclusion exclusion) {
+		getResourcesToExclusionsMap();
+
+		List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
+		if (exclusions == null) {
+			exclusions = new LinkedList<RefreshExclusion>();
+			fResourceToExclusionsMap.put(resource, exclusions);
+		}
+
+		exclusions.add(exclusion);
+	}
+
+	public synchronized void addResourceToRefresh(IProject project, IResource resource) {
+		getProjectToResourcesMap();
+		LinkedHashSet<IResource> resourceSet = fProjectToResourcesMap.get(project);
+
+		if (resourceSet == null) {
+			resourceSet = new LinkedHashSet<IResource>();
+			fProjectToResourcesMap.put(project, resourceSet);
+		}
+
+		resourceSet.add(resource);
+
+	}
+
+	public synchronized void clearAllData() {
+		clearAllResourcesToRefresh();
+		clearAllExclusions();
+		fIsLoaded = false;
+	}
+
+	public synchronized void clearAllExclusions() {
+		if (fResourceToExclusionsMap != null)
+			fResourceToExclusionsMap.clear();
+	}
+
+	public synchronized void clearAllResourcesToRefresh() {
+		getProjectToResourcesMap();
+		fProjectToResourcesMap.clear();
+	}
+
+	private synchronized void clearDataForProject(IProject project) {
+		clearResourcesToRefresh(project);
+		clearExclusionsForProject(project);
+	}
+
+	public synchronized void clearExclusions(IResource resource) {
+		getResourcesToExclusionsMap();
+		List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
+		if (exclusions != null) {
+			exclusions.clear();
+		}
+	}
+
+	public synchronized void clearExclusionsForProject(IProject project) {
+		getResourcesToExclusionsMap();
+		List<IResource> resourcesToRemove = new LinkedList<IResource>();
+
+		for (IResource resource : fResourceToExclusionsMap.keySet()) {
+			IProject project2 = resource.getProject();
+			if (project2.equals(project)) {
+				resourcesToRemove.add(resource);
+			}
+		}
+
+		for (IResource resource : resourcesToRemove) {
+			fResourceToExclusionsMap.remove(resource);
+		}
+	}
+
+	public synchronized void clearResourcesToRefresh(IProject project) {
+		getProjectToResourcesMap();
+		LinkedHashSet<IResource> resourceSet = null;
+
+		fProjectToResourcesMap.put(project, resourceSet);
+	}
+
+	public synchronized void deleteResourceToRefresh(IProject project, IResource resource) {
+		getProjectToResourcesMap();
+		LinkedHashSet<IResource> resourceSet = fProjectToResourcesMap.get(project);
+
+		if (resourceSet == null) {
+			resourceSet = new LinkedHashSet<IResource>();
+			return;
+		}
+
+		resourceSet.remove(resource);
+	}
+
+	public synchronized RefreshExclusion getExclusionForClassName(String className) {
+		RefreshExclusionFactory factory = getFactoryForClassName(className);
+
+		if (factory == null) {
+			return null;
+		}
+
+		return factory.createNewExclusion();
+	}
+
+	public synchronized List<RefreshExclusion> getExclusions(IResource resource) {
+		getResourcesToExclusionsMap();
+		List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
+		if (exclusions == null) {
+			exclusions = new LinkedList<RefreshExclusion>();
+			fResourceToExclusionsMap.put(resource, exclusions);
+		}
+
+		return exclusions;
+	}
+
+	public synchronized RefreshExclusionFactory getFactoryForClassName(String className) {
+		RefreshExclusionFactory factory = fClassnameToExclusionFactoryMap.get(className);
+
+		return factory;
+	}
+
+	public synchronized ExclusionInstance getInstanceForClassName(String className) {
+		RefreshExclusionFactory factory = getFactoryForClassName(className);
+
+		if (factory == null) {
+			return null;
+		}
+
+		return factory.createNewExclusionInstance();
+	}
+
+	private HashMap<IProject, LinkedHashSet<IResource>> getProjectToResourcesMap() {
+		if (fProjectToResourcesMap == null) {
+			fProjectToResourcesMap = new HashMap<IProject, LinkedHashSet<IResource>>();
+		}
+
+		return fProjectToResourcesMap;
+	}
+
+	public IWorkspaceRunnable getRefreshRunnable(final IProject project) {
+
+		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+
+			/**
+			 * @param q
+			 * @param resource
+			 * @throws CoreException
+			 */
+			private void refreshResources(IResource resource, List<RefreshExclusion> exclusions,
+					IProgressMonitor monitor) throws CoreException {
+				if (resource instanceof IContainer) {
+					IContainer container = (IContainer) resource;
+
+					if (shouldResourceBeRefreshed(resource)) {
+						resource.refreshLocal(IResource.DEPTH_ONE, monitor);
+
+					}
+
+					for (IResource child : container.members()) {
+						refreshResources(child, exclusions, monitor);
+					}
+				}
+			}
+
+			public void run(IProgressMonitor monitor) throws CoreException {
+
+				List<IResource> resourcesToRefresh = getResourcesToRefresh(project);
+				for (IResource resource : resourcesToRefresh) {
+					List<RefreshExclusion> exclusions = getExclusions(resource);
+					refreshResources(resource, exclusions, monitor);
+				}
+
+			}
+		};
+
+		return runnable;
+	}
+
+	public synchronized ISchedulingRule getRefreshSchedulingRule(IProject project) {
+		return new MultiRule(getResourcesToRefresh(project).toArray(new ISchedulingRule[0]));
+	}
+
+	private HashMap<IResource, List<RefreshExclusion>> getResourcesToExclusionsMap() {
+		if (fResourceToExclusionsMap == null) {
+			fResourceToExclusionsMap = new HashMap<IResource, List<RefreshExclusion>>();
+		}
+
+		return fResourceToExclusionsMap;
+	}
+
+	/**
+	 * Returns the set of resources that should be refreshed for a project. These resources might have
+	 * associated exclusions.
+	 * 
+	 * @param project
+	 * @return List<IResource>
+	 */
+	public synchronized List<IResource> getResourcesToRefresh(IProject project) {
+		getProjectToResourcesMap();
+		LinkedHashSet<IResource> resources = fProjectToResourcesMap.get(project);
+
+		if (resources == null) {
+			// there are no settings yet for the project, setup the defaults
+			resources = new LinkedHashSet<IResource>();
+			resources.add(project);
+			fProjectToResourcesMap.put(project, resources);
+		}
+
+		return new LinkedList<IResource>(resources);
+	}
+
+	public int getVersion() {
+		return fVersion;
+	}
+
 	public synchronized void loadExtensions() {
-		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID,
-				EXTENSION_ID);
+		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(
+				CCorePlugin.PLUGIN_ID, EXTENSION_ID);
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
 			for (IExtension extension2 : extensions) {
@@ -174,16 +393,19 @@ public class RefreshScopeManager {
 
 						if (factoryClassName != null) {
 							try {
-								Object execExt = configElement.createExecutableExtension(FACTORY_CLASS);
+								Object execExt = configElement
+										.createExecutableExtension(FACTORY_CLASS);
 								if ((execExt instanceof RefreshExclusionFactory)) {
 									RefreshExclusionFactory exclusionFactory = (RefreshExclusionFactory) execExt;
-									
-									if(exclusionClassName != null) {
-										fClassnameToExclusionFactoryMap.put(exclusionClassName, exclusionFactory);
+
+									if (exclusionClassName != null) {
+										fClassnameToExclusionFactoryMap.put(exclusionClassName,
+												exclusionFactory);
 									}
-									
-									if(instanceClassName != null) {
-										fClassnameToExclusionFactoryMap.put(instanceClassName, exclusionFactory);
+
+									if (instanceClassName != null) {
+										fClassnameToExclusionFactoryMap.put(instanceClassName,
+												exclusionFactory);
 									}
 								}
 							} catch (CoreException e) {
@@ -195,222 +417,9 @@ public class RefreshScopeManager {
 			}
 		}
 	}
-	
-	public static synchronized RefreshScopeManager getInstance() {
-		if(fInstance == null) {
-			fInstance = new RefreshScopeManager();
-		}
-		
-		return fInstance;
-	}
-	
-	public int getVersion() {
-		return fVersion;
-	}
-	
-	public synchronized RefreshExclusionFactory getFactoryForClassName(String className) {
-		RefreshExclusionFactory factory = fClassnameToExclusionFactoryMap.get(className);
-		
-		return factory;
-	}
-	
-	public synchronized RefreshExclusion getExclusionForClassName(String className) {
-		RefreshExclusionFactory factory = getFactoryForClassName(className);
-		
-		if(factory == null) {
-			return null;
-		}
-		
-		return factory.createNewExclusion();
-	}
-	
-	
-	/**
-	 * Returns the set of resources that should be refreshed for a project.
-	 * These resources might have associated exclusions.
-	 * 
-	 * @param project
-	 * @return List<IResource>
-	 */
-	public synchronized List<IResource> getResourcesToRefresh(IProject project) {
-		getProjectToResourcesMap();
-		LinkedHashSet<IResource> resources = fProjectToResourcesMap.get(project);
-		
-		if (resources == null) {
-			// there are no settings yet for the project, setup the defaults
-			resources = new LinkedHashSet<IResource>();
-			resources.add(project);
-			fProjectToResourcesMap.put(project, resources);
-		}	
-		
-		return new LinkedList<IResource>(resources);
-	}
-	
-	public synchronized void setResourcesToRefresh(IProject project, List<IResource> resources) {
-		getProjectToResourcesMap();
-		LinkedHashSet<IResource> resourceSet = new LinkedHashSet<IResource>(resources);
-		
-		fProjectToResourcesMap.put(project,  resourceSet);
-	}
-	
-	public synchronized void addResourceToRefresh(IProject project, IResource resource) {
-		getProjectToResourcesMap();
-		LinkedHashSet<IResource> resourceSet = fProjectToResourcesMap.get(project);
-		
-		if(resourceSet == null) {
-			resourceSet = new LinkedHashSet<IResource>();
-			fProjectToResourcesMap.put(project, resourceSet);
-		}
-		
-		resourceSet.add(resource);
-		
-	}
-	
-	public synchronized void deleteResourceToRefresh(IProject project, IResource resource) {
-		getProjectToResourcesMap();
-		LinkedHashSet<IResource> resourceSet = fProjectToResourcesMap.get(project);
-		
-		if(resourceSet == null) {
-			resourceSet = new LinkedHashSet<IResource>();
-			return;
-		}
-		
-		resourceSet.remove(resource);
-	}
-	
-	public synchronized void clearResourcesToRefresh(IProject project) {
-		getProjectToResourcesMap();
-		LinkedHashSet<IResource> resourceSet = null;
-		
-		fProjectToResourcesMap.put(project, resourceSet);
-	}
-	
-	public synchronized void clearAllResourcesToRefresh() {
-		getProjectToResourcesMap();
-		fProjectToResourcesMap.clear();
-	}
-	
-	public synchronized void clearAllData() {
-		clearAllResourcesToRefresh();
-		clearAllExclusions();
-		fIsLoaded = false;
-	}
 
-	private HashMap<IProject, LinkedHashSet<IResource>> getProjectToResourcesMap() {
-		if(fProjectToResourcesMap == null) {
-			fProjectToResourcesMap = new HashMap<IProject, LinkedHashSet<IResource>>();
-		}
-		
-		return fProjectToResourcesMap;
-	}
-	
-	public synchronized List<RefreshExclusion> getExclusions(IResource resource) {
-		getResourcesToExclusionsMap();
-		List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
-		if(exclusions == null) {
-			exclusions = new LinkedList<RefreshExclusion>();
-			fResourceToExclusionsMap.put(resource, exclusions);
-		}
-		
-		return exclusions;
-	}
-	
-	public synchronized void addExclusion(IResource resource, RefreshExclusion exclusion) {
-		getResourcesToExclusionsMap();
-		
-		List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
-		if(exclusions == null) {
-			exclusions = new LinkedList<RefreshExclusion>();
-			fResourceToExclusionsMap.put(resource, exclusions);
-		}
-		
-		exclusions.add(exclusion);
-	}
-	
-	private HashMap<IResource, List<RefreshExclusion>> getResourcesToExclusionsMap() {
-		if(fResourceToExclusionsMap == null) {
-			fResourceToExclusionsMap = new HashMap<IResource, List<RefreshExclusion>>();
-		}
-		
-		return fResourceToExclusionsMap;
-	}
-
-	public synchronized void removeExclusion(IResource resource, RefreshExclusion exclusion) {
-		getResourcesToExclusionsMap();
-		List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
-		if(exclusions == null) {
-			exclusions = new LinkedList<RefreshExclusion>();
-			fResourceToExclusionsMap.put(resource, exclusions);
-		}
-		
-		exclusions.remove(exclusion);
-	}
-	
-	public synchronized void persistSettings(ICProjectDescription projectDescription)
-			throws CoreException {
-		getProjectToResourcesMap();
-		getResourcesToExclusionsMap();
-		IProject project = projectDescription.getProject();
-
-		if (!project.exists()) {
-			return;
-		}
-
-		// serialize all settings for the project to the C Project Description
-		if (project.isOpen()) {
-			if (project.hasNature(CProjectNature.C_NATURE_ID)) {
-
-				ICStorageElement storageElement = projectDescription.getStorage(
-						REFRESH_SCOPE_STORAGE_NAME, true);
-				storageElement.clear();
-
-				storageElement.setAttribute(VERSION_NUMBER_ATTRIBUTE_NAME,
-						Integer.toString(fVersion));
-
-				for (IResource resource : fProjectToResourcesMap.get(project)) {
-
-					// create a resource node
-					ICStorageElement resourceElement = storageElement
-							.createChild(RESOURCE_ELEMENT_NAME);
-					resourceElement.setAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME, resource
-							.getFullPath().toString());
-					
-					String resourceTypeString = null;
-					
-					if(resource instanceof IFile) {
-						resourceTypeString = FILE_VALUE;
-					}
-					
-					else if(resource instanceof IFolder) {
-						resourceTypeString = FOLDER_VALUE;
-					}
-					
-					else if(resource instanceof IProject) {
-						resourceTypeString = PROJECT_VALUE;
-					}
-					
-					else {
-						resourceTypeString = OTHER_VALUE;
-					}
-					resourceElement.setAttribute(RESOURCE_TYPE_ATTRIBUTE_NAME, resourceTypeString);
-
-					// populate the node with any exclusions
-					List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
-					if (exclusions != null) {
-						for (RefreshExclusion exclusion : exclusions) {
-							exclusion.persistData(resourceElement);
-						}
-					}
-
-				}
-
-			}
-		}
-
-	}
-	
 	public synchronized void loadSettings() throws CoreException {
-		if(!fIsLoaded && !fIsLoading) {
+		if (!fIsLoaded && !fIsLoading) {
 			fIsLoading = true;
 			// iterate through all projects in the workspace. If they are C projects, attempt to load settings
 			// from them.
@@ -419,7 +428,7 @@ public class RefreshScopeManager {
 			for (IProject project : workspaceRoot.getProjects()) {
 				loadSettings(workspaceRoot, project);
 			}
-			
+
 			fIsLoaded = true;
 			fIsLoading = false;
 		}
@@ -434,16 +443,21 @@ public class RefreshScopeManager {
 			throws CoreException {
 		if (project.isOpen()) {
 			if (project.hasNature(CProjectNature.C_NATURE_ID)) {
-				CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
-				ICProjectDescription projectDescription = descriptionManager.getProjectDescription(project, false);
-				
+				CProjectDescriptionManager descriptionManager = CProjectDescriptionManager
+						.getInstance();
+				ICProjectDescription projectDescription = descriptionManager.getProjectDescription(
+						project, false);
+
 				if (projectDescription == null) {
-					// then there's nothing to load... could be an old project that pre-dates the project description's
-					// existence, or the project could have been just created but the project description hasn't been
-					// created yet.  Either way, just do nothing, because there's nothing to load.
+					/*
+					 * then there's nothing to load... could be an old project that pre-dates the project
+					 * description's existence, or the project could have been just created but the project
+					 * description hasn't been created yet. Either way, just do nothing, because there's
+					 * nothing to load.
+					 */
 					return;
 				}
-				
+
 				ICStorageElement storageElement = projectDescription.getStorage(
 						REFRESH_SCOPE_STORAGE_NAME, true);
 
@@ -468,17 +482,17 @@ public class RefreshScopeManager {
 						}
 
 						else {
-							String resourceTypeString = child.getAttribute(RESOURCE_TYPE_ATTRIBUTE_NAME);
-							
-							if(resourceTypeString == null) {
-								// we'll do our best, but we won't be able to create handles to non-existent resources
+							String resourceTypeString = child
+									.getAttribute(RESOURCE_TYPE_ATTRIBUTE_NAME);
+
+							if (resourceTypeString == null) {
+								// we'll do our best, but we won't be able to create handles to non-existent
+								// resources
 								resourceTypeString = OTHER_VALUE;
 							}
-							
+
 							// find the resource
 							IResource resource = null;
-
-							
 
 							if (resourceTypeString.equals(PROJECT_VALUE)) {
 								resource = workspaceRoot.getProject(resourcePath);
@@ -528,128 +542,124 @@ public class RefreshScopeManager {
 		}
 	}
 
-	public synchronized void clearExclusions(IResource resource) {
+	public synchronized void persistSettings(ICProjectDescription projectDescription)
+			throws CoreException {
+		getProjectToResourcesMap();
+		getResourcesToExclusionsMap();
+		IProject project = projectDescription.getProject();
+
+		if (!project.exists()) {
+			return;
+		}
+
+		// serialize all settings for the project to the C Project Description
+		if (project.isOpen()) {
+			if (project.hasNature(CProjectNature.C_NATURE_ID)) {
+
+				ICStorageElement storageElement = projectDescription.getStorage(
+						REFRESH_SCOPE_STORAGE_NAME, true);
+				storageElement.clear();
+
+				storageElement.setAttribute(VERSION_NUMBER_ATTRIBUTE_NAME,
+						Integer.toString(fVersion));
+
+				for (IResource resource : fProjectToResourcesMap.get(project)) {
+
+					// create a resource node
+					ICStorageElement resourceElement = storageElement
+							.createChild(RESOURCE_ELEMENT_NAME);
+					resourceElement.setAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME, resource
+							.getFullPath().toString());
+
+					String resourceTypeString = null;
+
+					if (resource instanceof IFile) {
+						resourceTypeString = FILE_VALUE;
+					}
+
+					else if (resource instanceof IFolder) {
+						resourceTypeString = FOLDER_VALUE;
+					}
+
+					else if (resource instanceof IProject) {
+						resourceTypeString = PROJECT_VALUE;
+					}
+
+					else {
+						resourceTypeString = OTHER_VALUE;
+					}
+
+					resourceElement.setAttribute(RESOURCE_TYPE_ATTRIBUTE_NAME, resourceTypeString);
+
+					// populate the node with any exclusions
+					List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
+					if (exclusions != null) {
+						for (RefreshExclusion exclusion : exclusions) {
+							exclusion.persistData(resourceElement);
+						}
+					}
+
+				}
+
+			}
+		}
+
+	}
+
+	public synchronized void removeExclusion(IResource resource, RefreshExclusion exclusion) {
 		getResourcesToExclusionsMap();
 		List<RefreshExclusion> exclusions = fResourceToExclusionsMap.get(resource);
-		if(exclusions != null) {
-			exclusions.clear();	
+		if (exclusions == null) {
+			exclusions = new LinkedList<RefreshExclusion>();
+			fResourceToExclusionsMap.put(resource, exclusions);
 		}
+
+		exclusions.remove(exclusion);
 	}
-	
+
 	public synchronized void setExclusions(IResource resource, List<RefreshExclusion> newExclusions) {
 		getResourcesToExclusionsMap();
 		List<RefreshExclusion> exclusions = new LinkedList<RefreshExclusion>(newExclusions);
-		
+
 		fResourceToExclusionsMap.put(resource, exclusions);
 	}
-	
-	public synchronized void clearAllExclusions() {
-		if(fResourceToExclusionsMap != null)
-			fResourceToExclusionsMap.clear();
-	}
-	
-	public synchronized void clearExclusionsForProject(IProject project) {
-		getResourcesToExclusionsMap();
-		List<IResource> resourcesToRemove = new LinkedList<IResource>();
-		
-		for(IResource resource : fResourceToExclusionsMap.keySet()) {
-			IProject project2 = resource.getProject();
-			if(project2.equals(project)) {
-				resourcesToRemove.add(resource);
-			}
-		}
-		
-		for(IResource resource : resourcesToRemove) {
-			fResourceToExclusionsMap.remove(resource);
-		}
-	}
-	
-	private synchronized void clearDataForProject(IProject project) {
-		clearResourcesToRefresh(project);
-		clearExclusionsForProject(project);
+
+	public synchronized void setResourcesToRefresh(IProject project, List<IResource> resources) {
+		getProjectToResourcesMap();
+		LinkedHashSet<IResource> resourceSet = new LinkedHashSet<IResource>(resources);
+
+		fProjectToResourcesMap.put(project, resourceSet);
 	}
 
-	public synchronized ExclusionInstance getInstanceForClassName(String className) {
-		RefreshExclusionFactory factory = getFactoryForClassName(className);
-		
-		if(factory == null) {
-			return null;
-		}
-		
-		return factory.createNewExclusionInstance();
-	}
-	
-	public synchronized ISchedulingRule getRefreshSchedulingRule(IProject project) {
-		return new MultiRule(getResourcesToRefresh(project).toArray(new ISchedulingRule[0]));
-	}
-	
-	public IWorkspaceRunnable getRefreshRunnable(final IProject project) {
-		
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-
-			public void run(IProgressMonitor monitor) throws CoreException {	
-				
-				List<IResource> resourcesToRefresh  = getResourcesToRefresh(project);
-				for(IResource resource : resourcesToRefresh) {
-					List<RefreshExclusion> exclusions = getExclusions(resource);
-					refreshResources(resource, exclusions, monitor);
-				}
-				
-			}
-
-			/**
-			 * @param q
-			 * @param resource
-			 * @throws CoreException 
-			 */
-			private void refreshResources(IResource resource, List<RefreshExclusion> exclusions, IProgressMonitor monitor) throws CoreException {
-				if (resource instanceof IContainer) {
-					IContainer container = (IContainer) resource;
-
-					if (shouldResourceBeRefreshed(resource)) {
-						resource.refreshLocal(IResource.DEPTH_ONE, monitor);
-
-					}
-					
-					for (IResource child : container.members()) {
-						refreshResources(child, exclusions, monitor);
-					}
-				}
-			}
-		};
-		
-		return runnable;
-	}
-	
 	public synchronized boolean shouldResourceBeRefreshed(IResource resource) {
 		IProject project = resource.getProject();
 		List<IResource> resourcesToRefresh = getResourcesToRefresh(project);
 		boolean isInSomeTree = false;
 		IResource topLevelResource = null;
-		
-		for(IResource resourceToRefresh : resourcesToRefresh) {
-			if(resourceToRefresh.equals(resource)) {
+
+		for (IResource resourceToRefresh : resourcesToRefresh) {
+			if (resourceToRefresh.equals(resource)) {
 				isInSomeTree = true;
 				topLevelResource = resource;
 				break;
 			}
-			
+
 			// see if the resource is a child of our top level resources
-			if(resourceToRefresh instanceof IContainer) {
+			if (resourceToRefresh instanceof IContainer) {
 				IContainer container = (IContainer) resourceToRefresh;
-				if(container.getFullPath().isPrefixOf(resource.getFullPath())) {
+				if (container.getFullPath().isPrefixOf(resource.getFullPath())) {
 					isInSomeTree = true;
 					topLevelResource = resourceToRefresh;
 					break;
 				}
 			}
-			
+
 		}
-		
-		if(!isInSomeTree) {
+
+		if (!isInSomeTree) {
 			return false;
 		}
-		
+
 		// get any exclusions
 		boolean isExcluded = false;
 
@@ -659,7 +669,7 @@ public class RefreshScopeManager {
 				break;
 			}
 		}
-		
+
 		return !isExcluded;
 
 	}

@@ -31,7 +31,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.cdt.codan.ui"; //$NON-NLS-1$
 	// The shared instance
 	private static CodanUIActivator plugin;
-	private IPreferenceStore preferenceCoreStore;
+	private IPreferenceStore corePreferenceStore;
 
 	/**
 	 * The constructor
@@ -39,25 +39,13 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	public CodanUIActivator() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
-	 * )
-	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
-	 * )
-	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
@@ -118,16 +106,16 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	 * @return
 	 */
 	public IPreferenceStore getCorePreferenceStore() {
-		if (preferenceCoreStore == null) {
-			preferenceCoreStore = new ScopedPreferenceStore(new InstanceScope(), CodanCorePlugin.PLUGIN_ID);
+		if (corePreferenceStore == null) {
+			corePreferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, CodanCorePlugin.PLUGIN_ID);
 		}
-		return preferenceCoreStore;
+		return corePreferenceStore;
 	}
 
 	public IPreferenceStore getPreferenceStore(IProject project) {
 		ProjectScope ps = new ProjectScope(project);
-		ScopedPreferenceStore scoped = new ScopedPreferenceStore(ps, PLUGIN_ID);
-		scoped.setSearchContexts(new IScopeContext[] { ps, new InstanceScope() });
+		ScopedPreferenceStore scoped = new ScopedPreferenceStore(ps, CodanCorePlugin.PLUGIN_ID);
+		scoped.setSearchContexts(new IScopeContext[] { ps, InstanceScope.INSTANCE });
 		return scoped;
 	}
 }

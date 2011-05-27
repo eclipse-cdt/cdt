@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Alena Laskavaia and others.
+ * Copyright (c) 2011 Alena Laskavaia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alena Laskavaia - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
@@ -25,20 +26,10 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 public class BuildPropertyPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
 	private IAdaptable element;
 
-	/**
-	 * 
-	 */
 	public BuildPropertyPage() {
-		setPreferenceStore(CodanUIActivator.getDefault().getPreferenceStore());
+		setPreferenceStore(CodanUIActivator.getDefault().getCorePreferenceStore());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors
-	 * ()
-	 */
 	@Override
 	protected void createFieldEditors() {
 		addField(new LabelFieldEditor("Set launch method for checkers, you can override this by editing individual problem settings",
@@ -87,9 +78,7 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements IWor
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.ui.IWorkbenchPropertyPage#setElement(org.eclipse.core.runtime
-	 * .IAdaptable)
+	 * @see org.eclipse.ui.IWorkbenchPropertyPage#setElement(org.eclipse.core.runtime.IAdaptable)
 	 */
 	public void setElement(IAdaptable element) {
 		this.element = element;

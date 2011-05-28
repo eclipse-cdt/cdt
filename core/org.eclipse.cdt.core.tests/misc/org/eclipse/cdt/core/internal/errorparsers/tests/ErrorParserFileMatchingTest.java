@@ -44,7 +44,7 @@ import org.eclipse.core.runtime.Platform;
  * properly locate and resolve filenames found in build output.
  */
 public class ErrorParserFileMatchingTest extends TestCase {
-	private static final String MAKE_ERRORPARSER_ID = "org.eclipse.cdt.core.CWDLocator";
+	private static final String CWD_LOCATOR_ID = "org.eclipse.cdt.core.CWDLocator";
 	private String mockErrorParserId = null;
 
 	private final static String testName = "FindMatchingFilesTest";
@@ -1024,7 +1024,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		String lines = "make[0]: Entering directory `dir'\n"
 			+ cygwinFileName+":1:error\n";
 		
-		String[] errorParsers = {MAKE_ERRORPARSER_ID, mockErrorParserId };
+		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
@@ -1139,7 +1139,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		String lines = "make[0]: Entering directory `Folder'\n"
 			+ fileName+":1:error\n";
 
-		String[] errorParsers = {MAKE_ERRORPARSER_ID, mockErrorParserId };
+		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
@@ -1166,7 +1166,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		String lines = "make[0]: Entering directory `" + absoluteDir + "'\n"
 			+ fileName+":1:error\n";
 
-		String[] errorParsers = {MAKE_ERRORPARSER_ID, mockErrorParserId };
+		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
@@ -1196,7 +1196,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 			+ "make[2]: Leaving directory `SubFolder'\n"
 			+ fileName+":1:error\n";
 
-		String[] errorParsers = {MAKE_ERRORPARSER_ID, mockErrorParserId };
+		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
 
@@ -1221,7 +1221,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 			+ "make[0]: Entering directory `Folder'\n"
 			+ fileName+":1:error\n";
 
-		String[] errorParsers = {MAKE_ERRORPARSER_ID, mockErrorParserId };
+		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(2, errorList.size());
 
@@ -1240,6 +1240,206 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		}
 	}
 
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testDisablePushDirectoryOnParallelBuild_J() throws Exception {
+		String fileName = getName()+".c";
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFile(fProject, fileName);
+		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+
+		String lines = "make -j\n"
+			+ "make[0]: Entering directory `Folder'\n"
+			+ fileName+":1:error\n";
+
+		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testDisablePushDirectoryOnParallelBuild_J2() throws Exception {
+		String fileName = getName()+".c";
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFile(fProject, fileName);
+		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		
+		String lines = "make -j2\n"
+				+ "make[0]: Entering directory `Folder'\n"
+				+ fileName+":1:error\n";
+		
+		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
+		assertEquals(1, errorList.size());
+		
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+	
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testDisablePushDirectoryOnParallelBuild_J_2() throws Exception {
+		String fileName = getName()+".c";
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFile(fProject, fileName);
+		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		
+		String lines = "make -j  2\n"
+				+ "make[0]: Entering directory `Folder'\n"
+				+ fileName+":1:error\n";
+		
+		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
+		assertEquals(1, errorList.size());
+		
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+	
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testDisablePushDirectoryOnParallelBuild_J1() throws Exception {
+		String fileName = getName()+".c";
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFile(fProject, fileName);
+		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		
+		String lines = "make -j1\n"
+				+ "make[0]: Entering directory `Folder'\n"
+				+ fileName+":1:error\n";
+		
+		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
+		assertEquals(1, errorList.size());
+		
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+	
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testDisablePushDirectoryOnParallelBuild_J_1() throws Exception {
+		String fileName = getName()+".c";
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFile(fProject, fileName);
+		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		
+		String lines = "make -j  1\n"
+				+ "make[0]: Entering directory `Folder'\n"
+				+ fileName+":1:error\n";
+		
+		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
+		assertEquals(1, errorList.size());
+		
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+	
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testDisablePushDirectoryOnParallelBuild_Jobs() throws Exception {
+		String fileName = getName()+".c";
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFile(fProject, fileName);
+		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		
+		String lines = "make --jobs=2\n"
+				+ "make[0]: Entering directory `Folder'\n"
+				+ fileName+":1:error\n";
+		
+		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
+		assertEquals(1, errorList.size());
+		
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+	
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testDisablePushDirectoryOnParallelBuild_Jobs1() throws Exception {
+		String fileName = getName()+".c";
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFile(fProject, fileName);
+		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		
+		String lines = "make --jobs=1\n"
+				+ "make[0]: Entering directory `Folder'\n"
+				+ fileName+":1:error\n";
+		
+		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
+		assertEquals(1, errorList.size());
+		
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+	
+	/**
+	 * Checks if a file from error output can be found.
+	 *
+	 * @throws Exception...
+	 */
+	public void testDisablePushDirectoryOnParallelBuild_gmake() throws Exception {
+		String fileName = getName()+".c";
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFile(fProject, fileName);
+		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		
+		String lines = "gmake384 -k -j all\n"
+				+ "make[0]: Entering directory `Folder'\n"
+				+ fileName+":1:error\n";
+		
+		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
+		assertEquals(1, errorList.size());
+		
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+	
 	/**
 	 * Checks if a file from error output can be found.
 	 *

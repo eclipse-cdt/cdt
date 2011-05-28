@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
@@ -106,7 +106,6 @@ public class NodeContainer {
 		public ArrayList<IASTName> getReferencesAfterSelection() {
 			if (referencesAfterCached == null
 					|| lastCachedReferencesHash != references.hashCode()) {
-
 				lastCachedReferencesHash = references.hashCode();
 				referencesAfterCached = new ArrayList<IASTName>();
 				for (IASTName ref : references) {
@@ -266,7 +265,6 @@ public class NodeContainer {
 		public void setWriteAccess(boolean isWriteAceess) {
 			this.isWriteAccess = isWriteAceess;
 		}
-
 	}
 
 	public NodeContainer() {
@@ -275,8 +273,12 @@ public class NodeContainer {
 		names = new ArrayList<NameInformation>();
 	}
 
-	public int size() {
+	public final int size() {
 		return vec.size();
+	}
+
+	public final boolean isEmpty() {
+		return vec.isEmpty();
 	}
 
 	public void add(IASTNode node) {
@@ -300,7 +302,6 @@ public class NodeContainer {
 						try {
 							if (!cppBind.isGloballyQualified()) {
 								NameInformation nameInformation = new NameInformation(name);
-
 								IASTName[] refs = name.getTranslationUnit().getReferences(bind);
 								for (IASTName ref : refs) {
 									nameInformation.addReference(ref);
@@ -310,13 +311,11 @@ public class NodeContainer {
 						} catch (DOMException e) {
 							ILog logger = CUIPlugin.getDefault().getLog();
 							IStatus status = new Status(IStatus.WARNING,
-									CUIPlugin.PLUGIN_ID, IStatus.OK, e
-											.getMessage(), e);
+									CUIPlugin.PLUGIN_ID, IStatus.OK, e.getMessage(), e);
 							logger.log(status);
 						}
 					} else if (bind instanceof IVariable) {
-						NameInformation nameInformation = new NameInformation(
-								name);
+						NameInformation nameInformation = new NameInformation(name);
 
 						IASTName[] refs = name.getTranslationUnit().getReferences(bind);
 						for (IASTName ref : refs) {
@@ -392,14 +391,12 @@ public class NodeContainer {
 
 		for (NameInformation nameInf : names) {
 			if (!declarations.contains(nameInf.getDeclaration())) {
-
 				declarations.add(nameInf.getDeclaration());
 				usedAfter.add(nameInf);
 			} else {
 				for (NameInformation nameInformation : usedAfter) {
 					if (nameInf.isWriteAccess()
-							&& nameInf.getDeclaration() == nameInformation
-									.getDeclaration()) {
+							&& nameInf.getDeclaration() == nameInformation.getDeclaration()) {
 						nameInformation.setWriteAccess(true);
 					}
 				}
@@ -421,11 +418,9 @@ public class NodeContainer {
 		for (NameInformation nameInf : names) {
 			if (nameInf.isDeclarationInScope()
 					&& !declarations.contains(nameInf.getDeclaration()) && nameInf.isUsedAfterReferences()) {
-
 				declarations.add(nameInf.getDeclaration());
 				usedAfter.add(nameInf);
-				// is return value candidate, set returnvalue to true and
-				// reference to false
+				// is return value candidate, set return value to true and reference to false
 				nameInf.setReturnValue(true);
 				nameInf.setReference(false);
 			}
@@ -491,7 +486,7 @@ public class NodeContainer {
 		for (IASTNode node : vec) {
 			int fileOffset = 0;
 			int length = 0;
-			
+
 			IASTNodeLocation[] nodeLocations = node.getNodeLocations();
 			for (IASTNodeLocation location : nodeLocations) {
 				int nodeOffset, nodeLength;
@@ -508,13 +503,13 @@ public class NodeContainer {
 					length = nodeLength;
 				}
 			}
-		int endNode = fileOffset + length;
-		if (endNode > end) {
-			end = endNode;
+			int endNode = fileOffset + length;
+			if (endNode > end) {
+				end = endNode;
+			}
 		}
-	}
 
-	return end;
+		return end;
 	}
 
 	@Override
@@ -522,8 +517,7 @@ public class NodeContainer {
 		return vec.toString();
 	}
 
-	public ArrayList<NameInformation> getNames() {
+	public List<NameInformation> getNames() {
 		return names;
 	}
-	
 }

@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable;
 
@@ -22,14 +22,13 @@ import org.eclipse.cdt.ui.tests.refactoring.RefactoringTester;
  * @author Tom Ball
  */
 public class ExtractLocalVariableTestSuite extends TestSuite {
-
 	@SuppressWarnings("nls")
 	public static Test suite() throws Exception {
 		TestSuite suite = new ExtractLocalVariableTestSuite();
 		suite.addTest(RefactoringTester.suite("ExtractLocalVariableRefactoringTests", 
 				"resources/refactoring/ExtractLocalVariable.rts"));
 		suite.addTest(RefactoringTester.suite("ExtractLocalVariableRefactoringHistoryTests", 
-		"resources/refactoring/ExtractLocalVariableHistory.rts"));
+				"resources/refactoring/ExtractLocalVariableHistory.rts"));
 		return suite;
 	}
 }

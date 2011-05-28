@@ -48,7 +48,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	}
 
 	// struct A {
-	//   virtual void f() = 0;
+	//   virtual void f() { };
 	//   ~A(); // warn! public non-virtual dtor.
 	// };
 	public void testPublicVirtualDtorInClass() {
@@ -57,7 +57,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	}
 
 	// struct A {
-	//   virtual void f() = 0;
+	//   virtual void f() { };
 	//   // warn! implicit public non-virtual dtor.
 	// };
 	public void testImplicitPublicNonVirtualDtorInClass() {
@@ -68,7 +68,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	// struct F { };
 	//
 	// struct A {
-	//   virtual void f() = 0;
+	//   virtual void f() { };
 	// private:
 	//   friend class F;
 	//   ~A(); // warn! can be called from class F.
@@ -79,7 +79,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	}
 
 	// struct A {
-	//   virtual void f() = 0;
+	//   virtual void f() { };
 	//   virtual ~A();
 	// };
 	//
@@ -92,7 +92,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	}
 
 	// struct A {
-	//   virtual void f() = 0;
+	//   virtual void f() { };
 	//   virtual ~A();  // ok.
 	// };
 	//
@@ -109,7 +109,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	}
 
 	// struct A {
-	//   virtual void f() = 0;
+	//   virtual void f() { };
 	//   ~A();  // warn! public non-virtual dtor.
 	//          // this affects B, D and E further down in the hierarchy as well
 	// };
@@ -122,7 +122,25 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	//
 	// struct E : public D {
 	// };
-	public void _testNonVirtualDtorInBaseClass2() {
+	public void testNonVirtualDtorInBaseClass2() {
+		loadCodeAndRun(getAboveComment());
 		checkErrorLines(3, 7, 11, 13);
+	}
+
+	// class A {  // OK. Do _not_ warn here.
+	//   // A is an abstract class because it has one pure virtual method.
+	//   // A cannot be instantiated.
+	//   virtual void f1() { };
+	//   virtual void f2() = 0;
+	// };
+	//
+	// class B : public A {
+	//   virtual void f1() { };
+	//   virtual void f2() { };
+	//   virtual ~B();
+	// };
+	public void testAbstractBaseClass() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
 	}
 }

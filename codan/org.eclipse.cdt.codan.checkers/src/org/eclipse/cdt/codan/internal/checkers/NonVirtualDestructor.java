@@ -36,7 +36,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"; //$NON-NLS-1$
 
 	public void processAst(IASTTranslationUnit ast) {
-		// Traverse the ast using the visitor pattern.
+		// Traverse the AST using the visitor pattern.
 		ast.accept(new OnEachClass());
 	}
 
@@ -102,25 +102,28 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 			// class has base virtual method and own non-virtual destructor
 			ICPPMethod[] declaredMethods = classType.getDeclaredMethods();
 			boolean hasOwnVirtualMethod = false;
-			boolean hasOwnNonVirDestructor = false;  // implicit destructor
+			boolean hasOwnNonVirtualDestructor = false;  // implicit destructor
 			boolean hasDestructor = false;
 			boolean hasVirtualMethod = false;
 			for (ICPPMethod method : declaredMethods) {
-				if (method.isVirtual() && !method.isDestructor()) {
+				if (method.isPureVirtual()) {
+					// Class has at least one pure virtual method, it is abstract and cannot be instantiated.
+					return false;
+				} else if (method.isVirtual() && !method.isDestructor()) {
 					hasOwnVirtualMethod = true;
 					virtualMethod = method;
 				}
 				if (method.isDestructor()) {
 					hasDestructor = true;
 					if (!method.isVirtual()) {
-						hasOwnNonVirDestructor = true;
+						hasOwnNonVirtualDestructor = true;
 						destructor = method;
 					}
 				}
 			}
 			boolean hasVirtualDestructor = false;
 			// Class has own virtual method and own non-virtual destructor.
-			if (hasOwnVirtualMethod && hasOwnNonVirDestructor) {
+			if (hasOwnVirtualMethod && hasOwnNonVirtualDestructor) {
 				if (classType.getFriends().length == 0) {
 					if (destructor instanceof ICPPMethod) {
 						// Check visibility of dtor. No error if it is protected or private.
@@ -134,15 +137,13 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 				// Destructor can be called from a class declared as friend.
 				return true;	
 			}
-			// Class does have virtual methods and no destructors, compiler will generate implicit public destructor
-			if (hasOwnVirtualMethod && !hasDestructor) {
-				if (classType.getBases().length == 0) {
-					return true;
-				}
+			// Class has virtual methods and implicit public destructor.
+			if (hasOwnVirtualMethod && !hasDestructor && classType.getBases().length == 0) {
+				return true;
 			}
 			// Class does not have virtual methods but has virtual destructor
 			// - not an error
-			if (!hasOwnVirtualMethod && hasDestructor && !hasOwnNonVirDestructor) {
+			if (!hasOwnVirtualMethod && hasDestructor && !hasOwnNonVirtualDestructor) {
 				return false;
 			}
 			// Check inherited methods
@@ -157,9 +158,8 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 					hasDestructor = true;
 					if (method.isVirtual()) {
 						hasVirtualDestructor = true;
-					} else {
-						if (destructor == null)
-							destructor = method;
+					} else if (destructor == null) {
+						destructor = method;
 					}
 				}
 			}
@@ -172,10 +172,9 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 					}
 					return noVirtualDtorInBase;
 				}
-				
 			} else if (hasVirtualMethod) {
 				// Class has base virtual method and own non-virtual destructor.
-				if (hasOwnNonVirDestructor) {
+				if (hasOwnNonVirtualDestructor) {
 					return true;
 				}
 				boolean noVirtualDtorInBase = !hasVirtualDtorInBaseClass(classType);
@@ -196,6 +195,9 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 				ICPPClassType testedBaseClass = (ICPPClassType) base.getBaseClass();
 				ICPPMethod[] declaredBaseMethods = testedBaseClass.getDeclaredMethods();
 				for (ICPPMethod method : declaredBaseMethods) {
+					if (method.isPureVirtual()) {
+						return false;
+					}
 					if (method.isDestructor() && method.isVirtual()) {
 						return true;
 					}
@@ -206,15 +208,8 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 			return false;
 		}
 
-		/**
-		 * @param decl
-		 * @return
-		 */
 		private boolean isClassDecl(IASTDeclSpecifier decl) {
-			if (decl instanceof ICPPASTCompositeTypeSpecifier) {
-				return true;
-			}
-			return false;
+			return decl instanceof ICPPASTCompositeTypeSpecifier;
 		}
 	}
 }

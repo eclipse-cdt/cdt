@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -220,7 +220,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	private void markWriteAccess() throws CoreException {
-		ArrayList<NameInformation> paras = container.getNames();
+		List<NameInformation> paras = container.getNames();
 
 		for (NameInformation name : paras) {
 			int flag = CPPVariableReadWriteFlags.getReadWriteFlags(name.getName());
@@ -631,7 +631,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			subRW = rewriter.insertBefore(insertpoint.getParent().getParent(), insertpoint.getParent(),
 					templateDeclaration, group);
 		} else {
-			
 			subRW = rewriter.insertBefore(insertpoint.getParent(), insertpoint, func, group);
 		}
 		
@@ -639,19 +638,18 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				container.getNodesToWrite(), subRW, group);
 
 		// Set return value
-		if (info.getReturnVariable() != null) {
+		NameInformation returnVariable = info.getReturnVariable();
+		if (returnVariable != null) {
 			IASTReturnStatement returnStmt = new CPPASTReturnStatement();
-			if (info.getReturnVariable().getDeclaration().getParent() instanceof IASTExpression) {
-				IASTExpression returnValue = (IASTExpression) info
-						.getReturnVariable().getDeclaration().getParent();
+			if (returnVariable.getDeclaration().getParent() instanceof IASTExpression) {
+				IASTExpression returnValue = (IASTExpression) returnVariable.getDeclaration().getParent();
 				returnStmt.setReturnValue(returnValue);
 			} else {
 				IASTIdExpression expr = new CPPASTIdExpression();
-				if (info.getReturnVariable().getUserSetName() == null) {
-					expr.setName(newName(info.getReturnVariable().getName()));
+				if (returnVariable.getUserSetName() == null) {
+					expr.setName(newName(returnVariable.getName()));
 				} else {
-					expr.setName(new CPPASTName(info.getReturnVariable()
-							.getUserSetName().toCharArray()));
+					expr.setName(new CPPASTName(returnVariable.getUserSetName().toCharArray()));
 				}
 				returnStmt.setReturnValue(expr);
 			}

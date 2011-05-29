@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -68,24 +69,25 @@ public class SelectionHelper {
 	
 	public static boolean isSelectionOnExpression(Region textSelection, IASTNode expression) {
 		Region exprPos = createExpressionPosition(expression);
+		int exprStart = exprPos.getOffset();
 		int selStart = textSelection.getOffset();
-		int selEnd = textSelection.getLength() + selStart;
-		return exprPos.getOffset() + exprPos.getLength() >= selStart && exprPos.getOffset() <= selEnd;
+		int selEnd = selStart + textSelection.getLength();
+		return exprStart + exprPos.getLength() >= selStart && exprStart <= selEnd;
 	}
 	
 	public static boolean isExpressionWhollyInSelection(Region textSelection, IASTNode expression) {
 		Region exprPos = createExpressionPosition(expression);
-
+		int exprStart = exprPos.getOffset();
 		int selStart = textSelection.getOffset();
-		int selEnd = textSelection.getLength() + selStart;
-
-		return exprPos.getOffset() >= selStart && exprPos.getOffset() + exprPos.getLength() <= selEnd;
+		int selEnd = selStart + textSelection.getLength();
+		return exprStart >= selStart && exprStart + exprPos.getLength() <= selEnd;
 	}
 	
 	public static boolean isInSameFile(IASTNode node, IFile file) {
 		IPath path = new Path(node.getContainingFilename());
-		IFile locFile = ResourcesPlugin.getWorkspace().getRoot().getFile(file.getLocation());
-		IFile tmpFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		IFile locFile = workspaceRoot.getFile(file.getLocation());
+		IFile tmpFile = workspaceRoot.getFile(path);
 		return locFile.equals(tmpFile);
 	}
 	

@@ -68,7 +68,7 @@ public class Sender implements ISender
 			String noDelayStr = System.getProperty("DSTORE_TCP_NO_DELAY"); //$NON-NLS-1$
 			if (noDelayStr != null && noDelayStr.length() > 0){
 				try {
-					boolean noDelay = Boolean.parseBoolean(noDelayStr);
+					boolean noDelay = Boolean.valueOf(noDelayStr).booleanValue();
 					_socket.setTcpNoDelay(noDelay); 
 					
 					noDelay = _socket.getTcpNoDelay();

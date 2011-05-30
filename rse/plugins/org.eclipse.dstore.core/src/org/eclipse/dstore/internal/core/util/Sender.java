@@ -37,6 +37,7 @@ import org.eclipse.dstore.core.java.IRemoteClassInstance;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 
 /**
  * This class is used for sending data to a socket in the DataStore 
@@ -65,7 +66,7 @@ public class Sender implements ISender
 		_xmlGenerator = new XMLgenerator(_dataStore);
 		try
 		{
-			String noDelayStr = System.getProperty("DSTORE_TCP_NO_DELAY"); //$NON-NLS-1$
+			String noDelayStr = System.getProperty(IDataStoreSystemProperties.DSTORE_TCP_NO_DELAY);
 			if (noDelayStr != null && noDelayStr.length() > 0){
 				try {
 					boolean noDelay = Boolean.valueOf(noDelayStr).booleanValue();

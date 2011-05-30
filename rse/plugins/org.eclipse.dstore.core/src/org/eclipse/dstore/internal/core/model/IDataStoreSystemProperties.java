@@ -99,4 +99,12 @@ public interface IDataStoreSystemProperties {
 	
 	// path to the server jars
 	public static final String A_PLUGIN_PATH="A_PLUGIN_PATH"; //$NON-NLS-1$
+	
+
+	/*****************************************************************
+	 * TCPNODELAY option
+	 *****************************************************************/
+	// specifying this as true disables Nagle's algorithm 
+	public static final String DSTORE_TCP_NO_DELAY="DSTORE_TCP_NO_DELAY"; //$NON-NLS-1$
+
 }

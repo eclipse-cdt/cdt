@@ -79,7 +79,7 @@ public final class Platform {
 				Process unameProcess;
 				String cmd[];
 				if (org.eclipse.core.runtime.Platform.OS_WIN32.equals(getOS())) {
-					cmd = new String[] {"cmd", "/c", "set", "PROCESSOR_ARCHITECTURE"};  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					cmd = new String[] {"cmd", "/d", "/c", "set", "PROCESSOR_ARCHITECTURE"};  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 				} else {
 					// We don't use "uname -p" since it returns "unknown" on some Linux systems.
 					cmd = new String[] {"uname", "-m"};  //$NON-NLS-1$//$NON-NLS-2$
@@ -87,7 +87,8 @@ public final class Platform {
 	
 				try {
 					unameProcess = Runtime.getRuntime().exec(cmd);
-	
+					unameProcess.getOutputStream().close();
+					unameProcess.getErrorStream().close();
 					InputStreamReader inputStreamReader = new InputStreamReader(unameProcess.getInputStream());
 					BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 					String unameOutput = bufferedReader.readLine();

@@ -73,9 +73,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 public class CScope implements ICScope, IASTInternalScope {
 	/**
 	 * ISO C:99 6.2.3 there are separate namespaces for various categories of
-	 * identifiers: - label names ( labels have ICFunctionScope ) - tags of
+	 * identifiers: - label names (labels have ICFunctionScope) - tags of
 	 * structures or unions : NAMESPACE_TYPE_TAG - members of structures or
-	 * unions ( members have ICCompositeTypeScope ) - all other identifiers :
+	 * unions (members have ICCompositeTypeScope) - all other identifiers :
 	 * NAMESPACE_TYPE_OTHER
 	 */
 	public static final int NAMESPACE_TYPE_TAG = 0;
@@ -128,37 +128,39 @@ public class CScope implements ICScope, IASTInternalScope {
      * @see org.eclipse.cdt.core.dom.ast.IScope#getParent()
      */
     public IScope getParent() {
-        return CVisitor.getContainingScope( physicalNode );
+        return CVisitor.getContainingScope(physicalNode);
     }
 
     protected static class CollectNamesAction extends ASTVisitor {
-        private char [] name;
-        private IASTName [] result = null;
-        CollectNamesAction( char [] n ){
+        private char[] name;
+        private IASTName[] result = null;
+        
+        CollectNamesAction(char[] n) {
             name = n;
             shouldVisitNames = true;
         }
         @Override
-		public int visit( IASTName n ){
+		public int visit(IASTName n) {
             ASTNodeProperty prop = n.getPropertyInParent();
-            if( prop == IASTElaboratedTypeSpecifier.TYPE_NAME ||
+            if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME ||
                 prop == IASTCompositeTypeSpecifier.TYPE_NAME ||
-                prop == IASTDeclarator.DECLARATOR_NAME )
-            {
-                if( CharArrayUtils.equals( n.toCharArray(), name ) )
-                    result = (IASTName[]) ArrayUtil.append( IASTName.class, result, n );    
+                prop == IASTDeclarator.DECLARATOR_NAME) {
+                if (CharArrayUtils.equals(n.toCharArray(), name))
+                    result = (IASTName[]) ArrayUtil.append(IASTName.class, result, n);    
             }
             
             return PROCESS_CONTINUE; 
         }
+
         @Override
-		public int visit( IASTStatement statement ){
-            if( statement instanceof IASTDeclarationStatement )
+		public int visit(IASTStatement statement) {
+            if (statement instanceof IASTDeclarationStatement)
                 return PROCESS_CONTINUE;
             return PROCESS_SKIP;
         }
-        public IASTName [] getNames(){
-            return (IASTName[]) ArrayUtil.trim( IASTName.class, result );
+
+        public IASTName[] getNames() {
+            return (IASTName[]) ArrayUtil.trim(IASTName.class, result);
         }
     }
     
@@ -169,7 +171,7 @@ public class CScope implements ICScope, IASTInternalScope {
 		return CVisitor.findBindings(this, name);
 	}
 
-    public IBinding getBinding( int namespaceType, char [] name ){
+    public IBinding getBinding(int namespaceType, char[] name) {
     	Object o= mapsToNameOrBinding[namespaceType].get(name);
     	if (o instanceof IBinding)
     		return (IBinding) o;
@@ -221,19 +223,18 @@ public class CScope implements ICScope, IASTInternalScope {
 		}
 	}
 
-    private int getNamespaceType( IASTName name ){
+    private int getNamespaceType(IASTName name) {
         ASTNodeProperty prop = name.getPropertyInParent();
-        if( prop == IASTCompositeTypeSpecifier.TYPE_NAME ||
+        if (prop == IASTCompositeTypeSpecifier.TYPE_NAME ||
             prop == IASTElaboratedTypeSpecifier.TYPE_NAME ||
             prop == IASTEnumerationSpecifier.ENUMERATION_NAME ||
-            prop == CVisitor.STRING_LOOKUP_TAGS_PROPERTY )
-        {
+            prop == CVisitor.STRING_LOOKUP_TAGS_PROPERTY) {
             return NAMESPACE_TYPE_TAG;
         }
         
         return NAMESPACE_TYPE_OTHER;
     }
-    public final IBinding getBinding( IASTName name, boolean resolve ) {
+    public final IBinding getBinding(IASTName name, boolean resolve) {
     	return getBinding(name, resolve, IIndexFileSet.EMPTY);
     }
     
@@ -243,7 +244,7 @@ public class CScope implements ICScope, IASTInternalScope {
 
 	public final IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		char[] c = name.toCharArray();
-	    if( c.length == 0  ){
+	    if (c.length == 0) {
 	        return null;
 	    }
 	    
@@ -272,7 +273,7 @@ public class CScope implements ICScope, IASTInternalScope {
     	if (resolve && physicalNode instanceof IASTTranslationUnit) {
     		final IASTTranslationUnit tu = (IASTTranslationUnit)physicalNode;
 			IIndex index= tu.getIndex();
-    		if(index!=null) {
+    		if (index != null) {
     			try {
     				IBinding[] bindings= index.findBindings(name.toCharArray(), INDEX_FILTERS[type], new NullProgressMonitor());
     				if (fileSet != null) {
@@ -310,8 +311,7 @@ public class CScope implements ICScope, IASTInternalScope {
     		if (parent instanceof IASTSimpleDeclSpecifier) {
     			if (((IASTSimpleDeclSpecifier) parent).getDeclTypeExpression() != null)
     				return false;
-    		}
-    		else if (parent instanceof IASTTypeIdExpression) {
+    		} else if (parent instanceof IASTTypeIdExpression) {
     			if (((IASTTypeIdExpression) parent).getOperator() == IASTTypeIdExpression.op_typeof)
     				return false;
     		}
@@ -324,7 +324,7 @@ public class CScope implements ICScope, IASTInternalScope {
      * @see org.eclipse.cdt.core.dom.ast.c.ICScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
-        char [] c = name.toCharArray();
+        char[] c = name.toCharArray();
         Object[] obj = null;
 
         populateCache();
@@ -348,15 +348,16 @@ public class CScope implements ICScope, IASTInternalScope {
 			IIndex index = tu.getIndex();
 			if (index != null) {
 				try {
-					IBinding[] bindings = prefixLookup ? index.findBindingsForContentAssist(name.toCharArray(), true, INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null)
-							: index.findBindings(name.toCharArray(), INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null);
+					IBinding[] bindings = prefixLookup ?
+							index.findBindingsForContentAssist(name.toCharArray(), true, INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null) :
+							index.findBindings(name.toCharArray(), INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null);
 					if (fileSet != null) {
 						bindings = fileSet.filterFileLocalBindings(bindings);
 					}
 
 					obj = ArrayUtil.addAll(Object.class, obj, bindings);
-				} catch (CoreException ce) {
-					CCorePlugin.log(ce);
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
 				}
 			}
 		}
@@ -366,7 +367,7 @@ public class CScope implements ICScope, IASTInternalScope {
 		for (Object element : obj) {
 			if (element instanceof IBinding) {
 				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, element);
-			} else  {
+			} else {
 				IASTName n= null;
 				if (element instanceof IASTName) {
 					n= (IASTName) element;
@@ -392,13 +393,13 @@ public class CScope implements ICScope, IASTInternalScope {
     
     /**
      * Index results from global scope, differ from ast results from translation unit scope. This routine
-     * is intended to fix results from the index to be consistent with ast scope behaviour.
+     * is intended to fix results from the index to be consistent with ast scope behavior.
      * @param name the name as it occurs in the ast
      * @param bindings the set of candidate bindings
      * @return the appropriate binding, or null if no binding is appropriate for the ast name
      */
     private IBinding processIndexResults(IASTName name, IBinding[] bindings) {
-    	if(bindings.length!=1)
+    	if (bindings.length != 1)
     		return null;
     	
     	return bindings[0];
@@ -569,7 +570,7 @@ public class CScope implements ICScope, IASTInternalScope {
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#getScopeName()
 	 */
 	public IName getScopeName() {
-		if( physicalNode instanceof IASTCompositeTypeSpecifier ){
+		if (physicalNode instanceof IASTCompositeTypeSpecifier) {
 			return ((IASTCompositeTypeSpecifier) physicalNode).getName();
 		}
 		return null;

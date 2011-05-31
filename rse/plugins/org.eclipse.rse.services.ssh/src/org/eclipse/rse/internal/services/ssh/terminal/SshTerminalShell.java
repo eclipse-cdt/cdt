@@ -6,10 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Martin Oberhuber (Wind River) - initial API and implementation
- * Anna Dushistova  (MontaVista) - [170910] Integrate the TM Terminal View with RSE
- * Martin Oberhuber (Wind River) - [227320] Fix endless loop in SshTerminalShell
- * Yufen Kuo        (MontaVista) - [274153] Fix pipe closed with RSE
+ * Martin Oberhuber (Wind River)      - initial API and implementation
+ * Anna Dushistova  (MontaVista)      - [170910] Integrate the TM Terminal View with RSE
+ * Martin Oberhuber (Wind River)      - [227320] Fix endless loop in SshTerminalShell
+ * Yufen Kuo        (MontaVista)      - [274153] Fix pipe closed with RSE
+ * Anna Dushistova  (Mentor Graphics) - Returned "session lost" handling to isActive()
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.terminal;
@@ -193,7 +194,7 @@ public class SshTerminalShell extends AbstractTerminalShell {
 		}
 	}
 
-	public void exit() {
+	 public void exit() {
 		if (fChannel != null) {
 			try {
 				try {
@@ -209,17 +210,22 @@ public class SshTerminalShell extends AbstractTerminalShell {
 				fChannel.disconnect();
 			} finally {
 				fChannel = null;
-			}
-			Session session = fSessionProvider.getSession();
-			if (session != null && !session.isConnected()) {
-			    fSessionProvider.handleSessionLost();
+				isActive();
 			}
 		}
 	}
 
-	public boolean isActive() {
+	 public boolean isActive() {
 		if (fChannel != null && !fChannel.isEOF()) {
 			return true;
+		}
+		// shell is not active: check for session lost
+		//AD: comment out exit call until we find better solution,
+		//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=274153
+		//exit();
+		Session session = fSessionProvider.getSession();
+		if (session != null && !session.isConnected()) {
+			fSessionProvider.handleSessionLost();
 		}
 		return false;
 	}

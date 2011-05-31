@@ -6,11 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM Rational Software) - Initial API and implementation 
- *    Markus Schorn (Wind River Systems)
- *    Bryan Wilkinson (QNX)
- *    Andrew Ferguson (Symbian)
- *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Andrew Niefer (IBM Rational Software) - Initial API and implementation 
+ *     Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
+ *     Andrew Ferguson (Symbian)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -131,7 +131,7 @@ public class CVisitor extends ASTQueries {
 		}
 		
 	    private IASTProblem[] removeNullFromProblems() {
-	    	if (problems[problems.length-1] != null) { // if the last element in the list is not null then return the list
+	    	if (problems[problems.length - 1] != null) { // if the last element in the list is not null then return the list
 				return problems;			
 			} else if (problems[0] == null) { // if the first element in the list is null, then return empty list
 				return new IASTProblem[0];
@@ -154,7 +154,7 @@ public class CVisitor extends ASTQueries {
 		@Override
 		public int visit(IASTDeclaration declaration) {
 			if (declaration instanceof IASTProblemHolder)
-				addProblem(((IASTProblemHolder)declaration).getProblem());
+				addProblem(((IASTProblemHolder) declaration).getProblem());
 
 			return PROCESS_CONTINUE;
 		}
@@ -165,7 +165,7 @@ public class CVisitor extends ASTQueries {
 		@Override
 		public int visit(IASTExpression expression) {
 			if (expression instanceof IASTProblemHolder)
-				addProblem(((IASTProblemHolder)expression).getProblem());
+				addProblem(((IASTProblemHolder) expression).getProblem());
 
 			return PROCESS_CONTINUE;
 		}
@@ -176,7 +176,7 @@ public class CVisitor extends ASTQueries {
 		@Override
 		public int visit(IASTStatement statement) {
 			if (statement instanceof IASTProblemHolder)
-				addProblem(((IASTProblemHolder)statement).getProblem());
+				addProblem(((IASTProblemHolder) statement).getProblem());
 
 			return PROCESS_CONTINUE;
 		}
@@ -187,7 +187,7 @@ public class CVisitor extends ASTQueries {
 		@Override
 		public int visit(IASTTypeId typeId) {
 			if (typeId instanceof IASTProblemHolder)
-				addProblem(((IASTProblemHolder)typeId).getProblem());
+				addProblem(((IASTProblemHolder) typeId).getProblem());
 
 			return PROCESS_CONTINUE;
 		}
@@ -208,8 +208,7 @@ public class CVisitor extends ASTQueries {
 		boolean compositeTypeDeclared = false;
 		
 		private void addName(IASTName name) {
-			if (declsFound.length == numFound) // if the found array is full, then double the array
-	        {
+			if (declsFound.length == numFound) { // if the found array is full, then double the array
 	            IASTName[] old = declsFound;
 	            declsFound = new IASTName[old.length * 2];
 	            for (int j = 0; j < old.length; ++j)
@@ -219,14 +218,14 @@ public class CVisitor extends ASTQueries {
 		}
 		
 	    private IASTName[] removeNullFromNames() {
-	    	if (declsFound[declsFound.length-1] != null) { // if the last element in the list is not null then return the list
+	    	if (declsFound[declsFound.length - 1] != null) { // if the last element in the list is not null then return the list
 				return declsFound;			
 			} else if (declsFound[0] == null) { // if the first element in the list is null, then return empty list
 				return new IASTName[0];
 			}
 			
 			IASTName[] results = new IASTName[numFound];
-			for (int i=0; i<results.length; i++)
+			for (int i= 0; i < results.length; i++)
 				results[i] = declsFound[i];
 				
 			return results;
@@ -251,8 +250,10 @@ public class CVisitor extends ASTQueries {
 			if (declarator == null || declarator.getName() == null || declarator.getName().toCharArray().length == 0) return PROCESS_CONTINUE;
 			
 			//if the binding is something not declared in a declarator, continue
-			if (binding instanceof ICompositeType) return PROCESS_CONTINUE;
-			if (binding instanceof IEnumeration) return PROCESS_CONTINUE;
+			if (binding instanceof ICompositeType)
+				return PROCESS_CONTINUE;
+			if (binding instanceof IEnumeration)
+				return PROCESS_CONTINUE;
 			
 			IASTNode parent = declarator.getParent();
 			while (parent != null && !(parent instanceof IASTDeclaration || parent instanceof IASTParameterDeclaration))
@@ -294,25 +295,25 @@ public class CVisitor extends ASTQueries {
 				return PROCESS_CONTINUE;
 			
 			if (binding instanceof ICompositeType && declSpec instanceof IASTCompositeTypeSpecifier) {
-			    if (((IASTCompositeTypeSpecifier)declSpec).getName().resolveBinding() == binding) { 
+			    if (((IASTCompositeTypeSpecifier) declSpec).getName().resolveBinding() == binding) { 
 					compositeTypeDeclared = true;
-					addName(((IASTCompositeTypeSpecifier)declSpec).getName());
+					addName(((IASTCompositeTypeSpecifier) declSpec).getName());
 				}
 			} else if (binding instanceof IEnumeration && declSpec instanceof IASTEnumerationSpecifier) {
-				if (((IASTEnumerationSpecifier)declSpec).getName().resolveBinding() == binding) {
+				if (((IASTEnumerationSpecifier) declSpec).getName().resolveBinding() == binding) {
 					compositeTypeDeclared = true;
-					addName(((IASTEnumerationSpecifier)declSpec).getName());
+					addName(((IASTEnumerationSpecifier) declSpec).getName());
 				}
 			} else if (declSpec instanceof IASTElaboratedTypeSpecifier) {
 			    if (compositeTypeDeclared) {
 			        IASTNode parent = declSpec.getParent();
-			        if (!(parent instanceof IASTSimpleDeclaration) || ((IASTSimpleDeclaration)parent).getDeclarators().length > 0) {
+			        if (!(parent instanceof IASTSimpleDeclaration) || ((IASTSimpleDeclaration) parent).getDeclarators().length > 0) {
 			            return PROCESS_CONTINUE;
 			        }
 			    }
-				if (((IASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding() == binding) { 
+				if (((IASTElaboratedTypeSpecifier) declSpec).getName().resolveBinding() == binding) { 
 					compositeTypeDeclared = true;
-					addName(((IASTElaboratedTypeSpecifier)declSpec).getName());
+					addName(((IASTElaboratedTypeSpecifier) declSpec).getName());
 				}
 			}
 			
@@ -337,8 +338,8 @@ public class CVisitor extends ASTQueries {
 		@Override
 		public int visit(IASTStatement statement) {
 			if (statement instanceof IASTLabelStatement && binding instanceof ILabel) {
-				if (((IASTLabelStatement)statement).getName().resolveBinding() == binding) 
-					addName(((IASTLabelStatement)statement).getName());
+				if (((IASTLabelStatement) statement).getName().resolveBinding() == binding) 
+					addName(((IASTLabelStatement) statement).getName());
 				return PROCESS_SKIP;
 			}
 
@@ -357,54 +358,51 @@ public class CVisitor extends ASTQueries {
 		private static final int KIND_OBJ_FN = 2;
 		private static final int KIND_TYPE   = 3;
 		
-		
 		public CollectReferencesAction(IBinding binding) {
 			this.binding = binding;
 			this.refs = new IASTName[DEFAULT_LIST_SIZE];
 			
 			shouldVisitNames = true;
-			if (binding instanceof ILabel)
+			if (binding instanceof ILabel) {
 				kind = KIND_LABEL;
-			else if (binding instanceof ICompositeType || 
+			} else if (binding instanceof ICompositeType || 
 					 binding instanceof ITypedef || 
-					 binding instanceof IEnumeration)
-			{
+					 binding instanceof IEnumeration) {
 				kind = KIND_TYPE;
-			} else 
+			} else {
 				kind = KIND_OBJ_FN;
+			}
 		}
 		
 		@Override
 		public int visit(IASTName name) {
 			ASTNodeProperty prop = name.getPropertyInParent();
-			switch(kind) {
-				case KIND_LABEL:
-					if (prop == IASTGotoStatement.NAME)
+			switch (kind) {
+			case KIND_LABEL:
+				if (prop == IASTGotoStatement.NAME)
+					break;
+				return PROCESS_CONTINUE;
+			case KIND_TYPE:
+				if (prop == IASTNamedTypeSpecifier.NAME) {
+					break;
+				} else if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME) {
+					IASTNode p = name.getParent().getParent();
+					if (!(p instanceof IASTSimpleDeclaration) ||
+							((IASTSimpleDeclaration) p).getDeclarators().length > 0) {
 						break;
-					return PROCESS_CONTINUE;
-				case KIND_TYPE:
-					if (prop == IASTNamedTypeSpecifier.NAME)
-						break;
-					else if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME) {
-						IASTNode p = name.getParent().getParent();
-						if (!(p instanceof IASTSimpleDeclaration) ||
-							((IASTSimpleDeclaration)p).getDeclarators().length > 0)
-						{
-							break;
-						}
 					}
-					return PROCESS_CONTINUE;
-				case KIND_OBJ_FN:
-					if (prop == IASTIdExpression.ID_NAME || 
+				}
+				return PROCESS_CONTINUE;
+			case KIND_OBJ_FN:
+				if (prop == IASTIdExpression.ID_NAME || 
 						prop == IASTFieldReference.FIELD_NAME || 
-						prop == ICASTFieldDesignator.FIELD_NAME)
-					{
-						break;
-					}
-					return PROCESS_CONTINUE;
+						prop == ICASTFieldDesignator.FIELD_NAME) {
+					break;
+				}
+				return PROCESS_CONTINUE;
 			}
 			
-			if (CharArrayUtils.equals(name.toCharArray(), binding.getNameCharArray()))
+			if (CharArrayUtils.equals(name.toCharArray(), binding.getNameCharArray())) {
 				if (sameBinding(name.resolveBinding(), binding)) {
 					if (refs.length == idx) {
 						IASTName[] temp = new IASTName[refs.length * 2];
@@ -413,6 +411,7 @@ public class CVisitor extends ASTQueries {
 					}
 					refs[idx++] = name;
 				}
+			}
 			return PROCESS_CONTINUE;
 		}
 		
@@ -441,7 +440,7 @@ public class CVisitor extends ASTQueries {
 	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	public static final char[] EMPTY_CHAR_ARRAY = "".toCharArray(); //$NON-NLS-1$
 	
-	//definition lookup start loc
+	// definition lookup start location
 	protected static final int AT_BEGINNING = 1;
 	protected static final int AT_NEXT = 2; 
 
@@ -486,7 +485,7 @@ public class CVisitor extends ASTQueries {
         if (binding != null && !(binding instanceof IIndexBinding) && name.isActive()) {
         	if (binding instanceof IEnumeration) {
             	if (binding instanceof CEnumeration) {
-            	    ((CEnumeration)binding).addDefinition(name);
+            	    ((CEnumeration) binding).addDefinition(name);
             	}
         	} else {
         		return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray());	
@@ -497,6 +496,7 @@ public class CVisitor extends ASTQueries {
 	    } 
         return binding; 
 	}
+
 	private static IBinding createBinding(IASTEnumerator enumerator) {
 	    IEnumerator binding = new CEnumerator(enumerator); 
 	    try {
@@ -505,9 +505,10 @@ public class CVisitor extends ASTQueries {
         }
 	    return binding;
 	}
+
 	private static IBinding createBinding(IASTStatement statement) {
 	    if (statement instanceof IASTGotoStatement) {
-	        char[] gotoName = ((IASTGotoStatement)statement).getName().toCharArray();
+	        char[] gotoName = ((IASTGotoStatement) statement).getName().toCharArray();
 	        IScope scope = getContainingScope(statement);
 	        if (scope != null && scope instanceof ICFunctionScope) {
 	            CFunctionScope functionScope = (CFunctionScope) scope;
@@ -518,10 +519,10 @@ public class CVisitor extends ASTQueries {
 	                }
 	            }
 	            //label not found
-	            return new ProblemBinding(((IASTGotoStatement)statement).getName(), IProblemBinding.SEMANTIC_LABEL_STATEMENT_NOT_FOUND, gotoName);
+	            return new ProblemBinding(((IASTGotoStatement) statement).getName(), IProblemBinding.SEMANTIC_LABEL_STATEMENT_NOT_FOUND, gotoName);
 	        }
 	    } else if (statement instanceof IASTLabelStatement) {
-	        IASTName name = ((IASTLabelStatement)statement).getName();
+	        IASTName name = ((IASTLabelStatement) statement).getName();
 	        IBinding binding = new CLabel(name);
 	        try {
 	        	IScope scope = binding.getScope();
@@ -533,6 +534,7 @@ public class CVisitor extends ASTQueries {
 	    }
 	    return null;
 	}
+
 	private static IBinding createBinding(ICASTElaboratedTypeSpecifier elabTypeSpec) {
 		IASTNode parent = elabTypeSpec.getParent();
 		IASTName name = elabTypeSpec.getName();
@@ -540,7 +542,7 @@ public class CVisitor extends ASTQueries {
 			IBinding binding= null;
 			IScope insertIntoScope= null;
 			if (parent instanceof IASTSimpleDeclaration 
-					&& ((IASTSimpleDeclaration)parent).getDeclarators().length == 0) {
+					&& ((IASTSimpleDeclaration) parent).getDeclarators().length == 0) {
 				IScope scope= getContainingScope(elabTypeSpec);
 				try {
 					while (scope instanceof ICCompositeTypeScope)
@@ -551,7 +553,7 @@ public class CVisitor extends ASTQueries {
 				}
 				if (binding != null && name.isActive()) {
 					if (binding instanceof CEnumeration) {
-				        ((CEnumeration)binding).addDeclaration(name);
+				        ((CEnumeration) binding).addDeclaration(name);
 				    } else if (binding instanceof CStructure) {
 				    	((CStructure) binding).addDeclaration(name);
 				    }
@@ -563,7 +565,7 @@ public class CVisitor extends ASTQueries {
 					binding= insertIntoScope.getBinding(name, false);
 					if (binding != null && name.isActive()) {
 						if (binding instanceof CEnumeration) {
-					        ((CEnumeration)binding).addDeclaration(name);
+					        ((CEnumeration) binding).addDeclaration(name);
 					    } else if (binding instanceof CStructure) {
 					    	((CStructure) binding).addDeclaration(name);
 					    }
@@ -580,7 +582,6 @@ public class CVisitor extends ASTQueries {
 					ASTInternal.addName(insertIntoScope, name);
 				}
 			}
-			
 			return binding;
 		} else if (parent instanceof IASTTypeId || parent instanceof IASTParameterDeclaration) {
 			return resolveBinding(elabTypeSpec);
@@ -602,7 +603,7 @@ public class CVisitor extends ASTQueries {
 		
 		IType type = fieldOwner.getExpressionType();
 	    while (type != null && type instanceof ITypeContainer) {
-    		type = ((ITypeContainer)type).getType();
+    		type = ((ITypeContainer) type).getType();
 	    }
 		
 		if (type != null && type instanceof ICompositeType) {
@@ -631,7 +632,7 @@ public class CVisitor extends ASTQueries {
 		IBinding[] bs = scope.find(PTRDIFF_T);
 		for (IBinding b : bs) {
 			if (b instanceof IType) {
-				if (b instanceof ICInternalBinding == false || 
+				if (!(b instanceof ICInternalBinding) || 
 						CVisitor.declaredBefore(((ICInternalBinding) b).getPhysicalNode(), expr)) {
 					return (IType) b;
 				}
@@ -646,7 +647,7 @@ public class CVisitor extends ASTQueries {
 		IBinding[] bs = scope.find(SIZE_T);
 		for (IBinding b : bs) {
 			if (b instanceof IType) {
-				if (b instanceof ICInternalBinding == false || 
+				if (!(b instanceof ICInternalBinding) || 
 						CVisitor.declaredBefore(((ICInternalBinding) b).getPhysicalNode(), expr)) {
 					return (IType) b;
 				}
@@ -673,10 +674,11 @@ public class CVisitor extends ASTQueries {
 				IScope scope= CVisitor.getContainingScope(declarator);
 				binding = scope.getBinding(name, false);
 				if (binding != null && !(binding instanceof IIndexBinding) && name.isActive()) {
-				    if (binding instanceof ICInternalFunction)
-				        ((ICInternalFunction)binding).addDeclarator(declarator);
-				    else 
+				    if (binding instanceof ICInternalFunction) {
+				        ((ICInternalFunction) binding).addDeclarator(declarator);
+				    } else {
 				        binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray());
+				    }
 				} else { 
 					binding = createBinding(declarator);
 				}
@@ -741,11 +743,11 @@ public class CVisitor extends ASTQueries {
 							if (binding instanceof IParameter) {
 								return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray());
 							} else if (binding instanceof IVariable) {
-								t2 = ((IVariable)binding).getType();
+								t2 = ((IVariable) binding).getType();
 								if (t1 != null && t2 != null && (
 										t1.isSameType(t2) || isCompatibleArray(t1, t2) != null)) {
 									if (binding instanceof CVariable)
-										((CVariable)binding).addDeclaration(name);
+										((CVariable) binding).addDeclaration(name);
 								} else {
 									return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray());
 								}
@@ -764,7 +766,7 @@ public class CVisitor extends ASTQueries {
 				if (binding instanceof IFunction) {
 					IFunction function = (IFunction) binding;
 					if (function instanceof CFunction) {
-						((CFunction)function).addDeclarator(typeRelevant);
+						((CFunction) function).addDeclarator(typeRelevant);
 					}
 					return function;
 				}
@@ -777,7 +779,6 @@ public class CVisitor extends ASTQueries {
 		return binding;
 	}
 
-	
 	private static IBinding createBinding(ICASTCompositeTypeSpecifier compositeTypeSpec) {
 		IScope scope = null;
 		IBinding binding = null;
@@ -791,11 +792,11 @@ public class CVisitor extends ASTQueries {
 				binding = scope.getBinding(name, false);
 				if (binding != null && !(binding instanceof IIndexBinding) && name.isActive()) {
 					if (binding instanceof CStructure)
-						((CStructure)binding).addDefinition(compositeTypeSpec);
+						((CStructure) binding).addDefinition(compositeTypeSpec);
 					return binding;
 				}
 			}
-		} catch (DOMException e2) {
+		} catch (DOMException e) {
 		}
 	    return new CStructure(name);
 	}
@@ -830,17 +831,17 @@ public class CVisitor extends ASTQueries {
 			return lookup(scope, ((ICASTElaboratedTypeSpecifier) node).getName());
 		} else if (node instanceof ICASTCompositeTypeSpecifier) {
 			IScope scope = getContainingScope(node);
-			return lookup(scope, ((ICASTCompositeTypeSpecifier)node).getName());
+			return lookup(scope, ((ICASTCompositeTypeSpecifier) node).getName());
 		} else if (node instanceof IASTTypeId) {
 			IASTTypeId typeId = (IASTTypeId) node;
 			IASTDeclSpecifier declSpec = typeId.getDeclSpecifier();
 			IASTName name = null;
 			if (declSpec instanceof ICASTElaboratedTypeSpecifier) {
-				name = ((ICASTElaboratedTypeSpecifier)declSpec).getName();
+				name = ((ICASTElaboratedTypeSpecifier) declSpec).getName();
 			} else if (declSpec instanceof ICASTCompositeTypeSpecifier) {
-				name = ((ICASTCompositeTypeSpecifier)declSpec).getName();
+				name = ((ICASTCompositeTypeSpecifier) declSpec).getName();
 			} else if (declSpec instanceof ICASTTypedefNameSpecifier) {
-				name = ((ICASTTypedefNameSpecifier)declSpec).getName();
+				name = ((ICASTTypedefNameSpecifier) declSpec).getName();
 			}
 			if (name != null) {
 				IBinding binding = name.resolveBinding();
@@ -856,36 +857,35 @@ public class CVisitor extends ASTQueries {
 			IASTNode blockItem = getContainingBlockItem(node);
 			
 			if ((blockItem instanceof IASTSimpleDeclaration ||
-					(blockItem instanceof IASTDeclarationStatement && ((IASTDeclarationStatement)blockItem).getDeclaration() instanceof IASTSimpleDeclaration))) {
-				
+					(blockItem instanceof IASTDeclarationStatement && ((IASTDeclarationStatement) blockItem).getDeclaration() instanceof IASTSimpleDeclaration))) {
 				IASTSimpleDeclaration simpleDecl = null;
 				if (blockItem instanceof IASTDeclarationStatement &&
-					((IASTDeclarationStatement)blockItem).getDeclaration() instanceof IASTSimpleDeclaration)
-					simpleDecl = (IASTSimpleDeclaration)((IASTDeclarationStatement)blockItem).getDeclaration();
-				else if (blockItem instanceof IASTSimpleDeclaration)
-					simpleDecl = (IASTSimpleDeclaration)blockItem;
+						((IASTDeclarationStatement) blockItem).getDeclaration() instanceof IASTSimpleDeclaration) {
+					simpleDecl = (IASTSimpleDeclaration)((IASTDeclarationStatement) blockItem).getDeclaration();
+				} else if (blockItem instanceof IASTSimpleDeclaration) {
+					simpleDecl = (IASTSimpleDeclaration) blockItem;
+				}
 		
 				if (simpleDecl != null) {
 					IBinding struct = null;
 					if (simpleDecl.getDeclSpecifier() instanceof IASTNamedTypeSpecifier)
-						struct = ((IASTNamedTypeSpecifier)simpleDecl.getDeclSpecifier()).getName().resolveBinding();
+						struct = ((IASTNamedTypeSpecifier) simpleDecl.getDeclSpecifier()).getName().resolveBinding();
 					else if (simpleDecl.getDeclSpecifier() instanceof IASTElaboratedTypeSpecifier)
-						struct = ((IASTElaboratedTypeSpecifier)simpleDecl.getDeclSpecifier()).getName().resolveBinding();
+						struct = ((IASTElaboratedTypeSpecifier) simpleDecl.getDeclSpecifier()).getName().resolveBinding();
 					else if (simpleDecl.getDeclSpecifier() instanceof IASTCompositeTypeSpecifier)
-						struct = ((IASTCompositeTypeSpecifier)simpleDecl.getDeclSpecifier()).getName().resolveBinding();
+						struct = ((IASTCompositeTypeSpecifier) simpleDecl.getDeclSpecifier()).getName().resolveBinding();
 					
 					if (struct instanceof CStructure) {
-						return ((CStructure)struct).findField(((ICASTFieldDesignator)node).getName().toString());
+						return ((CStructure) struct).findField(((ICASTFieldDesignator) node).getName().toString());
 					} else if (struct instanceof ITypeContainer) {
 						IType type;
-                        type = ((ITypeContainer)struct).getType();
+                        type = ((ITypeContainer) struct).getType();
 						while (type instanceof ITypeContainer && !(type instanceof CStructure)) {
-							type = ((ITypeContainer)type).getType();
+							type = ((ITypeContainer) type).getType();
 						}
-                        
-						
+
 						if (type instanceof CStructure)
-							return ((CStructure)type).findField(((ICASTFieldDesignator)node).getName().toString());
+							return ((CStructure) type).findField(((ICASTFieldDesignator) node).getName().toString());
 					}
 				}
 			}
@@ -903,17 +903,17 @@ public class CVisitor extends ASTQueries {
 		    if (node instanceof IASTDeclaration) {
 				IASTNode parent = node.getParent();
 				if (parent instanceof IASTTranslationUnit) {
-					return ((IASTTranslationUnit)parent).getScope();
+					return ((IASTTranslationUnit) parent).getScope();
 				} else if (parent instanceof IASTDeclarationStatement) {
 					return getContainingScope((IASTStatement) parent);
 				} else if (parent instanceof IASTForStatement) {
-				    return ((IASTForStatement)parent).getScope();
+				    return ((IASTForStatement) parent).getScope();
 				} else if (parent instanceof IASTCompositeTypeSpecifier) {
-				    return ((IASTCompositeTypeSpecifier)parent).getScope();
+				    return ((IASTCompositeTypeSpecifier) parent).getScope();
 				} else if (parent instanceof ICASTKnRFunctionDeclarator) {
-					parent = ((IASTDeclarator)parent).getParent();
+					parent = ((IASTDeclarator) parent).getParent();
 					if (parent instanceof IASTFunctionDefinition) {
-						return ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
+						return ((IASTCompoundStatement)((IASTFunctionDefinition) parent).getBody()).getScope();
 					}
 				}
 		    } else if (node instanceof IASTStatement) {
@@ -921,7 +921,7 @@ public class CVisitor extends ASTQueries {
 		    } else if (node instanceof IASTExpression) {
 				IASTNode parent = node.getParent();
 				if (parent instanceof IASTForStatement) {
-				    return ((IASTForStatement)parent).getScope();
+				    return ((IASTForStatement) parent).getScope();
 				} 
 		    } else if (node instanceof IASTParameterDeclaration) {
 				IASTNode parent = node.getParent();
@@ -971,7 +971,7 @@ public class CVisitor extends ASTQueries {
 			if (parent instanceof IASTForStatement) {
 				scope= ((IASTForStatement) parent).getScope();
 			} else {
-				scope = getContainingScope((IASTStatement)parent);
+				scope = getContainingScope((IASTStatement) parent);
 			}
 		} else if (parent instanceof IASTFunctionDefinition) {
 			return ((IASTFunctionDefinition) parent).getScope();
@@ -980,7 +980,7 @@ public class CVisitor extends ASTQueries {
 		}
 		
 		if (statement instanceof IASTGotoStatement) {
-		    //labels have function scope
+		    // labels have function scope
 		    while (scope != null && !(scope instanceof ICFunctionScope)) {
 		        try {
                     scope = scope.getParent();
@@ -1001,13 +1001,10 @@ public class CVisitor extends ASTQueries {
 			if (p instanceof IASTDeclarationStatement)
 				return p;
 			return parent;
-		}
-		//if parent is something that can contain a declaration
-		else if (parent instanceof IASTCompoundStatement || 
-				  parent instanceof IASTTranslationUnit   ||
-				  parent instanceof IASTForStatement  ||
-				  parent instanceof IASTFunctionDeclarator)
-		{
+		} else if (parent instanceof IASTCompoundStatement || // parent is something that can contain a declaration 
+				parent instanceof IASTTranslationUnit   ||
+				parent instanceof IASTForStatement  ||
+				parent instanceof IASTFunctionDeclarator) {
 			return node;
 		}
 		
@@ -1101,11 +1098,10 @@ public class CVisitor extends ASTQueries {
 	            //external function
 	            external = new CExternalFunction(tu, name);
 	            ASTInternal.addName(tu.getScope(), name);
-	        } 
-	        else {
+	        } else {
 	            //external variable
 	            //external = new CExternalVariable(tu, name);
-       	        //((CScope)tu.getScope()).addName(name);
+       	        //((CScope) tu.getScope()).addName(name);
 	        	external = new ProblemBinding(name, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, name.toCharArray());
 	        }
 	    }
@@ -1160,9 +1156,9 @@ public class CVisitor extends ASTQueries {
 						IASTName name = null;
 						
 						if (declSpec instanceof ICASTCompositeTypeSpecifier) {
-						    name = ((ICASTCompositeTypeSpecifier)declSpec).getName();
+						    name = ((ICASTCompositeTypeSpecifier) declSpec).getName();
 						} else if (declSpec instanceof ICASTEnumerationSpecifier) {
-						    name = ((ICASTEnumerationSpecifier)declSpec).getName();
+						    name = ((ICASTEnumerationSpecifier) declSpec).getName();
 						}
 						if (name !=  null) {
 						    if (CharArrayUtils.equals(name.toCharArray(), declName)) {
@@ -1202,23 +1198,22 @@ public class CVisitor extends ASTQueries {
 		if (node instanceof IASTParameterDeclaration)
 			declSpec = ((IASTParameterDeclaration) node).getDeclSpecifier();
 		else if (node instanceof IASTSimpleDeclaration)
-			declSpec = ((IASTSimpleDeclaration)node).getDeclSpecifier();
+			declSpec = ((IASTSimpleDeclaration) node).getDeclSpecifier();
 		else if (node instanceof IASTFunctionDefinition)
-			declSpec = ((IASTFunctionDefinition)node).getDeclSpecifier();
+			declSpec = ((IASTFunctionDefinition) node).getDeclSpecifier();
 		else if (node instanceof IASTTypeId)
-		    declSpec = ((IASTTypeId)node).getDeclSpecifier();
+		    declSpec = ((IASTTypeId) node).getDeclSpecifier();
 	
 		boolean isParameter = (node instanceof IASTParameterDeclaration || node.getParent() instanceof ICASTKnRFunctionDeclarator); 
 		
 		IType type = createType((ICASTDeclSpecifier) declSpec);
 		type = createType(type, declarator);
-		
-		
+
         if (isParameter) {
         	IType paramType = type;
         	// Remove typedefs ready for subsequent processing.
         	while (paramType instanceof ITypedef) {
-        		paramType = ((ITypedef)paramType).getType();
+        		paramType = ((ITypedef) paramType).getType();
         	}
         	        	
             //C99: 6.7.5.3-7 a declaration of a parameter as "array of type" shall be adjusted to "qualified pointer to type", where the
@@ -1244,7 +1239,7 @@ public class CVisitor extends ASTQueries {
 	
 	public static IType createType(IType baseType, IASTDeclarator declarator) {
 	    if (declarator instanceof IASTFunctionDeclarator)
-	        return createType(baseType, (IASTFunctionDeclarator)declarator);
+	        return createType(baseType, (IASTFunctionDeclarator) declarator);
 		
 		IType type = baseType;
 		type = setupPointerChain(declarator.getPointerOperators(), type);
@@ -1258,7 +1253,6 @@ public class CVisitor extends ASTQueries {
 	}
 	
 	public static IType createType(IType returnType, IASTFunctionDeclarator declarator) {
-
 	    IType[] pTypes = getParmTypes(declarator);
 	    returnType = setupPointerChain(declarator.getPointerOperators(), returnType);
 	    
@@ -1272,16 +1266,18 @@ public class CVisitor extends ASTQueries {
 	}
 
 	/**
-	 * This is used to create a base IType corresponding to an IASTDeclarator and the IASTDeclSpecifier.  This method doesn't have any recursive
-	 * behaviour and is used as the foundation of the ITypes being created.  
-	 * The parameter isParm is used to specify whether the declarator is a parameter or not.  
+	 * This is used to create a base IType corresponding to an IASTDeclarator and
+	 * the IASTDeclSpecifier.  This method doesn't have any recursive behavior and is used as
+	 * the foundation of the ITypes being created. The parameter isParm is used to specify whether
+	 * the declarator is a parameter or not.  
 	 * 
-	 * @param declSpec the IASTDeclSpecifier used to determine if the base type is a CQualifierType or not
+	 * @param declSpec the IASTDeclSpecifier used to determine if the base type is a CQualifierType
+	 * 		or not
 	 * @return the base IType
 	 */
 	public static IType createBaseType(IASTDeclSpecifier declSpec) {
 		if (declSpec instanceof ICASTSimpleDeclSpecifier) {
-			final ICASTSimpleDeclSpecifier sds = (ICASTSimpleDeclSpecifier)declSpec;
+			final ICASTSimpleDeclSpecifier sds = (ICASTSimpleDeclSpecifier) declSpec;
 			IASTExpression exp = sds.getDeclTypeExpression();
 			if (exp != null)
 				return exp.getExpressionType();
@@ -1296,7 +1292,7 @@ public class CVisitor extends ASTQueries {
 		} else if (declSpec instanceof IASTCompositeTypeSpecifier) {
 			name = ((IASTCompositeTypeSpecifier) declSpec).getName();		
 		} else if (declSpec instanceof IASTEnumerationSpecifier) {
-			name = ((IASTEnumerationSpecifier)declSpec).getName();
+			name = ((IASTEnumerationSpecifier) declSpec).getName();
 		} else {
 			throw new IllegalArgumentException();
 		}
@@ -1327,7 +1323,7 @@ public class CVisitor extends ASTQueries {
 	 */
 	private static IType[] getParmTypes(IASTFunctionDeclarator decltor) {
 		if (decltor instanceof IASTStandardFunctionDeclarator) {
-			IASTParameterDeclaration parms[] = ((IASTStandardFunctionDeclarator)decltor).getParameters();
+			IASTParameterDeclaration parms[] = ((IASTStandardFunctionDeclarator) decltor).getParameters();
 			IType parmTypes[] = new IType[parms.length];
 			
 		    for (int i = 0; i < parms.length; i++) {
@@ -1335,7 +1331,7 @@ public class CVisitor extends ASTQueries {
 		    }
 		    return parmTypes;
 		} else if (decltor instanceof ICASTKnRFunctionDeclarator) {
-			IASTName parms[] = ((ICASTKnRFunctionDeclarator)decltor).getParameterNames();
+			IASTName parms[] = ((ICASTKnRFunctionDeclarator) decltor).getParameterNames();
 			IType parmTypes[] = new IType[parms.length];
 			
 		    for (int i = 0; i < parms.length; i++) {
@@ -1356,7 +1352,7 @@ public class CVisitor extends ASTQueries {
             if (!(decls[i] instanceof IASTSimpleDeclaration))
                 continue;
             
-            IASTDeclarator[] dtors = ((IASTSimpleDeclaration)decls[i]).getDeclarators();
+            IASTDeclarator[] dtors = ((IASTSimpleDeclaration) decls[i]).getDeclarators();
             for (IASTDeclarator dtor : dtors) {
                 if (CharArrayUtils.equals(dtor.getName().toCharArray(), n)) {
                     return dtor; 
@@ -1378,11 +1374,11 @@ public class CVisitor extends ASTQueries {
 	 */
 	private static IType setupArrayChain(IASTDeclarator decl, IType lastType) {
 		if (decl instanceof IASTArrayDeclarator) {
-			IASTArrayModifier[] mods = ((IASTArrayDeclarator)decl).getArrayModifiers();
+			IASTArrayModifier[] mods = ((IASTArrayDeclarator) decl).getArrayModifiers();
 			for (int i = mods.length - 1; i >= 0; i--) {
 				CArrayType arrayType = new CArrayType(lastType);
 				if (mods[i] instanceof ICASTArrayModifier) {
-					arrayType.setModifier((ICASTArrayModifier)mods[i]);
+					arrayType.setModifier((ICASTArrayModifier) mods[i]);
 				}
 				lastType= arrayType;
 			}
@@ -1408,30 +1404,30 @@ public class CVisitor extends ASTQueries {
 			if (ptrs.length == 1) {
 				pointerType.setType(lastType);
 				pointerType.setQualifiers(
-						(((ICASTPointer)ptrs[0]).isConst() ? CPointerType.IS_CONST : 0) |
-						(((ICASTPointer)ptrs[0]).isRestrict() ? CPointerType.IS_RESTRICT : 0) |
-						(((ICASTPointer)ptrs[0]).isVolatile() ? CPointerType.IS_VOLATILE : 0));				
+						(((ICASTPointer) ptrs[0]).isConst() ? CPointerType.IS_CONST : 0) |
+						(((ICASTPointer) ptrs[0]).isRestrict() ? CPointerType.IS_RESTRICT : 0) |
+						(((ICASTPointer) ptrs[0]).isVolatile() ? CPointerType.IS_VOLATILE : 0));				
 			} else {
 				CPointerType tempType = new CPointerType();
 				pointerType.setType(tempType);
 				pointerType.setQualifiers(
-						(((ICASTPointer)ptrs[ptrs.length - 1]).isConst() ? CPointerType.IS_CONST : 0) |
-						(((ICASTPointer)ptrs[ptrs.length - 1]).isRestrict() ? CPointerType.IS_RESTRICT : 0) |
-						(((ICASTPointer)ptrs[ptrs.length - 1]).isVolatile() ? CPointerType.IS_VOLATILE : 0));
+						(((ICASTPointer) ptrs[ptrs.length - 1]).isConst() ? CPointerType.IS_CONST : 0) |
+						(((ICASTPointer) ptrs[ptrs.length - 1]).isRestrict() ? CPointerType.IS_RESTRICT : 0) |
+						(((ICASTPointer) ptrs[ptrs.length - 1]).isVolatile() ? CPointerType.IS_VOLATILE : 0));
 				int i = ptrs.length - 2;
 				for (; i > 0; i--) {
 					tempType.setType(new CPointerType());
 					tempType.setQualifiers(
-							(((ICASTPointer)ptrs[i]).isConst() ? CPointerType.IS_CONST : 0) |
-							(((ICASTPointer)ptrs[i]).isRestrict() ? CPointerType.IS_RESTRICT : 0) |
-							(((ICASTPointer)ptrs[i]).isVolatile() ? CPointerType.IS_VOLATILE : 0));
-					tempType = (CPointerType)tempType.getType();
+							(((ICASTPointer) ptrs[i]).isConst() ? CPointerType.IS_CONST : 0) |
+							(((ICASTPointer) ptrs[i]).isRestrict() ? CPointerType.IS_RESTRICT : 0) |
+							(((ICASTPointer) ptrs[i]).isVolatile() ? CPointerType.IS_VOLATILE : 0));
+					tempType = (CPointerType) tempType.getType();
 				}					
 				tempType.setType(lastType);
 				tempType.setQualifiers(
-						(((ICASTPointer)ptrs[i]).isConst() ? CPointerType.IS_CONST : 0) |
-						(((ICASTPointer)ptrs[i]).isRestrict() ? CPointerType.IS_RESTRICT : 0) |
-						(((ICASTPointer)ptrs[i]).isVolatile() ? CPointerType.IS_VOLATILE : 0));
+						(((ICASTPointer) ptrs[i]).isConst() ? CPointerType.IS_CONST : 0) |
+						(((ICASTPointer) ptrs[i]).isRestrict() ? CPointerType.IS_RESTRICT : 0) |
+						(((ICASTPointer) ptrs[i]).isVolatile() ? CPointerType.IS_VOLATILE : 0));
 			}
 			
 			return pointerType;
@@ -1484,7 +1480,7 @@ public class CVisitor extends ASTQueries {
     public static IBinding[] findBindings(IScope scope, String name) {
         CASTName astName = new CASTName(name.toCharArray());
 	    
-	    //normal names
+	    // normal names
 	    astName.setPropertyInParent(STRING_LOOKUP_PROPERTY);
 	    Object o1 = lookup(scope, astName);
         
@@ -1495,7 +1491,7 @@ public class CVisitor extends ASTQueries {
 	    	b1 = (IBinding[]) o1;
 	    }
 	    
-	    //structure names
+	    // structure names
         astName.setPropertyInParent(STRING_LOOKUP_TAGS_PROPERTY);
         Object o2 = lookup(scope, astName);
 
@@ -1506,12 +1502,12 @@ public class CVisitor extends ASTQueries {
 	    	b2 = (IBinding[]) o2;
 	    }
         
-        //label names
+        // label names
         List<ILabel> b3 = new ArrayList<ILabel>();
         do {
             char[] n = name.toCharArray();
             if (scope instanceof ICFunctionScope) {
-                ILabel[] labels = ((CFunctionScope)scope).getLabels();
+                ILabel[] labels = ((CFunctionScope) scope).getLabels();
                 for (ILabel label : labels) {
                 	if (CharArrayUtils.equals(label.getNameCharArray(), n)) {
                 		b3.add(label);
@@ -1551,18 +1547,18 @@ public class CVisitor extends ASTQueries {
 	        int pointOfDecl = 0;
 	        
             ASTNodeProperty prop = nd.getPropertyInParent();
-            //point of declaration for a name is immediately after its complete declarator and before its initializer
+            // point of declaration for a name is immediately after its complete declarator and before its initializer
             if (prop == IASTDeclarator.DECLARATOR_NAME || nd instanceof IASTDeclarator) {
                 IASTDeclarator dtor = (IASTDeclarator)((nd instanceof IASTDeclarator) ? nd : nd.getParent());
                 while (dtor.getParent() instanceof IASTDeclarator)
                     dtor = (IASTDeclarator) dtor.getParent();
                 IASTInitializer init = dtor.getInitializer();
                 if (init != null)
-                    pointOfDecl = ((ASTNode)init).getOffset() - 1;
+                    pointOfDecl = ((ASTNode) init).getOffset() - 1;
                 else
-                    pointOfDecl = ((ASTNode)dtor).getOffset() + ((ASTNode)dtor).getLength();
+                    pointOfDecl = ((ASTNode) dtor).getOffset() + ((ASTNode) dtor).getLength();
             } 
-            //point of declaration for an enumerator is immediately after it enumerator-definition
+            // point of declaration for an enumerator is immediately after it enumerator-definition
             else if (prop == IASTEnumerator.ENUMERATOR_NAME) {
                 IASTEnumerator enumtor = (IASTEnumerator) nd.getParent();
                 if (enumtor.getValue() != null) {
@@ -1575,7 +1571,7 @@ public class CVisitor extends ASTQueries {
                 pointOfDecl = nd.getOffset() + nd.getLength();
             }
             
-            return (pointOfDecl < ((ASTNode)nodeB).getOffset());
+            return pointOfDecl < ((ASTNode) nodeB).getOffset();
 	    }
 	    
 	    return true; 
@@ -1608,7 +1604,7 @@ public class CVisitor extends ASTQueries {
 	 */
 	public static IBinding findDeclarationOwner(IASTNode node, boolean allowFunction) {
 		// search for declaration
-		while (node instanceof IASTDeclaration == false) {
+		while (!(node instanceof IASTDeclaration)) {
 			if (node == null)
 				return null;
 			

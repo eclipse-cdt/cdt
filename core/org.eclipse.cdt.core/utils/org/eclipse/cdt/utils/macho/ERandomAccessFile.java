@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 QNX Software Systems and others.
+ * Copyright (c) 2002, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,23 @@ public class ERandomAccessFile extends RandomAccessFile {
 
 	public final long readLongE() throws IOException
 	{
-		return readIntE();
+		byte [] bytes = new byte[8];
+		long result = 0;
+		super.readFully(bytes);
+		int shift = 0;		
+		if ( isle ) 
+			for(int i=7; i >= 0; i-- )
+			{
+				shift = i*8;
+				result += ( ((long)bytes[i]) << shift ) & ( 0xffL << shift );
+			}
+	    else
+			for(int i=0; i <= 7; i++ )
+			{
+				shift = (7-i)*8;
+				result += ( ((long)bytes[i]) << shift ) & ( 0xffL << shift );
+			}
+		return result;
 	}
 	
     public void setFileOffset( long offset ) throws IOException {

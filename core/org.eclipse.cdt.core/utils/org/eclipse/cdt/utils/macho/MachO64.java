@@ -916,7 +916,7 @@ public class MachO64 {
 	}
 
 	private Line getLine(long value) {
-		if (!debugsym) {
+		if (!debugsym || lines == null) {
 			return null;
 		}
 		

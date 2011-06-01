@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -535,7 +535,38 @@ public class ResourceHelper {
 				new File(realPath.toOSString()).exists());
 
 		IPath linkedPath = project.getLocation().append(linkName);
-		String command = "ln -s " + realPath.toOSString() + ' ' + linkedPath.toOSString();
+		createSymbolicLink(linkedPath, realPath);
+
+		IResource resource = project.getFile(linkName);
+		resource.refreshLocal(IResource.DEPTH_ZERO, null);
+
+		if (!resource.exists()) {
+			resource = project.getFolder(linkName);
+			resource.refreshLocal(IResource.DEPTH_ZERO, null);
+		}
+		Assert.assertTrue("Failed to create resource form symbolic link", resource.exists());
+
+		externalFilesCreated.add(linkedPath.toOSString());
+		ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, NULL_MONITOR);
+		return resource;
+	}
+
+	/**
+	 * Creates new symbolic file system link from file or folder to another filesystem file.
+	 * The target path has to be present on disk.
+	 *
+	 * @param linkPath - filesystem path of the link being created.
+	 * @param realPath - file or folder on the file system, the target of the link.
+	 *
+	 * @throws UnsupportedOperationException on Windows where links are not supported.
+	 * @throws IOException if execution of the command fails.
+	 */
+	public static void createSymbolicLink(IPath linkPath, IPath realPath) throws IOException {
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			throw new UnsupportedOperationException("Windows links .lnk are not supported.");
+		}
+
+		String command = "ln -s " + realPath.toOSString() + ' ' + linkPath.toOSString();
 		Process process = Runtime.getRuntime().exec(command);
 
 		// Wait for up to 2.5s...
@@ -551,20 +582,7 @@ public class ResourceHelper {
 			// wait for a 500ms before checking again
 			try { Thread.sleep(500); } catch (InterruptedException e) {/*don't care*/}
 		}
-		Assert.assertTrue("Symbolic link not created, command=[" + command +"]", linkedPath.toFile().exists());
-
-		IResource resource = project.getFile(linkName);
-		resource.refreshLocal(IResource.DEPTH_ZERO, null);
-
-		if (!resource.exists()) {
-			resource = project.getFolder(linkName);
-			resource.refreshLocal(IResource.DEPTH_ZERO, null);
-		}
-		Assert.assertTrue("Failed to create resource form symbolic link", resource.exists());
-
-		externalFilesCreated.add(linkedPath.toOSString());
-		ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, NULL_MONITOR);
-		return resource;
+		Assert.assertTrue("Symbolic link not created, command=[" + command +"]", linkPath.toFile().exists());
 	}
 
 	/**

@@ -511,6 +511,18 @@ public class ResourceHelper {
 	}
 
 	/**
+	 * Checks if symbolic links are supported on the system.
+	 * Used in particular by method {@link #createSymbolicLink(IPath, IPath)}
+	 * and other flavors to create symbolic links.
+	 * 
+	 * Note that Windows links .lnk are not supported here.
+	 * @return {@code true} if symbolic links are suppoted, {@code false} otherwise.
+	 */
+	public static boolean isSymbolicLinkSupported() {
+		return ! Platform.getOS().equals(Platform.OS_WIN32);
+	}
+
+	/**
 	 * Creates new symbolic file system link from file or folder on project root
 	 * to another file system file. The filename can include relative path
 	 * as a part of the name but the the path has to be present on disk.
@@ -527,7 +539,7 @@ public class ResourceHelper {
 	public static IResource createSymbolicLink(IProject project, String linkName, IPath realPath)
 		throws IOException, CoreException, UnsupportedOperationException {
 
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+		if (!isSymbolicLinkSupported()) {
 			throw new UnsupportedOperationException("Windows links .lnk are not supported.");
 		}
 
@@ -562,7 +574,7 @@ public class ResourceHelper {
 	 * @throws IOException if execution of the command fails.
 	 */
 	public static void createSymbolicLink(IPath linkPath, IPath realPath) throws IOException {
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+		if (!isSymbolicLinkSupported()) {
 			throw new UnsupportedOperationException("Windows links .lnk are not supported.");
 		}
 

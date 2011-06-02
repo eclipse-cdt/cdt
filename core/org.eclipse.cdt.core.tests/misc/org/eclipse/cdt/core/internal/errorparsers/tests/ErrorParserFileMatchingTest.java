@@ -434,16 +434,15 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * @throws Exception...
 	 */
 	public void testSymbolicLink() throws Exception {
+		// do not test on systems where symbolic links are not supported
+		if (!ResourceHelper.isSymbolicLinkSupported())
+			return;
+
 		ResourceHelper.createWorkspaceFolder("OutsideFolder");
 		IPath realFile = ResourceHelper.createWorkspaceFile("OutsideFolder/RealFile.c");
 
-		try {
-			ResourceHelper.createFolder(fProject,"Folder");
-			ResourceHelper.createSymbolicLink(fProject, "Folder/testSymbolicLink.c", realFile);
-		} catch (UnsupportedOperationException e) {
-			// Do not run the test on Windows system where links are not supported.
-			return;
-		}
+		ResourceHelper.createFolder(fProject,"Folder");
+		ResourceHelper.createSymbolicLink(fProject, "Folder/testSymbolicLink.c", realFile);
 
 		parseOutput("testSymbolicLink.c:1:error");
 		assertEquals(1, errorList.size());
@@ -458,19 +457,18 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * @throws Exception...
 	 */
 	public void testDuplicateSymbolicLink() throws Exception {
+		// do not test on systems where symbolic links are not supported
+		if (!ResourceHelper.isSymbolicLinkSupported())
+			return;
+
 		ResourceHelper.createWorkspaceFolder("OutsideFolder");
 		IPath realFile = ResourceHelper.createWorkspaceFile("OutsideFolder/RealFile.c");
 
-		try {
-			ResourceHelper.createFolder(fProject,"FolderA");
-			ResourceHelper.createSymbolicLink(fProject, "FolderA/testDuplicateSymbolicLink.c", realFile);
+		ResourceHelper.createFolder(fProject,"FolderA");
+		ResourceHelper.createSymbolicLink(fProject, "FolderA/testDuplicateSymbolicLink.c", realFile);
 
-			ResourceHelper.createFolder(fProject,"FolderB");
-			ResourceHelper.createSymbolicLink(fProject, "FolderB/testDuplicateSymbolicLink.c", realFile);
-		} catch (UnsupportedOperationException e) {
-			// Do not run the test on Windows system where links are not supported.
-			return;
-		}
+		ResourceHelper.createFolder(fProject,"FolderB");
+		ResourceHelper.createSymbolicLink(fProject, "FolderB/testDuplicateSymbolicLink.c", realFile);
 
 		parseOutput("testDuplicateSymbolicLink.c:1:error");
 		assertEquals(1, errorList.size());
@@ -487,15 +485,14 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * @throws Exception...
 	 */
 	public void testFolderSymbolicLink() throws Exception {
+		// do not test on systems where symbolic links are not supported
+		if (!ResourceHelper.isSymbolicLinkSupported())
+			return;
+
 		IPath realFolder = ResourceHelper.createWorkspaceFolder("OutsideFolderForSymbolicLink");
 		ResourceHelper.createWorkspaceFile("OutsideFolderForSymbolicLink/testFolderSymbolicLink.c");
 
-		try {
-			ResourceHelper.createSymbolicLink(fProject, "FolderSymbolicLink", realFolder);
-		} catch (UnsupportedOperationException e) {
-			// Do not run the test on Windows system where links are not supported.
-			return;
-		}
+		ResourceHelper.createSymbolicLink(fProject, "FolderSymbolicLink", realFolder);
 
 		parseOutput("testFolderSymbolicLink.c:1:error");
 		assertEquals(1, errorList.size());
@@ -510,16 +507,15 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * @throws Exception...
 	 */
 	public void testDuplicateFolderSymbolicLink() throws Exception {
+		// do not test on systems where symbolic links are not supported
+		if (!ResourceHelper.isSymbolicLinkSupported())
+			return;
+
 		IPath realFolder = ResourceHelper.createWorkspaceFolder("OutsideFolder");
 		ResourceHelper.createWorkspaceFile("OutsideFolder/testDuplicateFolderSymbolicLink.c");
 
-		try {
-			ResourceHelper.createSymbolicLink(fProject, "FolderSymbolicLinkA", realFolder);
-			ResourceHelper.createSymbolicLink(fProject, "FolderSymbolicLinkB", realFolder);
-		} catch (UnsupportedOperationException e) {
-			// Do not run the test on Windows system where links are not supported.
-			return;
-		}
+		ResourceHelper.createSymbolicLink(fProject, "FolderSymbolicLinkA", realFolder);
+		ResourceHelper.createSymbolicLink(fProject, "FolderSymbolicLinkB", realFolder);
 
 		parseOutput("testDuplicateFolderSymbolicLink.c:1:error");
 		assertEquals(1, errorList.size());

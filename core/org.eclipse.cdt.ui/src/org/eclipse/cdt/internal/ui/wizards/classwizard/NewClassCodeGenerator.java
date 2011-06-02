@@ -1055,7 +1055,8 @@ public class NewClassCodeGenerator {
 
         IPath includePath = PathUtil.makeRelativePathToProjectIncludes(headerLocation, project);
         boolean isSystemIncludePath = false;
-        if (includePath != null && !projectLocation.isPrefixOf(headerLocation)) {
+        if (headerTU.getResource() == null && includePath != null
+        		&& !projectLocation.isPrefixOf(headerLocation)) {
             isSystemIncludePath = true;
         } else if (projectLocation.isPrefixOf(headerLocation)
         		&& projectLocation.isPrefixOf(sourceLocation)) {

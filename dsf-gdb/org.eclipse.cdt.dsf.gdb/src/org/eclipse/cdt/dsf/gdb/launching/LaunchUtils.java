@@ -439,7 +439,13 @@ public class LaunchUtils {
 	public static boolean getIsNonStopMode(ILaunchConfiguration config) {
 		try {
 			return config.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
-					getIsNonStopModeDefault());
+			// This call causes a race condition with the TraceControlManager
+			// Don't use it for now, until we find a fix.
+			// Consequence is that a Debug As->C/C++ application shortcut will not follow
+			// the preference for non-stop.  This is not as bad as not have the gdb traces
+			// Bug 348159
+					IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
+//					getIsNonStopModeDefault());
     	} catch (CoreException e) {    		
     	}
     	return false;

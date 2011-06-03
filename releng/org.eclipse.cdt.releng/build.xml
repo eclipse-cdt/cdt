@@ -20,8 +20,8 @@
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
 		<tstamp/>
-		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/S-3.7RC1-201105122000/eclipse-SDK-3.7RC1-linux-gtk.tar.gz"/>
-		<property name="rseDist" value="/home/data/httpd/download.eclipse.org/dsdp/tm/downloads/drops/R-3.2-201006071030/RSE-SDK-3.2.zip"/>
+		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/S-3.7RC3-201105261708/eclipse-SDK-3.7RC3-linux-gtk.tar.gz"/>
+		<property name="rseDist" value="/home/data/httpd/download.eclipse.org/tm/downloads/drops/S-3.3RC3-201106011145/RSE-SDK-3.3RC3.zip"/>
 		<property name="branchVersion" value="8.0.0"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="forceContextQualifier" value="${timestamp}"/>

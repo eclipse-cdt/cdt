@@ -38,6 +38,8 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
+import org.eclipse.cdt.debug.mi.core.command.MICommand;
+import org.eclipse.cdt.debug.mi.core.command.Command;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSetNewConsole;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
@@ -59,6 +61,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  */
 public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 
+	private String miVersion;
+	
 	public ICDISession createSession(ILaunch launch, File executable,
 			IProgressMonitor monitor) throws CoreException {
 		return super.createSession(launch, executable, monitor);
@@ -71,7 +75,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 	
 	protected CommandFactory getCommandFactory(ILaunchConfiguration config)
 			throws CoreException {
-		String miVersion = MIPlugin.getMIVersion(config);
+		miVersion = MIPlugin.getMIVersion(config);
 		return new GDBJtagCommandFactory(miVersion);
 	}
 	
@@ -333,13 +337,18 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 		for (int j = 0; j < commands.length; ++j) {
 			try {
 				submonitor.subTask(Messages.getString("GDBJtagDebugger.21") + commands[j]); //$NON-NLS-1$
-				CLICommand cli = new CLICommand(commands[j]);
-				miSession.postCommand(cli, MISession.FOREVER);
+				Command cmd = null;
+				if (commands[j].startsWith("-")) {
+					cmd = new MICommand(miVersion, commands[j]);
+ 				} else {
+ 					cmd = new CLICommand(commands[j]);
+ 				}
+				miSession.postCommand(cmd, MISession.FOREVER);
 				submonitor.worked(1);
 				if (submonitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
-				MIInfo info = cli.getMIInfo();
+				MIInfo info = cmd.getMIInfo();
 				if (info == null) {
 					throw new MIException("Timeout"); //$NON-NLS-1$
 				}

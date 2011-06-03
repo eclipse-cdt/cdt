@@ -37,7 +37,12 @@ public class DefaultGDBJtagConnectionImpl extends DefaultGDBJtagDeviceImpl imple
 	public void doRemote(String connection, Collection<String> commands) {
 		String cmd = ""; //$NON-NLS-1$
 		if (connection != null) {
-			cmd = "target remote " + connection; //$NON-NLS-1$
+			// The CLI version (target remote) does not let us know
+			// that we have properly connected.  For older GDBs (<= 6.8)
+			// we need this information for a DSF session.
+			// The MI version does tell us, which is why we must use it
+			// Bug 348043
+			cmd = "-target-select remote " + connection; //$NON-NLS-1$
 			addCmd(commands, cmd);
 		}
 	}

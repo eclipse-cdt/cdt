@@ -52,7 +52,12 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doRemote(java.lang.String, int, java.util.Collection)
 	 */
 	public void doRemote(String ip, int port, Collection<String> commands) {
-		String cmd = "target remote " + ip + ":" + String.valueOf(port); //$NON-NLS-1$ //$NON-NLS-2$
+		// The CLI version (target remote) does not let us know
+		// that we have properly connected.  For older GDBs (<= 6.8)
+		// we need this information for a DSF session.
+		// The MI version does tell us, which is why we must use it
+		// Bug 348043
+		String cmd = "-target-select remote " + ip + ":" + String.valueOf(port); //$NON-NLS-1$ //$NON-NLS-2$
 		addCmd(commands, cmd);
 	}
 

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    IBM Corporation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.indexer;
 

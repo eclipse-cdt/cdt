@@ -43,7 +43,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	
 	@Override
 	public IScannerInfo getBuildConfiguration(int linkageID, Object tu) {
-		return fIndexer.getScannerInfo((String)tu);
+		return fIndexer.getScannerInfo(tu.toString());
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 
 	@Override
 	public boolean isSourceUnit(Object tu) {
-		return isValidSourceUnitName((String) tu);
+		return isValidSourceUnitName(tu.toString());
 	}
 	
 	@Override
@@ -73,7 +73,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 
 	@Override
 	public IIndexFileLocation resolveFile(Object tu) {
-		return resolveASTPath((String) tu);
+		return resolveASTPath(tu.toString());
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 
 	@Override
 	public boolean isFileBuildConfigured(Object tu) {
-		return isValidSourceUnitName((String) tu);
+		return isValidSourceUnitName(tu.toString());
 	}
 
 	@Override
@@ -148,7 +148,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 				// TODO this is bad
 				return FileContent.adapt(new CodeReader(stu, fileEncoding));
 			} else {
-				return FileContent.createForExternalFileLocation((String) tu);
+				return FileContent.createForExternalFileLocation(tu.toString());
 			}
 		} catch (IOException e) {
 		}
@@ -162,7 +162,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 
 	@Override
 	public AbstractLanguage[] getLanguages(Object tu, boolean bothForHeaders) {
-		ILanguage language = fIndexer.getLanguageMapper().getLanguage((String) tu);
+		ILanguage language = fIndexer.getLanguageMapper().getLanguage(tu.toString());
 		if (language instanceof AbstractLanguage) {
 			return new AbstractLanguage[] {(AbstractLanguage) language};
 		}

@@ -159,7 +159,7 @@ plugin@org.eclipse.tm.tcf.core=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.ec
 plugin@org.eclipse.tm.tcf.debug=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=branches/0.4.0,path=plugins/org.eclipse.tm.tcf.debug
 plugin@org.eclipse.tm.tcf.debug.ui=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=branches/0.4.0,path=plugins/org.eclipse.tm.tcf.debug.ui
 plugin@org.eclipse.tm.tcf.rse=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=branches/0.4.0,path=plugins/org.eclipse.tm.tcf.rse
-feature@org.eclipse.tm.tcf.feature=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf/branches,tag=0.4.0,path=features/org.eclipse.tm.tcf.feature
+feature@org.eclipse.tm.tcf.feature=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=branches/0.4.0,path=features/org.eclipse.tm.tcf.feature
 
 ! Berkeley UPC
 plugin@org.eclipse.cdt.managedbuilder.bupc.ui=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/upc/org.eclipse.cdt.managedbuilder.bupc.ui

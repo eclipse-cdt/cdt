@@ -409,6 +409,31 @@ being contributed to the Eclipse Helios coordinated release train (Eclipse 3.6.x
     sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
+elif [ `basename $SITE` = 3.3 ]; then
+    TPTYPE="3.3"
+    TPVERSION="${TPVERSION} ${TPTYPE}"
+    TYPE=official
+    echo "Working on ${TPVERSION} update site"
+    echo "Expect that you copied your features and plugins yourself"
+    stamp=`date +'%Y%m%d-%H%M'`
+    rm index.html site.xml web/site.xsl
+    cvs -q update -dPR
+    sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
+    	-e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
+    	-e '\,</h1>,a\
+This site contains Target Management 3.3 Releases and Updates (R- builds) which are \
+being contributed to the Eclipse Indigo coordinated release train (Eclipse 3.7.x).' \
+    	index.html > index.html.new
+    mv -f index.html.new index.html
+    ## dont keep 2.0.x features in site.xml
+    sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
+        -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
+    	-e '/<!-- BEGIN_2_0 -->/,/<!-- BEGIN_3_3 -->/d' \
+        site.xml > site.xml.new
+    mv -f site.xml.new site.xml
+    sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
+    	web/site.xsl > web/site.xsl.new
+    mv -f web/site.xsl.new web/site.xsl
 else
     echo "Working on official update site"
     TYPE=official

@@ -28,6 +28,7 @@
  * Anton Leherbauer (Wind River) - [335021] Middle mouse button copy/paste does not work with the terminal
  * Max Stepanov (Appcelerator) - [339768] Fix ANSI code for PgUp / PgDn
  * Pawel Piech (Wind River) - [333613] "Job found still running" after shutdown
+ * Martin Oberhuber (Wind River) - [348700] Terminal unusable after disconnect
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -347,9 +348,14 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	public void disconnectTerminal() {
 		Logger.log("entered."); //$NON-NLS-1$
 
+		//Disconnect the remote side first
+		if (getState()!=TerminalState.CLOSED) {
+			if(getTerminalConnector()!=null) {
+				getTerminalConnector().disconnect();
+			}
+		}
+		
         //Ensure that a new Job can be started; then clean up old Job.
-        //TODO not sure whether the fInputStream needs to be cleaned too,
-        //or whether the Job could actually cancel in case the fInputStream is closed.
         Job job;
         synchronized(this) {
             job = fJob;
@@ -358,22 +364,13 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
         if (job!=null) {
             job.cancel();
             // Join job to avoid leaving job running after workbench shutdown (333613).
+            // Interrupt to be fast enough; cannot close fInputStream since it is re-used (bug 348700).
+            Thread t = job.getThread();
+            if(t!=null) t.interrupt();
             try {
-     			// The Job will check its cancel status after 500msec latest. But we still
-                // Interrupt the Job, such that it can join fast enough during Workbench shutdown (bug 333613).
-                // TODO closing fInputStream may seem more clean but causes problems (bug 348700).
-                Thread t = job.getThread();
-                if(t!=null) t.interrupt();
                 job.join();
             } catch (InterruptedException e) {}
         }
-		
-		if (getState()==TerminalState.CLOSED) {
-			return;
-		}
-		if(getTerminalConnector()!=null) {
-			getTerminalConnector().disconnect();
-		}
 	}
 
 	// TODO

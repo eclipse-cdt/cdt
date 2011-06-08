@@ -359,13 +359,13 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
             job.cancel();
             // Join job to avoid leaving job running after workbench shutdown (333613).
             try {
-                fInputStream.close();
+     			// The Job will check its cancel status after 500msec latest. But we still
+                // Interrupt the Job, such that it can join fast enough during Workbench shutdown (bug 333613).
+                // TODO closing fInputStream may seem more clean but causes problems (bug 348700).
+                Thread t = job.getThread();
+                if(t!=null) t.interrupt();
                 job.join();
-            } catch (IOException e1) {
-            } catch (InterruptedException e) {
-            }
-//            Thread t = job.getThread();
-//            if(t!=null) t.interrupt();
+            } catch (InterruptedException e) {}
         }
 		
 		if (getState()==TerminalState.CLOSED) {

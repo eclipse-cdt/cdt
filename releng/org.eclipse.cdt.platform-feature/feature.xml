@@ -3,7 +3,7 @@
       id="org.eclipse.cdt.platform"
       label="%featureName"
       version="8.0.0.qualifier"
-      provider-name="Eclipse.org">
+      provider-name="%providerName">
 
    <description>
       %description

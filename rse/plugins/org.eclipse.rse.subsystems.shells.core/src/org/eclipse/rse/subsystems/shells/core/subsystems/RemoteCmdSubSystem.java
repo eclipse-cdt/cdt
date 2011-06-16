@@ -24,6 +24,7 @@
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  * David McKnight     (IBM)   [302724] problems with environment variable substitution
  * David McKnight   (IBM)        - [338031] Remote Shell view tabs should have close (x) icon
+ * David McKnight   (IBM)        - [349491] possible NPE on shutdown due to event firing
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems;
@@ -709,8 +710,10 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 		public void run()
 		{
-			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-			registry.fireEvent(new SystemResourceChangeEvent(_ss, ISystemResourceChangeEvents.EVENT_REFRESH, _ss));
+			if (RSECorePlugin.isTheSystemRegistryActive()){
+				ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+				registry.fireEvent(new SystemResourceChangeEvent(_ss, ISystemResourceChangeEvents.EVENT_REFRESH, _ss));
+			}			
 		}
 	}
 

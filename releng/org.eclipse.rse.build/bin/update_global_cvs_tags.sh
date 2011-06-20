@@ -35,7 +35,6 @@ TOPMODULES="\
   org.eclipse.tm.rse/releng \
   org.eclipse.tm.rse/tests \
   org.eclipse.tm.core \
-  org.eclipse.tm.core/discovery \
   org.eclipse.tm.core/terminal \
   org.eclipse.tm.core/wince \
 "
@@ -48,6 +47,6 @@ for topmod in $TOPMODULES ; do
   #cvs tag -b R1_0_maintenance readme.txt
   #cvs tag -d v20060630 readme.txt
   cvs update -l -A .
-  cvs tag R3_2
+  cvs tag R3_3
   cd $curdir
 done

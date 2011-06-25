@@ -1328,6 +1328,14 @@
 			  valueType="includePath"
 			  browseType="directory">
 		  </option>
+		  <option
+	          browseType="file"
+	          category="gnu.cpp.compiler.category.dirs"
+	          command="-include"
+	          id="gnu.cpp.compiler.option.include.files"
+	          name="%Option.Posix.InclFiles"
+	          valueType="includeFiles">
+		  </option>
 		  <optionCategory
 			  owner="cdt.managedbuild.tool.gnu.cpp.compiler"
 			  name="%OptionCategory.Optimize"

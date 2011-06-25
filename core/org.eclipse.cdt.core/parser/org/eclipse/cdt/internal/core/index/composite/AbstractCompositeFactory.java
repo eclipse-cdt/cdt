@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite;
 
@@ -43,16 +43,6 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 		);
 	}
 	
-	/*
-	 * @see org.eclipse.cdt.internal.core.index.composite.ICompositesFactory#getCompositeBindings(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.internal.core.index.IIndexFragmentBinding[])
-	 */
-	public final IIndexBinding[] getCompositeBindings(IIndexFragmentBinding[] bindings) {
-		IIndexBinding[] result = new IIndexBinding[bindings.length];
-		for(int i=0; i<result.length; i++)
-			result[i] = getCompositeBinding(bindings[i]);
-		return result;
-	}
-
 	protected final IType[] getCompositeTypes(IType[] types) {
 		// Don't create a new array until it's really needed.
 		IType[] result = types;
@@ -71,13 +61,20 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 		return result;
 	}
 
-	/* 
-	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getComposites(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.internal.core.index.IIndexFragmentBinding[][])
+	/**
+	 * @see ICompositesFactory#getCompositeBindings(IIndexFragmentBinding[][])
 	 */
 	public final IIndexBinding[] getCompositeBindings(IIndexFragmentBinding[][] fragmentBindings) {
 		return getCompositeBindings(mergeBindingArrays(fragmentBindings));
 	}
-	
+
+	private final IIndexBinding[] getCompositeBindings(IIndexFragmentBinding[] bindings) {
+		IIndexBinding[] result = new IIndexBinding[bindings.length];
+		for (int i = 0; i < result.length; i++)
+			result[i] = getCompositeBinding(bindings[i]);
+		return result;
+	}
+
 	public final IIndexFragmentBinding[] findEquivalentBindings(IBinding binding) {
 		CIndex cindex= (CIndex) index;
 		try {
@@ -96,9 +93,13 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 	 */
 	protected IIndexFragmentBinding[] mergeBindingArrays(IIndexFragmentBinding[][] fragmentBindings) {
 		TreeSet<IIndexFragmentBinding> ts = new TreeSet<IIndexFragmentBinding>(fragmentComparator);
-		for (IIndexFragmentBinding[] fragmentBinding : fragmentBindings)
-			for (IIndexFragmentBinding element : fragmentBinding)
-				ts.add(element);
+		for (IIndexFragmentBinding[] array : fragmentBindings) {
+			if (array != null) {
+				for (IIndexFragmentBinding element : array) {
+					ts.add(element);
+				}
+			}
+		}
 		return ts.toArray(new IIndexFragmentBinding[ts.size()]);
 	}
 	
@@ -113,20 +114,20 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 	 * @return the representative binding as defined above
 	 */
 	protected IIndexFragmentBinding findOneBinding(IBinding binding, boolean allowDeclaration) {
-		try{
+		try {
 			IIndexFragmentBinding[] ibs= findEquivalentBindings(binding);
-			IBinding def= null;
-			IBinding dec= ibs.length>0 ? ibs[0] : null;
+			IIndexFragmentBinding def= null;
+			IIndexFragmentBinding dec= ibs.length > 0 ? ibs[0] : null;
 			for (IIndexFragmentBinding ib : ibs) {
-				if(ib.hasDefinition()) {
+				if (ib.hasDefinition()) {
 					def= ib;
-				} else if(allowDeclaration && ib.hasDeclaration()) {
+				} else if (allowDeclaration && ib.hasDeclaration()) {
 					dec= ib;
 				}
 			}
-			return (IIndexFragmentBinding) (def == null ? dec : def);
-		} catch(CoreException ce) {
-			CCorePlugin.log(ce);
+			return def == null ? dec : def;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
 		}
 		throw new CompositingNotImplementedError();
 	}
@@ -141,7 +142,7 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 		public int compare(IIndexFragmentBinding f1, IIndexFragmentBinding f2) {
 			for (IIndexFragmentBindingComparator comparator : comparators) {
 				int cmp= comparator.compare(f1, f2);
-				if(cmp!=Integer.MIN_VALUE) {
+				if (cmp != Integer.MIN_VALUE) {
 					return cmp;
 				}
 			}

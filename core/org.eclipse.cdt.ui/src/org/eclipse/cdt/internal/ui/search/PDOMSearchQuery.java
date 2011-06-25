@@ -380,7 +380,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		} else {
 			for (IIndexName name : bindingNames) {
 				String fullPath= name.getFile().getLocation().getFullPath();
-				if (accept(fullPath)) 
+				if (fullPath != null && accept(fullPath)) 
 					names.add(name);
 			}
 		}

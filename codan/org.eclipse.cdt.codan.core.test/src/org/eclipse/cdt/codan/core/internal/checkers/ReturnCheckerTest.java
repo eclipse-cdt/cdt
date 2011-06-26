@@ -255,4 +255,19 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		loadCodeAndRunCpp(getAboveComment());
 		checkErrorLine(1);
 	}
+
+	//	int
+	//	fp_goto(int a)
+	//	{
+	//	if (a) {
+	//	goto end;
+	//	}
+	//	end:
+	//	return (a);
+	//	}
+	public void testGoto_Bug346559() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
 }

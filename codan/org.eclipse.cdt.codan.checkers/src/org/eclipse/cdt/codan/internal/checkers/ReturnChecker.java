@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
@@ -150,6 +151,10 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 				IASTStatement[] statements = ((IASTCompoundStatement) body).getStatements();
 				if (statements.length > 0) {
 					IASTStatement last = statements[statements.length - 1];
+					// get nested statement if this is a label
+					while (last instanceof IASTLabelStatement) {
+						last = ((IASTLabelStatement) last).getNestedStatement();
+					}
 					// now check if last statement if complex (for optimization reasons, building CFG is expensive)
 					if (isCompoundStatement(last)) {
 						if (endsWithNoExitNode(func))

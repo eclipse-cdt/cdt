@@ -61,5 +61,10 @@
          contextId="org.eclipse.cdt.debug.ui.debugging"
          debugModelId="org.eclipse.cdt.dsf.gdb"/>
    </extension>
-   
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.cdt.dsf.gdb.internal.GdbPreferenceInitializer">
+      </initializer>
+   </extension>
 </plugin>

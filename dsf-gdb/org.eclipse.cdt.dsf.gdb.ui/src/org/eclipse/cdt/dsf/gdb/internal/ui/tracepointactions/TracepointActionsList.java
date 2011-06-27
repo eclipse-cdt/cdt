@@ -132,7 +132,9 @@ public class TracepointActionsList extends Composite {
 		TableItem[] currentItems = table.getItems();
 		for (int i = 0; i < currentItems.length; i++) {
 			if (i > 0) {
-				result.append(',');
+				// Keep a delimiter between the different action strings
+				// so we can separate them again.
+				result.append(TracepointActionManager.TRACEPOINT_ACTION_DELIMITER);
 			}
 			result.append(((ITracepointAction) currentItems[i].getData()).getName());
 		}
@@ -179,7 +181,7 @@ public class TracepointActionsList extends Composite {
 	public void setNames(String actionNames) {
 
 		table.removeAll();
-		String[] names = actionNames.split(","); //$NON-NLS-1$
+		String[] names = actionNames.split(TracepointActionManager.TRACEPOINT_ACTION_DELIMITER);
 
 		for (String actionName : names) {
 			ITracepointAction action = TracepointActionManager.getInstance().findAction(actionName);

@@ -1189,7 +1189,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		// so lets kill GDB
    		if (fBackend.getSessionType() == SessionType.CORE ||
    		   (fNumConnected == 1 && 
-   			Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+   			Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
 				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
 				true, null))) {
    			fCommandControl.terminate(rm);
@@ -1405,7 +1405,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     		assert fNumConnected > 0;
     		fNumConnected--;
     		
-    		if (Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+    		if (Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
     				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
     				true, null)) {
     			if (fNumConnected == 0 && !fProcRestarting) {

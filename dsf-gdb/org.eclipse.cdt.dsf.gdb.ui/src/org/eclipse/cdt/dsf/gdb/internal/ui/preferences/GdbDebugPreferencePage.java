@@ -251,9 +251,8 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		childCountLimitField.setValidRange(1, 10000);
 		childCountLimitField.fillIntoGrid(indentHelper, 3);
 
-		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
 		boolean prettyPrintingEnabled =
-				store.getBoolean(IGdbDebugPreferenceConstants.PREF_ENABLE_PRETTY_PRINTING);
+				getPreferenceStore().getBoolean(IGdbDebugPreferenceConstants.PREF_ENABLE_PRETTY_PRINTING);
 		childCountLimitField.setEnabled(prettyPrintingEnabled, indentHelper);
 
 		addField(childCountLimitField);

@@ -35,6 +35,7 @@ import org.eclipse.cdt.debug.mi.core.command.factories.CommandFactoryDescriptor;
 import org.eclipse.cdt.debug.mi.core.command.factories.CommandFactoryManager;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -362,7 +363,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			String defaultGdbCommand = Platform.getPreferencesService().getString("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+			String defaultGdbCommand = Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
 					                                                              IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND,"", null);  //$NON-NLS-1$
 			String gdbCommandAttr = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand);
 			gdbCommand.setText(gdbCommandAttr);
@@ -453,7 +454,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		String defaultGdbCommand = Platform.getPreferencesService().getString("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+		String defaultGdbCommand = Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
                                                                               IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND, "", null);  //$NON-NLS-1$
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand);
 		

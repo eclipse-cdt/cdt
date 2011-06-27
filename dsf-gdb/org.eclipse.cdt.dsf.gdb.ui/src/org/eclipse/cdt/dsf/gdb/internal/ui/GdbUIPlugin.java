@@ -11,18 +11,22 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui;
 
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.ui.console.TracingConsoleManager;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -39,6 +43,9 @@ public class GdbUIPlugin extends AbstractUIPlugin {
     private static BundleContext fgBundleContext; 
 
     private static TracingConsoleManager fTracingConsoleManager;
+    
+    private static IPreferenceStore fCorePreferenceStore;
+    
 	/**
 	 * The constructor
 	 */
@@ -97,6 +104,18 @@ public class GdbUIPlugin extends AbstractUIPlugin {
         return fgBundleContext;
     }
     
+	/**
+	 * Returns the preference store for this UI plug-in.
+	 * It actually uses the preference store of the core plug-in.
+	 */
+    @Override
+	public IPreferenceStore getPreferenceStore() {
+		if (fCorePreferenceStore == null) {
+			fCorePreferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, GdbPlugin.PLUGIN_ID);
+		}
+		return fCorePreferenceStore;
+	}
+	
     /**
      * copied from org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin
      */

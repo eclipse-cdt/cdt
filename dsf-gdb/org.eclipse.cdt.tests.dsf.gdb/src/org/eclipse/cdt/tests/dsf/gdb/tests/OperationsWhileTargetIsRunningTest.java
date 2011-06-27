@@ -26,6 +26,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
@@ -109,7 +110,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     @Test
     public void restartWhileTargetRunningKillGDB() throws Throwable {
     	// First set the preference to kill GDB (although it should not happen in this test)
-    	Preferences node = DefaultScope.INSTANCE.getNode("org.eclipse.cdt.dsf.gdb.ui");
+    	Preferences node = DefaultScope.INSTANCE.getNode(GdbPlugin.PLUGIN_ID);
     	node.putBoolean(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, true);
 
     	// The target is currently stopped.  We resume to get it running
@@ -132,7 +133,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     @Test
     public void restartWhileTargetRunningGDBAlive() throws Throwable {
     	// First set the preference not to kill gdb
-    	Preferences node = DefaultScope.INSTANCE.getNode("org.eclipse.cdt.dsf.gdb.ui");
+    	Preferences node = DefaultScope.INSTANCE.getNode(GdbPlugin.PLUGIN_ID);
     	node.putBoolean(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, false);
 
     	// The target is currently stopped.  We resume to get it running
@@ -155,7 +156,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     @Test
     public void terminateWhileTargetRunningKillGDB() throws Throwable {
     	// First set the preference to kill GDB
-    	Preferences node = DefaultScope.INSTANCE.getNode("org.eclipse.cdt.dsf.gdb.ui");
+    	Preferences node = DefaultScope.INSTANCE.getNode(GdbPlugin.PLUGIN_ID);
     	node.putBoolean(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, true);
 
     	// The target is currently stopped.  We resume to get it running
@@ -192,7 +193,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     @Test
     public void terminateWhileTargetRunningKeepGDBAlive() throws Throwable {
     	// First set the preference not to kill gdb
-    	Preferences node = DefaultScope.INSTANCE.getNode("org.eclipse.cdt.dsf.gdb.ui");
+    	Preferences node = DefaultScope.INSTANCE.getNode(GdbPlugin.PLUGIN_ID);
     	node.putBoolean(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, false);
 
     	// The target is currently stopped.  We resume to get it running
@@ -244,7 +245,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     @Test
     public void detachWhileTargetRunningKillGDB() throws Throwable {
     	// First set the preference to kill GDB
-    	Preferences node = DefaultScope.INSTANCE.getNode("org.eclipse.cdt.dsf.gdb.ui");
+    	Preferences node = DefaultScope.INSTANCE.getNode(GdbPlugin.PLUGIN_ID);
     	node.putBoolean(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, true);
 
     	// The target is currently stopped.  We resume to get it running
@@ -280,7 +281,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     @Test
     public void detachWhileTargetRunningGDBAlive() throws Throwable {
     	// First set the preference not to kill gdb
-    	Preferences node = DefaultScope.INSTANCE.getNode("org.eclipse.cdt.dsf.gdb.ui");
+    	Preferences node = DefaultScope.INSTANCE.getNode(GdbPlugin.PLUGIN_ID);
     	node.putBoolean(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, false);
 
     	// The target is currently stopped.  We resume to get it running

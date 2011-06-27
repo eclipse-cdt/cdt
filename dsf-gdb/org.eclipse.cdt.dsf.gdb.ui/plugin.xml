@@ -291,12 +291,6 @@
             name="%gdbPreferencePage.name">
       </page> 
    </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="org.eclipse.cdt.dsf.gdb.internal.ui.preferences.GdbPreferenceInitializer">
-      </initializer>
-   </extension>
 
    <extension
          point="org.eclipse.debug.ui.contextViewBindings">

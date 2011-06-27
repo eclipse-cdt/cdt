@@ -23,6 +23,7 @@
  * Noriaki Takatsu  (IBM) - [289234][multithread][api] Reset and Restart KeepAliveRequestThread
  * David McKnight   (IBM) - [282364] [dstore][multithread] timer-threads stay active after disconnect
  * David McKnight  (IBM)   [343939][dstore][windows] DBCS3.7 DBCS characters are corrupted in Files
+ * David McKnight  (IBM)   [350315][dstore] regress change made for bug 305218
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -479,17 +480,8 @@ public class XMLparser
 
 		if (offset > 0)
 		{
-			String result = null;	
-			
+			String result = null;				
 			String encoding = DE.ENCODING_UTF_8;
-			if (!_dataStore.isVirtual()){
-				encoding = System.getProperty("file.encoding"); //$NON-NLS-1$
-				String theOS = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
-				if (theOS.startsWith("z") || theOS.startsWith("win")){ //$NON-NLS-1$ //$NON-NLS-2$
-					encoding = DE.ENCODING_UTF_8;
-				}
-			}
-
 			try
 			{
 				result = new String(_byteBuffer, 0, offset, encoding);

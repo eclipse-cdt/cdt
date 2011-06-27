@@ -17,6 +17,7 @@
  * David McKnight  (IBM)   [307541][dstore] fix for Bug 305218 breaks RDz connections
  * David McKnight  (IBM)   [343939][dstore][windows] DBCS3.7 DBCS characters are corrupted in Files
  * David McKnight  (IBM)   [347412][dstore] Need an option to set TCP NODELAYACKS
+ * David McKnight  (IBM)   [350315][dstore] regress change made for bug 305218
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -88,14 +89,7 @@ public class Sender implements ISender
 		{
 			_outFile = new PrintStream(_socket.getOutputStream());
 			
-			String encoding = DE.ENCODING_UTF_8;
-			if (!_dataStore.isVirtual()){
-				encoding = System.getProperty("file.encoding"); //$NON-NLS-1$
-				String theOS = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
-				if (theOS.startsWith("z") || theOS.startsWith("win")){ //$NON-NLS-1$ //$NON-NLS-2$
-					encoding = DE.ENCODING_UTF_8;
-				}
-			}			
+			String encoding = DE.ENCODING_UTF_8;		
 			
 			OutputStreamWriter writer = new OutputStreamWriter(_socket.getOutputStream(), encoding);
 			_outData = new BufferedWriter(writer);

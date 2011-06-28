@@ -96,6 +96,8 @@ public class MIFrame {
             } else if (var.equals("addr")) { //$NON-NLS-1$
                 try {
                     addr = str.trim();
+                    if ( str.equals( "<unavailable>" ) ) //$NON-NLS-1$
+                    	addr = ""; //$NON-NLS-1$
                 } catch (NumberFormatException e) {
                 }
             } else if (var.equals("func")) { //$NON-NLS-1$

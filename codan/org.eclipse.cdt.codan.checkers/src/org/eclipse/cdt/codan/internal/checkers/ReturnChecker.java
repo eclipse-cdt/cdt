@@ -192,7 +192,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	 */
 	private boolean isCompoundStatement(IASTStatement last) {
 		return last instanceof IASTIfStatement || last instanceof IASTWhileStatement || last instanceof IASTDoStatement
-				|| last instanceof IASTForStatement || last instanceof IASTSwitchStatement;
+				|| last instanceof IASTForStatement || last instanceof IASTSwitchStatement || last instanceof IASTCompoundStatement;
 	}
 
 	protected boolean isFuncExitStatement(IASTStatement statement) {

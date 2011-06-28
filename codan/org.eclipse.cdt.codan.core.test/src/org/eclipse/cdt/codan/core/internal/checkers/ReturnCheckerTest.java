@@ -256,6 +256,16 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		checkErrorLine(1);
 	}
 
+	//	int f345687() {
+	//		{
+	//			return 0;
+	//		}
+	//	}
+	public void testNextedBlock_Bug345687() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
 	//	int
 	//	fp_goto(int a)
 	//	{

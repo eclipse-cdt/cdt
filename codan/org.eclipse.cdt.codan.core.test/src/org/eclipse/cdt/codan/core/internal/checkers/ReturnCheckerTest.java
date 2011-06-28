@@ -280,4 +280,13 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		checkNoErrors();
 	}
 
+	//	int main()
+	//	{
+	//		char c;  // added so function body is non-empty
+	//		// no error since return value in main is optional
+	//	}
+	public void testMainFunction() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
 }

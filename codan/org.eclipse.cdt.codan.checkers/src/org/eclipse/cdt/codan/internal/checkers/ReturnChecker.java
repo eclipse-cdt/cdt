@@ -131,6 +131,18 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		return false;
 	}
 
+	public boolean isMain(IASTFunctionDefinition func) {
+		try {
+			String functionName = func.getDeclarator().getName().getRawSignature();
+			if (functionName.equals("main")) { //$NON-NLS-1$
+				return true;
+			}
+		} catch (Exception e) {
+			// well, not main
+		}
+		return false;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -144,7 +156,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		ReturnStmpVisitor visitor = new ReturnStmpVisitor(func);
 		func.accept(visitor);
 		boolean nonVoid = !isVoid(func);
-		if (nonVoid) {
+		if (nonVoid && !isMain(func)) {
 			// there a return but maybe it is only on one branch
 			IASTStatement body = func.getBody();
 			if (body instanceof IASTCompoundStatement) {
@@ -163,8 +175,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 						reportNoRet(func, visitor.hasret);
 					}
 				} else {
-
-						reportNoRet(func, false);
+					reportNoRet(func, false);
 				}
 			}
 		}

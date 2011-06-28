@@ -18,14 +18,14 @@
 		User Agreement</a>.</p>
 		
 		<p><font size="+1"><strong>
-<!-- -->
-		  <a href="buildNotes.php">New and Noteworthy / Build Notes</a>
-<!-- -->
 <!--
-		  <p><a href="http://www.eclipse.org/tm/development/relnotes/3.2/tm-news-3.2.html">New and Noteworthy</a></p>
-		  <p><a href="http://www.eclipse.org/tm/development/relnotes/3.2/readme_tm_3.2.html">TM 3.2 Readme / Release Notes</a></p>
+		  <a href="buildNotes.php">New and Noteworthy / Build Notes</a>
+ -->
+<!-- -->
+		  <p><a href="http://www.eclipse.org/tm/development/relnotes/3.3/tm-news-3.3.html">New and Noteworthy</a></p>
+		  <p><a href="http://www.eclipse.org/tm/development/relnotes/3.3/readme_tm_3.3.html">TM 3.3 Readme / Release Notes</a></p>
 		  <p><a href="buildNotes.php">Build Notes</a></p>
--->
+<!-- -->
 		</strong></font></p>
 		
 		To view the map file entries for this build, click

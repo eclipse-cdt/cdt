@@ -47,12 +47,12 @@ case ${uname_s}${uname_m} in
 esac
 
 # prepare the base Eclipse installation in folder "eclipse"
-ep_rel="S-"
-ep_ver=3.7M7
-ep_date="-201104280848"
+ep_rel="R-"
+ep_ver=3.7
+ep_date="-201106131736"
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.0.v3730b.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.0.v3735b.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -133,12 +133,9 @@ if [ ! -f ${DROPIN}/org.sonatype.tycho.p2.updatesite_0.9.0.201005191712.jar ]; t
 fi
 
 # CDT Runtime
-#CDTREL=7.0.0
-#CDTFEAT=7.0.0
-#CDTVER=201006141710
 CDTREL=8.0.0
 CDTFEAT=8.0.0
-CDTVER=201105021546
+CDTVER=201106081058
 CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
 CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
 if [ ! -f eclipse/plugins/org.eclipse.cdt_${CDTFEAT}.${CDTVER}.jar ]; then
@@ -170,9 +167,9 @@ fi
 # checkout the basebuilder - 
 # http://wiki.eclipse.org/Platform-releng-basebuilder#Current_build_tag_for_3.7_stream_builds_.28Indigo.29
 #baseBuilderTag=R36_RC4
-baseBuilderTag=R37_M6
-if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.7.0.v20110304.jar \
-  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.6.100.v20110310/pdebuild.jar ]; then
+baseBuilderTag=R37_M7
+if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.7.0.v20110421.jar \
+  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.7.0.v20110418/pdebuild.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
     echo "Re-getting basebuilder from CVS..."
     rm -rf org.eclipse.releng.basebuilder

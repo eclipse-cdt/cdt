@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+    Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
     which accompanies this distribution, and is available at
@@ -688,62 +688,120 @@
    </category-def>
 <!-- END_3_2 -->
 <!-- BEGIN_3_3 -->
-   <feature url="features/org.eclipse.rse.core_3.3.0.qualifier.jar" id="org.eclipse.rse.core" version="3.3.0.qualifier">
+   <feature url="features/org.eclipse.rse.core_3.3.0.v201106011538-7a7JFYwFC7sReeS7d5k9KA.jar" id="org.eclipse.rse.core" version="3.3.0.v201106011538-7a7JFYwFC7sReeS7d5k9KA">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.rse.dstore_3.3.0.qualifier.jar" id="org.eclipse.rse.dstore" version="3.3.0.qualifier">
+   <feature url="features/org.eclipse.rse.dstore_3.3.0.v201106011538-7L78FR7EVVFNNFaMdQf_h.jar" id="org.eclipse.rse.dstore" version="3.3.0.v201106011538-7L78FR7EVVFNNFaMdQf_h">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.rse.ftp_3.0.300.qualifier.jar" id="org.eclipse.rse.ftp" version="3.0.300.qualifier">
+   <feature url="features/org.eclipse.rse.ftp_3.0.300.v201106011538-782F8N9oB588587HAFII.jar" id="org.eclipse.rse.ftp" version="3.0.300.v201106011538-782F8N9oB588587HAFII">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.rse.local_2.1.300.qualifier.jar" id="org.eclipse.rse.local" version="2.1.300.qualifier">
+   <feature url="features/org.eclipse.rse.local_2.1.300.v201103142315-7B4FKsBgJ9EE9ICQIFYT.jar" id="org.eclipse.rse.local" version="2.1.300.v201103142315-7B4FKsBgJ9EE9ICQIFYT">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.rse_3.3.0.qualifier.jar" id="org.eclipse.rse" version="3.3.0.qualifier">
+   <feature url="features/org.eclipse.rse_3.3.0.v201106081330-7L7CFGB8wqio7ppp-b5xx29Eb0hQ.jar" id="org.eclipse.rse" version="3.3.0.v201106081330-7L7CFGB8wqio7ppp-b5xx29Eb0hQ">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.rse.sdk_3.3.0.qualifier.jar" id="org.eclipse.rse.sdk" version="3.3.0.qualifier">
+   <feature url="features/org.eclipse.rse.sdk_3.3.0.v201106081330-7U7LFGBF8Wz-Sgjb9ViO_fNyqbiN.jar" id="org.eclipse.rse.sdk" version="3.3.0.v201106081330-7U7LFGBF8Wz-Sgjb9ViO_fNyqbiN">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.rse.ssh_3.0.300.qualifier.jar" id="org.eclipse.rse.ssh" version="3.0.300.qualifier">
+   <feature url="features/org.eclipse.rse.ssh_3.0.300.v201106011538-7A3F9wAkF7BB7FAKECRM.jar" id="org.eclipse.rse.ssh" version="3.0.300.v201106011538-7A3F9wAkF7BB7FAKECRM">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.rse.telnet_2.2.200.qualifier.jar" id="org.eclipse.rse.telnet" version="2.2.200.qualifier">
+   <feature url="features/org.eclipse.rse.telnet_2.2.200.v201106011538-775F8NAkF7BB7B9NEIPP.jar" id="org.eclipse.rse.telnet" version="2.2.200.v201106011538-775F8NAkF7BB7B9NEIPP">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.rse.examples_3.1.200.qualifier.jar" id="org.eclipse.rse.examples" version="3.1.200.qualifier">
+   <feature url="features/org.eclipse.rse.examples_3.1.200.v201103142315-7B5FBVAkF7BB7B7NFBRR.jar" id="org.eclipse.rse.examples" version="3.1.200.v201103142315-7B5FBVAkF7BB7B7NFBRR">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.rse.terminals_1.1.0.qualifier.jar" id="org.eclipse.rse.terminals" version="1.1.0.qualifier">
+   <feature url="features/org.eclipse.rse.terminals_1.1.0.v201106081330-771Bg9uD6I4AB9LEHNV3552.jar" id="org.eclipse.rse.terminals" version="1.1.0.v201106081330-771Bg9uD6I4AB9LEHNV3552">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.rse.tests_3.3.0.qualifier.jar" id="org.eclipse.rse.tests" version="3.3.0.qualifier">
+   <feature url="features/org.eclipse.rse.tests_3.3.0.v201106011538-7H7CA7AkF7BB7JDHDDRH.jar" id="org.eclipse.rse.tests" version="3.3.0.v201106011538-7H7CA7AkF7BB7JDHDDRH">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.rse.useractions_1.1.300.qualifier.jar" id="org.eclipse.rse.useractions" version="1.1.300.qualifier">
+   <feature url="features/org.eclipse.rse.useractions_1.1.300.v201103142315-31F8N8s7355353B75DD.jar" id="org.eclipse.rse.useractions" version="1.1.300.v201103142315-31F8N8s7355353B75DD">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.rse.scp_0.1.0.qualifier.jar" id="org.eclipse.rse.scp" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.rse.scp_0.1.0.v201103142315-11-8s735537353L55.jar" id="org.eclipse.rse.scp" version="0.1.0.v201103142315-11-8s735537353L55">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.rse.wince_0.3.0.qualifier.jar" id="org.eclipse.rse.wince" version="0.3.0.qualifier" os="win32" arch="x86">
+   <feature url="features/org.eclipse.rse.wince_0.3.0.v201105021534-15FEcAkF7BB7B7NFBRR.jar" id="org.eclipse.rse.wince" version="0.3.0.v201105021534-15FEcAkF7BB7B7NFBRR" os="win32" arch="x86">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk_3.2.0.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.2.0.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.sdk_3.2.0.v201106081330-7N7B-C5UEz0wYaUnVrdyLVTU.jar" id="org.eclipse.tm.terminal.sdk" version="3.2.0.v201106081330-7N7B-C5UEz0wYaUnVrdyLVTU">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.local_0.2.0.qualifier.jar" id="org.eclipse.tm.terminal.local" version="0.2.0.qualifier" os="linux,macosx,solaris">
+   <feature url="features/org.eclipse.tm.terminal.local_0.2.0.v201103142315-11-7w312212153266.jar" id="org.eclipse.tm.terminal.local" version="0.2.0.v201103142315-11-7w312212153266" os="linux,macosx,solaris">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.2.0.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.2.0.qualifier" os="linux,macosx,solaris">
+   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.2.0.v201106081330-66-89B4VsGBDHCLGVDFHI.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.2.0.v201106081330-66-89B4VsGBDHCLGVDFHI" os="linux,macosx,solaris">
       <category name="TM and RSE Uncategorized 3.3"/>
    </feature>
    <category-def name="TM and RSE Uncategorized 3.3" label="TM and RSE Uncategorized 3.3">
       <description>
-         Features and add-ons of the 3.2 release of Target Management / RSE.
+         Features and add-ons of the 3.3 release of Target Management / RSE.
       </description>
    </category-def>
 <!-- END_3_3 -->
+<!-- BEGIN_3_3_1 -->
+   <feature url="features/org.eclipse.rse.core_3.3.0.qualifier.jar" id="org.eclipse.rse.core" version="3.3.0.qualifier">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.dstore_3.3.0.qualifier.jar" id="org.eclipse.rse.dstore" version="3.3.0.qualifier">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.ftp_3.0.300.qualifier.jar" id="org.eclipse.rse.ftp" version="3.0.300.qualifier">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.local_2.1.300.qualifier.jar" id="org.eclipse.rse.local" version="2.1.300.qualifier">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse_3.3.0.qualifier.jar" id="org.eclipse.rse" version="3.3.0.qualifier">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.sdk_3.3.0.qualifier.jar" id="org.eclipse.rse.sdk" version="3.3.0.qualifier">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.ssh_3.0.300.qualifier.jar" id="org.eclipse.rse.ssh" version="3.0.300.qualifier">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.telnet_2.2.200.qualifier.jar" id="org.eclipse.rse.telnet" version="2.2.200.qualifier">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.examples_3.1.200.qualifier.jar" id="org.eclipse.rse.examples" version="3.1.200.qualifier">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.terminals_1.1.0.qualifier.jar" id="org.eclipse.rse.terminals" version="1.1.0.qualifier">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.tests_3.3.0.qualifier.jar" id="org.eclipse.rse.tests" version="3.3.0.qualifier">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.useractions_1.1.300.qualifier.jar" id="org.eclipse.rse.useractions" version="1.1.300.qualifier">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.scp_0.1.0.qualifier.jar" id="org.eclipse.rse.scp" version="0.1.0.qualifier">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.wince_0.3.0.qualifier.jar" id="org.eclipse.rse.wince" version="0.3.0.qualifier" os="win32" arch="x86">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.sdk_3.2.0.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.2.0.qualifier">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.local_0.2.0.qualifier.jar" id="org.eclipse.tm.terminal.local" version="0.2.0.qualifier" os="linux,macosx,solaris">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.2.0.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.2.0.qualifier" os="linux,macosx,solaris">
+      <category name="TM and RSE Uncategorized 3.3.1"/>
+   </feature>
+   <category-def name="TM and RSE Uncategorized 3.3.1" label="TM and RSE Uncategorized 3.3.1">
+      <description>
+         Features and add-ons of the 3.3.1 release of Target Management / RSE.
+      </description>
+   </category-def>
+<!-- END_3_3_1 -->
 <!-- END_ALL -->
 </site>

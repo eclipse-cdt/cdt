@@ -42,11 +42,13 @@ fi
 
 # get newest plugins and features: to be done manually on real update site
 TPVERSION="Target Management"
-VERSION=3.3
+VERSION=3.3.x
 DO_STATS=0
 DO_CATEGORIES=0
 TYPE=none
 SITEDIR=`basename ${SITE}`
+SITEPARENT=`dirname ${SITE}`
+SITEPARENT=`basename ${SITEPARENT}`
 case ${SITEDIR} in
   test*Updates)   TYPE=test ;;
   signed*Updates) TYPE=testSigned ;;
@@ -61,6 +63,9 @@ esac
 case ${SITEDIR} in
   3.2) DO_STATS=1 ;;
   3.3) DO_STATS=1 ;;
+esac
+case ${SITEPARENT} in
+  staging) SITEDIR=staging/${SITEDIR} ;;
 esac
 if [ ${TYPE} = test ]; then
     TPTYPE="${VERSION} Test"
@@ -78,12 +83,15 @@ if [ ${TYPE} = test ]; then
         cp -R $DIR/plugins .
       fi
     fi
-    # CHECK VERSION CORRECTNESS for MICRO or MINOR UPDATES only
+    # CHECK VERSION CORRECTNESS for MICRO UPDATES only
     # Major version updates are not allowed.
-    # Update of "qualifier" requires also updating "micro" or "minor"
-    echo "VERIFYING VERSION CORRECTNESS: Features against ../updates/3.2"
+    #MINOR_UPDATE_OK=1
+    # Minor/major version updates are not allowed.
+    MINOR_UPDATE_OK=0
+    # Update of "qualifier" requires also updating "micro"
+    echo "VERIFYING VERSION CORRECTNESS: Features against ../updates/3.3"
     ls features/*.jar | sed -e 's,^.*features/,,' | sort > f1.$$.txt
-    ls ../updates/3.2/features/*.jar | sed -e 's,^.*features/,,' | sort > f2.$$.txt
+    ls ../updates/3.3/features/*.jar | sed -e 's,^.*features/,,' | sort > f2.$$.txt
     diff f2.$$.txt f1.$$.txt | grep '^[>]' \
        | sed -e 's,[>] \(.*_[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,' > f_new.txt
     for f in `cat f_new.txt`; do
@@ -91,20 +99,25 @@ if [ ${TYPE} = test ]; then
       if [ "${fold}" != "" ]; then
         echo "PROBLEM: QUALIFIER update without MICRO: ${f}"
       fi
-      #fbase=`echo $f | sed -e 's,\(.*_[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,'`
-      #fold=`grep "${fbase}\." f2.$$.txt`
-      #if [ "${fold}" = "" ]; then
-      #  echo "PROBLEM: MAJOR or MINOR update : ${f}"
-      #fi
-      fbase=`echo $f | sed -e 's,\(.*_[0-9][0-9]*\)\.[0-9][0-9]*\..*,\1,'`
-      fold=`grep ${fbase} f2.$$.txt`
-      if [ "${fold}" = "" ]; then
-        echo "PROBLEM: MAJOR update or NEW : ${f}"
+      if [ "${MINOR_UPDATE_OK}" = "0" ]; then
+        #allow MICRO updates only, but require QUALIFIER update
+        fbase=`echo $f | sed -e 's,\(.*_[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,'`
+        fold=`grep "${fbase}\." f2.$$.txt`
+        if [ "${fold}" = "" ]; then
+          echo "PROBLEM: MAJOR or MINOR update : ${f}"
+        fi
+      else
+        #allow MINOR or MICRO updates, but require QUALIFIER update
+        fbase=`echo $f | sed -e 's,\(.*_[0-9][0-9]*\)\.[0-9][0-9]*\..*,\1,'`
+        fold=`grep ${fbase} f2.$$.txt`
+        if [ "${fold}" = "" ]; then
+          echo "PROBLEM: MAJOR update or NEW : ${f}"
+        fi
       fi
     done
-    echo "VERIFYING VERSION CORRECTNESS: Plugins against ../updates/3.2"
+    echo "VERIFYING VERSION CORRECTNESS: Plugins against ../updates/3.3"
     ls plugins/*.jar | sed -e 's,^.*plugins/,,' | sort > p1.$$.txt
-    ls ../updates/3.2/plugins/*.jar | sed -e 's,^.*plugins/,,' | sort > p2.$$.txt
+    ls ../updates/3.3/plugins/*.jar | sed -e 's,^.*plugins/,,' | sort > p2.$$.txt
     diff p2.$$.txt p1.$$.txt | grep '^[>]' \
        | sed -e 's,[>] \(.*_[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,' > p_new.txt
     for p in `cat p_new.txt`; do
@@ -112,15 +125,20 @@ if [ ${TYPE} = test ]; then
       if [ "${pold}" != "" ]; then
         echo "PROBLEM: QUALIFIER update without MICRO: ${p}"
       fi
-      #pbase=`echo $p | sed -e 's,\(.*_[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,'`
-      #pold=`grep "${pbase}\." p2.$$.txt`
-      #if [ "${pold}" = "" ]; then
-      #  echo "PROBLEM: MAJOR or MINOR update : ${p}"
-      #fi
-      pbase=`echo $p | sed -e 's,\(.*_[0-9][0-9]*\)\.[0-9][0-9]*\..*,\1,'`
-      pold=`grep ${pbase} p2.$$.txt`
-      if [ "${pold}" = "" ]; then
-        echo "PROBLEM: MAJOR update or NEW : ${p}"
+      if [ "${MINOR_UPDATE_OK}" = "0" ]; then
+        #allow MICRO updates only, but require QUALIFIER update
+        pbase=`echo $p | sed -e 's,\(.*_[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,'`
+        pold=`grep "${pbase}\." p2.$$.txt`
+        if [ "${pold}" = "" ]; then
+          echo "PROBLEM: MAJOR or MINOR update : ${p}"
+        fi
+      else
+        #allow MINOR or MICRO updates, but require QUALIFIER update
+        pbase=`echo $p | sed -e 's,\(.*_[0-9][0-9]*\)\.[0-9][0-9]*\..*,\1,'`
+        pold=`grep ${pbase} p2.$$.txt`
+        if [ "${pold}" = "" ]; then
+          echo "PROBLEM: MAJOR update or NEW : ${p}"
+        fi
       fi
     done
     #rm f_new.txt p_new.txt
@@ -138,7 +156,7 @@ if [ ${TYPE} = test ]; then
     sed -e "s,/tm/updates/2.0,/tm/${SITEDIR},g" \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
-    	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_2 -->/d' \
+    	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_3 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
@@ -272,7 +290,7 @@ elif [ ${TYPE} = testSigned ]; then
     sed -e "s,/tm/updates/2.0,/tm/${SITEDIR},g" \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
-    	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_2 -->/d' \
+    	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_3 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
@@ -298,7 +316,7 @@ being contributed to the Eclipse Indigo coordinated release train (Eclipse 3.7.x
     sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
-    	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_2 -->/d' \
+    	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_3 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
@@ -324,7 +342,7 @@ to test them before going live.' \
     sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
-    	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_2 -->/d' \
+    	-e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_3 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
@@ -404,6 +422,7 @@ being contributed to the Eclipse Helios coordinated release train (Eclipse 3.6.x
     sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- BEGIN_3_2 -->/d' \
+    	-e '/<!-- BEGIN_3_3 -->/,/<!-- END_ALL -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
@@ -527,7 +546,7 @@ if [ x${DO_STATS} = x1 ]; then
     -p2.statsURI http://download.eclipse.org/stats/tm \
     -p2.statsTrackedFeatures org.eclipse.rse.sdk,org.eclipse.rse.dstore,org.eclipse.rse.core,org.eclipse.rse.useractions,org.eclipse.rse.examples,org.eclipse.rse.tests,org.eclipse.rse.wince,org.eclipse.tm.terminal.view,org.eclipse.tm.terminal.local \
     -p2.statsTrackedBundles org.eclipse.rse.core,org.eclipse.rse.core.source,org.eclipse.tm.terminal \
-    -p2.statsSuffix _tm330
+    -p2.statsSuffix _tm331
     -vmargs -Xmx256M"
   echo $CMD
   $CMD
@@ -554,7 +573,7 @@ else
   echo "result: ${result}"
 fi
     
-	if [ x${DO_CATEGORIES} = x1 ]; then
+if [ x${DO_CATEGORIES} = x1 ]; then
   echo "Adding Categories..."
   CMD="java -jar ${tgtlauncher} \
     -application org.eclipse.equinox.p2.publisher.CategoryPublisher \

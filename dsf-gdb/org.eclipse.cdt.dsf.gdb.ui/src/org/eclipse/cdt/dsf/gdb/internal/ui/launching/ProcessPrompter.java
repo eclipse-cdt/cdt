@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Ericsson             - Modified for DSF
+ *     Marc Khouzam (Ericsson) - Add support for multi-attach (Bug 293679)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
@@ -150,6 +151,9 @@ public class ProcessPrompter implements IStatusHandler {
 			dialog.setTitle(LaunchMessages.getString("LocalAttachLaunchDelegate.Select_Process")); //$NON-NLS-1$
 			dialog.setMessage(LaunchMessages.getString("LocalAttachLaunchDelegate.Select_Process_to_attach_debugger_to")); //$NON-NLS-1$
 
+			// Allow for multiple selection
+			dialog.setMultipleSelection(true);
+
 			dialog.setElements(plist);
 			if (dialog.open() == Window.OK) {
 				// First check if the user pressed the New button
@@ -158,9 +162,13 @@ public class ProcessPrompter implements IStatusHandler {
 					return binaryPath;
 				}
 				
-				IProcessExtendedInfo processInfo = (IProcessExtendedInfo)dialog.getFirstResult();
-				if (processInfo != null) {
-					return new Integer(processInfo.getPid());
+				Object[] results = dialog.getResult();
+				if (results != null) {
+					IProcessExtendedInfo[] processes = new IProcessExtendedInfo[results.length];
+					for (int i=0; i<processes.length; i++) {
+						processes[i] = (IProcessExtendedInfo)results[i];
+					}
+					return processes;
 				}
 			}
 		}

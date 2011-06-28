@@ -39,12 +39,12 @@
 </li>
 -->
 <li>At least 4 bugs were resolved: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;value0-0-2=backport;chfieldto=2011-06-30;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.3%20M[34567];chfieldfrom=2011-04-28;field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.3%20RC1;target_milestone=3.3%20RC2;target_milestone=3.3%20RC3;target_milestone=3.3%20RC4;target_milestone=3.3;product=Target%20Management">
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?type0-0-4=regexp;negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;field0-0-4=target_milestone;value0-0-2=backport;chfieldto=2011-09-30;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.3%20M[34567];chfieldfrom=2011-06-01;value0-0-4=3\.3%20RC[1234];field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.3.1;product=Target%20Management">
   this query</a> to show the list of bugs fixed since
-  <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M7-201105022200/">
-  TM 3.3M7</a>
-  [<a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M7-201105022200/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/tm/downloads/drops/R-3.3-201106080935/">
+  TM 3.3</a>
+  [<a href="http://download.eclipse.org/tm/downloads/drops/R-3.3-201106080935/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -53,8 +53,8 @@
 <li>For other questions, please check the
   <a href="http://wiki.eclipse.org/TM_and_RSE_FAQ">TM and RSE FAQ</a>
   as well as the
-  <a href="http://wiki.eclipse.org/TM/3.2_Known_Issues_and_Workarounds">
-  TM 3.2 and 3.3 Known Issues and Workarounds</a>.</li>
+  <a href="http://wiki.eclipse.org/TM/3.3_Known_Issues_and_Workarounds">
+  TM 3.3 and 3.4 Known Issues and Workarounds</a>.</li>
 </ul>
 </td></tr></tbody></table>
 
@@ -87,7 +87,7 @@ are the best places for you to get started.
 	</tr>
 </table>
 <table><tbody><tr><td>
-<p>For the upcoming TM 3.3 release, only backward compatible API changes
+<p>For the upcoming TM 3.4 release, only backward compatible API changes
 are planned, especially in order to support improved componentization
 and UI/Non-UI splitting.
 In the interest of improving the code base, though, please 
@@ -121,13 +121,13 @@ More information can be found in the associated bugzilla items.
 
 Use 
   <!-- 
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&chfieldfrom=2009-06-20&chfieldto=2009-09-25&chfield=resolution&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&chfieldfrom=2011-06-20&chfieldto=2012-09-25&chfield=resolution&cmdtype=doit">
    -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&target_milestone=3.3&cmdtype=doit">
-  this query</a> to show the full list of API related updates since TM 3.2
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&target_milestone=3.4&cmdtype=doit">
+  this query</a> to show the full list of API related updates since TM 3.3
   , and
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&product=Target+Management&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&cmdtype=doit">
-  this query</a> to show the list of additional API changes proposed for TM 3.3 or later
+  this query</a> to show the list of additional API changes proposed for TM 3.4 or later
   .
 </td></tr></tbody></table>
 
@@ -161,8 +161,8 @@ Use
 for an up-to-date list of major or critical bugs.</p>
 
 <p>The 
-<a href="http://wiki.eclipse.org/TM/3.2_Known_Issues_and_Workarounds">
-TM 3.2 and 3.3 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
+<a href="http://wiki.eclipse.org/TM/3.3_Known_Issues_and_Workarounds">
+TM 3.3 and 3.4 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
 of the most frequent and obvious problems, and describes workarounds for them.<br/>
 If you have other questions regarding TM or RSE, please check the
 <a href="http://wiki.eclipse.org/TM_and_RSE_FAQ">TM and RSE FAQ</a>

@@ -21,6 +21,7 @@
  * Noriaki Takatsu  (IBM)        - [256724] thread-level security is not established
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  * David McKnight   (IBM)        - [153635] [dstore-linux] dangling symbolic links are not classified properly
+ * David McKnight   (IBM)        - [350581] [dstore] FileClassifier should default to English
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -718,11 +719,17 @@ public class FileClassifier extends SecuredThread
             else
             {
                 args[2] = "file " + files; //dont quote files to allow shell pattern matching //$NON-NLS-1$
-
+            }
+            
+            String[] envVars = null;
+            String classifyWithEnglish = System.getProperty("classify.with.english"); //$NON-NLS-1$
+            if (classifyWithEnglish == null || classifyWithEnglish.equals("true")){ //$NON-NLS-1$
+            	String langVar = "LANG=en_US"; // right now only classifying based on English //$NON-NLS-1$
+            	envVars = new String[] {langVar};
             }
 
             // run command with the working directory being the parent file
-            Process theProcess = Runtime.getRuntime().exec(args, null, parentFile);
+            Process theProcess = Runtime.getRuntime().exec(args, envVars, parentFile);
 
             BufferedReader reader = null;
             DataInputStream stream = null;

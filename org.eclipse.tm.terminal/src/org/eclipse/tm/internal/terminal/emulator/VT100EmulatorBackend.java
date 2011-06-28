@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Michael Scharf (Wind River) - initial API and implementation
+ * Anton Leherbauer (Wind River) - [206329] Changing terminal size right after connect does not scroll properly
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -77,34 +78,27 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		synchronized (fTerminal) {
 			if(lines==fLines && cols==fColumns)
 				return; // nothing to do
-			// cursor line from the bottom
-			int cl=lines-(fLines-getCursorLine());
+			// relative cursor line
+			int cl=getCursorLine();
 			int cc=getCursorColumn();
-			int newLines=Math.max(lines,fTerminal.getHeight());
-			// if the terminal has no history, then resize by
-			// setting the size to the new size
-			if(fTerminal.getHeight()==fLines) {
-				if(lines<fLines) {
-					cl+=fLines-lines;
-					newLines=lines;
-					// shrink by cutting empty lines at the bottom
-//					int firstNoneEmptyLine;
-//					for (firstNoneEmptyLine = fTerminal.getHeight(); firstNoneEmptyLine <= 0; firstNoneEmptyLine--) {
-//						LineSegment[] segments = fTerminal.getLineSegments(firstNoneEmptyLine, 0, fTerminal.getWidth());
-//						if(segments.length>1)
-//							break;
-//						// is the line empty?
-//						if(segments[0].getText().replaceAll("[\000 ]+", "").length()==0)
-//							break;
-//					}
-				} else {
-					cl+=fLines-lines;
+			int height=fTerminal.getHeight();
+			// absolute cursor line
+			int acl=cl+height-fLines;
+			int newLines=Math.max(lines,height);
+			if(lines<fLines) {
+				if(height==fLines) {
+					// if the terminal has no history, then resize by
+					// setting the size to the new size
+					// TODO We are assuming that cursor line points at end of text
+					newLines=Math.max(lines, cl+1);
 				}
 			}
 			fLines=lines;
 			fColumns=cols;
 			// make the terminal at least as high as we need lines
 			fTerminal.setDimensions(newLines, fColumns);
+			// compute relative cursor line
+			cl=acl-(newLines-fLines);
 			setCursor(cl, cc);
 		}
 	}

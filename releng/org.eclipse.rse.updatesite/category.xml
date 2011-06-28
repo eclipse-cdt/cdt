@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.rse_3.3.0.qualifier.jar" id="org.eclipse.rse" version="3.3.0.qualifier">
+   <feature url="features/org.eclipse.rse_3.3.1.qualifier.jar" id="org.eclipse.rse" version="3.3.1.qualifier">
       <category name="tm_331_main"/>
    </feature>
-   <feature url="features/org.eclipse.rse.sdk_3.3.0.qualifier.jar" id="org.eclipse.rse.sdk" version="3.3.0.qualifier">
+   <feature url="features/org.eclipse.rse.sdk_3.3.1.qualifier.jar" id="org.eclipse.rse.sdk" version="3.3.1.qualifier">
       <category name="tm_331_main"/>
    </feature>
    <feature url="features/org.eclipse.rse.useractions_1.1.300.qualifier.jar" id="org.eclipse.rse.useractions" version="1.1.300.qualifier">
@@ -21,10 +21,10 @@
    <feature url="features/org.eclipse.rse.wince_0.3.0.qualifier.jar" id="org.eclipse.rse.wince" version="0.3.0.qualifier">
       <category name="tm_331_optional"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.2.0.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.2.0.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.2.1.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.2.1.qualifier">
       <category name="tm_331_optional"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk_3.2.0.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.2.0.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.sdk_3.2.1.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.2.1.qualifier">
       <category name="tm_331_main"/>
    </feature>
    <category-def name="tm_331_main" label="TM and RSE 3.3.1 Main Features">

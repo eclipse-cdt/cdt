@@ -271,7 +271,7 @@ public class MIStack extends AbstractDsfService
 	    	return;
 	    }
 
-	    if (fTraceVisualization || (startIndex == 0 && endIndex == 0)) {
+	    if (startIndex == 0 && endIndex == 0) {
 	        // Try to retrieve the top stack frame from the cached stopped event.
 	        if (fCachedStoppedEvent != null && 
 	            fCachedStoppedEvent.getFrame() != null && 
@@ -383,6 +383,9 @@ public class MIStack extends AbstractDsfService
 
             public IAddress getAddress() {
                 String addr = getMIFrame().getAddress();
+                if (addr == null || addr.length() == 0) {
+                	return new Addr32(0);
+                }
                 if (addr.startsWith("0x")) { //$NON-NLS-1$
                     addr = addr.substring(2);
                 }
@@ -415,7 +418,7 @@ public class MIStack extends AbstractDsfService
         
         // Retrieve the top stack frame from the stopped event only if the selected thread is the one on which stopped event 
         // is raised
-        if (fTraceVisualization || miFrameDmc.fLevel == 0) {
+        if (miFrameDmc.fLevel == 0) {
         	if (fCachedStoppedEvent != null && fCachedStoppedEvent.getFrame() != null && 
         		(execDmc.equals(fCachedStoppedEvent.getDMContext()) || fTraceVisualization))
         	{
@@ -513,14 +516,6 @@ public class MIStack extends AbstractDsfService
             rm.done();
             return;
         }
-
-        if (fTraceVisualization) {
-        	// For the pre-release of GDB that supports tracepoints, we cannot ask
-        	// for the list of arguments for all stack frames, but only for available
-        	// ones.  Again, I'm hoping that GDB 7.2 will be smarter than that.
-        	getArgumentsForTraceVisualization(frameDmc, rm);
-        	return;
-        }
         
         // If not, retrieve the full list of frame data.  Although we only need one frame
         // for this call, it will be stored the cache and made available for other calls.
@@ -581,44 +576,7 @@ public class MIStack extends AbstractDsfService
                             }); 
                 }
             }); 
-    }    
-    
-	// For the pre-release of GDB that supports tracepoints, we cannot ask
-	// for the list of arguments for all stack frames, but only for available
-	// ones.  Again, I'm hoping that GDB 7.2 will be smarter than that.
-	private void getArgumentsForTraceVisualization(final IFrameDMContext frameDmc, final DataRequestMonitor<IVariableDMContext[]> rm) {
-        final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(frameDmc, IMIExecutionDMContext.class);
-
-        getStackDepth(execDmc, 0, new DataRequestMonitor<Integer>(getExecutor(), rm) {
-            @Override
-            protected void handleSuccess() {
-            	int bottomFrame = getData() - 1;
-            	fMICommandCache.execute(
-            			// Don't ask for values for tracepoints
-            			fCommandFactory.createMIStackListArguments(execDmc, false, 0, bottomFrame),
-            			new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
-            				@Override
-            				protected void handleSuccess() {
-            					// Find the index to the correct MI frame object.
-            					// Note: this is a short-cut, but it won't work once we implement retrieving
-            					// partial lists of stack frames.
-            					int idx = frameDmc.getLevel();
-            					if (idx == -1 || idx >= getData().getMIFrames().length) {
-            						rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid frame " + frameDmc, null));  //$NON-NLS-1$
-            						rm.done();
-            						return;
-            					}
-
-            					// Create the variable array out of MIArg array.
-            					MIArg[] args = getData().getMIFrames()[idx].getArgs();
-            					if (args == null) args = new MIArg[0]; 
-            					rm.setData(makeVariableDMCs(frameDmc, MIVariableDMC.Type.ARGUMENT, args));
-            					rm.done();
-            				}
-            			});
-            }
-        });
-	}
+    }
 	
     public void getVariableData(IVariableDMContext variableDmc, final DataRequestMonitor<IVariableDMData> rm) {
         if (!(variableDmc instanceof MIVariableDMC)) {
@@ -676,9 +634,6 @@ public class MIStack extends AbstractDsfService
         }
 
         if (miVariableDmc.fType == MIVariableDMC.Type.ARGUMENT){
-        	if (fTraceVisualization) {
-        		getArgumentsDataForTraceVisualization(miVariableDmc, rm);
-        	} else {
 	        fMICommandCache.execute(
 	            // Don't ask for value when we are visualizing trace data, since some
 	            // data will not be there, and the command will fail
@@ -724,7 +679,6 @@ public class MIStack extends AbstractDsfService
 	                			});	
 	                }
 	        	});
-        	}
         }//if
         if (miVariableDmc.fType == MIVariableDMC.Type.LOCAL){
             fMICommandCache.execute(
@@ -769,52 +723,6 @@ public class MIStack extends AbstractDsfService
         }//if   
 
     }
-
-	// For the pre-release of GDB that supports tracepoints, we cannot ask
-	// for the list of arguments for all stack frames, but only for available
-	// ones.  Again, I'm hoping that GDB 7.2 will be smarter than that.
-	private void getArgumentsDataForTraceVisualization(final MIVariableDMC miVariableDmc, final DataRequestMonitor<IVariableDMData> rm) {
-        final MIFrameDMC frameDmc = DMContexts.getAncestorOfType(miVariableDmc, MIFrameDMC.class);
-        final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(frameDmc, IMIExecutionDMContext.class);
-
-    	class VariableData implements IVariableDMData {
-    		private MIArg dsfMIArg;
-    		VariableData(MIArg arg){
-    			dsfMIArg = arg;
-    		}
-    		public String getName() { return dsfMIArg.getName(); }
-    		public String getValue() { return dsfMIArg.getValue(); }
-    		@Override
-    		public String toString() { return dsfMIArg.toString(); }	
-    	}    	
-
-        getStackDepth(execDmc, 0, new DataRequestMonitor<Integer>(getExecutor(), rm) {
-            @Override
-            protected void handleSuccess() {
-            	int bottomFrame = getData() - 1;
-            	fMICommandCache.execute(
-            			// Don't ask for values for tracepoints
-            			fCommandFactory.createMIStackListArguments(execDmc, false, 0, bottomFrame),
-            			new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
-            				@Override
-            				protected void handleSuccess() {
-            					// Find the correct frame and argument
-            					if ( frameDmc.fLevel >= getData().getMIFrames().length ||
-            							miVariableDmc.fIndex >= getData().getMIFrames()[frameDmc.fLevel].getArgs().length )
-            					{
-            						rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid variable " + miVariableDmc, null));  //$NON-NLS-1$
-            						rm.done();
-            						return;
-            					}
-
-            					// Create the data object.
-            					rm.setData(new VariableData(getData().getMIFrames()[frameDmc.fLevel].getArgs()[miVariableDmc.fIndex]));
-            					rm.done();
-            				}
-            			});
-            }
-        });
-	}
 
     private MIVariableDMC[] makeVariableDMCs(IFrameDMContext frame, MIVariableDMC.Type type, MIArg[] miArgs) {
     	// Use LinkedHashMap in order to keep the original ordering.
@@ -944,13 +852,12 @@ public class MIStack extends AbstractDsfService
 	    				@Override
 	    				protected void handleError() {
 	    					if (fTraceVisualization) {
-	    				    	// when visualizing trace data, the pre-release GDB, the command
+	    				    	// when visualizing trace data with GDB 7.2, the command
 	    				    	// -stack-info-depth will return an error if we ask for any level
 	    				    	// that GDB does not know about.  We would have to iteratively
 	    				    	// try different depths until we found the deepest that succeeds.
-	    				    	// That is too much of a hack for a pre-release.  Let's hope
-	    				    	// GDB 7.2 will properly answer -stack-info-depth when visualizing
-	    				    	// trace data.  Until then, we can safely say we have one stack
+	    				    	// That is too much of a hack, especially since GDB 7.3 answers correctly.
+	    				    	// For 7.2, we can safely say we have one stack
 	    				    	// frame, which is going to be the case for 95% of the cases.
 	    				    	// To have more stack frames, the user would have to have collected
 	    				    	// the registers and enough stack memory for GDB to build another frame.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -723,6 +723,7 @@ public class CProject extends Openable implements ICProject {
 	@Override
 	protected void closing(Object info) throws CModelException {
 		if (info instanceof CProjectInfo) {
+			CModelManager.getDefault().removeBinaryRunner(this);
 			CProjectInfo pinfo = (CProjectInfo)info;
 			if (pinfo.vBin != null) {
 				pinfo.vBin.close();
@@ -731,7 +732,6 @@ public class CProject extends Openable implements ICProject {
 				pinfo.vLib.close();
 			}
 			pinfo.resetCaches();
-			CModelManager.getDefault().removeBinaryRunner(this);
 		}
 		super.closing(info);
 	}

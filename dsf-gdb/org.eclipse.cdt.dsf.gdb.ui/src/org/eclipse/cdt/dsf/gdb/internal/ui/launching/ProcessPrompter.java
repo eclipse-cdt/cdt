@@ -158,10 +158,7 @@ public class ProcessPrompter implements IStatusHandler {
 					return binaryPath;
 				}
 				
-				IProcessExtendedInfo processInfo = (IProcessExtendedInfo)dialog.getFirstResult();
-				if (processInfo != null) {
-					return new Integer(processInfo.getPid());
-				}
+				return dialog.getFirstResult();
 			}
 		}
 		

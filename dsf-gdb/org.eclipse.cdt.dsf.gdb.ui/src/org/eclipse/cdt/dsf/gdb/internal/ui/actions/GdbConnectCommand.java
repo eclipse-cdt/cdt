@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -41,8 +42,10 @@ import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
@@ -58,6 +61,16 @@ public class GdbConnectCommand implements IConnect {
 	private final DsfExecutor fExecutor;
     private final DsfServicesTracker fTracker;
     
+    // A map of processName to path, that allows us to remember the path to the binary file
+    // for a process with a particular name.  We can then re-use the same binary for another
+    // process with the same name.  This allows a user to connect to multiple processes
+    // with the same name without having to be prompted each time for a path.
+    // This map is associated to the current debug session only, therefore the user can
+    // reset it by using a new debug session.
+    // This map is only needed for remote sessions, since we don't need to specify
+    // the binary location for a local attach session.
+    private Map<String, String> fProcessNameToBinaryMap = new HashMap<String, String>();
+
     public GdbConnectCommand(DsfSession session) {
         fExecutor = session.getExecutor();
         fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
@@ -131,7 +144,7 @@ public class GdbConnectCommand implements IConnect {
     			Object result = prompter.handleStatus(processPromptStatus, info);
     			 if (result == null) {
  					fRequestMonitor.cancel();
- 				} else if (result instanceof Integer || result instanceof String) {
+ 				} else if (result instanceof IProcessExtendedInfo || result instanceof String) {
     				fRequestMonitor.setData(result);
     		    } else {
     				fRequestMonitor.setStatus(NO_PID_STATUS);
@@ -150,27 +163,54 @@ public class GdbConnectCommand implements IConnect {
     private class PromptAndAttachToProcessJob extends UIJob {
     	private final String fPid;
     	private final RequestMonitor fRm;
-    	
-    	public PromptAndAttachToProcessJob(String pid, RequestMonitor rm) {
+    	private final String fProcName;
+
+    	public PromptAndAttachToProcessJob(String pid, String procName, RequestMonitor rm) {
     		super(""); //$NON-NLS-1$
     		fPid = pid;
+    		fProcName = procName;
     		fRm = rm;
     	}
 
     	@Override
     	public IStatus runInUIThread(IProgressMonitor monitor) {
-    		String binaryPath = null;
     		
-    		Shell shell = Display.getCurrent().getActiveShell();
-    		if (shell != null) {
-    			FileDialog fd = new FileDialog(shell, SWT.NONE);
-    			binaryPath = fd.open();
+			// If this is the very first attach of a remote session, check if the user
+			// specified the binary in the launch.  If so, let's add it to our map to 
+    		// avoid having to prompt the user for that binary.
+    		// This would be particularly annoying since we didn't use to have
+			// to do that before we supported multi-process.
+			// Bug 350365
+			if (fProcessNameToBinaryMap.isEmpty()) {
+				IGDBBackend backend = fTracker.getService(IGDBBackend.class);
+				if (backend != null) {
+					IPath binaryPath = backend.getProgramPath();
+					if (binaryPath != null && !binaryPath.isEmpty()) {
+						fProcessNameToBinaryMap.put(binaryPath.lastSegment(), binaryPath.toOSString());
+					}
+				}
+			}
+
+    		// Have we already see the binary for a process with this name?
+    		String binaryPath = fProcessNameToBinaryMap.get(fProcName);
+
+    		if (binaryPath == null) {
+    			// prompt for the binary path
+    			Shell shell = Display.getCurrent().getActiveShell();
+    			if (shell != null) {
+    				FileDialog fd = new FileDialog(shell, SWT.NONE);
+    				binaryPath = fd.open();
+    			}
     		}
 
     		if (binaryPath == null) {
     			// The user pressed the cancel button, so we cancel the attach gracefully
     			fRm.done();
     		} else {
+    			// Store the path of the binary so we can use it again for another process
+    			// with the same name
+    			fProcessNameToBinaryMap.put(fProcName, binaryPath);
+
     			final String finalBinaryPath = binaryPath;
     			fExecutor.execute(new DsfRunnable() {
     				public void run() {
@@ -250,17 +290,19 @@ public class GdbConnectCommand implements IConnect {
 																	String binaryPath = (String)data;
 																	procService.debugNewProcess(
 																			controlCtx, binaryPath, 
-																			// khouzam, maybe we should at least pass stopOnMain?
 																			new HashMap<String, Object>(), new DataRequestMonitor<IDMContext>(fExecutor, rm));
-																} else if (data instanceof Integer) {
-																	String pidStr = Integer.toString((Integer)data);
+																} else if (data instanceof IProcessExtendedInfo) {
+																	IProcessExtendedInfo process = (IProcessExtendedInfo)data;
+																	String pidStr = Integer.toString(process.getPid());
 																	final IGDBBackend backend = fTracker.getService(IGDBBackend.class);
 																	if (backend != null && backend.getSessionType() == SessionType.REMOTE) {
 																		// For remote attach, we must set the binary first so we need to prompt the user.
 																		// Because the prompt is a very long operation, we need to run outside the
 																		// executor, so we don't lock it.
 																		// Bug 344892
-																		new PromptAndAttachToProcessJob(pidStr, rm).schedule();
+								    									IPath processPath = new Path(process.getName());
+								    									String processShortName = processPath.lastSegment();
+								    									new PromptAndAttachToProcessJob(pidStr, processShortName, rm).schedule();
 																	} else {
 																		// For a local attach, GDB can figure out the binary automatically,
 																		// so we don't need to prompt for it.

@@ -149,7 +149,16 @@
 
 		<module>core/org.eclipse.cdt.core.tests</module>
 		<module>core/org.eclipse.cdt.ui.tests</module>
-
+		<module>build/org.eclipse.cdt.managedbuilder.core.tests</module>
+		<module>build/org.eclipse.cdt.managedbuilder.ui.tests</module>
+		<module>lrparser/org.eclipse.cdt.core.lrparser.tests</module>
+		<module>upc/org.eclipse.cdt.core.parser.upc.tests</module>
+		<module>xlc/org.eclipse.cdt.core.lrparser.xlc.tests</module>
+		<module>codan/org.eclipse.cdt.codan.core.test</module>
+<!-- 
+		<module>debug/org.eclipse.cdt.debug.ui.tests</module>
+-->
+		
 		<module>releng/org.eclipse.cdt.repo</module>
 	</modules>
 

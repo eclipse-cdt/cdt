@@ -71,6 +71,8 @@ public class GdbConnectCommand implements IConnect {
     // with the same name without having to be prompted each time for a path.
     // This map is associated to the current debug session only, therefore the user can
     // reset it by using a new debug session.
+    // This map is only needed for remote sessions, since we don't need to specify
+    // the binary location for a local attach session.
     private Map<String, String> fProcessNameToBinaryMap = new HashMap<String, String>();
     
     public GdbConnectCommand(DsfSession session) {
@@ -187,6 +189,23 @@ public class GdbConnectCommand implements IConnect {
 
     	@Override
     	public IStatus runInUIThread(IProgressMonitor monitor) {
+    		
+			// If this is the very first attach of a remote session, check if the user
+			// specified the binary in the launch.  If so, let's add it to our map to 
+    		// avoid having to prompt the user for that binary.
+    		// This would be particularly annoying since we didn't use to have
+			// to do that before we supported multi-process.
+			// Bug 350365
+			if (fProcessNameToBinaryMap.isEmpty()) {
+				IGDBBackend backend = fTracker.getService(IGDBBackend.class);
+				if (backend != null) {
+					IPath binaryPath = backend.getProgramPath();
+					if (binaryPath != null && !binaryPath.isEmpty()) {
+						fProcessNameToBinaryMap.put(binaryPath.lastSegment(), binaryPath.toOSString());
+					}
+				}
+			}
+
     		// Have we already see the binary for a process with this name?
     		String binaryPath = fProcessNameToBinaryMap.get(fProcName);
 

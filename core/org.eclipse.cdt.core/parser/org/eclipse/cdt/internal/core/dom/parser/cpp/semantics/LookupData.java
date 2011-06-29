@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -42,7 +41,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
@@ -401,41 +399,30 @@ public class LookupData {
         	nameParent= name.getParent();
         }
 
-        try {
-        	final ASTNodeProperty prop = name.getPropertyInParent();
-        	if (prop == CPPSemantics.STRING_LOOKUP_PROPERTY) {
-        		return null;
-        	}
-        	if (prop == IASTFieldReference.FIELD_NAME) {
-        		ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) nameParent;
-        		IType implied= CPPSemantics.getFieldOwnerType(fieldRef);
-        		if (fieldRef.isPointerDereference()) {
-            		implied= SemanticUtil.getUltimateTypeUptoPointers(implied);
-            		if (implied instanceof IPointerType)
-            			return ((IPointerType) implied).getType();
-    			}
-        		return implied;
-        	}
-        	if (prop == IASTIdExpression.ID_NAME) {
-        		IScope scope = CPPVisitor.getContainingScope(name);
-        		if (scope instanceof ICPPClassScope) {
-        			return ((ICPPClassScope) scope).getClassType();
-        		} 
-
-        		return CPPVisitor.getImpliedObjectType(scope);
-        	}
-        	if (prop == IASTDeclarator.DECLARATOR_NAME) {
-        		if (forExplicitFunctionInstantiation()) {
-            		IScope scope = CPPVisitor.getContainingScope(astName);
-            		if (scope instanceof ICPPClassScope) {
-            			return ((ICPPClassScope) scope).getClassType();
-            		} 
-        		}
-        	}
-        	return null;
-        } catch (DOMException e) {
-        	return e.getProblem();
-        }
+        final ASTNodeProperty prop = name.getPropertyInParent();
+		if (prop == CPPSemantics.STRING_LOOKUP_PROPERTY) {
+			return null;
+		}
+		if (prop == IASTFieldReference.FIELD_NAME) {
+			ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) nameParent;
+			return fieldRef.getFieldOwnerType();
+		}
+		if (prop == IASTIdExpression.ID_NAME) {
+			IScope scope = CPPVisitor.getContainingScope(name);
+			if (scope instanceof ICPPClassScope) {
+				return ((ICPPClassScope) scope).getClassType();
+			} 
+			return CPPVisitor.getImpliedObjectType(scope);
+		}
+		if (prop == IASTDeclarator.DECLARATOR_NAME) {
+			if (forExplicitFunctionInstantiation()) {
+				IScope scope = CPPVisitor.getContainingScope(astName);
+				if (scope instanceof ICPPClassScope) {
+					return ((ICPPClassScope) scope).getClassType();
+				} 
+			}
+		}
+		return null;
     }
 
 	public boolean forFriendship() {

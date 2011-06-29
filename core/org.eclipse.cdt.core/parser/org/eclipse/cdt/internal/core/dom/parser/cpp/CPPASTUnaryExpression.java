@@ -16,9 +16,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -28,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -46,7 +43,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * Unary expression in c++
@@ -249,15 +245,15 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 
 		if (op == op_star) {
 			IType type= operand.getExpressionType();
-			type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
-	    	if (type instanceof ISemanticProblem) {
-	    		return type;
-	    	}
-
-	    	if (type instanceof IPointerType || type instanceof IArrayType) {
+			type = prvalueType(type);
+	    	if (type instanceof IPointerType) {
 	    		type= ((ITypeContainer) type).getType();
 	    		return glvalueType(type);
 			} 
+	    	if (type instanceof ISemanticProblem) {
+	    		return type;
+	    	}
+	    	type= getUltimateTypeUptoPointers(type);
 	    	if (type instanceof ICPPUnknownType) {
 	    		// mstodo Type of unknown
 				return CPPUnknownClass.createUnnamedInstance();

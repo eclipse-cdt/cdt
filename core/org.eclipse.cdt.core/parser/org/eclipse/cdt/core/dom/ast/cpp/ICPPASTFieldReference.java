@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
+import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * Certain field references in C++ require the use the keyword template to
@@ -45,4 +46,10 @@ public interface ICPPASTFieldReference extends IASTFieldReference, IASTImplicitN
 	 * @since 5.3
 	 */
 	public ICPPASTFieldReference copy(CopyStyle style);
+
+	/**
+	 * Returns the type of the field owner.
+	 * @since 5.4
+	 */
+	public IType getFieldOwnerType();
 }

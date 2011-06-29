@@ -1121,19 +1121,16 @@ public class CPPVisitor extends ASTQueries {
 					data.usesEnclosingScope= false;
 				}
 				final ICPPASTFieldReference fieldReference = (ICPPASTFieldReference) parent;
-				IType type = CPPSemantics.getFieldOwnerType(fieldReference);
-				if (fieldReference.isPointerDereference()) {
-					type= getUltimateType(type, false);
-				} else {
-					type= getUltimateTypeUptoPointers(type);
-				}
+				IType type = fieldReference.getFieldOwnerType();
+				type= getUltimateTypeUptoPointers(type);
 				if (type instanceof ICPPClassType) {
-					if (type instanceof IIndexBinding) {
-						type= (((CPPASTTranslationUnit) fieldReference.getTranslationUnit())).mapToAST((ICPPClassType) type);
-					}
+					type= SemanticUtil.mapToAST(type, fieldReference);
 					return ((ICPPClassType) type).getCompositeScope();
 				} else if (type instanceof ICPPUnknownBinding) {
 					return ((ICPPUnknownBinding) type).asScope();
+				} else {
+					// mstodo introduce problem category
+					return new CPPScope.CPPScopeProblem(name, ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION); 
 				}
 			} else if (parent instanceof IASTGotoStatement || parent instanceof IASTLabelStatement) {
 			    while (!(parent instanceof IASTFunctionDefinition)) {

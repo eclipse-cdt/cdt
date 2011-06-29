@@ -17,12 +17,11 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -41,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -139,11 +139,7 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 			
     		// collect the function bindings
 			List<ICPPFunction> functionBindings = new ArrayList<ICPPFunction>();
-			try {
-				CPPSemantics.getFieldOwnerType(this, functionBindings);
-			} catch (DOMException e) {
-				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-			}
+			getFieldOwnerType(functionBindings);
 			if (functionBindings.isEmpty())
 				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			
@@ -319,4 +315,62 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);
 	}
+	
+    /**
+     * For a pointer dereference expression e1->e2, return the type that e1 ultimately evaluates to
+     * after chaining overloaded class member access operators <code>operator->()</code> calls.
+     */
+    public IType getFieldOwnerType() {
+    	return getFieldOwnerType(null);
+    }
+    
+    /*
+     * Also collects the function bindings if requested.
+     */
+    private IType getFieldOwnerType(Collection<ICPPFunction> functionBindings) {
+    	final IASTExpression owner = getFieldOwner();
+    	if (owner == null)
+    		return null;
+    	
+    	IType type= owner.getExpressionType();
+    	if (!isPointerDereference())
+    		return type;
+    	
+    	// bug 205964: as long as the type is a class type, recurse. 
+    	// Be defensive and allow a max of 20 levels.
+    	for (int j = 0; j < 20; j++) {
+    		// for unknown types we cannot determine the overloaded -> operator
+    		IType classType= getUltimateTypeUptoPointers(type);
+    		if (classType instanceof ICPPUnknownType)
+    			return CPPUnknownClass.createUnnamedInstance();
+
+    		if (!(classType instanceof ICPPClassType)) 
+    			break;
+    		
+    		/*
+    		 * 13.5.6-1: An expression x->m is interpreted as (x.operator->())->m for a
+    		 * class object x of type T
+    		 * 
+    		 * Construct an AST fragment for x.operator-> which the lookup routines can
+    		 * examine for type information.
+    		 */
+
+    		ICPPFunction op = CPPSemantics.findOverloadedOperator(this, type, (ICPPClassType) classType);
+    		if (op == null) 
+    			break;
+
+    		if (functionBindings != null)
+    			functionBindings.add(op);
+    		
+    		type= typeFromFunctionCall(op);
+			type= SemanticUtil.mapToAST(type, owner);
+    	}
+    	
+		IType prValue=  prvalueType(type);
+		if (prValue instanceof IPointerType) {
+			return glvalueType(((IPointerType) prValue).getType());
+		}
+
+		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+    }
 }

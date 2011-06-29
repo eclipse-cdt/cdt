@@ -9391,4 +9391,15 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertTrue(qn.isDeclaration());
 		assertTrue(qn.getLastName().isDeclaration());
 	}
+	
+	//	struct S{
+	//		void foo(){}
+	//	};
+	//	void test(){
+	//		S s[1];
+	//		s->foo();
+	//	}
+	public void testMemberAccessForArray_347298() throws Exception {
+		parseAndCheckBindings();
+	}
 }

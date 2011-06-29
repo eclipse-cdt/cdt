@@ -23,7 +23,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -2922,69 +2921,6 @@ public class CPPSemantics {
     	return result;
 	}
     
-    /**
-     * For a pointer dereference expression e1->e2, return the type that e1 ultimately evaluates to
-     * when chaining overloaded class member access operators <code>operator->()</code> calls.
-     * @param fieldReference
-     * @return the type the field owner expression ultimately evaluates to when chaining overloaded
-     * class member access operators <code>operator->()</code> calls.
-     * @throws DOMException
-     */
-    public static IType getFieldOwnerType(ICPPASTFieldReference fieldReference) throws DOMException {
-    	return getFieldOwnerType(fieldReference, null);
-    }
-    
-    /*
-     * Also collects the function bindings if requested.
-     */
-    public static IType getFieldOwnerType(ICPPASTFieldReference fieldReference, Collection<ICPPFunction> functionBindings) throws DOMException {
-    	final IASTExpression owner = fieldReference.getFieldOwner();
-    	if (owner == null)
-    		return null;
-    	
-    	IType type= SemanticUtil.getNestedType(owner.getExpressionType(), TDEF|REF);
-    	if (!fieldReference.isPointerDereference())
-    		return type;
-    	
-    	// bug 205964: as long as the type is a class type, recurse. 
-    	// Be defensive and allow a max of 10 levels.
-    	boolean foundOperator= false;
-    	for (int j = 0; j < 10; j++) {
-    		IType uTemp= getUltimateTypeUptoPointers(type);
-    		if (uTemp instanceof IPointerType)
-    			return type;
-
-    		// for unknown types we cannot determine the overloaded -> operator
-    		if (uTemp instanceof ICPPUnknownType)
-    			return CPPUnknownClass.createUnnamedInstance();
-
-    		if (!(uTemp instanceof ICPPClassType)) 
-    			break;
-    		
-    		/*
-    		 * 13.5.6-1: An expression x->m is interpreted as (x.operator->())->m for a
-    		 * class object x of type T
-    		 * 
-    		 * Construct an AST fragment for x.operator-> which the lookup routines can
-    		 * examine for type information.
-    		 */
-
-    		IASTExpression arg = createArgForType(fieldReference, type);
-    		ICPPFunction op = findOverloadedOperator(fieldReference, new IASTExpression[] {arg}, uTemp, OverloadableOperator.ARROW, LookupMode.NO_GLOBALS);
-    		if (op == null) 
-    			break;
-
-    		if (functionBindings != null)
-    			functionBindings.add(op);
-    		
-    		type= SemanticUtil.getNestedType(op.getType().getReturnType(), TDEF|REF);
-			type= SemanticUtil.mapToAST(type, owner);
-    		foundOperator= true;
-    	}
-    	
-    	return foundOperator ? type : null;
-    }
-    
     public static ICPPFunction findOverloadedOperator(IASTArraySubscriptExpression exp) {
     	final IASTExpression arrayExpression = exp.getArrayExpression();
 		IASTInitializerClause[] args = {arrayExpression, exp.getArgument()};
@@ -3277,6 +3213,14 @@ public class CPPSemantics {
     	
     	IASTExpression[] args = new IASTExpression[] { dummy , second };
     	return findOverloadedOperator(dummy, args, op1type, OverloadableOperator.COMMA, LookupMode.LIMITED_GLOBALS);
+    }
+
+    /**
+     * Returns the operator->() function 
+     */
+    public static ICPPFunction findOverloadedOperator(ICPPASTFieldReference fieldRef, IType cvQualifiedType, ICPPClassType classType) {
+    	IASTExpression arg = CPPSemantics.createArgForType(fieldRef, cvQualifiedType);
+    	return findOverloadedOperator(fieldRef, new IASTExpression[] {arg}, classType, OverloadableOperator.ARROW, LookupMode.NO_GLOBALS);
     }
 
     private static enum LookupMode {NO_GLOBALS, LIMITED_GLOBALS, ALL_GLOBALS}

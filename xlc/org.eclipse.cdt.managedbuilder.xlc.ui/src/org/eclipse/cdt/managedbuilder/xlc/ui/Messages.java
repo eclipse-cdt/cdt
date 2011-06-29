@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ public class Messages extends NLS {
 	public static String XLCompiler_v8;
 	public static String XLCompiler_v9;
 	public static String XLCompiler_v10;
+	public static String XLCompiler_v11;
 	public static String XLCompilerPreferencePage_0;
 	public static String XLCompilerPreferencePage_1;
 	public static String XLCompilerPreferencePage_2;

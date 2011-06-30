@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Broadcom Corporation and others.
+ * Copyright (c) 2010, 2011 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     James Blackburn (Broadcom Corp) - initial API and implementation
+ *     Wind River Systems - Bug 348569
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
@@ -57,7 +58,7 @@ public class Bug311189 extends BaseTestCase {
 		final IPathEntry sourceEntry = new SourceEntry(srcFolder.getFullPath(), new IPath[0]);
 
 		// create a source folder and set it as a source entry
-		srcFolder.create(true, false, null);
+		srcFolder.create(true, true, null);
 		CoreModel.setRawPathEntries(CoreModel.getDefault().create(project), new IPathEntry[] {sourceEntry}, null);
 		IPathEntry[] rawEntries = CoreModel.getPathEntryStore(project).getRawPathEntries();
 		assertTrue ("Path entry unset!", Arrays.asList(rawEntries).contains(sourceEntry));
@@ -69,7 +70,7 @@ public class Bug311189 extends BaseTestCase {
 			Job.getJobManager().beginRule(project, null);
 			// Delete the source folder, and re-recreate it
 			srcFolder.delete(true, null);
-			srcFolder.create(true, false, null);
+			srcFolder.create(true, true, null);
 		} finally {
 			Job.getJobManager().endRule(project);
 		}

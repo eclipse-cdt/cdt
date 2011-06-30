@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import org.eclipse.core.runtime.CoreException;
@@ -54,7 +54,7 @@ public class CallHierarchyUI {
 	public static void setIsJUnitTest(boolean val) {
 		sIsJUnitTest= val;
 	}
-	
+
 	public static void open(final IWorkbenchWindow window, final ICElement input) {
         if (input != null) {
         	final Display display= Display.getCurrent();
@@ -68,7 +68,7 @@ public class CallHierarchyUI {
 							public void run() {
 								internalOpen(window, elems);
 							}});
-					} 
+					}
 					return Status.OK_STATUS;
         		}
         	};
@@ -84,9 +84,9 @@ public class CallHierarchyUI {
             result.setInput(input);
             return result;
         } catch (CoreException e) {
-            ExceptionHandler.handle(e, window.getShell(), CHMessages.OpenCallHierarchyAction_label, null); 
+            ExceptionHandler.handle(e, window.getShell(), CHMessages.OpenCallHierarchyAction_label, null);
         }
-        return null;        
+        return null;
     }
 
     private static CHViewPart internalOpen(IWorkbenchWindow window, ICElement[] input) {
@@ -108,7 +108,7 @@ public class CallHierarchyUI {
 		}
 		if (elem != null) {
 			return internalOpen(window, elem);
-		} 
+		}
 		return null;
 	}
 
@@ -132,7 +132,7 @@ public class CallHierarchyUI {
 										internalOpen(editor.getSite().getWorkbenchWindow(), elems);
 									}});
 							} else {
-								StatusLineHandler.showStatusLineMessage(editor.getSite(), 
+								StatusLineHandler.showStatusLineMessage(editor.getSite(),
 										CHMessages.CallHierarchyUI_openFailureMessage);
 							}
 							return Status.OK_STATUS;
@@ -146,8 +146,8 @@ public class CallHierarchyUI {
 			}
 		}
     }
-    
-	private static ICElement[] findDefinitions(ICProject project, IEditorInput editorInput, ITextSelection sel) 
+
+	private static ICElement[] findDefinitions(ICProject project, IEditorInput editorInput, ITextSelection sel)
 			throws CoreException {
 		try {
 			IIndex index= CCorePlugin.getIndexManager().getIndex(project,
@@ -162,28 +162,28 @@ public class CallHierarchyUI {
 						if (name.isDefinition()) {
 							ICElement elem= IndexUI.getCElementForName(project, index, name);
 							if (elem != null) {
-								return new ICElement[]{elem};
+								return new ICElement[] { elem };
 							}
 							return NO_ELEMENTS;
-						} 
-						
+						}
+
 						ICElement[] elems= IndexUI.findAllDefinitions(index, binding);
-						if (elems.length != 0) 
+						if (elems.length != 0)
 							return elems;
-							
+
 						if (name.isDeclaration()) {
 							ICElementHandle elem= IndexUI.getCElementForName(project, index, name);
 							if (elem != null) {
-								return new ICElement[] {elem};
+								return new ICElement[] { elem };
 							}
 							return NO_ELEMENTS;
 						}
 
 						ICElementHandle elem= IndexUI.findAnyDeclaration(index, project, binding);
 						if (elem != null) {
-							return new ICElement[]{elem};
+							return new ICElement[] { elem };
 						}
-						
+
 						if (binding instanceof ICPPSpecialization) {
 							return findSpecializationDeclaration(binding, project, index);
 						}
@@ -209,7 +209,7 @@ public class CallHierarchyUI {
 			if (elems.length == 0) {
 				ICElementHandle elem= IndexUI.findAnyDeclaration(index, project, original);
 				if (elem != null) {
-					elems= new ICElementHandle[]{elem};
+					elems= new ICElementHandle[] { elem };
 				}
 			}
 			if (elems.length > 0) {

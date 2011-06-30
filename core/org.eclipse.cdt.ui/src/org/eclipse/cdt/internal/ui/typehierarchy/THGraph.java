@@ -94,7 +94,7 @@ class THGraph {
 		stack.add(to);
 		
 		while (!stack.isEmpty()) {
-			THGraphNode node= stack.remove(stack.size()-1);
+			THGraphNode node= stack.remove(stack.size() - 1);
 			List<THGraphEdge> out= node.getOutgoing();
 			for (THGraphEdge edge : out) {
 				node= edge.getEndNode();
@@ -150,7 +150,7 @@ class THGraph {
 			if (monitor.isCanceled()) {
 				return;
 			}
-			ICElement elem= stack.remove(stack.size()-1);
+			ICElement elem= stack.remove(stack.size() - 1);
 			THGraphNode graphNode= addNode(elem);
 			try {
 				IIndexBinding binding = IndexUI.elementToBinding(index, elem);
@@ -212,7 +212,7 @@ class THGraph {
 			if (monitor.isCanceled()) {
 				return;
 			}
-			ICElement elem= stack.remove(stack.size()-1);
+			ICElement elem= stack.remove(stack.size() - 1);
 			THGraphNode graphNode= addNode(elem);
 			try {
 				IBinding binding = IndexUI.elementToBinding(index, elem);

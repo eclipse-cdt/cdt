@@ -942,6 +942,7 @@ public class MIStack extends AbstractDsfService
 	public void flushCache(IDMContext context) {
         fMICommandCache.reset(context);
        	fStackDepthCache.clear(context);
+       	fCachedStoppedEvent = null;
 	}
 
 }

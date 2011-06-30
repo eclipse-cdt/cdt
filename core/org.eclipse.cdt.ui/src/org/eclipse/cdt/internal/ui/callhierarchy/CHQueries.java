@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
@@ -101,8 +101,8 @@ public class CHQueries {
 	}
 
 
-	private static void findCalledBy2(IIndex index, IBinding callee, boolean includeOrdinaryCalls, ICProject project, CalledByResult result) 
-			throws CoreException {
+	private static void findCalledBy2(IIndex index, IBinding callee, boolean includeOrdinaryCalls,
+			ICProject project, CalledByResult result) throws CoreException {
 		IIndexName[] names= index.findNames(callee, IIndex.FIND_REFERENCES | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		for (IIndexName rname : names) {
 			if (includeOrdinaryCalls || rname.couldBePolymorphicMethodCall()) {

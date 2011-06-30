@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
@@ -136,8 +136,7 @@ public class CallHierarchyUI {
 										CHMessages.CallHierarchyUI_openFailureMessage);
 							}
 							return Status.OK_STATUS;
-						} 
-						catch (CoreException e) {
+						} catch (CoreException e) {
 							return e.getStatus();
 						}
 					}
@@ -151,7 +150,8 @@ public class CallHierarchyUI {
 	private static ICElement[] findDefinitions(ICProject project, IEditorInput editorInput, ITextSelection sel) 
 			throws CoreException {
 		try {
-			IIndex index= CCorePlugin.getIndexManager().getIndex(project, IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
+			IIndex index= CCorePlugin.getIndexManager().getIndex(project,
+					IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
 
 			index.acquireReadLock();
 			try {
@@ -190,8 +190,7 @@ public class CallHierarchyUI {
 						return NO_ELEMENTS;
 					}
 				}
-			}
-			finally {
+			} finally {
 				index.releaseReadLock();
 			}
 		} catch (CoreException e) {
@@ -226,7 +225,8 @@ public class CallHierarchyUI {
 			final ITranslationUnit tu= CModelUtil.getTranslationUnit(input);
 			if (tu != null) {
 				final ICProject project= tu.getCProject();
-				final IIndex index= CCorePlugin.getIndexManager().getIndex(project, IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
+				final IIndex index= CCorePlugin.getIndexManager().getIndex(project,
+						IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
 
 				index.acquireReadLock();
 				try {
@@ -242,21 +242,18 @@ public class CallHierarchyUI {
 					IIndexName name= IndexUI.elementToName(index, input);
 					if (name != null) {
 						ICElementHandle handle= IndexUI.getCElementForName(tu, index, name);
-						return new ICElement[] {handle};
+						return new ICElement[] { handle };
 					}
-				}
-				finally {
+				} finally {
 					index.releaseReadLock();
 				}
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			CUIPlugin.log(e);
-		} 
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
-		return new ICElement[] {input};
+		return new ICElement[] { input };
 	}
 
 	private static boolean needToFindDefinition(ICElement elem) {

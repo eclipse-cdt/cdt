@@ -80,7 +80,7 @@ public class CallHierarchyUI {
     private static CHViewPart internalOpen(IWorkbenchWindow window, ICElement input) {
         IWorkbenchPage page= window.getActivePage();
         try {
-            CHViewPart result= (CHViewPart)page.showView(CUIPlugin.ID_CALL_HIERARCHY);
+            CHViewPart result= (CHViewPart) page.showView(CUIPlugin.ID_CALL_HIERARCHY);
             result.setInput(input);
             return result;
         } catch (CoreException e) {

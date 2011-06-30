@@ -35,7 +35,6 @@ import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
-
 /**
  * Access to high level queries in the index.
  * @since 4.0
@@ -100,7 +99,6 @@ public class CHQueries {
 		}
 	}
 
-
 	private static void findCalledBy2(IIndex index, IBinding callee, boolean includeOrdinaryCalls,
 			ICProject project, CalledByResult result) throws CoreException {
 		IIndexName[] names= index.findNames(callee, IIndex.FIND_REFERENCES | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
@@ -130,7 +128,7 @@ public class CHQueries {
 			for (IIndexName name : refs) {
 				IBinding binding= index.findBinding(name);
 				if (CallHierarchyUI.isRelevantForCallHierarchy(binding)) {
-					for(;;) {
+					while (true) {
 						ICElement[] defs= null;
 						if (binding instanceof ICPPMethod) {
 							defs = findOverriders(index, (ICPPMethod) binding);
@@ -154,7 +152,8 @@ public class CHQueries {
 	}
 
 	/**
-	 * Searches for overriders of method and converts them to ICElement, returns null, if there are none.
+	 * Searches for overriders of method and converts them to ICElement, returns null,
+	 * if there are none.
 	 */
 	static ICElement[] findOverriders(IIndex index, ICPPMethod binding)	throws CoreException {
 		IBinding[] virtualOverriders= ClassTypeHelper.findOverriders(index, binding);

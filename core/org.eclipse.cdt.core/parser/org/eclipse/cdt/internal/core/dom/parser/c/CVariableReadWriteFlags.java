@@ -10,8 +10,8 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -45,35 +45,27 @@ public final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 	}
 
 	@Override
-	protected int rwInExpression(IASTNode node, IASTExpression expr, int indirection) {
+	protected int rwInExpression(IASTExpression expr, IASTNode node, int indirection) {
 		if (expr instanceof ICASTTypeIdInitializerExpression) {
 			return 0;
 		}
-		return super.rwInExpression(node, expr, indirection);
+		return super.rwInExpression(expr, node, indirection);
 	}
 
 	@Override
-	protected int rwInInitializerExpression(int indirection, IASTNode parent) {
+	protected int rwInEqualsInitializer(IASTEqualsInitializer parent, int indirection) {
 		if (indirection == 0) {
 			return READ;
 		}
-		return super.rwInInitializerExpression(indirection, parent);
+		return super.rwInEqualsInitializer(parent, indirection);
 	}
 
 	@Override
-	protected int rwArgumentForFunctionCall(IASTFunctionCallExpression func, int parameterIdx,int indirection) {
+	protected int rwArgumentForFunctionCall(IASTFunctionCallExpression funcCall, IASTNode argument, int indirection) {
 		if (indirection == 0) {
 			return READ;
 		}
-		return super.rwArgumentForFunctionCall(func, parameterIdx, indirection);
-	}
-
-	@Override
-	protected int rwArgumentForFunctionCall(IASTNode node, IASTExpressionList exprList,	IASTFunctionCallExpression funcCall, int indirection) {
-		if (indirection == 0) {
-			return READ;
-		}
-		return super.rwArgumentForFunctionCall(node, exprList, funcCall, indirection);
+		return super.rwArgumentForFunctionCall(funcCall, argument, indirection);
 	}
 
 	@Override

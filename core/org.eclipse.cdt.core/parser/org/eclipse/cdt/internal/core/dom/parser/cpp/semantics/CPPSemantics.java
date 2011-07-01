@@ -3047,7 +3047,12 @@ public class CPPSemantics {
 	    			sourceType= new InitializerListType((ICPPASTInitializerList) initClause);
 	    		}
 	    		if (sourceType != null) {
-	    			Cost c= Conversions.checkImplicitConversionSequence(type, sourceType, isLValue, UDCMode.ALLOWED, Context.ORDINARY);
+	    			Cost c;
+	    			if (calculateInheritanceDepth(sourceType, classType) >= 0) {
+	    				c = Conversions.copyInitializationOfClass(isLValue, sourceType, classType, false);
+	    			} else {
+	    				c = Conversions.checkImplicitConversionSequence(type, sourceType, isLValue, UDCMode.ALLOWED, Context.ORDINARY);
+	    			}
 	    			if (c.converts()) {
 						ICPPFunction f = c.getUserDefinedConversion();
 						if (f instanceof ICPPConstructor)

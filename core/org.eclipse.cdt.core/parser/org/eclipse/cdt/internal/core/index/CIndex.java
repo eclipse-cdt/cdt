@@ -680,7 +680,9 @@ public class CIndex implements IIndex {
 		HashMap<IIndexFileLocation, IIndexFile> result= new HashMap<IIndexFileLocation, IIndexFile>();
 		for (IIndexFragment fragment : fFragments) {
 			for (IIndexFragmentFile file : fragment.getAllFiles()) {
-				result.put(file.getLocation(), file);
+				if (file.hasContent()) { 
+					result.put(file.getLocation(), file);
+				}
 			}
 		}
 		return result.values().toArray(new IIndexFile[result.size()]);

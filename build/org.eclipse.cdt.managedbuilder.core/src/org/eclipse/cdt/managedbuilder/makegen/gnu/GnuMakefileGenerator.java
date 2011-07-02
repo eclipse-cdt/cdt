@@ -1207,16 +1207,17 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(SRC_LISTS) + NEWLINE);
 		buffer.append("-include sources.mk" + NEWLINE); //$NON-NLS-1$
 
-		// add an include for each subdir
-		buffer.append("-include subdir.mk" + NEWLINE); //$NON-NLS-1$
-
-		for (IResource res : getSubdirList()) {
-			IContainer subDir = (IContainer)res;
+		// Add includes for each subdir in child-subdir-first order (required for makefile rule matching to work).
+		List<String> subDirList = new ArrayList<String>();
+		for (IContainer subDir : getSubdirList()) {
 			IPath projectRelativePath = subDir.getProjectRelativePath();
-
 			if(!projectRelativePath.toString().equals("")) //$NON-NLS-1$
-				buffer.append("-include " + escapeWhitespaces(projectRelativePath.toString()) + SEPARATOR + "subdir.mk"+ NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
+				subDirList.add(0, projectRelativePath.toString());
 		}
+		for (String dir : subDirList) {
+			buffer.append("-include " + escapeWhitespaces(dir) + SEPARATOR + "subdir.mk"+ NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		buffer.append("-include subdir.mk" + NEWLINE); //$NON-NLS-1$
 
 		buffer.append("-include objects.mk" + NEWLINE + NEWLINE); //$NON-NLS-1$
 

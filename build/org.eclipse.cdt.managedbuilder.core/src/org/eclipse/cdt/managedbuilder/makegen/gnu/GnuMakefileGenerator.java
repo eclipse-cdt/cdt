@@ -22,6 +22,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1214,6 +1215,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			if(!projectRelativePath.toString().equals("")) //$NON-NLS-1$
 				subDirList.add(0, projectRelativePath.toString());
 		}
+		Collections.sort(subDirList, Collections.reverseOrder());
 		for (String dir : subDirList) {
 			buffer.append("-include " + escapeWhitespaces(dir) + SEPARATOR + "subdir.mk"+ NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
 		}

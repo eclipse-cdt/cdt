@@ -9391,4 +9391,37 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertTrue(qn.isDeclaration());
 		assertTrue(qn.getLastName().isDeclaration());
 	}
+	
+	//	struct X {};
+	//	struct Y : X {
+	//		Y(){}
+	//		Y(Y const & y){}
+	//	};
+	//	void test() {
+	//		Y y;
+	//		Y y2 = y;
+	//      X x = y2;
+	//	}
+	public void testReferenceToCopyConstructor() throws Exception {
+		IASTTranslationUnit tu= parseAndCheckBindings();
+		ICPPASTFunctionDefinition fdef= getDeclaration(tu, 2);
+		
+		IASTDeclarationStatement dst= getStatement(fdef, 0);		
+		IASTDeclarator dtor= ((IASTSimpleDeclaration) dst.getDeclaration()).getDeclarators()[0];
+		IBinding ctor= ((IASTImplicitNameOwner) dtor).getImplicitNames()[0].resolveBinding();
+		assertTrue(ctor instanceof ICPPConstructor);
+		assertEquals(0, ((ICPPConstructor) ctor).getType().getParameterTypes().length);
+
+		dst= getStatement(fdef, 1);		
+		dtor= ((IASTSimpleDeclaration) dst.getDeclaration()).getDeclarators()[0];
+		ctor= ((IASTImplicitNameOwner) dtor).getImplicitNames()[0].resolveBinding();
+		assertTrue(ctor instanceof ICPPConstructor);
+		assertEquals(1, ((ICPPConstructor) ctor).getType().getParameterTypes().length);
+
+		dst= getStatement(fdef, 2);		
+		dtor= ((IASTSimpleDeclaration) dst.getDeclaration()).getDeclarators()[0];
+		ctor= ((IASTImplicitNameOwner) dtor).getImplicitNames()[0].resolveBinding();
+		assertTrue(ctor instanceof ICPPConstructor);
+		assertEquals(1, ((ICPPConstructor) ctor).getType().getParameterTypes().length);
+	}
 }

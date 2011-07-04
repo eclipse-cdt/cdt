@@ -1065,9 +1065,12 @@ public class CPPVisitor extends ASTQueries {
 				for (; i < names.length; i++) {
 					if (names[i] == name) break;
 				}
+				final IASTTranslationUnit tu = parent.getTranslationUnit();
 				if (i == 0) {
 					if (qname.isFullyQualified()) {
-						return parent.getTranslationUnit().getScope();
+						if (tu == null)
+							return null;
+						return tu.getScope();
 					} 
 					if (qname.getParent() instanceof ICPPASTFieldReference) {
 						name= qname;
@@ -1091,8 +1094,8 @@ public class CPPVisitor extends ASTQueries {
 					boolean done= true;
 					IScope scope= null;
 					if (binding instanceof ICPPClassType) {
-						if (binding instanceof IIndexBinding) {
-							binding= (((CPPASTTranslationUnit) parent.getTranslationUnit())).mapToAST((ICPPClassType) binding);
+						if (binding instanceof IIndexBinding && tu != null) {
+							binding= (((CPPASTTranslationUnit) tu)).mapToAST((ICPPClassType) binding);
 						}
 						scope= ((ICPPClassType) binding).getCompositeScope();
 					} else if (binding instanceof ICPPNamespace) {

@@ -127,15 +127,15 @@ class ASTComment extends ASTPreprocessorNode implements IASTComment {
 
 abstract class ASTDirectiveWithCondition extends ASTPreprocessorNode {
 	protected final int fConditionOffset;
-    private final boolean fActive;
-	public ASTDirectiveWithCondition(IASTTranslationUnit parent, int startNumber, int condNumber, int endNumber, boolean active) {
+    private final boolean fTaken;
+	public ASTDirectiveWithCondition(IASTTranslationUnit parent, int startNumber, int condNumber, int endNumber, boolean taken) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
 		fConditionOffset= condNumber;
-		fActive= active;
+		fTaken= taken;
 	}
 
     public boolean taken() {
-        return fActive;
+        return fTaken;
     }
         
     public String getConditionString() {
@@ -154,19 +154,19 @@ class ASTEndif extends ASTPreprocessorNode implements IASTPreprocessorEndifState
 }
 
 class ASTElif extends ASTDirectiveWithCondition implements IASTPreprocessorElifStatement {
-	public ASTElif(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean active) {
-		super(parent, startNumber, condNumber, condEndNumber, active);
+	public ASTElif(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean taken) {
+		super(parent, startNumber, condNumber, condEndNumber, taken);
     }
 }
 
 class ASTElse extends ASTPreprocessorNode implements IASTPreprocessorElseStatement {
-	private final boolean fActive;
-    public ASTElse(IASTTranslationUnit parent, int startNumber, int endNumber, boolean active) {
+	private final boolean fTaken;
+    public ASTElse(IASTTranslationUnit parent, int startNumber, int endNumber, boolean taken) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
-		fActive= active;
+		fTaken= taken;
 	}
     public boolean taken() {
-        return fActive;
+        return fTaken;
     }
 }
 
@@ -204,8 +204,8 @@ class ASTIfdef extends ASTDirectiveWithCondition implements IASTPreprocessorIfde
 }
 
 class ASTIf extends ASTDirectiveWithCondition implements IASTPreprocessorIfStatement {
-	public ASTIf(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean active) {
-		super(parent, startNumber, condNumber, condEndNumber, active);
+	public ASTIf(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean taken) {
+		super(parent, startNumber, condNumber, condEndNumber, taken);
 	}
 }
 
@@ -304,7 +304,6 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 	private final ASTPreprocessorName fName;
 	protected final int fExpansionNumber;
 	private final int fExpansionOffset;
-	private final boolean fActive;
 	
 	/**
 	 * Regular constructor.
@@ -314,8 +313,9 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
 		fExpansionNumber= expansionNumber;
 		fExpansionOffset= -1;
-		fActive= active;
 		fName= new ASTPreprocessorDefinition(this, IASTPreprocessorMacroDefinition.MACRO_NAME, nameNumber, nameEndNumber, macro.getNameCharArray(), macro);
+		if (!active)
+			setInactive();
 	}
 
 	/**
@@ -327,7 +327,6 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 		fName= new ASTBuiltinName(this, IASTPreprocessorMacroDefinition.MACRO_NAME, floc, macro.getNameCharArray(), macro);
 		fExpansionNumber= -1;
 		fExpansionOffset= expansionOffset;
-		fActive= true;
 	}
 
 	
@@ -387,11 +386,6 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 	@Override
 	public String toString() {
 		return getName().toString() + '=' + getExpansion();
-	}
-
-	@Override
-	final public boolean isActive() {
-		return fActive;
 	}
 }
 

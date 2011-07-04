@@ -1380,7 +1380,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	final int nameEndOffset = name.getEndOffset();
 		final int endOffset= lexer.currentToken().getEndOffset();
 		
-		boolean isActive= false;
+		boolean isTaken= false;
 		PreprocessorMacro macro= null;
 		final Conditional conditional= fCurrentContext.newBranch(BranchKind.eIf, withinExpansion);
 		if (conditional.canHaveActiveBranch(withinExpansion)) {
@@ -1394,19 +1394,23 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	    	} else {
 	    		final char[] namechars= name.getCharImage();
 	    		macro= fMacroDictionary.get(namechars);
-	    		isActive= (macro == null) == isIfndef;
+	    		isTaken= (macro == null) == isIfndef;
 	    		if (macro == null) {
 	    			macro = new UndefinedMacro(namechars);
 	    		}
 	    	}
 		}
 		
+		ASTPreprocessorNode stmt;
 		if (isIfndef) {
-			fLocationMap.encounterPoundIfndef(offset, nameOffset, nameEndOffset, endOffset, isActive, macro);
+			stmt= fLocationMap.encounterPoundIfndef(offset, nameOffset, nameEndOffset, endOffset, isTaken, macro);
 		} else {
-			fLocationMap.encounterPoundIfdef(offset, nameOffset, nameEndOffset, endOffset, isActive, macro);
+			stmt= fLocationMap.encounterPoundIfdef(offset, nameOffset, nameEndOffset, endOffset, isTaken, macro);
 		}
-		return fCurrentContext.setBranchState(conditional, isActive, withinExpansion, offset);
+		if (!conditional.isActive(withinExpansion))
+			stmt.setInactive();
+
+		return fCurrentContext.setBranchState(conditional, isTaken, withinExpansion, offset);
     }
 
     private CodeState executeIf(Lexer lexer, int startOffset, boolean isElif, boolean withinExpansion) throws OffsetLimitReachedException {
@@ -1418,7 +1422,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			return fCurrentContext.getCodeState();
 		}
 		
-		boolean isActive= false;
+		boolean isTaken= false;
 		IASTName[] refs= IASTName.EMPTY_NAME_ARRAY;
 		int condOffset= lexer.nextToken().getOffset();
 		int condEndOffset, endOffset;
@@ -1433,7 +1437,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			} else {
 				try {
 					fExpressionEvaluator.clearMacrosInDefinedExpression();
-					isActive= fExpressionEvaluator.evaluate(condition, fMacroDictionary, fLocationMap);
+					isTaken= fExpressionEvaluator.evaluate(condition, fMacroDictionary, fLocationMap);
 					refs = fExpressionEvaluator.clearMacrosInDefinedExpression();
 				} catch (EvalException e) {
 					handleProblem(e.getProblemID(), e.getProblemArg(), condOffset, endOffset);
@@ -1444,12 +1448,16 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			endOffset= lexer.currentToken().getEndOffset();
 		}
 
+		ASTPreprocessorNode stmt;
 		if (isElif) {
-			fLocationMap.encounterPoundElif(startOffset, condOffset, condEndOffset, endOffset, isActive, refs);
+			stmt= fLocationMap.encounterPoundElif(startOffset, condOffset, condEndOffset, endOffset, isTaken, refs);
 		} else {
-			fLocationMap.encounterPoundIf(startOffset, condOffset, condEndOffset, endOffset, isActive, refs);
+			stmt= fLocationMap.encounterPoundIf(startOffset, condOffset, condEndOffset, endOffset, isTaken, refs);
 		}
-		return fCurrentContext.setBranchState(cond, isActive, withinExpansion, startOffset);
+		if (!cond.isActive(withinExpansion))
+			stmt.setInactive();
+		
+		return fCurrentContext.setBranchState(cond, isTaken, withinExpansion, startOffset);
     }
 
 	private CodeState executeElse(final Lexer lexer, final int startOffset,boolean withinExpansion)
@@ -1461,9 +1469,11 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		return fCurrentContext.getCodeState();
 		}
 		
-		final boolean isActive= cond.canHaveActiveBranch(withinExpansion);
-		fLocationMap.encounterPoundElse(startOffset, endOffset, isActive);
-		return fCurrentContext.setBranchState(cond, isActive, withinExpansion, startOffset);
+		final boolean isTaken= cond.canHaveActiveBranch(withinExpansion);
+		ASTElse stmt = fLocationMap.encounterPoundElse(startOffset, endOffset, isTaken);
+		if (!cond.isActive(withinExpansion))
+			stmt.setInactive();
+		return fCurrentContext.setBranchState(cond, isTaken, withinExpansion, startOffset);
 	}
 
 	private CodeState executeEndif(Lexer lexer, int startOffset, boolean withinExpansion) throws OffsetLimitReachedException {
@@ -1472,7 +1482,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		if (cond == null) {
 			handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION, Keywords.cENDIF, startOffset, endOffset);
 		} else {
-			fLocationMap.encounterPoundEndIf(startOffset, endOffset);
+			ASTEndif stmt = fLocationMap.encounterPoundEndIf(startOffset, endOffset);
+			if (!cond.isActive(withinExpansion))
+				stmt.setInactive();
 		}
 		return fCurrentContext.setBranchEndState(cond, withinExpansion, startOffset);
 	}

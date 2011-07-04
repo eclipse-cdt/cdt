@@ -362,13 +362,13 @@ public class CPPSemantics {
 			}
 		}
 		
-		if (binding instanceof ICPPClassType) {
-			if (convertClassToConstructor(data.astName)) {
-				if (binding instanceof IIndexBinding) {
-					binding= data.tu.mapToAST((ICPPClassType) binding);
+		if (binding instanceof IType) {
+			IType t = getNestedType((IType) binding, TDEF);
+			if (t instanceof ICPPClassType && convertClassToConstructor(data.astName)) {
+				ICPPClassType cls= (ICPPClassType) t;
+				if (cls instanceof IIndexBinding) {
+					cls= data.tu.mapToAST(cls);
 				}
-				ICPPClassType cls= (ICPPClassType) binding;
-
 				try {
 					if (data.astName instanceof ICPPASTTemplateId && cls instanceof ICPPClassTemplate) {
 						if (data.tu != null) {

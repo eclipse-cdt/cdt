@@ -9424,4 +9424,20 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertTrue(ctor instanceof ICPPConstructor);
 		assertEquals(1, ((ICPPConstructor) ctor).getType().getParameterTypes().length);
 	}
+	
+	//	struct Foo {
+	//	    void Method(int) {}
+	//	    void Method() const {}
+	//	};
+	//	template<typename Arg> struct Callback {
+	//	    Callback(void (Foo::*function)(Arg arg)) {
+	//	    }
+	//	};
+	//	typedef Callback<int> MyCallback;
+	//	void xx() {
+	//		MyCallback x= MyCallback(&Foo::Method); // Invalid overload of 'Foo::Method'
+	//	}
+	public void testTypedefAsClassNameWithFunctionPtrArgument_350345() throws Exception {
+		parseAndCheckBindings();
+	}
 }

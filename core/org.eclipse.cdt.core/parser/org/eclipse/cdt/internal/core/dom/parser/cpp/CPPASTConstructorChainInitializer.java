@@ -21,14 +21,15 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
@@ -160,11 +161,16 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 	private CharArraySet getBaseClasses(IASTName name) {
 		CharArraySet result= new CharArraySet(2);
 		for (IASTNode parent = name.getParent(); parent != null; parent = parent.getParent()) {
-			if (parent instanceof ICPPASTCompositeTypeSpecifier) {
-				ICPPASTCompositeTypeSpecifier specifier = (ICPPASTCompositeTypeSpecifier) parent;
-				for (ICPPASTBaseSpecifier bs : specifier.getBaseSpecifiers()) {
-					result.put(bs.getName().getLastName().getSimpleID());
-				} 
+			if (parent instanceof ICPPASTFunctionDefinition) {
+				ICPPASTFunctionDefinition fdef= (ICPPASTFunctionDefinition) parent;
+				IBinding method= fdef.getDeclarator().getName().resolveBinding();
+				if (method instanceof ICPPMethod) {
+					ICPPClassType cls= ((ICPPMethod) method).getClassOwner();
+					for (ICPPBase base : cls.getBases()) {
+						result.put(base.getBaseClassSpecifierName().getSimpleID());
+					}
+					return result;
+				}
 			}
 		}
 		return result;

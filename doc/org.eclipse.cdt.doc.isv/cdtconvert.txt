@@ -1,0 +1,7 @@
+[pde.convertSchemaToHTML] D:\RDpWorkspaces\integration\org.eclipse.cdt\doc\org.eclipse.cdt.doc.isv\..\org.eclipse.cdt.core\plugin.xml (The system cannot find the path specified.)
+[pde.convertSchemaToHTML] D:\RDpWorkspaces\integration\org.eclipse.cdt\doc\org.eclipse.cdt.doc.isv\..\org.eclipse.cdt.ui\plugin.xml (The system cannot find the path specified.)
+[pde.convertSchemaToHTML] D:\RDpWorkspaces\integration\org.eclipse.cdt\doc\org.eclipse.cdt.doc.isv\..\org.eclipse.cdt.debug.core\plugin.xml (The system cannot find the path specified.)
+[pde.convertSchemaToHTML] D:\RDpWorkspaces\integration\org.eclipse.cdt\doc\org.eclipse.cdt.doc.isv\..\org.eclipse.cdt.make.core\plugin.xml (The system cannot find the path specified.)
+[pde.convertSchemaToHTML] D:\RDpWorkspaces\integration\org.eclipse.cdt\doc\org.eclipse.cdt.doc.isv\..\org.eclipse.cdt.make.ui\plugin.xml (The system cannot find the path specified.)
+[pde.convertSchemaToHTML] D:\RDpWorkspaces\integration\org.eclipse.cdt\doc\org.eclipse.cdt.doc.isv\..\org.eclipse.cdt.managedbuilder.core\plugin.xml (The system cannot find the path specified.)
+[pde.convertSchemaToHTML] D:\RDpWorkspaces\integration\org.eclipse.cdt\doc\org.eclipse.cdt.doc.isv\..\org.eclipse.cdt.managedbuilder.ui\plugin.xml (The system cannot find the path specified.)

@@ -138,10 +138,10 @@
 		<module>cross/org.eclipse.cdt.build.crossgcc-feature</module>
 		<module>cross/org.eclipse.cdt.launch.remote</module>
 		<module>cross/org.eclipse.cdt.launch.remote-feature</module>
-
+<!--
 		<module>windows/org.eclipse.cdt.msw.build</module>
 		<module>windows/org.eclipse.cdt.msw-feature</module>
-
+-->
 		<module>dsf/org.eclipse.cdt.examples.dsf</module>
 		<module>dsf/org.eclipse.cdt.examples.dsf.pda</module>
 		<module>dsf/org.eclipse.cdt.examples.dsf.pda.ui</module>

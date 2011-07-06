@@ -15,6 +15,20 @@
 	<artifactId>org.eclipse.cdt.ui.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 	
+	<profiles>
+		<profile>
+			<id>skip-ui-tests</id>
+			<activation>
+			<property>
+				<name>skip-ui-tests</name>
+			</property>
+			</activation>
+			<properties>
+				<maven.test.skip>true</maven.test.skip>
+			</properties>
+		</profile>
+	</profiles>
+	
 	<build>
 		<plugins>
 			<plugin>

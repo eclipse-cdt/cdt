@@ -55,6 +55,7 @@
 		<module>codan/org.eclipse.cdt.codan.ui.cxx</module>
 		<module>codan/org.eclipse.cdt.codan.checkers</module>
 		<module>codan/org.eclipse.cdt.codan.checkers.ui</module>
+		<module>codan/org.eclipse.cdt.codan-feature</module>
 		<module>debug/org.eclipse.cdt.debug.core</module>
 		<module>debug/org.eclipse.cdt.debug.ui</module>
 		<module>build/org.eclipse.cdt.make.core</module>

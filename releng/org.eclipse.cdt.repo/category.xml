@@ -2,6 +2,8 @@
 <site>
    <feature url="features/org.eclipse.cdt_0.0.0.qualifier.jar" id="org.eclipse.cdt" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.sdk_0.0.0.qualifier.jar" id="org.eclipse.cdt.sdk" version="0.0.0"/>
+   <feature url="features/org.eclipse.cdt.core.lrparser.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.lrparser.feature" version="0.0.0"/>
+   <feature url="features/org.eclipse.cdt.core.lrparser.sdk_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.lrparser.sdk" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.core.parser.upc.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.parser.upc.feature" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.core.parser.upc.sdk.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.parser.upc.feature" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.bupc_0.0.0.qualifier.jar" id="org.eclipse.cdt.bupc" version="0.0.0"/>
@@ -11,6 +13,7 @@
    <feature url="features/org.eclipse.cdt.debug.ui.memory_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.ui.memory" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.build.crossgcc_0.0.0.qualifier.jar" id="org.eclipse.cdt.build.crossgcc" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.launch.remote_0.0.0.qualifier.jar" id="org.eclipse.cdt.launch.remote" version="0.0.0"/>
-   <feature url="features/org.eclipse.cdt.msw_0.0.0.qualifier.jar" id="org.eclipse.cdt.msw" version="0.0.0"/>
+   <feature url="features/org.eclipse.cdt.codan.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.codan.feature" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.examples.dsf_0.0.0.qualifier.jar" id="org.eclipse.cdt.examples.dsf" version="0.0.0"/>
+   <feature url="features/org.eclipse.cdt.p2_0.0.0.qualifier.jar" id="org.eclipse.cdt.p2" version="0.0.0"/>
 </site>

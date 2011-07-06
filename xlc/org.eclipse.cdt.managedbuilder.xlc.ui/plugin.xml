@@ -3247,7 +3247,7 @@
              </enumeratedOptionValue>
              <enumeratedOptionValue
                    id="xlc.c.compiler.option.optimization.qassert.defaut"
-                   isDefault="false"
+                   isDefault="true"
                    name="%Option.default">
              </enumeratedOptionValue>
           </option>
@@ -3942,7 +3942,7 @@
             description="%variableDescription"
             name="XL_compilerRoot"
             resolver="org.eclipse.cdt.managedbuilder.xlc.ui.variables.DynamicVariableResolver"
-            supportsArgument="false">
+            supportsArgument="true">
       </variable>
    </extension>
 </plugin>

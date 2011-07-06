@@ -223,7 +223,17 @@
 						<environment>
 							<os>linux</os>
 							<ws>gtk</ws>
+							<arch>ppc</arch>
+						</environment>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
 							<arch>ppc64</arch>
+						</environment>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>ia64</arch>
 						</environment>
 						<environment>
 							<os>win32</os>
@@ -247,13 +257,18 @@
 						</environment>
 						<environment>
 							<os>aix</os>
-							<ws>gtk</ws>
-							<arch>ppc64</arch>
+							<ws>motif</ws>
+							<arch>ppc</arch>
 						</environment>
 						<environment>
 							<os>solaris</os>
 							<ws>gtk</ws>
 							<arch>sparc</arch>
+						</environment>
+						<environment>
+							<os>qnx</os>
+							<ws>photon</ws>
+							<arch>ppc</arch>
 						</environment>
 					</environments>
 				</configuration>

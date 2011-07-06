@@ -5327,6 +5327,18 @@ public class AST2CPPTests extends AST2BaseTest {
 		parse( getAboveComment(), ParserLanguage.CPP, true, true );
 	}
 	
+	//	namespace outer {
+	//		namespace inner {
+	//			class foo{};
+	//		}
+	//		using namespace inner __attribute__((__strong__));
+	//	}
+	//	outer::foo x;
+	//	outer::inner::foo y;
+	public void testAttributeInUsingDirective_351228() throws Exception {
+		parseAndCheckBindings();
+	}
+		
 	//	class C {
 	//	public:
 	//		int i;

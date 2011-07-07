@@ -22,6 +22,7 @@
 		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/${orbit-version}/updateSite</orbit-site>
 		<tm-version>3.2</tm-version>
 		<tm-site>http://download.eclipse.org/tm/updates/${tm-version}</tm-site>
+		<signer-input-directory>/opt/public/download-staging.priv/tools/cdt/test</signer-input-directory>
 	</properties>
 
 	<licenses>

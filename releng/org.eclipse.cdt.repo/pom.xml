@@ -15,6 +15,29 @@
 	<artifactId>org.eclipse.cdt.repo</artifactId>
 	<packaging>eclipse-repository</packaging>
 	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-antrun-plugin</artifactId>
+		        <executions>
+		          <execution>
+		            <id>rename</id>
+		            <phase>package</phase>
+		            <configuration>
+		              <target>
+						<move file="${project.build.directory}/org.eclipse.cdt.repo.zip" tofile="${project.build.directory}/org.eclipse.cdt.repo-${project.version}.zip"/>
+		              </target>
+		            </configuration>
+		            <goals>
+		              <goal>run</goal>
+		            </goals>
+		          </execution>
+		        </executions>
+			</plugin>
+		</plugins>
+	</build>
+	
 	<profiles>
 	   <profile>
 	     <id>build-server</id>
@@ -28,6 +51,9 @@
 	           	<!--
 	             <execution>
 	               <id>pack</id>
+	               <configuration>
+	                 <inputFile>${project.build.directory}/org.eclipse.cdt.repo-${project.version}.zip</inputFile>
+	               </configuration>
 	               <phase>package</phase>
 	               <goals>
 	                 <goal>pack</goal>
@@ -37,8 +63,9 @@
 	             <execution>
 	               <id>sign</id>
 	               <configuration>
-	               	 <inputFile>${project.build.directory}/org.eclipse.cdt.repo.zip</inputFile>
-	                 <signerInputDirectory>/opt/public/download-staging.priv/tools/cdt/test</signerInputDirectory>
+	               	 <inputFile>${project.build.directory}/org.eclipse.cdt.repo-${project.version}.zip</inputFile>
+	               	 <!-- <inputFile>${project.build.directory}/org.eclipse.cdt.repo.zip</inputFile>-->
+	                 <signerInputDirectory>${signer-input-directory}</signerInputDirectory>
 	               </configuration>
 	               <phase>package</phase>
 	               <goals>

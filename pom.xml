@@ -201,7 +201,16 @@
 		<!-- TODO: need 1.0.1.2-SNAPSHOT of the signing plugin until bugfix for
          https://bugs.eclipse.org/bugs/show_bug.cgi?id=347591
          is available in maven.eclipse.org -->
-
+		<pluginRepository>
+			<id>intalio-dash-signing-plugin</id>
+			<url>http://intalio.org/public/maven2</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
 	</pluginRepositories>
 
 	<build>

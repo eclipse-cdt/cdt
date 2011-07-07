@@ -27,7 +27,6 @@ import org.eclipse.cdt.ui.actions.SelectionDispatchAction;
 
 
 public class OpenCallHierarchyAction extends SelectionDispatchAction {
-
 	private ITextEditor fEditor;
 
 	public OpenCallHierarchyAction(IWorkbenchSite site) {
@@ -73,8 +72,7 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
 		ICElement elem= (ICElement) getAdapter(selectedObject, ICElement.class);
 		if (elem != null) {
 			setEnabled(isValidElement(elem));
-		}
-		else {
+		} else {
 			setEnabled(false);
 		}
 	}

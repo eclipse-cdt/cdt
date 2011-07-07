@@ -384,5 +384,19 @@
             name="%problem.name.UnusedStaticFunctionProblem">
          </problem>
       </checker>
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.ClassMembersInitializationChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.ClassMembersInitialization"
+            name="%checker.name.ClassMembersInitialization">
+         <problem
+            category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+            defaultEnabled="true"
+            defaultSeverity="Warning"
+            description="%problem.description.ClassMembersInitialization"
+            id="org.eclipse.cdt.codan.internal.checkers.ClassMembersInitialization"
+            messagePattern="%problem.messagePattern.ClassMembersInitialization"
+            name="%problem.name.ClassMembersInitialization">
+         </problem>
+      </checker>
    </extension>
 </plugin>

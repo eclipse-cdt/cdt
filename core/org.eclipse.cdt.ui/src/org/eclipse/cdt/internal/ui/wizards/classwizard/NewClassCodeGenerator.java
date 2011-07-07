@@ -467,9 +467,11 @@ public class NewClassCodeGenerator {
 		String body = constructMethodDeclarations(tu, publicMethods, protectedMethods,
 				privateMethods, lineDelimiter);
         body = CodeGeneration.getClassBodyContent(tu, fClassName, body, lineDelimiter);
-        code.append(body);
-        if (!body.endsWith(lineDelimiter)) {
-        	code.append(lineDelimiter);
+        if (body != null) {
+	        code.append(body);
+	        if (!body.endsWith(lineDelimiter)) {
+	        	code.append(lineDelimiter);
+	        }
         }
         code.append("};"); //$NON-NLS-1$
         return removeRedundantVisibilityLabels(code.toString());

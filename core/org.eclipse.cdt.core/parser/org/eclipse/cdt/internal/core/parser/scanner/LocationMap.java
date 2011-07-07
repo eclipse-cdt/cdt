@@ -248,19 +248,21 @@ public class LocationMap implements ILocationResolver {
 		fProblems.add(problem);
 	}
 
-	public void encounterPoundElse(int startOffset, int endOffset, boolean isActive) {
+	public ASTElse encounterPoundElse(int startOffset, int endOffset, boolean isActive) {
 		startOffset= getSequenceNumberForOffset(startOffset);
 		endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTElse(fTranslationUnit, startOffset, endOffset, isActive));
+		final ASTElse astElse = new ASTElse(fTranslationUnit, startOffset, endOffset, isActive);
+		fDirectives.add(astElse);
+		return astElse;
 	}
 
-	public void encounterPoundElif(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean isActive, 
+	public ASTElif encounterPoundElif(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean taken, 
 			IASTName[] macrosInDefinedExpression) {
 		startOffset= getSequenceNumberForOffset(startOffset); 	
 		condOffset= getSequenceNumberForOffset(condOffset);		
 		condEndOffset= getSequenceNumberForOffset(condEndOffset);
 		// compatible with 4.0: endOffset= getSequenceNumberForOffset(endOffset);
-		final ASTElif elif = new ASTElif(fTranslationUnit, startOffset, condOffset, condEndOffset, isActive);
+		final ASTElif elif = new ASTElif(fTranslationUnit, startOffset, condOffset, condEndOffset, taken);
 		fDirectives.add(elif);
 		
 		for (IASTName element : macrosInDefinedExpression) {
@@ -269,13 +271,15 @@ public class LocationMap implements ILocationResolver {
 			name.setPropertyInParent(IASTPreprocessorStatement.MACRO_NAME);
 			addMacroReference(name);
 		}
-
+		return elif;
 	}
 
-	public void encounterPoundEndIf(int startOffset, int endOffset) {
+	public ASTEndif encounterPoundEndIf(int startOffset, int endOffset) {
 		startOffset= getSequenceNumberForOffset(startOffset);
 		endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTEndif(fTranslationUnit, startOffset, endOffset));
+		final ASTEndif stmt = new ASTEndif(fTranslationUnit, startOffset, endOffset);
+		fDirectives.add(stmt);
+		return stmt;
 	}
 
 	public void encounterPoundError(int startOffset, int condOffset, int condEndOffset, int endOffset) {
@@ -298,7 +302,7 @@ public class LocationMap implements ILocationResolver {
 		fDirectives.add(new ASTPragmaOperator(fTranslationUnit, startNumber, condNumber, condEndNumber, endNumber));
 	}
 
-	public void encounterPoundIfdef(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean taken, IMacroBinding macro) {
+	public ASTIfdef encounterPoundIfdef(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean taken, IMacroBinding macro) {
 		startOffset= getSequenceNumberForOffset(startOffset);
 		condOffset= getSequenceNumberForOffset(condOffset);
 		condEndOffset= getSequenceNumberForOffset(condEndOffset);
@@ -306,9 +310,10 @@ public class LocationMap implements ILocationResolver {
 		final ASTIfdef ifdef = new ASTIfdef(fTranslationUnit, startOffset, condOffset, condEndOffset, taken, macro);
 		fDirectives.add(ifdef);
 		addMacroReference(ifdef.getMacroReference());
+		return ifdef;
 	}
 
-	public void encounterPoundIfndef(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean taken, IMacroBinding macro) {
+	public ASTIfndef encounterPoundIfndef(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean taken, IMacroBinding macro) {
 		startOffset= getSequenceNumberForOffset(startOffset);
 		condOffset= getSequenceNumberForOffset(condOffset);
 		condEndOffset= getSequenceNumberForOffset(condEndOffset);
@@ -316,15 +321,16 @@ public class LocationMap implements ILocationResolver {
 		final ASTIfndef ifndef = new ASTIfndef(fTranslationUnit, startOffset, condOffset, condEndOffset, taken, macro);
 		fDirectives.add(ifndef);
 		addMacroReference(ifndef.getMacroReference());
+		return ifndef;
 	}
 
-	public void encounterPoundIf(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean isActive,
+	public ASTIf encounterPoundIf(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean taken,
 			IASTName[] macrosInDefinedExpression) {
 		startOffset= getSequenceNumberForOffset(startOffset);	
 		condOffset= getSequenceNumberForOffset(condOffset);		
 		condEndOffset= getSequenceNumberForOffset(condEndOffset);
 		// not using endOffset, compatible with 4.0: endOffset= getSequenceNumberForOffset(endOffset);
-		final ASTIf astif = new ASTIf(fTranslationUnit, startOffset, condOffset, condEndOffset, isActive);
+		final ASTIf astif = new ASTIf(fTranslationUnit, startOffset, condOffset, condEndOffset, taken);
 		fDirectives.add(astif);
 		for (IASTName element : macrosInDefinedExpression) {
 			ASTMacroReferenceName name = (ASTMacroReferenceName) element;
@@ -332,6 +338,7 @@ public class LocationMap implements ILocationResolver {
 			name.setPropertyInParent(IASTPreprocessorStatement.MACRO_NAME);
 			addMacroReference(name);
 		}
+		return astif;
 	}
 	
 	public void encounterPoundDefine(int startOffset, int nameOffset, int nameEndOffset, int expansionOffset, int endOffset, boolean isActive, IMacroBinding macrodef) {

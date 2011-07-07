@@ -503,6 +503,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 					String methodName = id.toString();
 					methodName = methodName.replaceAll(NODE_PREFIX, BLANK_STRING);
 					Method method = nodeClass.getMethod(methodName, new Class[0]); // only going to be getter methods...
+					method.setAccessible(true);
 					result = method.invoke(node);
 				}
 				

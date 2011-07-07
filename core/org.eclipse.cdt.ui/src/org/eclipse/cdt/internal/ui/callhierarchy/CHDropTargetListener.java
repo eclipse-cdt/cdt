@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.Iterator;
@@ -24,9 +23,7 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.model.ICElement;
 
-
 public class CHDropTargetListener implements DropTargetListener {
-    
     private CHViewPart fCallHierarchy;
 	private ICElement fInput;
 	private boolean fEnabled= true;
@@ -56,7 +53,7 @@ public class CHDropTargetListener implements DropTargetListener {
 	private ICElement checkLocalSelection() {
 		ISelection sel= LocalSelectionTransfer.getTransfer().getSelection();
 		if (sel instanceof IStructuredSelection) {
-			for (Iterator<?> iter = ((IStructuredSelection)sel).iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = ((IStructuredSelection) sel).iterator(); iter.hasNext();) {
 				Object element = iter.next();
 				if (element instanceof ICElement) {
 					return (ICElement) element;
@@ -85,8 +82,7 @@ public class CHDropTargetListener implements DropTargetListener {
     public void drop(DropTargetEvent event) {
     	if (fInput == null) {
             Display.getCurrent().beep();
-        }
-        else {
+        } else {
             fCallHierarchy.setInput(fInput);
         }
     }
@@ -97,8 +93,7 @@ public class CHDropTargetListener implements DropTargetListener {
     private void checkOperation(DropTargetEvent event) {
         if (fEnabled && (event.operations & DND.DROP_COPY) != 0) {
             event.detail= DND.DROP_COPY;
-        }
-        else {
+        } else {
             event.detail= DND.DROP_NONE;
         }
     }

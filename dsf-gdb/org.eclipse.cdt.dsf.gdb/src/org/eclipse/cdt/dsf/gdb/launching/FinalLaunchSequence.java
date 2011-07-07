@@ -197,7 +197,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepEnablePrettyPrinting(final RequestMonitor requestMonitor) {
-		if (Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+		if (Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
 				IGdbDebugPreferenceConstants.PREF_ENABLE_PRETTY_PRINTING,
 				false, null)) {
 

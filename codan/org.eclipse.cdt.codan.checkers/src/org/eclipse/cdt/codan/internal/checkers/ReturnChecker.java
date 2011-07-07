@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
@@ -130,6 +131,18 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		return false;
 	}
 
+	public boolean isMain(IASTFunctionDefinition func) {
+		try {
+			String functionName = func.getDeclarator().getName().getRawSignature();
+			if (functionName.equals("main")) { //$NON-NLS-1$
+				return true;
+			}
+		} catch (Exception e) {
+			// well, not main
+		}
+		return false;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -143,13 +156,17 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		ReturnStmpVisitor visitor = new ReturnStmpVisitor(func);
 		func.accept(visitor);
 		boolean nonVoid = !isVoid(func);
-		if (nonVoid) {
+		if (nonVoid && !isMain(func)) {
 			// there a return but maybe it is only on one branch
 			IASTStatement body = func.getBody();
 			if (body instanceof IASTCompoundStatement) {
 				IASTStatement[] statements = ((IASTCompoundStatement) body).getStatements();
 				if (statements.length > 0) {
 					IASTStatement last = statements[statements.length - 1];
+					// get nested statement if this is a label
+					while (last instanceof IASTLabelStatement) {
+						last = ((IASTLabelStatement) last).getNestedStatement();
+					}
 					// now check if last statement if complex (for optimization reasons, building CFG is expensive)
 					if (isCompoundStatement(last)) {
 						if (endsWithNoExitNode(func))
@@ -158,8 +175,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 						reportNoRet(func, visitor.hasret);
 					}
 				} else {
-
-						reportNoRet(func, false);
+					reportNoRet(func, false);
 				}
 			}
 		}
@@ -187,7 +203,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	 */
 	private boolean isCompoundStatement(IASTStatement last) {
 		return last instanceof IASTIfStatement || last instanceof IASTWhileStatement || last instanceof IASTDoStatement
-				|| last instanceof IASTForStatement || last instanceof IASTSwitchStatement;
+				|| last instanceof IASTForStatement || last instanceof IASTSwitchStatement || last instanceof IASTCompoundStatement;
 	}
 
 	protected boolean isFuncExitStatement(IASTStatement statement) {

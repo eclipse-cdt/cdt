@@ -1859,6 +1859,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 throwBacktrack(offset, endOffset - offset);
             }
 
+            __attribute__();
+            
             switch (LT(1)) {
             case IToken.tSEMI:
             case IToken.tEOC:

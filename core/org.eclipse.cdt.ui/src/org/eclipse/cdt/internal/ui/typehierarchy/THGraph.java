@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
@@ -94,7 +94,7 @@ class THGraph {
 		stack.add(to);
 		
 		while (!stack.isEmpty()) {
-			THGraphNode node= stack.remove(stack.size()-1);
+			THGraphNode node= stack.remove(stack.size() - 1);
 			List<THGraphEdge> out= node.getOutgoing();
 			for (THGraphEdge edge : out) {
 				node= edge.getEndNode();
@@ -106,7 +106,7 @@ class THGraph {
 				}
 			}
 		}
-		// check if edge is already there.
+		// Check if edge is already there.
 		List<THGraphEdge> out= from.getOutgoing();
 		for (THGraphEdge edge : out) {
 			if (edge.getEndNode() == to) {
@@ -150,7 +150,7 @@ class THGraph {
 			if (monitor.isCanceled()) {
 				return;
 			}
-			ICElement elem= stack.remove(stack.size()-1);
+			ICElement elem= stack.remove(stack.size() - 1);
 			THGraphNode graphNode= addNode(elem);
 			try {
 				IIndexBinding binding = IndexUI.elementToBinding(index, elem);
@@ -176,8 +176,7 @@ class THGraph {
 							}
 						}
 					}
-				}
-				else if (binding instanceof ITypedef) {
+				} else if (binding instanceof ITypedef) {
 					ITypedef ct= (ITypedef) binding;
 					IType type= ct.getType();
 					if (type instanceof IBinding) {
@@ -213,7 +212,7 @@ class THGraph {
 			if (monitor.isCanceled()) {
 				return;
 			}
-			ICElement elem= stack.remove(stack.size()-1);
+			ICElement elem= stack.remove(stack.size() - 1);
 			THGraphNode graphNode= addNode(elem);
 			try {
 				IBinding binding = IndexUI.elementToBinding(index, elem);
@@ -257,24 +256,21 @@ class THGraph {
 					addMemberElements(index, members, memberList);
 					members= ct.getDeclaredMethods();
 					addMemberElements(index, members, memberList);
-				}
-				else if (binding instanceof ICompositeType) {
+				} else if (binding instanceof ICompositeType) {
 					ICompositeType ct= (ICompositeType) binding;
 					IBinding[] members= ct.getFields();
 					addMemberElements(index, members, memberList);
-				}
-				else if (binding instanceof IEnumeration) {
+				} else if (binding instanceof IEnumeration) {
 					IEnumeration ct= (IEnumeration) binding;
 					IBinding[] members= ct.getEnumerators();
 					addMemberElements(index, members, memberList);
 				}
 			} catch (DOMException e) {
-				// problem bindings should not be reported to the log.
+				// Problem bindings should not be reported to the log.
 			}
 			if (memberList.isEmpty()) {
 				graphNode.setMembers(NO_MEMBERS);
-			}
-			else {
+			} else {
 				graphNode.setMembers(memberList.toArray(new ICElement[memberList.size()]));
 			}
 		}

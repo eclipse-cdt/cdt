@@ -5327,6 +5327,18 @@ public class AST2CPPTests extends AST2BaseTest {
 		parse( getAboveComment(), ParserLanguage.CPP, true, true );
 	}
 	
+	//	namespace outer {
+	//		namespace inner {
+	//			class foo{};
+	//		}
+	//		using namespace inner __attribute__((__strong__));
+	//	}
+	//	outer::foo x;
+	//	outer::inner::foo y;
+	public void testAttributeInUsingDirective_351228() throws Exception {
+		parseAndCheckBindings();
+	}
+		
 	//	class C {
 	//	public:
 	//		int i;
@@ -9390,5 +9402,65 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertFalse(qn.getLastName().isDefinition());
 		assertTrue(qn.isDeclaration());
 		assertTrue(qn.getLastName().isDeclaration());
+	}
+	
+	//	struct S{
+	//		void foo(){}
+	//	};
+	//	void test(){
+	//		S s[1];
+	//		s->foo();
+	//	}
+	public void testMemberAccessForArray_347298() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	struct X {};
+	//	struct Y : X {
+	//		Y(){}
+	//		Y(Y const & y){}
+	//	};
+	//	void test() {
+	//		Y y;
+	//		Y y2 = y;
+	//      X x = y2;
+	//	}
+	public void testReferenceToCopyConstructor() throws Exception {
+		IASTTranslationUnit tu= parseAndCheckBindings();
+		ICPPASTFunctionDefinition fdef= getDeclaration(tu, 2);
+		
+		IASTDeclarationStatement dst= getStatement(fdef, 0);		
+		IASTDeclarator dtor= ((IASTSimpleDeclaration) dst.getDeclaration()).getDeclarators()[0];
+		IBinding ctor= ((IASTImplicitNameOwner) dtor).getImplicitNames()[0].resolveBinding();
+		assertTrue(ctor instanceof ICPPConstructor);
+		assertEquals(0, ((ICPPConstructor) ctor).getType().getParameterTypes().length);
+
+		dst= getStatement(fdef, 1);		
+		dtor= ((IASTSimpleDeclaration) dst.getDeclaration()).getDeclarators()[0];
+		ctor= ((IASTImplicitNameOwner) dtor).getImplicitNames()[0].resolveBinding();
+		assertTrue(ctor instanceof ICPPConstructor);
+		assertEquals(1, ((ICPPConstructor) ctor).getType().getParameterTypes().length);
+
+		dst= getStatement(fdef, 2);		
+		dtor= ((IASTSimpleDeclaration) dst.getDeclaration()).getDeclarators()[0];
+		ctor= ((IASTImplicitNameOwner) dtor).getImplicitNames()[0].resolveBinding();
+		assertTrue(ctor instanceof ICPPConstructor);
+		assertEquals(1, ((ICPPConstructor) ctor).getType().getParameterTypes().length);
+	}
+	
+	//	struct Foo {
+	//	    void Method(int) {}
+	//	    void Method() const {}
+	//	};
+	//	template<typename Arg> struct Callback {
+	//	    Callback(void (Foo::*function)(Arg arg)) {
+	//	    }
+	//	};
+	//	typedef Callback<int> MyCallback;
+	//	void xx() {
+	//		MyCallback x= MyCallback(&Foo::Method); // Invalid overload of 'Foo::Method'
+	//	}
+	public void testTypedefAsClassNameWithFunctionPtrArgument_350345() throws Exception {
+		parseAndCheckBindings();
 	}
 }

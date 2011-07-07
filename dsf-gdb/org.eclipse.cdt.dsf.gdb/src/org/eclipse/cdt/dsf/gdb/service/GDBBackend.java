@@ -201,7 +201,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 
 	public String getGDBInitFile() throws CoreException {
 		if (fGDBInitFile == null) {
-			String defaultGdbInit = Platform.getPreferencesService().getString("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+			String defaultGdbInit = Platform.getPreferencesService().getString(GdbPlugin.PLUGIN_ID,
 	                IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT,
 	                IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT, null);
 

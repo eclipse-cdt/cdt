@@ -325,7 +325,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 	}
 	
 	private ITracepointAction[] generateGdbCommands(String actionStr) {
-		String[] actionNames = actionStr.split(","); //$NON-NLS-1$
+		String[] actionNames = actionStr.split(TracepointActionManager.TRACEPOINT_ACTION_DELIMITER);
 		ITracepointAction[] actions = new ITracepointAction[actionNames.length];
 
 		TracepointActionManager actionManager = TracepointActionManager.getInstance();

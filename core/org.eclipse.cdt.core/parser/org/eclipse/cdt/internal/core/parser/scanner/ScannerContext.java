@@ -23,7 +23,7 @@ final class ScannerContext {
 	enum BranchKind {eIf, eElif, eElse, eEnd}
 	enum CodeState {eActive, eParseInactive, eSkipInactive}
 	final static class Conditional {
-		private CodeState fInitialState;
+		private final CodeState fInitialState;
 		private BranchKind fLast;
 		private boolean fTakeElse= true;
 		Conditional(CodeState state) {
@@ -31,7 +31,11 @@ final class ScannerContext {
 			fLast= BranchKind.eIf;
 		}
 		boolean canHaveActiveBranch(boolean withinExpansion) {
-			return fTakeElse && (fInitialState == CodeState.eActive || withinExpansion);
+			return fTakeElse && isActive(withinExpansion);
+		}
+
+		public boolean isActive(boolean withinExpansion) {
+			return withinExpansion || fInitialState == CodeState.eActive;
 		}
 	}
 	

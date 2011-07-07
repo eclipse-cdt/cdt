@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
@@ -42,7 +42,6 @@ import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
  * This is the content provider for the call hierarchy.
  */
 public class CHContentProvider extends AsyncTreeContentProvider {
-
 	private static final IProgressMonitor NPM = new NullProgressMonitor();
 	private boolean fComputeReferencedBy = true;
 	private WorkingSetFilterUI fFilter;
@@ -79,13 +78,12 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 				if (node.isInitializer()) {
 					return NO_CHILDREN;
 				}
-			}
-			else if (node.isVariableOrEnumerator() || node.isMacro()) { 
+			} else if (node.isVariableOrEnumerator() || node.isMacro()) { 
 				return NO_CHILDREN;
 			}
 			
 		}
-		// allow for async computation
+		// Allow for async computation
 		return null;
 	}
 
@@ -122,8 +120,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 						fView.reportNotIndexed(input);
 					}
 				});
-			} 
-			else {
+			} else {
 				element= IndexUI.attemptConvertionToHandle(index, input);
 				final ICElement finalElement= element;
 				getDisplay().asyncExec(new Runnable() {
@@ -146,8 +143,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 				}
 			}
 			return new Object[] { new CHNode(null, tu, 0, element, -1) };
-		}
-		finally {
+		} finally {
 			index.releaseReadLock();
 		}
 	}
@@ -158,8 +154,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		index.acquireReadLock();
 		try {
 			return CHQueries.findCalledBy(this, parent, index, NPM);
-		}
-		finally {
+		} finally {
 			index.releaseReadLock();
 		}
 	}
@@ -170,8 +165,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		index.acquireReadLock();
 		try {
 			return CHQueries.findCalls(this, parent, index, NPM);
-		}
-		finally {
+		} finally {
 			index.releaseReadLock();
 		}
 	}

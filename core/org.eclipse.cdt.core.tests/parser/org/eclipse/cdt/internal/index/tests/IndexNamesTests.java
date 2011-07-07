@@ -67,9 +67,9 @@ public class IndexNamesTests extends BaseTestCase {
 		return fCProject.getProject();
 	}
 
-	protected StringBuffer[] getContentsForTest(int blocks) throws IOException {
+	public String getComment() throws IOException {
 		return TestSourceReader.getContentsForTest(
-				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), blocks);
+		CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), 1)[0].toString();
 	}
 
 	protected IFile createFile(IContainer container, String fileName, String contents) throws Exception {
@@ -102,7 +102,7 @@ public class IndexNamesTests extends BaseTestCase {
 	// };
 	public void testNestingWithFunction() throws Exception {
 		waitForIndexer();
-		String content= getContentsForTest(1)[0].toString();
+		String content= getComment();
 		IFile file= createFile(getProject().getProject(), "test.cpp", content);
 		waitUntilFileIsIndexed(file, 4000);
 		
@@ -161,7 +161,7 @@ public class IndexNamesTests extends BaseTestCase {
 	// };
 	public void testNestingWithMethod() throws Exception {
 		waitForIndexer();
-		String content= getContentsForTest(1)[0].toString();
+		String content= getComment();
 		IFile file= createFile(getProject().getProject(), "test.cpp", content);
 		waitUntilFileIsIndexed(file, 4000);
 		
@@ -257,7 +257,7 @@ public class IndexNamesTests extends BaseTestCase {
 	//	}
 	public void testCouldBePolymorphicMethodCall_Bug156691() throws Exception {
 		waitForIndexer();
-		String content= getContentsForTest(1)[0].toString();
+		String content= getComment();
 		IFile file= createFile(getProject().getProject(), "test.cpp", content);
 		waitUntilFileIsIndexed(file, 4000);
 
@@ -315,7 +315,7 @@ public class IndexNamesTests extends BaseTestCase {
 	//	}
 	public void testReadWriteFlagsC() throws Exception {
 		waitForIndexer();
-		String content= getContentsForTest(1)[0].toString();
+		String content= getComment();
 		IFile file= createFile(getProject().getProject(), "test.c", content);
 		waitUntilFileIsIndexed(file, 4000);
 
@@ -329,16 +329,15 @@ public class IndexNamesTests extends BaseTestCase {
 			IIndexFile ifile= fIndex.getFile(linkageID, IndexLocationFactory.getWorkspaceIFL(file));
 			IIndexName[] names= ifile.findNames(0, Integer.MAX_VALUE);
 			int j= 0;
-			for (int i = 0; i < names.length; i++) {
-				IIndexName indexName = names[i];
+			for (IIndexName indexName : names) {
 				final String name = indexName.toString();
 				final char c0= name.length() > 0 ? name.charAt(0) : 0;
 				if ((c0 == '_' || c0 == 'r' || c0 == 'w') && indexName.isReference()) {
-					boolean isRead= name.charAt(0) == 'r' || name.charAt(0) == 'u';
-					boolean isWrite= name.charAt(isRead ? 1 : 0) == 'w' || name.charAt(0) == 'u';
-					String msg= "i=" + i + ", " + name + ":";
-					assertEquals(msg, isRead, indexName.isReadAccess());
-					assertEquals(msg, isWrite, indexName.isWriteAccess());
+					boolean isRead= name.charAt(0) == 'r';
+					boolean isWrite= c0 == 'w' || (isRead && name.length() > 1 && name.charAt(1) == 'w'); 
+					String msg= name + "(j=" + j + "):";
+					assertEquals("Read access for " + msg, isRead, indexName.isReadAccess());
+					assertEquals("Write access for " + msg, isWrite, indexName.isWriteAccess());
 					j++;
 				}
 				else {
@@ -352,50 +351,99 @@ public class IndexNamesTests extends BaseTestCase {
 		}
 	}
 
-	//	int _i, ri, wi, rwi, rfind, ui;
-	//  int* rp; int* wp; int* rwp; int* up; 
-	//  int* const rpc= 0;
-	//  const int * const rcpc= 0;
-	//  const int* cip= &ri;
-	//  int* bla= &rwi;
-	//  void fi(int);
-	//  void fp(int*);
-	//  void fr(int&);
-	//  void fcp(const int*);
-	//  void fcr(const int&);
-	//  void fpp(int**);
-	//  void fpr(int*&);
-	//  void fcpp(int const**);
-	//  void fcpr(int const*&);
-	//  void fpcp(int *const*);
-	//  void fpcr(int *const&);
-	//  void fcpcp(int const *const*);
-	//  void fcpcr(int const *const&);
-	//
+	//	int _i, ri, wi, rwi;
+	//	int* rp; int* wp; int* rwp;
+	//	int* const rpc= 0;
+	//	const int * const rcpc= 0;
+	//	const int* rwcp= &ri;
+	//	void fi(int);
+	//	void fp(int*);
+	//	void fr(int&);
+	//	void fcp(const int*);
+	//	void fcr(const int&);
+	//	void fpp(int**);
+	//	void fpr(int*&);
+	//	void fcpp(int const**);
+	//	void fcpr(int const*&);
+	//	void fpcp(int *const*);
+	//	void fpcr(int *const&);
+	//	void fcpcp(int const *const*);
+	//	void fcpcr(int const *const&);
 	//	int test() {
-	//      _i; 	
+	//		_i;
 	//		wi= ri, _i, _i; // expr-list
-	//      rwi %= ri;     // assignment
-	//      ri ? _i : _i;   // conditional
-	//      (ri ? wi : wi)= ri; // conditional
-	//      if (ri) _i;
-	//      for(wi=1; ri>ri; rwi++) _i;
+	//		rwi %= ri;     // assignment
+	//		ri ? _i : _i;   // conditional
+	//		(ri ? wi : wi)= ri; // conditional
+	//		if (ri) _i;
+	//		for(wi=1; ri>ri; rwi++) _i;
 	//		do {_i;} while (ri);
-	//      while(ri) {_i;};
-	//      switch(ri) {case ri: _i;};
-	//      fi(ri); fp(&rwi); fcp(&ri); 
-	//      fi(*rp); fp(rp); fcp(rp); fpp(&rwp); fcpp(&up); fpcp(&rpc); fcpcp(&rcpc); 
-	//      fr(rwi); fcr(ri); fpr(&ui); 
-	//      fcpr(&ui); fpcr(&rwi); fcpcr(&ri);
-	//      fpr(rwp); fcpr(up); fpcr(rp); fcpcr(rp);
-	//      return ri;
+	//		while(ri) {_i;};
+	//		switch(ri) {case ri: _i;};
+	//		fi(ri); fp(&rwi); fcp(&ri);
+	//		fi(*rp); fp(rp); fcp(rp); fpp(&rwp); fcpp(&rwcp); fpcp(&rpc); fcpcp(&rcpc);
+	//		fr(rwi); fcr(ri);
+	//		fpcr(&rwi); fcpcr(&ri);
+	//		fpr(rwp); fcpr(rwcp); fpcr(rp); fcpcr(rp);
+	//		return ri;
 	//	}
 	public void testReadWriteFlagsCpp() throws Exception {
 		waitForIndexer();
-		String content= getContentsForTest(1)[0].toString();
+		String content= getComment();
 		IFile file= createFile(getProject().getProject(), "test.cpp", content);
 		waitUntilFileIsIndexed(file, 4000);
 
-		checkReadWriteFlags(file, ILinkage.CPP_LINKAGE_ID, 47);
+		checkReadWriteFlags(file, ILinkage.CPP_LINKAGE_ID, 48);
+	}
+
+	
+	//	int _i, ri, wi, rwi;
+	//	void f(int&, int);
+	//	void g(int, int&);
+	//	void test() {
+	//		f(rwi, ri);
+	//		g(ri, rwi);
+	//	}
+	public void testRWInSecondArg() throws Exception {
+		waitForIndexer();
+		String content= getComment();
+		IFile file= createFile(getProject().getProject(), "testRWInSecondArg.cpp", content);
+		waitUntilFileIsIndexed(file, 4000);
+
+		checkReadWriteFlags(file, ILinkage.CPP_LINKAGE_ID, 4);
+	}
+	
+	//	struct A {
+	//		A(int p) {}
+	//	};
+	//  int r;
+	//  A a(r); 	// Should be read-access
+	//	void test() {
+	//		A b(r); // Should be read-access
+	//	}
+	public void testRWInConstructorCall_328528() throws Exception {
+		waitForIndexer();
+		String content= getComment();
+		IFile file= createFile(getProject().getProject(), "testRWInConstructorCall.cpp", content);
+		waitUntilFileIsIndexed(file, 4000);
+
+		checkReadWriteFlags(file, ILinkage.CPP_LINKAGE_ID, 2);
+	}
+
+	//	struct A {
+	//		A(int p) {}
+	//	};
+	//  int r;
+	//  int a[2] = {0, r}; 	// Should be read-access
+	//	void test() {
+	//      int b[2] = {0, r}; 	// Should be read-access
+	//	}
+	public void testRWInArrayInitializer_328528() throws Exception {
+		waitForIndexer();
+		String content= getComment();
+		IFile file= createFile(getProject().getProject(), "testRWInArrayInitializer.cpp", content);
+		waitUntilFileIsIndexed(file, 4000);
+
+		checkReadWriteFlags(file, ILinkage.CPP_LINKAGE_ID, 2);
 	}
 }

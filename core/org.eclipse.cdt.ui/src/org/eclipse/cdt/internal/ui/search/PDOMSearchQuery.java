@@ -73,22 +73,21 @@ import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
-
 public abstract class PDOMSearchQuery implements ISearchQuery {
 	public static final int FIND_DECLARATIONS = IIndex.FIND_DECLARATIONS;
 	public static final int FIND_DEFINITIONS = IIndex.FIND_DEFINITIONS;
 	public static final int FIND_REFERENCES = IIndex.FIND_REFERENCES;
 	public static final int FIND_DECLARATIONS_DEFINITIONS = FIND_DECLARATIONS | FIND_DEFINITIONS;
 	public static final int FIND_ALL_OCCURRENCES = FIND_DECLARATIONS | FIND_DEFINITIONS | FIND_REFERENCES;
-	
-	protected static final long LABEL_FLAGS= 
-			CElementLabels.M_PARAMETER_TYPES | 
+
+	protected static final long LABEL_FLAGS=
+			CElementLabels.M_PARAMETER_TYPES |
 			CElementLabels.ALL_FULLY_QUALIFIED |
 			CElementLabels.TEMPLATE_ARGUMENTS;
 
 	protected PDOMSearchResult result;
 	protected int flags;
-	
+
 	protected ICElement[] scope;
 	protected ICProject[] projects;
 	private Set<String> fullPathFilter;
@@ -97,19 +96,17 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		result = new PDOMSearchResult(this);
 		this.flags = flags;
 		this.scope = scope;
-		
+
 		try {
 			if (scope == null) {
 				// All CDT projects in workspace
 				ICProject[] allProjects = CoreModel.getDefault().getCModel().getCProjects();
-				
 				// Filter out closed projects for this case
 				for (int i = 0; i < allProjects.length; i++) {
-					if (!allProjects[i].getProject().isOpen()) { 
+					if (!allProjects[i].getProject().isOpen()) {
 						allProjects[i] = null;
 					}
 				}
-				
 				projects = (ICProject[]) ArrayUtil.removeNulls(ICProject.class, allProjects);
 			} else {
 				Map<String, ICProject> projectMap = new HashMap<String, ICProject>();
@@ -126,7 +123,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 						projectMap.put(project.getElementName(), project);
 					}
 				}
-				
+
 				projects = projectMap.values().toArray(new ICProject[projectMap.size()]);
 				if (needFilter) {
 					fullPathFilter= pathFilter;
@@ -136,7 +133,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 			CUIPlugin.log(e);
 		}
 	}
-	
+
 	protected String labelForBinding(final IIndex index, IBinding binding, String defaultLabel)
 			throws CoreException {
 		IIndexName[] names= index.findNames(binding, IIndex.FIND_DECLARATIONS_DEFINITIONS);
@@ -151,12 +148,13 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 
 	public String getLabel() {
 		String type;
-		if ((flags & FIND_REFERENCES) != 0)
-			type = CSearchMessages.PDOMSearchQuery_refs_label; 
-		else if ((flags & FIND_DECLARATIONS) != 0)
-			type = CSearchMessages.PDOMSearchQuery_decls_label; 
-		else
- 			type = CSearchMessages.PDOMSearchQuery_defs_label; 
+		if ((flags & FIND_REFERENCES) != 0) {
+			type = CSearchMessages.PDOMSearchQuery_refs_label;
+		} else if ((flags & FIND_DECLARATIONS) != 0) {
+			type = CSearchMessages.PDOMSearchQuery_decls_label;
+		} else {
+ 			type = CSearchMessages.PDOMSearchQuery_defs_label;
+		}
 		return type;
 	}
 
@@ -188,11 +186,13 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 			break;
 		}
 
-		if (scope != null) 
-			label= NLS.bind(CSearchMessages.PDOMSearchPatternQuery_PatternQuery_labelPatternInScope, label, scope);
+		if (scope != null) {
+			label= NLS.bind(CSearchMessages.PDOMSearchPatternQuery_PatternQuery_labelPatternInScope,
+					label, scope);
+		}
 
-		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(
-				matchCount));
+		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches,
+				new Integer(matchCount));
 		return label + " " + countLabel; //$NON-NLS-1$
 	}
 
@@ -246,7 +246,6 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 							isWriteAccess));
 				}
 			}
-
 		}
 	}
 
@@ -301,7 +300,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 				matches = convertMatchesPositions(file, matches);
 				// scan dirty editor and group matches by line elements
 				ITextEditor textEditor = pathsDirtyEditors.get(absolutePath);
-				IEditorInput input = textEditor.getEditorInput(); 
+				IEditorInput input = textEditor.getEditorInput();
 				IDocument document = textEditor.getDocumentProvider().getDocument(input);
 				Match[] matchesArray = matches.toArray(new Match[matches.size()]);
 				lineElements = LineSearchElement.createElements(file.getLocation(), matchesArray, document);
@@ -310,7 +309,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 				Match[] matchesArray = matches.toArray(new Match[matches.size()]);
 				lineElements = LineSearchElement.createElements(file.getLocation(), matchesArray);
 			}
-			// create real PDOMSearchMatch with corresponding line elements 
+			// create real PDOMSearchMatch with corresponding line elements
 			for (LineSearchElement searchElement : lineElements) {
 				for (Match lineMatch : searchElement.getMatches()) {
 					int offset = lineMatch.getOffset();
@@ -327,20 +326,20 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	protected void createMatches(IIndex index, IBinding binding) throws CoreException {
 		createMatches(index, new IBinding[] { binding });
 	}
-	
+
 	protected void createMatches(IIndex index, IBinding[] bindings) throws CoreException {
 		if (bindings == null)
 			return;
 		List<IIndexName> names= new ArrayList<IIndexName>();
 		List<IIndexName> polymorphicNames= null;
 		HashSet<IBinding> handled= new HashSet<IBinding>();
-		
+
 		for (IBinding binding : bindings) {
 			if (binding != null && handled.add(binding)) {
 				createMatches1(index, binding, names);
 			}
 		}
-		
+
 		if ((flags & FIND_REFERENCES) != 0) {
 			for (IBinding binding : bindings) {
 				if (binding != null) {
@@ -380,21 +379,21 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		} else {
 			for (IIndexName name : bindingNames) {
 				String fullPath= name.getFile().getLocation().getFullPath();
-				if (accept(fullPath)) 
+				if (fullPath != null && accept(fullPath))
 					names.add(name);
 			}
 		}
 	}
 
 	private boolean accept(String fullPath) {
-		for(;;) {
+		while (true) {
 			if (fullPathFilter.contains(fullPath))
 				return true;
 			int idx= fullPath.lastIndexOf('/');
 			if (idx < 0)
 				return false;
 			fullPath= fullPath.substring(0, idx);
-		} 
+		}
 	}
 
 	protected void createLocalMatches(IASTTranslationUnit ast, IBinding binding) throws CoreException {
@@ -404,7 +403,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 			names.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
 			names.addAll(Arrays.asList(ast.getReferences(binding)));
 			// Collect local matches from AST
-			IIndexFileLocation fileLocation = null; 
+			IIndexFileLocation fileLocation = null;
 			Set<Match> localMatches = new HashSet<Match>();
 			for (IASTName name : names) {
 				if (((flags & FIND_DECLARATIONS) != 0 && name.isDeclaration()) ||
@@ -461,7 +460,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 			} else {
 				lineElements = LineSearchElement.createElements(fileLocation, matchesArray);
 			}
-			// Create real PDOMSearchMatch with corresponding line elements 
+			// Create real PDOMSearchMatch with corresponding line elements
 			for (LineSearchElement searchElement : lineElements) {
 				for (Match lineMatch : searchElement.getMatches()) {
 					int offset = lineMatch.getOffset();
@@ -484,9 +483,9 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	public final IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
 		PDOMSearchResult result= (PDOMSearchResult) getSearchResult();
 		result.removeAll();
-		
+
 		result.setIndexerBusy(!CCorePlugin.getIndexManager().isIndexerIdle());
-		
+
 		try {
 			IIndex index= CCorePlugin.getIndexManager().getIndex(projects, 0);
 			try {
@@ -513,7 +512,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	public ICProject[] getProjects() {
 		return projects;
 	}
-	
+
 	public String getScopeDescription() {
 		StringBuilder buf= new StringBuilder();
 		switch (scope.length) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Nokia and others.
+ * Copyright (c) 2007, 2011 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,16 @@ public class SoundActionComposite extends Composite {
 		comboModifyListener = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (combo_1.getText().length() > 0) {
-					setSoundFile(combo_1.getText());
+					String filePath = combo_1.getText();
+					File soundFile = new File(filePath);
+					if (soundFile.exists()) {
+						soundFilePathLabel.setText(filePath);
+						tryItButton.setEnabled(true);
+						selectedSoundFile = soundFile;
+					} else {
+						soundFilePathLabel.setText(Messages.getString("SoundActionComposite.9")); //$NON-NLS-1$
+						tryItButton.setEnabled(false);
+					}
 				}
 			}
 		};
@@ -136,11 +145,11 @@ public class SoundActionComposite extends Composite {
 	private void rebuildRecentSoundsCombo() {
 		combo_1.removeAll();
 
-		ArrayList sortedSounds = new ArrayList(soundActionPage.getRecentSounds());
+		ArrayList<File> sortedSounds = new ArrayList<File>(soundActionPage.getRecentSounds());
 		Collections.sort(sortedSounds);
 
-		for (Iterator iter = sortedSounds.iterator(); iter.hasNext();) {
-			File element = (File) iter.next();
+		for (Iterator<File> iter = sortedSounds.iterator(); iter.hasNext();) {
+			File element = iter.next();
 			combo_1.add(element.getAbsolutePath());
 		}
 	}

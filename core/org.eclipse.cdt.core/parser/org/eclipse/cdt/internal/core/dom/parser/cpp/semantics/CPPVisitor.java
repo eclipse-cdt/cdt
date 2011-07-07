@@ -1065,9 +1065,12 @@ public class CPPVisitor extends ASTQueries {
 				for (; i < names.length; i++) {
 					if (names[i] == name) break;
 				}
+				final IASTTranslationUnit tu = parent.getTranslationUnit();
 				if (i == 0) {
 					if (qname.isFullyQualified()) {
-						return parent.getTranslationUnit().getScope();
+						if (tu == null)
+							return null;
+						return tu.getScope();
 					} 
 					if (qname.getParent() instanceof ICPPASTFieldReference) {
 						name= qname;
@@ -1091,8 +1094,8 @@ public class CPPVisitor extends ASTQueries {
 					boolean done= true;
 					IScope scope= null;
 					if (binding instanceof ICPPClassType) {
-						if (binding instanceof IIndexBinding) {
-							binding= (((CPPASTTranslationUnit) parent.getTranslationUnit())).mapToAST((ICPPClassType) binding);
+						if (binding instanceof IIndexBinding && tu != null) {
+							binding= (((CPPASTTranslationUnit) tu)).mapToAST((ICPPClassType) binding);
 						}
 						scope= ((ICPPClassType) binding).getCompositeScope();
 					} else if (binding instanceof ICPPNamespace) {
@@ -1121,19 +1124,16 @@ public class CPPVisitor extends ASTQueries {
 					data.usesEnclosingScope= false;
 				}
 				final ICPPASTFieldReference fieldReference = (ICPPASTFieldReference) parent;
-				IType type = CPPSemantics.getFieldOwnerType(fieldReference);
-				if (fieldReference.isPointerDereference()) {
-					type= getUltimateType(type, false);
-				} else {
-					type= getUltimateTypeUptoPointers(type);
-				}
+				IType type = fieldReference.getFieldOwnerType();
+				type= getUltimateTypeUptoPointers(type);
 				if (type instanceof ICPPClassType) {
-					if (type instanceof IIndexBinding) {
-						type= (((CPPASTTranslationUnit) fieldReference.getTranslationUnit())).mapToAST((ICPPClassType) type);
-					}
+					type= SemanticUtil.mapToAST(type, fieldReference);
 					return ((ICPPClassType) type).getCompositeScope();
 				} else if (type instanceof ICPPUnknownBinding) {
 					return ((ICPPUnknownBinding) type).asScope();
+				} else {
+					// mstodo introduce problem category
+					return new CPPScope.CPPScopeProblem(name, ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION); 
 				}
 			} else if (parent instanceof IASTGotoStatement || parent instanceof IASTLabelStatement) {
 			    while (!(parent instanceof IASTFunctionDefinition)) {

@@ -362,7 +362,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 		// Also, for a core session, there is no concept of killing the inferior,
 		// so lets kill GDB
    		if (fBackend.getSessionType() == SessionType.CORE ||
-   			Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+   			Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
 				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
 				true, null)) {
 			fGdb.terminate(rm);
@@ -635,7 +635,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
     	if (e.getDMContext() instanceof IContainerDMContext) {
     		fConnected = false;
     		
-    		if (Platform.getPreferencesService().getBoolean("org.eclipse.cdt.dsf.gdb.ui",  //$NON-NLS-1$
+    		if (Platform.getPreferencesService().getBoolean(GdbPlugin.PLUGIN_ID,
     				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
     				true, null)) {
     			// If the inferior finishes, let's terminate GDB

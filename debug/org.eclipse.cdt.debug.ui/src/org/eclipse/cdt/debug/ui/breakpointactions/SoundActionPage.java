@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Nokia and others.
+ * Copyright (c) 2007, 2011 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ public class SoundActionPage extends PlatformObject implements IBreakpointAction
 	private SoundActionComposite editor = null;
 	private String mediaPath = ""; //$NON-NLS-1$
 
-	private ArrayList recentSounds = new ArrayList();
+	private ArrayList<File> recentSounds = new ArrayList<File>();
 
 	private SoundAction soundAction;
 
@@ -78,8 +78,8 @@ public class SoundActionPage extends PlatformObject implements IBreakpointAction
 		String soundFilePath = soundFile.getAbsolutePath();
 		int removeIndex = -1;
 		int fileCount = 0;
-		for (Iterator iter = recentSounds.iterator(); iter.hasNext() && removeIndex < 0;) {
-			File element = (File) iter.next();
+		for (Iterator<File> iter = recentSounds.iterator(); iter.hasNext() && removeIndex < 0;) {
+			File element = iter.next();
 			if (element.getAbsolutePath().equals(soundFilePath))
 				removeIndex = fileCount;
 			fileCount++;
@@ -96,7 +96,7 @@ public class SoundActionPage extends PlatformObject implements IBreakpointAction
 		this.soundAction = (SoundAction) action;
 		loadRecentSounds();
 		if (soundAction.getSoundFile() == null && recentSounds.size() > 0)
-			soundAction.setSoundFile((File) recentSounds.get(0));
+			soundAction.setSoundFile(recentSounds.get(0));
 		editor = new SoundActionComposite(composite, style, this);
 		return editor;
 	}
@@ -105,7 +105,7 @@ public class SoundActionPage extends PlatformObject implements IBreakpointAction
 		return mediaPath;
 	}
 
-	public ArrayList getRecentSounds() {
+	public ArrayList<File> getRecentSounds() {
 		return recentSounds;
 	}
 
@@ -150,7 +150,7 @@ public class SoundActionPage extends PlatformObject implements IBreakpointAction
 			return;
 		}
 
-		recentSounds = new ArrayList();
+		recentSounds = new ArrayList<File>();
 
 		Element root = null;
 		DocumentBuilder parser;
@@ -201,8 +201,8 @@ public class SoundActionPage extends PlatformObject implements IBreakpointAction
 			Element rootElement = doc.createElement("recentSounds"); //$NON-NLS-1$
 			doc.appendChild(rootElement);
 
-			for (Iterator iter = recentSounds.iterator(); iter.hasNext();) {
-				File soundFile = (File) iter.next();
+			for (Iterator<File> iter = recentSounds.iterator(); iter.hasNext();) {
+				File soundFile = iter.next();
 
 				Element element = doc.createElement("soundFileName"); //$NON-NLS-1$
 				element.setAttribute("name", soundFile.getAbsolutePath()); //$NON-NLS-1$

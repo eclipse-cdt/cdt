@@ -255,4 +255,38 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		loadCodeAndRunCpp(getAboveComment());
 		checkErrorLine(1);
 	}
+
+	//	int f345687() {
+	//		{
+	//			return 0;
+	//		}
+	//	}
+	public void testNextedBlock_Bug345687() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
+	//	int
+	//	fp_goto(int a)
+	//	{
+	//	if (a) {
+	//	goto end;
+	//	}
+	//	end:
+	//	return (a);
+	//	}
+	public void testGoto_Bug346559() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	//	int main()
+	//	{
+	//		char c;  // added so function body is non-empty
+	//		// no error since return value in main is optional
+	//	}
+	public void testMainFunction() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
 }

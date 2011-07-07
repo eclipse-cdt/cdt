@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
@@ -7321,4 +7322,19 @@ public class AST2Tests extends AST2BaseTest {
 		bh.assertNonProblem("a;", 1);
 	}
 
+	//	#ifdef A // active, not taken.
+	//	#ifdef B // inactive, not taken.
+	//	#endif   // inactive
+	//	#endif   // active
+	public void testInactivePreprocessingStatements() throws Exception {
+		IASTTranslationUnit tu= parseAndCheckBindings(getAboveComment());
+		IASTPreprocessorStatement[] stmts= tu.getAllPreprocessorStatements();
+		assertTrue(stmts[0].isActive());
+		assertFalse(stmts[1].isActive());
+		assertFalse(stmts[2].isActive());
+		assertTrue(stmts[3].isActive());
+		
+		assertFalse(((IASTPreprocessorIfdefStatement) stmts[0]).taken());
+		assertFalse(((IASTPreprocessorIfdefStatement) stmts[1]).taken());
+	}	
 }

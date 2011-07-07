@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,11 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * Broadcom Corporation - Bug 311189 and clean-up
+ * Wind River Systems - Bug 348569
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,6 +32,7 @@ import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.ResourceChangeHandlerBase;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -204,11 +207,14 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 
 						// Bug 311189 -- if the resource still exists now, don't treat as a remove!
 						if (to == null) {
-							// Workaround for platform Bug 317783 
-							if (from.getWorkspace().validateFiltered(from).isOK())
-								from.refreshLocal(IResource.DEPTH_ZERO, null);
 							if (from.exists())
 								continue;
+							// Workaround for platform Bug 317783 
+							if (from.getWorkspace().validateFiltered(from).isOK()) {
+								URI uri = from.getLocationURI();
+								if (uri != null && EFS.getStore(uri).fetchInfo().exists())
+									continue;
+							}
 						}
 
 						ICProjectDescription prjDesc = getProjectDescription(from);

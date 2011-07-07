@@ -14,4 +14,90 @@
 	<version>7.0.2-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.repo</artifactId>
 	<packaging>eclipse-repository</packaging>
+	
+	<profiles>
+	   <profile>
+	     <id>build-server</id>
+	     <build>
+	       <plugins>
+	         <plugin>
+	           <groupId>org.eclipse.dash.maven</groupId>
+	           <artifactId>eclipse-signing-maven-plugin</artifactId>
+	           <version>1.0.1</version>
+	           <executions>
+	           	<!--
+	             <execution>
+	               <id>pack</id>
+	               <phase>package</phase>
+	               <goals>
+	                 <goal>pack</goal>
+	               </goals>
+	             </execution>
+	             -->
+	             <execution>
+	               <id>sign</id>
+	               <configuration>
+	               	 <inputFile>${project.build.directory}/org.eclipse.cdt.repo.zip</inputFile>
+	                 <signerInputDirectory>/opt/public/download-staging.priv/tools/cdt/test</signerInputDirectory>
+	               </configuration>
+	               <phase>package</phase>
+	               <goals>
+	                 <goal>sign</goal>
+	               </goals>
+	             </execution>
+	             <!--
+	             <execution>
+	               <id>repack</id>
+	               <configuration>
+	                 <inputFile>${project.build.directory}/signed/site_assembly.zip</inputFile> 
+	               </configuration>
+	               <phase>package</phase>
+	               <goals>
+	                 <goal>pack</goal>
+	               </goals>
+	             </execution>
+	             <execution>
+	               <id>fixCheckSums</id>
+	               <phase>package</phase>
+	               <goals>
+	                 <goal>fixCheckSums</goal>
+	               </goals>
+	             </execution>
+	             -->
+	           </executions>
+	         </plugin>
+	         <!--
+	         <plugin>
+	             <artifactId>maven-antrun-plugin</artifactId>
+	             <executions>
+	               <execution>
+	                 <id>deploy</id>
+	                 <phase>install</phase>
+	                 <goals>
+	                   <goal>run</goal>
+	                 </goals>
+	                 <configuration>
+	                   <tasks>
+	                     <delete includeemptydirs="false">
+	                       <fileset
+	                         dir="/home/data/httpd/download.eclipse.org/jetty/updates/jetty-wtp/development">
+	                         <include name="**" />
+	                       </fileset>
+	                     </delete>
+	                     <copy includeemptydirs="false"
+	                       todir="/home/data/httpd/download.eclipse.org/jetty/updates/jetty-wtp/development">
+	                       <fileset dir="target/checksumFix">
+	                         <include name="**" />
+	                       </fileset>
+	                     </copy>
+	                   </tasks>
+	                 </configuration>
+	               </execution>
+	             </executions>
+	           </plugin>
+	           -->
+	         </plugins>
+	     </build>
+	   </profile>
+	 </profiles>
 </project>

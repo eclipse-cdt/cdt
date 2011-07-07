@@ -182,5 +182,14 @@
          	class="org.eclipse.cdt.make.internal.core.dataprovider.MakeConfigurationDataProvider"
          />
    </extension>
+   <extension
+         point="org.eclipse.cdt.core.LanguageSettingsProvider">
+      <provider
+            class="org.eclipse.cdt.make.core.scannerconfig.GCCBuildCommandParser"
+            id="org.eclipse.cdt.make.core.build.command.parser.gcc"
+            name="CDT GCC Build Output Parser"
+            parameter="(gcc)|([gc]\+\+)">
+      </provider>
+   </extension>
 
 </plugin>

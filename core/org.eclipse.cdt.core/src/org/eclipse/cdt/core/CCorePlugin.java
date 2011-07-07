@@ -526,7 +526,7 @@ public class CCorePlugin extends Plugin {
 	 * 
 	 * @return CDT console adapter.
 	 */
-	private IConsole getConsole(String extConsoleId, String contextId, String name, URL iconUrl) {
+	public IConsole getConsole(String extConsoleId, String contextId, String name, URL iconUrl) {
 		try {
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, "CBuildConsole"); //$NON-NLS-1$
 			if (extensionPoint != null) {

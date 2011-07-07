@@ -94,6 +94,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static final String EDIT_STR = Messages.FileListControl_edit; 
 	public static final String MOVEUP_STR = Messages.FileListControl_moveup; 
 	public static final String MOVEDOWN_STR = Messages.FileListControl_movedown; 
+	public static final String PROJECTBUTTON_NAME = "Project..."; 
 	public static final String WORKSPACEBUTTON_NAME = Messages.FileListControl_button_workspace; 
 	public static final String FILESYSTEMBUTTON_NAME = Messages.FileListControl_button_fs; 
 	public static final String VARIABLESBUTTON_NAME = Messages.AbstractCPropertyTab_1; 
@@ -449,6 +450,12 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	}
 	public static String getWorkspaceFileDialog(Shell shell, String text) {
 		return getWorkspaceDialog(shell, text, false, null);
+	}
+	public static String getProjectDirDialog(Shell shell, String text, IProject prj) {
+		return getWorkspaceDialog(shell, text, true, prj);
+	}
+	public static String getProjectFileDialog(Shell shell, String text, IProject prj) {
+		return getWorkspaceDialog(shell, text, false, prj);
 	}
 	
 	private static String getWorkspaceDialog(Shell shell, String text, boolean dir, IProject prj) {

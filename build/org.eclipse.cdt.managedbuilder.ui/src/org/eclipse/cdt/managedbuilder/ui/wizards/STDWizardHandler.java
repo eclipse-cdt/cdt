@@ -11,7 +11,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
@@ -24,10 +31,12 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -71,6 +80,14 @@ public class STDWizardHandler extends MBSWizardHandler {
 
 	private void setProjectDescription(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor)
             throws CoreException {
+
+		boolean isTryingNewSD = false;
+		IWizardPage page = getStartingPage();
+		if (page instanceof CDTMainWizardPage) {
+			CDTMainWizardPage mainWizardPage = (CDTMainWizardPage)page;
+			isTryingNewSD = mainWizardPage.isTryingNewSD();
+		}
+
 	    ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 	    ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
 	    ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
@@ -99,10 +116,33 @@ public class STDWizardHandler extends MBSWizardHandler {
 	    	}
 	    	cfg.setArtifactName(mProj.getDefaultArtifactName());
 	    	CConfigurationData data = cfg.getConfigurationData();
-	    	des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+	    	ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+
+			if (isTryingNewSD) {
+				CfgScannerConfigProfileManager.disableScannerDiscovery(cfg);
+
+				List<ILanguageSettingsProvider> providers = ManagedBuildManager.getLanguageSettingsProviders(cfg);
+				cfgDes.setLanguageSettingProviders(providers);
+			} else {
+				ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(ManagedBuildManager.MBS_LANGUAGE_SETTINGS_PROVIDER);
+				List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+				providers.add(provider);
+				cfgDes.setLanguageSettingProviders(providers);
+			}
+
 	    	monitor.worked(work);
 	    }
 	    mngr.setProjectDescription(project, des);
+
+		// FIXME if scanner discovery is empty it is "fixed" deeply inside setProjectDescription(), taking the easy road here for the moment
+		if (isTryingNewSD) {
+			des = mngr.getProjectDescription(project);
+			boolean isChanged = CfgScannerConfigProfileManager.disableScannerDiscovery(des);
+
+			if (isChanged) {
+				mngr.setProjectDescription(project, des);
+			}
+		}
     }
 	public boolean canCreateWithoutToolchain() { return true; } 
 	

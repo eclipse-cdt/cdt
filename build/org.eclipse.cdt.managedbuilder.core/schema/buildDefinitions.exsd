@@ -263,7 +263,16 @@ Specifying this attribute is fully equivalent to specifying the &quot;org.eclips
          <attribute name="errorParsers" type="string">
             <annotation>
                <documentation>
-                  The semi-colon separated list of the default error parsers to be used with this configuration. The list is ordered with the first error parser on the list invoked first, the second error parser second, and so on.  The list may contain the error parsers defined by CDT and/or other installed error parser extensions.  The list of error parsers to be used may be changed by the user on a per-configuration basis.  When specified, this overrides the tool-chain errorParsers attribute.
+                  The semi-colon separated list of the default error parsers to be used with this configuration.Ã‚Â The list is ordered with the first error parser on the list invoked first, the second error parser second, and so on.  The list may contain the error parsers defined by CDT and/or other installed error parser extensions.  The list of error parsers to be used may be changed by the user on a per-configuration basis.  When specified, this overrides the tool-chain errorParsers attribute.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="languageSettingsProviders" type="string">
+            <annotation>
+               <documentation>
+                  Semicolon-separated list of providers ID implementing ILanguageSettingProvider interface.
+This field could be amended with toolchain-level providers list by using ${Toolchain} keyword.  Provider ID can be prefixed with &quot;*&quot;, in this case shared instance of the provider defined on workspace level is used. Also provider ID can be prefixed with &quot;-&quot; which will cause id to be removed from the preceeding list including providers defined with ${Toolchain} keyword.
+If this field is not specified, &quot;*org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider&quot; (MBS Language Settings Provider) is used by default.
                </documentation>
             </annotation>
          </attribute>
@@ -405,7 +414,15 @@ Specifying this attribute is fully equivalent to specifying the &quot;org.eclips
          <attribute name="errorParsers" type="string">
             <annotation>
                <documentation>
-                  The semi-colon separated list of the default error parsers to be used with this tool-chain. The list is ordered with the first error parser on the list invoked first, the second error parser second, and so on.  The list may contain the error parsers defined by CDT and/or other installed error parser extensions.  When specified, this overrides the tool errorParsers attributes of the tool children of the tool-chain and the builder child of the tool-chain.
+                  The semi-colon separated list of the default error parsers to be used with this tool-chain.Ã‚Â The list is ordered with the first error parser on the list invoked first, the second error parser second, and so on.  The list may contain the error parsers defined by CDT and/or other installed error parser extensions.  When specified, this overrides the tool errorParsers attributes of the tool children of the tool-chain and the builder child of the tool-chain.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="languageSettingsProviders" type="string">
+            <annotation>
+               <documentation>
+                  Semicolon-separated list of providers ID implementing ILanguageSettingProvider interface. Provider ID can be prefixed with &quot;*&quot;, in this case shared instance of the provider defined on workspace level is used.
+This list could be adjusted on configuration level in the corresponding attribute.
                </documentation>
             </annotation>
          </attribute>
@@ -732,14 +749,14 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
          <attribute name="customBuildStep" type="boolean">
             <annotation>
                <documentation>
-                  Specifies whether this Tool represents a user-define custom build step.  The default is false.  When True, the default value of the commandLinePattern attribute changes to “$(command)”.
+                  Specifies whether this Tool represents a user-define custom build step.  The default is false.  When True, the default value of the commandLinePattern attribute changes to Ã¢â‚¬Å“$(command)Ã¢â‚¬ï¿½.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="announcement" type="string">
             <annotation>
                <documentation>
-                  Specifies a string that is written to the build output prior to each invocation of the tool.  The default value is “Invoking tool-name (tool-id)…”
+                  Specifies a string that is written to the build output prior to each invocation of the tool.  The default value is Ã¢â‚¬Å“Invoking tool-name (tool-id)Ã¢â‚¬Â¦Ã¢â‚¬ï¿½
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -1066,7 +1083,7 @@ Overrides language id specified with the languageId attribute.
          <attribute name="primaryInputType" type="string">
             <annotation>
                <documentation>
-                  The id of the input type that is used in determining the build “rules” for the output type and for the default name of the output file.  The default is the input type with primaryInput == true.
+                  The id of the input type that is used in determining the build Ã¢â‚¬Å“rulesÃ¢â‚¬ï¿½ for the output type and for the default name of the output file.  The default is the input type with primaryInput == true.
                </documentation>
             </annotation>
          </attribute>
@@ -1080,7 +1097,7 @@ Overrides language id specified with the languageId attribute.
          <attribute name="outputPrefix" type="string">
             <annotation>
                <documentation>
-                  Some tools produce files with a special prefix that must be specified. For example, a librarian on POSIX systems expects the output to be libtarget.a, so &apos;lib&apos; would be the prefix.  The default is to use the Tool “outputPrefix” attribute if primaryOutput is True, otherwise the default is an empty string.  This attribute supports MBS configuration context macros.
+                  Some tools produce files with a special prefix that must be specified. For example, a librarian on POSIX systems expects the output to be libtarget.a, so &apos;lib&apos; would be the prefix.  The default is to use the Tool Ã¢â‚¬Å“outputPrefixÃ¢â‚¬ï¿½ attribute if primaryOutput is True, otherwise the default is an empty string.  This attribute supports MBS configuration context macros.
                </documentation>
             </annotation>
          </attribute>
@@ -2016,11 +2033,11 @@ If the &quot;buildPathResolver&quot; attribute is specified, the &quot;pathDelim
                <documentation>
                   Represents the applicability type for this enablement.
 Can contain the following values:
-UI_VISIBILITY – the given enablement expression specifies whether the option is to be visible in UI,
-UI_ENABLEMENT – the given enablement expression specifies the enable state of the controls that represent the option in UI,
-CMD_USAGE – the given enablement expression specifies whether the option is to be used in command line
+UI_VISIBILITY Ã¢â‚¬â€œ the given enablement expression specifies whether the option is to be visible in UI,
+UI_ENABLEMENT Ã¢â‚¬â€œ the given enablement expression specifies the enable state of the controls that represent the option in UI,
+CMD_USAGE Ã¢â‚¬â€œ the given enablement expression specifies whether the option is to be used in command line
 CONTAINER_ATTRIBUTE - the given enablement expressions specifies thecontainer attribute value
-ALL – this value means the combination of all the above values.
+ALL Ã¢â‚¬â€œ this value means the combination of all the above values.
 
 Several types could be specified simultaneously using the &quot;|&quot; as a delimiter, e.g.:
 type=&quot;UI_VISIBILITY|CMD_USAGE&quot;
@@ -2154,7 +2171,7 @@ Default value is true.
          <attribute name="value" type="string">
             <annotation>
                <documentation>
-                  Specifies the expected value. If the current option value matches the value specified in this attribute, the checkOption element is treated as true, otherwise – as false.
+                  Specifies the expected value. If the current option value matches the value specified in this attribute, the checkOption element is treated as true, otherwise Ã¢â‚¬â€œ as false.
 The expected value could be specified either as a string that may contain build macros or as a regular expression. During the comparison, the build macros are resolved and the option value is checked to match the resulting string or regular expression. The way the expected value is specified and treated depends on the value of the isRegex attribute
                </documentation>
             </annotation>
@@ -2169,14 +2186,14 @@ The expected value could be specified either as a string that may contain build 
          <attribute name="otherOptionId" type="string">
             <annotation>
                <documentation>
-                  The id of the option which is to be compared with the option specified with the “optionId” attribute. The default is the id of the option that holds this expression. If the “value” attribute is specified, both the “otherOptionId” and the “otherHolderId” attributes are ignored. When searching for the option to be checked, MBS will examine all the options the holder contains along with all superclasses of each option to find the option with the specified id.
+                  The id of the option which is to be compared with the option specified with the Ã¢â‚¬Å“optionIdÃ¢â‚¬ï¿½ attribute. The default is the id of the option that holds this expression. If the Ã¢â‚¬Å“valueÃ¢â‚¬ï¿½ attribute is specified, both the Ã¢â‚¬Å“otherOptionIdÃ¢â‚¬ï¿½ and the Ã¢â‚¬Å“otherHolderIdÃ¢â‚¬ï¿½ attributes are ignored. When searching for the option to be checked, MBS will examine all the options the holder contains along with all superclasses of each option to find the option with the specified id.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="otherHolderId" type="string">
             <annotation>
                <documentation>
-                  The option holder id that holds the option specified with the “otherOptionId” attribute. The default is the id of the holder that holds the container of this expression. If the “value” attribute is specified, both the “otherOptionId” and the “otherHolderId” attributes are ingnored. When searching for the needed holder, MBS will examine all the holders the current configuration contains along with all superclasses of each holder in order to find the holder with the specified id.
+                  The option holder id that holds the option specified with the Ã¢â‚¬Å“otherOptionIdÃ¢â‚¬ï¿½ attribute. The default is the id of the holder that holds the container of this expression. If the Ã¢â‚¬Å“valueÃ¢â‚¬ï¿½ attribute is specified, both the Ã¢â‚¬Å“otherOptionIdÃ¢â‚¬ï¿½ and the Ã¢â‚¬Å“otherHolderIdÃ¢â‚¬ï¿½ attributes are ingnored. When searching for the needed holder, MBS will examine all the holders the current configuration contains along with all superclasses of each holder in order to find the holder with the specified id.
                </documentation>
             </annotation>
          </attribute>
@@ -2200,7 +2217,7 @@ The expected value could be specified either as a string that may contain build 
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  Specifies the expected value. If the current string specified in the “string” attribute matches the value specified in this attribute, the checkString element is treated as true, otherwise – as false.
+                  Specifies the expected value. If the current string specified in the Ã¢â‚¬Å“stringÃ¢â‚¬ï¿½ attribute matches the value specified in this attribute, the checkString element is treated as true, otherwise Ã¢â‚¬â€œ as false.
 The expected value could be specified either as a string that might contain the build macros or as a regular expression.
 The way the value is specified and treated depends on the value of the isRegex attribute.
                </documentation>

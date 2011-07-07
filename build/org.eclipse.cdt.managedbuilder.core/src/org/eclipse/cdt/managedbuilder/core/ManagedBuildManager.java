@@ -49,17 +49,27 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICFolderDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.XmlStorageUtil;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.scannerconfig.ILanguageSettingsBuiltinSpecsDetector;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyManager;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentBuildPathsChangeListener;
@@ -149,6 +159,7 @@ import org.w3c.dom.ProcessingInstruction;
  */
 public class ManagedBuildManager extends AbstractCExtension {
 
+	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER = "org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider";
 //	private static final QualifiedName buildInfoProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "managedBuildInfo");	//$NON-NLS-1$
 	private static final String ROOT_NODE_NAME = "ManagedProjectBuildInfo";	//$NON-NLS-1$
 	public  static final String SETTINGS_FILE_NAME = ".cdtbuild";	//$NON-NLS-1$
@@ -4712,6 +4723,140 @@ public class ManagedBuildManager extends AbstractCExtension {
 			return false; // OS or ARCH does not fit
 		}
 		return true; // no target platform - nothing to check.
+	}
+
+	private static String getLanguageSettingsProvidersStr(IToolChain toolchain) {
+		for (;toolchain!=null;toolchain=toolchain.getSuperClass()) {
+			String providersIdsStr = toolchain.getDefaultLanguageSettingsProvidersIds();
+			if (providersIdsStr!=null) {
+				return providersIdsStr;
+			}
+		}
+		return "";
+	}
+
+	private static String getLanguageSettingsProvidersStr(IConfiguration cfg) {
+		for (;cfg!=null;cfg=cfg.getParent()) {
+			String providersIdsStr = cfg.getDefaultLanguageSettingsProvidersIds();
+			if (providersIdsStr!=null) {
+				return providersIdsStr;
+			}
+		}
+		return "";
+	}
+
+	public static List<ILanguageSettingsProvider> getLanguageSettingsProviders(IConfiguration cfg) {
+		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+
+		String providersIdsStr = getLanguageSettingsProvidersStr(cfg);
+		if (providersIdsStr!=null) {
+			if (providersIdsStr.contains("${Toolchain}")) {
+				IToolChain toolchain = cfg.getToolChain();
+				String toolchainProvidersIds = getLanguageSettingsProvidersStr(toolchain);
+				if (toolchainProvidersIds==null) {
+					toolchainProvidersIds="";
+				}
+				providersIdsStr = providersIdsStr.replaceAll("\\$\\{Toolchain\\}", toolchainProvidersIds);
+			}
+			List<String> providersIds = Arrays.asList(providersIdsStr.split(String.valueOf(LanguageSettingsManager_TBD.PROVIDER_DELIMITER)));
+			for (String id : providersIds) {
+				id = id.trim();
+				ILanguageSettingsProvider provider = null;
+				if (id.startsWith("*")) {
+					id = id.substring(1);
+					provider = LanguageSettingsManager.getWorkspaceProvider(id);
+				} else if (id.startsWith("-")) {
+					id = id.substring(1);
+					for (ILanguageSettingsProvider pr : providers) {
+						if (pr.getId().equals(id)) {
+							providers.remove(pr);
+							// Has to break as the collection is invalidated
+							// TODO: remove all elements or better use unique list
+							break;
+						}
+					}
+				} else if (id.length()>0){
+					provider = LanguageSettingsManager.getExtensionProviderCopy(id);
+				}
+				if (provider!=null) {
+					providers.add(provider);
+				}
+			}
+		}
+
+		if (providers.isEmpty()) {
+			// Add MBS provider for unsuspecting toolchains (backward compatibility)
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(MBS_LANGUAGE_SETTINGS_PROVIDER);
+			providers.add(provider);
+		}
+
+		if (!isProviderThere(providers, LanguageSettingsManager_TBD.PROVIDER_UI_USER)) {
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(LanguageSettingsManager_TBD.PROVIDER_UI_USER);
+			providers.add(0, provider);
+		}
+
+		return providers;
+	}
+
+	private static boolean isProviderThere(List<ILanguageSettingsProvider> providers, String id) {
+		for (ILanguageSettingsProvider provider : providers) {
+			if (provider.getId().equals(id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * TODO - better home?
+	 */
+	static public void runBuiltinSpecsDetectors(ICConfigurationDescription cfgDescription, IPath workingDirectory,
+			String[] env, IProgressMonitor monitor) {
+		IProject project = cfgDescription.getProjectDescription().getProject();
+		ICFolderDescription rootFolderDescription = cfgDescription.getRootFolderDescription();
+		List<String> languageIds = new ArrayList<String>();
+		for (ICLanguageSetting languageSetting : rootFolderDescription.getLanguageSettings()) {
+			String id = languageSetting.getLanguageId();
+			if (id!=null) {
+				languageIds.add(id);
+			}
+		}
+
+		for (ILanguageSettingsProvider provider : cfgDescription.getLanguageSettingProviders()) {
+			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
+			if (rawProvider instanceof ILanguageSettingsBuiltinSpecsDetector) {
+				ILanguageSettingsBuiltinSpecsDetector detector = (ILanguageSettingsBuiltinSpecsDetector)rawProvider;
+				boolean isWorkspaceProvider = LanguageSettingsManager.isWorkspaceProvider(provider);
+				for (String languageId : languageIds) {
+					if (detector.getLanguageScope()==null || detector.getLanguageScope().contains(languageId)) {
+						try {
+							if (isWorkspaceProvider) {
+								detector.run(project, languageId, workingDirectory, env, monitor);
+							} else {
+								detector.run(cfgDescription, languageId, workingDirectory, env, monitor);
+							}
+							// detector.shutdown() is called from ConsoleOutputSniffer
+						} catch (Throwable e) {
+							IStatus status = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, "Internal error in BuiltinSpecsDetector "+detector.getId(), e);
+							MakeCorePlugin.log(status);
+						}
+					}
+				}
+			}
+		}
+
+
+		// AG: FIXME
+//		LanguageSettingsManager.serialize(cfgDescription);
+		// AG: FIXME - rather send event that ls settings changed
+		ICProject icProject = CoreModel.getDefault().create(project);
+		ICElement[] tuSelection = new ICElement[] {icProject};
+			try {
+				CCorePlugin.getIndexManager().update(tuSelection, IIndexManager.UPDATE_ALL | IIndexManager.UPDATE_EXTERNAL_FILES_FOR_PROJECT);
+			} catch (CoreException e) {
+				IStatus status = new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "Error updating CDT index", e);
+				ManagedBuilderCorePlugin.log(status);
+			}
 	}
 
 }

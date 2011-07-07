@@ -26,6 +26,7 @@
    <extension-point id="quickAssistProcessors" name="%quickAssistProcessorExtensionPoint" schema="schema/quickAssistProcessors.exsd"/>
    <extension-point id="DocCommentOwner" name="%DocCommentOwner.name" schema="schema/DocCommentOwner.exsd"/>
    <extension-point id="workingSetConfigurations" name="%workingSetConfigurationsExtensionPoint" schema="schema/workingSetConfigurations.exsd"/>
+   <extension-point id="LanguageSettingsProviderAssociation" name="%LanguageSettingsProviderAssociationExtensionPoint" schema="schema/LanguageSettingsProviderAssociation.exsd"/>
    <extension-point id="RefreshExclusionContributor" name="%extension-point.name" schema="schema/RefreshExclusionContributor.exsd"/>
 
    <extension
@@ -2868,6 +2869,17 @@
              </adapt>
          </enabledWhen>
       </page>
+      <page
+            name="SD80"
+            id="org.eclipse.cdt.ui.language.settings"
+            class="org.eclipse.cdt.internal.ui.language.settings.providers.Page_LanguageSettingsProviders"
+            category="org.eclipse.cdt.ui.newui.Page_head_general">
+         <enabledWhen>
+           <adapt type="org.eclipse.core.resources.IResource">
+	            <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+           </adapt>
+         </enabledWhen>
+      </page>
    </extension>
 
    <extension
@@ -3770,6 +3782,37 @@
 				<objectClass name="org.eclipse.core.resources.IFile" />
 			</enablement>
 		</decorator>
+	</extension>
+	<extension point="org.eclipse.cdt.core.LanguageSettingsProvider">
+		<provider
+			class="org.eclipse.cdt.internal.ui.language.settings.providers.UserLanguageSettingsProvider"
+			id="org.eclipse.cdt.ui.user.LanguageSettingsProvider"
+			name="CDT User Setting Entries">
+		</provider>
+	</extension>
+	<extension point="org.eclipse.cdt.ui.LanguageSettingsProviderAssociation">
+		<id-association
+			id="org.eclipse.cdt.ui.user.LanguageSettingsProvider"
+			icon="icons/obj16/person-me.gif">
+		</id-association>
+	</extension>
+	<extension point="org.eclipse.cdt.ui.cPropertyTab">
+		<tab
+			class="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsEntriesTab"
+			icon="icons/obj16/ls_entries.gif"
+			name="Entries"
+			weight="010"
+			helpId="FIXME cdt_u_prop_pns_inc"
+			parent="org.eclipse.cdt.internal.ui.language.settings.providers.Page_LanguageSettingsProviders"
+			tooltip="%AllLanguageSettingEntries.tooltip"/>
+		<tab
+			class="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderTab"
+			icon="icons/obj16/extension_obj.gif"
+			name="Providers"
+			weight="020"
+			helpId="FIXME cdt_u_prop_pns_inc"
+			parent="org.eclipse.cdt.internal.ui.language.settings.providers.Page_LanguageSettingsProviders"
+			tooltip="%AllLanguageSettingEntries.tooltip"/>
 	</extension>
  <extension
        point="org.eclipse.ui.commands">

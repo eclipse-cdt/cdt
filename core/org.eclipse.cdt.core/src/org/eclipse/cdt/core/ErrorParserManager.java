@@ -697,7 +697,7 @@ outer:
 	 * @return URI
 	 * @since 5.1
 	 */
-	private URI toURI(IPath path) {
+	public URI toURI(IPath path) {
 //		try {
 			URI baseURI = getWorkingDirectoryURI();
 			String uriString = path.toString();

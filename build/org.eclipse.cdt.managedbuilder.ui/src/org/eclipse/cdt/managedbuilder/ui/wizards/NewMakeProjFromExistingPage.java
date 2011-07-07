@@ -19,6 +19,8 @@ import java.util.Map;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -52,6 +54,9 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 	List tcList;
 	Map<String, IToolChain> tcMap = new HashMap<String, IToolChain>();
 	
+    private Button checkBoxTryNewSD;
+
+
 	protected NewMakeProjFromExistingPage() {
 		super(Messages.NewMakeProjFromExistingPage_0);
 		setTitle(Messages.NewMakeProjFromExistingPage_1);
@@ -70,6 +75,21 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 		addSourceSelector(comp);
 		addLanguageSelector(comp);
 		addToolchainSelector(comp);
+
+		checkBoxTryNewSD = new Button(comp, SWT.CHECK);
+		checkBoxTryNewSD.setText(org.eclipse.cdt.internal.ui.newui.Messages.CDTMainWizardPage_TrySD90);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		checkBoxTryNewSD.setLayoutData(gd);
+
+
+		// restore settings from preferences
+		boolean isTryNewSD = true;
+		boolean contains = CUIPlugin.getDefault().getPreferenceStore().contains(CDTPrefUtil.KEY_NEWSD);
+		if (contains) {
+			isTryNewSD = CDTPrefUtil.getBool(CDTPrefUtil.KEY_NEWSD);
+		}
+		checkBoxTryNewSD.setSelection(isTryNewSD);
 
 		setControl(comp);
 	}
@@ -208,4 +228,7 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 		return selection.length != 0 ? tcMap.get(selection[0]) : null;
 	}
 
+	public boolean isTryingNewSD() {
+		return checkBoxTryNewSD.getSelection();
+	}
 }

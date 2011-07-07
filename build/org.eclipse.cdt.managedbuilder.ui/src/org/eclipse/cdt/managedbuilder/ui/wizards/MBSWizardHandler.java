@@ -23,6 +23,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -41,8 +44,8 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
-import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.templateengine.IWizardDataPage;
 import org.eclipse.cdt.ui.templateengine.Template;
@@ -549,6 +552,13 @@ public class MBSWizardHandler extends CWizardHandler {
 	}
 	
 	private void setProjectDescription(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor) throws CoreException {
+		boolean isTryingNewSD = false;
+		IWizardPage page = getStartingPage();
+		if (page instanceof CDTMainWizardPage) {
+			CDTMainWizardPage mainWizardPage = (CDTMainWizardPage)page;
+			isTryingNewSD = mainWizardPage.isTryingNewSD();
+		}
+
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
 		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
@@ -594,9 +604,32 @@ public class MBSWizardHandler extends CWizardHandler {
 				cfgDebug = cfgDes;
 			if (cfgFirst == null) // select at least first configuration 
 				cfgFirst = cfgDes; 
+
+			if (isTryingNewSD) {
+				CfgScannerConfigProfileManager.disableScannerDiscovery(config);
+
+				List<ILanguageSettingsProvider> providers = ManagedBuildManager.getLanguageSettingsProviders(config);
+				cfgDes.setLanguageSettingProviders(providers);
+			} else {
+				ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(ManagedBuildManager.MBS_LANGUAGE_SETTINGS_PROVIDER);
+				List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+				providers.add(provider);
+				cfgDes.setLanguageSettingProviders(providers);
+			}
+
 			monitor.worked(work);
 		}
 		mngr.setProjectDescription(project, des);
+
+		// FIXME if scanner discovery is empty it is "fixed" deeply inside setProjectDescription(), taking the easy road here for the moment
+		if (isTryingNewSD) {
+			des = mngr.getProjectDescription(project);
+			boolean isChanged = CfgScannerConfigProfileManager.disableScannerDiscovery(des);
+
+			if (isChanged) {
+				mngr.setProjectDescription(project, des);
+			}
+		}
 	}
 	
 	@Override

@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
@@ -764,5 +765,23 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		CConfigurationData data = getConfigurationData(false);
 		CConfigurationStatus status = data.getStatus();
 		return status != null ? status : CConfigurationStatus.CFG_STATUS_OK;
+	}
+
+	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
+		try {
+			CConfigurationSpecSettings specSettings = getSpecSettings();
+			specSettings.setLanguageSettingProviders(providers);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+}
+
+	public List<ILanguageSettingsProvider> getLanguageSettingProviders() {
+		try {
+			return getSpecSettings().getLanguageSettingProviders();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return null;
 	}
 }

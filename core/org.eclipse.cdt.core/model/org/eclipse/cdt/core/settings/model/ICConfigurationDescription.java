@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
@@ -386,4 +388,29 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	void updateExternalSettingsProviders(String[] ids) throws WriteAccessException;
 
 	CConfigurationStatus getConfigurationStatus();
+	
+	/**
+	 * Sets the list of language settings providers. Language settings providers are
+	 * used to supply language settings {@link ICLanguageSettingEntry} such as include paths
+	 * or preprocessor macros.
+	 * 
+	 * @param providers the list of providers to assign to the configuration description.
+	 * 
+	 * @since 6.0
+	 */
+	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers);
+	
+	/**
+	 * Returns the list of language settings providers. Language settings providers are
+	 * used to supply language settings {@link ICLanguageSettingEntry} such as include paths
+	 * or preprocessor macros.
+	 * 
+	 * @return the list of providers to assign to the configuration description. This
+	 *    returns immutable list. Use {@link #setLanguageSettingProviders(List)} to change.
+	 *    This method does not return {@code null}.
+	 * 
+	 * @since 6.0
+	 */
+	public List<ILanguageSettingsProvider> getLanguageSettingProviders();
+
 }

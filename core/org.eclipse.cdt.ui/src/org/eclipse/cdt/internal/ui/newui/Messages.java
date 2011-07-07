@@ -84,6 +84,7 @@ public class Messages extends NLS {
 	public static String CDTCommonProjectWizard_creatingProject;
 	public static String CDTMainWizardPage_0;
 	public static String CDTMainWizardPage_1;
+	public static String CDTMainWizardPage_TrySD90;
 	public static String CLocationOutputTab_0;
 	public static String CLocationSourceTab_0;
 	public static String CLocationTab_0;
@@ -186,6 +187,16 @@ public class Messages extends NLS {
 	public static String IncludeTab_2;
 	public static String IncludeTab_export;
 	public static String IncludeTab_import;
+	public static String LanguageSettingsProviderTab_AreYouSureToResetProviders;
+	public static String LanguageSettingsProviderTab_Clear;
+	public static String LanguageSettingsProviderTab_Configure;
+	public static String LanguageSettingsProviderTab_ErrorPerformingDefaults;
+	public static String LanguageSettingsProviderTab_ProviderOptions;
+//	public static String LanguageSettingsProviderTab_Run;
+	public static String LanguageSettingsProviderTab_SettingEntries;
+	public static String LanguageSettingsProviderTab_SettingEntriesTooltip;
+	public static String LanguageSettingsProviderTab_ShowEntries;
+	public static String LanguageSettingsProviderTab_TitleResetProviders;
 	public static String LanguagesTab_0;
 	public static String LanguagesTab_1;
 	public static String LibraryPathTab_1;

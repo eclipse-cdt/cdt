@@ -1665,10 +1665,11 @@
    	  
       <toolChain
           archList="all"
-          osList="linux,hpux,aix,qnx"
+            id="cdt.managedbuild.toolchain.gnu.base"
+            languageSettingsProviders="org.eclipse.cdt.make.core.build.command.parser.gcc;*org.eclipse.cdt.managedbuilder.core.gcc.specs.detector"
           name="%ToolChainName.Linux"
-          targetTool="cdt.managedbuild.tool.gnu.c.linker;cdt.managedbuild.tool.gnu.cpp.linker;cdt.managedbuild.tool.gnu.archiver"
-          id="cdt.managedbuild.toolchain.gnu.base">
+            osList="linux,hpux,aix,qnx"
+            targetTool="cdt.managedbuild.tool.gnu.c.linker;cdt.managedbuild.tool.gnu.cpp.linker;cdt.managedbuild.tool.gnu.archiver">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.platform.base"
 		              name="%PlatformName.Dbg"
@@ -1733,6 +1734,7 @@
                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
                     id="cdt.managedbuild.toolchain.gnu.cygwin.base"
                     isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.cygwin.IsGnuCygwinToolChainSupported"
+                    languageSettingsProviders="org.eclipse.cdt.make.core.build.command.parser.gcc;*org.eclipse.cdt.managedbuilder.core.cygwin.gcc.specs.detector"
                     name="%ToolChainName.Cygwin"
                     osList="win32"
                     targetTool="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base;cdt.managedbuild.tool.gnu.c.linker.cygwin.base;cdt.managedbuild.tool.gnu.archiver">
@@ -1802,6 +1804,7 @@
                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.mingw.MingwEnvironmentVariableSupplier"
                     id="cdt.managedbuild.toolchain.gnu.mingw.base"
                     isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.mingw.MingwIsToolChainSupported"
+                    languageSettingsProviders="org.eclipse.cdt.make.core.build.command.parser.gcc;*org.eclipse.cdt.managedbuilder.core.gcc.specs.detector"
                     name="%ToolChainName.MinGW"
                     osList="win32"
                     targetTool="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base;cdt.managedbuild.tool.gnu.c.linker.mingw.base;cdt.managedbuild.tool.gnu.archiver">
@@ -2043,9 +2046,9 @@
 			  </toolChain>
 
          <configuration
-               id="cdt.managedbuild.config.gnu.base"
                cleanCommand="rm -rf"
-			   >
+               id="cdt.managedbuild.config.gnu.base"
+               languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.make.core.build.command.parser.gcc">
 		    <enablement type="CONTAINER_ATTRIBUTE" 
               	attribute="artifactExtension"
               	value="so"
@@ -2440,10 +2443,10 @@
       </projectType>
       
       <configuration
-               id="cdt.managedbuild.config.gnu.cygwin.base"
-               cleanCommand="rm -rf"
                artifactExtension="exe"
-			   >
+            cleanCommand="rm -rf"
+            id="cdt.managedbuild.config.gnu.cygwin.base"
+            languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.make.core.build.command.parser.gcc">
 		    <enablement type="CONTAINER_ATTRIBUTE" 
               	attribute="artifactExtension" 
               	value="dll"
@@ -2838,10 +2841,10 @@
       </projectType>
       
       <configuration
-               id="cdt.managedbuild.config.gnu.mingw.base"
-               cleanCommand="rm -rf"
                artifactExtension="exe"
-			   >
+            cleanCommand="rm -rf"
+            id="cdt.managedbuild.config.gnu.mingw.base"
+            languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.make.core.build.command.parser.gcc">
 		    <enablement type="CONTAINER_ATTRIBUTE" 
               	attribute="artifactExtension" 
               	value="dll"

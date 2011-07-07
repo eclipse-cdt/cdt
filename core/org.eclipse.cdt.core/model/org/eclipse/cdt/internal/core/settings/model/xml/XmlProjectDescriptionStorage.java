@@ -34,6 +34,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
@@ -42,6 +43,7 @@ import org.eclipse.cdt.core.settings.model.extension.ICProjectConverter;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.envvar.ContributedEnvironment;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.settings.model.AbstractCProjectDescriptionStorage;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
@@ -170,6 +172,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				serializingLock.acquire();
 				projectModificaitonStamp = serialize(fDes.getProject(), ICProjectDescriptionStorageType.STORAGE_FILE_NAME, fElement);
 				((ContributedEnvironment) CCorePlugin.getDefault().getBuildEnvironmentManager().getContributedEnvironment()).serialize(fDes);
+				LanguageSettingsProvidersSerializer.serializeLanguageSettings(fDes);
 			} finally {
 				serializingLock.release();
 				Job.getJobManager().removeJobChangeListener(notifyJobCanceller);				
@@ -481,6 +484,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				// Update the modification stamp
 				projectModificaitonStamp = getModificationStamp(project.getFile(ICProjectDescriptionStorageType.STORAGE_FILE_NAME));
 				CProjectDescription des = new CProjectDescription(project, new XmlStorage(storage), storage, true, false);
+				LanguageSettingsProvidersSerializer.loadLanguageSettings(des);
 				try {
 					setThreadLocalProjectDesc(des);
 					des.loadDatas();

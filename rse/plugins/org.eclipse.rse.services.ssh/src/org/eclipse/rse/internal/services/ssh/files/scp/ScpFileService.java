@@ -9,6 +9,7 @@
  * Nikita Shulga                     - initial API and implementation 
  * Anna Dushistova (Mentor Graphics) - [331213][scp] Provide UI-less scp IFileService in org.eclipse.rse.services.ssh
  * Anna Dushistova (Mentor Graphics) - [331249][scp] incorrect home while logging in as root
+ * Simon Bernard   (Sierra Wireless) - [349947][scp] with scp IRemoteFile.exist() returns always true
  *******************************************************************************/
 package org.eclipse.rse.internal.services.ssh.files.scp;
 
@@ -494,9 +495,12 @@ public class ScpFileService extends AbstractFileService implements
 	private IHostFile makeHostFile(String remotePath, String fileName,
 			ScpFileAttr attr) {
 		boolean isRoot = (remotePath == null || remotePath.length() == 0);
-		if (attr == null)
-			return new SftpHostFile(isRoot ? null : remotePath, fileName,
-					false, isRoot, false, 0, 0);
+		if (attr == null) {
+			SftpHostFile sftpHostFile = new SftpHostFile(isRoot ? null : remotePath, fileName, false,
+					isRoot, false, 0, 0);
+			sftpHostFile.setExists(false);
+			return sftpHostFile;
+		}
 
 		boolean isLink = attr.isLink();
 		boolean isDir = attr.isDirectory();

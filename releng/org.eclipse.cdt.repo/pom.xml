@@ -15,6 +15,7 @@
 	<artifactId>org.eclipse.cdt.repo</artifactId>
 	<packaging>eclipse-repository</packaging>
 	
+	<!-- 
 	<build>
 		<plugins>
 			<plugin>
@@ -37,6 +38,7 @@
 			</plugin>
 		</plugins>
 	</build>
+	-->
 	
 	<profiles>
 	   <profile>
@@ -63,8 +65,8 @@
 	             <execution>
 	               <id>sign</id>
 	               <configuration>
-	               	 <inputFile>${project.build.directory}/org.eclipse.cdt.repo-${project.version}.zip</inputFile>
-	               	 <!-- <inputFile>${project.build.directory}/org.eclipse.cdt.repo.zip</inputFile>-->
+	               	 <!-- <inputFile>${project.build.directory}/org.eclipse.cdt.repo-${project.version}.zip</inputFile> -->
+	               	 <inputFile>${project.build.directory}/org.eclipse.cdt.repo.zip</inputFile>
 	                 <signerInputDirectory>${signer-input-directory}</signerInputDirectory>
 	               </configuration>
 	               <phase>package</phase>

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * David McKnight (IBM)          - [351435] org.eclipse.rse.subsystems.files.core.SystemIFileProperties.getBIDILogical() should default to true
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core;
@@ -352,7 +353,16 @@ public class SystemIFileProperties {
 	 * visual format.
 	 */
 	public boolean getBIDILogical() {
-		return getPropertyBoolean(_nameRemoteBIDILogical);
+		try{ // not using getPropertyBoolean() because true should be the default
+			String strValue = _resource.getPersistentProperty(_nameRemoteBIDILogical);
+			if( strValue == null )
+				return true;
+				
+			return strValue.equals( "true" ); //$NON-NLS-1$
+		}
+		catch( CoreException ex ){
+			return true;
+		}		
 	}
 
 	/**

@@ -22,8 +22,8 @@
 		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/${orbit-version}/updateSite</orbit-site>
 		<tm-version>3.2</tm-version>
 		<tm-site>http://download.eclipse.org/tm/updates/${tm-version}</tm-site>
-		<cdt-version>7.0.2</cdt-version>
-		<signer-input-directory>/opt/public/download-staging.priv/tools/cdt/gitbuild/org.eclipse.cdt_${cdt-version}</signer-input-directory>
+		<cdt-branch>cdt_7_0</cdt-branch>
+		<signer-input-directory>/opt/public/download-staging.priv/tools/cdt/gitbuild/org.eclipse.cdt_${cdt-branch}</signer-input-directory>
 	</properties>
 
 	<licenses>

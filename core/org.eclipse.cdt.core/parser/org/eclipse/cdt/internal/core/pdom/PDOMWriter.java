@@ -531,7 +531,7 @@ abstract public class PDOMWriter {
 	/**
 	 * Updates current progress information with the provided delta.
 	 */
-	protected final void updateRequestedFiles(int delta) {
+	protected final void incrementRequestedFilesCount(int delta) {
 		synchronized (fInfo) {
 			fInfo.fRequestedFilesCount += delta;
 		}

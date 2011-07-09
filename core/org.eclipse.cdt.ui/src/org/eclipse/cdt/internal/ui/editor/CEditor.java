@@ -272,7 +272,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			// look up the current range of the marker when the document has been edited
 			IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
 			if (model instanceof AbstractMarkerAnnotationModel) {
-
 				AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
 				Position pos= markerModel.getMarkerPosition(marker);
 				if (pos != null && !pos.isDeleted()) {

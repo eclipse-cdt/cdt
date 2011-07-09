@@ -22,7 +22,8 @@
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
-					<useUIHarness>false</useUIHarness>
+					<!-- Need UI harness for quick fix tests -->
+					<useUIHarness>true</useUIHarness>
 					<argLine>-Xms256m -Xmx512m -XX:MaxPermSize=256M</argLine>
 					<includes>
 						<include>**/AutomatedIntegrationSuite.*</include>

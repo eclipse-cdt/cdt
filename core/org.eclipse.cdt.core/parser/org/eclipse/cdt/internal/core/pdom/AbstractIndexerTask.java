@@ -202,7 +202,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		fIsFastIndexer= fastIndexer;
 		fFilesToUpdate= filesToUpdate;
 		Collections.addAll(fFilesToRemove, filesToRemove);
-		updateRequestedFiles(fFilesToUpdate.length + fFilesToRemove.size());
+		incrementRequestedFilesCount(fFilesToUpdate.length + fFilesToRemove.size());
 		fUrgentTasks = new LinkedList<AbstractIndexerTask>();
 	}
 	
@@ -402,7 +402,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 							fFilesToUpdate = urgentTask.fFilesToUpdate;
 							fForceNumberFiles = urgentTask.fForceNumberFiles;
 							fFilesToRemove = urgentTask.fFilesToRemove;
-							updateRequestedFiles(fFilesToUpdate.length + fFilesToRemove.size());
+							incrementRequestedFilesCount(fFilesToUpdate.length + fFilesToRemove.size());
 							extractFiles(files, indexFilesToRemove, monitor);
 							removeFilesInIndex(fFilesToRemove, indexFilesToRemove, monitor);
 						}
@@ -535,7 +535,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			}
 		}
 		synchronized (this) {
-			updateRequestedFiles(count - fFilesToUpdate.length);
+			incrementRequestedFilesCount(count - fFilesToUpdate.length);
 			fFilesToUpdate= null;
 		}
 	}
@@ -644,14 +644,14 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					for (IIndexFragmentFile ifile : ifiles) {
 						fIndex.clearFile(ifile, null);
 					}
-					updateRequestedFiles(-1);
+					incrementRequestedFilesCount(-1);
 				}
 				for (IIndexFragmentFile ifile : indexFilesToRemove) {
 					if (monitor.isCanceled()) {
 						return;
 					}
 					fIndex.clearFile(ifile, null);
-					updateRequestedFiles(-1);
+					incrementRequestedFilesCount(-1);
 				}
 			} finally {
 				fIndex.releaseWriteLock(1);

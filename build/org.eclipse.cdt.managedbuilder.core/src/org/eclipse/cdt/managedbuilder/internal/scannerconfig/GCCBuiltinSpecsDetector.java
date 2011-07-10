@@ -63,15 +63,6 @@ public class GCCBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector implem
 			return makeList(line);
 		}
 
-		/**
-
-Framework search starts here:
- /System/Library/Frameworks
- /Library/Frameworks
-End of framework search list.
-
-		 */
-
 		// contribution of includes
 		if (line.equals("#include \"...\" search starts here:")) {
 			state = State.EXPECTING_LOCAL_INCLUDE;

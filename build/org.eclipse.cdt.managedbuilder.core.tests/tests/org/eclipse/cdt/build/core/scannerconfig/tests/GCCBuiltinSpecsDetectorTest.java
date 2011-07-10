@@ -401,6 +401,35 @@ public class GCCBuiltinSpecsDetectorTest extends TestCase {
 		}
 	}
 
+	public void testAbstractBuiltinSpecsDetector_Launch() throws Exception {
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
+
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+
+		AbstractBuiltinSpecsDetector detector = new MockBuiltinSpecsDetector() {
+			@Override
+			public boolean processLine(String line) {
+				// pretending that we parsed the line
+				detectedSettingEntries.add(new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY));
+				return true;
+			}
+		};
+		detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID);}});
+		detector.setCustomParameter("echo #define MACRO VALUE");
+		
+		detector.run(cfgDescription, LANGUAGE_ID, null, null, null);
+
+		List<ICLanguageSettingEntry> noentries = detector.getSettingEntries(null, null, null);
+		assertNull(noentries);
+
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(cfgDescription, null, LANGUAGE_ID);
+		ICLanguageSettingEntry expected = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+		assertEquals(expected, entries.get(0));
+	}
+
 	public void testAbstractBuiltinSpecsDetector_GroupSettings() throws Exception {
 		// define benchmarks
 		final CIncludePathEntry includePath_1 = new CIncludePathEntry("/include/path_1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
@@ -606,7 +635,7 @@ public class GCCBuiltinSpecsDetectorTest extends TestCase {
 		detector.processLine(" "+loc+"/misplaced/include2");
 		detector.processLine("Framework search starts here:");
 		detector.processLine(" "+loc+"/System/Library/Frameworks");
-		detector.processLine("End of search list.");
+		detector.processLine("End of framework search list.");
 		detector.processLine(" "+loc+"/misplaced/include3");
 		detector.shutdown();
 

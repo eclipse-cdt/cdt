@@ -63,7 +63,7 @@
 	             <execution>
 	               <id>sign</id>
 	               <configuration>
-	               	 <inputFile>${project.build.directory}/org.eclipse.cdt.repo.zip</inputFile>
+	               	 <inputFile>${project.build.directory}/packed/org.eclipse.cdt.repo.zip</inputFile>
 	                 <signerInputDirectory>${signer-input-directory}</signerInputDirectory>
 	               </configuration>
 	               <phase>package</phase>
@@ -83,6 +83,10 @@
 	             </execution>
 	             <execution>
 	               <id>fixCheckSums</id>
+	               <configuration>
+	                 <inputFile>${project.build.directory}/packed/site_assembly.zip</inputFile>
+	                 <outputFile>${project.build.directory}/fixed/org.eclipse.cdt.repo.zip</outputFile>	                 
+	               </configuration>
 	               <phase>package</phase>
 	               <goals>
 	                 <goal>fixCheckSums</goal>

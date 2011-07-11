@@ -85,6 +85,7 @@
 	                 <goal>pack</goal>
 	               </goals>
 	             </execution>
+	             -->
 	             <execution>
 	               <id>fixCheckSums</id>
 	               <phase>package</phase>
@@ -92,7 +93,6 @@
 	                 <goal>fixCheckSums</goal>
 	               </goals>
 	             </execution>
-	             -->
 	           </executions>
 	         </plugin>
 	         <!--

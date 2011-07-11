@@ -50,6 +50,8 @@
 	           <artifactId>eclipse-maven-signing-plugin</artifactId>
 	           <!-- <version>1.0.1</version> -->
 	           <executions>
+	           <!-- Pack default output: ${project.build.directory}/packed/org.eclipse.cdt.repo.zip -->
+	           <!-- 
 	             <execution>
 	               <id>pack</id>
 	               <configuration>
@@ -60,10 +62,12 @@
 	                 <goal>pack</goal>
 	               </goals>
 	             </execution>
+	             -->
+	             <!-- Sign default output: ${project.build.directory}/signed/site_assembly.zip -->
 	             <execution>
 	               <id>sign</id>
 	               <configuration>
-	               	 <inputFile>${project.build.directory}/packed/org.eclipse.cdt.repo.zip</inputFile>
+	               	 <inputFile>${project.build.directory}/org.eclipse.cdt.repo.zip</inputFile>
 	                 <signerInputDirectory>${signer-input-directory}</signerInputDirectory>
 	               </configuration>
 	               <phase>package</phase>
@@ -71,6 +75,8 @@
 	                 <goal>sign</goal>
 	               </goals>
 	             </execution>
+	             <!-- Repack default output: ${project.build.directory}/packed/org.eclipse.cdt.repo.zip -->
+	             <!-- 
 	             <execution>
 	               <id>repack</id>
 	               <configuration>
@@ -81,10 +87,12 @@
 	                 <goal>pack</goal>
 	               </goals>
 	             </execution>
+	             -->
+	             <!-- FixCheckSums default output: ${project.build.directory}/fixed/org.eclipse.cdt.repo.zip -->
 	             <execution>
 	               <id>fixCheckSums</id>
 	               <configuration>
-	                 <inputFile>${project.build.directory}/packed/site_assembly.zip</inputFile>
+	                 <inputFile>${project.build.directory}/signed/site_assembly.zip</inputFile>
 	                 <outputFile>${project.build.directory}/fixed/org.eclipse.cdt.repo.zip</outputFile>	                 
 	               </configuration>
 	               <phase>package</phase>

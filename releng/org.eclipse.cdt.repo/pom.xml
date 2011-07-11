@@ -50,22 +50,19 @@
 	           <artifactId>eclipse-maven-signing-plugin</artifactId>
 	           <!-- <version>1.0.1</version> -->
 	           <executions>
-	           	<!--
 	             <execution>
 	               <id>pack</id>
 	               <configuration>
-	                 <inputFile>${project.build.directory}/org.eclipse.cdt.repo-${project.version}.zip</inputFile>
+	                 <inputFile>${project.build.directory}/org.eclipse.cdt.repo.zip</inputFile>
 	               </configuration>
 	               <phase>package</phase>
 	               <goals>
 	                 <goal>pack</goal>
 	               </goals>
 	             </execution>
-	             -->
 	             <execution>
 	               <id>sign</id>
 	               <configuration>
-	               	 <!-- <inputFile>${project.build.directory}/org.eclipse.cdt.repo-${project.version}.zip</inputFile> -->
 	               	 <inputFile>${project.build.directory}/org.eclipse.cdt.repo.zip</inputFile>
 	                 <signerInputDirectory>${signer-input-directory}</signerInputDirectory>
 	               </configuration>
@@ -74,7 +71,6 @@
 	                 <goal>sign</goal>
 	               </goals>
 	             </execution>
-	             <!--
 	             <execution>
 	               <id>repack</id>
 	               <configuration>
@@ -85,7 +81,6 @@
 	                 <goal>pack</goal>
 	               </goals>
 	             </execution>
-	             -->
 	             <execution>
 	               <id>fixCheckSums</id>
 	               <phase>package</phase>

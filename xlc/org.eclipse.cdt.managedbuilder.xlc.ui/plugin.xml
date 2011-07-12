@@ -3412,34 +3412,12 @@
              </enumeratedOptionValue>
           </option>
           <option
+                applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
                 category="xlc.c.compiler.category.lm"
                 command="-qlistfmt"
                 id="xlc.c.compiler.option.lm.qlistfmt"
                 name="%Option.qlistfmt"
                 valueType="string">
-             <enumeratedOptionValue
-                   id="xlc.c.lm.attr.none"
-                   isDefault="false"
-                   name="%Option.none">
-             </enumeratedOptionValue>
-             <enumeratedOptionValue
-                   command="-qnoattr"
-                   id="xlc.c.lm.attr.noattr"
-                   isDefault="false"
-                   name="%Option.attr.noattr">
-             </enumeratedOptionValue>
-             <enumeratedOptionValue
-                   command="-qattr=full"
-                   id="xlc.c.lm.attr.fullattr"
-                   isDefault="false"
-                   name="%Option.attr.fullattr">
-             </enumeratedOptionValue>
-             <enumeratedOptionValue
-                   command="-qattr"
-                   id="xlc.c.lm.attr.attr"
-                   isDefault="false"
-                   name="%Option.attr.attr">
-             </enumeratedOptionValue>
           </option>
           <option
                 category="xlc.c.compiler.category.optimization"

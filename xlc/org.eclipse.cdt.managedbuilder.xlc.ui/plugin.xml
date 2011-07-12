@@ -230,6 +230,25 @@
         resourceFilter="all"
         valueType="boolean">
   </option>
+  <option
+        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
+        category="xlc.c.compiler.category.objcc"
+        command="-qconcurrentupdate"
+        defaultValue="false"
+        id="org.eclipse.cdt.managedbuilder.xlc.ui.cpp.option.output.qconcurrentupdate"
+        isAbstract="false"
+        name="%Option.qconcurrentupdate.v11"
+        resourceFilter="all"
+        valueType="boolean">
+  </option>
+  <option
+        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCApplicabilityCalculator"
+        category="xlc.c.compiler.category.optimization"
+        command="-qrestrict"
+        id="xlc.c.compiler.option.optimization.qrestrict"
+        name="%Option.qrestrict"
+        valueType="string">
+  </option>
 	  </tool>
 	  <tool
          command="${XL_compilerRoot}/xlC"
@@ -1495,10 +1514,10 @@
 		  
 		  <option
           category="xlc.c.compiler.category.output"
-          command="-qfuncset"
+          command="-qfuncsect"
           defaultValue="false"
-          id="xlc.c.compiler.option.output.funcset"
-          name="%Option.funcset"
+          id="xlc.c.compiler.option.output.funcsect"
+          name="%Option.funcsect"
           valueType="boolean">
 		  </option>
 		  <option

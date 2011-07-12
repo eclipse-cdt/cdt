@@ -16,6 +16,7 @@
  * Don Yantzi (IBM) - [233970] Handle messages provided by ICredentialsValidator
  * David Dykstal (IBM) - [261047] StandardCredentialsProvider does not cause a reacquire of a password when validation fails in a background thread 
  * David McKnight   (IBM)        - [334839] File Content Conflict is not handled properly
+ * David McKnight   (IBM)        - [351883] StandardCredentialsProvider.getCredentials() ignores password cache
  ********************************************************************************/
 package org.eclipse.rse.ui.subsystems;
 
@@ -270,7 +271,17 @@ public class StandardCredentialsProvider extends AbstractCredentialsProvider {
 		IHost host = getConnectorService().getHost();
 		String hostName = host.getHostName();
 		IRSESystemType systemType = host.getSystemType();
-		SystemSignonInformation result = new SystemSignonInformation(hostName, userId, password, systemType);
+		SystemSignonInformation result = null;
+		if (password == null && savePassword) { // no password, then read it if we can
+			PasswordPersistenceManager ppm = PasswordPersistenceManager.getInstance();
+			result = ppm.find(systemType, hostName, userId);
+			if (result != null) {
+				password = result.getPassword();
+			}
+		}
+		if (result == null) {
+			result = new SystemSignonInformation(hostName, userId, password, systemType);
+		}
 		return result;
 	}
 

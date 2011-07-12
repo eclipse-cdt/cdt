@@ -1115,25 +1115,6 @@ Overrides language id specified with the languageId attribute.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="fieldEditor" type="string">
-            <annotation>
-               <documentation>
-                  Optional ID of the custom field-editor to represent this build-option in the project Properties dialog UI.  If no custom field-editor ID is specified then the option will be represented by one of the built-in field-editors based on the option&apos;s &lt;code&gt;valueType&lt;/code&gt; attribute.
-
-A custom field-editor needs to be registered, under the same ID, through the &lt;code&gt;org.eclipse.cdt.managedbuilder.ui.buildDefinitionsUI&lt;/code&gt; extension-point&apos;s &lt;code&gt;&amp;lt;fieldEditor&amp;gt;&lt;/code&gt; element.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.ui.buildDefinitionsUI/fieldEditor/@id"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="fieldEditorExtraArgument" type="string">
-            <annotation>
-               <documentation>
-                  An optional extra text string that is passed into the field-editor.  Can be used to parameterize the field-editor instance.
-               </documentation>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 
@@ -1438,6 +1419,25 @@ Additional special types exist to flag options of special relevance to the build
             <annotation>
                <documentation>
                   specify a fully qualified context id for supplying context sensitive help for an option.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="fieldEditor" type="string">
+            <annotation>
+               <documentation>
+                  Optional ID of the custom field-editor to represent this build-option in the project Properties dialog UI.  If no custom field-editor ID is specified then the option will be represented by one of the built-in field-editors based on the option&apos;s &lt;code&gt;valueType&lt;/code&gt; attribute.
+
+A custom field-editor needs to be registered, under the same ID, through the &lt;code&gt;org.eclipse.cdt.managedbuilder.ui.buildDefinitionsUI&lt;/code&gt; extension-point&apos;s &lt;code&gt;&amp;lt;fieldEditor&amp;gt;&lt;/code&gt; element.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.ui.buildDefinitionsUI/fieldEditor/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="fieldEditorExtraArgument" type="string">
+            <annotation>
+               <documentation>
+                  An optional extra text string that is passed into the field-editor.  Can be used to parameterize the field-editor instance.
                </documentation>
             </annotation>
          </attribute>

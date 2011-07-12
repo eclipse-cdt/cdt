@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel.properties;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -113,8 +114,11 @@ public class PropertiesUpdateStatus extends DsfMultiStatus {
         PropertiesUpdateStatus newStatus, Set<String> properties) 
     {
         PropertiesUpdateStatus mergedStatus = new PropertiesUpdateStatus();
+        // Copy the property status map from the base status.
         mergedStatus.fPropertiesStatus.putAll(baseStatus.fPropertiesStatus);
         
+        // Add in the property statuses from the new status, but only for the 
+        // specified properties.
         for (String property : properties) {
             IStatus propertyStatus = newStatus.getStatus(property);
             if (propertyStatus != null) {
@@ -123,11 +127,28 @@ public class PropertiesUpdateStatus extends DsfMultiStatus {
                 mergedStatus.fPropertiesStatus.remove(property);
             }
         }
+
+        // Children of merged status should contain all statuses that are found in the fPropertiesStatus map, but 
+        // without duplicates.
         Set<IStatus> children = new HashSet<IStatus>((baseStatus.getChildren().length + newStatus.getChildren().length) * 4/3);
-        
         children.addAll(mergedStatus.fPropertiesStatus.values());
         for (IStatus child : children) {
             mergedStatus.add(child);
+        }
+
+        // Merged status should contain all children statuses that were added without a corresponding property to the 
+        // base status and to the new status. 
+        Collection<IStatus> baseStatusPropertyChildren = baseStatus.fPropertiesStatus.values();
+        for (IStatus baseStatusChild : baseStatus.getChildren()) {
+            if (!baseStatusPropertyChildren.contains(baseStatusChild)) {
+                mergedStatus.add(baseStatusChild);
+            }
+        }
+        Collection<IStatus> newStatusPropertyChildren = newStatus.fPropertiesStatus.values();
+        for (IStatus newStatusChild : newStatus.getChildren()) {
+            if (!newStatusPropertyChildren.contains(newStatusChild)) {
+                mergedStatus.add(newStatusChild);
+            }
         }
         
         return mergedStatus;

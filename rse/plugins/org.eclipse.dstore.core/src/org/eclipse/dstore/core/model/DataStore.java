@@ -37,6 +37,7 @@
  * David McKnight   (IBM) - [336257] [dstore] leading file.searator in DSTORE_LOG_DIRECTORY not handled
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  * David McKnight   (IBM) - [340080] [dstore] empty string should not be allowed as a DataElement ID
+ * David McKnight  (IBM)  - [351993] [dstore] not able to connect to server if .eclipse folder not available
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -3692,14 +3693,20 @@ public final class DataStore
 			if (SystemServiceManager.getInstance().getSystemService() == null){
 				String logDir = getUserPreferencesDirectory();
 				_traceFileHandle = new File(logDir, ".dstoreTrace"); //$NON-NLS-1$
-
-				try
-				{
-					_traceFile = new RandomAccessFile(_traceFileHandle, "rw"); //$NON-NLS-1$
-					startTracing();
+				if (_traceFileHandle.canWrite()){
+					try
+					{
+						_traceFile = new RandomAccessFile(_traceFileHandle, "rw"); //$NON-NLS-1$
+						startTracing();
+					}
+					catch (IOException e)
+					{
+						// turn tracing off if there's a problem
+						_tracingOn = false;
+					}
 				}
-				catch (IOException e)
-				{
+				else {
+					_tracingOn = false;
 				}
 			}
 		}
@@ -3733,14 +3740,20 @@ public final class DataStore
 			{
 				String logDir = getUserPreferencesDirectory();
 				_memLoggingFileHandle = new File(logDir, ".dstoreMemLogging"); //$NON-NLS-1$
-
-				try
-				{
-					_memLogFile = new RandomAccessFile(_memLoggingFileHandle, "rw"); //$NON-NLS-1$
-					startMemLogging();
+				if (_memLoggingFileHandle.canWrite()){
+					try
+					{
+						_memLogFile = new RandomAccessFile(_memLoggingFileHandle, "rw"); //$NON-NLS-1$
+						startMemLogging();
+					}
+					catch (IOException e)
+					{
+						// turn mem logging off if there's a problem
+						_memLoggingOn = false;
+					}
 				}
-				catch (IOException e)
-				{
+				else {
+					_memLoggingOn = false;
 				}
 			}
 			_deRemover = new DataElementRemover(this);
@@ -4370,12 +4383,13 @@ public final class DataStore
 	}
 
 	protected void assignCacheJar()
-	{
+	{		
 		String cacheDirectory = getCacheDirectory();
 		File cacheJar = new File(cacheDirectory + REMOTE_CLASS_CACHE_JARFILE_NAME + JARFILE_EXTENSION);
 		File nextCacheJar = new File(cacheDirectory + REMOTE_CLASS_CACHE_JARFILE_NAME + "_next" + JARFILE_EXTENSION); //$NON-NLS-1$
-		if (nextCacheJar.exists()) nextCacheJar.renameTo(cacheJar);
-		if (!cacheJar.exists())
+		if (nextCacheJar.exists()) 
+			nextCacheJar.renameTo(cacheJar);
+		if (!cacheJar.exists() && cacheJar.canWrite())
 		{
 			try
 			{
@@ -4383,6 +4397,8 @@ public final class DataStore
 				cacheOut.putNextEntry(new JarEntry("/")); //$NON-NLS-1$
 				cacheOut.closeEntry();
 				cacheOut.close();
+
+				_cacheJar = cacheJar;
 			}
 			catch (IOException e)
 			{
@@ -4391,11 +4407,11 @@ public final class DataStore
 				return;
 			}
 		}
+		else {
+			_cacheJar = null;
+		}
 
-		_cacheJar = cacheJar;
-		if (!_cacheJar.canWrite()){ // can't write this..don't bother with cache
-			_cacheJar = null;	
-		}	
+		
 	}
 
 	protected String getCacheDirectory()
@@ -4529,13 +4545,20 @@ public final class DataStore
 			{
 				if (_tracingOn) {
 					_traceFileHandle = new File(logDir, ".dstoreTrace"); //$NON-NLS-1$
-					try
-					{
-						_traceFile = new RandomAccessFile(_traceFileHandle, "rw"); //$NON-NLS-1$
-						startTracing();
+					if (_traceFileHandle.canWrite()){
+						try
+						{
+							_traceFile = new RandomAccessFile(_traceFileHandle, "rw"); //$NON-NLS-1$
+							startTracing();
+						}
+						catch (IOException e)
+						{
+							// turn tracing off if there's a problem
+							_tracingOn = false;
+						}
 					}
-					catch (IOException e)
-					{
+					else {
+						_tracingOn = false;
 					}
 				}
 			}

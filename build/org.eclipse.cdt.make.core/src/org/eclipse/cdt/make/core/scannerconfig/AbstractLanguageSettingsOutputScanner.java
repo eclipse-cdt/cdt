@@ -243,17 +243,23 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		currentResource = findResource(parsedResourceName);
 
 		/**
+		 * URI of directory where the build is happening. This URI could point to a remote filesystem
+		 * for remote builds. Most often it is the same filesystem as for currentResource but
+		 * it can be different filesystem (and different URI schema).
+		 */
+		URI buildDirURI = null;
+		
+		/**
 		 * Where source tree starts if mapped. This kind of mapping is useful for example in cases when
 		 * the absolute path to the source file on the remote system is simulated inside a project in the
 		 * workspace.
+		 * This URI is rooted on the same filesystem where currentResource resides. In general this filesystem
+		 * (or even URI schema) does not have to match that of buildDirURI.
 		 */
 		URI mappedRootURI = null;
-		URI buildDirURI = null;
-
+		
 		if (isResolvingPaths) {
-			if (currentResource!=null) {
-				mappedRootURI = getMappedRootURI(currentResource, parsedResourceName);
-			}
+			mappedRootURI = getMappedRootURI(currentResource, parsedResourceName);
 			buildDirURI = getBuildDirURI(mappedRootURI);
 		}
 
@@ -346,7 +352,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		ICLanguageSettingEntry entry;
 		String resolvedPath = null;
 		
-		URI uri = determineURI(parsedPath, baseURI);
+		URI uri = determineMappedURI(parsedPath, baseURI);
 		IResource rc = null;
 		if (uri != null && uri.isAbsolute()) {
 			rc = findResourceForLocationURI(uri, optionParser.kind, currentProject);
@@ -417,7 +423,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		return sourceFile;
 	}
 
-	private URI getBuildDirURI(URI mappedRootURI) {
+	protected URI getBuildDirURI(URI mappedRootURI) {
 		URI buildDirURI = null;
 		
 		URI cwdURI = null;
@@ -457,13 +463,13 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * Determine URI appending to baseURI when possible.
+	 * Determine URI on the local filesystem considering possible mapping.
 	 * 
 	 * @param pathStr - path to the resource, can be absolute or relative
 	 * @param baseURI - base {@link URI} where path to the resource is rooted
 	 * @return {@link URI} of the resource
 	 */
-	private static URI determineURI(String pathStr, URI baseURI) {
+	private static URI determineMappedURI(String pathStr, URI baseURI) {
 		URI uri = null;
 	
 		if (baseURI==null) {
@@ -476,9 +482,15 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			// careful not to use Path here but 'pathStr' as String as we want to properly navigate symlinks
 			uri = resolvePathFromBaseLocation(pathStr, baseLocation);
 		} else {
-			// use canonicalized path here, in particular replace all '\' with '/' for Windows paths
-			Path path = new Path(pathStr);
-			uri = EFSExtensionManager.getDefault().append(baseURI, path.toString());
+			// location on a remote filesystem
+			IPath path = new Path(pathStr); // use canonicalized path here, in particular replace all '\' with '/' for Windows paths
+			URI remoteUri = EFSExtensionManager.getDefault().append(baseURI, path.toString());
+			if (remoteUri!=null) {
+				String localPath = EFSExtensionManager.getDefault().getMappedPath(remoteUri);
+				if (localPath!=null) {
+					uri = org.eclipse.core.filesystem.URIUtil.toURI(localPath);
+				}
+			}
 		}
 	
 		if (uri == null) {
@@ -642,7 +654,11 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 * @param parsedResourceName - path as appears in the output
 	 * @return mapped path as URI
 	 */
-	private static URI getMappedRootURI(IResource sourceFile, String parsedResourceName) {
+	protected URI getMappedRootURI(IResource sourceFile, String parsedResourceName) {
+		if (currentResource==null) {
+			return null;
+		}
+		
 		URI fileURI = sourceFile.getLocationURI();
 		String mappedRoot = "/"; //$NON-NLS-1$
 		
@@ -674,17 +690,19 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	private static URI resolvePathFromBaseLocation(String name, IPath baseLocation) {
 		String pathName = name;
 		if (baseLocation != null && !baseLocation.isEmpty()) {
-			String device = new Path(pathName).getDevice();
-			if (device != null && device.length() > 0) {
-				pathName = pathName.substring(device.length());
-			}
 			pathName = pathName.replace(File.separatorChar, '/');
-	
-			baseLocation = baseLocation.addTrailingSeparator();
-			if (pathName.startsWith("/")) { //$NON-NLS-1$
-				pathName = pathName.substring(1);
+			String device = new Path(pathName).getDevice();
+			if (device==null || device.equals(baseLocation.getDevice())) {
+				if (device != null && device.length() > 0) {
+					pathName = pathName.substring(device.length());
+				}
+		
+				baseLocation = baseLocation.addTrailingSeparator();
+				if (pathName.startsWith("/")) { //$NON-NLS-1$
+					pathName = pathName.substring(1);
+				}
+				pathName = baseLocation.toString() + pathName;
 			}
-			pathName = baseLocation.toString() + pathName;
 		}
 	
 		try {

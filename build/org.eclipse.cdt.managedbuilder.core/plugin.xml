@@ -609,7 +609,7 @@
          <language-scope id="org.eclipse.cdt.core.g++"/>
       </provider>
       <provider
-            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.GCCBuiltinSpecsDetector"
+            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.GCCBuiltinSpecsDetectorCygwin"
             id="org.eclipse.cdt.managedbuilder.core.cygwin.gcc.specs.detector"
             name="CDT GCC Builtin Compiler Settings Cygwin"
             parameter="sh -c &quot;${COMMAND} -E -P -v -dD ${INPUTS}&quot;">

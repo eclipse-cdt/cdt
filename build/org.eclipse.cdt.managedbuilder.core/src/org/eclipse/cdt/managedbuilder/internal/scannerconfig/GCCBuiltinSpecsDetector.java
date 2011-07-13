@@ -29,10 +29,10 @@ public class GCCBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector implem
 	private static final String GCC_TOOLCHAIN_ID = "cdt.managedbuild.toolchain.gnu.base";  //$NON-NLS-1$
 	
 	private enum State {NONE, EXPECTING_LOCAL_INCLUDE, EXPECTING_SYSTEM_INCLUDE, EXPECTING_FRAMEWORKS}
-	State state = State.NONE;
+	private State state = State.NONE;
 	
 	@SuppressWarnings("nls")
-	static final AbstractOptionParser[] optionParsers = {
+	private static final AbstractOptionParser[] optionParsers = {
 			new IncludePathOptionParser("#include \"(\\S.*)\"", "$1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.LOCAL),
 			new IncludePathOptionParser("#include <(\\S.*)>", "$1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
 			new IncludePathOptionParser("#framework <(\\S.*)>", "$1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.FRAMEWORKS_MAC),

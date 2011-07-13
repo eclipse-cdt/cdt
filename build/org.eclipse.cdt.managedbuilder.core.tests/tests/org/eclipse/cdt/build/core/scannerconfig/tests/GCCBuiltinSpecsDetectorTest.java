@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Andrew Gvozdev and others.
+ * Copyright (c) 2010, 2011 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.GCCBuiltinSpecsDetector;
+import org.eclipse.cdt.managedbuilder.internal.scannerconfig.GCCBuiltinSpecsDetectorCygwin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -280,7 +281,6 @@ public class GCCBuiltinSpecsDetectorTest extends TestCase {
 		String projectName = getName();
 		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
-		
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
 		
 		AbstractBuiltinSpecsDetector detector = new GCCBuiltinSpecsDetector() {
@@ -682,6 +682,64 @@ public class GCCBuiltinSpecsDetectorTest extends TestCase {
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		CIncludePathEntry expected = new CIncludePathEntry(dir2.removeLastSegments(1), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 		assertEquals(expected, entries.get(0));
+		assertEquals(1, entries.size());
+	}
+	
+	public void testGCCBuiltinSpecsDetector_Cygwin_NoProject() throws Exception {
+		String windowsLocation;
+		String cygwinLocation = "/usr/include";
+		try {
+			windowsLocation = ResourceHelper.cygwinToWindowsPath(cygwinLocation);
+		} catch (UnsupportedOperationException e) {
+			// Skip the test if Cygwin is not available.
+			return;
+		}
+		assertTrue("windowsLocation=["+windowsLocation+"]", new Path(windowsLocation).getDevice()!=null);
+
+		AbstractBuiltinSpecsDetector detector = new GCCBuiltinSpecsDetectorCygwin();
+		
+		detector.startup(null);
+		detector.processLine("#include <...> search starts here:");
+		detector.processLine(" /usr/include");
+		detector.processLine("End of search list.");
+		detector.shutdown();
+		
+		// check populated entries
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
+		assertEquals(new CIncludePathEntry(new Path(windowsLocation), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
+		assertEquals(1, entries.size());
+
+	}
+
+	public void testGCCBuiltinSpecsDetector_Cygwin_Configuration() throws Exception {
+		String windowsLocation;
+		String cygwinLocation = "/usr/include";
+		try {
+			windowsLocation = ResourceHelper.cygwinToWindowsPath(cygwinLocation);
+		} catch (UnsupportedOperationException e) {
+			// Skip the test if Cygwin is not available.
+			return;
+		}
+		assertTrue("windowsLocation=["+windowsLocation+"]", new Path(windowsLocation).getDevice()!=null);
+		
+		
+		// Create model project and folders to test
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+		
+		AbstractBuiltinSpecsDetector detector = new GCCBuiltinSpecsDetectorCygwin();
+		
+		detector.startup(cfgDescription);
+		detector.processLine("#include <...> search starts here:");
+		detector.processLine(" /usr/include");
+		detector.processLine("End of search list.");
+		detector.shutdown();
+		
+		// check populated entries
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
+		assertEquals(new CIncludePathEntry(new Path(windowsLocation), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
 		assertEquals(1, entries.size());
 	}
 

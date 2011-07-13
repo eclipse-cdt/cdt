@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.internal.scannerconfig;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,6 +80,9 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	protected java.io.File specFile = null;
 	protected boolean preserveSpecFile = false;
 
+	protected URI mappedRootURI = null;
+	protected URI buildDirURI = null;
+	
 	/**
 	 * TODO
 	 */
@@ -152,6 +156,22 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	}
 
 	@Override
+	protected URI getMappedRootURI(IResource sourceFile, String parsedResourceName) {
+		if (mappedRootURI==null) {
+			mappedRootURI = super.getMappedRootURI(sourceFile, parsedResourceName);
+		}
+		return mappedRootURI;
+	}
+	
+	@Override
+	protected URI getBuildDirURI(URI mappedRootURI) {
+		if (buildDirURI==null) {
+			buildDirURI = super.getBuildDirURI(mappedRootURI);
+		}
+		return buildDirURI;
+	}
+
+	@Override
 	public void startup(ICConfigurationDescription cfgDescription) throws CoreException {
 		// for workspace provider cfgDescription is used to figure out the current project for build console
 		currentCfgDescription = cfgDescription;
@@ -165,10 +185,16 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		specFile = null;
 
 		currentCommandResolved = resolveCommand(currentLanguageId);
+		
+		mappedRootURI = null;
+		buildDirURI = null;
 	}
 
 	@Override
 	public void shutdown() {
+		buildDirURI = null;
+		mappedRootURI = null;
+		
 		if (detectedSettingEntries!=null && detectedSettingEntries.size()>0) {
 			groupEntries(detectedSettingEntries);
 			setSettingEntries(currentCfgDescription, currentResource, currentLanguageId, detectedSettingEntries);

@@ -1026,17 +1026,13 @@ public class GCCBuildCommandParserTest extends TestCase {
 		// parse line
 		parser.startup(cfgDescription);
 		parser.processLine("gcc "
-				+ " -IC:\\path"
+				+ " -IX:\\path"
 				+ " file.cpp");
 		parser.shutdown();
 		
 		// check populated entries
-		IPath path0 = new Path("C:\\path").setDevice(project.getLocation().getDevice());
-		{
-			List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
-			CIncludePathEntry expected = new CIncludePathEntry(path0, 0);
-			assertEquals(expected, entries.get(0));
-		}
+		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
+		assertEquals(new CIncludePathEntry(new Path("X:\\path"), 0), entries.get(0));
 	}
 	
 	/**

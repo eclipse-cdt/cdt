@@ -62,7 +62,7 @@ public class GetterSetterNameGenerator {
 		}
 		return false;
 	}
-	
+
 	public static String generateSetterName(IASTName fieldName) {
 		IPreferencesService preferences = Platform.getPreferencesService();
 		int capitalization = preferences.getInt(CUIPlugin.PLUGIN_ID,
@@ -74,6 +74,22 @@ public class GetterSetterNameGenerator {
 				PreferenceConstants.NAME_STYLE_SETTER_PREFIX, "set", null); //$NON-NLS-1$
 		String suffix = preferences.getString(CUIPlugin.PLUGIN_ID,
 				PreferenceConstants.NAME_STYLE_SETTER_SUFFIX, "", null); //$NON-NLS-1$
+		NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);
+		String name = GetterSetterNameGenerator.trimFieldName(fieldName.toString());
+		return composer.compose(name);
+	}
+
+	public static String generateSetterParameterName(IASTName fieldName) {
+		IPreferencesService preferences = Platform.getPreferencesService();
+		int capitalization = preferences.getInt(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.NAME_STYLE_VARIABLE_CAPITALIZATION,
+				PreferenceConstants.NAME_STYLE_CAPITALIZATION_ORIGINAL, null);
+		String wordDelimiter = preferences.getString(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.NAME_STYLE_VARIABLE_WORD_DELIMITER, "", null); //$NON-NLS-1$
+		String prefix = preferences.getString(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.NAME_STYLE_VARIABLE_PREFIX, "", null); //$NON-NLS-1$
+		String suffix = preferences.getString(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.NAME_STYLE_VARIABLE_SUFFIX, "", null); //$NON-NLS-1$
 		NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);
 		String name = GetterSetterNameGenerator.trimFieldName(fieldName.toString());
 		return composer.compose(name);

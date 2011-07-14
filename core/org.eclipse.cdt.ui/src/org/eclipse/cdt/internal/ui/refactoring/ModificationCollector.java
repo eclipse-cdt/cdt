@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.CompositeChange;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
@@ -54,13 +55,31 @@ public class ModificationCollector {
 		CCompositeChange result = new CCompositeChange(""); //$NON-NLS-1$
 		result.markAsSynthetic();
 
-		if (changes != null)
-			result.addAll(changes.toArray(new Change[changes.size()]));
+		if (changes != null) {
+			for (Change change : changes) {
+				addFlattened(change, result);
+			}
+		}
 
 		for (ASTRewrite each : rewriters.values()) {
-			result.add(each.rewriteAST());
+			Change change = each.rewriteAST();
+			addFlattened(change, result);
 		}
 
 		return result;
+	}
+
+	/**
+	 * If {@code change} is a CompositeChange, merges it into the {@code receiver}, otherwise
+	 * adds it to the {@code receiver}.
+	 * @param change The change being added.
+	 * @param receiver The composite change that receives the addition.
+	 */
+	private void addFlattened(Change change, CompositeChange receiver) {
+		if (change instanceof CompositeChange) {
+			receiver.merge((CompositeChange) change);
+		} else {
+			receiver.add(change);
+		}
 	}
 }

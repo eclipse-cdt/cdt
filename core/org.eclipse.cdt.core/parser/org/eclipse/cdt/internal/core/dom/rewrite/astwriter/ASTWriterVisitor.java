@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html  
- *  
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
@@ -39,10 +39,10 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 /**
  * Visits all nodes, prints leading comments and handles macro expansions. The
  * source code generation is delegated to severals <code>NodeWriters</code>.
- * 
+ *
  * @see NodeWriter
  * @see MacroExpansionHandler
- * 
+ *
  * @author Emanuel Graf IFS
  */
 public class ASTWriterVisitor extends ASTVisitor {
@@ -73,7 +73,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 		shouldVisitParameterDeclarations = true;
 		shouldVisitTranslationUnit = true;
 	}
-	
+
 	public ASTWriterVisitor(NodeCommentMap commentMap) {
 		this("", commentMap); //$NON-NLS-1$
 	}
@@ -83,7 +83,6 @@ public class ASTWriterVisitor extends ASTVisitor {
 		scribe.setGivenIndentation(givenIndentation);
 		init(commentMap);
 		this.commentMap = commentMap;
-
 	}
 
 	private void init(NodeCommentMap commentMap) {
@@ -98,29 +97,27 @@ public class ASTWriterVisitor extends ASTVisitor {
 		nameWriter = new NameWriter(scribe, this, commentMap);
 		tempParameterWriter = new TemplateParameterWriter(scribe, this, commentMap);
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return scribe.toString();
 	}
 
 	@Override
 	public int leave(IASTTranslationUnit tu) {
-		for(IASTComment comment : commentMap.getFreestandingCommentsForNode(tu)) {
+		for (IASTComment comment : commentMap.getFreestandingCommentsForNode(tu)) {
 			scribe.print(comment.getComment());
 			scribe.newLine();
-		}	
+		}
 		return super.leave(tu);
 	}
 
 	private void writeLeadingComments(IASTNode node) {
-		for(IASTComment comment : getLeadingComments(node)) {
+		for (IASTComment comment : getLeadingComments(node)) {
 			scribe.print(comment.getComment());
 			scribe.newLine();
-		}		
+		}
 	}
-
-
 
 	private ArrayList<IASTComment> getLeadingComments(IASTNode node) {
 		ArrayList<IASTComment> leadingComments = commentMap.getLeadingCommentsForNode(node);
@@ -131,15 +128,15 @@ public class ASTWriterVisitor extends ASTVisitor {
 		}
 		return leadingComments;
 	}
-	
+
 	public void visit(ASTLiteralNode lit) {
 		scribe.print(lit.getRawSignature());
 	}
-	
+
 	@Override
 	public int visit(IASTName name) {
 		writeLeadingComments(name);
-		if(!macroHandler.checkisMacroExpansionNode(name)) {
+		if (!macroHandler.checkisMacroExpansionNode(name)) {
 			nameWriter.writeName(name);
 		}
 		return ASTVisitor.PROCESS_SKIP;
@@ -148,18 +145,19 @@ public class ASTWriterVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTDeclSpecifier declSpec) {
 		writeLeadingComments(declSpec);
-		declSpecWriter.writeDelcSpec(declSpec);			
+		declSpecWriter.writeDelcSpec(declSpec);
 		return ASTVisitor.PROCESS_SKIP;
 	}
 
 	@Override
 	public int visit(IASTExpression expression) {
-		writeLeadingComments(expression);		
-		if(!macroHandler.checkisMacroExpansionNode(expression)) {
+		writeLeadingComments(expression);
+		if (!macroHandler.checkisMacroExpansionNode(expression)) {
 			if (expression instanceof IGNUASTCompoundStatementExpression) {
-				IGNUASTCompoundStatementExpression gnuCompStmtExp = (IGNUASTCompoundStatementExpression) expression;
+				IGNUASTCompoundStatementExpression gnuCompStmtExp =
+						(IGNUASTCompoundStatementExpression) expression;
 				gnuCompStmtExp.getCompoundStatement().accept(this);
-			}else {
+			} else {
 				expWriter.writeExpression(expression);
 			}
 		}
@@ -169,10 +167,11 @@ public class ASTWriterVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTStatement statement) {
 		writeLeadingComments(statement);
-		if(macroHandler.isStatementWithMixedLocation(statement) && !(statement instanceof IASTCompoundStatement)){
+		if (macroHandler.isStatementWithMixedLocation(statement) &&
+				!(statement instanceof IASTCompoundStatement)) {
 			return statementWriter.writeMixedStatement(statement);
 		}
-		if(macroHandler.checkisMacroExpansionNode(statement)) {
+		if (macroHandler.checkisMacroExpansionNode(statement)) {
 			return ASTVisitor.PROCESS_SKIP;
 		}
 		return statementWriter.writeStatement(statement, true);
@@ -181,7 +180,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTDeclaration declaration) {
 		writeLeadingComments(declaration);
-		if(!macroHandler.checkisMacroExpansionNode(declaration)) {
+		if (!macroHandler.checkisMacroExpansionNode(declaration)) {
 			declarationWriter.writeDeclaration(declaration);
 		}
 		return  ASTVisitor.PROCESS_SKIP;
@@ -190,7 +189,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTDeclarator declarator) {
 		writeLeadingComments(declarator);
-		if(!macroHandler.checkisMacroExpansionNode(declarator)) {
+		if (!macroHandler.checkisMacroExpansionNode(declarator)) {
 			declaratorWriter.writeDeclarator(declarator);
 		}
 		return ASTVisitor.PROCESS_SKIP;
@@ -198,7 +197,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTArrayModifier amod) {
-		if(!macroHandler.checkisMacroExpansionNode(amod)) {
+		if (!macroHandler.checkisMacroExpansionNode(amod)) {
 			declaratorWriter.writeArrayModifier(amod);
 		}
 		return ASTVisitor.PROCESS_SKIP;
@@ -207,7 +206,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTInitializer initializer) {
 		writeLeadingComments(initializer);
-		if(!macroHandler.checkisMacroExpansionNode(initializer)) {
+		if (!macroHandler.checkisMacroExpansionNode(initializer)) {
 			initializerWriter.writeInitializer(initializer);
 		}
 		return ASTVisitor.PROCESS_SKIP;
@@ -216,11 +215,11 @@ public class ASTWriterVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
 		writeLeadingComments(parameterDeclaration);
-		if(!macroHandler.checkisMacroExpansionNode(parameterDeclaration)) {
+		if (!macroHandler.checkisMacroExpansionNode(parameterDeclaration)) {
 			parameterDeclaration.getDeclSpecifier().accept(this);
 			IASTDeclarator declarator = getParameterDeclarator(parameterDeclaration);
-			
-			if(getParameterName(declarator).toString().length() != 0){
+
+			if (getParameterName(declarator).toString().length() != 0) {
 				scribe.printSpaces(1);
 			}
 			declarator.accept(this);
@@ -232,15 +231,14 @@ public class ASTWriterVisitor extends ASTVisitor {
 		return declarator.getName();
 	}
 
-	protected IASTDeclarator getParameterDeclarator(
-			IASTParameterDeclaration parameterDeclaration) {
+	protected IASTDeclarator getParameterDeclarator(IASTParameterDeclaration parameterDeclaration) {
 		return parameterDeclaration.getDeclarator();
 	}
-	
+
 	@Override
 	public int visit(ICPPASTNamespaceDefinition namespace) {
 		writeLeadingComments(namespace);
-		if(!macroHandler.checkisMacroExpansionNode(namespace)) {
+		if (!macroHandler.checkisMacroExpansionNode(namespace)) {
 			declarationWriter.writeDeclaration(namespace);
 		}
 		return ASTVisitor.PROCESS_SKIP;
@@ -249,7 +247,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 	@Override
 	public int visit(ICPPASTTemplateParameter parameter) {
 		writeLeadingComments(parameter);
-		if(!macroHandler.checkisMacroExpansionNode(parameter)) {
+		if (!macroHandler.checkisMacroExpansionNode(parameter)) {
 			tempParameterWriter.writeTemplateParameter(parameter);
 		}
 		return ASTVisitor.PROCESS_SKIP;

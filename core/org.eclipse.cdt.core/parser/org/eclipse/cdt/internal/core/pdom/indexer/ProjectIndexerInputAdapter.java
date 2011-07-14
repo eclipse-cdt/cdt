@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.pdom.IndexerInputAdapter;
 import org.eclipse.cdt.internal.core.resources.PathCanonicalizationStrategy;
@@ -239,6 +240,17 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 	@Override
 	public boolean isIndexedOnlyIfIncluded(Object tu) {
 		return tu instanceof PotentialTranslationUnit;
+	}
+
+	@Override
+	public boolean isIndexedUnconditionally(Object tuo) {
+		ITranslationUnit tu= (ITranslationUnit) tuo;
+		return isIndexedUnconditionally(IndexLocationFactory.getIFL(tu));
+	}
+
+	@Override
+	public boolean isIndexedUnconditionally(IIndexFileLocation ifl) {
+		return CCoreInternals.getPDOMManager().isFileIndexedUnconditionally(ifl);
 	}
 
 	@Override

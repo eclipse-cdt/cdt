@@ -731,7 +731,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
         int count = 0;
         
         for (final IPropertiesUpdate update : updates) {
-            IExpression expression = (IExpression)DebugPlugin.getAdapter(update.getElement(), IExpression.class);
+            final IExpression expression = (IExpression)DebugPlugin.getAdapter(update.getElement(), IExpression.class);
             if (expression != null) {
             	update.setProperty(AbstractExpressionVMNode.PROP_ELEMENT_EXPRESSION, expression.getExpressionText());
             }
@@ -761,10 +761,13 @@ public class VariableVMNode extends AbstractExpressionVMNode
                             if (isSuccess()) {
                                 fillExpressionDataProperties(update, getData());
                             } else {
-                                // In case of an error fill in the expression next in the name column.
+                                // In case of an error fill in the expression text in the name column and expressions columns.
                                 IExpressionDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExpressions.IExpressionDMContext.class);
                                 if (dmc != null && dmc.getExpression() != null) {
                                     update.setProperty(PROP_NAME, dmc.getExpression());
+                                    if (expression == null) {
+                                        update.setProperty(PROP_ELEMENT_EXPRESSION, dmc.getExpression());
+                                    }
                                 }
                                 update.setStatus(getStatus());
                             }

@@ -278,6 +278,20 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 
 	public void projectClosedRemove(IProject project) {
 		CProjectDescriptionStorageManager.getInstance().projectClosedRemove(project);
+		disposeAssociatedListeners(project);
+	}
+
+	private void disposeAssociatedListeners(IProject project) {
+		List<ScannerInfoProviderProxy> proxyListeners = new ArrayList<ScannerInfoProviderProxy>();
+		for (ListenerDescriptor ldescriptor : fListeners) {
+			if (ldescriptor.fListener instanceof ScannerInfoProviderProxy)
+				proxyListeners.add((ScannerInfoProviderProxy) ldescriptor.fListener);
+		}
+		// avoid calling proxy.close() inside fListeners loop as it modifies the collection
+		for (ScannerInfoProviderProxy proxy : proxyListeners) {
+			if (project.equals(proxy.getProject()))
+				proxy.close();
+		}
 	}
 
 	/**

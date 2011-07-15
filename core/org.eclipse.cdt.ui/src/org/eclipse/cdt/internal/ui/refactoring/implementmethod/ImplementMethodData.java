@@ -37,6 +37,11 @@ public class ImplementMethodData implements ITreeContentProvider{
 		for (IASTSimpleDeclaration declaration : methodDeclarations) {
 			this.methodDeclarations.add(new MethodToImplementConfig(declaration, new ParameterHandler(declaration)));
 		}
+		
+		// Only one declaration available, might as well check it
+		if (this.methodDeclarations.size() == 1) {
+			this.methodDeclarations.get(0).setChecked(true);
+		}
 	}
 
 	public List<MethodToImplementConfig> getMethodDeclarations() {

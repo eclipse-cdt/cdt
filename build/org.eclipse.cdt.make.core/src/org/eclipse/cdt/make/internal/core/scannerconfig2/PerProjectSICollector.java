@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -68,18 +68,18 @@ import org.w3c.dom.Element;
 public class PerProjectSICollector implements IScannerInfoCollector3, IScannerInfoCollectorCleaner {
 	public static final String COLLECTOR_ID = MakeCorePlugin.getUniqueIdentifier() + ".PerProjectSICollector"; //$NON-NLS-1$
 
-	private IProject project;
-	private InfoContext context;
+	protected IProject project;
+	protected InfoContext context;
 	private boolean isBuiltinConfig= false;
 	
-	private Map<ScannerInfoTypes, List<String>> discoveredSI;
+	protected Map<ScannerInfoTypes, List<String>> discoveredSI;
 //    private List discoveredIncludes; 
 //	private List discoveredSymbols;
 //	private List discoveredTSO;	// target specific options
 	// cumulative values
-	private List<String> sumDiscoveredIncludes; 
+	protected List<String> sumDiscoveredIncludes; 
 	private Map<String, SymbolEntry> sumDiscoveredSymbols;
-    private boolean scPersisted = false;
+    protected boolean scPersisted = false;
 	
 	public PerProjectSICollector() {
         discoveredSI = new HashMap<ScannerInfoTypes, List<String>>();
@@ -185,7 +185,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 	 * @param ordered - to preserve order or append at the end
 	 * @return boolean - true if added
 	 */
-	private boolean addItemsWithOrder(List<String> sumIncludes, List<String> includes, boolean ordered) {
+	protected boolean addItemsWithOrder(List<String> sumIncludes, List<String> includes, boolean ordered) {
 		if (includes.isEmpty()) 
 			return false;
 		
@@ -321,7 +321,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 	/**
 	 * Compare symbol definitions with already discovered.
 	 */
-	private boolean definedSymbolsNeedUpdate(IPerProjectDiscoveredPathInfo discPathInfo) {
+	protected boolean definedSymbolsNeedUpdate(IPerProjectDiscoveredPathInfo discPathInfo) {
 		boolean addedSymbols = false;
         List<String> discoveredSymbols = discoveredSI.get(ScannerInfoTypes.SYMBOL_DEFINITIONS);
 		if (discoveredSymbols != null) {

@@ -50,10 +50,24 @@ public abstract class IndexerInputAdapter extends ASTFilePathResolver {
 	public abstract boolean isFileBuildConfigured(Object tu);
 
 	/**
-	 * Returns whether the given translation-unit is not indexed unless it gets included.
+	 * Returns whether the given translation unit is not indexed unless it gets included.
 	 * This applies to files that are outside of a source root.
 	 */
 	public abstract boolean isIndexedOnlyIfIncluded(Object tu);
+
+	/**
+	 * Checks whether the given translation unit should be indexed unconditionally. 
+	 * @param tu An ITranslationUnit or a file location in String form. 
+	 * @return {@code true} if the translation unit should be indexed unconditionally.
+	 */
+	public abstract boolean isIndexedUnconditionally(Object tu);
+
+	/**
+	 * Checks whether the given file should be indexed unconditionally. 
+	 * @param ifl The Location of the file.
+	 * @return {@code true} if the file should be indexed unconditionally.
+	 */
+	public abstract boolean isIndexedUnconditionally(IIndexFileLocation ifl);
 
 	/**
 	 * Tests whether the file in the index is allowed to be part of an SDK. If not

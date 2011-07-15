@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
  */
 public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 	
-	private static final boolean PRINT_POSITIONS= true;
+	private static final boolean PRINT_POSITIONS= false;
 
 	private static final Class<?> THIS= SemanticHighlightingTest.class;
 	

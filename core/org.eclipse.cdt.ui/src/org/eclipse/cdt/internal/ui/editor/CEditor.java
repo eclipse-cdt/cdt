@@ -39,6 +39,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
@@ -176,13 +178,8 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexFile;
-import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexManager;
-import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -208,20 +205,20 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.AddBlockCommentAction;
-import org.eclipse.cdt.internal.ui.actions.StructureSelectHistoryAction;
-import org.eclipse.cdt.internal.ui.actions.StructureSelectEnclosingAction;
-import org.eclipse.cdt.internal.ui.actions.StructureSelectNextAction;
-import org.eclipse.cdt.internal.ui.actions.StructureSelectPreviousAction;
 import org.eclipse.cdt.internal.ui.actions.FindWordAction;
 import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
 import org.eclipse.cdt.internal.ui.actions.GotoNextBookmarkAction;
 import org.eclipse.cdt.internal.ui.actions.IndentAction;
 import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectEnclosingAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectHistoryAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectNextAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectPreviousAction;
 import org.eclipse.cdt.internal.ui.actions.StructureSelectionAction;
 import org.eclipse.cdt.internal.ui.actions.SurroundWithActionGroup;
-import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder.OccurrenceLocation;
 import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder;
+import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder.OccurrenceLocation;
 import org.eclipse.cdt.internal.ui.search.OccurrencesFinder;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
@@ -272,7 +269,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			// look up the current range of the marker when the document has been edited
 			IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
 			if (model instanceof AbstractMarkerAnnotationModel) {
-
 				AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
 				Position pos= markerModel.getMarkerPosition(marker);
 				if (pos != null && !pos.isDeleted()) {
@@ -1226,6 +1222,70 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		}
 	}
 
+	private class IndexerPreferenceListener implements IPreferenceChangeListener {
+		private IProject fProject;
+
+		public void preferenceChange(PreferenceChangeEvent event) {
+			if (IndexerPreferences.KEY_INDEX_ON_OPEN.equals(event.getKey())) {
+				ICElement element= getInputCElement();
+				ITranslationUnit tu = element != null ? (ITranslationUnit) element : null;
+				updateIndexInclusion(tu, false);
+			}
+		}
+
+		void registerFor(IProject project) {
+			if (fProject == project || fProject != null && fProject.equals(project)) {
+				return;
+			}
+			unregister();
+			fProject = project;
+			if (fProject != null) {
+				IndexerPreferences.addChangeListener(fProject, this);
+			}
+		}
+
+		void unregister() {
+			if (fProject != null) {
+				IndexerPreferences.removeChangeListener(fProject, this);
+				fProject = null;
+			}
+		}
+	}
+
+	private static class IndexUpdateRequestorJob extends Job {
+		private final ITranslationUnit tuToAdd;
+		private final ITranslationUnit tuToReset;
+
+		/**
+		 * @param tu The translation unit to add or to remove from the index.
+		 * @param add {@code true} to add, {@code false} to reset index inclusion.
+		 */
+		IndexUpdateRequestorJob(ITranslationUnit tuToAdd, ITranslationUnit tuToReset) {
+			super(CEditorMessages.CEditor_index_expander_job_name);
+			this.tuToAdd = tuToAdd;
+			this.tuToReset = tuToReset;
+			setSystem(true);
+			setPriority(Job.DECORATE);
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			try {
+				IIndexManager indexManager = CCorePlugin.getIndexManager();
+				if (tuToReset != null) {
+					indexManager.update(new ICElement[] { tuToReset },
+							IIndexManager.RESET_INDEX_INCLUSION | IIndexManager.UPDATE_CHECK_TIMESTAMPS);
+				}
+				if (tuToAdd != null) {
+					indexManager.update(new ICElement[] { tuToAdd },
+							IIndexManager.FORCE_INDEX_INCLUSION | IIndexManager.UPDATE_CHECK_TIMESTAMPS);
+				}
+			} catch (CoreException e) {
+			}
+			return Status.OK_STATUS;
+		}
+	}
+
 	/**
 	 * The editor selection changed listener.
 	 *
@@ -1335,6 +1395,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 	private SelectionHistory fSelectionHistory;
 
+	/** The translation unit that was added by the editor to index, or <code>null</code>. */
+	private ITranslationUnit fTuAddedToIndex;
+
+	private IndexerPreferenceListener fIndexerPreferenceListener;
+
 	private static final Set<String> angularIntroducers = new HashSet<String>();
 	static {
 		angularIntroducers.add("template"); //$NON-NLS-1$
@@ -1370,6 +1435,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
 
 		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);
+		fIndexerPreferenceListener = new IndexerPreferenceListener();
 	}
 
 	/**
@@ -1422,6 +1488,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		if (cSourceViewer != null && isFoldingEnabled() && (store == null || !store.getBoolean(PreferenceConstants.EDITOR_SHOW_SEGMENTS)))
 			cSourceViewer.prepareDelayedProjection();
 
+		fIndexerPreferenceListener.unregister();
+
 		super.doSetInput(input);
 
 		setOutlinePageInput(fOutlinePage, input);
@@ -1433,57 +1501,39 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			fCEditorErrorTickUpdater.updateEditorImage(getInputCElement());
 		}
 		ICElement element= getInputCElement();
+		if (element != null) {
+			IProject project = element.getCProject().getProject();
+			fIndexerPreferenceListener.registerFor(project);
+		}
+
 		if (element instanceof ITranslationUnit) {
 			ITranslationUnit tu = (ITranslationUnit) element;
-			addToIndexIfNecessary(tu);
+			updateIndexInclusion(tu, false);
 			fBracketMatcher.configure(tu.getLanguage());
 		} else {
+			updateIndexInclusion(null, false);
 			fBracketMatcher.configure(null);
 		}
 	}
 
-	private void addToIndexIfNecessary(ITranslationUnit tu) {
-		IProject project = tu.getCProject().getProject();
-		if (String.valueOf(true).equals(IndexerPreferences.get(project, IndexerPreferences.KEY_INDEX_ON_OPEN, null))) {
-			IndexUpdateRequestorJob job = new IndexUpdateRequestorJob(tu);
-			job.schedule();
-		}
-	}
-
-	private static class IndexUpdateRequestorJob extends Job {
-		private final ITranslationUnit tu;
-
-		IndexUpdateRequestorJob(ITranslationUnit tu) {
-			super(CEditorMessages.CEditor_index_expander_job_name);
-			this.tu = tu; 
-			setSystem(true);
-			setPriority(Job.DECORATE);
-		}
-
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-			ICProject[] projects;
-			try {
-				projects = CoreModel.getDefault().getCModel().getCProjects();
-				IIndexManager indexManager = CCorePlugin.getIndexManager();
-				IIndex index = indexManager.getIndex(projects);
-				index.acquireReadLock();
-				try {
-					IIndexFileLocation ifl = IndexLocationFactory.getIFL(tu);
-					IIndexFile file = index.getFile(tu.getLanguage().getLinkageID(), ifl);
-					if (file != null) {
-						return Status.OK_STATUS; // Already indexed.
-					}
-					indexManager.update(new ICElement[] { tu },
-							IIndexManager.FORCE_INDEX_INCLUSION | IIndexManager.UPDATE_CHECK_TIMESTAMPS);
-				} finally {
-					index.releaseReadLock();
-				}
-			} catch (CModelException e) {
-			} catch (CoreException e) {
-			} catch (InterruptedException e) {
+	private void updateIndexInclusion(ITranslationUnit tu, boolean synchronous) {
+		if (tu!= null) {
+			IProject project = tu.getCProject().getProject();
+			if (!String.valueOf(true).equals(IndexerPreferences.get(project, IndexerPreferences.KEY_INDEX_ON_OPEN, null))) {
+				tu = null;
 			}
-			return Status.OK_STATUS;
+		}
+		if (tu != null || fTuAddedToIndex != null) {
+			IndexUpdateRequestorJob job = new IndexUpdateRequestorJob(tu, fTuAddedToIndex);
+			fTuAddedToIndex = tu;
+			job.schedule();
+			if (synchronous) {
+				try {
+					job.join();
+				} catch (InterruptedException e) {
+					// Ignore.
+				}
+			}
 		}
 	}
 
@@ -2148,6 +2198,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
      */
     @Override
 	public void dispose() {
+    	updateIndexInclusion(null, true);
 
 		ISourceViewer sourceViewer = getSourceViewer();
 		if (sourceViewer instanceof ITextViewerExtension)

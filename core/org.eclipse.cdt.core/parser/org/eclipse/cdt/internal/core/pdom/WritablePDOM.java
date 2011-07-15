@@ -52,8 +52,8 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		this(dbPath, locationConverter, ChunkCache.getSharedInstance(), linkageFactoryMappings);
 	}
 	
-	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache, Map<String,
-			IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
+	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache,
+			Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
 		super(dbPath, locationConverter, cache, linkageFactoryMappings);
 	}
 	

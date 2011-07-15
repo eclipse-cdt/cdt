@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html  
- *  
- * Contributors: 
- *    Institute for Software - initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Institute for Software - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
@@ -55,8 +55,6 @@ import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEditGroup;
 
 public class ChangeGenerator extends ASTVisitor {
-
-
 	private final LinkedHashMap<String, Integer> sourceOffsets = new LinkedHashMap<String, Integer>();
 	public LinkedHashMap<IASTNode, List<ASTModification>> modificationParent = new LinkedHashMap<IASTNode, List<ASTModification>>();
 	private final LinkedHashMap<IFile, MultiTextEdit> changes = new LinkedHashMap<IFile, MultiTextEdit>();
@@ -67,37 +65,23 @@ public class ChangeGenerator extends ASTVisitor {
 
 	{
 		shouldVisitExpressions = true;
-
 		shouldVisitStatements = true;
-
 		shouldVisitNames = true;
-
 		shouldVisitDeclarations = true;
-
 		shouldVisitDeclSpecifiers = true;
-
 		shouldVisitDeclarators = true;
-		
 		shouldVisitArrayModifiers= true;
-
 		shouldVisitInitializers = true;
-
 		shouldVisitBaseSpecifiers = true;
-
 		shouldVisitNamespaces = true;
-
 		shouldVisitTemplateParameters = true;
-
 		shouldVisitParameterDeclarations = true;
-
 		shouldVisitTranslationUnit = true;
-
 	}
 
 	public ChangeGenerator(ASTModificationStore modificationStore, NodeCommentMap commentMap) {
 		this.modificationStore = modificationStore;
 		this.commentMap = commentMap;
-
 	}
 
 	public void generateChange(IASTNode rootNode) throws ProblemRuntimeException {
@@ -110,7 +94,6 @@ public class ChangeGenerator extends ASTVisitor {
 		initParentModList();
 		rootNode.accept(pathProvider);
 		for (IFile currentFile : changes.keySet()) {
-
 			TextFileChange subchange= ASTRewriteAnalyzer.createCTextFileChange(currentFile);
 			subchange.setEdit(changes.get(currentFile));
 			change.add(subchange);
@@ -118,20 +101,19 @@ public class ChangeGenerator extends ASTVisitor {
 	}
 
 	private void initParentModList() {
-		ASTModificationMap rootModifications = modificationStore
-				.getRootModifications();
+		ASTModificationMap rootModifications = modificationStore.getRootModifications();
 		if (rootModifications != null) {
 			for (IASTNode modifiedNode : rootModifications.getModifiedNodes()) {
-				List<ASTModification> modificationsForNode = rootModifications
-						.getModificationsForNode(modifiedNode);
+				List<ASTModification> modificationsForNode = rootModifications.getModificationsForNode(modifiedNode);
 				IASTNode modifiedNodeParent = determineParentToBeRewritten(modifiedNode, modificationsForNode);
-				List<ASTModification> list = modificationParent.get(modifiedNodeParent != null ? modifiedNodeParent : modifiedNode);
-				if(list != null){
+				List<ASTModification> list = modificationParent.get(modifiedNodeParent != null ?
+						modifiedNodeParent : modifiedNode);
+				if (list != null) {
 					list.addAll(modificationsForNode);
-				}else{
+				} else {
 					List<ASTModification> modifiableList = new ArrayList<ASTModification>(modificationsForNode);
-					modificationParent.put(modifiedNodeParent != null ? modifiedNodeParent : modifiedNode,
-							modifiableList);
+					modificationParent.put(modifiedNodeParent != null ?
+							modifiedNodeParent : modifiedNode, modifiableList);
 				}
 			}
 		}
@@ -139,8 +121,8 @@ public class ChangeGenerator extends ASTVisitor {
 
 	private IASTNode determineParentToBeRewritten(IASTNode modifiedNode, List<ASTModification> modificationsForNode) {
 		IASTNode modifiedNodeParent = modifiedNode;
-		for(ASTModification currentModification : modificationsForNode){
-			if(currentModification.getKind() == ASTModification.ModificationKind.REPLACE){
+		for (ASTModification currentModification : modificationsForNode) {
+			if (currentModification.getKind() == ASTModification.ModificationKind.REPLACE) {
 				modifiedNodeParent = modifiedNode.getParent();
 				break;
 			}
@@ -152,21 +134,20 @@ public class ChangeGenerator extends ASTVisitor {
 	@Override
 	public int visit(IASTTranslationUnit translationUnit) {
 		if (hasChangedChild(translationUnit)) {
-
 			synthTreatment(translationUnit);
 		}
 		IASTFileLocation location = getFileLocationOfEmptyTranslationUnit(translationUnit);
-		sourceOffsets.put(location.getFileName(),
-				Integer.valueOf(location.getNodeOffset()));
+		sourceOffsets.put(location.getFileName(), Integer.valueOf(location.getNodeOffset()));
 		return super.visit(translationUnit);
 	}
-	
+
 	/**
-	 * This is a Workaround for a known but not jet solved Problem in IASTNode. If you get the FileFocation of a translationUnit
-	 * that was built on an empty file you will get null because there it explicitly returns null if the index and length is 0.
-	 * To get to the Filename and other information, the location is never the less needed.
+	 * This is a workaround for a known but not jet solved problem in IASTNode. If you get
+	 * the FileFocation of a translation unit that was built on an empty file you will get null
+	 * because there it explicitly returns null if the index and length is 0.
+	 * To get to the filename and other information, the location is never the less needed.
 	 * @param node
-	 * @return a hopefully "unnull" FileLocation
+	 * @return a hopefully non-{@code null} FileLocation
 	 */
 	public IASTFileLocation getFileLocationOfEmptyTranslationUnit(IASTNode node) {
 		IASTFileLocation fileLocation = node.getFileLocation();
@@ -175,7 +156,7 @@ public class ChangeGenerator extends ASTVisitor {
 			if (lr != null) {
 				fileLocation = lr.getMappedFileLocation(0, 0);
 			} else {
-				// support for old location map
+				// Support for old location map
 				fileLocation = node.getTranslationUnit().flattenLocationsToFile(node.getNodeLocations());
 			}
 		}
@@ -184,14 +165,11 @@ public class ChangeGenerator extends ASTVisitor {
 
 	@Override
 	public int leave(IASTTranslationUnit tu) {
-
 		return super.leave(tu);
 	}
 
 	private int getOffsetForNodeFile(IASTNode rootNode) {
-
-		Integer offset = sourceOffsets.get(rootNode.getFileLocation()
-				.getFileName());
+		Integer offset = sourceOffsets.get(rootNode.getFileLocation().getFileName());
 		return offset == null ? 0 : offset.intValue();
 	}
 
@@ -212,15 +190,13 @@ public class ChangeGenerator extends ASTVisitor {
 		String indent = getIndent(synthNode);
 		ASTWriter synthWriter = new ASTWriter(indent);
 		synthWriter.setModificationStore(modificationStore);
-		
+
 		String synthSource = synthWriter.write(synthNode, fileScope, commentMap);
 
 		createChange(synthNode, synthSource);
 
-		int newOffset = synthNode.getFileLocation().getNodeOffset()
-		+ synthNode.getFileLocation().getNodeLength();
+		int newOffset = synthNode.getFileLocation().getNodeOffset() + synthNode.getFileLocation().getNodeLength();
 		sourceOffsets.put(synthNode.getFileLocation().getFileName(), Integer.valueOf(newOffset));
-
 	}
 
 	private void synthTreatment(IASTTranslationUnit synthTU) {
@@ -228,9 +204,8 @@ public class ChangeGenerator extends ASTVisitor {
 		synthWriter.setModificationStore(modificationStore);
 
 		for (ASTModification modification : modificationParent.get(synthTU)) {
-			IASTFileLocation targetLocation;
-			
-			targetLocation = getFileLocationOfEmptyTranslationUnit(modification.getTargetNode());
+			IASTFileLocation targetLocation =
+					getFileLocationOfEmptyTranslationUnit(modification.getTargetNode());
 			String currentFile = targetLocation.getFileName();
 			IPath implPath = new Path(currentFile);
 			IFile relevantFile= ResourceLookup.selectFileForLocation(implPath, null);
@@ -256,14 +231,16 @@ public class ChangeGenerator extends ASTVisitor {
 						newNodeCode));
 				break;
 			case APPEND_CHILD:
-				if(modification.getTargetNode() instanceof IASTTranslationUnit && ((IASTTranslationUnit)modification.getTargetNode()).getDeclarations().length > 0) {
+				if (modification.getTargetNode() instanceof IASTTranslationUnit &&
+						((IASTTranslationUnit)modification.getTargetNode()).getDeclarations().length > 0) {
 					IASTTranslationUnit tu = (IASTTranslationUnit)modification.getTargetNode();
 					IASTDeclaration lastDecl = tu.getDeclarations()[tu.getDeclarations().length -1];
 					targetLocation = lastDecl.getFileLocation();
 				}
-				String lineDelimiter = FileHelper.determineLineDelimiter(FileHelper.getIFilefromIASTNode(modification.getTargetNode()));
-				edit.addChild(new InsertEdit(targetLocation.getNodeOffset()
-						+ targetLocation.getNodeLength(),lineDelimiter + lineDelimiter + newNodeCode));
+				String lineDelimiter = FileHelper.determineLineDelimiter(
+						FileHelper.getIFilefromIASTNode(modification.getTargetNode()));
+				edit.addChild(new InsertEdit(targetLocation.getNodeOffset() + targetLocation.getNodeLength(),
+						lineDelimiter + lineDelimiter + newNodeCode));
 				break;
 			}
 		}
@@ -291,7 +268,7 @@ public class ChangeGenerator extends ASTVisitor {
 			IFile sourceFile = FileHelper.getIFilefromIASTNode(node);
 			int nodeOffset = getOffsetIncludingComments(node);
 			int nodeLength = getNodeLengthIncludingComments(node);
-			
+
 			return FileContentHelper.getContent(sourceFile, nodeOffset,	nodeLength);
 		}
 		return null;
@@ -300,17 +277,17 @@ public class ChangeGenerator extends ASTVisitor {
 	private int getNodeLengthIncludingComments(IASTNode node) {
 		int nodeOffset = node.getFileLocation().getNodeOffset();
 		int nodeLength = node.getFileLocation().getNodeLength();
-		
+
 		ArrayList<IASTComment> comments = commentMap.getAllCommentsForNode(node);
-		if(!comments.isEmpty()) {
+		if (!comments.isEmpty()) {
 			int startOffset = nodeOffset;
 			int endOffset = nodeOffset + nodeLength;
-			for(IASTComment comment : comments) {
+			for (IASTComment comment : comments) {
 				IASTFileLocation commentLocation = comment.getFileLocation();
-				if(commentLocation.getNodeOffset() < startOffset) {
+				if (commentLocation.getNodeOffset() < startOffset) {
 					startOffset = commentLocation.getNodeOffset();
 				}
-				if(commentLocation.getNodeOffset() + commentLocation.getNodeLength() >= endOffset) {
+				if (commentLocation.getNodeOffset() + commentLocation.getNodeLength() >= endOffset) {
 					endOffset = commentLocation.getNodeOffset() + commentLocation.getNodeLength();
 				}
 			}
@@ -321,13 +298,13 @@ public class ChangeGenerator extends ASTVisitor {
 
 	private int getOffsetIncludingComments(IASTNode node) {
 		int nodeOffset = node.getFileLocation().getNodeOffset();
-		
+
 		ArrayList<IASTComment> comments = commentMap.getAllCommentsForNode(node);
-		if(!comments.isEmpty()) {
+		if (!comments.isEmpty()) {
 			int startOffset = nodeOffset;
-			for(IASTComment comment : comments) {
+			for (IASTComment comment : comments) {
 				IASTFileLocation commentLocation = comment.getFileLocation();
-				if(commentLocation.getNodeOffset() < startOffset) {
+				if (commentLocation.getNodeOffset() < startOffset) {
 					startOffset = commentLocation.getNodeOffset();
 				}
 			}
@@ -338,16 +315,13 @@ public class ChangeGenerator extends ASTVisitor {
 
 	private String getIndent(IASTNode nextNode) {
 		IASTFileLocation fileLocation = nextNode.getFileLocation();
-		int length = fileLocation.getNodeOffset()
-				- getOffsetForNodeFile(nextNode);
+		int length = fileLocation.getNodeOffset() - getOffsetForNodeFile(nextNode);
 
-		String originalSource = FileContentHelper.getContent(FileHelper
-				.getIFilefromIASTNode(nextNode),
+		String originalSource = FileContentHelper.getContent(FileHelper.getIFilefromIASTNode(nextNode),
 				getOffsetForNodeFile(nextNode), length);
 		StringBuilder indent = new StringBuilder(originalSource);
 		indent.reverse();
-		String lastline = indent
-				.substring(0, Math.max(indent.indexOf("\n"), 0)); //$NON-NLS-1$
+		String lastline = indent.substring(0, Math.max(indent.indexOf("\n"), 0)); //$NON-NLS-1$
 		if (lastline.trim().length() == 0) {
 			return lastline;
 		}
@@ -355,10 +329,8 @@ public class ChangeGenerator extends ASTVisitor {
 	}
 
 	private boolean hasChangedChild(IASTNode parent) {
-
 		return modificationParent.containsKey(parent);
 	}
-
 
 	@Override
 	public int visit(IASTDeclarator declarator) {
@@ -378,10 +350,9 @@ public class ChangeGenerator extends ASTVisitor {
 		return super.visit(mod);
 	}
 
-
 	@Override
 	public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
-		if(hasChangedChild(namespaceDefinition)){
+		if (hasChangedChild(namespaceDefinition)) {
 			synthTreatment(namespaceDefinition);
 			return ASTVisitor.PROCESS_SKIP;
 		}
@@ -443,7 +414,6 @@ public class ChangeGenerator extends ASTVisitor {
 	}
 
 	class CodeComparer {
-
 		private final StringBuilder originalCode;
 		private final StringBuilder synthCode;
 		private int lastCommonInSynthStart;
@@ -456,38 +426,38 @@ public class ChangeGenerator extends ASTVisitor {
 			this.synthCode = new StringBuilder(synthCode);
 			calculatePositions();
 		}
-		
-		private void calculatePositions(){
+
+		private void calculatePositions() {
 			lastCommonInSynthStart = calcLastCommonPositionInSynthCode();
-			lastCommonInOriginalStart = calcLastCommonPositionInOriginalCode();	
-			firstCommonInSynthEnd = calcFirstPositionOfCommonEndInSynthCode(lastCommonInSynthStart, lastCommonInOriginalStart);
-			firstCommonInOriginalEnd = calcFirstPositionOfCommonEndInOriginalCode(lastCommonInOriginalStart, lastCommonInSynthStart);
+			lastCommonInOriginalStart = calcLastCommonPositionInOriginalCode();
+			firstCommonInSynthEnd =
+					calcFirstPositionOfCommonEndInSynthCode(lastCommonInSynthStart, lastCommonInOriginalStart);
+			firstCommonInOriginalEnd =
+					calcFirstPositionOfCommonEndInOriginalCode(lastCommonInOriginalStart, lastCommonInSynthStart);
 			trimTrailingNewlines();
 		}
 
 		private void trimTrailingNewlines() {
 			int prevOrigEnd = firstCommonInOriginalEnd - 1;
-			while( prevOrigEnd > lastCommonInOriginalStart 
-					&& prevOrigEnd > -1
-					&& isUninterresting(originalCode, prevOrigEnd)){
-				
+			while (prevOrigEnd > lastCommonInOriginalStart && prevOrigEnd > -1 &&
+					isUninterresting(originalCode, prevOrigEnd)) {
 				firstCommonInOriginalEnd = prevOrigEnd;
 				prevOrigEnd--;
 			}
-			
-			while(firstCommonInOriginalEnd > 0 && firstCommonInOriginalEnd +1 < originalCode.length() && (originalCode.charAt(firstCommonInOriginalEnd) == ' ' || originalCode.charAt(firstCommonInOriginalEnd) == '\t')){
+
+			while (firstCommonInOriginalEnd > 0 && firstCommonInOriginalEnd + 1 < originalCode.length() &&
+					(originalCode.charAt(firstCommonInOriginalEnd) == ' ' || originalCode.charAt(firstCommonInOriginalEnd) == '\t')) {
 				firstCommonInOriginalEnd++;
 			}
-			
+
 			int prevSynthEnd = firstCommonInSynthEnd - 1;
-			while( prevSynthEnd > lastCommonInSynthStart 
-					&& prevSynthEnd > -1
-					&& isUninterresting(synthCode, prevSynthEnd)){
-				
+			while (prevSynthEnd > lastCommonInSynthStart && prevSynthEnd > -1 &&
+					isUninterresting(synthCode, prevSynthEnd)) {
 				firstCommonInSynthEnd = prevSynthEnd;
 				prevSynthEnd--;
 			}
-			while(firstCommonInSynthEnd > 0 && firstCommonInSynthEnd +1< synthCode.length() && (synthCode.charAt(firstCommonInSynthEnd) == ' ' || synthCode.charAt(firstCommonInSynthEnd) == '\t')){
+			while (firstCommonInSynthEnd > 0 && firstCommonInSynthEnd + 1 < synthCode.length() &&
+					(synthCode.charAt(firstCommonInSynthEnd) == ' ' || synthCode.charAt(firstCommonInSynthEnd) == '\t')) {
 				firstCommonInSynthEnd++;
 			}
 		}
@@ -495,11 +465,11 @@ public class ChangeGenerator extends ASTVisitor {
 		public int getLastCommonPositionInSynthCode() {
 			return lastCommonInSynthStart;
 		}
-		
+
 		public int getLastCommonPositionInOriginalCode() {
-			return lastCommonInOriginalStart;	
-		}		
-		
+			return lastCommonInOriginalStart;
+		}
+
 		public int getFirstPositionOfCommonEndInOriginalCode() {
 			return firstCommonInOriginalEnd;
 		}
@@ -507,58 +477,50 @@ public class ChangeGenerator extends ASTVisitor {
 		public int getFirstPositionOfCommonEndInSynthCode() {
 			return firstCommonInSynthEnd;
 		}
-		
 
 		public int calcLastCommonPositionInSynthCode() {
 			return findLastCommonPosition(synthCode, originalCode);
 		}
-		
+
 		public int calcLastCommonPositionInOriginalCode() {
-			return findLastCommonPosition(originalCode, synthCode);	
-		}		
-		
-		
+			return findLastCommonPosition(originalCode, synthCode);
+		}
+
 		private int calcFirstPositionOfCommonEndInOriginalCode(int originalLimit, int synthLimit) {
-
-			StringBuilder reverseOriginalCode = new StringBuilder(originalCode)
-					.reverse();
-			StringBuilder reverseSynthCode = new StringBuilder(synthCode)
-					.reverse();
+			StringBuilder reverseOriginalCode = new StringBuilder(originalCode).reverse();
+			StringBuilder reverseSynthCode = new StringBuilder(synthCode).reverse();
 			int lastCommonPosition = findLastCommonPosition(reverseOriginalCode, reverseSynthCode,
-					reverseOriginalCode.length() - originalLimit - 1, reverseSynthCode.length() - synthLimit - 1);
+					reverseOriginalCode.length() - originalLimit - 1,
+					reverseSynthCode.length() - synthLimit - 1);
 
-			if (lastCommonPosition < 0
-					|| lastCommonPosition >= originalCode.length()) {
+			if (lastCommonPosition < 0 || lastCommonPosition >= originalCode.length()) {
 				return -1;
 			}
 
-			return originalCode.length() - lastCommonPosition -1;
+			return originalCode.length() - lastCommonPosition - 1;
 		}
 
 		private int calcFirstPositionOfCommonEndInSynthCode(int synthLimit, int originalLimit) {
-			StringBuilder reverseOriginalCode = new StringBuilder(originalCode)
-			.reverse();
-			StringBuilder reverseSynthCode = new StringBuilder(synthCode)
-			.reverse();
+			StringBuilder reverseOriginalCode = new StringBuilder(originalCode).reverse();
+			StringBuilder reverseSynthCode = new StringBuilder(synthCode).reverse();
 
 			int lastCommonPosition = findLastCommonPosition(reverseSynthCode, reverseOriginalCode,
-					reverseSynthCode.length() - synthLimit -1, reverseOriginalCode.length() - originalLimit -1);
+					reverseSynthCode.length() - synthLimit - 1,
+					reverseOriginalCode.length() - originalLimit - 1);
 
-			if (lastCommonPosition < 0
-					|| lastCommonPosition >= synthCode.length()) {
+			if (lastCommonPosition < 0 || lastCommonPosition >= synthCode.length()) {
 				return -1;
 			}
 
 			return synthCode.length() - lastCommonPosition - 1;
 		}
-		
-		
-		private int findLastCommonPosition(StringBuilder first, StringBuilder second){
+
+		private int findLastCommonPosition(StringBuilder first, StringBuilder second) {
 			return findLastCommonPosition(first, second, first.length(), second.length());
 		}
-		
-		
-		private int findLastCommonPosition(StringBuilder first, StringBuilder second, int firstLimit, int secondLimit){
+
+		private int findLastCommonPosition(StringBuilder first, StringBuilder second, int firstLimit,
+				int secondLimit) {
 			int firstIndex = -1;
 			int secondIndex = -1;
 			int lastCommonIndex = -1;
@@ -567,11 +529,8 @@ public class ChangeGenerator extends ASTVisitor {
 				lastCommonIndex = firstIndex;
 				firstIndex = nextInterrestingPosition(first, firstIndex);
 				secondIndex = nextInterrestingPosition(second, secondIndex);
-			} while (firstIndex > -1
-					&& firstIndex <= firstLimit
-					&& secondIndex > -1
-					&& secondIndex <= secondLimit
-					&& first.charAt(firstIndex) == second.charAt(secondIndex));
+			} while (firstIndex > -1 && firstIndex <= firstLimit && secondIndex > -1 &&
+					secondIndex <= secondLimit && first.charAt(firstIndex) == second.charAt(secondIndex));
 			return lastCommonIndex;
 		}
 
@@ -600,63 +559,52 @@ public class ChangeGenerator extends ASTVisitor {
 
 		protected void createChange(MultiTextEdit edit, IASTNode changedNode) {
 			int changeOffset = getOffsetIncludingComments(changedNode);
-
 			TextEditGroup editGroup = new TextEditGroup(Messages.ChangeGenerator_group);
-			for (ASTModification currentModification : modificationParent
-					.get(changedNode)) {
+			for (ASTModification currentModification : modificationParent.get(changedNode)) {
 				if (currentModification.getAssociatedEditGroup() != null) {
 					editGroup = currentModification.getAssociatedEditGroup();
 					edit.addChildren(editGroup.getTextEdits());
 					break;
 				}
 			}
-
 			createChange(edit, changeOffset);
 		}
 
 		private void createChange(MultiTextEdit edit, int changeOffset) {
-
-			int i = (firstCommonInSynthEnd >= 0 ? firstCommonInOriginalEnd
-					: originalCode.length())
-					- lastCommonInOriginalStart;
+			int i = (firstCommonInSynthEnd >= 0 ?
+					firstCommonInOriginalEnd : originalCode.length()) - lastCommonInOriginalStart;
 			if (i <= 0) {
-				String insertCode = synthCode.substring(
-						lastCommonInSynthStart, firstCommonInSynthEnd);
-				InsertEdit iEdit = new InsertEdit(changeOffset
-						+ lastCommonInOriginalStart, insertCode);
+				String insertCode = synthCode.substring(lastCommonInSynthStart,
+						firstCommonInSynthEnd);
+				InsertEdit iEdit = new InsertEdit(changeOffset + lastCommonInOriginalStart,
+						insertCode);
 				edit.addChild(iEdit);
-			} else if ((firstCommonInSynthEnd >= 0 ? firstCommonInSynthEnd
-					: synthCode.length())
-					- lastCommonInSynthStart <= 0) {
+			} else if ((firstCommonInSynthEnd >= 0 ?
+					firstCommonInSynthEnd : synthCode.length()) - lastCommonInSynthStart <= 0) {
 				int correction = 0;
 				if (lastCommonInSynthStart > firstCommonInSynthEnd) {
-					correction = lastCommonInSynthStart
-							- firstCommonInSynthEnd;
+					correction = lastCommonInSynthStart - firstCommonInSynthEnd;
 				}
-				DeleteEdit dEdit = new DeleteEdit(changeOffset
-						+ lastCommonInOriginalStart,
-						firstCommonInOriginalEnd
-								- lastCommonInOriginalStart + correction);
+				DeleteEdit dEdit = new DeleteEdit(changeOffset + lastCommonInOriginalStart,
+						firstCommonInOriginalEnd - lastCommonInOriginalStart + correction);
 				edit.addChild(dEdit);
-			} else {			
-				String replacementCode = getReplacementCode(
-						lastCommonInSynthStart, firstCommonInSynthEnd);
+			} else {
+				String replacementCode = getReplacementCode(lastCommonInSynthStart,
+						firstCommonInSynthEnd);
 				ReplaceEdit rEdit = new ReplaceEdit(
-						changeOffset
-								+ Math.max(lastCommonInOriginalStart, 0),
-						(firstCommonInOriginalEnd >= 0 ? firstCommonInOriginalEnd
-								: originalCode.length())
-								- Math.max(lastCommonInOriginalStart, 0),
+						changeOffset + Math.max(lastCommonInOriginalStart, 0),
+						(firstCommonInOriginalEnd >= 0 ?
+								firstCommonInOriginalEnd :
+								originalCode.length()) - Math.max(lastCommonInOriginalStart, 0),
 						replacementCode);
 				edit.addChild(rEdit);
 			}
 		}
 
-		private String getReplacementCode(int lastCommonPositionInSynth,
-				int firstOfCommonEndInSynth) {
+		private String getReplacementCode(int lastCommonPositionInSynth, int firstOfCommonEndInSynth) {
 			int replacementStart = Math.max(lastCommonPositionInSynth, 0);
-			int replacementEnd = (firstOfCommonEndInSynth >= 0 ? firstOfCommonEndInSynth
-					: synthCode.length());
+			int replacementEnd = (firstOfCommonEndInSynth >= 0 ?
+					firstOfCommonEndInSynth : synthCode.length());
 			if (replacementStart < replacementEnd) {
 				return synthCode.substring(replacementStart, replacementEnd);
 			}

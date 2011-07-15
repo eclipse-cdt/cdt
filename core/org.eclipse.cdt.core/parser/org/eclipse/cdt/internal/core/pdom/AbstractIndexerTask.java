@@ -83,10 +83,12 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			fUri= uri;
 			fLinkageID= linkageID;
 		}
+
 		@Override
 		public int hashCode() {
 			return fUri.hashCode() * 31 + fLinkageID;
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			FileKey other = (FileKey) obj;
@@ -202,7 +204,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		fIsFastIndexer= fastIndexer;
 		fFilesToUpdate= filesToUpdate;
 		Collections.addAll(fFilesToRemove, filesToRemove);
-		updateRequestedFiles(fFilesToUpdate.length + fFilesToRemove.size());
+		incrementRequestedFilesCount(fFilesToUpdate.length + fFilesToRemove.size());
 		fUrgentTasks = new LinkedList<AbstractIndexerTask>();
 	}
 	
@@ -402,7 +404,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 							fFilesToUpdate = urgentTask.fFilesToUpdate;
 							fForceNumberFiles = urgentTask.fForceNumberFiles;
 							fFilesToRemove = urgentTask.fFilesToRemove;
-							updateRequestedFiles(fFilesToUpdate.length + fFilesToRemove.size());
+							incrementRequestedFilesCount(fFilesToUpdate.length + fFilesToRemove.size());
 							extractFiles(files, indexFilesToRemove, monitor);
 							removeFilesInIndex(fFilesToRemove, indexFilesToRemove, monitor);
 						}
@@ -465,7 +467,6 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		final boolean checkTimestamps= (fUpdateFlags & IIndexManager.UPDATE_CHECK_TIMESTAMPS) != 0;
 		final boolean checkFileContentsHash = (fUpdateFlags & IIndexManager.UPDATE_CHECK_CONTENTS_HASH) != 0;
 		final boolean checkConfig= (fUpdateFlags & IIndexManager.UPDATE_CHECK_CONFIGURATION) != 0;
-		final boolean forceInclusion= (fUpdateFlags & IIndexManager.FORCE_INDEX_INCLUSION) != 0;
 
 		int count= 0;
 		int forceFirst= fForceNumberFiles;
@@ -484,7 +485,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				final boolean isExcludedSource= isSourceUnit && !fIndexFilesWithoutConfiguration && !fResolver.isFileBuildConfigured(tu);
 
 				if ((isSourceUnit && !isExcludedSource) || fIndexHeadersWithoutContext != UnusedHeaderStrategy.skip ||
-						forceInclusion) {
+						fResolver.isIndexedUnconditionally(tu)) {
 					// Headers or sources required with a specific linkage
 					AbstractLanguage[] langs= fResolver.getLanguages(tu, fIndexHeadersWithoutContext == UnusedHeaderStrategy.useBoth);
 					for (AbstractLanguage lang : langs) {
@@ -515,7 +516,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			for (IIndexFragmentFile ifile : indexFiles) {
 				if (ifile != null) {
 					IIndexInclude ctx= ifile.getParsedInContext();
-					if (ctx == null) {
+					if (ctx == null && !fResolver.isIndexedUnconditionally(ifile.getLocation())) {
 						iFilesToRemove.add(ifile);
 						count++;
 					} else {
@@ -535,7 +536,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			}
 		}
 		synchronized (this) {
-			updateRequestedFiles(count - fFilesToUpdate.length);
+			incrementRequestedFilesCount(count - fFilesToUpdate.length);
 			fFilesToUpdate= null;
 		}
 	}
@@ -644,14 +645,14 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					for (IIndexFragmentFile ifile : ifiles) {
 						fIndex.clearFile(ifile, null);
 					}
-					updateRequestedFiles(-1);
+					incrementRequestedFilesCount(-1);
 				}
 				for (IIndexFragmentFile ifile : indexFilesToRemove) {
 					if (monitor.isCanceled()) {
 						return;
 					}
 					fIndex.clearFile(ifile, null);
-					updateRequestedFiles(-1);
+					incrementRequestedFilesCount(-1);
 				}
 			} finally {
 				fIndex.releaseWriteLock(1);

@@ -230,6 +230,14 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	public void shutdown() {
+		// release resources for garbage collector
+		currentCfgDescription = null;
+		currentProject = null;
+		currentResource = null;
+		currentLanguageId = null;
+
+		errorParserManager = null;
+		parsedResourceName = null;
 	}
 
 	public boolean processLine(String line, ErrorParserManager epm) {

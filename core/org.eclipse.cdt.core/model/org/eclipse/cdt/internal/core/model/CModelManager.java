@@ -1320,6 +1320,8 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 	}
 
 	private void preCloseProject(IProject project) {
+		// remove binary parsers
+		binaryParsersMap.remove(project);
 		// stop the binary runner for this project
 		removeBinaryRunner(project);
 		// stop indexing jobs for this project

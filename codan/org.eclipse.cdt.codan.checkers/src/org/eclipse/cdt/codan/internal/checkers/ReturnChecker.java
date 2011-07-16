@@ -93,7 +93,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		public int visit(IASTStatement stmt) {
 			if (stmt instanceof IASTReturnStatement) {
 				IASTReturnStatement ret = (IASTReturnStatement) stmt;
-				boolean hasValue = ret.getReturnValue() != null;
+				boolean hasValue = ret.getReturnArgument() != null;
 				if (hasret == false && hasValue) {
 					hasret = true;
 				}

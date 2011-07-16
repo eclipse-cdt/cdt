@@ -289,4 +289,13 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
+
+	// #include <vector>
+	// std::vector<int> f() {
+	//    return {1,2,3};
+	// }
+	public void testReturnInitializerList() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
 }

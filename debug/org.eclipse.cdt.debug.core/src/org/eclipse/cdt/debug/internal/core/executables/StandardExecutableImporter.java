@@ -31,6 +31,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -143,7 +144,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 		for (int i = 0; i < segmentCount; i++) {
 			currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
 			if (!currentFolder.exists()) {
-				((IFolder) currentFolder).create(false, true, new NullProgressMonitor());
+				((IFolder) currentFolder).create(IResource.VIRTUAL | IResource.DERIVED, true, new NullProgressMonitor());
 			}
 		}
 

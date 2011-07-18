@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.settings.model;
 
 import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
+import org.eclipse.cdt.internal.core.SafeStringInterner;
 
 
 
@@ -19,7 +20,7 @@ public abstract class ACSettingEntry implements ICSettingEntry {
 	String fName;
 	
 	ACSettingEntry(String name, int flags){
-		fName = name;
+		fName = SafeStringInterner.safeIntern(name);
 		fFlags = flags;
 	}
 

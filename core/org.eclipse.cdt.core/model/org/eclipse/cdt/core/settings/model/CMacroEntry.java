@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import org.eclipse.cdt.internal.core.SafeStringInterner;
+
 
 
 public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry{
@@ -17,7 +19,7 @@ public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry{
 
 	public CMacroEntry(String name, String value, int flags) {
 		super(name, flags);
-		fValue = value;
+		fValue = SafeStringInterner.safeIntern(value);
 		if(fValue == null)
 			fValue = "";	//$NON-NLS-1$
 	}

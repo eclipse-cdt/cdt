@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     Patrick Hofer - Initial API and implementation
+ *     Tomasz Wesolowski
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.internal.checkers;
 
@@ -14,7 +16,7 @@ import org.eclipse.cdt.codan.core.test.CheckerTestCase;
 import org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructor;
 
 /**
- * Test for {@see NonVirtualDestructor} class.
+ * Test for {@link NonVirtualDestructor} class.
  */
 public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	@Override
@@ -25,7 +27,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		enableProblems(NonVirtualDestructor.ER_ID);
+		enableProblems(NonVirtualDestructor.PROBLEM_ID);
 	}
 
 	// struct A {
@@ -86,7 +88,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	// struct B {
 	//   ~B(); // ok.
 	// };
-	public void testVirtualDtorInBaseClass() {
+	public void testVirtualDtorInBaseClass1() {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -108,6 +110,22 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 		checkNoErrors();
 	}
 
+	//	class A {
+	//	public:
+	//	  virtual ~A();
+	//	};
+	//
+	//	class B : public A {
+	//	public:
+	//	  ~B();
+	//	  virtual void m();
+	//	  friend class C;
+	//	};
+	public void testVirtualDtorInBaseClass3() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
 	// struct A {
 	//   virtual void f() { };
 	//   ~A();  // warn! public non-virtual dtor.
@@ -122,14 +140,12 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	//
 	// struct E : public D {
 	// };
-	public void testNonVirtualDtorInBaseClass2() {
+	public void testNonVirtualDtorInBaseClass() {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(3, 7, 11, 13);
 	}
 
-	// class A {  // OK. Do _not_ warn here.
-	//   // A is an abstract class because it has one pure virtual method.
-	//   // A cannot be instantiated.
+	// class A {
 	//   virtual void f1() { };
 	//   virtual void f2() = 0;
 	// };
@@ -141,6 +157,28 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	// };
 	public void testAbstractBaseClass() {
 		loadCodeAndRun(getAboveComment());
-		checkNoErrors();
+		// It doesn't matter if the class is abstract or not - dtor can be called polymorphically.
+		checkErrorLines(1);
+	}
+
+	//	struct Base {
+	//	};
+	//	struct Derived : Base {
+	//		virtual void bar();
+	//	};
+	public void testImplicitDtorInBaseClass() {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLines(3);
+	}
+
+	//	struct Base {
+	//  	~Base();
+	//	};
+	//	struct Derived : Base {
+	//		virtual void bar();
+	//	};
+	public void testExplicitDtorInBaseClass() {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLines(4);
 	}
 }

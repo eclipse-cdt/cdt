@@ -20,7 +20,7 @@
  * Kevin Doyle (IBM) - [198534] Shell Menu Enablement Issue's
  * Radoslav Gerganov (ProSyst) - [181563] Fix hardcoded Ctrl+Space for remote shell content assist
  * David McKnight   (IBM)        - [294398] [shells] SystemCommandsViewPart always assumes systemResourceChanged() called on Display thread
- * David McKnight   (IBM)        - [351759] [shells] need to check for disposed widget when handling events
+ * David McKnight   (IBM)        - [351750] [shells] need to check for disposed widget when handling events
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;

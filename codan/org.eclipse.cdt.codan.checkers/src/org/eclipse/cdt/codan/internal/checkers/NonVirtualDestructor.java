@@ -8,6 +8,7 @@
  * Contributors:
  *     Alena Laskavaia  - initial API and implementation
  *     Patrick Hofer [bug 315528]
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -83,11 +84,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 				}
 				ICPPMethod virtualMethod = null;
 				for (ICPPMethod method : classType.getAllDeclaredMethods()) {
-					if (method.isPureVirtual()) {
-						// Class has at least one pure virtual method, it is abstract
-						// and cannot be instantiated.
-						return PROCESS_SKIP;
-					} else if (method.isVirtual() && !method.isDestructor()) {
+					if (!method.isDestructor() && method.isVirtual()) {
 						virtualMethod = method;
 					}
 				}

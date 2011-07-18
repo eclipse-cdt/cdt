@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     Patrick Hofer - Initial API and implementation
+ *     Tomasz Wesolowski
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.internal.checkers;
 
@@ -143,9 +145,7 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 		checkErrorLines(3, 7, 11, 13);
 	}
 
-	// class A {  // OK. Do _not_ warn here.
-	//   // A is an abstract class because it has one pure virtual method.
-	//   // A cannot be instantiated.
+	// class A {
 	//   virtual void f1() { };
 	//   virtual void f2() = 0;
 	// };
@@ -157,7 +157,8 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	// };
 	public void testAbstractBaseClass() {
 		loadCodeAndRun(getAboveComment());
-		checkNoErrors();
+		// It doesn't matter if the class is abstract or not - dtor can be called polymorphically.
+		checkErrorLines(1);
 	}
 
 	//	struct Base {
@@ -179,19 +180,5 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	public void testExplicitDtorInBaseClass() {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(4);
-	}
-
-	//	struct IBase {
-	//		virtual void foo() = 0;
-	//	};
-	//	struct IDerived : IBase {
-	//	};
-	//	struct ADerived : IDerived {
-	//		void foo();
-	//		virtual void bar() = 0;
-	//	};
-	public void testInheritedAbstractClasses() {
-		loadCodeAndRun(getAboveComment());
-		checkNoErrors();
 	}
 }

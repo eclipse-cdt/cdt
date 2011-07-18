@@ -1253,6 +1253,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	}
 
 	private static class IndexUpdateRequestorJob extends Job {
+		// Temporary hack to avoid API changes.
+		private static final int RESET_INDEX_INCLUSION = IIndexManager.FORCE_INDEX_INCLUSION << 1;
 		private final ITranslationUnit tuToAdd;
 		private final ITranslationUnit tuToReset;
 
@@ -1274,7 +1276,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				IIndexManager indexManager = CCorePlugin.getIndexManager();
 				if (tuToReset != null) {
 					indexManager.update(new ICElement[] { tuToReset },
-							IIndexManager.RESET_INDEX_INCLUSION | IIndexManager.UPDATE_CHECK_TIMESTAMPS);
+							RESET_INDEX_INCLUSION | IIndexManager.UPDATE_CHECK_TIMESTAMPS);
 				}
 				if (tuToAdd != null) {
 					indexManager.update(new ICElement[] { tuToAdd },

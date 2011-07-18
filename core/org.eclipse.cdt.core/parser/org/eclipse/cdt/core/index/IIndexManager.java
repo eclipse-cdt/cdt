@@ -98,14 +98,6 @@ public interface IIndexManager extends IPDOMManager {
 	public final static int FORCE_INDEX_INCLUSION= 0x20;
 
 	/**
-	 * Causes files previously included in the index due to FORCE_INDEX_INCLUSION to loose
-	 * their index inclusion privilege. The files included only due to FORCE_INDEX_INCLUSION,
-	 * will be removed from the index.
-	 * @since 5.4
-	 */
-	public final static int RESET_INDEX_INCLUSION= 0x40;
-
-	/**
 	 * Returns the index for the given project.
 	 * @param project the project to get the index for
 	 * @return an index for the project

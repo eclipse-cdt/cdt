@@ -115,6 +115,8 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class PDOMManager implements IWritableIndexManager, IListener {
 	private static final String TRACE_INDEXER_SETUP = CCorePlugin.PLUGIN_ID + "/debug/indexer/setup"; //$NON-NLS-1$
+	// Temporary hack to avoid API changes.
+	private static final int RESET_INDEX_INCLUSION = IIndexManager.FORCE_INDEX_INCLUSION << 1;
 
 	private final class PCL implements IPreferenceChangeListener {
 		private ICProject fProject;
@@ -1377,7 +1379,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					}
 				}
 			}
-			if ((options & IIndexManager.RESET_INDEX_INCLUSION) != 0) {
+			if ((options & RESET_INDEX_INCLUSION) != 0) {
 				for (ICElement element : filesAndFolders) {
 					if (element instanceof ITranslationUnit) {
 						ITranslationUnit tu = (ITranslationUnit) element;

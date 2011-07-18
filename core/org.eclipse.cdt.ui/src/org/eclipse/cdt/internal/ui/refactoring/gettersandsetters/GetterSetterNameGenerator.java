@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 
@@ -32,7 +35,28 @@ public class GetterSetterNameGenerator {
 	// Do not instantiate.
 	private GetterSetterNameGenerator() {
 	}
+	
+	private static Set<String> generateGetterSettersPreferenceKeys = new HashSet<String>();
+	static {
+		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_GETTER_CAPITALIZATION);
+		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_GETTER_WORD_DELIMITER);
+		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_GETTER_PREFIX_FOR_BOOLEAN);
+		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_GETTER_PREFIX);
+		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_GETTER_SUFFIX);
+		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_SETTER_CAPITALIZATION);
+		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_SETTER_WORD_DELIMITER);
+		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_SETTER_PREFIX);
+		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_SETTER_SUFFIX);
+		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_VARIABLE_CAPITALIZATION);
+		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_VARIABLE_WORD_DELIMITER);
+		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_VARIABLE_PREFIX);
+		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_VARIABLE_SUFFIX);
+	}
 
+	public static Set<String> getGenerateGetterSettersPreferenceKeys() {
+		return generateGetterSettersPreferenceKeys;
+	}
+	
 	public static String generateGetterName(IASTName fieldName) {
     	IPreferencesService preferences = Platform.getPreferencesService();
     	int capitalization = preferences.getInt(CUIPlugin.PLUGIN_ID,

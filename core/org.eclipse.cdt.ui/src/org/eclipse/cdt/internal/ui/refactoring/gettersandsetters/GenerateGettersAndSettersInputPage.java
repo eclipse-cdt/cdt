@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -14,6 +14,10 @@ package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 import java.util.Set;
 import java.util.SortedSet;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
@@ -25,12 +29,17 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.preferences.NameStylePreferencePage;
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterContext.FieldWrapper;
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterInsertEditProvider.AccessorKind;
 
-public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
+public class GenerateGettersAndSettersInputPage extends UserInputWizardPage implements IPreferenceChangeListener {
 	private GetterSetterContext context;
 	private ContainerCheckedTreeViewer variableSelectionView;
 	private GetterSetterLabelProvider labelProvider;
@@ -38,6 +47,9 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
 	public GenerateGettersAndSettersInputPage(GetterSetterContext context) {
 		super(Messages.GettersAndSetters_Name); 
 		this.context = context;
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID);
+		// We are listening for changes in the Name Style preferences
+		node.addPreferenceChangeListener(this);
 	}
 
 	public void createControl(Composite parent) {
@@ -59,6 +71,8 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
 		final Button placeImplemetation = new Button(comp, SWT.CHECK);
 		placeImplemetation.setText(Messages.GenerateGettersAndSettersInputPage_PlaceImplHeader);
 		gd = new GridData();
+		gd.horizontalSpan = 2;
+		gd.heightHint = 40;
 		placeImplemetation.setLayoutData(gd);
 		placeImplemetation.setSelection(context.isImplementationInHeader());
 		placeImplemetation.addSelectionListener(new SelectionAdapter() {
@@ -67,6 +81,21 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
 				context.setImplementationInHeader(placeImplemetation.getSelection());
 			}
 		});
+
+		Link link= new Link(comp, SWT.WRAP);
+		link.setText(Messages.GenerateGettersAndSettersInputPage_LinkDescription);
+		link.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String id = NameStylePreferencePage.PREF_ID;
+				PreferencesUtil.createPreferenceDialogOn(getShell(), id, new String [] { id }, null).open();
+			}
+		});
+		link.setToolTipText(Messages.GenerateGettersAndSettersInputPage_LinkTooltip);
+
+		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd.grabExcessHorizontalSpace = true;
+		link.setLayoutData(gd);
 
 		setControl(comp);
 	}
@@ -188,5 +217,16 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage {
 				}
 			}
 		});
+	}
+
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (variableSelectionView.getTree().isDisposed()) {
+			return;
+		}
+		
+		if (GetterSetterNameGenerator.getGenerateGetterSettersPreferenceKeys().contains(event.getKey())) {
+			context.refresh();
+			variableSelectionView.refresh();
+		}
 	}
 }

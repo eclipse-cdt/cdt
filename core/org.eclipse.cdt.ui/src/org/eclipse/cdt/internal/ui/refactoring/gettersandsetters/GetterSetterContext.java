@@ -78,6 +78,17 @@ public class GetterSetterContext implements ITreeContentProvider {
 	public Object[] getElements(Object inputElement) {
 		return getWrappedFields().toArray();
 	}
+	
+	public void refresh() {
+		// We only recreate the function declarations instead of recreating GetterSetterInsertEditProviders.
+		// That way, selectedFunctions is still valid. Also, the objects inside the TreeViewer are still the same
+		// which is convenient because that way we don't need to save then restore the collapsed/expanded+checked/unchecked state of the TreeViewer.
+		for (FieldWrapper wrapper : wrappedFields) {
+			for (GetterSetterInsertEditProvider provider : wrapper.childNodes) {
+				provider.createFunctionDeclaration();
+			}
+		}
+	}
 
 	public void dispose() {
 	}

@@ -36,7 +36,15 @@ public class GetterSetterInsertEditProvider implements Comparable<GetterSetterIn
 	
 	public GetterSetterInsertEditProvider(IASTName fieldName, IASTSimpleDeclaration fieldDeclaration,
 			AccessorKind kind) {
-		switch (kind) {
+		this.kind = kind;
+		this.fieldName = fieldName;
+		this.fieldDeclaration = fieldDeclaration;
+		
+		createFunctionDeclaration();
+	}
+
+	public void createFunctionDeclaration() {
+		switch (this.kind) {
 		case GETTER:
 			this.functionDeclaration = FunctionFactory.createGetterDeclaration(fieldName, fieldDeclaration);
 			break;
@@ -44,10 +52,6 @@ public class GetterSetterInsertEditProvider implements Comparable<GetterSetterIn
 			this.functionDeclaration = FunctionFactory.createSetterDeclaration(fieldName, fieldDeclaration);
 			break;
 		}
-		
-		this.kind = kind;
-		this.fieldName = fieldName;
-		this.fieldDeclaration = fieldDeclaration;
 	}
 	
 	@Override

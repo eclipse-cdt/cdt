@@ -29,6 +29,7 @@
  * Max Stepanov (Appcelerator) - [339768] Fix ANSI code for PgUp / PgDn
  * Pawel Piech (Wind River) - [333613] "Job found still running" after shutdown
  * Martin Oberhuber (Wind River) - [348700] Terminal unusable after disconnect
+ * Simon Bernard (Sierra Wireless) - [351424] [terminal] Terminal does not support del and insert key
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -780,6 +781,13 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				event.doit = true;
 				return;
 			}
+			
+			// Manage the Del key
+			if (event.keyCode == 0x000007f) 
+				{
+				sendString("\u001b[3~"); //$NON-NLS-1$
+				return;
+			}
 
 			// If the event character is NUL ('\u0000'), then a special key was pressed
 			// (e.g., PageUp, PageDown, an arrow key, a function key, Shift, Alt,
@@ -830,7 +838,11 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				case 0x1000008: // End key.
 					sendString("\u001b[F"); //$NON-NLS-1$
 					break;
-
+				
+				case 0x1000009: // Insert.
+					sendString("\u001b[2~"); //$NON-NLS-1$
+					break;
+					
 				case 0x100000a: // F1 key.
 					if ( (event.stateMask & SWT.CTRL)!=0 ) {
 						//Allow Ctrl+F1 to act locally as well as on the remote, because it is

@@ -191,7 +191,8 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 				.setAlternativePrefixKey(KEY_GETTER_PREFIX_FOR_BOOLEAN)
 				.setSuffixKey(KEY_GETTER_SUFFIX)
 				.setSeedNameGenerator(fieldCategory)
-				.setNameValidator(IDENTIFIER_VALIDATOR);
+				.setNameValidator(IDENTIFIER_VALIDATOR)
+				.setTrimFieldName(true);
 		new Category(PreferencesMessages.NameStyleBlock_setter_node,
 				PreferencesMessages.NameStyleBlock_setter_node_description, EXAMPLE_FIELD_NAME,
 				codeCategory)
@@ -200,7 +201,8 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 				.setPrefixKey(KEY_SETTER_PREFIX)
 				.setSuffixKey(KEY_SETTER_SUFFIX)
 				.setSeedNameGenerator(fieldCategory)
-				.setNameValidator(IDENTIFIER_VALIDATOR);
+				.setNameValidator(IDENTIFIER_VALIDATOR)
+				.setTrimFieldName(true);
 		Category fileCategory = new Category(PreferencesMessages.NameStyleBlock_files_node);
 		new Category(PreferencesMessages.NameStyleBlock_cpp_header_node,
 				PreferencesMessages.NameStyleBlock_cpp_header_node_description, EXAMPLE_CLASS_NAME,
@@ -444,6 +446,7 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 
 		private Text previewText;
 		private Composite editorArea;
+		private boolean trimFieldName = false;
 
 		Category(String name, String description, String seedName, Category parent) {
 			this.name = name;
@@ -568,7 +571,14 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 			NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);
 			String name = seedNameGenerator != null ?
 					seedNameGenerator.composeExampleName(settings) : seedName;
+			if (trimFieldName) {
+				name = NameComposer.trimFieldName(name);
+			}
 			return composer.compose(name);
+		}
+
+		void setTrimFieldName(boolean trimSeedName) {
+			this.trimFieldName = trimSeedName;
 		}
 	}
 

@@ -20,6 +20,7 @@ import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -503,6 +504,18 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     	        		        getSession().dispatchEvent(new TracingStartedEvent(context), getProperties());
     	        				rm.done();
     	        			}
+                            @Override
+                            protected void handleError() {
+                                // Send an event to cause a refresh of the button states
+                                IDMEvent<ITraceTargetDMContext> event;
+                                if (fIsTracingActive) {
+                                    event = new TracingStartedEvent(context);
+                                } else {
+                                    event = new TracingStoppedEvent(context);
+                                }
+                                getSession().dispatchEvent(event, getProperties());
+                                rm.done();
+                            }
     	        		});
     		}
     	});

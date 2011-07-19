@@ -19,15 +19,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
-import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
-import org.eclipse.cdt.core.settings.model.CLibraryFileEntry;
-import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
-import org.eclipse.cdt.core.settings.model.CMacroEntry;
-import org.eclipse.cdt.core.settings.model.CMacroFileEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.core.resources.IResource;
@@ -264,28 +259,11 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 
 		}
 
-		ICLanguageSettingEntry entry = null;
-		switch (LanguageSettingEntriesSerializer.stringToKind(settingKind)) {
-		case ICSettingEntry.INCLUDE_PATH:
-			entry = new CIncludePathEntry(settingName, flags);
-			break;
-		case ICSettingEntry.INCLUDE_FILE:
-			entry = new CIncludeFileEntry(settingName, flags);
-			break;
-		case ICSettingEntry.MACRO:
-			String settingValue = XmlUtil.determineAttributeValue(parentElement, ATTR_VALUE);
-			entry = new CMacroEntry(settingName, settingValue, flags);
-			break;
-		case ICSettingEntry.MACRO_FILE:
-			entry = new CMacroFileEntry(settingName, flags);
-			break;
-		case ICSettingEntry.LIBRARY_PATH:
-			entry = new CLibraryPathEntry(settingName, flags);
-			break;
-		case ICSettingEntry.LIBRARY_FILE:
-			entry = new CLibraryFileEntry(settingName, flags);
-			break;
-		}
+		String settingValue = null;
+		int kind = LanguageSettingEntriesSerializer.stringToKind(settingKind);
+		if (kind == ICSettingEntry.MACRO)
+			settingValue = XmlUtil.determineAttributeValue(parentElement, ATTR_VALUE);
+		ICLanguageSettingEntry entry = (ICLanguageSettingEntry) CDataUtil.createEntry(kind, settingName, settingValue, null, flags);
 		return entry;
 	}
 

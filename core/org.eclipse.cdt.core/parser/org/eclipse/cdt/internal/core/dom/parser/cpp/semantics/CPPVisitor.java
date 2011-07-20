@@ -1723,7 +1723,7 @@ public class CPPVisitor extends ASTQueries {
 	 * Adjusts the parameter type according to 8.3.5-3:
 	 * cv-qualifiers are deleted, arrays and function types are converted to pointers.
 	 */
-	private static IType adjustParameterType(final IType pt, boolean forFunctionType) {
+	static IType adjustParameterType(final IType pt, boolean forFunctionType) {
 		// bug 239975
 		IType t= SemanticUtil.getNestedType(pt, TDEF);
 		if (t instanceof IArrayType) {

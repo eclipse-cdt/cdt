@@ -5402,4 +5402,18 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testAddressOfMethodForInstantiation_Bug344310() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template<typename Arg> struct Callback {
+	//	    Callback(void (*function)(Arg arg)) {}
+	//	};
+	//
+	//	void Subscribe(const Callback<const int>& callback){}
+	//	void CallMe(const int){}
+	//
+	//	int test() {
+	//	    Subscribe(Callback<const int>(&CallMe)); // invalid arguments, symbol not
+	//	}
+	public void testParameterAdjustementInInstantiatedFunctionType_351609() throws Exception {
+		parseAndCheckBindings();
+	}
 }

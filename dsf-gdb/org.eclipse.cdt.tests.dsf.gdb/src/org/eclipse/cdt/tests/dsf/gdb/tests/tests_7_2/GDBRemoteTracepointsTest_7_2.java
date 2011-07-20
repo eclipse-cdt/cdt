@@ -23,4 +23,7 @@ public class GDBRemoteTracepointsTest_7_2 extends GDBRemoteTracepointsTest_7_1 {
 	public static void beforeClassMethod_7_2() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_2);		
 	}
+	
+	@Override
+	protected boolean fastTracepointsSupported() { return true;	}
 }

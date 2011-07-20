@@ -17,6 +17,8 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.dsf.gdb.internal.tracepointactions.TracepointActionManager;
+
 /**
  * Contain info about the GDB/MI breakpoint.
  * 
@@ -497,8 +499,29 @@ public class MIBreakpoint  {
                 cond = str;
             } else if (var.equals("pending")) { //$NON-NLS-1$
             	// Only supported starting with GDB 6.8
-                pending = true;
+            	pending = true;
+            } else if (var.equals("script")) { //$NON-NLS-1$
+            	if (value instanceof MITuple) {
+            		parseCommands((MITuple)value);
+            	}
             }
         }
+    }
+
+    void parseCommands(MITuple tuple) {
+    	MIValue[] values = tuple.getMIValues();
+    	StringBuffer cmds = new StringBuffer();
+    	for (int i = 0; i < values.length; i++) {
+    		MIValue value = values[i];
+    		if (value != null && value instanceof MIConst) {
+    			if (i > 0) {
+    				// Insert a delimiter
+    				cmds.append(TracepointActionManager.TRACEPOINT_ACTION_DELIMITER);
+    			}
+    			cmds.append(((MIConst)value).getCString());
+    		}
+    	}
+    	setCommands(cmds.toString());
+
     }
 }

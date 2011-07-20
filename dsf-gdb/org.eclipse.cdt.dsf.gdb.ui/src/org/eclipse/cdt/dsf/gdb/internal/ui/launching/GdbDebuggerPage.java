@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Ericsson             - Modified for DSF
  *     Sergey Prigogin (Google)
+ *     Marc Khouzam (Ericsson) - Support for fast tracepoints (Bug 346320)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
@@ -30,9 +31,11 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
@@ -53,6 +56,14 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	protected Button fReverseCheckBox;
 	protected Button fUpdateThreadlistOnSuspend;
 	protected Button fDebugOnFork;
+	
+	/**
+	 * A combo box to let the user choose if fast tracepoints should be used or not.
+	 */
+	protected Combo fTracepointModeCombo;
+	protected static final String TP_FAST_ONLY = LaunchUIMessages.getString("GDBDebuggerPage.tracepoint_mode_fast"); //$NON-NLS-1$
+	protected static final String TP_SLOW_ONLY = LaunchUIMessages.getString("GDBDebuggerPage.tracepoint_mode_slow"); //$NON-NLS-1$
+	protected static final String TP_AUTOMATIC = LaunchUIMessages.getString("GDBDebuggerPage.tracepoint_mode_auto"); //$NON-NLS-1$
 
 	private IMILaunchConfigurationComponent fSolibBlock;
 	private boolean fIsInitializing = false;
@@ -82,7 +93,9 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
 				IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_ON_FORK_DEFAULT);
-
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
+				IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_MODE_DEFAULT);
+		
 		if (fSolibBlock != null)
 			fSolibBlock.setDefaults(configuration);
 	}
@@ -141,8 +154,44 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		fReverseCheckBox.setSelection(reverseEnabled);
 		fUpdateThreadlistOnSuspend.setSelection(updateThreadsOnSuspend);
 		fDebugOnFork.setSelection(debugOnFork);
-
+		
+		updateTracepointModeFromConfig(configuration);
+		
 		setInitializing(false);
+	}
+
+	protected void updateTracepointModeFromConfig(ILaunchConfiguration config) {
+		if (fTracepointModeCombo != null) {
+			String tracepointMode = getStringAttr(config, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
+					                              IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_MODE_DEFAULT);
+
+			if (tracepointMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_SLOW_ONLY)) {
+				fTracepointModeCombo.setText(TP_SLOW_ONLY);
+			} else if (tracepointMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_ONLY)) {
+				fTracepointModeCombo.setText(TP_FAST_ONLY);
+			} else if (tracepointMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_THEN_SLOW)) {
+				fTracepointModeCombo.setText(TP_AUTOMATIC);
+			} else {
+				assert false : "Unknown Tracepoint Mode: " + tracepointMode; //$NON-NLS-1$
+			    fTracepointModeCombo.setText(TP_SLOW_ONLY);
+			}
+		}
+	}
+
+	protected String getSelectedTracepointMode() {
+		if (fTracepointModeCombo != null) {
+			int selectedIndex = fTracepointModeCombo.getSelectionIndex();
+			if (fTracepointModeCombo.getItem(selectedIndex).equals(TP_SLOW_ONLY)) {
+				return IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_SLOW_ONLY;
+			} else if (fTracepointModeCombo.getItem(selectedIndex).equals(TP_FAST_ONLY)) {
+				return IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_ONLY;
+			} else if (fTracepointModeCombo.getItem(selectedIndex).equals(TP_AUTOMATIC)) {
+				return IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_THEN_SLOW;
+			} else {
+				assert false : "Unknown Tracepoint mode: " + fTracepointModeCombo.getItem(selectedIndex); //$NON-NLS-1$
+			}
+		}
+		return IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_MODE_DEFAULT;
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
@@ -158,6 +207,12 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
                 fUpdateThreadlistOnSuspend.getSelection());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
 				fDebugOnFork.getSelection());
+		
+		if (fTracepointModeCombo != null) {
+			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
+									   getSelectedTracepointMode());
+		}
+		
 		if (fSolibBlock != null)
 			fSolibBlock.performApply(configuration);
 	}
@@ -307,6 +362,30 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fUpdateThreadlistOnSuspend, GdbUIPlugin.PLUGIN_ID + ".update_threadlist_button_context"); //$NON-NLS-1$
 
 		fDebugOnFork = addCheckbox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.Automatically_debug_forked_processes")); //$NON-NLS-1$
+		
+		createTracepointModeCombo(subComp);
+	}
+
+	protected void createTracepointModeCombo(Composite parent) {
+		// Add a combo to choose the type of tracepoint mode to use
+		Label label = ControlFactory.createLabel(parent, LaunchUIMessages.getString("GDBDebuggerPage.tracepoint_mode_label")); //$NON-NLS-1$
+		label.setLayoutData(new GridData());
+
+		fTracepointModeCombo = new Combo(parent, SWT.READ_ONLY | SWT.DROP_DOWN);
+		fTracepointModeCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1));
+		fTracepointModeCombo.add(TP_SLOW_ONLY);
+		fTracepointModeCombo.add(TP_FAST_ONLY);
+		fTracepointModeCombo.add(TP_AUTOMATIC);
+
+		fTracepointModeCombo.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		fTracepointModeCombo.select(0);
 	}
 
 	public void createSolibTab(TabFolder tabFolder) {

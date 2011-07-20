@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -1288,6 +1288,23 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(13,  fDocument.getLength() - 19,  ICPartitions.C_STRING),
 				new TypedRegion(fDocument.getLength() - 6, 1,  IDocument.DEFAULT_CONTENT_TYPE),
 				new TypedRegion(fDocument.getLength() - 5, 5,  ICPartitions.C_STRING),
+			};
+			checkPartitioning(expectation, result);
+
+		} catch (BadLocationException x) {
+			assertTrue(false);
+		}
+	}
+
+	public void testRawString_Bug352544() {
+		try {
+
+			fDocument.replace(0, fDocument.getLength(), "BAR\"(\";");
+			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
+			TypedRegion[] expectation= {
+				new TypedRegion(0,  3,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(3,  3,  ICPartitions.C_STRING),
+				new TypedRegion(6,  1,  IDocument.DEFAULT_CONTENT_TYPE),
 			};
 			checkPartitioning(expectation, result);
 

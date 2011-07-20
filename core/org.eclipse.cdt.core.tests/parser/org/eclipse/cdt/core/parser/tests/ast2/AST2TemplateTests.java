@@ -5416,4 +5416,22 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testParameterAdjustementInInstantiatedFunctionType_351609() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	// template<typename T> struct CT {
+	//   int g;
+	// };
+	// template<typename T> struct CT<T&> {
+	//    int ref;
+	// };
+	// template<typename T> struct CT<T&&> {
+	//    int rref;
+	// };
+	// void test() {
+	//    CT<int>::g;
+	//    CT<int&>::ref;
+	//    CT<int&&>::rref;
+	// }
+	public void testRRefVsRef_351927() throws Exception {
+		parseAndCheckBindings();
+	}
 }

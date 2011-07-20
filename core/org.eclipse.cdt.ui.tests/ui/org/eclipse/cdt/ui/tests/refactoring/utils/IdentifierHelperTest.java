@@ -30,7 +30,6 @@ public class IdentifierHelperTest extends TestSuite {
 		suite.addTest(new EmptyCaseTest());
 		suite.addTest(new IllegalCharCaseTest());
 		suite.addTest(new KeywordCaseTest());
-		suite.addTestSuite(AccessorNameGeneratorTest.class);
 		return suite;
 	}
 }

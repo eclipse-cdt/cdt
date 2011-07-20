@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,11 +40,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 
-/**
- * TLETODO Document CElement.
- *
- * @since 5.0
- */
 public abstract class CElement extends PlatformObject implements ICElement {
 	
 	public static final char CEM_ESCAPE = '\\';
@@ -270,12 +265,15 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	}
 	
 	public static boolean equals(ICElement lhs, ICElement rhs) {
+		if (lhs == rhs) {
+			return true;
+		}
 		if (lhs.getElementType() != rhs.getElementType()) {
 			return false;
 		}
 		String lhsName= lhs.getElementName();
 		String rhsName= rhs.getElementName();
-		if( lhsName == null || rhsName == null || lhsName.length() == 0 ||
+		if( lhsName == null || rhsName == null || lhsName.length() != rhsName.length() ||
 				!lhsName.equals(rhsName)) {
 			return false;
 		}

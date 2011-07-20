@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -367,8 +368,8 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 
 	//	struct X {
 	//	  ~X();
-	//	  void operator delete();
-	//	  void operator delete[]();
+	//	  void operator delete(void *);
+	//	  void operator delete[](void *);
 	//	};
 	//
 	//	int test(X* x) {
@@ -393,11 +394,38 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		
 		names = ba.getImplicitNames("delete[] x;", 6);
 		assertEquals(1, names.length);
-		assertSame(col.getName(3).resolveBinding(), names[0].resolveBinding());
+		assertSame(col.getName(4).resolveBinding(), names[0].resolveBinding());
 		
 		ba.assertNoImplicitName("delete 1;", 6);
 	}
 	
+	//	struct A {
+	//	    void operator delete(void * a);
+	//	};
+	//	struct B {};
+	//	void operator delete(void * b);
+	//
+	//	void test() {
+	//	    A *a = new A;
+	//	    delete a;
+	//
+	//	    B* b = new B;
+	//	    delete b;
+	//	}
+	public void testOverloadedDelete_Bug351547() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		IBinding m= bh.assertNonProblem("operator delete(void * a)", 15);
+		IBinding f= bh.assertNonProblem("operator delete(void * b)", 15);
+		
+		IASTImplicitName[] names = bh.getImplicitNames("delete a;", 6);
+		assertEquals(2, names.length);
+		assertSame(m, names[1].resolveBinding());
+
+		names = bh.getImplicitNames("delete b;", 6);
+		assertEquals(2, names.length);
+		assertSame(f, names[1].resolveBinding());
+	}
+
 	//	struct X {}
 	//	int test(X* x) {
 	//	  X* xs = new X[5];

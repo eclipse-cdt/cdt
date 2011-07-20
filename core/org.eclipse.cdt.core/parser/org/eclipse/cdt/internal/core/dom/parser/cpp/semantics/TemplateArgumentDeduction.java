@@ -678,8 +678,12 @@ public class TemplateArgumentDeduction {
 				if (!(a instanceof ICPPReferenceType)) {
 					return false;
 				}
-				p = ((ICPPReferenceType) p).getType();
-				a = ((ICPPReferenceType) a).getType();
+				final ICPPReferenceType rp = (ICPPReferenceType) p;
+				final ICPPReferenceType ra = (ICPPReferenceType) a;
+				if (ra.isRValueReference() != rp.isRValueReference())
+					return false;
+				p = rp.getType();
+				a = ra.getType();
 			} else if (p instanceof IArrayType) {
 				if (!(a instanceof IArrayType)) {
 					return false;

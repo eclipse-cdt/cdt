@@ -5434,4 +5434,9 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testRRefVsRef_351927() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template <typename = int> class A {};
+	public void testTemplateParameterWithoutName_352266() throws Exception {
+		parseAndCheckBindings();
+	}
 }

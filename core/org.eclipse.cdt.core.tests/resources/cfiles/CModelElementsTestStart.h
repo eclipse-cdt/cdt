@@ -139,3 +139,8 @@ namespace MyPackage
 struct bug180815 {
 	int i,j;
 } bug180815_var0, bug180815_var1;
+
+// https://bugs.eclipse.org/bugs/show_bug.cgi?id=352350
+namespace {
+  int bug352350;
+}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,6 +69,7 @@ public class CModelElementsTests extends TestCase {
 		super(name);
 	}
 		
+	@Override
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
 		fCProject= CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_FAST_INDEXER);
@@ -93,6 +94,7 @@ public class CModelElementsTests extends TestCase {
 	}
 
 	
+	@Override
 	protected void tearDown() {
 		  CProjectHelper.delete(fCProject);
 	}	
@@ -133,6 +135,7 @@ public class CModelElementsTests extends TestCase {
 		checkArrays(tu);
 		
 		checkBug180815(tu);
+		checkBug352350(tu);
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=180815
@@ -144,6 +147,18 @@ public class CModelElementsTests extends TestCase {
 		assertEquals(2, struct.getChildren().length);
 	}
 
+	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=352350
+	private void checkBug352350(IParent parent) throws CModelException {
+		List namespaces = parent.getChildrenOfType(ICElement.C_NAMESPACE);
+		assertEquals(2, namespaces.size());
+		for (Object o : namespaces) {
+			INamespace namespace = (INamespace)o;
+			if (namespace.getElementName().length() == 0) {
+				assertTrue(namespace.equals(namespace));
+			}
+		}
+	}
+	
 	private void checkInclude(IParent tu) throws CModelException{
 		List tuIncludes = tu.getChildrenOfType(ICElement.C_INCLUDE);
 		IInclude inc1 = (IInclude) tuIncludes.get(0);

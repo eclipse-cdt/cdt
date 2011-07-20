@@ -3026,14 +3026,14 @@ public class CPPSemantics {
     		} 
     	} 
     	IASTInitializerClause[] argArray = args.toArray(new IASTInitializerClause[args.size()]);
-		return findOverloadedOperator(exp, argArray, type, op, LookupMode.ALL_GLOBALS);
+		return findOverloadedOperator(exp, argArray, type, op, LookupMode.GLOBALS_IF_NO_MEMBERS);
     }
 
     public static ICPPFunction findOverloadedOperator(ICPPASTDeleteExpression exp) {
     	OverloadableOperator op = OverloadableOperator.fromDeleteExpression(exp);
     	IType classType = getNestedClassType(exp);
-    	IASTExpression[] args = new IASTExpression[] {createArgForType(exp, classType)};
-		return findOverloadedOperator(exp, args, classType, op, LookupMode.ALL_GLOBALS);
+    	IASTExpression[] args = new IASTExpression[] {createArgForType(exp, classType), exp.getOperand()};
+		return findOverloadedOperator(exp, args, classType, op, LookupMode.GLOBALS_IF_NO_MEMBERS);
     }
     
     private static ICPPClassType getNestedClassType(ICPPASTDeleteExpression exp) {
@@ -3284,7 +3284,7 @@ public class CPPSemantics {
     	return findOverloadedOperator(dummy, args, op1type, OverloadableOperator.COMMA, LookupMode.LIMITED_GLOBALS);
     }
 
-    private static enum LookupMode {NO_GLOBALS, LIMITED_GLOBALS, ALL_GLOBALS}
+    private static enum LookupMode {NO_GLOBALS, GLOBALS_IF_NO_MEMBERS, LIMITED_GLOBALS, ALL_GLOBALS}
     private static ICPPFunction findOverloadedOperator(IASTExpression parent, IASTInitializerClause[] args, IType methodLookupType, 
     		OverloadableOperator operator, LookupMode mode) {
     	ICPPClassType callToObjectOfClassType= null;
@@ -3337,43 +3337,64 @@ public class CPPSemantics {
 	    funcName.setParent(parent);
 	    funcName.setPropertyInParent(STRING_LOOKUP_PROPERTY);
     	LookupData funcData = new LookupData(funcName);
+    	if (operator == OverloadableOperator.DELETE || operator == OverloadableOperator.DELETE_ARRAY) {
+    		args= ArrayUtil.removeFirst(args);
+    	}
     	funcData.setFunctionArguments(true, args);
     	funcData.ignoreMembers = true; // (13.3.1.2.3)
-    	if (mode != LookupMode.NO_GLOBALS || callToObjectOfClassType != null) {
+    	boolean haveMembers= methodData != null && methodData.hasResults();
+    	if (mode == LookupMode.ALL_GLOBALS || mode == LookupMode.LIMITED_GLOBALS
+    			|| (mode == LookupMode.GLOBALS_IF_NO_MEMBERS && !haveMembers)) {
 			try {
-				if (mode != LookupMode.NO_GLOBALS) {
-					IScope scope = CPPVisitor.getContainingScope(parent);
-					if (scope == null)
-						return null;
-					lookup(funcData, scope);
-					try {
-						doKoenigLookup(funcData);
-					} catch (DOMException e) {
-					}
-					// Filter with file-set
-					IASTTranslationUnit tu= parent.getTranslationUnit();
-					if (tu != null && funcData.foundItems instanceof Object[]) {
-						final IIndexFileSet fileSet = tu.getIndexFileSet();
-						if (fileSet != null) {
-							int j=0;
-							final Object[] items= (Object[]) funcData.foundItems;
-							for (int i = 0; i < items.length; i++) {
-								Object item = items[i];
-								items[i]= null;
-								if (item instanceof IIndexBinding) {
-									if (!fileSet.containsDeclaration((IIndexBinding) item)) {
-										continue;
-									}
+				IScope scope = CPPVisitor.getContainingScope(parent);
+				if (scope == null)
+					return null;
+				lookup(funcData, scope);
+				try {
+					doKoenigLookup(funcData);
+				} catch (DOMException e) {
+				}
+				// Filter with file-set
+				IASTTranslationUnit tu= parent.getTranslationUnit();
+				if (tu != null && funcData.foundItems instanceof Object[]) {
+					final IIndexFileSet fileSet = tu.getIndexFileSet();
+					if (fileSet != null) {
+						int j=0;
+						final Object[] items= (Object[]) funcData.foundItems;
+						for (int i = 0; i < items.length; i++) {
+							Object item = items[i];
+							items[i]= null;
+							if (item instanceof IIndexBinding) {
+								if (!fileSet.containsDeclaration((IIndexBinding) item)) {
+									continue;
 								}
-								items[j++]= item;
 							}
+							items[j++]= item;
 						}
 					}
 				}
 			} catch (DOMException e) {
 				return null;
 			}
-
+			
+			if (operator == OverloadableOperator.NEW || operator == OverloadableOperator.DELETE
+		    	|| operator == OverloadableOperator.NEW_ARRAY || operator == OverloadableOperator.DELETE_ARRAY) {
+				
+				// Those operators replace the built-in operator
+				Object[] items= (Object[]) funcData.foundItems;
+				int j= 0;
+				for (Object object : items) {
+					if (object instanceof ICPPFunction) {
+						ICPPFunction func= (ICPPFunction) object;
+						if (!(func instanceof CPPImplicitFunction)) 
+							items[j++]= func;
+					}
+				}
+				if (j>0) {
+					while (j < items.length) 
+						items[j++]= null;
+				}
+			}
 			// 13.3.1.2.3
 			// However, if no operand type has class type, only those non-member functions ...
 			if (mode == LookupMode.LIMITED_GLOBALS) {
@@ -3404,31 +3425,31 @@ public class CPPSemantics {
 					}
 				} 
 			}
-			
-			if (callToObjectOfClassType != null) {	
-				try {
-					// 13.3.1.1.2 call to object of class type
-					ICPPMethod[] ops = SemanticUtil.getConversionOperators(callToObjectOfClassType);
-					for (ICPPMethod op : ops) {
-						if (op.isExplicit())
-							continue;
-						IFunctionType ft= op.getType();
-						if (ft != null) {
-							IType rt= SemanticUtil.getNestedType(ft.getReturnType(), SemanticUtil.TDEF);
-							if (rt instanceof IPointerType) {
-								IType ptt= SemanticUtil.getNestedType(((IPointerType) rt).getType(), SemanticUtil.TDEF);
-								if (ptt instanceof IFunctionType) {
-									IFunctionType ft2= (IFunctionType) ptt;
-									IBinding sf= createSurrogateCallFunction(parent.getTranslationUnit().getScope(), ft2.getReturnType(), rt, ft2.getParameterTypes());
-									mergeResults(funcData, sf, false);
-								}
-							}
-						}
-					}
-				} catch (DOMException e) {
-					return null;
-				}
-			}
+    	}	
+    	
+    	if (callToObjectOfClassType != null) {	
+    		try {
+    			// 13.3.1.1.2 call to object of class type
+    			ICPPMethod[] ops = SemanticUtil.getConversionOperators(callToObjectOfClassType);
+    			for (ICPPMethod op : ops) {
+    				if (op.isExplicit())
+    					continue;
+    				IFunctionType ft= op.getType();
+    				if (ft != null) {
+    					IType rt= SemanticUtil.getNestedType(ft.getReturnType(), SemanticUtil.TDEF);
+    					if (rt instanceof IPointerType) {
+    						IType ptt= SemanticUtil.getNestedType(((IPointerType) rt).getType(), SemanticUtil.TDEF);
+    						if (ptt instanceof IFunctionType) {
+    							IFunctionType ft2= (IFunctionType) ptt;
+    							IBinding sf= createSurrogateCallFunction(parent.getTranslationUnit().getScope(), ft2.getReturnType(), rt, ft2.getParameterTypes());
+    							mergeResults(funcData, sf, false);
+    						}
+    					}
+    				}
+    			}
+    		} catch (DOMException e) {
+    			return null;
+    		}
     	}
 		
     	if (methodLookupType instanceof ICPPClassType || type2 instanceof ICPPClassType) {

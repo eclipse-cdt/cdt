@@ -1054,6 +1054,13 @@ public class CPPTemplates {
 				if (ret == r && params == ps) {
 					return type;
 				}
+				// The parameter types need to be adjusted.
+				for (int i=0; i<params.length; i++) {
+					IType p= params[i];
+					if (!isDependentType(p)) {
+						params[i]= CPPVisitor.adjustParameterType(p, true);
+					}
+				}
 				return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile(), ft.takesVarArgs());
 			} 
 

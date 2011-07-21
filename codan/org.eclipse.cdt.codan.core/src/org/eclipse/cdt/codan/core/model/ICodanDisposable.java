@@ -25,8 +25,8 @@ package org.eclipse.cdt.codan.core.model;
  */
 public interface ICodanDisposable {
 	/**
-	 * Disposes of the cache. This method has to be called exactly once during
-	 * the life cycle of the cache.
+	 * Disposes of the object. This method has to be called exactly once during
+	 * the life cycle of the object.
 	 */
 	public void dispose();
 }

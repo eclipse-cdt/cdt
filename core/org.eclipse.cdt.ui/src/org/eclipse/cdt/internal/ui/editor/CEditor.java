@@ -3224,7 +3224,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 *
 	 * @since 4.0
 	 */
-	private boolean isSemanticHighlightingEnabled() {
+	protected boolean isSemanticHighlightingEnabled() {
 		return SemanticHighlightings.isEnabled(getPreferenceStore()) && !(isEnableScalablilityMode() && getPreferenceStore().getBoolean(PreferenceConstants.SCALABILITY_SEMANTIC_HIGHLIGHT));
 	}
 

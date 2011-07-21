@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software (IFS)- initial API and implementation 
+ *     Institute for Software (IFS)- initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.hidemethod;
 
@@ -19,7 +19,6 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContribution;
 
 /**
  * @author Emanuel Graf IFS
- *
  */
 public class HideMethodRefactoringContribution extends CRefactoringContribution {
 
@@ -27,11 +26,10 @@ public class HideMethodRefactoringContribution extends CRefactoringContribution 
 	@Override
 	public RefactoringDescriptor createDescriptor(String id, String project, String description,
 			String comment, Map arguments, int flags) throws IllegalArgumentException {
-		if(id.equals(HideMethodRefactoring.ID)) {
+		if (id.equals(HideMethodRefactoring.ID)) {
 			return new HideMethodRefactoringDescription(project, description, comment, arguments);
-		}else {
+		} else {
 			return null;
 		}
 	}
-
 }

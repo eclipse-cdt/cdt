@@ -196,7 +196,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		mappedRootURI = null;
 		
 		if (detectedSettingEntries!=null && detectedSettingEntries.size()>0) {
-			groupEntries(detectedSettingEntries);
 			setSettingEntries(currentCfgDescription, currentResource, currentLanguageId, detectedSettingEntries);
 			
 			IStatus status = new Status(IStatus.INFO, MakeCorePlugin.PLUGIN_ID, getClass().getSimpleName()
@@ -211,33 +210,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		}
 
 		currentCommandResolved = null;
-	}
-
-	protected void groupEntries(List<ICLanguageSettingEntry> inputEntries) {
-		Map<Integer, List<ICLanguageSettingEntry>> groupedEntries = new HashMap<Integer, List<ICLanguageSettingEntry>>();
-		int kindMax = 0;
-		for (ICLanguageSettingEntry entry : inputEntries) {
-			int kind = entry.getKind();
-			if (kind>kindMax) {
-				kindMax = kind;
-			}
-			
-			List<ICLanguageSettingEntry> entries = groupedEntries.get(kind);
-			if (entries==null) {
-				entries = new ArrayList<ICLanguageSettingEntry>();
-				groupedEntries.put(kind, entries);
-			}
-			entries.add(entry);
-		}
-		
-		inputEntries.clear();
-		
-		for (int kind=1;kind<=kindMax;kind++) {
-			List<ICLanguageSettingEntry> entries = groupedEntries.get(kind);
-			if (entries!=null) {
-				inputEntries.addAll(entries);
-			}
-		}
 	}
 
 	public void run(IProject project, String languageId, IPath workingDirectory, String[] env,

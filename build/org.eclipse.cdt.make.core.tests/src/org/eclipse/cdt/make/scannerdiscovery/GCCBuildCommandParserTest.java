@@ -770,46 +770,21 @@ public class GCCBuildCommandParserTest extends TestCase {
 
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
+		String device = project.getLocation().getDevice();
 //		+ " -I/path0 "
-		{
-			IPath path = new Path("/path0").setDevice(project.getLocation().getDevice());
-			CIncludePathEntry expected = new CIncludePathEntry(path, 0);
-			assertEquals(expected, entries.get(0));
-		}
-//		+ " -DMACRO1=value"
-		{
-			CMacroEntry expected = new CMacroEntry("MACRO1", "value", 0);
-			assertEquals(expected, entries.get(1));
-		}
-//		+ " -ldomain"
-		{
-			CLibraryFileEntry expected = new CLibraryFileEntry("libdomain.a", 0);
-			assertEquals(expected, entries.get(2));
-		}
+		assertEquals(new CIncludePathEntry(new Path("/path0").setDevice(device), 0), entries.get(0));
 //		+ " -I /path1 "
-		{
-			IPath path = new Path("/path1").setDevice(project.getLocation().getDevice());
-			CIncludePathEntry expected = new CIncludePathEntry(path, 0);
-			assertEquals(expected, entries.get(3));
-		}
-//		+ " -DMACRO2=\"value with spaces\""
-		{
-			CMacroEntry expected = new CMacroEntry("MACRO2", "value with spaces", 0);
-			assertEquals(expected, entries.get(4));
-		}
+		assertEquals(new CIncludePathEntry(new Path("/path1").setDevice(device), 0), entries.get(1));
 //		+ " -I\"/path with spaces\""
-		{
-			IPath path = new Path("/path with spaces").setDevice(project.getLocation().getDevice());
-			CIncludePathEntry expected = new CIncludePathEntry(path, 0);
-			assertEquals(expected, entries.get(5));
-		}
+		assertEquals(new CIncludePathEntry(new Path("/path with spaces").setDevice(device), 0), entries.get(2));
+//		+ " -DMACRO1=value"
+		assertEquals(new CMacroEntry("MACRO1", "value", 0), entries.get(3));
+//		+ " -DMACRO2=\"value with spaces\""
+		assertEquals(new CMacroEntry("MACRO2", "value with spaces", 0), entries.get(4));
 //		+ " -L/usr/lib"
-		{
-			IPath path = new Path("/usr/lib").setDevice(project.getLocation().getDevice());
-			CLibraryPathEntry expected = new CLibraryPathEntry(path, 0);
-			assertEquals(expected, entries.get(6));
-		}
-
+		assertEquals(new CLibraryPathEntry(new Path("/usr/lib").setDevice(device), 0), entries.get(5));
+//		+ " -ldomain"
+		assertEquals(new CLibraryFileEntry("libdomain.a", 0), entries.get(6));
 		assertEquals(7, entries.size());
 	}
 
@@ -1811,11 +1786,11 @@ public class GCCBuildCommandParserTest extends TestCase {
 		// check populated entries
 		{
 			List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
-			assertEquals(new CMacroEntry("BOOST_ALL_NO_LIB", "1", 0), entries.get(0));
-			assertEquals(new CMacroEntry("BOOST_PYTHON_SOURCE", "", 0), entries.get(1));
-			assertEquals(new CMacroEntry("BOOST_PYTHON_STATIC_LIB", "", 0), entries.get(2));
-			assertEquals(new CIncludePathEntry(project.getFullPath(), ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED), entries.get(3));
-			assertEquals(new CIncludePathEntry(new Path("/Python1025/Include").setDevice(project.getLocation().getDevice()), 0), entries.get(4));
+			assertEquals(new CIncludePathEntry(project.getFullPath(), ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED), entries.get(0));
+			assertEquals(new CIncludePathEntry(new Path("/Python1025/Include").setDevice(project.getLocation().getDevice()), 0), entries.get(1));
+			assertEquals(new CMacroEntry("BOOST_ALL_NO_LIB", "1", 0), entries.get(2));
+			assertEquals(new CMacroEntry("BOOST_PYTHON_SOURCE", "", 0), entries.get(3));
+			assertEquals(new CMacroEntry("BOOST_PYTHON_STATIC_LIB", "", 0), entries.get(4));
 			assertEquals(5, entries.size());
 		}
 	}

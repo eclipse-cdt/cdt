@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.language.settings.providers;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,7 +120,8 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 				langMap = new HashMap<String, List<ICLanguageSettingEntry>>();
 				fStorage.put(languageId, langMap);
 			}
-			langMap.put(rcProjectPath, entries);
+			List<ICLanguageSettingEntry> sortedEntries = sortEntries(entries);
+			langMap.put(rcProjectPath, sortedEntries);
 		} else {
 			// do not keep nulls in the tables
 			Map<String, List<ICLanguageSettingEntry>> langMap = fStorage.get(languageId);
@@ -130,6 +132,25 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 				}
 			}
 		}
+	}
+
+	protected List<ICLanguageSettingEntry> sortEntries(List<ICLanguageSettingEntry> entries) {
+		List<ICLanguageSettingEntry> sortedEntries = new ArrayList<ICLanguageSettingEntry>(entries);
+		Collections.sort(sortedEntries, new Comparator<ICLanguageSettingEntry>(){
+			/**
+			 * This comparator sorts by kinds first and the macros are sorted additionally by name. 
+			 */
+			public int compare(ICLanguageSettingEntry entry0, ICLanguageSettingEntry entry1) {
+				int kind0 = entry0.getKind();
+				int kind1 = entry1.getKind();
+				if (kind0==ICSettingEntry.MACRO && kind1==ICSettingEntry.MACRO) {
+					return entry0.getName().compareTo(entry1.getName());
+				}
+				
+				return kind0 - kind1;
+			}});
+
+		return sortedEntries;
 	}
 
 	/**

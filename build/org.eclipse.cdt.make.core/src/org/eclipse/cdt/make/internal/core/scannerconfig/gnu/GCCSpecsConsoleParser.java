@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,11 +38,11 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	private final String DEFINE = "#define"; //$NON-NLS-1$
 
 	private IProject fProject = null;
-	private IScannerInfoCollector fCollector = null;
+	protected IScannerInfoCollector fCollector = null;
 	
 	private boolean expectingIncludes = false;
-	private List<String> symbols = new ArrayList<String>();
-	private List<String> includes = new ArrayList<String>();
+	protected List<String> symbols = new ArrayList<String>();
+	protected List<String> includes = new ArrayList<String>();
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IPath, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector, org.eclipse.cdt.core.IMarkerGenerator)

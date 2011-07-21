@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 			.compile("-(?:qgcc_c_stdinc|qc_stdinc|qgcc_cpp_stdinc|qcpp_stdinc)=(.*)"); //$NON-NLS-1$
 	
 	// xlC compiler constants
-	final static String [] compilerConstants = {
+	protected final static String [] compilerConstants = {
 			"__IBMCPP__", //$NON-NLS-1$
 			"__xlC__",    //$NON-NLS-1$
 			"__IBMC__",   //$NON-NLS-1$
@@ -57,11 +57,11 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	
 	private IProject fProject = null;
 
-	private IScannerInfoCollector fCollector = null;
+	protected IScannerInfoCollector fCollector = null;
 
-	private List<String> symbols = new ArrayList<String>();
+	protected List<String> symbols = new ArrayList<String>();
 
-	private List<String> includes = new ArrayList<String>();
+	protected List<String> includes = new ArrayList<String>();
 
 	/*
 	 * (non-Javadoc)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ import org.eclipse.core.resources.IProject;
  * @author vhirsl
  */
 public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsoleParser {
-    private static final String[] COMPILER_INVOCATION = {
+    protected static final String[] COMPILER_INVOCATION = {
             "gcc", "g++", "cc", "c++" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
     };
     protected static final String DASHIDASH= "-I-"; //$NON-NLS-1$
@@ -37,12 +37,12 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
     protected static final String DASHD= "-D"; //$NON-NLS-1$
     
     private IProject project;
-    private IScannerInfoCollector collector;
+    protected IScannerInfoCollector collector;
     
     private boolean bMultiline = false;
     private String sMultiline = ""; //$NON-NLS-1$
 
-	private String[] fCompilerCommands;
+	protected String[] fCompilerCommands;
 
     /**
      * @return Returns the project.

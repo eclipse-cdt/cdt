@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software (IFS)- initial API and implementation 
+ *     Institute for Software (IFS)- initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
@@ -18,7 +18,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 
 /**
  * @author Emanuel Graf IFS
- *
  */
 public abstract class CRefactoringContribution extends RefactoringContribution {
 
@@ -32,9 +31,8 @@ public abstract class CRefactoringContribution extends RefactoringContribution {
 		if (descriptor instanceof CRefactoringDescription) {
 			CRefactoringDescription refDesc = (CRefactoringDescription) descriptor;
 			return refDesc.getParameterMap();
-		}else {
+		} else {
 			return super.retrieveArgumentMap(descriptor);
 		}
 	}
-
 }

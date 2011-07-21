@@ -14,6 +14,7 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueVMUtil;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.ICachingVMProvider;
+import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
 
 /**
  * Public constants used in the debug view model.
@@ -30,7 +31,13 @@ public interface IDebugVMConstants {
     public static final String COLUMN_ID__VALUE = DsfUIPlugin.PLUGIN_ID + ".COLUMN_ID__VALUE"; //$NON-NLS-1$
     public static final String COLUMN_ID__ADDRESS = DsfUIPlugin.PLUGIN_ID + ".COLUMN_ID__ADDRESS"; //$NON-NLS-1$
     public static final String COLUMN_ID__DESCRIPTION = DsfUIPlugin.PLUGIN_ID + ".COLUMN_ID__DESCRIPTION"; //$NON-NLS-1$
-    public static final String COLUMN_ID__EXPRESSION = DsfUIPlugin.PLUGIN_ID + ".COLUMN_ID__EXPRESSION"; //$NON-NLS-1$
+    
+    /**
+     * Make expression column ID the same as platform's "name" column ID to 
+     * enable the File->Rename in-line editing action in the expressions view.
+     */
+    @SuppressWarnings("restriction")
+	public static final String COLUMN_ID__EXPRESSION = VariableColumnPresentation.COLUMN_VARIABLE_NAME;
 
     /**
      * Property name used to store the selected number format in a 

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ * IBM Corporation - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.indexer;
@@ -41,6 +41,9 @@ public class FileEncodingRegistry implements Serializable {
 	}
 
 	public void registerFileEncoding(String filename, String encoding) {
+		if(defaultEncoding.equals(encoding)){
+			return;
+		}
 		if (fFilePathToEncodingMap != null) {
 			fFilePathToEncodingMap.put(filename, encoding);
 		}

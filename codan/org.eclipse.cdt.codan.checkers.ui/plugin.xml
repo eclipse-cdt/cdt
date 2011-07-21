@@ -10,6 +10,10 @@
              problemId="org.eclipse.cdt.codan.internal.checkers.CatchByReference">
        </resolution>
        <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CatchByConstReferenceQuickFix"
+             problemId="org.eclipse.cdt.codan.internal.checkers.CatchByReference">
+       </resolution>
+       <resolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixAssignmentInCondition"
              problemId="org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionProblem">
        </resolution>

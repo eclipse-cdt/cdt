@@ -146,4 +146,12 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 	public void assertContainedIn(String expected, String result) {
 		assertTrue("Text <" + expected + "> not found in <" + result + ">", result.contains(expected)); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
+
+	/**
+	 * Changes the quick fix to be used
+	 * @param quickFix
+	 */
+	public void setQuickFix(AbstractCodanCMarkerResolution quickFix) {
+		this.quickFix = quickFix;
+	}
 }

@@ -39,6 +39,11 @@ public class FileEncodingRegistry implements Serializable {
 		defaultEncoding = newDefaultEncoding;
 
 	}
+	
+	public String getDefaultEncoding() {
+		return defaultEncoding;
+	}
+
 
 	public void registerFileEncoding(String filename, String encoding) {
 		if(defaultEncoding.equals(encoding)){

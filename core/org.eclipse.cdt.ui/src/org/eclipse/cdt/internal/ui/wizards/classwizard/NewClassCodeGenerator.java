@@ -211,7 +211,11 @@ public class NewClassCodeGenerator {
 	                String headerContent = constructHeaderFileContent(headerTU, publicMethods,
 	                		protectedMethods, privateMethods, headerWorkingCopy.getBuffer().getContents(),
 	                		new SubProgressMonitor(monitor, 100));
-	                headerContent= formatSource(headerContent, headerTU);
+	                if (headerContent != null) {
+		                headerContent= formatSource(headerContent, headerTU);	
+	                } else {
+	                	headerContent = ""; //$NON-NLS-1$
+	                }
 	                headerWorkingCopy.getBuffer().setContents(headerContent);
 
 	                if (monitor.isCanceled()) {
@@ -250,7 +254,11 @@ public class NewClassCodeGenerator {
 		                String sourceContent = constructSourceFileContent(sourceTU, headerTU,
 		                		publicMethods, protectedMethods, privateMethods,
 		                		sourceWorkingCopy.getBuffer().getContents(), new SubProgressMonitor(monitor, 100));
-		                sourceContent= formatSource(sourceContent, sourceTU);
+		                if (sourceContent != null) {
+			                sourceContent = formatSource(sourceContent, sourceTU);	
+		                } else {
+		                	sourceContent = ""; //$NON-NLS-1$
+		                }
 		                sourceWorkingCopy.getBuffer().setContents(sourceContent);
 
 		                if (monitor.isCanceled()) {

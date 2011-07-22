@@ -485,7 +485,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				final boolean isExcludedSource= isSourceUnit && !fIndexFilesWithoutConfiguration && !fResolver.isFileBuildConfigured(tu);
 
 				if ((isSourceUnit && !isExcludedSource) || fIndexHeadersWithoutContext != UnusedHeaderStrategy.skip ||
-						fResolver.isIndexedUnconditionally(tu)) {
+						fResolver.isIndexedUnconditionally(ifl)) {
 					// Headers or sources required with a specific linkage
 					AbstractLanguage[] langs= fResolver.getLanguages(tu, fIndexHeadersWithoutContext == UnusedHeaderStrategy.useBoth);
 					for (AbstractLanguage lang : langs) {

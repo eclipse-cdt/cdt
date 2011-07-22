@@ -243,12 +243,6 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 	}
 
 	@Override
-	public boolean isIndexedUnconditionally(Object tuo) {
-		ITranslationUnit tu= (ITranslationUnit) tuo;
-		return isIndexedUnconditionally(IndexLocationFactory.getIFL(tu));
-	}
-
-	@Override
 	public boolean isIndexedUnconditionally(IIndexFileLocation ifl) {
 		return CCoreInternals.getPDOMManager().isFileIndexedUnconditionally(ifl);
 	}

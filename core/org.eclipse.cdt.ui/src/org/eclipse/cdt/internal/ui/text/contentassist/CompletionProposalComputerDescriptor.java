@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.osgi.framework.Bundle;
 
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
@@ -70,13 +71,6 @@ final class CompletionProposalComputerDescriptor {
 	 * core's {@link PerformanceStats} service.
 	 */
 	private static final boolean MEASURE_PERFORMANCE= PerformanceStats.isEnabled(PERFORMANCE_EVENT);
-	/**
-	 * Independently of the {@link PerformanceStats} service, any operation that takes longer than
-	 * {@value} milliseconds will be flagged as an violation. This timeout does not apply to the
-	 * first invocation, as it may take longer due to plug-in initialization etc. See also
-	 * {@link #fIsReportingDelay}.
-	 */
-	private static final long MAX_DELAY= 5000;
 	
 	/* log constants */
 	private static final String COMPUTE_COMPLETION_PROPOSALS= "computeCompletionProposals()"; //$NON-NLS-1$
@@ -113,7 +107,7 @@ final class CompletionProposalComputerDescriptor {
 	/** The first error message in the most recent operation, or <code>null</code>. */
 	private String fLastError;
 	/**
-	 * Tells whether to inform the user when <code>MAX_DELAY</code> has been exceeded.
+	 * Tells whether to inform the user when the value of <code>getMaxDelay()</code> has been exceeded.
 	 * We start timing execution after the first session because the first may take
 	 * longer due to plug-in activation and initialization.
 	 */
@@ -463,13 +457,32 @@ final class CompletionProposalComputerDescriptor {
 		
 		if (fIsReportingDelay) {
 			long current= System.currentTimeMillis();
-			if (current - fStart > MAX_DELAY) {
+			if (current - fStart > getMaxDelay()) {
 				IStatus status= createPerformanceStatus(operation);
 				fRegistry.informUser(this, status);
 			}
 		}
 	}
 
+	/**
+	 * Independently of the {@link PerformanceStats} service, any operation that takes longer than
+     * the milliseconds returned by this method will be flagged as an violation. This timeout does
+     * not apply to the first invocation, as it may take longer due to plug-in initialization etc. 
+     * See also {@link #fIsReportingDelay}.
+     * <p>
+     * The max duration is stored in the preference {@link ContentAssistPreference#PROPOSALS_TIMEOUT}
+	 * 
+	 * @return the max duration (ms) a proposal computer is allowed to compute until it is 
+	 *         assumed to be buggy and will be disabled.<br>
+	 *         Is always > 0
+	 */
+	private long getMaxDelay() {
+        long timeout = CUIPlugin.getDefault().getPreferenceStore().getLong(PreferenceConstants.CODEASSIST_PROPOSALS_TIMEOUT);
+        if (timeout <= 0L)
+	        return  Long.MAX_VALUE;
+        return timeout;
+	}
+	
 	private IStatus createExceptionStatus(InvalidRegistryObjectException x) {
 		// extension has become invalid - log & disable
 		String blame= createBlameMessage();

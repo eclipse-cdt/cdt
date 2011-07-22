@@ -40,6 +40,8 @@ public class ContentAssistPreference {
 	public final static String AUTOACTIVATION_DELAY=  "content_assist_autoactivation_delay"; //$NON-NLS-1$
 	/** Preference key for content assist timeout delay (unused) */
 	public final static String TIMEOUT_DELAY=  "content_assist_timeout_delay"; //$NON-NLS-1$
+	/** Preference key for completion proposal timeout */
+	public final static String PROPOSALS_TIMEOUT=  PreferenceConstants.CODEASSIST_PROPOSALS_TIMEOUT;
 	/** Preference key for content assist proposal color */
 	public final static String PROPOSALS_FOREGROUND=  PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND;
 	/** Preference key for content assist proposal color */

@@ -1123,6 +1123,16 @@ public class PreferenceConstants {
 	public final static String CODEASSIST_PROPOSALS_FOREGROUND= "content_assist_proposals_foreground"; //$NON-NLS-1$
 	
 	/**
+     * A named preference that holds the duration (in milli seconds) a content proposal may compute 
+     * until it is assumed that the proposal computer has a problem and should be disabled.
+     * <p>
+     * Value is of type <code>long</code>.
+     * 
+     * @since 5.4 
+     */
+    public final static String CODEASSIST_PROPOSALS_TIMEOUT= "content_assist_proposals_timeout"; //$NON-NLS-1$
+
+    /**
 	 * A named preference that holds the background color used for parameter hints.
 	 * <p>
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
@@ -1959,6 +1969,8 @@ public class PreferenceConstants {
 		// Content assist
 		store.setDefault(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES, "org.eclipse.cdt.ui.textProposalCategory\0"); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.CODEASSIST_CATEGORY_ORDER, "org.eclipse.cdt.ui.parserProposalCategory:65539\0org.eclipse.cdt.ui.textProposalCategory:65541\0org.eclipse.cdt.ui.templateProposalCategory:2\0org.eclipse.cdt.ui.helpProposalCategory:5\0"); //$NON-NLS-1$
+
+		store.setDefault(PreferenceConstants.CODEASSIST_PROPOSALS_TIMEOUT, 5000);
 
 		setDefaultAndFireEvent(
 				store,

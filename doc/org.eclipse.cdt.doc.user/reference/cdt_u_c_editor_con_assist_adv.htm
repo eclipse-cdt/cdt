@@ -44,6 +44,13 @@
 			<td headers="option"><strong>Down</strong></td>
 			<td headers="description">Moves the selected proposal item down in the cycling list.</td>
 		</tr>
+        <tr valign="top">
+            <td headers="option"><strong>Timeout for each proposal kind (ms)</strong></td>
+            <td headers="description">Specifies the number of milliseconds a code completion proposal kind is allowed to compute 
+            proposals. If it takes more time then it is assumed that this proposal kind is faulty. 
+            In this case a dialog is opened and an appropriate message is shown to the user<br>If the value is 0 each completion 
+            proposal can compute as long as it needs to before being assumed to be faulty.</td>
+        </tr>
 	</tbody>
 </table>
 

@@ -117,7 +117,7 @@ public class StubUtility {
 			};
 
 		String text = evaluateTemplate(context, template, fullLine);
-		if (!text.endsWith(lineDelimiter))
+		if (text != null && !text.endsWith(lineDelimiter))
 			text += lineDelimiter;
 		return text;
 	}
@@ -164,7 +164,7 @@ public class StubUtility {
 				CodeTemplateContextType.TYPE_COMMENT
 			};
 		String text = evaluateTemplate(context, template, fullLine);
-		if (!text.endsWith(lineDelimiter))
+		if (text != null && !text.endsWith(lineDelimiter))
 			text += lineDelimiter;
 		return text;
 	}

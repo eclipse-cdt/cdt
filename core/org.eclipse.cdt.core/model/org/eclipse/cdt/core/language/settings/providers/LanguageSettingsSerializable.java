@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
 import org.eclipse.cdt.internal.core.XmlUtil;
+import org.eclipse.cdt.internal.core.parser.util.WeakHashSet;
 import org.eclipse.core.resources.IResource;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -49,6 +50,14 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 	private static final String ATTR_VALUE = "value"; //$NON-NLS-1$
 
 	private static final String ELEM_FLAG = "flag"; //$NON-NLS-1$
+
+	private static WeakHashSet<List<ICLanguageSettingEntry>> listLSEPool = new WeakHashSet<List<ICLanguageSettingEntry>>() {
+		@Override
+		public synchronized List<ICLanguageSettingEntry> add(List<ICLanguageSettingEntry> list) {
+			return super.add(list);
+		}
+		
+	};
 
 
 	private Map<String, // languageId
@@ -120,7 +129,7 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 				langMap = new HashMap<String, List<ICLanguageSettingEntry>>();
 				fStorage.put(languageId, langMap);
 			}
-			List<ICLanguageSettingEntry> sortedEntries = sortEntries(entries);
+			List<ICLanguageSettingEntry> sortedEntries = listLSEPool.add(Collections.unmodifiableList(sortEntries(entries)));
 			langMap.put(rcProjectPath, sortedEntries);
 		} else {
 			// do not keep nulls in the tables
@@ -152,7 +161,7 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 
 		return sortedEntries;
 	}
-
+	
 	/**
 	 * Sets language settings entries for the provider.
 	 * Note that the entries are not persisted at that point. To persist use TODO
@@ -170,6 +179,8 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * Note that this list is unmodifiable.
 	 */
 	@Override
 	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
@@ -178,7 +189,7 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 			String rcProjectPath = rc!=null ? rc.getProjectRelativePath().toString() : null;
 			List<ICLanguageSettingEntry> entries = langMap.get(rcProjectPath);
 			if (entries!=null)
-				return Collections.unmodifiableList(entries);
+				return entries;
 		}
 		
 		if (languageId!=null && (languageScope==null || languageScope.contains(languageId))) {
@@ -408,8 +419,8 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 				for (Entry<String, List<ICLanguageSettingEntry>> entryRc : entrySetRc) {
 					String rcProjectPath = entryRc.getKey();
 					List<ICLanguageSettingEntry> lsEntries = entryRc.getValue();
-					List<ICLanguageSettingEntry> lsEntriesClone = new ArrayList<ICLanguageSettingEntry>(lsEntries);
-					mapRcClone.put(rcProjectPath, lsEntriesClone);
+					// don't need to clone entries, they are from the pool 
+					mapRcClone.put(rcProjectPath, lsEntries);
 				}
 //				mapLangClone.put(langId, mapRcClone);
 				storageClone.put(langId, mapRcClone);

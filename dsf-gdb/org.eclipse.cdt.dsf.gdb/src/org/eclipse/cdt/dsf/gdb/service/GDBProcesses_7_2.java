@@ -231,74 +231,44 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		                },
 	    				new Step() { 
 	    					@Override
-	    					public void execute(RequestMonitor rm) {
+	    					public void execute(final RequestMonitor rm) {
 	    						// Now, set the binary to be used.
 	    						if (binaryPath != null) {
     				    			fCommandControl.queueCommand(
     				    					fCommandFactory.createMIFileExecAndSymbols(fContainerDmc, binaryPath), 
-			    							new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+			    							new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm) {
+    				    						@Override
+    				    						protected void handleCompleted() {
+    						                    	// Because of a GDB 7.2 bug, for remote-attach sessions,
+    						                    	// we need to be disconnected from the target
+    						                    	// when we set the very first binary to be used.
+    						                    	// Now that we have disconnected and set the binary,
+    				    							// we may need to reconnect to the target.
+    				    							// If we were unable to set the binary (e.g., if the specified path
+    				    							// is invalid) we also need to reconnect to the target before 
+    				    							// aborting the rest of the sequence.
+    						                    	// Bug 352998
+    				    							
+    				    							if (fNeedToReconnect) {
+    				    								fNeedToReconnect = false;
+
+    				    								// Set the status in case it is an error, so that when rm.done() is automatically
+    				    								// called, we continue to abort the sequence if we are dealing with a failure.
+    				    								rm.setStatus(getStatus());
+    				    							
+    						                    		connectToTarget(procCtx, rm);  				    								
+    				    							} else {
+    				    								super.handleCompleted();
+    				    							}
+    				    						};
+    				    					});
     				    			return;
 	    						}
 
+	    						assert fNeedToReconnect == false;
 	    				    	rm.done();
 	    					}
-	    				},		                
-		                new Step() { 
-		                    @Override
-		                	@SuppressWarnings("unchecked")
-		                    public void execute(final RequestMonitor rm) {
-		                    	// Because of a GDB 7.2 bug, for remote-attach sessions,
-		                    	// we need to be disconnected from the target
-		                    	// when we set the very first binary to be used.
-		                    	// Now that we have disconnected and set the binary,
-		                    	// lets reconnect.
-		                    	// Bug 352998
-		                    	if (fNeedToReconnect) {
-		                    		fNeedToReconnect = false;
-		                    		ILaunch launch = (ILaunch)procCtx.getAdapter(ILaunch.class);
-		                    		assert launch != null;
-		                    		if (launch != null) {
-		                    			Map<String, Object> attributes = null;
-		                    			try {
-		                    				attributes = launch.getLaunchConfiguration().getAttributes();
-		                    			} catch (CoreException e) {}
-
-		                    			boolean isTcpConnection = CDebugUtils.getAttribute(
-		                    					attributes,
-		                    					IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
-		                    					false);
-
-		                    			if (isTcpConnection) {
-		                    				String remoteTcpHost = CDebugUtils.getAttribute(
-		                    						attributes,
-		                    						IGDBLaunchConfigurationConstants.ATTR_HOST, INVALID);
-		                    				String remoteTcpPort = CDebugUtils.getAttribute(
-		                    						attributes,
-		                    						IGDBLaunchConfigurationConstants.ATTR_PORT, INVALID);
-
-		                    				fCommandControl.queueCommand(
-		                    						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), 
-		                    								remoteTcpHost, remoteTcpPort, true), 
-		                    								new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
-		                    			} else {
-		                    				String serialDevice = CDebugUtils.getAttribute(
-		                    						attributes,
-		                    						IGDBLaunchConfigurationConstants.ATTR_DEV, INVALID);
-
-		                    				fCommandControl.queueCommand(
-		                    						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), 
-		                    								serialDevice, true), 
-		                    								new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
-		                    			}
-		                    			return;
-		                    		} else {
-		                    			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Cannot reconnect to target.", null)); //$NON-NLS-1$
-		                    		}
-		                    	}
-		                    	
-		                    	rm.done();
-		                    }
-		                },
+	    				},
 		                // Now, actually do the attach
 		                new Step() { 
 		                    @Override
@@ -368,6 +338,49 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
             dataRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
             dataRm.done();
 	    }
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void connectToTarget(IProcessDMContext procCtx, RequestMonitor rm) {
+		ILaunch launch = (ILaunch)procCtx.getAdapter(ILaunch.class);
+		assert launch != null;
+		if (launch != null) {
+			Map<String, Object> attributes = null;
+			try {
+				attributes = launch.getLaunchConfiguration().getAttributes();
+			} catch (CoreException e) {}
+
+			boolean isTcpConnection = CDebugUtils.getAttribute(
+					attributes,
+					IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
+					false);
+
+			if (isTcpConnection) {
+				String remoteTcpHost = CDebugUtils.getAttribute(
+						attributes,
+						IGDBLaunchConfigurationConstants.ATTR_HOST, INVALID);
+				String remoteTcpPort = CDebugUtils.getAttribute(
+						attributes,
+						IGDBLaunchConfigurationConstants.ATTR_PORT, INVALID);
+
+				fCommandControl.queueCommand(
+						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), 
+								remoteTcpHost, remoteTcpPort, true), 
+								new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+			} else {
+				String serialDevice = CDebugUtils.getAttribute(
+						attributes,
+						IGDBLaunchConfigurationConstants.ATTR_DEV, INVALID);
+
+				fCommandControl.queueCommand(
+						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), 
+								serialDevice, true), 
+								new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+			}
+		} else {
+    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Cannot reconnect to target.", null)); //$NON-NLS-1$
+    		rm.done();
+    	}
 	}
 	
 	@Override

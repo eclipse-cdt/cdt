@@ -207,10 +207,7 @@ public class GdbConnectCommand implements IConnect {
     			// The user pressed the cancel button, so we cancel the attach gracefully
     			fRm.done();
     		} else {
-    			// Store the path of the binary so we can use it again for another process
-    			// with the same name
-    			fProcessNameToBinaryMap.put(fProcName, binaryPath);
-    			
+
     			final String finalBinaryPath = binaryPath;
     			fExecutor.execute(new DsfRunnable() {
     				public void run() {
@@ -219,7 +216,17 @@ public class GdbConnectCommand implements IConnect {
 
     					if (procService != null && commandControl != null) {
     						IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), fPid);
-    						procService.attachDebuggerToProcess(procDmc, finalBinaryPath, new DataRequestMonitor<IDMContext>(fExecutor, fRm));
+                            procService.attachDebuggerToProcess(procDmc, finalBinaryPath, new DataRequestMonitor<IDMContext>(fExecutor, fRm) {
+                                @Override
+                                protected void handleSuccess() {
+                                    // Store the path of the binary so we can use it again for another process
+                                    // with the same name.  Only do this on success, to avoid being stuck with
+                                    // a path that is invalid
+                                    fProcessNameToBinaryMap.put(fProcName, finalBinaryPath);
+                                    fRm.done();
+                                };
+                            });
+
     					} else {
     						fRm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Cannot find services", null)); //$NON-NLS-1$
     						fRm.done();

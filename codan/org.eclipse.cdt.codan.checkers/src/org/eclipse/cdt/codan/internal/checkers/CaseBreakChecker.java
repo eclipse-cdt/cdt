@@ -139,7 +139,11 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 			if (body == null) return true;
 			if (body instanceof IASTCompoundStatement) {
 				IASTStatement[] statements = ((IASTCompoundStatement) body).getStatements();
-				return isFallThroughStamement(statements[statements.length - 1]);
+				if (statements.length > 0) {
+					return isFallThroughStamement(statements[statements.length - 1]);	
+				}
+				
+				return true;
 			} else if (isBreakOrExitStatement(body)) {
 				return false;
 			} else if (body instanceof IASTExpressionStatement) {

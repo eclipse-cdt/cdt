@@ -558,5 +558,16 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		checkNoErrors();
 	}
 
-
+		//void foo()
+		//{
+		//switch(0)
+		//default:
+		//{
+		//}
+		//}
+		public void testEmptyCompoundStatement() {
+			String code = getAboveComment();
+			loadCodeAndRun(code);
+			checkErrorLine(4);
+		}
 }

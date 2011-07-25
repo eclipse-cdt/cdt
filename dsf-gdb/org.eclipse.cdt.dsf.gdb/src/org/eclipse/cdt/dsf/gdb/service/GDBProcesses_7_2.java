@@ -254,6 +254,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		                    	// lets reconnect.
 		                    	// Bug 352998
 		                    	if (fNeedToReconnect) {
+		                    		fNeedToReconnect = false;
 		                    		ILaunch launch = (ILaunch)procCtx.getAdapter(ILaunch.class);
 		                    		assert launch != null;
 		                    		if (launch != null) {

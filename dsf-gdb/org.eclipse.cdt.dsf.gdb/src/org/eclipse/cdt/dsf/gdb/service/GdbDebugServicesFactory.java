@@ -53,6 +53,8 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	public static final String GDB_7_1_VERSION = "7.1"; //$NON-NLS-1$	
 	/** @since 4.0 */
 	public static final String GDB_7_2_VERSION = "7.2"; //$NON-NLS-1$
+	/** @since 4.1 */
+	public static final String GDB_7_2_1_VERSION = "7.2.1"; //$NON-NLS-1$
 	
 	private final String fVersion;
 	
@@ -150,6 +152,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		
 	@Override
 	protected IProcesses createProcessesService(DsfSession session) {
+		if (GDB_7_2_1_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBProcesses_7_2_1(session);
+		}
 		if (GDB_7_2_VERSION.compareTo(fVersion) <= 0) {
 			return new GDBProcesses_7_2(session);
 		}

@@ -78,6 +78,15 @@
                isAbstract="false"
                name="Cross GCC Linker"
                superClass="cdt.managedbuild.tool.gnu.c.linker">
+            <enablement
+                  type="ALL">
+               <not>
+                  <checkBuildProperty
+                        property="org.eclipse.cdt.build.core.buildArtefactType"
+                        value="org.eclipse.cdt.build.core.buildArtefactType.staticLib">
+                  </checkBuildProperty>
+               </not>
+            </enablement>
          </tool>
          <tool
                commandLineGenerator="org.eclipse.cdt.internal.build.crossgcc.CrossCommandLineGenerator"
@@ -85,6 +94,29 @@
                isAbstract="false"
                name="Cross G++ Linker"
                superClass="cdt.managedbuild.tool.gnu.cpp.linker">
+            <enablement
+                  type="ALL">
+               <not>
+                  <checkBuildProperty
+                        property="org.eclipse.cdt.build.core.buildArtefactType"
+                        value="org.eclipse.cdt.build.core.buildArtefactType.staticLib">
+                  </checkBuildProperty>
+               </not>
+            </enablement>
+         </tool>
+         <tool
+               commandLineGenerator="org.eclipse.cdt.internal.build.crossgcc.CrossCommandLineGenerator"
+               id="cdt.managedbuild.tool.gnu.cross.archiver"
+               isAbstract="false"
+               name="Cross GCC Archiver"
+               superClass="cdt.managedbuild.tool.gnu.archiver">
+            <enablement
+                  type="ALL">
+               <checkBuildProperty
+                     property="org.eclipse.cdt.build.core.buildArtefactType"
+                     value="org.eclipse.cdt.build.core.buildArtefactType.staticLib">
+               </checkBuildProperty>
+            </enablement>
          </tool>
       </toolChain>
 	     <projectType

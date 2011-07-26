@@ -439,14 +439,23 @@
                id="org.eclipse.cdt.msvc.link.outputType.dll"
                outputs="dll">
          </outputType>
+         <enablement
+               type="ALL">
+            <not>
+               <checkBuildProperty
+                     property="org.eclipse.cdt.build.core.buildArtefactType"
+                     value="org.eclipse.cdt.build.core.buildArtefactType.staticLib">
+               </checkBuildProperty>
+            </not>
+         </enablement>
       </tool>
       <tool
             command="lib"
+            commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
             id="org.eclipse.cdt.msvc.lib"
             name="%lib.name"
             natureFilter="both"
-            outputFlag="/OUT:"
-            >
+            outputFlag="/OUT:">
          <supportedProperties>
             <property
                   id="org.eclipse.cdt.build.core.buildArtefactType">
@@ -474,6 +483,13 @@
                id="org.eclipse.cdt.msvc.lib.outputType"
                outputs="lib">
          </outputType>
+         <enablement
+               type="ALL">
+            <checkBuildProperty
+                  property="org.eclipse.cdt.build.core.buildArtefactType"
+                  value="org.eclipse.cdt.build.core.buildArtefactType.staticLib">
+            </checkBuildProperty>
+         </enablement>
       </tool>
       </toolChain>
       <configuration

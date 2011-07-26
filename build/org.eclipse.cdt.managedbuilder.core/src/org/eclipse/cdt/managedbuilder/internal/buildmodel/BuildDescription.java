@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Intel Corporation and others.
+ * Copyright (c) 2006, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
 import org.eclipse.cdt.managedbuilder.pdomdepgen.PDOMDependencyGenerator;
+import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
@@ -259,16 +260,7 @@ public class BuildDescription implements IBuildDescription {
 	//return rc.getFullPath();
 		IPath rcLocation = rc.getLocation();
 		if(rcLocation == null){
-			IPath fullPath = rc.getFullPath();
-			rcLocation = calcLocationForFullPath(fullPath);
-//			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-//			IProject proj = root.getProject(fullPath.segment(0));
-//			rcLocation = proj.getLocation();
-//			if(rcLocation != null){
-//				rcLocation = rcLocation.append(fullPath.removeFirstSegments(1));
-//			} else {
-//				rcLocation = root.getLocation().append(fullPath);
-//			}
+			rcLocation = new Path(EFSExtensionManager.getDefault().getPathFromURI(rc.getLocationURI()));
 		}
 		return rcLocation;
 	}
@@ -1067,16 +1059,9 @@ public class BuildDescription implements IBuildDescription {
 			return null;
 		}
 
-		try {
-			URI newURI = new URI(projURI.getScheme(), projURI.getUserInfo(),
-					projURI.getHost(), projURI.getPort(), location.toString(), projURI.getQuery(), projURI
-							.getFragment());
-			return newURI;
-		} catch (URISyntaxException e) {
-			ManagedBuilderCorePlugin.log(e);
-		}
+		URI newURI = EFSExtensionManager.getDefault().createNewURIFromPath(projURI, location.toString());
+		return newURI;
 
-		return null;
 	}
 
 	private void calculateOutputs(BuildStep action, BuildIOType arg, BuildResource buildRc) throws CoreException {

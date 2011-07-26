@@ -3933,7 +3933,7 @@
          
       </wizardPage>
    </extension>
-   <extension
+   <!--extension
          point="org.eclipse.core.variables.dynamicVariables">
       <variable
             description="%variableDescription"
@@ -3941,7 +3941,7 @@
             resolver="org.eclipse.cdt.managedbuilder.xlc.ui.variables.DynamicVariableResolver"
             supportsArgument="true">
       </variable>
-   </extension>
+   </extension -->
 </plugin>
 
 

@@ -118,6 +118,13 @@
                </checkBuildProperty>
             </enablement>
          </tool>
+         <tool
+               commandLineGenerator="org.eclipse.cdt.internal.build.crossgcc.CrossCommandLineGenerator"
+               id="cdt.managedbuild.tool.gnu.cross.assembler"
+               isAbstract="false"
+               name="Cross GCC Assembler"
+               superClass="cdt.managedbuild.tool.gnu.assembler">
+         </tool>
       </toolChain>
 	     <projectType
 	        buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe"

@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
@@ -65,6 +66,11 @@ public class GPPLanguage extends AbstractCLikeLanguage {
 	@Override
 	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
 		return CPP_GNU_SCANNER_EXTENSION;
+	}
+
+	@Override
+	protected IScannerExtensionConfiguration getScannerExtensionConfiguration(IScannerInfo info) {
+		return GPPScannerExtensionConfiguration.getInstance(info);
 	}
 
 	/**

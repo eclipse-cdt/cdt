@@ -84,7 +84,16 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	 *         return <code>null</code>
 	 */
 	protected abstract IScannerExtensionConfiguration getScannerExtensionConfiguration();
-	
+
+	/**
+	 * @return the scanner extension configuration for this language, may not
+	 *         return <code>null</code>
+	 * @since 5.4
+	 */
+	protected IScannerExtensionConfiguration getScannerExtensionConfiguration(IScannerInfo info) {
+		return getScannerExtensionConfiguration();
+	}
+
 	/**
 	 * @returns the actual parser object.
 	 */
@@ -212,7 +221,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	 * @since 5.2
 	 */
 	protected final IScanner createScanner(FileContent content, IScannerInfo scanInfo, IncludeFileContentProvider fcp, IParserLogService log) {
-		return new CPreprocessor(content, scanInfo, getParserLanguage(), log, getScannerExtensionConfiguration(), fcp);
+		return new CPreprocessor(content, scanInfo, getParserLanguage(), log, getScannerExtensionConfiguration(scanInfo), fcp);
 	}
 
 	@Deprecated

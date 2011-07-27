@@ -16,8 +16,10 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.AssertionFailedError;
 
@@ -95,13 +97,23 @@ import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 public class AST2BaseTest extends BaseTestCase {
 	public final static String TEST_CODE = "<testcode>";
     protected static final IParserLogService NULL_LOG = new NullLogService();
-	protected static boolean sValidateCopy;
+    protected static boolean sValidateCopy;
+
+    private static final ScannerInfo GNU_SCANNER_INFO = new ScannerInfo(getGnuMap());
+	private static final ScannerInfo SCANNER_INFO = new ScannerInfo();
+
+	private static Map<String, String> getGnuMap() {
+		Map<String, String> map= new HashMap<String, String>();
+		map.put("__GNUC__", "4");
+		map.put("__GNUC_MINOR__", "5");
+		return map;
+	}
 
     public AST2BaseTest() {
     	super();
     }
     
-    public AST2BaseTest(String name) {
+	public AST2BaseTest(String name) {
     	super(name);
     }
     
@@ -133,7 +145,7 @@ public class AST2BaseTest extends BaseTestCase {
     protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
     		boolean expectNoProblems, boolean skipTrivialInitializers) throws ParserException {
 		IScanner scanner = createScanner(FileContent.create(TEST_CODE, code.toCharArray()), lang, ParserMode.COMPLETE_PARSE, 
-        		new ScannerInfo());
+        		createScannerInfo(useGNUExtensions));
         configureScanner(scanner);
         AbstractGNUSourceCodeParser parser = null;
         if (lang == ParserLanguage.CPP) {
@@ -177,6 +189,12 @@ public class AST2BaseTest extends BaseTestCase {
         return tu;
     }
 
+	public ScannerInfo createScannerInfo(boolean useGnu) {
+		if (useGnu)
+			return GNU_SCANNER_INFO;
+		return SCANNER_INFO;
+	}
+
 	protected void configureScanner(IScanner scanner) {
 	}
 
@@ -186,7 +204,7 @@ public class AST2BaseTest extends BaseTestCase {
         if (lang == ParserLanguage.C)
             configuration= GCCScannerExtensionConfiguration.getInstance();
         else
-            configuration= GPPScannerExtensionConfiguration.getInstance();
+            configuration= GPPScannerExtensionConfiguration.getInstance(scannerInfo);
         IScanner scanner;
         scanner= new CPreprocessor(codeReader, scannerInfo, lang, NULL_LOG, configuration, 
         		IncludeFileContentProvider.getSavedFilesProvider());

@@ -19,8 +19,8 @@ import java.util.Map;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
-import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.EndOfFileException;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.NullLogService;
@@ -82,7 +82,7 @@ public class PreprocessorSpeedTest  {
 	    	scannerConfig= GCCScannerExtensionConfiguration.getInstance();
 	    }
 	    else {
-	    	scannerConfig= GPPScannerExtensionConfiguration.getInstance();
+	    	scannerConfig= GPPScannerExtensionConfiguration.getInstance(info);
 	    }
 		ParserMode mode = ParserMode.COMPLETE_PARSE;
 		CPreprocessor cpp= new CPreprocessor(reader, info, lang, new NullLogService(), scannerConfig, readerFactory);

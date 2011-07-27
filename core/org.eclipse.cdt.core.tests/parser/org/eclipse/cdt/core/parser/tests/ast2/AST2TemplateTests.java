@@ -4532,8 +4532,8 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	X<A> xa; // okay
 	//	X<B> xb; // ill-formed: default arguments for the parameters of a template template argument are ignored
 	//	X<C> xc; // ill-formed: a template parameter pack does not match a template parameter
-	//	Y<A> ya; // ill-formed: a template parameter pack does not match a template parameter
-	//	Y<B> yb; // ill-formed: a template parameter pack does not match a template parameter
+	//	Y<A> ya; // okay
+	//	Y<B> yb; // okay
 	//	Y<C> yc; // okay
 	public void testVariadicTemplateExamples_280909f() throws Exception {
 		final String code= getAboveComment();
@@ -4541,8 +4541,8 @@ public class AST2TemplateTests extends AST2BaseTest {
 		bh.assertNonProblem("X<A>", 4);
 		bh.assertProblem("X<B>", 4);
 		bh.assertProblem("X<C>", 4);
-		bh.assertProblem("Y<A>", 4);
-		bh.assertProblem("Y<B>", 4);
+		bh.assertNonProblem("Y<A>", 4);
+		bh.assertNonProblem("Y<B>", 4);
 		bh.assertNonProblem("Y<C>", 4);
 	}		
 
@@ -5437,6 +5437,21 @@ public class AST2TemplateTests extends AST2BaseTest {
 
 	//	template <typename = int> class A {};
 	public void testTemplateParameterWithoutName_352266() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template<template<typename, typename...> class T> struct CTTP{ };
+	//
+	//	template<typename T> struct CT1{ };
+	//	template<typename T1, typename T2> struct CT2{ };
+	//	template<typename T1, typename T2, typename T3> struct CT3{ };
+	//	template<typename T1, typename T2, typename T3, typename... T4> struct CT4{ };
+	//
+	//	typedef CTTP<CT1> a;
+	//	typedef CTTP<CT2> b;
+	//	typedef CTTP<CT3> c;
+	//	typedef CTTP<CT4> d;
+	public void testTemplateTemplateParameterMatching_352859() throws Exception {
 		parseAndCheckBindings();
 	}
 }

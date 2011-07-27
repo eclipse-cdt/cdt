@@ -6,8 +6,8 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *     Andrew Niefer (IBM Corporation) - initial API and implementation
- *     Markus Schorn (Wind River Systems)
+ *      Andrew Niefer (IBM Corporation) - initial API and implementation
+ *      Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -24,7 +24,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Integral c++ type.
+ * Built-in c++ type.
  */
 public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	public static final CPPBasicType BOOLEAN = new CPPBasicType(Kind.eBoolean, 0, null);
@@ -35,9 +35,9 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 
 	public CPPBasicType(Kind kind, int qualifiers, IASTExpression expression) {
 		if (kind == Kind.eUnspecified) {
-			if ( (qualifiers & (IS_COMPLEX | IS_IMAGINARY)) != 0) {
+			if ((qualifiers & (IS_COMPLEX | IS_IMAGINARY)) != 0) {
 				fKind= Kind.eFloat;
-			} else if ( (qualifiers & (IS_LONG | IS_SHORT | IS_SIGNED | IS_UNSIGNED | IS_LONG_LONG)) != 0 ) {
+			} else if ((qualifiers & (IS_LONG | IS_SHORT | IS_SIGNED | IS_UNSIGNED | IS_LONG_LONG)) != 0) {
 				fKind= Kind.eInt;
 			} else {
 				fKind= Kind.eUnspecified;
@@ -54,18 +54,18 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	}
 	
 	public CPPBasicType(ICPPASTSimpleDeclSpecifier sds) {
-		this (getKind(sds), getModifiers(sds), null);
+		this(getKind(sds), getModifiers(sds), null);
 	}
 	
 	private static int getModifiers(ICPPASTSimpleDeclSpecifier sds) {
 		return
-			( sds.isLong()    ? IBasicType.IS_LONG  : 0 ) |
-			( sds.isShort()   ? IBasicType.IS_SHORT : 0 ) |
-			( sds.isSigned()  ? IBasicType.IS_SIGNED: 0 ) |
-			( sds.isUnsigned()? IBasicType.IS_UNSIGNED : 0 ) |
-			( sds.isLongLong()? IBasicType.IS_LONG_LONG : 0 ) |
-			( sds.isComplex() ? IBasicType.IS_COMPLEX : 0 ) |
-			( sds.isImaginary()?IBasicType.IS_IMAGINARY : 0 );
+			(sds.isLong() ? IBasicType.IS_LONG  : 0) |
+			(sds.isShort() ? IBasicType.IS_SHORT : 0) |
+			(sds.isSigned() ? IBasicType.IS_SIGNED: 0) |
+			(sds.isUnsigned() ? IBasicType.IS_UNSIGNED : 0) |
+			(sds.isLongLong() ? IBasicType.IS_LONG_LONG : 0) |
+			(sds.isComplex() ? IBasicType.IS_COMPLEX : 0) |
+			(sds.isImaginary() ? IBasicType.IS_IMAGINARY : 0);
 	}
 	
 	private static Kind getKind(ICPPASTSimpleDeclSpecifier sds) {
@@ -73,7 +73,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	}
 
 	static Kind getKind(final int simpleDeclSpecType) {
-		switch(simpleDeclSpecType) {
+		switch (simpleDeclSpecType) {
 		case IASTSimpleDeclSpecifier.t_bool:
 			return Kind.eBoolean;
 		case IASTSimpleDeclSpecifier.t_char:
@@ -96,7 +96,6 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 			return Kind.eUnspecified;
 		}
 	}
-
 
 	public boolean isSameType(IType object) {
 		if (object == this)
@@ -208,12 +207,10 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		return new CPPBasicType(Kind.values()[kind], modifiers);
 	}
 
-
 	@Deprecated
 	public int getQualifierBits() {
 		return getModifiers();
 	}
-
 
 	@Deprecated
 	public int getType() {
@@ -239,6 +236,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		}
 		return t_unspecified;
 	}
+
     /**
      * @deprecated types don't have values
      */

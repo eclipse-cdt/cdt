@@ -67,7 +67,7 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 	}
 
 	public String[] getQualifiedName() {
-		return new String[] {getName()};
+		return new String[] { getName() };
 	}
 	
 	public IIndexScope getScope() {
@@ -88,7 +88,7 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 	}
 	
 	public boolean isFileLocal() throws CoreException {
-		return rbinding != null ? rbinding.isFileLocal() : false;
+		return rbinding != null && rbinding.isFileLocal();
 	}
 
 	public IIndexFile getLocalToFile() throws CoreException {

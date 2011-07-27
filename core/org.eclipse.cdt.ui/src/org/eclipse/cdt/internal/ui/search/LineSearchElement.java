@@ -72,7 +72,7 @@ public class LineSearchElement extends PDOMSearchElement {
 			if (!(obj instanceof Match))
 				return false;
 			Match m = (Match) obj;
-			return (fOffset == m.fOffset) && (fLength == m.fLength);
+			return fOffset == m.fOffset && fLength == m.fLength;
 		}
 
 		@Override
@@ -142,7 +142,7 @@ public class LineSearchElement extends PDOMSearchElement {
 		if (!(obj instanceof LineSearchElement))
 			return false;
 		LineSearchElement other = (LineSearchElement) obj;
-		return (fOffset == other.fOffset) && (super.equals(obj)) && (fMatches.equals(other.fMatches));
+		return fOffset == other.fOffset && super.equals(obj) && fMatches.equals(other.fMatches);
 	}
 
 	@Override
@@ -220,7 +220,6 @@ public class LineSearchElement extends PDOMSearchElement {
 
 	private static LineSearchElement[] collectLineElements(AbstractCharArray buf, Match[] matches,
 			IIndexFileLocation fileLocation) {
-
 		List<LineSearchElement> result = new ArrayList<LineSearchElement>();
 		List<Match> matchCollector= new ArrayList<Match>();
 
@@ -237,7 +236,7 @@ public class LineSearchElement extends PDOMSearchElement {
 				final int minOffset= matchOffset + match.getLength();
 				match= null;
 				matchOffset= Integer.MAX_VALUE;
-				for(i=i+1; i<matches.length; i++) {
+				for(i= i + 1; i < matches.length; i++) {
 					// Advance to next match that is not overlapped
 					final Match nextMatch= matches[i];
 					final int nextOffset= nextMatch.getOffset();

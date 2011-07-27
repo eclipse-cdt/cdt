@@ -6,11 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Andrew Ferguson (Symbian)
- *    Bryan Wilkinson (QNX)
- *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
+ *     Bryan Wilkinson (QNX)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -147,12 +147,12 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	}
 
 	public ICPPUsingDirective[] getUsingDirectives() {
-		return new ICPPUsingDirective[0];
+		return ICPPUsingDirective.EMPTY_ARRAY;
 	}
 
 	public IBinding[] find(String name) {
 		try {
-			BindingCollector visitor = new BindingCollector(getLinkage(),  name.toCharArray(),
+			BindingCollector visitor = new BindingCollector(getLinkage(), name.toCharArray(),
 					IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, false, false, true);
 			getIndex().accept(visitor);
 			return visitor.getBindings();

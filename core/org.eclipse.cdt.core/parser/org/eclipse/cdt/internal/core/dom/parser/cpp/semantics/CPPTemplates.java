@@ -1981,7 +1981,7 @@ public class CPPTemplates {
 			try {
 				pParams = ((ICPPTemplateTemplateParameter) param).getTemplateParameters();
 				aParams = ((ICPPTemplateDefinition) t).getTemplateParameters();
-				if (!compareTemplateParameters(pParams, aParams))
+				if (!matchTemplateTemplateParameters(pParams, aParams))
 					return null;
 			} catch (DOMException e) {
 				return null;
@@ -2015,48 +2015,57 @@ public class CPPTemplates {
 		return null;
 	}
 	
-	private static boolean compareTemplateParameters(ICPPTemplateParameter[] params1,
-			ICPPTemplateParameter[] params2) throws DOMException {
-		int size = params1.length;
-		if (params2.length != size) {
-			return false;
-		}
-
-		for (int i = 0; i < size; i++) {
-			final ICPPTemplateParameter p1 = params1[i];
-			final ICPPTemplateParameter p2 = params2[i];
-			if (p1.isParameterPack() != p2.isParameterPack())
+	private static boolean matchTemplateTemplateParameters(ICPPTemplateParameter[] pParams,
+			ICPPTemplateParameter[] aParams) throws DOMException {
+		int pi=0;
+		int ai=0;
+		while (pi < pParams.length && ai < aParams.length) {
+			final ICPPTemplateParameter pp = pParams[pi];
+			final ICPPTemplateParameter ap = aParams[ai];
+			
+			// A parameter pack does not match a regular template parameter.
+			if (ap.isParameterPack() && !pp.isParameterPack())
 				return false;
 			
-			boolean pb= p1 instanceof ICPPTemplateTypeParameter;
-			boolean ab= p2 instanceof ICPPTemplateTypeParameter;
+			
+			boolean pb= pp instanceof ICPPTemplateTypeParameter;
+			boolean ab= ap instanceof ICPPTemplateTypeParameter;
 			if (pb != ab)
 				return false;
 			
 			if (pb) {
 				// Both are template type parameters
 			} else {
-				pb= p1 instanceof ICPPTemplateNonTypeParameter;
-				ab= p2 instanceof ICPPTemplateNonTypeParameter;
+				pb= pp instanceof ICPPTemplateNonTypeParameter;
+				ab= ap instanceof ICPPTemplateNonTypeParameter;
 				if (pb != ab)
 					return false;
 
 				if (pb) {
 					// Both are non-type parameters
 				} else {
-					if (!(p1 instanceof ICPPTemplateTemplateParameter) ||
-							!(p2 instanceof ICPPTemplateTemplateParameter)) {
+					if (!(pp instanceof ICPPTemplateTemplateParameter) ||
+							!(ap instanceof ICPPTemplateTemplateParameter)) {
 						assert false;
 						return false;
 					}
 			
-					if (!compareTemplateParameters(((ICPPTemplateTemplateParameter) p1).getTemplateParameters(),
-					((ICPPTemplateTemplateParameter) p2).getTemplateParameters()) )
+					if (!matchTemplateTemplateParameters(((ICPPTemplateTemplateParameter) pp).getTemplateParameters(),
+					((ICPPTemplateTemplateParameter) ap).getTemplateParameters()) )
 						return false;
 				}
 			}
+			if (!pp.isParameterPack())
+				pi++;
+			ai++;
 		}
-		return true;
+		if (pi < pParams.length) {
+			if (pi == pParams.length - 1 && pParams[pi].isParameterPack())
+				return true;
+			return false;
+		}
+		
+		return ai == aParams.length;
 	}
 
 	/**

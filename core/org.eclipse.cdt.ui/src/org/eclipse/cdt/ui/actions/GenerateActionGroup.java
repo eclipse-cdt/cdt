@@ -139,6 +139,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	private IHandlerActivation fQuickAccessHandlerActivation;
 	private IHandlerService fHandlerService;
 
+	private final ISelectionProvider fSelectionProvider;
 
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call this constructor.
@@ -149,6 +150,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	 */
 	public GenerateActionGroup(CEditor editor, String groupName) {
 		fSite= editor.getSite();
+		fSelectionProvider= fSite.getSelectionProvider();
 		fEditor= editor;
 		fGroupName= groupName;
 		
@@ -224,7 +226,9 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	 * @param page the page that owns this action group
 	 */
 	public GenerateActionGroup(Page page) {
-		this(page.getSite());
+		this(page.getSite(), null);
+
+		installQuickAccessAction();
 	}
 
 	/**
@@ -235,13 +239,26 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	 * @param part the view part that owns this action group
 	 */
 	public GenerateActionGroup(IViewPart part) {
-		this(part.getSite());
+		this(part.getSite(), null);
+
+		installQuickAccessAction();
 	}
 	
-	private GenerateActionGroup(IWorkbenchSite site) {
+	/**
+	 * Creates a new <code>GenerateActionGroup</code>. The group requires
+	 * that the selection provided by the given selection provider is of type
+	 * {@link IStructuredSelection}.
+	 *
+	 * @param site the site that will own the action group.
+	 * @param selectionProvider the selection provider used instead of the
+	 *  page selection provider.
+	 *
+	 * @since 5.4
+	 */
+	public GenerateActionGroup(IWorkbenchSite site, ISelectionProvider selectionProvider) {
 		fSite= site;
-		ISelectionProvider provider= fSite.getSelectionProvider();
-		ISelection selection= provider.getSelection();
+		fSelectionProvider= selectionProvider == null ? fSite.getSelectionProvider() : selectionProvider;
+		ISelection selection= fSelectionProvider.getSelection();
 		
 //		fOverrideMethods= new OverrideMethodsAction(site);
 //		fOverrideMethods.setActionDefinitionId(ICEditorActionDefinitionIds.OVERRIDE_METHODS);
@@ -314,25 +331,23 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 			fAddTaskAction.setEnabled(false);
 		}
 		
-//		registerSelectionListener(provider, fOverrideMethods);
-//		registerSelectionListener(provider, fAddDelegateMethods);
-//		registerSelectionListener(provider, fAddUnimplementedConstructors);
-//		registerSelectionListener(provider, fGenerateConstructorUsingFields);
-//		registerSelectionListener(provider, fHashCodeEquals);
-//		registerSelectionListener(provider, fAddCppDocStub);
-		registerSelectionListener(provider, fAddBookmark);
-//		registerSelectionListener(provider, fExternalizeStrings);
-//		registerSelectionListener(provider, fFindNLSProblems);
-//		registerSelectionListener(provider, fOrganizeIncludes);
-		registerSelectionListener(provider, fFormatAll);
-//		registerSelectionListener(provider, fSortMembers);
-		registerSelectionListener(provider, fAddTaskAction);
-//		registerSelectionListener(provider, fCleanUp);
+//		registerSelectionListener(fSelectionProvider, fOverrideMethods);
+//		registerSelectionListener(fSelectionProvider, fAddDelegateMethods);
+//		registerSelectionListener(fSelectionProvider, fAddUnimplementedConstructors);
+//		registerSelectionListener(fSelectionProvider, fGenerateConstructorUsingFields);
+//		registerSelectionListener(fSelectionProvider, fHashCodeEquals);
+//		registerSelectionListener(fSelectionProvider, fAddCppDocStub);
+		registerSelectionListener(fSelectionProvider, fAddBookmark);
+//		registerSelectionListener(fSelectionProvider, fExternalizeStrings);
+//		registerSelectionListener(fSelectionProvider, fFindNLSProblems);
+//		registerSelectionListener(fSelectionProvider, fOrganizeIncludes);
+		registerSelectionListener(fSelectionProvider, fFormatAll);
+//		registerSelectionListener(fSelectionProvider, fSortMembers);
+		registerSelectionListener(fSelectionProvider, fAddTaskAction);
+//		registerSelectionListener(fSelectionProvider, fCleanUp);
 		
-		selectionChanged(new SelectionChangedEvent(provider, selection));
-		registerSelectionListener(provider, this);
-		
-		installQuickAccessAction();
+		selectionChanged(new SelectionChangedEvent(fSelectionProvider, selection));
+		registerSelectionListener(fSelectionProvider, this);
 	}
 	
 	private void installQuickAccessAction() {
@@ -466,7 +481,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	@Override
 	public void dispose() {
 		if (fRegisteredSelectionListeners != null) {
-			ISelectionProvider provider= fSite.getSelectionProvider();
+			ISelectionProvider provider= fSelectionProvider;
 			for (Iterator<ISelectionChangedListener> iter= fRegisteredSelectionListeners.iterator(); iter.hasNext();) {
 				ISelectionChangedListener listener= iter.next();
 				provider.removeSelectionChangedListener(listener);

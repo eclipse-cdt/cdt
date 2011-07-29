@@ -641,7 +641,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		PDOMNode inheritFileLocal= parent;
 		if (binding instanceof IEnumerator) {
 			try {
-				IType enumeration= ((IEnumerator)binding).getType();
+				IType enumeration= ((IEnumerator) binding).getType();
 				if (enumeration instanceof IEnumeration) {
 					inheritFileLocal= adaptBinding((IEnumeration) enumeration);
 				}

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Ed Swartz (Nokia)
+ *     Markus Schorn - initial API and implementation
+ *     Ed Swartz (Nokia)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.viewsupport;
 
@@ -108,8 +108,7 @@ public class IndexUI {
 				if (name != null) {
 					return index.findBinding(name);
 				}
-			}
-			else {
+			} else {
 				String name= element.getElementName();
 				name= name.substring(name.lastIndexOf(':')+1);
 				IIndexBinding[] bindings= index.findBindings(name.toCharArray(), IndexFilter.ALL, new NullProgressMonitor());
@@ -190,9 +189,9 @@ public class IndexUI {
 					for (IIndexFile file : files) {
 						if (linkageID == -1 || file.getLinkageID() == linkageID) {
 							String elementName= element.getElementName();
-							int idx= elementName.lastIndexOf(":")+1; //$NON-NLS-1$
+							int idx= elementName.lastIndexOf(":") + 1; //$NON-NLS-1$
 							ISourceRange pos= sf.getSourceRange();
-							IRegion region = getConvertedRegion(tu, file, pos.getIdStartPos()+idx, pos.getIdLength()-idx);
+							IRegion region = getConvertedRegion(tu, file, pos.getIdStartPos() + idx, pos.getIdLength() - idx);
 							IIndexName[] names= file.findNames(region.getOffset(), region.getLength());
 							for (IIndexName name2 : names) {
 								IIndexName name = name2;
@@ -223,9 +222,11 @@ public class IndexUI {
 		return false;
 	}
 	
-	private static IRegion getConvertedRegion(ITranslationUnit tu, IIndexFile file, int pos, int length) throws CoreException {
+	private static IRegion getConvertedRegion(ITranslationUnit tu, IIndexFile file, int pos,
+			int length) throws CoreException {
 		IRegion region= new Region(pos, length);
-		IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu, file.getTimestamp());
+		IPositionConverter converter=
+				CCorePlugin.getPositionTrackerManager().findPositionConverter(tu, file.getTimestamp());
 		if (converter != null) {
 			region= converter.actualToHistoric(region);
 		}
@@ -248,7 +249,7 @@ public class IndexUI {
 						int bestDiff= Integer.MAX_VALUE;
 						IIndexInclude best= null;
 						for (IIndexInclude candidate : includes) {
-							int diff= Math.abs(candidate.getNameOffset()- region.getOffset());
+							int diff= Math.abs(candidate.getNameOffset() - region.getOffset());
 							if (diff > bestDiff) {
 								break;
 							}
@@ -288,7 +289,6 @@ public class IndexUI {
 				if (definition != null) {
 					result.add(definition);
 				}
-				
 			}
 			return result.toArray(new ICElementHandle[result.size()]);
 		}
@@ -512,7 +512,6 @@ public class IndexUI {
 			if (!instances.isEmpty()) {
 				if (result == null)
 					result= new ArrayList<IBinding>(instances.size());
-
 
 				for (ICPPTemplateInstance inst : instances) {
 					if (!ASTInternal.hasDeclaration(inst)) {

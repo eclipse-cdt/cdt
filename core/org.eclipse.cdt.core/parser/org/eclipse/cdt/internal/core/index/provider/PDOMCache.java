@@ -39,8 +39,8 @@ class PDOMCache {
 	 * Returns the instance of the cache
 	 */
 	public static PDOMCache getInstance() {
-		synchronized(singletonMutex) {
-			if(singleton == null) {
+		synchronized (singletonMutex) {
+			if (singleton == null) {
 				singleton = new PDOMCache();
 			}
 			return singleton;
@@ -55,23 +55,22 @@ class PDOMCache {
 	 * @return a PDOM instance or null if the PDOM version was too old
 	 */
 	public PDOM getPDOM(IPath path, IIndexLocationConverter converter) {
-
-		if (path==null){
+		if (path == null){
 			return null;
 		}
 
 		PDOM result= null;
 		File file = path.toFile();
 
-		synchronized(path2pdom) {
-			if(path2pdom.containsKey(file)) {
+		synchronized (path2pdom) {
+			if (path2pdom.containsKey(file)) {
 				result= path2pdom.get(file);
 			}
-			if(result==null) {
+			if (result == null) {
 				try {
 					result= new PDOM(file, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 					path2pdom.put(file, result);
-				} catch(CoreException ce) {
+				} catch (CoreException ce) {
 					CCorePlugin.log(ce);
 				}
 			}

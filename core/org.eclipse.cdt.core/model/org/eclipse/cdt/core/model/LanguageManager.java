@@ -8,10 +8,8 @@
  * Contributors:
  *     Doug Schaefer (QNX) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
- *     IBM Corporation
- *     		- Language managment feature (see Bugzilla 151850)
+ *     IBM Corporation - Language management feature (see Bugzilla 151850)
  *******************************************************************************/
-
 package org.eclipse.cdt.core.model;
 
 import java.util.ArrayList;
@@ -84,19 +82,19 @@ public class LanguageManager {
 		return map.get(id);
 	}
 	
-	private HashMap<String, ILanguageDescriptor> getDescriptorCache(){
-		if(fIdToLanguageDescriptorCache == null){
+	private HashMap<String, ILanguageDescriptor> getDescriptorCache() {
+		if (fIdToLanguageDescriptorCache == null) {
 			fIdToLanguageDescriptorCache = createDescriptorCache();
 		}
 		return fIdToLanguageDescriptorCache;
 	}
 	
-	public ILanguageDescriptor[] getLanguageDescriptors(){
+	public ILanguageDescriptor[] getLanguageDescriptors() {
 		HashMap<String, ILanguageDescriptor> map = getDescriptorCache();
 		return map.values().toArray(new ILanguageDescriptor[map.size()]);
 	}
 	
-	private HashMap<String, ILanguageDescriptor> createDescriptorCache(){
+	private HashMap<String, ILanguageDescriptor> createDescriptorCache() {
 		HashMap<String, ILanguageDescriptor> map = new HashMap<String, ILanguageDescriptor>();
 		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
 		for (int j = 0; j < configs.length; ++j) {
@@ -109,21 +107,21 @@ public class LanguageManager {
 		return map;
 	}
 	
-	private HashMap<String, List<ILanguageDescriptor>> getContentTypeToDescriptorCache(){
-		if(fContentTypeToDescriptorListCache == null){
+	private HashMap<String, List<ILanguageDescriptor>> getContentTypeToDescriptorCache() {
+		if (fContentTypeToDescriptorListCache == null) {
 			fContentTypeToDescriptorListCache = createContentTypeToDescriptorCache();
 		}
 		return fContentTypeToDescriptorListCache;
 	}
 	
-	public Map<String, ILanguageDescriptor[]> getContentTypeIdToLanguageDescriptionsMap(){
+	public Map<String, ILanguageDescriptor[]> getContentTypeIdToLanguageDescriptionsMap() {
 		HashMap<String, ILanguageDescriptor[]> map = new HashMap<String, ILanguageDescriptor[]>();
 		Map<String, List<ILanguageDescriptor>> cache = getContentTypeToDescriptorCache();
 		
-		for(Iterator<Entry<String, List<ILanguageDescriptor>>> iter = cache.entrySet().iterator(); iter.hasNext();){
+		for (Iterator<Entry<String, List<ILanguageDescriptor>>> iter = cache.entrySet().iterator(); iter.hasNext();) {
 			Entry<String, List<ILanguageDescriptor>> entry = iter.next();
 			List<ILanguageDescriptor> list = entry.getValue();
-			if(list.size() > 0){
+			if (list.size() > 0) {
 				ILanguageDescriptor[] dess = list.toArray(new ILanguageDescriptor[list.size()]);
 				map.put(entry.getKey(), dess);
 			}
@@ -133,21 +131,21 @@ public class LanguageManager {
 	}
 
 	
-	private HashMap<String, List<ILanguageDescriptor>> createContentTypeToDescriptorCache(){
+	private HashMap<String, List<ILanguageDescriptor>> createContentTypeToDescriptorCache() {
 		HashMap<String, List<ILanguageDescriptor>> map = new HashMap<String, List<ILanguageDescriptor>>();
 		Map<String, ILanguageDescriptor> dc = getDescriptorCache();
 
 		List<ILanguageDescriptor> list;
 		IContentType type;
 		String id;
-		for(Iterator<ILanguageDescriptor> iter = dc.values().iterator(); iter.hasNext();){
+		for (Iterator<ILanguageDescriptor> iter = dc.values().iterator(); iter.hasNext();) {
 			ILanguageDescriptor des = iter.next();
 			IContentType types[] = des.getContentTypes();
-			for(int i = 0; i < types.length; i++){
+			for (int i = 0; i < types.length; i++) {
 				type = types[i];
 				id = type.getId();
 				list = map.get(id);
-				if(list == null){
+				if (list == null) {
 					list = new ArrayList<ILanguageDescriptor>();
 					map.put(id, list);
 				}
@@ -169,7 +167,7 @@ public class LanguageManager {
 				String langId = getLanguageID(languageElem);  
 				if (langId.equals(id)) {
 					final ILanguage[] result= new ILanguage[]{null};
-					SafeRunner.run(new ISafeRunnable(){
+					SafeRunner.run(new ISafeRunnable() {
 						public void handleException(Throwable exception) {
 							CCorePlugin.log(exception);
 						}
@@ -227,8 +225,8 @@ public class LanguageManager {
 	 * @deprecated use getRegisteredContentTypes() instead.
 	 */
 	@Deprecated
-	public ArrayList/*<String>*/<String> getAllContentTypes() {
-		ArrayList/*<String>*/<String> allTypes = new ArrayList<String>();
+	public ArrayList<String> getAllContentTypes() {
+		ArrayList<String> allTypes = new ArrayList<String>();
 		allTypes.add(CCorePlugin.CONTENT_TYPE_ASMSOURCE);
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CHEADER);
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CSOURCE);
@@ -261,7 +259,7 @@ public class LanguageManager {
 	}
 	
 	private Set<String> collectContentTypeIds() {
-		HashSet/*<String>*/<String> allTypes = new HashSet<String>();
+		HashSet<String> allTypes = new HashSet<String>();
 		allTypes.add(CCorePlugin.CONTENT_TYPE_ASMSOURCE);
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CHEADER);
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CSOURCE);
@@ -331,7 +329,7 @@ public class LanguageManager {
 		for (int i = 0; i < configs.length; i++) {
 			final IConfigurationElement element = configs[i];
 			if (ELEMENT_PDOM_LINKAGE_FACTORY.equals(element.getName())) {
-				SafeRunner.run(new ISafeRunnable(){
+				SafeRunner.run(new ISafeRunnable() {
 					public void handleException(Throwable exception) {
 						CCorePlugin.log(exception);
 					}
@@ -369,14 +367,14 @@ public class LanguageManager {
 			final IConfigurationElement languageElem = configs[j];
 			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
 				String langId = getLanguageID(languageElem);  
-				final ILanguage[] result= new ILanguage[]{null};
-				SafeRunner.run(new ISafeRunnable(){
+				final ILanguage[] result= new ILanguage[] { null };
+				SafeRunner.run(new ISafeRunnable() {
 					public void handleException(Throwable exception) {
 						CCorePlugin.log(exception);
 					}
 
 					public void run() throws Exception {
-						result[0]= (ILanguage)languageElem.createExecutableExtension(ATTRIBUTE_CLASS);
+						result[0]= (ILanguage) languageElem.createExecutableExtension(ATTRIBUTE_CLASS);
 					}
 				});
 				if (result[0] != null) {
@@ -490,8 +488,7 @@ public class LanguageManager {
 		
 		IContentType contentType = CContentTypes.getContentType(project, fullPathToFile);
 		
-		if(contentType == null)
-		{
+		if (contentType == null) {
 			return null;
 		}
 		
@@ -560,8 +557,7 @@ public class LanguageManager {
 	public ILanguage getLanguageForFile(IFile file, ICConfigurationDescription configuration) throws CoreException {
 		return getLanguageForFile(file, configuration, null);
 	}
-	
-	
+
 	/**
 	 * Returns an ILanguage representing the language to be used for the given file.
 	 * @return an ILanguage representing the language to be used for the given file
@@ -572,12 +568,12 @@ public class LanguageManager {
 	 * @throws CoreException
 	 * @since 4.0
 	 */
-	public ILanguage getLanguageForFile(IFile file, ICConfigurationDescription configuration, String contentTypeId) throws CoreException {
+	public ILanguage getLanguageForFile(IFile file, ICConfigurationDescription configuration,
+			String contentTypeId) throws CoreException {
 		IProject project = file.getProject();
 		
 		if (contentTypeId == null) {
-			IContentType contentType= 
-				CContentTypes.getContentType(project, file.getLocation().toString());
+			IContentType contentType= CContentTypes.getContentType(project, file.getLocation().toString());
 			if (contentType == null) {
 				return null;
 			}

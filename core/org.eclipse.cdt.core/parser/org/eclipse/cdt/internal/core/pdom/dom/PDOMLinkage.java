@@ -55,7 +55,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * link time. These are generally global symbols specific to a given language.
  */
 public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage, IIndexBindingConstants {
-
 	// record offsets
 	private static final int ID_OFFSET   = PDOMNamedNode.RECORD_SIZE + 0;
 	private static final int NEXT_OFFSET = PDOMNamedNode.RECORD_SIZE + 4;
@@ -210,16 +209,16 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 	
 	protected final PDOMBinding attemptFastAdaptBinding(final IBinding binding) throws CoreException {
-		if (binding instanceof PDOMBinding) {
-			// there is no guarantee, that the binding is from the same PDOM object.
-			PDOMBinding pdomBinding = (PDOMBinding) binding;
-			if (pdomBinding.getPDOM() == getPDOM()) {
-				return pdomBinding;
-			}
+		PDOMBinding pdomBinding= (PDOMBinding) binding.getAdapter(PDOMBinding.class);
+		// There is no guarantee, that the binding is from the same PDOM object.
+		if (pdomBinding != null && pdomBinding.getPDOM() == getPDOM()) {
+			return pdomBinding;
 		}
 		return (PDOMBinding) fPDOM.getCachedResult(binding);
 	}
+
 	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
+
 	public abstract PDOMBinding addBinding(IASTName name) throws CoreException;
 
 	final protected long getLocalToFileRec(PDOMNode parent, IBinding binding, PDOMBinding glob) throws CoreException {

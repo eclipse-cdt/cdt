@@ -11,7 +11,7 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>7.0.1-SNAPSHOT</version>
+	<version>7.0.2-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.debug.mi.core</artifactId>
 	<packaging>eclipse-plugin</packaging>
 </project>

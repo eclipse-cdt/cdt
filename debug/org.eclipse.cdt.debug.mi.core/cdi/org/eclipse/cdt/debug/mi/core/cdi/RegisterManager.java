@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Giuseppe Montalto, STMicroelectronics - bug 174988
  *     Alena Laskavaia (QNX) - Bug 221224
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi;
 
@@ -19,7 +20,6 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterDescriptor;
@@ -70,7 +70,7 @@ public class RegisterManager extends Manager {
 		/* (non-Javadoc)
 		 * @see java.util.LinkedHashMap#removeEldestEntry(java.util.Map.Entry)
 		 */
-		protected boolean removeEldestEntry(Entry eldest) {
+		protected boolean removeEldestEntry(Map.Entry eldest) {
             boolean toRemove = size() > MAX_ENTRIES;
             if (toRemove) {
         		ShadowRegister v = (ShadowRegister)eldest.getValue();

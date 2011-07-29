@@ -115,7 +115,7 @@ public class MIThreadInfoInfo extends MIInfo {
 					if (var.equals("threads")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIList) {
-							parseThreads((MIList) val);
+							fThreadList = parseThreads((MIList) val);
 						}
 					}
 					else if (var.equals("current-thread-id")) { //$NON-NLS-1$
@@ -136,13 +136,14 @@ public class MIThreadInfoInfo extends MIInfo {
 	//		id="n",target-id="Thread 0xb7c8ab90 (LWP 7010)",frame={...},state="stopped"
 	//		id="n",target-id="Thread 0xb7c8eb90 (LWP 7807)",state="running"
 	//      id="n",target-id="Thread 162.32942",details="...",frame={...},state="stopped"
-	private void parseThreads(MIList list) {
+	static MIThread[] parseThreads(MIList list) {
 		MIValue[] values = list.getMIValues();
-		fThreadList = new MIThread[values.length];
+		MIThread[] threadList = new MIThread[values.length];
 		
 		for (int i = 0; i < values.length; i++) {
-			fThreadList[i] = MIThread.parse((MITuple) values[i]);
+			threadList[i] = MIThread.parse((MITuple) values[i]);
 		}
+		return threadList;
 	}
 }
 

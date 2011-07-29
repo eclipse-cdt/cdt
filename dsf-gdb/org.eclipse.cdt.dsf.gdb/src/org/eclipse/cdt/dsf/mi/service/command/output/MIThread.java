@@ -25,6 +25,11 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 @Immutable
 public class MIThread {
 
+	/** @since 4.1 */
+	public final static String MI_THREAD_STATE_RUNNING = "running"; //$NON-NLS-1$
+	/** @since 4.1 */
+	public final static String MI_THREAD_STATE_STOPPED = "stopped"; //$NON-NLS-1$
+	
 	final private String       fThreadId;
 	final private String       fTargetId;
 	final private String       fOsId;

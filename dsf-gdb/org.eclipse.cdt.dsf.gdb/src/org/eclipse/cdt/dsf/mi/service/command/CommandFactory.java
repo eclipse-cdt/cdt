@@ -677,6 +677,11 @@ public class CommandFactory {
 		return new MIListThreadGroups(ctx, listAll);
 	}
 
+	/** @since 4.1 */
+	public ICommand<MIListThreadGroupsInfo> createMIListThreadGroups(ICommandControlDMContext ctx, boolean listAll, boolean recurse) {
+		return new MIListThreadGroups(ctx, listAll, recurse);
+	}
+
 	/** @since 4.0 */
 	public ICommand<MIInfo> createMIRemoveInferior(ICommandControlDMContext ctx, String groupId) {
 		return new MIRemoveInferior(ctx, groupId);

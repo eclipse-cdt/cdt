@@ -67,24 +67,42 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  */
 public class MIListThreadGroups extends MICommand<MIListThreadGroupsInfo> {
 	
-	// List all groups being debugged
+	/**
+	 *  List all groups (processes) being debugged.
+	 */
 	public MIListThreadGroups(ICommandControlDMContext ctx) {
 		this(ctx, false);
 	}
 
-	// List all groups or threads being debugged which are children of the specified group
+	/**
+	 *  If the parameter groupId is null, list all groups (processes) being debugged.
+	 *  If the parameter groupId is a valid group, list all threads 
+	 *  which are children of the specified group
+	 */
 	public MIListThreadGroups(ICommandControlDMContext ctx, String groupId) {
-		this(ctx, groupId, false);
+		this(ctx, groupId, false, false);
 	}
 
-	// List all groups available on the target
+	/**
+	 * If the parameter listAll is true, list all processes running on the 
+	 * target (not just the debugged ones).
+	 * If the parameter listAll is false, list only the processes being debugged. 
+	 */
 	public MIListThreadGroups(ICommandControlDMContext ctx, boolean listAll) {
-		this(ctx, null, listAll);
+		this(ctx, null, listAll, false);
 	}
 
+	/**
+	 * If the parameter recurse is true, list all threads of all processes. 
+	 * @since 4.1
+	 */
+	public MIListThreadGroups(ICommandControlDMContext ctx, boolean listAll, boolean recurse) {
+		this(ctx, null, listAll, recurse);
+	}
+	
 	// There should be no reason to have both listAll and groupId specified,
 	// so this constructor is private, and exists to avoid duplicating code.
-	private MIListThreadGroups(ICommandControlDMContext ctx, String groupId, boolean listAll) {
+	private MIListThreadGroups(ICommandControlDMContext ctx, String groupId, boolean listAll, boolean recurse) {
 		super(ctx, "-list-thread-groups"); //$NON-NLS-1$
 		
 		assert !((groupId != null) && listAll); // see comment above
@@ -92,6 +110,11 @@ public class MIListThreadGroups extends MICommand<MIListThreadGroupsInfo> {
 		final ArrayList<String> arguments = new ArrayList<String>();
 		if (listAll) {
 			arguments.add("--available"); //$NON-NLS-1$
+		}
+
+		if (recurse) {
+			arguments.add("--recurse"); //$NON-NLS-1$
+			arguments.add("1"); //$NON-NLS-1$
 		}
 
 		if (groupId != null) {

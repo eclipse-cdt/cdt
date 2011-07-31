@@ -186,10 +186,8 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 			IType unwindedType = CxxAstUtils.getInstance().unwindTypedef(typeToCheck);
 			if (unwindedType instanceof ICPPClassType) {
 				ICPPClassType classType = (ICPPClassType) unwindedType;
-				ICPPMethod[] pureVirtualMethods;
-				if (pureVirtualMethodsCache.containsKey(classType)) {
-					pureVirtualMethods = pureVirtualMethodsCache.get(classType);
-				} else {
+				ICPPMethod[] pureVirtualMethods = pureVirtualMethodsCache.get(classType);
+				if (pureVirtualMethods == null) {
 					pureVirtualMethods = ClassTypeHelper.getPureVirtualMethods(classType);
 					pureVirtualMethodsCache.put(classType, pureVirtualMethods);
 				}

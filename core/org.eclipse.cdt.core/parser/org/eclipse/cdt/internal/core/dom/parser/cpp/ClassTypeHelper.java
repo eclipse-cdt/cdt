@@ -870,7 +870,7 @@ public class ClassTypeHelper {
 		}
 
 		// Remove overridden methods (even if they are pure virtual)
-		for (ICPPMethod declaredMethod : getOwnMethods(classType).toList()) {
+		for (ICPPMethod declaredMethod : getOwnMethods(classType)) {
 			Set<ICPPMethod> methodsSet = pureVirtualMethods.get(getMethodNameForOverrideKey(declaredMethod));
 			if (methodsSet != null) {
 				for (Iterator<ICPPMethod> methodIt = methodsSet.iterator(); methodIt.hasNext();) {

@@ -6,16 +6,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ *     Andrew Niefer (IBM Corporation) - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
-public abstract class ObjectTable<T> extends HashTable {  
+public abstract class ObjectTable<T> extends HashTable implements Iterable<T> {  
 	protected T[] keyTable;
 
 	@SuppressWarnings("unchecked")
@@ -37,8 +40,8 @@ public abstract class ObjectTable<T> extends HashTable {
 	}
 	
 	public List<T> toList() {
-	    List<T> list = new ArrayList<T>(size());
 	    int size = size();
+	    List<T> list = new ArrayList<T>(size);
 	    for (int i = 0; i < size; i++) {
 	        list.add(keyAt(i));
 	    }
@@ -159,5 +162,31 @@ public abstract class ObjectTable<T> extends HashTable {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * @since 5.4
+	 */
+	public Iterator<T> iterator() {
+		return new Iterator<T>() {
+			int nextIndex;
+
+			public boolean hasNext() {
+				return nextIndex < size();
+			}
+
+			public T next() {
+				T element = keyAt(nextIndex);
+				if (element == null) {
+					throw new NoSuchElementException();
+				}
+				nextIndex++;
+				return element;
+			}
+
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+		};
 	}
 }

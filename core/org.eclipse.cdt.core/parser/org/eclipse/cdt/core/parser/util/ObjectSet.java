@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ *     Andrew Niefer (IBM Corporation) - Initial API and implementation 
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
@@ -18,12 +18,12 @@ public class ObjectSet<T> extends ObjectTable<T> {
 	 * Represents the empty ObjectSet
 	 */
 	@SuppressWarnings("rawtypes")
-    public static final ObjectSet EMPTY_SET = new ObjectSet( 0 ){
-    	@Override public Object clone()               { return this; }
-    	@Override public List toList()                { return Collections.EMPTY_LIST; }
-    	@Override public void put( Object key )       { throw new UnsupportedOperationException(); }
-    	@Override public void addAll( List list )     { throw new UnsupportedOperationException(); }
-    	@Override public void addAll( ObjectSet set ) { throw new UnsupportedOperationException(); }
+    public static final ObjectSet EMPTY_SET = new ObjectSet(0) {
+    	@Override public Object clone()             { return this; }
+    	@Override public List toList()              { return Collections.EMPTY_LIST; }
+    	@Override public void put(Object key)       { throw new UnsupportedOperationException(); }
+    	@Override public void addAll(List list)     { throw new UnsupportedOperationException(); }
+    	@Override public void addAll(ObjectSet set) { throw new UnsupportedOperationException(); }
     };
 
     /**
@@ -48,8 +48,8 @@ public class ObjectSet<T> extends ObjectTable<T> {
 	 * @param items
 	 */
 	public ObjectSet(T[] items) {
-		super( items == null ? 2 : items.length );
-		addAll( items );
+		super(items == null ? 2 : items.length);
+		addAll(items);
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class ObjectSet<T> extends ObjectTable<T> {
 	 * @param key the item to add (may be null)
 	 */
 	public void checkPut(T key) {
-		if(key!=null)
+		if (key!=null)
 			add(key);
 	}
 	
@@ -65,7 +65,7 @@ public class ObjectSet<T> extends ObjectTable<T> {
 	 * Adds the specified item to the set
 	 * @param key the (non-null) object to store
 	 */
-	public void put(T key){
+	public void put(T key) {
 		add(key);
 	}
 	
@@ -73,13 +73,13 @@ public class ObjectSet<T> extends ObjectTable<T> {
 	 * Adds each item in the list to this ObjectSet, or no-ops if list is null
 	 * @param list a list (may be null)
 	 */
-	public void addAll(List<T> list ) {
-	    if( list == null )
+	public void addAll(List<T> list) {
+	    if (list == null)
 	        return;
 	    
 	    int size = list.size();
-	    for( int i = 0; i < size; i++ ){
-	        add( list.get( i ) );
+	    for (int i = 0; i < size; i++) {
+	        add(list.get(i));
 	    }
 	}
 	
@@ -87,12 +87,12 @@ public class ObjectSet<T> extends ObjectTable<T> {
 	 * Adds each item in the specified ObjectSet, or no-ops if the set is null
 	 * @param set a set (may be null)
 	 */
-	public void addAll(ObjectSet<? extends T> set ){
-	    if( set == null )
+	public void addAll(ObjectSet<? extends T> set) {
+	    if (set == null)
 	        return;
 	    int size = set.size();
-	    for( int i = 0; i < size; i++ ){
-	        add( set.keyAt( i ) );
+	    for (int i = 0; i < size; i++) {
+	        add(set.keyAt(i));
 	    }
 	}
 	
@@ -100,12 +100,13 @@ public class ObjectSet<T> extends ObjectTable<T> {
 	 * Adds each of the items in the specified array, or no-ops if the array is null
 	 * @param objs an array (may be null)
 	 */
-	public void addAll(T[] objs ){
-		if( objs == null )
+	public void addAll(T[] objs) {
+		if (objs == null)
 			return;
 		
 		for (T obj : objs) {
-			if( obj != null ) add( obj );
+			if (obj != null)
+				add(obj);
 		}
 	}
 
@@ -114,7 +115,7 @@ public class ObjectSet<T> extends ObjectTable<T> {
 	 * @param key the (non-null) object to remove
 	 * @return whether an object was removed
 	 */
-	public boolean remove(T key ) {
+	public boolean remove(T key) {
 		int i = lookup(key);
 		if (i < 0)
 			return false;

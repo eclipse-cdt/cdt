@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,13 +146,18 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 	DWORD pid = GetCurrentProcessId();
 	int nPos;
 	pProcInfo_t pCurProcInfo;
-	wchar_t eventBreakName[20];
-	wchar_t eventWaitName[20];
-	wchar_t eventTerminateName[20];
-	wchar_t eventKillName[20];
-	wchar_t eventCtrlcName[20];
+
+	// This needs to be big enough to contain the name of the event used when calling CreateEventW bellow. 
+	// It is made of a prefix (7 characters max) plus the value of a pointer that gets outputed in characters.
+	// This will be bigger in the case of 64 bit.
+	static const int MAX_EVENT_NAME_LENGTH = 50;
+	wchar_t eventBreakName[MAX_EVENT_NAME_LENGTH];
+	wchar_t eventWaitName[MAX_EVENT_NAME_LENGTH];
+	wchar_t eventTerminateName[MAX_EVENT_NAME_LENGTH];
+	wchar_t eventKillName[MAX_EVENT_NAME_LENGTH];
+	wchar_t eventCtrlcName[MAX_EVENT_NAME_LENGTH];
 #ifdef DEBUG_MONITOR
-	wchar_t buffer[1000];
+	wchar_t buffer[4000];
 #endif
 	int nLocalCounter;
 	wchar_t inPipeName[PIPE_NAME_LENGTH];

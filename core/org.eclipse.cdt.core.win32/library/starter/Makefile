@@ -10,7 +10,7 @@ LIBS = -lpsapi
 CXX = g++
 CXXFLAGS = -DUNICODE
 
-INSTALL_DIR = ../../os/$(OS)/$(ARCH)
+INSTALL_DIR = ../../../org.eclipse.cdt.core.$(OS).$(ARCH)/os/$(OS)/$(ARCH)
 
 all: $(TARGET)
 

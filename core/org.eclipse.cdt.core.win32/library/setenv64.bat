@@ -1,0 +1,1 @@
+"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\setenv.cmd" /x64 /2003 /Release

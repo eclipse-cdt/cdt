@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ find_child_console (HWND hwnd, LPARAM arg)
 // Need to declare this Win32 prototype ourselves. _WIN32_WINNT is getting
 // defined to a Windows NT value, thus we don't get this. Can't assume 
 // we're running on XP, anyway (or can we by now?)
-#if (_WIN32_WINNT < 0x0501)
+#if (_WIN32_WINNT < 0x0501) || defined(_MSC_VER)
 typedef BOOL (WINAPI *DebugBreakProcessFunc)(HANDLE);
 #endif
 

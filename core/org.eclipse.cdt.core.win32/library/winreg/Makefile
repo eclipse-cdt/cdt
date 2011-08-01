@@ -15,7 +15,7 @@ JDK_OS_INCLUDES = "$(JAVA_HOME)/include/$(OS)"
 CXX = g++
 CXXFLAGS = -DUNICODE -I$(JDK_INCLUDES) -I$(JDK_OS_INCLUDES)
 
-INSTALL_DIR = ../../os/$(OS)/$(ARCH)
+INSTALL_DIR = ../../../org.eclipse.cdt.core.$(OS).$(ARCH)/os/$(OS)/$(ARCH)
 
 all: $(TARGET)
 

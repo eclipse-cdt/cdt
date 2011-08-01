@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %fragmentName.win32.x86
+Bundle-SymbolicName: org.eclipse.cdt.core.win32.x86;singleton:=true
+Bundle-Version: 5.2.0.qualifier
+Bundle-Vendor: %providerName
+Fragment-Host: org.eclipse.cdt.core;bundle-version="[5.2.0,6.0.0)"
+Bundle-Localization: plugin
+Eclipse-PlatformFilter: (&(osgi.os=win32)(osgi.arch=x86))
+Eclipse-BundleShape: dir

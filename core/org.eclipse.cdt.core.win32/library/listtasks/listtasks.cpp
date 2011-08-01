@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002 - 2005 QNX Software Systems and others.
+ * Copyright (c) 2002, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,9 +108,17 @@ BOOL WINAPI EnumProcs( PROCENUMPROC lpProc, LPARAM lParam )
      if( hInstLib == NULL )
         return FALSE ;
 
-     hInstLib2 = LoadLibraryA( "VDMDBG.DLL" ) ;
-     if( hInstLib2 == NULL )
-        return FALSE ;
+     SYSTEM_INFO systemInfo;
+
+     GetSystemInfo(&systemInfo);
+     bool isWin64 = systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64;
+
+     if(!isWin64)
+     {
+         hInstLib2 = LoadLibraryA( "VDMDBG.DLL" ) ;
+         if( hInstLib2 == NULL )
+            return FALSE ;
+     }
 
      // Get procedure addresses.
      lpfEnumProcesses = (BOOL(WINAPI *)(DWORD *,DWORD,DWORD*))
@@ -121,15 +129,21 @@ BOOL WINAPI EnumProcs( PROCENUMPROC lpProc, LPARAM lParam )
      lpfGetModuleFileNameEx =(DWORD (WINAPI *)(HANDLE, HMODULE,
         LPTSTR, DWORD )) GetProcAddress( hInstLib,
         "GetModuleFileNameExA" ) ;
-     lpfVDMEnumTaskWOWEx =(INT(WINAPI *)( DWORD, TASKENUMPROCEX,
-        LPARAM))GetProcAddress( hInstLib2, "VDMEnumTaskWOWEx" );
+     if(!isWin64)
+     {
+        lpfVDMEnumTaskWOWEx =(INT(WINAPI *)( DWORD, TASKENUMPROCEX,
+           LPARAM))GetProcAddress( hInstLib2, "VDMEnumTaskWOWEx" );
+     }
      if( lpfEnumProcesses == NULL ||
         lpfEnumProcessModules == NULL ||
         lpfGetModuleFileNameEx == NULL ||
-        lpfVDMEnumTaskWOWEx == NULL)
+        (!isWin64 && lpfVDMEnumTaskWOWEx == NULL))
         {
            FreeLibrary( hInstLib ) ;
-           FreeLibrary( hInstLib2 ) ;
+           if(!isWin64)
+           {
+              FreeLibrary( hInstLib2 ) ;
+           }
            return FALSE ;
         }
 
@@ -158,14 +172,20 @@ BOOL WINAPI EnumProcs( PROCENUMPROC lpProc, LPARAM lParam )
         if( lpdwPIDs == NULL )
         {
            FreeLibrary( hInstLib ) ;
-           FreeLibrary( hInstLib2 ) ;
+           if(!isWin64)
+           {
+              FreeLibrary( hInstLib2 ) ;
+           }
            return FALSE ;
         }
         if( !lpfEnumProcesses( lpdwPIDs, dwSize2, &dwSize ) )
         {
            HeapFree( GetProcessHeap(), 0, lpdwPIDs ) ;
            FreeLibrary( hInstLib ) ;
-           FreeLibrary( hInstLib2 ) ;
+           if(!isWin64)
+           {
+              FreeLibrary( hInstLib2 ) ;
+           }
            return FALSE ;
         }
      }while( dwSize == dwSize2 ) ;
@@ -206,7 +226,7 @@ BOOL WINAPI EnumProcs( PROCENUMPROC lpProc, LPARAM lParam )
            break ;
 
         // Did we just bump into an NTVDM?
-        if( _stricmp( szFileName+(strlen(szFileName)-9),
+        if(!isWin64 && _stricmp( szFileName+(strlen(szFileName)-9),
            "NTVDM.EXE")==0)
         {
            // Fill in some info for the 16-bit enum proc.
@@ -226,7 +246,10 @@ BOOL WINAPI EnumProcs( PROCENUMPROC lpProc, LPARAM lParam )
      }
 
      HeapFree( GetProcessHeap(), 0, lpdwPIDs ) ;
-     FreeLibrary( hInstLib2 ) ;
+     if(!isWin64)
+     {
+        FreeLibrary( hInstLib2 ) ;
+     }
 
   // If Windows 95:
   }else if( osver.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS )

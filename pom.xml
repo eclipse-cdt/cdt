@@ -46,6 +46,8 @@
 		<module>core/org.eclipse.cdt.core.linux.x86_64</module>
 		<module>core/org.eclipse.cdt.core.linux.ppc64</module>
 		<module>core/org.eclipse.cdt.core.win32</module>
+		<module>core/org.eclipse.cdt.core.win32.x86</module>
+		<module>core/org.eclipse.cdt.core.win32.x86_64</module>
 		<module>core/org.eclipse.cdt.core.macosx</module>
 		<module>core/org.eclipse.cdt.core.aix</module>
 		<module>core/org.eclipse.cdt.core.solaris</module>

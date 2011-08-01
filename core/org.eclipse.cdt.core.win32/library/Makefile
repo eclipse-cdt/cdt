@@ -17,7 +17,7 @@ CFLAGS = -DUNICODE -I$(JDK_INCLUDES) -I$(JDK_OS_INCLUDES)
 CXX=g++
 CXXFLAGS=$(CFLAGS)
 
-INSTALL_DIR = ../os/$(OS)/$(ARCH)
+INSTALL_DIR = ../../org.eclipse.cdt.core.$(OS).$(ARCH)/os/$(OS)/$(ARCH)
 
 LIB_NAME_SPAWNER = spawner.dll
 LIB_NAME_FULL_SPAWNER = $(INSTALL_DIR)/spawner.dll

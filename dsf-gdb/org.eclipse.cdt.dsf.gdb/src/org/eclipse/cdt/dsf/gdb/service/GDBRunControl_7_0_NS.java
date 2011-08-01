@@ -222,20 +222,22 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		}
 
 		public StateChangeReason getReason() {
-			switch(getMIEvent().getType()) {
-			case MIRunningEvent.CONTINUE:
-				return StateChangeReason.USER_REQUEST;
-			case MIRunningEvent.NEXT:
-			case MIRunningEvent.NEXTI:
-				return StateChangeReason.STEP;
-			case MIRunningEvent.STEP:
-			case MIRunningEvent.STEPI:
-				return StateChangeReason.STEP;
-			case MIRunningEvent.FINISH:
-				return StateChangeReason.STEP;
-			case MIRunningEvent.UNTIL:
-			case MIRunningEvent.RETURN:
-				break;
+			if (getMIEvent() != null) {
+				switch(getMIEvent().getType()) {
+				case MIRunningEvent.CONTINUE:
+					return StateChangeReason.USER_REQUEST;
+				case MIRunningEvent.NEXT:
+				case MIRunningEvent.NEXTI:
+					return StateChangeReason.STEP;
+				case MIRunningEvent.STEP:
+				case MIRunningEvent.STEPI:
+					return StateChangeReason.STEP;
+				case MIRunningEvent.FINISH:
+					return StateChangeReason.STEP;
+				case MIRunningEvent.UNTIL:
+				case MIRunningEvent.RETURN:
+					break;
+				}
 			}
 			return StateChangeReason.UNKNOWN;
 		}

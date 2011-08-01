@@ -30,10 +30,8 @@ import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo2;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThread;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadInfoInfo;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -179,52 +177,46 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 		fConnection.queueCommand(fCommandFactory.createMIExecContinue(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 	
-    
 	/**
 	 * @since 4.1
 	 */
 	protected void refreshThreads() {
 		fConnection.queueCommand(
-			fCommandFactory.createMIListThreadGroups(fConnection.getContext(), false, true),
-			new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), null) {
+			fCommandFactory.createMIThreadInfo(fConnection.getContext()),
+			new DataRequestMonitor<MIThreadInfoInfo>(getExecutor(), null) {
 				@Override
 				protected void handleSuccess() {
-					IThreadGroupInfo[] groups = getData().getGroupList();
-					for (IThreadGroupInfo group : groups) {
-						if (group instanceof IThreadGroupInfo2) {
-							MIThread[] threadList = ((IThreadGroupInfo2)group).getThreads(); 
-							for (MIThread thread : threadList) {
-								String threadId = thread.getThreadId();
-								IMIContainerDMContext containerDmc = 
-										fProcService.createContainerContextFromThreadId(fConnection.getContext(), threadId);
-								IProcessDMContext processDmc = DMContexts.getAncestorOfType(containerDmc, IProcessDMContext.class);
-								IThreadDMContext threadDmc =
-										fProcService.createThreadContext(processDmc, threadId);
-								IMIExecutionDMContext execDmc = fProcService.createExecutionContext(containerDmc, threadDmc, threadId);
+					MIThread[] threadList = getData().getThreadList(); 
+					for (MIThread thread : threadList) {
+						String threadId = thread.getThreadId();
+						IMIContainerDMContext containerDmc = 
+								fProcService.createContainerContextFromThreadId(fConnection.getContext(), threadId);
+						IProcessDMContext processDmc = DMContexts.getAncestorOfType(containerDmc, IProcessDMContext.class);
+						IThreadDMContext threadDmc =
+								fProcService.createThreadContext(processDmc, threadId);
+						IMIExecutionDMContext execDmc = fProcService.createExecutionContext(containerDmc, threadDmc, threadId);
 
-								MIThreadRunState threadState = fThreadRunStates.get(execDmc);
-								 if (threadState != null) {
-									 // We may not know this thread.  This can happen when dealing with a remote
-									 // where thread events are not reported immediately.
-									 // However, the -list-thread-groups command we just sent will make
-									 // GDB send those events.  Therefore, we can just ignore threads we don't
-									 // know about, and wait for those events.
-									 if (MIThread.MI_THREAD_STATE_RUNNING.equals(thread.getState())) {
-										 if (threadState.fSuspended == true) {
-											 // We missed a resumed event!  Send it now.
-											 IResumedDMEvent resumedEvent = new ResumedEvent(execDmc, null);
-											 fConnection.getSession().dispatchEvent(resumedEvent, getProperties());
-										 }
-									 } else if (MIThread.MI_THREAD_STATE_STOPPED.equals(thread.getState())) {
-										 if (threadState.fSuspended == false) {
-											 // We missed a suspend event!  Send it now.
-											 ISuspendedDMEvent suspendedEvent = new SuspendedEvent(execDmc, null);
-											 fConnection.getSession().dispatchEvent(suspendedEvent, getProperties());
-										 }
-									 } else {
-										 assert false : "Invalid thread state: " + thread.getState(); //$NON-NLS-1$
-									 }
-								 }
+						MIThreadRunState threadState = fThreadRunStates.get(execDmc);
+						if (threadState != null) {
+							// We may not know this thread.  This can happen when dealing with a remote
+							// where thread events are not reported immediately.
+							// However, the -list-thread-groups command we just sent will make
+							// GDB send those events.  Therefore, we can just ignore threads we don't
+							// know about, and wait for those events.
+							if (MIThread.MI_THREAD_STATE_RUNNING.equals(thread.getState())) {
+								if (threadState.fSuspended == true) {
+									// We missed a resumed event!  Send it now.
+									IResumedDMEvent resumedEvent = new ResumedEvent(execDmc, null);
+									fConnection.getSession().dispatchEvent(resumedEvent, getProperties());
+								}
+							} else if (MIThread.MI_THREAD_STATE_STOPPED.equals(thread.getState())) {
+								if (threadState.fSuspended == false) {
+									// We missed a suspend event!  Send it now.
+									ISuspendedDMEvent suspendedEvent = new SuspendedEvent(execDmc, null);
+									fConnection.getSession().dispatchEvent(suspendedEvent, getProperties());
+								}
+							} else {
+								assert false : "Invalid thread state: " + thread.getState(); //$NON-NLS-1$
 							}
 						}
 					}

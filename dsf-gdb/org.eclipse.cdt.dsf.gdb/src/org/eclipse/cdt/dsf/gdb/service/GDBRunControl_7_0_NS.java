@@ -359,6 +359,14 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	 */
 	private boolean fRunControlOperationsEnabled = true;
 	
+	/**
+	 * Keeps track if we are currently visualizing trace data or not.
+	 * This will only be needed when running GDB 7.2 and tracing.
+	 * However, we put it in this class to avoid adding new APIs to the
+	 * maintenance branch.
+	 */
+	private boolean fTraceVisualization;
+	
 	///////////////////////////////////////////////////////////////////////////
 	// Initialization and shutdown
 	///////////////////////////////////////////////////////////////////////////
@@ -1590,10 +1598,14 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     @DsfServiceEventHandler 
     public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
     	if (e.isVisualizationModeEnabled()) {
+    		fTraceVisualization = true;
+    		
     		// We have started looking at trace records.  We can no longer
     		// do run control operations.
     		fRunControlOperationsEnabled = false;
     	} else {
+    		fTraceVisualization = false;
+    		
     		// We stopped looking at trace data and gone back to debugger mode
     		fRunControlOperationsEnabled = true;
     	}
@@ -1604,7 +1616,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	}
 
 	private void refreshThreadStates() {
-		fConnection.queueCommand(
+		if (fTraceVisualization == false) {
+		  fConnection.queueCommand(
 			fCommandFactory.createMIThreadInfo(fConnection.getContext()),
 			new DataRequestMonitor<MIThreadInfoInfo>(getExecutor(), null) {
 				@Override
@@ -1645,6 +1658,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 					}
 				}
 			});
+		}
 	}
 	
 	private void moveToLocation(final IExecutionDMContext context,

@@ -972,7 +972,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     										// process?
     										IContainerDMContext processContainerDmc = (IContainerDMContext)(getData()[0]);
     										
-    										// Now find the proper thread.  We must do this hear because in post-mortem debugging
+    										// Now find the proper thread.  We must do this here because in post-mortem debugging
     										// we cannot rely on MIRunControl using 'thread', as it will fail
     			    						IMIProcesses procService = getServicesTracker().getService(IMIProcesses.class);
     			    						if (procService == null) {

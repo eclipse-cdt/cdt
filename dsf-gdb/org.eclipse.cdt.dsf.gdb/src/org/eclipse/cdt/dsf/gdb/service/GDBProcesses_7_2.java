@@ -30,9 +30,11 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.commands.MITargetDisconnect;
+import org.eclipse.cdt.dsf.gdb.internal.service.command.events.TraceRecordSelectedChangedEventListener;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
+import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl.MIRunMode;
@@ -55,6 +57,11 @@ import org.eclipse.debug.core.ILaunch;
  */
 public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
     
+    /**
+     * The id of the single thread to be used during event visualization. 
+     */
+    private static final String TRACE_VISUALIZATION_THREAD_ID = "1"; //$NON-NLS-1$
+
     private CommandFactory fCommandFactory;
     private IGDBControl fCommandControl;
     private IGDBBackend fBackend;
@@ -74,6 +81,11 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
      * because we know the process will be restarted.
      */
 	private Set<IContainerDMContext> fProcRestarting = new HashSet<IContainerDMContext>();
+
+	/*
+	 * Temporary to avoid API changes
+	 */
+	private TraceRecordSelectedChangedEventListener fTraceVisualizationEventListener = new TraceRecordSelectedChangedEventListener();
 
 	public GDBProcesses_7_2(DsfSession session) {
 		super(session);
@@ -102,11 +114,15 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
         fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
     	fBackend = getServicesTracker().getService(IGDBBackend.class);
     	
+        getSession().addServiceEventListener(fTraceVisualizationEventListener, null);
+
     	requestMonitor.done();
 	}
 
 	@Override
 	public void shutdown(RequestMonitor requestMonitor) {
+        getSession().removeServiceEventListener(fTraceVisualizationEventListener);
+
 		super.shutdown(requestMonitor);
 	}
 	
@@ -461,6 +477,25 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		return new DebugNewProcessSequence_7_2(executor, isInitial, dmc, file, attributes, rm);
 	}
 	
+	@Override
+	public void getProcessesBeingDebugged(final IDMContext dmc, final DataRequestMonitor<IDMContext[]> rm) {
+		if (fTraceVisualizationEventListener.fTracepointVisualizationEnabled) {
+			// If we are visualizing data during a live session, we should not ask GDB for the list of threads,
+			// because we will get the list of active threads, while GDB only cares about thread 1 for visualization.
+			final IMIContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
+			if (containerDmc != null) {
+				IProcessDMContext procDmc = DMContexts.getAncestorOfType(containerDmc, IProcessDMContext.class);
+				rm.setData(new IMIExecutionDMContext[]{createExecutionContext(containerDmc, 
+                        createThreadContext(procDmc, TRACE_VISUALIZATION_THREAD_ID),
+                        TRACE_VISUALIZATION_THREAD_ID)});
+				rm.done();
+				return;
+			}
+		}
+		
+		super.getProcessesBeingDebugged(dmc, rm);
+	}
+	
 	/** 
 	 * Creates the container context that is to be used for the new process that will
 	 * be created by the restart operation.
@@ -528,7 +563,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
      * 
      * See http://sourceware.org/ml/gdb-patches/2011-03/msg00531.html
      * and Bug 352998
-     *      */
+     */
     private boolean needFixForGDB72Bug352998() {
     	return true;
     }

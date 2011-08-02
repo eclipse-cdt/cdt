@@ -26,6 +26,7 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractLaunchVMProvider;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.LaunchRootVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.StackFramesVMNode;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITracingStartedDMEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITracingStoppedDMEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITracingSupportedChangeDMEvent;
@@ -45,6 +46,12 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 public class LaunchVMProvider extends AbstractLaunchVMProvider 
     implements IDebugEventSetListener, ILaunchesListener2
 {
+	
+	/**
+	 * Indicates that we are currently visualizing trace data.
+	 */
+	private boolean fTracepointVisualizationModeEnabled;
+	
 	@ThreadSafe
     public LaunchVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session)
     {
@@ -91,6 +98,15 @@ public class LaunchVMProvider extends AbstractLaunchVMProvider
         		return true;
         	}
         }
+        
+        if (eventToSkip instanceof ITraceRecordSelectedChangedDMEvent) {
+    		ITraceRecordSelectedChangedDMEvent recordChanged = (ITraceRecordSelectedChangedDMEvent)eventToSkip;
+    		if (recordChanged.isVisualizationModeEnabled() == fTracepointVisualizationModeEnabled) {
+    			// We only care about this event if it indicates a change of visualization state
+    			return true;
+    		}
+        }
+        
         return super.canSkipHandlingEvent(newEvent, eventToSkip);
     }
     
@@ -107,6 +123,19 @@ public class LaunchVMProvider extends AbstractLaunchVMProvider
     		return;
     	}    
 
+    	if (event instanceof ITraceRecordSelectedChangedDMEvent) {
+    		ITraceRecordSelectedChangedDMEvent recordChanged = (ITraceRecordSelectedChangedDMEvent)event;
+    		// If trace visualization has changed we have to refresh the debug view
+    		if (recordChanged.isVisualizationModeEnabled() != fTracepointVisualizationModeEnabled) {
+    			fTracepointVisualizationModeEnabled = recordChanged.isVisualizationModeEnabled();
+    			
+        		// Refresh the view because the set of threads has totally changed.
+        		refresh();
+        		rm.done();
+        		return;
+        	}
+    	}
+    	
     	super.handleEvent(event, rm);
     }
 

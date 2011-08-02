@@ -778,4 +778,127 @@ public class LanguageSettingsManagerTests extends TestCase {
 		// check for no side effect
 		assertSame(provider, providers.get(0));
 	}
+
+	/**
+	 */
+	public void testBuildResourceTree_FileInFolder() throws Exception {
+		// sample entries
+		CMacroEntry entry = new CMacroEntry("MACRO", null, 0);
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(entry);
+		
+		// create resources
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		IFile file = ResourceHelper.createFile(project, "file.cpp");
+		assertNotNull(file);
+		
+		// create a provider and set the entries
+		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
+		provider.setSettingEntries(null, file, null, entries);
+		// build the hierarchy
+		LanguageSettingsExtensionManager.buildResourceTree(provider, null, null, project);
+		
+		// check that entries go to highest possible level
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file, null));
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, project, null));
+	}
+	
+	/**
+	 */
+	public void testBuildResourceTree_FileInSubFolder() throws Exception {
+		// sample entries
+		CMacroEntry entry = new CMacroEntry("MACRO", null, 0);
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(entry);
+		
+		// create resources
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		IFolder folder = ResourceHelper.createFolder(project, "Folder");
+		IFile file = ResourceHelper.createFile(project, "Folder/file.cpp");
+		
+		// create a provider and set the entries
+		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
+		provider.setSettingEntries(null, file, null, entries);
+		// build the hierarchy
+		LanguageSettingsExtensionManager.buildResourceTree(provider, null, null, project);
+		
+		// check that entries go to highest possible level
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file, null));
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, folder, null));
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, project, null));
+	}
+	
+	/**
+	 */
+	public void testBuildResourceTree_TwoSubFolders() throws Exception {
+		// sample entries
+		List<ICLanguageSettingEntry> entries1 = new ArrayList<ICLanguageSettingEntry>();
+		entries1.add(new CMacroEntry("MACRO_1", null, 0));
+		List<ICLanguageSettingEntry> entries2 = new ArrayList<ICLanguageSettingEntry>();
+		entries2.add(new CMacroEntry("MACRO_2", null, 0));
+		
+		// create resources
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		IFolder folder1 = ResourceHelper.createFolder(project, "Folder1");
+		IFolder folder2 = ResourceHelper.createFolder(project, "Folder2");
+		IFile file1 = ResourceHelper.createFile(project, "Folder1/file1.cpp");
+		IFile file2 = ResourceHelper.createFile(project, "Folder2/file2.cpp");
+		
+		// create a provider and set the entries
+		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
+		provider.setSettingEntries(null, file1, null, entries1);
+		provider.setSettingEntries(null, file2, null, entries2);
+		// build the hierarchy
+		LanguageSettingsExtensionManager.buildResourceTree(provider, null, null, project);
+		
+		// check that entries go to highest possible level
+		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file1, null));
+		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, folder1, null));
+		
+		assertEquals(entries2, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file2, null));
+		assertEquals(entries2, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, folder2, null));
+
+		assertEquals(0, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, project, null).size());
+	}
+	
+	/**
+	 */
+	public void testBuildResourceTree_IncrementalBuildFlippingSettings() throws Exception {
+		// sample entries
+		List<ICLanguageSettingEntry> entries1 = new ArrayList<ICLanguageSettingEntry>();
+		entries1.add(new CMacroEntry("MACRO_1", null, 0));
+		List<ICLanguageSettingEntry> entries2 = new ArrayList<ICLanguageSettingEntry>();
+		entries2.add(new CMacroEntry("MACRO_2", null, 0));
+		
+		// create resources
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		IFile file1 = ResourceHelper.createFile(project, "file1.cpp");
+		IFile file2 = ResourceHelper.createFile(project, "file2.cpp");
+		IFile file3 = ResourceHelper.createFile(project, "file3.cpp");
+		
+		// create a provider
+		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
+		
+		// set the entries for the first 2 files
+		provider.setSettingEntries(null, file1, null, entries1);
+		provider.setSettingEntries(null, file2, null, entries1);
+		// build the hierarchy
+		LanguageSettingsExtensionManager.buildResourceTree(provider, null, null, project);
+		// double-check where the entries go
+		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file1, null));
+		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file2, null));
+		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, project, null));
+		
+		// set the entries for the second+third files (with overlap)
+		provider.setSettingEntries(null, file2, null, entries2);
+		provider.setSettingEntries(null, file3, null, entries2);
+		// build the hierarchy
+		LanguageSettingsExtensionManager.buildResourceTree(provider, null, null, project);
+		// check where the entries go, it should not lose entries for the first file
+		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file1, null));
+		assertEquals(entries2, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file2, null));
+		assertEquals(entries2, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file3, null));
+		assertEquals(entries2, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, project, null));
+	}
+
 }

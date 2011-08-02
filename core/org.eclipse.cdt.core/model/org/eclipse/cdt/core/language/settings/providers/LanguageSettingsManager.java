@@ -61,6 +61,14 @@ public class LanguageSettingsManager {
 	}
 
 	/**
+	 * TODO
+	 */
+	public static void buildResourceTree(LanguageSettingsSerializable provider, ICConfigurationDescription cfgDescription, String languageId, IProject project) {
+		LanguageSettingsExtensionManager.buildResourceTree(provider, cfgDescription, languageId, project);
+	}
+
+	
+	/**
 	 * Returns the list of setting entries of a certain kind (such as include paths)
 	 * for the given configuration description, resource and language. This is a
 	 * combined list for all providers taking into account settings of parent folder

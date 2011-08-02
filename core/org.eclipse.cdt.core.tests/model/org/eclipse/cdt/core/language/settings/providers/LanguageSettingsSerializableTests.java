@@ -825,156 +825,6 @@ public class LanguageSettingsSerializableTests extends TestCase {
 
 	/**
 	 */
-	public void testSort_Kinds() throws Exception {
-		// create sample entries
-		CIncludePathEntry includePathEntry1 = new CIncludePathEntry("path1", 0);
-		CIncludePathEntry includePathEntry2 = new CIncludePathEntry("path2", 0);
-		CMacroEntry macroEntry1 = new CMacroEntry("MACRO1", null, 0);
-		CMacroEntry macroEntry2 = new CMacroEntry("MACRO2", null, 0);
-		CIncludeFileEntry includeFileEntry1 = new CIncludeFileEntry("file1", 0);
-		CIncludeFileEntry includeFileEntry2 = new CIncludeFileEntry("file2", 0);
-		CMacroFileEntry macroFileEntry1 = new CMacroFileEntry("file1", 0);
-		CMacroFileEntry macroFileEntry2 = new CMacroFileEntry("file2", 0);
-		CLibraryPathEntry libraryPathEntry1 = new CLibraryPathEntry("lib1", 0);
-		CLibraryPathEntry libraryPathEntry2 = new CLibraryPathEntry("lib2", 0);
-		CLibraryFileEntry libraryFileEntry1 = new CLibraryFileEntry("file1", 0);
-		CLibraryFileEntry libraryFileEntry2 = new CLibraryFileEntry("file2", 0);
-		
-		// place entries in unsorted list
-		List<ICLanguageSettingEntry> unsortedEntries = new ArrayList<ICLanguageSettingEntry>();
-		unsortedEntries.add(macroEntry1);
-		unsortedEntries.add(macroFileEntry1);
-		unsortedEntries.add(macroEntry2);
-		unsortedEntries.add(includePathEntry1);
-		unsortedEntries.add(includeFileEntry1);
-		unsortedEntries.add(macroFileEntry2);
-		unsortedEntries.add(libraryFileEntry1);
-		unsortedEntries.add(includeFileEntry2);
-		unsortedEntries.add(libraryFileEntry2);
-		unsortedEntries.add(libraryPathEntry1);
-		unsortedEntries.add(includePathEntry2);
-		unsortedEntries.add(libraryPathEntry2);
-
-		// create a provider and set the entries
-		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
-		provider.setSettingEntries(null, null, null, unsortedEntries);
-		
-		// retrieve and check that language settings got sorted properly
-		assertEquals(PROVIDER_1, provider.getId());
-		int i=0;
-		List<ICLanguageSettingEntry> actual = provider.getSettingEntries(null, null, null);
-		assertEquals(includePathEntry1, actual.get(i++));
-		assertEquals(includePathEntry2, actual.get(i++));
-		assertEquals(includeFileEntry1, actual.get(i++));
-		assertEquals(includeFileEntry2, actual.get(i++));
-		assertEquals(macroEntry1, actual.get(i++));
-		assertEquals(macroEntry2, actual.get(i++));
-		assertEquals(macroFileEntry1, actual.get(i++));  
-		assertEquals(macroFileEntry2, actual.get(i++));  
-		assertEquals(libraryPathEntry1, actual.get(i++));
-		assertEquals(libraryPathEntry2, actual.get(i++));
-		assertEquals(libraryFileEntry1, actual.get(i++));
-		assertEquals(libraryFileEntry2, actual.get(i++));
-		
-		assertEquals(unsortedEntries.size(), actual.size());
-	}
-	
-	/**
-	 */
-	public void testSort_Entries() throws Exception {
-		// create sample entries
-		CIncludePathEntry includePathEntry1 = new CIncludePathEntry("path_B", 0);
-		CIncludePathEntry includePathEntry2 = new CIncludePathEntry("path_A", 0);
-		CMacroEntry macroEntry1 = new CMacroEntry("MACRO_A", null, 0);
-		CMacroEntry macroEntry2 = new CMacroEntry("MACRO_B", null, 0);
-		CIncludeFileEntry includeFileEntry1 = new CIncludeFileEntry("file_B", 0);
-		CIncludeFileEntry includeFileEntry2 = new CIncludeFileEntry("file_A", 0);
-		CMacroFileEntry macroFileEntry1 = new CMacroFileEntry("file_B", 0);
-		CMacroFileEntry macroFileEntry2 = new CMacroFileEntry("file_A", 0);
-		CLibraryPathEntry libraryPathEntry1 = new CLibraryPathEntry("lib_B", 0);
-		CLibraryPathEntry libraryPathEntry2 = new CLibraryPathEntry("lib_A", 0);
-		CLibraryFileEntry libraryFileEntry1 = new CLibraryFileEntry("file_B", 0);
-		CLibraryFileEntry libraryFileEntry2 = new CLibraryFileEntry("file_A", 0);
-		
-		// place entries in unsorted list
-		List<ICLanguageSettingEntry> unsortedEntries = new ArrayList<ICLanguageSettingEntry>();
-		// macros will be sorted by name
-		unsortedEntries.add(macroEntry2);
-		unsortedEntries.add(macroEntry1);
-		// paths are not sorted only grouped by kind
-		unsortedEntries.add(macroFileEntry1);
-		unsortedEntries.add(macroFileEntry2);
-		unsortedEntries.add(includePathEntry1);
-		unsortedEntries.add(includePathEntry2);
-		unsortedEntries.add(includeFileEntry1);
-		unsortedEntries.add(includeFileEntry2);
-		unsortedEntries.add(libraryFileEntry1);
-		unsortedEntries.add(libraryFileEntry2);
-		unsortedEntries.add(libraryPathEntry1);
-		unsortedEntries.add(libraryPathEntry2);
-		
-		// create a provider and set the entries
-		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
-		provider.setSettingEntries(null, null, null, unsortedEntries);
-		
-		// retrieve and check that language settings got sorted properly
-		assertEquals(PROVIDER_1, provider.getId());
-		int i=0;
-		List<ICLanguageSettingEntry> actual = provider.getSettingEntries(null, null, null);
-		assertEquals(includePathEntry1, actual.get(i++));
-		assertEquals(includePathEntry2, actual.get(i++));
-		assertEquals(includeFileEntry1, actual.get(i++));
-		assertEquals(includeFileEntry2, actual.get(i++));
-		assertEquals(macroEntry1, actual.get(i++));
-		assertEquals(macroEntry2, actual.get(i++));
-		assertEquals(macroFileEntry1, actual.get(i++));  
-		assertEquals(macroFileEntry2, actual.get(i++));  
-		assertEquals(libraryPathEntry1, actual.get(i++));
-		assertEquals(libraryPathEntry2, actual.get(i++));
-		assertEquals(libraryFileEntry1, actual.get(i++));
-		assertEquals(libraryFileEntry2, actual.get(i++));
-		
-		assertEquals(unsortedEntries.size(), actual.size());
-	}
-	
-	/**
-	 */
-	public void testSort_Undef() throws Exception {
-		// create sample entries
-		CMacroEntry macroEntry1 = new CMacroEntry("MACRO_1", null, 0);
-		CMacroEntry macroEntry2A = new CMacroEntry("MACRO_2", null, ICSettingEntry.UNDEFINED);
-		CMacroEntry macroEntry2B = new CMacroEntry("MACRO_2", null, 0);
-		CMacroEntry macroEntry2C = new CMacroEntry("MACRO_2", null, ICSettingEntry.BUILTIN);
-		CMacroEntry macroEntry3 = new CMacroEntry("MACRO_3", null, 0);
-		
-		// place entries in unsorted list
-		List<ICLanguageSettingEntry> unsortedEntries = new ArrayList<ICLanguageSettingEntry>();
-		// macros will be sorted by name and keep order for the same name
-		unsortedEntries.add(macroEntry2A);
-		unsortedEntries.add(macroEntry3);
-		unsortedEntries.add(macroEntry2B);
-		unsortedEntries.add(macroEntry1);
-		unsortedEntries.add(macroEntry2C);
-		
-		// create a provider and set the entries
-		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
-		provider.setSettingEntries(null, null, null, unsortedEntries);
-		
-		// retrieve and check that language settings got sorted properly
-		assertEquals(PROVIDER_1, provider.getId());
-		int i=0;
-		List<ICLanguageSettingEntry> actual = provider.getSettingEntries(null, null, null);
-		assertEquals(macroEntry1, actual.get(i++));
-		assertEquals(macroEntry2A, actual.get(i++));
-		assertEquals(macroEntry2B, actual.get(i++));
-		assertEquals(macroEntry2C, actual.get(i++));
-		assertEquals(macroEntry3, actual.get(i++));
-		
-		assertEquals(unsortedEntries.size(), actual.size());
-	}
-	
-	/**
-	 */
 	public void testLanguageAndNull() throws Exception {
 		Element elementProvider = null;
 
@@ -1292,6 +1142,154 @@ public class LanguageSettingsSerializableTests extends TestCase {
 		List<ICLanguageSettingEntry> actual = providerClone.getSettingEntries(null, null, null);
 		assertNull(actual);
 	}
+	
+	/**
+	 */
+	public void testSort_Kinds() throws Exception {
+		// create sample entries
+		CIncludePathEntry includePathEntry1 = new CIncludePathEntry("path1", 0);
+		CIncludePathEntry includePathEntry2 = new CIncludePathEntry("path2", 0);
+		CMacroEntry macroEntry1 = new CMacroEntry("MACRO1", null, 0);
+		CMacroEntry macroEntry2 = new CMacroEntry("MACRO2", null, 0);
+		CIncludeFileEntry includeFileEntry1 = new CIncludeFileEntry("file1", 0);
+		CIncludeFileEntry includeFileEntry2 = new CIncludeFileEntry("file2", 0);
+		CMacroFileEntry macroFileEntry1 = new CMacroFileEntry("file1", 0);
+		CMacroFileEntry macroFileEntry2 = new CMacroFileEntry("file2", 0);
+		CLibraryPathEntry libraryPathEntry1 = new CLibraryPathEntry("lib1", 0);
+		CLibraryPathEntry libraryPathEntry2 = new CLibraryPathEntry("lib2", 0);
+		CLibraryFileEntry libraryFileEntry1 = new CLibraryFileEntry("file1", 0);
+		CLibraryFileEntry libraryFileEntry2 = new CLibraryFileEntry("file2", 0);
+		
+		// place entries in unsorted list
+		List<ICLanguageSettingEntry> unsortedEntries = new ArrayList<ICLanguageSettingEntry>();
+		unsortedEntries.add(macroEntry1);
+		unsortedEntries.add(macroFileEntry1);
+		unsortedEntries.add(macroEntry2);
+		unsortedEntries.add(includePathEntry1);
+		unsortedEntries.add(includeFileEntry1);
+		unsortedEntries.add(macroFileEntry2);
+		unsortedEntries.add(libraryFileEntry1);
+		unsortedEntries.add(includeFileEntry2);
+		unsortedEntries.add(libraryFileEntry2);
+		unsortedEntries.add(libraryPathEntry1);
+		unsortedEntries.add(includePathEntry2);
+		unsortedEntries.add(libraryPathEntry2);
+
+		// create a provider and set the entries
+		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
+		provider.setSettingEntries(null, null, null, unsortedEntries);
+		
+		// retrieve and check that language settings got sorted properly
+		int i=0;
+		List<ICLanguageSettingEntry> actual = provider.getSettingEntries(null, null, null);
+		assertEquals(includePathEntry1, actual.get(i++));
+		assertEquals(includePathEntry2, actual.get(i++));
+		assertEquals(includeFileEntry1, actual.get(i++));
+		assertEquals(includeFileEntry2, actual.get(i++));
+		assertEquals(macroEntry1, actual.get(i++));
+		assertEquals(macroEntry2, actual.get(i++));
+		assertEquals(macroFileEntry1, actual.get(i++));  
+		assertEquals(macroFileEntry2, actual.get(i++));  
+		assertEquals(libraryPathEntry1, actual.get(i++));
+		assertEquals(libraryPathEntry2, actual.get(i++));
+		assertEquals(libraryFileEntry1, actual.get(i++));
+		assertEquals(libraryFileEntry2, actual.get(i++));
+		
+		assertEquals(unsortedEntries.size(), actual.size());
+	}
+	
+	/**
+	 */
+	public void testSort_Entries() throws Exception {
+		// create sample entries
+		CIncludePathEntry includePathEntry1 = new CIncludePathEntry("path_B", 0);
+		CIncludePathEntry includePathEntry2 = new CIncludePathEntry("path_A", 0);
+		CMacroEntry macroEntry1 = new CMacroEntry("MACRO_A", null, 0);
+		CMacroEntry macroEntry2 = new CMacroEntry("MACRO_B", null, 0);
+		CIncludeFileEntry includeFileEntry1 = new CIncludeFileEntry("file_B", 0);
+		CIncludeFileEntry includeFileEntry2 = new CIncludeFileEntry("file_A", 0);
+		CMacroFileEntry macroFileEntry1 = new CMacroFileEntry("file_B", 0);
+		CMacroFileEntry macroFileEntry2 = new CMacroFileEntry("file_A", 0);
+		CLibraryPathEntry libraryPathEntry1 = new CLibraryPathEntry("lib_B", 0);
+		CLibraryPathEntry libraryPathEntry2 = new CLibraryPathEntry("lib_A", 0);
+		CLibraryFileEntry libraryFileEntry1 = new CLibraryFileEntry("file_B", 0);
+		CLibraryFileEntry libraryFileEntry2 = new CLibraryFileEntry("file_A", 0);
+		
+		// place entries in unsorted list
+		List<ICLanguageSettingEntry> unsortedEntries = new ArrayList<ICLanguageSettingEntry>();
+		// macros will be sorted by name
+		unsortedEntries.add(macroEntry2);
+		unsortedEntries.add(macroEntry1);
+		// paths are not sorted only grouped by kind
+		unsortedEntries.add(macroFileEntry1);
+		unsortedEntries.add(macroFileEntry2);
+		unsortedEntries.add(includePathEntry1);
+		unsortedEntries.add(includePathEntry2);
+		unsortedEntries.add(includeFileEntry1);
+		unsortedEntries.add(includeFileEntry2);
+		unsortedEntries.add(libraryFileEntry1);
+		unsortedEntries.add(libraryFileEntry2);
+		unsortedEntries.add(libraryPathEntry1);
+		unsortedEntries.add(libraryPathEntry2);
+		
+		// create a provider and set the entries
+		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
+		provider.setSettingEntries(null, null, null, unsortedEntries);
+		
+		// retrieve and check that language settings got sorted properly
+		int i=0;
+		List<ICLanguageSettingEntry> actual = provider.getSettingEntries(null, null, null);
+		assertEquals(includePathEntry1, actual.get(i++));
+		assertEquals(includePathEntry2, actual.get(i++));
+		assertEquals(includeFileEntry1, actual.get(i++));
+		assertEquals(includeFileEntry2, actual.get(i++));
+		assertEquals(macroEntry1, actual.get(i++));
+		assertEquals(macroEntry2, actual.get(i++));
+		assertEquals(macroFileEntry1, actual.get(i++));  
+		assertEquals(macroFileEntry2, actual.get(i++));  
+		assertEquals(libraryPathEntry1, actual.get(i++));
+		assertEquals(libraryPathEntry2, actual.get(i++));
+		assertEquals(libraryFileEntry1, actual.get(i++));
+		assertEquals(libraryFileEntry2, actual.get(i++));
+		
+		assertEquals(unsortedEntries.size(), actual.size());
+	}
+	
+	/**
+	 */
+	public void testSort_Undef() throws Exception {
+		// create sample entries
+		CMacroEntry macroEntry1 = new CMacroEntry("MACRO_1", null, 0);
+		CMacroEntry macroEntry2A = new CMacroEntry("MACRO_2", null, ICSettingEntry.UNDEFINED);
+		CMacroEntry macroEntry2B = new CMacroEntry("MACRO_2", null, 0);
+		CMacroEntry macroEntry2C = new CMacroEntry("MACRO_2", null, ICSettingEntry.BUILTIN);
+		CMacroEntry macroEntry3 = new CMacroEntry("MACRO_3", null, 0);
+		
+		// place entries in unsorted list
+		List<ICLanguageSettingEntry> unsortedEntries = new ArrayList<ICLanguageSettingEntry>();
+		// macros will be sorted by name and keep order for the same name
+		unsortedEntries.add(macroEntry2A);
+		unsortedEntries.add(macroEntry3);
+		unsortedEntries.add(macroEntry2B);
+		unsortedEntries.add(macroEntry1);
+		unsortedEntries.add(macroEntry2C);
+		
+		// create a provider and set the entries
+		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
+		provider.setSettingEntries(null, null, null, unsortedEntries);
+		
+		// retrieve and check that language settings got sorted properly
+		int i=0;
+		List<ICLanguageSettingEntry> actual = provider.getSettingEntries(null, null, null);
+		assertEquals(macroEntry1, actual.get(i++));
+		assertEquals(macroEntry2A, actual.get(i++));
+		assertEquals(macroEntry2B, actual.get(i++));
+		assertEquals(macroEntry2C, actual.get(i++));
+		assertEquals(macroEntry3, actual.get(i++));
+		
+		assertEquals(unsortedEntries.size(), actual.size());
+	}
+	
 }
 
 

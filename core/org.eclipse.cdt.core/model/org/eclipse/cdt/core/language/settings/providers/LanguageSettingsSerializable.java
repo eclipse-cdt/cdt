@@ -51,7 +51,7 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 
 	private static final String ELEM_FLAG = "flag"; //$NON-NLS-1$
 
-	private static WeakHashSet<List<ICLanguageSettingEntry>> listLSEPool = new WeakHashSet<List<ICLanguageSettingEntry>>() {
+	private static WeakHashSet<List<ICLanguageSettingEntry>> lseListPool = new WeakHashSet<List<ICLanguageSettingEntry>>() {
 		@Override
 		public synchronized List<ICLanguageSettingEntry> add(List<ICLanguageSettingEntry> list) {
 			return super.add(list);
@@ -129,7 +129,7 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 				langMap = new HashMap<String, List<ICLanguageSettingEntry>>();
 				fStorage.put(languageId, langMap);
 			}
-			List<ICLanguageSettingEntry> sortedEntries = listLSEPool.add(Collections.unmodifiableList(sortEntries(entries)));
+			List<ICLanguageSettingEntry> sortedEntries = lseListPool.add(Collections.unmodifiableList(sortEntries(entries)));
 			langMap.put(rcProjectPath, sortedEntries);
 		} else {
 			// do not keep nulls in the tables

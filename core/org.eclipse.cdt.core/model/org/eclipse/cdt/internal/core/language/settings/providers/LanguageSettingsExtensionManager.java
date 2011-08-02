@@ -13,8 +13,10 @@ package org.eclipse.cdt.internal.core.language.settings.providers;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -23,12 +25,16 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -41,6 +47,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentType;
 
 /**
  * Class {@code LanguageSettingsExtensionManager} manages {@link ILanguageSettingsProvider} extensions
@@ -385,6 +392,99 @@ public class LanguageSettingsExtensionManager {
 		return new ArrayList<ICLanguageSettingEntry>(0);
 	}
 
+	/**
+	 * TODO
+	 */
+	public static void buildResourceTree(LanguageSettingsSerializable provider, ICConfigurationDescription cfgDescription, String languageId, IContainer folder) {
+		IResource[] members = null;
+		try {
+			members = folder.members();
+		} catch (Exception e) {
+			CCorePlugin.log(e);
+		}
+		if (members==null)
+			return;
+		
+		for (IResource rc : members) {
+			if (rc instanceof IContainer) {
+				buildResourceTree(provider, cfgDescription, languageId, (IContainer) rc);
+			}
+		}
+
+		int rcNumber = members.length;
+		
+		Map<List<ICLanguageSettingEntry>, Integer> listMap = new HashMap<List<ICLanguageSettingEntry>, Integer>();
+		
+		// on the first pass find majority entries
+		List<ICLanguageSettingEntry> majorityEntries = null;
+		List<ICLanguageSettingEntry> candidate = null;
+		int candidateCount = 0;
+		for (IResource rc : members) {
+			if (rc instanceof IFile) {
+				IContentType contentType = Platform.getContentTypeManager().findContentTypeFor(rc.getName());
+				if (contentType==null) {
+					rcNumber--;
+					if (candidateCount > rcNumber/2) {
+						majorityEntries = candidate;
+						break;
+					}
+					continue;
+				}
+				
+				ILanguage lang = LanguageManager.getInstance().getLanguage(contentType);
+				List<String> languageScope = provider.getLanguageScope();
+				if (lang==null || (languageScope!=null && !languageScope.contains(lang.getId()))) {
+					rcNumber--;
+					if (candidateCount > rcNumber/2) {
+						majorityEntries = candidate;
+						break;
+					}
+					continue;
+				}
+			}
+
+			List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, rc, languageId);
+			if (entries==null && rc instanceof IContainer) {
+				rcNumber--;
+				if (candidateCount > rcNumber/2) {
+					majorityEntries = candidate;
+					break;
+				}
+				continue;
+			}
+			
+			Integer count = listMap.get(entries);
+			if (count==null) {
+				count = 0;
+			}
+			count++;
+			if (count > rcNumber/2) {
+				majorityEntries = entries;
+				break;
+			}
+			if (count>candidateCount) {
+				candidateCount = count;
+				candidate = entries;
+			}
+			
+			listMap.put(entries, count);
+			
+		}
+		
+		if (majorityEntries!=null) {
+			provider.setSettingEntries(cfgDescription, folder, languageId, majorityEntries);
+		}
+		
+		for (IResource rc : members) {
+			List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, rc, languageId);
+			if (entries!=null && entries==majorityEntries) {
+				if (!(rc instanceof IFile)) { // preserve information which files were collected
+					provider.setSettingEntries(cfgDescription, rc, languageId, null);
+				}
+			}
+		}
+	}
+	
 	private static boolean checkBit(int flags, int bit) {
 		return (flags & bit) == bit;
 	}

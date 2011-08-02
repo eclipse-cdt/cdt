@@ -100,6 +100,13 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		return super.processLine(line, epm);
 	}
 
+	// TODO - test cases
+	@Override
+	public void shutdown() {
+		LanguageSettingsManager.buildResourceTree(this, currentCfgDescription, currentLanguageId, currentProject);
+		super.shutdown();
+	}
+
 	/**
 	 * Trivial Error Parser which allows highlighting of output lines matching the patterns
 	 * of this parser. Intended for better troubleshooting experience.

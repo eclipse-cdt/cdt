@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
@@ -68,6 +69,7 @@ import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.cdtvariables.CoreVariableSubstitutor;
 import org.eclipse.cdt.internal.core.cdtvariables.DefaultVariableContextInfo;
 import org.eclipse.cdt.internal.core.cdtvariables.ICoreVariableContextInfo;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsLogger;
 import org.eclipse.cdt.internal.core.model.APathEntry;
 import org.eclipse.cdt.internal.core.model.CModelStatus;
 import org.eclipse.cdt.internal.core.model.PathEntry;
@@ -2002,7 +2004,7 @@ public class PathEntryTranslator {
 		}
 	}
 
-	public static PathEntryCollector collectEntries(IProject project, ICConfigurationDescription des) {
+	public static PathEntryCollector collectEntries(IProject project, final ICConfigurationDescription des) {
 		CConfigurationData data = getCfgData(des);
 
 		ReferenceSettingsInfo refInfo = new ReferenceSettingsInfo(des);
@@ -2036,10 +2038,12 @@ public class PathEntryTranslator {
 			public boolean visit(PathSettingsContainer container) {
 				CResourceData data = (CResourceData)container.getValue();
 				if (data != null) {
+					AG_log(des, kinds, data); // AG FIXME REMOVEME
+
 					PathEntryCollector child = cr.createChild(container.getPath());
 					for (int kind : kinds) {
 						List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
-						if (collectResourceDataEntries(kind, data, list)) {
+						if (collectResourceDataEntries(des, kind, data, list)) {
 							ICLanguageSettingEntry[] entries = list.toArray(new ICLanguageSettingEntry[list.size()]);
 							child.setEntries(kind, entries, exportedSettings);
 						}
@@ -2047,11 +2051,28 @@ public class PathEntryTranslator {
 				}
 				return true;
 			}
+
+			// AG FIXME REMOVEME
+			private void AG_log(final ICConfigurationDescription des, final int[] kinds, CResourceData data) {
+				String kindsStr="";
+				for (int kind : kinds) {
+					String kstr = LanguageSettingEntriesSerializer.kindToString(kind);
+					if (kindsStr.length()==0) {
+						kindsStr = kstr;
+					} else {
+						kindsStr += "|" + kstr;
+					}
+				}
+				final IProject prj = des.getProjectDescription().getProject();
+				String log_msg = "path="+prj+"/"+data.getPath()+", kind=["+kindsStr+"]"+" (PathEntryTranslator.collectEntries())";
+				LanguageSettingsLogger.logInfo(log_msg);
+			}
+
 		});
 		return cr;
 	}
 
-	private static boolean collectResourceDataEntries(int kind, CResourceData data, List<ICLanguageSettingEntry> list) {
+	private static boolean collectResourceDataEntries(ICConfigurationDescription des, int kind, CResourceData data, List<ICLanguageSettingEntry> list) {
 		CLanguageData[] lDatas = null;
 		if (data instanceof CFolderData) {
 			lDatas = ((CFolderData)data).getLanguageDatas();
@@ -2068,6 +2089,17 @@ public class PathEntryTranslator {
 			return false;
 		}
 
+		
+		IProject project = des.getProjectDescription().getProject();
+		if (LanguageSettingsManager.isLanguageSettingsProvidersEnabled(project)) {
+			IResource rc = getResource(project, data.getPath());
+			for (CLanguageData lData : lDatas) {
+				list.addAll(LanguageSettingsManager.getSettingEntriesByKind(des, rc, lData.getLanguageId(), kind));
+			}
+			return list.size()>0;
+			
+		}
+		// Legacy logic
 		boolean supported = false;
 		for (CLanguageData lData : lDatas) {
 			if (collectLanguageDataEntries(kind, lData, list))
@@ -2091,5 +2123,15 @@ public class PathEntryTranslator {
 	public static IPathEntry[] getPathEntries(IProject project, ICConfigurationDescription cfg, int flags) {
 		PathEntryCollector cr = collectEntries(project, cfg);
 		return cr.getEntries(flags, cfg);
+	}
+
+	private static IResource getResource(IProject project, IPath workspacePath) {
+		IResource rc;
+		if (project!=null) {
+			rc = project.findMember(workspacePath);
+		} else {
+			rc = ResourcesPlugin.getWorkspace().getRoot().findMember(workspacePath);
+		}
+		return rc;
 	}
 }

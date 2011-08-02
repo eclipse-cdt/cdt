@@ -85,6 +85,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 	private String targetToolIds;
 	private String secondaryOutputIds;
 	private Boolean isAbstract;
+	private String defaultLanguageSettingsProvidersIds;
     private String scannerConfigDiscoveryProfileId;
 	private String versionsSupported;
 	private String convertToId;
@@ -554,6 +555,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		// Get the target tool id
 		targetToolIds = SafeStringInterner.safeIntern(element.getAttribute(TARGET_TOOL));
 		
+		// Get the initial/default language setttings providers IDs
+		defaultLanguageSettingsProvidersIds = element.getAttribute(LANGUAGE_SETTINGS_PROVIDERS);
+
 		// Get the scanner config discovery profile id
         scannerConfigDiscoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(SCANNER_CONFIG_PROFILE_ID));
         String tmp = element.getAttribute(RESOURCE_TYPE_BASED_DISCOVERY);
@@ -1499,6 +1503,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 			archList.add(archs[i]);
 		}		
 		setDirty(true);
+	}
+
+	public String getDefaultLanguageSettingsProvidersIds() {
+		return defaultLanguageSettingsProvidersIds;
 	}
 
     /* (non-Javadoc)

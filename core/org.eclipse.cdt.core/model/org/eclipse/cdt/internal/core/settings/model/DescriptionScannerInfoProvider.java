@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsLogger;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -74,6 +75,9 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 	}
 
 	public IScannerInfo getScannerInformation(IResource resource) {
+		// AG FIXME
+		LanguageSettingsLogger.logScannerInfoProvider(resource, this);
+		
 		if(!fInited)
 			updateProjCfgInfo(CProjectDescriptionManager.getInstance().getProjectDescription(fProject, false));
 

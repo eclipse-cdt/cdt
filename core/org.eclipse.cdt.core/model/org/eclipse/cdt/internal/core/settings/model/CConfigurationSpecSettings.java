@@ -11,15 +11,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
@@ -37,9 +41,11 @@ import org.eclipse.cdt.internal.core.COwner;
 import org.eclipse.cdt.internal.core.COwnerConfiguration;
 import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * CConfigurationSpecSettings impelements ICSettingsStorage
@@ -86,6 +92,8 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	private COwner fOwner;
 //	private CConfigBasedDescriptor fDescriptor;
 //	private Map fExternalSettingsProviderMap;
+
+	private List<ILanguageSettingsProvider> fLanguageSettingsProviders = new ArrayList<ILanguageSettingsProvider>(0);
 
 	private class DeltaSet {
 		public Set<ICConfigExtensionReference> extSet;
@@ -179,6 +187,8 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		fOwner = base.fOwner;
 
 		copyExtensionInfo(base);
+		
+		fLanguageSettingsProviders = new ArrayList<ILanguageSettingsProvider>(base.getLanguageSettingProviders());
 	}
 
 //	private void copyRefInfos(Map infosMap){
@@ -970,5 +980,35 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 
 	public void updateExternalSettingsProviders(String[] ids){
 		ExtensionContainerFactory.updateReferencedProviderIds(fCfg, ids);
+	}
+	
+	/**
+	 * Adds list of {@link ILanguageSettingsProvider} to the specs.
+	 * Note that only unique IDs are accepted.
+	 * 
+	 * @param providers - list of providers to keep in the specs.
+	 */
+	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
+		fLanguageSettingsProviders.clear();
+		Set<String> ids = new HashSet<String>();
+		for (ILanguageSettingsProvider provider : providers) {
+			String id = provider.getId();
+			if (provider==LanguageSettingsProvidersSerializer.getRawWorkspaceProvider(id)) {
+				String msg = "Error: Attempt to add to the configuration raw global provider " + id;
+				throw new IllegalArgumentException(msg);
+			}
+			if (!ids.contains(id)) {
+				fLanguageSettingsProviders.add(provider);
+				ids.add(id);
+			} else {
+				String msg = NLS.bind(SettingsModelMessages.getString("CConfigurationSpecSettings.MustHaveUniqueID"), id); //$NON-NLS-1$
+				throw new IllegalArgumentException(msg);
+			}
+		}
+		fIsModified = true;
+	}
+
+	public List<ILanguageSettingsProvider> getLanguageSettingProviders() {
+		return Collections.unmodifiableList(fLanguageSettingsProviders);
 	}
 }

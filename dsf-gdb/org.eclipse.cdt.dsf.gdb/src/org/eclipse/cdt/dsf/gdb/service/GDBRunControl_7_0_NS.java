@@ -398,6 +398,16 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		super.shutdown(rm);
 	}
 
+	/** @since 4.1 */
+	protected boolean getRunControlOperationsEnabled() {
+		return fRunControlOperationsEnabled;
+	}
+
+	/** @since 4.1 */
+	protected void setRunControlOperationsEnabled(boolean runControlEnabled) {
+		fRunControlOperationsEnabled = runControlEnabled;
+	}
+	
 	///////////////////////////////////////////////////////////////////////////
 	// AbstractDsfService
 	///////////////////////////////////////////////////////////////////////////
@@ -1585,18 +1595,13 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     }
 
     /**
+     * @deprecated Tracing is only supported with GDB 7.2, so this logic
+     * was moved to the GDBRunControl_7_2_NS class.
 	 * @since 3.0
 	 */
+    @Deprecated
     @DsfServiceEventHandler 
     public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
-    	if (e.isVisualizationModeEnabled()) {
-    		// We have started looking at trace records.  We can no longer
-    		// do run control operations.
-    		fRunControlOperationsEnabled = false;
-    	} else {
-    		// We stopped looking at trace data and gone back to debugger mode
-    		fRunControlOperationsEnabled = true;
-    	}
     }
     
 	public void flushCache(IDMContext context) {

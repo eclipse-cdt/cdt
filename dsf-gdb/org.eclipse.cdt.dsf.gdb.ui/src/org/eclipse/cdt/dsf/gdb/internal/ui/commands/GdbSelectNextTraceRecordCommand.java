@@ -80,14 +80,22 @@ public class GdbSelectNextTraceRecordCommand extends AbstractDebugCommand implem
        						new DataRequestMonitor<ITraceRecordDMContext>(fExecutor, rm) {
        							@Override
        							protected void handleSuccess() {
-       							    final ITraceRecordDMContext nextDmc = traceControl.createNextRecordContext(getData());
-       							    traceControl.selectTraceRecord(nextDmc, new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
-       							        @Override
-       							        protected void handleSuccess() {
-       							            fSession.dispatchEvent(new TraceRecordSelectedChangedEvent(nextDmc), new Hashtable<String, String>());
-       							            rm.done();
-       							        }
-       							    });
+       								final ITraceRecordDMContext previousDmc = getData();
+       							    ITraceRecordDMContext nextDmc = traceControl.createNextRecordContext(previousDmc);
+       							    // Must send the event right away to tell the services we are starting visualization
+       							    // If we don't, the services won't behave accordingly soon enough
+       							    // Bug 347514
+						            fSession.dispatchEvent(new TraceRecordSelectedChangedEvent(nextDmc), new Hashtable<String, String>());
+						            
+						            traceControl.selectTraceRecord(nextDmc, new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+						            	@Override
+						            	protected void handleError() {
+						            		// If we weren't able to select the next record, we must notify that we are still on the previous one
+						            		// since we have already sent a TraceRecordSelectedChangedEvent early, but it didn't happen.
+						            		fSession.dispatchEvent(new TraceRecordSelectedChangedEvent(previousDmc), new Hashtable<String, String>());
+						            		rm.done();
+						            	}
+						            });
        							};
        						});
        			} else {

@@ -21,12 +21,14 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -41,7 +43,12 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 
 	private ICommandControlService fConnection;
 	private CommandFactory fCommandFactory;
-
+	
+	/**
+	 * Keeps track if we are currently visualizing trace data or not
+	 */
+	private boolean fTraceVisualization;
+	
 	///////////////////////////////////////////////////////////////////////////
 	// Initialization and shutdown
 	///////////////////////////////////////////////////////////////////////////
@@ -81,6 +88,16 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 		super.shutdown(rm);
 	}
 
+	/** @since 4.1 */
+	protected boolean getTraceVisualization() {
+		return fTraceVisualization;
+	}
+
+	/** @since 4.1 */
+	protected void setTraceVisualization(boolean visualizing) {
+		fTraceVisualization = visualizing;
+	}
+	
 	// Now that the flag --thread-group is globally supported
 	// by GDB 7.2, we have to make sure not to use it twice.
 	// Bug 340262
@@ -168,5 +185,31 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 
 	private void doResumeContainer(IMIContainerDMContext context, final RequestMonitor rm) {
 		fConnection.queueCommand(fCommandFactory.createMIExecContinue(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
-	}	
+	}
+	
+    /**
+	 * @since 4.1
+	 */
+	@Override
+    @DsfServiceEventHandler
+    public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
+    	setTraceVisualization(e.isVisualizationModeEnabled());
+
+    	// Disable or re-enable run control operations if we are looking
+    	// at trace data or we are not, respectively.
+    	setRunControlOperationsEnabled(!e.isVisualizationModeEnabled());
+    }
+    
+	@Override
+	protected void refreshThreadStates() {
+		// We should not refresh the thread state while we are visualizing trace data.
+		// This is because GDB will report the state of the threads of the executing
+		// program, while we should only deal with a 'fake' stopped thread 1, during
+		// visualization.
+		// So, simply keep the state of the threads as is until visualization stops.
+		// Bug 347514
+		if (getTraceVisualization() == false) {
+			super.refreshThreadStates();
+		}
+	}
 }

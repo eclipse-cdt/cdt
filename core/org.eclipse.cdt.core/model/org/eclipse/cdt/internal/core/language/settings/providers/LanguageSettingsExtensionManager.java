@@ -393,7 +393,14 @@ public class LanguageSettingsExtensionManager {
 	}
 
 	/**
-	 * TODO
+	 * Builds for the provider a nice looking resource tree to present hierarchical view to the user.
+	 * Note that it is not advisable to "compact" the tree because of potential loss of information
+	 * which is especially important during partial or incremental builds.
+	 * 
+	 * @param provider - language settings provider to build the tree for.
+	 * @param cfgDescription - configuration description.
+	 * @param languageId - language ID.
+	 * @param folder - container where the tree roots.
 	 */
 	public static void buildResourceTree(LanguageSettingsSerializable provider, ICConfigurationDescription cfgDescription, String languageId, IContainer folder) {
 		IResource[] members = null;
@@ -420,61 +427,39 @@ public class LanguageSettingsExtensionManager {
 		List<ICLanguageSettingEntry> candidate = null;
 		int candidateCount = 0;
 		for (IResource rc : members) {
-			if (rc instanceof IFile) {
-				IContentType contentType = Platform.getContentTypeManager().findContentTypeFor(rc.getName());
-				if (contentType==null) {
+			if (!isLanguageInScope(rc, cfgDescription, languageId)) {
+				rcNumber--;
+			} else {
+				List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, rc, languageId);
+				if (entries==null && rc instanceof IContainer) {
 					rcNumber--;
-					if (candidateCount > rcNumber/2) {
-						majorityEntries = candidate;
-						break;
+				} else {
+					Integer count = listMap.get(entries);
+					if (count==null) {
+						count = 0;
 					}
-					continue;
-				}
-				
-				ILanguage lang = LanguageManager.getInstance().getLanguage(contentType);
-				List<String> languageScope = provider.getLanguageScope();
-				if (lang==null || (languageScope!=null && !languageScope.contains(lang.getId()))) {
-					rcNumber--;
-					if (candidateCount > rcNumber/2) {
-						majorityEntries = candidate;
-						break;
+					count++;
+					
+					if (count>candidateCount) {
+						candidateCount = count;
+						candidate = entries;
 					}
-					continue;
+					
+					listMap.put(entries, count);
 				}
 			}
 
-			List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, rc, languageId);
-			if (entries==null && rc instanceof IContainer) {
-				rcNumber--;
-				if (candidateCount > rcNumber/2) {
-					majorityEntries = candidate;
-					break;
-				}
-				continue;
-			}
-			
-			Integer count = listMap.get(entries);
-			if (count==null) {
-				count = 0;
-			}
-			count++;
-			if (count > rcNumber/2) {
-				majorityEntries = entries;
+			if (candidateCount > rcNumber/2) {
+				majorityEntries = candidate;
 				break;
 			}
-			if (count>candidateCount) {
-				candidateCount = count;
-				candidate = entries;
-			}
-			
-			listMap.put(entries, count);
-			
 		}
 		
 		if (majorityEntries!=null) {
 			provider.setSettingEntries(cfgDescription, folder, languageId, majorityEntries);
 		}
 		
+		// second pass - assign the entries to the folders
 		for (IResource rc : members) {
 			List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, rc, languageId);
 			if (entries!=null && entries==majorityEntries) {
@@ -483,6 +468,21 @@ public class LanguageSettingsExtensionManager {
 				}
 			}
 		}
+	}
+
+	private static boolean isLanguageInScope(IResource rc, ICConfigurationDescription cfgDescription, String languageId) {
+		if (rc instanceof IFile) {
+			ILanguage lang = null;
+			try {
+				lang = LanguageManager.getInstance().getLanguageForFile((IFile) rc, cfgDescription);
+			} catch (CoreException e) {
+				CCorePlugin.log("Error loading language settings providers extensions", e); //$NON-NLS-1$
+			}
+			if (lang==null || (languageId!=null && languageId.equals(lang.getId()))) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	private static boolean checkBit(int flags, int bit) {

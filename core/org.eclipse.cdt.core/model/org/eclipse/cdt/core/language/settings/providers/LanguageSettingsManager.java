@@ -61,7 +61,12 @@ public class LanguageSettingsManager {
 	}
 
 	/**
-	 * TODO
+	 * Builds for the provider a nice looking resource tree to present hierarchical view to the user.
+	 * 
+	 * @param provider - language settings provider to build the tree for.
+	 * @param cfgDescription - configuration description.
+	 * @param languageId - language ID.
+	 * @param project - the project which is considered the root of the resource tree.
 	 */
 	public static void buildResourceTree(LanguageSettingsSerializable provider, ICConfigurationDescription cfgDescription, String languageId, IProject project) {
 		LanguageSettingsExtensionManager.buildResourceTree(provider, cfgDescription, languageId, project);

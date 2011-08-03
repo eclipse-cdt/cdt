@@ -217,11 +217,15 @@ public abstract class AbstractMIControl extends AbstractDsfService
         fRxThread = new RxThread(inStream);
         
         GDBBackend backend = getServicesTracker().getService(GDBBackend.class);
-        fErrorThread = new ErrorThread(backend.getProcess().getErrorStream());
+        if (backend != null) {
+        	fErrorThread = new ErrorThread(backend.getProcess().getErrorStream());
+        }
         
         fTxThread.start();
         fRxThread.start();
-        fErrorThread.start();
+        if (fErrorThread != null) {
+        	fErrorThread.start();
+        }
     }
     
     /**

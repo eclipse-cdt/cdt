@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [236505] Remote systems dialog not working
  * Martin Oberhuber (Wind River) - [238519][api] Support styled label decorations
  * David McKnight   (IBM)        - [238288] use ImageRegistry to store/retrieve images for RSE label providers
+ * David McKnight   (IBM)        - [353685] Connection error dialog is not displayed
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -28,8 +29,12 @@ import java.util.Hashtable;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -43,14 +48,19 @@ import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelP
 import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.SubSystem.SystemMessageDialogRunnable;
+import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.operations.SystemDeferredTreeContentManager;
 import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.PendingUpdateAdapter;
@@ -331,8 +341,45 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	  {
     		  children = adapter.getChildren((IAdaptable)object, new NullProgressMonitor());
     	  }
-
-
+    	  if (children == null){
+    	  	// make sure connected - the message may have been suppressed
+	      	ISubSystem ss = null;
+	    	 if (object instanceof IContextObject){
+	    		ss = ((IContextObject)object).getSubSystem();
+	     	 }
+	     	 else{
+	    		ss = adapter.getSubSystem(object);
+	    	 }
+	    	  if (ss != null){
+	    		  if (!ss.isConnected()){
+	    			  final ISubSystem fss = ss;
+	    			  // run a connect job so we can get at the error message
+	    			  new Job(SystemResources.ACTION_CONNECT_LABEL) {						
+						protected IStatus run(IProgressMonitor monitor) {
+							try {
+								fss.connect(monitor, false);
+							} 
+							catch (SystemMessageException ex){
+								final SystemMessageException fex = ex;
+								Display.getDefault().asyncExec(new Runnable() {
+									
+									public void run() {
+										SystemMessageDialog dlg = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), fex.getSystemMessage());
+										dlg.open();
+									}
+								});
+							}
+							catch (Exception e) {																
+								return Status.CANCEL_STATUS;
+							}
+							return Status.OK_STATUS;
+						}
+					}.schedule();					
+	    		  }
+	    	  }
+    	  }
+    	  
+    	  
     	  if ((filesOnly || foldersOnly) &&
     	      // an array of one SystemMessageObject item implies some kind of error, so don't cache...
     	      ((children.length != 1) || !(children[0] instanceof SystemMessageObject)) )

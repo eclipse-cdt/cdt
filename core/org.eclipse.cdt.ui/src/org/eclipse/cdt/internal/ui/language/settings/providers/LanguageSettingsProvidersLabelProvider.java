@@ -107,10 +107,15 @@ class LanguageSettingsProvidersLabelProvider extends LabelProvider {
 	@Override
 	public String getText(Object element) {
 		if (element instanceof ILanguageSettingsProvider) {
-			String name = ((ILanguageSettingsProvider) element).getName();
-			if (name!=null)
+			ILanguageSettingsProvider provider = (ILanguageSettingsProvider) element;
+			String name = provider.getName();
+			if (name!=null) {
+				if (LanguageSettingsManager.isWorkspaceProvider(provider)) {
+					name = name + "   [ Shared ]";
+				}
 				return name;
-			String id = ((ILanguageSettingsProvider) element).getId();
+			}
+			String id = provider.getId();
 			return "[ Not accessible id="+id+" ]";
 		}
 		return OOPS;

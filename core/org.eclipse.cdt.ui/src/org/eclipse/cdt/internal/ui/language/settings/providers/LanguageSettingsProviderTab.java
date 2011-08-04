@@ -389,7 +389,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		if (!page.isForPrefs()) {
 			if (globalProviderCheckBox==null) {
 				globalProviderCheckBox = new Button(groupOptionsPage, SWT.CHECK);
-				globalProviderCheckBox.setText("Use global provider sharing settings among projects");
+				globalProviderCheckBox.setText("Share setting entries between projects (global provider)");
 				globalProviderCheckBox.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {

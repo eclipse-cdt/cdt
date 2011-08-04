@@ -47,7 +47,6 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.content.IContentType;
 
 /**
  * Class {@code LanguageSettingsExtensionManager} manages {@link ILanguageSettingsProvider} extensions
@@ -478,7 +477,7 @@ public class LanguageSettingsExtensionManager {
 			} catch (CoreException e) {
 				CCorePlugin.log("Error loading language settings providers extensions", e); //$NON-NLS-1$
 			}
-			if (lang==null || (languageId!=null && languageId.equals(lang.getId()))) {
+			if (lang==null || (languageId!=null && !languageId.equals(lang.getId()))) {
 				return false;
 			}
 		}

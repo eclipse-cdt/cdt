@@ -21,6 +21,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
@@ -59,7 +60,7 @@ public class GCCBuildCommandParserTest extends TestCase {
 	private static final String GCC_BUILD_COMMAND_PARSER_EXT = "org.eclipse.cdt.make.core.build.command.parser.gcc"; //$NON-NLS-1$
 	
 	private static final String ELEM_TEST = "test";
-	private static final String LANG_CPP = "org.eclipse.cdt.core.g++";
+	private static final String LANG_CPP = GPPLanguage.ID;
 
 	// those attributes must match that in AbstractBuiltinSpecsDetector
 	private static final String ATTR_EXPAND_RELATIVE_PATHS = "expand-relative-paths"; //$NON-NLS-1$
@@ -1871,5 +1872,38 @@ public class GCCBuildCommandParserTest extends TestCase {
 			assertEquals(new CIncludePathEntry(new Path("/LocallyMappedTo/Folder").setDevice(device), 0), entries.get(0));
 		}
 	}
+
+	/**
+	 */
+	public void testBuildResourceTree() throws Exception {
+		// create resources
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+		IFolder folder = ResourceHelper.createFolder(project, "Folder");
+		IFile file = ResourceHelper.createFile(project, "Folder/file.cpp");
+		
+		// create GCCBuildCommandParser
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		ErrorParserManager epm = new ErrorParserManager(project, null);
+		
+		// parse line
+		parser.startup(cfgDescription);
+		parser.processLine("gcc "
+				+ " -DMACRO"
+				+ " Folder/file.cpp",
+				epm);
+		parser.shutdown();
+		
+		// check that entries go to highest possible level
+		CMacroEntry entry = new CMacroEntry("MACRO", null, 0);
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(entry);
+		
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(parser, cfgDescription, file, LANG_CPP));
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(parser, cfgDescription, folder, LANG_CPP));
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(parser, cfgDescription, project, LANG_CPP));
+	}
+	
 
 }

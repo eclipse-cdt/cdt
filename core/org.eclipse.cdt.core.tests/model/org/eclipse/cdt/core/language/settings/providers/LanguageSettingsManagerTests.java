@@ -18,6 +18,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.AbstractExecutableExtensionBase;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CMacroEntry;
@@ -48,6 +49,7 @@ public class LanguageSettingsManagerTests extends TestCase {
 	private static final IFile FILE_0 = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("/project/path0"));
 	private static final String CFG_ID = "test.configuration.id";
 	private static final String LANG_ID = "test.lang.id";
+	private static final String LANG_CPP = GPPLanguage.ID;
 	private static final String PROVIDER_0 = "test.provider.0.id";
 	private static final String PROVIDER_1 = "test.provider.1.id";
 	private static final String PROVIDER_2 = "test.provider.2.id";
@@ -230,6 +232,7 @@ public class LanguageSettingsManagerTests extends TestCase {
 		// use careless provider causing an exception
 		{
 			ILanguageSettingsProvider providerNPE = new MockProvider(PROVIDER_1, PROVIDER_NAME_1, null) {
+				@Override
 				public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
 					throw new NullPointerException("Can you handle me?");
 				}
@@ -820,7 +823,7 @@ public class LanguageSettingsManagerTests extends TestCase {
 		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
 		provider.setSettingEntries(null, file, null, entries);
 		// build the hierarchy
-		LanguageSettingsExtensionManager.buildResourceTree(provider, null, null, project);
+		LanguageSettingsManager.buildResourceTree(provider, null, null, project);
 		
 		// check that entries go to highest possible level
 		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file, null));
@@ -849,7 +852,7 @@ public class LanguageSettingsManagerTests extends TestCase {
 		provider.setSettingEntries(null, file1, null, entries1);
 		provider.setSettingEntries(null, file2, null, entries2);
 		// build the hierarchy
-		LanguageSettingsExtensionManager.buildResourceTree(provider, null, null, project);
+		LanguageSettingsManager.buildResourceTree(provider, null, null, project);
 		
 		// check that entries go to highest possible level
 		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file1, null));
@@ -863,7 +866,7 @@ public class LanguageSettingsManagerTests extends TestCase {
 	
 	/**
 	 */
-	public void testBuildResourceTree_IncrementalBuildFlippingSettings() throws Exception {
+	public void testBuildResourceTree_FlippingSettings() throws Exception {
 		// sample entries
 		List<ICLanguageSettingEntry> entries1 = new ArrayList<ICLanguageSettingEntry>();
 		entries1.add(new CMacroEntry("MACRO_1", null, 0));
@@ -883,17 +886,17 @@ public class LanguageSettingsManagerTests extends TestCase {
 		provider.setSettingEntries(null, file1, null, entries1);
 		provider.setSettingEntries(null, file2, null, entries1);
 		// build the hierarchy
-		LanguageSettingsExtensionManager.buildResourceTree(provider, null, null, project);
+		LanguageSettingsManager.buildResourceTree(provider, null, null, project);
 		// double-check where the entries go
 		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file1, null));
 		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file2, null));
 		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, project, null));
 		
-		// set the entries for the second+third files (with overlap)
+		// set the entries for the second+third files (second file flips the settings)
 		provider.setSettingEntries(null, file2, null, entries2);
 		provider.setSettingEntries(null, file3, null, entries2);
 		// build the hierarchy
-		LanguageSettingsExtensionManager.buildResourceTree(provider, null, null, project);
+		LanguageSettingsManager.buildResourceTree(provider, null, null, project);
 		// check where the entries go, it should not lose entries for the first file
 		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file1, null));
 		assertEquals(entries2, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file2, null));
@@ -901,4 +904,29 @@ public class LanguageSettingsManagerTests extends TestCase {
 		assertEquals(entries2, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, project, null));
 	}
 
+	/**
+	 */
+	public void testBuildResourceTree_WithLanguage() throws Exception {
+		// sample entries
+		CMacroEntry entry = new CMacroEntry("MACRO", null, 0);
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(entry);
+		
+		// create resources
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		IFolder folder = ResourceHelper.createFolder(project, "Folder");
+		IFile file = ResourceHelper.createFile(project, "Folder/file.cpp");
+		
+		// create a provider and set the entries
+		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
+		provider.setSettingEntries(null, file, LANG_CPP, entries);
+		// build the hierarchy
+		LanguageSettingsManager.buildResourceTree(provider, null, LANG_CPP, project);
+		
+		// check that entries go to highest possible level
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file, LANG_CPP));
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, folder, LANG_CPP));
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, project, LANG_CPP));
+	}
+	
 }

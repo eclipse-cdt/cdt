@@ -17,6 +17,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -46,8 +48,8 @@ public class GCCBuiltinSpecsDetectorTest extends TestCase {
 	private static final String PROVIDER_ID = "provider.id";
 	private static final String PROVIDER_NAME = "provider name";
 	private static final String LANGUAGE_ID = "language.test.id";
-	private static final String LANGUAGE_ID_C = "org.eclipse.cdt.core.gcc";
-	private static final String LANGUAGE_ID_CPP = "org.eclipse.cdt.core.g++";
+	private static final String LANGUAGE_ID_C = GCCLanguage.ID;
+	private static final String LANGUAGE_ID_CPP = GPPLanguage.ID;
 	private static final String CUSTOM_PARAMETER = "customParameter";
 	private static final String ELEM_TEST = "test";
 	

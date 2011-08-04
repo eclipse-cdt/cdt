@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  * David McKnight     (IBM)      - [238314] Default user ID on host properties page not disabled
+ * David McKnight     (IBM)      - [353377] Connection name with ":" causes problems
  *******************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -59,6 +60,7 @@ import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorConnectionName;
+import org.eclipse.rse.ui.validators.ValidatorFileName;
 import org.eclipse.rse.ui.validators.ValidatorUserId;
 import org.eclipse.rse.ui.widgets.InheritableEntryField;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizardPage;
@@ -126,6 +128,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 	protected ISystemValidator[] nameValidators;
 	protected ISystemValidator hostValidator;
 	protected ISystemValidator userIdValidator;
+	private ISystemValidator fileNameValidator;
 
 	// other inputs
 	protected ISystemMessageLine msgLine;
@@ -178,6 +181,8 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 
 		userIdValidator = new ValidatorUserId(true); // false => allow empty? Yes.
 		defaultUserId = ""; //$NON-NLS-1$
+		
+		fileNameValidator = new ValidatorFileName();
 	}
 
 	// -------------------------------------------------------------
@@ -1329,10 +1334,18 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 		if (nameValidator != null) {
 			errorMessage = nameValidator.validate(connName);
 		}
+		
+		if (errorMessage == null){
+			// bug 353377
+			// also validate file name - deals with ':' problem
+			errorMessage = fileNameValidator.validate(connName);
+		}
+		
 		showErrorMessage(errorMessage);
 		setPageComplete();
 		if (userTyped)
 			connectionNameEmpty = (connName.length() == 0); // d43191
+						
 		return errorMessage;
 	}
 
@@ -1358,7 +1371,11 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 		final String hostName = textHostName.getText().trim();
 
 		// d43191
-		if (connectionNameEmpty && contentsCreated) internalSetConnectionName(hostName);
+		if (connectionNameEmpty && contentsCreated) {
+			// make sure connection name doesn't use ':' - bug 353377
+			String newConnectionName = hostName.replace(':', '_');
+			internalSetConnectionName(newConnectionName);
+		}
 
 		errorMessage = null;
 

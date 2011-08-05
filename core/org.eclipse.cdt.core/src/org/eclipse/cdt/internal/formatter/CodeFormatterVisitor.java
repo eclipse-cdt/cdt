@@ -3132,11 +3132,18 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					formatLeftCurlyBrace(line, preferences.brace_position_for_block);
 					if (startNode(body)) {
 						try {
+							final boolean braceOnSameLine = DefaultCodeFormatterConstants.END_OF_LINE.equals(preferences.brace_position_for_block);
+							if (!braceOnSameLine) {
+								ok = true;
+								scribe.exitAlignment(alignment, true);
+							}
 							formatBlockOpening((IASTCompoundStatement) body,
 									preferences.brace_position_for_block,
 									preferences.insert_space_before_opening_brace_in_block);
-							ok = true;
-							scribe.exitAlignment(alignment, true);
+							if (braceOnSameLine) {
+								ok = true;
+								scribe.exitAlignment(alignment, true);
+							}
 							formatOpenedBlock((IASTCompoundStatement) body,
 									preferences.brace_position_for_block,
 									preferences.indent_statements_compare_to_block);

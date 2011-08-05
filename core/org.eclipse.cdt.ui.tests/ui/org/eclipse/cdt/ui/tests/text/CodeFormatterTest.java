@@ -2383,4 +2383,101 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testDoubleClosingAngleBrackets_Bug333816() throws Exception {
 		assertFormatterResult();
 	}
+
+	//void foo() {
+	//	int i;
+	//	for (iiiiiiiiiiiiiiiiii = 0; iiiiiiiiiiiiiiiiii < 10; iiiiiiiiiiiiiiiiii++) {
+	//	}
+	//	foo();
+	//}
+
+	//void foo() {
+	//	int i;
+	//	for (iiiiiiiiiiiiiiiiii = 0; iiiiiiiiiiiiiiiiii < 10;
+	//			iiiiiiiiiiiiiiiiii++) {
+	//	}
+	//	foo();
+	//}
+	public void testForLoopWrappingAtOpeningBrace() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_LINE_SPLIT, "80");
+		assertFormatterResult();
+	}
+	
+	//void foo() {
+	//	int i;
+	//	for (i = 0; i < 10; i++) {
+	//	}
+	//	foo();
+	//}
+
+	//void foo() {
+	//	int i;
+	//	for (i = 0; i < 10; i++) {
+	//	}
+	//	foo();
+	//}
+	public void testForLoopKnR_Bug351399() throws Exception {
+		assertFormatterResult();
+	}
+	
+	//void foo() {
+	//	int i;
+	//	for (i = 0; i < 10; i++) {
+	//	}
+	//	foo();
+	//}
+
+	//void foo()
+	//    {
+	//    int i;
+	//    for (i = 0; i < 10; i++)
+	//	{
+	//	}
+	//    foo();
+	//    }
+	public void testForLoopWhitesmiths_Bug351399() throws Exception {
+		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
+		assertFormatterResult();
+	}
+
+	//void foo() {
+	//	int i;
+	//	for (i = 0; i < 10; i++) {
+	//	}
+	//	foo();
+	//}
+
+	//void
+	//foo()
+	//{
+	//  int i;
+	//  for (i = 0; i < 10; i++)
+	//    {
+	//    }
+	//  foo();
+	//}
+	public void testForLoopGNU_Bug351399() throws Exception {
+		fOptions.putAll(DefaultCodeFormatterOptions.getGNUSettings().getMap());
+		assertFormatterResult();
+	}
+
+	//void foo() {
+	//	int i;
+	//	for (i = 0; i < 10; i++) {
+	//	}
+	//	foo();
+	//}
+
+	//void foo()
+	//{
+	//	int i;
+	//	for (i = 0; i < 10; i++)
+	//	{
+	//	}
+	//	foo();
+	//}
+	public void testForLoopAllman_Bug351399() throws Exception {
+		fOptions.putAll(DefaultCodeFormatterOptions.getAllmanSettings().getMap());
+		assertFormatterResult();
+	}
 }

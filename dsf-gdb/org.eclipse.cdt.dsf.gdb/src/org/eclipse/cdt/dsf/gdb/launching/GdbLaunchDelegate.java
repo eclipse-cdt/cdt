@@ -58,10 +58,11 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
     public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.cdt.dsf.gdb"; //$NON-NLS-1$
 
     private final static String NON_STOP_FIRST_VERSION = "6.8.50"; //$NON-NLS-1$
+    
+    // Can be removed once we remove the deprecated newServiceFactory(String)
 	private boolean fIsNonStopSession = false;
 	
     private final static String TRACING_FIRST_VERSION = "7.1.50"; //$NON-NLS-1$
-	private boolean fIsPostMortemTracingSession;
 	
 	public GdbLaunchDelegate() {
 		// We now fully support project-less debugging
@@ -134,21 +135,21 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
     	
         monitor.worked( 1 );
 
+        // Must set this here for users that call directly the deprecated newServiceFactory(String)
         fIsNonStopSession = LaunchUtils.getIsNonStopMode(config);
-        fIsPostMortemTracingSession = LaunchUtils.getIsPostMortemTracing(config);
 
         String gdbVersion = getGDBVersion(config);
         
         // First make sure non-stop is supported, if the user want to use this mode
-        if (fIsNonStopSession && !isNonStopSupportedInGdbVersion(gdbVersion)) {
+        if (LaunchUtils.getIsNonStopMode(config) && !isNonStopSupportedInGdbVersion(gdbVersion)) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Non-stop mode is only supported starting with GDB " + NON_STOP_FIRST_VERSION, null)); //$NON-NLS-1$        	
         }
 
-        if (fIsPostMortemTracingSession && !isPostMortemTracingSupportedInGdbVersion(gdbVersion)) {
+        if (LaunchUtils.getIsPostMortemTracing(config) && !isPostMortemTracingSupportedInGdbVersion(gdbVersion)) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Post-mortem tracing is only supported starting with GDB " + TRACING_FIRST_VERSION, null)); //$NON-NLS-1$        	
         }
 
-        launch.setServiceFactory(newServiceFactory(gdbVersion));
+        launch.setServiceFactory(newServiceFactory(config, gdbVersion));
 
         // Create and invoke the launch sequence to create the debug control and services
         IProgressMonitor subMon1 = new SubProgressMonitor(monitor, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK); 
@@ -377,7 +378,10 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 		return false;
 	}
 
-	// A subclass can override this method and provide its own ServiceFactory.
+	/**
+	 * @deprecated Replaced by newServiceFactory(ILaunchConfiguration, String)
+	 */
+	@Deprecated
 	protected IDsfDebugServicesFactory newServiceFactory(String version) {
 
 		if (fIsNonStopSession && isNonStopSupportedInGdbVersion(version)) {
@@ -394,6 +398,18 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 		}
 
 		return new GdbDebugServicesFactory(version);
+	}
+
+	/**
+	 * Method called to create the services factory for this debug session.
+	 * A subclass can override this method and provide its own ServiceFactory.
+	 * @since 4.1
+	 */
+	protected IDsfDebugServicesFactory newServiceFactory(ILaunchConfiguration config, String version) {
+		// Call the deprecated one for now to avoid code duplication.
+		// Once we get rid of the deprecated one, we can also get rid of fIsNonStopSession
+		fIsNonStopSession = LaunchUtils.getIsNonStopMode(config);
+		return newServiceFactory(version);
 	}
 
 	@Override

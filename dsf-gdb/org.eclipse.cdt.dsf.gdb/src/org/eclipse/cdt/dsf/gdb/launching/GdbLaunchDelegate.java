@@ -26,6 +26,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
+import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactoryNS;
@@ -45,6 +46,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ISourceLocator;
  
@@ -272,8 +274,21 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 
 	@Override
     public boolean preLaunchCheck(ILaunchConfiguration config, String mode, IProgressMonitor monitor) throws CoreException {
-		// no pre launch check for core file
-		if (mode.equals(ILaunchManager.DEBUG_MODE) && LaunchUtils.getSessionType(config) == SessionType.CORE) return true; 
+		// Forcibly turn off non-stop for post-mortem sessions.
+		// Non-stop does not apply to post-mortem sessions.
+		// Now that we can have non-stop defaulting to enabled, it will prevent
+		// post-mortem sessions from starting for GDBs <= 6.8 and there is no way to turn if off
+		// Bug 348091
+		if (LaunchUtils.getSessionType(config) == SessionType.CORE) {
+			if (LaunchUtils.getIsNonStopMode(config)) {
+				ILaunchConfigurationWorkingCopy wcConfig = config.getWorkingCopy();
+				wcConfig.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP, false);
+				wcConfig.doSave();			
+			}
+			
+			// no further prelaunch check for core files
+			return true;
+		}
 		
 		return super.preLaunchCheck(config, mode, monitor);
 	}

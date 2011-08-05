@@ -277,7 +277,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 		// Forcibly turn off non-stop for post-mortem sessions.
 		// Non-stop does not apply to post-mortem sessions.
 		// Now that we can have non-stop defaulting to enabled, it will prevent
-		// post-mortem sessions from starting for GDBs <= 6.8 and there is no way to turn if off
+		// post-mortem sessions from starting for GDBs <= 6.8 and there is no way to turn it off
 		// Bug 348091
 		if (LaunchUtils.getSessionType(config) == SessionType.CORE) {
 			if (LaunchUtils.getIsNonStopMode(config)) {

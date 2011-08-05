@@ -2366,7 +2366,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			if (preferences.insert_space_after_opening_paren_in_method_invocation) {
 				scribe.space();
 			}
-			node.getOperand().accept(this);
+			Runnable tailFormatter = scribe.takeTailFormatter();
+			try {
+				node.getOperand().accept(this);
+			} finally {
+				scribe.setTailFormatter(tailFormatter);
+			}
 			scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_method_invocation);
 			break;
 		default:

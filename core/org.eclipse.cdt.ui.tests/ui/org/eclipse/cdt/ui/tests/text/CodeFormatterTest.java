@@ -2480,4 +2480,18 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.putAll(DefaultCodeFormatterOptions.getAllmanSettings().getMap());
 		assertFormatterResult();
 	}
+
+	//void f() {
+	//	int i = static_cast<int>(5+1);
+	//	int j;
+	//}
+
+	//void f() {
+	//	int i = static_cast<int>(5 + 1);
+	//	int j;
+	//}
+	public void testStaticCastInInitializer_Bug353974() throws Exception {
+		assertFormatterResult();
+	}
+
 }

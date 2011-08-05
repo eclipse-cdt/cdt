@@ -2600,7 +2600,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			return formatOverloadedLeftShiftChain(node);
 		}
 
-		Runnable tailFormatter = scribe.takeTailFormatter();
+		Runnable tailFormatter = endsWithMacroExpansion(node) ? null : scribe.takeTailFormatter();
 
 		Alignment expressionAlignment= scribe.createAlignment(
 				Alignment.BINARY_EXPRESSION,

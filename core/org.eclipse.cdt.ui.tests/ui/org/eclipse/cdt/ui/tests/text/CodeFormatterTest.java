@@ -2512,4 +2512,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testMacroInBinaryExpression_Bug344379() throws Exception {
 		assertFormatterResult();
 	}
+
+	public void testBackslashUInPreprocessorDirective_Bug350433() throws Exception {
+		String before= "#include \"test\\udp.h\"\n";
+		String expected= before;
+		assertFormatterResult(before, expected);
+	}
 }

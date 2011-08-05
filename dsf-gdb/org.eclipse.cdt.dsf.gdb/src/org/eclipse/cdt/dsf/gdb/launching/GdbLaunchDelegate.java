@@ -11,6 +11,7 @@
  * IBM Corporation 
  * Ericsson               - Added support for Mac OS
  * Ericsson               - Added support for post-mortem trace files
+ * Abeer Bagul (Tensilica) - Allow to better override GdbLaunch (bug 339550)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching; 
 
@@ -132,6 +133,9 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         }
     	
         monitor.worked( 1 );
+
+        fIsNonStopSession = LaunchUtils.getIsNonStopMode(config);
+        fIsPostMortemTracingSession = LaunchUtils.getIsPostMortemTracing(config);
 
         String gdbVersion = getGDBVersion(config);
         
@@ -280,17 +284,38 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         // the adapters will be created for the whole session, including 
         // the source lookup adapter.
         
-		fIsNonStopSession = LaunchUtils.getIsNonStopMode(configuration);
-		fIsPostMortemTracingSession = LaunchUtils.getIsPostMortemTracing(configuration);
-
-        GdbLaunch launch = new GdbLaunch(configuration, mode, null);
+        GdbLaunch launch = createGdbLaunch(configuration, mode, null);
         launch.initialize();
         launch.setSourceLocator(getSourceLocator(configuration, launch.getSession()));
         return launch;
     }
+    
+    /**
+     * Creates an object of GdbLaunch.
+     * Subclasses who wish to just replace the GdbLaunch object with a sub-classed GdbLaunch
+     * should override this method.
+     * Subclasses who wish to replace the GdbLaunch object as well as change the 
+     * initialization sequence of the launch, should override getLaunch() as well as this method.
+     * Subclasses who wish to create a launch class which does not subclass GdbLaunch, 
+     * are advised to override getLaunch() directly.
+     * 
+     * @param configuration The launch configuration
+     * @param mode The launch mode - "run", "debug", "profile"
+     * @param locator The source locator.  Can be null.
+     * @return The GdbLaunch object, or a sub-classed object
+     * @throws CoreException
+     * @since 4.1
+     */
+    protected GdbLaunch createGdbLaunch(ILaunchConfiguration configuration, String mode, ISourceLocator locator) throws CoreException {
+    	return new GdbLaunch(configuration, mode, locator);
+    }
 
-    private ISourceLocator getSourceLocator(ILaunchConfiguration configuration, DsfSession session) throws CoreException {
-        DsfSourceLookupDirector locator = new DsfSourceLookupDirector(session);
+    /**
+     * Creates and initializes the source locator for the given launch configuration and dsf session.
+     * @since 4.1
+     */
+    protected ISourceLocator getSourceLocator(ILaunchConfiguration configuration, DsfSession session) throws CoreException {
+        DsfSourceLookupDirector locator = createDsfSourceLocator(configuration, session);
         String memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
         if (memento == null) {
             locator.initializeDefaults(configuration);
@@ -298,6 +323,21 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
             locator.initializeFromMemento(memento, configuration);
         }
         return locator;
+    }
+    
+    /**
+     * Creates an object of DsfSourceLookupDirector with the given DsfSession.
+     * Subclasses who wish to just replace the source locator object with a sub-classed source locator
+     * should override this method. 
+     * Subclasses who wish to replace the source locator object as well as change the 
+     * initialization sequence of the source locator, should override getSourceLocator()
+     * as well as this method.
+     * Subclasses who wish to create a source locator which does not subclass DsfSourceLookupDirector,
+     * are advised to override getSourceLocator() directly.
+     * @since 4.1
+     */
+    protected DsfSourceLookupDirector createDsfSourceLocator(ILaunchConfiguration configuration, DsfSession session) throws CoreException {
+    	return new DsfSourceLookupDirector(session);
     }
 	
 	/**

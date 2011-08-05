@@ -2494,4 +2494,22 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//#define A 1
+	//#define B 2
+	//#define C 4
+	//void f(int x, int y) {
+	//	f(A|B|C,5);
+	//	return;
+	//}
+
+	//#define A 1
+	//#define B 2
+	//#define C 4
+	//void f(int x, int y) {
+	//	f(A | B | C, 5);
+	//	return;
+	//}
+	public void testMacroInBinaryExpression_Bug344379() throws Exception {
+		assertFormatterResult();
+	}
 }

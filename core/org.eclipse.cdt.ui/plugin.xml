@@ -2870,7 +2870,7 @@
          </enabledWhen>
       </page>
       <page
-            name="SD80"
+            name="SD90"
             id="org.eclipse.cdt.ui.language.settings"
             class="org.eclipse.cdt.internal.ui.language.settings.providers.Page_LanguageSettingsProviders"
             category="org.eclipse.cdt.ui.newui.Page_head_general">

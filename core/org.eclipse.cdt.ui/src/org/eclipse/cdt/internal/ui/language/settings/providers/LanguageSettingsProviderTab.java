@@ -48,6 +48,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
 import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -59,7 +60,6 @@ import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.dialogs.DialogsMessages;
 import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
@@ -124,6 +124,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 	private Button globalProviderCheckBox = null;
 	private Link linkWorkspacePreferences = null;
+	private Button projectStorageCheckBox = null;
 	
 	private Page_LanguageSettingsProviders masterPropertyPage = null;
 
@@ -315,10 +316,11 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		enableSashForm(sashFormConfigure, true);
 	}
 
-	private Link createLinkToPreferences(final Composite parent) {
+	private Link createLinkToPreferences(final Composite parent, int span) {
 		Link link = new Link(parent, SWT.NONE);
-//		// FIXME
-//		link.setText(DialogsMessages.RegexErrorParserOptionPage_LinkToPreferencesMessage + " Select Discovery Tab.");
+		GridData gd = new GridData();
+		gd.horizontalSpan = span;
+		link.setLayoutData(gd);
 
 		link.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -407,7 +409,10 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 				});
 				
-				linkWorkspacePreferences = createLinkToPreferences(groupOptionsPage);
+				projectStorageCheckBox = new Button(groupOptionsPage, SWT.CHECK);
+				projectStorageCheckBox.setText("Store entries under project settings folder (supporting project miration)");
+				
+				linkWorkspacePreferences = createLinkToPreferences(groupOptionsPage, 2);
 			}
 		}
 
@@ -574,10 +579,15 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			globalProviderCheckBox.setEnabled(isChecked && isRawProviderEditable);
 			globalProviderCheckBox.setVisible(provider!=null);
 			
+			projectStorageCheckBox.setEnabled(!isGlobal);
+			projectStorageCheckBox.setVisible(rawProvider instanceof LanguageSettingsSerializable);
+			
 			boolean needPreferencesLink=isGlobal && currentOptionsPage!=null;
 			// TODO: message
-			linkWorkspacePreferences.setText(needPreferencesLink ? DialogsMessages.RegexErrorParserOptionPage_LinkToPreferencesMessage + " Select Discovery Tab." : "");
+			final String linkMsg = needPreferencesLink ? "Options of global providers can be changed in <a href=\"workspace\">Workspace Settings</a>, Discovery Tab." : "";
+			linkWorkspacePreferences.setText(linkMsg);
 			linkWorkspacePreferences.pack();
+			linkWorkspacePreferences.setEnabled(isChecked);
 		}
 		
 		if (currentOptionsPage != null) {

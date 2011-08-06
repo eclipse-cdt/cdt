@@ -195,8 +195,9 @@ public class ChangeGenerator extends ASTVisitor {
 
 		createChange(synthNode, synthSource);
 
-		int newOffset = synthNode.getFileLocation().getNodeOffset() + synthNode.getFileLocation().getNodeLength();
-		sourceOffsets.put(synthNode.getFileLocation().getFileName(), Integer.valueOf(newOffset));
+		IASTFileLocation fileLocation = synthNode.getFileLocation();
+		int newOffset = fileLocation.getNodeOffset() + fileLocation.getNodeLength();
+		sourceOffsets.put(fileLocation.getFileName(), Integer.valueOf(newOffset));
 	}
 
 	private void synthTreatment(IASTTranslationUnit synthTU) {

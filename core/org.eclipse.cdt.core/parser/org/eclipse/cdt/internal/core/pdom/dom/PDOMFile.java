@@ -640,23 +640,22 @@ public class PDOMFile implements IIndexFragmentFile {
 		return result.toArray(new IIndexName[result.size()]);
 	}
 
-	public static PDOMFile findFile(PDOMLinkage linkage, BTree btree, IIndexFileLocation location, IIndexLocationConverter strategy)
-			throws CoreException {
+	public static PDOMFile findFile(PDOMLinkage linkage, BTree btree, IIndexFileLocation location,
+			IIndexLocationConverter strategy) throws CoreException {
 		String internalRepresentation= strategy.toInternalFormat(location);
-		long record= 0;
 		if (internalRepresentation != null) {
 			Finder finder = new Finder(linkage.getDB(), internalRepresentation, linkage.getLinkageID());
 			btree.accept(finder);
-			record= finder.getRecord();
-		}
-		if (record != 0) {
-			return new PDOMFile(linkage, record);
+			long record= finder.getRecord();
+			if (record != 0) {
+				return new PDOMFile(linkage, record);
+			}
 		}
 		return null;
 	}
 
-	public static IIndexFragmentFile[] findFiles(PDOM pdom, BTree btree, IIndexFileLocation location, IIndexLocationConverter strategy)
-			throws CoreException {
+	public static IIndexFragmentFile[] findFiles(PDOM pdom, BTree btree, IIndexFileLocation location,
+			IIndexLocationConverter strategy) throws CoreException {
 		String internalRepresentation= strategy.toInternalFormat(location);
 		if (internalRepresentation != null) {
 			Finder finder = new Finder(pdom.getDB(), internalRepresentation, -1);

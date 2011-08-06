@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Andrew Gvozdev (Quoin Inc.) and others.
+ * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Andrew Gvozdev (Quoin Inc.) - initial API and implementation
+ *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.core.language.settings.providers;
@@ -45,12 +45,15 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 	private static final String ELEM_ENTRY = "entry"; //$NON-NLS-1$
 	private static final String ATTR_KIND = "kind"; //$NON-NLS-1$
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
+	private static final String ATTR_VALUE = "value"; //$NON-NLS-1$
 	private static final String ATTR_CLASS = "class"; //$NON-NLS-1$
 	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
-	private static final String ATTR_VALUE = "value"; //$NON-NLS-1$
-
 	private static final String ELEM_FLAG = "flag"; //$NON-NLS-1$
 
+	private static final String ATTR_STORE_ENTRIES = "store-entries"; //$NON-NLS-1$
+	private static final String VALUE_WORKSPACE = "workspace"; //$NON-NLS-1$
+	private static final String VALUE_PROJECT = "project"; //$NON-NLS-1$
+	
 	private static WeakHashSet<List<ICLanguageSettingEntry>> lseListPool = new WeakHashSet<List<ICLanguageSettingEntry>>() {
 		@Override
 		public synchronized List<ICLanguageSettingEntry> add(List<ICLanguageSettingEntry> list) {
@@ -59,6 +62,7 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 		
 	};
 
+	private boolean isEntriesStorageWithProject = false;
 
 	private Map<String, // languageId
 				Map<String, // resource project path
@@ -117,11 +121,30 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 		this.customParameter = customParameter;
 	}
 
+	/**
+	 * Tells if language settings entries are persisted with the project (under .settings folder)
+	 * or in workspace area. Persistence in the project area lets the entries migrate with the
+	 * project.
+	 * 
+	 * @return {@code true} if LSE persisted with the project or {@code false} if in the workspace.
+	 */
+	public boolean isEntriesStorageWithProject() {
+		return isEntriesStorageWithProject;
+	}
+
+	/**
+	 * Setter to define where language settings are persisted.
+	 * @param storeEntriesWithProject - {@code true} if with the project,
+	 *    {@code false} if in workspace area.
+	 */
+	public void setEntriesStorageWithProject(boolean storeEntriesWithProject) {
+		this.isEntriesStorageWithProject = storeEntriesWithProject;
+	}
+
 	public void clear() {
 		fStorage.clear();
 	}
 
-	// TODO: look for refactoring this method
 	private void setSettingEntriesInternal(String rcProjectPath, String languageId, List<ICLanguageSettingEntry> entries) {
 		if (entries!=null) {
 			Map<String, List<ICLanguageSettingEntry>> langMap = fStorage.get(languageId);
@@ -217,6 +240,7 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 				ATTR_NAME, getName(),
 				ATTR_CLASS, getClass().getCanonicalName(),
 				ATTR_PARAMETER, getCustomParameter(),
+				ATTR_STORE_ENTRIES, isEntriesStorageWithProject() ? VALUE_PROJECT : VALUE_WORKSPACE,
 			});
 
 		if (languageScope!=null) {
@@ -309,9 +333,12 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 			String providerId = XmlUtil.determineAttributeValue(providerNode, ATTR_ID);
 			String providerName = XmlUtil.determineAttributeValue(providerNode, ATTR_NAME);
 			String providerParameter = XmlUtil.determineAttributeValue(providerNode, ATTR_PARAMETER);
+			String providerStoreEntries = XmlUtil.determineAttributeValue(providerNode, ATTR_STORE_ENTRIES);
+
 			this.setId(providerId);
 			this.setName(providerName);
 			this.setCustomParameter(providerParameter);
+			this.setEntriesStorageWithProject(VALUE_PROJECT.equals(providerStoreEntries));
 
 			List<ICLanguageSettingEntry> settings = new ArrayList<ICLanguageSettingEntry>();
 			NodeList nodes = providerNode.getChildNodes();
@@ -456,6 +483,7 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
 		result = prime * result + ((languageScope == null) ? 0 : languageScope.hashCode());
 		result = prime * result + ((customParameter == null) ? 0 : customParameter.hashCode());
+		result = prime * result + (isEntriesStorageWithProject ? 0 : 1);
 		result = prime * result + ((fStorage == null) ? 0 : fStorage.hashCode());
 		result = prime * result + getClass().hashCode();
 		return result;
@@ -502,6 +530,9 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 			if (other.customParameter != null)
 				return false;
 		} else if (!customParameter.equals(other.customParameter))
+			return false;
+		
+		if (isEntriesStorageWithProject!=other.isEntriesStorageWithProject)
 			return false;
 
 		if (fStorage == null) {

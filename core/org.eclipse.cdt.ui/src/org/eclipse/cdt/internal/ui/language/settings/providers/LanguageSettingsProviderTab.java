@@ -206,6 +206,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 	/**
 	 * Shortcut for getting the currently selected provider.
+	 * Do not use if you need to change provider's settings, use {@link #getWorkingCopy(String)}.
 	 */
 	private ILanguageSettingsProvider getSelectedProvider() {
 		ILanguageSettingsProvider provider = null;
@@ -333,7 +334,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	}
 
 	// Called from globalProviderCheckBox listener
-	private void toggleGlobalProvider(ILanguageSettingsProvider oldProvider, boolean toGlobal) {
+	private ILanguageSettingsProvider toggleGlobalProvider(ILanguageSettingsProvider oldProvider, boolean toGlobal) {
 		ILanguageSettingsProvider newProvider = null;
 
 		String id = oldProvider.getId();
@@ -356,7 +357,11 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			ICConfigurationDescription cfgDescription = getConfigurationDescription();
 			initializeOptionsPage(newProvider, cfgDescription);
 			displaySelectedOptionPage();
+		} else {
+			newProvider = oldProvider;
 		}
+		
+		return newProvider;
 	}
 
 	private void replaceSelectedProvider(ILanguageSettingsProvider newProvider) {
@@ -398,8 +403,10 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 						boolean isGlobal = globalProviderCheckBox.getSelection();
 						ILanguageSettingsProvider provider = getSelectedProvider();
 						if (isGlobal != LanguageSettingsManager.isWorkspaceProvider(provider)) {
-							toggleGlobalProvider(provider, isGlobal);
+							provider = toggleGlobalProvider(provider, isGlobal);
 						}
+						projectStorageCheckBox.setSelection(provider instanceof LanguageSettingsSerializable
+								&& ((LanguageSettingsSerializable) provider).isEntriesStorageWithProject());
 					}
 
 					@Override
@@ -410,7 +417,23 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 				});
 				
 				projectStorageCheckBox = new Button(groupOptionsPage, SWT.CHECK);
-				projectStorageCheckBox.setText("Store entries under project settings folder (supporting project miration)");
+				projectStorageCheckBox.setText("Store entries in project settings folder (supporting project miration)");
+				projectStorageCheckBox.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						boolean isWithProject = projectStorageCheckBox.getSelection();
+						ILanguageSettingsProvider provider = getWorkingCopy(getSelectedProvider().getId());
+						Assert.isTrue(provider instanceof LanguageSettingsSerializable);
+						((LanguageSettingsSerializable)provider).setEntriesStorageWithProject(isWithProject);
+						refreshItem(provider);
+					}
+
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+						widgetSelected(e);
+					}
+
+				});
 				
 				linkWorkspacePreferences = createLinkToPreferences(groupOptionsPage, 2);
 			}
@@ -581,6 +604,8 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			
 			projectStorageCheckBox.setEnabled(!isGlobal);
 			projectStorageCheckBox.setVisible(rawProvider instanceof LanguageSettingsSerializable);
+			projectStorageCheckBox.setSelection(provider instanceof LanguageSettingsSerializable
+					&& ((LanguageSettingsSerializable)provider).isEntriesStorageWithProject());
 			
 			boolean needPreferencesLink=isGlobal && currentOptionsPage!=null;
 			// TODO: message

@@ -157,14 +157,14 @@ public class LanguageSettingsProvidersSerializer {
 	 * @param store - name of the store
 	 * @return location of the store in the plug-in state area
 	 */
-	private static URI getStoreLocation(String store) {
+	private static URI getStoreLocationInWorkspaceArea(String store) {
 		IPath location = CCorePlugin.getDefault().getStateLocation().append(store);
 		URI uri = URIUtil.toURI(location);
 		return uri;
 	}
 
 	public static void serializeLanguageSettingsWorkspace() throws CoreException {
-		URI uriLocation = getStoreLocation(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
+		URI uriLocation = getStoreLocationInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
 		List<LanguageSettingsSerializable> serializableExtensionProviders = new ArrayList<LanguageSettingsSerializable>();
 		for (ILanguageSettingsProvider provider : rawGlobalWorkspaceProviders.values()) {
 			if (provider instanceof LanguageSettingsSerializable) {
@@ -206,7 +206,7 @@ public class LanguageSettingsProvidersSerializer {
 	public static void loadLanguageSettingsWorkspace() throws CoreException {
 		List <ILanguageSettingsProvider> providers = null;
 		
-		URI uriLocation = getStoreLocation(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
+		URI uriLocation = getStoreLocationInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
 	
 		Document doc = null;
 		try {

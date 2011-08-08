@@ -37,6 +37,7 @@ import org.w3c.dom.Element;
  * Test cases testing LanguageSettingsProvider functionality
  */
 public class LanguageSettingsPersistenceProjectTests extends TestCase {
+	private static final String LANGUAGE_SETTINGS_PROJECT_XML = ".settings/language.settings.xml";
 	// Should match id of extension point defined in plugin.xml
 	private static final String EXTENSION_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.base.provider.subclass";
 	private static final String EXTENSION_PROVIDER_NAME = "Test Plugin Base Provider Subclass";
@@ -744,7 +745,7 @@ public class LanguageSettingsPersistenceProjectTests extends TestCase {
 
 			// write to project description
 			coreModel.setProjectDescription(project, writableProjDescription);
-			IFile xmlStorageFile = project.getFile(".settings/language.settings.xml");
+			IFile xmlStorageFile = project.getFile(LANGUAGE_SETTINGS_PROJECT_XML);
 			assertTrue(xmlStorageFile.exists());
 			xmlStorageFileLocation = xmlStorageFile.getLocation().toOSString();
 		}

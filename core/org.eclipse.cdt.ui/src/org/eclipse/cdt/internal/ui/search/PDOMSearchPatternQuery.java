@@ -81,7 +81,7 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 		
 		// Parse the pattern string
 		List<Pattern> patternList = new ArrayList<Pattern>();
-    	StringBuffer buff = new StringBuffer();
+    	StringBuilder buff = new StringBuilder();
     	int n = patternStr.length();
     	for (int i = 0; i < n; ++i) {
     		char c = patternStr.charAt(i);
@@ -114,7 +114,7 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
     					patternList.add(Pattern.compile(buff.toString()));
     				else
     					patternList.add(Pattern.compile(buff.toString(),Pattern.CASE_INSENSITIVE));
-    				buff = new StringBuffer();
+    				buff = new StringBuilder();
     			}
     			break;
 			case '|': case '+': case '^': case '(': case ')': case '[': case ']': 

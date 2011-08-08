@@ -158,7 +158,7 @@ public class SortLinesTest extends BaseUITestCase {
 	//	// e.h
 	//	#include "e.h"
 	public void testSortLinesMixed() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		CharSequence[] contents= getContentsForTest(2);
 		String before= contents[0].toString();
 		String after= contents[1].toString();
 		fDocument.set(before);
@@ -179,7 +179,7 @@ public class SortLinesTest extends BaseUITestCase {
 	//	 * Callisto
 	//	 */
 	public void testSortLinesCommentsOnly() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		CharSequence[] contents= getContentsForTest(2);
 		String before= contents[0].toString();
 		String after= contents[1].toString();
 		fDocument.set(before);

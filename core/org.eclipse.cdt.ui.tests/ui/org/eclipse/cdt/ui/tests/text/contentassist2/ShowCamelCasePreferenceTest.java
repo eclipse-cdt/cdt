@@ -44,7 +44,7 @@ public class ShowCamelCasePreferenceTest extends AbstractContentAssistTest {
 	@Override
 	protected IFile setUpProjectContent(IProject project) throws Exception {
 		fProject= project;
-		StringBuffer sourceContent= getContentsForTest(1)[0];
+		StringBuilder sourceContent= getContentsForTest(1)[0];
 		fCursorOffset= sourceContent.indexOf(CURSOR_LOCATION_TAG);
 		assertTrue("No cursor location specified", fCursorOffset >= 0);
 		sourceContent.delete(fCursorOffset, fCursorOffset+CURSOR_LOCATION_TAG.length());

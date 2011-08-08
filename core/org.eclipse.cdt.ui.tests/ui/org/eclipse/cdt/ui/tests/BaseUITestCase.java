@@ -101,8 +101,9 @@ public class BaseUITestCase extends BaseTestCase {
      * Reads multiple sections in comments from the source of the given class.
      * @since 4.0
      */
-	public StringBuffer[] getContentsForTest(int sections) throws IOException {
-		return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui", getClass(), getName(), sections);
+	public StringBuilder[] getContentsForTest(int sections) throws IOException {
+		return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui",
+				getClass(), getName(), sections);
 	}
 	
 	public String getAboveComment() throws IOException {

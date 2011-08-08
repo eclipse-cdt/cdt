@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.test;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
@@ -45,6 +42,9 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 /**
  * TODO: add description
  */
@@ -56,7 +56,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 		return getContents(1)[0].toString();
 	}
 
-	protected StringBuffer[] getContents(int sections) {
+	protected StringBuilder[] getContents(int sections) {
 		try {
 			CodanCoreTestActivator plugin = CodanCoreTestActivator.getDefault();
 			return TestSourceReader.getContentsForTest(plugin == null ? null : plugin.getBundle(), "src", getClass(), getName(), sections);
@@ -69,6 +69,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 	public boolean isCpp() {
 		return false;
 	}
+
 	private static final NullLogService NULL_LOG = new NullLogService();
 
 	/**

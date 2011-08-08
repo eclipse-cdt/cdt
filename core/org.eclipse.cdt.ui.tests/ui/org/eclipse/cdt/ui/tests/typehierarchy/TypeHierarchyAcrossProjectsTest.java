@@ -85,7 +85,7 @@ public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
 	//    int method4();
 	// };
 	public void testSimpleInheritanceAcross() throws Exception {
-		StringBuffer[] content= getContentsForTest(2);
+		CharSequence[] content= getContentsForTest(2);
 		String header= content[0].toString();
 		String source = content[1].toString();
 		IFile headerFile= createFile(fCProject.getProject(), "simpleHeader.h", header);

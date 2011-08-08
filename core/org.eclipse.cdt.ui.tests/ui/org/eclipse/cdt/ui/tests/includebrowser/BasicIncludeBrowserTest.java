@@ -42,7 +42,7 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 	public void testSimpleInclusion() throws Exception {
 		TestScannerProvider.sIncludes= new String[]{getProject().getProject().getLocation().toOSString()};
 
-		StringBuffer[] contents= getContentsForTest(1);
+		StringBuilder[] contents= getContentsForTest(1);
 		IProject project= getProject().getProject();
 		IFile user= createFile(project, "user.h", "");
 		IFile system= createFile(project, "system.h", "");
@@ -76,7 +76,7 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 			
 			TestScannerProvider.sIncludes= new String[]{op.getProject().getLocation().toOSString()};
 
-			StringBuffer[] contents= getContentsForTest(1);
+			StringBuilder[] contents= getContentsForTest(1);
 			IFile user= createFile(op.getProject(), "user.h", "");
 			IFile system= createFile(op.getProject(), "system.h", "");
 			IFile source= createFile(getProject().getProject(), "source.cpp", contents[0].toString());
@@ -98,8 +98,7 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 			checkTreeNode(tree, 0, "system.h");
 			checkTreeNode(tree, 0, 0, "source.cpp");
 
-		}
-		finally {
+		} finally {
 			CProjectHelper.delete(op);
 		}
 	}

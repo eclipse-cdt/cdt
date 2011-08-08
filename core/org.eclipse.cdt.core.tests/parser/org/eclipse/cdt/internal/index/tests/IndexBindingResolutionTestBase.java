@@ -211,7 +211,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		void setUp() throws Exception;
 		void tearDown() throws Exception;
 		public IASTTranslationUnit getAst();
-		public StringBuffer[] getTestData();
+		public StringBuilder[] getTestData();
 		public ICProject getCProject();
 		public boolean isCompositeIndex();
 	}
@@ -242,7 +242,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	class SinglePDOMTestFirstASTStrategy implements ITestStrategy {
 		private IIndex index;
 		private ICProject cproject;
-		private StringBuffer[] testData;
+		private StringBuilder[] testData;
 		private IASTTranslationUnit ast;
 		private boolean cpp;
 
@@ -254,7 +254,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			return cproject;
 		}
 		
-		public StringBuffer[] getTestData() {
+		public StringBuilder[] getTestData() {
 			return testData;
 		}
 
@@ -308,7 +308,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	class SinglePDOMTestStrategy implements ITestStrategy {
 		private IIndex index;
 		private ICProject cproject;
-		private StringBuffer[] testData;
+		private StringBuilder[] testData;
 		private IASTTranslationUnit ast;
 		private boolean cpp;
 
@@ -319,8 +319,8 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		public ICProject getCProject() {
 			return cproject;
 		}
-		
-		public StringBuffer[] getTestData() {
+
+		public StringBuilder[] getTestData() {
 			return testData;
 		}
 
@@ -373,7 +373,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	class ReferencedProject implements ITestStrategy {
 		private IIndex index;
 		private ICProject cproject, referenced;
-		private StringBuffer[] testData;
+		private StringBuilder[] testData;
 		private IASTTranslationUnit ast;
 		private boolean cpp;
 
@@ -453,7 +453,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			return index;
 		}
 
-		public StringBuffer[] getTestData() {
+		public StringBuilder[] getTestData() {
 			return testData;
 		}
 		

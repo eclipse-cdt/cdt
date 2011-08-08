@@ -53,7 +53,8 @@ public class PDOMCBugsTest extends BaseTestCase {
 	protected void setUp() throws Exception {
 		cproject= CProjectHelper.createCProject("PDOMCBugsTest"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 		Bundle b = CTestPlugin.getDefault().getBundle();
-		StringBuffer[] testData = TestSourceReader.getContentsForTest(b, "parser", PDOMCBugsTest.this.getClass(), getName(), 1);
+		CharSequence[] testData = TestSourceReader.getContentsForTest(b, "parser",
+				PDOMCBugsTest.this.getClass(), getName(), 1);
 
 		IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), testData[0].toString());
 		CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);

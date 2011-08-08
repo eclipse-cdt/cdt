@@ -59,7 +59,7 @@ public class IndexTestBase extends BaseTestCase {
 		return TestSourceReader.readTaggedComment(CTestPlugin.getDefault().getBundle(), "parser", getClass(), tag);
 	}
 	
-    protected StringBuffer[] getContentsForTest(int blocks) throws IOException {
+    protected StringBuilder[] getContentsForTest(int blocks) throws IOException {
     	return TestSourceReader.getContentsForTest(
     			CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), blocks);
     }

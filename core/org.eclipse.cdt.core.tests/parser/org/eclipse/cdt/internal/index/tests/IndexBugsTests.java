@@ -275,11 +275,11 @@ public class IndexBugsTests extends BaseTestCase {
 	}
 	
     protected String[] getContentsForTest(int blocks) throws IOException {
-    	StringBuffer[] help= TestSourceReader.getContentsForTest(
+    	CharSequence[] help= TestSourceReader.getContentsForTest(
     			CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), blocks);
     	String[] result= new String[help.length];
     	int i= 0;
-    	for (StringBuffer buf : help) {
+    	for (CharSequence buf : help) {
 			result[i++]= buf.toString();
 		}
     	return result;

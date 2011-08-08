@@ -285,7 +285,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	// #include "header1.h"
 	// #include "header2.h"
 	public void testParsingInContext_bug220358() throws Exception {
-		StringBuffer[] sources= getContentsForTest(4);
+		CharSequence[] sources= getContentsForTest(4);
 		IFile h1= TestSourceReader.createFile(fProject.getProject(), "header1.h", sources[0].toString());
 		IFile h2= TestSourceReader.createFile(fProject.getProject(), "header2.h", sources[1].toString());
 		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s1.cpp", sources[3].toString());
@@ -405,7 +405,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	public void testUpdateIncludes() throws Exception {
 		waitForIndexer();
 		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
-		StringBuffer[] source= getContentsForTest(4);
+		CharSequence[] source= getContentsForTest(4);
 		IFile header= TestSourceReader.createFile(fProject.getProject(), "resolved20070427.h", "");
 		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
 				source[0].toString() + "\nint a20070427;");

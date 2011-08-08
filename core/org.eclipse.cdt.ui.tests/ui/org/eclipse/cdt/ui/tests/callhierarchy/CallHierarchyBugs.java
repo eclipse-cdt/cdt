@@ -54,7 +54,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	//    field= 1;
 	// }
 	public void testCallHierarchyFromOutlineView_183941() throws Exception {
-		StringBuffer[] contents = getContentsForTest(2);
+		StringBuilder[] contents = getContentsForTest(2);
 		IFile file1= createFile(getProject(), "SomeClass.h", contents[0].toString());
 		IFile file2= createFile(getProject(), "SomeClass.cpp", contents[1].toString());
 		waitForIndexer(fIndex, file2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
@@ -95,7 +95,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	//    ref2= 0;
 	// }
 	public void testCallHierarchyFromOutlineViewAmbiguous_183941() throws Exception {
-		StringBuffer[] contents = getContentsForTest(2);
+		StringBuilder[] contents = getContentsForTest(2);
 		IFile file1= createFile(getProject(), "SomeClass.h", contents[0].toString());
 		IFile file2= createFile(getProject(), "SomeClass.cpp", contents[1].toString());
 		waitForIndexer(fIndex, file2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
@@ -363,7 +363,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	//     shared_func();
 	//	}
 	public void testMultiLanguageWithPrototype_260262() throws Exception {
-		final StringBuffer[] contents = getContentsForTest(3);
+		final StringBuilder[] contents = getContentsForTest(3);
 		final String hcontent = contents[0].toString();
 		final String content_inc = contents[1].toString();
 		final String content_full = content_inc + contents[2].toString();
@@ -393,7 +393,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	//     shared_func();
 	//	}
 	public void testMultiLanguageWithInlinedfunc_260262() throws Exception {
-		final StringBuffer[] contents = getContentsForTest(3);
+		final StringBuilder[] contents = getContentsForTest(3);
 		final String hcontent = contents[0].toString();
 		final String content_inc = contents[1].toString();
 		final String content_full = content_inc + contents[2].toString();
@@ -425,7 +425,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	//		return 0;
 	//	}
 	public void testUnnamedNamespace_283679() throws Exception {
-		final StringBuffer[] contents = getContentsForTest(1);
+		final StringBuilder[] contents = getContentsForTest(1);
 		final String content = contents[0].toString();
 		IFile f2= createFile(getProject(), "testUnnamedNamespace_283679.cpp", content);
 		waitForIndexer(fIndex, f2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
@@ -460,7 +460,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	//		delete dbPtr;
 	//	}
 	public void testCallsToFromVirtualMethod_246064() throws Exception {
-		final StringBuffer[] contents = getContentsForTest(1);
+		final StringBuilder[] contents = getContentsForTest(1);
 		final String content = contents[0].toString();
 		IFile f2= createFile(getProject(), "testCallsToFromVirtualMethod_246064.cpp", content);
 		waitForIndexer(fIndex, f2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);

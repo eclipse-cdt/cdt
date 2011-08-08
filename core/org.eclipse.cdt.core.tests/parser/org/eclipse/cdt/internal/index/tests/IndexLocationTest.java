@@ -90,7 +90,7 @@ public class IndexLocationTest extends BaseTestCase {
 
 		try {
 			Bundle b = CTestPlugin.getDefault().getBundle();
-			StringBuffer[] testData = TestSourceReader.getContentsForTest(b, "parser", getClass(), getName(), 3);
+			CharSequence[] testData = TestSourceReader.getContentsForTest(b, "parser", getClass(), getName(), 3);
 
 			IFile file1 = TestSourceReader.createFile(cproject.getProject(), "header.h", testData[0].toString());		
 			createExternalFile(externalHeader, testData[1].toString());

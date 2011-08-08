@@ -201,7 +201,7 @@ public class CommentTests extends AST2BaseTest {
 	// // comment2
 	// #endif
 	public void testCommentsInInactiveCode_bug183930() throws Exception {
-		StringBuffer code= getContents(1)[0];
+		CharSequence code= getContents(1)[0];
 		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, true);
 		IASTComment[] comments = tu.getComments();
 		
@@ -212,7 +212,7 @@ public class CommentTests extends AST2BaseTest {
 	
 	// //comment
 	public void testCommentLocation_bug186337() throws Exception{
-		StringBuffer code= getContents(1)[0];
+		CharSequence code= getContents(1)[0];
 		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, true);
 		IASTComment[] comments = tu.getComments();
 		
@@ -236,7 +236,7 @@ public class CommentTests extends AST2BaseTest {
 	// // TODO: shows up in task list
 
 	public void testCommentInDirectives_bug192546() throws Exception {
-		StringBuffer code= getContents(1)[0];
+		CharSequence code= getContents(1)[0];
 		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, false);
 		IASTComment[] comments = tu.getComments();
 		
@@ -246,7 +246,7 @@ public class CommentTests extends AST2BaseTest {
 		for (IASTComment comment : comments) {
 			IASTFileLocation loc= comment.getFileLocation();
 			int idx= loc.getNodeOffset() + comment.getRawSignature().indexOf("TODO");
-			assertEquals("TODO", code.substring(idx, idx+4));			
+			assertEquals("TODO", code.subSequence(idx, idx + 4));			
 		}
 	}
 }

@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  */
 public class LongString implements IString {
-
 	private final Database db;
 	private final long record;
 	private int hash;
@@ -370,7 +369,7 @@ public class LongString implements IString {
 
 	public String getString() throws CoreException {
 		int length = db.getInt(record + LENGTH);
-		final StringBuffer buffer = new StringBuffer(length);
+		final StringBuilder buffer = new StringBuilder(length);
 		readChars(length, new IReader() {
 			public void appendChar(char c) {
 				buffer.append(c);

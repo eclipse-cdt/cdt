@@ -473,7 +473,7 @@ public class AST2BaseTest extends BaseTestCase {
 		return getContents(1)[0].toString();
 	}
 	
-	protected StringBuffer[] getContents(int sections) throws IOException {
+	protected CharSequence[] getContents(int sections) throws IOException {
 		CTestPlugin plugin = CTestPlugin.getDefault();
 		if (plugin == null)
 			throw new AssertionFailedError("This test must be run as a JUnit plugin test");

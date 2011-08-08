@@ -85,7 +85,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	private ICProject fCppProject= null;
 	private ICProject fCProject= null;
 	private IIndex fIndex= null;
-	private StringBuffer[] fContents;
+	private CharSequence[] fContents;
 	private IFile fFile;
 	private IFile fHeader;
 	private int fContentUsed;

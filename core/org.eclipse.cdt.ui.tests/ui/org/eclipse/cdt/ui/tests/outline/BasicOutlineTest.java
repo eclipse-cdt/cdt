@@ -95,7 +95,7 @@ public class BasicOutlineTest extends BaseUITestCase {
 	//#define MACRO2()
 	//int main(int argc, char** argv) {}
 	public void testSimpleOutlineContent() throws Exception {
-		StringBuffer[] contents= getContentsForTest(1);
+		StringBuilder[] contents= getContentsForTest(1);
 		IProject project= getProject().getProject();
 		IFile source= createFile(project, "source.cpp", contents[0].toString());
 		waitForIndexer(project, source);
@@ -121,7 +121,7 @@ public class BasicOutlineTest extends BaseUITestCase {
 	//int Foo::field = 5;
 	//void Foo::foo() {}
 	public void testGroupedMembers() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		StringBuilder[] contents= getContentsForTest(2);
 		IProject project= getProject().getProject();
 		IFile header= createFile(project, "header.h", contents[0].toString());
 		IFile source= createFile(project, "source.cpp", contents[1].toString());
@@ -162,7 +162,7 @@ public class BasicOutlineTest extends BaseUITestCase {
 	//void Foo::foo() {}
 	//}
 	public void testGroupedMembersInNamespace() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		StringBuilder[] contents= getContentsForTest(2);
 		IProject project= getProject().getProject();
 		IFile header= createFile(project, "header.h", contents[0].toString());
 		IFile source= createFile(project, "source.cpp", contents[1].toString());
@@ -208,7 +208,7 @@ public class BasicOutlineTest extends BaseUITestCase {
 	//void Foo::foo() {}
 	//}
 	public void testGroupedNamespaces() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		StringBuilder[] contents= getContentsForTest(2);
 		IProject project= getProject().getProject();
 		IFile header= createFile(project, "header.h", contents[0].toString());
 		IFile source= createFile(project, "source.cpp", contents[1].toString());
@@ -252,7 +252,7 @@ public class BasicOutlineTest extends BaseUITestCase {
 	//void Foo::foo() {}
 	//}
 	public void testGroupedMembersInGroupedNamespaces() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		StringBuilder[] contents= getContentsForTest(2);
 		IProject project= getProject().getProject();
 		IFile header= createFile(project, "header.h", contents[0].toString());
 		IFile source= createFile(project, "source.cpp", contents[1].toString());

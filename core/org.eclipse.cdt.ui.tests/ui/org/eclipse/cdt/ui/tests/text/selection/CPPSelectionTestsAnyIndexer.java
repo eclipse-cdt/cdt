@@ -74,7 +74,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 		return cPrj;
 	}
 	
-	protected StringBuffer[] getContents(int sections) throws IOException {
+	protected StringBuilder[] getContents(int sections) throws IOException {
 		return TestSourceReader.getContentsForTest(
 				CTestPlugin.getDefault().getBundle(), "ui", CPPSelectionTestsAnyIndexer.class, getName(), sections);
 	}
@@ -119,7 +119,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     //    return (0);                          
     // }
     public void testBug93281() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("test93281.h", hcode); 
@@ -161,7 +161,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	//	        return EXIT_SUCCESS;
 	//	}
 	public void testBug207320() throws Exception {
-		StringBuffer[] buffers= getContents(2);
+		StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("test.h", hcode); 
@@ -187,7 +187,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	//   a.assign("aaa");
 	// }
 	public void testTemplateClassMethod_207320() throws Exception {
-		StringBuffer[] buffers= getContents(2);
+		StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("test.h", hcode); 
@@ -218,7 +218,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	// class MyClass;          
 	// struct MyStruct;        
     public void testBasicDefinition() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("basicDefinition.h", hcode); 
@@ -299,7 +299,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     // #include "testBasicTemplateInstance.h"
     // N::AAA<int> a;
 	public void testBasicTemplateInstance_207320() throws Exception{
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBasicTemplateInstance.h", hcode); 
@@ -333,7 +333,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     //    X b = f(X(2)); // openDeclarations on X(int) shall find constructor 
     // }
 	public void testBug86829A() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBug86829A.h", hcode); 
@@ -365,7 +365,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     // int c = X(a); // OK: a.operator X().operator int()
 	// }
 	public void _testBug86829B() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBug86829B.h", hcode); 
@@ -408,7 +408,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	// S s;
 	// Int lhs= s.a+s.b+up+down+anX+0;
 	public void testCPPSpecDeclsDefs() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testCPPSpecDeclsDefs.h", hcode); 
@@ -559,7 +559,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	// using N::d; 					// declares 
 	// int a= d;
 	public void testBug168533() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBug168533.h", hcode); 
@@ -595,7 +595,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     //    }
     // }
 	public void testBug95225() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBug95225.h", hcode); 
@@ -637,7 +637,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     //    return *this;
     // }
     public void testBug95202() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBug95202.h", hcode); 
@@ -661,7 +661,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	//    abc;
 	// }
 	public void testBug101287() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBug101287.h", hcode); 
@@ -687,7 +687,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     // void f(RTBindingEnd & end) {
     // }
 	public void testBug102258() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBug102258.h", hcode); 
@@ -715,7 +715,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	//    return foo::g();
 	// }
 	public void testBug103323() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBug103323.h", hcode); 
@@ -745,7 +745,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     //    return 0;
     // }
     public void testBug78354() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBug78354.h", hcode); 
@@ -776,7 +776,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     //     return x;
     // }
     public void testBug103697() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFileWithLink("testBug103697.h", hcode); 
@@ -803,7 +803,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	//    return 0;
 	// }
     public void testBug108202() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBug108202.h", hcode); 
@@ -830,7 +830,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     // #include "cpp.h"
     // void cpp() {}
     public void testCNavigationInCppProject_bug183973() throws Exception {
-        StringBuffer[] buffers= getContents(4);
+        StringBuilder[] buffers= getContents(4);
         String hccode= buffers[0].toString();
         String ccode= buffers[1].toString();
         String hcppcode= buffers[2].toString();
@@ -870,7 +870,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     // void func(usertype t) {
     // }
     public void testFuncWithTypedefForAnonymousStruct_190730() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBug190730.h", hcode); 
@@ -896,7 +896,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     // void func(userEnum t) {
     // }
     public void testFuncWithTypedefForAnonymousEnum_190730() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBug190730_2.h", hcode); 
@@ -924,7 +924,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     //     MY_PAR(0);
     //  }
     public void testMacroNavigation() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("macrodef.h", hcode); 
@@ -959,7 +959,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     //     tester= MY_PAR(gvar);
     //  }
     public void testMacroNavigation_Bug208300() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("macrodef.h", hcode); 
@@ -988,7 +988,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 
 	//  #include "aheader.h"
     public void testIncludeNavigation() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("aheader.h", hcode); 
@@ -1014,7 +1014,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	//    cxcpp();
 	// }
     public void testNavigationCppCallsC() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String ccode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile cfile = importFile("s.c", ccode); 
@@ -1052,7 +1052,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	//    cppfunc();
 	// }}
     public void testNavigationCCallsCpp() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String ccode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile cfile = importFile("s.c", ccode); 
@@ -1087,7 +1087,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     //    #endif
     //    }
     public void testNavigationInDefinedExpression_215906() throws Exception {
-        StringBuffer[] buffers= getContents(1);
+        StringBuilder[] buffers= getContents(1);
         String code= buffers[0].toString();
         IFile file = importFile("s.cpp", code); 
         waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
@@ -1118,7 +1118,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	//		delete xx;
 	//	}    
     public void testNavigationToImplicitNames() throws Exception {
-    	StringBuffer[] buffers= getContents(1);
+    	StringBuilder[] buffers= getContents(1);
         String code= buffers[0].toString();
         IFile file = importFile("in.cpp", code); 
         waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
@@ -1157,7 +1157,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	//   a + 2;
 	// }
 	public void testBug272744() throws Exception {
-		StringBuffer[] buffers= getContents(2);
+		StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("test.h", hcode); 
@@ -1203,7 +1203,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	//	  A a3;
 	//	};
 	public void testImplicitConstructorCall_248855() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testImplicitConstructorCall_248855.h", hcode); 
@@ -1234,7 +1234,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 
 	//	#undef MYMACRO
 	public void testUndef_312399() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testUndef_312399.h", hcode); 

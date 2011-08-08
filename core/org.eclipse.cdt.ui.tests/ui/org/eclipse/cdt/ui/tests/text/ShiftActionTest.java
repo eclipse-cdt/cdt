@@ -133,7 +133,7 @@ public class ShiftActionTest extends BaseUITestCase {
 	//	for(;;) {
 	//    }
 	public void testShiftRight() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		CharSequence[] contents= getContentsForTest(2);
 		String before= contents[0].toString();
 		String after= contents[1].toString();
 		fDocument.set(before);
@@ -150,7 +150,7 @@ public class ShiftActionTest extends BaseUITestCase {
 	//    for(;;) {
 	//}
 	public void testShiftLeft() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		CharSequence[] contents= getContentsForTest(2);
 		String before= contents[0].toString();
 		String after= contents[1].toString();
 		fDocument.set(before);

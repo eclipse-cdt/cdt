@@ -57,18 +57,19 @@ import org.osgi.framework.Bundle;
 public class TestSourceReader {
 
 	/**
-	 * Returns an array of StringBuffer objects for each comment section found preceding the named
+	 * Returns an array of StringBuilder objects for each comment section found preceding the named
 	 * test in the source code. 
-	 * @param bundle the bundle containing the source, if null can try to load using classpath (source folder has to be in the classpath for this to work)
+	 * @param bundle the bundle containing the source, if null can try to load using classpath
+	 *     (source folder has to be in the classpath for this to work)
 	 * @param srcRoot the directory inside the bundle containing the packages
 	 * @param clazz the name of the class containing the test
 	 * @param testName the name of the test
 	 * @param sections the number of comment sections preceding the named test to return
-	 * @return an array of StringBuffer objects for each comment section found preceding the named
+	 * @return an array of StringBuilder objects for each comment section found preceding the named
 	 * test in the source code. 
 	 * @throws IOException
 	 */
-	public static StringBuffer[] getContentsForTest(Bundle bundle, String srcRoot, Class clazz, final String testName, int sections) throws IOException {
+	public static StringBuilder[] getContentsForTest(Bundle bundle, String srcRoot, Class clazz, final String testName, int sections) throws IOException {
 		String fqn = clazz.getName().replace('.', '/');
 		fqn = fqn.indexOf("$")==-1 ? fqn : fqn.substring(0,fqn.indexOf("$"));
 		String classFile = fqn + ".java";
@@ -91,7 +92,7 @@ public class TestSourceReader {
 	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	    
 	    List contents = new ArrayList();
-	    StringBuffer content = new StringBuffer();
+	    StringBuilder content = new StringBuilder();
 	    for(String line = br.readLine(); line!=null; line = br.readLine()) {
 	    	line = line.replaceFirst("^\\s*", ""); // replace leading whitespace, preserve trailing
 	    	if(line.startsWith("//")) {
@@ -101,11 +102,11 @@ public class TestSourceReader {
 	    			contents.add(content);
 	    			if(contents.size()==sections+1)
 	    				contents.remove(0);
-	    			content = new StringBuffer();
+	    			content = new StringBuilder();
 	    		}
 	    		int idx= line.indexOf(testName);
 	    		if( idx != -1 && !Character.isJavaIdentifierPart(line.charAt(idx+testName.length()))) {
-	    			return (StringBuffer[]) contents.toArray(new StringBuffer[contents.size()]);
+	    			return (StringBuilder[]) contents.toArray(new StringBuilder[contents.size()]);
 	    		}
 	    	}
 	    }
@@ -132,7 +133,7 @@ public class TestSourceReader {
 		try {
 			int c= 0;
 			int offset= 0;
-			StringBuffer buf= new StringBuffer();
+			StringBuilder buf= new StringBuilder();
 			while ((c = reader.read()) >= 0) {
 				buf.append((char) c);
 				if (c == '\n') {
@@ -182,7 +183,7 @@ public class TestSourceReader {
 	    InputStream in= FileLocator.openStream(bundle, filePath, false);
 	    LineNumberReader reader= new LineNumberReader(new InputStreamReader(in));
 	    boolean found= false;
-	    final StringBuffer content= new StringBuffer();
+	    final StringBuilder content= new StringBuilder();
 	    try {
 	        String line= reader.readLine();
 	        while (line != null) {
@@ -222,7 +223,6 @@ public class TestSourceReader {
 	 * @param contents the content for the file
 	 * @return a file object.
 	 * @throws CoreException 
-	 * @throws Exception
 	 * @since 4.0
 	 */    
 	public static IFile createFile(final IContainer container, final IPath filePath, final String contents) throws CoreException {
@@ -264,10 +264,7 @@ public class TestSourceReader {
 	 * @param container a container to create the file in
 	 * @param filePath the path relative to the container to create the file at
 	 * @param contents the content for the file
-	 * @return 
 	 * @return a file object.
-	 * @throws Exception 
-	 * @throws Exception
 	 * @since 4.0
 	 */    
 	public static IFile createFile(IContainer container, String filePath, String contents) throws CoreException {

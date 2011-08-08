@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.internal.checkers;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
 import org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectChecker;
 import org.eclipse.core.resources.IMarker;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Test for {@see StatementHasNoEffectChecker} class
@@ -107,7 +107,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// }
 	/* this test is using two files */
 	public void test2FilesUnaryExpression() throws IOException {
-		StringBuffer[] code = getContents(2);
+		CharSequence[] code = getContents(2);
 		File f1 = loadcode(code[0].toString());
 		File f2 = loadcode(code[1].toString());
 		runOnProject();

@@ -190,7 +190,7 @@ public class DOMPreprocessorInformationTest extends AST2BaseTest {
 	// #elif
 	// #endif
 	public void testElifWithoutCondition_bug185324() throws Exception {
-		StringBuffer code= getContents(1)[0];
+		CharSequence code= getContents(1)[0];
 		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, false);
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(3, st.length);

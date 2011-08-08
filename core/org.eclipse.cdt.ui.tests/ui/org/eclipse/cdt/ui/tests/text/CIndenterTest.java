@@ -57,7 +57,7 @@ public class CIndenterTest extends BaseUITestCase {
 
 	protected void assertIndenterResult() throws Exception {
 		CCorePlugin.setOptions(fOptions);
-		StringBuffer[] contents= getContentsForTest(2);
+		StringBuilder[] contents= getContentsForTest(2);
 		String before= contents[0].toString();
 		IDocument document= new Document(before);
 		String expected= contents[1].toString();

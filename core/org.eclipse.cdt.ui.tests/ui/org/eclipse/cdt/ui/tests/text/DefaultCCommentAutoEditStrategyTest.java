@@ -599,7 +599,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 		IDocument doc = new Document();
 		textTools.setupCDocument(doc);
 
-		StringBuffer[] raw= getTestContents();
+		CharSequence[] raw= getTestContents();
 		String init= raw[0].toString(), expected= raw[1].toString();
 
 		int caretInit= init.indexOf('X');

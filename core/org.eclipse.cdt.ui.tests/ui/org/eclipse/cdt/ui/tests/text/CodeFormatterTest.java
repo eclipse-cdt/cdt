@@ -59,7 +59,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	}
 
 	protected void assertFormatterResult() throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		CharSequence[] contents= getContentsForTest(2);
 		String before= contents[0].toString();
 		String expected= contents[1].toString();
 		assertFormatterResult(before, expected);

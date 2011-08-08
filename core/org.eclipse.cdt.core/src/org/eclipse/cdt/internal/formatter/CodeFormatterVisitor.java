@@ -1603,8 +1603,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	private int visit(IASTArrayDeclarator node) {
 		IASTArrayModifier[] arrayModifiers= node.getArrayModifiers();
 		if (arrayModifiers != null) {
-			for (IASTArrayModifier arrayModifier2 : arrayModifiers) {
-				IASTArrayModifier arrayModifier = arrayModifier2;
+			for (IASTArrayModifier arrayModifier : arrayModifiers) {
 				scribe.printNextToken(Token.tLBRACKET, preferences.insert_space_before_opening_bracket);
 				boolean emptyBrackets= arrayModifier.getConstantExpression() == null
 						&& !(arrayModifier instanceof ICASTArrayModifier);
@@ -1625,10 +1624,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 						scribe.space();
 					}
 				}
+				Runnable tailFormatter = scribe.takeTailFormatter();
 				try {
 					arrayModifier.accept(this);
 				} catch (ASTProblemException e) {
 					scribe.skipToToken(Token.tRBRACKET);
+				} finally {
+					scribe.setTailFormatter(tailFormatter);
 				}
 				boolean insertSpace= emptyBrackets ?
 						preferences.insert_space_between_empty_brackets	:

@@ -2518,4 +2518,23 @@ public class CodeFormatterTest extends BaseUITestCase {
 		String expected= before;
 		assertFormatterResult(before, expected);
 	}
+
+	//#define SIZE 5
+	//char s0[5];
+	//char s1[1+1];
+	//char s2[SIZE];
+	//char s3[SIZE+1];
+	//char s4[SIZE+SIZE];
+	//char s5[1+SIZE];
+
+	//#define SIZE 5
+	//char s0[5];
+	//char s1[1 + 1];
+	//char s2[SIZE];
+	//char s3[SIZE + 1];
+	//char s4[SIZE + SIZE];
+	//char s5[1 + SIZE];
+	public void testExpressionInArrayDeclarator_Bug350816() throws Exception {
+		assertFormatterResult();
+	}
 }

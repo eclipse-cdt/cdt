@@ -2537,4 +2537,44 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testExpressionInArrayDeclarator_Bug350816() throws Exception {
 		assertFormatterResult();
 	}
+
+	//void f(int p0 ,... ){}
+	
+	//void f(int p0, ...) {
+	//}
+	public void testEllipsisInFunctionDefinition_Bug350689() throws Exception {
+		assertFormatterResult();
+	}
+
+	//struct{int n;}* l;
+	//void f(int p0, int p1) { f((p0 + 2), l->n); }
+
+	//struct {
+	//	int n;
+	//}* l;
+	//void f(int p0, int p1) {
+	//	f((p0 + 2), l->n);
+	//}
+	public void testParenthesizedExpressionInArgumentList_Bug350689() throws Exception {
+		assertFormatterResult();
+	}
+
+	//#define m(x) { x=1; }
+	//void f() {
+	//	int i;
+	//	if (1) i=1;
+	//	else m(i);
+	//}
+
+	//#define m(x) { x=1; }
+	//void f() {
+	//	int i;
+	//	if (1)
+	//		i = 1;
+	//	else
+	//		m(i);
+	//}
+	public void testMacroInElseBranch_Bug350689() throws Exception {
+		assertFormatterResult();
+	}
 }

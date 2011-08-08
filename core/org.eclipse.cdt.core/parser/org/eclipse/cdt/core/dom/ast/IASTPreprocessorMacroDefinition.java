@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Doug Schaefer (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -17,9 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTPreprocessorMacroDefinition extends
-		IASTPreprocessorStatement, IASTNameOwner {
-
+public interface IASTPreprocessorMacroDefinition extends IASTPreprocessorStatement, IASTNameOwner {
 	/**
 	 * <code>MACRO_NAME</code> describes the relationship between a macro
 	 * definition and it's name.
@@ -43,7 +41,6 @@ public interface IASTPreprocessorMacroDefinition extends
 	 * @since 5.0
 	 */
 	public IASTFileLocation getExpansionLocation();
-
 	
 	/**
 	 * Returns whether this macro definition occurs in active code.

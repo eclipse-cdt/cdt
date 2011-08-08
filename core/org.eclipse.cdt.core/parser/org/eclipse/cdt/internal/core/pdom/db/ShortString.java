@@ -10,7 +10,6 @@
  *     Andrew Ferguson (Symbian)
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.db;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -77,7 +76,7 @@ public class ShortString implements IString {
 		Chunk chunk = db.getChunk(record);
 		int length = chunk.getInt(record + LENGTH);
 		char[] chars = new char[length];
-		chunk.getCharArray(record+CHARS, chars);
+		chunk.getCharArray(record + CHARS, chars);
 		return chars;
 	}
 	
@@ -259,7 +258,6 @@ public class ShortString implements IString {
 		else
 			return 0;
 	}
-	
 
 	public int compareCompatibleWithIgnoreCase(IString string) throws CoreException {
 		if (string instanceof ShortString)
@@ -269,7 +267,6 @@ public class ShortString implements IString {
 		else
 			throw new IllegalArgumentException();
 	}
-
 	
 	public int compareCompatibleWithIgnoreCase(ShortString other) throws CoreException {
 		Chunk chunk1 = db.getChunk(record);

@@ -1200,14 +1200,14 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		final int[] nameOffsets= new int[] {header.getOffset(), condEndOffset};
 		char[] headerName= null;
 		boolean userInclude= true;
-		
+
 		switch (header.getType()) {
 		case Lexer.tSYSTEM_HEADER_NAME:
 			userInclude= false;
 			headerName = extractHeaderName(header.getCharImage(), '<', '>', nameOffsets);
 			condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
 			break;
-			
+
 		case Lexer.tQUOTE_HEADER_NAME:
 			headerName = extractHeaderName(header.getCharImage(), '"', '"', nameOffsets);
 			condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
@@ -1215,7 +1215,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 		case IToken.tCOMPLETION:
 			throw new OffsetLimitReachedException(ORIGIN_PREPROCESSOR_DIRECTIVE, header);
-			
+
 		case IToken.tIDENTIFIER:
 			TokenList tl= new TokenList();
 			condEndOffset= nameOffsets[1]= getTokensWithinPPDirective(false, tl, false);
@@ -1245,11 +1245,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				}
 			}
 			break;
-			
+
 		default:
 			condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
 			break;
 		}
+
 		if (headerName == null || headerName.length == 0) {
 	    	if (active) {
 	            handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE,
@@ -1288,8 +1289,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 						fAllIncludedFiles.add(path);
 						ILocationCtx ctx= fLocationMap.pushInclusion(poundOffset, nameOffsets[0], nameOffsets[1],
 								condEndOffset, source, path, headerName, userInclude, isHeuristic, fi.isSource());
-						ScannerContext fctx= new ScannerContext(ctx, fCurrentContext, new Lexer(source,
-								fLexOptions, this, this));
+						ScannerContext fctx= new ScannerContext(ctx, fCurrentContext,
+								new Lexer(source, fLexOptions, this, this));
 						fctx.setFoundOnPath(fi.getFoundOnPath(), includeDirective);
 						fCurrentContext= fctx;
 					}

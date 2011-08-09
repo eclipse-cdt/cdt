@@ -6,11 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Andrew Ferguson (Symbian)
- *    Anton Leherbauer (Wind River Systems)
- *    IBM Corporation
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
+ *     Anton Leherbauer (Wind River Systems)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 

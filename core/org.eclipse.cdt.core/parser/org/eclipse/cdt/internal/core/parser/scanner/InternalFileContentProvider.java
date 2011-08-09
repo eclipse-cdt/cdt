@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -21,7 +21,6 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.Inclusio
  * Internal implementation of the file content providers
  */
 public abstract class InternalFileContentProvider extends IncludeFileContentProvider {
-
 	private IIncludeFileResolutionHeuristics fIncludeResolutionHeuristics;
 
 	/**

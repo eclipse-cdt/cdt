@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Andrew Ferguson (Symbian)
+ *     Markus Schorn - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
 
@@ -90,7 +90,7 @@ public interface IIndexFile {
 	IIndexName[] findNames(int offset, int length) throws CoreException;
 	
 	/**
-	 * Returns the include that was used to parse this file, may be null.
+	 * Returns the include that was used to parse this file, may be <code>null</code>.
 	 */
 	IIndexInclude getParsedInContext() throws CoreException;
 	

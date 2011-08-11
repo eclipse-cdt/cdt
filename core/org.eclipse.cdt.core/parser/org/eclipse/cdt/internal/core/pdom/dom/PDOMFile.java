@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Andrew Ferguson (Symbian)
- *    Sergey Prigogin (Google)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -607,8 +607,8 @@ public class PDOMFile implements IIndexFragmentFile {
 				if (nameOffset + name.getNodeLength() <= offset + length) {
 					result.add(name);
 				} else if (name.isReference()) { 
-					// names are ordered, but callers are inserted before
-					// their references
+					// Names are ordered, but callers are inserted before
+					// their references.
 					break;
 				}
 			}

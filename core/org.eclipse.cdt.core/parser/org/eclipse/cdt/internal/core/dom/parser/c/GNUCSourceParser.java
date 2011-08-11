@@ -177,17 +177,20 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         		// in any way add the initializer such that the actual size can be tracked.
         		result.addClause(clause);
         	} else {
-        		// Gnu extension: the assign operator is optional
-        		if (LT(1) == IToken.tASSIGN)
-        			consume(IToken.tASSIGN);
-        		
-        		IASTInitializerClause clause= initClause(false);
-        		ICASTDesignatedInitializer desigInitializer = nodeFactory.newDesignatedInitializer(clause);
+        		ICASTDesignatedInitializer desigInitializer = nodeFactory.newDesignatedInitializer((IASTInitializerClause) null);
         		setRange(desigInitializer, designator.get(0));
-        		adjustLength(desigInitializer, clause);
-
         		for (ICASTDesignator d : designator) {
         			desigInitializer.addDesignator(d);
+        		}
+
+        		if (LT(1) != IToken.tEOC) {
+        			// Gnu extension: the assign operator is optional
+        			if (LT(1) == IToken.tASSIGN)
+        				consume(IToken.tASSIGN);
+
+        			IASTInitializerClause clause= initClause(false);
+        			desigInitializer.setOperand(clause);
+        			adjustLength(desigInitializer, clause);
         		}
         		result.addClause(desigInitializer);
         	}

@@ -607,24 +607,29 @@ public class CVisitor extends ASTQueries {
 	    }
 		
 		if (type != null && type instanceof ICompositeType) {
+			final ICompositeType ct = (ICompositeType) type;
 			if (type instanceof IIndexBinding) {
-				type= ((CASTTranslationUnit) fieldReference.getTranslationUnit()).mapToASTType((ICompositeType) type);
+				type= ((CASTTranslationUnit) fieldReference.getTranslationUnit()).mapToASTType(ct);
 			}
 		    if (prefix) {
-		        IBinding[] result = null;
 		        char[] p = fieldReference.getFieldName().toCharArray();
-		        IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(p);
-				IField[] fields = ((ICompositeType) type).getFields();
-				for (IField field : fields) {
-					if (matcher.match(field.getNameCharArray())) {
-				        result = (IBinding[]) ArrayUtil.append(IBinding.class, result, field);
-				    }
-				}
-				return ArrayUtil.trim(IBinding.class, result);
+		        return findFieldsByPrefix(ct, p);
 		    } 
-			return ((ICompositeType) type).findField(fieldReference.getFieldName().toString());
+			return ct.findField(fieldReference.getFieldName().toString());
 		}
 		return null;
+	}
+
+	public static IBinding[] findFieldsByPrefix(final ICompositeType ct, char[] p) {
+		IBinding[] result = null;
+		IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(p);
+		IField[] fields = ct.getFields();
+		for (IField field : fields) {
+			if (matcher.match(field.getNameCharArray())) {
+		        result = (IBinding[]) ArrayUtil.append(IBinding.class, result, field);
+		    }
+		}
+		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
 	
 	static IType getPtrDiffType(IASTBinaryExpression expr) {
@@ -1463,6 +1468,8 @@ public class CVisitor extends ASTQueries {
         
         if (prop == IASTFieldReference.FIELD_NAME) {
             result = (IBinding[]) findBinding((IASTFieldReference) name.getParent(), isPrefix);
+        } else if (prop == ICASTFieldDesignator.FIELD_NAME) {
+            result = findBindingForContentAssist((ICASTFieldDesignator) name.getParent(), isPrefix);
         } else {
 	        IScope scope= getContainingScope(name);
 			try {
@@ -1477,7 +1484,35 @@ public class CVisitor extends ASTQueries {
         return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
     }
     
-    public static IBinding[] findBindings(IScope scope, String name) {
+	private static IBinding[] findBindingForContentAssist(ICASTFieldDesignator fd, boolean isPrefix) {
+		IASTNode blockItem = getContainingBlockItem(fd);
+		
+		IASTNode parent= blockItem;
+		while (parent != null && !(parent instanceof IASTSimpleDeclaration))
+			parent= parent.getParent();
+		
+		if (parent instanceof IASTSimpleDeclaration) {
+			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;
+			IBinding struct= null;
+			if (simpleDecl.getDeclSpecifier() instanceof IASTNamedTypeSpecifier) {
+				struct = ((IASTNamedTypeSpecifier) simpleDecl.getDeclSpecifier()).getName().resolveBinding();
+			} else if (simpleDecl.getDeclSpecifier() instanceof IASTElaboratedTypeSpecifier) {
+				struct = ((IASTElaboratedTypeSpecifier) simpleDecl.getDeclSpecifier()).getName().resolveBinding();
+			} else if (simpleDecl.getDeclSpecifier() instanceof IASTCompositeTypeSpecifier) {
+				struct = ((IASTCompositeTypeSpecifier) simpleDecl.getDeclSpecifier()).getName().resolveBinding();
+			}
+			if (struct instanceof IType) {
+				IType t= unwrapTypedefs((IType) struct);
+			
+				if (t instanceof ICompositeType) {
+					return findFieldsByPrefix((ICompositeType) t, fd.getName().toCharArray());
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static IBinding[] findBindings(IScope scope, String name) {
         CASTName astName = new CASTName(name.toCharArray());
 	    
 	    // normal names

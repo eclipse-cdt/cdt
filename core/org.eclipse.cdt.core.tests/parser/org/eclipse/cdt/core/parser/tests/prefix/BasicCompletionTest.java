@@ -370,5 +370,12 @@ public class BasicCompletionTest extends CompletionTestBase {
 		checkCompletion(code, false, expected);
 		checkCompletion(code, true, expected);
 	}
-
+	
+	// struct foo { int axx;};
+	// struct foo bar = {.a
+	public void testCompletionInDesignatedInitializor_353281() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"axx"};
+		checkCompletion(code, false, expected);
+	}
 }

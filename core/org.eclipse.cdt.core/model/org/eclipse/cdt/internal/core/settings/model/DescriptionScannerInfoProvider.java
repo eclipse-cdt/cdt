@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -34,6 +35,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -239,10 +241,11 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				IResource rc = root.findMember(path);
 				if(rc != null){
-					path = rc.getLocation();
+					path = new Path(EFSExtensionManager.getDefault().getPathFromURI(rc.getLocationURI()));
 				}
 			} else if (!path.isAbsolute()) {
-				IPath projLocation = fProject != null ? fProject.getLocation() : null;
+				IPath projLocation = fProject != null ? new Path(EFSExtensionManager.getDefault()
+						.getPathFromURI(fProject.getLocationURI())) : null;
 				if(projLocation != null)
 					path = projLocation.append(path);
 			}

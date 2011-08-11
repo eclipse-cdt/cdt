@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * David McKnight   (IBM)   - [187711] Link with Editor action for System View
  * David McKnight   (IBM)   - [238294] ClassCastException using Link With Editor
  * David McKnight   (IBM)   - [281309] RSE Explorer View is not able to be sync with Editor in next Eclipse launched
+ * David McKnight   (IBM)   - [354283] Refresh highlights wrong tab when two files of same name are open
  *******************************************************************************/
 package org.eclipse.rse.internal.files.ui.actions;
 
@@ -31,6 +32,7 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
@@ -137,7 +139,6 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 		private IAdaptable _targetRemoteObj;
 		private ISystemTree _systemTree;
 		private ISystemFilterReference _filterRef;
-		private ISystemViewElementAdapter _adapter;
 		
 		public LinkFromFolderJob(IAdaptable remoteFolder, ISystemFilterReference filterRef, IAdaptable targetRemoteObj, ISystemTree systemTree) {
 			super(FileResources.MESSAGE_EXPANDING_FOLDER);
@@ -158,7 +159,7 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 			try
 			{				
 				// get the adapter
-				ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)_remoteFolder).getAdapter(ISystemViewElementAdapter.class);
+				ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)(_remoteFolder).getAdapter(ISystemViewElementAdapter.class);
 				
 				// get the context
 				ContextObject contextObject = new ContextObject(_remoteFolder, _subSystem, _filterRef);
@@ -276,7 +277,7 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 	    	  		 // my home filter - will encompass iff remoteObjectAbsoluteName is within the home dir	    	  		 	    	  		
 	    	  		 try
 	    	  		 {	
-	    	  			 IAdaptable homeObj = (IAdaptable)_subSystem.getObjectWithAbsoluteName(".", new NullProgressMonitor());
+	    	  			 IAdaptable homeObj = (IAdaptable)_subSystem.getObjectWithAbsoluteName(".", new NullProgressMonitor()); //$NON-NLS-1$
 	    	  			 if (homeObj != null){
 	    	  				 String homePath = getAbsolutePath(homeObj);
 	    	  				 would = remoteObjectAbsoluteName.startsWith(homePath);
@@ -369,7 +370,7 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 						if (item != null){
 							_systemTree.getTree().setSelection(item);
 						}
-						else
+						else if (remoteObj != null)
 						{
 							// no reference in the tree so we will search forward from the filter in a job (avoiding query on the main thread)
 							LinkFromFilterJob job = new LinkFromFilterJob(remoteObj, _systemTree);
@@ -415,11 +416,22 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 										if (file.getProject().getName().equals(SystemRemoteEditManager.REMOTE_EDIT_PROJECT_NAME))
 										{
 											SystemIFileProperties properties = new SystemIFileProperties(file);
-											String path = properties.getRemoteFilePath();
+											String path = properties.getRemoteFilePath();																													
+											
 											if (path != null && path.equals(adapter.getAbsoluteName(obj)))
 											{
-												page.bringToTop(editor);
-												return;
+												ISubSystem objSS = adapter.getSubSystem(obj);
+												ISubSystem editorSS = null;
+												// make sure this is for the correct file subsystem
+												String subsystemID = properties.getRemoteFileSubSystem();
+												if (subsystemID != null){
+													ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+													editorSS = registry.getSubSystem(subsystemID);
+												}
+												if (objSS != null && editorSS != null && objSS.equals(editorSS)){													
+													page.bringToTop(editor);
+													return;
+												}												
 											}
 										}								
 									}											

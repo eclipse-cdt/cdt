@@ -206,10 +206,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  113.0 - Changed marshaling of values, bug 327878
 	 *  114.0 - Partial specializations for class template specializations, bug 332884.
 	 *  115.0 - Corrected signatures for function templates, bug 335062.
+	 *  116.0 - Multiple variants of included header file, bug 197989.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(114, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(114, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(114, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(116, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(116, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(116, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

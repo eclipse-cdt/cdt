@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 QNX Software Systems and others.
+ * Copyright (c) 2005, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
@@ -50,6 +52,7 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
+import org.eclipse.cdt.internal.core.pdom.db.StringMapEncoder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -76,8 +79,10 @@ public class PDOMFile implements IIndexFragmentFile {
 	private static final int ENCODING_HASH= 44;
 	private static final int LAST_USING_DIRECTIVE= 48;
 	private static final int FIRST_MACRO_REFERENCE= 52;
+	private static final int RELEVANT_MACROS= 56;
+	private static final int INCLUDE_GUARD_MACRO= 60;
 
-	private static final int RECORD_SIZE= 56;
+	private static final int RECORD_SIZE= 64;
 
 	public static class Comparator implements IBTreeComparator {
 		private Database db;
@@ -229,6 +234,16 @@ public class PDOMFile implements IIndexFragmentFile {
 		setContentsHash(sourceFile.getContentsHash());
 		setScannerConfigurationHashcode(sourceFile.getScannerConfigurationHashcode());
 
+		Database db= fLinkage.getDB();
+		// Transfer the relevant macros.
+		long rec = db.getRecPtr(sourceFile.record + RELEVANT_MACROS);
+		db.putRecPtr(record + RELEVANT_MACROS, rec);
+		db.putRecPtr(sourceFile.record + RELEVANT_MACROS, 0);
+		// Transfer the include guard macro.
+		rec = db.getRecPtr(sourceFile.record + INCLUDE_GUARD_MACRO);
+		db.putRecPtr(record + INCLUDE_GUARD_MACRO, rec);
+		db.putRecPtr(sourceFile.record + INCLUDE_GUARD_MACRO, 0);
+
 		sourceFile.delete();
 	}
 
@@ -239,9 +254,10 @@ public class PDOMFile implements IIndexFragmentFile {
 	 */
 	public void setLocation(IIndexFileLocation location) throws CoreException {
 		String locationString = fLinkage.getPDOM().getLocationConverter().toInternalFormat(location);
-		if (locationString == null)
+		if (locationString == null) {
 			throw new CoreException(CCorePlugin.createStatus(Messages.getString("PDOMFile.toInternalProblem") + //$NON-NLS-1$
 					location.getURI()));
+		}
 		setInternalLocation(locationString);
 	}
 
@@ -304,6 +320,40 @@ public class PDOMFile implements IIndexFragmentFile {
 	public void setEncodingHashcode(int hashcode) throws CoreException {
 		Database db= fLinkage.getDB();
 		db.putInt(record + ENCODING_HASH, hashcode);
+	}
+
+	public Map<String, String> getRelevantMacros() throws CoreException {
+		Database db = fLinkage.getDB();
+		long rec = db.getRecPtr(record + RELEVANT_MACROS);
+		if (rec == 0) {
+			return Collections.emptyMap();
+		}
+		char[] chars = db.getString(rec).getChars();
+		return StringMapEncoder.decodeMap(chars);
+	}
+
+	public void setRelevantMacros(Map<String, String> macros) throws CoreException {
+		Database db= fLinkage.getDB();
+		long oldRecord = db.getRecPtr(record + RELEVANT_MACROS);
+		if (oldRecord != 0)
+			db.getString(oldRecord).delete();
+		db.putRecPtr(record + RELEVANT_MACROS,
+				macros.isEmpty() ? 0 : db.newString(StringMapEncoder.encode(macros)).getRecord());
+	}
+
+	public String getIncludeGuardMacro() throws CoreException {
+		Database db = fLinkage.getDB();
+		long rec = db.getRecPtr(record + INCLUDE_GUARD_MACRO);
+		return rec != 0 ? db.getString(rec).getString() : null;
+	}
+
+	public void setIncludeGuardMacro(String macroName) throws CoreException {
+		Database db = fLinkage.getDB();
+		long oldRecord = db.getRecPtr(record + INCLUDE_GUARD_MACRO);
+		if (oldRecord != 0)
+			db.getString(oldRecord).delete();
+		db.putRecPtr(record + INCLUDE_GUARD_MACRO,
+				macroName != null ? db.newString(macroName).getRecord() : 0);
 	}
 
 	private PDOMName getFirstName() throws CoreException {
@@ -529,6 +579,12 @@ public class PDOMFile implements IIndexFragmentFile {
 		long locRecord = db.getRecPtr(record + LOCATION_REPRESENTATION);
 		if (locRecord != 0)
 			db.getString(locRecord).delete();
+		locRecord = db.getRecPtr(record + RELEVANT_MACROS);
+		if (locRecord != 0)
+			db.getString(locRecord).delete();
+		locRecord = db.getRecPtr(record + INCLUDE_GUARD_MACRO);
+		if (locRecord != 0)
+			db.getString(locRecord).delete();
 
 		db.free(record);
 	}
@@ -612,7 +668,6 @@ public class PDOMFile implements IIndexFragmentFile {
 					break;
 				}
 			}
-
 		}
 		for (PDOMMacro macro= getFirstMacro(); macro != null; macro= macro.getNextMacro()) {
 			int nameOffset=  macro.getNodeOffset();
@@ -640,11 +695,61 @@ public class PDOMFile implements IIndexFragmentFile {
 		return result.toArray(new IIndexName[result.size()]);
 	}
 
+	/**
+	 * Finds the file in index.
+	 * 
+	 * @param linkage The linkage of the file.
+	 * @param btree The file index.
+	 * @param location The location of the file.
+	 * @param strategy The index location converter.
+	 * @param macroDictionary The names and definitions of the macros used to disambiguate between
+	 *     variants of the file contents corresponding to different inclusion points.
+	 * @return The found file, or <code>null</code> if the matching file was not found.  
+	 */
+	public static PDOMFile findFile(PDOMLinkage linkage, BTree btree, IIndexFileLocation location,
+			IIndexLocationConverter strategy, Map<String, String> macroDictionary) throws CoreException {
+		String internalRepresentation= strategy.toInternalFormat(location);
+		if (internalRepresentation != null) {
+			Finder finder = new Finder(linkage.getDB(), internalRepresentation, linkage.getLinkageID(),
+					macroDictionary);
+			btree.accept(finder);
+			long record= finder.getRecord();
+			if (record != 0) {
+				return new PDOMFile(linkage, record);
+			}
+		}
+		return null;
+	}
+
+	public static PDOMFile[] findFiles(PDOMLinkage linkage, BTree btree, IIndexFileLocation location,
+			IIndexLocationConverter strategy) throws CoreException {
+		String internalRepresentation= strategy.toInternalFormat(location);
+		if (internalRepresentation != null) {
+			Finder finder = new Finder(linkage.getDB(), internalRepresentation, linkage.getLinkageID(), null);
+			btree.accept(finder);
+			long[] records= finder.getRecords();
+			PDOMFile[] result= new PDOMFile[records.length];
+			for (int i = 0; i < result.length; i++) {
+				result[i]= new PDOMFile(linkage, records[i]);
+			}
+			return result;
+		}
+		return null;
+	}
+
+	/**
+	 * When a header file is stored in the index in multiple variants for different macro
+	 * definitions this method will return an arbitrary one of the variants.
+	 *  
+	 * @deprecated Use #findFiles(PDOMLinkage, BTree, IIndexFileLocation, IIndexLocationConverter)
+	 *     or #findFile(PDOMLinkage, BTree, IIndexFileLocation, IIndexLocationConverter, Map<String, String>)
+	 */
+	@Deprecated
 	public static PDOMFile findFile(PDOMLinkage linkage, BTree btree, IIndexFileLocation location,
 			IIndexLocationConverter strategy) throws CoreException {
 		String internalRepresentation= strategy.toInternalFormat(location);
 		if (internalRepresentation != null) {
-			Finder finder = new Finder(linkage.getDB(), internalRepresentation, linkage.getLinkageID());
+			Finder finder = new Finder(linkage.getDB(), internalRepresentation, linkage.getLinkageID(), null);
 			btree.accept(finder);
 			long record= finder.getRecord();
 			if (record != 0) {
@@ -658,7 +763,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			IIndexLocationConverter strategy) throws CoreException {
 		String internalRepresentation= strategy.toInternalFormat(location);
 		if (internalRepresentation != null) {
-			Finder finder = new Finder(pdom.getDB(), internalRepresentation, -1);
+			Finder finder = new Finder(pdom.getDB(), internalRepresentation, -1, null);
 			btree.accept(finder);
 			long[] records= finder.getRecords();
 			PDOMFile[] result= new PDOMFile[records.length];
@@ -676,25 +781,30 @@ public class PDOMFile implements IIndexFragmentFile {
 		PDOMLinkage linkage= pdom.getLinkage(linkageID);
 		if (linkage == null)
 			throw new CoreException(createStatus("Invalid linkage ID in database")); //$NON-NLS-1$
-		PDOMFile file= new PDOMFile(linkage, record);
-		return file;
+		return new PDOMFile(linkage, record);
 	}
 
 	private static class Finder implements IBTreeVisitor {
 		private static final long[] EMPTY = {};
+		private static final char[] EMPTY_CHAR_ARRAY = {};
 		private final Database db;
 		private final String rawKey;
 		private long record;
 		private long[] records;
 		private final int linkageID;
+		private final Map<String, String> macroDictionary;
+		private char[] rawRelevantMacros;
 
 		/**
 		 * Searches for a file with the given linkage id.
+		 * @param macroDictionary 
 		 */
-		public Finder(Database db, String internalRepresentation, int linkageID) {
+		public Finder(Database db, String internalRepresentation, int linkageID,
+				Map<String, String> macroDictionary) {
 			this.db = db;
 			this.rawKey = internalRepresentation;
 			this.linkageID= linkageID;
+			this.macroDictionary = macroDictionary;
 		}
 
 		public long[] getRecords() {
@@ -712,10 +822,39 @@ public class PDOMFile implements IIndexFragmentFile {
 			int cmp= name.compare(rawKey, true);
 			if (cmp == 0 && linkageID >= 0) {
 				cmp= db.getInt(record + PDOMFile.LINKAGE_ID) - linkageID;
+				if (cmp == 0 && macroDictionary != null) {
+					IString relevantMacrosStr = getString(record + RELEVANT_MACROS);
+					if (rawRelevantMacros == null) {
+						Map<String, String> fileRelevantMacros = Collections.emptyMap();
+						if (relevantMacrosStr != null) {
+							fileRelevantMacros = StringMapEncoder.decodeMap(relevantMacrosStr.getChars());
+						}
+						IString str = getString(record + INCLUDE_GUARD_MACRO);
+						String includeGuardMacro = str != null ? str.getString() : null;
+						Map<String, String> relevantMacros = new HashMap<String, String>(fileRelevantMacros.size());
+						for (String key : fileRelevantMacros.keySet()) {
+							String value = key.equals(includeGuardMacro) ? null : macroDictionary.get(key); 
+							relevantMacros.put(key, value);
+						}
+						rawRelevantMacros = relevantMacros.isEmpty() ?
+								EMPTY_CHAR_ARRAY :
+								StringMapEncoder.encode(relevantMacros);
+					}
+					if (relevantMacrosStr != null) {
+						cmp = relevantMacrosStr.compare(rawRelevantMacros, true);
+					} else {
+						cmp = rawRelevantMacros.length > 0 ? -1 : 0;
+					}
+				}
 			}
 			return cmp;
 		}
-		
+
+		private IString getString(long offset) throws CoreException {
+			long rec = db.getRecPtr(offset);
+			return rec != 0 ? db.getString(rec) : null;
+		}
+
 		public boolean visit(long record) throws CoreException {
 			if (linkageID >= 0) {
 				this.record = record;
@@ -724,7 +863,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			if (this.record == 0) {
 				this.record= record;
 			} else if (this.records == null) {
-				this.records= new long[] {this.record, record};
+				this.records= new long[] { this.record, record };
 			} else {
 				long[] cpy= new long[this.records.length + 1];
 				System.arraycopy(this.records, 0, cpy, 0, this.records.length);

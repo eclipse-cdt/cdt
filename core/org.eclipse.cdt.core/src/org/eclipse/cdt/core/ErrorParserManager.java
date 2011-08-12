@@ -564,9 +564,18 @@ outer:
 	 */
 	public void generateExternalMarker(IResource file, int lineNumber, String desc, int severity, String varName, IPath externalPath) {
 		ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, desc, severity, varName, externalPath);
+		this.addProblemMarker(problemMarkerInfo);
+	}
+
+	/**
+	 * Add the given marker to the list of error markers.
+	 * @param problemMarkerInfo - The marker to be added.
+	 * @since 5.4
+	 */
+	public void addProblemMarker(ProblemMarkerInfo problemMarkerInfo){
 		fErrors.add(problemMarkerInfo);
 		fMarkerGenerator.addMarker(problemMarkerInfo);
-		if (severity == IMarkerGenerator.SEVERITY_ERROR_RESOURCE)
+		if (problemMarkerInfo.severity == IMarkerGenerator.SEVERITY_ERROR_RESOURCE)
 			hasErrors = true;
 	}
 

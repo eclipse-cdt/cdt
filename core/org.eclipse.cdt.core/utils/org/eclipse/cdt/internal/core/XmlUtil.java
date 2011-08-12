@@ -16,7 +16,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URI;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -266,8 +265,6 @@ public class XmlUtil {
 		if (!storeFile.exists()) {
 			storeFile.createNewFile();
 		}
-		OutputStream fileStream = new FileOutputStream(storeFile);
-
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml");	//$NON-NLS-1$
@@ -279,7 +276,7 @@ public class XmlUtil {
 		StreamResult result = new StreamResult(new FileOutputStream(storeFile));
 		transformer.transform(source, result);
 
-		fileStream.close();
+		result.getOutputStream().close();
 		ResourcesUtil.refreshWorkspaceFiles(uriLocation);
 	}
 

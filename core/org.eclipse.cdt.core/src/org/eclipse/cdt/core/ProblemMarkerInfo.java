@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009, 2011 Siemens AG and others.
+ * Copyright (c) 2006, 2011 Siemens AG and others.
  * All rights reserved. This content and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,11 +22,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * {@link ProblemMarkerInfo} is an object used to pass error properties to {@link ErrorParserManager}.
- * @see ErrorParserManager#addProblemMarker(ProblemMarkerInfo) and
- * @see ErrorParserManager#generateMarker(IResource, int, String, int, String) and
- * @see ErrorParserManager#generateExternalMarker(IResource, int, String, int, String, IPath)
+ * {@code ProblemMarkerInfo} is an object used to pass error properties to {@link ErrorParserManager}.
  * The information stored in this object will later be used to create an {@link IMarker} by {@link ACBuilder}
+ * @see ErrorParserManager#addProblemMarker(ProblemMarkerInfo)
+ * @see ErrorParserManager#generateMarker(IResource, int, String, int, String)
+ * @see ErrorParserManager#generateExternalMarker(IResource, int, String, int, String, IPath)
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public  class ProblemMarkerInfo {
@@ -42,11 +43,12 @@ public  class ProblemMarkerInfo {
 
 		/**
 		 * Create a new {@link ProblemMarkerInfo} object.
+		 * 
 		 * @param file - the file where the problem has occurred.
 		 * @param lineNumber - the line number of the problem.
 		 * @param description - a description of the problem.
-		 * @param severity - the severity of the problem @see {@link IMarkerGenerator}
-		 *        for acceptable severity values
+		 * @param severity - the severity of the problem, see {@link IMarkerGenerator}
+		 *        for acceptable severity values.
 		 * @param variableName - the name of the variable involved in the error if any.
 		 */
 		public ProblemMarkerInfo(IResource file, int lineNumber, String description, int severity, String variableName) {
@@ -62,10 +64,11 @@ public  class ProblemMarkerInfo {
 
 		/**
 		 * Create a new {@link ProblemMarkerInfo} object.
+		 * 
 		 * @param file - the file where the problem has occurred.
 		 * @param lineNumber - the line number of the problem.
 		 * @param description - a description of the problem.
-		 * @param severity - the severity of the problem @see {@link IMarkerGenerator}
+		 * @param severity - the severity of the problem, see {@link IMarkerGenerator}
 		 *        for acceptable severity values
 		 * @param variableName - the name of the variable involved in the error if any.
 		 * @param externalPath - if this error involves a file outside the workspace this parameter should
@@ -88,11 +91,12 @@ public  class ProblemMarkerInfo {
 		/**
 		 * Return the value of the attribute with the given key,
 		 * or null if no such attribute exists.
+		 * 
 		 * @param key - attribute key.
 		 * @return attribute value
 		 * @since 5.4
 		 */
-		public String getAttribute (String key){
+		public String getAttribute(String key){
 			return this.attributes.get(key);
 		}
 
@@ -100,11 +104,12 @@ public  class ProblemMarkerInfo {
 		 * Set the value of the attribute with the given key
 		 * to the given value, or add one if one does not already
 		 * exist.
+		 * 
 		 * @param key - attribute key.
 		 * @param value - new attribute value.
 		 * @since 5.4
 		 */
-		public void setAttribute (String key, String value){
+		public void setAttribute(String key, String value){
 			this.attributes.put(key, value);
 		}
 
@@ -120,6 +125,7 @@ public  class ProblemMarkerInfo {
 
 		/**
 		 * Set the type of this problem marker.
+		 * 
 		 * @param type - the new type.
 		 * @since 5.4
 		 */

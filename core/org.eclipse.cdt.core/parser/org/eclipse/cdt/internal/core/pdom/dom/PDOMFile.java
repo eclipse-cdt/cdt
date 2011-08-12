@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Andrew Ferguson (Symbian)
- *    Sergey Prigogin (Google)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -607,8 +607,8 @@ public class PDOMFile implements IIndexFragmentFile {
 				if (nameOffset + name.getNodeLength() <= offset + length) {
 					result.add(name);
 				} else if (name.isReference()) { 
-					// names are ordered, but callers are inserted before
-					// their references
+					// Names are ordered, but callers are inserted before
+					// their references.
 					break;
 				}
 			}
@@ -640,23 +640,22 @@ public class PDOMFile implements IIndexFragmentFile {
 		return result.toArray(new IIndexName[result.size()]);
 	}
 
-	public static PDOMFile findFile(PDOMLinkage linkage, BTree btree, IIndexFileLocation location, IIndexLocationConverter strategy)
-			throws CoreException {
+	public static PDOMFile findFile(PDOMLinkage linkage, BTree btree, IIndexFileLocation location,
+			IIndexLocationConverter strategy) throws CoreException {
 		String internalRepresentation= strategy.toInternalFormat(location);
-		long record= 0;
 		if (internalRepresentation != null) {
 			Finder finder = new Finder(linkage.getDB(), internalRepresentation, linkage.getLinkageID());
 			btree.accept(finder);
-			record= finder.getRecord();
-		}
-		if (record != 0) {
-			return new PDOMFile(linkage, record);
+			long record= finder.getRecord();
+			if (record != 0) {
+				return new PDOMFile(linkage, record);
+			}
 		}
 		return null;
 	}
 
-	public static IIndexFragmentFile[] findFiles(PDOM pdom, BTree btree, IIndexFileLocation location, IIndexLocationConverter strategy)
-			throws CoreException {
+	public static IIndexFragmentFile[] findFiles(PDOM pdom, BTree btree, IIndexFileLocation location,
+			IIndexLocationConverter strategy) throws CoreException {
 		String internalRepresentation= strategy.toInternalFormat(location);
 		if (internalRepresentation != null) {
 			Finder finder = new Finder(pdom.getDB(), internalRepresentation, -1);

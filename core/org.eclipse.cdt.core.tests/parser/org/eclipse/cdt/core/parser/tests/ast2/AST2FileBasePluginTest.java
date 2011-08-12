@@ -145,7 +145,7 @@ public class AST2FileBasePluginTest extends TestCase {
 		return file;
 	}
     
-	protected StringBuffer[] getContents(int sections) throws IOException {
+	protected StringBuilder[] getContents(int sections) throws IOException {
 		return TestSourceReader.getContentsForTest(
 				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
 	}

@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -23,7 +22,6 @@ import org.eclipse.core.runtime.CoreException;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IIndexMacro extends IMacroBinding, IIndexBinding {
-	
 	IIndexMacro[] EMPTY_INDEX_MACRO_ARRAY = new IIndexMacro[0];
 
 	/**

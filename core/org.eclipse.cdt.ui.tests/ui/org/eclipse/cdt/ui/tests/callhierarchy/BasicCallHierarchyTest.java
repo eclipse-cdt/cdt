@@ -551,7 +551,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	//     sf();
 	// }
 	public void testStaticFunctionsC() throws Exception {
-		StringBuffer[] sbs= getContentsForTest(2);
+		StringBuilder[] sbs= getContentsForTest(2);
 		String content2= sbs[0].toString();
 		String content1= content2 + sbs[1].toString();
 		IFile file1= createFile(getProject(), "staticFunc1.c", content1);
@@ -620,7 +620,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	//     sf();
 	// }
 	public void testStaticFunctionsCpp() throws Exception {
-		StringBuffer[] sbs= getContentsForTest(2);
+		StringBuilder[] sbs= getContentsForTest(2);
 		String content2= sbs[0].toString();
 		String content1= content2 + sbs[1].toString();
 		IFile file1= createFile(getProject(), "staticFunc1.cpp", content1);

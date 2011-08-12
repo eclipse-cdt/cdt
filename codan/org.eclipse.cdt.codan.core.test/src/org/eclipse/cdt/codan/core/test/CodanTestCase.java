@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.test;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CModelException;
@@ -35,6 +29,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * TODO: add description
@@ -64,7 +64,7 @@ public class CodanTestCase extends BaseTestCase {
 
 	/**
 	 * Override for c++ (i.e. at least one c++ test)
-	 * 
+	 *
 	 * @return is c++ tests
 	 */
 	public boolean isCpp() {
@@ -170,9 +170,10 @@ public class CodanTestCase extends BaseTestCase {
 		return getContents(1)[0].toString();
 	}
 
-	protected StringBuffer[] getContents(int sections) {
+	protected StringBuilder[] getContents(int sections) {
 		try {
-			return TestSourceReader.getContentsForTest(getPlugin().getBundle(), getSourcePrefix(), getClass(), getName(), sections);
+			return TestSourceReader.getContentsForTest(getPlugin().getBundle(), getSourcePrefix(),
+					getClass(), getName(), sections);
 		} catch (IOException e) {
 			fail(e.getMessage());
 			return null;

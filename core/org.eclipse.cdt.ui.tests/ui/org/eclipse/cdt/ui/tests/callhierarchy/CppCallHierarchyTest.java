@@ -57,7 +57,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
     //	   n->inline_method(); // r3
     // }
 	public void testMethods() throws Exception {
-		StringBuffer[] content= getContentsForTest(2);
+		CharSequence[] content= getContentsForTest(2);
 		String header= content[0].toString();
 		String source = content[1].toString();
 		IFile headerFile= createFile(getProject(), "testMethods.h", header);
@@ -127,7 +127,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 	//    method3(); 
 	// }
 	public void testMethodsInMultipleFiles() throws Exception {
-		StringBuffer[] content= getContentsForTest(3);
+		CharSequence[] content= getContentsForTest(3);
 		String header= content[0].toString();
 		String source1 = content[1].toString();
 		String source2 = content[2].toString();
@@ -177,7 +177,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 	//   method3();
 	// }
 	public void testMultipleImplsForMethod() throws Exception {
-		StringBuffer[] content= getContentsForTest(3);
+		CharSequence[] content= getContentsForTest(3);
 		String header= content[0].toString();
 		String source1 = content[1].toString();
 		String source2 = content[2].toString();
@@ -237,7 +237,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 	// 	  mc.method1();
 	// }
 	public void testReverseMultipleImplsForMethod() throws Exception {
-		StringBuffer[] content= getContentsForTest(3);
+		CharSequence[] content= getContentsForTest(3);
 		String header= content[0].toString();
 		String source1 = content[1].toString();
 		String source2 = content[2].toString();
@@ -294,7 +294,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 	//    cxcpp();
 	// }
 	public void testCPPCallsC() throws Exception {
-		StringBuffer[] content= getContentsForTest(2);
+		CharSequence[] content= getContentsForTest(2);
 		String cSource= content[0].toString();
 		String cppSource = content[1].toString();
 		IFile cFile= createFile(getProject(), "s.c", cSource);
@@ -339,7 +339,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 	//    cppfunc();
 	// }}
 	public void testCCallsCPP() throws Exception {
-		StringBuffer[] content= getContentsForTest(2);
+		CharSequence[] content= getContentsForTest(2);
 		String cSource= content[0].toString();
 		String cppSource = content[1].toString();
 		IFile cFile= createFile(getProject(), "s.c", cSource);
@@ -411,7 +411,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 	//		f('1');
 	//	}
 	public void testTemplates() throws Exception {
-		StringBuffer[] content= getContentsForTest(1);
+		CharSequence[] content= getContentsForTest(1);
 		String source = content[0].toString();
 		IFile file= createFile(getProject(), "testTemplates.cpp", source);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -475,7 +475,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 	//	  []{c();}();
 	//	}
 	public void testClosures_316307() throws Exception {
-		StringBuffer[] content= getContentsForTest(1);
+		CharSequence[] content= getContentsForTest(1);
 		String source = content[0].toString();
 		IFile file= createFile(getProject(), "testClosures.cpp", source);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();

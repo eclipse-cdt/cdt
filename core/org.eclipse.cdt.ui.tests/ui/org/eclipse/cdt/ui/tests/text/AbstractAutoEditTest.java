@@ -233,7 +233,7 @@ public class AbstractAutoEditTest extends BaseTestCase {
 		}
 	}
 	
-	protected StringBuffer[] getTestContents() {
+	protected CharSequence[] getTestContents() {
 		try {
 			return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui", this.getClass(), getName(), 2);
 		} catch(IOException ioe) {
@@ -242,7 +242,7 @@ public class AbstractAutoEditTest extends BaseTestCase {
 		return null;
 	}
 	
-	protected StringBuffer[] getTestContents1() {
+	protected CharSequence[] getTestContents1() {
 		try {
 			return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui", this.getClass(), getName(), 1);
 		} catch(IOException ioe) {

@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import org.eclipse.cdt.codan.core.test.TestUtils;
 import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.core.runtime.CoreException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Test for quick fix for suggested parenthesis
@@ -32,7 +32,7 @@ public class SuggestedParenthesisQuickFixTest extends QuickFixTestCase {
 
 	//	 main() {
 	//	   int a=1,b=3;
-	//	   if (b+a && a>b || b-a) b--; // error here 
+	//	   if (b+a && a>b || b-a) b--; // error here
 	//	 }
 	public void testSimple() throws IOException, CoreException {
 		loadcode(getAboveComment());
@@ -53,7 +53,7 @@ public class SuggestedParenthesisQuickFixTest extends QuickFixTestCase {
 	 * quick fix is not called
 	 */
 	public void test2FilesExample() throws FileNotFoundException, IOException {
-		StringBuffer[] code = getContents(2);
+		CharSequence[] code = getContents(2);
 		File f1 = loadcode(code[0].toString());
 		File f2 = loadcode(code[1].toString());
 		// lets pretend marker is found in main.c but fixes go in both files,

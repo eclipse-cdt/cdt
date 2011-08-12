@@ -36,11 +36,11 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	}
 	
 	private void performTest(int steps) throws Exception {
-		StringBuffer[] bufs= TestSourceReader.getContentsForTest(
+		CharSequence[] bufs= TestSourceReader.getContentsForTest(
 				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), steps+2);
 		String[] input= new String[steps+2];
 		int i= -1;
-		for (StringBuffer buf : bufs) {
+		for (CharSequence buf : bufs) {
 			input[++i]= buf.toString().trim();
 		}
 		final MacroExpander expander= createExpander(input[0]);

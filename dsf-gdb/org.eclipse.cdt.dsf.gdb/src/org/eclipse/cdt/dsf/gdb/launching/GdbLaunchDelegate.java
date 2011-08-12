@@ -11,6 +11,7 @@
  * IBM Corporation 
  * Ericsson               - Added support for Mac OS
  * Ericsson               - Added support for post-mortem trace files
+ * Abeer Bagul (Tensilica) - Allow to better override GdbLaunch (bug 339550)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching; 
 
@@ -25,6 +26,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
+import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactoryNS;
@@ -44,6 +46,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ISourceLocator;
  
@@ -57,10 +60,11 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
     public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.cdt.dsf.gdb"; //$NON-NLS-1$
 
     private final static String NON_STOP_FIRST_VERSION = "6.8.50"; //$NON-NLS-1$
+    
+    // Can be removed once we remove the deprecated newServiceFactory(String)
 	private boolean fIsNonStopSession = false;
 	
     private final static String TRACING_FIRST_VERSION = "7.1.50"; //$NON-NLS-1$
-	private boolean fIsPostMortemTracingSession;
 	
 	public GdbLaunchDelegate() {
 		// We now fully support project-less debugging
@@ -133,18 +137,21 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
     	
         monitor.worked( 1 );
 
+        // Must set this here for users that call directly the deprecated newServiceFactory(String)
+        fIsNonStopSession = LaunchUtils.getIsNonStopMode(config);
+
         String gdbVersion = getGDBVersion(config);
         
         // First make sure non-stop is supported, if the user want to use this mode
-        if (fIsNonStopSession && !isNonStopSupportedInGdbVersion(gdbVersion)) {
+        if (LaunchUtils.getIsNonStopMode(config) && !isNonStopSupportedInGdbVersion(gdbVersion)) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Non-stop mode is only supported starting with GDB " + NON_STOP_FIRST_VERSION, null)); //$NON-NLS-1$        	
         }
 
-        if (fIsPostMortemTracingSession && !isPostMortemTracingSupportedInGdbVersion(gdbVersion)) {
+        if (LaunchUtils.getIsPostMortemTracing(config) && !isPostMortemTracingSupportedInGdbVersion(gdbVersion)) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Post-mortem tracing is only supported starting with GDB " + TRACING_FIRST_VERSION, null)); //$NON-NLS-1$        	
         }
 
-        launch.setServiceFactory(newServiceFactory(gdbVersion));
+        launch.setServiceFactory(newServiceFactory(config, gdbVersion));
 
         // Create and invoke the launch sequence to create the debug control and services
         IProgressMonitor subMon1 = new SubProgressMonitor(monitor, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK); 
@@ -267,8 +274,21 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 
 	@Override
     public boolean preLaunchCheck(ILaunchConfiguration config, String mode, IProgressMonitor monitor) throws CoreException {
-		// no pre launch check for core file
-		if (mode.equals(ILaunchManager.DEBUG_MODE) && LaunchUtils.getSessionType(config) == SessionType.CORE) return true; 
+		// Forcibly turn off non-stop for post-mortem sessions.
+		// Non-stop does not apply to post-mortem sessions.
+		// Now that we can have non-stop defaulting to enabled, it will prevent
+		// post-mortem sessions from starting for GDBs <= 6.8 and there is no way to turn it off
+		// Bug 348091
+		if (LaunchUtils.getSessionType(config) == SessionType.CORE) {
+			if (LaunchUtils.getIsNonStopMode(config)) {
+				ILaunchConfigurationWorkingCopy wcConfig = config.getWorkingCopy();
+				wcConfig.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP, false);
+				wcConfig.doSave();			
+			}
+			
+			// no further prelaunch check for core files
+			return true;
+		}
 		
 		return super.preLaunchCheck(config, mode, monitor);
 	}
@@ -280,17 +300,38 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         // the adapters will be created for the whole session, including 
         // the source lookup adapter.
         
-		fIsNonStopSession = LaunchUtils.getIsNonStopMode(configuration);
-		fIsPostMortemTracingSession = LaunchUtils.getIsPostMortemTracing(configuration);
-
-        GdbLaunch launch = new GdbLaunch(configuration, mode, null);
+        GdbLaunch launch = createGdbLaunch(configuration, mode, null);
         launch.initialize();
         launch.setSourceLocator(getSourceLocator(configuration, launch.getSession()));
         return launch;
     }
+    
+    /**
+     * Creates an object of GdbLaunch.
+     * Subclasses who wish to just replace the GdbLaunch object with a sub-classed GdbLaunch
+     * should override this method.
+     * Subclasses who wish to replace the GdbLaunch object as well as change the 
+     * initialization sequence of the launch, should override getLaunch() as well as this method.
+     * Subclasses who wish to create a launch class which does not subclass GdbLaunch, 
+     * are advised to override getLaunch() directly.
+     * 
+     * @param configuration The launch configuration
+     * @param mode The launch mode - "run", "debug", "profile"
+     * @param locator The source locator.  Can be null.
+     * @return The GdbLaunch object, or a sub-classed object
+     * @throws CoreException
+     * @since 4.1
+     */
+    protected GdbLaunch createGdbLaunch(ILaunchConfiguration configuration, String mode, ISourceLocator locator) throws CoreException {
+    	return new GdbLaunch(configuration, mode, locator);
+    }
 
-    private ISourceLocator getSourceLocator(ILaunchConfiguration configuration, DsfSession session) throws CoreException {
-        DsfSourceLookupDirector locator = new DsfSourceLookupDirector(session);
+    /**
+     * Creates and initializes the source locator for the given launch configuration and dsf session.
+     * @since 4.1
+     */
+    protected ISourceLocator getSourceLocator(ILaunchConfiguration configuration, DsfSession session) throws CoreException {
+        DsfSourceLookupDirector locator = createDsfSourceLocator(configuration, session);
         String memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
         if (memento == null) {
             locator.initializeDefaults(configuration);
@@ -298,6 +339,21 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
             locator.initializeFromMemento(memento, configuration);
         }
         return locator;
+    }
+    
+    /**
+     * Creates an object of DsfSourceLookupDirector with the given DsfSession.
+     * Subclasses who wish to just replace the source locator object with a sub-classed source locator
+     * should override this method. 
+     * Subclasses who wish to replace the source locator object as well as change the 
+     * initialization sequence of the source locator, should override getSourceLocator()
+     * as well as this method.
+     * Subclasses who wish to create a source locator which does not subclass DsfSourceLookupDirector,
+     * are advised to override getSourceLocator() directly.
+     * @since 4.1
+     */
+    protected DsfSourceLookupDirector createDsfSourceLocator(ILaunchConfiguration configuration, DsfSession session) throws CoreException {
+    	return new DsfSourceLookupDirector(session);
     }
 	
 	/**
@@ -337,7 +393,10 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 		return false;
 	}
 
-	// A subclass can override this method and provide its own ServiceFactory.
+	/**
+	 * @deprecated Replaced by newServiceFactory(ILaunchConfiguration, String)
+	 */
+	@Deprecated
 	protected IDsfDebugServicesFactory newServiceFactory(String version) {
 
 		if (fIsNonStopSession && isNonStopSupportedInGdbVersion(version)) {
@@ -354,6 +413,18 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 		}
 
 		return new GdbDebugServicesFactory(version);
+	}
+
+	/**
+	 * Method called to create the services factory for this debug session.
+	 * A subclass can override this method and provide its own ServiceFactory.
+	 * @since 4.1
+	 */
+	protected IDsfDebugServicesFactory newServiceFactory(ILaunchConfiguration config, String version) {
+		// Call the deprecated one for now to avoid code duplication.
+		// Once we get rid of the deprecated one, we can also get rid of fIsNonStopSession
+		fIsNonStopSession = LaunchUtils.getIsNonStopMode(config);
+		return newServiceFactory(version);
 	}
 
 	@Override

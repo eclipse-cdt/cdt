@@ -82,7 +82,7 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
     //	   n->inline_method(); // r3
     // }
 	public void testMethods() throws Exception {
-		StringBuffer[] content= getContentsForTest(2);
+		StringBuilder[] content= getContentsForTest(2);
 		String header= content[0].toString();
 		String source = content[1].toString();
 		IFile headerFile= createFile(fCProject.getProject(), "testMethods.h", header);
@@ -155,7 +155,7 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 	//    method3(); 
 	// }
 	public void testMethodsInMultipleFiles() throws Exception {
-		StringBuffer[] content= getContentsForTest(3);
+		StringBuilder[] content= getContentsForTest(3);
 		String header= content[0].toString();
 		String source1 = content[1].toString();
 		String source2 = content[2].toString();
@@ -205,7 +205,7 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 	//   method3();
 	// }
 	public void testMultipleImplsForMethod() throws Exception {
-		StringBuffer[] content= getContentsForTest(3);
+		StringBuilder[] content= getContentsForTest(3);
 		String header= content[0].toString();
 		String source1 = content[1].toString();
 		String source2 = content[2].toString();
@@ -266,7 +266,7 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 	// 	  mc.method1();
 	// }
 	public void testReverseMultipleImplsForMethod() throws Exception {
-		StringBuffer[] content= getContentsForTest(3);
+		StringBuilder[] content= getContentsForTest(3);
 		String header= content[0].toString();
 		String source1 = content[1].toString();
 		String source2 = content[2].toString();

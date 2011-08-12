@@ -992,7 +992,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     //  typedef int (functionPointerArray[2])(int);
     //  functionPointerArray fctVariablArray;
     public void testBug195822() throws Exception {
-    	StringBuffer[] contents= getContentsForTest(2);
+    	StringBuilder[] contents= getContentsForTest(2);
     	String code= contents[0].toString();
     	String appendCode= contents[1].toString();
 

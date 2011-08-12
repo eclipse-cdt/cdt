@@ -19,8 +19,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -573,7 +573,14 @@ public class LanguageManager {
 		IProject project = file.getProject();
 		
 		if (contentTypeId == null) {
-			IContentType contentType= CContentTypes.getContentType(project, file.getLocation().toString());
+			IPath location = file.getLocation();
+			String filename;
+			if (location != null) {
+				filename = location.toString();
+			} else {
+				filename = file.getName();
+			}
+			IContentType contentType= CContentTypes.getContentType(project, filename);
 			if (contentType == null) {
 				return null;
 			}

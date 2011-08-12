@@ -99,7 +99,7 @@ public class AddBlockCommentTest extends BaseUITestCase {
 	 */
 	protected void assertFormatterResult(LinePosition startLinePosition, LinePosition endLinePosition)
 			throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		StringBuilder[] contents= getContentsForTest(2);
 		String before = contents[0].toString();
 		String after  = contents[1].toString();
 		

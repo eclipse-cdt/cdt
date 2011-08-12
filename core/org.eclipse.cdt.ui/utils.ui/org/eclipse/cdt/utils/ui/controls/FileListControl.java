@@ -593,7 +593,7 @@ public class FileListControl {
 		moveDownItem.setToolTipText(MOVEDOWN_STR);
 		moveDownItem.addSelectionListener(getSelectionListener());
 		grid3 = new GridData(GridData.FILL_HORIZONTAL
-				| GridData.HORIZONTAL_ALIGN_END);
+				| GridData.HORIZONTAL_ALIGN_BEGINNING);
 		buttonPanel.setLayoutData(grid3);
 		// list control
 		list = new ClipboardList(filePanel, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER | SWT.MULTI);

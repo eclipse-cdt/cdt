@@ -1603,8 +1603,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	private int visit(IASTArrayDeclarator node) {
 		IASTArrayModifier[] arrayModifiers= node.getArrayModifiers();
 		if (arrayModifiers != null) {
-			for (IASTArrayModifier arrayModifier2 : arrayModifiers) {
-				IASTArrayModifier arrayModifier = arrayModifier2;
+			for (IASTArrayModifier arrayModifier : arrayModifiers) {
 				scribe.printNextToken(Token.tLBRACKET, preferences.insert_space_before_opening_bracket);
 				boolean emptyBrackets= arrayModifier.getConstantExpression() == null
 						&& !(arrayModifier instanceof ICASTArrayModifier);
@@ -1625,10 +1624,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 						scribe.space();
 					}
 				}
+				Runnable tailFormatter = scribe.takeTailFormatter();
 				try {
 					arrayModifier.accept(this);
 				} catch (ASTProblemException e) {
 					scribe.skipToToken(Token.tRBRACKET);
+				} finally {
+					scribe.setTailFormatter(tailFormatter);
 				}
 				boolean insertSpace= emptyBrackets ?
 						preferences.insert_space_between_empty_brackets	:
@@ -1772,7 +1774,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 		// Consider macro expansion
 		if (withinMacroExpansion(node, scribe.scanner.getCurrentPosition())) {
+			scribe.printNextToken(peekNextToken());
 			continueNode(node);
+			if (scribe.printComment()) scribe.space();
 		}
 
 		switch (node.getKey()) {
@@ -1823,7 +1827,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 		// Consider macro expansion
 		if (withinMacroExpansion(node, scribe.scanner.getCurrentPosition())) {
+			scribe.printNextToken(peekNextToken());
 			continueNode(node);
+			if (scribe.printComment()) scribe.space();
 		}
 
 		switch (node.getKey()) {
@@ -2078,7 +2084,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					int i;
 					for (i = 0; i < elementsLength; i++) {
 						final IASTNode node= elements.get(i);
-						if (i < alignment.fragmentCount - 1) {
+						if (i < elementsLength - 1) {
 							scribe.setTailFormatter(
 									new TrailingTokenFormatter(options.fSeparatorToken,
 											options.fSpaceBeforeSeparator,
@@ -2093,7 +2099,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 						} else {
 							node.accept(this);
 						}
-						if (i < alignment.fragmentCount - 1) {
+						if (i < elementsLength - 1) {
 							scribe.runTailFormatter();
 						}
 					}
@@ -2366,7 +2372,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			if (preferences.insert_space_after_opening_paren_in_method_invocation) {
 				scribe.space();
 			}
-			node.getOperand().accept(this);
+			Runnable tailFormatter = scribe.takeTailFormatter();
+			try {
+				node.getOperand().accept(this);
+			} finally {
+				scribe.setTailFormatter(tailFormatter);
+			}
 			scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_method_invocation);
 			break;
 		default:
@@ -2595,7 +2606,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			return formatOverloadedLeftShiftChain(node);
 		}
 
-		Runnable tailFormatter = scribe.takeTailFormatter();
+		Runnable tailFormatter = endsWithMacroExpansion(node) ? null : scribe.takeTailFormatter();
 
 		Alignment expressionAlignment= scribe.createAlignment(
 				Alignment.BINARY_EXPRESSION,
@@ -3132,11 +3143,18 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					formatLeftCurlyBrace(line, preferences.brace_position_for_block);
 					if (startNode(body)) {
 						try {
+							final boolean braceOnSameLine = DefaultCodeFormatterConstants.END_OF_LINE.equals(preferences.brace_position_for_block);
+							if (!braceOnSameLine) {
+								ok = true;
+								scribe.exitAlignment(alignment, true);
+							}
 							formatBlockOpening((IASTCompoundStatement) body,
 									preferences.brace_position_for_block,
 									preferences.insert_space_before_opening_brace_in_block);
-							ok = true;
-							scribe.exitAlignment(alignment, true);
+							if (braceOnSameLine) {
+								ok = true;
+								scribe.exitAlignment(alignment, true);
+							}
 							formatOpenedBlock((IASTCompoundStatement) body,
 									preferences.brace_position_for_block,
 									preferences.indent_statements_compare_to_block);
@@ -3300,7 +3318,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				}
 			}
 
-			if (elseStatement instanceof IASTCompoundStatement) {
+			if (elseStatement instanceof IASTCompoundStatement && !enclosedInMacroExpansion(elseStatement)) {
 				elseStatement.accept(this);
 			} else if (elseStatement instanceof IASTIfStatement) {
 				if (!preferences.compact_else_if) {
@@ -3805,8 +3823,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (preferences.insert_space_after_opening_paren_in_parenthesized_expression ) {
 			scribe.space();
 		}
-		if (operand != null) {
-			operand.accept(this);
+		Runnable tailFormatter = scribe.takeTailFormatter();
+		try {
+			if (operand != null) {
+				operand.accept(this);
+			}
+		} finally {
+			scribe.setTailFormatter(tailFormatter);
 		}
 		if (peekNextToken() != Token.tRPAREN) {
 			if (!enclosedInMacroExpansion(operand)) {
@@ -3883,22 +3906,22 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private static boolean withinMacroExpansion(IASTNode node, int offset) {
+		IASTFileLocation loc = node.getFileLocation();
+		if (loc == null || offset < loc.getNodeOffset() || offset >= loc.getNodeOffset() + loc.getNodeLength()) {
+			return false;
+		}
 		IASTNodeLocation[] locations= node.getNodeLocations();
 		for (IASTNodeLocation location : locations) {
-			if (location instanceof IASTMacroExpansionLocation) {
-				IASTFileLocation fileLocation = location.asFileLocation();
-				if (fileLocation != null) {
-					final int nodeOffset = fileLocation.getNodeOffset();
-					final int endOffset = nodeOffset + fileLocation.getNodeLength();
-					if (offset >= nodeOffset && offset < endOffset) {
-						return true;
-					} else if (offset < nodeOffset) {
-						return false;
-					}
+			IASTFileLocation fileLocation = location.asFileLocation();
+			if (fileLocation != null) {
+				final int nodeOffset = fileLocation.getNodeOffset();
+				final int endOffset = nodeOffset + fileLocation.getNodeLength();
+				if (offset >= nodeOffset && offset < endOffset) {
+					return location instanceof IASTMacroExpansionLocation;
 				}
 			}
 		}
-		return false;
+		return true;
 	}
 
 	private static boolean doNodeLocationsOverlap(IASTNode node1, IASTNode node2) {

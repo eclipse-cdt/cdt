@@ -81,7 +81,7 @@ public class RemoveBlockCommentTest extends BaseUITestCase {
 	protected void assertFormatterResult(
 			LinePosition startLinePosition,
 			LinePosition endLinePosition) throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		CharSequence[] contents= getContentsForTest(2);
 		String before = contents[0].toString();
 		String after  = contents[1].toString();
 		

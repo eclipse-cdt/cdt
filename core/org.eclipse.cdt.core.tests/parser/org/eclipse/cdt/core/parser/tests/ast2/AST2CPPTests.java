@@ -8060,7 +8060,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	
 	// }
 	public void testInitOfClassObjectsByRValues_294730() throws Exception {
-		final StringBuffer[] contents = getContents(3);
+		final CharSequence[] contents = getContents(3);
 		final String code= contents[0].toString();
 		final String end= contents[2].toString();
 		parseAndCheckBindings(code + end, ParserLanguage.CPP);

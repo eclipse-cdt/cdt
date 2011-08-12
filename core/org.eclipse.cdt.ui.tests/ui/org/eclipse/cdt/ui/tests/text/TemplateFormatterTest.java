@@ -81,7 +81,7 @@ public class TemplateFormatterTest extends BaseUITestCase {
 		assertFormatterResult(false);
 	}
 	protected void assertFormatterResult(boolean useFormatter) throws Exception {
-		StringBuffer[] contents= getContentsForTest(2);
+		CharSequence[] contents= getContentsForTest(2);
 		String before= contents[0].toString().replaceAll("\\r\\n", "\n");
 		String expected= contents[1].toString();
 		final Document document = new Document(before);

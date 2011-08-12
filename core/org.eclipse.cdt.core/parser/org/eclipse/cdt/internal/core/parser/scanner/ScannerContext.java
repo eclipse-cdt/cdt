@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -22,14 +22,17 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 final class ScannerContext {
 	enum BranchKind {eIf, eElif, eElse, eEnd}
 	enum CodeState {eActive, eParseInactive, eSkipInactive}
+
 	final static class Conditional {
 		private final CodeState fInitialState;
 		private BranchKind fLast;
 		private boolean fTakeElse= true;
+
 		Conditional(CodeState state) {
 			fInitialState= state;
 			fLast= BranchKind.eIf;
 		}
+
 		boolean canHaveActiveBranch(boolean withinExpansion) {
 			return fTakeElse && isActive(withinExpansion);
 		}
@@ -174,12 +177,12 @@ final class ScannerContext {
 	private int getOldNestingLevel(BranchKind kind, int nesting) {
 		switch (kind) {
 		case eIf:
-			return nesting-1;
+			return nesting - 1;
 		case eElif:
 		case eElse:
 			return nesting;
 		case eEnd:
-			return nesting+1;
+			return nesting + 1;
 		}
 		return nesting;
 	}

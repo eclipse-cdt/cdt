@@ -44,7 +44,7 @@ public class PDOMLocationTests extends BaseTestCase {
 		cproject= CProjectHelper.createCCProject("PDOMLocationTests"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 		
 		Bundle b = CTestPlugin.getDefault().getBundle();
-		StringBuffer[] testData = TestSourceReader.getContentsForTest(b, "parser", getClass(), getName(), 3);
+		CharSequence[] testData = TestSourceReader.getContentsForTest(b, "parser", getClass(), getName(), 3);
 		
 		super.setUp();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -800,7 +800,7 @@ public class SimpleScanner {
 	private void getRestOfPreprocessorLine() {
 	    int c = getChar();
 	    while (true) {
-	        while ((c != '\n') && (c != '\r') && (c != '/') && (c != EOFCHAR)) {
+	        while ((c != '\n') && (c != '\r') && (c != '/') && (c != '"') && (c != EOFCHAR)) {
 	            c = getChar();
 	        }
 	        if (c == '/') {
@@ -823,6 +823,9 @@ public class SimpleScanner {
 	                c = next;
 	                continue;
 	            }
+	        } else if (c == '"') {
+	        	matchStringLiteral();
+	        	c = getChar();
 	        } else {
 	            ungetChar(c);
 	            break;

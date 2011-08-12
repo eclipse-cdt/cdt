@@ -58,7 +58,7 @@ import org.eclipse.cdt.internal.ui.search.PDOMSearchViewPage;
 
 public class BasicSearchTest extends BaseUITestCase {
 	ICProject fCProject;
-	StringBuffer[] testData;
+	CharSequence[] testData;
 
 	public static TestSuite suite() {
 		return suite(BasicSearchTest.class);

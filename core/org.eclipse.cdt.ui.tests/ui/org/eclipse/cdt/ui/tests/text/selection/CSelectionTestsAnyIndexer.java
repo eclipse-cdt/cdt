@@ -68,7 +68,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
 		return cPrj;
 	}
 	
-	protected StringBuffer[] getContents(int sections) throws IOException {
+	protected StringBuilder[] getContents(int sections) throws IOException {
 		return TestSourceReader.getContentsForTest(
 				CTestPlugin.getDefault().getBundle(), "ui", CSelectionTestsAnyIndexer.class, getName(), sections);
 	}
@@ -94,7 +94,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
     // void MyFunc(int a) { cout << a << endl; }
 	// struct MyStruct;        
     public void testBasicDefinition() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("basicDefinition.h", hcode); 
@@ -176,7 +176,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
 	// struct S s;
 	// Int lhs= s.a+s.b+up+down+anX+0;			
 	public void testCPPSpecDeclsDefs() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testCPPSpecDeclsDefs.h", hcode); 
@@ -288,7 +288,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
 	//    abc;
 	// }
 	public void testBug101287() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBug101287.h", hcode); 
@@ -312,7 +312,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
     //     return x;
     // }
     public void testBug103697() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFileWithLink("testBug103697.h", hcode); 
@@ -340,7 +340,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
     //    return 0;
     // }
     public void testBug78354() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBug78354.h", hcode); 
@@ -373,7 +373,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
     // void func(usertype t) {
     // }
     public void testFuncWithTypedefForAnonymousStruct_190730() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBug190730.h", hcode); 
@@ -399,7 +399,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
     // void func(userEnum t) {
     // }
     public void testFuncWithTypedefForAnonymousEnum_190730() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBug190730_2.h", hcode); 
@@ -427,7 +427,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
     //     MY_PAR(0);
     //  }
     public void testMacroNavigation() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("macrodef.h", hcode); 
@@ -460,7 +460,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
 	//	   int tester = MY_PAR(MY_MACRO);
     //  }
     public void testMacroNavigation_Bug208300() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("macrodef.h", hcode); 
@@ -484,7 +484,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
 
 	//  #include "aheader.h"
     public void testIncludeNavigation() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("aheader.h", hcode); 
@@ -504,7 +504,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
     
     // #define DR_ACCESS_FNS(DR)
     public void testNavigationInMacroDefinition_Bug102643() throws Exception {
-        StringBuffer[] buffers= getContents(2);
+        StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("aheader.h", hcode); 
@@ -533,7 +533,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
 	//     return myFunc(0); 
 	// }
     public void testKRstyleFunctions_Bug221635() throws Exception {
-        final StringBuffer[] contents = getContentsForTest(2);
+        final StringBuilder[] contents = getContentsForTest(2);
         String hcode= contents[0].toString();
 		String code= contents[1].toString();
         IFile hfile = importFile("aheader.h", hcode); 
@@ -550,7 +550,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
     
     // int x= __LINE__;
     public void testBuiltinMacro_Bug293864() throws Exception {
-        final StringBuffer[] contents = getContentsForTest(1);
+        final StringBuilder[] contents = getContentsForTest(1);
         String code= contents[0].toString();
         IFile file = importFile("source.c", code); 
         int offset= code.indexOf("__LINE__");

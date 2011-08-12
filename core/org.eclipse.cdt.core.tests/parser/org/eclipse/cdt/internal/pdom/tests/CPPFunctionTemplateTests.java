@@ -43,9 +43,9 @@ public class CPPFunctionTemplateTests extends PDOMTestBase {
 	}
 	
 	protected void setUpSections(int sections) throws Exception {
-		StringBuffer[] contents= TestSourceReader.getContentsForTest(
+		StringBuilder[] contents= TestSourceReader.getContentsForTest(
 				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
-		for (StringBuffer content : contents) {
+		for (StringBuilder content : contents) {
 			IFile file= TestSourceReader.createFile(cproject.getProject(), new Path("refs.cpp"), content.toString());
 		}
 		IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);

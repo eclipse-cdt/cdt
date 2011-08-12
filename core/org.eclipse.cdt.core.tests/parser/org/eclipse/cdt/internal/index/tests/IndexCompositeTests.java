@@ -63,7 +63,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 	
 	IIndex index;
 	
-	protected StringBuffer[] getContentsForTest(int blocks) throws IOException {
+	protected StringBuilder[] getContentsForTest(int blocks) throws IOException {
 		return TestSourceReader.getContentsForTest(
 				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), blocks);
 	}
@@ -72,7 +72,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 
 	// class B {};
 	public void testPairDisjointContent() throws Exception {
-		StringBuffer[] contents = getContentsForTest(2);
+		CharSequence[] contents = getContentsForTest(2);
 		List projects = new ArrayList();
 
 		try {
@@ -117,7 +117,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 	// void foo(X::B2 c) {}
 	// namespace X { class A2 {}; B2 b; C2 c; }
 	public void testTripleLinear() throws Exception {
-		StringBuffer[] contents = getContentsForTest(3);
+		CharSequence[] contents = getContentsForTest(3);
 		List projects = new ArrayList();
 
 		try {
@@ -224,7 +224,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 	// namespace X { class A2 {}; }
 	// B1 ab;
 	public void testTripleUpwardV() throws Exception {
-		StringBuffer[] contents = getContentsForTest(3);
+		CharSequence[] contents = getContentsForTest(3);
 		List projects = new ArrayList();
 
 		
@@ -313,7 +313,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 	// void foo(A1 a, A1 b) {}
 	// namespace X { class A2 {}; }
 	public void testTripleDownwardV() throws Exception {
-		StringBuffer[] contents = getContentsForTest(3);
+		CharSequence[] contents = getContentsForTest(3);
 		List projects = new ArrayList();
 
 		try {
@@ -450,7 +450,7 @@ class ProjectBuilder {
 		return this;
 	}
 
-	ProjectBuilder addFile(String relativePath, StringBuffer content) {
+	ProjectBuilder addFile(String relativePath, CharSequence content) {
 		path2content.put(relativePath, content.toString());
 		return this;
 	}

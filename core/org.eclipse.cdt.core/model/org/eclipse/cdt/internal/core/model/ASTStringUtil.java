@@ -77,17 +77,15 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
-
 /**
  * This is a utility class to help convert AST elements to Strings.
  * 
  * @see org.eclipse.cdt.core.dom.ast.ASTTypeUtil
  */
-
 public class ASTStringUtil {
 	private static final String SPACE= " "; //$NON-NLS-1$
 	private static final String COMMA_SPACE= ", "; //$NON-NLS-1$
-	private static final String[] EMPTY_STRING_ARRAY= new String[0];
+	private static final String[] EMPTY_STRING_ARRAY= {};
 
 	/**
 	 * Return the qualified name if the given <code>IASTName</code> 

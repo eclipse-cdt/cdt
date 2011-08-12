@@ -95,10 +95,9 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 		initializeScanner(getAboveComment());
 	}
 
-	protected StringBuffer[] getTestContent(int sections) throws IOException {
-		StringBuffer[] input= TestSourceReader.getContentsForTest(
+	protected StringBuilder[] getTestContent(int sections) throws IOException {
+		return TestSourceReader.getContentsForTest(
 				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
-		return input;
 	}
 
 	protected String getAboveComment() throws IOException {
@@ -110,8 +109,7 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 			for(;;) {
 				IToken t= fScanner.nextToken();
 			}
-		}
-		catch ( EndOfFileException e){
+		} catch ( EndOfFileException e){
 		}
 	}
 

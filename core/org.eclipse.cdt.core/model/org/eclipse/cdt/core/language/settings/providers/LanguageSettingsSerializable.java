@@ -235,6 +235,12 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 	*/
 	// provider/configuration/language/resource/entry
 	public Element serialize(Element parentElement) {
+		Element elementProvider = serializeAttributes(parentElement);
+		serializeEntries(elementProvider);
+		return elementProvider;
+	}
+
+	public Element serializeAttributes(Element parentElement) {
 		Element elementProvider = XmlUtil.appendElement(parentElement, ELEM_PROVIDER, new String[] {
 				ATTR_ID, getId(),
 				ATTR_NAME, getName(),
@@ -248,10 +254,13 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 				XmlUtil.appendElement(elementProvider, ELEM_LANGUAGE_SCOPE, new String[] {ATTR_ID, langId});
 			}
 		}
+		return elementProvider;
+	}
+	
+	public void serializeEntries(Element elementProvider) {
 		for (Entry<String, Map<String, List<ICLanguageSettingEntry>>> entryLang : fStorage.entrySet()) {
 			serializeLanguage(elementProvider, entryLang);
 		}
-		return elementProvider;
 	}
 
 	private void serializeLanguage(Element parentElement, Entry<String, Map<String, List<ICLanguageSettingEntry>>> entryLang) {
@@ -330,40 +339,47 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 		languageScope = null;
 
 		if (providerNode!=null) {
-			String providerId = XmlUtil.determineAttributeValue(providerNode, ATTR_ID);
-			String providerName = XmlUtil.determineAttributeValue(providerNode, ATTR_NAME);
-			String providerParameter = XmlUtil.determineAttributeValue(providerNode, ATTR_PARAMETER);
-			String providerStoreEntries = XmlUtil.determineAttributeValue(providerNode, ATTR_STORE_ENTRIES);
+			loadAttributes(providerNode);
+			loadEntries(providerNode);
+		}
+	}
 
-			this.setId(providerId);
-			this.setName(providerName);
-			this.setCustomParameter(providerParameter);
-			this.setEntriesStorageWithProject(VALUE_PROJECT.equals(providerStoreEntries));
+	public void loadAttributes(Element providerNode) {
+		String providerId = XmlUtil.determineAttributeValue(providerNode, ATTR_ID);
+		String providerName = XmlUtil.determineAttributeValue(providerNode, ATTR_NAME);
+		String providerParameter = XmlUtil.determineAttributeValue(providerNode, ATTR_PARAMETER);
+		String providerStoreEntries = XmlUtil.determineAttributeValue(providerNode, ATTR_STORE_ENTRIES);
 
-			List<ICLanguageSettingEntry> settings = new ArrayList<ICLanguageSettingEntry>();
-			NodeList nodes = providerNode.getChildNodes();
-			for (int i=0;i<nodes.getLength();i++) {
-				Node elementNode = nodes.item(i);
-				if(elementNode.getNodeType() != Node.ELEMENT_NODE)
-					continue;
+		this.setId(providerId);
+		this.setName(providerName);
+		this.setCustomParameter(providerParameter);
+		this.setEntriesStorageWithProject(VALUE_PROJECT.equals(providerStoreEntries));
+	}
 
-				if (ELEM_LANGUAGE_SCOPE.equals(elementNode.getNodeName())) {
-					loadLanguageScopeElement(elementNode);
-				} else if (ELEM_LANGUAGE.equals(elementNode.getNodeName())) {
-					loadLanguageElement(elementNode, null);
-				} else if (ELEM_RESOURCE.equals(elementNode.getNodeName())) {
-					loadResourceElement(elementNode, null, null);
-				} else if (ELEM_ENTRY.equals(elementNode.getNodeName())) {
-					ICLanguageSettingEntry entry = loadSettingEntry(elementNode);
-					if (entry!=null) {
-						settings.add(entry);
-					}
+	public void loadEntries(Element providerNode) {
+		List<ICLanguageSettingEntry> settings = new ArrayList<ICLanguageSettingEntry>();
+		NodeList nodes = providerNode.getChildNodes();
+		for (int i=0;i<nodes.getLength();i++) {
+			Node elementNode = nodes.item(i);
+			if(elementNode.getNodeType() != Node.ELEMENT_NODE)
+				continue;
+
+			if (ELEM_LANGUAGE_SCOPE.equals(elementNode.getNodeName())) {
+				loadLanguageScopeElement(elementNode);
+			} else if (ELEM_LANGUAGE.equals(elementNode.getNodeName())) {
+				loadLanguageElement(elementNode, null);
+			} else if (ELEM_RESOURCE.equals(elementNode.getNodeName())) {
+				loadResourceElement(elementNode, null, null);
+			} else if (ELEM_ENTRY.equals(elementNode.getNodeName())) {
+				ICLanguageSettingEntry entry = loadSettingEntry(elementNode);
+				if (entry!=null) {
+					settings.add(entry);
 				}
 			}
-			// set settings
-			if (settings.size()>0) {
-				setSettingEntriesInternal(null, null, settings);
-			}
+		}
+		// set settings
+		if (settings.size()>0) {
+			setSettingEntriesInternal(null, null, settings);
 		}
 	}
 

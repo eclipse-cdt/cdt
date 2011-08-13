@@ -807,15 +807,15 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	@Override
-	public Element serialize(Element parentElement) {
-		Element elementProvider = super.serialize(parentElement);
+	public Element serializeAttributes(Element parentElement) {
+		Element elementProvider = super.serializeAttributes(parentElement);
 		elementProvider.setAttribute(ATTR_EXPAND_RELATIVE_PATHS, Boolean.toString(isResolvingPaths));
 		return elementProvider;
 	}
 	
 	@Override
-	public void load(Element providerNode) {
-		super.load(providerNode);
+	public void loadAttributes(Element providerNode) {
+		super.loadAttributes(providerNode);
 		
 		String expandRelativePathsValue = XmlUtil.determineAttributeValue(providerNode, ATTR_EXPAND_RELATIVE_PATHS);
 		if (expandRelativePathsValue!=null)

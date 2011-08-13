@@ -344,6 +344,9 @@ public class GCCBuildCommandParserTest extends TestCase {
 		IFile file3=ResourceHelper.createFile(project, "file3.cpp");
 		IFile file4=ResourceHelper.createFile(project, "file4.cpp");
 		IFile file5=ResourceHelper.createFile(project, "file5.cpp");
+		IFile file6=ResourceHelper.createFile(project, "file6.cpp");
+		IFile file7=ResourceHelper.createFile(project, "file7.cpp");
+		IFile file8=ResourceHelper.createFile(project, "file8.cpp");
 		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file1.getProjectRelativePath(), true);
 		String languageId = ls.getLanguageId();
 
@@ -357,6 +360,9 @@ public class GCCBuildCommandParserTest extends TestCase {
 		parser.processLine("g++ -I/path0 file3.cpp");
 		parser.processLine("c++ -I/path0 file4.cpp");
 		parser.processLine("\"gcc\" -I/path0 file5.cpp");
+		parser.processLine("/absolute/path/gcc -I/path0 file6.cpp");
+		parser.processLine(" \"/absolute/path/gcc\" -I/path0 file7.cpp");
+		parser.processLine("../relative/path/gcc -I/path0 file8.cpp");
 		parser.shutdown();
 
 		// check populated entries
@@ -379,6 +385,18 @@ public class GCCBuildCommandParserTest extends TestCase {
 		}
 		{
 			List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file5, languageId);
+			assertEquals(new CIncludePathEntry(path0, 0), entries.get(0));
+		}
+		{
+			List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file6, languageId);
+			assertEquals(new CIncludePathEntry(path0, 0), entries.get(0));
+		}
+		{
+			List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file7, languageId);
+			assertEquals(new CIncludePathEntry(path0, 0), entries.get(0));
+		}
+		{
+			List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file8, languageId);
 			assertEquals(new CIncludePathEntry(path0, 0), entries.get(0));
 		}
 	}

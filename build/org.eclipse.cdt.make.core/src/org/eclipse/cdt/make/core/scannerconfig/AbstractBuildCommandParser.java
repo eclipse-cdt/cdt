@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 public abstract class AbstractBuildCommandParser extends AbstractLanguageSettingsOutputScanner implements
 		ILanguageSettingsBuildOutputScanner {
 
+	private static final String LEADING_PATH_PATTERN = "\\S+[/\\\\]"; //$NON-NLS-1$
 	private static final Pattern OPTIONS_PATTERN = Pattern.compile("-[^\\s\"']*(\\s*((\".*?\")|('.*?')|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$
 	private static final int OPTION_GROUP = 0;
 	
@@ -34,8 +35,8 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	 */
 	@SuppressWarnings("nls")
 	private static final String[] PATTERN_TEMPLATES = {
-		"\\s*\"?${COMPILER_PATTERN}\"?.*\\s" + "()([^'\"\\s]*\\.${EXTENSIONS_PATTERN})(\\s.*)?[\r\n]*", // compiling unquoted file
-		"\\s*\"?${COMPILER_PATTERN}\"?.*\\s" + "(['\"])(.*\\.${EXTENSIONS_PATTERN})\\${COMPILER_GROUPS+1}(\\s.*)?[\r\n]*" // compiling quoted file
+		"${COMPILER_PATTERN}.*\\s" + "()([^'\"\\s]*\\.${EXTENSIONS_PATTERN})(\\s.*)?[\r\n]*", // compiling unquoted file
+		"${COMPILER_PATTERN}.*\\s" + "(['\"])(.*\\.${EXTENSIONS_PATTERN})\\${COMPILER_GROUPS+1}(\\s.*)?[\r\n]*" // compiling quoted file
 	};
 	private static final int FILE_GROUP = 2;
 	
@@ -43,7 +44,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	@SuppressWarnings("nls")
 	private String getCompilerCommandPattern() {
 		String parameter = getCustomParameter();
-		return "(" + parameter + ")";
+		return "\\s*\"?("+LEADING_PATH_PATTERN+")?(" + parameter + ")\"?";
 	}
 
 	private int adjustFileGroup() {

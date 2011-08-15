@@ -477,7 +477,9 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		String selectedId = selectedProvider!=null ? selectedProvider.getId() : null;
 
 		// update viewer if the list of providers changed
+		int pos = tableProviders.getSelectionIndex();
 		tableProvidersViewer.setInput(presentedProviders);
+		tableProviders.setSelection(pos);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
 		if (cfgDescription!=null) {
@@ -544,7 +546,10 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 		// renders better when using temporary
 		presentedProviders = providers;
+		
+		int pos = tableProviders.getSelectionIndex();
 		tableProvidersViewer.setInput(presentedProviders);
+		tableProviders.setSelection(pos);
 	}
 
 	private ICOptionPage createOptionsPage(ILanguageSettingsProvider provider, ICConfigurationDescription cfgDescription) {
@@ -891,7 +896,6 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 					}
 
 				} else if (page.isForPrefs()) {
-					int pos = tableProviders.getSelectionIndex();
 					List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(presentedProviders);
 					for (int i=0;i<providers.size();i++) {
 						ILanguageSettingsProvider provider = providers.get(i);
@@ -903,6 +907,8 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 					}
 					// seems to render better when temporary is used
 					presentedProviders = providers;
+					
+					int pos = tableProviders.getSelectionIndex();
 					tableProvidersViewer.setInput(presentedProviders);
 					tableProviders.setSelection(pos);
 

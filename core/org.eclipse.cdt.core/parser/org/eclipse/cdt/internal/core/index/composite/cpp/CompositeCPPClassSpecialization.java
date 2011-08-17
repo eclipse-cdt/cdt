@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -25,7 +24,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -105,7 +103,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	}
 
 	@Override
-	public ICPPBase[] getBases() {
+	public final ICPPBase[] getBases() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getBases();
@@ -114,7 +112,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	}
 	
 	@Override
-	public ICPPConstructor[] getConstructors() {
+	public final ICPPConstructor[] getConstructors() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getConstructors();
@@ -123,7 +121,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	}
 
 	@Override
-	public ICPPMethod[] getDeclaredMethods() {
+	public final ICPPMethod[] getDeclaredMethods() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getDeclaredMethods();
@@ -132,7 +130,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	}
 
 	@Override
-	public ICPPField[] getDeclaredFields() {
+	public final ICPPField[] getDeclaredFields() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getDeclaredFields();
@@ -141,7 +139,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	}
 
 	@Override
-	public IBinding[] getFriends() {
+	public final IBinding[] getFriends() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getFriends();
@@ -150,32 +148,12 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	}
 
 	@Override
-	public ICPPClassType[] getNestedClasses() {
+	public final ICPPClassType[] getNestedClasses() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getNestedClasses();
 		}
 		return super.getNestedClasses();
-	}
-	
-	@Override
-	public IField findField(String name) {
-		return ClassTypeHelper.findField(this, name);
-	}
-	
-	@Override
-	public ICPPMethod[] getAllDeclaredMethods() {
-		return ClassTypeHelper.getAllDeclaredMethods(this);
-	}
-
-	@Override
-	public IField[] getFields() {
-		return ClassTypeHelper.getFields(this);
-	}
-
-	@Override
-	public ICPPMethod[] getMethods() {
-		return ClassTypeHelper.getMethods(this);
 	}
 	
 	@Deprecated

@@ -227,6 +227,8 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateString("a");
 		validateToken(IToken.tSEMI);
 
+		validateString("a");
+		validateIdentifier("b");
 		validateToken(IToken.tSEMI);
 		validateEOF();
 		validateProblemCount(1);

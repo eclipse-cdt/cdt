@@ -24,6 +24,7 @@
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * Martin Oberhuber (Wind River) - [190231] Prepare API for UI/Non-UI Splitting
  * David Dykstal (IBM) = [226958] add status values to waitForInitCompletion(phase)
+ * David McKnight (IBM) - [354874] persistence manager hits a NPE during shutdown
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -317,7 +318,6 @@ public class RSECorePlugin extends Plugin {
 	public void stop(BundleContext context) throws Exception {
 		LoggerFactory.freeLogger(this);
 		logger = null;
-		plugin = null;
 		super.stop(context);
 	}
 

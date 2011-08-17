@@ -135,6 +135,8 @@ public class CfgScannerConfigInfoFactory2 {
 				boolean isPerRcType = cfg.isPerRcTypeDiscovery();
 				Map<InfoContext, IScannerConfigBuilderInfo2> baseMap = container.getInfoMap();
 				if(!isPerRcType){
+					// Discovery profile scope = configuration wide
+					
 					CfgInfoContext c = new CfgInfoContext(cfg);
 					InfoContext baseContext = c.toInfoContext();
 					IScannerConfigBuilderInfo2 info = container.getInfo(baseContext);
@@ -164,8 +166,10 @@ public class CfgScannerConfigInfoFactory2 {
 					}
 					map.put(new CfgInfoContext(cfg), info);				
 				} else {
-					Map<CfgInfoContext, IScannerConfigBuilderInfo2> configMap = getConfigInfoMap(baseMap);
+					// Discovery profile scope = per language
 					
+					Map<CfgInfoContext, IScannerConfigBuilderInfo2> configMap = getConfigInfoMap(baseMap);
+
 					IResourceInfo[] rcInfos = cfg.getResourceInfos();
 					for (IResourceInfo rcInfo : rcInfos) {
 						ITool tools[];
@@ -188,7 +192,26 @@ public class CfgScannerConfigInfoFactory2 {
 											if(superContext != null && superContext.getResourceInfo() != null){
 												info = configMap.get(superContext);
 											}
-											String id = CfgScannerConfigUtil.getDefaultProfileId(context, true);
+
+											// Files with custom properties don't have a persisted entry in the config
+											// info map; we create an ephemeral entry instead. We need to assign that file 
+											// the scanner profile that's used for non-custom files of the same 
+											// inputType/tool (and configuration, of course). Unfortunately, identifying
+											// a match is inefficient, but in practice, projects don't have tons of
+											// customized files. See Bug 354194
+											String id = null;
+											for (Entry<CfgInfoContext, IScannerConfigBuilderInfo2> entry : configMap.entrySet()) {
+												CfgInfoContext cfgInfoCxt = entry.getKey();
+												if (match(cfgInfoCxt.getInputType(), context.getInputType()) && 
+														match(cfgInfoCxt.getTool(), context.getTool().getSuperClass()) &&
+														cfgInfoCxt.getConfiguration().equals(context.getConfiguration())) {
+													id = entry.getValue().getSelectedProfileId();
+												}
+											}
+											if (id == null) {
+												id = CfgScannerConfigUtil.getDefaultProfileId(context, true);
+											}
+											
 											InfoContext baseContext = context.toInfoContext();
 											if(info == null){
 												if(id != null){
@@ -203,6 +226,13 @@ public class CfgScannerConfigInfoFactory2 {
 													info = container.createInfo(baseContext, info);
 												}
 											}
+											// Make sure to remove the ephemeral info map entry from the
+											// container, otherwise it will not be ephemeral but rather a
+											// permanent and stagnant part of the project description. It was
+											// added to the container only so we could obtain an
+											// IScannerConfigBuilderInfo2. Now that we have the info object,
+											// revert the container. See Bug 354194
+											container.removeInfo(context.toInfoContext());
 										}
 										if(info != null){
 											map.put(context, info);
@@ -347,4 +377,25 @@ public class CfgScannerConfigInfoFactory2 {
 			}
 		}
 	}
+	
+	private static boolean match(ITool t1, ITool t2){
+		if (t1 == null || t2 == null)
+			return false;
+		if (t1.getId().equals(t2.getId())) {
+			return true;
+		}
+		
+		return match(t1.getSuperClass(), t2.getSuperClass()); 
+	}
+	
+	private static boolean match(IInputType i1, IInputType i2){
+		if (i1 == null || i2 == null)
+			return false;
+		if (i1.getId().equals(i2.getId())) {
+			return true;
+		}
+		
+		return match(i1.getSuperClass(), i2.getSuperClass()); 
+	}
+	
 }

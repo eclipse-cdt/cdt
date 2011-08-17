@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
@@ -35,17 +36,12 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		fail(); return null;
 	}
 
-	public IField findField(String name) {
-		IField preResult = ((ICPPClassType)rbinding).findField(name);
-		return (IField) cf.getCompositeBinding((IIndexFragmentBinding)preResult);
+	public final IField findField(String name) {
+		return ClassTypeHelper.findField(this, name);
 	}
 
-	public ICPPMethod[] getAllDeclaredMethods() {
-		ICPPMethod[] result = ((ICPPClassType)rbinding).getAllDeclaredMethods();
-		for(int i=0; i<result.length; i++) {
-			result[i] = (ICPPMethod) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
-		}
-		return result;
+	public final ICPPMethod[] getAllDeclaredMethods() {
+		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
 
 	private class CPPBaseDelegate implements ICPPBase {
@@ -129,12 +125,8 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		return result;
 	}
 
-	public IField[] getFields() {
-		IField[] result = ((ICPPClassType)rbinding).getFields();
-		for(int i=0; i<result.length; i++) {
-			result[i]= (IField) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
-		}
-		return result;
+	public final IField[] getFields() {
+		return ClassTypeHelper.getFields(this);
 	}
 
 	public IBinding[] getFriends() {
@@ -146,12 +138,8 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		return result;
 	}
 
-	public ICPPMethod[] getMethods() {
-		ICPPMethod[] result = ((ICPPClassType)rbinding).getMethods();
-		for(int i=0; i<result.length; i++) {
-			result[i] = (ICPPMethod) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
-		}
-		return result;
+	public final ICPPMethod[] getMethods() {
+		return ClassTypeHelper.getMethods(this);
 	}
 
 	public ICPPClassType[] getNestedClasses() {

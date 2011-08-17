@@ -2941,20 +2941,19 @@ public class CPPSemantics {
     	return findOverloadedOperator(exp, args, type, OverloadableOperator.PAREN, LookupMode.NO_GLOBALS);
     }
     
-    public static ICPPFunction findOverloadedOperator(ICPPASTNewExpression exp) {
-		OverloadableOperator op = OverloadableOperator.fromNewExpression(exp);
-		
-		IType type = exp.getExpressionType();
-		if (!(type instanceof IPointerType))
-			return null;
-		type = ((IPointerType) type).getType();
-		
-		IASTTypeId typeId = exp.getTypeId().copy();
-    	IASTExpression sizeExpression = new CPPASTTypeIdExpression(IASTTypeIdExpression.op_sizeof, typeId);
-    	sizeExpression.setParent(exp);
+    public static ICPPFunction findOverloadedOperator(ICPPASTNewExpression expr) {
+		OverloadableOperator op = OverloadableOperator.fromNewExpression(expr);
+    	IType type = getTypeOfPointer(expr.getExpressionType());
+    	if (type == null)
+    		return null;
     	
-    	IASTInitializerClause[] placement = exp.getPlacementArguments();
+    	IASTTypeId typeId = expr.getTypeId().copy();
+    	IASTExpression sizeExpression = new CPPASTTypeIdExpression(IASTTypeIdExpression.op_sizeof, typeId);
+    	sizeExpression.setParent(expr);
+    	
+    	IASTInitializerClause[] placement = expr.getPlacementArguments();
     	List<IASTInitializerClause> args = new ArrayList<IASTInitializerClause>();
+    	args.add(createArgForType(expr, type));
     	args.add(sizeExpression);
     	if (placement != null) {
     		for (IASTInitializerClause p : placement) {
@@ -2962,23 +2961,23 @@ public class CPPSemantics {
     		} 
     	} 
     	IASTInitializerClause[] argArray = args.toArray(new IASTInitializerClause[args.size()]);
-		return findOverloadedOperator(exp, argArray, type, op, LookupMode.GLOBALS_IF_NO_MEMBERS);
+		return findOverloadedOperator(expr, argArray, type, op, LookupMode.GLOBALS_IF_NO_MEMBERS);
     }
 
-    public static ICPPFunction findOverloadedOperator(ICPPASTDeleteExpression exp) {
-    	OverloadableOperator op = OverloadableOperator.fromDeleteExpression(exp);
-    	IType classType = getNestedClassType(exp);
-    	IASTExpression[] args = new IASTExpression[] {createArgForType(exp, classType), exp.getOperand()};
-		return findOverloadedOperator(exp, args, classType, op, LookupMode.GLOBALS_IF_NO_MEMBERS);
+    public static ICPPFunction findOverloadedOperator(ICPPASTDeleteExpression expr) {
+    	OverloadableOperator op = OverloadableOperator.fromDeleteExpression(expr);
+    	IType type = getTypeOfPointer(expr.getOperand().getExpressionType());
+    	if (type == null)
+    		return null;
+
+    	IASTExpression[] args = {createArgForType(expr, type), expr.getOperand()};
+		return findOverloadedOperator(expr, args, type, op, LookupMode.GLOBALS_IF_NO_MEMBERS);
     }
     
-    private static ICPPClassType getNestedClassType(ICPPASTDeleteExpression exp) {
-    	IType type = exp.getOperand().getExpressionType();
-    	type = SemanticUtil.getUltimateTypeUptoPointers(type);
+    private static IType getTypeOfPointer(IType type) {
+    	type = SemanticUtil.getNestedType(type, SemanticUtil.TDEF | SemanticUtil.REF | SemanticUtil.CVTYPE);
     	if (type instanceof IPointerType) {
-    		IType classType = ((IPointerType) type).getType();
-			if (classType instanceof ICPPClassType)
-				return (ICPPClassType) classType;
+    		return getNestedType(((IPointerType) type).getType(), TDEF | REF | CVTYPE);
     	}
 		return null;
     }
@@ -3101,10 +3100,11 @@ public class CPPSemantics {
     }
 
     public static ICPPFunction findImplicitlyCalledDestructor(ICPPASTDeleteExpression expr) {
-    	ICPPClassType cls = getNestedClassType(expr);
-    	if (cls == null)
+    	IType t = getTypeOfPointer(expr.getOperand().getExpressionType());
+    	if (!(t instanceof ICPPClassType))
     		return null;
-
+    	
+    	ICPPClassType cls = (ICPPClassType) t;
     	IScope scope = cls.getCompositeScope();
 		if (scope == null)
 			return null;
@@ -3281,8 +3281,15 @@ public class CPPSemantics {
 	    funcName.setParent(parent);
 	    funcName.setPropertyInParent(STRING_LOOKUP_PROPERTY);
     	LookupData funcData = new LookupData(funcName);
-    	if (operator == OverloadableOperator.DELETE || operator == OverloadableOperator.DELETE_ARRAY) {
+    	
+    	// Global new and delete operators do not take an argument for the this pointer.
+    	switch (operator) {
+    	case DELETE: case DELETE_ARRAY:
+    	case NEW: case NEW_ARRAY:
     		args= ArrayUtil.removeFirst(args);
+    		break;
+    	default:
+    		break;
     	}
     	funcData.setFunctionArguments(true, args);
     	funcData.ignoreMembers = true; // (13.3.1.2.3)

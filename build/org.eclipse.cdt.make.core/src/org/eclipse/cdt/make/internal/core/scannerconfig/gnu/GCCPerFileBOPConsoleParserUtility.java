@@ -224,26 +224,16 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
      * @return filePath : IPath - not <code>null</code>
      */
     public IPath getAbsolutePath(String filePath) {
-    	IPath p = getAbsolutePath2(filePath);
-    	if (p.getDevice()==null) {
-    		p = p.setDevice(getWorkingDirectory().getDevice());
-    	}
-    	return p;
-    }
-    
-    private IPath getAbsolutePath2(String filePath) {
         IPath pFilePath;
         if (filePath.startsWith("/")) { //$NON-NLS-1$
-        	return convertCygpath(new Path(filePath));
-        }
-        else if (filePath.startsWith("\\") || //$NON-NLS-1$
+        	pFilePath = convertCygpath(new Path(filePath));
+        } else if (filePath.startsWith("\\") || //$NON-NLS-1$
             (!filePath.startsWith(".") && //$NON-NLS-1$
              filePath.length() > 2 && filePath.charAt(1) == ':' && 
              (filePath.charAt(2) == '\\' || filePath.charAt(2) == '/'))) {
             // absolute path
             pFilePath = new Path(filePath);
-        }
-        else {
+        } else {
             // relative path
             IPath cwd = getWorkingDirectory();
             if (!cwd.isAbsolute()) {
@@ -259,6 +249,10 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
             }
             pFilePath = cwd.append(filePath);
         }
+        
+    	if (pFilePath.getDevice()==null) {
+    		pFilePath = pFilePath.setDevice(getWorkingDirectory().getDevice());
+    	}
         return pFilePath;
     }
 

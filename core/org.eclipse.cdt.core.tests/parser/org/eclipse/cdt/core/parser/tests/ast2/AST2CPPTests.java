@@ -9452,4 +9452,21 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testTypedefAsClassNameWithFunctionPtrArgument_350345() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	int func1(int input) {
+	//	    return input;
+	//	}
+	//	void dut() {
+	//	    int const_zero;
+	//	    int lll = (func1(func1(const_zero))) + func1(const_zero);
+	//	    int kkk = (func1(func1(const_zero))) + func1(const_zero);
+	//	}
+	//
+	//	void f3(int (x), int y=x);
+	//	void f2(int (x), int y=x) {
+	//		x= 1;
+	//	}
+	public void testAmbiguityResolution_Bug354599() throws Exception {
+		parseAndCheckBindings();
+	}
 }

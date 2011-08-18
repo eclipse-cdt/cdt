@@ -64,7 +64,16 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 					break;
 				}
 				if (node instanceof IASTParameterDeclaration) {
-					repopulateScope((IASTParameterDeclaration) node);
+					// If the parameter declaration belongs to a function declaration or
+					// function definition we need to update the scope.
+					IASTNode parent= node.getParent();
+					if (parent instanceof IASTDeclarator) {
+						IASTDeclarator dtor= (IASTDeclarator) parent;
+						if (dtor == ASTQueries.findTypeRelevantDeclarator(dtor) &&
+								ASTQueries.findOutermostDeclarator(dtor).getParent() instanceof IASTDeclaration) {
+							repopulateScope((IASTParameterDeclaration) node);
+						}
+					}
 					break;
 				}
 				if (node instanceof IASTExpression) {

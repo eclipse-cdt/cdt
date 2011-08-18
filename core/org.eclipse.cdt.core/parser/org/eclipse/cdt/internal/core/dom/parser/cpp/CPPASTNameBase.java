@@ -52,7 +52,7 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
 
 	public final void incResolutionDepth() {
 		if (fBinding == null && ++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
-			fBinding = new RecursionResolvingBinding(this);
+			setBinding(new RecursionResolvingBinding(this));
 		}
 	}
 	
@@ -69,9 +69,9 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
 	public IBinding resolvePreBinding() {
     	if (fBinding == null) {
     		if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
-    			fBinding= new RecursionResolvingBinding(this);
+    			setBinding(new RecursionResolvingBinding(this));
     		} else {
-    			fBinding= createIntermediateBinding();
+    			setBinding(createIntermediateBinding());
     		}
     	}
     	return fBinding;
@@ -80,7 +80,7 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
     public IBinding resolveBinding() {
     	if (fBinding == null) {
     		if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
-    			fBinding= new RecursionResolvingBinding(this);
+    			setBinding(new RecursionResolvingBinding(this));
     		} else {
     			fIsFinal= false;
     			final IBinding b= createIntermediateBinding();
@@ -91,7 +91,7 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
     					pb.setASTNode(this);
     				}
     			}
-    			fBinding= b;
+    			setBinding(b);
     		}
     	}
     	if (!fIsFinal)
@@ -106,13 +106,14 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
      * @see ICPPTwoPhaseBinding
      */
     public IBinding getPreBinding() {
-    	final IBinding cand= fBinding;
-        if (cand == null)
-        	return null;
-        
         return fBinding;
     }
 
+    /**
+     * If this name has not yet been resolved at all, <code>null</code> will be returned.
+     * Otherwise the final binding for this name is returned.
+     * @see ICPPTwoPhaseBinding
+     */
     public IBinding getBinding() {
     	final IBinding cand= fBinding;
         if (cand == null)
@@ -128,15 +129,12 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
 		if (fBinding instanceof ICPPTwoPhaseBinding) {
     		ICPPTwoPhaseBinding intermediateBinding= (ICPPTwoPhaseBinding) fBinding;
     		if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
-    			fBinding= new RecursionResolvingBinding(this);
+    			setBinding(new RecursionResolvingBinding(this));
     		} else {
-    			IBinding finalBinding= intermediateBinding.resolveFinalBinding(astName);
-    			fBinding= finalBinding;
+    			setBinding(intermediateBinding.resolveFinalBinding(astName));
     		}
     	}
-	
 		fIsFinal= true;
-		fResolutionDepth= 0;
 	}
 	
 	public void setBinding(IBinding binding) {

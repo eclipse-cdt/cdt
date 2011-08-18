@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Martin Oberhuber (Wind River Systems) - bug 155096
  *     Gerhard Schaber (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
+ *     Martin Oberhuber (Wind River) - bug 345750: discover drive-relative paths
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
@@ -223,6 +224,14 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
      * @return filePath : IPath - not <code>null</code>
      */
     public IPath getAbsolutePath(String filePath) {
+    	IPath p = getAbsolutePath2(filePath);
+    	if (p.getDevice()==null) {
+    		p = p.setDevice(getWorkingDirectory().getDevice());
+    	}
+    	return p;
+    }
+    
+    private IPath getAbsolutePath2(String filePath) {
         IPath pFilePath;
         if (filePath.startsWith("/")) { //$NON-NLS-1$
         	return convertCygpath(new Path(filePath));

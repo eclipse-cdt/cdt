@@ -422,6 +422,10 @@ public class CCommandDSC {
 		IPath ppath = new Path(path);
 		if (project != null && !ppath.isAbsolute()) {
 			IResource res = project.findMember(ppath);
+			if (res == null) {
+				// To calculate path only; this does not create any file
+				res = project.getFile(path);
+			}
 			if (res != null) {
 				ppath = res.getLocation();
 				if (ppath != null) {

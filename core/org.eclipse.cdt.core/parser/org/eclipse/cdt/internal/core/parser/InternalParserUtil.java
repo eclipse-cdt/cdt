@@ -183,6 +183,7 @@ public class InternalParserUtil extends ParserFactory {
 			case IResourceStatus.NO_LOCATION_LOCAL:
 			case IResourceStatus.FAILED_READ_LOCAL:
 			case IResourceStatus.RESOURCE_NOT_LOCAL:
+			case IResourceStatus.RESOURCE_NOT_FOUND:
 				break;
 			default:
 				CCorePlugin.log(e);

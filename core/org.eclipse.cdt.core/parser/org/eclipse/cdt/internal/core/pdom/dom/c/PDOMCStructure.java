@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Andrew Ferguson (Symbian)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
@@ -91,7 +91,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
-		new PDOMNodeLinkedList(getLinkage(), record+MEMBERLIST).accept(visitor);
+		new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST).accept(visitor);
 	}
 	
 	@Override
@@ -197,8 +197,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		} catch (CoreException e) {
 			if (e.getStatus().equals(Status.OK_STATUS)) {
 				result= visitor.getField();
-			}
-			else {
+			} else {
 				CCorePlugin.log(e);
 				return null;
 			}

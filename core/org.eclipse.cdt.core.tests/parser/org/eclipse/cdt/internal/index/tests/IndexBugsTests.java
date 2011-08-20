@@ -551,10 +551,11 @@ public class IndexBugsTests extends BaseTestCase {
 			fIndex.releaseReadLock();
 		}
     }
+
 	public void test164360_1() throws Exception {
 		waitForIndexer();
 		IFile include= TestSourceReader.createFile(fCProject.getProject(), "test164360.h", "");
-		TestScannerProvider.sIncludeFiles= new String[]{include.getLocation().toOSString()};
+		TestScannerProvider.sIncludeFiles= new String[] { include.getLocation().toOSString() };
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test164360.cpp", "");
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
 
@@ -696,8 +697,7 @@ public class IndexBugsTests extends BaseTestCase {
 			if (bindings[0] instanceof ICompositeType) {
 				struct= bindings[0];
 				typedef= bindings[1];
-			}
-			else {
+			} else {
 				struct= bindings[1];
 				typedef= bindings[0];
 			}
@@ -730,8 +730,7 @@ public class IndexBugsTests extends BaseTestCase {
 			if (bindings[0] instanceof ICPPClassType) {
 				struct= bindings[0];
 				typedef= bindings[1];
-			}
-			else {
+			} else {
 				struct= bindings[1];
 				typedef= bindings[0];
 			}
@@ -1149,8 +1148,7 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(1, bindings.length);
 			IIndexBinding binding = bindings[0];
 			assertTrue(binding instanceof IVariable);
-			IIndexName[] names = index.findNames(binding,
-					IIndex.FIND_ALL_OCCURRENCES);
+			IIndexName[] names = index.findNames(binding, IIndex.FIND_ALL_OCCURRENCES);
 			assertEquals(1, names.length);
 			assertEquals(f4.getFullPath().toString(), names[0].getFile().getLocation().getFullPath());
 			

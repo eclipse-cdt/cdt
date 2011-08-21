@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -100,7 +101,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 	final private IIncludeFileTester<InternalFileContent> createCodeReaderTester= new IIncludeFileTester<InternalFileContent>() {
     	public InternalFileContent checkFile(String path, boolean isHeuristicMatch, IncludeSearchPathElement onPath) {
-			final InternalFileContent fc= fFileContentProvider.getContentForInclusion(path);
+    		// TODO(197989): Propagate the macroDictionary associated with the current inclusion statement.
+    		Map<String, String> macroDictionary = Collections.emptyMap();
+			final InternalFileContent fc= fFileContentProvider.getContentForInclusion(path, macroDictionary);
 			if (fc != null) {
 				fc.setFoundByHeuristics(isHeuristicMatch);
 				fc.setFoundOnPath(onPath);
@@ -240,7 +243,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
         ILocationCtx ctx= fLocationMap.pushTranslationUnit(filePath, fRootContent.getSource());
         fAllIncludedFiles.add(filePath);
-    	fFileContentProvider.reportTranslationUnitFile(filePath);
+        // TODO(197989): Provide real relevant macros and include guard.
+    	Map<String, String> relevantMacros = Collections.emptyMap();
+    	String includeGuardMacro = null;
+		fFileContentProvider.reportTranslationUnitFile(filePath, relevantMacros, includeGuardMacro);
         fRootLexer= new Lexer(fRootContent.getSource(), fLexOptions, this, this);
         fRootContext= fCurrentContext= new ScannerContext(ctx, null, fRootLexer);
         if (info instanceof IExtendedScannerInfo) {
@@ -374,7 +380,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		handlePreIncludedFiles();
     	}
 		final String location = fLocationMap.getTranslationUnitPath();
-		InternalFileContent content= fFileContentProvider.getContentForContextToHeaderGap(location);
+		InternalFileContent content= fFileContentProvider.getContentForContextToHeaderGap(location,
+				getSimpleMacroDefinitions());
 		if (content != null && content.getKind() == InclusionKind.FOUND_IN_INDEX) {
 			processInclusionFromIndex(0, location, content);
 		}
@@ -448,6 +455,14 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
             hashMap.put(String.valueOf(key), fMacroDictionary.get(key));
 		}
         return hashMap;
+    }
+
+    public Map<String, String> getSimpleMacroDefinitions() {
+        Map<String, String> map = new HashMap<String, String>(fMacroDictionary.size());
+        for (char[] key : fMacroDictionary.keys()) {
+            map.put(String.valueOf(key), String.valueOf(fMacroDictionary.get(key).getExpansion()));
+		}
+        return map;
     }
 
     public boolean isOnTopContext() {
@@ -1176,7 +1191,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     }
 
     private boolean hasFileBeenIncluded(String location) {
-    	Boolean itHas= fFileContentProvider.hasFileBeenIncludedInCurrentTranslationUnit(location);
+    	// TODO(197989): Change Collections.emptyMap() to getSimpleMacroDefinitions()
+    	Map<String, String> macroDefinitions = Collections.emptyMap();
+    	Boolean itHas= fFileContentProvider.hasFileBeenIncludedInCurrentTranslationUnit(location,
+    			macroDefinitions);
     	if (itHas != null) {
     		return itHas.booleanValue();
     	}

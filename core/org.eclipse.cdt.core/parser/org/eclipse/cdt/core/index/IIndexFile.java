@@ -15,8 +15,6 @@ package org.eclipse.cdt.core.index;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.core.runtime.CoreException;
 
-import java.util.Map;
-
 /**
  * Represents a file that has been indexed.
  * 
@@ -98,20 +96,10 @@ public interface IIndexFile {
 	IIndexInclude getParsedInContext() throws CoreException;
 
 	/**
-	 * Returns the names and definitions of the macros that affect the preprocessed contents of
-	 * the file or the files it includes directly or indirectly. Undefined macros have
-	 * <code>null</code> values in the map.
+	 * Returns a key that uniquely identifies the preprocessed content of the file.
 	 * @since 5.4
 	 */
-	Map<String, String> getRelevantMacros() throws CoreException;
-
-	/**
-	 * Returns the name of the macro that, if defined, makes the preprocessed contents of the file
-	 * not contain any code irrespectively of other macros. Returns <code>null</code> if the file
-	 * does not have the include guard macro.
-	 * @since 5.4
-	 */
-	String getIncludeGuardMacro() throws CoreException;
+	IFileContentKey getContentKey() throws CoreException;
 
 	/**
 	 * Returns the id of the linkage this file was parsed in.

@@ -18,6 +18,8 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
+import java.util.Map;
+
 
 public class SavedFilesProvider extends InternalFileContentProvider {
 	final private static SavedFilesProvider INSTANCE= new SavedFilesProvider();
@@ -30,7 +32,8 @@ public class SavedFilesProvider extends InternalFileContentProvider {
 	}
 	
 	@Override
-	public InternalFileContent getContentForInclusion(String path) {
+	public InternalFileContent getContentForInclusion(String path,
+			Map<String, String> macroDictionary) {
 		if (!getInclusionExists(path))
 			return null;
 		

@@ -935,20 +935,21 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			for (IASTInclusionNode element : nested) {
 				collectOrderedIFLs(linkageID, element, enteredFiles, orderedIFLs);
 			}
-			if (isFirstEntry && needToUpdateHeader(linkageID, ifl)) {
+			if (isFirstEntry && needToUpdateHeader(linkageID, ifl, id.getRelevantMacros())) {
 				orderedIFLs.add(ifl);
 			}
 		}
 	}
 
-	public final boolean needToUpdateHeader(int linkageID, IIndexFileLocation ifl) throws CoreException {
+	public final boolean needToUpdateHeader(int linkageID, IIndexFileLocation ifl,
+			Map<String, String> macroDictionary) throws CoreException {
 		IndexFileContent info= getFileInfo(linkageID, ifl);
 		if (info == null) {
 			IIndexFile ifile= null;
 			if (fResolver.canBePartOfSDK(ifl)) {
-				ifile= fIndex.getFile(linkageID, ifl);
+				ifile= fIndex.getFile(linkageID, ifl, macroDictionary);
 			} else {
-				IIndexFragmentFile fragFile= fIndex.getWritableFile(linkageID, ifl);
+				IIndexFragmentFile fragFile= fIndex.getWritableFile(linkageID, ifl, macroDictionary);
 				if (fragFile != null && fragFile.hasContent()) {
 					ifile= fragFile;
 				}
@@ -1084,12 +1085,13 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		return codeReader != null ? codeReader.getContentsHash() : 0;
 	}
 
-	public final IndexFileContent getFileContent(int linkageID, IIndexFileLocation ifl) throws CoreException {
-		if (!needToUpdateHeader(linkageID, ifl)) {
+	public final IndexFileContent getFileContent(int linkageID, IIndexFileLocation ifl,
+			Map<String, String> macroDictionary) throws CoreException {
+		if (!needToUpdateHeader(linkageID, ifl, macroDictionary)) {
 			IndexFileContent info= getFileInfo(linkageID, ifl);
 			Assert.isNotNull(info);
 			if (info.fIndexFile == null) {
-				info.fIndexFile= fIndex.getFile(linkageID, ifl);
+				info.fIndexFile= fIndex.getFile(linkageID, ifl, macroDictionary);
 				if (info.fIndexFile == null) {
 					return null;
 				}

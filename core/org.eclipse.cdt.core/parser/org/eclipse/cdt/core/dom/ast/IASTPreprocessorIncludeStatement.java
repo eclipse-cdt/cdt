@@ -6,10 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
+
+import java.util.Map;
 
 /**
  * This interface represent a preprocessor #include statement.
@@ -17,9 +19,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTPreprocessorIncludeStatement extends
-		IASTPreprocessorStatement {
-
+public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatement {
 	/**
 	 * <code>INCLUDE_NAME</code> describes the relationship between an include directive and
 	 * it's name.
@@ -64,4 +64,32 @@ public interface IASTPreprocessorIncludeStatement extends
 	 * @since 5.1
 	 */
 	public boolean isResolvedByHeuristics();
+
+	/**
+	 * Returns macros and their definitions at the point of the include.
+	 * @since 5.4
+	 */
+	public Map<String, String> getMacroDefinitions();
+
+	/**
+	 * Returns macros relevant to parsing of the file included by this include statement and their
+	 * definitions at the point of the include. Undefined macros are represented in the map by
+	 * <code>null</code> values.
+	 * <p>
+	 * Unlike {@link #getMacroDefinitions()}, this method can only be called after the included file
+	 * has been parsed.
+	 * @since 5.4
+	 */
+	public Map<String, String> getRelevantMacros();
+
+	/**
+	 * Returns the include guard macro for the file included by this include statement,
+	 * or <code>null</code> if the file doesn't have the include guard. THe include guard macro is
+	 * the macro that, when defined, guarantees that the file has no active content irrespectively
+	 * of definitions of other macros.
+	 * <p>
+	 * This method can only be called after the included file has been parsed.
+	 * @since 5.4
+	 */
+	public String getIncludeGuard();
 }

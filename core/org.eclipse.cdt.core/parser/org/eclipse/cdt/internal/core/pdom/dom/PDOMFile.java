@@ -33,18 +33,21 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
+import org.eclipse.cdt.core.index.IFileContentKey;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.internal.core.index.FileContentKey;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
+import org.eclipse.cdt.internal.core.index.StringMapEncoder;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -52,7 +55,6 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
-import org.eclipse.cdt.internal.core.pdom.db.StringMapEncoder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -65,7 +67,8 @@ import org.eclipse.core.runtime.Status;
 public class PDOMFile implements IIndexFragmentFile {
 	private final PDOMLinkage fLinkage;
 	private final long record;
-	private IIndexFileLocation location;  // No need to make volatile, all fields of IIndexFileLocation are final.
+	private IIndexFileLocation location;  // No need to make volatile, all fields of IndexFileLocation are final.
+	private IFileContentKey key;  // No need to make volatile, all fields of FileContentsKey are final.
 
 	private static final int FIRST_NAME = 0;
 	private static final int FIRST_INCLUDE = 4;
@@ -275,6 +278,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			db.getString(oldRecord).delete();
 		db.putRecPtr(record + LOCATION_REPRESENTATION, db.newString(internalLocation).getRecord());
 		location= null;
+		key= null;
 	}
 	
 	public int getLinkageID() throws CoreException {
@@ -322,14 +326,21 @@ public class PDOMFile implements IIndexFragmentFile {
 		db.putInt(record + ENCODING_HASH, hashcode);
 	}
 
-	public Map<String, String> getRelevantMacros() throws CoreException {
-		Database db = fLinkage.getDB();
-		long rec = db.getRecPtr(record + RELEVANT_MACROS);
-		if (rec == 0) {
-			return Collections.emptyMap();
+	public IFileContentKey getContentKey() throws CoreException {
+		if (key == null) {
+			Database db = fLinkage.getDB();
+			long rec = db.getRecPtr(record + RELEVANT_MACROS);
+			char[] relevantMacros;
+			if (rec == 0) {
+				relevantMacros = StringMapEncoder.ENCODED_EMPTY_MAP;
+			} else {
+				relevantMacros = db.getString(rec).getChars();
+			}
+			rec = db.getRecPtr(record + INCLUDE_GUARD_MACRO);
+			String includeGuardMacro = rec != 0 ? db.getString(rec).getString() : null;
+			key = new FileContentKey(getLocation(), relevantMacros, includeGuardMacro);
 		}
-		char[] chars = db.getString(rec).getChars();
-		return StringMapEncoder.decodeMap(chars);
+		return key;
 	}
 
 	public void setRelevantMacros(Map<String, String> macros) throws CoreException {
@@ -339,12 +350,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			db.getString(oldRecord).delete();
 		db.putRecPtr(record + RELEVANT_MACROS,
 				macros.isEmpty() ? 0 : db.newString(StringMapEncoder.encode(macros)).getRecord());
-	}
-
-	public String getIncludeGuardMacro() throws CoreException {
-		Database db = fLinkage.getDB();
-		long rec = db.getRecPtr(record + INCLUDE_GUARD_MACRO);
-		return rec != 0 ? db.getString(rec).getString() : null;
+		key = null;
 	}
 
 	public void setIncludeGuardMacro(String macroName) throws CoreException {
@@ -354,6 +360,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			db.getString(oldRecord).delete();
 		db.putRecPtr(record + INCLUDE_GUARD_MACRO,
 				macroName != null ? db.newString(macroName).getRecord() : 0);
+		key = null;
 	}
 
 	private PDOMName getFirstName() throws CoreException {
@@ -695,32 +702,6 @@ public class PDOMFile implements IIndexFragmentFile {
 		return result.toArray(new IIndexName[result.size()]);
 	}
 
-	/**
-	 * Finds the file in index.
-	 * 
-	 * @param linkage The linkage of the file.
-	 * @param btree The file index.
-	 * @param location The location of the file.
-	 * @param strategy The index location converter.
-	 * @param macroDictionary The names and definitions of the macros used to disambiguate between
-	 *     variants of the file contents corresponding to different inclusion points.
-	 * @return The found file, or <code>null</code> if the matching file was not found.  
-	 */
-	public static PDOMFile findFile(PDOMLinkage linkage, BTree btree, IIndexFileLocation location,
-			IIndexLocationConverter strategy, Map<String, String> macroDictionary) throws CoreException {
-		String internalRepresentation= strategy.toInternalFormat(location);
-		if (internalRepresentation != null) {
-			Finder finder = new Finder(linkage.getDB(), internalRepresentation, linkage.getLinkageID(),
-					macroDictionary);
-			btree.accept(finder);
-			long record= finder.getRecord();
-			if (record != 0) {
-				return new PDOMFile(linkage, record);
-			}
-		}
-		return null;
-	}
-
 	public static PDOMFile[] findFiles(PDOMLinkage linkage, BTree btree, IIndexFileLocation location,
 			IIndexLocationConverter strategy) throws CoreException {
 		String internalRepresentation= strategy.toInternalFormat(location);
@@ -738,18 +719,36 @@ public class PDOMFile implements IIndexFragmentFile {
 	}
 
 	/**
-	 * When a header file is stored in the index in multiple variants for different macro
-	 * definitions this method will return an arbitrary one of the variants.
+	 * When a header file is stored in the index in multiple variants for different sets of macro
+	 * definitions this method will return an arbitrary one of these variants.
 	 *  
-	 * @deprecated Use #findFiles(PDOMLinkage, BTree, IIndexFileLocation, IIndexLocationConverter)
-	 *     or #findFile(PDOMLinkage, BTree, IIndexFileLocation, IIndexLocationConverter, Map<String, String>)
+	 * @deprecated Use
+	 *     {@link #findFile(PDOMLinkage, BTree, IIndexFileLocation, IIndexLocationConverter, Map)}
+	 *     or {@link #findFiles(PDOMLinkage, BTree, IIndexFileLocation, IIndexLocationConverter)}
 	 */
 	@Deprecated
 	public static PDOMFile findFile(PDOMLinkage linkage, BTree btree, IIndexFileLocation location,
 			IIndexLocationConverter strategy) throws CoreException {
+		return findFile(linkage, btree, location, strategy, null);
+	}
+
+	/**
+	 * Finds the file in index.
+	 * 
+	 * @param linkage The linkage of the file.
+	 * @param btree The file index.
+	 * @param location The location of the file.
+	 * @param strategy The index location converter.
+	 * @param macroDictionary The names and definitions of the macros used to disambiguate between
+	 *     variants of the file contents corresponding to different inclusion points.
+	 * @return The found file, or <code>null</code> if the matching file was not found.  
+	 */
+	public static PDOMFile findFile(PDOMLinkage linkage, BTree btree, IIndexFileLocation location,
+			IIndexLocationConverter strategy, Map<String, String> macroDictionary) throws CoreException {
 		String internalRepresentation= strategy.toInternalFormat(location);
 		if (internalRepresentation != null) {
-			Finder finder = new Finder(linkage.getDB(), internalRepresentation, linkage.getLinkageID(), null);
+			Finder finder = new Finder(linkage.getDB(), internalRepresentation, linkage.getLinkageID(),
+					macroDictionary);
 			btree.accept(finder);
 			long record= finder.getRecord();
 			if (record != 0) {

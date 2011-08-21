@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.index;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
@@ -43,20 +44,23 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		return fWritableFragment;
 	}
 	
-	public IIndexFragmentFile getWritableFile(int linkageID, IIndexFileLocation location) throws CoreException {
-		return fWritableFragment.getFile(linkageID, location);
+	public IIndexFragmentFile getWritableFile(int linkageID, IIndexFileLocation location,
+			Map<String, String> macroDictionary) throws CoreException {
+		return fWritableFragment.getFile(linkageID, location, macroDictionary);
 	}
 	
 	public IIndexFragmentFile[] getWritableFiles(IIndexFileLocation location) throws CoreException {
 		return fWritableFragment.getFiles(location);
 	}
 
-	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location) throws CoreException {
-		return fWritableFragment.addFile(linkageID, location);
+	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location,
+			Map<String, String> macroDictionary) throws CoreException {
+		return fWritableFragment.addFile(linkageID, location, macroDictionary);
 	}
 
-	public IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation location) throws CoreException {
-		return fWritableFragment.addUncommittedFile(linkageID, location);
+	public IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation location,
+			Map<String, String> macroDictionary) throws CoreException {
+		return fWritableFragment.addUncommittedFile(linkageID, location, macroDictionary);
 	}
 
 	public IIndexFragmentFile commitUncommittedFile() throws CoreException {
@@ -78,9 +82,10 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		if (!isWritableFragment(indexFragment)) {
 			assert false : "Attempt to update file of read-only fragment"; //$NON-NLS-1$
 		} else {
-			for (IncludeInformation ii : includes) {
-				if (ii.fLocation != null) {
-					ii.fTargetFile= addFile(linkageID, ii.fLocation);
+			for (IncludeInformation include : includes) {
+				if (include.fLocation != null) {
+					include.fTargetFile= addFile(linkageID, include.fLocation,
+							include.fStatement.getRelevantMacros());
 				}
 			}
 			((IWritableIndexFragment) indexFragment).addFileContent(file, includes, macros, names, resolver, lock);

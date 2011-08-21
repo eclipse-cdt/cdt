@@ -456,11 +456,14 @@ abstract public class PDOMWriter {
 			YieldableIndexLock lock) throws CoreException, InterruptedException {
 		Set<IIndexFileLocation> clearedContexts= Collections.emptySet();
 		IIndexFragmentFile file;
-		// We create a temporary PDOMFile with zero timestamp, add names to it, then replace contents
-		// of the old file from the temporary one, then delete the temporary file. The write lock on
-		// the index can be yielded between adding names to the temporary file, if another thread
-		// is waiting for a read lock.
-		IIndexFragmentFile oldFile = index.getWritableFile(linkageID, location);
+		// We create a temporary PDOMFile with zero timestamp, add names to it, then replace
+		// contents of the old file from the temporary one, then delete the temporary file.
+		// The write lock on the index can be yielded between adding names to the temporary file,
+		// if another thread is waiting for a read lock.
+		// TODO(197989): Replace the dummy relevantMacros with the real one.
+		Map<String, String> relevantMacros = Collections.emptyMap();
+		String includeGuardMacro = null;
+		IIndexFragmentFile oldFile = index.getWritableFile(linkageID, location, relevantMacros);
 		if (oldFile != null) {
 			IIndexInclude[] includedBy = index.findIncludedBy(oldFile);
 			if (includedBy.length > 0) {
@@ -470,9 +473,12 @@ abstract public class PDOMWriter {
 				}
 			}
 		}
-		file= index.addUncommittedFile(linkageID, location);
+		file= index.addUncommittedFile(linkageID, location, relevantMacros);
 		try {
 			file.setScannerConfigurationHashcode(configHash);
+			file.setRelevantMacros(relevantMacros);
+			file.setIncludeGuardMacro(includeGuardMacro);
+
 			Symbols lists= symbolMap.get(location);
 			if (lists != null) {
 				IASTPreprocessorStatement[] macros= lists.fMacros.toArray(new IASTPreprocessorStatement[lists.fMacros.size()]);

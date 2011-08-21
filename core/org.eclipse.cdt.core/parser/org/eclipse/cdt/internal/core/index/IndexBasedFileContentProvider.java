@@ -16,12 +16,15 @@ package org.eclipse.cdt.internal.core.index;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
+import org.eclipse.cdt.core.index.IFileContentKey;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -46,12 +49,14 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 
 	private final IIndex fIndex;
 	private int fLinkage;
-	private Set<IIndexFileLocation> fIncludedFiles= new HashSet<IIndexFileLocation>();
+	private final Set<IFileContentKey> fIncludedFiles= new HashSet<IFileContentKey>();
+	private final Map<IIndexFileLocation, IFileContentKey> fIncludedFilesMap =
+			new HashMap<IIndexFileLocation, IFileContentKey>();
 	/** The fall-back code reader factory used in case a header file is not indexed */
 	private final InternalFileContentProvider fFallBackFactory;
 	private final ASTFilePathResolver fPathResolver;
 	private final AbstractIndexerTask fRelatedIndexerTask;
-	private boolean fSupportFillGapFromContextToHeader= false;
+	private boolean fSupportFillGapFromContextToHeader;
 	private long fFileSizeLimit= 0;
 	
 	public IndexBasedFileContentProvider(IIndex index,
@@ -82,6 +87,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 
 	public void cleanupAfterTranslationUnit() {
 		fIncludedFiles.clear();
+		fIncludedFilesMap.clear();
 	}
 	
 	@Override
@@ -90,41 +96,58 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 	}
 	
 	@Override
-	public void reportTranslationUnitFile(String path) {
+	public void reportTranslationUnitFile(String path, Map<String, String> relevantMacros,
+			String includeGuardMacro) {
 		IIndexFileLocation ifl= fPathResolver.resolveASTPath(path);
-		fIncludedFiles.add(ifl);
+		IFileContentKey fileKey = new FileContentKey(ifl, relevantMacros, includeGuardMacro);
+		fIncludedFiles.add(fileKey);
+		fIncludedFilesMap.put(ifl, fileKey);
 	}
 
 	@Override
-	public Boolean hasFileBeenIncludedInCurrentTranslationUnit(String path) {
+	public Boolean hasFileBeenIncludedInCurrentTranslationUnit(String path,
+			Map<String, String> macroDictionary) {
 		IIndexFileLocation ifl= fPathResolver.resolveASTPath(path);
-		return fIncludedFiles.contains(ifl);
+		IFileContentKey fileKey = fIncludedFilesMap.get(ifl);
+		if (fileKey == null) {
+			return false;
+		}
+		Map<String, String> fileRelevantMacros = fileKey.getRelevantMacros();
+		if (fileRelevantMacros == null) {
+			return true;
+		}
+		Map<String, String> relevantMacros = new HashMap<String, String>(fileRelevantMacros.size());
+		for (String key : fileRelevantMacros.keySet()) {
+			String value = key.equals(fileKey.getIncludeGuardMacro()) ?
+					null : macroDictionary.get(key); 
+			relevantMacros.put(key, value);
+		}
+		fileKey = new FileContentKey(ifl, relevantMacros, fileKey.getIncludeGuardMacro());
+		return fIncludedFiles.contains(fileKey);
 	}
 	
 	@Override
-	public InternalFileContent getContentForInclusion(String path) {
+	public InternalFileContent getContentForInclusion(String path, Map<String, String> macroDictionary) {
 		IIndexFileLocation ifl= fPathResolver.resolveIncludeFile(path);
 		if (ifl == null) {
 			return null;
 		}
 		path= fPathResolver.getASTPath(ifl);
 		
-		// Include files once, only.
-		if (!fIncludedFiles.add(ifl)) {
-			return new InternalFileContent(path, InclusionKind.SKIP_FILE);
-		}
-		
 		try {
-			IIndexFile file= fIndex.getFile(fLinkage, ifl);
+			IIndexFile file= fIndex.getFile(fLinkage, ifl, macroDictionary);
 			if (file != null) {
 				try {
 					List<IIndexFile> files= new ArrayList<IIndexFile>();
 					List<IIndexMacro> macros= new ArrayList<IIndexMacro>();
 					List<ICPPUsingDirective> directives= new ArrayList<ICPPUsingDirective>();
-					Set<IIndexFileLocation> ifls= new HashSet<IIndexFileLocation>();
-					collectFileContent(file, ifls, files, macros, directives, false);
-					// add included files only, if no exception was thrown
-					fIncludedFiles.addAll(ifls);
+					Set<IFileContentKey> fileKeys= new HashSet<IFileContentKey>();
+					collectFileContent(file, fileKeys, files, macros, directives, false);
+					// Add included files only if no exception was thrown.
+					fIncludedFiles.addAll(fileKeys);
+					for (IFileContentKey key : fileKeys) {
+						fIncludedFilesMap.put(key.getLocation(), key);
+					}
 					return new InternalFileContent(path, macros, directives, files);
 				} catch (NeedToParseException e) {
 				}
@@ -132,7 +155,14 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		
+
+		// TODO(197989): Without the following three lines IndexBugsTests.testIncludeGuardsOutsideOfHeader_Bug167100
+		// test fails, but it's not clear how to make this code work with realistic relevant macros
+		// since they are not yet known at this point.
+//		IFileContentKey key = new FileContentKey(ifl, macroDictionary, null);
+//		fIncludedFiles.add(key);
+//		fIncludedFilesMap.put(key.getLocation(), key);
+
 		// Skip large files
 		if (fFileSizeLimit > 0 && fPathResolver.getFileSize(path) > fFileSizeLimit) {
 			return new InternalFileContent(path, InclusionKind.SKIP_FILE);
@@ -155,16 +185,18 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		return null;
 	}
 
-	private void collectFileContent(IIndexFile file, Set<IIndexFileLocation> ifls, List<IIndexFile> files,
-			List<IIndexMacro> macros, List<ICPPUsingDirective> usingDirectives, boolean checkIncluded)
+	private void collectFileContent(IIndexFile file, Set<IFileContentKey> fileKeys,
+			List<IIndexFile> files, List<IIndexMacro> macros,
+			List<ICPPUsingDirective> usingDirectives, boolean checkIncluded)
 			throws CoreException, NeedToParseException {
 		IIndexFileLocation ifl= file.getLocation();
-		if (!ifls.add(ifl) || (checkIncluded && fIncludedFiles.contains(ifl))) {
+		IFileContentKey key = file.getContentKey();
+		if (!fileKeys.add(key) || (checkIncluded && fIncludedFiles.contains(key))) {
 			return;
 		}
 		IndexFileContent content;
 		if (fRelatedIndexerTask != null) {
-			content= fRelatedIndexerTask.getFileContent(fLinkage, ifl);
+			content= fRelatedIndexerTask.getFileContent(fLinkage, ifl, key.getRelevantMacros());
 			if (content == null) {
 				throw new NeedToParseException();
 			}
@@ -183,14 +215,15 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 			} else if (d instanceof IIndexInclude) {
 				IIndexFile includedFile= fIndex.resolveInclude((IIndexInclude) d);
 				if (includedFile != null) {
-					collectFileContent(includedFile, ifls, files, macros, usingDirectives, true);
+					collectFileContent(includedFile, fileKeys, files, macros, usingDirectives, true);
 				}
 			}
 		}
 	}
 
 	@Override
-	public InternalFileContent getContentForContextToHeaderGap(String path) {
+	public InternalFileContent getContentForContextToHeaderGap(String path,
+			Map<String, String> macroDictionary) {
 		if (!fSupportFillGapFromContextToHeader) {
 			return null;
 		}
@@ -201,7 +234,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		}
 		
 		try {
-			IIndexFile targetFile= fIndex.getFile(fLinkage, ifl);
+			IIndexFile targetFile= fIndex.getFile(fLinkage, ifl, macroDictionary);
 			if (targetFile == null) {
 				return null;
 			}
@@ -220,7 +253,9 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 
 			// mark the files in the gap as included
 			for (IIndexFile file : filesIncluded) {
-				fIncludedFiles.add(file.getLocation());
+				IFileContentKey key = file.getContentKey();
+				fIncludedFiles.add(key);
+				fIncludedFilesMap.put(key.getLocation(), key);
 			}
 			return new InternalFileContent(GAP, macros, directives, new ArrayList<IIndexFile>(filesIncluded));
 		} catch (CoreException e) {
@@ -252,7 +287,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 			return true;
 		}
 
-		if (fIncludedFiles.contains(ifl) || !filesIncluded.add(from)) {
+		if (fIncludedFiles.contains(from.getContentKey()) || !filesIncluded.add(from)) {
 			return false;
 		}
 

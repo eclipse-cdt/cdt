@@ -416,6 +416,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return fileIndex;
 	}
 
+	@Deprecated
 	public PDOMFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
 		PDOMLinkage linkage= getLinkage(linkageID);
 		if (linkage == null)
@@ -423,8 +424,25 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return PDOMFile.findFile(linkage, getFileIndex(), location, locationConverter);
 	}
 
-	public PDOMFile getFile(PDOMLinkage linkage, IIndexFileLocation location) throws CoreException {
-		return PDOMFile.findFile(linkage, getFileIndex(), location, locationConverter);
+	public PDOMFile getFile(int linkageID, IIndexFileLocation location,
+			Map<String, String> macroDictionary) throws CoreException {
+		PDOMLinkage linkage= getLinkage(linkageID);
+		if (linkage == null)
+			return null;
+		return PDOMFile.findFile(linkage, getFileIndex(), location, locationConverter,
+				macroDictionary);
+	}
+
+	public PDOMFile getFile(PDOMLinkage linkage, IIndexFileLocation location,
+			Map<String, String> macroDictionary) throws CoreException {
+		return PDOMFile.findFile(linkage, getFileIndex(), location, locationConverter, macroDictionary);
+	}
+
+	public PDOMFile[] getFiles(int linkageID, IIndexFileLocation location) throws CoreException {
+		PDOMLinkage linkage= getLinkage(linkageID);
+		if (linkage == null)
+			return null;
+		return PDOMFile.findFiles(linkage, getFileIndex(), location, locationConverter);
 	}
 
 	public IIndexFragmentFile[] getFiles(IIndexFileLocation location) throws CoreException {
@@ -433,7 +451,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	public IIndexFragmentFile[] getAllFiles() throws CoreException {
 		final List<PDOMFile> locations = new ArrayList<PDOMFile>();
-		getFileIndex().accept(new IBTreeVisitor(){
+		getFileIndex().accept(new IBTreeVisitor() {
 			public int compare(long record) throws CoreException {
 				return 0;
 			}
@@ -446,9 +464,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return locations.toArray(new IIndexFragmentFile[locations.size()]);
 	}
 
-	protected IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location) throws CoreException {
+	protected IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location,
+			Map<String, String> macroDictionary) throws CoreException {
 		PDOMLinkage linkage= createLinkage(linkageID);
-		IIndexFragmentFile file = getFile(linkage, location);
+		IIndexFragmentFile file = getFile(linkage, location, macroDictionary);
 		if (file == null) {
 			PDOMFile pdomFile = new PDOMFile(linkage, location, linkageID);
 			getFileIndex().insert(pdomFile.getRecord());

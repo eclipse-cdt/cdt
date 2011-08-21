@@ -6,11 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -263,7 +265,8 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 			int startNumber, int nameStartNumber, int nameEndNumber, int endNumber,
 			char[] headerName, String filePath, boolean userInclude, boolean active, boolean heuristic) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
-		fName= new ASTPreprocessorName(this, IASTPreprocessorIncludeStatement.INCLUDE_NAME, nameStartNumber, nameEndNumber, headerName, null);
+		fName= new ASTPreprocessorName(this, IASTPreprocessorIncludeStatement.INCLUDE_NAME,
+				nameStartNumber, nameEndNumber, headerName, null);
 		fPath= filePath == null ? "" : filePath; //$NON-NLS-1$
 		fIsResolved= filePath != null;
 		fIsSystemInclude= !userInclude;
@@ -297,6 +300,21 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 
 	public boolean isResolvedByHeuristics() {
 		return fFoundByHeuristics;
+	}
+
+	public Map<String, String> getMacroDefinitions() {
+		// TODO(197989): Implement.
+		return Collections.emptyMap();
+	}
+
+	public Map<String, String> getRelevantMacros() {
+		// TODO(197989): Implement.
+		return Collections.emptyMap();
+	}
+
+	public String getIncludeGuard() {
+		// TODO(197989): Implement.
+		return null;
 	}
 }
 
@@ -723,4 +741,3 @@ class ASTImageLocation extends ASTFileLocationForBuiltins implements IASTImageLo
 		return fKind;
 	}
 }
-

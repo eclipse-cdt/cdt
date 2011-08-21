@@ -8,7 +8,7 @@
  * Contributors:
  * 	  Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.pdom.db;
+package org.eclipse.cdt.internal.core.index;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,13 +26,14 @@ import java.util.TreeMap;
  * A <code>null</code> string is encoded as a single comma.
  */
 public class StringMapEncoder {
+	public static final char[] ENCODED_EMPTY_MAP = {};
 	/** Delimiter separating a number in decimal character representation from the remaining text */
 	private static final char DELIMITER = ',';
-	
+
 	private static class InputCharStream {
 		final char[] chars;
 		int pos;
-		
+
 		InputCharStream(char[] chars) {
 			this.chars = chars;
 		}
@@ -84,6 +85,9 @@ public class StringMapEncoder {
 	 * <code>null</code>. Use {@link #decodeMap(char[])} to decode.
 	 */
 	public static char[] encode(Map<String, String> map) {
+		if (map.isEmpty()) {
+			return ENCODED_EMPTY_MAP;
+		}
 		StringBuilder buf = new StringBuilder();
 		buf.append(map.size());
 		buf.append(DELIMITER);
@@ -115,6 +119,9 @@ public class StringMapEncoder {
 	 * Decodes a string map encoded using {@link #encode(Map)}
 	 */
 	public static Map<String, String> decodeMap(char[] chars) {
+		if (chars.length == 0) {
+			return Collections.emptyMap();
+		}
 		return new InputCharStream(chars).readMap();
 	}
 }

@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    IBM Corporation
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation
+ *     IBM Corporation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -80,6 +80,7 @@ abstract public class PDOMWriter {
 		ArrayList<IASTPreprocessorStatement> fMacros= new ArrayList<IASTPreprocessorStatement>();
 		ArrayList<IASTPreprocessorIncludeStatement> fIncludes= new ArrayList<IASTPreprocessorIncludeStatement>();
 	}
+
 	private boolean fShowProblems;
 	protected boolean fShowInclusionProblems;
 	private boolean fShowScannerProblems;

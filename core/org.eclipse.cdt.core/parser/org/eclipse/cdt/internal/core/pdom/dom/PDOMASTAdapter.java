@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -54,6 +54,7 @@ public class PDOMASTAdapter {
 				public int getEndingLineNumber() {
 					return loc.getStartingLineNumber();
 				}
+
 				public String getFileName() {
 					return loc.getFileName();
 				}
@@ -73,7 +74,6 @@ public class PDOMASTAdapter {
 				public int getNodeOffset() {
 					return loc.getNodeOffset();
 				}
-				
 			};
 		}
 

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Andrew Ferguson (Symbian)
+ *     Markus Schorn - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -35,37 +35,31 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase {
 
 	public static class SingleProject extends IndexCBindingResolutionBugs {
-		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(false));}
-		public static TestSuite suite() {return suite(SingleProject.class);}
+		public SingleProject() { setStrategy(new SinglePDOMTestStrategy(false)); }
+		public static TestSuite suite() { return suite(SingleProject.class); }
 	}
 	public static class ProjectWithDepProj extends IndexCBindingResolutionBugs {
-		public ProjectWithDepProj() {setStrategy(new ReferencedProject(false));}
-		public static TestSuite suite() {return suite(ProjectWithDepProj.class);}
+		public ProjectWithDepProj() { setStrategy(new ReferencedProject(false)); }
+		public static TestSuite suite() { return suite(ProjectWithDepProj.class); }
 	}
 	
 	public static void addTests(TestSuite suite) {		
 		suite.addTest(SingleProject.suite());
 		suite.addTest(ProjectWithDepProj.suite());
 	}
-	
-	
+
 	// #include <stdio.h>	
-	// void func1(void)
-	//	{
+	// void func1(void) {
 	//	    int i = 0;
-	//	    for (i=0; i<10;i++)
-	//	    {
+	//	    for (i=0; i<10;i++) {
 	//	        printf("%i", i);
 	//	    }
-	//
 	//	}
 	
 	//  #include "header.h"
 	//
-	//	int main(void)
-	//	{
-	//	    while (1)
-	//	    {
+	//	int main(void) {
+	//	    while (1) {
 	//	        func1();
 	//	    }
 	//	    return 0;
@@ -86,8 +80,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 	
 	//  #include "header.h"
 	//
-	//	int main(void)
-	//	{
+	//	int main(void) {
 	//      void* v= func1;
 	//	}
 	public void testBug181735() throws DOMException {
@@ -151,7 +144,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		IVariable v= (IVariable) b0;
 		IType type= v.getType();
 		assertTrue(type instanceof IBasicType);
-		assertTrue(((IBasicType) type).getType() == IBasicType.t_char);
+		assertTrue(((IBasicType) type).getKind() == IBasicType.Kind.eChar);
     }
 
     // int globalFunc();
@@ -165,7 +158,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		IFunction f= (IFunction) b0;
 		IType type= f.getType().getReturnType();
 		assertTrue(type instanceof IBasicType);
-		assertTrue(((IBasicType) type).getType() == IBasicType.t_char);
+		assertTrue(((IBasicType) type).getKind() == IBasicType.Kind.eChar);
     }
 
     // struct astruct {
@@ -193,7 +186,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		assertEquals("additionalMember", additionalMember.getName());
 		IType type= member.getType();
 		assertTrue(type instanceof IBasicType);
-		assertTrue(((IBasicType) type).getType() == IBasicType.t_char);
+		assertTrue(((IBasicType) type).getKind() == IBasicType.Kind.eChar);
     }
 
     // enum anenum {
@@ -224,7 +217,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		ITypedef t= (ITypedef) b0;
 		IType type= t.getType();
 		assertTrue(type instanceof IBasicType);
-		assertTrue(((IBasicType) type).getType() == IBasicType.t_char);
+		assertTrue(((IBasicType) type).getKind() == IBasicType.Kind.eChar);
     }
 
     // struct st_20070703 {
@@ -395,7 +388,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		IParameter[] params= f.getParameters();
 		assertEquals(1, params.length);
 		assertTrue(params[0].getType() instanceof IBasicType);
-		assertEquals(IBasicType.t_int, ((IBasicType)params[0].getType()).getType());
+		assertEquals(IBasicType.Kind.eInt, ((IBasicType) params[0].getType()).getKind());
 	}
 	
 	//	typedef struct S S;

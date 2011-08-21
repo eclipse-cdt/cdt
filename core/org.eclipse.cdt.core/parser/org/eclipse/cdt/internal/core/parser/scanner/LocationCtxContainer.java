@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -56,7 +56,7 @@ class LocationCtxContainer extends LocationCtx {
 	}
 
 	public char[] getSource(int offset, int length) {
-		if (fSource.isValidOffset(offset+length-1)) {
+		if (fSource.isValidOffset(offset + length - 1)) {
 			char[] result= new char[length];
 			fSource.arraycopy(offset, result, 0, length);
 			return result;
@@ -73,12 +73,11 @@ class LocationCtxContainer extends LocationCtx {
 	public final int getSequenceNumberForOffset(int offset, boolean checkChildren) {
 		int result= fSequenceNumber + fChildSequenceLength + offset;
 		if (checkChildren && fChildren != null) {
-			for (int i= fChildren.size()-1; i >= 0; i--) {
+			for (int i= fChildren.size() - 1; i >= 0; i--) {
 				final LocationCtx child= fChildren.get(i);
 				if (child.fEndOffsetInParent > offset) {	// child was inserted behind the offset, adjust sequence number
 					result-= child.getSequenceLength();
-				}
-				else {
+				} else {
 					return result;
 				}
 			}
@@ -93,7 +92,7 @@ class LocationCtxContainer extends LocationCtx {
 
 	@Override
 	public final LocationCtx findSurroundingContext(int sequenceNumber, int length) {
-		int testEnd= length > 1 ? sequenceNumber+length-1 : sequenceNumber;
+		int testEnd= length > 1 ? sequenceNumber + length - 1 : sequenceNumber;
 		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber, false);
 		if (child != null && child.fSequenceNumber+child.getSequenceLength() > testEnd) {
 			return child.findSurroundingContext(sequenceNumber, length);
@@ -103,7 +102,7 @@ class LocationCtxContainer extends LocationCtx {
 
 	@Override
 	public final LocationCtxMacroExpansion findEnclosingMacroExpansion(int sequenceNumber, int length) {
-		int testEnd= length > 1 ? sequenceNumber+length-1 : sequenceNumber;
+		int testEnd= length > 1 ? sequenceNumber + length - 1 : sequenceNumber;
 		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber, true);
 		if (child != null && child.fSequenceNumber+child.getSequenceLength() > testEnd) {
 			return child.findEnclosingMacroExpansion(sequenceNumber, length);
@@ -129,9 +128,9 @@ class LocationCtxContainer extends LocationCtx {
 	@Override
 	public ASTFileLocation findMappedFileLocation(int sequenceNumber, int length) {
 		// try to delegate to a child.
-		int testEnd= length > 1 ? sequenceNumber+length-1 : sequenceNumber;
+		int testEnd= length > 1 ? sequenceNumber + length - 1 : sequenceNumber;
 		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber, false);
-		if (child != null && child.fSequenceNumber+child.getSequenceLength() > testEnd) {
+		if (child != null && child.fSequenceNumber + child.getSequenceLength() > testEnd) {
 			return child.findMappedFileLocation(sequenceNumber, length);
 		}
 		return super.findMappedFileLocation(sequenceNumber, length);
@@ -139,7 +138,7 @@ class LocationCtxContainer extends LocationCtx {
 
 	@Override
 	public boolean collectLocations(int sequenceNumber, final int length, ArrayList<IASTNodeLocation> locations) {
-		final int endSequenceNumber= sequenceNumber+length;
+		final int endSequenceNumber= sequenceNumber + length;
 		if (fChildren != null) {
 			int childIdx= Math.max(0, findChildIdxLessOrEqualThan(sequenceNumber, false));
 			for (; childIdx < fChildren.size(); childIdx++) {
@@ -151,18 +150,18 @@ class LocationCtxContainer extends LocationCtx {
 					final int offset= child.fEndOffsetInParent - (child.fSequenceNumber - sequenceNumber);
 					// it the child is not affected, we are done.
 					if (endSequenceNumber <= child.fSequenceNumber) {
-						addFileLocation(offset, endSequenceNumber-sequenceNumber, locations);
+						addFileLocation(offset, endSequenceNumber - sequenceNumber, locations);
 						return true;
 					}
 					if (offset < child.fOffsetInParent)
-						addFileLocation(offset, child.fOffsetInParent-offset, locations);
+						addFileLocation(offset, child.fOffsetInParent - offset, locations);
 					sequenceNumber= child.fSequenceNumber;
 				}
 
 				// let the child create locations
 				final int childEndSequenceNumber= child.fSequenceNumber + child.getSequenceLength();
 				if (sequenceNumber < childEndSequenceNumber) {
-					if (child.collectLocations(sequenceNumber, endSequenceNumber-sequenceNumber, locations)) {
+					if (child.collectLocations(sequenceNumber, endSequenceNumber - sequenceNumber, locations)) {
 						return true;
 					}
 					sequenceNumber= childEndSequenceNumber;
@@ -174,10 +173,10 @@ class LocationCtxContainer extends LocationCtx {
 		final int myEndNumber = fSequenceNumber + getSequenceLength();
 		final int offset= fSource.getLength() - (myEndNumber - sequenceNumber);
 		if (endSequenceNumber <= myEndNumber) {
-			addFileLocation(offset, endSequenceNumber-sequenceNumber, locations);
+			addFileLocation(offset, endSequenceNumber - sequenceNumber, locations);
 			return true;
 		}
-		addFileLocation(offset, fSource.getLength()-offset, locations);
+		addFileLocation(offset, fSource.getLength() - offset, locations);
 		return false;
 	}
 	
@@ -200,20 +199,19 @@ class LocationCtxContainer extends LocationCtx {
 		int upper= fChildren.size();
 		int lower= 0;
 		while (upper > lower) {
-			int middle= (upper+lower)/2;
+			int middle= (upper + lower) / 2;
 			LocationCtx child= fChildren.get(middle);
 			int childSequenceNumber= child.fSequenceNumber;
 			if (beforeReplacedChars) {
-				childSequenceNumber-= child.fEndOffsetInParent-child.fOffsetInParent; 
+				childSequenceNumber-= child.fEndOffsetInParent - child.fOffsetInParent; 
 			}
 			if (childSequenceNumber <= sequenceNumber) {
-				lower= middle+1;
-			}
-			else {
+				lower= middle + 1;
+			} else {
 				upper= middle;
 			}
 		}
-		return lower-1;
+		return lower - 1;
 	}
 
 	final LocationCtx findChildLessOrEqualThan(final int sequenceNumber, boolean beforeReplacedChars) {
@@ -227,8 +225,7 @@ class LocationCtxContainer extends LocationCtx {
 			for (LocationCtx ctx : fChildren) {
 				if (ctx.getInclusionStatement() != null) {
 					result.add(new ASTInclusionNode(ctx));
-				}
-				else {
+				} else {
 					ctx.getInclusions(result);
 				}
 			}

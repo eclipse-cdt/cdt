@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -46,10 +46,10 @@ class LocationCtxMacroExpansion extends LocationCtx {
 	
 	@Override
 	public boolean collectLocations(int start, int length, ArrayList<IASTNodeLocation> locations) {
-		final int offset= start-fSequenceNumber;
+		final int offset= start - fSequenceNumber;
 		assert offset >= 0 && length >= 0;
 		
-		if (offset+length <= fLength) {
+		if (offset + length <= fLength) {
 			locations.add(new ASTMacroExpansionLocation(this, offset, length));
 			return true;
 		}
@@ -87,18 +87,15 @@ class LocationCtxMacroExpansion extends LocationCtx {
 			if (info.fTokenOffsetInExpansion == nextToCheck) {
 				if (firstInfo == null || lastInfo == null) {
 					firstInfo= lastInfo= info;
-				}
-				else if (lastInfo.canConcatenate(info)) {
+				} else if (lastInfo.canConcatenate(info)) {
 					lastInfo= info;
-				}
-				else {
+				} else {
 					return null;
 				}
 				if (++nextToCheck == end) {
 					return firstInfo.createLocation(fLocationMap, lastInfo);
 				}
-			}
-			else if (info.fTokenOffsetInExpansion > nextToCheck) {
+			} else if (info.fTokenOffsetInExpansion > nextToCheck) {
 				return null;
 			}
 		}
@@ -109,5 +106,3 @@ class LocationCtxMacroExpansion extends LocationCtx {
 		return fLocationMap.getNestedMacroReferences((ASTMacroExpansion) fExpansionName.getParent());
 	}
 }
-
-

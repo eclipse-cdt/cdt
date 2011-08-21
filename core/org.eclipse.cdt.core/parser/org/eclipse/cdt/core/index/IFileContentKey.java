@@ -14,13 +14,17 @@ import java.util.Map;
 
 /**
  * A key that uniquely determines the preprocessed content of a file. 
+
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ *
  * @since 5.4
  */
 public interface IFileContentKey {
 	/**
 	 * Returns an IIndexFileLocation representing the location of the file.
 	 */
-	IIndexFileLocation getLocation();
+	public IIndexFileLocation getLocation();
 
 	/**
 	 * Returns the names and definitions of the macros that affect the preprocessed contents of
@@ -28,12 +32,21 @@ public interface IFileContentKey {
 	 * <code>null</code> values in the map. May return <code>null</code> if the relevant macros are
 	 * unknown.
 	 */
-	Map<String, String> getRelevantMacros();
+	public Map<String, String> getRelevantMacros();
 
 	/**
 	 * Returns the name of the macro that, if defined, makes the preprocessed contents of the file
 	 * not contain any code irrespectively of other macros. Returns <code>null</code> if the file
 	 * does not have the include guard macro.
 	 */
-	String getIncludeGuardMacro();
+	public String getIncludeGuardMacro();
+
+	/**
+	 * Selects relevant macros from a given macro dictionary. May return <code>null</code> if
+	 * the relevant macros are unknown.
+	 * @param macroDictionary macros and their definitions.
+	 * @return Relevant macros and their definitions. Undefined macros have <code>null</code> values
+	 * 	   in the map. 
+	 */
+	public Map<String, String> selectRelevantMacros(Map<String, String> macroDictionary);
 }

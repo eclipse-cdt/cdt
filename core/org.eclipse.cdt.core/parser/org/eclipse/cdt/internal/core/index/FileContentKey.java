@@ -14,7 +14,9 @@ import org.eclipse.cdt.core.index.IFileContentKey;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A key that uniquely determines the preprocessed contents of a file. 
@@ -68,6 +70,34 @@ public class FileContentKey implements IFileContentKey {
 
 	public String getIncludeGuardMacro() {
 		return includeGuardMacro;
+	}
+
+	public Map<String, String> selectRelevantMacros(Map<String, String> macroDictionary) {
+		if (relevantMacros == null) {
+			return null;
+		}
+		return selectRelevantMacros(relevantMacros.keySet(), includeGuardMacro, macroDictionary);
+	}
+
+	/**
+	 * Selects relevant macros from a given macro dictionary.
+	 * @param relevantMacroNames the names of the relevant macros.
+	 * @param includeGuardMacro the name of the include guard macro.
+	 * @param macroDictionary macros and their definitions.
+	 * @return Relevant macros and their definitions. Undefined macros have <code>null</code> values
+	 * 	   in the map. 
+	 */
+	public static Map<String, String> selectRelevantMacros(Set<String> relevantMacroNames,
+			String includeGuardMacro, Map<String, String> macroDictionary) {
+		if (relevantMacroNames.isEmpty()) {
+			return Collections.emptyMap();
+		}
+		Map<String, String> relevant = new HashMap<String, String>(relevantMacroNames.size());
+		for (String key : relevantMacroNames) {
+			String value = key.equals(includeGuardMacro) ? null : macroDictionary.get(key);
+			relevant.put(key, value);
+		}
+		return relevant;
 	}
 
 	@Override

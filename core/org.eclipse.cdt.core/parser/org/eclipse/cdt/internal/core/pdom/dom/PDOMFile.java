@@ -17,7 +17,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -823,18 +822,14 @@ public class PDOMFile implements IIndexFragmentFile {
 				cmp= db.getInt(record + PDOMFile.LINKAGE_ID) - linkageID;
 				if (cmp == 0 && macroDictionary != null) {
 					IString relevantMacrosStr = getString(record + RELEVANT_MACROS);
-					if (rawRelevantMacros == null) {
-						Map<String, String> fileRelevantMacros = Collections.emptyMap();
-						if (relevantMacrosStr != null) {
-							fileRelevantMacros = StringMapEncoder.decodeMap(relevantMacrosStr.getChars());
-						}
+					if (rawRelevantMacros == null && relevantMacrosStr != null) {
+						Map<String, String> fileRelevantMacros =
+								StringMapEncoder.decodeMap(relevantMacrosStr.getChars());
 						IString str = getString(record + INCLUDE_GUARD_MACRO);
 						String includeGuardMacro = str != null ? str.getString() : null;
-						Map<String, String> relevantMacros = new HashMap<String, String>(fileRelevantMacros.size());
-						for (String key : fileRelevantMacros.keySet()) {
-							String value = key.equals(includeGuardMacro) ? null : macroDictionary.get(key); 
-							relevantMacros.put(key, value);
-						}
+						Map<String, String> relevantMacros =
+								FileContentKey.selectRelevantMacros(fileRelevantMacros.keySet(),
+										includeGuardMacro, macroDictionary);
 						rawRelevantMacros = relevantMacros.isEmpty() ?
 								EMPTY_CHAR_ARRAY :
 								StringMapEncoder.encode(relevantMacros);
@@ -842,7 +837,7 @@ public class PDOMFile implements IIndexFragmentFile {
 					if (relevantMacrosStr != null) {
 						cmp = relevantMacrosStr.compare(rawRelevantMacros, true);
 					} else {
-						cmp = rawRelevantMacros.length > 0 ? -1 : 0;
+						cmp = rawRelevantMacros != null && rawRelevantMacros.length > 0 ? -1 : 0;
 					}
 				}
 			}

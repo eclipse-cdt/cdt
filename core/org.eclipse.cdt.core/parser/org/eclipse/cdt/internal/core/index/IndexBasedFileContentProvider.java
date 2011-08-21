@@ -112,15 +112,9 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		if (fileKey == null) {
 			return false;
 		}
-		Map<String, String> fileRelevantMacros = fileKey.getRelevantMacros();
-		if (fileRelevantMacros == null) {
+		Map<String, String> relevantMacros = fileKey.selectRelevantMacros(macroDictionary);
+		if (relevantMacros == null) {
 			return true;
-		}
-		Map<String, String> relevantMacros = new HashMap<String, String>(fileRelevantMacros.size());
-		for (String key : fileRelevantMacros.keySet()) {
-			String value = key.equals(fileKey.getIncludeGuardMacro()) ?
-					null : macroDictionary.get(key); 
-			relevantMacros.put(key, value);
 		}
 		fileKey = new FileContentKey(ifl, relevantMacros, fileKey.getIncludeGuardMacro());
 		return fIncludedFiles.contains(fileKey);

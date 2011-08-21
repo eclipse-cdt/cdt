@@ -57,6 +57,18 @@ class TokenList {
 			}
 		}
 	}
+	
+	public final void prepend(Token t) {
+		final Token first= t;
+		if (first != null) {
+			final Token last= t;
+			last.setNext(fFirst);
+			fFirst= first;
+			if (fLast == null) {
+				fLast= last;
+			}
+		}
+	}
 
 	public final void prepend(TokenList prepend) {
 		final Token first= prepend.fFirst;

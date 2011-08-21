@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -111,7 +110,7 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
 	/**
 	 * Maps structs from the index into this AST.
 	 */
-	public IType mapToASTType(ICompositeType type) {
+	public ICompositeType mapToASTType(ICompositeType type) {
 		return fStructMapper.mapToAST(type);
 	}
 }

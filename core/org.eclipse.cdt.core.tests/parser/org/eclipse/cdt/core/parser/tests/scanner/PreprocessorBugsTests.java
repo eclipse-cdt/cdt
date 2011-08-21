@@ -326,5 +326,19 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
-
+	
+	//	#define foo(x) (## x)
+	//	void test foo(void);  // Valid for Microsoft's compiler, expands to (void)
+	public void testInvalidTokenPasting_Bug354553() throws Exception {
+		initializeScanner();
+		validateToken(IToken.t_void);
+		validateIdentifier("test");
+		validateToken(IToken.tLPAREN);
+		validateToken(IToken.t_void);
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblem(0, IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, "foo");
+		validateProblemCount(1);
+	}
 }

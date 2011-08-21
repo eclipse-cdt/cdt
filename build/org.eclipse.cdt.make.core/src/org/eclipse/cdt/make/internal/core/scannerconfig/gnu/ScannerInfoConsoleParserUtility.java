@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,9 +87,13 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 		}
 		
 		if (file!=null) {
-			String filePath = new Path(fileName).toString();
-			String foundLocation = file.getLocation().toString();
-			if (!foundLocation.endsWith(filePath)) {
+			IPath filePath = new Path(fileName);
+			if(filePath.segment(0).compareTo("..") == 0) {  //$NON-NLS-1$
+				filePath = filePath.removeFirstSegments(1);
+			}
+			
+			String foundLocation = file.getLocationURI().toString();
+			if (!foundLocation.endsWith(filePath.toString())) {
 				file = null;
 			}
 		}

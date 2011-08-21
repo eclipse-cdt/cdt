@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.resources;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -85,7 +86,11 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 				}
 			}
 			
-			IMarker marker = markerResource.createMarker(ICModelMarker.C_MODEL_PROBLEM_MARKER);
+			String type = problemMarkerInfo.getType();
+			if (type == null)
+				type = ICModelMarker.C_MODEL_PROBLEM_MARKER;
+
+			IMarker marker = markerResource.createMarker(type);
 			marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
 			marker.setAttribute(IMarker.SEVERITY, mapMarkerSeverity(problemMarkerInfo.severity));
 			marker.setAttribute(IMarker.LINE_NUMBER, problemMarkerInfo.lineNumber);
@@ -104,6 +109,14 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 				}
 			} else if (problemMarkerInfo.lineNumber==0){
 				marker.setAttribute(IMarker.LOCATION, " "); //$NON-NLS-1$
+			}
+
+			// Add all other client defined attributes.
+			Map<String, String> attributes = problemMarkerInfo.getAttributes();
+			if (attributes != null){
+				for (Entry<String, String> entry : attributes.entrySet()) {
+					marker.setAttribute(entry.getKey(), entry.getValue());
+				}
 			}
 		}
 		catch (CoreException e) {

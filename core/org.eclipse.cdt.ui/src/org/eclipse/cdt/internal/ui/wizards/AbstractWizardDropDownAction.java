@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,13 +71,11 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 
 	public Menu getMenu(Control parent) {
 		synchronized(fLock) {
-			if (fMenu == null) {
-				fMenu= new Menu(parent);
-				IAction[] actions= getActions();
-				for (int i= 0; i < actions.length; i++) {
-					ActionContributionItem item= new ActionContributionItem(actions[i]);
-					item.fill(fMenu, -1);				
-				}
+			fMenu= new Menu(parent);
+			IAction[] actions= getActions();
+			for (int i= 0; i < actions.length; i++) {
+				ActionContributionItem item= new ActionContributionItem(actions[i]);
+				item.fill(fMenu, -1);
 			}
 			return fMenu;
 		}
@@ -110,13 +108,12 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 	
 	private IAction[] getActions() {
 		synchronized(fLock) {
-		    if (fActions == null) {
-		        fActions = getWizardActions();
-			    if (fActions == null)
-			        fActions = NO_ACTIONS;
-	
-			    //TODO provide a way to sort the actions
-		    }
+	        fActions = getWizardActions();
+		    if (fActions == null)
+		        fActions = NO_ACTIONS;
+
+		    //TODO provide a way to sort the actions
+
 		    return fActions;
 		}
 	}

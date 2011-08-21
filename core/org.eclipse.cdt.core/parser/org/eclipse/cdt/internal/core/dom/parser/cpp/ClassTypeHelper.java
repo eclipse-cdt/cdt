@@ -425,7 +425,7 @@ public class ClassTypeHelper {
 		IField[] fields = ct.getDeclaredFields();
 		ICPPClassType[] bases = getAllBases(ct);
 		for (ICPPClassType base : bases) {
-			fields = (IField[]) ArrayUtil.addAll(IField.class, fields, base.getFields());
+			fields = (IField[]) ArrayUtil.addAll(IField.class, fields, base.getDeclaredFields());
 		}
 		return (IField[]) ArrayUtil.trim(IField.class, fields);
 	}

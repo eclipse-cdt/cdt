@@ -23,6 +23,7 @@ import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
+import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -220,7 +221,7 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 					// appending fileName to cwd should yield file path
 					filePath = cwd.append(fileName);
 				}
-				if (!filePath.toString().equalsIgnoreCase(file.getLocation().toString())) {
+				if (!filePath.toString().equalsIgnoreCase(EFSExtensionManager.getDefault().getPathFromURI(file.getLocationURI()))) {
 					// must be the cwd is wrong
 					// check if file name starts with ".."
 					if (fileName.startsWith("..")) {	//$NON-NLS-1$

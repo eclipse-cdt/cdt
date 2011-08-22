@@ -238,7 +238,7 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 							tPath = tPath.removeFirstSegments(1);
 						}
 						// get the file path from the file
-						filePath = file.getLocation();
+						filePath = new Path(EFSExtensionManager.getDefault().getPathFromURI(file.getLocationURI()));
 						IPath lastFileSegment = filePath.removeFirstSegments(filePath.segmentCount() - tPath.segmentCount());
 						if (lastFileSegment.matchingFirstSegments(tPath) == tPath.segmentCount()) {
 							cwd = filePath.removeLastSegments(tPath.segmentCount());

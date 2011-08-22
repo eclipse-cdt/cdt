@@ -71,21 +71,17 @@ public class CModelUtil {
 	 */
 	public static ICContainer getSourceFolder(ICElement element) {
 		ICContainer folder = null;
-	    if (element != null) {
-			boolean foundSourceRoot = false;
+		if (element != null) {
 			ICElement curr = element;
-			while (curr != null && !foundSourceRoot) {
-				if (curr instanceof ICContainer && folder == null) {
-				    folder = (ICContainer)curr;
-				}
-				foundSourceRoot = (curr instanceof ISourceRoot);
+			while (curr != null && !(curr instanceof ISourceRoot)) {
 				curr = curr.getParent();
 			}
+			folder = (ISourceRoot)curr;
 			if (folder == null) {
 			    ICProject cproject = element.getCProject();
 				folder = cproject.findSourceRoot(cproject.getProject());
 			}
-	    }
+		}
 		return folder;
 	}
 	

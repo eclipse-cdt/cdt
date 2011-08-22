@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- *    Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -56,59 +56,54 @@ import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
  * Handles the extraction of expression nodes, like return type determination.
  * 
  * @author Mirko Stocker
- * 
  */
 public class ExtractExpression extends ExtractedFunctionConstructionHelper {
-	
-	final static char[] ZERO= {'0'};
+	final static char[] ZERO= { '0' };
 
 	@Override
-	public void constructMethodBody(IASTCompoundStatement compound,
-			List<IASTNode> list, ASTRewrite rewrite, TextEditGroup group) {
-
+	public void constructMethodBody(IASTCompoundStatement compound, List<IASTNode> list,
+			ASTRewrite rewrite, TextEditGroup group) {
 		CPPASTReturnStatement statement = new CPPASTReturnStatement();
 		IASTExpression nullReturnExp = new CPPASTLiteralExpression(IASTLiteralExpression.lk_integer_constant, ZERO); 
 		statement.setReturnValue(nullReturnExp);
 		ASTRewrite nestedRewrite = rewrite.insertBefore(compound, null, statement, group);
 		
 		nestedRewrite.replace(nullReturnExp, getExpression(list), group);
-		
 	}
 
 	private IASTExpression getExpression(List<IASTNode> list) {
-		if(list.size()> 1 ) {
+		if (list.size()> 1) {
 			CPPASTBinaryExpression bExp = new CPPASTBinaryExpression();
 			bExp.setParent(list.get(0).getParent());
 			bExp.setOperand1((IASTExpression) list.get(0).copy(CopyStyle.withLocations));
 			bExp.setOperator(((IASTBinaryExpression)list.get(1).getParent()).getOperator());
 			bExp.setOperand2(getExpression(list.subList(1, list.size())));
 			return bExp;
-		}else {
+		} else {
 			return (IASTExpression) list.get(0).copy(CopyStyle.withLocations);
 		}
-		
 	}
 
 	@Override
 	public IASTDeclSpecifier determineReturnType(IASTNode extractedNode, NameInformation _) {
-		List<ITypedef> typdefs = getTypdefs(extractedNode);
+		List<ITypedef> typedefs = getTypedefs(extractedNode);
 		if (extractedNode instanceof IASTExpression) {
 			IASTExpression exp = (IASTExpression) extractedNode;
 			INodeFactory factory = extractedNode.getTranslationUnit().getASTNodeFactory();
 			DeclarationGenerator generator = DeclarationGenerator.create(factory);
 			IType expressionType = exp.getExpressionType();
-			for (ITypedef typedef : typdefs) {
+			for (ITypedef typedef : typedefs) {
 				if (typedef.getType().isSameType(expressionType)) {
 					return generator.createDeclSpecFromType(typedef);
 				}
 			}
 			return generator.createDeclSpecFromType(expressionType);
-		} else {// Fallback
+		} else { // Fallback
 			return createSimpleDeclSpecifier(Kind.eVoid);
 		}
 	}
 
-	private List<ITypedef> getTypdefs(IASTNode extractedNode) {
+	private List<ITypedef> getTypedefs(IASTNode extractedNode) {
 		final ArrayList<ITypedef> typeDefs = new ArrayList<ITypedef>();
 		extractedNode.accept(new ASTVisitor() {
 			{
@@ -148,10 +143,10 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 		IASTExpression functionNameExpression = callExpression.getFunctionNameExpression();
 		IASTName functionName = null;
 		
-		if(functionNameExpression instanceof CPPASTIdExpression) {
+		if (functionNameExpression instanceof CPPASTIdExpression) {
 			CPPASTIdExpression idExpression = (CPPASTIdExpression) functionNameExpression;
 			functionName = idExpression.getName();
-		} else  if(functionNameExpression instanceof CPPASTFieldReference) {
+		} else if (functionNameExpression instanceof CPPASTFieldReference) {
 			CPPASTFieldReference fieldReference = (CPPASTFieldReference) functionNameExpression;
 			functionName = fieldReference.getFieldName();
 		}		
@@ -160,28 +155,29 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 
 	@Override
 	protected boolean isReturnTypeAPointer(IASTNode node) {
-		if(node instanceof ICPPASTNewExpression) {
+		if (node instanceof ICPPASTNewExpression) {
 			return true;
-		} else if(!(node instanceof IASTFunctionCallExpression)) {
+		} else if (!(node instanceof IASTFunctionCallExpression)) {
 			return false;
 		}
 
 		IASTName functionName = findCalledFunctionName((IASTFunctionCallExpression) node);
-		if(functionName != null) {
+		if (functionName != null) {
 			IBinding binding = functionName.resolveBinding();
 			if (binding instanceof CPPFunction) {
 				CPPFunction function =  (CPPFunction) binding;
-				if(function.getDefinition() != null) {
+				if (function.getDefinition() != null) {
 					IASTNode parent = function.getDefinition().getParent();
-					if(parent instanceof CPPASTFunctionDefinition) {
+					if (parent instanceof CPPASTFunctionDefinition) {
 						CPPASTFunctionDefinition definition = (CPPASTFunctionDefinition) parent;
 						return definition.getDeclarator().getPointerOperators().length > 0;
 					}
-				} else if(hasDeclaration(function)) {
+				} else if (hasDeclaration(function)) {
 					IASTNode parent = function.getDeclarations()[0].getParent();
 					if (parent instanceof CPPASTSimpleDeclaration) {
 						CPPASTSimpleDeclaration declaration = (CPPASTSimpleDeclaration) parent;
-						return declaration.getDeclarators().length > 0 && declaration.getDeclarators()[0].getPointerOperators().length > 0;
+						return declaration.getDeclarators().length > 0 &&
+								declaration.getDeclarators()[0].getPointerOperators().length > 0;
 					}
 				}
 			}

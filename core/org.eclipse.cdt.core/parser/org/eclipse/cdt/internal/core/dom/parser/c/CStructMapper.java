@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 
 /**
@@ -56,7 +55,7 @@ public class CStructMapper {
 		fTranslationUnit= tu;
 	}
 
-	public IType mapToAST(ICompositeType type) {
+	public ICompositeType mapToAST(ICompositeType type) {
 		if (fStructs == null) {
 			fStructs= new CharArrayMap<IASTName>();
 			fTranslationUnit.accept(new Visitor());

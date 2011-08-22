@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -96,7 +96,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 			setIndex(cprojA, REFD);	assertBCount(1, 1);
 			setIndex(cprojA, BOTH);	assertBCount(2, 2);
 		} finally {
-			for(Iterator i = projects.iterator(); i.hasNext(); )
+			for (Iterator i = projects.iterator(); i.hasNext();)
 				((ICProject)i.next()).getProject().delete(true, true, new NullProgressMonitor());
 		}
 	}
@@ -203,7 +203,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 			assertNamespaceXMemberCount(5);
 			assertFieldCount("C1", 1);
 		} finally {
-			for(Iterator i = projects.iterator(); i.hasNext(); )
+			for (Iterator i = projects.iterator(); i.hasNext();)
 				((ICProject)i.next()).getProject().delete(true, true, new NullProgressMonitor());
 		}
 	}
@@ -226,8 +226,6 @@ public class IndexCompositeTests  extends BaseTestCase {
 	public void testTripleUpwardV() throws Exception {
 		CharSequence[] contents = getContentsForTest(3);
 		List projects = new ArrayList();
-
-		
 		
 		try {
 			ProjectBuilder pb = new ProjectBuilder("projB"+System.currentTimeMillis(), true);
@@ -294,7 +292,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 			assertBCount(7+4+4-2, 7+4+4-2 +2+1+1);
 			assertNamespaceXMemberCount(4);
 		} finally {
-			for(Iterator i = projects.iterator(); i.hasNext(); )
+			for (Iterator i = projects.iterator(); i.hasNext();)
 				((ICProject)i.next()).getProject().delete(true, true, new NullProgressMonitor());
 		}
 	}
@@ -349,7 +347,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 			assertBCount(6, 6+1);
 			assertNamespaceXMemberCount(1);
 			setIndex(cprojC, REFD);
-			assertBCount(6+4+1-1, 6+4+1-1 +1+1+1+1 );
+			assertBCount(6+4+1-1, 6+4+1-1 +1+1+1+1);
 			assertNamespaceXMemberCount(4);
 			setIndex(cprojC, BOTH);
 			assertBCount(6+4+3-2, 6+4+3-2 +1+2+1);
@@ -375,24 +373,22 @@ public class IndexCompositeTests  extends BaseTestCase {
 			assertBCount(3, 3 +1);
 			assertNamespaceXMemberCount(1);
 			setIndex(cprojA, REFD);
-			assertBCount(4+2+3-1-1, 4+2+3-1-1 +2+1 );
+			assertBCount(4+2+3-1-1, 4+2+3-1-1 +2+1);
 			assertNamespaceXMemberCount(4);
 			setIndex(cprojA, BOTH);
 			assertBCount(6+4+3-2, 6+4+3-2 +1+2+1);
 			assertNamespaceXMemberCount(4);
 		} finally {
-			for(Iterator i = projects.iterator(); i.hasNext(); )
+			for (Iterator i = projects.iterator(); i.hasNext();)
 				((ICProject)i.next()).getProject().delete(true, true, new NullProgressMonitor());
 		}
 	}
 	
 	/**
 	 * Asserts binding counts, and returns the index tested against
-	 * @param cprojA the project to obtain the index for
-	 * @param options the options to obtain the index for
 	 * @param global the number of bindings expected to be found at global scope
 	 * @param all the number of bindings expected to be found at all scopes
-	 * @return
+	 * @return the index
 	 * @throws CoreException
 	 */
 	private IIndex assertBCount(int global, int all) throws CoreException {
@@ -416,7 +412,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 	}
 	
 	private void setIndex(ICProject project, int options) throws CoreException, InterruptedException {
-		if(index!=null) {
+		if (index != null) {
 			index.releaseReadLock();
 		}
 		index = CCorePlugin.getIndexManager().getIndex(project, options);
@@ -424,7 +420,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 	}
 	
 	protected void tearDown() throws Exception {
-		if(index!=null) {
+		if (index != null) {
 			index.releaseReadLock();
 		}
 		super.tearDown();
@@ -456,16 +452,17 @@ class ProjectBuilder {
 	}
 
 	ICProject create() throws CoreException {
-		ICProject result = cpp ? CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER)
-				: CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
+		ICProject result = cpp ?
+				CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER) :
+				CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
 
-		for(Iterator i = path2content.entrySet().iterator(); i.hasNext(); ) {
+		for (Iterator i = path2content.entrySet().iterator(); i.hasNext();) {
 			Map.Entry entry = (Map.Entry) i.next();
 			TestSourceReader.createFile(result.getProject(), new Path((String)entry.getKey()), (String) entry.getValue());
 		}
 
 		IProjectDescription desc = result.getProject().getDescription();
-		desc.setReferencedProjects( (IProject[]) dependencies.toArray(new IProject[dependencies.size()]) );
+		desc.setReferencedProjects((IProject[]) dependencies.toArray(new IProject[dependencies.size()]));
 		result.getProject().setDescription(desc, new NullProgressMonitor());
 
 		CCorePlugin.getIndexManager().setIndexerId(result, IPDOMManager.ID_FAST_INDEXER);

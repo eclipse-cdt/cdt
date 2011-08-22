@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -1829,5 +1830,40 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertTrue(reference instanceof ICPPSpecialization);
 	}
 
+	//  template<typename T> struct Base {
+	//     int bfield;
+	//     void bmethod();
+	//  };
+	//	template<typename T> struct XT : Base<T> {
+	//     int field;
+	//     void method() {};
+	//     friend void f();
+	//     struct Nested {};
+	//  };
+	//  struct TXT : XT<int> {};
+	
+	// TXT x;
+	public void testClassSpecialization_Bug354086() throws Exception {
+		ICPPClassType ct= getBindingFromASTName("TXT", 0, ICPPClassType.class);
+		ICPPMethod[] methods = ct.getAllDeclaredMethods();
+		assertEquals(2, methods.length);
+		
+		methods= ct.getConstructors();
+		assertEquals(2, methods.length);
 
+		methods= ct.getMethods();
+		assertEquals(14, methods.length);
+		
+		ICPPBase[] bases = ct.getBases();
+		assertEquals(1, bases.length);
+		
+		IField field = ct.findField("bfield");
+		assertNotNull(field);
+
+		IField[] fields = ct.getFields();
+		assertEquals(2, fields.length);
+
+		IBinding[] friends = ct.getFriends();
+		assertEquals(0, friends.length); // not yet supported
+	}
 }

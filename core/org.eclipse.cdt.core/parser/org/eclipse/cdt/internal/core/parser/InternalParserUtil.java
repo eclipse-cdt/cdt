@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -154,6 +155,20 @@ public class InternalParserUtil extends ParserFactory {
 		InputStream in;
 		try {
 			in= file.getContents(true);
+			if (!(in instanceof FileInputStream)) {
+				/*
+				 * In general, non-local file-systems will not use FileInputStream. Instead make a
+				 * cached copy of the file and open an input stream to that.
+				 */
+				IFileStore store = EFS.getStore(file.getLocationURI());
+				File fileCache = store.toLocalFile(EFS.CACHE, null);
+				try {
+					in = new FileInputStream(fileCache);
+				} catch (FileNotFoundException e) {
+					CCorePlugin.log(e);
+					return null;
+				}
+			}
 			try {
 				return createFileContent(path, file.getCharset(), in);
 			} finally {
@@ -168,6 +183,7 @@ public class InternalParserUtil extends ParserFactory {
 			case IResourceStatus.NO_LOCATION_LOCAL:
 			case IResourceStatus.FAILED_READ_LOCAL:
 			case IResourceStatus.RESOURCE_NOT_LOCAL:
+			case IResourceStatus.RESOURCE_NOT_FOUND:
 				break;
 			default:
 				CCorePlugin.log(e);
@@ -221,6 +237,9 @@ public class InternalParserUtil extends ParserFactory {
 	private static InternalFileContent createFileContent(String path, String charset, InputStream in) {
 		try {
 			AbstractCharArray chars= FileCharArray.create(path, charset, in);
+			if (chars == null)
+				return null;
+			
 			return new InternalFileContent(path, chars);
 		} catch (IOException e) {
 			CCorePlugin.log(e);

@@ -9480,4 +9480,16 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testAmbiguityResolution_Bug354599() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	void (g)(char);
+	//	void (g )(int);
+	//	void (g  )(int);
+	public void testFunctionRedeclarations() throws Exception {
+		BindingAssertionHelper bh= getAssertionHelper();
+		IFunction g1= bh.assertNonProblem("g)", 1); 
+		IFunction g2= bh.assertNonProblem("g )", 1); 
+		IFunction g3= bh.assertNonProblem("g  )", 1);
+		assertNotSame(g1, g2);
+		assertSame(g2, g3);
+	}
 }

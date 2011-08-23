@@ -163,7 +163,7 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 		}
 	}
 
-	public boolean mergeToExplicit(CPPTemplateParameterMap deducedMap) {
+	public boolean addDeducedArgs(CPPTemplateParameterMap deducedMap) {
 		Integer[] keys= deducedMap.getAllParameterPositions();
 		for (Integer key : keys) {
 			Object explicit= fMap.get(key);

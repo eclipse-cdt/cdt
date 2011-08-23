@@ -633,13 +633,7 @@ public class CPPVisitor extends ASTQueries {
 		boolean isFriendDecl= false;
 		ICPPScope scope = (ICPPScope) getContainingNonTemplateScope(name);
 		if (scope instanceof ICPPClassScope) {
-			if (parent instanceof IASTSimpleDeclaration) {
-				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) parent).getDeclSpecifier();
-				isFriendDecl= declSpec.isFriend();
-			} else if (parent instanceof IASTFunctionDefinition) {
-				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition) parent).getDeclSpecifier();
-				isFriendDecl= declSpec.isFriend();
-			}
+			isFriendDecl = isFriendDeclaration(parent);
 			if (isFriendDecl) {
 				try {
 					while (scope.getKind() == EScopeKind.eClassType) {
@@ -751,6 +745,18 @@ public class CPPVisitor extends ASTQueries {
         }
         
 		return binding;
+	}
+
+	public static boolean isFriendDeclaration(IASTNode decl) {
+		IASTDeclSpecifier declSpec;
+		if (decl instanceof IASTSimpleDeclaration) {
+			declSpec = ((IASTSimpleDeclaration) decl).getDeclSpecifier();
+		} else if (decl instanceof IASTFunctionDefinition) {
+			declSpec = ((IASTFunctionDefinition) decl).getDeclSpecifier();
+		} else {
+			return false;
+		}
+		return declSpec instanceof ICPPASTDeclSpecifier && ((ICPPASTDeclSpecifier) declSpec).isFriend();
 	}
 
 	public static boolean isConstructor(IScope containingScope, IASTDeclarator declarator) {
@@ -2340,7 +2346,6 @@ public class CPPVisitor extends ASTQueries {
 	 */
 	public static IBinding findDeclarationOwner(IASTNode node, boolean allowFunction) {
 		// Search for declaration
-		boolean isFriend= false;
 		boolean isNonSimpleElabDecl= false;
 		while (!(node instanceof IASTDeclaration)) {
 			if (node == null)
@@ -2360,19 +2365,7 @@ public class CPPVisitor extends ASTQueries {
 			node= node.getParent();
 		}
 
-		if (node instanceof IASTSimpleDeclaration) {
-			final IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) node;
-			ICPPASTDeclSpecifier declSpec= (ICPPASTDeclSpecifier) sdecl.getDeclSpecifier();
-			if (declSpec.isFriend()) {
-				isFriend= true;
-			} 
-		} else if (node instanceof IASTFunctionDefinition) {
-			IASTFunctionDefinition funcDefinition = (IASTFunctionDefinition) node;
-			ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) funcDefinition.getDeclSpecifier();
-			if (declSpec.isFriend()) {
-				isFriend= true;
-			}
-		}
+		boolean isFriend= isFriendDeclaration(node);
 		
 		// Search for enclosing binding
 		IASTName name= null;
@@ -2407,26 +2400,6 @@ public class CPPVisitor extends ASTQueries {
 			return null;
 		
 		return name.resolveBinding();
-	}
-
-	/**
-	 * Check whether a given declaration is a friend function declaration.
-	 */
-	public static boolean isFriendFunctionDeclaration(IASTDeclaration declaration) {
-		while (declaration instanceof ICPPASTTemplateDeclaration) {
-			declaration= ((ICPPASTTemplateDeclaration) declaration).getDeclaration();
-		}
-		if (declaration instanceof IASTSimpleDeclaration) {
-			IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) declaration;
-			ICPPASTDeclSpecifier declspec= (ICPPASTDeclSpecifier) sdecl.getDeclSpecifier();
-			if (declspec.isFriend()) {
-				IASTDeclarator[] dtors= sdecl.getDeclarators();
-				if (dtors.length == 1 && findTypeRelevantDeclarator(dtors[0]) instanceof IASTFunctionDeclarator) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 
 	public static boolean doesNotSpecifyType(IASTDeclSpecifier declspec) {

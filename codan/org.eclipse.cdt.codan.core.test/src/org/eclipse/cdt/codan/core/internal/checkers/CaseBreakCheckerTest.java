@@ -62,7 +62,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	// }
 	public void testLastCaseBad() {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(4);
+		checkErrorLines(5);
 	}
 
 	// void foo(void) {
@@ -181,7 +181,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	// }
 	public void testEmptyLastCaseTwoSwitches() {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(3);
+		checkErrorLines(7);
 	}
 
 	// void foo(void) {
@@ -222,7 +222,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	// }
 	public void testLastCaseBadCommentNotLast() {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(4);
+		checkErrorLines(7);
 	}
 
 	// void foo(void) {
@@ -246,70 +246,74 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//  case 6:
 	//    b = 2;
 	//    /* no break1 */
+	//  case 7:
+	//    b = 2;
+	//    /* fallthrough */
 	//  }
 	// }
 	public void testDifferentComments() {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(16, 19);
+		checkErrorLines(17,23);
 	}
 
 	// void foo(void) {
 	//  int a, b;
 	//  switch( a ) {
-	//  case 1:
+	//  case 1: //err
 	//    // lolo
-	//  case 2:
-	//  case 3:
+	//  case 2: //err
+	//  case 3://err
 	//  }
 	//
 	//  switch( a ) {
 	//  case 1:
-	//    b = 2;
+	//    b = 2; // err
 	//    // lolo
 	//  case 2:
-	//    b = 2;
-	//  case 3:
+	//    b = 2; // err
+	//  case 3: // err
 	//  case 4:
 	//    break;
-	//  case 5:
-	//  case 6:
+	//  case 5: // err
+	//  case 6: // err
 	//  }
 	//
 	//  switch( a ) {
 	//  case 1:
-	//    b = 2;
+	//    b = 2; // err
 	//    // lolo
 	//  case 2:
-	//    b = 2;
+	//    b = 2; //err
 	//  case 3:
 	//    b = 2;
 	//    /* no break */
 	//  case 4:
-	//    b = 2;
+	//    b = 2; // err
 	//  case 5:
 	//    b = 2;
 	//    break;
 	//  case 6:
 	//    b = 2;
 	//    /* no break */
-	//    b = 2;
+	//    b = 2; //err
 	//  case 7:
-	//    b = 2;
+	//    b = 2;//err
 	//  }
 	//
 	//  switch( a ) {
 	//  case 1:
-	//    b = 2;
+	//    b = 2; // err
 	//    // lolo
 	//  case 2:
-	//    b = 2;
-	//  default:
+	//    b = 2; // err
+	//  default: //err
 	//  }
 	// }
 	public void testGeneral1() {
 		setEmpty(true);
+		setLast(true);
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(4, 6, 7, 11, 14, 16, 19, 20, 24, 27, 32, 37, 41, 46, 49, 51);
+		checkErrorComments();
 	}
 
 	// void foo(void) {
@@ -339,7 +343,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	// }
 	public void testGeneralComments1() {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(8, 12);
+		checkErrorLines(9, 14);
 	}
 
 	// void foo(void) {
@@ -347,14 +351,14 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//  switch( a ) {
 	//  case 0:
 	//    switch( b ) {
-	//    case 2:
-	//    }
+	//    case 2: // err
+	//    } // err
 	//
 	//  case 1:
 	//    switch( b ) {
 	//    case 2:
 	//      break;
-	//    }
+	//    } // err
 	//  case 3:
 	//    switch( b ) {
 	//    case 2:
@@ -365,17 +369,17 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    switch( b ) {
 	//    case 2:
 	//      /* no break */
-	//    }
+	//    } // err
 	//  case 5:
 	//    switch( b ) {
-	//    case 2:
+	//    case 2: // err
 	//    }
 	//    /* no break */
 	//  }
 	// }
 	public void testNestedSwitches() {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(4, 20, 6, 9, 27);
+		checkErrorComments();
 	}
 
 	// void foo(void) {
@@ -441,16 +445,16 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//   switch( a ) {
 	//   case 1:
 	//     while (a--)
-	//       break;
+	//       break; // err
 	//   case 2:
 	//     while (a--) {
 	//       break;
-	//     }
+	//     } // err
 	//   }
 	// }
 	public void testEmptyCaseWithLoopBreak() {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(3, 6);
+		checkErrorComments();
 	}
 
 	// void foo(int a) {
@@ -518,7 +522,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	public void testIfErr() {
 		String code = getAboveComment();
 		loadCodeAndRun(code);
-		checkErrorLine(3);
+		checkErrorLine(7);
 	}
 
 //	#define DEFINE_BREAK {break;}
@@ -568,6 +572,6 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		public void testEmptyCompoundStatement() {
 			String code = getAboveComment();
 			loadCodeAndRun(code);
-			checkErrorLine(4);
+			checkErrorLine(6);
 		}
 }

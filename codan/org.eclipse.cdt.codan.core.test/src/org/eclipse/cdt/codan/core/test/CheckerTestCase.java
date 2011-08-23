@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * method to get source directory for the tests,
  * default is "src". To make it read comment from java class, you need to
  * include this source directory (with test java files) into the build bundle.
- * 
+ *
  */
 @SuppressWarnings("nls")
 public class CheckerTestCase extends CodanTestCase {
@@ -48,6 +48,13 @@ public class CheckerTestCase extends CodanTestCase {
 			checkErrorLine((Integer) i);
 		}
 		assertEquals(args.length, markers.length);
+	}
+
+	public void checkErrorComments() {
+		for (Object i : errLines) {
+			checkErrorLine((Integer) i);
+		}
+		assertEquals("Expected number of errors "+errLines.size(),errLines.size(), markers.length);
 	}
 
 	public IMarker checkErrorLine(int i, String problemId) {
@@ -82,7 +89,7 @@ public class CheckerTestCase extends CodanTestCase {
 					break;
 			}
 		}
-		assertEquals(Integer.valueOf(expectedLine), line);
+		assertEquals("Error on line "+expectedLine+" is not found",Integer.valueOf(expectedLine), line);
 		if (file != null)
 			assertEquals(file.getName(), mfile);
 		assertTrue(found);

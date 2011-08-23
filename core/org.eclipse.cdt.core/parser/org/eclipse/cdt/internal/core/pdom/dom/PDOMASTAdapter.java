@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -73,6 +74,10 @@ public class PDOMASTAdapter {
 
 				public int getNodeOffset() {
 					return loc.getNodeOffset();
+				}
+
+				public IASTPreprocessorIncludeStatement getInclusionStatement() {
+					return null;
 				}
 			};
 		}

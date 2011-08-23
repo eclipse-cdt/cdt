@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
@@ -321,6 +322,10 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	public int getEndingLineNumber() {
 		return 0;
+	}
+
+	public IASTPreprocessorIncludeStatement getInclusionStatement() {
+		return null;
 	}
 
 	public IASTFileLocation asFileLocation() {

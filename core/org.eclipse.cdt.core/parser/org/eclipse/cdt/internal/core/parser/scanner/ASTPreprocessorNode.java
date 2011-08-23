@@ -597,6 +597,10 @@ class ASTFileLocation implements IASTFileLocation {
 	public LocationCtxFile getLocationContext() {
 		return fLocationCtx;
 	}
+
+	public IASTPreprocessorIncludeStatement getInclusionStatement() {
+		return fLocationCtx.getInclusionStatement();
+	}
 }
 
 class ASTMacroExpansion extends ASTPreprocessorNode implements IASTPreprocessorMacroExpansion {
@@ -725,6 +729,10 @@ class ASTFileLocationForBuiltins implements IASTFileLocation {
 
 	public int getStartingLineNumber() {
 		return 0;
+	}
+
+	public IASTPreprocessorIncludeStatement getInclusionStatement() {
+		return null;
 	}
 }
 

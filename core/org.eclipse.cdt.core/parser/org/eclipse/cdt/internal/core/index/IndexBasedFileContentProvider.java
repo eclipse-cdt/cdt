@@ -40,8 +40,7 @@ import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask.IndexFileContent;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Code reader factory, that fakes code readers for header files already stored in the 
- * index.
+ * Code reader factory, that fakes code readers for header files already stored in the index.
  */
 public final class IndexBasedFileContentProvider extends InternalFileContentProvider {
 	private static final class NeedToParseException extends Exception {}

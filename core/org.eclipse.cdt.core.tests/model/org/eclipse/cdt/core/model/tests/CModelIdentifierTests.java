@@ -36,8 +36,8 @@ import org.eclipse.core.runtime.Path;
 /**
  * Tests for CModel identifier API.
  * 
- * @see ICElement#getHandleIdentier()
- * @see CoreModel.create(String)
+ * @see ICElement#getHandleIdentifier()
+ * @see CoreModel#create(String)
  *
  * @since 5.0
  */
@@ -105,7 +105,7 @@ public class CModelIdentifierTests extends BaseTestCase {
 			String identifier= (String) identifiers.get(i);
 			assertNotNull("Could not create identifier for element: "+ expected, identifier);
 			ICElement actual= CoreModel.create(identifier);
-			assertNotNull("Cannot create element '" + expected + "' from identifier: "+identifier, actual);
+			assertNotNull("Cannot create element '" + expected + "' from identifier: " + identifier, actual);
 			assertEquals(expected.getElementName(), actual.getElementName());
 			assertEquals(expected.getElementType(), actual.getElementType());
 			assertEquals(expected, actual);

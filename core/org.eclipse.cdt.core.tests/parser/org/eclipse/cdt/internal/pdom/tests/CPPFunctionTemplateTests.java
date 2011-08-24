@@ -11,18 +11,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import java.util.Arrays;
+import java.util.List;
+
 import junit.framework.Test;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
@@ -96,7 +101,15 @@ public class CPPFunctionTemplateTests extends PDOMTestBase {
 		ICPPFunctionTemplate fooX= (ICPPFunctionTemplate) bs[b ? 0 : 1];
 		ICPPFunctionTemplate fooAB= (ICPPFunctionTemplate) bs[b ? 1 : 0];
 		
-		assertNameCount(pdom, fooX, IIndexFragment.FIND_REFERENCES, 3);
-		assertNameCount(pdom, fooAB, IIndexFragment.FIND_REFERENCES, 6);
+		List<ICPPTemplateInstance> instances= Arrays.asList(((ICPPInstanceCache) fooX).getAllInstances());
+		assertEquals(3, instances.size());
+		for (ICPPTemplateInstance inst : instances) {
+			assertEquals(1, pdom.findNames(inst, IIndexFragment.FIND_REFERENCES).length);
+		}
+		instances= Arrays.asList(((ICPPInstanceCache) fooAB).getAllInstances());
+		assertEquals(6, instances.size());
+		for (ICPPTemplateInstance inst : instances) {
+			assertEquals(1, pdom.findNames(inst, IIndexFragment.FIND_REFERENCES).length);
+		}
 	}
 }

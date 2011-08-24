@@ -5454,4 +5454,16 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testTemplateTemplateParameterMatching_352859() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template<typename T> T f();
+	//	template<> int f() { 
+	//	    return 0;
+	//	}
+	public void testArgumentDeductionFromReturnTypeOfExplicitSpecialization_355304() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPFunctionTemplate template= bh.assertNonProblem("f();", 1);
+		ICPPTemplateInstance inst= bh.assertNonProblem("f() {", 1);
+		assertSame(template, inst.getTemplateDefinition());
+	}
 }

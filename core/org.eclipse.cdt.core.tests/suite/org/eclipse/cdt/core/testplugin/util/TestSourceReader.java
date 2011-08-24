@@ -286,12 +286,12 @@ public class TestSourceReader {
 			Assert.assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, new NullProgressMonitor()));
 			index.acquireReadLock();
 			try {
-				IIndexFile pfile= index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-				if (pfile != null && pfile.getTimestamp() >= file.getLocalTimeStamp()) {
+				IIndexFile[] files= index.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
+				if (files.length > 0 && areAllFilesNotOlderThan(files, file.getLocalTimeStamp())) {
 					return;
 				}
-				pfile= index.getFile(ILinkage.C_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-				if (pfile != null && pfile.getTimestamp() >= file.getLocalTimeStamp()) {
+				files= index.getFiles(ILinkage.C_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
+				if (files.length > 0 && areAllFilesNotOlderThan(files, file.getLocalTimeStamp())) {
 					return;
 				}
 			} finally {
@@ -304,7 +304,16 @@ public class TestSourceReader {
 		Assert.fail("Indexing " + file.getFullPath() + " did not complete in time!");
 	}
 
-    public static IASTTranslationUnit createIndexBasedAST(IIndex index, ICProject project, IFile file) throws CModelException, CoreException {
+	private static boolean areAllFilesNotOlderThan(IIndexFile[] files, long timestamp) throws CoreException {
+		for (IIndexFile file : files) {
+			if (file.getTimestamp() < timestamp) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static IASTTranslationUnit createIndexBasedAST(IIndex index, ICProject project, IFile file) throws CModelException, CoreException {
     	ICElement elem= project.findElement(file.getFullPath());
     	if (elem instanceof ITranslationUnit) {
     		ITranslationUnit tu= (ITranslationUnit) elem;

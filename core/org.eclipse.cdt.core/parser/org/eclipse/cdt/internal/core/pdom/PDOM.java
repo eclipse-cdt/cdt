@@ -438,10 +438,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return PDOMFile.findFile(linkage, getFileIndex(), location, locationConverter, macroDictionary);
 	}
 
-	public PDOMFile[] getFiles(int linkageID, IIndexFileLocation location) throws CoreException {
+	public IIndexFragmentFile[] getFiles(int linkageID, IIndexFileLocation location) throws CoreException {
 		PDOMLinkage linkage= getLinkage(linkageID);
 		if (linkage == null)
-			return null;
+			return PDOMFile.EMPTY_ARRAY;
 		return PDOMFile.findFiles(linkage, getFileIndex(), location, locationConverter);
 	}
 

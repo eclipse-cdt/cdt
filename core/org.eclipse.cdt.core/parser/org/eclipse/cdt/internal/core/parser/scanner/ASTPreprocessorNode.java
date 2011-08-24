@@ -302,14 +302,14 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 		return fFoundByHeuristics;
 	}
 
+	public boolean hasPragmaOnceSemantics() {
+		// TODO(197989): Implement.
+		return false;
+	}
+
 	public Map<String, String> getSignificantMacros() {
 		// TODO(197989): Implement.
 		return Collections.emptyMap();
-	}
-
-	public boolean hasPragmaOnceSemantics() {
-		// TODO(197989): Implement.
-		return true;
 	}
 }
 

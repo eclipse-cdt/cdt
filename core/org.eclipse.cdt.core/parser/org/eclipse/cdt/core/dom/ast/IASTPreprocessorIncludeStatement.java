@@ -66,6 +66,16 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	public boolean isResolvedByHeuristics();
 
 	/**
+	 * Returns <code>true</code> if the file included by this include statement has #pragma once
+	 * statement or an include guard.
+	 * <p>
+	 * This method should only be called after the included file has been parsed. The method will
+	 * return <code>false</code> if it is called prematurely.
+	 * @since 5.4
+	 */
+	public boolean hasPragmaOnceSemantics();
+
+	/**
 	 * Returns macros relevant to parsing of the file included by this include statement and their
 	 * definitions at the point of the include. Undefined macros are represented in the map by
 	 * <code>null</code> values.
@@ -75,14 +85,4 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	 * @since 5.4
 	 */
 	public Map<String, String> getSignificantMacros();
-
-	/**
-	 * Returns <code>true</code> if the file included by this include statement has #pragma once
-	 * statement or an include guard.
-	 * <p>
-	 * This method should only be called after the included file has been parsed. The method will
-	 * return <code>false</code> if it is called prematurely.
-	 * @since 5.4
-	 */
-	public boolean hasPragmaOnceSemantics();
 }

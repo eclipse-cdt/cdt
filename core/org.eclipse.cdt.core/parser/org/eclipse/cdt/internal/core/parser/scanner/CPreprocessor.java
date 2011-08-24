@@ -250,7 +250,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fRootContext= fCurrentContext= new ScannerContext(ctx, null, fRootLexer);
         if (info instanceof IExtendedScannerInfo) {
         	final IExtendedScannerInfo einfo= (IExtendedScannerInfo) info;
-        	fPreIncludedFiles= new String[][] {einfo.getMacroFiles(), einfo.getIncludeFiles()};
+        	fPreIncludedFiles= new String[][] { einfo.getMacroFiles(), einfo.getIncludeFiles() };
         }
     }
 

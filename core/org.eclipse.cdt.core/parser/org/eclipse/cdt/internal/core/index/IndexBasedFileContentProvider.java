@@ -109,17 +109,20 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		IIndexFileLocation ifl= fPathResolver.resolveASTPath(path);
 		IFileContentKey fileKey = fIncludedFilesMap.get(ifl);
 		if (fileKey == null) {
-			return false;
+			return null;
 		}
 		if (fileKey.hasPragmaOnceSemantics()) {
-			return true;
+			return Boolean.TRUE;
 		}
 		Map<String, String> significantMacros = fileKey.selectSignificantMacros(macroDictionary);
 		if (significantMacros == null) {
-			return true;
+			return Boolean.TRUE;
 		}
 		fileKey = new FileContentKey(ifl, false, significantMacros);
-		return fIncludedFiles.contains(fileKey);
+		if (fIncludedFiles.contains(fileKey)) {
+			return Boolean.TRUE;
+		}
+		return null;
 	}
 	
 	@Override
@@ -151,13 +154,6 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-
-		// TODO(197989): Without the following three lines IndexBugsTests.testIncludeGuardsOutsideOfHeader_Bug167100
-		// test fails, but it's not clear how to make this code work with realistic significant
-		// macros since they are not yet known at this point.
-//		IFileContentKey key = new FileContentKey(ifl, false, macroDictionary);
-//		fIncludedFiles.add(key);
-//		fIncludedFilesMap.put(key.getLocation(), key);
 
 		// Skip large files
 		if (fFileSizeLimit > 0 && fPathResolver.getFileSize(path) > fFileSizeLimit) {
@@ -228,13 +224,13 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		if (ifl == null) {
 			return null;
 		}
-		
+
 		try {
 			IIndexFile targetFile= fIndex.getFile(fLinkage, ifl, macroDictionary);
 			if (targetFile == null) {
 				return null;
 			}
-			
+
 			IIndexFile contextFile= findContext(targetFile);
 			if (contextFile == targetFile || contextFile == null) {
 				return null;
@@ -310,7 +306,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 			directives.addAll(Arrays.asList(uds));
 			return false;
 		}
-			
+
 		final int offset= success.getNameOffset();
 		for (ICPPUsingDirective ud : uds) {
 			if (ud.getPointOfDeclaration() > offset)

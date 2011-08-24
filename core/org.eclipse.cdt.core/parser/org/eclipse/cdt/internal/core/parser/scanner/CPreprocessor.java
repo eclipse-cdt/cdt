@@ -101,8 +101,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 	final private IIncludeFileTester<InternalFileContent> createCodeReaderTester= new IIncludeFileTester<InternalFileContent>() {
     	public InternalFileContent checkFile(String path, boolean isHeuristicMatch, IncludeSearchPathElement onPath) {
-    		// TODO(197989): Propagate the macroDictionary associated with the current inclusion statement.
-    		Map<String, String> macroDictionary = Collections.emptyMap();
+    		Map<String, String> macroDictionary = getSimpleMacroDefinitions();
 			final InternalFileContent fc= fFileContentProvider.getContentForInclusion(path, macroDictionary);
 			if (fc != null) {
 				fc.setFoundByHeuristics(isHeuristicMatch);

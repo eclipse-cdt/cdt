@@ -36,7 +36,7 @@ public interface IFileContentKey {
 
 	/**
 	 * Returns <code>true</code> if the file is a header with #pragma once statement or an include
-	 * guard, or if it is parsed only once because it is a source file.
+	 * guard, or if it is a source file.
 	 */
 	public boolean hasPragmaOnceSemantics();
 

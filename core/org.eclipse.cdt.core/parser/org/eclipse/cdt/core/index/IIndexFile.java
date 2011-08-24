@@ -97,7 +97,7 @@ public interface IIndexFile {
 
 	/**
 	 * Returns <code>true</code> if the file is a header with #pragma once statement or an include
-	 * guard, or it is a source file and parsed only once because of that.
+	 * guard, or if it is a source file.
 	 * @since 5.4
 	 */
 	public boolean hasPragmaOnceSemantics() throws CoreException;

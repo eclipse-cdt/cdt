@@ -39,22 +39,19 @@ public class FileContentKey implements IFileContentKey {
 	}
 
 	/**
-	 * Creates a file content key.
+	 * Creates a file content key that does not have the "#pragma once" semantics.
 	 * @param location the file location.
-	 * @param hasPragmaOnceSemantics the boolean flag indicating whether the file may be parsed
-	 *     in different variants or not.
 	 * @param significantMacros the significant macros and their definitions, or <code>null</code>
-	 * 	   if the set of significant macros is unknown. This parameter is ignored if
-	 *      hasPragmaOnceSemantics is <code>true</code>.
+	 * 	   if the set of significant macros is unknown.
 	 */
-	public FileContentKey(IIndexFileLocation location, boolean hasPragmaOnceSemantics,
+	public FileContentKey(IIndexFileLocation location, boolean hasProgmaOnceSemantics,
 			Map<String, String> significantMacros) {
 		this.location = location;
-		this.pragmaOnceSemantics = hasPragmaOnceSemantics;
-		this.significantMacros = !pragmaOnceSemantics && significantMacros != null ?
+		this.pragmaOnceSemantics = hasProgmaOnceSemantics;
+		this.significantMacros = !hasProgmaOnceSemantics && significantMacros != null ?
 				Collections.unmodifiableMap(significantMacros) : null;
 		// Encode macros to a string to avoid expensive map comparisons later.
-		this.significantMacrosKey = !pragmaOnceSemantics && significantMacros != null ?
+		this.significantMacrosKey = !hasProgmaOnceSemantics && significantMacros != null ?
 				String.valueOf(StringMapEncoder.encode(significantMacros)) : null;
 	}
 

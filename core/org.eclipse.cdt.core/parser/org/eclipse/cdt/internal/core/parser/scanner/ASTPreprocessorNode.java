@@ -302,11 +302,6 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 		return fFoundByHeuristics;
 	}
 
-	public Map<String, String> getMacroDefinitions() {
-		// TODO(197989): Implement.
-		return Collections.emptyMap();
-	}
-
 	public Map<String, String> getSignificantMacros() {
 		// TODO(197989): Implement.
 		return Collections.emptyMap();

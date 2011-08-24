@@ -354,7 +354,8 @@ public class PDOMFile implements IIndexFragmentFile {
 		if (oldRecord != 0)
 			db.getString(oldRecord).delete();
 		db.putRecPtr(record + SIGNIFICANT_MACROS,
-				macros != null ? db.newString(StringMapEncoder.encode(macros)).getRecord() : 0);
+				macros != null && !macros.isEmpty() ?
+						db.newString(StringMapEncoder.encode(macros)).getRecord() : 0);
 		key = null;
 	}
 

@@ -244,8 +244,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         ILocationCtx ctx= fLocationMap.pushTranslationUnit(filePath, fRootContent.getSource());
         fAllIncludedFiles.add(filePath);
         // TODO(197989): Provide real significant macros and hasPragmaOnceSemantics value.
-    	Map<String, String> significantMacros = Collections.emptyMap();
     	boolean hasPragmaOnceSemantics = false;
+    	Map<String, String> significantMacros = Collections.emptyMap();
 		fFileContentProvider.reportTranslationUnitFile(filePath, hasPragmaOnceSemantics, significantMacros);
         fRootLexer= new Lexer(fRootContent.getSource(), fLexOptions, this, this);
         fRootContext= fCurrentContext= new ScannerContext(ctx, null, fRootLexer);

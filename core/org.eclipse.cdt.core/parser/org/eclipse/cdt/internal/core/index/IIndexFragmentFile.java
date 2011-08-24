@@ -49,17 +49,16 @@ public interface IIndexFragmentFile extends IIndexFile {
 	void setEncodingHashcode(int hashcode) throws CoreException;
 
 	/**
+	 * Sets the flag that determines whether the file is a header with #pragma once statement
+	 * or an include guard, or it is a source file and parsed only once because of that.
+	 */
+	void setPragmaOnceSemantics(boolean value) throws CoreException;
+
+	/**
 	 * Sets the names and definitions of the macros that affect the preprocessed contents of
 	 * the file or the files it includes. Undefined macros have <code>null</code> values in the map.
 	 */
 	void setSignificantMacros(Map<String, String> macros) throws CoreException;
-
-	/**
-	 * Sets the name of the macro that, if defined, makes the preprocessed contents of the file
-	 * not contain any code irrespectively of other macros. Returns <code>null</code> if the file
-	 * does not have the include guard macro.
-	 */
-	void setPragmaOnceSemantics(boolean value) throws CoreException;
 
 	/**
 	 * Returns whether this file contains content in its

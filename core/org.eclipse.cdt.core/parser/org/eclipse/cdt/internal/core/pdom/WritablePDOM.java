@@ -62,16 +62,17 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	}
 
 	@Override
-	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location) throws CoreException {
+	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location, Map<String, String> macroDictionary) throws CoreException {
 		if (uncommittedLocation != null && uncommittedLocation.equals(location)) {
 			return uncommittedFile;
 		}
-		return super.addFile(linkageID, location);
+		return super.addFile(linkageID, location, macroDictionary);
 	}
 
-	public IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation location) throws CoreException {
+	public IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation location,
+			Map<String, String> significantMacros) throws CoreException {
 		uncommittedLocation = location;
-		fileBeingUpdated = getFile(linkageID, uncommittedLocation);
+		fileBeingUpdated = getFile(linkageID, uncommittedLocation, significantMacros);
 		PDOMLinkage linkage= createLinkage(linkageID);
 		uncommittedFile = new PDOMFile(linkage, location, linkageID);
 		return uncommittedFile;

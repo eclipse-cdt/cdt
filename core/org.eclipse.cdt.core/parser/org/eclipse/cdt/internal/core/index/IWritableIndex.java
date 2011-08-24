@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.index;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
@@ -45,14 +46,15 @@ public interface IWritableIndex extends IIndex {
 	boolean isWritableFile(IIndexFile file);
 
 	/**
-	 * Returns a writable file for the given location and linkage, or null. This method
-	 * returns file-objects without content, also.
+	 * Returns a writable file for the given location, linkage, and the set of macro definitions,
+	 * or null. This method returns file objects without content, also.
 	 */
-	IIndexFragmentFile getWritableFile(int linkageID, IIndexFileLocation location) throws CoreException;
+	IIndexFragmentFile getWritableFile(int linkageID, IIndexFileLocation location,
+			Map<String, String> macroDictionary) throws CoreException;
 
 	/**
 	 * Returns the writable files for the given location in any linkage. This method
-	 * returns file-objects without content, also.
+	 * returns file objects without content, also.
 	 */
 	IIndexFragmentFile[] getWritableFiles(IIndexFileLocation location) throws CoreException;
 
@@ -66,17 +68,24 @@ public interface IWritableIndex extends IIndex {
 
 	/**
 	 * Creates a file object for the given location or returns an existing one.
+	 * @param linkageID the id of the linkage in which the file has been parsed.
+	 * @param location the IIndexFileLocation representing the location of the file
+	 * @param macroDictionary The names and definitions of the macros used to disambiguate between
+	 *     variants of the file contents corresponding to different inclusion points.
+	 * @return A created or an existing file.  
 	 */
-	IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location) throws CoreException;
+	IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location,
+			Map<String, String> macroDictionary) throws CoreException;
 
 	/**
 	 * Creates a uncommitted file object for the given location.
 	 */
-	IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation location) throws CoreException;
+	IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation location,
+			Map<String, String> macroDictionary) throws CoreException;
 
 	/**
 	 * Makes an uncommitted file that was created earlier by calling
-	 * {@link #addUncommittedFile(int, IIndexFileLocation)} method visible in the index.
+	 * {@link #addUncommittedFile(int, IIndexFileLocation, Map)} method visible in the index.
 	 *
 	 * @return The file that was updated.
 	 * @throws CoreException

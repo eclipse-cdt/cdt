@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.index;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
@@ -44,23 +45,27 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	/**
 	 * Creates a file object for the given location and linkage or returns an existing one.
 	 * @param fileLocation an IIndexFileLocation representing the location of the file.
+	 * @param macroDictionary the macro definitions at the inclusion point. 
 	 * @return the existing IIndexFragmentFile for this location, or a newly created one. 
 	 * @throws CoreException
 	 */
-	IIndexFragmentFile addFile(int linkageID, IIndexFileLocation fileLocation) throws CoreException;
+	IIndexFragmentFile addFile(int linkageID, IIndexFileLocation fileLocation,
+			Map<String, String> macroDictionary) throws CoreException;
 
 	/**
 	 * Creates a file object for the given location and linkage. The created file object is not added to
 	 * the file index.
 	 * @param fileLocation an IIndexFileLocation representing the location of the file.
+	 * @param macroDictionary the macro definitions at the inclusion point. 
 	 * @return a newly created IIndexFragmentFile. 
 	 * @throws CoreException
 	 */
-	IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation fileLocation) throws CoreException;
+	IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation fileLocation,
+			Map<String, String> macroDictionary) throws CoreException;
 
 	/**
 	 * Makes an uncommitted file that was created earlier by calling
-	 * {@link #addUncommittedFile(int, IIndexFileLocation)} method visible in the index.
+	 * {@link #addUncommittedFile(int, IIndexFileLocation, Map)} method visible in the index.
      *
 	 * @return The file that was updated.
 	 * @throws CoreException

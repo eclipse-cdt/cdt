@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
+import org.eclipse.cdt.core.index.IFileContentKey;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
@@ -49,6 +50,7 @@ import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
+import org.eclipse.cdt.internal.core.index.FileContentKey;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
@@ -76,23 +78,23 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private static final int MAX_ERRORS = 500;
 	
 	private static class FileKey {
-		final URI fUri;
+		final URI fFileContentKey;
 		final int fLinkageID;
 		
 		public FileKey(int linkageID, URI uri) {
-			fUri= uri;
+			fFileContentKey= uri;
 			fLinkageID= linkageID;
 		}
 
 		@Override
 		public int hashCode() {
-			return fUri.hashCode() * 31 + fLinkageID;
+			return fFileContentKey.hashCode() * 31 + fLinkageID;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
 			FileKey other = (FileKey) obj;
-			return fLinkageID == other.fLinkageID && fUri.equals(other.fUri);
+			return fLinkageID == other.fLinkageID && fFileContentKey.equals(other.fFileContentKey);
 		}
 	}
 
@@ -896,59 +898,63 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	
 	private void writeToIndex(final int linkageID, IASTTranslationUnit ast, long fileContentsHash,
 			int configHash, IProgressMonitor pm) throws CoreException, InterruptedException {
-		HashSet<IIndexFileLocation> enteredFiles= new HashSet<IIndexFileLocation>();
-		ArrayList<IIndexFileLocation> orderedIFLs= new ArrayList<IIndexFileLocation>();
+		HashSet<IFileContentKey> enteredFiles= new HashSet<IFileContentKey>();
+		ArrayList<IFileContentKey> orderedFileKeys= new ArrayList<IFileContentKey>();
 		
 		final IIndexFileLocation topIfl = fResolver.resolveASTPath(ast.getFilePath());
-		enteredFiles.add(topIfl);
+		IFileContentKey topKey = new FileContentKey(topIfl);
+		enteredFiles.add(topKey);
 		IDependencyTree tree= ast.getDependencyTree();
 		IASTInclusionNode[] inclusions= tree.getInclusions();
 		for (IASTInclusionNode inclusion : inclusions) {
-			collectOrderedIFLs(linkageID, inclusion, enteredFiles, orderedIFLs);
+			collectOrderedFileKeys(linkageID, inclusion, enteredFiles, orderedFileKeys);
 		}
 		
 		IndexFileContent info= getFileInfo(linkageID, topIfl);
 		if (info != null && info.fRequestUpdate && !info.fIsUpdated) {
-			orderedIFLs.add(topIfl);
+			orderedFileKeys.add(topKey);
 		}
 		
-		IIndexFileLocation[] ifls= orderedIFLs.toArray(new IIndexFileLocation[orderedIFLs.size()]);
+		IFileContentKey[] fileKeys= orderedFileKeys.toArray(new IFileContentKey[orderedFileKeys.size()]);
 		try {
-			addSymbols(ast, ifls, fIndex, 1, false, fileContentsHash, configHash, fTodoTaskUpdater, pm);
+			addSymbols(ast, fileKeys, fIndex, 1, false, fileContentsHash, configHash, fTodoTaskUpdater, pm);
 		} finally {
 			// mark as updated in any case, to avoid parsing files that caused an exception to be thrown.
-			for (IIndexFileLocation ifl : ifls) {
-				info= getFileInfo(linkageID, ifl);
+			for (IFileContentKey fileKey : fileKeys) {
+				info= getFileInfo(linkageID, fileKey.getLocation());
 				Assert.isNotNull(info);
 				info.fIsUpdated= true;
 			}
 		}
 	}
 
-	private void collectOrderedIFLs(final int linkageID, IASTInclusionNode inclusion,
-			HashSet<IIndexFileLocation> enteredFiles, ArrayList<IIndexFileLocation> orderedIFLs) throws CoreException {
-		final IASTPreprocessorIncludeStatement id= inclusion.getIncludeDirective();
-		if (id.isActive() && id.isResolved()) {
-			final IIndexFileLocation ifl= fResolver.resolveASTPath(id.getPath());
-			final boolean isFirstEntry= enteredFiles.add(ifl);
+	private void collectOrderedFileKeys(final int linkageID, IASTInclusionNode inclusion,
+			HashSet<IFileContentKey> enteredFiles, ArrayList<IFileContentKey> orderedFileKeys) throws CoreException {
+		final IASTPreprocessorIncludeStatement include= inclusion.getIncludeDirective();
+		if (include.isActive() && include.isResolved()) {
+			final IIndexFileLocation ifl= fResolver.resolveASTPath(include.getPath());
+			IFileContentKey fileKey = new FileContentKey(ifl, include.hasPragmaOnceSemantics(),
+					include.getSignificantMacros());
+			final boolean isFirstEntry= enteredFiles.add(fileKey);
 			IASTInclusionNode[] nested= inclusion.getNestedInclusions();
 			for (IASTInclusionNode element : nested) {
-				collectOrderedIFLs(linkageID, element, enteredFiles, orderedIFLs);
+				collectOrderedFileKeys(linkageID, element, enteredFiles, orderedFileKeys);
 			}
-			if (isFirstEntry && needToUpdateHeader(linkageID, ifl)) {
-				orderedIFLs.add(ifl);
+			if (isFirstEntry && needToUpdateHeader(linkageID, ifl, include.getSignificantMacros())) {
+				orderedFileKeys.add(fileKey);
 			}
 		}
 	}
 
-	public final boolean needToUpdateHeader(int linkageID, IIndexFileLocation ifl) throws CoreException {
+	public final boolean needToUpdateHeader(int linkageID, IIndexFileLocation ifl,
+			Map<String, String> macroDictionary) throws CoreException {
 		IndexFileContent info= getFileInfo(linkageID, ifl);
 		if (info == null) {
 			IIndexFile ifile= null;
 			if (fResolver.canBePartOfSDK(ifl)) {
-				ifile= fIndex.getFile(linkageID, ifl);
+				ifile= fIndex.getFile(linkageID, ifl, macroDictionary);
 			} else {
-				IIndexFragmentFile fragFile= fIndex.getWritableFile(linkageID, ifl);
+				IIndexFragmentFile fragFile= fIndex.getWritableFile(linkageID, ifl, macroDictionary);
 				if (fragFile != null && fragFile.hasContent()) {
 					ifile= fragFile;
 				}
@@ -1084,12 +1090,13 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		return codeReader != null ? codeReader.getContentsHash() : 0;
 	}
 
-	public final IndexFileContent getFileContent(int linkageID, IIndexFileLocation ifl) throws CoreException {
-		if (!needToUpdateHeader(linkageID, ifl)) {
+	public final IndexFileContent getFileContent(int linkageID, IIndexFileLocation ifl,
+			Map<String, String> macroDictionary) throws CoreException {
+		if (!needToUpdateHeader(linkageID, ifl, macroDictionary)) {
 			IndexFileContent info= getFileInfo(linkageID, ifl);
 			Assert.isNotNull(info);
 			if (info.fIndexFile == null) {
-				info.fIndexFile= fIndex.getFile(linkageID, ifl);
+				info.fIndexFile= fIndex.getFile(linkageID, ifl, macroDictionary);
 				if (info.fIndexFile == null) {
 					return null;
 				}

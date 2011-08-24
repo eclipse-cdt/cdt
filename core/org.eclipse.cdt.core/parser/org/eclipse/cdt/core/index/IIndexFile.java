@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
 
@@ -93,7 +94,20 @@ public interface IIndexFile {
 	 * Returns the include that was used to parse this file, may be <code>null</code>.
 	 */
 	IIndexInclude getParsedInContext() throws CoreException;
-	
+
+	/**
+	 * Returns <code>true</code> if the file is a header with #pragma once statement or an include
+	 * guard, or it is a source file and parsed only once because of that.
+	 * @since 5.4
+	 */
+	public boolean hasPragmaOnceSemantics() throws CoreException;
+
+	/**
+	 * Returns a key that uniquely identifies the preprocessed content of the file.
+	 * @since 5.4
+	 */
+	IFileContentKey getContentKey() throws CoreException;
+
 	/**
 	 * Returns the id of the linkage this file was parsed in.
 	 * @since 5.0

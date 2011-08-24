@@ -6,10 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
+
+import java.util.Map;
 
 /**
  * This interface represent a preprocessor #include statement.
@@ -17,9 +19,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTPreprocessorIncludeStatement extends
-		IASTPreprocessorStatement {
-
+public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatement {
 	/**
 	 * <code>INCLUDE_NAME</code> describes the relationship between an include directive and
 	 * it's name.
@@ -64,4 +64,25 @@ public interface IASTPreprocessorIncludeStatement extends
 	 * @since 5.1
 	 */
 	public boolean isResolvedByHeuristics();
+
+	/**
+	 * Returns macros relevant to parsing of the file included by this include statement and their
+	 * definitions at the point of the include. Undefined macros are represented in the map by
+	 * <code>null</code> values.
+	 * <p>
+	 * This method should only be called after the included file has been parsed. The method will
+	 * return <code>null</code> if it is called prematurely.
+	 * @since 5.4
+	 */
+	public Map<String, String> getSignificantMacros();
+
+	/**
+	 * Returns <code>true</code> if the file included by this include statement has #pragma once
+	 * statement or an include guard.
+	 * <p>
+	 * This method should only be called after the included file has been parsed. The method will
+	 * return <code>false</code> if it is called prematurely.
+	 * @since 5.4
+	 */
+	public boolean hasPragmaOnceSemantics();
 }

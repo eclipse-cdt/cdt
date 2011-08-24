@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2010,2011 Gil Barash 
+ * Copyright (c) 2010,2011 Gil Barash
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *    Gil Barash  - Initial implementation
  *    Elena laskavaia - Rewrote checker to reduce false positives in complex cases
@@ -14,6 +14,8 @@ package org.eclipse.cdt.codan.internal.checkers;
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.codan.core.model.ICheckerWithPreferences;
+import org.eclipse.cdt.codan.core.model.IProblemLocation;
+import org.eclipse.cdt.codan.core.model.IProblemLocationFactory;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
@@ -23,9 +25,11 @@ import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -40,7 +44,10 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 	public static final String DEFAULT_NO_BREAK_COMMENT = "no break"; //$NON-NLS-1$
 	private Boolean _checkLastCase; // Should we check the last case in the switch?
 	private Boolean _checkEmptyCase; // Should we check an empty case (a case without any statements within it)
-	private String _noBreakComment; // The comment suppressing this warning 
+	private String _noBreakComment; // The comment suppressing this warning
+
+	public CaseBreakChecker() {
+	}
 
 	/**
 	 * This visitor looks for "switch" statements and invokes "SwitchVisitor" on
@@ -72,7 +79,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 
 		@Override
 		public int visit(IASTStatement statement) {
-			if (statement instanceof IASTSwitchStatement && !isProducedMyMacroExpansion(statement)) {
+			if (statement instanceof IASTSwitchStatement && !isProducedByMacroExpansion(statement)) {
 				IASTSwitchStatement switchStmt = (IASTSwitchStatement) statement;
 				IASTStatement body = switchStmt.getBody();
 				if (body instanceof IASTCompoundStatement) {
@@ -110,10 +117,10 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 								}
 								if (comment != null) {
 									String str = getTrimmedComment(comment);
-									if (str.equalsIgnoreCase(_noBreakComment))
+									if (str.toLowerCase().contains(_noBreakComment.toLowerCase()))
 										continue;
 								}
-								reportProblem(ER_ID, prevCase, (Object) null);
+								reportProblem(curr, prevCase);
 							}
 						}
 					}
@@ -136,13 +143,13 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		 * @return
 		 */
 		public boolean isFallThroughStamement(IASTStatement body) {
-			if (body == null) return true;
+			if (body == null)
+				return true;
 			if (body instanceof IASTCompoundStatement) {
 				IASTStatement[] statements = ((IASTCompoundStatement) body).getStatements();
 				if (statements.length > 0) {
-					return isFallThroughStamement(statements[statements.length - 1]);	
+					return isFallThroughStamement(statements[statements.length - 1]);
 				}
-				
 				return true;
 			} else if (isBreakOrExitStatement(body)) {
 				return false;
@@ -150,26 +157,36 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 				return true;
 			} else if (body instanceof IASTIfStatement) {
 				IASTIfStatement ifs = (IASTIfStatement) body;
-				return isFallThroughStamement(ifs.getThenClause()) || isFallThroughStamement(ifs.getElseClause()) ;
+				return isFallThroughStamement(ifs.getThenClause()) || isFallThroughStamement(ifs.getElseClause());
 			}
 			return true; // TODO
 		}
-
-		/**
-		 * Checks if the given statement is a result of macro expansion with a possible
-		 * exception for the trailing semicolon.
-		 * 
-		 * @param statement the statement to check. 
-		 * @return <code>true</code> if the statement is a result of macro expansion
-		 */
-		private boolean isProducedMyMacroExpansion(IASTStatement statement) {
-			IASTNodeLocation[] locations = statement.getNodeLocations();
-			return locations.length > 0 && locations[0] instanceof IASTMacroExpansionLocation &&
-					(locations.length == 1 || locations.length == 2 && locations[1].getNodeLength() == 1);
-		}
 	}
 
-	public CaseBreakChecker() {
+	public void reportProblem(IASTStatement curr, IASTStatement prevCase) {
+		reportProblem(ER_ID, getProblemLocationAtEndOfNode(curr));
+	}
+
+	private IProblemLocation getProblemLocationAtEndOfNode(IASTNode astNode) {
+		IASTFileLocation astLocation = astNode.getFileLocation();
+		int line = astLocation.getEndingLineNumber();
+		IProblemLocationFactory locFactory = getRuntime().getProblemLocationFactory();
+		return locFactory.createProblemLocation(getFile(), -1,
+				-1, line);
+	}
+
+	/**
+	 * Checks if the given statement is a result of macro expansion with a
+	 * possible
+	 * exception for the trailing semicolon.
+	 * 
+	 * @param statement the statement to check.
+	 * @return <code>true</code> if the statement is a result of macro expansion
+	 */
+	private boolean isProducedByMacroExpansion(IASTStatement statement) {
+		IASTNodeLocation[] locations = statement.getNodeLocations();
+		return locations.length > 0 && locations[0] instanceof IASTMacroExpansionLocation
+				&& (locations.length == 1 || locations.length == 2 && locations[1].getNodeLength() == 1);
 	}
 
 	/**

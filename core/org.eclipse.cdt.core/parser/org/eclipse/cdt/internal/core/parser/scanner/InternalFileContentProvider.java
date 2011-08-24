@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
+import java.util.Map;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
@@ -33,9 +34,12 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	/**
 	 * Create an InclusionContent object for the given location.
      * return an inclusion content or <code>null</code> if the location does not exist.
+	 * @param filePath the absolute location of the file.
+	 * @param macroDictionary macros defined at the inclusion point.
 	 * @see InternalFileContent
 	 */
-	public abstract InternalFileContent getContentForInclusion(String path);
+	public abstract InternalFileContent getContentForInclusion(String filePath,
+			Map<String, String> macroDictionary);
 
 	/** 
 	 * Called only when used as a delegate of the index file content provider.
@@ -46,22 +50,33 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	 * Returns a file-content object of kind {@link InclusionKind#FOUND_IN_INDEX}, representing
 	 * the content from the context of the given file up to where the file actually gets included,
 	 * or <code>null</code> if this cannot be done.
+	 * @param filePath the absolute location of the file.
+	 * @param macroDictionary macros defined at the inclusion point.
 	 */
-	public InternalFileContent getContentForContextToHeaderGap(String location) {
+	public InternalFileContent getContentForContextToHeaderGap(String filePath,
+			Map<String, String> macroDictionary) {
 		return null;
 	}
 
 	/**
 	 * Reports the path of the translation unit, such that it is known as included.
+	 * @param filePath the absolute location of the file.
+	 * @param hasPragmaOnceSemantics the name of the include guard macro for the file,
+	 *     or <code>null</code> if the file doesn't have the include guard macro.
+	 * @param significantMacros macros relevant to the file and their definitions.
 	 */
-	public void reportTranslationUnitFile(String filePath) {
+	public void reportTranslationUnitFile(String filePath, boolean hasPragmaOnceSemantics,
+			Map<String, String> significantMacros) {
 	}
 	
 	/**
 	 * Returns whether or not the file has been included, or <code>null</code> if the content provider
 	 * does not track that.
+	 * @param filePath the absolute location of the file.
+	 * @param macroDictionary macros defined at the inclusion point.
 	 */
-	public Boolean hasFileBeenIncludedInCurrentTranslationUnit(String location) {
+	public Boolean hasFileBeenIncludedInCurrentTranslationUnit(String filePath,
+			Map<String, String> macroDictionary) {
 		return null;
 	}
 

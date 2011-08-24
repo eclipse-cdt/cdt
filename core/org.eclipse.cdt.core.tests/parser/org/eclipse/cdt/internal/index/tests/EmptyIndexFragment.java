@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -100,14 +101,24 @@ public class EmptyIndexFragment implements IIndexFragment {
 		return 0;
 	}
 
+	@Deprecated
 	public IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location)
 			throws CoreException {
 		return null;
 	}
 
+	public IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location,
+			Map<String, String> macroDictionary) throws CoreException {
+		return null;
+	}
+
+	public IIndexFragmentFile[] getFiles(int linkageID, IIndexFileLocation location)
+			throws CoreException {
+		return IIndexFragmentFile.EMPTY_ARRAY;
+	}
 	
 	public IIndexFragmentFile[] getFiles(IIndexFileLocation location) throws CoreException {
-		return new IIndexFragmentFile[0];
+		return IIndexFragmentFile.EMPTY_ARRAY;
 	}
 
 	public long getLastWriteAccess() {

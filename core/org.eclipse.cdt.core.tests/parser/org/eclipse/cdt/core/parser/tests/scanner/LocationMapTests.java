@@ -80,6 +80,9 @@ public class LocationMapTests extends BaseTestCase {
 		public IASTFileLocation asFileLocation() {
 			return this;
 		}
+		public IASTPreprocessorIncludeStatement getContextInclusionStatement() {
+			return null;
+		}
 	}
 
 	private static final String FN = "filename";

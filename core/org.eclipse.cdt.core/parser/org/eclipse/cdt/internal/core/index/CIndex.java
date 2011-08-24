@@ -17,13 +17,14 @@ package org.eclipse.cdt.internal.core.index;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -208,6 +209,7 @@ public class CIndex implements IIndex {
 		return findNames(binding, FIND_REFERENCES);
 	}
 
+	@Deprecated
 	public IIndexFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			IIndexFragmentFile candidate= fFragments[i].getFile(linkageID, location);
@@ -218,19 +220,70 @@ public class CIndex implements IIndex {
 		return null;
 	}
 
+	public IIndexFile getFile(int linkageID, IIndexFileLocation location,
+			Map<String, String> macroDictionary) throws CoreException {
+		for (int i = 0; i < fPrimaryFragmentCount; i++) {
+			IIndexFragmentFile candidate= fFragments[i].getFile(linkageID, location, macroDictionary);
+			if (candidate != null && candidate.hasContent()) {
+				return candidate;
+			}
+		}
+		return null;
+	}
+
+	public IIndexFile[] getFiles(int linkageID, IIndexFileLocation location) throws CoreException {
+		if (location == null) {
+			return IIndexFile.EMPTY_FILE_ARRAY;
+		}
+		Map<Map<String, String>, IIndexFile> filesByKey =
+				new HashMap<Map<String, String>, IIndexFile>();
+		ArrayList<IIndexFragmentFile> result= new ArrayList<IIndexFragmentFile>();
+		for (int i = 0; i < fPrimaryFragmentCount; i++) {
+			IIndexFragmentFile[] candidates= fFragments[i].getFiles(linkageID, location);
+			for (IIndexFragmentFile candidate : candidates) {
+				if (candidate.hasContent()) {
+					Map<String, String> macroKey = candidate.getContentKey().getSignificantMacros();
+					// A null value of macroKey means "unknown" and excludes any other value. 
+					if (macroKey == null ?
+							filesByKey.isEmpty() :
+							!filesByKey.containsKey(macroKey) && !filesByKey.containsKey(null)) {
+						result.add(candidate);
+						filesByKey.put(macroKey, candidate);
+					}
+				}
+			}
+		}
+		if (result.isEmpty()) {
+			return IIndexFile.EMPTY_FILE_ARRAY;
+		}
+		return result.toArray(new IIndexFile[result.size()]);
+	}
+
 	public IIndexFile[] getFiles(IIndexFileLocation location) throws CoreException {
 		if (location == null) {
 			return IIndexFile.EMPTY_FILE_ARRAY;
 		}
+		Map<Integer, Map<Map<String, String>, IIndexFile>> filesByLinkage =
+				new TreeMap<Integer, Map<Map<String, String>, IIndexFile>>();
 		ArrayList<IIndexFragmentFile> result= new ArrayList<IIndexFragmentFile>();
-		BitSet linkages= new BitSet();
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			IIndexFragmentFile[] candidates= fFragments[i].getFiles(location);
 			for (IIndexFragmentFile candidate : candidates) {
-				int linkage= candidate.getLinkageID();
-				if (!linkages.get(linkage) && candidate.hasContent()) {
-					result.add(candidate);
-					linkages.set(linkage);
+				if (candidate.hasContent()) {
+					int linkageId= candidate.getLinkageID();
+					Map<Map<String, String>, IIndexFile> filesByKey = filesByLinkage.get(linkageId);
+					if (filesByKey == null) {
+						filesByKey = new HashMap<Map<String, String>, IIndexFile>();
+						filesByLinkage.put(linkageId, filesByKey);
+					}
+					Map<String, String> macroKey = candidate.getContentKey().getSignificantMacros();
+					// A null value of macroKey means "unknown" and excludes any other value. 
+					if (macroKey == null ?
+							filesByKey.isEmpty() :
+							!filesByKey.containsKey(macroKey) && !filesByKey.containsKey(null)) {
+						result.add(candidate);
+						filesByKey.put(macroKey, candidate);
+					}
 				}
 			}
 		}
@@ -288,7 +341,6 @@ public class CIndex implements IIndex {
 		}
 		findIncludedBy(nextLevel, out, depth, handled);
 	}
-
 
 	public IIndexInclude[] findIncludes(IIndexFile file) throws CoreException {
 		return findIncludes(file, 0);

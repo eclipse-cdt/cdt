@@ -16,6 +16,8 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 
+import java.util.Map;
+
 public class EmptyFilesProvider extends InternalFileContentProvider {
 	final private static EmptyFilesProvider INSTANCE= new EmptyFilesProvider();
 
@@ -27,7 +29,8 @@ public class EmptyFilesProvider extends InternalFileContentProvider {
 	}
 
 	@Override
-	public InternalFileContent getContentForInclusion(String path) {
+	public InternalFileContent getContentForInclusion(String path,
+			Map<String, String> macroDictionary) {
 		if (!getInclusionExists(path))
 			return null;
 		

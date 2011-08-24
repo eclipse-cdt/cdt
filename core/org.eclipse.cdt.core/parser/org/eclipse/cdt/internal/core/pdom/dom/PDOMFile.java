@@ -60,14 +60,14 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * Represents a file containing names.
- * 
+ *
  * @author Doug Schaefer
  */
 public class PDOMFile implements IIndexFragmentFile {
 	private final PDOMLinkage fLinkage;
 	private final long record;
 	private IIndexFileLocation location;  // No need to make volatile, all fields of IndexFileLocation are final.
-	private IFileContentKey key;  // No need to make volatile, all fields of FileContentsKey are final.
+	private IFileContentKey key;  // No need to make volatile, all fields of FileContentsKey are either final or volatile.
 
 	private static final int FIRST_NAME = 0;
 	private static final int FIRST_INCLUDE = 4;
@@ -75,7 +75,7 @@ public class PDOMFile implements IIndexFragmentFile {
 	private static final int FIRST_MACRO = 12;
 	private static final int LOCATION_REPRESENTATION = 16;
 	private static final int LINKAGE_ID= 20;  // size 3
-	private static final int FLAGS=23;  // size 1
+	private static final int FLAGS= 23;  // size 1
 	private static final int TIME_STAMP = 24;
 	private static final int CONTENT_HASH= 32;  // size 8
 	private static final int SCANNER_CONFIG_HASH= 40;
@@ -132,7 +132,7 @@ public class PDOMFile implements IIndexFragmentFile {
 	public PDOM getPDOM() {
 		return fLinkage.getPDOM();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
@@ -148,7 +148,7 @@ public class PDOMFile implements IIndexFragmentFile {
 	public final int hashCode() {
 		return System.identityHashCode(fLinkage.getPDOM()) + (int) (41 * record);
 	}
-	
+
 	/**
 	 * Transfers names, macros and includes from another file to this one and deletes the other file.
 	 * @param sourceFile the file to transfer the local bindings from.
@@ -279,7 +279,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		location= null;
 		key= null;
 	}
-	
+
 	public int getLinkageID() throws CoreException {
 		Database db = fLinkage.getDB();
 		return db.get3ByteUnsignedInt(record + LINKAGE_ID);
@@ -405,7 +405,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		long rec = fLinkage.getDB().getRecPtr(record + FIRST_INCLUDED_BY);
 		return rec != 0 ? new PDOMInclude(fLinkage, rec) : null;
 	}
-	
+
 	public IIndexInclude getParsedInContext() throws CoreException {
 		return getFirstIncludedBy();
 	}
@@ -607,7 +607,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		PDOMInclude lastInclude= null;
 		for (final IncludeInformation info : includeInfos) {
 			final PDOMFile targetFile= (PDOMFile) info.fTargetFile;
-			
+
 			PDOMInclude pdomInclude = new PDOMInclude(fLinkage, info.fStatement, this, targetFile);
 			assert targetFile == null || targetFile.getIndexFragment() instanceof IWritableIndexFragment;
 			if (targetFile != null) {
@@ -628,7 +628,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			if (isContext) {
 				setFirstIncludedBy(include);
 				include.setNextInIncludedBy(firstIncludedBy);
-				firstIncludedBy.setPrevInIncludedBy(include);				
+				firstIncludedBy.setPrevInIncludedBy(include);
 			} else {
 				PDOMInclude secondIncludedBy= firstIncludedBy.getNextInIncludedBy();
 				if (secondIncludedBy != null) {
@@ -674,7 +674,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			if (nameOffset >= offset) {
 				if (nameOffset + name.getNodeLength() <= offset + length) {
 					result.add(name);
-				} else if (name.isReference()) { 
+				} else if (name.isReference()) {
 					// Names are ordered, but callers are inserted before
 					// their references.
 					break;
@@ -689,7 +689,7 @@ public class PDOMFile implements IIndexFragmentFile {
 					if (name != null) {
 						result.add(name);
 					}
-				} else { 
+				} else {
 					break;
 				}
 			}
@@ -699,7 +699,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			if (nameOffset >= offset) {
 				if (nameOffset + name.getNodeLength() <= offset + length) {
 					result.add(name);
-				} else { 
+				} else {
 					break;
 				}
 			}
@@ -726,7 +726,7 @@ public class PDOMFile implements IIndexFragmentFile {
 	/**
 	 * When a header file is stored in the index in multiple variants for different sets of macro
 	 * definitions this method will return an arbitrary one of these variants.
-	 *  
+	 *
 	 * @deprecated Use
 	 *     {@link #findFile(PDOMLinkage, BTree, IIndexFileLocation, IIndexLocationConverter, Map)}
 	 *     or {@link #findFiles(PDOMLinkage, BTree, IIndexFileLocation, IIndexLocationConverter)}
@@ -739,14 +739,14 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	/**
 	 * Finds the file in index.
-	 * 
+	 *
 	 * @param linkage The linkage of the file.
 	 * @param btree The file index.
 	 * @param location The location of the file.
 	 * @param strategy The index location converter.
 	 * @param macroDictionary The names and definitions of the macros used to disambiguate between
 	 *     variants of the file contents corresponding to different inclusion points.
-	 * @return The found file, or <code>null</code> if the matching file was not found.  
+	 * @return The found file, or <code>null</code> if the matching file was not found.
 	 */
 	public static PDOMFile findFile(PDOMLinkage linkage, BTree btree, IIndexFileLocation location,
 			IIndexLocationConverter strategy, Map<String, String> macroDictionary) throws CoreException {
@@ -801,7 +801,7 @@ public class PDOMFile implements IIndexFragmentFile {
 
 		/**
 		 * Searches for a file with the given linkage id.
-		 * @param macroDictionary 
+		 * @param macroDictionary
 		 */
 		public Finder(Database db, String internalRepresentation, int linkageID,
 				Map<String, String> macroDictionary) {
@@ -820,7 +820,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			}
 			return records;
 		}
-		
+
 		public int compare(long record) throws CoreException {
 			IString name = db.getString(db.getRecPtr(record + PDOMFile.LOCATION_REPRESENTATION));
 			int cmp= name.compare(rawKey, true);

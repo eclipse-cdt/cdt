@@ -11,6 +11,7 @@
  *     Andrew Ferguson (Symbian)
  *     Anton Leherbauer (Wind River Systems)
  *     IBM Corporation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 

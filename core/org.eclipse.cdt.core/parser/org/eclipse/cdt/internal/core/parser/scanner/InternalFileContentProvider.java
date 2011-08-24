@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -25,17 +26,17 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	private IIncludeFileResolutionHeuristics fIncludeResolutionHeuristics;
 
 	/**
-	 * Check whether the specified inclusion exists.
+	 * Checks whether the specified inclusion exists.
 	 */
 	public boolean getInclusionExists(String path) {
 		return new File(path).exists();
 	}
 
 	/**
-	 * Create an InclusionContent object for the given location.
-     * return an inclusion content or <code>null</code> if the location does not exist.
+	 * Creates an InclusionContent object for the given location.
 	 * @param filePath the absolute location of the file.
 	 * @param macroDictionary macros defined at the inclusion point.
+     * @return Returns an inclusion content, or <code>null</code> if the location does not exist.
 	 * @see InternalFileContent
 	 */
 	public abstract InternalFileContent getContentForInclusion(String filePath,
@@ -61,17 +62,17 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	/**
 	 * Reports the path of the translation unit, such that it is known as included.
 	 * @param filePath the absolute location of the file.
-	 * @param hasPragmaOnceSemantics the name of the include guard macro for the file,
-	 *     or <code>null</code> if the file doesn't have the include guard macro.
-	 * @param significantMacros macros relevant to the file and their definitions.
+	 * @param hasPragmaOnceSemantics a flag indicating whether the file has #pragma once
+	 *     statement or an include guard.
+	 * @param significantMacros macros affecting preprocessed content of the file .
 	 */
 	public void reportTranslationUnitFile(String filePath, boolean hasPragmaOnceSemantics,
 			Map<String, String> significantMacros) {
 	}
 	
 	/**
-	 * Returns whether or not the file has been included, or <code>null</code> if the content provider
-	 * does not track that.
+	 * Returns whether or not the file has been included, or <code>null</code> if the content
+	 * provider does not track that.
 	 * @param filePath the absolute location of the file.
 	 * @param macroDictionary macros defined at the inclusion point.
 	 */
@@ -81,8 +82,8 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	}
 
 	/**
-	 * Returns a strategy for heuristically resolving includes, or <code>null</code> if this shall not
-	 * be done.
+	 * Returns a strategy for heuristically resolving includes, or <code>null</code> if this shall
+	 * not be done.
 	 */
 	public final IIncludeFileResolutionHeuristics getIncludeHeuristics() {
 		return fIncludeResolutionHeuristics;

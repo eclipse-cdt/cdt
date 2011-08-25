@@ -303,6 +303,7 @@ public class CIndex implements IIndex {
 			return result;
 		}
 
+		// TODO(197989): Replace call to a deprecated method.
 		return getFile(include.getIncludedBy().getLinkageID(), include.getIncludesLocation());
 	}
 

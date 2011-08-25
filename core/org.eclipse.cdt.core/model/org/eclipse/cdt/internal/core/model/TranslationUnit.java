@@ -839,18 +839,19 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return fileContentsProvider;
 	}
 
-	private static int[] CTX_LINKAGES= {ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID};
+	private static final int[] CTX_LINKAGES= { ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID };
 	public ITranslationUnit getSourceContextTU(IIndex index, int style) {
 		if (index != null && (style & AST_CONFIGURE_USING_SOURCE_CONTEXT) != 0) {
 			try {
 				fLanguageOfContext= null;
-				for (int element : CTX_LINKAGES) {
+				for (int linkageID : CTX_LINKAGES) {
 					IIndexFile context= null;
 					final IIndexFileLocation ifl = IndexLocationFactory.getIFL(this);
 					if (ifl != null) {
-						IIndexFile indexFile= index.getFile(element, ifl);
+						// TODO(197989): Replace call to a deprecated method.
+						IIndexFile indexFile= index.getFile(linkageID, ifl);
 						if (indexFile != null) {
-							// bug 199412, when a source-file includes itself the context may recurse.
+							// Bug 199412, when a source-file includes itself the context may recurse.
 							HashSet<IIndexFile> visited= new HashSet<IIndexFile>();
 							visited.add(indexFile);
 							indexFile = getParsedInContext(indexFile);

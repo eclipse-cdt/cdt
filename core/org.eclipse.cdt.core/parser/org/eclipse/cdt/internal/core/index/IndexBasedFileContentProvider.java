@@ -320,6 +320,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 	public IIndexFile findIndexFile(InternalFileContent fc) throws CoreException {
 		IIndexFileLocation ifl = fPathResolver.resolveASTPath(fc.getFileLocation());
 		if (ifl != null) {
+			// TODO(197989): Replace call to a deprecated method.
 			return fIndex.getFile(fLinkage, ifl);
 		}
 		return null;

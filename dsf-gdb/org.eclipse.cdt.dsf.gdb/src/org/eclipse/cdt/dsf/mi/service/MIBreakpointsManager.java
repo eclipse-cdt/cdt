@@ -1669,7 +1669,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
             // Extract the thread IDs (if there is none, we are covered)
             for (IContainerDMContext ctxt : targets) {
-                if (DMContexts.isAncestorOf(ctxt, context)) {
+                if (ctxt.equals(context) || DMContexts.isAncestorOf(ctxt, context)) {
                     threads.add(filterExtension.getThreadFilters(ctxt));
                 }
             }

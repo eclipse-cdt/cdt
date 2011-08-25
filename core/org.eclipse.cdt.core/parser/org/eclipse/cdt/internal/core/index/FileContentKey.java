@@ -10,20 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.eclipse.cdt.core.index.IFileContentKey;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * A key that uniquely determines the preprocessed contents of a file. 
  */
 public class FileContentKey implements IFileContentKey {
 	private final IIndexFileLocation location;
-	private final boolean pragmaOnceSemantics;
 	private final String significantMacrosKey;
 	private volatile Map<String, String> significantMacros;
 
@@ -33,25 +30,21 @@ public class FileContentKey implements IFileContentKey {
 	 */
 	public FileContentKey(IIndexFileLocation location) {
 		this.location = location;
-		this.pragmaOnceSemantics = true;
 		this.significantMacrosKey = null;
 	}
 
 	/**
 	 * Creates a file content key that does not have the "#pragma once" semantics.
 	 * @param location the file location.
-	 * @param hasPragmaOnceSemantics 
 	 * @param significantMacros the significant macros and their definitions, or <code>null</code>
 	 * 	   if the set of significant macros is unknown.
 	 */
-	public FileContentKey(IIndexFileLocation location, boolean hasPragmaOnceSemantics,
-			Map<String, String> significantMacros) {
+	public FileContentKey(IIndexFileLocation location, Map<String, String> significantMacros) {
 		this.location = location;
-		this.pragmaOnceSemantics = hasPragmaOnceSemantics;
 		// Encode macros to a string to avoid expensive map comparisons later.
-		this.significantMacrosKey = !hasPragmaOnceSemantics && significantMacros != null ?
+		this.significantMacrosKey = significantMacros != null ?
 				String.valueOf(StringMapEncoder.encode(significantMacros)) : null;
-		if (!hasPragmaOnceSemantics && significantMacros != null) {
+		if (significantMacros != null) {
 			this.significantMacros = Collections.unmodifiableMap(significantMacros);
 		}
 	}
@@ -64,7 +57,6 @@ public class FileContentKey implements IFileContentKey {
 	 */
 	public FileContentKey(IIndexFileLocation location, char[] encodedSignificantMacros) {
 		this.location = location;
-		this.pragmaOnceSemantics = false;
 		this.significantMacrosKey =
 				encodedSignificantMacros != null ? String.valueOf(encodedSignificantMacros) : null;
 	}
@@ -79,36 +71,6 @@ public class FileContentKey implements IFileContentKey {
 					Collections.unmodifiableMap(StringMapEncoder.decodeMap(significantMacrosKey.toCharArray()));
 		}
 		return significantMacros;
-	}
-
-	public boolean hasPragmaOnceSemantics() {
-		return pragmaOnceSemantics;
-	}
-
-	public Map<String, String> selectSignificantMacros(Map<String, String> macroDictionary) {
-		if (significantMacros == null || pragmaOnceSemantics) {
-			return null;
-		}
-		return selectSignificantMacros(significantMacros.keySet(), macroDictionary);
-	}
-
-	/**
-	 * Selects significant macros from a given macro dictionary.
-	 * @param relevantMacroNames the names of the significant macros.
-	 * @param macroDictionary macros and their definitions.
-	 * @return Significant macros and their definitions. Undefined macros have <code>null</code>
-	 *     values in the map. 
-	 */
-	public static Map<String, String> selectSignificantMacros(Set<String> relevantMacroNames,
-			Map<String, String> macroDictionary) {
-		if (relevantMacroNames.isEmpty()) {
-			return Collections.emptyMap();
-		}
-		Map<String, String> relevant = new HashMap<String, String>(relevantMacroNames.size());
-		for (String key : relevantMacroNames) {
-			relevant.put(key, macroDictionary.get(key));
-		}
-		return relevant;
 	}
 
 	@Override
@@ -135,6 +97,6 @@ public class FileContentKey implements IFileContentKey {
 		} else if (!significantMacrosKey.equals(other.significantMacrosKey)) {
 			return false;
 		}
-        return pragmaOnceSemantics == other.pragmaOnceSemantics;
+        return true;
 	}
 }

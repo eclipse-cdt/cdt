@@ -743,10 +743,10 @@ public class LocationMap implements ILocationResolver {
 		}
 	}
 	
-	public void replacingFile(InternalFileContentProvider fileContentProvider, 
+	public void parsingFile(InternalFileContentProvider fileContentProvider, 
 			InternalFileContent fileContent) {
 		for (ISkippedIndexedFilesListener l : fSkippedFilesListeners) {
-			l.replacingFile(fileContentProvider, fileContent);
+			l.parsingFile(fileContentProvider, fileContent);
 		}
 	}		
 }

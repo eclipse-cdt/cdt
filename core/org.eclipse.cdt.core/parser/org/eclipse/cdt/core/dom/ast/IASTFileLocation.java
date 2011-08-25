@@ -54,6 +54,8 @@ public interface IASTFileLocation extends IASTNodeLocation {
 	/**
 	 * Returns the inclusion statement that included this file, or <code>null</code> for
 	 * a top-level file.
+	 * Also <code>null</code> when the file location does not belong to an AST node, e.g.
+	 * if it is obtained from a name in the index.
 	 * @since 5.4
 	 */
 	public IASTPreprocessorIncludeStatement getContextInclusionStatement();

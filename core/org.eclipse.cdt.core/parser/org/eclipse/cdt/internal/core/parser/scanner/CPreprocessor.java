@@ -15,9 +15,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +28,7 @@ import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IMacro;
+import org.eclipse.cdt.core.parser.IMacroDictionary;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IPreprocessorDirective;
 import org.eclipse.cdt.core.parser.IProblem;
@@ -95,14 +94,25 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private static final int STOP_AT_NL 		 = 0x04;
 	private static final int CHECK_NUMBERS 		 = 0x08;
 
+	private final class MacroDictionary implements IMacroDictionary {
+		public boolean compliesWith(Map<String, String> significantMacros) {
+			// mstodo Add implementation
+			return true;
+		}
+	}
+
 	private interface IIncludeFileTester<T> {
     	T checkFile(String path, boolean isHeuristicMatch, IncludeSearchPathElement onPath);
     }
 
 	final private IIncludeFileTester<InternalFileContent> createCodeReaderTester= new IIncludeFileTester<InternalFileContent>() {
     	public InternalFileContent checkFile(String path, boolean isHeuristicMatch, IncludeSearchPathElement onPath) {
-    		Map<String, String> macroDictionary = getSimpleMacroDefinitions();
-			final InternalFileContent fc= fFileContentProvider.getContentForInclusion(path, macroDictionary);
+			final InternalFileContent fc;
+			if (fFileContentProvider.mustSkipFileInclusion(path)) { 
+				fc= new InternalFileContent(path, InclusionKind.SKIP_FILE);
+			} else {
+				fc= fFileContentProvider.getContentForInclusion(path, fMacroDictionaryFacade);
+			}
 			if (fc != null) {
 				fc.setFoundByHeuristics(isHeuristicMatch);
 				fc.setFoundOnPath(onPath);
@@ -186,10 +196,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
     // state information
     private final CharArrayMap<PreprocessorMacro> fMacroDictionary = new CharArrayMap<PreprocessorMacro>(512);
+	private final IMacroDictionary fMacroDictionaryFacade = new MacroDictionary();
     private final LocationMap fLocationMap;
-
-    /** Set of already included files */
-    private final HashSet<String> fAllIncludedFiles= new HashSet<String>();
 
 	private final Lexer fRootLexer;
 	private final ScannerContext fRootContext;
@@ -241,19 +249,17 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         setupMacroDictionary(configuration, info, language);		
 
         ILocationCtx ctx= fLocationMap.pushTranslationUnit(filePath, fRootContent.getSource());
-        fAllIncludedFiles.add(filePath);
-        // TODO(197989): Provide real significant macros and hasPragmaOnceSemantics value.
-    	boolean hasPragmaOnceSemantics = false;
-    	Map<String, String> significantMacros = Collections.emptyMap();
-		fFileContentProvider.reportTranslationUnitFile(filePath, hasPragmaOnceSemantics, significantMacros);
         fRootLexer= new Lexer(fRootContent.getSource(), fLexOptions, this, this);
         fRootContext= fCurrentContext= new ScannerContext(ctx, null, fRootLexer);
         if (info instanceof IExtendedScannerInfo) {
         	final IExtendedScannerInfo einfo= (IExtendedScannerInfo) info;
         	fPreIncludedFiles= new String[][] { einfo.getMacroFiles(), einfo.getIncludeFiles() };
         }
+        fFileContentProvider.resetInclusionCounting();
+        fFileContentProvider.reportFile(filePath, 
+        		detectPragmaOnce(new Lexer(fRootContent.getSource(), fLexOptions, this, this)));
     }
-
+    
     public void setSplitShiftROperator(boolean val) {
     	fSplitShiftRightOperator= val;
     }
@@ -380,11 +386,11 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	}
 		final String location = fLocationMap.getTranslationUnitPath();
 		InternalFileContent content= fFileContentProvider.getContentForContextToHeaderGap(location,
-				getSimpleMacroDefinitions());
+				fMacroDictionaryFacade);
 		if (content != null && content.getKind() == InclusionKind.FOUND_IN_INDEX) {
 			processInclusionFromIndex(0, location, content);
 		}
-		fLocationMap.replacingFile(fFileContentProvider, fRootContent);
+		fLocationMap.parsingFile(fFileContentProvider, fRootContent);
 		fRootContent= null;
 	}
 
@@ -454,14 +460,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
             hashMap.put(String.valueOf(key), fMacroDictionary.get(key));
 		}
         return hashMap;
-    }
-
-    public Map<String, String> getSimpleMacroDefinitions() {
-        Map<String, String> map = new HashMap<String, String>(fMacroDictionary.size());
-        for (char[] key : fMacroDictionary.keys()) {
-            map.put(String.valueOf(key), String.valueOf(fMacroDictionary.get(key).getExpansion()));
-		}
-        return map;
     }
 
     public boolean isOnTopContext() {
@@ -1189,17 +1187,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	}
     }
 
-    private boolean hasFileBeenIncluded(String location) {
-    	// TODO(197989): Change Collections.emptyMap() to getSimpleMacroDefinitions()
-    	Map<String, String> macroDefinitions = Collections.emptyMap();
-    	Boolean itHas= fFileContentProvider.hasFileBeenIncludedInCurrentTranslationUnit(location,
-    			macroDefinitions);
-    	if (itHas != null) {
-    		return itHas.booleanValue();
-    	}
-    	return fAllIncludedFiles.contains(location);
-    }
-    
 	private void executeInclude(final Lexer lexer, int poundOffset, boolean include_next,
 			boolean active, boolean withinExpansion) throws OffsetLimitReachedException {
 		if (withinExpansion) {
@@ -1282,10 +1269,14 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		
 		final String includeDirective = new String(headerName);
 		if (!active) {
+			// #ifndef GUARD
+			//    #include "file.h"
+			// #endif
+			// mstodo we need to detect these constructs, i.e. the include should be marked as active.
 			// test if the include is inactive just because it was included before (bug 167100)
 			final IncludeResolution resolved= findInclusion(includeDirective, userInclude, include_next,
 					getCurrentFilename(), createPathTester);
-			if (resolved != null && hasFileBeenIncluded(resolved.fLocation)) {
+			if (resolved != null && fFileContentProvider.getFileInclusionCount(resolved.fLocation) != 0) {
 				path= resolved.fLocation;
 				isHeuristic= resolved.fHeuristic;
 			}
@@ -1301,17 +1292,17 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 					break;
 				case USE_SOURCE:
 					AbstractCharArray source= fi.getSource();
-					if (source != null && !isCircularInclusion(path)) {
+					if (source != null) {
 						reported= true;
-						fAllIncludedFiles.add(path);
 						ILocationCtx ctx= fLocationMap.pushInclusion(poundOffset, nameOffsets[0], nameOffsets[1],
 								condEndOffset, source, path, headerName, userInclude, isHeuristic, fi.isSource());
 						ScannerContext fctx= new ScannerContext(ctx, fCurrentContext,
 								new Lexer(source, fLexOptions, this, this));
 						fctx.setFoundOnPath(fi.getFoundOnPath(), includeDirective);
 						fCurrentContext= fctx;
+						fFileContentProvider.reportFile(path, detectPragmaOnce(new Lexer(source, fLexOptions, this, this)));
 					}
-					fLocationMap.replacingFile(fFileContentProvider, fi);
+					fLocationMap.parsingFile(fFileContentProvider, fi);
 					break;
 					
 				case SKIP_FILE:
@@ -1363,18 +1354,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		return headerName;
 	}
 	
-	private boolean isCircularInclusion(String filename) {
-		ILocationCtx checkContext= fCurrentContext.getLocationCtx();
-		while (checkContext != null) {
-			if (filename.equals(checkContext.getFilePath())) {
-				return true;
-			}
-			checkContext= checkContext.getParent();
-		}
-		return false;
-	}
-
-
     private void executeDefine(final Lexer lexer, int startOffset, boolean isActive)
     		throws OffsetLimitReachedException {
 		try {
@@ -1696,5 +1675,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			return fMacroExpander;
 		}
 		return null;
+	}
+	
+	private boolean detectPragmaOnce(Lexer lexer) {
+		// mstodo implementation
+		return true;
 	}
 }

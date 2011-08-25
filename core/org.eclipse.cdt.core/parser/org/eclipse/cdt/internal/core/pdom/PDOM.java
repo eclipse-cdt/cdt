@@ -441,7 +441,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public IIndexFragmentFile[] getFiles(int linkageID, IIndexFileLocation location) throws CoreException {
 		PDOMLinkage linkage= getLinkage(linkageID);
 		if (linkage == null)
-			return PDOMFile.EMPTY_ARRAY;
+			return IIndexFragmentFile.EMPTY_ARRAY;
 		return PDOMFile.findFiles(linkage, getFileIndex(), location, locationConverter);
 	}
 

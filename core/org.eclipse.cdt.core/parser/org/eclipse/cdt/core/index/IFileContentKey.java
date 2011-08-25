@@ -33,19 +33,4 @@ public interface IFileContentKey {
 	 * are unknown or if the file has the "#pragma once" semantics.
 	 */
 	public Map<String, String> getSignificantMacros();
-
-	/**
-	 * Returns <code>true</code> if the file is a header with #pragma once statement or an include
-	 * guard, or if it is a source file.
-	 */
-	public boolean hasPragmaOnceSemantics();
-
-	/**
-	 * Selects significant macros from a given macro dictionary. May return <code>null</code> if
-	 * the significant macros are unknown.
-	 * @param macroDictionary macros and their definitions.
-	 * @return Significant macros and their definitions. Undefined macros have <code>null</code>
-	 *     values in the map. 
-	 */
-	public Map<String, String> selectSignificantMacros(Map<String, String> macroDictionary);
 }

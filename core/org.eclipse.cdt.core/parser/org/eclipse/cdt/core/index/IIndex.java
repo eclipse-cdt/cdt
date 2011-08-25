@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.parser.IMacroDictionary;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -149,7 +150,7 @@ public interface IIndex {
 	public IIndexFile getFile(int linkageID, IIndexFileLocation location) throws CoreException;
 
 	/**
-	 * Returns the file for the given location, linkage, and a set of macro definitions.
+	 * Returns the file for the given location, linkage, and macro dictionary.
 	 * May return <code>null</code>, if no such file exists.
 	 *  
 	 * @param linkageID the id of the linkage in which the file has been parsed.
@@ -161,7 +162,23 @@ public interface IIndex {
 	 * @throws CoreException
 	 * @since 5.4
 	 */
-	IIndexFile getFile(int linkageID, IIndexFileLocation location, Map<String, String> macroDictionary)
+	IIndexFile getFile(int linkageID, IIndexFileLocation location, IMacroDictionary macroDictionary)
+			throws CoreException;
+
+	/**
+	 * Returns the file for the given location, linkage, and significant macros
+	 * May return <code>null</code>, if no such file exists.
+	 *  
+	 * @param linkageID the id of the linkage in which the file has been parsed.
+	 * @param location the IIndexFileLocation representing the location of the file
+	 * @param macroDictionary The names and definitions of the macros used to disambiguate between
+	 *     variants of the file contents corresponding to different inclusion points.
+	 * @return the file for the location, or <code>null</code> if the file is not present in
+	 *     the index
+	 * @throws CoreException
+	 * @since 5.4
+	 */
+	IIndexFile getFile(int linkageID, IIndexFileLocation location, Map<String, String> significantMacros)
 			throws CoreException;
 
 	/**

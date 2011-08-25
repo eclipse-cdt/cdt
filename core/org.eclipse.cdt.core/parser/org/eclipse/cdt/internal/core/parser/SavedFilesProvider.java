@@ -12,13 +12,12 @@ package org.eclipse.cdt.internal.core.parser;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.FileContent;
+import org.eclipse.cdt.core.parser.IMacroDictionary;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-
-import java.util.Map;
 
 
 public class SavedFilesProvider extends InternalFileContentProvider {
@@ -33,7 +32,7 @@ public class SavedFilesProvider extends InternalFileContentProvider {
 	
 	@Override
 	public InternalFileContent getContentForInclusion(String path,
-			Map<String, String> macroDictionary) {
+			IMacroDictionary macroDictionary) {
 		if (!getInclusionExists(path))
 			return null;
 		

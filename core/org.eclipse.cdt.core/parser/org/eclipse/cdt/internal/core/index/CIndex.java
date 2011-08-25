@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
@@ -221,9 +222,21 @@ public class CIndex implements IIndex {
 	}
 
 	public IIndexFile getFile(int linkageID, IIndexFileLocation location,
-			Map<String, String> macroDictionary) throws CoreException {
+			IMacroDictionary macroDictionary) throws CoreException {
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
-			IIndexFragmentFile candidate= fFragments[i].getFile(linkageID, location, macroDictionary);
+			for (IIndexFragmentFile ifile : fFragments[i].getFiles(linkageID, location)) {
+				if (ifile.hasContent() && macroDictionary.compliesWith(ifile.getContentKey().getSignificantMacros())) {
+					return ifile;
+				}
+			}
+		}
+		return null;
+	}
+
+	public IIndexFile getFile(int linkageID, IIndexFileLocation location,
+			Map<String, String> significantMacros) throws CoreException {
+		for (int i = 0; i < fPrimaryFragmentCount; i++) {
+			IIndexFragmentFile candidate= fFragments[i].getFile(linkageID, location, significantMacros);
 			if (candidate != null && candidate.hasContent()) {
 				return candidate;
 			}

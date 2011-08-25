@@ -796,19 +796,19 @@ public class PDOMFile implements IIndexFragmentFile {
 		private long record;
 		private long[] records;
 		private final int linkageID;
-		private final Map<String, String> macroDictionary;
 		private char[] rawSignificantMacros;
 
 		/**
 		 * Searches for a file with the given linkage id.
-		 * @param macroDictionary
 		 */
 		public Finder(Database db, String internalRepresentation, int linkageID,
-				Map<String, String> macroDictionary) {
+				Map<String, String> significantMacros) {
 			this.db = db;
 			this.rawKey = internalRepresentation;
 			this.linkageID= linkageID;
-			this.macroDictionary = macroDictionary;
+			this.rawSignificantMacros = significantMacros == null ? null 
+					: significantMacros.isEmpty() ? EMPTY_CHAR_ARRAY 
+							: StringMapEncoder.encode(significantMacros);
 		}
 
 		public long[] getRecords() {
@@ -826,23 +826,12 @@ public class PDOMFile implements IIndexFragmentFile {
 			int cmp= name.compare(rawKey, true);
 			if (cmp == 0 && linkageID >= 0) {
 				cmp= db.get3ByteUnsignedInt(record + PDOMFile.LINKAGE_ID) - linkageID;
-				if (cmp == 0 && (db.getByte(record + FLAGS) & FLAG_PRAGMA_ONCE_SEMANTICS) == 0 &&
-						macroDictionary != null) {
+				if (cmp == 0 && rawSignificantMacros != null) {
 					IString significantMacrosStr = getString(record + SIGNIFICANT_MACROS);
-					if (rawSignificantMacros == null && significantMacrosStr != null) {
-						Map<String, String> fileSignificantMacros =
-								StringMapEncoder.decodeMap(significantMacrosStr.getChars());
-						Map<String, String> significantMacros =
-								FileContentKey.selectSignificantMacros(fileSignificantMacros.keySet(),
-										macroDictionary);
-						rawSignificantMacros = significantMacros.isEmpty() ?
-								EMPTY_CHAR_ARRAY :
-								StringMapEncoder.encode(significantMacros);
-					}
 					if (significantMacrosStr != null) {
 						cmp = significantMacrosStr.compare(rawSignificantMacros, true);
 					} else {
-						cmp = rawSignificantMacros != null && rawSignificantMacros.length > 0 ? -1 : 0;
+						cmp = rawSignificantMacros.length > 0 ? -1 : 0;
 					}
 				}
 			}

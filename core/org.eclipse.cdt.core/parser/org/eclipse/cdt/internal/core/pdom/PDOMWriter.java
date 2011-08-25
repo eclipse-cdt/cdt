@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,7 +52,6 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
-import org.eclipse.cdt.internal.core.index.FileContentKey;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
@@ -72,6 +70,15 @@ import org.eclipse.osgi.util.NLS;
  * @since 4.0
  */
 abstract public class PDOMWriter {
+	public static class FileInAST {
+		public FileInAST(IASTPreprocessorIncludeStatement includeStmt, IFileContentKey key) {
+			fIncludeStatement= includeStmt;
+			fFileContentKey= key;
+		}
+		final IASTPreprocessorIncludeStatement fIncludeStatement;
+		final IFileContentKey fFileContentKey;
+	}
+
 	public static int SKIP_ALL_REFERENCES= -1;
 	public static int SKIP_TYPE_REFERENCES= 1;
 	public static int SKIP_MACRO_REFERENCES= 2;
@@ -79,9 +86,24 @@ abstract public class PDOMWriter {
 	public static int SKIP_NO_REFERENCES= 0;
 
 	private static class Symbols {
-		ArrayList<IASTName[]> fNames= new ArrayList<IASTName[]>();
-		ArrayList<IASTPreprocessorStatement> fMacros= new ArrayList<IASTPreprocessorStatement>();
-		ArrayList<IASTPreprocessorIncludeStatement> fIncludes= new ArrayList<IASTPreprocessorIncludeStatement>();
+		final ArrayList<IASTName[]> fNames= new ArrayList<IASTName[]>();
+		final ArrayList<IASTPreprocessorStatement> fMacros= new ArrayList<IASTPreprocessorStatement>();
+		final ArrayList<IASTPreprocessorIncludeStatement> fIncludes= new ArrayList<IASTPreprocessorIncludeStatement>();
+	}
+	
+	private static class Data {
+		final IASTTranslationUnit fAST;
+		final FileInAST[] fSelectedFiles;
+		final IWritableIndex fIndex;
+		final Map<IASTPreprocessorIncludeStatement, Symbols> fSymbolMap = new HashMap<IASTPreprocessorIncludeStatement, Symbols>();
+		final Set<IASTPreprocessorIncludeStatement> fContextIncludes = new HashSet<IASTPreprocessorIncludeStatement>();
+		final List<IStatus> fStati= new ArrayList<IStatus>();
+		
+		public Data(IASTTranslationUnit ast, FileInAST[] selectedFiles, IWritableIndex index) {
+			fAST= ast;
+			fSelectedFiles= selectedFiles;
+			fIndex= index;
+		}
 	}
 
 	private boolean fShowProblems;
@@ -142,9 +164,8 @@ abstract public class PDOMWriter {
 	 * 
 	 * When flushIndex is set to <code>false</code>, you must make sure to flush 
 	 * the index after your last write operation.
-	 * @since 4.0
 	 */
-	public void addSymbols(IASTTranslationUnit ast, IFileContentKey[] fileKeys, IWritableIndex index,
+	public void addSymbols(IASTTranslationUnit ast, FileInAST[] selectedFiles, IWritableIndex index,
 			int readlockCount, boolean flushIndex, long fileContentsHash, int configHash,
 			ITodoTaskUpdater taskUpdater, IProgressMonitor pm) throws InterruptedException, CoreException {
 		if (fShowProblems) {
@@ -152,29 +173,36 @@ abstract public class PDOMWriter {
 			fShowScannerProblems= true;
 			fShowSyntaxProblems= true;
 		}
-		final Map<IFileContentKey, Symbols> symbolMap= new HashMap<IFileContentKey, Symbols>();
-		for (IFileContentKey fileKey : fileKeys) {
-			prepareInMap(symbolMap, fileKey);
+		
+		Data info= new Data(ast, selectedFiles, index);
+		for (FileInAST file : selectedFiles) {
+			info.fSymbolMap.put(file.fIncludeStatement, new Symbols());
 		}
-		ArrayList<IStatus> stati= new ArrayList<IStatus>();
+		
 
-		HashSet<IASTPreprocessorIncludeStatement> contextIncludes= new HashSet<IASTPreprocessorIncludeStatement>();
-		extractSymbols(ast, symbolMap, contextIncludes);
+		// Extract symbols from AST
+		extractSymbols(info);
 
-		// name resolution
-		resolveNames(symbolMap, fileKeys, stati, pm);
+		// Name resolution
+		resolveNames(info, pm);
 
-		// index update
-		storeSymbolsInIndex(symbolMap, fileKeys, ast.getLinkage().getLinkageID(), fileContentsHash,
-				configHash, contextIncludes, index, readlockCount, flushIndex, stati, pm);
+		// Index update
+		storeSymbolsInIndex(info, fileContentsHash, configHash, readlockCount, flushIndex, pm);
 
+		// Tasks update
 		if (taskUpdater != null) {
-			taskUpdater.updateTasks(ast.getComments(), fileKeys);
+			IFileContentKey[] keyArray= new IFileContentKey[selectedFiles.length];
+			int i= 0;
+			for (FileInAST file : selectedFiles) {
+				keyArray[i++]= file.fFileContentKey;
+			}
+			taskUpdater.updateTasks(ast.getComments(), keyArray);
 		}
-		if (!stati.isEmpty()) {
+		if (!info.fStati.isEmpty()) {
+			List<IStatus> stati = info.fStati;
 			String path= null;
-			if (fileKeys.length > 0) {
-				path= fileKeys[fileKeys.length - 1].getLocation().getURI().getPath();
+			if (selectedFiles.length > 0) {
+				path= selectedFiles[selectedFiles.length - 1].fFileContentKey.getLocation().getURI().getPath();
 			} else {
 				path= ast.getFilePath().toString();
 			}
@@ -192,26 +220,24 @@ abstract public class PDOMWriter {
 		}
 	}
 
-	private void storeSymbolsInIndex(final Map<IFileContentKey, Symbols> symbolMap, IFileContentKey[] fileKeys,
-			int linkageID, long fileContentsHash, int configHash,
-			HashSet<IASTPreprocessorIncludeStatement> contextIncludes, IWritableIndex index, int readlockCount,
-			boolean flushIndex, ArrayList<IStatus> stati, IProgressMonitor pm)
+	private void storeSymbolsInIndex(final Data data, long fileContentsHash, int configHash,
+			int readlockCount, boolean flushIndex, IProgressMonitor pm)
 			throws InterruptedException, CoreException {
-		for (int i= 0; i < fileKeys.length; i++) {
+		final int linkageID= data.fAST.getLinkage().getLinkageID();
+		for (int i= 0; i < data.fSelectedFiles.length; i++) {
 			if (pm.isCanceled())
 				return;
 
-			final IFileContentKey fileKey= fileKeys[i];
-			if (fileKey != null) {
+			final FileInAST file= data.fSelectedFiles[i];
+			if (file != null) {
 				if (fShowActivity) {
-					trace("Indexer: adding " + fileKey.getLocation().getURI());  //$NON-NLS-1$
+					trace("Indexer: adding " + file.fFileContentKey.getLocation().getURI());  //$NON-NLS-1$
 				}
 				Throwable th= null;
-				YieldableIndexLock lock = new YieldableIndexLock(index, readlockCount, flushIndex);
+				YieldableIndexLock lock = new YieldableIndexLock(data.fIndex, readlockCount, flushIndex);
 				lock.acquire();
 				try {
-					storeFileInIndex(index, fileKey, symbolMap, linkageID, fileContentsHash, configHash,
-							contextIncludes, lock);
+					storeFileInIndex(data, file, linkageID, fileContentsHash, configHash, lock);
 				} catch (RuntimeException e) {
 					th= e;
 				} catch (StackOverflowError e) {
@@ -221,16 +247,16 @@ abstract public class PDOMWriter {
 				} finally {
 					// When the caller holds a read-lock, the result cache of the index is never cleared.
 					// ==> Before releasing the lock for the last time in this ast, we clear the result cache.
-					if (readlockCount > 0  && i == fileKeys.length-1) {
-						index.clearResultCache();
+					if (readlockCount > 0  && i == data.fSelectedFiles.length-1) {
+						data.fIndex.clearResultCache();
 					}
 					lock.release();
 				}
 				if (th != null) {
-					stati.add(createStatus(NLS.bind(Messages.PDOMWriter_errorWhileParsing,
-							fileKey.getLocation().getURI().getPath()), th));
+					data.fStati.add(createStatus(NLS.bind(Messages.PDOMWriter_errorWhileParsing,
+							file.fFileContentKey.getLocation().getURI().getPath()), th));
 				}
-				if (i < fileKeys.length - 1) {
+				if (i < data.fSelectedFiles.length - 1) {
 					updateFileCount(0, 0, 1); // update header count
 				}
 				fStatistics.fAddToIndexTime += lock.getCumulativeLockTime();
@@ -238,14 +264,13 @@ abstract public class PDOMWriter {
 		}
 	}
 
-	private void resolveNames(final Map<IFileContentKey, Symbols> symbolMap, IFileContentKey[] fileKeys,
-			ArrayList<IStatus> stati, IProgressMonitor pm) {
+	private void resolveNames(Data data, IProgressMonitor pm) {
 		long start= System.currentTimeMillis();
-		for (IFileContentKey fileKey : fileKeys) {
+		for (FileInAST file : data.fSelectedFiles) {
 			if (pm.isCanceled()) {
 				return;
 			}
-			Symbols symbols= symbolMap.get(fileKey);
+			Symbols symbols= data.fSymbolMap.get(file.fIncludeStatement);
 
 			final ArrayList<IASTName[]> names= symbols.fNames;
 			boolean reported= false;
@@ -288,8 +313,8 @@ abstract public class PDOMWriter {
 					}
 					if (th != null) {
 						if (!reported) {
-							stati.add(CCorePlugin.createStatus(NLS.bind(Messages.PDOMWriter_errorResolvingName,
-									name.toString(), fileKey.getLocation().getURI().getPath()), th));
+							data.fStati.add(CCorePlugin.createStatus(NLS.bind(Messages.PDOMWriter_errorResolvingName,
+									name.toString(), file.fFileContentKey.getLocation().getURI().getPath()), th));
 						}
 						reported= true;
 						j.remove();
@@ -300,12 +325,11 @@ abstract public class PDOMWriter {
 		fStatistics.fResolutionTime += System.currentTimeMillis()-start;
 	}
 
-	private void extractSymbols(IASTTranslationUnit ast, final Map<IFileContentKey, Symbols> symbolMap,
-			Collection<IASTPreprocessorIncludeStatement> contextIncludes) throws CoreException {
-		final HashSet<IFileContentKey> contextKeys= new HashSet<IFileContentKey>();
-		final IIndexFileLocation astIFL = fResolver.resolveASTPath(ast.getFilePath());
-
+	private void extractSymbols(Data data) throws CoreException {
 		int unresolvedIncludes= 0;
+		final IASTTranslationUnit ast = data.fAST;
+		final Map<IASTPreprocessorIncludeStatement, Symbols> symbolMap = data.fSymbolMap;
+
 		IASTPreprocessorStatement[] stmts = ast.getAllPreprocessorStatements();
 		for (final IASTPreprocessorStatement stmt : stmts) {
 			// Includes.
@@ -313,23 +337,18 @@ abstract public class PDOMWriter {
 				IASTPreprocessorIncludeStatement include= (IASTPreprocessorIncludeStatement) stmt;
 
 				final IASTFileLocation astLoc= include.getFileLocation();
-				final IIndexFileLocation sourceIFL= astLoc != null ? fResolver.resolveASTPath(astLoc.getFileName()) : astIFL; // command-line includes
-				
-				IFileContentKey fileKey = getFileContentKey(sourceIFL, astLoc);
-				final boolean updateSource= symbolMap.containsKey(fileKey);
+				IASTPreprocessorIncludeStatement owner = astLoc.getContextInclusionStatement();
+				final boolean updateSource= symbolMap.containsKey(owner);
 				if (updateSource) {
-					addToMap(symbolMap, fileKey, include);
+					addToMap(symbolMap, owner, include);
 				}
 				if (include.isActive()) {
 					if (!include.isResolved()) {
 						unresolvedIncludes++;
 					} else if (updateSource) {
 						// The include was parsed, check if we want to update the included file in the index.
-						final IIndexFileLocation targetIFL= fResolver.resolveASTPath(include.getPath());
-						fileKey = new FileContentKey(targetIFL, include.hasPragmaOnceSemantics(),
-								include.getSignificantMacros());
-						if (symbolMap.containsKey(fileKey) && contextKeys.add(fileKey)) {
-							contextIncludes.add(include);
+						if (symbolMap.containsKey(include)) {
+							data.fContextIncludes.add(include);
 						}
 					}
 				}
@@ -337,9 +356,8 @@ abstract public class PDOMWriter {
 					(stmt instanceof IASTPreprocessorUndefStatement || stmt instanceof IASTPreprocessorMacroDefinition)) {
 				IASTFileLocation sourceLoc = stmt.getFileLocation();
 				if (sourceLoc != null) { // skip built-ins and command line macros
-					IIndexFileLocation location = fResolver.resolveASTPath(sourceLoc.getFileName());
-					IFileContentKey fileKey = getFileContentKey(location, sourceLoc);
-					addToMap(symbolMap, fileKey, stmt);
+					IASTPreprocessorIncludeStatement owner = sourceLoc.getContextInclusionStatement();
+					addToMap(symbolMap, owner, stmt);
 				}
 			}
 		}
@@ -361,9 +379,8 @@ abstract public class PDOMWriter {
 				if (name != null) {
 					IASTFileLocation nameLoc = name.getFileLocation();
 					if (nameLoc != null) {
-						IIndexFileLocation location = fResolver.resolveASTPath(nameLoc.getFileName());
-						IFileContentKey fileKey = getFileContentKey(location, nameLoc);
-						addToMap(symbolMap, fileKey, new IASTName[] { name, caller });
+						IASTPreprocessorIncludeStatement owner= nameLoc.getContextInclusionStatement();
+						addToMap(symbolMap, owner, new IASTName[] { name, caller });
 					}
 				}
 			}
@@ -377,9 +394,8 @@ abstract public class PDOMWriter {
 				for (IASTName name : refs) {
 					IASTFileLocation nameLoc = name.getFileLocation();
 					if (nameLoc != null) {
-						IIndexFileLocation location = fResolver.resolveASTPath(nameLoc.getFileName());
-						IFileContentKey fileKey = getFileContentKey(location, nameLoc);
-						addToMap(symbolMap, fileKey, new IASTName[] { name, null });
+						IASTPreprocessorIncludeStatement owner= nameLoc.getContextInclusionStatement();
+						addToMap(symbolMap, owner, new IASTName[] { name, null });
 					}
 				}
 			}
@@ -404,13 +420,6 @@ abstract public class PDOMWriter {
 				reportProblem(problem);
 			}
 		}
-	}
-
-	private static IFileContentKey getFileContentKey(IIndexFileLocation ifl, IASTFileLocation astLocation) {
-		IASTPreprocessorIncludeStatement parentInclude = astLocation.getContextInclusionStatement();
-		return new FileContentKey(ifl,
-				parentInclude == null || parentInclude.hasPragmaOnceSemantics(),
-				parentInclude != null ? parentInclude.getSignificantMacros() : null);
 	}
 
 	protected final boolean isRequiredReference(IASTName name) {
@@ -443,43 +452,36 @@ abstract public class PDOMWriter {
 		return false;
 	}
 
-	private void addToMap(Map<IFileContentKey, Symbols> map, IFileContentKey fileKey, IASTName[] thing) {
-		Symbols lists= map.get(fileKey);
+	private void addToMap(Map<IASTPreprocessorIncludeStatement, Symbols> symbolMap, IASTPreprocessorIncludeStatement owner, IASTName[] thing) {
+		Symbols lists= symbolMap.get(owner);
 		if (lists != null)
 			lists.fNames.add(thing);
 	}
 
-	private void addToMap(Map<IFileContentKey, Symbols> map, IFileContentKey fileKey,
-			IASTPreprocessorIncludeStatement thing) {
-		Symbols lists= map.get(fileKey);
+	private void addToMap(Map<IASTPreprocessorIncludeStatement, Symbols> symbolMap, IASTPreprocessorIncludeStatement owner, IASTPreprocessorIncludeStatement thing) {
+		Symbols lists= symbolMap.get(owner);
 		if (lists != null)
 			lists.fIncludes.add(thing);
 	}
 
-	private void addToMap(Map<IFileContentKey, Symbols> map, IFileContentKey fileKey,
-			IASTPreprocessorStatement thing) {
-		Symbols lists= map.get(fileKey);
+	private void addToMap(Map<IASTPreprocessorIncludeStatement, Symbols> symbolMap, IASTPreprocessorIncludeStatement owner, IASTPreprocessorStatement thing) {
+		Symbols lists= symbolMap.get(owner);
 		if (lists != null)
 			lists.fMacros.add(thing);
 	}
 
-	private boolean prepareInMap(Map<IFileContentKey, Symbols> map, IFileContentKey fileKey) {
-		if (map.get(fileKey) == null) {
-			map.put(fileKey, new Symbols());
-		}
-		return false;
-	}
-
-	private IIndexFragmentFile storeFileInIndex(IWritableIndex index, IFileContentKey fileKey,
-			Map<IFileContentKey, Symbols> symbolMap, int linkageID, long fileContentsHash,
-			int configHash, Set<IASTPreprocessorIncludeStatement> contextIncludes,
-			YieldableIndexLock lock) throws CoreException, InterruptedException {
+	private IIndexFragmentFile storeFileInIndex(Data data, FileInAST astFile, int linkageID, long fileContentsHash, 
+			int configHash,	YieldableIndexLock lock) throws CoreException, InterruptedException {
+		final IWritableIndex index = data.fIndex;
 		Set<IIndexFileLocation> clearedContexts= Collections.emptySet();
 		IIndexFragmentFile file;
 		// We create a temporary PDOMFile with zero timestamp, add names to it, then replace
 		// contents of the old file from the temporary one, then delete the temporary file.
 		// The write lock on the index can be yielded between adding names to the temporary file,
 		// if another thread is waiting for a read lock.
+		final IFileContentKey fileKey = astFile.fFileContentKey;
+		final IASTPreprocessorIncludeStatement owner= astFile.fIncludeStatement;
+		
 		IIndexFileLocation location = fileKey.getLocation();
 		Map<String, String> significantMacros = fileKey.getSignificantMacros();
 		IIndexFragmentFile oldFile = index.getWritableFile(linkageID, location, significantMacros);
@@ -495,10 +497,11 @@ abstract public class PDOMWriter {
 		file= index.addUncommittedFile(linkageID, location, significantMacros);
 		try {
 			file.setScannerConfigurationHashcode(configHash);
-			file.setPragmaOnceSemantics(fileKey.hasPragmaOnceSemantics());
+			boolean pragmaOnce= owner != null ? owner.hasPragmaOnceSemantics() : true;  // mstodo obtain from ast 
+			file.setPragmaOnceSemantics(pragmaOnce);
 			file.setSignificantMacros(significantMacros);
 
-			Symbols lists= symbolMap.get(fileKey);
+			Symbols lists= data.fSymbolMap.get(owner);
 			if (lists != null) {
 				IASTPreprocessorStatement[] macros= lists.fMacros.toArray(new IASTPreprocessorStatement[lists.fMacros.size()]);
 				IASTName[][] names= lists.fNames.toArray(new IASTName[lists.fNames.size()][]);
@@ -517,7 +520,7 @@ abstract public class PDOMWriter {
 					if (include.isResolved()) {
 						info.fLocation= fResolver.resolveASTPath(include.getPath());
 						info.fIsContext= include.isActive() &&
-							(contextIncludes.contains(include) || clearedContexts.contains(info.fLocation));
+							(data.fContextIncludes.contains(include) || clearedContexts.contains(info.fLocation));
 					}
 				}
 				index.setFileContent(file, linkageID, includeInfos, macros, names, fResolver, lock);

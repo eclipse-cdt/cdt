@@ -12,9 +12,10 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
-import java.util.Map;
+import java.util.HashMap;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.parser.IMacroDictionary;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.InclusionKind;
@@ -23,7 +24,9 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.Inclusio
  * Internal implementation of the file content providers
  */
 public abstract class InternalFileContentProvider extends IncludeFileContentProvider {
+	private static final Integer MAX_CONTENT_INCLUSIONS = 50;
 	private IIncludeFileResolutionHeuristics fIncludeResolutionHeuristics;
+    private final HashMap<Object, Integer> fIncludedFilesHistory= new HashMap<Object, Integer>();
 
 	/**
 	 * Checks whether the specified inclusion exists.
@@ -40,7 +43,7 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	 * @see InternalFileContent
 	 */
 	public abstract InternalFileContent getContentForInclusion(String filePath,
-			Map<String, String> macroDictionary);
+			IMacroDictionary macroDictionary);
 
 	/** 
 	 * Called only when used as a delegate of the index file content provider.
@@ -55,31 +58,56 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	 * @param macroDictionary macros defined at the inclusion point.
 	 */
 	public InternalFileContent getContentForContextToHeaderGap(String filePath,
-			Map<String, String> macroDictionary) {
+			IMacroDictionary macroDictionary) {
 		return null;
 	}
 
-	/**
-	 * Reports the path of the translation unit, such that it is known as included.
-	 * @param filePath the absolute location of the file.
-	 * @param hasPragmaOnceSemantics a flag indicating whether the file has #pragma once
-	 *     statement or an include guard.
-	 * @param significantMacros macros affecting preprocessed content of the file .
+	public final void resetInclusionCounting() {
+		fIncludedFilesHistory.clear();
+	}
+
+	/** 
+	 * Reports that a file is about to be parsed. Called for the root file and the included files.
+	 * @param pragmaOnce whether the file has pragma once semantics.
 	 */
-	public void reportTranslationUnitFile(String filePath, boolean hasPragmaOnceSemantics,
-			Map<String, String> significantMacros) {
+	public void reportFile(String file, boolean pragmaOnce) {
+		reportFileKey(file, pragmaOnce);
+	}
+	
+	protected final void reportFileKey(Object fileKey, boolean pragmaOnce) {
+		if (pragmaOnce) {
+			fIncludedFilesHistory.put(fileKey, -1);
+		} else {
+			final Integer history= fIncludedFilesHistory.get(fileKey);
+			fIncludedFilesHistory.put(fileKey, history == null ? 1 : history < 0 ? -1 : history + 1);
+		}
 	}
 	
 	/**
-	 * Returns whether or not the file has been included, or <code>null</code> if the content
-	 * provider does not track that.
-	 * @param filePath the absolute location of the file.
-	 * @param macroDictionary macros defined at the inclusion point.
+	 * Returns how many times the given file has been included in this translation unit, 
+	 * or -1 if it was included with pragma once semantics.
 	 */
-	public Boolean hasFileBeenIncludedInCurrentTranslationUnit(String filePath,
-			Map<String, String> macroDictionary) {
-		return null;
+	public int getFileInclusionCount(String filePath) {
+		return getFileKeyInclusionCount(filePath);
 	}
+	
+	protected final int getFileKeyInclusionCount(Object key) {
+		final Integer history= fIncludedFilesHistory.get(key);
+		return history == null ? 0 : history;
+	}
+
+	/**
+	 * Checks for pragma once semantics or too many inclusions.
+	 */
+	protected boolean mustSkipFileInclusion(String filePath) {
+		return mustSkipKeyInclusion(filePath);
+	}
+	
+	protected final boolean mustSkipKeyInclusion(Object key) {
+		Integer count= getFileKeyInclusionCount(key);
+		return count != null && (count < 0 || count > MAX_CONTENT_INCLUSIONS);
+	}
+
 
 	/**
 	 * Returns a strategy for heuristically resolving includes, or <code>null</code> if this shall

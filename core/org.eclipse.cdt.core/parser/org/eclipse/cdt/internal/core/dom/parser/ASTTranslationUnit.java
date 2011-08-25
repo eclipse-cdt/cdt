@@ -367,6 +367,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		if (fIndexFileSet != null) {
 			List<IIndexFile> files= fileContent.getFilesIncluded();
 			for (IIndexFile indexFile : files) {
+				fASTFileSet.remove(indexFile);
 				fIndexFileSet.add(indexFile);
 			}
 		}
@@ -376,13 +377,14 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		return fIndexFileSet;
 	}
 	
-	public void replacingFile(InternalFileContentProvider provider, InternalFileContent fc) {
+	public void parsingFile(InternalFileContentProvider provider, InternalFileContent fc) {
 		if (fASTFileSet != null) {
 			if (provider instanceof IndexBasedFileContentProvider) {
 				try {
-					IIndexFile file= ((IndexBasedFileContentProvider) provider).findIndexFile(fc);
-					if (file != null) {
-						fASTFileSet.add(file);
+					for (IIndexFile file : ((IndexBasedFileContentProvider) provider).findIndexFiles(fc)) {
+						if (!fIndexFileSet.contains(file)) {
+							fASTFileSet.add(file);
+						}
 					}
 				} catch (CoreException e) {
 					// Ignore, tracking of replaced files fails.

@@ -12,11 +12,10 @@ package org.eclipse.cdt.internal.core.parser;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.FileContent;
+import org.eclipse.cdt.core.parser.IMacroDictionary;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
-
-import java.util.Map;
 
 public class EmptyFilesProvider extends InternalFileContentProvider {
 	final private static EmptyFilesProvider INSTANCE= new EmptyFilesProvider();
@@ -29,8 +28,8 @@ public class EmptyFilesProvider extends InternalFileContentProvider {
 	}
 
 	@Override
-	public InternalFileContent getContentForInclusion(String path,
-			Map<String, String> macroDictionary) {
+	public InternalFileContent getContentForInclusion(String path, 
+			IMacroDictionary macroDictionary) {
 		if (!getInclusionExists(path))
 			return null;
 		

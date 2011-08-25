@@ -123,7 +123,7 @@ public interface IIndexFragment {
 	 * @throws CoreException
 	 */
 	IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location,
-			Map<String, String> macroDictionary) throws CoreException;
+			Map<String, String> significantMacros) throws CoreException;
 
 	/**
 	 * Returns the files for the given location and linkage.

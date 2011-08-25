@@ -190,7 +190,7 @@ class ASTIfndef extends ASTDirectiveWithCondition implements IASTPreprocessorIfn
 }
 
 class ASTIfdef extends ASTDirectiveWithCondition implements IASTPreprocessorIfdefStatement {
-	ASTMacroReferenceName fMacroRef;
+	private ASTMacroReferenceName fMacroRef;
 	public ASTIfdef(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean taken, IMacroBinding macro) {
 		super(parent, startNumber, condNumber, condEndNumber, taken);
 		if (macro != null) {
@@ -304,7 +304,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 
 	public boolean hasPragmaOnceSemantics() {
 		// TODO(197989): Implement.
-		return false;
+		return true;
 	}
 
 	public Map<String, String> getSignificantMacros() {

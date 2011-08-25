@@ -16,21 +16,18 @@
 package org.eclipse.cdt.internal.core.index;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
-import org.eclipse.cdt.core.index.IFileContentKey;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
+import org.eclipse.cdt.core.parser.IMacroDictionary;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.InclusionKind;
@@ -49,16 +46,13 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 
 	private final IIndex fIndex;
 	private int fLinkage;
-	private final Set<IFileContentKey> fIncludedFiles= new HashSet<IFileContentKey>();
-	private final Map<IIndexFileLocation, IFileContentKey> fIncludedFilesMap =
-			new HashMap<IIndexFileLocation, IFileContentKey>();
 	/** The fall-back code reader factory used in case a header file is not indexed */
 	private final InternalFileContentProvider fFallBackFactory;
 	private final ASTFilePathResolver fPathResolver;
 	private final AbstractIndexerTask fRelatedIndexerTask;
 	private boolean fSupportFillGapFromContextToHeader;
 	private long fFileSizeLimit= 0;
-	
+
 	public IndexBasedFileContentProvider(IIndex index,
 			ASTFilePathResolver pathResolver, int linkage, IncludeFileContentProvider fallbackFactory) {
 		this(index, pathResolver, linkage, fallbackFactory, null);
@@ -84,55 +78,41 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 	public void setLinkage(int linkageID) {
 		fLinkage= linkageID;
 	}
-
-	public void cleanupAfterTranslationUnit() {
-		fIncludedFiles.clear();
-		fIncludedFilesMap.clear();
-	}
 	
+	@Override
+	public void reportFile(String filePath, boolean pragmaOnce) {
+		reportFileKey(fPathResolver.resolveIncludeFile(filePath), pragmaOnce);
+	}
+
+	@Override
+	public int getFileInclusionCount(String filePath) {
+		return getFileKeyInclusionCount(fPathResolver.resolveIncludeFile(filePath));
+	}
+
+	
+	@Override
+	protected boolean mustSkipFileInclusion(String filePath) {
+		// Handled by getContentForInclusion
+		return false;
+	}
+
 	@Override
 	public boolean getInclusionExists(String path) {
 		return fPathResolver.doesIncludeFileExist(path); 
 	}
 	
-	@Override
-	public void reportTranslationUnitFile(String path, boolean hasPragmaOnceSemantics,
-			Map<String, String> significantMacros) {
-		IIndexFileLocation ifl= fPathResolver.resolveASTPath(path);
-		IFileContentKey fileKey = new FileContentKey(ifl, hasPragmaOnceSemantics, significantMacros);
-		fIncludedFiles.add(fileKey);
-		fIncludedFilesMap.put(ifl, fileKey);
-	}
-
-	@Override
-	public Boolean hasFileBeenIncludedInCurrentTranslationUnit(String path,
-			Map<String, String> macroDictionary) {
-		IIndexFileLocation ifl= fPathResolver.resolveASTPath(path);
-		IFileContentKey fileKey = fIncludedFilesMap.get(ifl);
-		if (fileKey == null) {
-			return null;
-		}
-		if (fileKey.hasPragmaOnceSemantics()) {
-			return Boolean.TRUE;
-		}
-		Map<String, String> significantMacros = fileKey.selectSignificantMacros(macroDictionary);
-		if (significantMacros == null) {
-			return Boolean.TRUE;
-		}
-		fileKey = new FileContentKey(ifl, false, significantMacros);
-		if (fIncludedFiles.contains(fileKey)) {
-			return Boolean.TRUE;
-		}
-		return null;
-	}
 	
 	@Override
-	public InternalFileContent getContentForInclusion(String path, Map<String, String> macroDictionary) {
+	public InternalFileContent getContentForInclusion(String path, IMacroDictionary macroDictionary) {
 		IIndexFileLocation ifl= fPathResolver.resolveIncludeFile(path);
 		if (ifl == null) {
 			return null;
 		}
 		path= fPathResolver.getASTPath(ifl);
+
+		if (mustSkipKeyInclusion(ifl))
+			return new InternalFileContent(path, InclusionKind.SKIP_FILE);
+
 		
 		try {
 			IIndexFile file= fIndex.getFile(fLinkage, ifl, macroDictionary);
@@ -141,12 +121,11 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 					List<IIndexFile> files= new ArrayList<IIndexFile>();
 					List<IIndexMacro> macros= new ArrayList<IIndexMacro>();
 					List<ICPPUsingDirective> directives= new ArrayList<ICPPUsingDirective>();
-					Set<IFileContentKey> fileKeys= new HashSet<IFileContentKey>();
-					collectFileContent(file, fileKeys, files, macros, directives, false);
-					// Add included files only if no exception was thrown.
-					fIncludedFiles.addAll(fileKeys);
-					for (IFileContentKey key : fileKeys) {
-						fIncludedFilesMap.put(key.getLocation(), key);
+					Set<IIndexFileLocation> newPragmaOnce= new HashSet<IIndexFileLocation>();
+					collectFileContent(file, null, newPragmaOnce, files, macros, directives, null);
+					// Report pragma once inclusions, only if no exception was thrown.
+					for (IIndexFileLocation once : newPragmaOnce) {
+						reportFileKey(once, true);
 					}
 					return new InternalFileContent(path, macros, directives, files);
 				} catch (NeedToParseException e) {
@@ -178,45 +157,74 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		return null;
 	}
 
-	private void collectFileContent(IIndexFile file, Set<IFileContentKey> fileKeys,
+	private boolean collectFileContent(IIndexFile file, IIndexFile stopAt, Set<IIndexFileLocation> newPragmaOnce,
 			List<IIndexFile> files, List<IIndexMacro> macros,
-			List<ICPPUsingDirective> usingDirectives, boolean checkIncluded)
+			List<ICPPUsingDirective> usingDirectives, Set<IIndexFile> preventRecursion)
 			throws CoreException, NeedToParseException {
+		if (file.equals(stopAt))
+			return true;
+		
 		IIndexFileLocation ifl= file.getLocation();
-		IFileContentKey key = file.getContentKey();
-		if (!fileKeys.add(key) || (checkIncluded && fIncludedFiles.contains(key))) {
-			return;
-		}
-		IndexFileContent content;
-		if (fRelatedIndexerTask != null) {
-			content= fRelatedIndexerTask.getFileContent(fLinkage, ifl, key.getSignificantMacros());
-			if (content == null) {
-				throw new NeedToParseException();
-			}
+		if (preventRecursion != null) {
+			if (isPragmaOnceIncluded(ifl) || newPragmaOnce.contains(ifl)) 
+				return false;
+			if (file.hasPragmaOnceSemantics()) 
+				newPragmaOnce.add(ifl);
 		} else {
-			content= new IndexFileContent();
-			content.setPreprocessorDirectives(file.getIncludes(), file.getMacros());
-			content.setUsingDirectives(file.getUsingDirectives());
+			preventRecursion= new HashSet<IIndexFile>();
+		}
+
+		if (!preventRecursion.add(file))
+			return false;
+
+		final ICPPUsingDirective[] uds;
+		final Object[] pds;
+		if (fRelatedIndexerTask != null) {
+			IndexFileContent content= fRelatedIndexerTask.getFileContent(fLinkage, ifl, file);
+			if (content == null) 
+				throw new NeedToParseException();
+			uds= content.getUsingDirectives();
+			pds= content.getPreprocessingDirectives();
+		} else {
+			uds= file.getUsingDirectives();
+			pds= IndexFileContent.merge(file.getIncludes(), file.getMacros());
 		}
 		
 		files.add(file);
-		usingDirectives.addAll(Arrays.asList(content.getUsingDirectives()));
-		Object[] dirs= content.getPreprocessingDirectives();
-		for (Object d : dirs) {
+		int udx= 0;
+		for (Object d : pds) {
 			if (d instanceof IIndexMacro) {
 				macros.add((IIndexMacro) d);
 			} else if (d instanceof IIndexInclude) {
+				IIndexInclude inc= (IIndexInclude) d;
 				IIndexFile includedFile= fIndex.resolveInclude((IIndexInclude) d);
 				if (includedFile != null) {
-					collectFileContent(includedFile, fileKeys, files, macros, usingDirectives, true);
+					// Add in using directives that appear before the inclusion
+					final int offset= inc.getNameOffset();
+					for (; udx < uds.length && uds[udx].getPointOfDeclaration() <= offset; udx++) {
+						usingDirectives.add(uds[udx]);
+					}
+					if (collectFileContent(includedFile, stopAt, newPragmaOnce, files, macros, usingDirectives, preventRecursion))
+						return true;
 				}
 			}
 		}
+		// Add in remaining using directives
+		for (; udx < uds.length; udx++) {
+			usingDirectives.add(uds[udx]);
+		}
+		preventRecursion.remove(file);
+		return false;
+	}
+
+	private boolean isPragmaOnceIncluded(IIndexFileLocation ifl) {
+		final Integer count= getFileKeyInclusionCount(ifl);
+		return count != null && count == -1;
 	}
 
 	@Override
 	public InternalFileContent getContentForContextToHeaderGap(String path,
-			Map<String, String> macroDictionary) {
+			IMacroDictionary macroDictionary) {
 		if (!fSupportFillGapFromContextToHeader) {
 			return null;
 		}
@@ -227,6 +235,9 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		}
 
 		try {
+			// TODO(197989) This is wrong, the dictionary at this point does not relate to the target
+			// file. We'll have to provide the target file from the outside (i.e. from the indexer
+			// task.
 			IIndexFile targetFile= fIndex.getFile(fLinkage, ifl, macroDictionary);
 			if (targetFile == null) {
 				return null;
@@ -237,18 +248,22 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 				return null;
 			}
 			
-			HashSet<IIndexFile> filesIncluded= new HashSet<IIndexFile>();
+			Set<IIndexFileLocation> newPragmaOnce= new HashSet<IIndexFileLocation>();
+			List<IIndexFile> filesIncluded= new ArrayList<IIndexFile>();
 			ArrayList<IIndexMacro> macros= new ArrayList<IIndexMacro>();
 			ArrayList<ICPPUsingDirective> directives= new ArrayList<ICPPUsingDirective>();
-			if (!collectFileContentForGap(contextFile, ifl, filesIncluded, macros, directives)) {
+			try {
+				if (!collectFileContent(contextFile, targetFile, newPragmaOnce,
+						filesIncluded, macros, directives, new HashSet<IIndexFile>())) {
+					return null;
+				}
+			} catch (NeedToParseException e) {
 				return null;
 			}
 
-			// mark the files in the gap as included
-			for (IIndexFile file : filesIncluded) {
-				IFileContentKey key = file.getContentKey();
-				fIncludedFiles.add(key);
-				fIncludedFilesMap.put(key.getLocation(), key);
+			// Report pragma once inclusions.
+			for (IIndexFileLocation once : newPragmaOnce) {
+				reportFileKey(once, true);
 			}
 			return new InternalFileContent(GAP, macros, directives, new ArrayList<IIndexFile>(filesIncluded));
 		} catch (CoreException e) {
@@ -272,57 +287,12 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		return file;
 	}
 
-	private boolean collectFileContentForGap(IIndexFile from, IIndexFileLocation to,
-			Set<IIndexFile> filesIncluded, List<IIndexMacro> macros,
-			List<ICPPUsingDirective> directives) throws CoreException {
-		final IIndexFileLocation ifl= from.getLocation();
-		if (ifl.equals(to)) {
-			return true;
-		}
 
-		if (fIncludedFiles.contains(from.getContentKey()) || !filesIncluded.add(from)) {
-			return false;
-		}
-
-		final IIndexInclude[] ids= from.getIncludes();
-		final IIndexMacro[] ms= from.getMacros();
-		final Object[] dirs= IndexFileContent.merge(ids, ms);
-		IIndexInclude success= null;
-		for (Object d : dirs) {
-			if (d instanceof IIndexMacro) {
-				macros.add((IIndexMacro) d);
-			} else if (d instanceof IIndexInclude) {
-				IIndexFile includedFile= fIndex.resolveInclude((IIndexInclude) d);
-				if (includedFile != null) {
-					if (collectFileContentForGap(includedFile, to, filesIncluded, macros, directives)) {
-						success= (IIndexInclude) d;
-						break;
-					}
-				}
-			}
-		}
-
-		final ICPPUsingDirective[] uds= from.getUsingDirectives();
-		if (success == null) {
-			directives.addAll(Arrays.asList(uds));
-			return false;
-		}
-
-		final int offset= success.getNameOffset();
-		for (ICPPUsingDirective ud : uds) {
-			if (ud.getPointOfDeclaration() > offset)
-				break;
-			directives.add(ud);
-		}
-		return true;
-	}
-
-	public IIndexFile findIndexFile(InternalFileContent fc) throws CoreException {
+	public IIndexFile[] findIndexFiles(InternalFileContent fc) throws CoreException {
 		IIndexFileLocation ifl = fPathResolver.resolveASTPath(fc.getFileLocation());
 		if (ifl != null) {
-			// TODO(197989): Replace call to a deprecated method.
-			return fIndex.getFile(fLinkage, ifl);
+			return fIndex.getFiles(fLinkage, ifl);
 		}
-		return null;
+		return IIndexFile.EMPTY_FILE_ARRAY;
 	}
 }

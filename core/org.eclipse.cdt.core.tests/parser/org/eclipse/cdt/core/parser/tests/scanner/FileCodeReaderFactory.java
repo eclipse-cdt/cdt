@@ -12,10 +12,9 @@ package org.eclipse.cdt.core.parser.tests.scanner;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.FileContent;
+import org.eclipse.cdt.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
-
-import java.util.Map;
 
 public class FileCodeReaderFactory extends InternalFileContentProvider {
     private static FileCodeReaderFactory instance;
@@ -24,7 +23,7 @@ public class FileCodeReaderFactory extends InternalFileContentProvider {
     
     @Override
 	public InternalFileContent getContentForInclusion(String path,
-			Map<String, String> macroDictionary) {
+			IMacroDictionary macroDictionary) {
 		return (InternalFileContent) FileContent.createForExternalFileLocation(path);
 	}
 

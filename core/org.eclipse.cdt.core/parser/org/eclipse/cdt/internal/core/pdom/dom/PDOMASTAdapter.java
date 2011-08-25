@@ -77,7 +77,7 @@ public class PDOMASTAdapter {
 				}
 
 				public IASTPreprocessorIncludeStatement getContextInclusionStatement() {
-					return null;
+					return loc.getContextInclusionStatement();
 				}
 			};
 		}

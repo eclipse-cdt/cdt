@@ -81,18 +81,21 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	public IIndexFragmentFile commitUncommittedFile() throws CoreException {
 		if (uncommittedFile == null)
 			return null;
-		IIndexFragmentFile file;
+		PDOMFile file;
+		BTree fileIndex = getFileIndex();
 		if (fileBeingUpdated == null) {
 			// New file.
-			BTree fileIndex = getFileIndex();
-			fileIndex.insert(uncommittedFile.getRecord());
 			file = uncommittedFile;
 		} else {
 			// Existing file.
+			// Remove the file from the index before replacing its contents since position of
+			// the file in the index is content-dependent.
+			fileIndex.delete(fileBeingUpdated.getRecord());
 			fileBeingUpdated.replaceContentsFrom(uncommittedFile);
 			file = fileBeingUpdated;
 			fileBeingUpdated = null;
 		}
+		fileIndex.insert(file.getRecord()); // Insert the file to the file index.
 		fEvent.fFilesWritten.add(uncommittedLocation);
 		uncommittedFile = null;
 		uncommittedLocation = null;
@@ -138,9 +141,16 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	public void clearFile(IIndexFragmentFile file, Collection<IIndexFileLocation> contextsRemoved)
 			throws CoreException {
 		assert file.getIndexFragment() == this;
-		((PDOMFile) file).clear(contextsRemoved);	
-		
-		fEvent.fClearedFiles.add(file.getLocation());
+		IIndexFileLocation location = file.getLocation();
+		PDOMFile pdomFile = (PDOMFile) file;
+		BTree fileIndex = getFileIndex();
+		// Remove the file from the index before clearing its contents since position of
+		// the file in the index is content-dependent.
+		fileIndex.delete(pdomFile.getRecord());
+		pdomFile.clear(contextsRemoved);	
+		fileIndex.insert(pdomFile.getRecord());
+
+		fEvent.fClearedFiles.add(location);
 	}
 	
 	@Override
@@ -166,9 +176,9 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	}
 	
 	/**
-	 * Use the specified location converter to update each internal representation of a file location.
-	 * The file index is rebuilt with the new representations. Individual PDOMFile records are unmoved so
-	 * as to maintain referential integrity with other PDOM records.
+	 * Uses the specified location converter to update each internal representation of a file
+	 * location. The file index is rebuilt with the new representations. Individual PDOMFile records
+	 * are unmoved so as to maintain referential integrity with other PDOM records.
 	 * 
 	 * <b>A write-lock must be obtained before calling this method</b>
 	 * 

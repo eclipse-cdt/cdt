@@ -580,6 +580,8 @@ public class PDOMFile implements IIndexFragmentFile {
 			m.delete();
 		}
 		setFirstMacroReference(null);
+		setPragmaOnceSemantics(false);
+		setSignificantMacros(null);
 
 		setTimestamp(-1);
 	}

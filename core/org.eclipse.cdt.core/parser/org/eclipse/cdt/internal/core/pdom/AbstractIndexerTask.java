@@ -492,13 +492,13 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					AbstractLanguage[] langs= fResolver.getLanguages(tu, fIndexHeadersWithoutContext == UnusedHeaderStrategy.useBoth);
 					for (AbstractLanguage lang : langs) {
 						int linkageID = lang.getLinkageID();
-						IIndexFragmentFile ifile= getFile(linkageID, indexFiles);
-						if (ifile == null || !ifile.hasContent()) {
-							store(tu, linkageID, isSourceUnit, files);
-							requestUpdate(linkageID, ifl, null);
-							count++;
-						} else {
-							takeFile(ifile, indexFiles);
+						boolean foundInInkage = false;
+						for (int i = 0; i < indexFiles.length; i++) {
+							IIndexFragmentFile ifile = indexFiles[i];
+							if (ifile == null || ifile.getLinkageID() != linkageID || !ifile.hasContent())
+								continue;
+							foundInInkage = true;
+							indexFiles[i]= null;  // Take the file.
 							boolean update= false;
 							if (checkConfig) {
 								update= isSourceUnit ? isSourceUnitConfigChange(tu, ifile) : isHeaderConfigChange(tu, ifile);
@@ -510,11 +510,16 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 								count++;
 							}
 						}
+						if (!foundInInkage) {
+							store(tu, linkageID, isSourceUnit, files);
+							requestUpdate(linkageID, ifl, null);
+							count++;
+						}
 					}
 				}
 			}
 			
-			// handle other files present in index
+			// Handle other files present in index.
 			for (IIndexFragmentFile ifile : indexFiles) {
 				if (ifile != null) {
 					IIndexInclude ctx= ifile.getParsedInContext();
@@ -598,24 +603,6 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		return false;
 	}
 	
-	private IIndexFragmentFile getFile(int linkageID, IIndexFragmentFile[] indexFiles) throws CoreException {
-		for (IIndexFragmentFile ifile : indexFiles) {
-			if (ifile != null && ifile.getLinkageID() == linkageID) {
-				return ifile;
-			}
-		}
-		return null;
-	}
-
-	private void takeFile(IIndexFragmentFile ifile, IIndexFragmentFile[] indexFiles) {
-		for (int i = 0; i < indexFiles.length; i++) {
-			if (indexFiles[i] == ifile) {
-				indexFiles[i]= null;
-				return;
-			}
-		}
-	}
-
 	private void store(Object tu, int linkageID, boolean isSourceUnit, HashMap<Integer, List<Object>> files) {
 		Integer key = getFileListKey(linkageID, isSourceUnit);
 		List<Object> list= files.get(key);

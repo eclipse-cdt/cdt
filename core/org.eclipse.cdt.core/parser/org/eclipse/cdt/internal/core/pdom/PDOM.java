@@ -1093,6 +1093,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			return (PDOMFile) file;
 		}
 
+		// TODO(197989): Replace call to a deprecated method.
 		return getFile(file.getLinkageID(), file.getLocation());
 	}
 

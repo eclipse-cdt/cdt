@@ -233,6 +233,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 			IIndexFileLocation location = fPathResolver.resolveASTPath(astPath);
 			if (location.equals(uncommittedLocation))
 				return fileBeingUpdated != null ? fileBeingUpdated : uncommittedFile;
+			// TODO(197989): Replace call to a deprecated method.
 			return getFile(linkageID, location);
 		}
 		return null;

@@ -12,6 +12,7 @@
 	</parent>
 
 	<version>2.1.0-SNAPSHOT</version>
+	<groupId>org.eclipse.cdt.features</groupId>
 	<artifactId>org.eclipse.cdt.examples.dsf</artifactId>
 	<packaging>eclipse-feature</packaging>
 </project>

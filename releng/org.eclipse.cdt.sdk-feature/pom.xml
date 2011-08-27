@@ -11,6 +11,6 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>org.eclipse.cdt.sdk-feature</artifactId>
+	<artifactId>org.eclipse.cdt.sdk</artifactId>
 	<packaging>eclipse-feature</packaging>
 </project>

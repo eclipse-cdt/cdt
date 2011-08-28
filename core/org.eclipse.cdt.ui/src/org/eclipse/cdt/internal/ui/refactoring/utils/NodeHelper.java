@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -212,11 +212,16 @@ public class NodeHelper {
 	}
 
 	public static boolean isContainedInTemplateDeclaration(IASTNode node) {
-		if (node == null) {
-			return false;
-		} else if (node instanceof ICPPASTTemplateDeclaration) {
-			return true;
+		return findContainedTemplateDecalaration(node) != null;
+	}
+	
+	public static ICPPASTTemplateDeclaration findContainedTemplateDecalaration(IASTNode node) {
+		while (node != null) {
+			if (node instanceof ICPPASTTemplateDeclaration) {
+				return (ICPPASTTemplateDeclaration) node;
+			}
+			node = node.getParent();
 		}
-		return isContainedInTemplateDeclaration(node.getParent());
+		return null;
 	}
 }

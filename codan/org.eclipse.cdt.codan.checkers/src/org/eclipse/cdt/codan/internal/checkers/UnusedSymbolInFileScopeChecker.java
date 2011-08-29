@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Gvozdev  - initial API and implementation
+ *     Andrew Gvozdev  - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -90,11 +91,11 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 	}
 
 	private boolean isAnyCandidate() {
-		return externFunctionDeclarations.size() > 0 ||
-			staticFunctionDeclarations.size() > 0 ||
-			staticFunctionDefinitions.size() > 0 ||
-			externVariableDeclarations.size() > 0 ||
-			staticVariableDeclarations.size() > 0;
+		return !externFunctionDeclarations.isEmpty() ||
+				!staticFunctionDeclarations.isEmpty() ||
+				!staticFunctionDefinitions.isEmpty() ||
+				!externVariableDeclarations.isEmpty() ||
+				!staticVariableDeclarations.isEmpty();
 	}
 
 	public void processAst(IASTTranslationUnit ast) {
@@ -138,16 +139,15 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 									}
 								} else if (binding instanceof IVariable) {
 									if (storageClass == IASTDeclSpecifier.sc_extern) {
-										IASTInitializer initializer = decl.getInitializer();
-										// initializer makes "extern" declaration to become definition do not count these
-										if (initializer==null) {
+										// Initializer makes "extern" declaration to become definition do not count these
+										if (decl.getInitializer() == null) {
 											externVariableDeclarations.put(binding, decl);
 										}
 									} else if (storageClass == IASTDeclSpecifier.sc_static) {
 										IType type = ((IVariable) binding).getType();
-										// account for class constructor and avoid possible false positive
+										// Account for class constructor and avoid possible false positive
 										if (!(type instanceof ICPPClassType) && !(type instanceof IProblemType)) {
-											// check if initializer disqualifies it
+											// Check if initializer disqualifies it
 											IASTInitializer initializer = decl.getInitializer();
 											IASTInitializerClause clause = null;
 											if (initializer instanceof IASTEqualsInitializer) {
@@ -156,7 +156,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 											} else if (initializer instanceof ICPPASTConstructorInitializer) {
 												ICPPASTConstructorInitializer constructorInitializer = (ICPPASTConstructorInitializer) initializer;
 												IASTInitializerClause[] args = constructorInitializer.getArguments();
-												if (args.length==1)
+												if (args.length == 1)
 													clause = args[0];
 											}
 											if (clause instanceof IASTLiteralExpression) {
@@ -232,7 +232,12 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 						staticFunctionDefinitions.remove(binding);
 					}
 
-					if (!(parentNode instanceof IASTDeclarator)) {
+					if (parentNode instanceof IASTDeclarator) {
+						// Initializer makes "extern" declaration to become definition.
+						if (((IASTDeclarator) parentNode).getInitializer() != null) {
+							externVariableDeclarations.remove(binding);
+						}
+					} else {
 						externVariableDeclarations.remove(binding);
 						staticVariableDeclarations.remove(binding);
 					}

@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -25,7 +25,9 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * Models a simple declaration.
  */
 public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclaration, IASTAmbiguityParent {
-
+    private IASTDeclarator[] declarators;
+    private int declaratorsPos = -1;
+    private IASTDeclSpecifier declSpecifier;
 
     public CASTSimpleDeclaration() {
 	}
@@ -42,7 +44,7 @@ public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclarat
 		CASTSimpleDeclaration copy = new CASTSimpleDeclaration();
 		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy(style));
 		
-		for(IASTDeclarator declarator : getDeclarators())
+		for (IASTDeclarator declarator : getDeclarators())
 			copy.addDeclarator(declarator == null ? null : declarator.copy(style));
 		
 		copy.setOffsetAndLength(this);
@@ -57,26 +59,21 @@ public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclarat
     }
 
     public IASTDeclarator[] getDeclarators() {
-        if( declarators == null ) return IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
-        declarators = (IASTDeclarator[]) ArrayUtil.removeNullsAfter( IASTDeclarator.class, declarators, declaratorsPos );
+        if (declarators == null)
+        	return IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
+        declarators = (IASTDeclarator[]) ArrayUtil.removeNullsAfter(IASTDeclarator.class, declarators, declaratorsPos);
         return declarators;
     }
     
-    public void addDeclarator( IASTDeclarator d ) {
+    public void addDeclarator(IASTDeclarator d) {
         assertNotFrozen();
     	if (d != null) {
     		d.setParent(this);
 			d.setPropertyInParent(DECLARATOR);
-    		declarators = (IASTDeclarator[]) ArrayUtil.append( IASTDeclarator.class, declarators, ++declaratorsPos, d );    		
+    		declarators = (IASTDeclarator[]) ArrayUtil.append(IASTDeclarator.class, declarators, ++declaratorsPos, d);    		
     	}
     }
     
-
-    private IASTDeclarator [] declarators = null;
-    private int declaratorsPos=-1;
-    private IASTDeclSpecifier declSpecifier;
-
-
     public void setDeclSpecifier(IASTDeclSpecifier declSpecifier) {
         assertNotFrozen();
         this.declSpecifier = declSpecifier;
@@ -87,25 +84,28 @@ public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclarat
     }
     
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclarations ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclarations) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
-        if( declSpecifier != null ) if( !declSpecifier.accept( action ) ) return false;
-        IASTDeclarator [] dtors = getDeclarators();
-        for( int i = 0; i < dtors.length; i++ )
-            if( !dtors[i].accept( action ) ) return false;
+        if (declSpecifier != null && !declSpecifier.accept(action))
+        	return false;
+        IASTDeclarator[] dtors = getDeclarators();
+        for (int i = 0; i < dtors.length; i++) {
+            if (!dtors[i].accept(action))
+            	return false;
+        }
         
-        if( action.shouldVisitDeclarations ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitDeclarations) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
@@ -118,8 +118,8 @@ public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclarat
     		declSpecifier= (IASTDeclSpecifier) other;
     	} else {
     		IASTDeclarator[] declarators = getDeclarators();
-    		for(int i = 0; i < declarators.length; i++) {
-    			if(declarators[i] == child) {
+    		for (int i = 0; i < declarators.length; i++) {
+    			if (declarators[i] == child) {
     				declarators[i] = (IASTDeclarator)other;
     				other.setParent(child.getParent());
     				other.setPropertyInParent(child.getPropertyInParent());

@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Gil Barash  - Initial implementation
+ *     Gil Barash  - Initial implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.internal.checkers;
 
@@ -383,11 +384,11 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	}
 
 	// void foo(void) {
-	//  int a, b;
-	//  switch( a ) {
-	//  case 1:
-	//    b = 2;
-	//  }
+	//   int a, b;
+	//   switch( a ) {
+	//   case 1:
+	//     b = 2;
+	//   }
 	// }
 	public void testLastCaseIgnore() {
 		setLast(false);
@@ -474,12 +475,12 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	}
 
 	// void foo(void) {
-	//  int a;
-	//  switch( a ) {
-	//  case 2:
+	//   int a;
+	//   switch( a ) {
+	//   case 2:
 	//     break;
-	//  case 1:
-	//  }
+	//   case 1:
+	//   }
 	// }
 	public void testEmptyLastCaseError() {
 		String code = getAboveComment();
@@ -493,31 +494,32 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	}
 
 	// void foo(int a) {
-	//  switch( a ) {
-	//  case 2:
+	//   switch( a ) {
+	//   case 2:
 	//     if (a*2<10)
-	//         return;
+	//       return;
 	//     else
-	//         break;
-	//  case 1:
-	//      break;
-	//  }
+	//       break;
+	//   case 1:
+	//     break;
+	//   }
 	// }
 	public void testIf() {
 		String code = getAboveComment();
 		loadCodeAndRun(code);
 		checkNoErrors();
 	}
+
 	// void foo(int a) {
-	//  switch( a ) {
-	//  case 2:
+	//   switch(a) {
+	//   case 2:
 	//     if (a*2<10)
-	//         return;
+	//       return;
 	//     else
-	//         a++;
-	//  case 1:
-	//      break;
-	//  }
+	//       a++;
+	//   case 1:
+	//     break;
+	//   }
 	// }
 	public void testIfErr() {
 		String code = getAboveComment();
@@ -525,53 +527,43 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		checkErrorLine(7);
 	}
 
-//	#define DEFINE_BREAK {break;}
-//	void foo ( int a )
-//	{
-//	    switch ( a )
-//	    {
-//	        case 1:
-//	            DEFINE_BREAK  // <-- Warning: No break at the end of this case
-//	    }
-//	}
+	//	#define DEFINE_BREAK {break;}
+	//	void foo(int a) {
+	//	  switch (a) {
+	//	    case 1:
+	//	      DEFINE_BREAK  // No warning here
+	//	  }
+	//	}
 	public void testBreakInBraces() {
 		String code = getAboveComment();
 		loadCodeAndRun(code);
 		checkNoErrors();
 	}
 
-
-//	#define MY_MACRO(i)     \
-//	    case i:             \
-//	    {                   \
-//	        break;          \
-//	    }
-//
-//	void f()
-//	{
-//	    int x;
-//	    switch (x)
-//	    {
-//	        MY_MACRO(1)  // WARNING HERE
-//	    }
-//	}
-
+	//	#define MY_MACRO(i) \
+	//	  case i: {         \
+	//	  }
+	//
+	//	void f() {
+	//	  int x;
+	//	  switch (x) {
+	//	    MY_MACRO(1)  // No warning here
+	//	  }
+	//	}
 	public void testInMacro() {
 		String code = getAboveComment();
 		loadCodeAndRun(code);
 		checkNoErrors();
 	}
 
-		//void foo()
-		//{
-		//switch(0)
-		//default:
-		//{
-		//}
-		//}
-		public void testEmptyCompoundStatement() {
-			String code = getAboveComment();
-			loadCodeAndRun(code);
-			checkErrorLine(6);
-		}
+	//  void foo() {
+	//    switch (0)
+	//    default: {
+	//    }
+	//  }
+	public void testEmptyCompoundStatement() {
+		String code = getAboveComment();
+		loadCodeAndRun(code);
+		checkErrorLine(4);
+	}
 }

@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2010,2011 Gil Barash
+ * Copyright (c) 2010, 2011 Gil Barash
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Gil Barash  - Initial implementation
- *    Elena laskavaia - Rewrote checker to reduce false positives in complex cases
+ *     Gil Barash  - Initial implementation
+ *     Elena laskavaia - Rewrote checker to reduce false positives in complex cases
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -50,8 +51,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 	}
 
 	/**
-	 * This visitor looks for "switch" statements and invokes "SwitchVisitor" on
-	 * them.
+	 * This visitor looks for "switch" statements and invokes "SwitchVisitor" on them.
 	 */
 	class SwitchFindingVisitor extends ASTVisitor {
 		SwitchFindingVisitor() {
@@ -67,7 +67,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		 *         - "continue"
 		 *         - "goto" (does not check that the goto actually exists the
 		 *         switch)
-		 *         - "thorw"
+		 *         - "throw"
 		 *         - "exit"
 		 */
 		protected boolean isBreakOrExitStatement(IASTStatement statement) {
@@ -83,7 +83,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 				IASTSwitchStatement switchStmt = (IASTSwitchStatement) statement;
 				IASTStatement body = switchStmt.getBody();
 				if (body instanceof IASTCompoundStatement) {
-					// if not it is not really a switch
+					// If not it is not really a switch
 					IASTStatement[] statements = ((IASTCompoundStatement) body).getStatements();
 					IASTStatement prevCase = null;
 					for (int i = 0; i < statements.length; i++) {
@@ -97,16 +97,16 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 						if (isCaseStatement(curr)) {
 							prevCase = curr;
 						}
-						// next is case or end of switch - means this one is the last
+						// Next is case or end of switch - means this one is the last
 						if (prevCase != null && (isCaseStatement(next) || next == null)) {
-							// check that current statement end with break or any other exit statement
+							// Check that current statement end with break or any other exit statement
 							if (!_checkEmptyCase && isCaseStatement(curr) && next != null) {
-								continue; // empty case & we don't care
+								continue; // Empty case and we don't care
 							}
 							if (!_checkLastCase && next == null) {
-								continue; // last case and we don't care
+								continue; // Last case and we don't care
 							}
-							if (isFallThroughStamement(curr)) {
+							if (!isProducedByMacroExpansion(prevCase) && isFallThroughStamement(curr)) {
 								IASTComment comment = null;
 								if (next != null) {
 									comment = getLeadingComment(next);
@@ -139,7 +139,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		}
 
 		/**
-		 * @param nextstatement
+		 * @param body
 		 * @return
 		 */
 		public boolean isFallThroughStamement(IASTStatement body) {
@@ -171,13 +171,11 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		IASTFileLocation astLocation = astNode.getFileLocation();
 		int line = astLocation.getEndingLineNumber();
 		IProblemLocationFactory locFactory = getRuntime().getProblemLocationFactory();
-		return locFactory.createProblemLocation(getFile(), -1,
-				-1, line);
+		return locFactory.createProblemLocation(getFile(), -1, -1, line);
 	}
 
 	/**
-	 * Checks if the given statement is a result of macro expansion with a
-	 * possible
+	 * Checks if the given statement is a result of macro expansion with a possible
 	 * exception for the trailing semicolon.
 	 * 
 	 * @param statement the statement to check.

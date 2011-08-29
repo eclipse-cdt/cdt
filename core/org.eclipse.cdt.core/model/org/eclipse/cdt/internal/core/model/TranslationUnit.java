@@ -848,22 +848,22 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 					IIndexFile context= null;
 					final IIndexFileLocation ifl = IndexLocationFactory.getIFL(this);
 					if (ifl != null) {
-						// TODO(197989): Replace call to a deprecated method.
-						IIndexFile indexFile= index.getFile(linkageID, ifl);
-						if (indexFile != null) {
-							// Bug 199412, when a source-file includes itself the context may recurse.
-							HashSet<IIndexFile> visited= new HashSet<IIndexFile>();
-							visited.add(indexFile);
-							indexFile = getParsedInContext(indexFile);
-							while (indexFile != null && visited.add(indexFile)) {
-								context= indexFile;
-								indexFile= getParsedInContext(indexFile);
+						for (IIndexFile indexFile : index.getFiles(linkageID, ifl)) {
+							if (indexFile != null) {
+								// Bug 199412, when a source-file includes itself the context may recurse.
+								HashSet<IIndexFile> visited= new HashSet<IIndexFile>();
+								visited.add(indexFile);
+								indexFile = getParsedInContext(indexFile);
+								while (indexFile != null && visited.add(indexFile)) {
+									context= indexFile;
+									indexFile= getParsedInContext(indexFile);
+								}
 							}
-						}
-						if (context != null) {
-							ITranslationUnit tu= CoreModelUtil.findTranslationUnitForLocation(context.getLocation(), getCProject());
-							if (tu != null && tu.isSourceUnit()) {
-								return tu;
+							if (context != null) {
+								ITranslationUnit tu= CoreModelUtil.findTranslationUnitForLocation(context.getLocation(), getCProject());
+								if (tu != null && tu.isSourceUnit()) {
+									return tu;
+								}
 							}
 						}
 					}

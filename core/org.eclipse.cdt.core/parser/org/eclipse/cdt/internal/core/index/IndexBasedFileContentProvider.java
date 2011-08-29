@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 QNX Software Systems and others.
+ * Copyright (c) 2005, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,8 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 	private boolean fSupportFillGapFromContextToHeader;
 	private long fFileSizeLimit= 0;
 
+	private final Set<IIndexFileLocation> fPragmaOnce= new HashSet<IIndexFileLocation>();
+
 	public IndexBasedFileContentProvider(IIndex index,
 			ASTFilePathResolver pathResolver, int linkage, IncludeFileContentProvider fallbackFactory) {
 		this(index, pathResolver, linkage, fallbackFactory, null);
@@ -80,20 +82,24 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 	}
 	
 	@Override
-	public void reportFile(String filePath, boolean pragmaOnce) {
-		reportFileKey(fPathResolver.resolveIncludeFile(filePath), pragmaOnce);
+	public void resetPragmaOnceTracking() {
+		fPragmaOnce.clear();
 	}
 
+	/** 
+	 * Reports detection of pragma once semantics.
+	 */
 	@Override
-	public int getFileInclusionCount(String filePath) {
-		return getFileKeyInclusionCount(fPathResolver.resolveIncludeFile(filePath));
+	public void reportPragmaOnceSemantics(String filePath) {
+		fPragmaOnce.add(fPathResolver.resolveIncludeFile(filePath));
 	}
 
-	
+	/**
+	 * Returns whether the given file has been included with pragma once semantics.
+	 */
 	@Override
-	protected boolean mustSkipFileInclusion(String filePath) {
-		// Handled by getContentForInclusion
-		return false;
+	public boolean isIncludedWithPragmaOnceSemantics(String filePath) {
+		return fPragmaOnce.contains(fPathResolver.resolveIncludeFile(filePath));
 	}
 
 	@Override
@@ -110,10 +116,6 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		}
 		path= fPathResolver.getASTPath(ifl);
 
-		if (mustSkipKeyInclusion(ifl))
-			return new InternalFileContent(path, InclusionKind.SKIP_FILE);
-
-		
 		try {
 			IIndexFile file= fIndex.getFile(fLinkage, ifl, macroDictionary);
 			if (file != null) {
@@ -124,9 +126,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 					Set<IIndexFileLocation> newPragmaOnce= new HashSet<IIndexFileLocation>();
 					collectFileContent(file, null, newPragmaOnce, files, macros, directives, null);
 					// Report pragma once inclusions, only if no exception was thrown.
-					for (IIndexFileLocation once : newPragmaOnce) {
-						reportFileKey(once, true);
-					}
+					fPragmaOnce.addAll(newPragmaOnce);
 					return new InternalFileContent(path, macros, directives, files);
 				} catch (NeedToParseException e) {
 				}
@@ -166,7 +166,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		
 		IIndexFileLocation ifl= file.getLocation();
 		if (preventRecursion != null) {
-			if (isPragmaOnceIncluded(ifl) || newPragmaOnce.contains(ifl)) 
+			if (fPragmaOnce.contains(ifl) || newPragmaOnce.contains(ifl)) 
 				return false;
 			if (file.hasPragmaOnceSemantics()) 
 				newPragmaOnce.add(ifl);
@@ -217,11 +217,6 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		return false;
 	}
 
-	private boolean isPragmaOnceIncluded(IIndexFileLocation ifl) {
-		final Integer count= getFileKeyInclusionCount(ifl);
-		return count != null && count == -1;
-	}
-
 	@Override
 	public InternalFileContent getContentForContextToHeaderGap(String path,
 			IMacroDictionary macroDictionary) {
@@ -262,9 +257,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 			}
 
 			// Report pragma once inclusions.
-			for (IIndexFileLocation once : newPragmaOnce) {
-				reportFileKey(once, true);
-			}
+			fPragmaOnce.addAll(newPragmaOnce);
 			return new InternalFileContent(GAP, macros, directives, new ArrayList<IIndexFile>(filesIncluded));
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

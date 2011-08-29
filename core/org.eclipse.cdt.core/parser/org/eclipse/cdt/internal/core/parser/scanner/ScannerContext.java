@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ final class ScannerContext {
 	}
 	
 	private CodeState fInactiveState= CodeState.eSkipInactive;
+	private final int fDepth;
 	private final ILocationCtx fLocationCtx;
 	private final ScannerContext fParent;
 	private final Lexer fLexer;
@@ -51,6 +52,7 @@ final class ScannerContext {
 	private CodeState fCurrentState= CodeState.eActive;
 	private IncludeSearchPathElement fFoundOnPath;
 	private String fFoundViaDirective;
+	
 
 	/**
 	 * @param ctx 
@@ -60,6 +62,7 @@ final class ScannerContext {
 		fLocationCtx= ctx;
 		fParent= parent;
 		fLexer= lexer;
+		fDepth = parent == null ? 0 : parent.fDepth+1;
 	}
 	
 	public ScannerContext(ILocationCtx ctx, ScannerContext parent, TokenList tokens) {
@@ -87,6 +90,13 @@ final class ScannerContext {
 		return fParent;
 	}
 
+	/**
+	 * Returns the depth of this context, equals the number of parents of this context.
+	 */
+	public final int getDepth() {
+		return fDepth;
+	}
+	
 	/**
 	 * Returns the lexer for this context.
 	 */

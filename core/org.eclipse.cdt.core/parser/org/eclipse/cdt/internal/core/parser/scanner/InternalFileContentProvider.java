@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,8 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.IMacroDictionary;
@@ -24,9 +25,8 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.Inclusio
  * Internal implementation of the file content providers
  */
 public abstract class InternalFileContentProvider extends IncludeFileContentProvider {
-	private static final Integer MAX_CONTENT_INCLUSIONS = 50;
 	private IIncludeFileResolutionHeuristics fIncludeResolutionHeuristics;
-    private final HashMap<Object, Integer> fIncludedFilesHistory= new HashMap<Object, Integer>();
+    private final Set<String> fPragmaOnce= new HashSet<String>();
 
 	/**
 	 * Checks whether the specified inclusion exists.
@@ -62,52 +62,23 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 		return null;
 	}
 
-	public final void resetInclusionCounting() {
-		fIncludedFilesHistory.clear();
+	public void resetPragmaOnceTracking() {
+		fPragmaOnce.clear();
 	}
 
 	/** 
-	 * Reports that a file is about to be parsed. Called for the root file and the included files.
-	 * @param pragmaOnce whether the file has pragma once semantics.
+	 * Reports detection of pragma once semantics.
 	 */
-	public void reportFile(String file, boolean pragmaOnce) {
-		reportFileKey(file, pragmaOnce);
-	}
-	
-	protected final void reportFileKey(Object fileKey, boolean pragmaOnce) {
-		if (pragmaOnce) {
-			fIncludedFilesHistory.put(fileKey, -1);
-		} else {
-			final Integer history= fIncludedFilesHistory.get(fileKey);
-			fIncludedFilesHistory.put(fileKey, history == null ? 1 : history < 0 ? -1 : history + 1);
-		}
-	}
-	
-	/**
-	 * Returns how many times the given file has been included in this translation unit, 
-	 * or -1 if it was included with pragma once semantics.
-	 */
-	public int getFileInclusionCount(String filePath) {
-		return getFileKeyInclusionCount(filePath);
-	}
-	
-	protected final int getFileKeyInclusionCount(Object key) {
-		final Integer history= fIncludedFilesHistory.get(key);
-		return history == null ? 0 : history;
+	public void reportPragmaOnceSemantics(String file) {
+		fPragmaOnce.add(file);
 	}
 
 	/**
-	 * Checks for pragma once semantics or too many inclusions.
+	 * Returns whether the given file has been included with pragma once semantics.
 	 */
-	protected boolean mustSkipFileInclusion(String filePath) {
-		return mustSkipKeyInclusion(filePath);
+	public boolean isIncludedWithPragmaOnceSemantics(String filePath) {
+		return fPragmaOnce.contains(filePath);
 	}
-	
-	protected final boolean mustSkipKeyInclusion(Object key) {
-		Integer count= getFileKeyInclusionCount(key);
-		return count != null && (count < 0 || count > MAX_CONTENT_INCLUSIONS);
-	}
-
 
 	/**
 	 * Returns a strategy for heuristically resolving includes, or <code>null</code> if this shall

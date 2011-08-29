@@ -977,23 +977,23 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			final WritablePDOM wpdom= (WritablePDOM) pdom;
 			PDOMFile file= null;
 			if (binding instanceof ICPPUsingDeclaration) {
-				String path= ASTInternal.getDeclaredInOneFileOnly(binding);
-				if (path != null) {
-					file= wpdom.getFileForASTPath(getLinkageID(), path);
+				IASTNode node= ASTInternal.getDeclaredInOneFileOnly(binding);
+				if (node != null) {
+					file= wpdom.getFileForASTNode(getLinkageID(), node);
 				}
 			} else if (binding instanceof ICPPNamespaceAlias) {
-				String path= ASTInternal.getDeclaredInSourceFileOnly(binding, false, glob);
-				if (path != null) {
-					file= wpdom.getFileForASTPath(getLinkageID(), path);
+				IASTNode node= ASTInternal.getDeclaredInSourceFileOnly(binding, false, glob);
+				if (node != null) {
+					file= wpdom.getFileForASTNode(getLinkageID(), node);
 				}
 			}
 			if (file == null && !(binding instanceof IIndexBinding)) {
 				IBinding owner= binding.getOwner();
 				if (owner instanceof ICPPNamespace) {
 					if (owner.getNameCharArray().length == 0) {
-						String path= ASTInternal.getDeclaredInSourceFileOnly(owner, false, glob);
-						if (path != null) {
-							file= wpdom.getFileForASTPath(getLinkageID(), path);
+						IASTNode node= ASTInternal.getDeclaredInSourceFileOnly(owner, false, glob);
+						if (node != null) {
+							file= wpdom.getFileForASTNode(getLinkageID(), node);
 						}
 					}
 				}

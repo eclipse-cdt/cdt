@@ -10,7 +10,9 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -71,6 +73,9 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private INodeFactory fNodeFactory;
 	private boolean fForContentAssist;
 	private ITranslationUnit fOriginatingTranslationUnit;
+	private Map<String, String> fSignificantMacros= Collections.emptyMap();
+	private boolean fPragmaOnceSemantics;
+	
 	/** The semaphore controlling exclusive access to the AST. */
 	private final Semaphore fSemaphore= new Semaphore(1);
 
@@ -450,6 +455,24 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 
 	public void setOriginatingTranslationUnit(ITranslationUnit tu) {
 		this.fOriginatingTranslationUnit = tu;
+	}
+
+	public Map<String, String> getSignificantMacros() {
+		return fSignificantMacros;
+	}
+
+	public void setSignificantMacros(Map<String, String> sigMacros) {
+		assertNotFrozen();
+		fSignificantMacros= sigMacros;
+	}
+	
+	public boolean hasPragmaOnceSemantics() {
+		return fPragmaOnceSemantics;
+	}
+	
+	public void setPragmaOnceSemantics(boolean value) {
+		assertNotFrozen();
+		fPragmaOnceSemantics= value;
 	}
 
 	/**

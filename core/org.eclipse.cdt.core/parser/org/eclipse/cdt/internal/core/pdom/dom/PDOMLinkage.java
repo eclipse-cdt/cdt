@@ -256,9 +256,9 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			}
 
 			if (checkIfInSourceOnly) {
-				String path= ASTInternal.getDeclaredInSourceFileOnly(binding, requireDefinition, glob);
-				if (path != null) {
-					return wpdom.getFileForASTPath(getLinkageID(), path);
+				IASTNode node= ASTInternal.getDeclaredInSourceFileOnly(binding, requireDefinition, glob);
+				if (node != null) {
+					return wpdom.getFileForASTNode(getLinkageID(), node);
 				}
 			}
 		}

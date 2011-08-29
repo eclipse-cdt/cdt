@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -747,6 +747,18 @@ public class LocationMap implements ILocationResolver {
 			InternalFileContent fileContent) {
 		for (ISkippedIndexedFilesListener l : fSkippedFilesListeners) {
 			l.parsingFile(fileContentProvider, fileContent);
+		}
+	}
+
+	public void reportPragmaOnceSemantics(ILocationCtx locationCtx) {
+		if (locationCtx == fRootContext) {
+			if (fTranslationUnit != null)
+				fTranslationUnit.setPragmaOnceSemantics(true);
+		} else if (locationCtx instanceof LocationCtxFile) {
+			ASTInclusionStatement stmt = ((LocationCtxFile) locationCtx).getInclusionStatement();
+			if (stmt != null) {
+				stmt.setPragamOnceSemantics(true);
+			}
 		}
 	}		
 }

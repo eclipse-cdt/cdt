@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.index.IFileContentKey;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLinkage;
@@ -1093,8 +1094,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 			return (PDOMFile) file;
 		}
 
-		// TODO(197989): Replace call to a deprecated method.
-		return getFile(file.getLinkageID(), file.getLocation());
+		IFileContentKey key= file.getContentKey();
+		return getFile(file.getLinkageID(), key.getLocation(), key.getSignificantMacros());
 	}
 
 	public File getPath() {

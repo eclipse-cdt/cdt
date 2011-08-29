@@ -12,6 +12,9 @@ org.eclipse.cdt.core/debug/parser/exceptions=false
 # Reports scanner activity
 org.eclipse.cdt.core/debug/scanner=false
 
+# Reports scanner activity
+org.eclipse.cdt.core/debug/scanner/missingIncludeGuards=false
+
 # Reports search activity
 org.eclipse.cdt.core/debug/search=false
 

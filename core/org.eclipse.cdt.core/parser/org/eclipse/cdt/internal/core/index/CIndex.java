@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.core.index.IFileContentKey;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -307,17 +308,17 @@ public class CIndex implements IIndex {
 	}
 
 	public IIndexFile resolveInclude(IIndexInclude include) throws CoreException {
-		if (!include.isResolved()) {
-			return null;
-		}
 		IIndexFragmentInclude fragmentInclude = (IIndexFragmentInclude) include;
 		IIndexFragmentFile result= fragmentInclude.getIncludes();
-		if (result != null && result.hasContent()) {
+		if (result == null)
+			return null;
+		
+		if (result.hasContent()) {
 			return result;
 		}
 
-		// TODO(197989): Replace call to a deprecated method.
-		return getFile(include.getIncludedBy().getLinkageID(), include.getIncludesLocation());
+		IFileContentKey key = result.getContentKey();
+		return getFile(include.getIncludedBy().getLinkageID(), key.getLocation(), key.getSignificantMacros());
 	}
 
 	public IIndexInclude[] findIncludedBy(IIndexFile file) throws CoreException {

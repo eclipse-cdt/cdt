@@ -581,7 +581,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		}
 		setFirstMacroReference(null);
 		setPragmaOnceSemantics(false);
-		// TODO(197989) 
+		// TODO(197989) don't change significant macros. 
 		// mschorn: As long as the file is in the BTree we must not change the values that
 		// contribute to the order. Otherwise the binary search in the file table no longer works.
 		// I think it is sufficient to delete the significant macros during PDOMFile.delete().

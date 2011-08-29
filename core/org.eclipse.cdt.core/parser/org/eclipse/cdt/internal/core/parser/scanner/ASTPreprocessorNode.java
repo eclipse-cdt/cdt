@@ -260,6 +260,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	private final boolean fIsResolved;
 	private final boolean fIsSystemInclude;
 	private final boolean fFoundByHeuristics;
+	private boolean fPragmaOnce;
 
 	public ASTInclusionStatement(IASTTranslationUnit parent, 
 			int startNumber, int nameStartNumber, int nameEndNumber, int endNumber,
@@ -303,9 +304,13 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	}
 
 	public boolean hasPragmaOnceSemantics() {
-		// TODO(197989): Implement.
-		return true;
+		return fPragmaOnce;
 	}
+	
+	public void setPragamOnceSemantics(boolean value) {
+		fPragmaOnce= value;
+	}
+
 
 	public Map<String, String> getSignificantMacros() {
 		// TODO(197989): Implement.

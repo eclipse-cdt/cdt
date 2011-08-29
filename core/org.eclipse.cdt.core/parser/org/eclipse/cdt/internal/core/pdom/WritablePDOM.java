@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,14 +18,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
-import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
+import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
@@ -63,6 +67,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 
 	@Override
 	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location, Map<String, String> macroDictionary) throws CoreException {
+		// TODO(197989) the uncommitted file also has significant macros, we need to match them.
 		if (uncommittedLocation != null && uncommittedLocation.equals(location)) {
 			return uncommittedFile;
 		}
@@ -238,14 +243,32 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		return false;
 	}
 
-	public PDOMFile getFileForASTPath(int linkageID, String astPath) throws CoreException {
-		if (fPathResolver != null && astPath != null) {
-			IIndexFileLocation location = fPathResolver.resolveASTPath(astPath);
-			if (location.equals(uncommittedLocation))
-				return fileBeingUpdated != null ? fileBeingUpdated : uncommittedFile;
-			// TODO(197989): Replace call to a deprecated method.
-			return getFile(linkageID, location);
+	public PDOMFile getFileForASTNode(int linkageID, IASTNode node) throws CoreException {
+		if (fPathResolver != null && node != null) {
+			IASTFileLocation loc= node.getFileLocation();
+			if (loc != null) {
+				Map<String, String> sigMacros= getSignificantMacros(node, loc);
+				if (sigMacros != null) {
+					IIndexFileLocation location = fPathResolver.resolveASTPath(loc.getFileName());
+					// TODO(197989) the uncommitted file also has significant macros, we need to match them.
+					if (location.equals(uncommittedLocation))
+						return fileBeingUpdated != null ? fileBeingUpdated : uncommittedFile;
+					return getFile(linkageID, location, sigMacros);
+				}
+			}
 		}
+		return null;
+	}
+
+	private Map<String, String> getSignificantMacros(IASTNode node, IASTFileLocation loc) {
+		IASTPreprocessorIncludeStatement owner= loc.getContextInclusionStatement();
+		if (owner != null) 
+			return owner.getSignificantMacros();
+
+		IASTTranslationUnit tu = node.getTranslationUnit();
+		if (tu != null)
+			return tu.getSignificantMacros();
+		
 		return null;
 	}
 

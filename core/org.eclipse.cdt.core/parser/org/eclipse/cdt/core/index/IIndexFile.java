@@ -13,6 +13,7 @@
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -33,6 +34,12 @@ public interface IIndexFile {
 	 */
 	IIndexFileLocation getLocation() throws CoreException;
 
+	/**
+	 * Returns the significant macros for this version of the file.
+	 * @since 5.4
+	 */
+	ISignificantMacros getSignificantMacros() throws CoreException;
+	
 	/**
 	 * Returns all includes found in this file.
 	 * @return an array of all includes found in this file
@@ -70,11 +77,9 @@ public interface IIndexFile {
 	long getContentsHash() throws CoreException;
 
 	/**
-	 * Returns the hash-code of the scanner configuration that was used to parse the file.
-	 * <code>0</code> will be returned in case the hash-code is unknown.
-	 * @return the hash-code of the scanner configuration or <code>0</code>.
-	 * @throws CoreException 
+	 * @deprecated Returns 0. 
 	 */
+	@Deprecated
 	int getScannerConfigurationHashcode() throws CoreException;
 
 	/**
@@ -101,12 +106,6 @@ public interface IIndexFile {
 	 * @since 5.4
 	 */
 	public boolean hasPragmaOnceSemantics() throws CoreException;
-
-	/**
-	 * Returns a key that uniquely identifies the preprocessed content of the file.
-	 * @since 5.4
-	 */
-	IFileContentKey getContentKey() throws CoreException;
 
 	/**
 	 * Returns the id of the linkage this file was parsed in.

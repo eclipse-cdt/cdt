@@ -10,9 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -39,6 +37,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
@@ -73,7 +72,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private INodeFactory fNodeFactory;
 	private boolean fForContentAssist;
 	private ITranslationUnit fOriginatingTranslationUnit;
-	private Map<String, String> fSignificantMacros= Collections.emptyMap();
+	private ISignificantMacros fSignificantMacros= ISignificantMacros.NONE;
 	private boolean fPragmaOnceSemantics;
 	
 	/** The semaphore controlling exclusive access to the AST. */
@@ -457,13 +456,14 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		this.fOriginatingTranslationUnit = tu;
 	}
 
-	public Map<String, String> getSignificantMacros() {
+	public ISignificantMacros getSignificantMacros() {
 		return fSignificantMacros;
 	}
 
-	public void setSignificantMacros(Map<String, String> sigMacros) {
+	public void setSignificantMacros(ISignificantMacros sigMacros) {
 		assertNotFrozen();
-		fSignificantMacros= sigMacros;
+		if (sigMacros != null)
+			fSignificantMacros= sigMacros;
 	}
 	
 	public boolean hasPragmaOnceSemantics() {

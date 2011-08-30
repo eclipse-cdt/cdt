@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -24,6 +23,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -102,7 +102,7 @@ public interface IIndexFragment {
 	 * @return the file for the location, or <code>null</code> if the file is not present in
 	 *     the index
 	 * @throws CoreException
-	 * @deprecated Use {@link #getFile(int, IIndexFileLocation, Map)} or
+	 * @deprecated Use {@link #getFile(int, IIndexFileLocation, ISignificantMacros)} or
 	 *     {@link #getFiles(int, IIndexFileLocation)}.
 	 */
 	@Deprecated
@@ -123,7 +123,7 @@ public interface IIndexFragment {
 	 * @throws CoreException
 	 */
 	IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location,
-			Map<String, String> significantMacros) throws CoreException;
+			ISignificantMacros significantMacros) throws CoreException;
 
 	/**
 	 * Returns the files for the given location and linkage.

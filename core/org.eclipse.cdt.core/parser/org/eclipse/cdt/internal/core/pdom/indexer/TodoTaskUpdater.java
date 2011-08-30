@@ -23,7 +23,6 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
-import org.eclipse.cdt.core.index.IFileContentKey;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICModelMarker;
@@ -96,7 +95,7 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
         taskParser = new TodoTaskParser(taskTags, taskPriorities, isTaskCaseSensitive);
 	}
 
-	public void updateTasks(IASTComment[] comments, IFileContentKey[] filesToUpdate) {
+	public void updateTasks(IASTComment[] comments, IIndexFileLocation[] filesToUpdate) {
 		class TaskList {
 			IFile fFile;
 			List<Task> fTasks;
@@ -116,8 +115,7 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 		// first collect all valid file-locations
 		final Map<IPath, TaskList> pathToTaskList= new HashMap<IPath, TaskList>();
 		final Set<IProject> projects= new HashSet<IProject>();
-		for (final IFileContentKey fileKey : filesToUpdate) {
-			IIndexFileLocation indexFileLocation = fileKey.getLocation();
+		for (final IIndexFileLocation indexFileLocation : filesToUpdate) {
 			final String filepath = indexFileLocation.getFullPath();
 			if (filepath != null) {
 				IFile file = workspaceRoot.getFile(new Path(filepath));

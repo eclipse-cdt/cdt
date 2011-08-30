@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
@@ -33,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
-import org.eclipse.cdt.core.index.IFileContentKey;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
@@ -43,9 +41,9 @@ import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.FileContent;
-import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
@@ -691,8 +689,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 									}
 								}
 							}
-							writeToIndex(linkageID, ast, StreamHasher.hash(code), computeHashCode(scanInfo),
-									monitor);
+							writeToIndex(linkageID, ast, StreamHasher.hash(code), monitor);
 							updateFileCount(0, 0, 1);
 						}
 					}
@@ -858,7 +855,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			IASTTranslationUnit ast= createAST(tu, lang, codeReader, scanInfo, fASTOptions, inContext, pm);
 			fStatistics.fParsingTime += System.currentTimeMillis() - start;
 			if (ast != null) {
-				writeToIndex(linkageID, ast, codeReader.getContentsHash(), computeHashCode(scanInfo), pm);
+				writeToIndex(linkageID, ast, codeReader.getContentsHash(), pm);
 			}
 		} catch (CoreException e) {
 			th= e;
@@ -878,13 +875,13 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 	}
 	
-	private void writeToIndex(final int linkageID, IASTTranslationUnit ast, long fileContentsHash,
-			int configHash, IProgressMonitor pm) throws CoreException, InterruptedException {
-		HashSet<IFileContentKey> enteredFiles= new HashSet<IFileContentKey>();
+	private void writeToIndex(final int linkageID, IASTTranslationUnit ast, long fileContentsHash, IProgressMonitor pm) 
+			throws CoreException, InterruptedException {
+		HashSet<FileContentKey> enteredFiles= new HashSet<FileContentKey>();
 		ArrayList<FileInAST> orderedFileKeys= new ArrayList<FileInAST>();
 		
 		final IIndexFileLocation topIfl = fResolver.resolveASTPath(ast.getFilePath());
-		IFileContentKey topKey = new FileContentKey(topIfl);
+		FileContentKey topKey = new FileContentKey(linkageID, topIfl, ast.getSignificantMacros());
 		enteredFiles.add(topKey);
 		IDependencyTree tree= ast.getDependencyTree();
 		IASTInclusionNode[] inclusions= tree.getInclusions();
@@ -899,7 +896,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		
 		FileInAST[] fileKeys= orderedFileKeys.toArray(new FileInAST[orderedFileKeys.size()]);
 		try {
-			addSymbols(ast, fileKeys, fIndex, 1, false, fileContentsHash, configHash, fTodoTaskUpdater, pm);
+			addSymbols(ast, fileKeys, fIndex, 1, false, fileContentsHash, fTodoTaskUpdater, pm);
 		} finally {
 			// mark as updated in any case, to avoid parsing files that caused an exception to be thrown.
 			for (FileInAST fileKey : fileKeys) {
@@ -911,11 +908,11 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	private void collectOrderedFileKeys(final int linkageID, IASTInclusionNode inclusion,
-			HashSet<IFileContentKey> enteredFiles, ArrayList<FileInAST> orderedFileKeys) throws CoreException {
+			HashSet<FileContentKey> enteredFiles, ArrayList<FileInAST> orderedFileKeys) throws CoreException {
 		final IASTPreprocessorIncludeStatement include= inclusion.getIncludeDirective();
 		if (include.isActive() && include.isResolved()) {
 			final IIndexFileLocation ifl= fResolver.resolveASTPath(include.getPath());
-			IFileContentKey fileKey = new FileContentKey(ifl, include.getSignificantMacros());
+			FileContentKey fileKey = new FileContentKey(linkageID, ifl, include.getSignificantMacros());
 			final boolean isFirstEntry= enteredFiles.add(fileKey);
 			IASTInclusionNode[] nested= inclusion.getNestedInclusions();
 			for (IASTInclusionNode element : nested) {
@@ -928,7 +925,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	public final boolean needToUpdateHeader(int linkageID, IIndexFileLocation ifl,
-			Map<String, String> significantMacros) throws CoreException {
+			ISignificantMacros significantMacros) throws CoreException {
 		IndexFileContent info= getFileInfo(linkageID, ifl);
 		if (info == null) {
 			IIndexFile ifile= null;
@@ -1015,55 +1012,6 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	
 	protected void logException(Throwable e) {
 		CCorePlugin.log(e);
-	}
-
-	private static int computeHashCode(IScannerInfo scannerInfo) {
-		int result= 0;
-		Map<String, String> macros= scannerInfo.getDefinedSymbols();
-		if (macros != null) {
-			for (Entry<String, String> entry : macros.entrySet()) {
-				String key = entry.getKey();
-				String value = entry.getValue();
-				result= addToHashcode(result, key);
-				if (value != null && value.length() > 0) {
-					result= addToHashcode(result, value);
-				}
-			}
-		}
-		String[] a= scannerInfo.getIncludePaths();
-		if (a != null) {
-			for (String element : a) {
-				result= addToHashcode(result, element);
-
-			}
-		}
-		if (scannerInfo instanceof IExtendedScannerInfo) {
-			IExtendedScannerInfo esi= (IExtendedScannerInfo) scannerInfo;
-			a= esi.getIncludeFiles();
-			if (a != null) {
-				for (String element : a) {
-					result= addToHashcode(result, element);
-
-				}
-			}			
-			a= esi.getLocalIncludePath();
-			if (a != null) {
-				for (String element : a) {
-					result= addToHashcode(result, element);
-				}
-			}		
-			a= esi.getMacroFiles();
-			if (a != null) {
-				for (String element : a) {
-					result= addToHashcode(result, element);
-				}
-			}		
-		}
-		return result;
-	}
-
-	private static int addToHashcode(int result, String key) {
-		return result * 31 + key.hashCode();
 	}
 
 	private long computeFileContentsHash(Object tu) {

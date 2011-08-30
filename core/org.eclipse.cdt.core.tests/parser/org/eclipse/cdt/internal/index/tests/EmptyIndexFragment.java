@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -22,6 +21,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
@@ -108,7 +108,7 @@ public class EmptyIndexFragment implements IIndexFragment {
 	}
 
 	public IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location,
-			Map<String, String> macroDictionary) throws CoreException {
+			ISignificantMacros sigMacros) throws CoreException {
 		return null;
 	}
 

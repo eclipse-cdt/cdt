@@ -23,8 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -34,7 +33,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
-import org.eclipse.cdt.core.index.IFileContentKey;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -45,6 +43,7 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.IMacroDictionary;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
@@ -226,7 +225,7 @@ public class CIndex implements IIndex {
 			IMacroDictionary macroDictionary) throws CoreException {
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			for (IIndexFragmentFile ifile : fFragments[i].getFiles(linkageID, location)) {
-				if (ifile.hasContent() && macroDictionary.compliesWith(ifile.getContentKey().getSignificantMacros())) {
+				if (ifile.hasContent() && ifile.getSignificantMacros().isComplient(macroDictionary)) {
 					return ifile;
 				}
 			}
@@ -235,7 +234,7 @@ public class CIndex implements IIndex {
 	}
 
 	public IIndexFile getFile(int linkageID, IIndexFileLocation location,
-			Map<String, String> significantMacros) throws CoreException {
+			ISignificantMacros significantMacros) throws CoreException {
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			IIndexFragmentFile candidate= fFragments[i].getFile(linkageID, location, significantMacros);
 			if (candidate != null && candidate.hasContent()) {
@@ -249,20 +248,15 @@ public class CIndex implements IIndex {
 		if (location == null) {
 			return IIndexFile.EMPTY_FILE_ARRAY;
 		}
-		Map<Map<String, String>, IIndexFile> filesByKey =
-				new HashMap<Map<String, String>, IIndexFile>();
+		Set<ISignificantMacros> handled = new HashSet<ISignificantMacros>();
 		ArrayList<IIndexFragmentFile> result= new ArrayList<IIndexFragmentFile>();
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			IIndexFragmentFile[] candidates= fFragments[i].getFiles(linkageID, location);
 			for (IIndexFragmentFile candidate : candidates) {
 				if (candidate.hasContent()) {
-					Map<String, String> macroKey = candidate.getContentKey().getSignificantMacros();
-					// A null value of macroKey means "unknown" and excludes any other value. 
-					if (macroKey == null ?
-							filesByKey.isEmpty() :
-							!filesByKey.containsKey(macroKey) && !filesByKey.containsKey(null)) {
+					ISignificantMacros macroKey = candidate.getSignificantMacros();
+					if (handled.add(macroKey)) {
 						result.add(candidate);
-						filesByKey.put(macroKey, candidate);
 					}
 				}
 			}
@@ -277,26 +271,14 @@ public class CIndex implements IIndex {
 		if (location == null) {
 			return IIndexFile.EMPTY_FILE_ARRAY;
 		}
-		Map<Integer, Map<Map<String, String>, IIndexFile>> filesByLinkage =
-				new TreeMap<Integer, Map<Map<String, String>, IIndexFile>>();
+		Set<FileContentKey> keys = new HashSet<FileContentKey>();
 		ArrayList<IIndexFragmentFile> result= new ArrayList<IIndexFragmentFile>();
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			IIndexFragmentFile[] candidates= fFragments[i].getFiles(location);
 			for (IIndexFragmentFile candidate : candidates) {
 				if (candidate.hasContent()) {
-					int linkageId= candidate.getLinkageID();
-					Map<Map<String, String>, IIndexFile> filesByKey = filesByLinkage.get(linkageId);
-					if (filesByKey == null) {
-						filesByKey = new HashMap<Map<String, String>, IIndexFile>();
-						filesByLinkage.put(linkageId, filesByKey);
-					}
-					Map<String, String> macroKey = candidate.getContentKey().getSignificantMacros();
-					// A null value of macroKey means "unknown" and excludes any other value. 
-					if (macroKey == null ?
-							filesByKey.isEmpty() :
-							!filesByKey.containsKey(macroKey) && !filesByKey.containsKey(null)) {
+					if (keys.add(new FileContentKey(candidate.getLinkageID(), candidate.getLocation(), candidate.getSignificantMacros()))) {
 						result.add(candidate);
-						filesByKey.put(macroKey, candidate);
 					}
 				}
 			}
@@ -317,8 +299,7 @@ public class CIndex implements IIndex {
 			return result;
 		}
 
-		IFileContentKey key = result.getContentKey();
-		return getFile(include.getIncludedBy().getLinkageID(), key.getLocation(), key.getSignificantMacros());
+		return getFile(result.getLinkageID(), result.getLocation(), result.getSignificantMacros());
 	}
 
 	public IIndexInclude[] findIncludedBy(IIndexFile file) throws CoreException {

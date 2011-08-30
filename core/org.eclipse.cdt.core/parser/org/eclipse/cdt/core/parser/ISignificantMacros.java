@@ -11,17 +11,26 @@
 
 package org.eclipse.cdt.core.parser;
 
+import org.eclipse.cdt.internal.core.parser.scanner.SignificantMacros;
 
 /**
- * Interface for accessing the macro dictionary of the preprocessor.
+ * Significant macros describe the conditions under which the preprocessor selects
+ * the same active code branches in a file.
  * @since 5.4
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- * TODO(197989) remove from public API
  */
-public interface IMacroDictionary {
+public interface ISignificantMacros {
 
-	boolean isDefined(String macro);
-	
-	boolean hasValue(String macro, char[] value);
+	ISignificantMacros NONE = new SignificantMacros(null);
+
+	/**
+	 * Returns whether the macro dictionary complies with this map of significant macros.
+	 */
+	boolean isComplient(IMacroDictionary macroDictionary);
+
+	/**
+	 * Returns the significant macros encoded as an array of characters.
+	 */
+	char[] encode();
 }

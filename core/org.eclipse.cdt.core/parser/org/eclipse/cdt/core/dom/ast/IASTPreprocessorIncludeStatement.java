@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.Map;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 
 /**
  * This interface represent a preprocessor #include statement.
@@ -84,5 +84,5 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	 * return <code>null</code> if it is called prematurely.
 	 * @since 5.4
 	 */
-	public Map<String, String> getSignificantMacros();
+	public ISignificantMacros getSignificantMacros();
 }

@@ -15,7 +15,6 @@
 
 package org.eclipse.cdt.internal.core.index;
 
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.IName;
@@ -31,6 +30,7 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.IMacroDictionary;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -67,7 +67,7 @@ final public class EmptyCIndex implements IIndex {
 	}
 
 	public IIndexFile getFile(int linkageID, IIndexFileLocation location,
-			Map<String, String> significantFiles) throws CoreException {
+			ISignificantMacros significantFiles) throws CoreException {
 		return null;
 	}
 

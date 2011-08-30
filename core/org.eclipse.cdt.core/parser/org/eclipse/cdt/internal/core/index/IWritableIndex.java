@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.index;
 
 import java.util.Collection;
-import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
@@ -21,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.core.runtime.CoreException;
@@ -50,7 +50,7 @@ public interface IWritableIndex extends IIndex {
 	 * or null. This method returns file objects without content, also.
 	 */
 	IIndexFragmentFile getWritableFile(int linkageID, IIndexFileLocation location,
-			Map<String, String> macroDictionary) throws CoreException;
+			ISignificantMacros macroDictionary) throws CoreException;
 
 	/**
 	 * Returns the writable files for the given location in any linkage. This method
@@ -75,17 +75,17 @@ public interface IWritableIndex extends IIndex {
 	 * @return A created or an existing file.  
 	 */
 	IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location,
-			Map<String, String> macroDictionary) throws CoreException;
+			ISignificantMacros macroDictionary) throws CoreException;
 
 	/**
 	 * Creates a uncommitted file object for the given location.
 	 */
 	IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation location,
-			Map<String, String> macroDictionary) throws CoreException;
+			ISignificantMacros macroDictionary) throws CoreException;
 
 	/**
 	 * Makes an uncommitted file that was created earlier by calling
-	 * {@link #addUncommittedFile(int, IIndexFileLocation, Map)} method visible in the index.
+	 * {@link #addUncommittedFile(int, IIndexFileLocation, ISignificantMacros)} method visible in the index.
 	 *
 	 * @return The file that was updated.
 	 * @throws CoreException

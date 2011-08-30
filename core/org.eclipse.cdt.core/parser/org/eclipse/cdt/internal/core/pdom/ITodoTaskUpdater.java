@@ -12,8 +12,8 @@
 package org.eclipse.cdt.internal.core.pdom;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
-import org.eclipse.cdt.core.index.IFileContentKey;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 
 public interface ITodoTaskUpdater {
-	public void updateTasks(IASTComment[] comments, IFileContentKey[] fileKeys);
+	public void updateTasks(IASTComment[] comments, IIndexFileLocation[] files);
 }

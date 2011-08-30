@@ -49,7 +49,6 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-import org.eclipse.cdt.core.index.IFileContentKey;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLinkage;
@@ -57,6 +56,7 @@ import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexMacroContainer;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -426,7 +426,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public PDOMFile getFile(int linkageID, IIndexFileLocation location,
-			Map<String, String> macroDictionary) throws CoreException {
+			ISignificantMacros macroDictionary) throws CoreException {
 		PDOMLinkage linkage= getLinkage(linkageID);
 		if (linkage == null)
 			return null;
@@ -435,7 +435,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public PDOMFile getFile(PDOMLinkage linkage, IIndexFileLocation location,
-			Map<String, String> macroDictionary) throws CoreException {
+			ISignificantMacros macroDictionary) throws CoreException {
 		return PDOMFile.findFile(linkage, getFileIndex(), location, locationConverter, macroDictionary);
 	}
 
@@ -466,11 +466,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	protected IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location,
-			Map<String, String> macroDictionary) throws CoreException {
+			ISignificantMacros sigMacros) throws CoreException {
 		PDOMLinkage linkage= createLinkage(linkageID);
-		IIndexFragmentFile file = getFile(linkage, location, macroDictionary);
+		IIndexFragmentFile file = getFile(linkage, location, sigMacros);
 		if (file == null) {
-			PDOMFile pdomFile = new PDOMFile(linkage, location, linkageID);
+			PDOMFile pdomFile = new PDOMFile(linkage, location, linkageID, sigMacros);
 			getFileIndex().insert(pdomFile.getRecord());
 			file= pdomFile;
 			fEvent.setHasNewFiles();
@@ -1094,8 +1094,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			return (PDOMFile) file;
 		}
 
-		IFileContentKey key= file.getContentKey();
-		return getFile(file.getLinkageID(), key.getLocation(), key.getSignificantMacros());
+		return getFile(file.getLinkageID(), file.getLocation(), file.getSignificantMacros());
 	}
 
 	public File getPath() {

@@ -13,12 +13,12 @@
 package org.eclipse.cdt.internal.core.index;
 
 import java.util.Collection;
-import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.core.runtime.CoreException;
@@ -45,7 +45,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 	}
 	
 	public IIndexFragmentFile getWritableFile(int linkageID, IIndexFileLocation location,
-			Map<String, String> macroDictionary) throws CoreException {
+			ISignificantMacros macroDictionary) throws CoreException {
 		return fWritableFragment.getFile(linkageID, location, macroDictionary);
 	}
 	
@@ -54,12 +54,12 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 	}
 
 	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location,
-			Map<String, String> macroDictionary) throws CoreException {
+			ISignificantMacros macroDictionary) throws CoreException {
 		return fWritableFragment.addFile(linkageID, location, macroDictionary);
 	}
 
 	public IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation location,
-			Map<String, String> macroDictionary) throws CoreException {
+			ISignificantMacros macroDictionary) throws CoreException {
 		return fWritableFragment.addUncommittedFile(linkageID, location, macroDictionary);
 	}
 

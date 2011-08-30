@@ -103,9 +103,13 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 
 	private final class MacroDictionary implements IMacroDictionary {
-		public boolean compliesWith(Map<String, String> significantMacros) {
-			// TODO(197989) Add implementation for MacroDictionary.compliesWith()
-			return true;
+		public boolean isDefined(String macro) {
+			return fMacroDictionary.containsKey(macro.toCharArray());
+		}
+
+		public boolean hasValue(String macro, char[] value) {
+			PreprocessorMacro m = fMacroDictionary.get(macro.toCharArray());
+			return CharArrayUtils.equals(m.getExpansion(), value);
 		}
 	}
 

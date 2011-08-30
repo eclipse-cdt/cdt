@@ -11,8 +11,6 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -43,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -311,10 +310,8 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 		fPragmaOnce= value;
 	}
 
-
-	public Map<String, String> getSignificantMacros() {
-		// TODO(197989): Implement.
-		return Collections.emptyMap();
+	public ISignificantMacros getSignificantMacros() {
+		return ISignificantMacros.NONE;
 	}
 }
 

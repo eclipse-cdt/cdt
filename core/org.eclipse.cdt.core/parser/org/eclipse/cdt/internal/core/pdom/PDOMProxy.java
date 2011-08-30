@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFileSet;
@@ -162,9 +163,9 @@ public class PDOMProxy implements IPDOM {
 	}
 
 	public IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location,
-			Map<String, String> macroDictionary) throws CoreException {
+			ISignificantMacros sigMacros) throws CoreException {
 		if (fDelegate != null)
-			return fDelegate.getFile(linkageID, location, macroDictionary);
+			return fDelegate.getFile(linkageID, location, sigMacros);
 
 		return null;
 	}

@@ -14,13 +14,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.index;
 
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.IMacroDictionary;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -143,7 +143,7 @@ public interface IIndex {
 	 * @param location an IIndexFileLocation representing the location of the file
 	 * @return the file in the index or <code>null</code>
 	 * @throws CoreException
-	 * @deprecated Use {@link #getFile(int, IIndexFileLocation, Map)} or
+	 * @deprecated Use {@link #getFile(int, IIndexFileLocation, ISignificantMacros)} or
 	 *     {@link #getFiles(int, IIndexFileLocation)}.
 	 */
 	@Deprecated
@@ -178,7 +178,7 @@ public interface IIndex {
 	 * @throws CoreException
 	 * @since 5.4
 	 */
-	IIndexFile getFile(int linkageID, IIndexFileLocation location, Map<String, String> significantMacros)
+	IIndexFile getFile(int linkageID, IIndexFileLocation location, ISignificantMacros significantMacros)
 			throws CoreException;
 
 	/**

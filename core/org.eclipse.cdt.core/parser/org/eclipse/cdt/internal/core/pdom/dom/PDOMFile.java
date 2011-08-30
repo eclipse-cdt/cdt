@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
@@ -32,21 +31,20 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
-import org.eclipse.cdt.core.index.IFileContentKey;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.internal.core.index.FileContentKey;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
-import org.eclipse.cdt.internal.core.index.StringMapEncoder;
+import org.eclipse.cdt.internal.core.parser.scanner.SignificantMacros;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -67,24 +65,22 @@ public class PDOMFile implements IIndexFragmentFile {
 	private final PDOMLinkage fLinkage;
 	private final long record;
 	private IIndexFileLocation location;  // No need to make volatile, all fields of IndexFileLocation are final.
-	private IFileContentKey key;  // No need to make volatile, all fields of FileContentsKey are either final or volatile.
+	private ISignificantMacros sigMacros;  // No need to make volatile, all fields of FileContentsKey are either final or volatile.
 
 	private static final int FIRST_NAME = 0;
-	private static final int FIRST_INCLUDE = 4;
-	private static final int FIRST_INCLUDED_BY = 8;
-	private static final int FIRST_MACRO = 12;
-	private static final int LOCATION_REPRESENTATION = 16;
-	private static final int LINKAGE_ID= 20;  // size 3
-	private static final int FLAGS= 23;  // size 1
-	private static final int TIME_STAMP = 24;
-	private static final int CONTENT_HASH= 32;  // size 8
-	private static final int SCANNER_CONFIG_HASH= 40;
-	private static final int ENCODING_HASH= 44;
-	private static final int LAST_USING_DIRECTIVE= 48;
-	private static final int FIRST_MACRO_REFERENCE= 52;
-	private static final int SIGNIFICANT_MACROS= 56;
-
-	private static final int RECORD_SIZE= 60;
+	private static final int FIRST_INCLUDE = FIRST_NAME + Database.PTR_SIZE;
+	private static final int FIRST_INCLUDED_BY = FIRST_INCLUDE + Database.PTR_SIZE;
+	private static final int FIRST_MACRO = FIRST_INCLUDED_BY + Database.PTR_SIZE;
+	private static final int LOCATION_REPRESENTATION = FIRST_MACRO + Database.PTR_SIZE;
+	private static final int LINKAGE_ID= LOCATION_REPRESENTATION + Database.PTR_SIZE;  // size 3
+	private static final int FLAGS= LINKAGE_ID + 3;  // size 1
+	private static final int TIME_STAMP = FLAGS + 1; // long
+	private static final int CONTENT_HASH= TIME_STAMP + 8;  // long
+	private static final int ENCODING_HASH= CONTENT_HASH + 8;
+	private static final int LAST_USING_DIRECTIVE= ENCODING_HASH + 4;
+	private static final int FIRST_MACRO_REFERENCE= LAST_USING_DIRECTIVE + Database.PTR_SIZE;
+	private static final int SIGNIFICANT_MACROS= FIRST_MACRO_REFERENCE + Database.PTR_SIZE;
+	private static final int RECORD_SIZE= SIGNIFICANT_MACROS + Database.PTR_SIZE;   // 8*PTR_SIZE + 3+1+8+8+4 = 56
 
 	private static final int FLAG_PRAGMA_ONCE_SEMANTICS	= 0x01;
 
@@ -111,7 +107,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		this.record = record;
 	}
 
-	public PDOMFile(PDOMLinkage linkage, IIndexFileLocation location, int linkageID) throws CoreException {
+	public PDOMFile(PDOMLinkage linkage, IIndexFileLocation location, int linkageID, ISignificantMacros macros) throws CoreException {
 		fLinkage = linkage;
 		this.location= location;
 		Database db = fLinkage.getDB();
@@ -122,6 +118,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		IString locationDBString = db.newString(locationString);
 		db.putRecPtr(record + LOCATION_REPRESENTATION, locationDBString.getRecord());
 		db.put3ByteUnsignedInt(record + LINKAGE_ID, linkageID);
+		db.putRecPtr(record + SIGNIFICANT_MACROS, db.newString(macros.encode()).getRecord());
 		setTimestamp(-1);
 	}
 
@@ -236,13 +233,8 @@ public class PDOMFile implements IIndexFragmentFile {
 		setTimestamp(sourceFile.getTimestamp());
 		setEncodingHashcode(sourceFile.getEncodingHashcode());
 		setContentsHash(sourceFile.getContentsHash());
-		setScannerConfigurationHashcode(sourceFile.getScannerConfigurationHashcode());
 
 		Database db= fLinkage.getDB();
-		// Transfer the significant macros.
-		long rec = db.getRecPtr(sourceFile.record + SIGNIFICANT_MACROS);
-		db.putRecPtr(record + SIGNIFICANT_MACROS, rec);
-		db.putRecPtr(sourceFile.record + SIGNIFICANT_MACROS, 0);
 		// Transfer the flags.
 		db.putByte(record + FLAGS, db.getByte(sourceFile.record + FLAGS));
 
@@ -277,7 +269,6 @@ public class PDOMFile implements IIndexFragmentFile {
 			db.getString(oldRecord).delete();
 		db.putRecPtr(record + LOCATION_REPRESENTATION, db.newString(internalLocation).getRecord());
 		location= null;
-		key= null;
 	}
 
 	public int getLinkageID() throws CoreException {
@@ -306,13 +297,7 @@ public class PDOMFile implements IIndexFragmentFile {
 	}
 
 	public int getScannerConfigurationHashcode() throws CoreException {
-		Database db = fLinkage.getDB();
-		return db.getInt(record + SCANNER_CONFIG_HASH);
-	}
-
-	public void setScannerConfigurationHashcode(int hashcode) throws CoreException {
-		Database db= fLinkage.getDB();
-		db.putInt(record + SCANNER_CONFIG_HASH, hashcode);
+		return 0;
 	}
 
 	public int getEncodingHashcode() throws CoreException {
@@ -325,38 +310,8 @@ public class PDOMFile implements IIndexFragmentFile {
 		db.putInt(record + ENCODING_HASH, hashcode);
 	}
 
-	public IFileContentKey getContentKey() throws CoreException {
-		if (key == null) {
-			Database db = fLinkage.getDB();
-			if ((db.getByte(record + FLAGS) & FLAG_PRAGMA_ONCE_SEMANTICS) != 0) {
-				key = new FileContentKey(getLocation());
-			} else {
-				long rec = db.getRecPtr(record + SIGNIFICANT_MACROS);
-				char[] significantMacros;
-				if (rec == 0) {
-					significantMacros = StringMapEncoder.ENCODED_EMPTY_MAP;
-				} else {
-					significantMacros = db.getString(rec).getChars();
-				}
-				key = new FileContentKey(getLocation(), significantMacros);
-			}
-		}
-		return key;
-	}
-
 	public boolean hasPragmaOnceSemantics() throws CoreException {
 		return (fLinkage.getDB().getByte(record + FLAGS) & FLAG_PRAGMA_ONCE_SEMANTICS) != 0;
-	}
-
-	public void setSignificantMacros(Map<String, String> macros) throws CoreException {
-		Database db= fLinkage.getDB();
-		long oldRecord = db.getRecPtr(record + SIGNIFICANT_MACROS);
-		if (oldRecord != 0)
-			db.getString(oldRecord).delete();
-		db.putRecPtr(record + SIGNIFICANT_MACROS,
-				macros != null && !macros.isEmpty() ?
-						db.newString(StringMapEncoder.encode(macros)).getRecord() : 0);
-		key = null;
 	}
 
 	public void setPragmaOnceSemantics(boolean value) throws CoreException {
@@ -368,7 +323,6 @@ public class PDOMFile implements IIndexFragmentFile {
 			flags &= ~FLAG_PRAGMA_ONCE_SEMANTICS;
 		}
 		db.putByte(record + FLAGS, flags);
-		key = null;
 	}
 
 	private PDOMName getFirstName() throws CoreException {
@@ -581,12 +535,6 @@ public class PDOMFile implements IIndexFragmentFile {
 		}
 		setFirstMacroReference(null);
 		setPragmaOnceSemantics(false);
-		// TODO(197989) don't change significant macros. 
-		// mschorn: As long as the file is in the BTree we must not change the values that
-		// contribute to the order. Otherwise the binary search in the file table no longer works.
-		// I think it is sufficient to delete the significant macros during PDOMFile.delete().
-		setSignificantMacros(null);
-
 		setTimestamp(-1);
 	}
 
@@ -734,7 +682,7 @@ public class PDOMFile implements IIndexFragmentFile {
 	 * definitions this method will return an arbitrary one of these variants.
 	 *
 	 * @deprecated Use
-	 *     {@link #findFile(PDOMLinkage, BTree, IIndexFileLocation, IIndexLocationConverter, Map)}
+	 *     {@link #findFile(PDOMLinkage, BTree, IIndexFileLocation, IIndexLocationConverter, ISignificantMacros)}
 	 *     or {@link #findFiles(PDOMLinkage, BTree, IIndexFileLocation, IIndexLocationConverter)}
 	 */
 	@Deprecated
@@ -755,7 +703,7 @@ public class PDOMFile implements IIndexFragmentFile {
 	 * @return The found file, or <code>null</code> if the matching file was not found.
 	 */
 	public static PDOMFile findFile(PDOMLinkage linkage, BTree btree, IIndexFileLocation location,
-			IIndexLocationConverter strategy, Map<String, String> macroDictionary) throws CoreException {
+			IIndexLocationConverter strategy, ISignificantMacros macroDictionary) throws CoreException {
 		String internalRepresentation= strategy.toInternalFormat(location);
 		if (internalRepresentation != null) {
 			Finder finder = new Finder(linkage.getDB(), internalRepresentation, linkage.getLinkageID(),
@@ -796,7 +744,6 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	private static class Finder implements IBTreeVisitor {
 		private static final long[] EMPTY = {};
-		private static final char[] EMPTY_CHAR_ARRAY = {};
 		private final Database db;
 		private final String rawKey;
 		private long record;
@@ -807,14 +754,11 @@ public class PDOMFile implements IIndexFragmentFile {
 		/**
 		 * Searches for a file with the given linkage id.
 		 */
-		public Finder(Database db, String internalRepresentation, int linkageID,
-				Map<String, String> significantMacros) {
+		public Finder(Database db, String internalRepresentation, int linkageID, ISignificantMacros sigMacros) {
 			this.db = db;
 			this.rawKey = internalRepresentation;
 			this.linkageID= linkageID;
-			this.rawSignificantMacros = significantMacros == null ? null 
-					: significantMacros.isEmpty() ? EMPTY_CHAR_ARRAY 
-							: StringMapEncoder.encode(significantMacros);
+			this.rawSignificantMacros = sigMacros == null ? null : sigMacros.encode();
 		}
 
 		public long[] getRecords() {
@@ -889,6 +833,16 @@ public class PDOMFile implements IIndexFragmentFile {
 			}
 		}
 		return location;
+	}
+
+	
+	public ISignificantMacros getSignificantMacros() throws CoreException {
+		if (sigMacros == null) {
+			Database db= fLinkage.getDB();
+			final IString encoded = db.getString(db.getRecPtr(record + SIGNIFICANT_MACROS));
+			sigMacros= encoded == null ? ISignificantMacros.NONE : new SignificantMacros(encoded.getChars());
+		}
+		return sigMacros;
 	}
 
 	public boolean hasContent() throws CoreException {

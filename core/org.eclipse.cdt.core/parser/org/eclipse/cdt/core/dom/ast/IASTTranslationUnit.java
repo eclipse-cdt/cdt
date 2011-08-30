@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -348,20 +349,19 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IAdaptabl
 	
 	/**
 	 * Returns macros relevant to parsing of the file included by this include statement and their
-	 * definitions at the point of the include. Undefined macros are represented in the map by
-	 * <code>null</code> values.
+	 * definitions at the point of the include. 
 	 * <p>
 	 * This method should only be called after the included file has been parsed. The method will
-	 * return <code>null</code> if it is called prematurely.
+	 * return {@link ISignificantMacros#NONE}</code> if it is called prematurely.
 	 * @since 5.4
 	 */
-	public Map<String, String> getSignificantMacros();
+	public ISignificantMacros getSignificantMacros();
 	
 	/**
 	 * @since 5.4
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public void setSignificantMacros(Map<String, String> sigMacros);
+	public void setSignificantMacros(ISignificantMacros sigMacros);
 
 	/**
 	 * Returns whether pragma once semantics has been detected when parsing the translation unit.

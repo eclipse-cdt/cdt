@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
+import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
@@ -55,6 +56,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 	public static final String ER_UNUSED_VARIABLE_DECLARATION_ID = "org.eclipse.cdt.codan.internal.checkers.UnusedVariableDeclarationProblem"; //$NON-NLS-1$
 	public static final String ER_UNUSED_FUNCTION_DECLARATION_ID = "org.eclipse.cdt.codan.internal.checkers.UnusedFunctionDeclarationProblem"; //$NON-NLS-1$
 	public static final String ER_UNUSED_STATIC_FUNCTION_ID = "org.eclipse.cdt.codan.internal.checkers.UnusedStaticFunctionProblem"; //$NON-NLS-1$
+	public static final String PARAM_MACRO_ID = "macro"; //$NON-NLS-1$
 	public static final String PARAM_EXCEPT_ARG_LIST = "exceptions"; //$NON-NLS-1$
 
 	private Map<IBinding, IASTDeclarator> externFunctionDeclarations = new HashMap<IBinding, IASTDeclarator>();
@@ -72,6 +74,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
+		addPreference(problem, PARAM_MACRO_ID, CheckersMessages.StatementHasNoEffectChecker_ParameterMacro, Boolean.TRUE);
 		if (problem.getId().equals(ER_UNUSED_VARIABLE_DECLARATION_ID)) {
 			unusedVariableProblem = problem;
 			ListProblemPreference pref = addListPreference(problem, PARAM_EXCEPT_ARG_LIST,
@@ -132,41 +135,51 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 								int storageClass = simpleDeclaration.getDeclSpecifier().getStorageClass();
 
 								if (binding instanceof IFunction) {
-									if (storageClass == IASTDeclSpecifier.sc_extern || storageClass == IASTDeclSpecifier.sc_unspecified) {
-										externFunctionDeclarations.put(binding, decl);
-									} else if (storageClass == IASTDeclSpecifier.sc_static) {
-										staticFunctionDeclarations.put(binding, decl);
-									}
-								} else if (binding instanceof IVariable) {
-									if (storageClass == IASTDeclSpecifier.sc_extern) {
-										// Initializer makes "extern" declaration to become definition do not count these
-										if (decl.getInitializer() == null) {
-											externVariableDeclarations.put(binding, decl);
+									if (storageClass == IASTDeclSpecifier.sc_extern ||
+											storageClass == IASTDeclSpecifier.sc_unspecified) {
+										if (shouldReportInMacro(ER_UNUSED_FUNCTION_DECLARATION_ID) ||
+												!CxxAstUtils.isInMacro(astName)) {
+											externFunctionDeclarations.put(binding, decl);
 										}
 									} else if (storageClass == IASTDeclSpecifier.sc_static) {
-										IType type = ((IVariable) binding).getType();
-										// Account for class constructor and avoid possible false positive
-										if (!(type instanceof ICPPClassType) && !(type instanceof IProblemType)) {
-											// Check if initializer disqualifies it
-											IASTInitializer initializer = decl.getInitializer();
-											IASTInitializerClause clause = null;
-											if (initializer instanceof IASTEqualsInitializer) {
-												IASTEqualsInitializer equalsInitializer = (IASTEqualsInitializer) initializer;
-												clause = equalsInitializer.getInitializerClause();
-											} else if (initializer instanceof ICPPASTConstructorInitializer) {
-												ICPPASTConstructorInitializer constructorInitializer = (ICPPASTConstructorInitializer) initializer;
-												IASTInitializerClause[] args = constructorInitializer.getArguments();
-												if (args.length == 1)
-													clause = args[0];
+										if (shouldReportInMacro(ER_UNUSED_STATIC_FUNCTION_ID) ||
+												!CxxAstUtils.isInMacro(astName)) {
+											staticFunctionDeclarations.put(binding, decl);
+										}
+									}
+								} else if (binding instanceof IVariable) {
+									if (shouldReportInMacro(ER_UNUSED_VARIABLE_DECLARATION_ID) ||
+											!CxxAstUtils.isInMacro(astName)) {
+										if (storageClass == IASTDeclSpecifier.sc_extern) {
+											// Initializer makes "extern" declaration to become definition do not count these
+											if (decl.getInitializer() == null) {
+												externVariableDeclarations.put(binding, decl);
 											}
-											if (clause instanceof IASTLiteralExpression) {
-												IASTLiteralExpression literalExpression = (IASTLiteralExpression) clause;
-												String literal = literalExpression.toString();
-												if (isFilteredOut(literal, unusedVariableProblem, PARAM_EXCEPT_ARG_LIST))
-													continue;
+										} else if (storageClass == IASTDeclSpecifier.sc_static) {
+											IType type = ((IVariable) binding).getType();
+											// Account for class constructor and avoid possible false positive
+											if (!(type instanceof ICPPClassType) && !(type instanceof IProblemType)) {
+												// Check if initializer disqualifies it
+												IASTInitializer initializer = decl.getInitializer();
+												IASTInitializerClause clause = null;
+												if (initializer instanceof IASTEqualsInitializer) {
+													IASTEqualsInitializer equalsInitializer = (IASTEqualsInitializer) initializer;
+													clause = equalsInitializer.getInitializerClause();
+												} else if (initializer instanceof ICPPASTConstructorInitializer) {
+													ICPPASTConstructorInitializer constructorInitializer = (ICPPASTConstructorInitializer) initializer;
+													IASTInitializerClause[] args = constructorInitializer.getArguments();
+													if (args.length == 1)
+														clause = args[0];
+												}
+												if (clause instanceof IASTLiteralExpression) {
+													IASTLiteralExpression literalExpression = (IASTLiteralExpression) clause;
+													String literal = literalExpression.toString();
+													if (isFilteredOut(literal, unusedVariableProblem, PARAM_EXCEPT_ARG_LIST))
+														continue;
+												}
+	
+												staticVariableDeclarations.put(binding, decl);
 											}
-
-											staticVariableDeclarations.put(binding, decl);
 										}
 									}
 								}
@@ -315,7 +328,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 		clearCandidates(); // release memory
 	}
 
-	public boolean isFilteredOut(String arg, IProblem problem, String exceptionListParamId) {
+	private boolean isFilteredOut(String arg, IProblem problem, String exceptionListParamId) {
 		Object[] arr = (Object[]) getPreference(problem, exceptionListParamId);
 		for (int i = 0; i < arr.length; i++) {
 			String str = (String) arr[i];
@@ -325,4 +338,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 		return false;
 	}
 
+	private boolean shouldReportInMacro(String errorId) {
+		return (Boolean) getPreference(getProblemById(errorId, getFile()), PARAM_MACRO_ID);
+	}
 }

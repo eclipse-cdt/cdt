@@ -11,6 +11,6 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>org.eclipse.cdt.gnu.build.source-feature</artifactId>
+	<artifactId>org.eclipse.cdt.gnu.build.source</artifactId>
 	<packaging>eclipse-feature</packaging>
 </project>

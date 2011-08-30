@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Eugene Ostroukhov (NVIDIA) - new done(IStatus) method
  *******************************************************************************/
 package org.eclipse.cdt.dsf.concurrent;
 
@@ -165,7 +166,9 @@ public class RequestMonitor extends DsfExecutable {
     
     /** 
      * Sets the status of the result of the request.  If status is OK, this 
-     * method does not need to be called. 
+     * method does not need to be called.
+     * 
+     * @see #done(IStatus)
      */
     public synchronized void setStatus(IStatus status) { 
         assert isCanceled() || status.getSeverity() != IStatus.CANCEL; 
@@ -270,8 +273,8 @@ public class RequestMonitor extends DsfExecutable {
      * monitor submits a runnable to the DSF Executor to call the 
      * <code>handle...</code> methods.  
      * <p>
-     * Note: This method should be called once and only once, for every request 
-     * issued.  Even if the request was canceled.
+     * Note: Only one <code>done</code> method should be called and only once, 
+     * for every request issued. Even if the request was canceled.
      * </p>  
      */
     public synchronized void done() {
@@ -305,6 +308,24 @@ public class RequestMonitor extends DsfExecutable {
         } catch (RejectedExecutionException e) {
             handleRejectedExecutionException();
         }
+    }
+    
+    /**
+     * Sets status and marks request monitor as completed.
+     * 
+     * <p>
+     * Note: Only one <code>done</code> method should be called and only once, 
+     * for every request issued. Even if the request was canceled.
+     * </p>  
+     * 
+     * @param status Request processing status
+     * @see #done()
+     * @see #setStatus(IStatus)
+     * @since 2.3
+     */
+    public synchronized void done(IStatus status) {
+        setStatus(status);
+        done();
     }
 
     @Override

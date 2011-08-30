@@ -566,11 +566,10 @@ public class SyncUtil {
                     		Assert.assertEquals("unexpected number of processes", 1, contexts.length);
                     		IDMContext context = contexts[0];    
                     		Assert.assertNotNull("unexpected process context type ", context);
-                    		rm.setData((IContainerDMContext)context);
+                    		rm.done((IContainerDMContext)context);
                     	} else {
-                            rm.setStatus(getStatus());
+                            rm.done(getStatus());
                     	}
-                    	rm.done();
                     }
             	});
 			}

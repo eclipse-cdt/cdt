@@ -57,9 +57,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 			if (stmt instanceof IASTExpressionStatement) {
 				IASTExpression expression = ((IASTExpressionStatement) stmt).getExpression();
 				if (hasNoEffect(expression)) {
-					boolean inMacro = CxxAstUtils.getInstance().isInMacro(expression);
-					boolean shouldReportInMacro = shouldReportInMacro();
-					if (inMacro && !shouldReportInMacro)
+					if (!shouldReportInMacro() && CxxAstUtils.isInMacro(expression))
 						return PROCESS_SKIP;
 					String arg = expression.getRawSignature();
 					if (!isFilteredArg(arg))

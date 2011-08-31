@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [214378] [dstore] remote search doesn't display results sometimes
  * David McKnight  (IBM)  - [261644] [dstore] remote search improvements
+ * David McKnight  (IBM)         - [356230] [dstore] remote search sometimes returns incomplete results in view
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
@@ -144,14 +145,17 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 			// need to wait for the results though
 			DelayedDomainListenerRemover remover = new DelayedDomainListenerRemover(this, _status);
 			remover.start();
+			OutputRefresh refresh = new OutputRefresh(this);			
+			Display.getDefault().asyncExec(refresh);	
 		}
 		else if (_status.getValue().equals("cancelled")) //$NON-NLS-1$
 		{
 			setStatus(IHostSearchConstants.CANCELLED);
 			_status.getDataStore().getDomainNotifier().removeDomainListener(this);
+			OutputRefresh refresh = new OutputRefresh(this);			
+			Display.getDefault().asyncExec(refresh);	
 		}
-		OutputRefresh refresh = new OutputRefresh(this);			
-		Display.getDefault().asyncExec(refresh);							
+						
 	}
 	
 	public void cancel()

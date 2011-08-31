@@ -36,7 +36,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
@@ -81,6 +80,15 @@ import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -125,6 +133,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	protected StackLayout fStackLayout;
 	private Composite fRenderingsComposite;
 	private GoToAddressBarWidget fGotoAddressBar;
+	private DropTarget fDropTarget;
 	private Control fGotoAddressBarControl;
 	private Combo fGotoMemorySpaceControl;
 	private Label fUnsupportedLabel;
@@ -203,6 +212,31 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		return fMainComposite;
 	}
 
+	/*
+	 * Handles DnD from other views.
+	 */
+	private class MemoryDropAdapter extends DropTargetAdapter {
+		/*
+		 * @see org.eclipse.swt.dnd.DropTargetListener#drop(org.eclipse.swt.dnd.DropTargetEvent)
+		 */
+		public void drop(final DropTargetEvent event) {
+			if (TextTransfer.getInstance().isSupportedType( event.currentDataType )) {
+				if ( event.data instanceof String ) {
+					fGotoAddressBar.setExpressionText( (String) event.data );
+					performGo(false);
+				}
+			}
+		}
+
+		/*
+		 * @see org.eclipse.swt.dnd.DropTargetListener#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
+		 */
+		public void dragEnter(DropTargetEvent event) {
+			event.detail   = DND.DROP_COPY;
+			event.feedback = DND.FEEDBACK_NONE;
+		}
+	}
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		// set default rendering type. use the traditional rendering if available. fallback on first registered type.
@@ -240,6 +274,12 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		fGotoMemorySpaceControl = new Combo(fMainComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fGotoAddressBar = new GoToAddressBarWidget();
 		fGotoAddressBarControl = fGotoAddressBar.createControl(fMainComposite);
+		
+		if (fDropTarget == null) {
+			fDropTarget = new DropTarget(fGotoAddressBarControl, DND.DROP_COPY | DND.DROP_DEFAULT);
+			fDropTarget.setTransfer( new Transfer[] { TextTransfer.getInstance() });
+			fDropTarget.addDropListener(new MemoryDropAdapter());
+		}
 		
 		fGotoAddressBar.getButton(IDialogConstants.OK_ID).addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -358,6 +398,10 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	
 	@Override
 	public void dispose() {
+		if (fDropTarget != null) {
+			fDropTarget.dispose();
+			fDropTarget = null;
+		}
 		DebugPlugin.getDefault().removeDebugEventListener(this);
         IDebugContextService contextService = 
             DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()); 

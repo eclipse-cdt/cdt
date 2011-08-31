@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Gorenkov  - initial implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
@@ -179,22 +181,23 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 		}
 
 		/**
-		 *  Checks whether specified type (class or typedef to the class) is abstract class.
-		 *  If it is - reports violations on each pure virtual method 
+		 *  Checks whether specified type (class or typedef to the class) is an abstract class.
+		 *  If it is, reports violations on each pure virtual method 
 		 */
 		private void reportProblemsIfAbstract(IType typeToCheck, IASTNode problemNode ) {
 			IType unwindedType = CxxAstUtils.getInstance().unwindTypedef(typeToCheck);
-			if (unwindedType instanceof ICPPClassType) {
-				ICPPClassType classType = (ICPPClassType) unwindedType;
-				ICPPMethod[] pureVirtualMethods = pureVirtualMethodsCache.get(classType);
-				if (pureVirtualMethods == null) {
-					pureVirtualMethods = ClassTypeHelper.getPureVirtualMethods(classType);
-					pureVirtualMethodsCache.put(classType, pureVirtualMethods);
-				}
-				
-				for (ICPPMethod method : pureVirtualMethods) {
-					reportProblem(ER_ID, problemNode, resolveName(classType), resolveName(method));
-				}
+			if (!(unwindedType instanceof ICPPClassType) || unwindedType instanceof IProblemBinding) {
+				return;
+			}
+			ICPPClassType classType = (ICPPClassType) unwindedType;
+			ICPPMethod[] pureVirtualMethods = pureVirtualMethodsCache.get(classType);
+			if (pureVirtualMethods == null) {
+				pureVirtualMethods = ClassTypeHelper.getPureVirtualMethods(classType);
+				pureVirtualMethodsCache.put(classType, pureVirtualMethods);
+			}
+			
+			for (ICPPMethod method : pureVirtualMethods) {
+				reportProblem(ER_ID, problemNode, resolveName(classType), resolveName(method));
 			}
 		}
 	}

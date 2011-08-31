@@ -838,3 +838,22 @@ void TestClass::foo()
 {
 }
 
+//!Bug 355006 - NPE implementing template function
+//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
+//@.config
+filename=A.h
+infos=1
+//@A.h
+
+/*$*/template<typename T> void func(T&);/*$$*/
+
+//=
+
+template<typename T> void func(T&);
+
+template<typename T> inline void func(T& )
+{
+}
+
+
+

@@ -149,6 +149,8 @@
 		<module>dsf/org.eclipse.cdt.examples.dsf.pda.ui</module>
 		<module>dsf/org.eclipse.cdt.examples.dsf-feature</module>
 
+		<module>releng/org.eclipse.cdt.repo</module>
+
 		<module>core/org.eclipse.cdt.core.tests</module>
 		<module>core/org.eclipse.cdt.ui.tests</module>
 		<module>build/org.eclipse.cdt.managedbuilder.core.tests</module>
@@ -161,7 +163,6 @@
 		<module>debug/org.eclipse.cdt.debug.ui.tests</module>
 -->
 		
-		<module>releng/org.eclipse.cdt.repo</module>
 	</modules>
 
 	<repositories>

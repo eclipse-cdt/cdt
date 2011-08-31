@@ -260,15 +260,16 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 		IASTFunctionDefinition functionDefinition = nodeFactory.newFunctionDefinition(declSpecifier, createdMethodDeclarator, nodeFactory.newCompoundStatement());
 		functionDefinition.setParent(unit);
 		
-		if (NodeHelper.isContainedInTemplateDeclaration(declarationParent)) {
-			ICPPASTTemplateDeclaration templateDeclaration = nodeFactory.newTemplateDeclaration(functionDefinition);
-			templateDeclaration.setParent(unit);
+		ICPPASTTemplateDeclaration templateDeclaration = NodeHelper.findContainedTemplateDecalaration(declarationParent);
+		if (templateDeclaration != null) {
+			ICPPASTTemplateDeclaration newTemplateDeclaration = nodeFactory.newTemplateDeclaration(functionDefinition);
+			newTemplateDeclaration.setParent(unit);
 			
-			for (ICPPASTTemplateParameter templateParameter : ((ICPPASTTemplateDeclaration) declarationParent.getParent().getParent() ).getTemplateParameters()) {
-				templateDeclaration.addTemplateParameter(templateParameter.copy(CopyStyle.withLocations));
+			for (ICPPASTTemplateParameter templateParameter : templateDeclaration.getTemplateParameters()) {
+				newTemplateDeclaration.addTemplateParameter(templateParameter.copy(CopyStyle.withLocations));
 			}
 			
-			return templateDeclaration;
+			return newTemplateDeclaration;
 		}
 		return functionDefinition;
 	}

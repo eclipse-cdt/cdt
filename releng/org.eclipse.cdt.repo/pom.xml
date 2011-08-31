@@ -14,4 +14,47 @@
 	<version>8.0.0-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.repo</artifactId>
 	<packaging>eclipse-repository</packaging>
+
+	<properties>
+		<cdt-install>/home/data/httpd/download.eclipse.org/tools/cdt/builds/hudson/cdt-maint</cdt-install>
+	</properties>
+	
+	<profiles>
+		<profile>
+			<id>production</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<mkdir "${cdt-install}"/>
+										<delete>
+											<fileset dir="${cdt-install}">
+												<include name="**" />
+											</fileset>
+										</delete>
+										<copy
+											file="target/org.eclipse.cdt.repo.zip"
+											tofile="${cdt-install}/org.eclipse.cdt.repo.${unqualifiedVersion}.${buildQualifier}.zip"/>
+										<unzip
+											src="target/org.eclipse.cdt.repo.zip"
+											dest="${cdt-install}"/>
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>

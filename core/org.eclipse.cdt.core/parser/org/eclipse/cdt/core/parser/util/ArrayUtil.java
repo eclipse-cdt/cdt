@@ -210,7 +210,14 @@ public abstract class ArrayUtil {
 	}
 
     /**
-     * Assumes that both arrays contain nulls at the end, only.
+     * Takes contents of the two arrays up to the first <code>null</code> element and concatenates
+     * them.
+     * @param c The type of the element of the returned array if there was not enough free space
+     *     in the destination array.
+     * @param dest The destination array. The elements of the source array are added to this array
+     *     if there is enough free space in it. May be <code>null</code>. 
+     * @param source The source array. May not be <code>null</code>. 
+     * @return The concatenated array, which may be the same as the first parameter. 
      */
     public static Object[] addAll(Class<?> c, Object[] dest, Object[] source) {
         if (source == null || source.length == 0)
@@ -246,8 +253,12 @@ public abstract class ArrayUtil {
     }
 
     /**
-     * Concatenates two arrays skipping <code>null</code> elements.
-     * Assumes that both arrays contain <code>null</code>s at the end, only.
+     * Takes contents of the two arrays up to the first <code>null</code> element and concatenates
+     * them.
+     * @param dest The destination array. The elements of the source array are added to this array
+     *     if there is enough free space in it. May be <code>null</code>. 
+     * @param source The source array. May not be <code>null</code>. 
+     * @return The concatenated array, which may be the same as the first parameter. 
      * @since 5.2
      */
     @SuppressWarnings("unchecked")
@@ -264,7 +275,8 @@ public abstract class ArrayUtil {
         }
 
         if (dest == null || dest.length == 0) {
-    		Class<? extends Object> c = dest != null ? dest.getClass().getComponentType() : source.getClass().getComponentType();
+    		Class<? extends Object> c =	dest != null ?
+    				dest.getClass().getComponentType() : source.getClass().getComponentType();
             dest = (T[]) Array.newInstance(c, numToAdd);
             System.arraycopy(source, 0, dest, 0, numToAdd);
             return dest;

@@ -200,7 +200,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     
     private final INodeFactory nodeFactory;
 	private boolean fActiveCode= true;
-	private int fEndOffset= -1;
 	
     protected AbstractGNUSourceCodeParser(IScanner scanner,
             IParserLogService logService, ParserMode parserMode,
@@ -435,7 +434,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     	try {
     		return LA(i);
     	} catch (EndOfFileException e) {
-    		fEndOffset= e.getEndOffset();
     		return null;
     	}
     }
@@ -456,7 +454,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     	try {
     		return LT(i);
     	} catch (EndOfFileException e) {
-    		fEndOffset= e.getEndOffset();
     		return 0;
     	}
     }
@@ -1281,9 +1278,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	protected void parseTranslationUnit() {
 		final IASTTranslationUnit tu= getTranslationUnit();
 		declarationList(tu, DeclarationOptions.GLOBAL, false, 0);
-		// Bug 3033152: getEndOffset() is computed off the last node and ignores trailing macros.
-		final int length= Math.max(getEndOffset(), fEndOffset);
-        ((ASTNode) tu).setLength(length);
 	}
 
 	protected final void declarationListInBraces(final IASTDeclarationListOwner tu, int offset, DeclarationOptions options) throws EndOfFileException, BacktrackException {
@@ -1356,7 +1350,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 				IASTDeclaration declaration= skipProblemDeclaration(offset);
 				addDeclaration(tu, declaration, active);
 				if (!e.endsInactiveCode()) {
-					fEndOffset= e.getEndOffset();
 					break;
 				}
 			} finally {

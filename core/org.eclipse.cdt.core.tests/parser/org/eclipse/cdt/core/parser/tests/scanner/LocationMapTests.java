@@ -37,10 +37,10 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
@@ -49,8 +49,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.parser.scanner.CharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationCtx;
 import org.eclipse.cdt.internal.core.parser.scanner.ImageLocationInfo;
-import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
+import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
 
 public class LocationMapTests extends BaseTestCase {
 	public class Loc implements IASTFileLocation {
@@ -507,21 +507,21 @@ public class LocationMapTests extends BaseTestCase {
 		ILocationCtx i2= fLocationMap.pushInclusion(6, 7, 8, 9, new CharArray("c1c2c3c4c5"), "pre11", "pre11".toCharArray(), false, false, false);
 		assertEquals("pre11", fLocationMap.getCurrentFilePath());
 		fLocationMap.encounteredComment(2,6,true);
-		fLocationMap.popContext(i2);
+		fLocationMap.popContext(i2, null);
 		// add a comment before the include
 		fLocationMap.encounteredComment(4,6,false);
 
 		assertEquals("pre1", fLocationMap.getCurrentFilePath());
-		fLocationMap.popContext(i1);
+		fLocationMap.popContext(i1, null);
 		assertEquals(FN, fLocationMap.getCurrentFilePath());
-		fLocationMap.popContext(pre2);
+		fLocationMap.popContext(pre2, null);
 		assertEquals(FN, fLocationMap.getCurrentFilePath());
 		// number [36, 46)
 		ILocationCtx i3= fLocationMap.pushInclusion(0, 2, 4, 6, new CharArray("d1d2d3d4d5"), "pre2", "pre2".toCharArray(), false, false, false);
 		assertEquals("pre2", fLocationMap.getCurrentFilePath());
 		fLocationMap.encounteredComment(0,2,true);
-		fLocationMap.popContext(i3);
-		fLocationMap.popContext(pre1);
+		fLocationMap.popContext(i3, null);
+		fLocationMap.popContext(pre1, null);
 		assertEquals(FN, fLocationMap.getCurrentFilePath());
 		
 		

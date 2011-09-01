@@ -260,6 +260,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	private final boolean fIsSystemInclude;
 	private final boolean fFoundByHeuristics;
 	private boolean fPragmaOnce;
+	private ISignificantMacros fSignificantMacros;
 
 	public ASTInclusionStatement(IASTTranslationUnit parent, 
 			int startNumber, int nameStartNumber, int nameEndNumber, int endNumber,
@@ -271,6 +272,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 		fIsResolved= filePath != null;
 		fIsSystemInclude= !userInclude;
 		fFoundByHeuristics= heuristic;
+		fSignificantMacros= ISignificantMacros.NONE;
 		if (!active) {
 			setInactive();
 		}
@@ -311,7 +313,12 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	}
 
 	public ISignificantMacros getSignificantMacros() {
-		return ISignificantMacros.NONE;
+		return fSignificantMacros;
+	}
+	
+	public void setSignificantMacros(ISignificantMacros sig) {
+		assert sig != null;
+		fSignificantMacros= sig;
 	}
 }
 

@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import org.eclipse.cdt.core.parser.IMacroDictionary;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
@@ -29,17 +29,48 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  * A <code>null</code> string is encoded as a single comma.
  */
 public class SignificantMacros implements ISignificantMacros {
-	private static final char[] UNDEFINED = {}; 
-	private static final char[] DEFINED = {};
+	public static final char[] UNDEFINED = {}; 
+	public static final char[] DEFINED = {};
 	private static final int ENCODED_UNDEFINED = Character.MAX_VALUE;
-	private static final int ENCODED_DEFINED = ENCODED_UNDEFINED-1; 
+	private static final int ENCODED_DEFINED = Character.MAX_VALUE-1;
+	private static final Comparator<Object> SORTER = new Comparator<Object>() {
+		public int compare(Object o1, Object o2) {
+			return CharArrayUtils.compare((char[])o1, (char[])o2);
+		}
+	}; 
 			
 	private final char[] fEncoded;
-	private volatile Map<String, char[]> fMap;
 	private int fHash;
 
 	public SignificantMacros(char[] encoded) {
-		fEncoded= encoded == null ? CharArrayUtils.EMPTY : encoded;
+		assert encoded != null;
+		fEncoded= encoded;
+	}
+
+	public SignificantMacros(CharArrayObjectMap<char[]> sigMacros) {
+		fEncoded= encode(sigMacros);
+	}
+
+	private char[] encode(CharArrayObjectMap<char[]> sigMacros) {
+		StringBuilder buffer= new StringBuilder();
+		Object[] keys= sigMacros.keyArray();
+		Arrays.sort(keys, SORTER);
+		for (Object key : keys) {
+			char[] name= (char[]) key;
+			char[] value= sigMacros.get(name);
+			buffer.append((char) name.length).append(name);
+			if (value == DEFINED) {
+				buffer.append((char) ENCODED_DEFINED);
+			} else if (value == UNDEFINED) {
+				buffer.append((char) ENCODED_UNDEFINED);
+			} else {
+				buffer.append((char) value.length).append(value);
+			}
+		}
+		int len= buffer.length();
+		char[] result= new char[len];
+		buffer.getChars(0, len, result, 0);
+		return result;
 	}
 
 	@Override
@@ -64,65 +95,86 @@ public class SignificantMacros implements ISignificantMacros {
 	}
 	
 	public boolean isComplient(IMacroDictionary macroDictionary) {
-		Map<String, char[]> map= getMap();
-		for (Map.Entry<String, char[]> entry : map.entrySet()) {
-			if (entry.getValue() == UNDEFINED) {
-				if (macroDictionary.isDefined(entry.getKey()))
+		final char[] encoded = fEncoded;
+		final int len = encoded.length;
+		int i= 0;
+		while (i < len) {
+			final int len1 = encoded[i++];
+			int v= i + len1;
+			if (v >= len) 
+				break;
+			
+			char[] macro= extract(encoded, i, len1);
+			final int len2 = encoded[v++];
+			switch(len2) {
+			case ENCODED_UNDEFINED:
+				i= v;
+				if (macroDictionary.isDefined(macro))
 					return false;
-			} else if (entry.getValue() == DEFINED) {
-				if (!macroDictionary.isDefined(entry.getKey()))
+				break;
+			case ENCODED_DEFINED:
+				i= v;
+				if (!macroDictionary.isDefined(macro))
 					return false;
-			} else {
-				if (!macroDictionary.hasValue(entry.getKey(), entry.getValue()))
+				break;
+			default:
+				i= v+len2;
+				if (i > len) 
+					break;
+				if (!macroDictionary.hasValue(macro, extract(encoded, v, len2)))
 					return false;
-			}
+				break;
+			} 
 		}
 		return true;
 	}
 
-	private Map<String, char[]> getMap() {
-		if (fMap == null) {
-			fMap= rebuildMap();
-		}
-		return fMap;
-	}
 
-	private Map<String, char[]> rebuildMap() {
-		final char[] encoded = fEncoded;
-		final int len = encoded.length;
-		if (len == 0)
-			return Collections.emptyMap();
-		
-		Map<String, char[]> map= new HashMap<String, char[]>();
-		int i= 0;
-		while (i < len) {
-			final int len1 = encoded[i];
-			int end1= i+ len1;
-			if (end1 >= len) 
-				break;
-			
-			String macro= new String(encoded, i, len1);
-			final int len2 = encoded[end1];
-			if (len2 == ENCODED_UNDEFINED) {
-				i= end1+1;
-				map.put(macro, UNDEFINED);
-			} else if (len2 == ENCODED_DEFINED) {
-				i= end1+1;
-				map.put(macro, DEFINED);
-			} else {
-				i= end1+len2;
-				if (i > len) 
-					break;
-				
-				char[] value= new char[len2];
-				System.arraycopy(encoded, end1, value, 0, len2);
-				map.put(macro, value);
-			} 
-		}
-		return map;
+	public char[] extract(final char[] source, int from, final int length) {
+		char[] value= new char[length];
+		System.arraycopy(source, from, value, 0, length);
+		return value;
 	}
 
 	public char[] encode() {
 		return fEncoded;
+	}
+	
+	/**
+	 * For debugging purposes.
+	 */
+	@SuppressWarnings("nls")
+	@Override
+	public String toString() {
+		StringBuilder buf= new StringBuilder();
+		buf.append('{');
+		final char[] encoded = fEncoded;
+		final int len = encoded.length;
+		int i= 0;
+		while (i < len) {
+			final int len1 = encoded[i++];
+			int v= i+len1;
+			if (v >= len) 
+				break;
+			
+			final int len2 = encoded[v++];
+			if (len2 == ENCODED_UNDEFINED) {
+				buf.append(encoded, i, len1).append('=').append("<undef>,");
+				i= v;
+			} else if (len2 == ENCODED_DEFINED) {
+				buf.append(encoded, i, len1).append('=').append("<defined>,");
+				i= v;
+			} else {
+				if (v+len2 > len) 
+					break;
+				buf.append(encoded, i, len1).append('=').append(encoded, v, len2).append(',');
+				i= v+len2;
+			} 
+		}
+		int buflen = buf.length();
+		if (buflen > 1)
+			buf.setLength(buflen-1);
+		buf.append('}');
+		return buf.toString();
 	}
 }

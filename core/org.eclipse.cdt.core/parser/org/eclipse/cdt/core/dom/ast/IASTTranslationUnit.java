@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.Map;
-
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.index.IIndex;

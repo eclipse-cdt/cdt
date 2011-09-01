@@ -31,6 +31,14 @@ public abstract class AbstractParserLogService implements IParserLogService {
 	 * @param traceOption an option as defined in the .options file.
 	 * @since 5.4
 	 */
+	public boolean isTracing(String traceOption) {
+		return isTracing();
+	}
+	
+	/**
+	 * @param traceOption an option as defined in the .options file.
+	 * @since 5.4
+	 */
 	public void traceLog(String traceOption, String message) {
 		traceLog(message);
 	}

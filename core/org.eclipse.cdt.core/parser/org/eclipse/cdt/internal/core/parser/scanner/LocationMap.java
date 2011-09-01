@@ -31,7 +31,10 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSpecification;
 import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
@@ -205,7 +208,7 @@ public class LocationMap implements ILocationResolver {
 	 * Ends the current context.
 	 * @param locationCtx the current context, used to check whether caller and location map are still in sync.
 	 */
-	public void popContext(ILocationCtx locationCtx) {
+	public void popContext(ILocationCtx locationCtx, CharArrayObjectMap<char[]> sigMacros) {
 		assert fCurrentContext == locationCtx;
 		final LocationCtx child= fCurrentContext;
 		final LocationCtx parent= (LocationCtx) fCurrentContext.getParent();
@@ -213,6 +216,18 @@ public class LocationMap implements ILocationResolver {
 			fCurrentContext= parent;
 			fLastChildInsertionOffset= child.fEndOffsetInParent;
 			parent.addChildSequenceLength(child.getSequenceLength());
+		}
+		if (sigMacros != null && locationCtx instanceof LocationCtxFile) {
+			ISignificantMacros sig = sigMacros.isEmpty() ? ISignificantMacros.NONE 
+					: new SignificantMacros(sigMacros);
+			ASTInclusionStatement inc = ((LocationCtxFile) locationCtx).getInclusionStatement();
+			if (inc != null) {
+				inc.setSignificantMacros(sig);
+			} else if (locationCtx == fRootContext) {
+				if (fTranslationUnit != null) {
+					fTranslationUnit.setSignificantMacros(sig);
+				}
+			}
 		}
 	}
 
@@ -760,5 +775,18 @@ public class LocationMap implements ILocationResolver {
 				stmt.setPragamOnceSemantics(true);
 			}
 		}
-	}		
+	}
+
+	public void endTranslationUnit(int endOffset, CharArrayObjectMap<char[]> sigMacros) {
+		if (fTranslationUnit != null) {
+			int offset= getSequenceNumberForOffset(endOffset);
+			((ASTNode) fTranslationUnit).setLength(offset);
+
+			if (sigMacros != null) {
+				ISignificantMacros sig = sigMacros.isEmpty() ? ISignificantMacros.NONE 
+						: new SignificantMacros(sigMacros);
+				fTranslationUnit.setSignificantMacros(sig);
+			}
+		}
+	}
 }

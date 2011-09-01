@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.core.parser;
 
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner.SignificantMacros;
 
 /**
@@ -22,7 +23,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.SignificantMacros;
  */
 public interface ISignificantMacros {
 
-	ISignificantMacros NONE = new SignificantMacros(null);
+	ISignificantMacros NONE = new SignificantMacros(CharArrayUtils.EMPTY);
 
 	/**
 	 * Returns whether the macro dictionary complies with this map of significant macros.

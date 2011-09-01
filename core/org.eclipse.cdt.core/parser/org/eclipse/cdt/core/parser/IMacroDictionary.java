@@ -21,7 +21,7 @@ package org.eclipse.cdt.core.parser;
  */
 public interface IMacroDictionary {
 
-	boolean isDefined(String macro);
-	
-	boolean hasValue(String macro, char[] value);
+	boolean isDefined(char[] name);
+
+	boolean hasValue(char[] name, char[] value);
 }

@@ -55,11 +55,15 @@ public class ParserLogService extends AbstractParserLogService implements ICance
 	}
 
 	@Override
+	public boolean isTracing(String option) {
+		return "true".equals(Platform.getDebugOption(option)); //$NON-NLS-1$
+	}
+	
+	@Override
 	public void traceLog(String option, String message) {
-		if ("true".equals(Platform.getDebugOption(option))) //$NON-NLS-1$
+		if (isTracing(option)) 
 			System.out.println(message);
 	}
-
 
 	@Override
 	public void errorLog(String message) {

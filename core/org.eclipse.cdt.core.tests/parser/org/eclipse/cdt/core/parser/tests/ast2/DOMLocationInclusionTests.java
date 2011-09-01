@@ -690,7 +690,6 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
     // #ifdef xx
     // trailing
     // #endif
-
     public void testPragmaOnceDetection_197989b() throws Exception {    
     	CharSequence[] contents= getContents(6);
     	
@@ -704,6 +703,79 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
 			assertEquals(1, incs.length);
 			assertFalse(incs[0].hasPragmaOnceSemantics());
 		}
+    }
+    
+    // // header.h
+    // #ifdef AH
+    // #endif
+    // #ifndef BH 
+    // #endif
+    // #define h
+    // #if CH || DH
+    // #elif EH==1
+    // #endif
+    
+    // #define BH
+    // #define DH 0
+    // #define EH 1
+    // #include "header.h"
+    // #ifdef h // defined in header
+    // #endif
+    // #ifdef A 
+    //    #ifdef a  // inactive
+    //    #endif
+    // #else
+    //   #ifndef B	 
+    //   #endif
+    // #endif
+    // #if defined C
+    // #elif ((!((defined(D)))))
+    // #endif
+    // #define A
+    // #define B
+    // #define AH
+    // #define h
+    // #undef u
+    // #ifdef h  // locally defined
+    // #endif    
+    // #ifndef u // locally undefined
+    // #endif
+    public void testSignificantMacros_197989a() throws Exception {    
+    	CharSequence[] contents= getContents(2);
+
+    	IFile h = importFile("header.h", contents[0].toString());
+    	IFile c = importFile("source.c", contents[1].toString());
+
+    	IASTTranslationUnit tu = parse(c, new ScannerInfo()); 
+    	IASTPreprocessorIncludeStatement[] incs = tu.getIncludeDirectives();
+    	assertEquals(1, incs.length);
+    	assertEquals("{AH=<undef>,BH=<defined>,CH=<undef>,DH=0,EH=1}",
+    			incs[0].getSignificantMacros().toString());
+    	assertEquals("{A=<undef>,AH=<undef>,B=<undef>,C=<undef>,CH=<undef>,D=<undef>}",
+    			tu.getSignificantMacros().toString());
+    }
+    
+    // // header.h
+    // #if EQ(A,B)
+    // #endif
+    
+    // #define EQ(x,y) x==y
+    // #define A A1
+    // #define B 1
+    // #include "header.h"
+        public void testSignificantMacros_197989b() throws Exception {    
+    	CharSequence[] contents= getContents(2);
+
+    	IFile h = importFile("header.h", contents[0].toString());
+    	IFile c = importFile("source.c", contents[1].toString());
+
+    	IASTTranslationUnit tu = parse(c, new ScannerInfo()); 
+    	IASTPreprocessorIncludeStatement[] incs = tu.getIncludeDirectives();
+    	assertEquals(1, incs.length);
+    	assertEquals("{A=A1,A1=<undef>,B=1,EQ=x==y}",
+    			incs[0].getSignificantMacros().toString());
+    	assertEquals("{A1=<undef>}",
+    			tu.getSignificantMacros().toString());
     }
 
 }

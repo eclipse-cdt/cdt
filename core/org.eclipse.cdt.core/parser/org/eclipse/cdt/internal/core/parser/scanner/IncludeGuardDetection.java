@@ -50,26 +50,15 @@ public class IncludeGuardDetection {
 					case IPreprocessorDirective.ppIf:
 						// #if !defined GUARD
 						// #if ((!((defined (GUARD)))))
-						
-						if (skipAll(l, IToken.tLPAREN).getType() == IToken.tNOT
-								&& CharArrayUtils.equals(Keywords.cDEFINED, skipAll(l, IToken.tLPAREN).getCharImage())) {
-							t= l.nextToken(); // only a single parenthesis is allowed
-							if (t.getType() == IToken.tLPAREN)
-								t= l.nextToken();
-							if (t.getType() == IToken.tIDENTIFIER) {
-								guard= t.getCharImage();
-							}
-							if (skipAll(l, IToken.tRPAREN).getType() != Lexer.tNEWLINE)
-								guard= null;
-						} 
+						guard = findNotDefined(l); 
 						break;
 					}
 					if (guard != null) {
 						// #define GUARD
 						l.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
 						if (skipAll(l, Lexer.tNEWLINE).getType() == IToken.tPOUND
-								&& CharArrayUtils.equals(Keywords.cDEFINE, l.nextToken().getCharImage())
-								&& CharArrayUtils.equals(guard, l.nextToken().getCharImage())) {
+								&& checkToken(l.nextToken(), Keywords.cDEFINE)
+								&& checkToken(l.nextToken(), guard)) {
 							l.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
 							return guard;
 						}
@@ -80,6 +69,26 @@ public class IncludeGuardDetection {
  		}
  		return null;
  	}
+
+	private static char[] findNotDefined(Lexer l) throws OffsetLimitReachedException {
+		Token t;
+		if (skipAll(l, IToken.tLPAREN).getType() == IToken.tNOT
+				&& checkToken(skipAll(l, IToken.tLPAREN), Keywords.cDEFINED)) {
+			t= l.nextToken(); // only a single parenthesis is allowed
+			if (t.getType() == IToken.tLPAREN)
+				t= l.nextToken();
+			if (t.getType() == IToken.tIDENTIFIER) {
+				char[] guard= t.getCharImage();
+				if (skipAll(l, IToken.tRPAREN).getType() == Lexer.tNEWLINE)
+					return guard;
+			}
+		}
+		return null;
+	}
+
+	private static boolean checkToken(Token t, char[] image) throws OffsetLimitReachedException {
+		return CharArrayUtils.equals(t.getCharImage(), image);
+	}
 	
 	private static boolean currentIfSpansFile(Lexer l, CharArrayIntMap ppKeywords) {
 		// Check if the #ifndef spans the entire file
@@ -113,5 +122,44 @@ public class IncludeGuardDetection {
 		while (t.getType() == kind)
 			t= l.nextToken();
 		return t;
+	}
+
+	
+	public static boolean detectIncludeEndif(Lexer l) {
+		l.saveState();
+		try {
+			return findIncludeEndif(l);
+		} catch (OffsetLimitReachedException e) {
+		} finally {
+			l.restoreState();
+		}
+		return false;
+	}
+
+	private static boolean findIncludeEndif(Lexer l) throws OffsetLimitReachedException {
+		if (skipAll(l, Lexer.tNEWLINE).getType() != IToken.tPOUND)
+			return false;
+		if (!checkToken(l.nextToken(), Keywords.cINCLUDE))
+			return false;
+		l.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+		if (skipAll(l, Lexer.tNEWLINE).getType() != IToken.tPOUND)
+			return false;
+		if (!checkToken(l.nextToken(), Keywords.cENDIF))
+			return false;
+		
+		return true;
+	}
+
+	public static char[] detectIfNotDefinedIncludeEndif(Lexer l) {
+		l.saveState();
+		try {
+			char[] guard= findNotDefined(l);
+			if (guard != null && findIncludeEndif(l))
+				return guard;
+		} catch (OffsetLimitReachedException e) {
+		} finally {
+			l.restoreState();
+		}
+		return null;
 	}
 }

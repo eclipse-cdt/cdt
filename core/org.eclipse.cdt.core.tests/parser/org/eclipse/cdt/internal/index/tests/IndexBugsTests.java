@@ -1116,7 +1116,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// #endif
 	
 	// #ifndef _h1
-	// #include "header1.h"
+	// #include "header1.h"   // is inactive, but must be resolved, h1 is not significant
 	// #endif
 	
 	// #include "header1.h"
@@ -1127,7 +1127,7 @@ public class IndexBugsTests extends BaseTestCase {
 	
 	// #include "header2.h"
 	// #ifndef _h1
-	// #include "header1.h"
+	// #include "header1.h"   // inactive and not resolved because header1.h is internally included.
 	// #endif
 	public void testIncludeGuardsOutsideOfHeader_Bug167100() throws Exception {
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1151,14 +1151,27 @@ public class IndexBugsTests extends BaseTestCase {
 			IIndexName[] names = index.findNames(binding, IIndex.FIND_ALL_OCCURRENCES);
 			assertEquals(1, names.length);
 			assertEquals(f4.getFullPath().toString(), names[0].getFile().getLocation().getFullPath());
+
+			IIndexFile[] idxFiles= index.getFiles(ILinkage.CPP_LINKAGE_ID, 
+					IndexLocationFactory.getWorkspaceIFL(f2));
+			assertEquals(1, idxFiles.length);
+			IIndexFile idxFile= idxFiles[0];
 			
-			IIndexFile idxFile= index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f5));
 			IIndexInclude[] includes= idxFile.getIncludes();
+			assertEquals(1, includes.length);
+			assertFalse(includes[0].isActive());
+			assertTrue(includes[0].isResolved());
+			assertEquals("{}", idxFile.getSignificantMacros().toString());
+			
+			idxFiles= index.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f5));
+			assertEquals(1, idxFiles.length);
+			idxFile= idxFiles[0];
+			includes= idxFile.getIncludes();
 			assertEquals(2, includes.length);
 			assertTrue(includes[0].isActive());
 			assertTrue(includes[0].isResolved());
 			assertFalse(includes[1].isActive());
-			assertTrue(includes[1].isResolved());
+			assertFalse(includes[1].isResolved());
 		} finally {
 			index.releaseReadLock();
 		}

@@ -64,6 +64,8 @@ public class TodoTaskParser {
 				final String key= fileName + ':' + nodeOffset;
 				// full indexer can yield duplicate comments, make sure to handle each comment only once (bug 287181)
 				if (locKeys.add(key)) {
+					if (comment.getComment().length == 0)
+						comment.getComment();
 					parse(comment.getComment(), fileName, nodeOffset,
 							location.getStartingLineNumber(), tasks);
 				}

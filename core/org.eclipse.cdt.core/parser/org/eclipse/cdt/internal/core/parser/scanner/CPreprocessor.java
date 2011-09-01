@@ -16,12 +16,15 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndexMacro;
@@ -96,6 +99,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private static final int PROTECT_DEFINED 	 = 0x02;
 	private static final int STOP_AT_NL 		 = 0x04;
 	private static final int CHECK_NUMBERS 		 = 0x08;
+	private static final int REPORT_SIGNIFICANT_MACROS = 0x10;
 
 	private static final int MAX_INCLUSION_DEPTH = 200;
 
@@ -103,13 +107,13 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 
 	private final class MacroDictionary implements IMacroDictionary {
-		public boolean isDefined(String macro) {
-			return fMacroDictionary.containsKey(macro.toCharArray());
+		public boolean isDefined(char[] macro) {
+			return fMacroDictionary.containsKey(macro);
 		}
 
-		public boolean hasValue(String macro, char[] value) {
-			PreprocessorMacro m = fMacroDictionary.get(macro.toCharArray());
-			return CharArrayUtils.equals(m.getExpansion(), value);
+		public boolean hasValue(char[] macro, char[] value) {
+			PreprocessorMacro m = fMacroDictionary.get(macro);
+			return m != null && CharArrayUtils.equals(m.getExpansion(), value);
 		}
 	}
 
@@ -222,6 +226,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     private Token fLastToken;
 
 	private InternalFileContent fRootContent;
+	private boolean fHandledEndOfTranslationUnit;
+
+	// Detection of include guards used around an include directive
+	private char[] fExternIncludeGuard;
+	private Set<String> fTracedGuards; 
+
 
     public CPreprocessor(FileContent fileContent, IScannerInfo info, ParserLanguage language,
     		IParserLogService log, IScannerExtensionConfiguration configuration,
@@ -262,24 +272,32 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
         ILocationCtx ctx= fLocationMap.pushTranslationUnit(filePath, fRootContent.getSource());
         fRootLexer= new Lexer(fRootContent.getSource(), fLexOptions, this, this);
-        fRootContext= fCurrentContext= new ScannerContext(ctx, null, fRootLexer);
+        fRootContext= fCurrentContext= new ScannerContext(ctx, null, fRootLexer, true);
         if (info instanceof IExtendedScannerInfo) {
         	final IExtendedScannerInfo einfo= (IExtendedScannerInfo) info;
         	fPreIncludedFiles= new String[][] { einfo.getMacroFiles(), einfo.getIncludeFiles() };
         }
         fFileContentProvider.resetPragmaOnceTracking();
-        detectIncludeGuard(filePath, fRootContent.getSource(), ctx);
+        detectIncludeGuard(filePath, fRootContent.getSource(), fRootContext);
     }
     
-	private void detectIncludeGuard(String filePath, AbstractCharArray source, ILocationCtx locationCtx) {
-		if (IncludeGuardDetection.detectIncludeGuard(source, fLexOptions, fPPKeywords) != null) {
+	private char[] detectIncludeGuard(String filePath, AbstractCharArray source, ScannerContext ctx) {
+		final char[] guard = IncludeGuardDetection.detectIncludeGuard(source, fLexOptions, fPPKeywords);
+		if (guard != null) {
 			fFileContentProvider.reportPragmaOnceSemantics(filePath);
-			fLocationMap.reportPragmaOnceSemantics(locationCtx);
-		} else if (locationCtx != fRootContext.getLocationCtx()) {
-			String file= fLocationMap.getTranslationUnitPath();
-			file= file.substring(file.lastIndexOf('/')+1);
-			fLog.traceLog(TRACE_NO_GUARD, file + ": no include guard in " + filePath); //$NON-NLS-1$
+			fLocationMap.reportPragmaOnceSemantics(ctx.getLocationCtx());
+			ctx.internalModification(guard);
+			return guard;
+		} 
+		if (ctx != fRootContext) {
+			if (fLog.isTracing(TRACE_NO_GUARD)) {
+				if (fTracedGuards == null)
+					fTracedGuards= new HashSet<String>();
+				if (fTracedGuards.add(filePath))
+					fLog.traceLog(TRACE_NO_GUARD, "No include guard in " + filePath); //$NON-NLS-1$
+			}
 		}
+		return null;
 	}
 
 	public void setSplitShiftROperator(boolean val) {
@@ -403,17 +421,17 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     }
 
 	private void beforeFirstFetchToken() {
-		if (fPreIncludedFiles != null) {
-    		handlePreIncludedFiles();
-    	}
-		final String location = fLocationMap.getTranslationUnitPath();
+        final String location = fLocationMap.getTranslationUnitPath();
 		InternalFileContent content= fFileContentProvider.getContentForContextToHeaderGap(location,
 				fMacroDictionaryFacade);
 		if (content != null && content.getKind() == InclusionKind.FOUND_IN_INDEX) {
 			processInclusionFromIndex(0, location, content);
+			fPreIncludedFiles= null;
+		} else if (fPreIncludedFiles != null) {
+			handlePreIncludedFiles();
 		}
 		fLocationMap.parsingFile(fFileContentProvider, fRootContent);
-		fRootContent= null;
+		fRootContent= null;		
 	}
 
     private void handlePreIncludedFiles() {
@@ -421,14 +439,14 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	if (imacro != null && imacro.length > 0) {
     		final char[] buffer= createSyntheticFile(imacro);
     		ILocationCtx ctx= fLocationMap.pushPreInclusion(new CharArray(buffer), 0, true);
-    		fCurrentContext= new ScannerContext(ctx, fCurrentContext, new Lexer(buffer, fLexOptions, this, this));
+    		fCurrentContext= new ScannerContext(ctx, fCurrentContext, new Lexer(buffer, fLexOptions, this, this), false);
     		ScannerContext preCtx= fCurrentContext;
     		try {
 				while (internalFetchToken(preCtx, CHECK_NUMBERS, false).getType() != IToken.tEND_OF_INPUT) {
 					// just eat the tokens
 				}
             	final ILocationCtx locationCtx = fCurrentContext.getLocationCtx();
-            	fLocationMap.popContext(locationCtx);
+            	fLocationMap.popContext(locationCtx, null);
         		fCurrentContext= fCurrentContext.getParent();
         		assert fCurrentContext == fRootContext;
 			} catch (OffsetLimitReachedException e) {
@@ -438,7 +456,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	if (include != null && include.length > 0) {
     		final char[] buffer= createSyntheticFile(include);
     		ILocationCtx ctx= fLocationMap.pushPreInclusion(new CharArray(buffer), 0, false);
-    		fCurrentContext= new ScannerContext(ctx, fCurrentContext, new Lexer(buffer, fLexOptions, this, this));
+    		fCurrentContext= new ScannerContext(ctx, fCurrentContext, new Lexer(buffer, fLexOptions, this, this), false);
     	}
     	fPreIncludedFiles= null;
     }
@@ -760,11 +778,17 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         		
         	case IToken.tEND_OF_INPUT:
         		if (fCurrentContext == uptoEndOfCtx || uptoEndOfCtx == null) {
+        			if (fCurrentContext == fRootContext && !fHandledEndOfTranslationUnit 
+        					&& (options & STOP_AT_NL) == 0) {
+        				fHandledEndOfTranslationUnit= true;
+        				fLocationMap.endTranslationUnit(ppToken.getEndOffset(), fCurrentContext.getSignificantMacros()); 
+        			}
         			return ppToken;
         		}
-            	final ILocationCtx locationCtx = fCurrentContext.getLocationCtx();
-            	fLocationMap.popContext(locationCtx);
-        		fCurrentContext= fCurrentContext.getParent();
+        		final ILocationCtx locationCtx = fCurrentContext.getLocationCtx();
+            	fLocationMap.popContext(locationCtx, fCurrentContext.getSignificantMacros());
+            	fCurrentContext.propagateSignificantMacros();
+				fCurrentContext= fCurrentContext.getParent();
         		assert fCurrentContext != null;
             	
         		ppToken= fCurrentContext.currentLexerToken();
@@ -815,7 +839,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         }
     }
 
-    private void checkNumber(Token number, final boolean isFloat) {
+	private void checkNumber(Token number, final boolean isFloat) {
         final char[] image= number.getCharImage();
         boolean hasExponent = false;
 
@@ -1216,6 +1240,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 	private void executeInclude(final Lexer lexer, int poundOffset, boolean include_next,
 			boolean active, boolean withinExpansion) throws OffsetLimitReachedException {
+		// Make sure to clear the extern include guard.
+		final char[] externGuard= fExternIncludeGuard;
+		fExternIncludeGuard= null;
+
 		if (withinExpansion) {
 			final char[] name= lexer.currentToken().getCharImage();
 			final int endOffset = lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
@@ -1305,13 +1333,16 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			// #ifndef GUARD
 			//    #include "file.h"
 			// #endif
-			// mstodo we need to detect these constructs, i.e. the include should be marked as active.
-			// test if the include is inactive just because it was included before (bug 167100)
-			final IncludeResolution resolved= findInclusion(includeDirective, userInclude, include_next,
-					getCurrentFilename(), createPathTester);
-			if (resolved != null && fFileContentProvider.isIncludedWithPragmaOnceSemantics(resolved.fLocation)) {
-				path= resolved.fLocation;
-				isHeuristic= resolved.fHeuristic;
+			if (externGuard != null) {
+				// When the extern guard matches we need to resolve the inclusion. We don't actually
+				// check whether the guard matches.
+				final IncludeResolution resolved= findInclusion(includeDirective, userInclude, include_next,
+						getCurrentFilename(), createPathTester);
+				if (resolved != null && fFileContentProvider.isIncludedWithPragmaOnceSemantics(resolved.fLocation)) {
+					path= resolved.fLocation;
+					isHeuristic= resolved.fHeuristic;
+					fCurrentContext.undoSignificance(externGuard);
+				}
 			}
 		} else {
 			final InternalFileContent fi= findInclusion(includeDirective, userInclude, include_next,
@@ -1322,6 +1353,14 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				switch (fi.getKind()) {
 				case FOUND_IN_INDEX:
 					processInclusionFromIndex(poundOffset, path, fi);
+					// When the extern guard matches, it is not significant.
+					if (externGuard != null && fFileContentProvider.isIncludedWithPragmaOnceSemantics(path) &&
+							fMacroDictionary.containsKey(externGuard)) {
+						List<IIndexMacro> mdefs = fi.getMacroDefinitions();
+						if (!mdefs.isEmpty() && CharArrayUtils.equals(mdefs.get(0).getNameCharArray(), externGuard)) {
+							fCurrentContext.undoSignificance(externGuard);
+						}
+					}
 					break;
 				case USE_SOURCE:
 					AbstractCharArray source= fi.getSource();
@@ -1330,10 +1369,20 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 						ILocationCtx ctx= fLocationMap.pushInclusion(poundOffset, nameOffsets[0], nameOffsets[1],
 								condEndOffset, source, path, headerName, userInclude, isHeuristic, fi.isSource());
 						ScannerContext fctx= new ScannerContext(ctx, fCurrentContext,
-								new Lexer(source, fLexOptions, this, this));
+								new Lexer(source, fLexOptions, this, this), true);
 						fctx.setFoundOnPath(fi.getFoundOnPath(), includeDirective);
+						// When the extern guard matches, it is not significant.
+						char[] guard= detectIncludeGuard(path, source, fctx);
+						// mstodo
+						source= fi.getSource();
+						if (source == null) {
+							findInclusion(includeDirective, userInclude, include_next,
+									getCurrentFilename(), createCodeReaderTester);
+						}
+						if (externGuard != null && guard != null && CharArrayUtils.equals(externGuard, guard)) {
+							fCurrentContext.undoSignificance(guard);
+						}
 						fCurrentContext= fctx;
-						detectIncludeGuard(path, source, ctx);
 					}
 					fLocationMap.parsingFile(fFileContentProvider, fi);
 					break;
@@ -1364,6 +1413,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		List<IIndexMacro> mdefs= fi.getMacroDefinitions();
 		for (IIndexMacro macro : mdefs) {
 			addMacroDefinition(macro);
+			fCurrentContext.internalModification(macro.getNameCharArray());
 		}
 		fLocationMap.skippedFile(fLocationMap.getSequenceNumberForOffset(offset), fi);
 	}
@@ -1391,8 +1441,11 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		throws OffsetLimitReachedException {
 		try {
 			ObjectStyleMacro macrodef = fMacroDefinitionParser.parseMacroDefinition(lexer, this);
-			if (isActive)
-				fMacroDictionary.put(macrodef.getNameCharArray(), macrodef);
+			if (isActive) {
+				final char[] macroName = macrodef.getNameCharArray();
+				fMacroDictionary.put(macroName, macrodef);
+				fCurrentContext.internalModification(macroName);
+			}
 			
 			final Token name= fMacroDefinitionParser.getNameToken();
 			fLocationMap.encounterPoundDefine(startOffset, name.getOffset(), name.getEndOffset(),
@@ -1422,6 +1475,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	PreprocessorMacro definition;
     	if (isActive) {
     		definition= fMacroDictionary.remove(namechars, 0, namechars.length);
+    		fCurrentContext.internalModification(namechars);
     	} else {
     		definition= fMacroDictionary.get(namechars);
     	}
@@ -1451,10 +1505,19 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	    		handleProblem(IProblem.PREPROCESSOR_DEFINITION_NOT_FOUND, name.getCharImage(), offset, nameEndOffset);
 	    	} else {
 	    		final char[] namechars= name.getCharImage();
+				if (isIfndef && !fCurrentContext.hasInternalModification(namechars)
+						&& !fCurrentContext.isSignificant(namechars)) {
+	    			if (IncludeGuardDetection.detectIncludeEndif(lexer)) {
+	    				fExternIncludeGuard= namechars;
+	    			}
+	    		}
 	    		macro= fMacroDictionary.get(namechars);
 	    		isTaken= (macro == null) == isIfndef;
 	    		if (macro == null) {
 	    			macro = new UndefinedMacro(namechars);
+	    			fCurrentContext.significantMacroUndefined(namechars);
+	    		} else {
+	    			fCurrentContext.significantMacroDefined(namechars);
 	    		}
 	    	}
 		}
@@ -1471,7 +1534,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		return fCurrentContext.setBranchState(conditional, isTaken, withinExpansion, offset);
     }
 
-    private CodeState executeIf(Lexer lexer, int startOffset, boolean isElif,
+	private CodeState executeIf(Lexer lexer, int startOffset, boolean isElif,
     		boolean withinExpansion) throws OffsetLimitReachedException {
 		Conditional cond= fCurrentContext.newBranch(isElif ? BranchKind.eElif : BranchKind.eIf, withinExpansion);
 		if (cond == null) {
@@ -1487,6 +1550,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		int condEndOffset, endOffset;
 
 		if (cond.canHaveActiveBranch(withinExpansion)) {
+			char[] macro= IncludeGuardDetection.detectIfNotDefinedIncludeEndif(lexer);
+			if (macro != null && !fCurrentContext.hasInternalModification(macro)
+					&& !fCurrentContext.isSignificant(macro)) {
+    			fExternIncludeGuard= macro;
+    		}
+
 			TokenList condition= new TokenList();
 			condEndOffset= getTokensWithinPPDirective(true, condition, withinExpansion);
 			endOffset= lexer.currentToken().getEndOffset();
@@ -1498,6 +1567,14 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 					fExpressionEvaluator.clearMacrosInDefinedExpression();
 					isTaken= fExpressionEvaluator.evaluate(condition, fMacroDictionary, fLocationMap);
 					refs = fExpressionEvaluator.clearMacrosInDefinedExpression();
+					for (IASTName iastName : refs) {
+						IBinding mb= iastName.getBinding();
+						if (mb instanceof UndefinedMacro) {
+							fCurrentContext.significantMacroUndefined(iastName.toCharArray());
+						} else {
+							fCurrentContext.significantMacroDefined(iastName.toCharArray());
+						}
+					}
 				} catch (EvalException e) {
 					handleProblem(e.getProblemID(), e.getProblemArg(), condOffset, endOffset);
 				}
@@ -1560,7 +1637,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		boolean withinExpansion) throws OffsetLimitReachedException {
     	final ScannerContext scannerCtx= fCurrentContext;
     	scannerCtx.clearInactiveCodeMarkerToken();
-    	int options= STOP_AT_NL;
+    	int options= STOP_AT_NL | REPORT_SIGNIFICANT_MACROS;
     	if (isCondition)
     		options |= PROTECT_DEFINED;
     	
@@ -1574,10 +1651,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		case Lexer.tNEWLINE:
     			break loop;
     		case IToken.tIDENTIFIER:
-    			if (isCondition && CharArrayUtils.equals(Keywords.cDEFINED, t.getCharImage())) {
-    				t.setType(CPreprocessor.tDEFINED);
-    				options |= NO_EXPANSION;	
-    			}
+    			break;
+    		case tDEFINED:
+    			options |= NO_EXPANSION;
     			break;
     		case IToken.tLPAREN:
     			break;
@@ -1668,9 +1744,16 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	 */
 	private boolean expandMacro(final Token identifier, Lexer lexer, int options,
 			boolean withinExpansion) throws OffsetLimitReachedException {
+		final boolean reportSignificant = (options & REPORT_SIGNIFICANT_MACROS) != 0;
 		final char[] name= identifier.getCharImage();
+		if ((options & PROTECT_DEFINED) != 0 && CharArrayUtils.equals(name, Keywords.cDEFINED)) {
+			identifier.setType(tDEFINED);
+			return false;
+		}
         PreprocessorMacro macro= fMacroDictionary.get(name);
         if (macro == null) {
+        	if (reportSignificant) 
+        		fCurrentContext.significantMacroUndefined(name);
         	return false;
         }
         boolean stopAtNewline= (options & STOP_AT_NL) != 0;
@@ -1682,6 +1765,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     			}
     		}
     		if (t.getType() != IToken.tLPAREN) {
+            	if (reportSignificant) 
+            		fCurrentContext.significantMacro(macro);
     			return false;
     		}
         }
@@ -1690,7 +1775,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		final MacroExpander expander = withinExpansion ? new MacroExpander(this, fMacroDictionary,
 				fLocationMap, fLexOptions) : fMacroExpander;
         TokenList replacement= expander.expand(input, (options & PROTECT_DEFINED) != 0, macro,
-        		identifier, contentAssist);
+        		identifier, contentAssist, 
+        		reportSignificant ? fCurrentContext : null);
     	final IASTName[] expansions= expander.clearImplicitExpansions();
     	final ImageLocationInfo[] ili= expander.clearImageLocationInfos();
     	final Token last= replacement.last();
@@ -1708,5 +1794,5 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			return fMacroExpander;
 		}
 		return null;
-	}
+	}	
 }

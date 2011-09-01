@@ -12,8 +12,11 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArraySet;
 
 /**
  * Represents part of the input to the preprocessor. This may be a file or the result of a macro expansion.
@@ -52,21 +55,31 @@ final class ScannerContext {
 	private CodeState fCurrentState= CodeState.eActive;
 	private IncludeSearchPathElement fFoundOnPath;
 	private String fFoundViaDirective;
+	private CharArraySet fInternalModifications;
+	private CharArrayObjectMap<char[]> fSignificantMacros;
 	
 
 	/**
 	 * @param ctx 
 	 * @param parent context to be used after this context is done.
 	 */
-	public ScannerContext(ILocationCtx ctx, ScannerContext parent, Lexer lexer) {
+	public ScannerContext(ILocationCtx ctx, ScannerContext parent, Lexer lexer, 
+			boolean trackSignificantMacros) {
 		fLocationCtx= ctx;
 		fParent= parent;
 		fLexer= lexer;
 		fDepth = parent == null ? 0 : parent.fDepth+1;
+		if (trackSignificantMacros) {
+			fInternalModifications= new CharArraySet(5);
+			fSignificantMacros= new CharArrayObjectMap<char[]>(5);
+		} else {
+			fInternalModifications= null;
+			fSignificantMacros= null;
+		}			
 	}
 	
 	public ScannerContext(ILocationCtx ctx, ScannerContext parent, TokenList tokens) {
-		this(ctx, parent, (Lexer) null);
+		this(ctx, parent, null, false);
 		fTokens= tokens.first();
 		fInactiveState= CodeState.eSkipInactive;  // no branches in result of macro expansion
 	}
@@ -306,5 +319,80 @@ final class ScannerContext {
 	public void setFoundOnPath(IncludeSearchPathElement foundOnPath, String viaDirective) {
 		fFoundOnPath= foundOnPath;
 		fFoundViaDirective= viaDirective;
+	}
+	
+	public void internalModification(char[] macroName) {
+		if (fInternalModifications != null)
+			fInternalModifications.put(macroName);
+	}
+	
+	public boolean hasInternalModification(char[] namechars) {
+		return fInternalModifications != null && fInternalModifications.containsKey(namechars);
+	}
+
+	public void significantMacro(IMacroBinding macro) {
+		final char[] macroName= macro.getNameCharArray();
+		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
+			fSignificantMacros.put(macroName, macro.getExpansion());
+		}
+	}
+	
+	public void significantMacroDefined(char[] macroName) {
+		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
+			addSignificantMacroDefined(macroName);
+		}
+	}
+
+	private void addSignificantMacroDefined(char[] macroName) {
+		char[] old= fSignificantMacros.put(macroName, SignificantMacros.DEFINED);
+		if (old != null && old != SignificantMacros.DEFINED) {
+			// Put back more detailed condition
+			fSignificantMacros.put(macroName, old);
+		}
+	}
+	
+	public void significantMacroUndefined(char[] macroName) {
+		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
+			fSignificantMacros.put(macroName, SignificantMacros.UNDEFINED);
+		}
+	}
+	
+	public CharArrayObjectMap<char[]> getSignificantMacros() {
+		return fSignificantMacros;
+	}
+
+	public void propagateSignificantMacros() {
+		if (fInternalModifications == null)
+			return;
+		
+		if (fParent != null) {
+			final CharArraySet local = fParent.fInternalModifications;
+			if (local != null) {
+				final CharArrayObjectMap<char[]> significant = fParent.fSignificantMacros;
+				for (int i=0; i<fSignificantMacros.size(); i++) {
+					final char[] name = fSignificantMacros.keyAt(i);
+					if (!local.containsKey(name)) {
+						final char[] value= fSignificantMacros.getAt(i);
+						if (value == SignificantMacros.DEFINED) {
+							fParent.significantMacroDefined(name);
+						} else {
+							significant.put(name, value);
+						}
+					}
+				}
+				local.addAll(fInternalModifications);
+			}
+		}
+		fInternalModifications= null;
+		fSignificantMacros= null;
+	}
+
+	public boolean isSignificant(char[] macro) {
+		return fSignificantMacros != null && fSignificantMacros.containsKey(macro);
+	}
+
+	public void undoSignificance(char[] macro) {
+		if (fSignificantMacros != null) 
+			fSignificantMacros.remove(macro, 0, macro.length);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [331986] Sort in Remote System Details view shows wrong results
+ * David McKnight   (IBM)        - [355467] The result of sorting resources that contains null blank cells is not correct in Remote System Details view.
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -82,6 +83,11 @@ public class SystemTableViewSorter extends ViewerSorter
 		Object name1 = getValueFor(e1, _columnNumber);
 		Object name2 = getValueFor(e2, _columnNumber);
 
+		// deal with equal objects
+		if (name1 == name2){
+			return 0;
+		}
+		
 		try
 		{
 			Object n1 = name1;
@@ -93,6 +99,15 @@ public class SystemTableViewSorter extends ViewerSorter
 				n2 = name1;
 			}
 
+			// deal with nulls
+			if (n1 == null){
+				return -1;
+			}
+			else  if (n2 == null){
+				return 1;
+			}
+			
+			
 			if (n1 instanceof String)
 			{
 				return ((String) n1).compareTo((String) n2);

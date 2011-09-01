@@ -9469,4 +9469,25 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testAmbiguityResolution_Bug354599() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	struct A {
+	//	  void method(A);
+	//	};
+	//
+	//	struct B : A {
+	//	  void method(B);
+	//	  using A::method;
+	//	};
+	//
+	//	struct C : B {
+	//	};
+	//
+	//	void test() {
+	//	  B b;
+	//	  C c;
+	//	  c.method(b);
+	//	}
+	public void testAmbiguityResolution_Bug356268() throws Exception {
+		parseAndCheckBindings();
+	}
 }

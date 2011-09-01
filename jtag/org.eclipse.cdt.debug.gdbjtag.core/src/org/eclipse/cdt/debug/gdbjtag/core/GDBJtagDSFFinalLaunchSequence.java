@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 - 2010 QNX Software Systems and others.
+ * Copyright (c) 2007 - 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Sage Electronic Engineering, LLC - bug 305943
  *              - API generalization to become transport-independent (allow
  *                connections via serial ports and pipes).
+ *     John Dallaway - Wrong groupId during initialization (Bug 349736)           
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
@@ -615,7 +616,7 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 	        public void execute(final RequestMonitor requestMonitor) {
 	           	if (fSessionType != SessionType.CORE) {
 	           		MIBreakpointsManager bpmService = fTracker.getService(MIBreakpointsManager.class);
-	    			IMIContainerDMContext containerDmc = fProcService.createContainerContextFromGroupId(fCommandControl.getContext(), null);
+	    			IMIContainerDMContext containerDmc = fProcService.createContainerContextFromGroupId(fCommandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
 	    			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
 	
 	           		bpmService.startTrackingBreakpoints(bpTargetDmc, requestMonitor);

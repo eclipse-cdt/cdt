@@ -24,6 +24,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IDsfBreakpointExtension;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
@@ -32,7 +33,6 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
-import org.eclipse.cdt.dsf.gdb.breakpoints.CBreakpointGdbThreadsFilterExtension;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -302,27 +302,19 @@ public class GdbThreadFilterEditor {
      * a thread filter in a given thread, that thread should be checked.
      */
     protected void setInitialCheckedState() {
-        CBreakpointGdbThreadsFilterExtension filterExtension = fPage.getFilterExtension();
+    	IDsfBreakpointExtension filterExtension = fPage.getFilterExtension();
         try {
             IContainerDMContext[] targets = filterExtension.getTargetFilters();
-
-            // TODO: Hack to properly initialize the target/thread list
-            // Should be done in filterExtension.initialize() but we don't know
-            // how to get the target list from an ICBreakpoint...
-            if (targets.length == 0) {
-            	targets = getDebugTargets();
-            	for (IContainerDMContext target : targets) {
-            		filterExtension.setTargetFilter(target);
-            	}
-            }
-            // TODO: End of hack
 
             for (int i = 0; i < targets.length; i++) {
                 IExecutionDMContext[] filteredThreads = filterExtension.getThreadFilters(targets[i]);
                 if (filteredThreads != null) {
-                    for (int j = 0; j < filteredThreads.length; ++j)
+                    for (int j = 0; j < filteredThreads.length; ++j) {
+                    	// Mark this thread as selected
                         fCheckHandler.checkThread(filteredThreads[j], true);
+                    }
                 } else {
+                	// Mark the entire process as selected
                     fCheckHandler.checkTarget(targets[i], true);
                 }
             }
@@ -332,7 +324,7 @@ public class GdbThreadFilterEditor {
     }
 
     protected void doStore() {
-        CBreakpointGdbThreadsFilterExtension filterExtension = fPage.getFilterExtension();
+    	IDsfBreakpointExtension filterExtension = fPage.getFilterExtension();
         IContainerDMContext[] targets = getDebugTargets();
         for (int i = 0; i < targets.length; ++i) {
             try {

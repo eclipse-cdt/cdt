@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Marc Khouzam (Ericsson) - Check for a null threadId (Bug 356463)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints;
 
@@ -474,7 +475,15 @@ public class GdbThreadFilterEditor {
                             new DataRequestMonitor<IThreadDMData>(ImmediateExecutor.getInstance(), rm) {
                                 @Override
                                 public void handleSuccess() {
-                                	rm.setData(getData().getName());
+                                    final StringBuilder builder = new StringBuilder(getData().getName());
+                                    String containerId = getData().getId();
+                                    if (containerId != null) {
+                                    	builder.append(" ["); //$NON-NLS-1$
+                                    	builder.append(containerId);
+                                    	builder.append("]"); //$NON-NLS-1$
+                                    }
+ 
+                                	rm.setData(builder.toString());
                                 	rm.done();
                                 }
                             });
@@ -524,8 +533,14 @@ public class GdbThreadFilterEditor {
                             builder.append("["); //$NON-NLS-1$
                             builder.append(((IMIExecutionDMContext)thread).getThreadId());
                             builder.append("] "); //$NON-NLS-1$
-                            builder.append(getData().getId());
-                            builder.append(getData().getName());
+                            String threadId = getData().getId();
+                            if (threadId != null) {
+                            	builder.append(threadId);
+                            }
+                            String threadName = getData().getName();
+                            if (threadName != null) {
+                            	builder.append(threadName);
+                            }
 
                             rm.setData(builder.toString());
                             rm.done();

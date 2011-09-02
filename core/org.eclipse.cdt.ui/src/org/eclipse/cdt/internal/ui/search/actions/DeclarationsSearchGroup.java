@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.search.ui.IContextMenuConstants;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.actions.ActionGroup;
@@ -35,18 +36,21 @@ import org.eclipse.cdt.internal.ui.search.CSearchUtil;
 
 
 public class DeclarationsSearchGroup extends ActionGroup {
-	
+
 	private CEditor fEditor;
 	private IWorkbenchSite fSite;
-	
+
 	private FindDeclarationsAction fFindDeclarationsAction;
 	private FindDeclarationsProjectAction fFindDeclarationsProjectAction;
 	private FindDeclarationsInWorkingSetAction fFindDeclarationsInWorkingSetAction;
-	
+
 	public DeclarationsSearchGroup(IWorkbenchSite site) {
 		fFindDeclarationsAction= new FindDeclarationsAction(site);
+		fFindDeclarationsAction.setActionDefinitionId(ICEditorActionDefinitionIds.FIND_DECL);
 		fFindDeclarationsProjectAction = new FindDeclarationsProjectAction(site);
+		fFindDeclarationsProjectAction.setActionDefinitionId(ICEditorActionDefinitionIds.FIND_DECL_PROJECT);
 		fFindDeclarationsInWorkingSetAction = new FindDeclarationsInWorkingSetAction(site,null);
+		fFindDeclarationsInWorkingSetAction.setActionDefinitionId(ICEditorActionDefinitionIds.FIND_DECL_WORKING_SET);
 		fSite = site;
 	}
 	/**
@@ -57,45 +61,53 @@ public class DeclarationsSearchGroup extends ActionGroup {
 
 		fFindDeclarationsAction= new FindDeclarationsAction(editor);
 		fFindDeclarationsAction.setActionDefinitionId(ICEditorActionDefinitionIds.FIND_DECL);
-		if (editor != null){
-			editor.setAction(ICEditorActionDefinitionIds.FIND_DECL, fFindDeclarationsAction);
-		}
-		
+		editor.setAction(ICEditorActionDefinitionIds.FIND_DECL, fFindDeclarationsAction);
+
 		fFindDeclarationsProjectAction = new FindDeclarationsProjectAction(editor);
-		
+		fFindDeclarationsProjectAction.setActionDefinitionId(ICEditorActionDefinitionIds.FIND_DECL_PROJECT);
+		editor.setAction(ICEditorActionDefinitionIds.FIND_DECL_PROJECT, fFindDeclarationsProjectAction);
 		fFindDeclarationsInWorkingSetAction = new FindDeclarationsInWorkingSetAction(editor,null);
+		fFindDeclarationsInWorkingSetAction.setActionDefinitionId(ICEditorActionDefinitionIds.FIND_DECL_WORKING_SET);
+		editor.setAction(ICEditorActionDefinitionIds.FIND_DECL_WORKING_SET, fFindDeclarationsInWorkingSetAction);
 	}
-	/* 
+	/*
 	 * Method declared on ActionGroup.
 	 */
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
-		
+
 		IMenuManager incomingMenu = menu;
-	
-		IMenuManager declarationsMenu = new MenuManager(CSearchMessages.group_declarations, IContextMenuConstants.GROUP_SEARCH); 
-		
+
+		IMenuManager declarationsMenu = new MenuManager(CSearchMessages.group_declarations, IContextMenuConstants.GROUP_SEARCH);
+
 		if (fEditor != null){
-			menu.appendToGroup(ITextEditorActionConstants.GROUP_FIND, declarationsMenu);	
+			menu.appendToGroup(ITextEditorActionConstants.GROUP_FIND, declarationsMenu);
 		} else {
 			incomingMenu.appendToGroup(IContextMenuConstants.GROUP_SEARCH, declarationsMenu);
 		}
 		incomingMenu = declarationsMenu;
-		
+
 		FindAction[] actions = getWorkingSetActions();
 		incomingMenu.add(fFindDeclarationsAction);
 		incomingMenu.add(fFindDeclarationsProjectAction);
 		incomingMenu.add(fFindDeclarationsInWorkingSetAction);
-		
+
 		for (FindAction action : actions) {
 			incomingMenu.add(action);
 		}
-	}	
-	
+	}
+
+	@Override
+	public void fillActionBars(IActionBars actionBars) {
+		actionBars.setGlobalActionHandler(ICEditorActionDefinitionIds.FIND_DECL, fFindDeclarationsAction);
+		actionBars.setGlobalActionHandler(ICEditorActionDefinitionIds.FIND_DECL_PROJECT, fFindDeclarationsProjectAction);
+		actionBars.setGlobalActionHandler(ICEditorActionDefinitionIds.FIND_DECL_WORKING_SET, fFindDeclarationsInWorkingSetAction);
+	}
+
 	private FindAction[] getWorkingSetActions() {
 		ArrayList<FindAction> actions= new ArrayList<FindAction>(CSearchUtil.LRU_WORKINGSET_LIST_SIZE);
-		
+
 		Iterator<IWorkingSet[]> iter= CSearchUtil.getLRUWorkingSets().iterator();
 		while (iter.hasNext()) {
 			IWorkingSet[] workingSets= iter.next();
@@ -104,10 +116,10 @@ public class DeclarationsSearchGroup extends ActionGroup {
 				action= new WorkingSetFindAction(fEditor, new FindDeclarationsInWorkingSetAction(fEditor, workingSets), CSearchUtil.toString(workingSets));
 			else
 				action= new WorkingSetFindAction(fSite, new FindDeclarationsInWorkingSetAction(fSite, workingSets), CSearchUtil.toString(workingSets));
-			
+
 			actions.add(action);
 		}
-		
+
 		return actions.toArray(new FindAction[actions.size()]);
 	}
 	public static boolean canActionBeAdded(ISelection selection) {
@@ -116,7 +128,7 @@ public class DeclarationsSearchGroup extends ActionGroup {
 		}
 		return getElement(selection) != null;
 	}
-	
+
 	private static ICElement getElement(ISelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
 			List<?> list= ((IStructuredSelection)sel).toList();
@@ -129,8 +141,8 @@ public class DeclarationsSearchGroup extends ActionGroup {
 		}
 		return null;
 	}
-	
-	/* 
+
+	/*
 	 * Overrides method declared in ActionGroup
 	 */
 	@Override

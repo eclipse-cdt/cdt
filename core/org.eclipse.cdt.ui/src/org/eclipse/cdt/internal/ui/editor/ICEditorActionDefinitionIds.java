@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * @since 4.0.0
 	 */
 	public static final String TOGGLE_COMMENT= "org.eclipse.cdt.ui.edit.text.c.toggle.comment"; //$NON-NLS-1$
-	
+
 	/**
 	 * Action definition ID of the source -> add block comment action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.add.block.comment"</code>).
@@ -48,20 +48,20 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * @since 3.0
 	 */
 	public static final String REMOVE_BLOCK_COMMENT= "org.eclipse.cdt.ui.edit.text.c.remove.block.comment"; //$NON-NLS-1$
-	
+
 	/**
 	 * Action definition ID of the source -> join lines action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.join.lines"</code>).
 	 * @since 3.0.2
 	 */
 	public static final String JOIN_LINES= "org.eclipse.cdt.ui.edit.text.c.join.lines"; //$NON-NLS-1$
-	
+
 	/**
 	 * Action definition ID of the source -> indent action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.indent"</code>).
 	 */
 	public static final String INDENT = "org.eclipse.cdt.ui.edit.text.c.indent"; //$NON-NLS-1$
-	
+
 	/**
 	 * Action definition ID of the source -> format action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.format"</code>).
@@ -72,20 +72,20 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * Action definition ID of the source -> add include action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.add.include"</code>).
 	 */
-	public static final String ADD_INCLUDE= "org.eclipse.cdt.ui.edit.text.c.add.include"; //$NON-NLS-1$	
+	public static final String ADD_INCLUDE= "org.eclipse.cdt.ui.edit.text.c.add.include"; //$NON-NLS-1$
 
 	/**
 	 * Action definition ID of the open declaration action
 	 * (value <code>"org.eclipse.cdt.ui.edit.opendecl"</code>).
 	 */
 	public static final String OPEN_DECL= "org.eclipse.cdt.ui.edit.opendecl"; //$NON-NLS-1$
-    
+
 	/**
 	 * Action definition ID of the show in C/C++ Projects View action
 	 * (value <code>"org.eclipse.cdt.ui.edit.opencview"</code>).
 	 */
 	public static final String OPEN_CVIEW= "org.eclipse.cdt.ui.edit.opencview"; //$NON-NLS-1$
-	
+
 	/**
 	 * Action definition ID of the refactor -> rename element action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.rename.element"</code>).
@@ -103,7 +103,7 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.refactor.extract.local.variable"</code>).
 	 */
 	public static final String EXTRACT_LOCAL_VARIABLE= "org.eclipse.cdt.ui.refactor.extract.local.variable"; //$NON-NLS-1$
-	
+
 	/**
 	 * Action definition ID of the refactor -> extract function action (value
 	 * <code>"org.eclipse.cdt.ui.refactor.extract.function"</code>).
@@ -121,7 +121,7 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.refactor.hide.method"</code>).
 	 */
 	public static final String HIDE_METHOD= "org.eclipse.cdt.ui.refactor.hide.method"; //$NON-NLS-1$
-	
+
 	/**
 	 * Action definition ID of the refactor -> implement method action
 	 * (value <code>"org.eclipse.cdt.ui.refactor.implement.method"</code>).
@@ -139,24 +139,48 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.undo.action"</code>).
 	 */
 	public static final String UNDO_ACTION= "org.eclipse.cdt.ui.edit.text.undo.action"; //$NON-NLS-1$
-	
+
 	/**
 	 * Action definition ID of the refactor -> redo action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.redo.action"</code>).
 	 */
-	public static final String REDO_ACTION= "org.eclipse.cdt.ui.edit.text.redo.action"; //$NON-NLS-1$	
+	public static final String REDO_ACTION= "org.eclipse.cdt.ui.edit.text.redo.action"; //$NON-NLS-1$
 
 	/**
 	 * Action definition ID of the find references in workspace action
 	 * (value <code>"org.eclipse.cdt.ui.search.findrefs"</code>).
 	 */
-	public static final String FIND_REFS= "org.eclipse.cdt.ui.search.findrefs"; //$NON-NLS-1$	
-	
+	public static final String FIND_REFS= "org.eclipse.cdt.ui.search.findrefs"; //$NON-NLS-1$
+
+	/**
+	 * Action definition ID of the find references in project action
+	 * (value <code>"org.eclipse.cdt.ui.search.findrefs.project"</code>).
+	 */
+	public static final String FIND_REFS_PROJECT= "org.eclipse.cdt.ui.search.findrefs.project"; //$NON-NLS-1$
+
+	/**
+	 * Action definition ID of the find references in working set action
+	 * (value <code>"org.eclipse.cdt.ui.search.findrefs.workingset"</code>).
+	 */
+	public static final String FIND_REFS_WORKING_SET= "org.eclipse.cdt.ui.search.findrefs.workingset"; //$NON-NLS-1$
+
 	/**
 	 * Action definition ID of the find declarations in workspace action
 	 * (value <code>"org.eclipse.cdt.ui.search.finddecl"</code>).
 	 */
-	public static final String FIND_DECL= "org.eclipse.cdt.ui.search.finddecl"; //$NON-NLS-1$	
+	public static final String FIND_DECL= "org.eclipse.cdt.ui.search.finddecl"; //$NON-NLS-1$
+
+	/**
+	 * Action definition ID of the find declarations in project action
+	 * (value <code>"org.eclipse.cdt.ui.search.finddecl.project"</code>).
+	 */
+	public static final String FIND_DECL_PROJECT= "org.eclipse.cdt.ui.search.finddecl.project"; //$NON-NLS-1$
+
+	/**
+	 * Action definition ID of the find declarations in working set action
+	 * (value <code>"org.eclipse.cdt.ui.search.finddecl.workingset"</code>).
+	 */
+	public static final String FIND_DECL_WORKING_SET= "org.eclipse.cdt.ui.search.finddecl.workingset"; //$NON-NLS-1$
 
 	/**
 	 * Action definition ID of the navigate -> open type hierarchy action
@@ -218,18 +242,18 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * Action definition ID for goto next bookmark action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.goto.next.bookmark"</code>).
 	 */
-	public static final String GOTO_NEXT_BOOKMARK = "org.eclipse.cdt.ui.edit.text.c.goto.next.bookmark"; //$NON-NLS-1$	
+	public static final String GOTO_NEXT_BOOKMARK = "org.eclipse.cdt.ui.edit.text.c.goto.next.bookmark"; //$NON-NLS-1$
 
 	/**
 	 * Action definition ID for find word action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.find.word"</code>).
 	 */
-	public static final String FIND_WORD = "org.eclipse.cdt.ui.edit.text.c.find.word"; //$NON-NLS-1$	
+	public static final String FIND_WORD = "org.eclipse.cdt.ui.edit.text.c.find.word"; //$NON-NLS-1$
 
 	/**
 	 * Action definition ID for toggle source/header action.
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.toggle.source.header"</code>)
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String TOGGLE_SOURCE_HEADER = "org.eclipse.cdt.ui.edit.text.c.toggle.source.header"; //$NON-NLS-1$
@@ -260,19 +284,19 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.select.enclosing"</code>).
 	 */
 	public static final String SELECT_ENCLOSING = "org.eclipse.cdt.ui.edit.text.c.select.enclosing"; //$NON-NLS-1$
-	
+
 	/**
 	 * Action definition ID of the edit -> select next action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.select.next"</code>).
 	 */
 	public static final String SELECT_NEXT = "org.eclipse.cdt.ui.edit.text.c.select.next"; //$NON-NLS-1$
-	
+
 	/**
 	 * Action definition ID of the edit -> select previous action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.select.previous"</code>).
 	 */
 	public static final String SELECT_PREVIOUS = "org.eclipse.cdt.ui.edit.text.c.select.previous"; //$NON-NLS-1$
-	
+
 	/**
 	 * Action definition ID of the edit -> select restore last action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.select.last"</code>).

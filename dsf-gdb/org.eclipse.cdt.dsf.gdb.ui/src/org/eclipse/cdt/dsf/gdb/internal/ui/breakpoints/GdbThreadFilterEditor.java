@@ -402,7 +402,7 @@ public class GdbThreadFilterEditor {
         } catch (InterruptedException e) {
         } catch (ExecutionException e) {
         }
-        return null;
+        return new IContainerDMContext[0];
     }
 
     private IExecutionDMContext[] syncGetThreads(final IContainerDMContext container) {

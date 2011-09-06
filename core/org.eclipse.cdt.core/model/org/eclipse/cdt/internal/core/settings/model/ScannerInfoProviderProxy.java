@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -39,7 +39,7 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements
 	}
 
 	public IScannerInfo getScannerInformation(IResource resource) {
-		if (LanguageSettingsManager.isLanguageSettingsProvidersEnabled(getProject())) {
+		if (ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(getProject())) {
 			LanguageSettingsScannerInfoProvider lsProvider = new LanguageSettingsScannerInfoProvider();
 			return lsProvider.getScannerInformation(resource);
 		}

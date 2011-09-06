@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
@@ -2091,7 +2092,7 @@ public class PathEntryTranslator {
 
 		
 		IProject project = des.getProjectDescription().getProject();
-		if (LanguageSettingsManager.isLanguageSettingsProvidersEnabled(project)) {
+		if (ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project)) {
 			IResource rc = getResource(project, data.getPath());
 			for (CLanguageData lData : lDatas) {
 				list.addAll(LanguageSettingsManager.getSettingEntriesByKind(des, rc, lData.getLanguageId(), kind));

@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.language.settings.providers;
 
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.cdt.ui.newui.ICPropertyTab;
+
 
 
 /**
@@ -29,7 +30,7 @@ public class Page_LanguageSettingsProviders extends AbstractPage {
 	
 	public boolean isLanguageSettingsProvidersEnabled() {
 		if (isLanguageSettingsProvidersEnabled==null) {
-			isLanguageSettingsProvidersEnabled = LanguageSettingsManager.isLanguageSettingsProvidersEnabled(getProject());
+			isLanguageSettingsProvidersEnabled = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(getProject());
 		}
 		return isLanguageSettingsProvidersEnabled;
 	}

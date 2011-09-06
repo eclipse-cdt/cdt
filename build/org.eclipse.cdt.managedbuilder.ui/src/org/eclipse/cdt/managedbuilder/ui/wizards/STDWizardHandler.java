@@ -14,9 +14,9 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -118,9 +118,8 @@ public class STDWizardHandler extends MBSWizardHandler {
 	    	CConfigurationData data = cfg.getConfigurationData();
 	    	ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 
+			ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isTryingNewSD);
 			if (isTryingNewSD) {
-				CfgScannerConfigProfileManager.disableScannerDiscovery(cfg);
-
 				List<ILanguageSettingsProvider> providers = ManagedBuildManager.getLanguageSettingsProviders(cfg);
 				cfgDes.setLanguageSettingProviders(providers);
 			} else {
@@ -133,16 +132,6 @@ public class STDWizardHandler extends MBSWizardHandler {
 	    	monitor.worked(work);
 	    }
 	    mngr.setProjectDescription(project, des);
-
-		// FIXME if scanner discovery is empty it is "fixed" deeply inside setProjectDescription(), taking the easy road here for the moment
-		if (isTryingNewSD) {
-			des = mngr.getProjectDescription(project);
-			boolean isChanged = CfgScannerConfigProfileManager.disableScannerDiscovery(des);
-
-			if (isChanged) {
-				mngr.setProjectDescription(project, des);
-			}
-		}
     }
 	public boolean canCreateWithoutToolchain() { return true; } 
 	

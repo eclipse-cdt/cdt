@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProv
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.model.util.CDTListComparator;
@@ -65,6 +66,7 @@ import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
+
 
 import org.eclipse.cdt.internal.ui.newui.LanguageSettingsImages;
 import org.eclipse.cdt.internal.ui.newui.Messages;
@@ -401,7 +403,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 					initialProvidersMap.put(cfgId, initialProviders);
 				}
 			}
-			initialEnablement = LanguageSettingsManager.isLanguageSettingsProvidersEnabled(page.getProject());
+			initialEnablement = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(page.getProject());
 		}
 	}
 	
@@ -452,7 +454,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		if (masterPropertyPage!=null)
 			enableProvidersCheckBox.setSelection(masterPropertyPage.isLanguageSettingsProvidersEnabled());
 		else
-			enableProvidersCheckBox.setSelection(LanguageSettingsManager.isLanguageSettingsProvidersEnabled(page.getProject()));
+			enableProvidersCheckBox.setSelection(ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(page.getProject()));
 		// display but disable the checkbox for file/folder resource
 		enableProvidersCheckBox.setEnabled(page.isForProject()/* && !isConfigureMode*/);
 		enableControls(enableProvidersCheckBox.getSelection());
@@ -1058,7 +1060,7 @@ providers:	for (ILanguageSettingsProvider provider : providers) {
 			boolean enabled = enableProvidersCheckBox.getSelection();
 			if (masterPropertyPage!=null)
 				enabled = masterPropertyPage.isLanguageSettingsProvidersEnabled();
-			LanguageSettingsManager.setLanguageSettingsProvidersEnabled(page.getProject(), enabled);
+			ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(page.getProject(), enabled);
 			enableProvidersCheckBox.setSelection(enabled);
 		}
 		

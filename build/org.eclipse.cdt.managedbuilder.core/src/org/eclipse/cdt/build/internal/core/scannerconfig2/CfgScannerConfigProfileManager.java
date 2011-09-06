@@ -10,14 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.build.internal.core.scannerconfig2;
 
-import java.util.Collection;
-import java.util.Map;
-
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigScope;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfile;
@@ -49,35 +43,5 @@ public class CfgScannerConfigProfileManager {
 		if(cfg != null)
 			return new CfgInfoContext(cfg).toInfoContext();
 		return new InfoContext(project);
-	}
-
-	public static boolean disableScannerDiscovery(IConfiguration cfg) {
-		boolean isChanged = false;
-
-		ICfgScannerConfigBuilderInfo2Set info2set = getCfgScannerConfigBuildInfo(cfg);
-		Map<CfgInfoContext, IScannerConfigBuilderInfo2> infoMap = info2set.getInfoMap();
-		Collection<IScannerConfigBuilderInfo2> infos = infoMap.values();
-		for (IScannerConfigBuilderInfo2 info2 : infos) {
-			isChanged = isChanged || info2.isAutoDiscoveryEnabled();
-			info2.setAutoDiscoveryEnabled(false);
-		}
-		return isChanged;
-	}
-
-	public static boolean disableScannerDiscovery(ICProjectDescription prjDescription) {
-		boolean isChanged = false;
-
-		ICConfigurationDescription[] cfgDescs = prjDescription.getConfigurations();
-		if (cfgDescs!=null) {
-			for (ICConfigurationDescription cfgDesc : cfgDescs) {
-				IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDesc);
-				boolean changed=CfgScannerConfigProfileManager.disableScannerDiscovery(cfg);
-				if (changed) {
-					isChanged = true;
-				}
-
-			}
-		}
-		return isChanged;
 	}
 }

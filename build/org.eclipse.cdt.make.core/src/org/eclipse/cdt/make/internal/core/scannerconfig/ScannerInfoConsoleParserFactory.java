@@ -14,6 +14,10 @@ package org.eclipse.cdt.make.internal.core.scannerconfig;
 import java.io.OutputStream;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.make.core.MakeBuilder;
 import org.eclipse.cdt.make.core.MakeBuilderUtil;
@@ -118,23 +122,29 @@ public class ScannerInfoConsoleParserFactory {
     					// builder not installed or disabled
     				}
                 }
-				if (scBuildInfo != null && 
-						scBuildInfo.isAutoDiscoveryEnabled() &&
-						scBuildInfo.isBuildOutputParserEnabled()) {
-					// get the make builder console parser 
-					SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
-							getSCProfileInstance(currentProject, context, scBuildInfo.getSelectedProfileId());
-					IScannerInfoConsoleParser clParser = profileInstance.createBuildOutputParser();
-                    if (collector == null) {
-                        collector = profileInstance.getScannerInfoCollector();
-                    }
-                    if(clParser != null){
-						clParser.startup(currentProject, workingDirectory, collector,
-	                            scBuildInfo.isProblemReportingEnabled() ? markerGenerator : null);
-						// create an output stream sniffer
-						return new ConsoleOutputSniffer(outputStream, errorStream, new 
-							IScannerInfoConsoleParser[] {clParser});
-                    }
+				if (scBuildInfo != null) {
+					boolean autodiscoveryEnabled2 = scBuildInfo.isAutoDiscoveryEnabled();
+					if (autodiscoveryEnabled2) {
+						ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(currentProject);
+						ICConfigurationDescription cfgDescription = projDesc.getActiveConfiguration();
+						autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+					}
+					if (autodiscoveryEnabled2 && scBuildInfo.isBuildOutputParserEnabled()) {
+						// get the make builder console parser 
+						SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
+								getSCProfileInstance(currentProject, context, scBuildInfo.getSelectedProfileId());
+						IScannerInfoConsoleParser clParser = profileInstance.createBuildOutputParser();
+						if (collector == null) {
+							collector = profileInstance.getScannerInfoCollector();
+						}
+						if(clParser != null){
+							clParser.startup(currentProject, workingDirectory, collector,
+									scBuildInfo.isProblemReportingEnabled() ? markerGenerator : null);
+							// create an output stream sniffer
+							return new ConsoleOutputSniffer(outputStream, errorStream, new 
+									IScannerInfoConsoleParser[] {clParser});
+						}
+					}
 				}
 			}
 //		} 

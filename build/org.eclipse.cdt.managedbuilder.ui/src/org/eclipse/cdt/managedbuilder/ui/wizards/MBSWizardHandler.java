@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -605,9 +606,8 @@ public class MBSWizardHandler extends CWizardHandler {
 			if (cfgFirst == null) // select at least first configuration 
 				cfgFirst = cfgDes; 
 
+			ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isTryingNewSD);
 			if (isTryingNewSD) {
-				CfgScannerConfigProfileManager.disableScannerDiscovery(config);
-
 				List<ILanguageSettingsProvider> providers = ManagedBuildManager.getLanguageSettingsProviders(config);
 				cfgDes.setLanguageSettingProviders(providers);
 			} else {
@@ -620,16 +620,6 @@ public class MBSWizardHandler extends CWizardHandler {
 			monitor.worked(work);
 		}
 		mngr.setProjectDescription(project, des);
-
-		// FIXME if scanner discovery is empty it is "fixed" deeply inside setProjectDescription(), taking the easy road here for the moment
-		if (isTryingNewSD) {
-			des = mngr.getProjectDescription(project);
-			boolean isChanged = CfgScannerConfigProfileManager.disableScannerDiscovery(des);
-
-			if (isChanged) {
-				mngr.setProjectDescription(project, des);
-			}
-		}
 	}
 	
 	@Override

@@ -14,11 +14,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -118,9 +118,8 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 					CConfigurationData data = config.getConfigurationData();
 					ICConfigurationDescription cfgDes = projDesc.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 
+					ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isTryingNewSD);
 					if (isTryingNewSD) {
-						CfgScannerConfigProfileManager.disableScannerDiscovery(config);
-
 						List<ILanguageSettingsProvider> providers = ManagedBuildManager.getLanguageSettingsProviders(config);
 						cfgDes.setLanguageSettingProviders(providers);
 					} else {
@@ -130,25 +129,12 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 						cfgDes.setLanguageSettingProviders(providers);
 					}
 
-
 					monitor.worked(1);
 					
 					pdMgr.setProjectDescription(project, projDesc);
-
-					// FIXME if scanner discovery is empty it is "fixed" deeply inside setProjectDescription(), taking the easy road here for the moment
-					if (isTryingNewSD) {
-						ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
-						ICProjectDescription des = mngr.getProjectDescription(project);
-						boolean isChanged = CfgScannerConfigProfileManager.disableScannerDiscovery(des);
-
-						if (isChanged) {
-							mngr.setProjectDescription(project, des);
-						}
-					}
 				} catch (Throwable e) {
 					ManagedBuilderUIPlugin.log(e);
 				}
-
 				monitor.done();
 			}
 		};

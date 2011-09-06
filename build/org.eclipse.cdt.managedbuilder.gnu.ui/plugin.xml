@@ -1253,7 +1253,6 @@
 			  dependencyExtensions="h"
 			  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator2"
               id="cdt.managedbuild.tool.gnu.c.compiler.input"
-              scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"
               languageId="org.eclipse.cdt.core.gcc">
           </inputType>
           <outputType
@@ -1559,7 +1558,6 @@
 			  dependencyExtensions="h,H,hpp"
 			  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator2"
               id="cdt.managedbuild.tool.gnu.cpp.compiler.input"
-              scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"
               languageId="org.eclipse.cdt.core.g++">
           </inputType>
           <outputType
@@ -1626,7 +1624,7 @@
           <inputType
           	  id="cdt.managedbuild.tool.gnu.c.compiler.input.cygwin"
               superClass="cdt.managedbuild.tool.gnu.c.compiler.input"
-              scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileC"/>
+          />
       </tool>      
       <tool
           id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin"
@@ -1640,7 +1638,7 @@
           <inputType
           	  id="cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin"
               superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"
-              scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP"/>
+          />
       </tool>      
 
 	  <builder

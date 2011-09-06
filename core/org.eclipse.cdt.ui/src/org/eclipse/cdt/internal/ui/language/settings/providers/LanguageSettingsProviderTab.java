@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvide
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -64,6 +65,7 @@ import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
+
 
 import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
@@ -228,7 +230,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 					initialProvidersByCfg.put(cfgId, initialProviders);
 				}
 			}
-			initialEnablement = LanguageSettingsManager.isLanguageSettingsProvidersEnabled(page.getProject());
+			initialEnablement = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(page.getProject());
 		}
 	}
 
@@ -268,7 +270,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		if (masterPropertyPage!=null)
 			enableProvidersCheckBox.setSelection(masterPropertyPage.isLanguageSettingsProvidersEnabled());
 		else
-			enableProvidersCheckBox.setSelection(LanguageSettingsManager.isLanguageSettingsProvidersEnabled(page.getProject()));
+			enableProvidersCheckBox.setSelection(ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(page.getProject()));
 		// display but disable the checkbox for file/folder resource
 		enableProvidersCheckBox.setEnabled(page.isForProject() /*|| page.isForPrefs()*/);
 		enableControls(enableProvidersCheckBox.getSelection());
@@ -982,7 +984,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			boolean enabled = enableProvidersCheckBox.getSelection();
 			if (masterPropertyPage!=null)
 				enabled = masterPropertyPage.isLanguageSettingsProvidersEnabled();
-			LanguageSettingsManager.setLanguageSettingsProvidersEnabled(page.getProject(), enabled);
+			ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(page.getProject(), enabled);
 			enableProvidersCheckBox.setSelection(enabled);
 		}
 
@@ -1040,7 +1042,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		if (cfgDescription!=null) {
 			newProvidersList = cfgDescription.getLanguageSettingProviders();
 		}
-		boolean newEnablement = LanguageSettingsManager.isLanguageSettingsProvidersEnabled(page.getProject());
+		boolean newEnablement = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(page.getProject());
 
 		// TODO
 		boolean isEqualList = false;

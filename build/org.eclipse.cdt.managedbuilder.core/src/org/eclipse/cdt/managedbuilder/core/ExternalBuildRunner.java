@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.RefreshScopeManager;
@@ -439,28 +440,34 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 		IScannerConfigBuilderInfo2 info = map.get(context);
 		InfoContext ic = context.toInfoContext();
 		boolean added = false;
-		if (info != null &&
-				info.isAutoDiscoveryEnabled() &&
-				info.isBuildOutputParserEnabled()) {
+		if (info != null) {
+			boolean autodiscoveryEnabled2 = info.isAutoDiscoveryEnabled();
+			if (autodiscoveryEnabled2) {
+				IConfiguration cfg = context.getConfiguration();
+				ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(cfg);
+				autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+			}
+			if (autodiscoveryEnabled2 && info.isBuildOutputParserEnabled()) {
 
-			String id = info.getSelectedProfileId();
-			ScannerConfigProfile profile = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(id);
-			if(profile.getBuildOutputProviderElement() != null){
-				// get the make builder console parser
-				SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
-						getSCProfileInstance(project, ic, id);
+				String id = info.getSelectedProfileId();
+				ScannerConfigProfile profile = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(id);
+				if(profile.getBuildOutputProviderElement() != null){
+					// get the make builder console parser
+					SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
+							getSCProfileInstance(project, ic, id);
 
-				IScannerInfoConsoleParser clParser = profileInstance.createBuildOutputParser();
-                if (collector == null) {
-                    collector = profileInstance.getScannerInfoCollector();
-                }
-                if(clParser != null){
-					clParser.startup(project, workingDirectory, collector,
-                            info.isProblemReportingEnabled() ? markerGenerator : null);
-					parserList.add(clParser);
-					added = true;
-                }
+					IScannerInfoConsoleParser clParser = profileInstance.createBuildOutputParser();
+					if (collector == null) {
+						collector = profileInstance.getScannerInfoCollector();
+					}
+					if(clParser != null){
+						clParser.startup(project, workingDirectory, collector,
+								info.isProblemReportingEnabled() ? markerGenerator : null);
+						parserList.add(clParser);
+						added = true;
+					}
 
+				}
 			}
 		}
 

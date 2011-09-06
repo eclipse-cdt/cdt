@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Andrew Gvozdev (Quoin Inc.) and others.
+ * Copyright (c) 2009, 2011 Andrew Gvozdev (Quoin Inc.) and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.language.settings.providers;
 
 import java.util.List;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
@@ -25,7 +24,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 /**
@@ -35,13 +33,6 @@ import org.osgi.service.prefs.Preferences;
  * @since 6.0
  */
 public class LanguageSettingsManager {
-	/** @noreference This field is temporary and not intended to be referenced by clients. */
-	public static String USE_LANGUAGE_SETTINGS_PROVIDERS_PREFERENCE = "enabled"; //$NON-NLS-1$
-	public static boolean USE_LANGUAGE_SETTINGS_PROVIDERS_DEFAULT = true;
-
-	private static final String PREFERENCES_QUALIFIER = CCorePlugin.PLUGIN_ID;
-	private static final String LANGUAGE_SETTINGS_PROVIDERS_NODE = "languageSettingsProviders"; //$NON-NLS-1$
-
 	/**
 	 * Returns the list of setting entries of the given provider
 	 * for the given configuration description, resource and language.
@@ -174,44 +165,6 @@ public class LanguageSettingsManager {
 			provider = LanguageSettingsManager.getWorkspaceProvider(id);
 		
 		return provider;
-	}
-
-	private static Preferences getPreferences(IProject project) {
-		if (project == null)
-			return InstanceScope.INSTANCE.getNode(PREFERENCES_QUALIFIER).node(LANGUAGE_SETTINGS_PROVIDERS_NODE);
-		else
-			return new LocalProjectScope(project).getNode(PREFERENCES_QUALIFIER).node(LANGUAGE_SETTINGS_PROVIDERS_NODE);
-	}
-
-	/**
-	 * Checks if Language Settings functionality is enabled for given project.
-	 *
-	 * @param project - project to check the preference
-	 * @return {@code true} if functionality is enabled
-	 *
-	 * @noreference This method is temporary and not intended to be referenced by clients.
-	 */
-	public static boolean isLanguageSettingsProvidersEnabled(IProject project) {
-		Preferences pref = LanguageSettingsManager.getPreferences(project);
-		return pref.getBoolean(LanguageSettingsManager.USE_LANGUAGE_SETTINGS_PROVIDERS_PREFERENCE, LanguageSettingsManager.USE_LANGUAGE_SETTINGS_PROVIDERS_DEFAULT);
-	}
-
-	/**
-	 * Enable/disable Language Settings functionality for the given project.
-	 *
-	 * @param project
-	 * @param value {@code true} to enable or {@code false} to disable the functionality.
-	 *
-	 * @noreference This method is temporary and not intended to be referenced by clients.
-	 */
-	public static void setLanguageSettingsProvidersEnabled(IProject project, boolean value) {
-		Preferences pref = LanguageSettingsManager.getPreferences(project);
-		pref.putBoolean(LanguageSettingsManager.USE_LANGUAGE_SETTINGS_PROVIDERS_PREFERENCE, value);
-		try {
-			pref.flush();
-		} catch (BackingStoreException e) {
-			CCorePlugin.log(e);
-		}
 	}
 
 }

@@ -66,8 +66,7 @@ class LanguageSettingsProvidersLabelProvider extends LabelProvider {
 	protected String[] getOverlayKeys(ILanguageSettingsProvider provider) {
 		String[] overlayKeys = new String[5];
 		{ // TODO temporary for debugging
-//			final String MBS_LANGUAGE_SETTINGS_PROVIDER = "org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider";
-//			boolean isSpecial = provider.getId().equals(MBS_LANGUAGE_SETTINGS_PROVIDER);
+//			boolean isSpecial = provider.getId().equals(LegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER);
 			
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 			if (rawProvider instanceof LanguageSettingsSerializable) {

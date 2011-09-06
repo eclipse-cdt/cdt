@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -510,7 +510,8 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	
 		// Do this before setting input but after the initializations of the fields filtering
 		registerActionBars(bars);
-	
+		bars.updateActionBars();
+		
 		fTreeViewer.setInput(fInput);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, ICHelpContextIds.COUTLINE_VIEW);
 	}
@@ -591,7 +592,9 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		if (fRefactoringActionGroup != null) {
 			fRefactoringActionGroup.fillActionBars(actionBars);
 		}
-	
+		if (fSelectionSearchGroup != null) {
+			fSelectionSearchGroup.fillActionBars(actionBars);
+		}
 		IMenuManager menu= actionBars.getMenuManager();
 		menu.add(new Separator("EndFilterGroup")); //$NON-NLS-1$
 		

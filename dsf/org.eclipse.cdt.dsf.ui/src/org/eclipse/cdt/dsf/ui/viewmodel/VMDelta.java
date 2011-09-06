@@ -364,4 +364,8 @@ public class VMDelta extends ModelDelta {
         }
     }
 
+    @Override
+    public void setIndex(final int index) {
+        fIndex = index;
+    }
 }

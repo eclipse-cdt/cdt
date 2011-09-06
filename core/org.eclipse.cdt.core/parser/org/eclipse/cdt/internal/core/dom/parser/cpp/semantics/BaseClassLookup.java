@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -56,8 +55,13 @@ class BaseClassLookup {
 			rootInfo.collectResultForContentAssist(data);
 		} else {
 			hideVirtualBases(rootInfo, infoMap);
-			IBinding[] result= rootInfo.collectResult(data, true, null);
-			verifyResult(data, result);
+			IBinding[] result= rootInfo.collectResult(data, true, IBinding.EMPTY_BINDING_ARRAY);
+			if (data.problem == null) {
+				data.foundItems = ArrayUtil.addAll((Object[]) data.foundItems, result);
+			} else if (result.length > 0) {
+				data.problem.setCandidateBindings(result);
+			}
+//			verifyResult(data, result);
 		}
 	}
 
@@ -323,7 +327,7 @@ class BaseClassLookup {
 		}
 	}
 
-	public IBinding[] collectResult(LookupData data, boolean asVirtualBase, IBinding[] result) {
+	private IBinding[] collectResult(LookupData data, boolean asVirtualBase, IBinding[] result) {
 		if (asVirtualBase) {
 			if (fHiddenAsVirtualBase)
 				return result;
@@ -337,41 +341,27 @@ class BaseClassLookup {
 		if (fCollected)
 			return result;
 		fCollected= true;
-		
-		result= (IBinding[]) ArrayUtil.addAll(IBinding.class, result, fBindings);
+
+		int numBindingsToAdd = 0;
+		for (int i = 0; i < fBindings.length; i++) {
+			IBinding binding = fBindings[i];
+			if (binding == null)
+				break;
+			if (!ArrayUtil.contains(result, binding))
+				fBindings[numBindingsToAdd++] = binding;
+		}
+		if (numBindingsToAdd < fBindings.length)
+			fBindings[numBindingsToAdd] = null;
+		if (result.length > 0 && numBindingsToAdd > 0 && data.problem == null) {
+			// Matches are found in more than one base class - this is an indication of ambiguity.
+			data.problem= new ProblemBinding(data.astName,
+					IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, result);
+		}
+		result= ArrayUtil.addAll(result, fBindings);
 		for (int i= 0; i < fChildren.size(); i++) {
 			BaseClassLookup child = fChildren.get(i);
 			result= child.collectResult(data, fVirtual.get(i), result);
 		}
 		return result;
-	}
-	
-	static void verifyResult(LookupData data, IBinding[] bindings) {
-		bindings= (IBinding[]) ArrayUtil.trim(IBinding.class, bindings);
-		if (bindings.length == 0)
-			return;
-		
-		if (data.problem != null) {
-			data.problem.setCandidateBindings(bindings);
-		} else {
-			ICPPClassType uniqueOwner= null;
-			for (IBinding b : bindings) {
-				if (!(b instanceof IType)) {
-					IBinding owner= b.getOwner();
-					if (owner instanceof ICPPClassType) {
-						final ICPPClassType classOwner = (ICPPClassType) owner;
-						if (uniqueOwner == null) {
-							uniqueOwner= classOwner;
-						} else if (!uniqueOwner.isSameType(classOwner)) {
-							data.problem= new ProblemBinding(data.astName,
-									IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, bindings);
-							return;
-						}
-					}
-				}
-			}
-		}
-
-		data.foundItems = ArrayUtil.addAll(Object.class, (Object[]) data.foundItems, bindings);
 	}
 }

@@ -11,7 +11,8 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
+	<groupId>org.eclipse.cdt.features</groupId>
 	<version>1.0.0-SNAPSHOT</version>
-	<artifactId>org.eclipse.cdt.msw-feature</artifactId>
+	<artifactId>org.eclipse.cdt.msw</artifactId>
 	<packaging>eclipse-feature</packaging>
 </project>

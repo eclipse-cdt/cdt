@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Gil Barash  - Initial implementation
+ *     Gil Barash  - Initial implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.internal.checkers;
 
@@ -62,7 +63,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	// }
 	public void testLastCaseBad() {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(4);
+		checkErrorLines(5);
 	}
 
 	// void foo(void) {
@@ -181,7 +182,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	// }
 	public void testEmptyLastCaseTwoSwitches() {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(3);
+		checkErrorLines(7);
 	}
 
 	// void foo(void) {
@@ -222,7 +223,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	// }
 	public void testLastCaseBadCommentNotLast() {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(4);
+		checkErrorLines(7);
 	}
 
 	// void foo(void) {
@@ -246,70 +247,74 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//  case 6:
 	//    b = 2;
 	//    /* no break1 */
+	//  case 7:
+	//    b = 2;
+	//    /* fallthrough */
 	//  }
 	// }
 	public void testDifferentComments() {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(16, 19);
+		checkErrorLines(17,23);
 	}
 
 	// void foo(void) {
 	//  int a, b;
 	//  switch( a ) {
-	//  case 1:
+	//  case 1: //err
 	//    // lolo
-	//  case 2:
-	//  case 3:
+	//  case 2: //err
+	//  case 3://err
 	//  }
 	//
 	//  switch( a ) {
 	//  case 1:
-	//    b = 2;
+	//    b = 2; // err
 	//    // lolo
 	//  case 2:
-	//    b = 2;
-	//  case 3:
+	//    b = 2; // err
+	//  case 3: // err
 	//  case 4:
 	//    break;
-	//  case 5:
-	//  case 6:
+	//  case 5: // err
+	//  case 6: // err
 	//  }
 	//
 	//  switch( a ) {
 	//  case 1:
-	//    b = 2;
+	//    b = 2; // err
 	//    // lolo
 	//  case 2:
-	//    b = 2;
+	//    b = 2; //err
 	//  case 3:
 	//    b = 2;
 	//    /* no break */
 	//  case 4:
-	//    b = 2;
+	//    b = 2; // err
 	//  case 5:
 	//    b = 2;
 	//    break;
 	//  case 6:
 	//    b = 2;
 	//    /* no break */
-	//    b = 2;
+	//    b = 2; //err
 	//  case 7:
-	//    b = 2;
+	//    b = 2;//err
 	//  }
 	//
 	//  switch( a ) {
 	//  case 1:
-	//    b = 2;
+	//    b = 2; // err
 	//    // lolo
 	//  case 2:
-	//    b = 2;
-	//  default:
+	//    b = 2; // err
+	//  default: //err
 	//  }
 	// }
 	public void testGeneral1() {
 		setEmpty(true);
+		setLast(true);
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(4, 6, 7, 11, 14, 16, 19, 20, 24, 27, 32, 37, 41, 46, 49, 51);
+		checkErrorComments();
 	}
 
 	// void foo(void) {
@@ -339,7 +344,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	// }
 	public void testGeneralComments1() {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(8, 12);
+		checkErrorLines(9, 14);
 	}
 
 	// void foo(void) {
@@ -347,14 +352,14 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//  switch( a ) {
 	//  case 0:
 	//    switch( b ) {
-	//    case 2:
-	//    }
+	//    case 2: // err
+	//    } // err
 	//
 	//  case 1:
 	//    switch( b ) {
 	//    case 2:
 	//      break;
-	//    }
+	//    } // err
 	//  case 3:
 	//    switch( b ) {
 	//    case 2:
@@ -365,25 +370,25 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    switch( b ) {
 	//    case 2:
 	//      /* no break */
-	//    }
+	//    } // err
 	//  case 5:
 	//    switch( b ) {
-	//    case 2:
+	//    case 2: // err
 	//    }
 	//    /* no break */
 	//  }
 	// }
 	public void testNestedSwitches() {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(4, 20, 6, 9, 27);
+		checkErrorComments();
 	}
 
 	// void foo(void) {
-	//  int a, b;
-	//  switch( a ) {
-	//  case 1:
-	//    b = 2;
-	//  }
+	//   int a, b;
+	//   switch( a ) {
+	//   case 1:
+	//     b = 2;
+	//   }
 	// }
 	public void testLastCaseIgnore() {
 		setLast(false);
@@ -441,16 +446,16 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//   switch( a ) {
 	//   case 1:
 	//     while (a--)
-	//       break;
+	//       break; // err
 	//   case 2:
 	//     while (a--) {
 	//       break;
-	//     }
+	//     } // err
 	//   }
 	// }
 	public void testEmptyCaseWithLoopBreak() {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(3, 6);
+		checkErrorComments();
 	}
 
 	// void foo(int a) {
@@ -470,12 +475,12 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	}
 
 	// void foo(void) {
-	//  int a;
-	//  switch( a ) {
-	//  case 2:
+	//   int a;
+	//   switch( a ) {
+	//   case 2:
 	//     break;
-	//  case 1:
-	//  }
+	//   case 1:
+	//   }
 	// }
 	public void testEmptyLastCaseError() {
 		String code = getAboveComment();
@@ -489,85 +494,76 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	}
 
 	// void foo(int a) {
-	//  switch( a ) {
-	//  case 2:
+	//   switch( a ) {
+	//   case 2:
 	//     if (a*2<10)
-	//         return;
+	//       return;
 	//     else
-	//         break;
-	//  case 1:
-	//      break;
-	//  }
+	//       break;
+	//   case 1:
+	//     break;
+	//   }
 	// }
 	public void testIf() {
 		String code = getAboveComment();
 		loadCodeAndRun(code);
 		checkNoErrors();
 	}
+
 	// void foo(int a) {
-	//  switch( a ) {
-	//  case 2:
+	//   switch(a) {
+	//   case 2:
 	//     if (a*2<10)
-	//         return;
+	//       return;
 	//     else
-	//         a++;
-	//  case 1:
-	//      break;
-	//  }
+	//       a++;
+	//   case 1:
+	//     break;
+	//   }
 	// }
 	public void testIfErr() {
 		String code = getAboveComment();
 		loadCodeAndRun(code);
-		checkErrorLine(3);
+		checkErrorLine(7);
 	}
 
-//	#define DEFINE_BREAK {break;}
-//	void foo ( int a )
-//	{
-//	    switch ( a )
-//	    {
-//	        case 1:
-//	            DEFINE_BREAK  // <-- Warning: No break at the end of this case
-//	    }
-//	}
+	//	#define DEFINE_BREAK {break;}
+	//	void foo(int a) {
+	//	  switch (a) {
+	//	    case 1:
+	//	      DEFINE_BREAK  // No warning here
+	//	  }
+	//	}
 	public void testBreakInBraces() {
 		String code = getAboveComment();
 		loadCodeAndRun(code);
 		checkNoErrors();
 	}
 
-
-//	#define MY_MACRO(i)     \
-//	    case i:             \
-//	    {                   \
-//	        break;          \
-//	    }
-//
-//	void f()
-//	{
-//	    int x;
-//	    switch (x)
-//	    {
-//	        MY_MACRO(1)  // WARNING HERE
-//	    }
-//	}
-
+	//	#define MY_MACRO(i) \
+	//	  case i: {         \
+	//	  }
+	//
+	//	void f() {
+	//	  int x;
+	//	  switch (x) {
+	//	    MY_MACRO(1)  // No warning here
+	//	  }
+	//	}
 	public void testInMacro() {
 		String code = getAboveComment();
 		loadCodeAndRun(code);
 		checkNoErrors();
 	}
 
-		//void foo()
-		//{
-		//switch(0)
-		//default:
-		//{
-		//}
-		//}
-		public void testEmptyCompoundStatement() {
-			String code = getAboveComment();
-			loadCodeAndRun(code);
-			checkErrorLine(4);
-		}
+	//  void foo() {
+	//    switch (0)
+	//    default: {
+	//    }
+	//  }
+	public void testEmptyCompoundStatement() {
+		String code = getAboveComment();
+		loadCodeAndRun(code);
+		checkErrorLine(4);
+	}
 }

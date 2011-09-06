@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
@@ -51,6 +52,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
@@ -706,10 +708,17 @@ public class CPPTemplates {
 			parentOfName= parentOfName.getParent();
 		}
 
-		return  parentOfName instanceof ICPPASTElaboratedTypeSpecifier ||
+		if (parentOfName instanceof ICPPASTElaboratedTypeSpecifier ||
 				parentOfName instanceof ICPPASTCompositeTypeSpecifier ||
 				parentOfName instanceof ICPPASTNamedTypeSpecifier || 
-				parentOfName instanceof ICPPASTBaseSpecifier;
+				parentOfName instanceof ICPPASTBaseSpecifier)
+			return true;
+		
+		if (parentOfName instanceof IASTDeclarator) {
+			IASTDeclarator rel= ASTQueries.findTypeRelevantDeclarator((IASTDeclarator) parentOfName);
+			return !(rel instanceof IASTFunctionDeclarator);
+		}
+		return false;
 	}
 
 
@@ -1310,7 +1319,7 @@ public class CPPTemplates {
 		
 		// determine nesting level of parent
 		int level= missingTemplateDecls;
-		if (!CPPVisitor.isFriendFunctionDeclaration(innerMostTDecl.getDeclaration())) {
+		if (!isFriendFunctionDeclaration(innerMostTDecl.getDeclaration())) {
 			node= outerMostTDecl.getParent();
 			while (node != null) {
 				if (node instanceof ICPPASTInternalTemplateDeclaration) {
@@ -1333,6 +1342,23 @@ public class CPPTemplates {
 			}
 		}
 		innerMostTDecl.setAssociatedWithLastName(lastIsTemplate);
+	}
+
+	private static boolean isFriendFunctionDeclaration(IASTDeclaration declaration) {
+		while (declaration instanceof ICPPASTTemplateDeclaration) {
+			declaration= ((ICPPASTTemplateDeclaration) declaration).getDeclaration();
+		}
+		if (declaration instanceof IASTSimpleDeclaration) {
+			IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) declaration;
+			ICPPASTDeclSpecifier declspec= (ICPPASTDeclSpecifier) sdecl.getDeclSpecifier();
+			if (declspec.isFriend()) {
+				IASTDeclarator[] dtors= sdecl.getDeclarators();
+				if (dtors.length == 1 && ASTQueries.findTypeRelevantDeclarator(dtors[0]) instanceof IASTFunctionDeclarator) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private static CharArraySet collectTemplateParameterNames(ICPPASTTemplateDeclaration tdecl) {
@@ -1628,24 +1654,30 @@ public class CPPTemplates {
 		return null;
 	}
 
-	static void instantiateConversionTemplates(IFunction[] functions, IType conversionType) {
+	/**
+	 * 14.8.2.3 Deducing conversion function template arguments
+	 */
+	static ICPPFunction[] instantiateConversionTemplates(ICPPFunction[] functions, IType conversionType) {
 		boolean checkedForDependentType= false;
-		for (int i = 0; i < functions.length; i++) {
-			IFunction func = functions[i];
-			if (func instanceof ICPPFunctionTemplate) {
-				ICPPFunctionTemplate template= (ICPPFunctionTemplate) func;
-				functions[i]= null;
+		ICPPFunction[] result= functions;
+		int i=0;
+		boolean done= false;
+		for (ICPPFunction f : functions) {
+			ICPPFunction inst = f;
+			if (f instanceof ICPPFunctionTemplate) {
+				ICPPFunctionTemplate template= (ICPPFunctionTemplate) f;
+				inst= null;
 				
-				// extract template arguments and parameter types.
+				// Extract template arguments and parameter types.
 				if (!checkedForDependentType) {
 					try {
 						if (isDependentType(conversionType)) {
-							functions[i]= CPPUnknownFunction.createForSample(template);
-							return;
+							inst= CPPUnknownFunction.createForSample(template);
+							done= true;
 						}
 						checkedForDependentType= true;
 					} catch (DOMException e) {
-						return;
+						return functions;
 					}
 				}
 				CPPTemplateParameterMap map= new CPPTemplateParameterMap(1);
@@ -1653,16 +1685,48 @@ public class CPPTemplates {
 					ICPPTemplateArgument[] args= TemplateArgumentDeduction.deduceForConversion(template, conversionType, map);
 					if (args != null) {
 						IBinding instance= instantiateFunctionTemplate(template, args, map);
-						if (instance instanceof IFunction) {
-							functions[i]= (IFunction) instance;
+						if (instance instanceof ICPPFunction) {
+							inst= (ICPPFunction) instance;
 						} 
 					}
 				} catch (DOMException e) {
 					// try next candidate
 				}
 			} 
+			if (result != functions || f != inst) {
+				if (result == functions) {
+					result= new ICPPFunction[functions.length];
+					System.arraycopy(functions, 0, result, 0, i);
+				}
+				result[i++]= inst;
+			}
+			if (done)
+				break;
 		}
+		return result;
 	}
+	
+	/**
+	 * 14.8.2.6 Deducing template arguments from a function declaration
+	 * @return 
+	 */
+	static ICPPFunction instantiateForFunctionDeclaration(ICPPFunctionTemplate template,
+			ICPPTemplateArgument[] args, ICPPFunctionType functionType) {
+		CPPTemplateParameterMap map= new CPPTemplateParameterMap(1);
+		try {
+			args= TemplateArgumentDeduction.deduceForDeclaration(template, args, functionType, map);
+			if (args != null) {
+				IBinding instance= instantiateFunctionTemplate(template, args, map);
+				if (instance instanceof ICPPFunction) {
+					return (ICPPFunction) instance;
+				} 
+			}
+		} catch (DOMException e) {
+			// try next candidate
+		}
+		return null;
+	}
+
 
 	/**
 	 * 14.8.2.2 Deducing template arguments taking the address of a function template [temp.deduct.funcaddr]
@@ -1702,6 +1766,13 @@ public class CPPTemplates {
 	// 14.5.6.2 Partial ordering of function templates
 	static int orderFunctionTemplates(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2, TypeSelection mode)
 			throws DOMException {
+		if (f1 == f2)
+			return 0;
+		if (f1 == null)
+			return -1;
+		if (f2 == null)
+			return 1;
+		
 		int s1 = compareSpecialization(f1, f2, mode);
 		int s2 = compareSpecialization(f2, f1, mode);
 		

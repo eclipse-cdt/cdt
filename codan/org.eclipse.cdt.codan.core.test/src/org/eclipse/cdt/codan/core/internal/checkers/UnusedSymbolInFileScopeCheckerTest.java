@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Gvozdev  - initial API and implementation
+ *     Andrew Gvozdev  - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.internal.checkers;
 
@@ -17,7 +18,6 @@ import org.eclipse.cdt.codan.internal.checkers.UnusedSymbolInFileScopeChecker;
 
 /**
  * Test for {@see UnusedSymbolInFileScopeChecker} class
- *
  */
 public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 	@Override
@@ -222,8 +222,15 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 		checkNoErrors();
 	}
 
-	// extern int test_var=0; // not quite legal but some compilers allow that
-	public void testExternVariable_Definition() throws IOException {
+	// extern const int test_var=0; // not quite legal but some compilers allow that
+	public void testExternVariable_Definition1() throws IOException {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	// extern const int test_var;
+	// const int test_var = 0;
+	public void testExternVariable_Definition2() throws IOException {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}

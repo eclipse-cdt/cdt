@@ -2380,10 +2380,30 @@
             name="%ActionDefinition.finddecl.name"
             id="org.eclipse.cdt.ui.search.finddecl"/>
       <command
+            description="%ActionDefinition.finddecl.project.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            name="%ActionDefinition.finddecl.project.name"
+            id="org.eclipse.cdt.ui.search.finddecl.project"/>
+      <command
+            description="%ActionDefinition.finddecl.workingset.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            name="%ActionDefinition.finddecl.workingset.name"
+            id="org.eclipse.cdt.ui.search.finddecl.workingset"/>
+      <command
             categoryId="org.eclipse.cdt.ui.category.source"
             description="%ActionDefinition.findrefs.description"
             name="%ActionDefinition.findrefs.name"
             id="org.eclipse.cdt.ui.search.findrefs"/>
+      <command
+            categoryId="org.eclipse.cdt.ui.category.source"
+            description="%ActionDefinition.findrefs.project.description"
+            name="%ActionDefinition.findrefs.project.name"
+            id="org.eclipse.cdt.ui.search.findrefs.project"/>
+      <command
+            categoryId="org.eclipse.cdt.ui.category.source"
+            description="%ActionDefinition.findrefs.workingset.description"
+            name="%ActionDefinition.findrefs.workingset.name"
+            id="org.eclipse.cdt.ui.search.findrefs.workingset"/>
       <command
             categoryId="org.eclipse.ui.category.navigate"
             description="%ActionDefinition.openCallHierarchy.description"

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River and others.
+ * Copyright (c) 2007, 2011 Wind River and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Ericsson   - Added breakpoint filter support
  *     Ericsson   - Re-factored the service and put a few comments
  *     Ericsson   - Added Action support
+ *     Marc Khouzam (Ericsson) - Fix support for thread filter (Bug 355833)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;
@@ -422,7 +423,24 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             // Upon determining the debuggerPath, the breakpoint is installed
             determineDebuggerPath(dmc, attributes, new RequestMonitor(getExecutor(), countingRm) {
                 @Override
-                protected void handleSuccess() {
+                protected void handleSuccess() {                	
+                	// Before installing a breakpoint, set the target filter for that target.
+                	// Even if the breakpoint is disabled when we start, the target filter 
+                	// can be accessed by the user through the breakpoint properties UI, so
+                	// we must set it right now.
+                	// This is the reason we don't do this in 'installBreakpoint', which is not
+                	// called right away if the breakpoint is disabled.
+                	try {
+                		IContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
+                		IDsfBreakpointExtension filterExt = getFilterExtension(breakpoint);
+                		if (filterExt.getThreadFilters(containerDmc) == null) {
+                			// Do this only if there wasn't already an entry, or else we would
+                			// erase the content of that previous entry.
+                			filterExt.setTargetFilter(containerDmc);
+                		}
+					} catch (CoreException e) {
+					}
+                	
                 	// Install only if the breakpoint is enabled at startup (Bug261082)
                     // Note that Tracepoints are not affected by "skip-all"
                 	boolean bpEnabled = attributes.get(ICBreakpoint.ENABLED).equals(true) &&
@@ -718,6 +736,14 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         final Map<ICBreakpoint, Set<String>> threadsIDs = fBreakpointThreads.get(dmc);
         assert threadsIDs != null;
 
+        // Remove any target filter (if any)
+        try {
+        	IContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
+        	getFilterExtension(breakpoint).removeTargetFilter(containerDmc);
+        }
+        catch( CoreException e ) {
+        }
+        
         // Remove breakpoint problem marker (if any)
         removeBreakpointProblemMarker(breakpoint);
 
@@ -1127,6 +1153,18 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                                     new RequestMonitor(getExecutor(), countingRm) {
                                     @Override
                                     protected void handleSuccess() {
+                                    	// For a new breakpoint, set the target filter.
+                                    	try {
+                                    		IContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
+                                    		IDsfBreakpointExtension filterExt = getFilterExtension((ICBreakpoint)breakpoint);
+                                    		if (filterExt.getThreadFilters(containerDmc) == null) {
+                                    			// Do this only if there wasn't already an entry, or else we would
+                                    			// erase the content of that previous entry.
+                                    			filterExt.setTargetFilter(containerDmc);
+                                    		}
+                    					} catch (CoreException e) {
+                    					}
+                                    	
                                         installBreakpoint(dmc, (ICBreakpoint) breakpoint,
                                             attrs, countingRm);
                                     }
@@ -1372,15 +1410,28 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     	for (IBreakpointsTargetDMContext ctx : fPlatformBPs.keySet()) {
     		Map<ICBreakpoint, Map<String, Object>> breakpoints = fPlatformBPs.get(ctx);
             clearBreakpointStatus(breakpoints.keySet().toArray(new ICBreakpoint[breakpoints.size()]), ctx);
+            
+            // Also clear any target filter since we will not be calling uninstallBreakpoint() which
+            // usually does that work.
+            IContainerDMContext dmc = DMContexts.getAncestorOfType(ctx, IContainerDMContext.class);
+            clearTargetFilter(dmc, breakpoints.keySet());
     	}
     	// This will prevent Shutdown() from trying to remove bps from a
     	// backend that has already shutdown
         fPlatformBPs.clear();
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Breakpoint status handling functions
-    ///////////////////////////////////////////////////////////////////////////
+    private void clearTargetFilter(IContainerDMContext containerDmc, Set<ICBreakpoint> breakpoints) {
+        // Remove any target filter (if any)
+        try {
+        	for (ICBreakpoint bp : breakpoints) {
+        		getFilterExtension(bp).removeTargetFilter(containerDmc);
+        	}
+        }
+        catch( CoreException e ) {
+        }
+    }
+
 
     /**
      * @param bps
@@ -1651,41 +1702,28 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      * @return
      */
     private Set<String> extractThreads(IBreakpointsTargetDMContext context, ICBreakpoint breakpoint) {
-        Set<String> results = new HashSet<String>();
+    	Set<String> results = new HashSet<String>();
+    	
+    	IExecutionDMContext[] threads = null;
+    	try {
+    		IContainerDMContext containerDmc = DMContexts.getAncestorOfType(context, IContainerDMContext.class);
+			threads = getFilterExtension(breakpoint).getThreadFilters(containerDmc);
+		} catch (CoreException e) {
+		}
 
-        // Find the ancestor
-        List<IExecutionDMContext[]> threads = new ArrayList<IExecutionDMContext[]>(1);
-
-        try {
-            // Retrieve the targets
-            IDsfBreakpointExtension filterExtension = getFilterExtension(breakpoint);
-            IContainerDMContext[] targets = filterExtension.getTargetFilters();
-
-            // If no target is present, breakpoint applies to all.
-            if (targets.length == 0) {
-                results.add("0"); //$NON-NLS-1$    
-                return results;
-            }
-
-            // Extract the thread IDs (if there is none, we are covered)
-            for (IContainerDMContext ctxt : targets) {
-                if (DMContexts.isAncestorOf(ctxt, context)) {
-                    threads.add(filterExtension.getThreadFilters(ctxt));
-                }
-            }
-        } catch (CoreException e1) {
+    	if (threads == null || threads.length == 0) {
+            results.add("0"); //$NON-NLS-1$    
+            return results;
         }
-
+    	
         if (supportsThreads(breakpoint)) {
-            for (IExecutionDMContext[] targetThreads : threads) {
-                if (targetThreads != null) {
-                    for (IExecutionDMContext thread : targetThreads) {
-                        if (thread instanceof IMIExecutionDMContext) {
-                        	IMIExecutionDMContext dmc = (IMIExecutionDMContext) thread;
-                            results.add(((Integer) dmc.getThreadId()).toString());
-                        }
-                    }
+            for (IExecutionDMContext thread : threads) {
+            	if (thread instanceof IMIExecutionDMContext) {
+            		results.add(Integer.toString(((IMIExecutionDMContext)thread).getThreadId()));
                 } else {
+                	// If any of the threads is not an IMIExecutionDMContext,
+                	// we don't support thread filters at all.
+                	results.clear();
                     results.add("0"); //$NON-NLS-1$    
                     break;
                 }

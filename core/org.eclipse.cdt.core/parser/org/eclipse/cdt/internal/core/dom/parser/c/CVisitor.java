@@ -104,6 +104,11 @@ import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
  * Collection of methods to find information in an AST.
  */
 public class CVisitor extends ASTQueries {
+	/**
+	 * 
+	 */
+	private static final CBasicType UNSIGNED_LONG_INT = new CBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
+
 	public static class CollectProblemsAction extends ASTVisitor {
 		{
 			shouldVisitDeclarations = true;
@@ -646,19 +651,21 @@ public class CVisitor extends ASTQueries {
 
 		return new CBasicType(Kind.eInt, 0, expr);
 	}
-    
-	static IType getSize_T(IASTExpression expr) {
-		IScope scope = getContainingScope(expr);
-		IBinding[] bs = scope.find(SIZE_T);
-		for (IBinding b : bs) {
-			if (b instanceof IType) {
-				if (!(b instanceof ICInternalBinding) || 
-						CVisitor.declaredBefore(((ICInternalBinding) b).getPhysicalNode(), expr)) {
-					return (IType) b;
+
+	static IType get_SIZE_T(IASTExpression expr) {
+		IASTTranslationUnit tu= expr.getTranslationUnit();
+		if (tu != null) {
+			IBinding[] bs = tu.getScope().find(SIZE_T);
+			for (IBinding b : bs) {
+				if (b instanceof IType) {
+					if (!(b instanceof ICInternalBinding) || 
+							CVisitor.declaredBefore(((ICInternalBinding) b).getPhysicalNode(), expr)) {
+						return (IType) b;
+					}
 				}
 			}
 		}
-		return new CBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
+		return UNSIGNED_LONG_INT;
 	}
 
 	static IType unwrapTypedefs(IType type) {

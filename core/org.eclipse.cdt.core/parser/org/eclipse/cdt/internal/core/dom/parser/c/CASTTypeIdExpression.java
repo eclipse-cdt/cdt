@@ -94,7 +94,7 @@ public class CASTTypeIdExpression extends ASTNode implements IASTTypeIdExpressio
     
     public IType getExpressionType() {
     	if (getOperator() == op_sizeof) {
-			return CVisitor.getSize_T(this);
+			return CVisitor.get_SIZE_T(this);
 		}
     	return CVisitor.createType(typeId.getAbstractDeclarator());
     }

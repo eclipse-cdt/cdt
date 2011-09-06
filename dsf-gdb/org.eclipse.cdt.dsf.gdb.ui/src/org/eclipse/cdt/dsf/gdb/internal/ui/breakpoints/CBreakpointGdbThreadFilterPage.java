@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Marc Khouzam (Ericsson) - Use IDsfBreakpointExtension directly  (Bug 355833)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints; 
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.dsf.debug.service.IDsfBreakpointExtension;
 import org.eclipse.cdt.dsf.gdb.breakpoints.CBreakpointGdbThreadsFilterExtension;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
 import org.eclipse.core.runtime.CoreException;
@@ -44,12 +46,12 @@ public class CBreakpointGdbThreadFilterPage extends PropertyPage {
         return (ICBreakpoint)getElement().getAdapter(ICBreakpoint.class);
     }
 
-	public CBreakpointGdbThreadsFilterExtension getFilterExtension() {
+	public IDsfBreakpointExtension getFilterExtension() {
 	    ICBreakpoint bp = getBreakpoint();
 	    if (bp != null) {
 	        try {
-	        	CBreakpointGdbThreadsFilterExtension filter =
-	        		(CBreakpointGdbThreadsFilterExtension) bp.getExtension(
+	        	IDsfBreakpointExtension filter =
+	        		(IDsfBreakpointExtension) bp.getExtension(
 	        				GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, CBreakpointGdbThreadsFilterExtension.class);
 	        	filter.initialize(bp);
 	        	return filter;

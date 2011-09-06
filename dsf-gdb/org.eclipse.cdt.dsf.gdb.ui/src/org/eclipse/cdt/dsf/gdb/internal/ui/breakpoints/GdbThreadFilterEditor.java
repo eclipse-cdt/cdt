@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Marc Khouzam (Ericsson) - Check for a null threadId (Bug 356463)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints;
 
@@ -23,17 +24,17 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IDsfBreakpointExtension;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
-import org.eclipse.cdt.dsf.gdb.breakpoints.CBreakpointGdbThreadsFilterExtension;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
-import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -256,7 +257,7 @@ public class GdbThreadFilterEditor {
 
     private void createThreadViewer(Composite parent) {
         Label label = new Label(parent, SWT.NONE);
-        label.setText("&Restrict to Selected Targets and Threads:"); //$NON-NLS-1$
+        label.setText(Messages.GdbThreadFilterEditor_RestrictToSelected);
         label.setFont(parent.getFont());
         label.setLayoutData(new GridData());
         GridData data = new GridData(GridData.FILL_BOTH);
@@ -301,27 +302,19 @@ public class GdbThreadFilterEditor {
      * a thread filter in a given thread, that thread should be checked.
      */
     protected void setInitialCheckedState() {
-        CBreakpointGdbThreadsFilterExtension filterExtension = fPage.getFilterExtension();
+    	IDsfBreakpointExtension filterExtension = fPage.getFilterExtension();
         try {
             IContainerDMContext[] targets = filterExtension.getTargetFilters();
-
-            // TODO: Hack to properly initialize the target/thread list
-            // Should be done in filterExtension.initialize() but we don't know
-            // how to get the target list from an ICBreakpoint...
-            if (targets.length == 0) {
-            	targets = getDebugTargets();
-            	for (IContainerDMContext target : targets) {
-            		filterExtension.setTargetFilter(target);
-            	}
-            }
-            // TODO: End of hack
 
             for (int i = 0; i < targets.length; i++) {
                 IExecutionDMContext[] filteredThreads = filterExtension.getThreadFilters(targets[i]);
                 if (filteredThreads != null) {
-                    for (int j = 0; j < filteredThreads.length; ++j)
+                    for (int j = 0; j < filteredThreads.length; ++j) {
+                    	// Mark this thread as selected
                         fCheckHandler.checkThread(filteredThreads[j], true);
+                    }
                 } else {
+                	// Mark the entire process as selected
                     fCheckHandler.checkTarget(targets[i], true);
                 }
             }
@@ -331,7 +324,7 @@ public class GdbThreadFilterEditor {
     }
 
     protected void doStore() {
-        CBreakpointGdbThreadsFilterExtension filterExtension = fPage.getFilterExtension();
+    	IDsfBreakpointExtension filterExtension = fPage.getFilterExtension();
         IContainerDMContext[] targets = getDebugTargets();
         for (int i = 0; i < targets.length; ++i) {
             try {
@@ -388,7 +381,7 @@ public class GdbThreadFilterEditor {
             							IContainerDMContext[] containerDmcs = (IContainerDMContext[])getData();
             							rm.setData(containerDmcs);
             						} else {
-            		                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "Wront type of container contexts.")); //$NON-NLS-1$
+            		                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "Wrong type of container contexts.")); //$NON-NLS-1$
             						}
             						rm.done();
             					}
@@ -409,7 +402,7 @@ public class GdbThreadFilterEditor {
         } catch (InterruptedException e) {
         } catch (ExecutionException e) {
         }
-        return null;
+        return new IContainerDMContext[0];
     }
 
     private IExecutionDMContext[] syncGetThreads(final IContainerDMContext container) {
@@ -458,7 +451,7 @@ public class GdbThreadFilterEditor {
 
         class ContainerLabelQuery extends Query<String> {
             @Override
-            protected void execute(DataRequestMonitor<String> rm) {
+            protected void execute(final DataRequestMonitor<String> rm) {
                 if (!session.isActive()) {
                     rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "Container's session not active.")); //$NON-NLS-1$
                     rm.done();
@@ -466,13 +459,30 @@ public class GdbThreadFilterEditor {
                 }
 
                 DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
-                IGDBBackend backend = tracker.getService(IGDBBackend.class);
-                if (backend != null) {
-                    rm.setData(backend.getProgramPath().toOSString());
+                IProcesses processService = tracker.getService(IProcesses.class);
+                IProcessDMContext procDmc = DMContexts.getAncestorOfType(container, IProcessDMContext.class);
+                if (processService != null && procDmc != null) {
+                	processService.getExecutionData(
+                            procDmc,
+                            new DataRequestMonitor<IThreadDMData>(ImmediateExecutor.getInstance(), rm) {
+                                @Override
+                                public void handleSuccess() {
+                                    final StringBuilder builder = new StringBuilder(getData().getName());
+                                    String containerId = getData().getId();
+                                    if (containerId != null) {
+                                    	builder.append(" ["); //$NON-NLS-1$
+                                    	builder.append(containerId);
+                                    	builder.append("]"); //$NON-NLS-1$
+                                    }
+ 
+                                	rm.setData(builder.toString());
+                                	rm.done();
+                                }
+                            });
                 } else {
-                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "GDB Backend not accessible.")); //$NON-NLS-1$
+                    rm.setStatus(getFailStatus(IDsfStatusConstants.INVALID_STATE, "Processes service not accessible.")); //$NON-NLS-1$
+                    rm.done();
                 }
-                rm.done();
                 tracker.dispose();
             }
         }
@@ -511,11 +521,18 @@ public class GdbThreadFilterEditor {
                         ImmediateExecutor.getInstance(), rm) {
                         @Override
                         protected void handleSuccess() {
-                            final StringBuilder builder = new StringBuilder("Thread["); //$NON-NLS-1$
+                            final StringBuilder builder = new StringBuilder(Messages.GdbThreadFilterEditor_Thread);
+                            builder.append("["); //$NON-NLS-1$
                             builder.append(((IMIExecutionDMContext)thread).getThreadId());
                             builder.append("] "); //$NON-NLS-1$
-                            builder.append(getData().getId());
-                            builder.append(getData().getName());
+                            String threadId = getData().getId();
+                            if (threadId != null) {
+                            	builder.append(threadId);
+                            }
+                            String threadName = getData().getName();
+                            if (threadName != null) {
+                            	builder.append(threadName);
+                            }
 
                             rm.setData(builder.toString());
                             rm.done();

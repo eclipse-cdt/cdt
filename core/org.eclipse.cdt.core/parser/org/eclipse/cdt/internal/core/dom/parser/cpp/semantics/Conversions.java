@@ -684,10 +684,11 @@ public class Conversions {
 		
 		final IType uqSource= getNestedType(source, TDEF | REF | CVTYPE);
 		if (uqSource instanceof ICPPClassType) {
-			ICPPMethod[] ops = SemanticUtil.getConversionOperators((ICPPClassType) uqSource); 
-			CPPTemplates.instantiateConversionTemplates(ops, t);
-			for (final ICPPMethod op : ops) {
-				if (op != null && !(op instanceof IProblemBinding)) {
+			ICPPFunction[] ops = SemanticUtil.getConversionOperators((ICPPClassType) uqSource); 
+			ops= CPPTemplates.instantiateConversionTemplates(ops, t);
+			for (final ICPPFunction f : ops) {
+				if (f instanceof ICPPMethod && !(f instanceof IProblemBinding)) {
+					ICPPMethod op= (ICPPMethod) f;
 					if (op.isExplicit())
 						continue;
 					final IType returnType = op.getType().getReturnType();
@@ -733,12 +734,13 @@ public class Conversions {
 			c.setDeferredUDC(DeferredUDC.INIT_BY_CONVERSION);
 			return c;
 		}
-		ICPPMethod[] ops = SemanticUtil.getConversionOperators(uqSource); 
-		CPPTemplates.instantiateConversionTemplates(ops, target);
+		ICPPFunction[] ops = SemanticUtil.getConversionOperators(uqSource); 
+		ops= CPPTemplates.instantiateConversionTemplates(ops, target);
 		FunctionCost cost1= null;
 		Cost cost2= null;
-		for (final ICPPMethod op : ops) {
-			if (op != null && !(op instanceof IProblemBinding)) {
+		for (final ICPPFunction f : ops) {
+			if (f instanceof ICPPMethod && !(f instanceof IProblemBinding)) {
+				ICPPMethod op= (ICPPMethod) f;
 				final boolean isExplicitConversion= op.isExplicit();
 				if (isExplicitConversion /** && !direct **/)
 					continue;

@@ -31,7 +31,10 @@ public class Messages extends NLS {
 	public static String TracepointPropertyPage_PassCount;
 	public static String TracepointPropertyPage_Class;
 	public static String TracepointPropertyPage_Enabled;
-	
+
+	public static String GdbThreadFilterEditor_Thread;
+	public static String GdbThreadFilterEditor_RestrictToSelected;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

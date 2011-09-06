@@ -49,6 +49,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 
 	private IRegion fRegion;
 	private long fTimestamp;
+	private int fIndex;
 
 	public CElementHandle(ICElement parent, int type, String name) {
 		fParent= parent;
@@ -57,8 +58,8 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		// undo this here
 		if (name.length() > 0 && name.charAt(0)=='{') {
 			fName= ""; //$NON-NLS-1$
-		}
-		else {
+			fIndex= name.hashCode();
+		} else {
 			fName= name;
 		}
 		fRegion= new Region(0,0);
@@ -313,6 +314,6 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	}
 
 	public int getIndex() {
-		return 0;
+		return fIndex;
 	}
 }

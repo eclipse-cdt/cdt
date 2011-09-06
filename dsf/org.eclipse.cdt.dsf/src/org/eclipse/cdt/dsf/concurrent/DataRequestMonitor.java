@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Eugene Ostroukhov (NVIDIA) - new done(V) method
  *******************************************************************************/
 package org.eclipse.cdt.dsf.concurrent;
 
@@ -33,6 +34,8 @@ public class DataRequestMonitor<V> extends RequestMonitor {
      * Sets the data object to specified value.  To be called by the 
      * asynchronous method implementor.
      * @param data Data value to set.
+     * 
+     * @see #done(Object)
      */
     public synchronized void setData(V data) { fData = data; }
     
@@ -41,6 +44,26 @@ public class DataRequestMonitor<V> extends RequestMonitor {
      */
     public synchronized V getData() { return fData; }
     
+    /**
+     * Completes the monitor setting data object to specified value. To be
+     * called by asynchronous method implementor.
+     *
+     * <p>
+     * Note: Only one <code>done</code> method should be called and only once, 
+     * for every request issued. Even if the request was canceled.
+     * </p>  
+     *
+     * @param data Data value to set
+     * @see #setData(Object)
+     * @see #done()
+     * @see #done(org.eclipse.core.runtime.IStatus)
+     * @since 2.3
+     */
+    public synchronized void done(V data) {
+        setData(data);
+        done();
+    }
+
     @Override
     public String toString() { 
         if (getData() != null) {

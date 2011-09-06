@@ -11,7 +11,8 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
+	<groupId>org.eclipse.cdt.features</groupId>
 	<version>2.1.100-SNAPSHOT</version>
-	<artifactId>org.eclipse.cdt.debug.ui.memory-feature</artifactId>
+	<artifactId>org.eclipse.cdt.debug.ui.memory</artifactId>
 	<packaging>eclipse-feature</packaging>
 </project>

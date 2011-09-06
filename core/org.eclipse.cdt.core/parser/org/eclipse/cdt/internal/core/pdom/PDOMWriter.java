@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -254,7 +255,8 @@ abstract public class PDOMWriter {
 					try {
 						final IBinding binding = name.resolveBinding();
 						if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME &&
-								((IASTName) name.getParent()).getBinding() == binding) {
+								(((IASTName) name.getParent()).getBinding() == binding ||
+								binding instanceof ICPPFunctionTemplate)) {
 								na[0]= null;
 						} else if (binding instanceof IProblemBinding) {
 							fStatistics.fProblemBindingCount++;

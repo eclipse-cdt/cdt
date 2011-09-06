@@ -107,9 +107,12 @@ public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression,
     }
     
 	public IType getExpressionType() {
+		int op = getOperator();
+		if (op == op_sizeof) {
+			return CVisitor.get_SIZE_T(this);
+		}
 		final IType exprType = getOperand().getExpressionType();
 		IType type = CVisitor.unwrapTypedefs(exprType);
-		int op = getOperator();
 		switch(op) {
 		case op_star:
 			if (type instanceof IPointerType || type instanceof IArrayType) {

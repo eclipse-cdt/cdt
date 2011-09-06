@@ -137,6 +137,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -195,12 +196,15 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
  * Collection of methods to extract information from a C++ translation unit.
  */
 public class CPPVisitor extends ASTQueries {
-	public static final char[] SIZE_T = "size_t".toCharArray(); //$NON-NLS-1$
-	public static final char[] PTRDIFF_T = "ptrdiff_t".toCharArray(); //$NON-NLS-1$
+	private static final CPPBasicType UNSIGNED_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
+	private static final CPPBasicType INT_TYPE = new CPPBasicType(Kind.eInt, 0);
+
 	static final char[] BEGIN = "begin".toCharArray(); //$NON-NLS-1$
-	public static final String STD = "std"; //$NON-NLS-1$
-	public static final String TYPE_INFO= "type_info"; //$NON-NLS-1$
-	private static final String INITIALIZER_LIST = "initializer_list"; //$NON-NLS-1$
+	static final String STD = "std"; //$NON-NLS-1$
+	private static final char[] SIZE_T = "size_t".toCharArray(); //$NON-NLS-1$
+	private static final char[] PTRDIFF_T = "ptrdiff_t".toCharArray(); //$NON-NLS-1$
+	private static final char[] TYPE_INFO= "type_info".toCharArray(); //$NON-NLS-1$
+	private static final char[] INITIALIZER_LIST = "initializer_list".toCharArray(); //$NON-NLS-1$
 
 	// Thread-local set of DeclSpecifiers for which auto types are being created.
 	// Used to prevent infinite recursion while processing invalid self-referencing
@@ -2091,57 +2095,42 @@ public class CPPVisitor extends ASTQueries {
 	}
 	
 	public static IType getPointerDiffType(final IASTBinaryExpression binary) {
-		CPPBasicType basicType;
-		IScope scope = getContainingScope(binary);
-		IBinding[] bs= CPPSemantics.findBindings(scope, PTRDIFF_T, false, binary);
-		if (bs.length > 0) {
-			for (IBinding b : bs) {
-				if (b instanceof IType && CPPSemantics.declaredBefore(b, binary, false)) {
-					return (IType) b;
-				}
-			}
-		}
-		basicType= new CPPBasicType(Kind.eInt, 0);
-		basicType.setFromExpression(binary);
-		return basicType;
+		IType t= getStdType(binary, PTRDIFF_T);
+		return t != null ? t : INT_TYPE;
 	}
 
-	public static IType get_type_info(IASTExpression expression) {
-		IBinding[] std= expression.getTranslationUnit().getScope().find(STD);
-		for (IBinding binding : std) {
-			if (binding instanceof ICPPNamespace) {
-				IBinding[] typeInfo= ((ICPPNamespace) binding).getNamespaceScope().find(TYPE_INFO);
-				for (IBinding t : typeInfo) {
-					if (t instanceof ICPPClassType) {
-						return (ICPPClassType) t;
-					}
-				}
-			}
-		}
-		return new CPPBasicType(Kind.eInt, 0);
-	}
-
-	public static IType get_SIZE_T(IASTNode sizeofExpr) {
-		IScope scope = getContainingScope(sizeofExpr);
-		IBinding[] bs = CPPSemantics.findBindings(scope, SIZE_T, false, sizeofExpr);
-		if (bs.length > 0 && bs[0] instanceof IType) {
-			return (IType) bs[0];
-		}
-		return new CPPBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
-	}
-
-	public static ICPPClassTemplate get_initializer_list(IASTNode node) {
+	private static IType getStdType(final IASTNode node, char[] name) {
 		IBinding[] std= node.getTranslationUnit().getScope().find(STD);
 		for (IBinding binding : std) {
 			if (binding instanceof ICPPNamespace) {
-				IBinding[] initializer_list= ((ICPPNamespace) binding).getNamespaceScope().find(INITIALIZER_LIST);
-				for (IBinding t : initializer_list) {
-					if (t instanceof ICPPClassTemplate) {
-						return (ICPPClassTemplate) t;
+				final ICPPNamespaceScope scope = ((ICPPNamespace) binding).getNamespaceScope();
+				IBinding[] bs= CPPSemantics.findBindings(scope, name, false, node);
+				if (bs.length > 0) {
+					for (IBinding b : bs) {
+						if (b instanceof IType && CPPSemantics.declaredBefore(b, node, false)) {
+							return (IType) b;
+						}
 					}
 				}
 			}
 		}
+		return null;
+	}
+
+	public static IType get_type_info(IASTExpression expression) {
+		IType t= getStdType(expression, TYPE_INFO);
+		return t != null ? t : INT_TYPE;
+	}
+
+	public static IType get_SIZE_T(IASTNode sizeofExpr) {
+		IType t= getStdType(sizeofExpr, SIZE_T);
+		return t != null ? t : UNSIGNED_LONG;
+	}
+
+	public static ICPPClassTemplate get_initializer_list(IASTNode node) {
+		IType t= getStdType(node, INITIALIZER_LIST);
+		if (t instanceof ICPPClassTemplate)
+			return (ICPPClassTemplate) t;
 		return null;
 	}
 

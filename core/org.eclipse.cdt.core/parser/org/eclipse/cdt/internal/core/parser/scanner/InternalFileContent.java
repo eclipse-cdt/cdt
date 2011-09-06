@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IFileNomination;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexMacro;
@@ -43,6 +44,7 @@ public class InternalFileContent extends FileContent {
 	private final List<IIndexMacro> fMacroDefinitions;
 	private final List<ICPPUsingDirective> fUsingDirectives;
 	private final String fFileLocation;
+	private final IFileNomination fPragmaOnceNomination;
 	private boolean fHeuristic;
 	private boolean fIsSource= false;
 	private List<IIndexFile> fFiles;
@@ -52,10 +54,11 @@ public class InternalFileContent extends FileContent {
 	 * For skipping include files.
 	 * @param fileLocation the location of the file.
 	 * @param kind must be {@link InclusionKind#SKIP_FILE}.
+	 * @param once 
 	 * @throws IllegalArgumentException if fileLocation is <code>null</code> or the kind value is illegal for
 	 * this constructor.
 	 */
-	public InternalFileContent(String fileLocation, InclusionKind kind) throws IllegalArgumentException {
+	public InternalFileContent(String fileLocation, InclusionKind kind, IFileNomination once) throws IllegalArgumentException {
 		if (fileLocation == null || kind != InclusionKind.SKIP_FILE) {
 			throw new IllegalArgumentException();
 		}
@@ -64,6 +67,7 @@ public class InternalFileContent extends FileContent {
 		fMacroDefinitions= null;
 		fUsingDirectives= null;
 		fSource= null;
+		fPragmaOnceNomination= once;
 	}
 
 	/**
@@ -79,6 +83,7 @@ public class InternalFileContent extends FileContent {
 		fSource= content;
 		fMacroDefinitions= null;
 		fUsingDirectives= null;
+		fPragmaOnceNomination= null;
 		if (fFileLocation == null) {
 			throw new IllegalArgumentException();
 		}
@@ -99,6 +104,7 @@ public class InternalFileContent extends FileContent {
 		fUsingDirectives= usingDirectives;
 		fMacroDefinitions= macroDefinitions;
 		fFiles= files;
+		fPragmaOnceNomination= null;
 	}
 
 	/**
@@ -183,6 +189,10 @@ public class InternalFileContent extends FileContent {
 		fFoundOnPath= isp;
 	}
 
+	public IFileNomination getPragmaOnceNomination() {
+		return fPragmaOnceNomination;
+	}
+	
 	/**
 	 * This method is slow. Use only for debugging.
 	 */

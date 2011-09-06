@@ -68,4 +68,10 @@ public class FileContentKey {
 	
         return true;
 	}
+	
+	@SuppressWarnings("nls")
+	@Override
+	public String toString() {
+		return linkageID + ": " + location.getURI().toString() + "[" + significantMacros.hashCode() + "]";
+	}
 }

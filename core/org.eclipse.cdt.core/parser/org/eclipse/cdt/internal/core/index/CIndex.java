@@ -42,7 +42,6 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.cdt.core.parser.IMacroDictionary;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
@@ -216,18 +215,6 @@ public class CIndex implements IIndex {
 			IIndexFragmentFile candidate= fFragments[i].getFile(linkageID, location);
 			if (candidate != null && candidate.hasContent()) {
 				return candidate;
-			}
-		}
-		return null;
-	}
-
-	public IIndexFile getFile(int linkageID, IIndexFileLocation location,
-			IMacroDictionary macroDictionary) throws CoreException {
-		for (int i = 0; i < fPrimaryFragmentCount; i++) {
-			for (IIndexFragmentFile ifile : fFragments[i].getFiles(linkageID, location)) {
-				if (ifile.hasContent() && ifile.getSignificantMacros().isComplient(macroDictionary)) {
-					return ifile;
-				}
 			}
 		}
 		return null;

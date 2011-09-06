@@ -78,6 +78,11 @@ abstract public class PDOMWriter {
 		}
 		final IASTPreprocessorIncludeStatement fIncludeStatement;
 		final FileContentKey fFileContentKey;
+		
+		@Override
+		public String toString() {
+			return fFileContentKey.toString();
+		}
 	}
 
 	public static int SKIP_ALL_REFERENCES= -1;
@@ -115,7 +120,6 @@ abstract public class PDOMWriter {
 	protected final IndexerStatistics fStatistics;
 	protected final IndexerInputAdapter fResolver;
 
-	private IndexerProgress fInfo= new IndexerProgress();
 	private int fSkipReferences= SKIP_NO_REFERENCES;
 
 	public PDOMWriter(IndexerInputAdapter resolver) {
@@ -236,7 +240,8 @@ abstract public class PDOMWriter {
 				YieldableIndexLock lock = new YieldableIndexLock(data.fIndex, readlockCount, flushIndex);
 				lock.acquire();
 				try {
-					storeFileInIndex(data, file, linkageID, fileContentsHash, lock);
+					IIndexFragmentFile ifile= storeFileInIndex(data, file, linkageID, fileContentsHash, lock);
+					reportFileWrittenToIndex(file, ifile);
 				} catch (RuntimeException e) {
 					th= e;
 				} catch (StackOverflowError e) {
@@ -254,9 +259,6 @@ abstract public class PDOMWriter {
 				if (th != null) {
 					data.fStati.add(createStatus(NLS.bind(Messages.PDOMWriter_errorWhileParsing,
 							file.fFileContentKey.getLocation().getURI().getPath()), th));
-				}
-				if (i < data.fSelectedFiles.length - 1) {
-					updateFileCount(0, 0, 1); // update header count
 				}
 				fStatistics.fAddToIndexTime += lock.getCumulativeLockTime();
 			}
@@ -535,34 +537,9 @@ abstract public class PDOMWriter {
 	}
 
 	/**
-	 * Makes a copy of the current progress information and returns it.
-	 * @since 4.0
+	 * Informs the subclass that a file has been stored in the index.
 	 */
-	public IndexerProgress getProgressInformation() {
-		synchronized (fInfo) {
-			return new IndexerProgress(fInfo);
-		}
-	}
-
-	/**
-	 * Updates current progress information with the provided delta.
-	 */
-	protected final void updateFileCount(int sources, int primaryHeader, int header) {
-		synchronized (fInfo) {
-			fInfo.fCompletedSources += sources;
-			fInfo.fPrimaryHeaderCount += primaryHeader;
-			fInfo.fCompletedHeaders += header;
-		}
-	}
-
-	/**
-	 * Updates current progress information with the provided delta.
-	 */
-	protected final void incrementRequestedFilesCount(int delta) {
-		synchronized (fInfo) {
-			fInfo.fRequestedFilesCount += delta;
-		}
-	}
+	protected abstract void reportFileWrittenToIndex(FileInAST file, IIndexFragmentFile ifile);
 
 	private String getLocationInfo(String filename, int lineNumber) {
 		return " at " + filename + "(" + lineNumber + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

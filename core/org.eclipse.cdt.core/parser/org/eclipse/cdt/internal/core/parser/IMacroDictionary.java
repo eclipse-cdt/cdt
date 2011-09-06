@@ -9,19 +9,15 @@
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 
-package org.eclipse.cdt.core.parser;
+package org.eclipse.cdt.internal.core.parser;
+
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 
 
 /**
  * Interface for accessing the macro dictionary of the preprocessor.
- * @since 5.4
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
- * TODO(197989) remove from public API
  */
 public interface IMacroDictionary {
 
-	boolean isDefined(char[] name);
-
-	boolean hasValue(char[] name, char[] value);
+	boolean satisfies(ISignificantMacros significantMacros);
 }

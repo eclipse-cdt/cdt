@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -394,5 +395,31 @@ final class ScannerContext {
 	public void undoSignificance(char[] macro) {
 		if (fSignificantMacros != null) 
 			fSignificantMacros.remove(macro, 0, macro.length);
+	}
+
+	public void addSignificantMacros(ISignificantMacros sm) {
+		if (fInternalModifications == null)
+			return;
+		
+		sm.accept(new ISignificantMacros.IVisitor() {
+			public boolean visitValue(char[] macro, char[] value) {
+				if (!fInternalModifications.containsKey(macro)) {
+					fSignificantMacros.put(macro, value);
+				}
+				return true;
+			}
+			public boolean visitUndefined(char[] macro) {
+				if (!fInternalModifications.containsKey(macro)) {
+					fSignificantMacros.put(macro, SignificantMacros.UNDEFINED);
+				}
+				return true;
+			}
+			public boolean visitDefined(char[] macro) {
+				if (!fInternalModifications.containsKey(macro)) {
+					fSignificantMacros.put(macro, SignificantMacros.DEFINED);
+				}
+				return true;
+			}
+		});
 	}
 }

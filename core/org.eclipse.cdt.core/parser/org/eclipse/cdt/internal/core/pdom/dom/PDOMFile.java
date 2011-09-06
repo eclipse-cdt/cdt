@@ -97,8 +97,24 @@ public class PDOMFile implements IIndexFragmentFile {
 			int cmp= name1.compare(name2, true);
 			if (cmp == 0) {
 				cmp= db.get3ByteUnsignedInt(record1 + LINKAGE_ID) - db.get3ByteUnsignedInt(record2 + LINKAGE_ID);
+				if (cmp == 0) {
+					IString sm1= getString(record1 + SIGNIFICANT_MACROS);
+					IString sm2= getString(record2 + SIGNIFICANT_MACROS);
+					if (sm1 == null) {
+						cmp= sm2 == null ? 0 : -1;
+					} else if (sm2 == null) {
+						cmp= 1;
+					} else {
+						cmp= sm1.compare(sm2, true);
+					}
+				}
 			}
 			return cmp;
+		}
+		
+		private IString getString(long offset) throws CoreException {
+			long rec = db.getRecPtr(offset);
+			return rec != 0 ? db.getString(rec) : null;
 		}
 	}
 
@@ -108,6 +124,9 @@ public class PDOMFile implements IIndexFragmentFile {
 	}
 
 	public PDOMFile(PDOMLinkage linkage, IIndexFileLocation location, int linkageID, ISignificantMacros macros) throws CoreException {
+		if (location.getURI().getPath().endsWith("lcode.h"))
+			location=
+			location;
 		fLinkage = linkage;
 		this.location= location;
 		Database db = fLinkage.getDB();
@@ -759,6 +778,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			this.rawKey = internalRepresentation;
 			this.linkageID= linkageID;
 			this.rawSignificantMacros = sigMacros == null ? null : sigMacros.encode();
+			assert linkageID >= 0 || rawSignificantMacros == null;
 		}
 
 		public long[] getRecords() {
@@ -794,10 +814,12 @@ public class PDOMFile implements IIndexFragmentFile {
 		}
 
 		public boolean visit(long record) throws CoreException {
-			if (linkageID >= 0) {
+			if (rawSignificantMacros != null) {
 				this.record = record;
-				return false;
+				return false; 
+				// Stop searching.
 			}
+			
 			if (this.record == 0) {
 				this.record= record;
 			} else if (this.records == null) {
@@ -808,7 +830,8 @@ public class PDOMFile implements IIndexFragmentFile {
 				cpy[cpy.length - 1]= record;
 				this.records= cpy;
 			}
-			return linkageID < 0;
+			// Continue search.
+			return true;
 		}
 
 		public long getRecord() {

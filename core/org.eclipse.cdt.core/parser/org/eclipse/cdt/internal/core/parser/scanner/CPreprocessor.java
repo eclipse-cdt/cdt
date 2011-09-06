@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFileNomination;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndexMacro;
@@ -33,12 +34,12 @@ import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IMacro;
-import org.eclipse.cdt.core.parser.IMacroDictionary;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IPreprocessorDirective;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.Keywords;
@@ -50,6 +51,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.parser.EmptyFilesProvider;
+import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.InclusionKind;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
@@ -57,6 +59,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.MacroDefinitionParser.Invali
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerContext.BranchKind;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerContext.CodeState;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerContext.Conditional;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
@@ -106,14 +109,26 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private static final String TRACE_NO_GUARD = CCorePlugin.PLUGIN_ID + "/debug/scanner/missingIncludeGuards"; //$NON-NLS-1$
 
 
-	private final class MacroDictionary implements IMacroDictionary {
-		public boolean isDefined(char[] macro) {
-			return fMacroDictionary.containsKey(macro);
+	private final class MacroDictionary implements IMacroDictionary, ISignificantMacros.IVisitor {
+		public boolean satisfies(ISignificantMacros significantMacros) {
+			return significantMacros.accept(this);
+		}
+		
+		public boolean visitDefined(char[] macro) {
+			return isDefined(macro);
 		}
 
-		public boolean hasValue(char[] macro, char[] value) {
+		public boolean visitUndefined(char[] macro) {
+			return !isDefined(macro);
+		}
+
+		public boolean visitValue(char[] macro, char[] value) {
 			PreprocessorMacro m = fMacroDictionary.get(macro);
 			return m != null && CharArrayUtils.equals(m.getExpansion(), value);
+		}
+
+		private boolean isDefined(char[] macro) {
+			return fMacroDictionary.containsKey(macro);
 		}
 	}
 
@@ -124,8 +139,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	final private IIncludeFileTester<InternalFileContent> createCodeReaderTester= new IIncludeFileTester<InternalFileContent>() {
     	public InternalFileContent checkFile(String path, boolean isHeuristicMatch, IncludeSearchPathElement onPath) {
 			final InternalFileContent fc;
-			if (fFileContentProvider.isIncludedWithPragmaOnceSemantics(path)) { 
-				fc= new InternalFileContent(path, InclusionKind.SKIP_FILE);
+			IFileNomination once= fFileContentProvider.isIncludedWithPragmaOnceSemantics(path);
+			if (once != null) {
+				fc= new InternalFileContent(path, InclusionKind.SKIP_FILE, once);
 			} else {
 				fc= fFileContentProvider.getContentForInclusion(path, fMacroDictionaryFacade);
 			}
@@ -284,8 +300,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private char[] detectIncludeGuard(String filePath, AbstractCharArray source, ScannerContext ctx) {
 		final char[] guard = IncludeGuardDetection.detectIncludeGuard(source, fLexOptions, fPPKeywords);
 		if (guard != null) {
-			fFileContentProvider.reportPragmaOnceSemantics(filePath);
-			fLocationMap.reportPragmaOnceSemantics(ctx.getLocationCtx());
+			IFileNomination nom= fLocationMap.reportPragmaOnceSemantics(ctx.getLocationCtx());
+ 			fFileContentProvider.reportPragmaOnceSemantics(filePath, nom);
 			ctx.internalModification(guard);
 			return guard;
 		} 
@@ -1220,8 +1236,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     			int endOffset= lexer.currentToken().getEndOffset();
     			fLocationMap.encounterPoundPragma(startOffset, condOffset, condEndOffset, endOffset);
     			if (CharArrayUtils.equals(ONCE, pragmaToken.getCharImage())) {
-    				fFileContentProvider.reportPragmaOnceSemantics(getCurrentFilename());
-    				fLocationMap.reportPragmaOnceSemantics(fCurrentContext.getLocationCtx());
+    				IFileNomination nom= fLocationMap.reportPragmaOnceSemantics(fCurrentContext.getLocationCtx());
+    				fFileContentProvider.reportPragmaOnceSemantics(getCurrentFilename(), nom);
     			}
     		}
     		break;
@@ -1327,6 +1343,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		String path= null;
 		boolean reported= false;
 		boolean isHeuristic= false;
+		IFileNomination nominationDelegate= null;
 		
 		final String includeDirective = new String(headerName);
 		if (!active) {
@@ -1338,10 +1355,13 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				// check whether the guard matches.
 				final IncludeResolution resolved= findInclusion(includeDirective, userInclude, include_next,
 						getCurrentFilename(), createPathTester);
-				if (resolved != null && fFileContentProvider.isIncludedWithPragmaOnceSemantics(resolved.fLocation)) {
-					path= resolved.fLocation;
-					isHeuristic= resolved.fHeuristic;
-					fCurrentContext.undoSignificance(externGuard);
+				if (resolved != null) {
+					nominationDelegate = fFileContentProvider.isIncludedWithPragmaOnceSemantics(resolved.fLocation);
+					if (nominationDelegate != null) {
+						path= resolved.fLocation;
+						isHeuristic= resolved.fHeuristic;
+						fCurrentContext.undoSignificance(externGuard);
+					}
 				}
 			}
 		} else {
@@ -1352,10 +1372,18 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				isHeuristic= fi.isFoundByHeuristics();
 				switch (fi.getKind()) {
 				case FOUND_IN_INDEX:
+					nominationDelegate= fi.getFilesIncluded().get(0);
+					if (nominationDelegate != null) {
+						try {
+							ISignificantMacros sm = nominationDelegate.getSignificantMacros();
+							fCurrentContext.addSignificantMacros(sm);
+						} catch (CoreException e) {
+						}
+					}
 					processInclusionFromIndex(poundOffset, path, fi);
 					// When the extern guard matches, it is not significant.
-					if (externGuard != null && fFileContentProvider.isIncludedWithPragmaOnceSemantics(path) &&
-							fMacroDictionary.containsKey(externGuard)) {
+					if (externGuard != null && fFileContentProvider.isIncludedWithPragmaOnceSemantics(path) != null 
+							&& fMacroDictionary.containsKey(externGuard)) {
 						List<IIndexMacro> mdefs = fi.getMacroDefinitions();
 						if (!mdefs.isEmpty() && CharArrayUtils.equals(mdefs.get(0).getNameCharArray(), externGuard)) {
 							fCurrentContext.undoSignificance(externGuard);
@@ -1373,12 +1401,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 						fctx.setFoundOnPath(fi.getFoundOnPath(), includeDirective);
 						// When the extern guard matches, it is not significant.
 						char[] guard= detectIncludeGuard(path, source, fctx);
-						// mstodo
-						source= fi.getSource();
-						if (source == null) {
-							findInclusion(includeDirective, userInclude, include_next,
-									getCurrentFilename(), createCodeReaderTester);
-						}
 						if (externGuard != null && guard != null && CharArrayUtils.equals(externGuard, guard)) {
 							fCurrentContext.undoSignificance(guard);
 						}
@@ -1388,6 +1410,16 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 					break;
 					
 				case SKIP_FILE:
+					nominationDelegate= fi.getPragmaOnceNomination();
+					if (nominationDelegate != null) {
+						try {
+							// TODO(197989) when recursively included the significant
+							// macros will not yet be known.
+							ISignificantMacros sm = nominationDelegate.getSignificantMacros();
+							fCurrentContext.addSignificantMacros(sm);
+						} catch (CoreException e) {
+						}
+					}
 					break;
 				}
 			} else {
@@ -1405,7 +1437,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 		if (!reported) {
 			fLocationMap.encounterPoundInclude(poundOffset, nameOffsets[0], nameOffsets[1],
-					condEndOffset, headerName, path, userInclude, active, isHeuristic);
+					condEndOffset, headerName, path, userInclude, active, isHeuristic, nominationDelegate);
 		}
 	}
 

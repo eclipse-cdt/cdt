@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.cdt.core.parser.IMacroDictionary;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -93,8 +92,8 @@ public class SignificantMacros implements ISignificantMacros {
 				&& hashCode() == obj.hashCode() 
 				&& CharArrayUtils.equals(fEncoded, ((SignificantMacros) obj).fEncoded);
 	}
-	
-	public boolean isComplient(IMacroDictionary macroDictionary) {
+
+	public boolean accept(IVisitor visitor) {
 		final char[] encoded = fEncoded;
 		final int len = encoded.length;
 		int i= 0;
@@ -109,26 +108,25 @@ public class SignificantMacros implements ISignificantMacros {
 			switch(len2) {
 			case ENCODED_UNDEFINED:
 				i= v;
-				if (macroDictionary.isDefined(macro))
+				if (!visitor.visitUndefined(macro))
 					return false;
 				break;
 			case ENCODED_DEFINED:
 				i= v;
-				if (!macroDictionary.isDefined(macro))
+				if (!visitor.visitDefined(macro))
 					return false;
 				break;
 			default:
 				i= v+len2;
 				if (i > len) 
 					break;
-				if (!macroDictionary.hasValue(macro, extract(encoded, v, len2)))
+				if (!visitor.visitValue(macro, extract(encoded, v, len2)))
 					return false;
 				break;
 			} 
 		}
 		return true;
 	}
-
 
 	public char[] extract(final char[] source, int from, final int length) {
 		char[] value= new char[length];

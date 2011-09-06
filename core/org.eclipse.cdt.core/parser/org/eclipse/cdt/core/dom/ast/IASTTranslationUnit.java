@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTTranslationUnit extends IASTDeclarationListOwner, IAdaptable {
+public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomination, IAdaptable {
 
 	/**
 	 * <code>OWNED_DECLARATION</code> represents the relationship between an <code>IASTTranslationUnit</code> and
@@ -346,27 +346,11 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IAdaptabl
 	public ITranslationUnit getOriginatingTranslationUnit();
 	
 	/**
-	 * Returns macros relevant to parsing of the file included by this include statement and their
-	 * definitions at the point of the include. 
-	 * <p>
-	 * This method should only be called after the included file has been parsed. The method will
-	 * return {@link ISignificantMacros#NONE}</code> if it is called prematurely.
-	 * @since 5.4
-	 */
-	public ISignificantMacros getSignificantMacros();
-	
-	/**
 	 * @since 5.4
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void setSignificantMacros(ISignificantMacros sigMacros);
 
-	/**
-	 * Returns whether pragma once semantics has been detected when parsing the translation unit.
-	 * @since 5.4
-	 */
-	public boolean hasPragmaOnceSemantics();
-	
 	/**
 	 * @since 5.4
 	 * @noreference This method is not intended to be referenced by clients.

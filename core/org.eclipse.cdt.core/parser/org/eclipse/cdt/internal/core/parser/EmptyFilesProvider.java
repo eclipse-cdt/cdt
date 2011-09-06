@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.parser;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.FileContent;
-import org.eclipse.cdt.core.parser.IMacroDictionary;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;

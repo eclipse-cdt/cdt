@@ -339,8 +339,8 @@ public class LocationMapTests extends BaseTestCase {
 
 	public void testIncludes() {
 		init(DIGITS);
-		fLocationMap.encounterPoundInclude(0, 0, 0, 0, "n1".toCharArray(), null, true, false, false);
-		fLocationMap.encounterPoundInclude(0, 1, 3, 16, "n2".toCharArray(), "f2", false , true, false);
+		fLocationMap.encounterPoundInclude(0, 0, 0, 0, "n1".toCharArray(), null, true, false, false, null);
+		fLocationMap.encounterPoundInclude(0, 1, 3, 16, "n2".toCharArray(), "f2", false , true, false, null);
 		IASTPreprocessorIncludeStatement[] includes= fLocationMap.getIncludeDirectives();
 		assertEquals(2, includes.length);
 		checkInclude(includes[0], "", "", "n1", "", true, false, FN, 0, 0, 1, 0, 0);

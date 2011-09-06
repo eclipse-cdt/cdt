@@ -12,13 +12,16 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IFileNomination;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.parser.IMacroDictionary;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
+import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.InclusionKind;
 
 /**
@@ -26,7 +29,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.Inclusio
  */
 public abstract class InternalFileContentProvider extends IncludeFileContentProvider {
 	private IIncludeFileResolutionHeuristics fIncludeResolutionHeuristics;
-    private final Set<String> fPragmaOnce= new HashSet<String>();
+    private final Map<String, IFileNomination> fPragmaOnce= new HashMap<String, IFileNomination>();
 
 	/**
 	 * Checks whether the specified inclusion exists.
@@ -69,15 +72,17 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	/** 
 	 * Reports detection of pragma once semantics.
 	 */
-	public void reportPragmaOnceSemantics(String file) {
-		fPragmaOnce.add(file);
+	public void reportPragmaOnceSemantics(String file, IFileNomination nomination) {
+		fPragmaOnce.put(file, nomination);
 	}
 
 	/**
-	 * Returns whether the given file has been included with pragma once semantics.
+	 * Returns {@link IASTPreprocessorIncludeStatement} or {@link IIndexFile}, in
+	 * case the file has been included using pragma once semantics,
+	 * or <code>null</code> otherwise.
 	 */
-	public boolean isIncludedWithPragmaOnceSemantics(String filePath) {
-		return fPragmaOnce.contains(filePath);
+	public IFileNomination isIncludedWithPragmaOnceSemantics(String filePath) {
+		return fPragmaOnce.get(filePath);
 	}
 
 	/**

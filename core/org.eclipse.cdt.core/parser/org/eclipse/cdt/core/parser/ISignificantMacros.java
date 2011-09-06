@@ -22,13 +22,29 @@ import org.eclipse.cdt.internal.core.parser.scanner.SignificantMacros;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISignificantMacros {
+	interface IVisitor {
+		/**
+		 * Returns whether to continue the visit.
+		 */
+		boolean visitDefined(char[] macro);
+
+		/**
+		 * Returns whether to continue the visit.
+		 */
+		boolean visitUndefined(char[] macro);
+
+		/**
+		 * Returns whether to continue the visit.
+		 */
+		boolean visitValue(char[] macro, char[] value);
+	}
 
 	ISignificantMacros NONE = new SignificantMacros(CharArrayUtils.EMPTY);
 
 	/**
-	 * Returns whether the macro dictionary complies with this map of significant macros.
+	 * Returns whether visitor continued its visit till the end.
 	 */
-	boolean isComplient(IMacroDictionary macroDictionary);
+	boolean accept(IVisitor visitor);
 
 	/**
 	 * Returns the significant macros encoded as an array of characters.

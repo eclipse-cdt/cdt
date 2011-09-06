@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFileNomination;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -133,7 +134,7 @@ public class LocationMap implements ILocationResolver {
 		int nameEndNumber= getSequenceNumberForOffset(nameEndOffset);
 		int endNumber= getSequenceNumberForOffset(endOffset);
 		final ASTInclusionStatement inclusionStatement= 
-			new ASTInclusionStatement(fTranslationUnit, startNumber, nameNumber, nameEndNumber, endNumber, name, filename, userInclude, true, heuristic);
+			new ASTInclusionStatement(fTranslationUnit, startNumber, nameNumber, nameEndNumber, endNumber, name, filename, userInclude, true, heuristic, null);
 		fDirectives.add(inclusionStatement);
 		fCurrentContext= new LocationCtxFile((LocationCtxContainer) fCurrentContext, filename, buffer, startOffset, endOffset, endNumber, inclusionStatement, isSource);
 		fLastChildInsertionOffset= 0;
@@ -242,13 +243,15 @@ public class LocationMap implements ILocationResolver {
 	 * @param active <code>true</code> when include appears in active code.
 	 */
 	public void encounterPoundInclude(int startOffset, int nameOffset, int nameEndOffset, int endOffset,
-			char[] name, String filename, boolean userInclude, boolean active, boolean heuristic) {
+			char[] name, String filename, boolean userInclude, boolean active, boolean heuristic,
+			IFileNomination nominationDelegate) {
 		startOffset= getSequenceNumberForOffset(startOffset);	
 		nameOffset= getSequenceNumberForOffset(nameOffset);		
 		nameEndOffset= getSequenceNumberForOffset(nameEndOffset);
 		endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTInclusionStatement(fTranslationUnit, startOffset, nameOffset,
-				nameEndOffset, endOffset, name, filename, userInclude, active, heuristic));
+		final ASTInclusionStatement inc = new ASTInclusionStatement(fTranslationUnit, startOffset, nameOffset,
+				nameEndOffset, endOffset, name, filename, userInclude, active, heuristic, nominationDelegate);
+		fDirectives.add(inc);
 	}
 
 	public void encounteredComment(int offset, int endOffset, boolean isBlockComment) {
@@ -765,16 +768,20 @@ public class LocationMap implements ILocationResolver {
 		}
 	}
 
-	public void reportPragmaOnceSemantics(ILocationCtx locationCtx) {
+	public IFileNomination reportPragmaOnceSemantics(ILocationCtx locationCtx) {
 		if (locationCtx == fRootContext) {
-			if (fTranslationUnit != null)
+			if (fTranslationUnit != null) {
 				fTranslationUnit.setPragmaOnceSemantics(true);
+			}
+			return fTranslationUnit;
 		} else if (locationCtx instanceof LocationCtxFile) {
 			ASTInclusionStatement stmt = ((LocationCtxFile) locationCtx).getInclusionStatement();
 			if (stmt != null) {
 				stmt.setPragamOnceSemantics(true);
 			}
+			return stmt;
 		}
+		return null;
 	}
 
 	public void endTranslationUnit(int endOffset, CharArrayObjectMap<char[]> sigMacros) {

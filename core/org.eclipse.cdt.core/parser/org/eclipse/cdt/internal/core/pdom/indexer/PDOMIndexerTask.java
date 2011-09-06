@@ -15,8 +15,6 @@ import java.util.Calendar;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-import com.ibm.icu.text.NumberFormat;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
@@ -39,13 +37,14 @@ import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.osgi.util.NLS;
+
+import com.ibm.icu.text.NumberFormat;
 
 /**
  * Configures the abstract indexer task suitable for indexing projects.
@@ -152,16 +151,6 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 			}
 		}
 		return defaultValue;
-	}
-
-	@Override
-	protected String getASTPathForParsingUpFront() {
-		final IProject project = getProject().getProject();
-		final IPath prjLocation= project.getLocation();
-		if (prjLocation == null) {
-			return null;
-		}
-		return prjLocation.append(super.getASTPathForParsingUpFront()).toString();
 	}
 
 	@Override

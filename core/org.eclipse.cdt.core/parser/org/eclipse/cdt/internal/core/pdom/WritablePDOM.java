@@ -255,7 +255,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		return null;
 	}
 
-	private ISignificantMacros getSignificantMacros(IASTNode node, IASTFileLocation loc) {
+	private ISignificantMacros getSignificantMacros(IASTNode node, IASTFileLocation loc) throws CoreException {
 		IASTPreprocessorIncludeStatement owner= loc.getContextInclusionStatement();
 		if (owner != null) 
 			return owner.getSignificantMacros();

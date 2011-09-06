@@ -12,6 +12,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
 
+import org.eclipse.cdt.core.dom.ast.IFileNomination;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.core.runtime.CoreException;
@@ -24,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @since 4.0
  */
-public interface IIndexFile {
+public interface IIndexFile extends IFileNomination {
 	IIndexFile[] EMPTY_FILE_ARRAY = {};
 
 	/**
@@ -36,6 +37,7 @@ public interface IIndexFile {
 
 	/**
 	 * Returns the significant macros for this version of the file.
+	 * @throws CoreException 
 	 * @since 5.4
 	 */
 	ISignificantMacros getSignificantMacros() throws CoreException;

@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.FileContent;
-import org.eclipse.cdt.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;

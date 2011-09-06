@@ -40,12 +40,14 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFileNomination;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSpecification;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Models various AST-constructs obtained from the preprocessor.
@@ -259,12 +261,14 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	private final boolean fIsResolved;
 	private final boolean fIsSystemInclude;
 	private final boolean fFoundByHeuristics;
+	private final IFileNomination fNominationDelegate;
 	private boolean fPragmaOnce;
 	private ISignificantMacros fSignificantMacros;
 
 	public ASTInclusionStatement(IASTTranslationUnit parent, 
 			int startNumber, int nameStartNumber, int nameEndNumber, int endNumber,
-			char[] headerName, String filePath, boolean userInclude, boolean active, boolean heuristic) {
+			char[] headerName, String filePath, boolean userInclude, boolean active, boolean heuristic, 
+			IFileNomination nominationDelegate) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
 		fName= new ASTPreprocessorName(this, IASTPreprocessorIncludeStatement.INCLUDE_NAME,
 				nameStartNumber, nameEndNumber, headerName, null);
@@ -273,6 +277,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 		fIsSystemInclude= !userInclude;
 		fFoundByHeuristics= heuristic;
 		fSignificantMacros= ISignificantMacros.NONE;
+		fNominationDelegate= nominationDelegate;
 		if (!active) {
 			setInactive();
 		}
@@ -305,19 +310,33 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	}
 
 	public boolean hasPragmaOnceSemantics() {
+		if (fNominationDelegate != null) {
+			try {
+				return fNominationDelegate.hasPragmaOnceSemantics();
+			} catch (CoreException e) {
+			}
+		} 	
 		return fPragmaOnce;
 	}
 	
 	public void setPragamOnceSemantics(boolean value) {
+		assert fNominationDelegate == null;
 		fPragmaOnce= value;
 	}
 
 	public ISignificantMacros getSignificantMacros() {
+		if (fNominationDelegate != null) {
+			try {
+				return fNominationDelegate.getSignificantMacros();
+			} catch (CoreException e) {
+			}
+		} 	
 		return fSignificantMacros;
 	}
 	
 	public void setSignificantMacros(ISignificantMacros sig) {
 		assert sig != null;
+		assert fNominationDelegate == null;
 		fSignificantMacros= sig;
 	}
 }

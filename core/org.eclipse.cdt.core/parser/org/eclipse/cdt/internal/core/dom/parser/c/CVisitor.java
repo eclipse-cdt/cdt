@@ -879,8 +879,8 @@ public class CVisitor extends ASTQueries {
 					else if (simpleDecl.getDeclSpecifier() instanceof IASTCompositeTypeSpecifier)
 						struct = ((IASTCompositeTypeSpecifier) simpleDecl.getDeclSpecifier()).getName().resolveBinding();
 					
-					if (struct instanceof CStructure) {
-						return ((CStructure) struct).findField(((ICASTFieldDesignator) node).getName().toString());
+					if (struct instanceof ICompositeType) {
+						return ((ICompositeType) struct).findField(((ICASTFieldDesignator) node).getName().toString());
 					} else if (struct instanceof ITypeContainer) {
 						IType type;
                         type = ((ITypeContainer) struct).getType();

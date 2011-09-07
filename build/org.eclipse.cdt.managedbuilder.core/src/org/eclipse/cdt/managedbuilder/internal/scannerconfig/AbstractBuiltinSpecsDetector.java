@@ -16,16 +16,14 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
-import org.eclipse.cdt.core.model.ILanguageDescriptor;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -368,7 +366,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	}
 
 	private IConsole startProviderConsole() {
-		ILanguageDescriptor ld = LanguageManager.getInstance().getLanguageDescriptor(currentLanguageId);
+		ILanguage ld = LanguageManager.getInstance().getLanguage(currentLanguageId);
 		
 		String consoleId = MakeCorePlugin.PLUGIN_ID + '.' + getId() + '.' + currentLanguageId;
 		String consoleName = getName() + ", " + ld.getName();

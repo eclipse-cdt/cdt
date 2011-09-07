@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.model.util.CDTListComparator;
@@ -919,12 +920,11 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				if (langId==null || langId.length()==0)
 					continue;
 
-				LanguageManager langManager = LanguageManager.getInstance();
-				ILanguageDescriptor langDes = langManager.getLanguageDescriptor(langId);
-				if (langDes == null)
+				ILanguage language = LanguageManager.getInstance().getLanguage(langId);
+				if (language == null)
 					continue;
 
-				langId = langDes.getName();
+				langId = language.getName();
 				if (langId == null || langId.length()==0)
 					continue;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Monta Vista and others.
+ * Copyright (c) 2008, 2011 Monta Vista and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Ericsson    - Major re-factoring to deal with children
  *     Axel Mueller - Bug 306555 - Add support for cast to type / view as array (IExpressions2)
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
+ *     Axel Mueller - Workaround for GDB bug where -var-info-path-expression gives invalid result (Bug 320277)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -64,6 +65,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetChildCountInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetChildrenInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetValueInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetVarInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDisplayHint;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDisplayHint.GdbDisplayHint;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -378,6 +380,15 @@ public class MIVariableManager implements ICommandControl {
 		
 		private boolean fetchingChildren = false;
 		
+		
+		/** 
+		 * In case of base class variables that are accessed in a derived class 
+		 * we cannot trust var-info-path-expression because of a bug in gdb.
+		 * We have to use a workaround and apply it to the complete hierarchy of this varObject.
+		 * Bug 320277
+		 */
+		private boolean hasCastToBaseClassWorkaround = false;
+
 		public MIVariableObject(VariableObjectId id, MIVariableObject parentObj) {
 			this(id, parentObj, false);
 		}
@@ -1352,15 +1363,43 @@ public class MIVariableManager implements ICommandControl {
 
 	        					numSubRequests++;
 	        					
-	        					final DataRequestMonitor<String> childPathRm =
-	        						new DataRequestMonitor<String>(fSession.getExecutor(), countingRm) {
+	        					// Class to keep track of the child's full expression, but also
+	        					// if that child had to use the CastToBaseClassWorkaround,
+	        					// which needs to be propagated to its own children.
+	        					class ChildFullExpressionInfo {
+	        						private String childFullExpression;
+	        						private boolean childHasCastToBaseClassWorkaround;
+	        						
+	        						public ChildFullExpressionInfo(String path) {
+	        							this(path, false);
+	        						}
+	        						
+	        						public ChildFullExpressionInfo(String path, boolean hasWorkaround) {
+	        							childFullExpression = path == null ? "" : path; //$NON-NLS-1$
+	        							childHasCastToBaseClassWorkaround = hasWorkaround;
+	        						}
+	        						
+	        						public String getChildPath() { return childFullExpression; }
+	        						public boolean getChildHasCastToBaseClassWorkaround() { return childHasCastToBaseClassWorkaround; }
+	        					};
+	        					
+	        					final DataRequestMonitor<ChildFullExpressionInfo> childPathRm =
+	        						new DataRequestMonitor<ChildFullExpressionInfo>(fSession.getExecutor(), countingRm) {
 	        						@Override
 	        						protected void handleSuccess() {
+	        							final String childPath = getData().getChildPath();
+	        							// The child varObj we are about to create should have hasCastToBaseClassWorkaround
+	        							// set in two conditions:
+	        							// 1- if its parent was set (which is the current varObj)
+	        							// 2- if the workaround was used for the child itself, which is part of ChildFullExpressionInfo
+	        							final boolean childHasCastToBaseClassWorkaround = 
+	        									hasCastToBaseClassWorkaround || getData().getChildHasCastToBaseClassWorkaround();
+	        							
 	        							// For children that do not map to a real expression (such as f.public)
 	        							// GDB returns an empty string.  In this case, we can use another unique
 	        							// name, such as the variable name
-	        							final boolean fakeChild = (getData().length() == 0);
-	        							final String childFullExpression = fakeChild ? child.getVarName() : getData();
+	        							final boolean fakeChild = (childPath.length() == 0);
+	        							final String childFullExpression = fakeChild ? child.getVarName() : childPath;
 	        							
 	        							// Now try to see if we already have this variable object in our Map
 	        							// Since our map names use the expression, and not the GDB given
@@ -1395,6 +1434,8 @@ public class MIVariableManager implements ICommandControl {
 															var = createChild(childId, childFullExpression, indexInParent, child);
 														}
 														
+														var.hasCastToBaseClassWorkaround = childHasCastToBaseClassWorkaround;
+														
 														if (fakeChild) {
 
 															addRealChildrenOfFake(var,	exprDmc, realChildren,
@@ -1425,6 +1466,8 @@ public class MIVariableManager implements ICommandControl {
 	        							if (childVar == null) {
 	        								childVar = createChild(childId, childFullExpression, indexInParent, child);
 											
+											childVar.hasCastToBaseClassWorkaround = childHasCastToBaseClassWorkaround;
+
 											if (fakeChild) {
 												
 												addRealChildrenOfFake(childVar,	exprDmc, realChildren,
@@ -1442,14 +1485,21 @@ public class MIVariableManager implements ICommandControl {
 	        					if (isAccessQualifier(child.getExp())) {	        						
 	        						// This is just a qualifier level of C++, so we don't need
 	        						// to call -var-info-path-expression for real, but just pretend we did.
-	        						childPathRm.setData("");  //$NON-NLS-1$
+	        						childPathRm.setData(new ChildFullExpressionInfo(""));  //$NON-NLS-1$
 	        						childPathRm.done();
 	        					} else if (isDynamic() || exprInfo.hasDynamicAncestor()) {
 	        						// Equivalent to (which can't be implemented): child.hasDynamicAncestor
 	        						// The new child has a dynamic ancestor. Such children don't support
 	        						// var-info-path-expression. Build the expression ourselves.
-    	    						childPathRm.setData(buildChildExpression(exprDmc.getExpression(), child.getExp()));
+    	    						childPathRm.setData(new ChildFullExpressionInfo(buildChildExpression(exprDmc.getExpression(), child.getExp())));
 	        						childPathRm.done();
+	        					} else if (hasCastToBaseClassWorkaround) {
+	        						// We had to use the "CastToBaseClass" workaround in the hierarchy, so we
+	        						// know -var-info-path-expression won't work in this case.  We have to
+	        						// build the expression ourselves again to keep the workaround as part 
+	        						// of the child's expression.
+	        						childPathRm.setData(new ChildFullExpressionInfo(buildChildExpression(exprDmc.getExpression(), child.getExp())));
+	        						childPathRm.done();                                 
 	        					} else {
 	        						// To build the child id, we need the fully qualified expression which we
 	        						// can get from -var-info-path-expression starting from GDB 6.7 
@@ -1459,14 +1509,55 @@ public class MIVariableManager implements ICommandControl {
 	        	        						@Override
 	        	        						protected void handleCompleted() {
 	        	        							if (isSuccess()) {
-	        	        								childPathRm.setData(getData().getFullExpression());
+	        	        								final String expression = getData().getFullExpression();
+
+	        	        								if (needFixForGDBBug320277() && child.getExp().equals(child.getType()) && !isAccessQualifier(getExpressionInfo().getRelExpr())) {
+	        	        	        						// Special handling for a derived class that is cast to its base class (see bug 320277)
+	        	        	        						//
+	        	        	        						// If the name of a child equals its type then it could be a base class.
+	        	        	        						// The exception is when the name of the actual variable is identical with the type name (bad coding style :-))
+	        	        	        						// The only way to tell the difference is to check if the parent is a fake (public/private/protected).
+	        	        	        						// 
+	        	        	        						// What we could do instead, is make sure we are using C++ (using -var-info-expression).  That would
+	        	        	        						// be safer.  However, at this time, there does not seem to be a way to create a variable with the same
+	        	        	        						// name and type using plain C, so we are safe.
+	        	        	        						//
+	        	        	        						// When we know we are dealing with derived class that is cast to its base class
+	        	        	        						// -var-info-path-expression returns (*(testbase*) this) and in some cases
+	        	        	        						// this expression will fail when being evaluated in GDB because of a GDB bug.
+	        	        	        						// Instead, we need (*(struct testbase*) this).
+	        	        									//
+	        	        									// To check if GDB actually has this bug we call -data-evaluate-expression with the return value
+	        	        									// of -var-info-path-expression
+	        	        									IExpressionDMContext exprDmcMIData = fExpressionService.createExpression(exprDmc, expression);
+	        	        									fCommandControl.queueCommand(
+	        	        											fCommandFactory.createMIDataEvaluateExpression(exprDmcMIData),
+	        	        											new DataRequestMonitor<MIDataEvaluateExpressionInfo>(fSession.getExecutor(), childPathRm) {
+	        	        												@Override
+	        	        												protected void handleCompleted() {
+	        	        													if (isSuccess()) {
+	        	        														childPathRm.setData(new ChildFullExpressionInfo(expression));
+	        	        														childPathRm.done();
+	        	        													} else {
+        	        															// We build the expression ourselves
+        	        															// We must also indicate that this workaround has been used for this child
+        	        															// so that we know to keep using it for further descendants.
+	        	        														childPathRm.setData(new ChildFullExpressionInfo(buildDerivedChildExpression(exprDmc.getExpression(), child.getExp()), true));
+	        	        														childPathRm.done();
+	        	        													}
+	        	        												}
+	        	        											});
+	        	        								} else {
+	        	        									childPathRm.setData(new ChildFullExpressionInfo(expression));
+	        	        									childPathRm.done();
+	        	        								}
 	        	        							} else {
 	        	        								// If we don't have var-info-path-expression
 	        	        								// build the expression ourselves
 	        	        								// Note that this does not work well yet
-	        	        	    						childPathRm.setData(buildChildExpression(exprDmc.getExpression(), child.getExp()));
+	        	        								childPathRm.setData(new ChildFullExpressionInfo(buildChildExpression(exprDmc.getExpression(), child.getExp())));
+	        	        								childPathRm.done();
 	        	        							}
-        	        								childPathRm.done();
 	        	        						}
 	        								});
 	        					}
@@ -1583,26 +1674,64 @@ public class MIVariableManager implements ICommandControl {
 		}
 
 		/**
+		 * Method performing special handling for a derived class that is cast to its base class (see bug 320277).
+		 * The command '-var-info-path-expression' returns (*(testbase*) this) but we need (*(struct testbase*) this).
+		 * Also, in case of a namespace this method adds additional backticks:
+		 * (*(struct 'namespace::testbase'*) this)
+		 */
+		private String buildDerivedChildExpression(String parentExp, String childExpr) {
+			
+			final String CAST_PREFIX = "struct "; //$NON-NLS-1$
+			
+			// Before doing the cast, let's surround the child expression (base class name) with quotes 
+			// if it contains a :: which indicates a namespace
+			String childNameForCast = childExpr.contains("::") ? "'" + childExpr + "'" : childExpr; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			String childFullExpression;
+			if (isPointer()) {
+				// casting to pointer base class requires a slightly different format
+				childFullExpression = "*(" + CAST_PREFIX + childNameForCast + "*)(" + parentExp + ")";//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			} else {
+				// casting to base class
+				childFullExpression = "(" + CAST_PREFIX + childNameForCast + ")" + parentExp;//$NON-NLS-1$ //$NON-NLS-2$
+			}
+			
+			return childFullExpression;
+		}
+		
+		/**
 		 * This method builds a child expression based on its parent's expression.
 		 * It is a fallback solution for when GDB doesn't support the var-info-path-expression.
 		 * 
-		 * Currently, this does not support inherited class such as
+		 * This method does not take care of inherited classes such as
 		 * class foo : bar {
 		 * ...
 		 * }
-		 * because we'll create foo.bar instead of (bar)foo.
+		 * that case is hanlded by buildDerivedChildExpression
 		 */
 		private String buildChildExpression(String parentExp, String childExp) {
+			String childFullExpression;
+
+			// If the current varObj is a fake object, we obtain the proper parent
+			// expression from the parent of the varObj.
+			if (isAccessQualifier(exprInfo.getRelExpr())) {
+				parentExp = getParent().getExpression();
+			}
+			
 			// For pointers, the child expression is already contained in the parent,
 			// so we must simply prefix with *
 		    //  See Bug219179 for more information.
 			if (!isDynamic() && !exprInfo.hasDynamicAncestor() && isPointer()) {
-				return "*("+parentExp+")"; //$NON-NLS-1$//$NON-NLS-2$
+				childFullExpression =  "*("+parentExp+")"; //$NON-NLS-1$//$NON-NLS-2$
+			} else {
+				// We must surround the parentExp with parentheses because it
+				// may be a casted expression.
+				childFullExpression = "("+parentExp+")." + childExp; //$NON-NLS-1$ //$NON-NLS-2$
 			}
-
-		    return parentExp + "." + childExp; //$NON-NLS-1$
+			
 		    // No need for a special case for arrays since we deal with arrays differently
 		    // and don't call this method for them
+
+			return childFullExpression;
 		}
 
 		/**
@@ -2893,5 +3022,25 @@ public class MIVariableManager implements ICommandControl {
     		iterator.next();
     		iterator.remove();
     	}
+    }
+    
+    /**
+     * GDB has a bug which makes -data-evaluate-expression fail when using
+     * the return value of -var-info-path-expression in the case of derived classes.
+     * To work around this bug, we don't use -var-info-path-expression for some derived
+     * classes and all their descendants.
+     *
+     * This method can be overridden to easily disable the workaround, for versions
+     * of GDB that no longer have the bug.
+     * 
+     * See http://sourceware.org/bugzilla/show_bug.cgi?id=11912
+     * and Bug 320277.
+     * 
+     * The bug was fixed in GDB 7.3.1.
+     * 
+     * @since 4.1 
+     */
+    protected boolean needFixForGDBBug320277() {
+    	return true;
     }
 }

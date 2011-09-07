@@ -137,6 +137,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -2316,12 +2317,26 @@ public class CPPVisitor extends ASTQueries {
 				}
 				if (--i < 0) 
 					break;
-				return qn[i].resolveBinding();
+				return bindingToOwner(qn[i].resolveBinding());
 			}
 			name= (IASTName) node;
 			node= node.getParent();
 		}
 		return findDeclarationOwner(node, allowFunction);
+	}
+
+	private static IBinding bindingToOwner(IBinding b) {
+		if (b instanceof ITypedef) {
+			IType t= SemanticUtil.getNestedType((IType) b, TDEF);
+			if (t instanceof IBinding) 
+				return (IBinding) t;
+			
+			return b;
+		}
+		while (b instanceof ICPPNamespaceAlias) {
+			b= ((ICPPNamespaceAlias) b).getBinding();
+		}
+		return b;
 	}
 
 	/**

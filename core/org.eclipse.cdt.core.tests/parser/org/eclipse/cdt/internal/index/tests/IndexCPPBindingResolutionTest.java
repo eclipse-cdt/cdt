@@ -1584,6 +1584,19 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		getBindingFromASTName("g(1)", 1);
 	}
 
+	//	namespace ns {
+	//		void fun();
+	//	}
+
+	//	namespace alias = ns;
+	//	void alias::fun() {
+	//	}
+	public void testNamespaceAliasAsQualifier_356493() throws Exception {
+		IFunction ref= getBindingFromASTName("fun", 0);
+		assertEquals("ns", ref.getOwner().getName());
+	}
+	
+	
 	/* CPP assertion helpers */
 	/* ##################################################################### */
 

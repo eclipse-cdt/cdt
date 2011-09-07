@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.SafeStringInterner;
@@ -1696,6 +1698,15 @@ public class InputType extends BuildObject implements IInputType {
 
 		if(langId == null){
 			langId = getLanguageIdAttribute();
+		}
+
+		if(langId == null){
+			IContentType contentType = getSourceContentType();
+			if (contentType!=null) {
+				ILanguage language = LanguageManager.getInstance().getLanguage(contentType);
+				if (language!=null)
+					langId = language.getId();
+			}
 		}
 
 		return langId;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems and others.
+ * Copyright (c) 2005, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,8 +118,7 @@ public class LanguageManager {
 		HashMap<String, ILanguageDescriptor[]> map = new HashMap<String, ILanguageDescriptor[]>();
 		Map<String, List<ILanguageDescriptor>> cache = getContentTypeToDescriptorCache();
 		
-		for (Iterator<Entry<String, List<ILanguageDescriptor>>> iter = cache.entrySet().iterator(); iter.hasNext();) {
-			Entry<String, List<ILanguageDescriptor>> entry = iter.next();
+		for (Entry<String, List<ILanguageDescriptor>> entry : cache.entrySet()) {
 			List<ILanguageDescriptor> list = entry.getValue();
 			if (list.size() > 0) {
 				ILanguageDescriptor[] dess = list.toArray(new ILanguageDescriptor[list.size()]);
@@ -136,13 +135,10 @@ public class LanguageManager {
 		Map<String, ILanguageDescriptor> dc = getDescriptorCache();
 
 		List<ILanguageDescriptor> list;
-		IContentType type;
 		String id;
-		for (Iterator<ILanguageDescriptor> iter = dc.values().iterator(); iter.hasNext();) {
-			ILanguageDescriptor des = iter.next();
+		for (ILanguageDescriptor des : dc.values()) {
 			IContentType types[] = des.getContentTypes();
-			for (int i = 0; i < types.length; i++) {
-				type = types[i];
+			for (IContentType type : types) {
 				id = type.getId();
 				list = map.get(id);
 				if (list == null) {
@@ -326,8 +322,7 @@ public class LanguageManager {
 		
 		// read configuration
 		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
-		for (int i = 0; i < configs.length; i++) {
-			final IConfigurationElement element = configs[i];
+		for (final IConfigurationElement element : configs) {
 			if (ELEMENT_PDOM_LINKAGE_FACTORY.equals(element.getName())) {
 				SafeRunner.run(new ISafeRunnable() {
 					public void handleException(Throwable exception) {
@@ -609,8 +604,8 @@ public class LanguageManager {
 	public void notifyLanguageChangeListeners(ILanguageMappingChangeEvent event) {
 		Object[] listeners = fLanguageChangeListeners.getListeners();
 		
-		for (int i= 0; i < listeners.length; i++) {
-			ILanguageMappingChangeListener listener = (ILanguageMappingChangeListener) listeners[i];
+		for (Object obj : listeners) {
+			ILanguageMappingChangeListener listener = (ILanguageMappingChangeListener) obj;
 			listener.handleLanguageMappingChangeEvent(event);
 		}
 	}
@@ -637,5 +632,48 @@ public class LanguageManager {
 		event.setProject(project);
 		event.setFile(file);
 		notifyLanguageChangeListeners(event);
+	}
+
+	/**
+	 * Returns language binding to a particular content type for given project.
+	 * This method will check project settings, workspace settings and default
+	 * bindings (in that order)
+	 * 
+	 * @param contentType content type of the file
+	 * @param project C/C++ workspace project
+	 * @return CDT language object 
+	 * @since 5.4
+	 */
+	public ILanguage getLanguage(IContentType contentType, IProject project) {
+		return getLanguage(contentType, project, null);
+	}
+
+	/**
+	 * Returns language binding to a particular content type for given project.
+	 * This method will check project settings, workspace settings and default
+	 * bindings (in that order)
+	 * 
+	 * @param contentType content type of the file
+	 * @param project C/C++ workspace project
+	 * @param configurationDescription build configuration or <code>null</code>
+	 * @return CDT language object 
+	 * @since 5.4
+	 */
+	public ILanguage getLanguage(IContentType contentType,
+			IProject project, ICConfigurationDescription configurationDescription) {
+		try {
+			final ProjectLanguageConfiguration projectConfig = getLanguageConfiguration(project);
+			final String contentTypeId = contentType.getId();
+			String langId = projectConfig.getLanguageForContentType(configurationDescription,
+					contentTypeId);
+			if (langId == null) {
+				WorkspaceLanguageConfiguration wsConfig = getWorkspaceLanguageConfiguration();
+				langId = wsConfig.getLanguageForContentType(contentTypeId);
+			}
+			return langId != null ? getLanguage(langId) : getLanguage(contentType);
+		} catch (CoreException e) {
+			// Fall through to default language mapping
+		}
+		return getLanguage(contentType);
 	}
 }

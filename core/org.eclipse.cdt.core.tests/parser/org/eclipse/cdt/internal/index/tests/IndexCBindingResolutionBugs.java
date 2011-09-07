@@ -464,4 +464,15 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		getBindingFromASTName("f255", 0);
 		getBindingFromASTName("f256", 0);
 	}		
+	
+	//	struct B {
+	//		float f;
+	//	};
+
+	//	struct B b = {
+	//			.f = 3.1
+	//	};
+	public void testDesignatedInitializer_Bug210019() throws Exception {
+		IField f= getBindingFromASTName("f", 0);
+	}		
 }

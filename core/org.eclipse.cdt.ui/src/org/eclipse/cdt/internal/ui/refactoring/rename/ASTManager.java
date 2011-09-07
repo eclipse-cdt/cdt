@@ -98,6 +98,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -183,13 +184,26 @@ public class ASTManager implements IDisposable {
      * Returns TRUE, FALSE or UNKNOWN.
      * @throws DOMException 
      */
-    public static int isSameBinding(IBinding b1, IBinding b2) throws DOMException {
+    public static int isSameBinding(IIndex index, IBinding b1, IBinding b2) throws DOMException {
         if (b1 == null || b2 == null) {
             return UNKNOWN;
         }
         if (b1.equals(b2)) {
             return TRUE;
         }
+        if (b1 instanceof IIndexBinding || b2 instanceof IIndexBinding) {
+        	if (index != null) {
+        		IIndexBinding b11 = index.adaptBinding(b1);
+        		if (b11 != null)
+        			b1= b11;
+        		IIndexBinding b21 = index.adaptBinding(b2);
+        		if (b21 != null)
+        			b2= b21;
+                if (b1.equals(b2))
+                	return TRUE;
+        	}
+        }
+        
         String n1= b1.getName();
         String n2= b2.getName();
         if (n1 == null || n2 == null) {
@@ -1191,9 +1205,11 @@ public class ASTManager implements IDisposable {
         	if (problemInQualifier) {
         		cmp= UNKNOWN;
         	} else {
+    			final IASTTranslationUnit tu = name.getTranslationUnit();
+    			final IIndex index= tu != null ? tu.getIndex() : null;
         		for (IBinding renameBinding : fValidBindings) {
         			try {
-        				int cmp0= isSameBinding(binding, renameBinding);
+        				int cmp0= isSameBinding(index, binding, renameBinding);
         				if (cmp0 != FALSE) {
         					cmp= cmp0;
         				}
@@ -1486,7 +1502,7 @@ public class ASTManager implements IDisposable {
                 for (int i = 0; !isAboveOrEqual && i<newBindingsAboverOrEqual.length; i++) {
                     IBinding aboveBinding = newBindingsAboverOrEqual[i];
                     try {
-                        if (isSameBinding(aboveBinding, conflictingBinding) == TRUE) {
+                        if (isSameBinding(tu.getIndex(), aboveBinding, conflictingBinding) == TRUE) {
                             isAboveOrEqual= true;
                         }
                     } catch (DOMException e) {

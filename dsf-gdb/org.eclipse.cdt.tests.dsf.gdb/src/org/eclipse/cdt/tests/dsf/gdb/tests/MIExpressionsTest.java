@@ -61,7 +61,7 @@ public class MIExpressionsTest extends BaseTestCase {
 
     private DsfServicesTracker fServicesTracker;
 
-    private IExpressions fExpService;
+    protected IExpressions fExpService;
 
     private int fExprChangedEventCount = 0;
 

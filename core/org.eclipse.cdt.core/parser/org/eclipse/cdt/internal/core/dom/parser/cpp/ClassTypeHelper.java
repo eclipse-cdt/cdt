@@ -314,11 +314,10 @@ public class ClassTypeHelper {
 	private static ObjectSet<ICPPMethod> getOwnMethods(ICPPClassType classType) {
 		ObjectSet<ICPPMethod> set= new ObjectSet<ICPPMethod>(4);
 		set.addAll(classType.getDeclaredMethods());
-		if (classType instanceof IProblemBinding) {
-			return set;
+		IScope scope = classType.getCompositeScope();
+		if (scope instanceof ICPPClassScope) {
+			set.addAll(((ICPPClassScope) scope).getImplicitMethods());
 		}
-		ICPPClassScope scope= (ICPPClassScope) classType.getCompositeScope();
-		set.addAll(scope.getImplicitMethods());
 		return set;
 	}
 	

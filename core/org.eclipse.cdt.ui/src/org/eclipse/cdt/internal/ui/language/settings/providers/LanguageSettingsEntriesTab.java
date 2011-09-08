@@ -563,6 +563,12 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, msg);
 			}
 		}
+		if (status==null || status==Status.OK_STATUS) {
+			if (treeLanguages.getItemCount()<=0) {
+				String msg = "Cannot determine toolchain languages.";
+				status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg);
+			}
+		}
 		fStatusLine.setErrorStatus(status);
 	}
 
@@ -1080,24 +1086,28 @@ providers:	for (ILanguageSettingsProvider provider : providers) {
 	public boolean canBeVisible() {
 		if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_NO_SHOW_PROVIDERS))
 			return false;
-		if (page.isForPrefs())
-			return true;
 
-		ICLanguageSetting [] langSettings = getLangSettings(getResDesc());
-		if (langSettings == null)
-			return false;
+		//filter out files not associated with any languages
+		if (page.isForFile()) {
+			ICLanguageSetting [] langSettings = getLangSettings(getResDesc());
+			if (langSettings == null)
+				return false;
 
-		for (ICLanguageSetting langSetting : langSettings) {
-			String langId = langSetting.getLanguageId();
-			if (langId!=null && langId.length()>0) {
-				LanguageManager langManager = LanguageManager.getInstance();
-				ILanguageDescriptor langDes = langManager.getLanguageDescriptor(langId);
-				if (langDes != null)
-					return true;
+			// files like *.o may have langSettings but no associated language
+			for (ICLanguageSetting langSetting : langSettings) {
+				String langId = langSetting.getLanguageId();
+				if (langId!=null && langId.length()>0) {
+					LanguageManager langManager = LanguageManager.getInstance();
+					ILanguageDescriptor langDes = langManager.getLanguageDescriptor(langId);
+					if (langDes != null)
+						return true;
+				}
 			}
+	
+			return false;
 		}
-
-		return false;
+		
+		return true;
 	}
 
 	/**

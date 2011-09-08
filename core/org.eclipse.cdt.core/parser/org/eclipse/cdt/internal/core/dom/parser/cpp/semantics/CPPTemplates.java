@@ -64,6 +64,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -155,11 +156,19 @@ public class CPPTemplates {
 	private static final int PACK_SIZE_NOT_FOUND = Integer.MAX_VALUE;
 	private static final ICPPFunction[] NO_FUNCTIONS = {};
 	static enum TypeSelection {PARAMETERS, RETURN_TYPE, PARAMETERS_AND_RETURN_TYPE}
+
+	/**
+	 * Instantiates a class template with the given arguments. May return <code>null</code>.
+	 */
+	public static IBinding instantiate(ICPPClassTemplate template, ICPPTemplateArgument[] args) {
+		return instantiate(template, args, false, false); 
+	}
 	
 	/**
 	 * Instantiates a class template with the given arguments. May return <code>null</code>.
 	 */
-	public static IBinding instantiate(ICPPClassTemplate template, ICPPTemplateArgument[] args, boolean isDef) {
+	private static IBinding instantiate(ICPPClassTemplate template, ICPPTemplateArgument[] args, 
+			boolean isDefinition, boolean isExplicitSpecialization) {
 		try {
 			// Add default arguments, if necessary.
 			ICPPTemplateArgument[] arguments= SemanticUtil.getSimplifiedArguments(args);
@@ -172,7 +181,7 @@ public class CPPTemplates {
 			}
 			
 			if (template instanceof ICPPClassTemplatePartialSpecialization) {
-				return instantiatePartialSpecialization((ICPPClassTemplatePartialSpecialization) template, arguments, isDef, null);
+				return instantiatePartialSpecialization((ICPPClassTemplatePartialSpecialization) template, arguments, isDefinition, null);
 			}
 		
 			
@@ -222,15 +231,17 @@ public class CPPTemplates {
 				map.put(param, pack);
 			}
 
-			ICPPTemplateInstance prim= getInstance(template, arguments, isDef);
-			if (prim != null && prim.isExplicitSpecialization())
+			ICPPTemplateInstance prim= getInstance(template, arguments, isDefinition);
+			if (prim != null && (isExplicitSpecialization || prim.isExplicitSpecialization()))
 				return prim;
 
-			IBinding result= CPPTemplates.selectSpecialization(template, arguments, isDef);
-			if (result != null)
-				return result;
+			if (!isExplicitSpecialization) {
+				IBinding result= CPPTemplates.selectSpecialization(template, arguments, isDefinition);
+				if (result != null)
+					return result;
+			}
 			
-			return instantiatePrimaryTemplate(template, arguments, map, isDef);	
+			return instantiatePrimaryTemplate(template, arguments, map, isDefinition);	
 		} catch (DOMException e) {
 			return e.getProblem();
 		}
@@ -620,23 +631,26 @@ public class CPPTemplates {
 			parentOfName = parentOfName.getParent();
 		}
 
-		boolean isDecl= false;
-		boolean isDef= false;
-		if (isLastName) {
-			if (parentOfName instanceof ICPPASTElaboratedTypeSpecifier) {
-				IASTNode parentOfDeclaration= parentOfName;
-				while (parentOfDeclaration != null) {
-					if (parentOfDeclaration instanceof IASTDeclaration) {
-						parentOfDeclaration= parentOfDeclaration.getParent();
-						break;
+		boolean isDeclaration= false;
+		boolean isDefinition= false;
+		boolean isExplicitSpecialization= false;
+		if (isLastName && parentOfName != null) {
+			IASTNode declaration= parentOfName.getParent();
+			if (declaration instanceof IASTSimpleDeclaration) {
+				if (parentOfName instanceof ICPPASTElaboratedTypeSpecifier) {
+					isDeclaration= true;
+				} else if (parentOfName instanceof ICPPASTCompositeTypeSpecifier) {
+					isDefinition= true;
+				} 
+				if (isDeclaration || isDefinition) {
+					IASTNode parentOfDeclaration = declaration.getParent();
+					if (parentOfDeclaration instanceof ICPPASTExplicitTemplateInstantiation) {
+						isDeclaration= false;
+					} else if (parentOfDeclaration instanceof ICPPASTTemplateSpecialization) {
+						isExplicitSpecialization= true;
 					}
-					parentOfDeclaration= parentOfDeclaration.getParent();
 				}
-
-				isDecl= !(parentOfDeclaration instanceof ICPPASTExplicitTemplateInstantiation);
-			} else if (parentOfName instanceof ICPPASTCompositeTypeSpecifier) {
-				isDef= true;
-			} 
+			}
 		}
 		try {
 			// class template instance
@@ -669,7 +683,7 @@ public class CPPTemplates {
 						result= classTemplate;  
 					} else {
 						ICPPClassTemplatePartialSpecialization partialSpec= findPartialSpecialization(classTemplate, args);
-						if (isDecl || isDef) {
+						if (isDeclaration || isDefinition) {
 							if (partialSpec == null) {
 								partialSpec = new CPPClassTemplatePartialSpecialization(id);
 								if (template instanceof ICPPInternalClassTemplate)
@@ -684,11 +698,11 @@ public class CPPTemplates {
 				}
 			}
 			if (result == null) {
-				result= instantiate(classTemplate, args, isDef);
+				result= instantiate(classTemplate, args, isDefinition, isExplicitSpecialization);
 				if (result instanceof ICPPInternalBinding) {
-					if (isDecl) {
+					if (isDeclaration) {
 						ASTInternal.addDeclaration(result, id);
-					} else if (isDef) {
+					} else if (isDefinition) {
 						ASTInternal.addDefinition(result, id);
 					}
 				}
@@ -2320,7 +2334,7 @@ public class CPPTemplates {
 	            		ICPPTemplateArgument[] newArgs = CPPTemplates.instantiateArguments(
 	            				((ICPPUnknownClassInstance) unknown).getArguments(), tpMap, packOffset, within);
 	            		if (result instanceof ICPPClassTemplate) {
-	            			result = instantiate((ICPPClassTemplate) result, newArgs, false);
+	            			result = instantiate((ICPPClassTemplate) result, newArgs);
 	            		}
 	            	}
 	            }
@@ -2349,7 +2363,7 @@ public class CPPTemplates {
 		}
 
 		if (changed) {
-			IBinding inst= instantiate(classTemplate, newArgs, false);
+			IBinding inst= instantiate(classTemplate, newArgs);
 			if (inst != null)
 				return inst;
 		}

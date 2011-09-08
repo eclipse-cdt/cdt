@@ -373,7 +373,7 @@ public class CPPSemantics {
 						if (data.tu != null) {
 							ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
 							ICPPTemplateArgument[] args = CPPTemplates.createTemplateArgumentArray(id);
-							IBinding inst= CPPTemplates.instantiate((ICPPClassTemplate) cls, args, false);
+							IBinding inst= CPPTemplates.instantiate((ICPPClassTemplate) cls, args);
 							if (inst instanceof ICPPClassType) {
 								cls= (ICPPClassType) inst;
 							}

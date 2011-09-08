@@ -15,6 +15,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -43,6 +44,17 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 	
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return arguments;
+	}
+
+	@Override
+	protected ICPPClassSpecializationScope getSpecializationScope() {
+		// An instance with a declaration has no specialization scope.
+		checkForDefinition();
+		final IASTNode[] decls = getDeclarations();
+		if (decls != null && decls.length > 0 && decls[0] != null)
+			return null;
+		
+		return super.getSpecializationScope();
 	}
 
 	public boolean isExplicitSpecialization() {

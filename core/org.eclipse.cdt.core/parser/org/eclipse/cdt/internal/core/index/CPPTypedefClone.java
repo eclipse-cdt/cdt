@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
-import org.eclipse.core.runtime.CoreException;
 
 public class CPPTypedefClone implements ITypedef, ITypeContainer, IIndexType, ICPPBinding {
 	protected final ITypedef delegate;
@@ -35,7 +34,7 @@ public class CPPTypedefClone implements ITypedef, ITypeContainer, IIndexType, IC
 		return type;
 	}
 
-	public ILinkage getLinkage() throws CoreException {
+	public ILinkage getLinkage() {
 		return delegate.getLinkage();
 	}
 

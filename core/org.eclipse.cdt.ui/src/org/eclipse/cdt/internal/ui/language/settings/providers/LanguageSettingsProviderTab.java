@@ -824,21 +824,6 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		updateButtons();
 	}
 
-	private ICLanguageSetting[] getLangSettings(ICResourceDescription rcDes) {
-		switch (rcDes.getType()) {
-		case ICSettingBase.SETTING_PROJECT:
-		case ICSettingBase.SETTING_CONFIGURATION:
-		case ICSettingBase.SETTING_FOLDER:
-			ICFolderDescription foDes = (ICFolderDescription) rcDes;
-			return foDes.getLanguageSettings();
-		case ICSettingBase.SETTING_FILE:
-			ICFileDescription fiDes = (ICFileDescription) rcDes;
-			ICLanguageSetting langSetting = fiDes.getLanguageSetting();
-			return (langSetting != null) ? new ICLanguageSetting[] { langSetting } : null;
-		}
-		return null;
-	}
-
 	/**
 	 * Called when configuration changed
 	 */

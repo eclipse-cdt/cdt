@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
@@ -44,6 +45,11 @@ public class FindBinding {
 				if (t1 == t2) {
 					t1 = PDOMNode.getNodeType(database, record1);
 					t2 = PDOMNode.getNodeType(database, record2);
+					if (t1 == t2 && t1 == IIndexBindingConstants.ENUMERATOR) {
+						// Allow to insert multiple enumerators into the global index.
+						t1= record1;
+						t2= record2;
+					}
 				}
 				cmp= t1 < t2 ? -1 : (t1 > t2 ? 1 : 0);
 			}
@@ -164,7 +170,6 @@ public class FindBinding {
 
 	public static PDOMBinding findBinding(IPDOMNode node, final PDOMLinkage linkage, final char[] name, final int[] constants,
 			long localToFileRec) throws CoreException {
-		// mstodo faster searches
 		final DefaultFindBindingVisitor visitor = new DefaultFindBindingVisitor(linkage, name, constants, localToFileRec);
 		try {
 			node.accept(visitor);

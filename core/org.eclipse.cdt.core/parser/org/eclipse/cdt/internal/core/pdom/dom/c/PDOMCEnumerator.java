@@ -29,22 +29,17 @@ import org.eclipse.core.runtime.CoreException;
  * Binding for c enumerator in the index.
  */
 class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
-
-	private static final int ENUMERATION = PDOMBinding.RECORD_SIZE + 0;
-	private static final int NEXT_ENUMERATOR = PDOMBinding.RECORD_SIZE + 4;
-	private static final int VALUE= PDOMBinding.RECORD_SIZE + 8;
+	private static final int VALUE= PDOMBinding.RECORD_SIZE + 0;
 	
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 12;
+	protected static final int RECORD_SIZE = VALUE + 4;
 	
-	public PDOMCEnumerator(PDOMLinkage linkage, PDOMNode parent, IEnumerator enumerator, PDOMCEnumeration enumeration)
+	public PDOMCEnumerator(PDOMLinkage linkage, PDOMNode parent, IEnumerator enumerator)
 			throws CoreException {
 		super(linkage, parent, enumerator.getNameCharArray());
 		
 		final Database db = getDB();
-		db.putRecPtr(record + ENUMERATION, enumeration.getRecord());
 		storeValue(db, enumerator);
-		enumeration.addEnumerator(this);
 	}
 
 	public PDOMCEnumerator(PDOMLinkage linkage, long record) {
@@ -75,35 +70,13 @@ class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 			storeValue(getDB(), (IEnumerator) newBinding);
 	}
 
-
-	public PDOMCEnumerator getNextEnumerator() throws CoreException {
-		long value = getDB().getRecPtr(record + NEXT_ENUMERATOR);
-		return value != 0 ? new PDOMCEnumerator(getLinkage(), value) : null;
-	}
-	
-	public void setNextEnumerator(PDOMCEnumerator enumerator) throws CoreException {
-		long value = enumerator != null ? enumerator.getRecord() : 0;
-		getDB().putRecPtr(record + NEXT_ENUMERATOR, value);
-	}
-	
 	public IType getType() throws DOMException {
-		return getEnumeration();
-	}
-
-	private PDOMCEnumeration getEnumeration() {
-		try {
-			return new PDOMCEnumeration(getLinkage(), getDB().getRecPtr(record + ENUMERATION));
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
-		}
+		IIndexFragmentBinding owner = getOwner();
+		if (owner instanceof IType)
+			return (IType) owner;
+		return null;
 	}
 	
-	@Override
-	public IIndexFragmentBinding getOwner() {
-		return getEnumeration();
-	}
-
 	public IValue getValue() {
 		try {
 			int val= getDB().getInt(record + VALUE);

@@ -196,7 +196,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  96.0 - storing pack expansions in the template parameter map, bug 294730.
 	 *  97.0 - storing file contents hash in PDOMFile, bug 302083.
 	 *  #98.0# - strongly typed enums, bug 305975.  <<CDT 7.0.0>>
-	 *  99.0 - correct marshalling of basic types, bug 319186.
+	 *  #99.0# - correct marshalling of basic types, bug 319186.  <<CDT 7.0.1>>
 	 *
 	 *  CDT 8.0 development (versions not supported on the 7.0.x branch)
 	 *  110.0 - update index on encoding change, bug 317435.
@@ -204,12 +204,15 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  111.1 - defaulted and deleted functions, bug 305978
 	 *  112.0 - inline namespaces, bug 305980
 	 *  113.0 - Changed marshaling of values, bug 327878
-	 *  114.0 - Partial specializations for class template specializations, bug 332884.
-	 *  115.0 - Corrected signatures for function templates, bug 335062.
+	 *  #114.0# - Partial specializations for class template specializations, bug 332884.
+	 *          - Corrected signatures for function templates, bug 335062.  <<CDT 8.0>>
+	 *  
+	 *  CDT 8.1 development (versions not supported on teh 8.0.x branch)
+	 *  120.0 - Enumerators in global index, bug 356235
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(114, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(114, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(114, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(120, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(120, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(120, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

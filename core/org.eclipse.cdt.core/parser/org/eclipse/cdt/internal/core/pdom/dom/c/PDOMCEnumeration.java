@@ -11,20 +11,28 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.IPDOMNode;
+import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
+import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -33,12 +41,10 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Enumerations in the database.
  */
-class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType {
-
-	private static final int FIRST_ENUMERATOR = PDOMBinding.RECORD_SIZE + 0;
-	private static final int OFFSET_MIN_VALUE= FIRST_ENUMERATOR + Database.PTR_SIZE;
+class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType, IPDOMMemberOwner {
+	private static final int OFFSET_ENUMERATOR_LIST = PDOMBinding.RECORD_SIZE;
+	private static final int OFFSET_MIN_VALUE= OFFSET_ENUMERATOR_LIST + Database.PTR_SIZE;
 	private static final int OFFSET_MAX_VALUE= OFFSET_MIN_VALUE + 8;
-	
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = OFFSET_MAX_VALUE + 8;
 
@@ -80,35 +86,71 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType {
 		return IIndexCBindingConstants.CENUMERATION;
 	}
 
-	public IEnumerator[] getEnumerators() throws DOMException {
+	public IEnumerator[] getEnumerators() {
+		List<PDOMCEnumerator> result = getCachedEnumerators(true);
+		return result.toArray(new IEnumerator[result.size()]);
+	}
+
+	private List<PDOMCEnumerator> getCachedEnumerators(boolean create) {
+		final Long key= record;
+		final PDOM pdom = getPDOM();
+		@SuppressWarnings("unchecked")
+		Reference<List<PDOMCEnumerator>> cached= (Reference<List<PDOMCEnumerator>>) pdom.getCachedResult(key);
+		List<PDOMCEnumerator> result= cached == null ? null : cached.get();
+
+		if (result == null && create) {
+			// there is no cache, build it:
+			result= loadEnumerators();
+			pdom.putCachedResult(key, new SoftReference<List<PDOMCEnumerator>>(result));
+		}
+		return result;
+	}
+
+	private List<PDOMCEnumerator> loadEnumerators() {
+		final ArrayList<PDOMCEnumerator> result= new ArrayList<PDOMCEnumerator>();
 		try {
-			ArrayList<PDOMCEnumerator> enums = new ArrayList<PDOMCEnumerator>();
-			for (PDOMCEnumerator enumerator = getFirstEnumerator();
-					enumerator != null;
-					enumerator = enumerator.getNextEnumerator()) {
-				enums.add(enumerator);
-			}
-			
-			// Reverse the list since they are last in first out
-			Collections.reverse(enums);
-			return enums.toArray(new IEnumerator[enums.size()]);
+			PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + OFFSET_ENUMERATOR_LIST);
+			list.accept(new IPDOMVisitor() {
+				public boolean visit(IPDOMNode node) throws CoreException {
+					if (node instanceof PDOMCEnumerator) {
+						result.add((PDOMCEnumerator) node);
+					}
+					return true;
+				}
+				public void leave(IPDOMNode node) {}
+			});
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return new IEnumerator[0];
+		}
+		result.trimToSize();
+		return result;
+	}
+
+	@Override
+	public void accept(IPDOMVisitor visitor) throws CoreException {
+		for (PDOMCEnumerator enumerator : getCachedEnumerators(true)) {
+			visitor.visit(enumerator);
+			visitor.leave(enumerator);
 		}
 	}
 
-	private PDOMCEnumerator getFirstEnumerator() throws CoreException {
-		long value = getDB().getRecPtr(record + FIRST_ENUMERATOR);
-		return value != 0 ? new PDOMCEnumerator(getLinkage(), value) : null;
+	@Override
+	public void addChild(PDOMNode node) throws CoreException {
+		if (node instanceof PDOMCEnumerator) {
+			PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + OFFSET_ENUMERATOR_LIST);
+			list.addMember(node);
+			List<PDOMCEnumerator> cache = getCachedEnumerators(false);
+			if (cache != null)
+				cache.add((PDOMCEnumerator) node);
+		}
 	}
-	
-	public void addEnumerator(PDOMCEnumerator enumerator) throws CoreException {
-		PDOMCEnumerator first = getFirstEnumerator();
-		enumerator.setNextEnumerator(first);
-		getDB().putRecPtr(record + FIRST_ENUMERATOR, enumerator.getRecord());
+
+	@Override
+	public boolean mayHaveChildren() {
+		return true;
 	}
-		
+
+
 	public long getMinValue() {
 		if (fMinValue != null) {
 			return fMinValue.longValue();
@@ -149,18 +191,20 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType {
 		
 		if (type instanceof IEnumeration) {
 			IEnumeration etype= (IEnumeration) type;
-			etype= (IEnumeration) PDOMASTAdapter.getAdapterForAnonymousASTBinding(etype);
-			try {
-				return getDBName().equals(etype.getNameCharArray());
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
+			char[] nchars = etype.getNameCharArray();
+			if (nchars.length == 0) {
+				nchars= ASTTypeUtil.createNameForAnonymous(etype);
 			}
+			if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
+				return false;
+			
+			return SemanticUtil.isSameOwner(getOwner(), etype.getOwner());
 		}
 		return false;
 	}
 
 	@Override
 	public Object clone() {
-		throw new UnsupportedOperationException(); 
+		throw new IllegalArgumentException("Enums must not be cloned"); //$NON-NLS-1$
 	}
 }

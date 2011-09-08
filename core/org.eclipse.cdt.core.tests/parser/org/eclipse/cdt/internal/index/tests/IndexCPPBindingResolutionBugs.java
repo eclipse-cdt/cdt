@@ -18,6 +18,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -1307,5 +1308,32 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		IVariable v= getBindingFromASTName("var", 0);
 		IFunction f= getBindingFromASTName("fun", 0);
 		ITypedef t= getBindingFromASTName("Type", 0);
+	}
+	
+	//	struct base {
+	//		virtual void operator+(base const &) { }
+	//		virtual void operator-(base const &) { }
+	//	};
+	
+	//	#include "header.h"
+	//	struct inter : public base {
+	//	  virtual void operator+(base const &){}
+	//	};
+	//	struct sub : public inter {
+	//	  void doSomething() {
+	//	    base *left, *right;
+	//
+	//	    *left + *right;
+	//	    *left - *right;  
+	//	  }
+	//	};
+	public void test_Bug356982() throws Exception {
+		IASTName name= findName("+ ", 1);
+		assertTrue(name instanceof IASTImplicitName);
+		assertEquals("base", name.resolveBinding().getOwner().getName());
+		
+		name= findName("- ", 1);
+		assertTrue(name instanceof IASTImplicitName);
+		assertEquals("base", name.resolveBinding().getOwner().getName());
 	}
 }

@@ -1,30 +1,37 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Andrew Gvozdev (Quoin Inc.) and others.
+ * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Andrew Gvozdev (Quoin Inc.) - initial API and implementation
+ *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.core.language.settings.providers;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICFileDescription;
+import org.eclipse.cdt.core.settings.model.ICFolderDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ILanguageSettingsEditableProvider;
-import org.eclipse.cdt.internal.core.LocalProjectScope;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.osgi.service.prefs.Preferences;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * A collection of utility methods to manage language settings providers.
@@ -165,6 +172,84 @@ public class LanguageSettingsManager {
 			provider = LanguageSettingsManager.getWorkspaceProvider(id);
 		
 		return provider;
+	}
+
+	/**
+	 * Find language IDs for the resource represented by resource description.
+	 * Under the hood build component is inquired and the language IDs would
+	 * commonly come from the input type(s).
+	 * 
+	 * @param rcDescription - resource description
+	 * @return list of language IDs for the resource.
+	 *    Never returns {@code null} but empty list if no languages can be found.
+	 * 
+	 */
+	public static List<String> getLanguages(ICResourceDescription rcDescription) {
+		ICLanguageSetting[] languageSettings = null;
+		if (rcDescription instanceof ICFileDescription) {
+			ICLanguageSetting languageSetting = ((ICFileDescription)rcDescription).getLanguageSetting();
+			if (languageSetting != null) {
+				languageSettings = new ICLanguageSetting[] {languageSetting};
+			}
+		} else if (rcDescription instanceof ICFolderDescription) {
+			languageSettings = ((ICFolderDescription)rcDescription).getLanguageSettings();
+		}
+	
+		List<String> languageIds = new ArrayList<String>();
+		if (languageSettings != null) {
+			for (ICLanguageSetting languageSetting : languageSettings) {
+				if (languageSetting!=null) {
+					String languageId = languageSetting.getLanguageId();
+					if (languageId != null && !languageId.isEmpty()) {
+						languageIds.add(languageId);
+					}
+				}
+			}
+		}
+	
+		return languageIds;
+	}
+
+	/**
+	 * Find language IDs for the resource in given build configuration.
+	 * Under the hood build component is inquired and the language IDs would
+	 * commonly come from the input type(s).
+	 * 
+	 * @param resource - the resource to find languages for.
+	 * @param cfgDescription
+	 * @return list of language IDs for the resource.
+	 *    Never returns {@code null} but empty list if no languages can be found.
+	 */
+	public static List<String> getLanguages(IResource resource, ICConfigurationDescription cfgDescription) {
+		List<String> languageIds = new ArrayList<String>();
+		IPath prjRelPath = resource.getProjectRelativePath();
+		if (resource instanceof IFile) {
+			String langId = null;
+			if (cfgDescription != null) {
+				ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(prjRelPath, true);
+				if (ls != null) {
+					langId = ls.getLanguageId();
+				}
+			} else {
+				try {
+					ILanguage lang = LanguageManager.getInstance().getLanguageForFile((IFile) resource, null);
+					langId = lang.getId();
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
+			}
+			if (langId != null) {
+				languageIds.add(langId);
+			}
+		} else {
+			ICResourceDescription rcDes = cfgDescription.getResourceDescription(prjRelPath, false);
+			if (rcDes == null) {
+				rcDes = cfgDescription.getRootFolderDescription();
+			}
+			languageIds = getLanguages(rcDes);
+		}
+	
+		return languageIds;
 	}
 
 }

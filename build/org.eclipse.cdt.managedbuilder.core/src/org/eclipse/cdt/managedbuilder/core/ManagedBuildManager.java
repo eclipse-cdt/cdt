@@ -60,8 +60,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICFolderDescription;
-import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
@@ -4813,13 +4811,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	static public void runBuiltinSpecsDetectors(ICConfigurationDescription cfgDescription, IPath workingDirectory,
 			String[] env, IProgressMonitor monitor) {
 		IProject project = cfgDescription.getProjectDescription().getProject();
-		ICFolderDescription rootFolderDescription = cfgDescription.getRootFolderDescription();
-		List<String> languageIds = new ArrayList<String>();
-		for (ICLanguageSetting languageSetting : rootFolderDescription.getLanguageSettings()) {
-			String id = languageSetting.getLanguageId();
-			if (id!=null) {
-				languageIds.add(id);
-			}
+		List<String> languageIds = LanguageSettingsManager.getLanguages(project, cfgDescription);
+		if (languageIds.isEmpty()) {
+			return;
 		}
 
 		for (ILanguageSettingsProvider provider : cfgDescription.getLanguageSettingProviders()) {

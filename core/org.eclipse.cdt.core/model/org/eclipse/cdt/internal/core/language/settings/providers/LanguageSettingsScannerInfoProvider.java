@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2010 Andrew Gvozdev (Quoin Inc.) and others.
+ * Copyright (c) 2010, 2011 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Andrew Gvozdev (Quoin Inc.) - initial API and implementation
+ *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.language.settings.providers;
@@ -20,24 +20,18 @@ import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.settings.model.ACPathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICFolderDescription;
-import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingPathEntry;
 import org.eclipse.cdt.core.settings.model.ICMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.SettingsModelMessages;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -72,8 +66,10 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 		if (cfgDescription==null)
 			return DUMMY_SCANNER_INFO;
 
-		List<String> languageIds = getLanguageIds(cfgDescription, rc);
-		if (languageIds==null || languageIds.size()==0) {
+		List<String> languageIds = LanguageSettingsManager.getLanguages(rc, cfgDescription);
+		if (languageIds.isEmpty()) {
+			String msg = NLS.bind(SettingsModelMessages.getString("LanguageSettingsScannerInfoProvider.UnableToDetermineLanguage"), rc.toString()); //$NON-NLS-1$
+			CCorePlugin.log(new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg)));
 			return DUMMY_SCANNER_INFO;
 		}
 
@@ -119,66 +115,6 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 		}
 
 		return new ExtendedScannerInfo(definedMacros, includePaths, macroFiles, includeFiles, includePathsLocal);
-	}
-
-	private List<String> getLanguageIds(ICConfigurationDescription cfgDescription, IResource resource) {
-		List<String> languageIds = null;
-		if (resource instanceof IFile) {
-			String langId = getLanguageIdForFile(cfgDescription, resource);
-			if (langId!=null) {
-				languageIds = new ArrayList<String>(1);
-				languageIds.add(langId);
-			}
-		} else if (resource instanceof IContainer) { // IResource can be either IFile or IContainer
-			languageIds = getLanguageIdsForFolder(cfgDescription, (IContainer) resource);
-		}
-		if (languageIds==null || languageIds.size()==0) {
-			String msg = NLS.bind(SettingsModelMessages.getString("LanguageSettingsScannerInfoProvider.UnableToDetermineLanguage"), resource.toString()); //$NON-NLS-1$
-			CCorePlugin.log(new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg)));
-		}
-		return languageIds;
-	}
-
-	private String getLanguageIdForFile(ICConfigurationDescription cfgDescription, IResource resource) {
-		// For files using LanguageManager
-		try {
-			ILanguage language = LanguageManager.getInstance().getLanguageForFile((IFile) resource, cfgDescription);
-			if (language!=null) {
-				return language.getId();
-			}
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return null;
-	}
-
-	private List<String> getLanguageIdsForFolder(ICConfigurationDescription cfgDescription, IContainer resource) {
-		// Using MBS for folders. That will take language ID from input type of applicable tools in the toolchain.
-		List<String> languageIds = new ArrayList<String>();
-
-		ICFolderDescription rcDes = null;
-		ICLanguageSetting[] langSettings = null;
-		if (resource.getType() == IResource.FOLDER) { // but not IResource.PROJECT
-			IPath rcPath = resource.getProjectRelativePath();
-			rcDes = (ICFolderDescription) cfgDescription.getResourceDescription(rcPath, false);
-			langSettings = rcDes.getLanguageSettings();
-		}
-		if (langSettings==null || langSettings.length==0) {
-			// not found or IResource.PROJECT
-			ICFolderDescription rootDes = cfgDescription.getRootFolderDescription();
-			langSettings = rootDes.getLanguageSettings();
-		}
-
-		if (langSettings!=null) {
-			for (ICLanguageSetting ls : langSettings) {
-				String langId = ls.getLanguageId();
-				if (langId!=null && !languageIds.contains(langId)) {
-					languageIds.add(langId);
-				}
-			}
-		}
-
-		return languageIds;
 	}
 
 	private IPath expandVariables(IPath path, ICConfigurationDescription cfgDescription) {

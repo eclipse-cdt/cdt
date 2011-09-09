@@ -26,9 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
@@ -243,12 +242,11 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	public boolean processLine(String line, ErrorParserManager epm) {
 		errorParserManager = epm;
 		parsedResourceName = parseForResourceName(line);
+		currentResource = findResource(parsedResourceName);
 		
-		currentLanguageId = determineLanguage(parsedResourceName);
+		currentLanguageId = determineLanguage();
 		if (!isLanguageInScope(currentLanguageId))
 			return false;
-
-		currentResource = findResource(parsedResourceName);
 
 		/**
 		 * URI of directory where the build is happening. This URI could point to a remote filesystem
@@ -316,21 +314,22 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		MakeCorePlugin.log(status);
 	}
 
-	protected String determineLanguage(String parsedResourceName) {
-		if (parsedResourceName==null)
+	protected String determineLanguage() {
+		IResource rc = currentResource;
+		if (rc == null && currentProject != null && parsedResourceName != null) {
+			String fileName = new Path(parsedResourceName).lastSegment().toString();
+			// use handle; resource does not need to exist
+			rc = currentProject.getFile("__" + fileName);
+		}
+		
+		if (rc == null)
 			return null;
 	
-		String fileName = new Path(parsedResourceName).lastSegment().toString();
-		IContentTypeManager manager = Platform.getContentTypeManager();
-		IContentType contentType = manager.findContentTypeFor(fileName);
-		if (contentType==null)
+		List<String> languageIds = LanguageSettingsManager.getLanguages(rc, currentCfgDescription);
+		if (languageIds.isEmpty())
 			return null;
-		
-		ILanguage lang = LanguageManager.getInstance().getLanguage(contentType);
-		if (lang==null)
-			return null;
-		
-		return lang.getId();
+
+		return languageIds.get(0);
 	}
 
 	protected boolean isLanguageInScope(String languageId) {

@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.ui.language.settings.providers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,23 +50,16 @@ import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICFileDescription;
-import org.eclipse.cdt.core.settings.model.ICFolderDescription;
-import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
-
 
 import org.eclipse.cdt.internal.ui.newui.LanguageSettingsImages;
 import org.eclipse.cdt.internal.ui.newui.Messages;
@@ -89,7 +81,6 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	private Tree treeEntries;
 	private TreeViewer treeEntriesViewer;
 	private String currentLanguageId = null;
-	private ICLanguageSetting[] allLanguages;
 	
 	private Button builtInCheckBox;
 	private Button enableProvidersCheckBox;
@@ -320,12 +311,9 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem[] items = treeLanguages.getSelection();
 				if (items.length > 0) {
-					ICLanguageSetting langSetting = (ICLanguageSetting) items[0].getData();
-					if (langSetting != null) {
-						currentLanguageId = langSetting.getLanguageId();
-						updateTreeEntries();
-						updateButtons();
-					}
+					currentLanguageId = (String) items[0].getData();
+					updateTreeEntries();
+					updateButtons();
 				}
 			}
 		});
@@ -887,58 +875,38 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		updateButtons();
 	}
 
-	private ICLanguageSetting[] getLangSettings(ICResourceDescription rcDes) {
-		switch (rcDes.getType()) {
-		case ICSettingBase.SETTING_PROJECT:
-		case ICSettingBase.SETTING_CONFIGURATION:
-		case ICSettingBase.SETTING_FOLDER:
-			ICFolderDescription foDes = (ICFolderDescription) rcDes;
-			return foDes.getLanguageSettings();
-		case ICSettingBase.SETTING_FILE:
-			ICFileDescription fiDes = (ICFileDescription) rcDes;
-			ICLanguageSetting langSetting = fiDes.getLanguageSetting();
-			return (langSetting != null) ? new ICLanguageSetting[] { langSetting } : null;
-		}
-		return null;
-	}
-
 	private void updateTreeLanguages(ICResourceDescription rcDes) {
 		treeLanguages.removeAll();
 		TreeItem selectedLanguageItem = null;
-		allLanguages = getLangSettings(rcDes);
-		if (allLanguages != null) {
-			Arrays.sort(allLanguages, CDTListComparator.getInstance());
-			for (ICLanguageSetting langSetting : allLanguages) {
-				String langId = langSetting.getLanguageId();
-				if (langId==null || langId.length()==0)
-					continue;
 
-				ILanguage language = LanguageManager.getInstance().getLanguage(langId);
-				if (language == null)
-					continue;
+		List<String> languageIds = LanguageSettingsManager.getLanguages(rcDes);
+		Collections.sort(languageIds);
+		for (String langId : languageIds) {
+			ILanguage language = LanguageManager.getInstance().getLanguage(langId);
+			if (language == null)
+				continue;
 
-				langId = language.getName();
-				if (langId == null || langId.length()==0)
-					continue;
+			String langName = language.getName();
+			if (langName == null || langName.length()==0)
+				continue;
 
-				TreeItem t = new TreeItem(treeLanguages, SWT.NONE);
-				t.setText(0, langId);
-				t.setData(langSetting);
-				if (selectedLanguageItem == null) {
-					if (currentLanguageId!=null) {
-						if (currentLanguageId.equals(langSetting.getLanguageId())) {
-							selectedLanguageItem = t;
-						}
-					} else {
+			TreeItem t = new TreeItem(treeLanguages, SWT.NONE);
+			t.setText(0, langName);
+			t.setData(langId);
+			if (selectedLanguageItem == null) {
+				if (currentLanguageId!=null) {
+					if (currentLanguageId.equals(langId)) {
 						selectedLanguageItem = t;
-						currentLanguageId = langSetting.getLanguageId();
 					}
+				} else {
+					selectedLanguageItem = t;
+					currentLanguageId = langId;
 				}
 			}
+		}
 
-			if (selectedLanguageItem != null) {
-				treeLanguages.setSelection(selectedLanguageItem);
-			}
+		if (selectedLanguageItem != null) {
+			treeLanguages.setSelection(selectedLanguageItem);
 		}
 	}
 
@@ -988,24 +956,20 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 providers:	for (ILanguageSettingsProvider provider : providers) {
 				ILanguageSettingsEditableProvider writableProvider = null;
 				if (provider instanceof ILanguageSettingsEditableProvider) {
-					TreeItem[] tisLang = treeLanguages.getItems();
-					for (TreeItem tiLang : tisLang) {
-						Object item = tiLang.getData();
-						if (item instanceof ICLanguageSetting) {
-							String languageId = ((ICLanguageSetting)item).getLanguageId();
-							if (languageId!=null) {
-								if (provider.getSettingEntries(cfgDescription, rc, languageId)!=null) {
-									try {
-										// clone providers to be able to "Cancel" in UI
-										if (writableProvider==null) {
-											writableProvider = ((ILanguageSettingsEditableProvider) provider).clone();
-										}
-										writableProvider.setSettingEntries(cfgDescription, rc, languageId, null);
-										changed = true;
-									} catch (CloneNotSupportedException e) {
-										CUIPlugin.log("Internal Error: cannot clone provider "+provider.getId(), e);
-										continue providers;
+					for (TreeItem langItems : treeLanguages.getItems()) {
+						String langId = (String)langItems.getData();
+						if (langId!=null) {
+							if (provider.getSettingEntries(cfgDescription, rc, langId)!=null) {
+								try {
+									// clone providers to be able to "Cancel" in UI
+									if (writableProvider==null) {
+										writableProvider = ((ILanguageSettingsEditableProvider) provider).clone();
 									}
+									writableProvider.setSettingEntries(cfgDescription, rc, langId, null);
+									changed = true;
+								} catch (CloneNotSupportedException e) {
+									CUIPlugin.log("Internal Error: cannot clone provider "+provider.getId(), e);
+									continue providers;
 								}
 							}
 						}
@@ -1073,23 +1037,15 @@ providers:	for (ILanguageSettingsProvider provider : providers) {
 		if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_NO_SHOW_PROVIDERS))
 			return false;
 
-		//filter out files not associated with any languages
+		//filter out files not associated with any languages such as *.o
 		if (page.isForFile()) {
-			ICLanguageSetting [] langSettings = getLangSettings(getResDesc());
-			if (langSettings == null)
-				return false;
-
-			// files like *.o may have langSettings but no associated language
-			for (ICLanguageSetting langSetting : langSettings) {
-				String langId = langSetting.getLanguageId();
-				if (langId!=null && langId.length()>0) {
-					LanguageManager langManager = LanguageManager.getInstance();
-					ILanguageDescriptor langDes = langManager.getLanguageDescriptor(langId);
-					if (langDes != null)
-						return true;
-				}
+			List<String> languageIds = LanguageSettingsManager.getLanguages(getResDesc());
+			for (String langId : languageIds) {
+				LanguageManager langManager = LanguageManager.getInstance();
+				ILanguage language = langManager.getLanguage(langId);
+				if (language != null)
+					return true;
 			}
-	
 			return false;
 		}
 		

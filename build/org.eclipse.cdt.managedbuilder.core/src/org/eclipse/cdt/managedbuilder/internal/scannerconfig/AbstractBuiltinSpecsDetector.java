@@ -148,7 +148,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	}
 	
 	@Override
-	protected String determineLanguage(String parsedResourceName) {
+	protected String determineLanguage() {
 		// language id is supposed to be set by run(), just return it
 		return currentLanguageId;
 	}

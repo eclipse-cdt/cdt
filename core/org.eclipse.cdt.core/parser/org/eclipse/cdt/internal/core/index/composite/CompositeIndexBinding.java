@@ -46,7 +46,7 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 		this.rbinding = rbinding;
 	}
 	
-	public ILinkage getLinkage() throws CoreException {
+	public ILinkage getLinkage() {
 		return rbinding.getLinkage();
 	}
 

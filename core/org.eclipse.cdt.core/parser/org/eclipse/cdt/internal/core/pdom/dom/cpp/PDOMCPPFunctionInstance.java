@@ -71,7 +71,7 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 	
 	public boolean isExplicitSpecialization() {
 		try {
-			return hasDefinition();
+			return hasDeclaration();
 		} catch (CoreException e) {
 			return false;
 		}

@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
@@ -42,7 +41,7 @@ public interface IBinding extends IAdaptable {
 	 * Returns the linkage the binding belongs to. C++-declarations declared as
 	 * extern "C" will still return c++-linkage.
 	 */
-	public ILinkage getLinkage() throws CoreException;
+	public ILinkage getLinkage();
 	
 	/**
 	 * Returns the binding that owns this binding, or <code>null</code> if there is no owner.

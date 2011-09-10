@@ -27,7 +27,7 @@ public interface IIndexFragmentBinding extends IIndexBinding {
 	/**
 	 * Returns the linkage the binding belongs to.
 	 */
-	ILinkage getLinkage() throws CoreException;
+	ILinkage getLinkage();
 	
 	/**
      * Returns whether this binding has any definitions associated with it

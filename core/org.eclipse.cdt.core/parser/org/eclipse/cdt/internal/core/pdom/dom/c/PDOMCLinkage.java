@@ -14,7 +14,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -110,6 +109,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	private PDOMBinding createBinding(PDOMNode parent, IBinding binding, long localToFile) throws CoreException {
 		PDOMBinding pdomBinding= null;
 
+		PDOMNode insertIntoIndex= null;
 		if (binding instanceof IField) { // must be before IVariable
 			if (parent instanceof IPDOMMemberOwner)
 				pdomBinding = new PDOMCField(this, (IPDOMMemberOwner)parent, (IField) binding);
@@ -124,15 +124,11 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		} else if (binding instanceof IEnumeration) {
 			pdomBinding = new PDOMCEnumeration(this, parent, (IEnumeration) binding);
 		} else if (binding instanceof IEnumerator) {
-			try {
-				IType enumeration= ((IEnumerator)binding).getType();
-				if (enumeration instanceof IEnumeration) {
-					PDOMBinding pdomEnumeration = adaptBinding((IEnumeration) enumeration);
-					if (pdomEnumeration instanceof PDOMCEnumeration)
-						pdomBinding = new PDOMCEnumerator(this, parent, (IEnumerator) binding, (PDOMCEnumeration)pdomEnumeration);
-				}
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
+			assert parent instanceof IEnumeration;
+			pdomBinding = new PDOMCEnumerator(this, parent, (IEnumerator) binding);
+			insertIntoIndex= parent.getParentNode();
+			if (insertIntoIndex == null) {
+				insertIntoIndex= this;
 			}
 		} else if (binding instanceof ITypedef) {
 			pdomBinding = new PDOMCTypedef(this, parent, (ITypedef)binding);
@@ -141,7 +137,12 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		if (pdomBinding != null) {
 			pdomBinding.setLocalToFileRec(localToFile);
 			parent.addChild(pdomBinding);
-			insertIntoNestedBindingsIndex(pdomBinding);
+			if (insertIntoIndex != null) {
+				insertIntoIndex.addChild(pdomBinding);
+			}
+			if (parent != this && insertIntoIndex != this) {
+				insertIntoNestedBindingsIndex(pdomBinding);
+			}
 		}
 		return pdomBinding;
 	}
@@ -214,10 +215,6 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		} 
 		
 		IBinding owner= binding.getOwner();
-		// For plain c the enumeration type is not the parent of the enumeration item.
-		if (owner instanceof IEnumeration) {
-			owner= owner.getOwner();
-		}
 		if (owner == null) {
 			return this;
 		}
@@ -263,23 +260,11 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		if (parent == null) {
 			parent= getAdaptedParent(binding);
 		}
-		PDOMNode inheritFileLocal= parent;
-		if (binding instanceof IEnumerator) {
-			try {
-				IType enumeration= ((IEnumerator)binding).getType();
-				if (enumeration instanceof IEnumeration) {
-					inheritFileLocal= adaptBinding((IEnumeration) enumeration);
-				}
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
-			}
-		}
-
 		if (parent == this) {
 			final int[] bindingTypes = new int[] {getBindingType(binding)};
 			final char[] nameChars = binding.getNameCharArray();
 			PDOMBinding nonLocal= FindBinding.findBinding(getIndex(), this, nameChars, bindingTypes, 0);
-			long localToFileRec= getLocalToFileRec(inheritFileLocal, binding, nonLocal);
+			long localToFileRec= getLocalToFileRec(parent, binding, nonLocal);
 			if (localToFileRec == 0)
 				return nonLocal;
 			localToFileHolder[0]= localToFileRec;
@@ -289,7 +274,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			final int[] bindingTypes = new int[] {getBindingType(binding)};
 			final char[] nameChars = binding.getNameCharArray();
 			PDOMBinding nonLocal= FindBinding.findBinding(parent, this, nameChars, bindingTypes, 0);
-			long localToFileRec= getLocalToFileRec(inheritFileLocal, binding, nonLocal);
+			long localToFileRec= getLocalToFileRec(parent, binding, nonLocal);
 			if (localToFileRec == 0)
 				return nonLocal;
 			localToFileHolder[0]= localToFileRec;

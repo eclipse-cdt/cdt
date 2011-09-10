@@ -1893,7 +1893,7 @@ public class CPPVisitor extends ASTQueries {
 					return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
 				}
 				type = (IType) CPPTemplates.instantiate(initializer_list_template,
-						new ICPPTemplateArgument[] { new CPPTemplateArgument(type) }, true);
+						new ICPPTemplateArgument[] { new CPPTemplateArgument(type) });
 				if (type instanceof IProblemBinding) {
 					return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
 				}
@@ -1924,7 +1924,7 @@ public class CPPVisitor extends ASTQueries {
 		type = argument.getTypeValue();
 		if (initClause instanceof ICPPASTInitializerList) {
 			type = (IType) CPPTemplates.instantiate(initializer_list_template,
-					new ICPPTemplateArgument[] { new CPPTemplateArgument(type) }, true);
+					new ICPPTemplateArgument[] { new CPPTemplateArgument(type) });
 		}
 		return decorateType(type, declSpec, declarator);
 	}

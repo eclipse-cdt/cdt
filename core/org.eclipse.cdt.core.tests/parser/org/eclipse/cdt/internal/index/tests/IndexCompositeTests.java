@@ -53,6 +53,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 	private static final int NONE = 0, REFS = IIndexManager.ADD_DEPENDENCIES;
 	private static final int REFD = IIndexManager.ADD_DEPENDENT, BOTH = REFS | REFD;
 	private static final IndexFilter FILTER= new IndexFilter() {
+		@Override
 		public boolean acceptBinding(IBinding binding) throws CoreException {
 			if (binding instanceof ICPPMethod) {
 				return !((ICPPMethod) binding).isImplicit();
@@ -419,6 +420,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 		index.acquireReadLock();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		if (index != null) {
 			index.releaseReadLock();
@@ -451,7 +453,7 @@ class ProjectBuilder {
 		return this;
 	}
 
-	ICProject create() throws CoreException {
+	ICProject create() throws Exception {
 		ICProject result = cpp ?
 				CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER) :
 				CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
@@ -466,7 +468,7 @@ class ProjectBuilder {
 		result.getProject().setDescription(desc, new NullProgressMonitor());
 
 		CCorePlugin.getIndexManager().setIndexerId(result, IPDOMManager.ID_FAST_INDEXER);
-		CCorePlugin.getIndexManager().joinIndexer(4000, new NullProgressMonitor());
+		BaseTestCase.waitForIndexer(result);
 		return result;
 	}
 }

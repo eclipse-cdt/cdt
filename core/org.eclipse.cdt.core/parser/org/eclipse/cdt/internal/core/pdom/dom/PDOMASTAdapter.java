@@ -41,7 +41,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.core.runtime.CoreException;
 
 public class PDOMASTAdapter {
 	private static class AnonymousASTName implements IASTName {
@@ -253,7 +252,7 @@ public class PDOMASTAdapter {
 			return fDelegate.getEnumerators();
 		}
 
-		public ILinkage getLinkage() throws CoreException {
+		public ILinkage getLinkage() {
 			return fDelegate.getLinkage();
 		}
 
@@ -321,7 +320,7 @@ public class PDOMASTAdapter {
 			return fDelegate.getKey();
 		}
 
-		public ILinkage getLinkage() throws CoreException {
+		public ILinkage getLinkage() {
 			return fDelegate.getLinkage();
 		}
 
@@ -395,7 +394,7 @@ public class PDOMASTAdapter {
 			return fDelegate.getAdapter(adapter);
 		}
 
-		public ILinkage getLinkage() throws CoreException {
+		public ILinkage getLinkage() {
 			return fDelegate.getLinkage();
 		}
 

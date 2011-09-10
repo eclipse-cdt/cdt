@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * Marker for bindings in the pdom
@@ -33,5 +32,5 @@ public interface IPDOMBinding extends IPDOMNode, IIndexFragmentBinding {
 	/**
 	 * Returns the linkage of the binding.
 	 */
-	PDOMLinkage getLinkage() throws CoreException;
+	PDOMLinkage getLinkage();
 }

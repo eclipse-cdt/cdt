@@ -57,7 +57,7 @@ public class BaseTestCase extends TestCase {
 		super(name);
 	}
 
-	public NullProgressMonitor npm() {
+	public static NullProgressMonitor npm() {
 		return new NullProgressMonitor();
 	}
 
@@ -284,7 +284,7 @@ public class BaseTestCase extends TestCase {
 		}
 	}
     
-    protected void waitForIndexer(ICProject project) throws InterruptedException {
+    public static void waitForIndexer(ICProject project) throws InterruptedException {
 		final PDOMManager indexManager = CCoreInternals.getPDOMManager();
 		assertTrue(indexManager.joinIndexer(10000, npm()));
 		long waitms= 1;

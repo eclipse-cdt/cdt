@@ -129,7 +129,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	public ICPPClassScope getCompositeScope() {
 		if (fScope == null) {
 			try {
-				if (hasDefinition()) {
+				if (hasOwnScope()) {
 					fScope= new PDOMCPPClassScope(this);
 					return fScope;
 				} 
@@ -138,6 +138,10 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 			fScope= new PDOMCPPClassSpecializationScope(this);
 		}
 		return fScope;
+	}
+
+	protected boolean hasOwnScope() throws CoreException {
+		return hasDefinition();
 	}
 
 	public PDOMCPPBase getFirstBase() throws CoreException {

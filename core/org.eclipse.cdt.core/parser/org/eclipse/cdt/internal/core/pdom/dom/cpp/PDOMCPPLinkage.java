@@ -638,21 +638,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (parent == null) {
 			parent= adaptOrAddParent(false, binding);
 		}
-		PDOMNode inheritFileLocal= parent;
-		if (binding instanceof IEnumerator) {
-			try {
-				IType enumeration= ((IEnumerator) binding).getType();
-				if (enumeration instanceof IEnumeration) {
-					inheritFileLocal= adaptBinding((IEnumeration) enumeration);
-				}
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
-			}
-		}
-
 		if (parent == this) {
 			PDOMBinding glob= CPPFindBinding.findBinding(getIndex(), this, binding, 0);
-			final long loc= getLocalToFileRec(inheritFileLocal, binding, glob);
+			final long loc= getLocalToFileRec(parent, binding, glob);
 			if (loc == 0) 
 				return glob;
 			fileLocalRecHolder[0]= loc;
@@ -661,7 +649,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (parent instanceof PDOMCPPNamespace) {
 			final BTree btree = ((PDOMCPPNamespace) parent).getIndex();
 			PDOMBinding glob= CPPFindBinding.findBinding(btree, this, binding, 0);
-			final long loc= getLocalToFileRec(inheritFileLocal, binding, glob);
+			final long loc= getLocalToFileRec(parent, binding, glob);
 			if (loc == 0) 
 				return glob;
 			fileLocalRecHolder[0]= loc;
@@ -673,7 +661,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 		if (parent instanceof IPDOMMemberOwner) {
 			PDOMBinding glob= CPPFindBinding.findBinding(parent, this, binding, 0);
-			final long loc= getLocalToFileRec(inheritFileLocal, binding, glob);
+			final long loc= getLocalToFileRec(parent, binding, glob);
 			if (loc == 0) 
 				return glob;
 			fileLocalRecHolder[0]= loc;

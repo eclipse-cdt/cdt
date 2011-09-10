@@ -14,12 +14,13 @@ package org.eclipse.cdt.internal.core.index;
  * Constants used by IIndexFragment implementations for identifying persisted binding types
  */
 public interface IIndexCBindingConstants {
-	 int CVARIABLE = IIndexBindingConstants.LAST_CONSTANT + 1;
-	 int CFUNCTION = IIndexBindingConstants.LAST_CONSTANT + 2;
-	 int CSTRUCTURE = IIndexBindingConstants.LAST_CONSTANT + 3;
-	 int CFIELD = IIndexBindingConstants.LAST_CONSTANT + 4;
-	 int CENUMERATION = IIndexBindingConstants.LAST_CONSTANT + 5;
-	 int CENUMERATOR = IIndexBindingConstants.LAST_CONSTANT + 6;
-	 int CTYPEDEF = IIndexBindingConstants.LAST_CONSTANT + 7;
-	 int CPARAMETER = IIndexBindingConstants.LAST_CONSTANT + 8;
+	int CENUMERATOR = IIndexBindingConstants.ENUMERATOR;
+
+	int CVARIABLE = IIndexBindingConstants.LAST_CONSTANT + 1;
+	int CFUNCTION = IIndexBindingConstants.LAST_CONSTANT + 2;
+	int CSTRUCTURE = IIndexBindingConstants.LAST_CONSTANT + 3;
+	int CFIELD = IIndexBindingConstants.LAST_CONSTANT + 4;
+	int CENUMERATION = IIndexBindingConstants.LAST_CONSTANT + 5;
+	int CTYPEDEF = IIndexBindingConstants.LAST_CONSTANT + 7;
+	int CPARAMETER = IIndexBindingConstants.LAST_CONSTANT + 8;
 }

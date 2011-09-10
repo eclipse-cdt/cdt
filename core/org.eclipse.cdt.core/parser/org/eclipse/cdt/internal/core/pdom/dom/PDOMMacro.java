@@ -357,8 +357,8 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 		return false;
 	}
 
-	public PDOMLinkage getLinkage() throws CoreException {
-		return getFile().getLinkage();
+	public PDOMLinkage getLinkage() {
+		return fLinkage;
 	}
 
 	public IIndexScope getScope() {

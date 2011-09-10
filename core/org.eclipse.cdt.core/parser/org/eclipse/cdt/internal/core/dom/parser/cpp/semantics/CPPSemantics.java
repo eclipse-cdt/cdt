@@ -373,7 +373,7 @@ public class CPPSemantics {
 						if (data.tu != null) {
 							ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
 							ICPPTemplateArgument[] args = CPPTemplates.createTemplateArgumentArray(id);
-							IBinding inst= CPPTemplates.instantiate((ICPPClassTemplate) cls, args, false);
+							IBinding inst= CPPTemplates.instantiate((ICPPClassTemplate) cls, args);
 							if (inst instanceof ICPPClassType) {
 								cls= (ICPPClassType) inst;
 							}
@@ -955,7 +955,7 @@ public class CPPSemantics {
 				return;
 			
 			// Lookup in base classes
-			if (!data.usingDirectivesOnly && scope instanceof ICPPClassScope) {
+			if (!data.usingDirectivesOnly && scope instanceof ICPPClassScope && !data.ignoreMembers) {
 				BaseClassLookup.lookupInBaseClasses(data, (ICPPClassScope) scope, fileSet);
 				if (!data.contentAssist && data.hasResultOrProblem()) 
 					return;

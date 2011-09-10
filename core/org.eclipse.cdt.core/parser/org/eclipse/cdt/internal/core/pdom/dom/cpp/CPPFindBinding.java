@@ -104,7 +104,6 @@ public class CPPFindBinding extends FindBinding {
 
 	public static PDOMBinding findBinding(PDOMNode node, PDOMLinkage linkage, char[] name, int constant,
 			int sigHash, long localToFileRec) throws CoreException {
-		// mstodo faster searches
 		CPPFindBindingVisitor visitor= new CPPFindBindingVisitor(linkage, name, constant, sigHash,
 				localToFileRec);
 		try {

@@ -77,6 +77,12 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 		}
 	}
 	
+	@Override
+	protected boolean hasOwnScope() throws CoreException {
+		// An instance with a declaration does not use the original template.
+		return hasDeclaration();
+	}
+	
 	public boolean isExplicitSpecialization() {
 		return !(getCompositeScope() instanceof ICPPClassSpecializationScope);
 	}

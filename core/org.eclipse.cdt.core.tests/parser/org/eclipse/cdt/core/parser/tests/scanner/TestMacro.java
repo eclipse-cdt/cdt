@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.core.runtime.CoreException;
 
 final class TestMacro implements IMacroBinding {
 	private String fName;
@@ -36,7 +35,7 @@ final class TestMacro implements IMacroBinding {
 		return fParams != null;
 	}
 
-	public ILinkage getLinkage() throws CoreException {
+	public ILinkage getLinkage() {
 		return null;
 	}
 

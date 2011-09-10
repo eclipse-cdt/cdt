@@ -26,9 +26,8 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -83,9 +82,10 @@ public class CPPClassSpecialization extends CPPSpecialization
 		}
 	}
 	
-	private class FindDefinitionAction extends ASTVisitor {
+	private class FindDeclarationDefinitionAction extends ASTVisitor {
 		private char [] nameArray = CPPClassSpecialization.this.getNameCharArray();
-		public IASTName result = null;
+		public IASTName foundDef = null;
+		public IASTName foundDecl = null;
 
 		{
 			shouldVisitNames          = true;
@@ -95,32 +95,27 @@ public class CPPClassSpecialization extends CPPSpecialization
 		}
 
 		@Override
-		public int visit( IASTName name ){
-			if( name instanceof ICPPASTTemplateId )
-				return PROCESS_SKIP;
-			if( name instanceof ICPPASTQualifiedName )
-				return PROCESS_CONTINUE;
-			char[] c = name.getLookupKey();
-
-			if (name.getParent() instanceof ICPPASTQualifiedName) {
-				IASTName[] ns = ((ICPPASTQualifiedName) name.getParent()).getNames();
-				if (ns[ns.length - 1] != name)
-					return PROCESS_CONTINUE;
-				name = (IASTName) name.getParent();
-			}
-
-			if (name.getParent() instanceof ICPPASTCompositeTypeSpecifier && CharArrayUtils.equals(c, nameArray)) {
-				IBinding binding = name.resolveBinding();
-				if (binding == CPPClassSpecialization.this) {
-					if (name instanceof ICPPASTQualifiedName) {
-						IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-						name = ns[ns.length - 1];
+		public int visit(IASTName name) {
+			final IASTNode parent = name.getParent();
+			final boolean isDef = parent instanceof ICPPASTCompositeTypeSpecifier;
+			final boolean isDecl = !isDef && parent instanceof ICPPASTElaboratedTypeSpecifier
+					&& parent.getParent() instanceof IASTSimpleDeclaration;
+			if (isDef || isDecl) {
+				name= name.getLastName();
+				if (CharArrayUtils.equals(name.getLookupKey(), nameArray)) {
+					IBinding binding = name.resolveBinding();
+					if (binding == CPPClassSpecialization.this) {
+						if (isDef) {
+							foundDef= name;
+							return PROCESS_ABORT;
+						}
+						if (foundDecl == null)
+							foundDecl= name;
 					}
-					result = name;
-					return PROCESS_ABORT;
 				}
 			}
-			return PROCESS_CONTINUE; 
+			// Don't look at members of qualified names or template ids.
+			return PROCESS_SKIP;
 		}
 
 		@Override
@@ -155,9 +150,12 @@ public class CPPClassSpecialization extends CPPSpecialization
 				orig= ((ICPPSpecialization) orig).getSpecializedBinding();
 			}
 			if (tu != null) {
-				FindDefinitionAction action= new FindDefinitionAction();
+				FindDeclarationDefinitionAction action= new FindDeclarationDefinitionAction();
 				tu.accept( action );
-				definition = action.result;
+				definition = action.foundDef;
+				if (definition == null && action.foundDecl != null) {
+					addDeclaration(action.foundDecl);
+				}
 			}
 			checked = true;
 		}
@@ -260,10 +258,14 @@ public class CPPClassSpecialization extends CPPSpecialization
 		if (specScope != null)
 			return specScope;
 		
-		return getCompositeTypeSpecifier().getScope();
+		final ICPPASTCompositeTypeSpecifier typeSpecifier = getCompositeTypeSpecifier();
+		if (typeSpecifier != null)
+			return typeSpecifier.getScope();
+		
+		return null;
 	}
 	
-	private ICPPClassSpecializationScope getSpecializationScope() {
+	protected ICPPClassSpecializationScope getSpecializationScope() {
 		checkForDefinition();
 		if (getDefinition() != null)
 			return null;

@@ -25,7 +25,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameter;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * This class represents a template function used for deducing 'auto' types (C++0x: 7.1.6.4).
@@ -115,7 +114,7 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
-	public ILinkage getLinkage() throws CoreException {
+	public ILinkage getLinkage() {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 

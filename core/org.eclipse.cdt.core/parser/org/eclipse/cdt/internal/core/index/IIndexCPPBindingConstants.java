@@ -15,6 +15,8 @@ package org.eclipse.cdt.internal.core.index;
  * Constants used by IIndexFragment implementations for identifying persisted binding types.
  */
 public interface IIndexCPPBindingConstants {
+	int CPPENUMERATOR = IIndexBindingConstants.ENUMERATOR;
+
 	int CPPVARIABLE = IIndexBindingConstants.LAST_CONSTANT + 1;
 	int CPPFUNCTION = IIndexBindingConstants.LAST_CONSTANT + 2;
 	int CPPCLASSTYPE = IIndexBindingConstants.LAST_CONSTANT + 3;
@@ -24,7 +26,6 @@ public interface IIndexCPPBindingConstants {
 	int CPPNAMESPACEALIAS = IIndexBindingConstants.LAST_CONSTANT + 7;
 	int CPPPARAMETER = IIndexBindingConstants.LAST_CONSTANT + 9;
 	int CPPENUMERATION = IIndexBindingConstants.LAST_CONSTANT + 10;
-	int CPPENUMERATOR = IIndexBindingConstants.LAST_CONSTANT + 11;
 	int CPPTYPEDEF = IIndexBindingConstants.LAST_CONSTANT + 12;
 	int CPP_CONSTRUCTOR= IIndexBindingConstants.LAST_CONSTANT + 14;
 	int CPP_FUNCTION_TEMPLATE= IIndexBindingConstants.LAST_CONSTANT + 16;

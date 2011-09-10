@@ -522,18 +522,19 @@
          name="%TargetName.xlc.exe"
          projectMacroSupplier="org.eclipse.cdt.managedbuilder.xlc.ui.XLCProjectMacroSupplier">
          <configuration
-            name="%ConfigName.Dbg"
-            artifactExtension="exe"
-            cleanCommand="rm -rf"
-            errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-            id="cdt.managedbuild.config.xlc.exe.debug">
+               artifactExtension="exe"
+               cleanCommand="rm -rf"
+               errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
+               id="cdt.managedbuild.config.xlc.exe.debug"
+               languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser"
+               name="%ConfigName.Dbg">
             <toolChain
                archList="all"
                configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.xlc.aix.AixConfigurationEnvironmentSupplier"
                id="cdt.managedbuild.toolchain.xlc.exe.debug"
                name="%ToolChainName.Dbg"
                osList="all"
-               scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP"
+               languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;*org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
                targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.debug;cdt.managedbuild.tool.xlc.cpp.linker.exe.debug">
                <targetPlatform
                   id="cdt.managedbuild.target.xlc.platform.exe.debug"
@@ -588,17 +589,18 @@
             </toolChain>
          </configuration>
          <configuration
-            name="%ConfigName.Rel"
-            artifactExtension="exe"
-            cleanCommand="rm -rf"
-            errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-            id="cdt.managedbuild.config.xlc.exe.release">
+               name="%ConfigName.Rel"
+               artifactExtension="exe"
+               cleanCommand="rm -rf"
+               errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
+               languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser"
+               id="cdt.managedbuild.config.xlc.exe.release">
             <toolChain
                archList="all"
                id="cdt.managedbuild.toolchain.xlc.exe.release"
                name="%ToolChainName.Rel"
                osList="all"
-               scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP"
+               languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;*org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
                targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.release;cdt.managedbuild.tool.xlc.cpp.linker.exe.release">
                <targetPlatform
                   id="cdt.managedbuild.target.xlc.platform.exe.release"
@@ -661,15 +663,17 @@
          name="%TargetName.xlc.so"
          projectMacroSupplier="org.eclipse.cdt.managedbuilder.xlc.ui.XLCProjectMacroSupplier">
          <configuration
-            name="%ConfigName.Dbg"
-            cleanCommand="rm -rf"
-            artifactExtension="so"
-            errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-            id="cdt.managedbuild.config.xlc.so.debug">
+               name="%ConfigName.Dbg"
+               cleanCommand="rm -rf"
+               artifactExtension="so"
+               errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
+               languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser"
+               id="cdt.managedbuild.config.xlc.so.debug">
             <toolChain
-               name="%ToolChainName.Dbg"
-               targetTool="cdt.managedbuild.tool.xlc.c.linker.so.debug;cdt.managedbuild.tool.xlc.cpp.linker.so.debug"
-               id="cdt.managedbuild.toolchain.xlc.so.debug">
+                  id="cdt.managedbuild.toolchain.xlc.so.debug"
+                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;*org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+                  name="%ToolChainName.Dbg"
+                  targetTool="cdt.managedbuild.tool.xlc.c.linker.so.debug;cdt.managedbuild.tool.xlc.cpp.linker.so.debug">
                <targetPlatform
                   id="cdt.managedbuild.target.xlc.platform.so.debug"
                   name="%PlatformName.Dbg"
@@ -723,15 +727,17 @@
             </toolChain>
          </configuration>
          <configuration
-            name="%ConfigName.Rel"
-            cleanCommand="rm -rf"
-            artifactExtension="so"
-            errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-            id="cdt.managedbuild.config.xlc.so.release">
+               name="%ConfigName.Rel"
+               cleanCommand="rm -rf"
+               artifactExtension="so"
+               errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
+               languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser"
+               id="cdt.managedbuild.config.xlc.so.release">
             <toolChain
-               name="%ToolChainName.Rel"
-               targetTool="cdt.managedbuild.tool.xlc.c.linker.so.release;cdt.managedbuild.tool.xlc.cpp.linker.so.release"
-               id="cdt.managedbuild.toolchain.xlc.so.release">
+                  id="cdt.managedbuild.toolchain.xlc.so.release"
+                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;*org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+                  name="%ToolChainName.Rel"
+                  targetTool="cdt.managedbuild.tool.xlc.c.linker.so.release;cdt.managedbuild.tool.xlc.cpp.linker.so.release">
                <targetPlatform
                   id="cdt.managedbuild.target.xlc.platform.so.release"
                   name="%PlatformName.Rel"
@@ -793,15 +799,17 @@
          name="%TargetName.xlc.lib"
          projectMacroSupplier="org.eclipse.cdt.managedbuilder.xlc.ui.XLCProjectMacroSupplier">
          <configuration
-            name="%ConfigName.Dbg"
-            cleanCommand="rm -rf"
-            artifactExtension="lib"
-            errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-            id="cdt.managedbuild.config.xlc.lib.debug">
+               name="%ConfigName.Dbg"
+               cleanCommand="rm -rf"
+               artifactExtension="lib"
+               errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
+               languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser"
+               id="cdt.managedbuild.config.xlc.lib.debug">
             <toolChain
-               name="%ToolChainName.Dbg"
-               targetTool="cdt.managedbuild.tool.xlc.archiver.lib.debug"
-               id="cdt.managedbuild.toolchain.xlc.lib.debug">
+                  id="cdt.managedbuild.toolchain.xlc.lib.debug"
+                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;*org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+                  name="%ToolChainName.Dbg"
+                  targetTool="cdt.managedbuild.tool.xlc.archiver.lib.debug">
                <targetPlatform
                   id="cdt.managedbuild.target.xlc.platform.lib.debug"
                   name="%PlatformName.Dbg"
@@ -851,15 +859,17 @@
             </toolChain>
          </configuration>
          <configuration
-            name="%ConfigName.Rel"
-            cleanCommand="rm -rf"
-            artifactExtension="lib"
-            errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-            id="cdt.managedbuild.config.xlc.lib.release">
+               name="%ConfigName.Rel"
+               cleanCommand="rm -rf"
+               artifactExtension="lib"
+               errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
+               languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser"
+               id="cdt.managedbuild.config.xlc.lib.release">
             <toolChain
-               name="%ToolChainName.Rel"
-               targetTool="cdt.managedbuild.tool.xlc.archiver.lib.release"
-               id="cdt.managedbuild.toolchain.xlc.lib.release">
+                  id="cdt.managedbuild.toolchain.xlc.lib.release"
+                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;*org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+                  name="%ToolChainName.Rel"
+                  targetTool="cdt.managedbuild.tool.xlc.archiver.lib.release">
                <targetPlatform
                   id="cdt.managedbuild.target.xlc.platform.lib.release"
                   name="%PlatformName.Rel"
@@ -3732,7 +3742,6 @@
             id="cdt.managedbuild.tool.xlc.c.compiler.input"
             name="%inputType.c.name"
             primaryInput="true"
-            scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
             sourceContentType="org.eclipse.cdt.core.cSource"
             sources="c">
          </inputType>
@@ -3753,7 +3762,6 @@
             id="cdt.managedbuild.tool.xlc.cpp.c.compiler.input"
             name="%inputType.c.name.2"
             primaryInput="true"
-            scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
             sourceContentType="org.eclipse.cdt.core.cSource"
             sources="c">
          </inputType>
@@ -3763,7 +3771,6 @@
             id="cdt.managedbuild.tool.xlc.cpp.compiler.input"
             name="%inputType.cpp.name"
             primaryInput="true"
-            scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP"
             sourceContentType="org.eclipse.cdt.core.cxxSource"
             sources="c,C,cc,cxx,cpp">
          </inputType>

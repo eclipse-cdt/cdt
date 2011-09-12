@@ -12,6 +12,7 @@
       <toc
             primary="false"
             file="topics_Reference.xml"/>
+      <index path="index/"/>
    </extension>
 
 </plugin>

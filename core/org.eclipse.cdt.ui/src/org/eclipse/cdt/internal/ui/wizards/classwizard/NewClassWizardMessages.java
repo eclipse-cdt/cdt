@@ -17,8 +17,6 @@ public final class NewClassWizardMessages extends NLS {
 	public static String NewClassCreationWizard_title;
 	public static String NewClassCreationWizardPage_title;
 	public static String NewClassCreationWizardPage_description;
-	public static String NewClassCreationWizardPage_getTypes_noClasses_title;
-	public static String NewClassCreationWizardPage_getTypes_noClasses_message;
 	public static String NewClassCreationWizardPage_getTypes_noNamespaces_title;
 	public static String NewClassCreationWizardPage_getTypes_noNamespaces_message;
 	public static String NewClassCreationWizardPage_sourceFolder_label;

@@ -1178,14 +1178,6 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     }
     
     private void chooseBaseClasses() {
-        ITypeInfo[] elements = NewClassWizardUtil.getReachableClasses(getCurrentProject());
-        if (elements == null || elements.length == 0) {
-            String title = NewClassWizardMessages.NewClassCreationWizardPage_getTypes_noClasses_title;
-            String message = NewClassWizardMessages.NewClassCreationWizardPage_getTypes_noClasses_message;
-            MessageDialog.openInformation(getShell(), title, message);
-            return;
-        }
-        
         List<IBaseClassInfo> oldContents = fBaseClassesDialogField.getElements();
         NewBaseClassSelectionDialog dialog = new NewBaseClassSelectionDialog(getShell());
         dialog.addListener(new ITypeSelectionListener() {
@@ -1193,16 +1185,15 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
                 addBaseClass(newBaseClass, ASTAccessVisibility.PUBLIC, false);
             }
         });
-        dialog.setElements(elements);
         int result = dialog.open();
         if (result != IDialogConstants.OK_ID) {
-            // restore the old contents
+            // Restore the old contents
             fBaseClassesDialogField.setElements(oldContents);
         }
     }
     
     /**
-     * handles changes to the method stubs field
+     * Handles changes to the method stubs field
      */
 	private final class MethodStubsFieldAdapter implements IListAdapter<IMethodStub> {
 
@@ -1667,7 +1658,6 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	
 	    ICProject project = getCurrentProject();
 	    if (project != null) {
-	    	
 		    IQualifiedTypeName fullyQualifiedName = typeName;
 			if (isNamespaceSelected()) {
                 String namespace = getNamespaceText();
@@ -1745,7 +1735,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
                     ITypeInfo baseType = baseClass.getType();
                     StatusInfo baseClassStatus = new StatusInfo();
                     if (!NewClassWizardUtil.isTypeReachable(baseType, project, includePaths)) {
-                        baseClassStatus.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_BaseClassNotExistsInProject, baseType.getQualifiedTypeName().toString()));
+                        baseClassStatus.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_BaseClassNotExistsInProject,
+                        		baseType.getQualifiedTypeName().toString()));
                     }
                     status.add(baseClassStatus);
                 }

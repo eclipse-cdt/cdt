@@ -15,7 +15,6 @@ import org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog;
 import org.eclipse.swt.widgets.Shell;
 
 public class NamespaceSelectionDialog extends TypeSelectionDialog {
-    
     private static final String DIALOG_SETTINGS = NamespaceSelectionDialog.class.getName();
     private static final int[] VISIBLE_TYPES = { ICElement.C_NAMESPACE };
     

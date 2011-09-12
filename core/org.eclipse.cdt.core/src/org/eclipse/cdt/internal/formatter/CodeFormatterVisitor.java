@@ -3460,29 +3460,43 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	private int visit(IASTSwitchStatement node) {
 		final int headerIndent= scribe.numberOfIndentations;
-		scribe.printNextToken(Token.t_switch);
-		scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_switch);
-
-		if (preferences.insert_space_after_opening_paren_in_switch) {
-			scribe.space();
+		/*
+		 * 'switch' keyword
+		 */
+		if (!startsWithMacroExpansion(node)) {
+			scribe.printNextToken(Token.t_switch);
 		}
-
-		node.getControllerExpression().accept(this);
-		scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_switch);
+		/*
+		 * Controller expression
+		 */
+		IASTExpression controllerExpression = node.getControllerExpression();
+		if (!enclosedInMacroExpansion(controllerExpression)) {
+			scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_switch);
+			if (preferences.insert_space_after_opening_paren_in_switch) {
+				scribe.space();
+			}
+		}
+		controllerExpression.accept(this);
+		if (!enclosedInMacroExpansion(controllerExpression)) {
+			scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_switch);
+		}
 		/*
 		 * switch body
 		 */
-		String switch_brace = preferences.brace_position_for_switch;
-		formatOpeningBrace(switch_brace, preferences.insert_space_before_opening_brace_in_switch);
-		scribe.startNewLine();
-		final int braceIndent= scribe.numberOfIndentations;
-		if (braceIndent > headerIndent) {
-			scribe.unIndent();
-		}
-		if (preferences.indent_switchstatements_compare_to_switch) {
-			scribe.indent();
-		}
+		String brace_position = preferences.brace_position_for_switch;
+		int braceIndent = -1;
 		IASTStatement bodyStmt= node.getBody();
+		if (!startsWithMacroExpansion(bodyStmt)) {
+			formatOpeningBrace(brace_position, preferences.insert_space_before_opening_brace_in_switch);
+			scribe.startNewLine();
+			braceIndent= scribe.numberOfIndentations;
+			if (braceIndent > headerIndent) {
+				scribe.unIndent();
+			}
+			if (preferences.indent_switchstatements_compare_to_switch) {
+				scribe.indent();
+			}
+		}
 		final List<IASTStatement> statements;
 		if (bodyStmt instanceof IASTCompoundStatement) {
 			statements= Arrays.asList(((IASTCompoundStatement) bodyStmt).getStatements());
@@ -3497,6 +3511,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				boolean wasAStatement = false;
 				for (int i = 0; i < statementsLength; i++) {
 					final IASTStatement statement = statements.get(i);
+					if (doNodeLocationsOverlap(controllerExpression, statement)) {
+						statement.accept(this);
+						continue;
+					}
 					if (statement instanceof IASTCaseStatement || statement instanceof IASTDefaultStatement) {
 						if (wasACase) {
 							scribe.startNewLine();
@@ -3598,15 +3616,17 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				}
 			}
 
-			if (preferences.indent_switchstatements_compare_to_switch) {
-				scribe.unIndent();
+			if (!startsWithMacroExpansion(bodyStmt)) {
+				if (preferences.indent_switchstatements_compare_to_switch) {
+					scribe.unIndent();
+				}
+				if (scribe.numberOfIndentations < braceIndent) {
+					scribe.indent();
+				}
+				scribe.startNewLine();
+	
+				formatClosingBrace(brace_position);
 			}
-			if (scribe.numberOfIndentations < braceIndent) {
-				scribe.indent();
-			}
-			scribe.startNewLine();
-
-			formatClosingBrace(switch_brace);
 		} finally {
 			endOfNode(bodyStmt);
 		}

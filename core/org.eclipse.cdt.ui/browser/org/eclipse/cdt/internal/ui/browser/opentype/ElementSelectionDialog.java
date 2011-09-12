@@ -9,7 +9,6 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.browser.opentype;
 
 import java.util.Arrays;
@@ -62,12 +61,10 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ElementSelectionDialog extends TypeSelectionDialog {
-
 	/**
 	 * Job to update the element list in the background.
 	 */
 	private class UpdateElementsJob extends Job {
-
 		/**
 		 * The last used prefix to query the index. <code>null</code> means
 		 * the query result should be empty.
@@ -111,14 +108,12 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			}
 			return Status.CANCEL_STATUS;
 		}
-
 	}
 
 	/**
 	 * A job listener for simple job status reporting.
 	 */
 	private final class UpdateJobListener extends JobChangeAdapter {
-
 		boolean fDone;
 		private IProgressMonitor fMonitor;
 
@@ -183,7 +178,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		fUpdateJob= new UpdateElementsJob(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_name);
 		fUpdateJob.setRule(SINGLE_INSTANCE_RULE);
 	}
-	
+
 	/*
 	 * @see org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog#create()
 	 */
@@ -242,7 +237,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		// the low-level filter is useless for us
 		return false;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.dialogs.TwoPaneElementSelector#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -261,7 +256,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		createProgressMonitorPart(parent);
 		return table;
 	}
-	
+
 	/**
 	 * Create the control for progress reporting.
 	 * @param parent
@@ -290,7 +285,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			return null;
 		}
 		HashSet<IndexTypeInfo> types = new HashSet<IndexTypeInfo>();
-		if(prefix != null) {
+		if (prefix != null) {
 			final IndexFilter filter= new IndexFilter() {
 				@Override
 				public boolean acceptBinding(IBinding binding) throws CoreException {
@@ -305,7 +300,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 				index.acquireReadLock();
 				try {
 					IIndexBinding[] bindings= index.findBindingsForPrefix(prefix, false, filter, monitor);
-					for(int i=0; i<bindings.length; i++) {
+					for (int i= 0; i < bindings.length; i++) {
 						if (i % 0x1000 == 0 && monitor.isCanceled()) {
 							return null;
 						}
@@ -315,7 +310,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 					
 					if (isVisibleType(ICElement.C_MACRO)) {
 						IIndexMacro[] macros= index.findMacrosForPrefix(prefix, IndexFilter.ALL_DECLARED, monitor);
-						for(int i=0; i<macros.length; i++) {
+						for (int i= 0; i < macros.length; i++) {
 							if (i % 0x1000 == 0 && monitor.isCanceled()) {
 								return null;
 							}
@@ -326,20 +321,20 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 				} finally {
 					index.releaseReadLock();
 				}
-			} catch(CoreException ce) {
-				CUIPlugin.log(ce);
-			} catch(InterruptedException ie) {
-				CUIPlugin.log(ie);
+			} catch (CoreException e) {
+				CUIPlugin.log(e);
+			} catch (InterruptedException e) {
+				CUIPlugin.log(e);
 			}
 		}
 		return types.toArray(new ITypeInfo[types.size()]);
 	}
-	
+
 	@Override
 	protected final void setListElements(Object[] elements) {
 		super.setListElements(elements);
 	}
-	
+
 	/**
 	 * @deprecated Unsupported
 	 */
@@ -348,12 +343,12 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	public void setElements(Object[] elements) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	protected void handleEmptyList() {
 		updateOkState();
 	}
-	
+
 	@Override
 	protected Text createFilterText(Composite parent) {
 		final Text result = super.createFilterText(parent);
@@ -377,7 +372,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			newPrefix= null;
 			needQuery= needQuery || currentPrefix != null;
 		}
-		if(needQuery || jobState == Job.WAITING  || jobState == Job.SLEEPING) {
+		if (needQuery || jobState == Job.WAITING || jobState == Job.SLEEPING) {
 			fUpdateJob.cancel();
 			fUpdateJob.scheduleQuery(newPrefix);
 		}
@@ -393,11 +388,11 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		}
 		int asterisk= userFilter.indexOf("*"); //$NON-NLS-1$
 		int questionMark= userFilter.indexOf("?"); //$NON-NLS-1$
-		int prefixEnd = asterisk < 0 ? questionMark
-				: (questionMark < 0 ? asterisk : Math.min(asterisk, questionMark));
-		return (prefixEnd==-1 ? userFilter : userFilter.substring(0, prefixEnd)).toCharArray();		
+		int prefixEnd = asterisk < 0 ? questionMark :
+				questionMark < 0 ? asterisk : Math.min(asterisk, questionMark);
+		return (prefixEnd == -1 ? userFilter : userFilter.substring(0, prefixEnd)).toCharArray();		
 	}
-	
+
 	private boolean isEquivalentPrefix(char[] currentPrefix, char[] newPrefix) {
 		if (currentPrefix == null || currentPrefix.length > newPrefix.length) {
 			return false;
@@ -406,5 +401,4 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		}
 		return new String(currentPrefix).equals(new String(newPrefix, 0, currentPrefix.length));
 	}
-
 }

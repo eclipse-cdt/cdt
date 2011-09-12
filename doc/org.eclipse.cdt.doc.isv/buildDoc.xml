@@ -5,8 +5,13 @@
 		<antcall target="convertSchemaToHtml" />
 		<!--antcall target="examplesDocCopy" /-->
 		<antcall target="generateJavadoc" />
+		<antcall target="build.index" />
 	</target>
-	
+
+	<target name="build.index" description="Builds search index for the plug-in: org.eclipse.cdt.doc.isv" if="eclipse.running">
+		<help.buildHelpIndex manifest="${basedir}/plugin.xml" destination="${basedir}" />
+	</target>
+
 	<target name="convertSchemaToHtml" if="eclipse.running">
 		<property name="dest" value="reference/extension-points" />
 	    <record name="${basedir}/cdtconvert.txt" action="start"/>

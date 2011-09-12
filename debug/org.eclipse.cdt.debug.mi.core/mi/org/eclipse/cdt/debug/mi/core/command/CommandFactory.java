@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     ENEA Software AB - CLI command extension - fix for bug 190277
+ *     Marc Khouzam (Ericsson) - New methods for new MIDataDisassemble (Bug 357073)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.mi.core.command;
@@ -88,10 +89,20 @@ public class CommandFactory {
 		return new MIDataDisassemble(getMIVersion(), start, end, mixed);
 	}
 
+	/** @since 7.2 */
+	public MIDataDisassemble createMIDataDisassemble(String start, String end, int mode) {
+		return new MIDataDisassemble(getMIVersion(), start, end, mode);
+	}
+
 	public MIDataDisassemble createMIDataDisassemble(String file, int linenum, int lines, boolean mixed) {
 		return new MIDataDisassemble(getMIVersion(), file, linenum, lines, mixed);
 	}
-
+	
+	/** @since 7.2 */
+	public MIDataDisassemble createMIDataDisassemble(String file, int linenum, int lines, int mode) {
+		return new MIDataDisassemble(getMIVersion(), file, linenum, lines, mode);
+	}
+	
 	public MIDataEvaluateExpression createMIDataEvaluateExpression(String expression) {
 		return new MIDataEvaluateExpression(getMIVersion(), expression);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Daniel Thomas (Broadcom corp.) - Added support for mode 2 and 3 (Bug 357073)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.mi.core.command;
@@ -47,8 +48,11 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  *     END-ADDR, only the lines up to END-ADDR are displayed.
  *
  *`MODE'
- *     is either 0 (meaning only disassembly) or 1 (meaning mixed source
- *     and disassembly).
+ *  - 0 disassembly
+ *  - 1 mixed source and disassembly
+ *  - 2 disassembly with raw opcodes
+ *  - 3 mixed source and disassembly with raw opcodes
+ *  Note: Modes 2 and 3 are only available starting with GDB 7.3
  *
  *Result
  *......
@@ -64,32 +68,48 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  *   * Instruction
  *
  *   Note that whatever included in the instruction field, is not
- *manipulated directely by GDB/MI, i.e. it is not possible to adjust its
+ *manipulated directly by GDB/MI, i.e. it is not possible to adjust its
  *format.
  *
  *
  */
 public class MIDataDisassemble extends MICommand 
 {
+	private static final int MIN_MODE = 0;
+	private static final int MAX_MODE = 3;
+	private static final String MODE_OUT_OF_RANGE = "Mode out of range: "; //$NON-NLS-1$
+
 	public MIDataDisassemble(String miVersion, String start, String end, boolean mode) {
+		this(miVersion, start, end, mode ? 1 : 0);
+	}
+
+	/** @since 7.2 */
+	public MIDataDisassemble(String miVersion, String start, String end, int mode) {
 		super(miVersion, "-data-disassemble"); //$NON-NLS-1$
 		setOptions(new String[]{"-s", start, "-e", end}); //$NON-NLS-1$ //$NON-NLS-2$
-		String mixed = "0"; //$NON-NLS-1$
-		if (mode) {
-			mixed = "1"; //$NON-NLS-1$
-		}
-		setParameters(new String[]{mixed});
+		
+        if (mode >= MIN_MODE && mode <= MAX_MODE) {
+        	setParameters(new String[] { Integer.toString(mode) });
+        } else {
+        	throw new IllegalArgumentException(MODE_OUT_OF_RANGE + mode);
+        }
 	}
 
 	public MIDataDisassemble(String miVersion, String file, int linenum, int lines, boolean mode) {
+		this(miVersion, file, linenum, lines, mode ? 1 : 0);
+	}
+	
+	/** @since 7.2 */
+	public MIDataDisassemble(String miVersion, String file, int linenum, int lines, int mode) {
 		super(miVersion, "-data-disassemble"); //$NON-NLS-1$
 		setOptions(new String[]{"-f", file, "-l", //$NON-NLS-1$ //$NON-NLS-2$
 			 Integer.toString(linenum), "-n", Integer.toString(lines)}); //$NON-NLS-1$
-		String mixed = "0"; //$NON-NLS-1$
-		if (mode) {
-			mixed = "1"; //$NON-NLS-1$
-		}
-		setParameters(new String[]{mixed});	
+		
+		if (mode >= MIN_MODE && mode <= MAX_MODE) {
+        	setParameters(new String[] { Integer.toString(mode) });
+        } else {
+        	throw new IllegalArgumentException(MODE_OUT_OF_RANGE + mode);
+        }
 	}
 
 	public MIDataDisassembleInfo getMIDataDisassembleInfo() throws MIException {

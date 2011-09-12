@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ILanguageSettingsEditableProvider;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
@@ -33,24 +34,37 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
 		
 		IPath projectPath = rc.getProjectRelativePath();
-		ICResourceDescription rcDescription = cfgDescription.getResourceDescription(projectPath, false);
+		ICLanguageSetting[] languageSettings = null;
+		
+		if (rc instanceof IFile) {
+			ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(projectPath, true);
+			if (ls != null) {
+				languageSettings = new ICLanguageSetting[] {ls};
+			}
+		} else {
+			ICResourceDescription rcDescription = cfgDescription.getResourceDescription(projectPath, false);
+			languageSettings = getLanguageSettings(rcDescription);
+		}
 		
 		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
-		for (ICLanguageSetting languageSetting : getLanguageSettings(rcDescription)) {
-			if (languageSetting!=null) {
-				String id = languageSetting.getLanguageId();
-				if (id!=null && id.equals(languageId)) {
-					int kindsBits = languageSetting.getSupportedEntryKinds();
-					for (int kind=1;kind<=kindsBits;kind<<=1) {
-						if ((kindsBits & kind) != 0) {
-							list.addAll(languageSetting.getSettingEntriesList(kind));
+		
+		if (languageSettings != null) {
+			for (ICLanguageSetting langSetting : languageSettings) {
+				if (langSetting!=null) {
+					String id = langSetting.getLanguageId();
+					if (id!=null && id.equals(languageId)) {
+						int kindsBits = langSetting.getSupportedEntryKinds();
+						for (int kind=1;kind<=kindsBits;kind<<=1) {
+							if ((kindsBits & kind) != 0) {
+								list.addAll(langSetting.getSettingEntriesList(kind));
+							}
 						}
+					} else {
+	//					System.err.println("languageSetting id=null: name=" + languageSetting.getName());
 					}
 				} else {
-//					System.err.println("languageSetting id=null: name=" + languageSetting.getName());
+					System.err.println("languageSetting=null: rc=" + rc);
 				}
-			} else {
-				System.err.println("languageSetting=null: rcDescription=" + rcDescription.getName());
 			}
 		}
 		return list;

@@ -48,7 +48,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.StringMatcher;
 
-
 /**
  * A dialog to select a type from a list of types.
  * 
@@ -264,20 +263,19 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	public void setVisibleTypes(int[] types) {
 		fKnownTypes.clear();
 		for (int i = 0; i < types.length; ++i) {
-			fKnownTypes.add(new Integer(types[i]));
+			fKnownTypes.add(types[i]);
 		}
 	}
 	
 	/**
 	 * Answer whether the given type is visible in the dialog.
 	 * 
-	 * @param type
-	 *            the type constant, see {@link ICElement}
+	 * @param type the type constant, see {@link ICElement}
 	 * @return <code>true</code> if the given type is visible,
 	 *         <code>false</code> otherwise
 	 */
 	protected boolean isVisibleType(int type) {
-		return fKnownTypes.contains(new Integer(type));
+		return fKnownTypes.contains(type);
 	}
 
 	/**
@@ -436,8 +434,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		upperLayout.marginWidth = 0;
 		upperRow.setLayout(upperLayout);
 
-		// the for loop is here to guarantee we always
-		// create the checkboxes in the same order
+		// The 'for' loop is here to guarantee that we always create the checkboxes in the same order.
 		for (int i = 0; i < ALL_TYPES.length; ++i) {
 			Integer typeObject = new Integer(ALL_TYPES[i]);
 			if (fKnownTypes.contains(typeObject))

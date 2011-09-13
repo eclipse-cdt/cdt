@@ -14,6 +14,7 @@
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *     Abeer Bagul - Support for -exec-arguments (bug 337687)
+ *     Marc Khouzam (Ericsson) - New methods for new MIDataDisassemble (Bug 357073)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -347,7 +348,17 @@ public class CommandFactory {
 		return new MIDataDisassemble(ctx, start, end, mode);
 	}
 
+	/** @since 4.1 */
+	public ICommand<MIDataDisassembleInfo> createMIDataDisassemble(IDisassemblyDMContext ctx, String start, String end, int mode) {
+		return new MIDataDisassemble(ctx, start, end, mode);
+	}
+
 	public ICommand<MIDataDisassembleInfo> createMIDataDisassemble(IDisassemblyDMContext ctx, String file, int linenum, int lines, boolean mode) {
+		return new MIDataDisassemble(ctx, file, linenum, lines, mode);
+	}
+
+	/** @since 4.1 */
+	public ICommand<MIDataDisassembleInfo> createMIDataDisassemble(IDisassemblyDMContext ctx, String file, int linenum, int lines, int mode) {
 		return new MIDataDisassemble(ctx, file, linenum, lines, mode);
 	}
 

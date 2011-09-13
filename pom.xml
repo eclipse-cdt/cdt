@@ -135,6 +135,7 @@
 		<module>memory/org.eclipse.cdt.debug.ui.memory.traditional</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory.transport</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory-feature</module>
+		<module>memory/org.eclipse.cdt.debug.ui.memory.source-feature</module>
 
 		<module>cross/org.eclipse.cdt.build.crossgcc</module>
 		<module>cross/org.eclipse.cdt.build.crossgcc-feature</module>

@@ -9,6 +9,7 @@
    <feature url="features/org.eclipse.cdt.xlc.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.xlc.feature" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.util_0.0.0.qualifier.jar" id="org.eclipse.cdt.util" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.debug.ui.memory_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.ui.memory" version="0.0.0"/>
+   <feature url="features/org.eclipse.cdt.debug.ui.memory.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.ui.memory.source" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.build.crossgcc_0.0.0.qualifier.jar" id="org.eclipse.cdt.build.crossgcc" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.launch.remote_0.0.0.qualifier.jar" id="org.eclipse.cdt.launch.remote" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.msw_0.0.0.qualifier.jar" id="org.eclipse.cdt.msw" version="0.0.0"/>

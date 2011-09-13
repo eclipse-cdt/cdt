@@ -2,6 +2,7 @@
 <site>
    <feature url="features/org.eclipse.cdt_0.0.0.qualifier.jar" id="org.eclipse.cdt" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.sdk_0.0.0.qualifier.jar" id="org.eclipse.cdt.sdk" version="0.0.0"/>
+   <feature url="features/org.eclipse.cdt.core.lrparser.sdk_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.lrparser.sdk" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.core.parser.upc.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.parser.upc.feature" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.core.parser.upc.sdk.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.parser.upc.feature" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.bupc_0.0.0.qualifier.jar" id="org.eclipse.cdt.bupc" version="0.0.0"/>

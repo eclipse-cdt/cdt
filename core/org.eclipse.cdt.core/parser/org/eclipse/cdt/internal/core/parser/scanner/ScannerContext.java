@@ -58,6 +58,7 @@ final class ScannerContext {
 	private String fFoundViaDirective;
 	private CharArraySet fInternalModifications;
 	private CharArrayObjectMap<char[]> fSignificantMacros;
+	private boolean fPragmaOnce;
 	
 
 	/**
@@ -322,6 +323,10 @@ final class ScannerContext {
 		fFoundViaDirective= viaDirective;
 	}
 	
+	public void setPragmaOnce() {
+		fPragmaOnce= true;
+	}
+
 	public void internalModification(char[] macroName) {
 		if (fInternalModifications != null)
 			fInternalModifications.put(macroName);
@@ -332,6 +337,8 @@ final class ScannerContext {
 	}
 
 	public void significantMacro(IMacroBinding macro) {
+		if (fPragmaOnce)
+			return;
 		final char[] macroName= macro.getNameCharArray();
 		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
 			fSignificantMacros.put(macroName, macro.getExpansion());
@@ -339,6 +346,8 @@ final class ScannerContext {
 	}
 	
 	public void significantMacroDefined(char[] macroName) {
+		if (fPragmaOnce)
+			return;
 		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
 			addSignificantMacroDefined(macroName);
 		}
@@ -353,11 +362,20 @@ final class ScannerContext {
 	}
 	
 	public void significantMacroUndefined(char[] macroName) {
+		if (fPragmaOnce)
+			return;
 		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
 			fSignificantMacros.put(macroName, SignificantMacros.UNDEFINED);
 		}
 	}
 	
+	public void addSignificantInclusion(String path) {
+		final char[] inc = path.toCharArray();
+		if (fInternalModifications != null && !fInternalModifications.containsKey(inc)) {
+			fSignificantMacros.put(inc, SignificantMacros.INCLUDED);
+		}
+	}
+
 	public CharArrayObjectMap<char[]> getSignificantMacros() {
 		return fSignificantMacros;
 	}
@@ -375,7 +393,9 @@ final class ScannerContext {
 					if (!local.containsKey(name)) {
 						final char[] value= fSignificantMacros.getAt(i);
 						if (value == SignificantMacros.DEFINED) {
-							fParent.significantMacroDefined(name);
+							if (!local.containsKey(name)) {
+								fParent.addSignificantMacroDefined(name);
+							}
 						} else {
 							significant.put(name, value);
 						}
@@ -417,6 +437,12 @@ final class ScannerContext {
 			public boolean visitDefined(char[] macro) {
 				if (!fInternalModifications.containsKey(macro)) {
 					fSignificantMacros.put(macro, SignificantMacros.DEFINED);
+				}
+				return true;
+			}
+			public boolean visitIncluded(char[] path) {
+				if (!fInternalModifications.containsKey(path)) {
+					fSignificantMacros.put(path, SignificantMacros.INCLUDED);
 				}
 				return true;
 			}

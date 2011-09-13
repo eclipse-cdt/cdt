@@ -30,8 +30,10 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 public class SignificantMacros implements ISignificantMacros {
 	public static final char[] UNDEFINED = {}; 
 	public static final char[] DEFINED = {};
+	public static final char[] INCLUDED = {};
 	private static final int ENCODED_UNDEFINED = Character.MAX_VALUE;
 	private static final int ENCODED_DEFINED = Character.MAX_VALUE-1;
+	private static final int ENCODED_INCLUDED = Character.MAX_VALUE-2;
 	private static final Comparator<Object> SORTER = new Comparator<Object>() {
 		public int compare(Object o1, Object o2) {
 			return CharArrayUtils.compare((char[])o1, (char[])o2);
@@ -62,6 +64,8 @@ public class SignificantMacros implements ISignificantMacros {
 				buffer.append((char) ENCODED_DEFINED);
 			} else if (value == UNDEFINED) {
 				buffer.append((char) ENCODED_UNDEFINED);
+			} else if (value == INCLUDED) {
+				buffer.append((char) ENCODED_INCLUDED);
 			} else {
 				buffer.append((char) value.length).append(value);
 			}
@@ -116,6 +120,11 @@ public class SignificantMacros implements ISignificantMacros {
 				if (!visitor.visitDefined(macro))
 					return false;
 				break;
+			case ENCODED_INCLUDED:
+				i= v;
+				if (!visitor.visitIncluded(macro))
+					return false;
+				break;
 			default:
 				i= v+len2;
 				if (i > len) 
@@ -144,31 +153,26 @@ public class SignificantMacros implements ISignificantMacros {
 	@SuppressWarnings("nls")
 	@Override
 	public String toString() {
-		StringBuilder buf= new StringBuilder();
+		final StringBuilder buf= new StringBuilder();
 		buf.append('{');
-		final char[] encoded = fEncoded;
-		final int len = encoded.length;
-		int i= 0;
-		while (i < len) {
-			final int len1 = encoded[i++];
-			int v= i+len1;
-			if (v >= len) 
-				break;
-			
-			final int len2 = encoded[v++];
-			if (len2 == ENCODED_UNDEFINED) {
-				buf.append(encoded, i, len1).append('=').append("<undef>,");
-				i= v;
-			} else if (len2 == ENCODED_DEFINED) {
-				buf.append(encoded, i, len1).append('=').append("<defined>,");
-				i= v;
-			} else {
-				if (v+len2 > len) 
-					break;
-				buf.append(encoded, i, len1).append('=').append(encoded, v, len2).append(',');
-				i= v+len2;
-			} 
-		}
+		accept(new IVisitor() {
+			public boolean visitValue(char[] macro, char[] value) {
+				buf.append(macro).append('=').append(value).append(',');
+				return true;
+			}
+			public boolean visitUndefined(char[] macro) {
+				buf.append(macro).append('=').append("null,");
+				return true;
+			}
+			public boolean visitIncluded(char[] path) {
+				buf.append(path).append(',');
+				return true;
+			}
+			public boolean visitDefined(char[] macro) {
+				buf.append(macro).append('=').append("*,");
+				return true;
+			}
+		});
 		int buflen = buf.length();
 		if (buflen > 1)
 			buf.setLength(buflen-1);

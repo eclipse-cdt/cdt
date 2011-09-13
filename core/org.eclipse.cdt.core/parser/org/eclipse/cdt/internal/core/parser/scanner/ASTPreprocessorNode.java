@@ -263,6 +263,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	private final boolean fFoundByHeuristics;
 	private final IFileNomination fNominationDelegate;
 	private boolean fPragmaOnce;
+	private boolean fComplete;
 	private ISignificantMacros fSignificantMacros;
 
 	public ASTInclusionStatement(IASTTranslationUnit parent, 
@@ -338,6 +339,11 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 		assert sig != null;
 		assert fNominationDelegate == null;
 		fSignificantMacros= sig;
+		fComplete= true;
+	}
+
+	public boolean isComplete() {
+		return fComplete;
 	}
 }
 

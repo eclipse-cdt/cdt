@@ -648,8 +648,19 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
     
     // // comment
     // #pragma once
+    
+    //    // Some comment
+    //
+    //    #ifndef AN_UNIQUE_INCLUDE_GUARD_H_
+    //    #define AN_UNIQUE_INCLUDE_GUARD_H_
+    //
+    //    #include <string>
+    //
+    //    Some code without any macro references
+    //
+    //    #endif  // AN_UNIQUE_INCLUDE_GUARD_H_
     public void testPragmaOnceDetection_197989a() throws Exception {    
-    	CharSequence[] contents= getContents(4);
+    	CharSequence[] contents= getContents(5);
     	
     	int i= 0;
     	for (CharSequence content : contents) {
@@ -658,7 +669,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
     		importFile(headerName, content.toString());
 			IASTTranslationUnit tu = parse(base, new ScannerInfo()); 
 			IASTPreprocessorIncludeStatement[] incs = tu.getIncludeDirectives();
-			assertEquals(1, incs.length);
+			assertTrue(incs.length > 0);
 			assertTrue(incs[0].hasPragmaOnceSemantics());
 		}
     }
@@ -705,6 +716,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
 		}
     }
     
+    
     // // header.h
     // #ifdef AH
     // #endif
@@ -749,9 +761,9 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
     	IASTTranslationUnit tu = parse(c, new ScannerInfo()); 
     	IASTPreprocessorIncludeStatement[] incs = tu.getIncludeDirectives();
     	assertEquals(1, incs.length);
-    	assertEquals("{AH=<undef>,BH=<defined>,CH=<undef>,DH=0,EH=1}",
+    	assertEquals("{AH=null,BH=*,CH=null,DH=0,EH=1}",
     			incs[0].getSignificantMacros().toString());
-    	assertEquals("{A=<undef>,AH=<undef>,B=<undef>,C=<undef>,CH=<undef>,D=<undef>}",
+    	assertEquals("{A=null,AH=null,B=null,C=null,CH=null,D=null}",
     			tu.getSignificantMacros().toString());
     }
     
@@ -772,9 +784,9 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
     	IASTTranslationUnit tu = parse(c, new ScannerInfo()); 
     	IASTPreprocessorIncludeStatement[] incs = tu.getIncludeDirectives();
     	assertEquals(1, incs.length);
-    	assertEquals("{A=A1,A1=<undef>,B=1,EQ=x==y}",
+    	assertEquals("{A=A1,A1=null,B=1,EQ=x==y}",
     			incs[0].getSignificantMacros().toString());
-    	assertEquals("{A1=<undef>}",
+    	assertEquals("{A1=null}",
     			tu.getSignificantMacros().toString());
     }
 

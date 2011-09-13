@@ -74,6 +74,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private ITranslationUnit fOriginatingTranslationUnit;
 	private ISignificantMacros fSignificantMacros= ISignificantMacros.NONE;
 	private boolean fPragmaOnceSemantics;
+	private boolean fComplete;
 	
 	/** The semaphore controlling exclusive access to the AST. */
 	private final Semaphore fSemaphore= new Semaphore(1);
@@ -464,6 +465,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		assertNotFrozen();
 		if (sigMacros != null)
 			fSignificantMacros= sigMacros;
+		fComplete= true;
 	}
 	
 	public boolean hasPragmaOnceSemantics() {
@@ -473,6 +475,10 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	public void setPragmaOnceSemantics(boolean value) {
 		assertNotFrozen();
 		fPragmaOnceSemantics= value;
+	}
+
+	public boolean isComplete() {
+		return fComplete;
 	}
 
 	/**

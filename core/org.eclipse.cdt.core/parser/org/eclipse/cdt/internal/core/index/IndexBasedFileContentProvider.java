@@ -16,6 +16,7 @@
 package org.eclipse.cdt.internal.core.index;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -130,7 +131,8 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 					collectFileContent(file, null, newPragmaOnce, files, macros, directives, null);
 					// Report pragma once inclusions, only if no exception was thrown.
 					fPragmaOnce.putAll(newPragmaOnce);
-					return new InternalFileContent(path, macros, directives, files);
+					List<String> newPragmaOncePaths = toPathList(newPragmaOnce.keySet());
+					return new InternalFileContent(path, macros, directives, files, newPragmaOncePaths);
 				} catch (NeedToParseException e) {
 				}
 			} 
@@ -150,6 +152,14 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 			return ifc;
 		}
 		return null;
+	}
+
+	public List<String> toPathList(Collection<IIndexFileLocation> newPragmaOnce) {
+		List<String> newPragmaOncePaths= new ArrayList<String>(newPragmaOnce.size());
+		for (IIndexFileLocation l : newPragmaOnce) {
+			newPragmaOncePaths.add(fPathResolver.getASTPath(l));
+		}
+		return newPragmaOncePaths;
 	}
 
 	public IIndexFile selectIndexFile(IMacroDictionary macroDictionary, IIndexFileLocation ifl)
@@ -180,17 +190,19 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 			return true;
 		
 		IIndexFileLocation ifl= file.getLocation();
+		if (newPragmaOnce.containsKey(ifl))
+			return false;
+		if (file.hasPragmaOnceSemantics()) 
+			newPragmaOnce.put(ifl, file);
+		
 		if (preventRecursion != null) {
-			if (fPragmaOnce.containsKey(ifl) || newPragmaOnce.containsKey(ifl)) 
+			if (fPragmaOnce.containsKey(ifl)) 
 				return false;
 		} else {
 			preventRecursion= new HashSet<IIndexFile>();
 		}
-
 		if (!preventRecursion.add(file))
 			return false;
-		if (file.hasPragmaOnceSemantics()) 
-			newPragmaOnce.put(ifl, file);
 
 		final ICPPUsingDirective[] uds;
 		final Object[] pds;
@@ -273,7 +285,9 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 
 			// Report pragma once inclusions.
 			fPragmaOnce.putAll(newPragmaOnce);
-			return new InternalFileContent(GAP, macros, directives, new ArrayList<IIndexFile>(filesIncluded));
+			List<String> newPragmaOncePaths = toPathList(newPragmaOnce.keySet());
+			return new InternalFileContent(GAP, macros, directives, new ArrayList<IIndexFile>(filesIncluded),
+					newPragmaOncePaths);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

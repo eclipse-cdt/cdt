@@ -124,9 +124,6 @@ public class PDOMFile implements IIndexFragmentFile {
 	}
 
 	public PDOMFile(PDOMLinkage linkage, IIndexFileLocation location, int linkageID, ISignificantMacros macros) throws CoreException {
-		if (location.getURI().getPath().endsWith("lcode.h"))
-			location=
-			location;
 		fLinkage = linkage;
 		this.location= location;
 		Database db = fLinkage.getDB();
@@ -866,6 +863,11 @@ public class PDOMFile implements IIndexFragmentFile {
 			sigMacros= encoded == null ? ISignificantMacros.NONE : new SignificantMacros(encoded.getChars());
 		}
 		return sigMacros;
+	}
+
+	
+	public boolean isComplete() {
+		return true;
 	}
 
 	public boolean hasContent() throws CoreException {

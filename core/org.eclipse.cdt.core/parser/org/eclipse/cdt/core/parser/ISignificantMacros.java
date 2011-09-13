@@ -37,6 +37,11 @@ public interface ISignificantMacros {
 		 * Returns whether to continue the visit.
 		 */
 		boolean visitValue(char[] macro, char[] value);
+
+		/**
+		 * Returns whether to continue the visit.
+		 */
+		boolean visitIncluded(char[] path);
 	}
 
 	ISignificantMacros NONE = new SignificantMacros(CharArrayUtils.EMPTY);

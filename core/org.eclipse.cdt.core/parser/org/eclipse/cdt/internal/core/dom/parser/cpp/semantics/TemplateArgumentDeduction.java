@@ -227,7 +227,7 @@ public class TemplateArgumentDeduction {
 					ICPPTemplateInstance pInst = (ICPPTemplateInstance) pcheck;
 					ICPPClassTemplate pTemplate= getPrimaryTemplate(pInst);
 					if (pTemplate != null) {
-						ICPPClassType aInst= findBaseInstance((ICPPClassType) argcheck, pTemplate, CPPSemantics.MAX_INHERITANCE_DEPTH);	
+						ICPPClassType aInst= findBaseInstance((ICPPClassType) argcheck, pTemplate);	
 						if (aInst != null && aInst != argcheck) {
 							par= pcheck;
 							arg= aInst;
@@ -467,10 +467,15 @@ public class TemplateArgumentDeduction {
 		return result.toArray(new ICPPTemplateArgument[result.size()]);
 	}
 
+	
 	/**
 	 * 14.8.2.1.3 If P is a class and has the form template-id, then A can be a derived class of the deduced A.
 	 */
-	private static ICPPClassType findBaseInstance(ICPPClassType a, ICPPClassTemplate pTemplate, int maxdepth) throws DOMException {
+	private static ICPPClassType findBaseInstance(ICPPClassType a, ICPPClassTemplate pTemplate) throws DOMException {
+		return findBaseInstance(a, pTemplate, CPPSemantics.MAX_INHERITANCE_DEPTH, new HashSet<Object>());
+	}
+
+	private static ICPPClassType findBaseInstance(ICPPClassType a, ICPPClassTemplate pTemplate, int maxdepth, HashSet<Object> handled) throws DOMException {
 		if (a instanceof ICPPTemplateInstance) {
 			final ICPPTemplateInstance inst = (ICPPTemplateInstance) a;
 			ICPPClassTemplate tmpl= getPrimaryTemplate(inst);
@@ -480,8 +485,8 @@ public class TemplateArgumentDeduction {
 		if (maxdepth-- > 0) {
 			for (ICPPBase cppBase : a.getBases()) {
 				IBinding base= cppBase.getBaseClass();
-				if (base instanceof ICPPClassType) {
-					final ICPPClassType inst= findBaseInstance((ICPPClassType) base, pTemplate, maxdepth);
+				if (base instanceof ICPPClassType && handled.add(base)) {
+					final ICPPClassType inst= findBaseInstance((ICPPClassType) base, pTemplate, maxdepth, handled);
 					if (inst != null)
 						return inst;
 				}

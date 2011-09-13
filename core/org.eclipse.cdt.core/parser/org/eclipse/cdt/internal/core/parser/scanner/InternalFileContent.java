@@ -45,6 +45,7 @@ public class InternalFileContent extends FileContent {
 	private final List<ICPPUsingDirective> fUsingDirectives;
 	private final String fFileLocation;
 	private final IFileNomination fPragmaOnceNomination;
+	private final List<String> fNewPragmaOncePaths;
 	private boolean fHeuristic;
 	private boolean fIsSource= false;
 	private List<IIndexFile> fFiles;
@@ -68,6 +69,7 @@ public class InternalFileContent extends FileContent {
 		fUsingDirectives= null;
 		fSource= null;
 		fPragmaOnceNomination= once;
+		fNewPragmaOncePaths= null;
 	}
 
 	/**
@@ -84,6 +86,7 @@ public class InternalFileContent extends FileContent {
 		fMacroDefinitions= null;
 		fUsingDirectives= null;
 		fPragmaOnceNomination= null;
+		fNewPragmaOncePaths= null;
 		if (fFileLocation == null) {
 			throw new IllegalArgumentException();
 		}
@@ -94,10 +97,11 @@ public class InternalFileContent extends FileContent {
 	 * @param fileLocation the location of the file
 	 * @param macroDefinitions a list of macro definitions
 	 * @param files 
+	 * @param newPragmaOncePaths 
 	 * @throws IllegalArgumentException in case the fileLocation or the macroDefinitions are <code>null</code>.
 	 */
 	public InternalFileContent(String fileLocation, List<IIndexMacro> macroDefinitions, List<ICPPUsingDirective> usingDirectives,
-			List<IIndexFile> files) {
+			List<IIndexFile> files, List<String> newPragmaOncePaths) {
 		fKind= InclusionKind.FOUND_IN_INDEX;
 		fFileLocation= fileLocation;
 		fSource= null;
@@ -105,6 +109,7 @@ public class InternalFileContent extends FileContent {
 		fMacroDefinitions= macroDefinitions;
 		fFiles= files;
 		fPragmaOnceNomination= null;
+		fNewPragmaOncePaths= newPragmaOncePaths;
 	}
 
 	/**
@@ -160,6 +165,10 @@ public class InternalFileContent extends FileContent {
 	 */
 	public List<IIndexFile> getFilesIncluded() {
 		return fFiles;
+	}
+	
+	public List<String> getPragmaOncePaths() {
+		return fNewPragmaOncePaths;
 	}
 
 	/**

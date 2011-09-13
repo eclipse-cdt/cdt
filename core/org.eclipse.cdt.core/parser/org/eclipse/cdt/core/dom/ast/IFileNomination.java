@@ -37,4 +37,9 @@ public interface IFileNomination {
 	 * Returns whether pragma once semantics has been detected when parsing the translation unit.
 	 */
 	public boolean hasPragmaOnceSemantics() throws CoreException;
+
+	/**
+	 * @return
+	 */
+	public boolean isComplete();
 }

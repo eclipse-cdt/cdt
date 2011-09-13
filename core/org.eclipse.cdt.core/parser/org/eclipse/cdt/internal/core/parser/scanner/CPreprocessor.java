@@ -130,6 +130,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		private boolean isDefined(char[] macro) {
 			return fMacroDictionary.containsKey(macro);
 		}
+
+		public boolean visitIncluded(char[] path) {
+			return fFileContentProvider.isIncludedWithPragmaOnceSemantics(new String(path)) != null;
+		}
 	}
 
 	private interface IIncludeFileTester<T> {
@@ -303,6 +307,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			IFileNomination nom= fLocationMap.reportPragmaOnceSemantics(ctx.getLocationCtx());
  			fFileContentProvider.reportPragmaOnceSemantics(filePath, nom);
 			ctx.internalModification(guard);
+			ctx.internalModification(filePath.toCharArray());
 			return guard;
 		} 
 		if (ctx != fRootContext) {
@@ -1399,10 +1404,13 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 						ScannerContext fctx= new ScannerContext(ctx, fCurrentContext,
 								new Lexer(source, fLexOptions, this, this), true);
 						fctx.setFoundOnPath(fi.getFoundOnPath(), includeDirective);
-						// When the extern guard matches, it is not significant.
 						char[] guard= detectIncludeGuard(path, source, fctx);
-						if (externGuard != null && guard != null && CharArrayUtils.equals(externGuard, guard)) {
-							fCurrentContext.undoSignificance(guard);
+						if (guard != null) {
+							fctx.setPragmaOnce();
+							// When the extern guard matches, it is not significant.
+							if (externGuard != null && CharArrayUtils.equals(externGuard, guard)) {
+								fCurrentContext.undoSignificance(guard);
+							}
 						}
 						fCurrentContext= fctx;
 					}
@@ -1412,12 +1420,17 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				case SKIP_FILE:
 					nominationDelegate= fi.getPragmaOnceNomination();
 					if (nominationDelegate != null) {
-						try {
-							// TODO(197989) when recursively included the significant
-							// macros will not yet be known.
-							ISignificantMacros sm = nominationDelegate.getSignificantMacros();
+						ISignificantMacros sm= null;
+						if (nominationDelegate.isComplete()) {
+							try {
+								sm = nominationDelegate.getSignificantMacros();
+							} catch (CoreException e) {
+							}
+						}
+						if (sm != null && fMacroDictionaryFacade.satisfies(sm)) {
 							fCurrentContext.addSignificantMacros(sm);
-						} catch (CoreException e) {
+						} else {
+							fCurrentContext.addSignificantInclusion(path);
 						}
 					}
 					break;
@@ -1446,6 +1459,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		for (IIndexMacro macro : mdefs) {
 			addMacroDefinition(macro);
 			fCurrentContext.internalModification(macro.getNameCharArray());
+		}
+		for (String pragOncePath : fi.getPragmaOncePaths()) {
+			fCurrentContext.internalModification(pragOncePath.toCharArray());
 		}
 		fLocationMap.skippedFile(fLocationMap.getSequenceNumberForOffset(offset), fi);
 	}

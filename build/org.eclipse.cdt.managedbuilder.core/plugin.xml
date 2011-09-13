@@ -313,9 +313,9 @@
       </configuration>
 
 	 <configuration
-	 	id="org.eclipse.cdt.build.core.prefbase.cfg"
-	 	name="%cfg1_base"
-	 	 >     
+        id="org.eclipse.cdt.build.core.prefbase.cfg"
+        languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;${Toolchain}"
+        name="%cfg1_base">
 	  <toolChain
 	  	id="org.eclipse.cdt.build.core.prefbase.toolchain"
 	  	name="%toolChain.name"

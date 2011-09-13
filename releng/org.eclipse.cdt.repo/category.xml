@@ -8,6 +8,7 @@
    <feature url="features/org.eclipse.cdt.bupc_0.0.0.qualifier.jar" id="org.eclipse.cdt.bupc" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.debug.gdbjtag_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.gdbjtag" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.xlc.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.xlc.feature" version="0.0.0"/>
+   <feature url="features/org.eclipse.cdt.xlc.sdk_0.0.0.qualifier.jar" id="org.eclipse.cdt.xlc.sdk" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.util_0.0.0.qualifier.jar" id="org.eclipse.cdt.util" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.debug.ui.memory_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.ui.memory" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.debug.ui.memory.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.ui.memory.source" version="0.0.0"/>

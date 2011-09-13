@@ -1891,37 +1891,4 @@ public class GCCBuildCommandParserTest extends TestCase {
 		}
 	}
 
-	/**
-	 */
-	public void testBuildResourceTree() throws Exception {
-		// create resources
-		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
-		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-		IFolder folder = ResourceHelper.createFolder(project, "Folder");
-		IFile file = ResourceHelper.createFile(project, "Folder/file.cpp");
-		
-		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
-		ErrorParserManager epm = new ErrorParserManager(project, null);
-		
-		// parse line
-		parser.startup(cfgDescription);
-		parser.processLine("gcc "
-				+ " -DMACRO"
-				+ " Folder/file.cpp",
-				epm);
-		parser.shutdown();
-		
-		// check that entries go to highest possible level
-		CMacroEntry entry = new CMacroEntry("MACRO", null, 0);
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
-		entries.add(entry);
-		
-		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(parser, cfgDescription, file, LANG_CPP));
-		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(parser, cfgDescription, folder, LANG_CPP));
-		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(parser, cfgDescription, project, LANG_CPP));
-	}
-	
-
 }

@@ -61,6 +61,11 @@ public class LanguageSettingsManager {
 	/**
 	 * Builds for the provider a nice looking resource tree to present hierarchical view to the user.
 	 * 
+	 * TODO - Note that after using this method for a while for BOP parsers it appears that disadvantages
+	 * outweight benefits. In particular, it doesn't result in saving memory as the language settings
+	 * (and the lists itself) are not duplicated in memory anyway but optimized with using WeakHashSet
+	 * and SafeStringInterner.
+	 * 
 	 * @param provider - language settings provider to build the tree for.
 	 * @param cfgDescription - configuration description.
 	 * @param languageId - language ID.

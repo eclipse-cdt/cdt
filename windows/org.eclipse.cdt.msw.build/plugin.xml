@@ -477,6 +477,7 @@
                valueType="boolean"/>
          <inputType
                id="org.eclipse.cdt.msvc.lib.inputType"
+               multipleOfType="true"
                sources="obj,res">
          </inputType>
          <outputType

@@ -18,10 +18,10 @@
 	<profiles>
 		<profile>
 			<id>production</id>
+			<properties>
+				<cdt-install>/home/data/httpd/download.eclipse.org/tools/cdt/builds/hudson/cdt-nightly</cdt-install>
+			</properties>
 			<build>
-				<properties>
-					<cdt-install>/home/data/httpd/download.eclipse.org/tools/cdt/builds/hudson/cdt-nightly</cdt-install>
-				</properties>
 				<plugins>
 					<plugin>
 						<artifactId>maven-antrun-plugin</artifactId>

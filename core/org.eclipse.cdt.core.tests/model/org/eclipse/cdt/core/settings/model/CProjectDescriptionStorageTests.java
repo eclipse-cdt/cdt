@@ -79,6 +79,8 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 			for (IResource child : cProj.getProject().getFolder(".csettings").members())
 				child.setReadOnly(false);
 		}
+		// Wait for a few seconds for the indexer to get going so we avoid deadlock
+		Thread.sleep(2000);
 		// Delete the project
 		CProjectHelper.delete(cProj);
 	}

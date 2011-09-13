@@ -254,30 +254,31 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		// Status line
 		fStatusLine = new StatusMessageLine(usercomp, SWT.LEFT, 2);
 
-		// "I want to try new scanner discovery" temporary checkbox
-		enableProvidersCheckBox = setupCheck(usercomp, Messages.CDTMainWizardPage_TrySD90, 2, GridData.FILL_HORIZONTAL);
-		enableProvidersCheckBox.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean enabled = enableProvidersCheckBox.getSelection();
-				if (masterPropertyPage!=null)
-					masterPropertyPage.setLanguageSettingsProvidersEnabled(enabled);
-				enableControls(enabled);
-				updateStatusLine();
-			}
-		});
-
-		if (masterPropertyPage!=null)
-			enableProvidersCheckBox.setSelection(masterPropertyPage.isLanguageSettingsProvidersEnabled());
-		else
-			enableProvidersCheckBox.setSelection(ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(page.getProject()));
-		// display but disable the checkbox for file/folder resource
-		enableProvidersCheckBox.setEnabled(page.isForProject() /*|| page.isForPrefs()*/);
-		enableControls(enableProvidersCheckBox.getSelection());
-
 		if (page.isForPrefs()) {
 			initButtons(BUTTON_LABELS_PREF);
+			
 		} else {
+			// "I want to try new scanner discovery" temporary checkbox
+			enableProvidersCheckBox = setupCheck(usercomp, Messages.CDTMainWizardPage_TrySD90, 2, GridData.FILL_HORIZONTAL);
+			enableProvidersCheckBox.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					boolean enabled = enableProvidersCheckBox.getSelection();
+					if (masterPropertyPage!=null)
+						masterPropertyPage.setLanguageSettingsProvidersEnabled(enabled);
+					enableControls(enabled);
+					updateStatusLine();
+				}
+			});
+
+			if (masterPropertyPage!=null)
+				enableProvidersCheckBox.setSelection(masterPropertyPage.isLanguageSettingsProvidersEnabled());
+			else
+				enableProvidersCheckBox.setSelection(ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(page.getProject()));
+			// display but disable the checkbox for file/folder resource
+			enableProvidersCheckBox.setEnabled(page.isForProject());
+			enableControls(enableProvidersCheckBox.getSelection());
+
 			initButtons(BUTTON_LABELS_PROJECT);
 		}
 		updateData(getResDesc());
@@ -840,7 +841,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 				setAllVisible(true, null);
 			}
 
-			if (masterPropertyPage!=null) {
+			if (enableProvidersCheckBox!=null && masterPropertyPage!=null) {
 				boolean enabled = masterPropertyPage.isLanguageSettingsProvidersEnabled();
 				enableProvidersCheckBox.setSelection(enabled);
 				enableControls(enabled);

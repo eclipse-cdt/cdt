@@ -15,6 +15,14 @@
 	<artifactId>org.eclipse.cdt.ui.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 	
+	<repositories>
+		<repository>
+			<id>cdt.repo</id>
+			<url>file:/${basedir}/../../releng/org.eclipse.cdt.repo/target/repository</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -28,6 +36,18 @@
 						<include>**/AutomatedSuite.*</include>
 					</includes>
 					<testFailureIgnore>true</testFailureIgnore>
+					<dependencies>
+						<dependency>
+							<artifactId>org.eclipse.platform.feature.group</artifactId>
+							<version>3.7.0</version>
+							<type>p2-installable-unit</type>
+						</dependency>
+						<dependency>
+							<artifactId>org.eclipse.cdt.feature.group</artifactId>
+							<version>8.0.0.${buildQualifier}</version>
+							<type>p2-installable-unit</type>
+						</dependency>
+					</dependencies>
 				</configuration>
 			</plugin>
 		</plugins>

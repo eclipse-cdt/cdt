@@ -51,7 +51,6 @@
  * Xuan Chen        (IBM)        - [222544] [testing] FileServiceArchiveTest leaves temporary files and folders behind in TEMP dir
  * David McKnight   (IBM)        - [337612] Failed to copy the content of a tar file
  * David McKnight   (IBM)        - [232084] [local] local file service should not throw operation cancelled exception due to file sizes
- * David McKnight   (IBM)        - [352248] Indigo upload of executable file on Linux to local system drops executable flags
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -73,20 +72,16 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
-import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.internal.services.local.Activator;
 import org.eclipse.rse.internal.services.local.ILocalMessageIds;
@@ -708,21 +703,6 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			}
 			catch (IOException e)
 			{
-			}
-			
-			// preserve executable bit (non-windows only)
-			String osName = System.getProperty("os.name"); //$NON-NLS-1$
-			if (!osName.toLowerCase().startsWith("win")) { // not windows			 //$NON-NLS-1$						
-				// get remote permissions
-				IHostFile srcFile = getFile(localFile.getParentFile().getAbsolutePath(), localFile.getName(), new NullProgressMonitor());
-				IHostFile tgtFile = getFile(remoteParent, remoteFile, new NullProgressMonitor());
-				
-				IHostFilePermissions srcPermissions = getFilePermissions(srcFile, new NullProgressMonitor());
-				if (srcPermissions != null){
-					// set these permissions on the temp file							
-					// get local file service		
-					setFilePermissions(tgtFile, srcPermissions, new NullProgressMonitor());														
-				}
 			}
 		}
 	}

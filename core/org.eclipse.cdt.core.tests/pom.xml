@@ -38,6 +38,11 @@
 					<testFailureIgnore>true</testFailureIgnore>
 					<dependencies>
 						<dependency>
+							<artifactId>org.eclipse.platform.feature.group</artifactId>
+							<version>3.7.0</version>
+							<type>p2-installable-unit</type>
+						</dependency>
+						<dependency>
 							<artifactId>org.eclipse.cdt.feature.group</artifactId>
 							<version>8.0.0.${buildQualifier}</version>
 							<type>p2-installable-unit</type>

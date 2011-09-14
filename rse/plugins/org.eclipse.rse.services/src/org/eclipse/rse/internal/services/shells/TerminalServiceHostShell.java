@@ -21,6 +21,7 @@
  * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
  * Anna Dushistova  (MontaVista) - [258720] SshHostShell fails to run command if initialWorkingDirectory supplied
  * Rob Stryker (JBoss) - [335059] TerminalServiceShellOutputReader logs error when hostShell.exit() is called
+ * Martin Oberhuber (Wind River) - [356132] wait for initial output
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.shells;
@@ -59,17 +60,21 @@ public class TerminalServiceHostShell extends AbstractHostShell {
 		try {
 			fTerminalShell = terminalShell;
 			String encoding = fTerminalShell.getDefaultEncoding();
+			BufferedReader bufReader;
 			if (encoding != null) {
-				fStdoutHandler = new TerminalServiceShellOutputReader(this,
-						new BufferedReader(new InputStreamReader(fTerminalShell
-								.getInputStream(), encoding)), false);
+				bufReader = new BufferedReader(new InputStreamReader(fTerminalShell
+						.getInputStream(), encoding)); 
 			} else {
-				fStdoutHandler = new TerminalServiceShellOutputReader(this,
-						new BufferedReader(new InputStreamReader(fTerminalShell
-								.getInputStream())), false);
+				bufReader = new BufferedReader(new InputStreamReader(fTerminalShell
+								.getInputStream()));
 			}
-			fStderrHandler = new TerminalServiceShellOutputReader(this, null,
-					true);
+			//bug 356132: wait for initial output before sending any command
+			bufReader.mark(1);
+			bufReader.read();
+			bufReader.reset();
+			
+			fStdoutHandler = new TerminalServiceShellOutputReader(this, bufReader, false);
+			fStderrHandler = new TerminalServiceShellOutputReader(this, null, true);
 			OutputStream outputStream = fTerminalShell.getOutputStream();
 			if (encoding != null) {
 				// use specified encoding

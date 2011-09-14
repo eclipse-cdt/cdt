@@ -69,6 +69,7 @@ public class TerminalServiceHostShell extends AbstractHostShell {
 								.getInputStream()));
 			}
 			//bug 356132: wait for initial output before sending any command
+			//FIXME this should likely move into the TerminalServiceShellWriterThread, so wait can be canceled
 			bufReader.mark(1);
 			bufReader.read();
 			bufReader.reset();

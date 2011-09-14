@@ -335,6 +335,28 @@ public class GCCBuiltinSpecsDetectorTest extends TestCase {
 		assertEquals(expected, entries.get(0));
 	}
 	
+	public void testAbstractBuiltinSpecsDetector_RunGlobal() throws Exception {
+		AbstractBuiltinSpecsDetector detector = new GCCBuiltinSpecsDetector() {
+			@Override
+			protected boolean runProgram(String command, String[] env, IPath workingDirectory, IProgressMonitor monitor,
+					OutputStream consoleOut, OutputStream consoleErr) throws CoreException, IOException {
+				printLine(consoleOut, "#define MACRO VALUE");
+				consoleOut.close();
+				consoleErr.close();
+				return true;
+			}
+		};
+		
+		detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID);}});
+		
+		detector.run((IProject)null, LANGUAGE_ID, null, null, null);
+		assertFalse(detector.isEmpty());
+		
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, LANGUAGE_ID);
+		ICLanguageSettingEntry expected = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+		assertEquals(expected, entries.get(0));
+	}
+	
 	public void testAbstractBuiltinSpecsDetector_RunOnce() throws Exception {
 		// Create model project and accompanied descriptions
 		String projectName = getName();

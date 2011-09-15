@@ -239,7 +239,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 
 	@Override
-	public PDOMBinding addUnknownValue(IBinding binding) throws CoreException {
+	public PDOMBinding addPotentiallyUnknownBinding(IBinding binding) throws CoreException {
 		return addBinding(binding, null);
 	}
 
@@ -461,6 +461,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			result= new PDOMCPPClassSpecialization(this, parent, (ICPPClassType) special, orig);
 		} else if (special instanceof ITypedef) {
 			result= new PDOMCPPTypedefSpecialization(this, parent, (ITypedef) special, orig);
+		} else if (special instanceof ICPPUsingDeclaration) {
+			result= new PDOMCPPUsingDeclarationSpecialization(this, parent, (ICPPUsingDeclaration) special, orig);
 		}
 		
 		return result;
@@ -805,6 +807,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPClassTemplateSpecialization(this, record);
 		case CPP_TYPEDEF_SPECIALIZATION:
 			return new PDOMCPPTypedefSpecialization(this, record);
+		case CPP_USING_DECLARATION_SPECIALIZATION:
+			return new PDOMCPPUsingDeclarationSpecialization(this, record);
 		}
 		assert false : "nodeid= " + nodeType; //$NON-NLS-1$
 		return null;

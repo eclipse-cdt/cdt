@@ -2465,7 +2465,7 @@ public class CPPSemantics {
 		boolean haveASTResult= false;
 		for (ICPPFunction f : fns) {
 			// Use the ast binding
-			final boolean fromIndex = f instanceof IIndexBinding;
+			final boolean fromIndex = isFromIndex(f);
 			if (haveASTResult && fromIndex) 
 				break;
 			

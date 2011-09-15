@@ -54,7 +54,7 @@ class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclara
 		Set<PDOMBinding> targets= new LinkedHashSet<PDOMBinding>();
 		PDOMCPPUsingDeclaration last= null;
 		for (IBinding delegate : using.getDelegates()) {
-			PDOMBinding target = getLinkage().adaptBinding(delegate);
+			PDOMBinding target = getLinkage().addPotentiallyUnknownBinding(delegate);
 			if (target != null && targets.add(target)) {
 				if (last == null) {
 					setTargetBinding(linkage, target);

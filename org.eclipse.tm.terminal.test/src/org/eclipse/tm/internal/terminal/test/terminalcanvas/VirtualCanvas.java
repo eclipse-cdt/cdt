@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.ScrollBar;
  */
 public abstract class VirtualCanvas extends Canvas {
 
-	private Rectangle fVirtualBounds = new Rectangle(0,0,0,0);
+	private final Rectangle fVirtualBounds = new Rectangle(0,0,0,0);
 	private Rectangle fClientArea;
 	private GC fPaintGC=null;
 	public VirtualCanvas(Composite parent, int style) {
@@ -170,7 +170,7 @@ public abstract class VirtualCanvas extends Canvas {
 	 * @param gc
 	 */
 	abstract protected void paint(GC gc);
-	protected Color getBackgroundColor() {
+	protected Color getBackgroundCanvasColor() {
 		return getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 	}
 	protected void paintUnoccupiedSpace(GC gc, Rectangle clipping) {
@@ -180,7 +180,7 @@ public abstract class VirtualCanvas extends Canvas {
 		int marginHeight = (clipping.y+clipping.height) - height;
 		if(marginWidth>0||marginHeight>0){
 			Color bg=getBackground();
-			gc.setBackground(getBackgroundColor());
+			gc.setBackground(getBackgroundCanvasColor());
 			if (marginWidth > 0) {
 				gc.fillRectangle (width, clipping.y, marginWidth, clipping.height);
 			}
@@ -266,7 +266,7 @@ public abstract class VirtualCanvas extends Canvas {
 		return y-fVirtualBounds.y;
 	}
 	/** called when the viewed part is changing */
-	private Rectangle fViewRectangle=new Rectangle(0,0,0,0);
+	private final Rectangle fViewRectangle=new Rectangle(0,0,0,0);
 	void updateViewRectangle() {
 		if(
 				fViewRectangle.x==-fVirtualBounds.x 

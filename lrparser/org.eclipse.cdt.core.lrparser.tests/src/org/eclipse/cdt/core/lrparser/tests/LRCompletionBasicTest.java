@@ -48,7 +48,8 @@ public class LRCompletionBasicTest extends BasicCompletionTest {
 	public void testCastExpression_Bug301933() throws Exception {}
 	@Override
 	public void testConditionalOperator_Bug308611() throws Exception {}
-
+	@Override
+	public void testCompletionInDesignatedInitializor_353281() throws Exception {}
 
 	@Override
 	@SuppressWarnings("unused") 

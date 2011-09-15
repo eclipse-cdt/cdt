@@ -28,14 +28,14 @@ import org.eclipse.core.resources.IProject;
 
 public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
-	private Listener listener;
+	private MockListener listener;
 	
-	private class Listener implements ICProjectDescriptionListener {
+	private class MockListener implements ICProjectDescriptionListener {
 		private boolean fIsNotified;
 		private String fProjName;
 		private ICDescriptionDelta fDelta;
 		
-		public Listener(String projName){
+		public MockListener(String projName){
 			fProjName = projName;
 			fIsNotified = false;
 			fDelta = null;
@@ -52,7 +52,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 			return fIsNotified;
 		}
 
-		void resetNotified(){
+		void clearNotified(){
 			fIsNotified = false;
 			fDelta = null;
 		}
@@ -78,7 +78,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		if(listener != null)
 			mngr.removeCProjectDescriptionListener(listener);
-		listener = new Listener(projName);
+		listener = new MockListener(projName);
 		mngr.addCProjectDescriptionListener(listener, CProjectDescriptionEvent.APPLIED);
 		
 		assertFalse(listener.isNotified());
@@ -123,7 +123,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		prjDescription.setActiveConfiguration(cfgDescription1);
 		
 		// Write project description
-		listener.resetNotified();
+		listener.clearNotified();
 		mngr.setProjectDescription(project, prjDescription);
 		assertEquals(true, listener.isNotified());
 		
@@ -165,7 +165,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		cfgDescription.setName(newName);
 		
 		// Write project description
-		listener.resetNotified();
+		listener.clearNotified();
 		mngr.setProjectDescription(project, prjDescription);
 		assertEquals(true, listener.isNotified());
 		
@@ -207,7 +207,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		cfgDescription.setDescription("New description");
 		
 		// Write project description
-		listener.resetNotified();
+		listener.clearNotified();
 		mngr.setProjectDescription(project, prjDescription);
 		assertEquals(true, listener.isNotified());
 		
@@ -254,7 +254,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		langSetting.setLanguageId(newLanguageId);
 		
 		// Write project description
-		listener.resetNotified();
+		listener.clearNotified();
 		mngr.setProjectDescription(project, prjDescription);
 		assertEquals(true, listener.isNotified());
 		
@@ -299,7 +299,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		langSetting.setSourceContentTypeIds(new String[] {testContentType});
 		
 		// Write project description
-		listener.resetNotified();
+		listener.clearNotified();
 		mngr.setProjectDescription(project, prjDescription);
 		assertEquals(true, listener.isNotified());
 		
@@ -349,7 +349,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 
 		
 		// Write project description
-		listener.resetNotified();
+		listener.clearNotified();
 		mngr.setProjectDescription(project, prjDescription);
 		assertEquals(true, listener.isNotified());
 		
@@ -397,7 +397,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		langSetting.setSettingEntries(ICSettingEntry.INCLUDE_PATH, entries);
 		
 		// Write project description
-		listener.resetNotified();
+		listener.clearNotified();
 		mngr.setProjectDescription(project, prjDescription);
 		assertEquals(true, listener.isNotified());
 		
@@ -442,7 +442,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		targetPlatformSetting.setBinaryParserIds(new String[] {testBinaryParserId});
 		
 		// Write project description
-		listener.resetNotified();
+		listener.clearNotified();
 		mngr.setProjectDescription(project, prjDescription);
 		assertEquals(true, listener.isNotified());
 		
@@ -487,7 +487,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		cfgDescription.getBuildSetting().setErrorParserIDs(new String[] {testErrorParserId});
 		
 		// Write project description
-		listener.resetNotified();
+		listener.clearNotified();
 		mngr.setProjectDescription(project, prjDescription);
 		assertEquals(true, listener.isNotified());
 		
@@ -550,7 +550,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 			fileDescription.setExcluded(true);
 			
 			// Write project description
-			listener.resetNotified();
+			listener.clearNotified();
 			mngr.setProjectDescription(project, prjDescription);
 			assertEquals(true, listener.isNotified());
 			
@@ -596,7 +596,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		cfgDescription.setSourceEntries(sourceEntries.toArray(new ICSourceEntry[0]));
 		
 		// Write project description
-		listener.resetNotified();
+		listener.clearNotified();
 		mngr.setProjectDescription(project, prjDescription);
 		assertEquals(true, listener.isNotified());
 		
@@ -655,7 +655,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 			cfgDescription.setSourceEntries(new ICSourceEntry[0]);
 			
 			// Write project description
-			listener.resetNotified();
+			listener.clearNotified();
 			mngr.setProjectDescription(project, prjDescription);
 			assertEquals(true, listener.isNotified());
 			
@@ -701,7 +701,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		ICExternalSetting testExternalSetting = cfgDescription.createExternalSetting(null, null, null, new ICSettingEntry[] {testSettingEntry});
 		
 		// Write project description
-		listener.resetNotified();
+		listener.clearNotified();
 		mngr.setProjectDescription(project, prjDescription);
 		assertEquals(true, listener.isNotified());
 		
@@ -759,7 +759,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 			cfgDescription.removeExternalSettings();
 			
 			// Write project description
-			listener.resetNotified();
+			listener.clearNotified();
 			mngr.setProjectDescription(project, prjDescription);
 			assertEquals(true, listener.isNotified());
 			
@@ -810,7 +810,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		cfgDescription.setReferenceInfo(refs);
 		
 		// Write project description
-		listener.resetNotified();
+		listener.clearNotified();
 		mngr.setProjectDescription(project, prjDescription);
 		assertEquals(true, listener.isNotified());
 		
@@ -870,7 +870,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 			cfgDescription.setReferenceInfo(new HashMap<String, String>());
 			
 			// Write project description
-			listener.resetNotified();
+			listener.clearNotified();
 			mngr.setProjectDescription(project, prjDescription);
 			assertEquals(true, listener.isNotified());
 			
@@ -918,7 +918,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		targetPlatformSetting.setBinaryParserIds(new String[] {testBinaryParserId});
 		
 		// Write project description
-		listener.resetNotified();
+		listener.clearNotified();
 		mngr.setProjectDescription(project, prjDescription);
 		assertEquals(true, listener.isNotified());
 		
@@ -971,7 +971,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		prjDescription.setDefaultSettingConfiguration(cfgDescription1);
 		
 		// Write project description
-		listener.resetNotified();
+		listener.clearNotified();
 		mngr.setProjectDescription(project, prjDescription);
 		assertEquals(true, listener.isNotified());
 		

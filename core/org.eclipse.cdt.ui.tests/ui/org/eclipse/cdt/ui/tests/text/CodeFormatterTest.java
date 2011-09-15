@@ -963,7 +963,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//M* A::c(M* tm) { N::iterator it = myN.find(tm); if (!it) return NULL; else return *it; }
 
 	//void A::a(C e) {
-	//	if (D::iterator it = m.find (e))
+	//	if (D::iterator it = m.find(e))
 	//		m.erase(it);
 	//}
 	//T* A::b(T* t) {
@@ -1502,6 +1502,24 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	}
 	//}
 	public void testCompoundStatementAsMacro_Bug244928() throws Exception {
+		assertFormatterResult();
+	}
+
+	//#define BLOCK { }
+	//#define ALWAYS if(true)
+	//
+	//void foo() {
+	//ALWAYS BLOCK
+	//}
+
+	//#define BLOCK { }
+	//#define ALWAYS if(true)
+	//
+	//void foo() {
+	//	ALWAYS
+	//		BLOCK
+	//}
+	public void testCompoundStatementAsMacro_Temp() throws Exception {
 		assertFormatterResult();
 	}
 
@@ -2394,6 +2412,37 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//             << " another literal.";
 	//}
 	public void testOverloadedLeftShiftChain_5() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_OVERLOADED_LEFT_SHIFT_CHAIN,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		assertFormatterResult();
+	}
+
+	//struct Stream {
+	//Stream& operator <<(const char*);
+	//};
+	//Stream GetStream();
+	//
+	//#define MY_MACRO switch (0) case 0: default: if (bool x = false) ; else GetStream()
+	//
+	//void test() {
+	//MY_MACRO << "Loooooooooooooooooooong string literal" << " another literal.";
+	//MY_MACRO << "Looooooooooooooooooooong string literal" << " another literal.";
+	//}
+
+	//struct Stream {
+	//    Stream& operator <<(const char*);
+	//};
+	//Stream GetStream();
+	//
+	//#define MY_MACRO switch (0) case 0: default: if (bool x = false) ; else GetStream()
+	//
+	//void test() {
+	//    MY_MACRO << "Loooooooooooooooooooong string literal" << " another literal.";
+	//    MY_MACRO << "Looooooooooooooooooooong string literal"
+	//             << " another literal.";
+	//}
+	public void testOverloadedLeftShiftChain_6() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_OVERLOADED_LEFT_SHIFT_CHAIN,
 				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));

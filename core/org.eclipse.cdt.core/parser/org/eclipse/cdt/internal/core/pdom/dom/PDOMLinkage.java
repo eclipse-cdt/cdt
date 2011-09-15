@@ -379,11 +379,11 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	/**
-	 * Usually bindings are added on behalf of a name, only. For unknown values we need to 
-	 * add further bindings.
+	 * Usually bindings are added on behalf of a name, only. For unknown values or using declarations
+	 * we need to add further bindings.
 	 * @throws CoreException 
 	 */
-	public PDOMBinding addUnknownValue(IBinding binding) throws CoreException {
+	public PDOMBinding addPotentiallyUnknownBinding(IBinding binding) throws CoreException {
 		return null;
 	}
 

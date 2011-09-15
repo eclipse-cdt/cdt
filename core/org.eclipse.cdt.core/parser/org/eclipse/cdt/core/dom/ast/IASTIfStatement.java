@@ -6,18 +6,17 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
+ *     Doug Schaefer (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * The if statement including the optional else clause.
+ * The 'if' statement including the optional else clause.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTIfStatement extends IASTStatement {
-
 	/**
 	 * <code>CONDITION</code> represents the relationship between an
 	 * <code>IASTIfStatement</code> and its nested <code>IASTExpression</code>.
@@ -40,14 +39,16 @@ public interface IASTIfStatement extends IASTStatement {
 	public static final ASTNodeProperty ELSE = new ASTNodeProperty("IASTIfStatement.ELSE - IASTStatement (else) for IASTIfStatement"); //$NON-NLS-1$
 
 	/**
-	 * Get the condition in the if statement.
+	 * Returns the condition in the if statement.
 	 * 
-	 * @return the condition <code>IASTExpression</code>
+	 * @return the condition <code>IASTExpression</code>. May return <code>null</code> if the 'if'
+	 *     statement has condition declaration instead of condition expression
+	 *     (see {@link org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement}).
 	 */
 	public IASTExpression getConditionExpression();
 
 	/**
-	 * Set the condition in the if statement.
+	 * Sets the condition in the if statement.
 	 * 
 	 * @param condition
 	 *            <code>IASTExpression</code>
@@ -55,14 +56,14 @@ public interface IASTIfStatement extends IASTStatement {
 	public void setConditionExpression(IASTExpression condition);
 
 	/**
-	 * Get the statement that is executed if the condition is true.
+	 * Returns the statement that is executed if the condition is true.
 	 * 
 	 * @return the then clause <code>IASTStatement</code>
 	 */
 	public IASTStatement getThenClause();
 
 	/**
-	 * Set the statement that is executed if the condition is true.
+	 * Sets the statement that is executed if the condition is true.
 	 * 
 	 * @param thenClause
 	 *            <code>IASTStatement</code>
@@ -70,7 +71,7 @@ public interface IASTIfStatement extends IASTStatement {
 	public void setThenClause(IASTStatement thenClause);
 
 	/**
-	 * Get the statement that is executed if the condition is false. This clause
+	 * Returns the statement that is executed if the condition is false. This clause
 	 * is optional and returns null if there is none.
 	 * 
 	 * @return the else clause or null <code>IASTStatement</code>
@@ -78,7 +79,7 @@ public interface IASTIfStatement extends IASTStatement {
 	public IASTStatement getElseClause();
 
 	/**
-	 * Set the else clause.
+	 * Sets the else clause.
 	 * 
 	 * @param elseClause
 	 *            <code>IASTStatement</code>

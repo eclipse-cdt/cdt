@@ -107,6 +107,12 @@ public class LRTemplateTests extends AST2TemplateTests {
 	//variadic template 
 	@Override
 	public void testVariadicFunctionTemplate_Bug333389() throws Exception {}
+	//auto
+	@Override	
+	public void testRRefVsRef_351927() throws Exception {}
+	//Variadic template arguments 
+	@Override
+	public void testTemplateTemplateParameterMatching_352859() throws Exception {}
 	
 	@Override
 	@SuppressWarnings("unused")

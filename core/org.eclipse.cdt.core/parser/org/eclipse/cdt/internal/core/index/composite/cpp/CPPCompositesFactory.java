@@ -293,6 +293,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 						return new CompositeCPPParameterSpecialization(this, (ICPPParameter) binding);
 					} else if (binding instanceof ITypedef) {
 						return new CompositeCPPTypedefSpecialization(this, (ICPPBinding) binding);
+					} else if (binding instanceof ICPPUsingDeclaration) {
+						return new CompositeCPPUsingDeclarationSpecialization(this, (ICPPUsingDeclaration) binding);
 					} else {
 						throw new CompositingNotImplementedError("composite binding unavailable for " + binding + " " + binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 					}

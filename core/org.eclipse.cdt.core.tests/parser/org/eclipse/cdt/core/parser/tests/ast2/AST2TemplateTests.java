@@ -5481,4 +5481,36 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testExplicitSpecializationOfForbiddenAsImplicit_356818() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct A {
+	//		void f() { }
+	//	};
+	//	template <typename T> struct B : A {
+	//		using A::f;
+	//		void f(int) { }
+	//	};
+	//	template <typename T> struct C : B<T> {
+	//		using B<T>::f;
+	//		void f(int, int);
+	//	};
+	//
+	//	void test() {
+	//		B<float> b;
+	//		C<float> c;
+	//		b.f();
+	//		b.f(1);
+	//		c.f();
+	//		c.f(1);
+	//		c.f(1,1);
+	//	}
+	public void testSpecializationOfUsingDeclaration_357293() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template<typename T> struct SS {};
+	//	template<template<typename T, typename S = SS<T> > class Cont> 
+	//   	   Cont<int> f() {}
+	public void testReferenceToParameterOfTemplateTemplateParameter_357308() throws Exception {
+		parseAndCheckBindings();
+	}
 }

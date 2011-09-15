@@ -9513,4 +9513,13 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertNotSame(g1, g2);
 		assertSame(g2, g3);
 	}
+	
+
+	//	class A : A {
+	//	};
+	public void testRecursiveClassInheritance_Bug357256() throws Exception {
+		BindingAssertionHelper bh= getAssertionHelper();
+		ICPPClassType c= bh.assertNonProblem("A", 1);
+		assertEquals(0, ClassTypeHelper.getPureVirtualMethods(c).length);
+	}
 }

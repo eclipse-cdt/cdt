@@ -114,6 +114,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
@@ -157,7 +158,7 @@ import org.eclipse.text.edits.TextEdit;
  * Some heuristic is applied in case of syntax errors or other problems
  * to skip those areas, but because of incomplete location information
  * the formatting may fail. The reason of the failure is logged.
- * 
+ *
  * @since 4.0
  */
 public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, ICASTVisitor {
@@ -827,7 +828,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	/**
 	 * Determine whether the given declarator is the first in a list of declarators (if any).
-	 * 
+	 *
 	 * @param node  the declarator node
 	 * @return <code>true</code> if this node is the first in a list
 	 */
@@ -1527,7 +1528,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	/**
 	 * Returns the position of the last character of a node, or -1 if that character is part of
 	 * a macro expansion.
-	 * 
+	 *
 	 * @param node an AST node
 	 * @return the position of the last character of a node, or -1 if that character is part of
 	 * 		a macro expansion.
@@ -1658,12 +1659,16 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			Runnable tailFormatter = fExpectSemicolonAfterDeclaration ?
 					new TrailingSemicolonFormatter(node) : null;
 			if (declarators.size() == 1) {
-				scribe.setTailFormatter(tailFormatter);
-				try {
+				if (tailFormatter != null) {
+					scribe.setTailFormatter(tailFormatter);
+					try {
+						visit(declarators.get(0));
+						scribe.runTailFormatter();
+					} finally {
+						scribe.setTailFormatter(null);
+					}
+				} else {
 					visit(declarators.get(0));
-					scribe.runTailFormatter();
-				} finally {
-					scribe.setTailFormatter(null);
 				}
 			} else {
 				final ListOptions options= new ListOptions(preferences.alignment_for_declarator_list);
@@ -2047,7 +2052,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 * @param encloseInParen indicates whether the list should be enclosed in parentheses
 	 * @param addEllipsis indicates whether ellipsis should be added after the last element
 	 * @param tailFormatter formatter for the trailing text that should be kept together with
-	 * 		the last element of the list. 
+	 * 		the last element of the list.
 	 */
 	private void formatList(List<? extends IASTNode> elements, ListOptions options,
 			boolean encloseInParen, boolean addEllipsis, Runnable tailFormatter) {
@@ -2153,12 +2158,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 		final IASTDeclaration decl= node.getDeclaration();
 		if (decl != null) {
-			fExpectSemicolonAfterDeclaration= false;
-			try {
-				decl.accept(this);
-			} finally {
-				fExpectSemicolonAfterDeclaration= true;
-			}
+			formatInlineDeclaration(decl);
 		} else if (node.isCatchAll()) {
 			scribe.printNextToken(Token.tELIPSE, false /* preferences.insert_space_before_ellipsis */);
 //			if (false /* preferences.insert_space_after_ellipsis */) {
@@ -2171,6 +2171,15 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			catchBody.accept(this);
 		}
 		return PROCESS_SKIP;
+	}
+
+	private void formatInlineDeclaration(final IASTDeclaration decl) {
+		fExpectSemicolonAfterDeclaration= false;
+		try {
+			decl.accept(this);
+		} finally {
+			fExpectSemicolonAfterDeclaration= true;
+		}
 	}
 
 	private int visit(IASTCompoundStatement node) {
@@ -2288,7 +2297,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	/**
 	 * Formats given expressions as a function call, ie. enclosed in parenthesis.
-	 * 
+	 *
 	 * @param args  the argument expressions, may be <code>null</code>
 	 */
 	private void formatFunctionCallArguments(IASTInitializerClause[] args) {
@@ -2785,7 +2794,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private boolean isOverloadedLeftShift(IASTBinaryExpression node) {
-		return node.getOperator() == IASTBinaryExpression.op_shiftLeft && 
+		return node.getOperator() == IASTBinaryExpression.op_shiftLeft &&
 				node instanceof ICPPASTBinaryExpression &&
 				((ICPPASTBinaryExpression) node).getOverload() != null;
 	}
@@ -3079,14 +3088,29 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTForStatement node) {
-		scribe.printNextToken(Token.t_for);
-	    final int line = scribe.line;
-	    scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_for);
-		fInsideFor= true;
-		if (preferences.insert_space_after_opening_paren_in_for) {
-			scribe.space();
+		if (!startsWithMacroExpansion(node)) {
+			scribe.printNextToken(Token.t_for);
 		}
+	    final int line = scribe.line;
 		IASTStatement initializerStmt= node.getInitializerStatement();
+		IASTStatement body = node.getBody();
+		Runnable tailFormatter = null;
+		if (!doNodesHaveSameOffset(node, initializerStmt)) {
+			scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_for);
+			fInsideFor= true;
+			if (preferences.insert_space_after_opening_paren_in_for) {
+				scribe.space();
+			}
+			if (DefaultCodeFormatterConstants.END_OF_LINE.equals(preferences.brace_position_for_block) &&
+					body instanceof IASTCompoundStatement && !startsWithMacroExpansion(body)) {
+				tailFormatter = new TrailingTokenFormatter(Token.tLBRACE,
+						body.getFileLocation().getNodeOffset(),
+						preferences.insert_space_before_opening_brace_in_block, false);
+			}
+			tailFormatter = new ClosingParensesisTailFormatter(
+					preferences.insert_space_before_closing_paren_in_for, tailFormatter);
+		}
+
 		initializerStmt.accept(this);
 		if (peekNextToken() == Token.tSEMI) {
 			scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon_in_for);
@@ -3124,6 +3148,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 						scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon_in_for);
 					}
 
+					scribe.setTailFormatter(tailFormatter);
 					scribe.alignFragment(alignment, 1);
 					IASTExpression iterationExpr= node.getIterationExpression();
 					if (iterationExpr != null) {
@@ -3132,52 +3157,62 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 						}
 						iterationExpr.accept(this);
 					}
+					if (tailFormatter != null) {
+						scribe.runTailFormatter();
+						scribe.setTailFormatter(null);
+					}
 				} finally {
 					fInsideFor= false;
 				}
-				if (peekNextToken() == Token.tRPAREN) {
-					scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_for);
-				}
-				IASTStatement body = node.getBody();
-				if (body instanceof IASTCompoundStatement && !startsWithMacroExpansion(body)) {
-					formatLeftCurlyBrace(line, preferences.brace_position_for_block);
-					if (startNode(body)) {
-						try {
-							final boolean braceOnSameLine = DefaultCodeFormatterConstants.END_OF_LINE.equals(preferences.brace_position_for_block);
-							if (!braceOnSameLine) {
-								ok = true;
-								scribe.exitAlignment(alignment, true);
-							}
-							formatBlockOpening((IASTCompoundStatement) body,
-									preferences.brace_position_for_block,
-									preferences.insert_space_before_opening_brace_in_block);
-							if (braceOnSameLine) {
-								ok = true;
-								scribe.exitAlignment(alignment, true);
-							}
-							formatOpenedBlock((IASTCompoundStatement) body,
-									preferences.brace_position_for_block,
-									preferences.indent_statements_compare_to_block);
-						} finally {
-							endOfNode(body);
-						}
-					} else {
-						ok = true;
-						scribe.exitAlignment(alignment, true);
-					}
-				} else {
-					ok = true;
-					scribe.exitAlignment(alignment, true);
-					formatAction(line, body, preferences.brace_position_for_block);
-				}
+				ok = true;
 			} catch (AlignmentException e) {
-				if (ok) {
-					throw e;
-				}
 				scribe.redoAlignment(e);
     		}
     	} while (!ok);
+    	scribe.exitAlignment(alignment, true);
 
+		if (body instanceof IASTCompoundStatement && !startsWithMacroExpansion(body)) {
+//			if (body instanceof IASTCompoundStatement && !startsWithMacroExpansion(body)) {
+//				formatLeftCurlyBrace(line, preferences.brace_position_for_block);
+//				if (startNode(body)) {
+//					try {
+//						final boolean braceOnSameLine = DefaultCodeFormatterConstants.END_OF_LINE.equals(preferences.brace_position_for_block);
+//						if (!braceOnSameLine) {
+//							ok = true;
+//							scribe.exitAlignment(alignment, true);
+//						}
+//						formatBlockOpening((IASTCompoundStatement) body,
+//								preferences.brace_position_for_block,
+//								preferences.insert_space_before_opening_brace_in_block);
+//						if (braceOnSameLine) {
+//							ok = true;
+//							scribe.exitAlignment(alignment, true);
+//						}
+//						formatOpenedBlock((IASTCompoundStatement) body,
+//								preferences.brace_position_for_block,
+//								preferences.indent_statements_compare_to_block);
+//					} finally {
+//						endOfNode(body);
+//					}
+//				}
+//			}
+			if (startNode(body)) {
+				try {
+					if (scribe.scanner.getCurrentPosition() <= body.getFileLocation().getNodeOffset()) {
+						formatLeftCurlyBrace(line, preferences.brace_position_for_block);
+					}
+					formatBlock((IASTCompoundStatement) body,
+							preferences.brace_position_for_block,
+							preferences.insert_space_before_opening_brace_in_block,
+							preferences.indent_statements_compare_to_block);
+				} finally {
+					endOfNode(body);
+				}
+			}
+		} else {
+			formatAction(line, body, preferences.brace_position_for_block);
+		}
+		scribe.printTrailingComment();
 		return PROCESS_SKIP;
 	}
 
@@ -3210,36 +3245,53 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(IASTIfStatement node) {
-		scribe.printNextToken(Token.t_if);
-        final int line = scribe.line;
-        scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_if);
-		if (preferences.insert_space_after_opening_paren_in_if) {
-			scribe.space();
+		if (!startsWithMacroExpansion(node)) {
+			scribe.printNextToken(Token.t_if);
 		}
-		IASTExpression condExpr= node.getConditionExpression();
+        final int line = scribe.line;
+		IASTNode condition = node.getConditionExpression();
+		if (condition == null && node instanceof ICPPASTIfStatement) {
+			condition = ((ICPPASTIfStatement) node).getConditionDeclaration();
+		}
 		final IASTStatement thenStatement = node.getThenClause();
 		final IASTStatement elseStatement = node.getElseClause();
-		Runnable tailFormatter = null;
-		if (DefaultCodeFormatterConstants.END_OF_LINE.equals(preferences.brace_position_for_block) &&
-				thenStatement instanceof IASTCompoundStatement && !startsWithMacroExpansion(thenStatement)) {
-			tailFormatter = new TrailingTokenFormatter(Token.tLBRACE,
-					thenStatement.getFileLocation().getNodeOffset(),
-					preferences.insert_space_before_opening_brace_in_block, false);
+
+		fExpectSemicolonAfterDeclaration= false;
+		try {
+			if (condition == null || !doNodesHaveSameOffset(node, condition)) {
+		        scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_if);
+				if (preferences.insert_space_after_opening_paren_in_if) {
+					scribe.space();
+				}
+				Runnable tailFormatter = null;
+				if (DefaultCodeFormatterConstants.END_OF_LINE.equals(preferences.brace_position_for_block) &&
+						thenStatement instanceof IASTCompoundStatement && !startsWithMacroExpansion(thenStatement)) {
+					tailFormatter = new TrailingTokenFormatter(Token.tLBRACE,
+							thenStatement.getFileLocation().getNodeOffset(),
+							preferences.insert_space_before_opening_brace_in_block, false);
+				}
+				tailFormatter = new ClosingParensesisTailFormatter(
+						preferences.insert_space_before_closing_paren_in_if, tailFormatter);
+				scribe.setTailFormatter(tailFormatter);
+				if (condition == null || condition instanceof IASTProblemHolder) {
+					scribe.skipToToken(Token.tRPAREN);
+				} else {
+					condition.accept(this);
+				}
+				scribe.runTailFormatter();
+				scribe.setTailFormatter(null);
+			} else if (!(condition instanceof IASTProblemHolder)) {
+				condition.accept(this);
+			}
+		} finally {
+			fExpectSemicolonAfterDeclaration= true;
 		}
-		tailFormatter = new ClosingParensesisTailFormatter(
-				preferences.insert_space_before_closing_paren_in_if, tailFormatter);
-		scribe.setTailFormatter(tailFormatter);
-		if (condExpr == null || condExpr instanceof IASTProblemExpression) {
-			scribe.skipToToken(Token.tRPAREN);
-		} else {
-			condExpr.accept(this);
-		}
-		scribe.runTailFormatter();
-		scribe.setTailFormatter(null);
 
 		boolean thenStatementIsBlock = false;
 		if (thenStatement != null) {
-			if (thenStatement instanceof IASTCompoundStatement && !startsWithMacroExpansion(thenStatement)) {
+			if (condition != null && doNodeLocationsOverlap(condition, thenStatement)) {
+				thenStatement.accept(this);
+			} else if (thenStatement instanceof IASTCompoundStatement && !startsWithMacroExpansion(thenStatement)) {
 				final IASTCompoundStatement block = (IASTCompoundStatement) thenStatement;
 				thenStatementIsBlock = true;
 				final List<IASTStatement> statements = Arrays.asList(block.getStatements());
@@ -3263,7 +3315,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					}
 				}
 			} else {
-				if (node.getFileLocation().getNodeOffset() == thenStatement.getFileLocation().getNodeOffset()) {
+				if (doNodesHaveSameOffset(node, thenStatement)) {
 					startNode(thenStatement);
 				}
  				if (elseStatement == null && preferences.keep_simple_if_on_one_line) {
@@ -3310,34 +3362,38 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 
 		if (elseStatement != null) {
-			if (peekNextToken() == Token.t_else) {
-				if (thenStatementIsBlock) {
-					scribe.printNextToken(Token.t_else, preferences.insert_space_after_closing_brace_in_block);
-				} else {
-					scribe.printNextToken(Token.t_else, true);
-				}
-			}
-
-			if (elseStatement instanceof IASTCompoundStatement && !enclosedInMacroExpansion(elseStatement)) {
-				elseStatement.accept(this);
-			} else if (elseStatement instanceof IASTIfStatement) {
-				if (!preferences.compact_else_if) {
-					scribe.startNewLine();
-					scribe.indent();
-				}
-				scribe.space();
-				elseStatement.accept(this);
-				if (!preferences.compact_else_if) {
-					scribe.unIndent();
-				}
-			} else if (preferences.keep_else_statement_on_same_line) {
-				scribe.space();
+			if (condition != null && doNodeLocationsOverlap(condition, elseStatement)) {
 				elseStatement.accept(this);
 			} else {
-				scribe.startNewLine();
-				scribe.indent();
-				elseStatement.accept(this);
-				scribe.unIndent();
+				if (peekNextToken() == Token.t_else) {
+					if (thenStatementIsBlock) {
+						scribe.printNextToken(Token.t_else, preferences.insert_space_after_closing_brace_in_block);
+					} else {
+						scribe.printNextToken(Token.t_else, true);
+					}
+				}
+
+				if (elseStatement instanceof IASTCompoundStatement && !enclosedInMacroExpansion(elseStatement)) {
+					elseStatement.accept(this);
+				} else if (elseStatement instanceof IASTIfStatement) {
+					if (!preferences.compact_else_if) {
+						scribe.startNewLine();
+						scribe.indent();
+					}
+					scribe.space();
+					elseStatement.accept(this);
+					if (!preferences.compact_else_if) {
+						scribe.unIndent();
+					}
+				} else if (preferences.keep_else_statement_on_same_line) {
+					scribe.space();
+					elseStatement.accept(this);
+				} else {
+					scribe.startNewLine();
+					scribe.indent();
+					elseStatement.accept(this);
+					scribe.unIndent();
+				}
 			}
 		}
 		return PROCESS_SKIP;
@@ -3624,7 +3680,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					scribe.indent();
 				}
 				scribe.startNewLine();
-	
+
 				formatClosingBrace(brace_position);
 			}
 		} finally {
@@ -3684,9 +3740,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 * Test whether the next node location is inside a macro expansion. If it is
 	 * a macro expansion, formatting will be skipped until the next node outside
 	 * the expansion is reached.
-	 * 
+	 *
 	 * @param node the AST node to be tested
-	 * @return <code>false</code> if the node should be skipped 
+	 * @return <code>false</code> if the node should be skipped
 	 */
 	private boolean startNode(IASTNode node) {
 		scribe.startNode();
@@ -3702,7 +3758,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				IASTFileLocation macroLocation = macroExpansion.getFileLocation();
 				IASTFileLocation nodeLocation = node.getFileLocation();
 				if (macroLocation.getNodeOffset() >= scribe.scanner.getCurrentPosition() &&
-						!scribe.shouldSkip(macroLocation.getNodeOffset()) && 
+						!scribe.shouldSkip(macroLocation.getNodeOffset()) &&
 						(nodeLocation.getNodeOffset() + nodeLocation.getNodeLength() ==
 						macroLocation.getNodeOffset() + macroLocation.getNodeLength() ||
 						locations.length == 2 && isSemicolonLocation(locations[1])) &&
@@ -3729,7 +3785,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	/**
 	 * Formatting of node is complete. Undo skip region if any.
-	 * 
+	 *
 	 * @param node
 	 */
 	private void endOfNode(IASTNode node) {
@@ -3751,7 +3807,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	/**
 	 * Formatting of node continues after completion of a child node. Establish next skip region.
-	 * 
+	 *
 	 * @param node
 	 */
 	private void continueNode(IASTNode node) {
@@ -3835,7 +3891,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	/**
 	 * Format an expression nested in parenthesis. If the operand is
 	 * <code>null</code>, empty parenthesis are expected.
-	 * 
+	 *
 	 * @param operand
 	 */
 	private void formatParenthesizedExpression(final IASTExpression operand) {
@@ -3944,11 +4000,25 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		return true;
 	}
 
+	/**
+	 * Returns true if the two given nodes have overlapping file locations. For nodes that are
+	 * normally separated by other tokens this is an indication that they were produced by the same
+	 * macro expansion.
+	 */
 	private static boolean doNodeLocationsOverlap(IASTNode node1, IASTNode node2) {
 		IASTFileLocation loc1 = node1.getFileLocation();
 		IASTFileLocation loc2 = node2.getFileLocation();
 		return loc1.getNodeOffset() + loc1.getNodeLength() > loc2.getNodeOffset() &&
-				loc1.getNodeOffset() < loc2.getNodeOffset() + loc2.getNodeLength(); 
+				loc1.getNodeOffset() < loc2.getNodeOffset() + loc2.getNodeLength();
+	}
+
+	/**
+	 * Returns true if the two given nodes have the same offset. For nodes that are normally
+	 * separated by other tokens this is an indication that they were produced by the same macro
+	 * expansion.
+	 */
+	private static boolean doNodesHaveSameOffset(IASTNode node1, IASTNode node2) {
+		return node1.getFileLocation().getNodeOffset() == node2.getFileLocation().getNodeOffset();
 	}
 
 	private void formatBlock(IASTCompoundStatement block, String block_brace_position,

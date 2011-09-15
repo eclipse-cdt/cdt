@@ -146,6 +146,9 @@ public class LRCPPTests extends AST2CPPTests {
 	@Override
 	public void testStaticAssertions_294730() throws Exception {}
 	
+	//outer::foo x
+	@Override
+	public void testAttributeInUsingDirective_351228() throws Exception {}
 	
 	 
 	@Override

@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
@@ -31,6 +32,7 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
     private boolean fIsParameterPack;
     private IASTName fName;
     private IASTExpression fDefaultValue;
+	private CPPTemplateTemplateParameterScope fScope;
 
     public CPPASTTemplatedTypeTemplateParameter() {
 	}
@@ -156,4 +158,11 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
             fDefaultValue  = (IASTExpression) other;
         }
     }
+
+	public ICPPScope asScope() {
+		if (fScope == null) {
+			fScope= new CPPTemplateTemplateParameterScope(this);
+		}
+		return fScope;
+	}
 }

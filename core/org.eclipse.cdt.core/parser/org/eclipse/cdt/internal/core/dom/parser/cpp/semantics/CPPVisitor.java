@@ -908,7 +908,7 @@ public class CPPVisitor extends ASTQueries {
 					if (result != null)
 						return result;
 			    } else if (parent instanceof ICPPASTTemplateDeclaration) {
-			    	return CPPTemplates.getContainingScope(node);
+			    	return ((ICPPASTTemplateDeclaration) parent).getScope();
 			    }
 			} else if (node instanceof IASTInitializer) {
 				if (node instanceof ICPPASTConstructorChainInitializer) {
@@ -979,7 +979,13 @@ public class CPPVisitor extends ASTQueries {
 					continue;
 			    }
 		    } else if (node instanceof ICPPASTTemplateParameter) {
-		    	return CPPTemplates.getContainingScope(node);
+		    	if (node instanceof ICPPASTTemplatedTypeTemplateParameter && node != inputNode) {
+		    		return ((ICPPASTTemplatedTypeTemplateParameter) node).asScope();
+		    	}
+		    	IASTNode parent = node.getParent();
+		    	if (parent instanceof ICPPASTTemplateDeclaration) {
+		    		return ((ICPPASTTemplateDeclaration) parent).getScope();
+		    	}
 		    } else if (node instanceof ICPPASTBaseSpecifier) {
 	    	    ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) node.getParent();
 	    	    IASTName n = compSpec.getName();

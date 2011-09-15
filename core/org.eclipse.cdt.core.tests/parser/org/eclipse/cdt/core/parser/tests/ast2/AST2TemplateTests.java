@@ -5506,4 +5506,11 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testSpecializationOfUsingDeclaration_357293() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template<typename T> struct SS {};
+	//	template<template<typename T, typename S = SS<T> > class Cont> 
+	//   	   Cont<int> f() {}
+	public void testReferenceToParameterOfTemplateTemplateParameter_357308() throws Exception {
+		parseAndCheckBindings();
+	}
 }

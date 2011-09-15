@@ -1426,6 +1426,15 @@ public class CPPSemantics {
 	    		ASTInternal.addName(scope, enumerator.getName());
 	    	}
 	    	return;
+		} else if (parent instanceof ICPPASTTemplatedTypeTemplateParameter) {
+			// The template-template parameter scope contains the parameters
+	    	for (ICPPASTTemplateParameter par : ((ICPPASTTemplatedTypeTemplateParameter) parent).getTemplateParameters()) {
+	    		IASTName name= CPPTemplates.getTemplateParameterName(par);
+	    		if (name != null) {
+	    			ASTInternal.addName(scope, name);
+	    		}
+	    	}
+	    	return;
 		}
 		
 		int idx = -1;

@@ -51,6 +51,10 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 	private static final String PROVIDER_ID = "test.provider.id";
 	private static final String PROVIDER_ID_2 = "test.provider.id.2";
 	private static final String PROVIDER_NAME = "test.provider.name";
+	
+	// constants for getProjectDescription()
+	private static final boolean READ_ONLY = false;
+	private static final boolean WRITEABLE = true;
 
 	private class MockProvider extends LanguageSettingsBaseProvider implements ILanguageSettingsProvider {
 		private final List<ICLanguageSettingEntry> entries;
@@ -106,7 +110,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 	private void setBuilderCWD(IProject project, IPath buildCWD) throws CoreException {
 		CProjectDescriptionManager manager = CProjectDescriptionManager.getInstance();
 		{
-			ICProjectDescription prjDescription = manager.getProjectDescription(project, true);
+			ICProjectDescription prjDescription = manager.getProjectDescription(project, WRITEABLE);
 			assertNotNull(prjDescription);
 			ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 			assertNotNull(cfgDescription);
@@ -119,7 +123,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		}
 		{
 			// triplecheck builderCWD for different project/configuration descriptions
-			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, READ_ONLY);
 			assertNotNull(prjDescription);
 			ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 			assertNotNull(cfgDescription);
@@ -148,7 +152,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		{
 			// Handle prjDescription==null
 			IProject project = FAKE_FILE.getProject();
-			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, READ_ONLY);
 			assertNull(prjDescription);
 
 			LanguageSettingsScannerInfoProvider scannerInfoProvider = new LanguageSettingsScannerInfoProvider();
@@ -166,7 +170,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 			IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
 			IFile file = ResourceHelper.createFile(project, "file");
 
-			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, READ_ONLY);
 			assertNotNull(prjDescription);
 			ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 			assertNotNull(cfgDescription);
@@ -191,7 +195,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		IFile file = ResourceHelper.createFile(project, "file.c");
 
 		// confirm that language==null
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, READ_ONLY);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -213,7 +217,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 	public void testRegular() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -250,6 +254,9 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		providers.add(provider);
 		cfgDescription.setLanguageSettingProviders(providers);
 
+		// set project description
+		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
+
 		// test that the scannerInfoProvider gets the entries
 		LanguageSettingsScannerInfoProvider scannerInfoProvider = new LanguageSettingsScannerInfoProvider();
 		ExtendedScannerInfo info = scannerInfoProvider.getScannerInformation(file);
@@ -281,7 +288,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 	public void testLocal() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -310,6 +317,9 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		providers.add(provider);
 		cfgDescription.setLanguageSettingProviders(providers);
 
+		// set project description
+		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
+
 		// test that the scannerInfoProvider gets the entries
 		LanguageSettingsScannerInfoProvider scannerInfoProvider = new LanguageSettingsScannerInfoProvider();
 		ExtendedScannerInfo info = scannerInfoProvider.getScannerInformation(file);
@@ -331,7 +341,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 	public void testFramework() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -351,7 +361,10 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
 		cfgDescription.setLanguageSettingProviders(providers);
-		
+
+		// set project description
+		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
+
 		// test that the scannerInfoProvider gets the entries
 		LanguageSettingsScannerInfoProvider scannerInfoProvider = new LanguageSettingsScannerInfoProvider();
 		ExtendedScannerInfo info = scannerInfoProvider.getScannerInformation(file);
@@ -370,7 +383,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 	public void testDuplicate() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -397,6 +410,9 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		providers.add(provider);
 		cfgDescription.setLanguageSettingProviders(providers);
 
+		// set project description
+		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
+
 		// test that the scannerInfoProvider gets the entries
 		LanguageSettingsScannerInfoProvider scannerInfoProvider = new LanguageSettingsScannerInfoProvider();
 		ExtendedScannerInfo info = scannerInfoProvider.getScannerInformation(file);
@@ -416,7 +432,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 	public void testWorkspacePath() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -454,6 +470,9 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		providers.add(provider);
 		cfgDescription.setLanguageSettingProviders(providers);
 
+		// set project description
+		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
+
 		// test the entries received from the scannerInfoProvider
 		LanguageSettingsScannerInfoProvider scannerInfoProvider = new LanguageSettingsScannerInfoProvider();
 		ExtendedScannerInfo info = scannerInfoProvider.getScannerInformation(file);
@@ -481,7 +500,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 //		String buildCwdDevice = buildCWD.getDevice();
 
 		// get project/configuration descriptions
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -501,6 +520,9 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
 		cfgDescription.setLanguageSettingProviders(providers);
+
+		// set project description
+		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
 
 		// test the entries received from the scannerInfoProvider
 		LanguageSettingsScannerInfoProvider scannerInfoProvider = new LanguageSettingsScannerInfoProvider();
@@ -529,7 +551,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		setBuilderCWD(project, buildCWD);
 
 		// get project/configuration descriptions
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -551,6 +573,9 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
 		cfgDescription.setLanguageSettingProviders(providers);
+
+		// set project description
+		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
 
 		// test the entries received from the scannerInfoProvider
 		LanguageSettingsScannerInfoProvider scannerInfoProvider = new LanguageSettingsScannerInfoProvider();
@@ -595,7 +620,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		IFolder incFolder_dotdot_slash_path = ResourceHelper.createFolder(project, "include2"); // "/ProjPath/buildDir/../include2"
 
 		// get project/configuration descriptions
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -627,6 +652,9 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
 		cfgDescription.setLanguageSettingProviders(providers);
+
+		// set project description
+		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
 
 		// test the entries received from the scannerInfoProvider
 		LanguageSettingsScannerInfoProvider scannerInfoProvider = new LanguageSettingsScannerInfoProvider();
@@ -674,7 +702,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		String envPathStr = "${ProjDirPath}/Folder";
 
 		// get project/configuration descriptions
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -692,6 +720,9 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
 		cfgDescription.setLanguageSettingProviders(providers);
+
+		// set project description
+		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
 
 		// test the entries received from the scannerInfoProvider
 		LanguageSettingsScannerInfoProvider scannerInfoProvider = new LanguageSettingsScannerInfoProvider();
@@ -726,7 +757,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -751,6 +782,9 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		providers.add(provider);
 		cfgDescription.setLanguageSettingProviders(providers);
 
+		// set project description
+		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
+
 		// test that the scannerInfoProvider gets the entries for
 		LanguageSettingsScannerInfoProvider scannerInfoProvider = new LanguageSettingsScannerInfoProvider();
 		ExtendedScannerInfo info = scannerInfoProvider.getScannerInformation(file);
@@ -770,7 +804,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		String envPathStr = "${ProjDirPath}/Folder";
 
 		// get project/configuration descriptions
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -788,6 +822,9 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
 		cfgDescription.setLanguageSettingProviders(providers);
+		
+		// set project description
+		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
 
 		// test the entries received from the scannerInfoProvider
 		LanguageSettingsScannerInfoProvider scannerInfoProvider = new LanguageSettingsScannerInfoProvider();
@@ -848,7 +885,7 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		IFolder incFolderC = ResourceHelper.createFolder(project, "includeC");
 
 		// get project/configuration descriptions
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, WRITEABLE);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
@@ -877,6 +914,9 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 		providers.add(provider1);
 		providers.add(provider2);
 		cfgDescription.setLanguageSettingProviders(providers);
+
+		// set project description
+		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
 
 		// test the entries received from the scannerInfoProvider
 		LanguageSettingsScannerInfoProvider scannerInfoProvider = new LanguageSettingsScannerInfoProvider();

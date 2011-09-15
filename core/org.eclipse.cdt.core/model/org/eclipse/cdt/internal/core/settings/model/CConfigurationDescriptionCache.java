@@ -559,10 +559,8 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	}
 
 	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
-//	FIXME? - not sure
-//		if(!fInitializing)
-//			throw ExceptionFactory.createIsReadOnlyException();
-
+		if(!fInitializing)
+			throw ExceptionFactory.createIsReadOnlyException();
 		fSpecSettings.setLanguageSettingProviders(providers);
 	}
 

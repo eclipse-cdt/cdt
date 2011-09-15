@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.testplugin.CModelMock;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.internal.core.XmlUtil;
@@ -173,6 +174,26 @@ public class LanguageSettingsPersistenceProjectTests extends TestCase {
 		LanguageSettingsProvidersSerializer.loadLanguageSettingsWorkspace();
 
 		// test passes if no exception was thrown
+	}
+
+	/**
+	 */
+	public void testReadOnlyDescription() throws Exception {
+		// create a project
+		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
+		// get read-only description
+		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		assertNotNull(prjDescription);
+		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
+		assertNotNull(cfgDescription);
+
+		try {
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			cfgDescription.setLanguageSettingProviders(providers);
+			fail("WriteAccessException was expected but it was not throw.");
+		} catch (WriteAccessException e) {
+			// exception is expected
+		}
 	}
 
 	/**

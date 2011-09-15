@@ -16,7 +16,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -819,20 +818,76 @@ public class ClassTypeHelper {
 	 * template parameters.
 	 */
 	public static ICPPMethod[] getPureVirtualMethods(ICPPClassType classType) {
-		Collection<Set<ICPPMethod>> result = collectPureVirtualMethods(classType).values();
+		Map<String, List<ICPPMethod>> result= collectPureVirtualMethods(classType, 
+				new HashMap<ICPPClassType, Map<String, List<ICPPMethod>>>());
+		
 		int resultArraySize = 0;
-		for (Set<ICPPMethod> set : result) {
-			resultArraySize += set.size();
+		for (List<ICPPMethod> methods : result.values()) {
+			resultArraySize += methods.size();
 		}
 		ICPPMethod[] resultArray = new ICPPMethod[resultArraySize];
 		int resultArrayIdx = 0;
-		for (Set<ICPPMethod> methodsSet : result) {
-			for (ICPPMethod method : methodsSet) {
-				resultArray[resultArrayIdx] = method;
-				++resultArrayIdx;
+		for (List<ICPPMethod> methods : result.values()) {
+			for (ICPPMethod method : methods) {
+				resultArray[resultArrayIdx++] = method;
 			}
 		}
 		return resultArray;
+	}
+
+	private static Map<String, List<ICPPMethod>> collectPureVirtualMethods(ICPPClassType classType,
+			Map<ICPPClassType, Map<String, List<ICPPMethod>>> cache) {
+
+		Map<String, List<ICPPMethod>> result = cache.get(classType);
+		if (result != null)
+			return result;
+		
+		result= new HashMap<String, List<ICPPMethod>>();
+		cache.put(classType, result);
+		
+		// Look at the pure virtual methods of the base classes
+		Set<IBinding> handledBaseClasses= new HashSet<IBinding>();
+		for (ICPPBase base : classType.getBases()) {
+			final IBinding baseClass = base.getBaseClass();
+			if (baseClass instanceof ICPPClassType && handledBaseClasses.add(baseClass)) {
+				Map<String, List<ICPPMethod>> pureVirtuals = collectPureVirtualMethods((ICPPClassType) baseClass, cache);
+				// Merge derived pure virtual methods
+				for (String key : pureVirtuals.keySet()) {
+					List<ICPPMethod> list = result.get(key);
+					if (list == null) {
+						list= new ArrayList<ICPPMethod>();
+						result.put(key, list);
+					}
+					list.addAll(pureVirtuals.get(key));
+				}
+			}
+		}
+
+		// Remove overridden pure-virtual methods and add in new pure virutals.
+		final ObjectSet<ICPPMethod> methods = getOwnMethods(classType);
+		for (ICPPMethod method : methods) {
+			String key= getMethodNameForOverrideKey(method);
+			List<ICPPMethod> list = result.get(key);
+			if (list != null) {
+				final ICPPFunctionType methodType = method.getType();
+				for (Iterator<ICPPMethod> it= list.iterator(); it.hasNext(); ) {
+					ICPPMethod pureVirtual = it.next();
+					if (functionTypesAllowOverride(methodType, pureVirtual.getType())) {
+						it.remove();
+					}
+				}
+			}
+			if (method.isPureVirtual()) {
+				if (list == null) {
+					list= new ArrayList<ICPPMethod>();
+					result.put(key, list);
+				}
+				list.add(method);
+			} else if (list != null && list.isEmpty()) {
+				result.remove(key);
+			}
+		}
+		return result;
 	}
 
 	private static String getMethodNameForOverrideKey(ICPPMethod method) {
@@ -842,60 +897,5 @@ public class ClassTypeHelper {
 		} else {
 			return method.getName();
 		}
-	}
-
-	/**
-	 * Returns pure virtual methods of the given class grouped by their names.
-	 * 
-	 * @param classType The class to obtain the pure virtual method for.
-	 * @return pure virtual methods grouped by their names.
-	 */
-	private static Map<String, Set<ICPPMethod> > collectPureVirtualMethods(ICPPClassType classType) {
-		// Collect pure virtual functions from base classes
-		Map<String, Set<ICPPMethod>> pureVirtualMethods = new HashMap<String, Set<ICPPMethod>>();
-		for (ICPPBase base : classType.getBases()) {
-			if (base.getBaseClass() instanceof ICPPClassType) {
-				ICPPClassType baseClass = (ICPPClassType) base.getBaseClass();
-				Map<String, Set<ICPPMethod> > derivedPureVirtualMethods = collectPureVirtualMethods(baseClass);
-				// Merge derived pure virtual methods
-				for (Map.Entry<String, Set<ICPPMethod> > currMethodEntry : derivedPureVirtualMethods.entrySet()) {
-					Set<ICPPMethod> methodsSet = pureVirtualMethods.get(currMethodEntry.getKey());
-					if (methodsSet == null) {
-						pureVirtualMethods.put(currMethodEntry.getKey(), currMethodEntry.getValue());
-					} else {
-						methodsSet.addAll(currMethodEntry.getValue());
-					}						
-				}
-			}
-		}
-
-		// Remove overridden methods (even if they are pure virtual)
-		for (ICPPMethod declaredMethod : getOwnMethods(classType)) {
-			Set<ICPPMethod> methodsSet = pureVirtualMethods.get(getMethodNameForOverrideKey(declaredMethod));
-			if (methodsSet != null) {
-				for (Iterator<ICPPMethod> methodIt = methodsSet.iterator(); methodIt.hasNext();) {
-					ICPPMethod method = methodIt.next();
-					if (functionTypesAllowOverride(declaredMethod.getType(), method.getType())) {
-						methodIt.remove();
-					}
-				}
-				if (methodsSet.isEmpty()) {
-					pureVirtualMethods.remove(getMethodNameForOverrideKey(declaredMethod));
-				}
-			}
-		}
-
-		// Add pure virtual methods of current class
-		for (ICPPMethod method : classType.getDeclaredMethods()) {
-			if (method.isPureVirtual()) {
-				Set<ICPPMethod> methodsSet = pureVirtualMethods.get(getMethodNameForOverrideKey(method));
-				if (methodsSet == null) {
-					methodsSet = new HashSet<ICPPMethod>();
-					pureVirtualMethods.put(getMethodNameForOverrideKey(method), methodsSet);
-				}
-				methodsSet.add(method);
-			}
-		}
-		return pureVirtualMethods;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems and others.
+ * Copyright (c) 2007, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -3020,6 +3020,26 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		return fFile2Storage.get(file);
 	}
 
+	/**
+	 * A pass through to process the text to populate into a text hover.
+	 */
+	public String getHoverInfoData(AddressRangePosition pos, String ident) {
+		if (fBackend != null ) {
+			return fBackend.getHoverInfoData(pos, ident);
+		}
+		return ""; //$NON-NLS-1$
+	}
+
+	/**
+	 * A passthru from the text hover code to the backend.
+	 */
+	public String evaluateRegister(String register) {
+		if (fBackend != null) {
+			return fBackend.evaluateRegister(register);
+		}
+		return ""; //$NON-NLS-1$
+	}
+	
 	/**
 	 * A passthru from the text hover code to the backend.
 	 */

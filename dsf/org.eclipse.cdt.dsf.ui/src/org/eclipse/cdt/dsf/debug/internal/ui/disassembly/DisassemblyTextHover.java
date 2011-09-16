@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems and others.
+ * Copyright (c) 2007, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,21 +58,29 @@ public class DisassemblyTextHover implements ITextHover {
 			String ident = doc.get(offset, hoverRegion.getLength());
 			String value = null;
 			pos = doc.getModelPosition(offset);
-			if (pos instanceof SourcePosition) {
-				value = evaluateExpression(ident);
-			} else if (pos instanceof LabelPosition) {
-				value = evaluateExpression(ident);
-			} else if (pos instanceof DisassemblyPosition) {
-				// first, try to evaluate as register
-				value = evaluateRegister(ident);
-				if (value == null) {
-					// if this fails, try expression
+			
+			value = fDisassemblyPart.getHoverInfoData(pos, ident);
+
+			// If returns null (or empty string), not implemented or something went wrong.		
+			if (value == null || value.length() == 0) {
+				if (pos instanceof SourcePosition) {
 					value = evaluateExpression(ident);
+				} else if (pos instanceof LabelPosition) {
+					value = evaluateExpression(ident);
+				} else if (pos instanceof DisassemblyPosition) {
+					// first, try to evaluate as register
+					value = evaluateRegister(ident);
+					if (value == null) {
+						// if this fails, try expression
+						value = evaluateExpression(ident);
+					}
+				}
+				if (value != null) {
+					return ident + " = " + value; //$NON-NLS-1$
 				}
 			}
-			if (value != null) {
-				return ident + " = " + value; //$NON-NLS-1$
-			}
+			else
+				return value;
 		} catch (BadLocationException e) {
 			if (DsfUIPlugin.getDefault().isDebugging()) {
 				DsfUIPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, "Internal Error", e)); //$NON-NLS-1$
@@ -87,8 +95,7 @@ public class DisassemblyTextHover implements ITextHover {
 	 * @return register value or <code>null</code>
 	 */
 	private String evaluateRegister(String register) {
-		// TLETODO [disassembly] evaluate register
-        return null;
+        return fDisassemblyPart.evaluateRegister(register);
 	}
 
 	/**

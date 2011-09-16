@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems and others.
+ * Copyright (c) 2007, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,10 +27,11 @@ public class DisassemblyWithSourcePosition extends DisassemblyPosition {
 	 * @param length
 	 * @param addressOffset
 	 * @param addressLength
-	 * @param opcodes
+	 * @param functionOffset
+	 * @param opcode 
 	 */
-	public DisassemblyWithSourcePosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength, String opcodes, String file, int lineNr) {
-		super(offset, length, addressOffset, addressLength, opcodes);
+	public DisassemblyWithSourcePosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength, String functionOffset, BigInteger opcode, String file, int lineNr) {
+		super(offset, length, addressOffset, addressLength, functionOffset, opcode);
 		fFile = file;
 		fLine = lineNr;
 	}

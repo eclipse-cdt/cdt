@@ -212,6 +212,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	protected AbstractDisassemblyAction fActionGotoAddress;
 	protected AbstractDisassemblyAction fActionToggleSource;
 	private AbstractDisassemblyAction fActionToggleFunctionColumn;
+	private AbstractDisassemblyAction fActionToggleOpcodeColumn;
 	protected AbstractDisassemblyAction fActionToggleSymbols;
 	protected AbstractDisassemblyAction fActionRefreshView;
 	protected Action fActionOpenPreferences;
@@ -243,7 +244,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private TextViewerDragAdapter fDragSourceAdapter;
 	private DisassemblyDropAdapter fDropTargetAdapter;
 
-	private FunctionOffsetRulerColumn fOpcodeRulerColumn;
+	private FunctionOffsetRulerColumn fFunctionOffsetRulerColumn;
+	private OpcodeRulerColumn fOpcodeRulerColumn;
 	private AddressRulerColumn fAddressRulerColumn;
 
 	private BigInteger fStartAddress;
@@ -270,6 +272,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private List<Action> fSelectionActions = new ArrayList<Action>();
 	private List<AbstractDisassemblyAction> fStateDependentActions = new ArrayList<AbstractDisassemblyAction>();
 	private boolean fShowSource;
+	private boolean fShowFunctionOffsets;
 	private boolean fShowOpcodes;
 	private boolean fShowSymbols;
 	private Map<String, Object> fFile2Storage = new HashMap<String, Object>();
@@ -409,6 +412,22 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 
+	private final class ActionToggleOpcodeColumn extends AbstractDisassemblyAction {
+		ActionToggleOpcodeColumn() {
+			super(DisassemblyPart.this);
+			setText(DisassemblyMessages.Disassembly_action_ShowOpcode_label);
+		}
+		@Override
+		public void run() {
+			IPreferenceStore store = DsfUIPlugin.getDefault().getPreferenceStore();
+			store.setValue(DisassemblyPreferenceConstants.SHOW_CODE_BYTES, !isOpcodeRulerVisible());
+		}
+		@Override
+		public void update() {
+			setChecked(isOpcodeRulerVisible());
+		}
+	}
+
 	private final class ActionToggleBreakpointEnablement extends AbstractDisassemblyAction {
 		private IBreakpoint fBreakpoint;
 		public ActionToggleBreakpointEnablement() {
@@ -518,7 +537,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		else
 			fEndAddress = new BigInteger(endAddressString, 16);
 		fShowSource = prefs.getBoolean(DisassemblyPreferenceConstants.SHOW_SOURCE);
-		fShowOpcodes = prefs.getBoolean(DisassemblyPreferenceConstants.SHOW_FUNCTION_OFFSETS);
+		fShowFunctionOffsets = prefs.getBoolean(DisassemblyPreferenceConstants.SHOW_FUNCTION_OFFSETS);
+		fShowOpcodes = prefs.getBoolean(DisassemblyPreferenceConstants.SHOW_CODE_BYTES);
 		fShowSymbols = prefs.getBoolean(DisassemblyPreferenceConstants.SHOW_SYMBOLS);
 		fUpdateBeforeFocus = !prefs.getBoolean(DisassemblyPreferenceConstants.AVOID_READ_BEFORE_PC);
 		fPCHistorySizeMax = prefs.getInt(DisassemblyPreferenceConstants.PC_HISTORY_SIZE);
@@ -602,6 +622,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				hideAddressRuler();
 				showAddressRuler();
 			}
+		} else if (property.equals(DisassemblyPreferenceConstants.OPCODE_RADIX)) {
+			if (isOpcodeRulerVisible()) {
+				hideOpcodeRuler();                        
+				showOpcodeRuler();
+			}
 		} else if (property.equals(DisassemblyPreferenceConstants.SHOW_ADDRESS_RADIX)) {
 			if (fAddressRulerColumn != null) {
 				hideAddressRuler();
@@ -624,13 +649,21 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			fActionToggleSymbols.update();
 			refreshView(10);
 		} else if (property.equals(DisassemblyPreferenceConstants.SHOW_FUNCTION_OFFSETS)) {
-			fShowOpcodes = store.getBoolean(property);
+			fShowFunctionOffsets = store.getBoolean(property);
 			fActionToggleFunctionColumn.update();
 			if (isFunctionOffsetsRulerVisible()) {
 				showFunctionOffsetsRuler();
 			} else {
 				hideFunctionOffsetsRuler();
 			}
+		} else if (property.equals(DisassemblyPreferenceConstants.SHOW_CODE_BYTES)) {
+			fShowOpcodes = store.getBoolean(property);			
+			fActionToggleOpcodeColumn.update();
+			if (isOpcodeRulerVisible()) {
+				showOpcodeRuler();
+			} else {
+				hideOpcodeRuler();
+			}			
 		} else if (property.equals(DisassemblyPreferenceConstants.AVOID_READ_BEFORE_PC)) {
 			fUpdateBeforeFocus = !store.getBoolean(property);
 			updateVisibleArea();
@@ -699,6 +732,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (isFunctionOffsetsRulerVisible()) {
 			showFunctionOffsetsRuler();
 		}
+		if (isOpcodeRulerVisible()) {
+			showOpcodeRuler();
+		}
+
 		initDragAndDrop();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fViewer.getControl(), IDisassemblyHelpContextIds.DISASSEMBLY_VIEW);
 		updateTitle();
@@ -1025,8 +1062,21 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 * @return the created line number column
 	 */
 	protected IVerticalRulerColumn createFunctionOffsetsRulerColumn() {
-		fOpcodeRulerColumn= new FunctionOffsetRulerColumn();
-		initializeRulerColumn(fOpcodeRulerColumn, DisassemblyPreferenceConstants.FUNCTION_OFFSETS_COLOR);
+		fFunctionOffsetRulerColumn= new FunctionOffsetRulerColumn();
+
+		initializeRulerColumn(fFunctionOffsetRulerColumn, DisassemblyPreferenceConstants.FUNCTION_OFFSETS_COLOR);
+		
+		return fFunctionOffsetRulerColumn;
+	}
+	
+	protected IVerticalRulerColumn createOpcodeRulerColumn() {
+		fOpcodeRulerColumn= new OpcodeRulerColumn();
+		
+		initializeRulerColumn(fOpcodeRulerColumn, DisassemblyPreferenceConstants.CODE_BYTES_COLOR);
+
+		IPreferenceStore prefs = getPreferenceStore();
+		fOpcodeRulerColumn.setRadix(prefs.getInt(DisassemblyPreferenceConstants.OPCODE_RADIX));
+		
 		return fOpcodeRulerColumn;
 	}
 
@@ -1110,18 +1160,49 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	}
 
 	private boolean isFunctionOffsetsRulerVisible() {
+		return fShowFunctionOffsets;
+	}
+
+	private boolean isOpcodeRulerVisible() {
 		return fShowOpcodes;
+	}
+
+	/**
+	 * Shows the function offset ruler column.
+	 */
+	private void showFunctionOffsetsRuler() {
+		if (fFunctionOffsetRulerColumn == null) {
+			IVerticalRuler v= getVerticalRuler();
+			if (v instanceof CompositeRuler) {
+				CompositeRuler c= (CompositeRuler) v;
+				c.addDecorator(3, createFunctionOffsetsRulerColumn());
+			}
+		}
+	}
+
+	/**
+	 * Hides the function offset ruler column.
+	 */
+	private void hideFunctionOffsetsRuler() {
+		if (fFunctionOffsetRulerColumn != null) {
+			IVerticalRuler v= getVerticalRuler();
+			if (v instanceof CompositeRuler) {
+				CompositeRuler c= (CompositeRuler) v;
+				c.removeDecorator(fFunctionOffsetRulerColumn);
+			}
+			fFunctionOffsetRulerColumn = null;
+		}
 	}
 
 	/**
 	 * Shows the opcode ruler column.
 	 */
-	private void showFunctionOffsetsRuler() {
+	private void showOpcodeRuler() {
 		if (fOpcodeRulerColumn == null) {
 			IVerticalRuler v= getVerticalRuler();
 			if (v instanceof CompositeRuler) {
 				CompositeRuler c= (CompositeRuler) v;
-				c.addDecorator(2, createFunctionOffsetsRulerColumn());
+				c.addDecorator(2, createOpcodeRulerColumn());
 			}
 		}
 	}
@@ -1129,7 +1210,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/**
 	 * Hides the opcode ruler column.
 	 */
-	private void hideFunctionOffsetsRuler() {
+	private void hideOpcodeRuler() {
 		if (fOpcodeRulerColumn != null) {
 			IVerticalRuler v= getVerticalRuler();
 			if (v instanceof CompositeRuler) {
@@ -1235,6 +1316,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	protected void fillRulerContextMenu(IMenuManager manager) {
 		fActionToggleBreakpointEnablement.update();
 		fActionToggleAddressColumn.update();
+		fActionToggleOpcodeColumn.update();
 		fActionToggleFunctionColumn.update();
 
 		manager.add(new GroupMarker("group.top")); // ICommonMenuConstants.GROUP_TOP //$NON-NLS-1$
@@ -1246,6 +1328,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		manager.add(new Separator("add")); //$NON-NLS-1$
 		manager.add(new Separator(ITextEditorActionConstants.GROUP_RULERS));
 		manager.add(fActionToggleAddressColumn);
+		manager.add(fActionToggleOpcodeColumn);
 		manager.add(fActionToggleFunctionColumn);
 		manager.add(new Separator(ITextEditorActionConstants.GROUP_REST));
 
@@ -1347,6 +1430,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		});
 		fActionToggleBreakpointEnablement = new ActionToggleBreakpointEnablement();
 		fActionToggleAddressColumn = new ActionToggleAddressColumn();
+		fActionToggleOpcodeColumn = new ActionToggleOpcodeColumn();
 		fActionToggleFunctionColumn = new ActionToggleFunctionColumn();
 		fActionToggleSymbols = new ActionToggleSymbols();
 		fActionRefreshView = new ActionRefreshView();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems and others.
+ * Copyright (c) 2007, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,20 +18,22 @@ import java.math.BigInteger;
 public class DisassemblyPosition extends AddressRangePosition {
 
 	public char[] fFunction;
-	
+	public BigInteger fOpcodes;
+
 	/**
-	 * 
 	 * @param offset
 	 * @param length
 	 * @param addressOffset
 	 * @param addressLength
+	 * @param functionOffset
 	 * @param opcodes
 	 */
-	public DisassemblyPosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength, String opcodes) {
+	public DisassemblyPosition(int offset, int length, BigInteger addressOffset, BigInteger addressLength, String functionOffset, BigInteger opcodes) {
 		super(offset, length, addressOffset, addressLength);
-		fFunction = opcodes.toCharArray();
-	}
-
+		fOpcodes = opcodes;
+		fFunction = functionOffset.toCharArray();
+	}	
+	
 	/**
 	 * @return source file
 	 */

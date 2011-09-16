@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems and others.
+ * Copyright (c) 2007, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public final class DisassemblyMessages extends NLS {
 
 	public static String Disassembly_action_ShowAddresses_label;
 	public static String Disassembly_action_ShowFunctionOffsets_label;
+	public static String Disassembly_action_ShowOpcode_label;
 	public static String Disassembly_action_ShowSource_label;
 	public static String Disassembly_action_ShowSymbols_label;
 	public static String Disassembly_action_GotoPC_label;
@@ -65,6 +66,10 @@ public final class DisassemblyMessages extends NLS {
 	public static String DisassemblyPreferencePage_radix_hexadecimal;
 	public static String DisassemblyPreferencePage_showFunctionOffsets;
 	public static String DisassemblyPreferencePage_showFunctionOffsetsTooltip;
+	public static String DisassemblyPreferencePage_showCodeBytes;
+	public static String DisassemblyPreferencePage_showCodeBytesTooltip;
+	public static String DisassemblyPreferencePage_OpcodeFormat;
+	public static String DisassemblyPreferencePage_OpcodeFormatTooltip;
 	public static String DisassemblyPreferencePage_showAddress;
 	public static String DisassemblyPreferencePage_showAddressTooltip;
 	public static String DisassemblyPreferencePage_showRadixTooltip;

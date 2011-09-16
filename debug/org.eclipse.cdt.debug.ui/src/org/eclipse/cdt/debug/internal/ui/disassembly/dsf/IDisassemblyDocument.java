@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,11 @@ public interface IDisassemblyDocument {
 			throws BadLocationException;
 
 	AddressRangePosition insertDisassemblyLine(AddressRangePosition p,
-			BigInteger address, int intValue, String opCode, String string,
+			BigInteger address, int intValue, String functionOffset, String instruction,
 			String compilationPath, int lineNumber) throws BadLocationException;
+
+	AddressRangePosition insertDisassemblyLine(AddressRangePosition p, 
+			BigInteger address, int length, String functionOffset, BigInteger opcode, 
+			String instruction, String compilationPath, int lineNumber) 
+			throws BadLocationException;
 }

@@ -1897,4 +1897,15 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		getBindingFromASTName("f(2,1)", 1, ICPPMethod.class);
 	}
 
+	//	template<class T> struct C1 {
+	//	    typedef int iterator;
+	//	    iterator m1();
+	//	};
+
+	//	template<class T> typename C1<T>::iterator C1<T>::m1() {
+	//		return 0;
+	//	}
+	public void testUsageOfClassTemplateOutsideOfClassBody_357320() throws Exception {
+		getBindingFromASTName("m1", 0, ICPPMethod.class);
+	}
 }

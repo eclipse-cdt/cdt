@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
@@ -103,7 +103,7 @@ class THHierarchyModel {
 
 	public Object[] getHierarchyRootElements() {
 		if (fRootNodes == null) {
-			return new Object[] {"..."}; //$NON-NLS-1$
+			return new Object[] { "..." }; //$NON-NLS-1$
 		}
 		return fRootNodes;
 	}
@@ -132,8 +132,7 @@ class THHierarchyModel {
 		IWorkbenchSiteProgressService ps= fView.getProgressService();
 		if (ps != null) {
 			ps.schedule(fJob, 0L, true);
-		}
-		else {
+		} else {
 			fJob.schedule();
 		}
 	}
@@ -161,21 +160,18 @@ class THHierarchyModel {
 				graph.addSubClasses(index, monitor);
 				if (monitor.isCanceled()) 
 					return Status.CANCEL_STATUS;
-			}
-			finally {
+			} finally {
 				index.releaseReadLock(); 
 			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
 		} catch (InterruptedException e) {
 			return Status.CANCEL_STATUS;
-		}
-		finally {
+		} finally {
 			onJobDone(graph, job);
 		}			
 		return Status.OK_STATUS;
 	}
-	
 	
 	protected void computeNodes() {
 		if (fGraph == null) {
@@ -191,13 +187,11 @@ class THHierarchyModel {
 		
 		if (fHierarchyKind == TYPE_HIERARCHY) {
 			groots= fGraph.getLeaveNodes();
-		}
-		else {
+		} else {
 			THGraphNode node= fGraph.getInputNode();
 			if (node != null) {
 				groots= Collections.singleton(node);
-			}
-			else {
+			} else {
 				groots= Collections.emptySet();
 			}
 		}
@@ -208,14 +202,13 @@ class THHierarchyModel {
 			stack.add(node);
 		}
 		
-		while(!stack.isEmpty()) {
+		while (!stack.isEmpty()) {
 			THNode node= stack.remove(stack.size()-1);
 			THGraphNode gnode= fGraph.getNode(node.getElement());
 			List<THGraphEdge> edges= fwd ? gnode.getOutgoing() : gnode.getIncoming();
 			if (edges.isEmpty()) {
 				leafs.add(node);
-			}
-			else {
+			} else {
 				for (THGraphEdge edge : edges) {
 					THGraphNode gchildNode= fwd ? edge.getEndNode() : edge.getStartNode();
 					THNode childNode= createNode(node, gchildNode, inputNode);
@@ -271,8 +264,7 @@ class THHierarchyModel {
 		if (node.equals(fSelectedTypeNode)) {
 			result[0]= node;
 			return;
-		}
-		else if (result[1] == null) {
+		} else if (result[1] == null) {
 			if (node.getElement().equals(fTypeToSelect)) {
 				result[1]= node;
 			}
@@ -324,11 +316,9 @@ class THHierarchyModel {
 					THGraphNode inputNode= fGraph.getInputNode();
 					if (!fGraph.isFileIndexed()) {
 						fView.setMessage(IndexUI.getFileNotIndexedMessage(fInput));
-					}
-					else if (inputNode == null) {
+					} else if (inputNode == null) {
 						fView.setMessage(Messages.THHierarchyModel_errorComputingHierarchy);
-					}
-					else {
+					} else {
 						if (fTypeToSelect == fInput) {
 							fTypeToSelect= inputNode.getElement();
 						}

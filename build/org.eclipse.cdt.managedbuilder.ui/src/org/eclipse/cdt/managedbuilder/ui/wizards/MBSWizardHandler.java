@@ -427,25 +427,22 @@ public class MBSWizardHandler extends CWizardHandler {
 			return; // not probable 
 		
 		ICDTCommonProjectWizard wz = (ICDTCommonProjectWizard)getWizard();
+		MBSCustomPageManager.init();
+		MBSCustomPageManager.addStockPage(getStartingPage(), CDTMainWizardPage.PAGE_ID);
+		MBSCustomPageManager.addStockPage(getConfigPage(), CDTConfigWizardPage.PAGE_ID);
+
+		// load all custom pages specified via extensions
+		try	{
+			MBSCustomPageManager.loadExtensions();
+		} catch (BuildException e) { e.printStackTrace(); }
+
+		customPages = MBSCustomPageManager.getCustomPages();
+
+		if (customPages == null) 
+			customPages = new IWizardPage[0];
 		
-		if (customPages == null) {
-			MBSCustomPageManager.init();
-			MBSCustomPageManager.addStockPage(getStartingPage(), CDTMainWizardPage.PAGE_ID);
-			MBSCustomPageManager.addStockPage(getConfigPage(), CDTConfigWizardPage.PAGE_ID);
-
-			// load all custom pages specified via extensions
-			try	{
-				MBSCustomPageManager.loadExtensions();
-			} catch (BuildException e) { e.printStackTrace(); }
-
-			customPages = MBSCustomPageManager.getCustomPages();
-
-			if (customPages == null) 
-				customPages = new IWizardPage[0];
-			
-			for (IWizardPage customPage : customPages)
-				customPage.setWizard(wz);
-		}
+		for (IWizardPage customPage : customPages)
+			customPage.setWizard(wz);
 		setCustomPagesFilter(wz);
 	}
 

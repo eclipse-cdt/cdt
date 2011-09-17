@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -65,6 +64,14 @@ public class CIndex implements IIndex {
 	private int fReadLock;
 	private ICompositesFactory cppCF, cCF, fCF;
 
+	/**
+	 * Creates an index consisting of one or more fragments.
+	 * 
+	 * @param fragments Fragments constituting the index. If there are extended fragments,
+	 * they are located in the array after the PDOM fragments for the same project. 
+	 * @param primaryFragmentCount The number of primary index fragments. This number may include
+	 *     extended fragments.
+	 */
 	public CIndex(IIndexFragment[] fragments, int primaryFragmentCount) {
 		fFragments= fragments;
 		fPrimaryFragmentCount= primaryFragmentCount;
@@ -109,7 +116,8 @@ public class CIndex implements IIndex {
 					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
 					for (int i = 0; i < fPrimaryFragmentCount; i++) {
 						try {
-							IBinding[] part = fFragments[i].findBindings(patterns, isFullyQualified, retargetFilter(linkage, filter), monitor);
+							IBinding[] part = fFragments[i].findBindings(patterns, isFullyQualified,
+									retargetFilter(linkage, filter), monitor);
 							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
 							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
 						} catch (CoreException e) {
@@ -171,29 +179,47 @@ public class CIndex implements IIndex {
 			binding= bindings[0];
 		}
 
-		int fragCount= 0;
+		// Maps a file location to -1 if the file belongs to an earlier index fragment,
+		// or to the index of the last checked index fragment plus one, if the file doesn't belong
+		// to any of the index fragments up to the last checked one.
+		HashMap<IIndexFileLocation, Integer> fileCheckCache = new HashMap<IIndexFileLocation, Integer>();
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
-			final IIndexFragmentName[] names = fFragments[i].findNames(binding, flags);
-			if (names.length > 0) {
-				result.addAll(Arrays.asList(names));
-				fragCount++;
-			}
-		}
-		// bug 192352, files can reside in multiple fragments, remove duplicates
-		if (fragCount > 1 || (flags & IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES) != 0) {
-			HashMap<String, IIndexFile> fileMap= new HashMap<String, IIndexFile>();
-			for (Iterator<IIndexFragmentName> iterator = result.iterator(); iterator.hasNext();) {
-				final IIndexFragmentName name = iterator.next();
-				final IIndexFile file= name.getFile();
-				final String fileKey= name.getFile().getLocation().getURI().toString();
-				final IIndexFile otherFile= fileMap.get(fileKey);
-				if (otherFile == null) {
-					fileMap.put(fileKey, file);
-				} else if (!otherFile.equals(file)) { // same file in another fragment
-					iterator.remove();
+			IIndexFragment fragment = fFragments[i];
+			final IIndexFragmentName[] names = fragment.findNames(binding, flags);
+			for (IIndexFragmentName name : names) {
+				IIndexFileLocation location = name.getFile().getLocation();
+				Integer checkState = fileCheckCache.get(location);
+				int checkOffset = checkState == null ? 0 : checkState.intValue();
+				if (checkOffset >= 0) {
+					for (; checkOffset < i; checkOffset++) {
+						IIndexFragment fragment2 = fFragments[checkOffset];
+						if (fragment2.getFiles(location).length != 0) {
+							checkOffset = -1;
+							break;
+						}
+					}
+					fileCheckCache.put(location, Integer.valueOf(checkOffset));
+				}
+				if (checkOffset == i) {
+					result.add(name);
 				}
 			}
 		}
+//		// bug 192352, files can reside in multiple fragments, remove duplicates
+//		if (fragCount > 1 || (flags & IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES) != 0) {
+//			HashMap<String, IIndexFile> fileMap= new HashMap<String, IIndexFile>();
+//			for (Iterator<IIndexFragmentName> iterator = result.iterator(); iterator.hasNext();) {
+//				final IIndexFragmentName name = iterator.next();
+//				final IIndexFile file= name.getFile();
+//				final String fileKey= name.getFile().getLocation().getURI().toString();
+//				final IIndexFile otherFile= fileMap.get(fileKey);
+//				if (otherFile == null) {
+//					fileMap.put(fileKey, file);
+//				} else if (!otherFile.equals(file)) { // same file in another fragment
+//					iterator.remove();
+//				}
+//			}
+//		}
 		return result.toArray(new IIndexName[result.size()]);
 	}
 
@@ -436,8 +462,8 @@ public class CIndex implements IIndex {
 					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
 					for (int i = 0; i < fPrimaryFragmentCount; i++) {
 						try {
-							IBinding[] part = fFragments[i].findBindings(names, retargetFilter(linkage, filter),
-									new SubProgressMonitor(monitor, 1));
+							IBinding[] part = fFragments[i].findBindings(names,
+									retargetFilter(linkage, filter), new SubProgressMonitor(monitor, 1));
 							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
 							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
 						} catch (CoreException e) {

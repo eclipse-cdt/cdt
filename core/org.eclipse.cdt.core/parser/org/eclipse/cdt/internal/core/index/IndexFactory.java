@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.index;
@@ -42,6 +43,7 @@ public class IndexFactory {
 	private static final int ADD_DEPENDENCIES = IIndexManager.ADD_DEPENDENCIES;
 	private static final int ADD_DEPENDENT = IIndexManager.ADD_DEPENDENT;
 	private static final int SKIP_PROVIDED = IIndexManager.SKIP_PROVIDED;
+	private static final int ADD_EXTENSION_FRAGMENTS = IIndexManager.ADD_EXTENSION_FRAGMENTS;
 
 	private PDOMManager fPDOMManager;
 
@@ -55,6 +57,7 @@ public class IndexFactory {
 		boolean addDependencies= (options & ADD_DEPENDENCIES) != 0;
 		boolean addDependent= (options & ADD_DEPENDENT) != 0;
 		boolean skipProvided= (options & SKIP_PROVIDED) != 0;
+		boolean addExtensionFragments= (options & ADD_EXTENSION_FRAGMENTS) != 0;
 
 		HashMap<IProject, Integer> map= new HashMap<IProject, Integer>();
 		Collection<ICProject> selectedProjects= getProjects(projects, addDependencies, addDependent,
@@ -67,7 +70,7 @@ public class IndexFactory {
 				safeAddFragment(fragments, pdom);
 
 				if (!skipProvided) {
-					safeAddProvidedFragments(cproject, fragments);
+					safeAddProvidedFragments(cproject, fragments, addExtensionFragments);
 				}
 			}
 		}
@@ -87,7 +90,7 @@ public class IndexFactory {
 				safeAddFragment(fragments, pdom);
 
 				if (!skipProvided) {
-					safeAddProvidedFragments(cproject, fragments);
+					safeAddProvidedFragments(cproject, fragments, addExtensionFragments);
 				}
 			}
 		}
@@ -103,7 +106,7 @@ public class IndexFactory {
 			throw new CoreException(CCorePlugin.createStatus(
 					NLS.bind(Messages.IndexFactory_errorNoSuchPDOM0, project.getElementName())));
 		}
-		safeAddProvidedFragments(project, readOnlyFrag);
+		safeAddProvidedFragments(project, readOnlyFrag, false);
 
 		Collection<ICProject> selectedProjects= getProjects(new ICProject[] {project}, true, false,
 				new HashMap<IProject, Integer>(), new Integer(1));
@@ -201,19 +204,21 @@ public class IndexFactory {
 	}
 
 	/**
-	 * Adds ID -> IIndexFragment entries to the specified Map, for fragments provided under the
-	 * CIndex extension point for the specified ICProject
-	 * @param cproject
+	 * Adds ID -> IIndexFragment entries to the specified Map, for fragments provided under
+	 * the CIndex extension point for the specified ICProject.
+	 * @param cproject The project to get the provided index fragments for.
 	 * @param fragments
+	 * @param includeNonPDOMFragments
 	 */
-	private void safeAddProvidedFragments(ICProject cproject, Map<String, IIndexFragment> fragments) {
+	private void safeAddProvidedFragments(ICProject cproject, Map<String, IIndexFragment> fragments,
+			boolean includeNonPDOMFragments) {
 		ICProjectDescription pd= CoreModel.getDefault().getProjectDescription(cproject.getProject(), false);
 		if (pd != null) {
 			IndexProviderManager ipm = CCoreInternals.getPDOMManager().getIndexProviderManager();
 			ICConfigurationDescription cfg= pd.getDefaultSettingConfiguration();
 			if (cfg != null) {
 				try {
-					IIndexFragment[] pFragments= ipm.getProvidedIndexFragments(cfg);
+					IIndexFragment[] pFragments= ipm.getProvidedIndexFragments(cfg, includeNonPDOMFragments);
 					for (IIndexFragment fragment : pFragments) {
 						safeAddFragment(fragments, fragment);
 					}

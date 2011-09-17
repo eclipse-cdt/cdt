@@ -1589,9 +1589,6 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.index.IIndexFragment#getInlineNamespaces()
-	 */
 	public IIndexScope[] getInlineNamespaces() throws CoreException {
 		PDOMLinkage linkage = getLinkage(ILinkage.CPP_LINKAGE_ID);
 		if (linkage == null) {

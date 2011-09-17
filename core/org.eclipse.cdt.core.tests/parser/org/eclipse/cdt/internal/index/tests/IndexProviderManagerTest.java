@@ -237,7 +237,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			ipm.reset(VERSION_405); ipm.startup();
 			ipm.addIndexProvider(provider1);  ipm.addIndexProvider(provider2);
 			
-			IIndexFragment[] actual = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			IIndexFragment[] actual = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(1, actual.length);
 			assertFragmentPresent("contentID.contentA", "38", actual);
 		} finally {
@@ -292,7 +292,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			ipm.reset(VERSION_502); ipm.startup();
 			ipm.addIndexProvider(provider1);  ipm.addIndexProvider(provider2);
 			
-			IIndexFragment[] actual = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			IIndexFragment[] actual = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(3, actual.length);
 			assertFragmentPresent("contentID.foo", "90", actual);
 			assertFragmentPresent("contentID.bar", "91", actual);
@@ -399,29 +399,29 @@ public class IndexProviderManagerTest extends IndexTestBase {
 
 			IIndexFragment[] fragments;
 			mockState.setConfig(MockState.REL_V1_ID);
-			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(2, fragments.length);
 			assertTrue(ArrayUtil.contains(fragments, provider1.fragments[0]));
 			assertTrue(ArrayUtil.contains(fragments, provider2.fragments[0]));
 
 			mockState.setConfig(MockState.DBG_V2_ID);
-			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(2, fragments.length);
 			assertTrue(ArrayUtil.contains(fragments, provider1.fragments[3]));
 			assertTrue(ArrayUtil.contains(fragments, provider2.fragments[3]));
 
 			mockState.setConfig(MockState.DBG_V1_ID);
-			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(0, fragments.length);
 
 			mockState.setConfig(MockState.REL_V2_ID);
-			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(2, fragments.length);
 			assertTrue(ArrayUtil.contains(fragments, provider1.fragments[1]));
 			assertTrue(ArrayUtil.contains(fragments, provider2.fragments[1]));
 
 			mockState.setConfig(MockState.REL_V1_ID);
-			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(2, fragments.length);
 			assertTrue(ArrayUtil.contains(fragments, provider1.fragments[0]));
 			assertTrue(ArrayUtil.contains(fragments, provider2.fragments[0]));
@@ -429,29 +429,29 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			provider1.invert();
 
 			mockState.setConfig(MockState.REL_V1_ID);
-			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(2, fragments.length);
 			assertTrue(ArrayUtil.contains(fragments, provider1.fragments[3]));
 			assertTrue(ArrayUtil.contains(fragments, provider2.fragments[0]));
 
 			mockState.setConfig(MockState.DBG_V2_ID);
-			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(2, fragments.length);
 			assertTrue(ArrayUtil.contains(fragments, provider1.fragments[0]));
 			assertTrue(ArrayUtil.contains(fragments, provider2.fragments[3]));
 
 			mockState.setConfig(MockState.DBG_V1_ID);
-			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(1, fragments.length);
 			assertTrue(ArrayUtil.contains(fragments, provider1.fragments[1]));
 
 			mockState.setConfig(MockState.REL_V2_ID);
-			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(1, fragments.length);
 			assertTrue(ArrayUtil.contains(fragments, provider2.fragments[1]));
 
 			mockState.setConfig(MockState.REL_V1_ID);
-			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(2, fragments.length);
 			assertTrue(ArrayUtil.contains(fragments, provider1.fragments[3]));
 			assertTrue(ArrayUtil.contains(fragments, provider2.fragments[0]));
@@ -459,29 +459,29 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			provider2.invert();
 
 			mockState.setConfig(MockState.REL_V1_ID);
-			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(2, fragments.length);
 			assertTrue(ArrayUtil.contains(fragments, provider1.fragments[3]));
 			assertTrue(ArrayUtil.contains(fragments, provider2.fragments[3]));
 
 			mockState.setConfig(MockState.DBG_V2_ID);
-			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(2, fragments.length);
 			assertTrue(ArrayUtil.contains(fragments, provider1.fragments[0]));
 			assertTrue(ArrayUtil.contains(fragments, provider2.fragments[0]));
 
 			mockState.setConfig(MockState.DBG_V1_ID);
-			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(2, fragments.length);
 			assertTrue(ArrayUtil.contains(fragments, provider1.fragments[1]));
 			assertTrue(ArrayUtil.contains(fragments, provider2.fragments[1]));
 
 			mockState.setConfig(MockState.REL_V2_ID);
-			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(0, fragments.length);
 
 			mockState.setConfig(MockState.REL_V1_ID);
-			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig());
+			fragments = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(2, fragments.length);
 			assertTrue(ArrayUtil.contains(fragments, provider1.fragments[3]));
 			assertTrue(ArrayUtil.contains(fragments, provider2.fragments[3]));

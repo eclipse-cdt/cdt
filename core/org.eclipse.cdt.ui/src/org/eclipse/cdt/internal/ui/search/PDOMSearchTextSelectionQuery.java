@@ -71,7 +71,7 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 									return Status.OK_STATUS;
 								}
 							}
-							binding = index.findBinding(searchName);
+							binding = ast.getIndex().findBinding(searchName);
 							binding= CPPTemplates.findDeclarationForSpecialization(binding);
 							if (binding != null) {
 								label= labelForBinding(index, binding, label);

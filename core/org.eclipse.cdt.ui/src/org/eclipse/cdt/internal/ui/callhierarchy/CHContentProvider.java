@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
@@ -23,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -150,7 +152,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 
 	private Object[] asyncronouslyComputeReferencedBy(CHNode parent) throws CoreException, InterruptedException {
 		ICProject[] scope= CoreModel.getDefault().getCModel().getCProjects();
-		IIndex index= CCorePlugin.getIndexManager().getIndex(scope);
+		IIndex index= CCorePlugin.getIndexManager().getIndex(scope, IIndexManager.ADD_EXTENSION_FRAGMENTS);
 		index.acquireReadLock();
 		try {
 			return CHQueries.findCalledBy(this, parent, index, NPM);
@@ -161,7 +163,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 
 	private Object[] asyncronouslyComputeRefersTo(CHNode parent) throws CoreException, InterruptedException {
 		ICProject[] scope= CoreModel.getDefault().getCModel().getCProjects();
-		IIndex index= CCorePlugin.getIndexManager().getIndex(scope);
+		IIndex index= CCorePlugin.getIndexManager().getIndex(scope, IIndexManager.ADD_EXTENSION_FRAGMENTS);
 		index.acquireReadLock();
 		try {
 			return CHQueries.findCalls(this, parent, index, NPM);

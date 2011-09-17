@@ -314,9 +314,6 @@ public class PDOMProxy implements IPDOM {
 			fDelegate.clearResultCache();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.index.IIndexFragment#getInlineNamespaces()
-	 */
 	public IIndexScope[] getInlineNamespaces() throws CoreException {
 		if (fDelegate != null)
 			return fDelegate.getInlineNamespaces();

@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Sergey Prigogin (Google)
- *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Andrew Ferguson (Symbian) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -74,7 +74,7 @@ public class EmptyIndexFragment implements IIndexFragment {
 	throws CoreException {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
-	
+
 	public IIndexMacro[] findMacros(char[] name, boolean isPrefix, boolean caseSensitive, IndexFilter filter, IProgressMonitor monitor) {
 		return IIndexMacro.EMPTY_INDEX_MACRO_ARRAY;
 	}
@@ -105,7 +105,6 @@ public class EmptyIndexFragment implements IIndexFragment {
 		return null;
 	}
 
-	
 	public IIndexFragmentFile[] getFiles(IIndexFileLocation location) throws CoreException {
 		return new IIndexFragmentFile[0];
 	}

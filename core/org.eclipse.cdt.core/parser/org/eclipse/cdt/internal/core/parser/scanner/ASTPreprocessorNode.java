@@ -320,7 +320,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 		return fPragmaOnce;
 	}
 	
-	public void setPragamOnceSemantics(boolean value) {
+	public void setPragmaOnceSemantics(boolean value) {
 		assert fNominationDelegate == null;
 		fPragmaOnce= value;
 	}

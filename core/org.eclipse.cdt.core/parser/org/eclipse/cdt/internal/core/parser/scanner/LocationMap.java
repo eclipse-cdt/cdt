@@ -777,7 +777,7 @@ public class LocationMap implements ILocationResolver {
 		} else if (locationCtx instanceof LocationCtxFile) {
 			ASTInclusionStatement stmt = ((LocationCtxFile) locationCtx).getInclusionStatement();
 			if (stmt != null) {
-				stmt.setPragamOnceSemantics(true);
+				stmt.setPragmaOnceSemantics(true);
 			}
 			return stmt;
 		}

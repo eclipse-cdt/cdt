@@ -2657,4 +2657,18 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testMacroInElseBranch_Bug350689() throws Exception {
 		assertFormatterResult();
 	}
+
+	//#define IF(cond) if(cond){}
+	//void f() { if(1){}IF(1>0);}
+
+	//#define IF(cond) if(cond){}
+	//void f() {
+	//	if (1) {
+	//	}
+	//	IF(1>0);
+	//}
+	public void testMacroAfterCompoundStatement_Bug356690() throws Exception {
+		assertFormatterResult();
+	}
+
 }

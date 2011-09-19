@@ -37,6 +37,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildConfigurationData;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 
@@ -193,7 +194,8 @@ public class CfgScannerConfigInfoFactory2 {
 												info = configMap.get(superContext);
 											}
 
-											// Files with custom properties don't have a persisted entry in the config
+											// Scanner discovery options aren't settable on a file-per-file basis. Thus
+											// files with custom properties don't have a persisted entry in the config
 											// info map; we create an ephemeral entry instead. We need to assign that file 
 											// the scanner profile that's used for non-custom files of the same 
 											// inputType/tool (and configuration, of course). Unfortunately, identifying
@@ -231,8 +233,13 @@ public class CfgScannerConfigInfoFactory2 {
 											// permanent and stagnant part of the project description. It was
 											// added to the container only so we could obtain an
 											// IScannerConfigBuilderInfo2. Now that we have the info object,
-											// revert the container. See Bug 354194
-											container.removeInfo(context.toInfoContext());
+											// revert the container. See Bug 354194. Note that the permanent 
+											// entry for the project's root folder resource info gets created 
+											// by us shortly after project creation; thus we have to make an 
+											// exception for that rcinfo.
+											if (!(rcInfo instanceof IFolderInfo && rcInfo.getPath().isEmpty())) { 
+												container.removeInfo(context.toInfoContext());
+											}
 										}
 										if(info != null){
 											map.put(context, info);

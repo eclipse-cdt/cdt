@@ -969,7 +969,7 @@ public class CPPSemantics {
 				return;
 			
 			// Lookup in base classes
-			if (!data.usingDirectivesOnly && scope instanceof ICPPClassScope) {
+			if (!data.usingDirectivesOnly && scope instanceof ICPPClassScope && !data.ignoreMembers) {
 				BaseClassLookup.lookupInBaseClasses(data, (ICPPClassScope) scope, fileSet);
 				if (!data.contentAssist && data.hasResultOrProblem()) 
 					return;

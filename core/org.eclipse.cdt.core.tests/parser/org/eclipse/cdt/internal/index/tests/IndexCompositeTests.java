@@ -53,6 +53,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 	private static final int NONE = 0, REFS = IIndexManager.ADD_DEPENDENCIES;
 	private static final int REFD = IIndexManager.ADD_DEPENDENT, BOTH = REFS | REFD;
 	private static final IndexFilter FILTER= new IndexFilter() {
+		@Override
 		public boolean acceptBinding(IBinding binding) throws CoreException {
 			if (binding instanceof ICPPMethod) {
 				return !((ICPPMethod) binding).isImplicit();
@@ -63,7 +64,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 	
 	IIndex index;
 	
-	protected StringBuilder[] getContentsForTest(int blocks) throws IOException {
+	protected StringBuffer[] getContentsForTest(int blocks) throws IOException {
 		return TestSourceReader.getContentsForTest(
 				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), blocks);
 	}
@@ -419,6 +420,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 		index.acquireReadLock();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		if (index != null) {
 			index.releaseReadLock();

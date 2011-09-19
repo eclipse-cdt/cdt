@@ -36,13 +36,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class LanguageSettingsProvidersSerializer {
-
 	private static final String STORAGE_WORKSPACE_LANGUAGE_SETTINGS = "language.settings.xml"; //$NON-NLS-1$
 	private static final String SETTINGS_FOLDER_NAME = ".settings/"; //$NON-NLS-1$
 	private static final String STORAGE_PROJECT_LANGUAGE_SETTINGS = "language.settings.xml"; //$NON-NLS-1$
@@ -54,9 +55,9 @@ public class LanguageSettingsProvidersSerializer {
 	private static final String ELEM_CONFIGURATION = "configuration"; //$NON-NLS-1$
 	private static final String ELEM_PROVIDER = "provider"; //$NON-NLS-1$
 	private static final String ELEM_PROVIDER_REFERENCE = "provider-reference"; //$NON-NLS-1$
+	private static ILock serializingLock = Job.getJobManager().newLock();
 	/** Cache of globally available providers to be consumed by calling clients */
 	private static Map<String, ILanguageSettingsProvider> rawGlobalWorkspaceProviders = new HashMap<String, ILanguageSettingsProvider>();
-	private static Object serializingLock = new Object();
 
 	private static class LanguageSettingsWorkspaceProvider implements ILanguageSettingsProvider {
 		private String providerId;
@@ -186,7 +187,7 @@ public class LanguageSettingsProvidersSerializer {
 	}
 
 	public static void serializeLanguageSettingsWorkspace() throws CoreException {
-		URI uriLocation = getStoreInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
+		URI uriStoreWsp = getStoreInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
 		List<LanguageSettingsSerializable> serializableExtensionProviders = new ArrayList<LanguageSettingsSerializable>();
 		for (ILanguageSettingsProvider provider : rawGlobalWorkspaceProviders.values()) {
 			if (provider instanceof LanguageSettingsSerializable) {
@@ -199,23 +200,28 @@ public class LanguageSettingsProvidersSerializer {
 		}
 		try {
 			if (serializableExtensionProviders.isEmpty()) {
-				java.io.File file = new java.io.File(uriLocation);
-				synchronized (serializingLock) {
-					file.delete();
+				java.io.File fileStoreWsp = new java.io.File(uriStoreWsp);
+				serializingLock.acquire();
+				try {
+					fileStoreWsp.delete();
+				} finally {
+					serializingLock.release();
 				}
-				return;
-			}
-
-			Document doc = XmlUtil.newDocument();
-			Element rootElement = XmlUtil.appendElement(doc, ELEM_PLUGIN);
-			Element elementExtension = XmlUtil.appendElement(rootElement, ELEM_EXTENSION, new String[] {ATTR_POINT, LanguageSettingsExtensionManager.PROVIDER_EXTENSION_FULL_ID});
-
-			for (LanguageSettingsSerializable provider : serializableExtensionProviders) {
-				provider.serialize(elementExtension);
-			}
-
-			synchronized (serializingLock) {
-				XmlUtil.serializeXml(doc, uriLocation);
+			} else {
+				Document doc = XmlUtil.newDocument();
+				Element rootElement = XmlUtil.appendElement(doc, ELEM_PLUGIN);
+				Element elementExtension = XmlUtil.appendElement(rootElement, ELEM_EXTENSION, new String[] {ATTR_POINT, LanguageSettingsExtensionManager.PROVIDER_EXTENSION_FULL_ID});
+	
+				for (LanguageSettingsSerializable provider : serializableExtensionProviders) {
+					provider.serialize(elementExtension);
+				}
+	
+				serializingLock.acquire();
+				try {
+					XmlUtil.serializeXml(doc, uriStoreWsp);
+				} finally {
+					serializingLock.release();
+				}
 			}
 
 		} catch (Exception e) {
@@ -228,15 +234,16 @@ public class LanguageSettingsProvidersSerializer {
 	public static void loadLanguageSettingsWorkspace() throws CoreException {
 		List <ILanguageSettingsProvider> providers = null;
 
-		URI uriLocation = getStoreInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
+		URI uriStoreWsp = getStoreInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
 
 		Document doc = null;
+		serializingLock.acquire();
 		try {
-			synchronized (serializingLock) {
-				doc = XmlUtil.loadXml(uriLocation);
-			}
+			doc = XmlUtil.loadXml(uriStoreWsp);
 		} catch (Exception e) {
-			CCorePlugin.log("Can't load preferences from file "+uriLocation, e); //$NON-NLS-1$
+			CCorePlugin.log("Can't load preferences from file "+uriStoreWsp, e); //$NON-NLS-1$
+		} finally {
+			serializingLock.release();
 		}
 
 		if (doc!=null) {
@@ -334,29 +341,31 @@ public class LanguageSettingsProvidersSerializer {
 		IProject project = prjDescription.getProject();
 		try {
 			// Document to store in project area
-			Document docPrjStore = XmlUtil.newDocument();
-			Element projectElementPrjStore = XmlUtil.appendElement(docPrjStore, ELEM_PROJECT);
+			Document docStorePrj = XmlUtil.newDocument();
+			Element projectElementStorePrj = XmlUtil.appendElement(docStorePrj, ELEM_PROJECT);
 			// Document to store in workspace area
-			Document docWspStore = XmlUtil.newDocument();
-			Element projectElementWspStore = XmlUtil.appendElement(docWspStore, ELEM_PROJECT);
+			Document docStoreWsp = XmlUtil.newDocument();
+			Element projectElementStoreWsp = XmlUtil.appendElement(docStoreWsp, ELEM_PROJECT);
 
-			serializeLanguageSettingsInternal(projectElementPrjStore, projectElementWspStore, prjDescription);
+			serializeLanguageSettingsInternal(projectElementStorePrj, projectElementStoreWsp, prjDescription);
 
-			IFile filePrjStore = getStoreInProjectArea(project);
-			URI uriWspStore = null;
-			boolean isWorkspaceStoreEmpty = projectElementWspStore.getChildNodes().getLength() == 0;
-			uriWspStore = getStoreInWorkspaceArea(project.getName()+'.'+STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
+			IFile fileStorePrj = getStoreInProjectArea(project);
+			// The project store should not be absent. Absent store means legacy project, not 0 providers.
+			XmlUtil.serializeXml(docStorePrj, fileStorePrj);
 
-			synchronized (serializingLock){
-				// The project store should not be absent. Absent store means legacy project, not 0 providers.
-				XmlUtil.serializeXml(docPrjStore, filePrjStore);
-
+			URI uriStoreWsp = null;
+			boolean isWorkspaceStoreEmpty = projectElementStoreWsp.getChildNodes().getLength() == 0;
+			uriStoreWsp = getStoreInWorkspaceArea(project.getName()+'.'+STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
+			serializingLock.acquire();
+			try {
 				// project-specific location in workspace area
 				if (!isWorkspaceStoreEmpty) {
-					XmlUtil.serializeXml(docWspStore, uriWspStore);
+					XmlUtil.serializeXml(docStoreWsp, uriStoreWsp);
 				} else {
-					new java.io.File(uriWspStore).delete();
+					new java.io.File(uriStoreWsp).delete();
 				}
+			} finally {
+				serializingLock.release();
 			}
 
 		} catch (Exception e) {
@@ -493,26 +502,27 @@ public class LanguageSettingsProvidersSerializer {
 
 	public static void loadLanguageSettings(ICProjectDescription prjDescription) {
 		IProject project = prjDescription.getProject();
-		IFile file = project.getFile(SETTINGS_FOLDER_NAME+STORAGE_PROJECT_LANGUAGE_SETTINGS);
+		IFile storePrj = project.getFile(SETTINGS_FOLDER_NAME+STORAGE_PROJECT_LANGUAGE_SETTINGS);
 		// AG: FIXME not sure about that one
 		// Causes java.lang.IllegalArgumentException: Attempted to beginRule: P/cdt312, does not match outer scope rule: org.eclipse.cdt.internal.ui.text.c.hover.CSourceHover$SingletonRule@6f34fb
 		try {
-			file.refreshLocal(IResource.DEPTH_ZERO, null);
+			storePrj.refreshLocal(IResource.DEPTH_ZERO, null);
 		} catch (CoreException e) {
 			// ignore failure
 		}
-		if (file.exists() && file.isAccessible()) {
+		if (storePrj.exists() && storePrj.isAccessible()) {
 			Document doc = null;
 			try {
-				synchronized (serializingLock) {
-					doc = XmlUtil.loadXml(file);
-				}
+				doc = XmlUtil.loadXml(storePrj);
 				Element rootElementPrj = doc.getDocumentElement(); // <project/>
 
-				URI uriLocation = getStoreInWorkspaceArea(project.getName()+'.'+STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
+				URI uriStoreWsp = getStoreInWorkspaceArea(project.getName()+'.'+STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
 				Document docWsp = null;
-				synchronized (serializingLock) {
-					docWsp = XmlUtil.loadXml(uriLocation);
+				serializingLock.acquire();
+				try {
+					docWsp = XmlUtil.loadXml(uriStoreWsp);
+				} finally {
+					serializingLock.release();
 				}
 
 				Element rootElementWsp = null; // <project/>
@@ -523,7 +533,7 @@ public class LanguageSettingsProvidersSerializer {
 
 				loadLanguageSettingsInternal(rootElementPrj, rootElementWsp, prjDescription);
 			} catch (Exception e) {
-				CCorePlugin.log("Can't load preferences from file "+file.getLocation(), e); //$NON-NLS-1$
+				CCorePlugin.log("Can't load preferences from file "+storePrj.getLocation(), e); //$NON-NLS-1$
 			}
 
 			if (doc!=null) {

@@ -203,9 +203,9 @@ public class LanguageMappingStore {
 	public WorkspaceLanguageConfiguration decodeWorkspaceMappings() throws CoreException {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
 		IEclipsePreferences defaultNode = DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
-		String encodedMappings = defaultNode.get(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS, null);
+		String encodedMappings = node.get(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS, null);
 		if (encodedMappings == null) {
-			encodedMappings = node.get(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS, null);
+			encodedMappings = defaultNode.get(CCorePreferenceConstants.WORKSPACE_LANGUAGE_MAPPINGS, null);
 		}
 		WorkspaceLanguageConfiguration config = new WorkspaceLanguageConfiguration();
 

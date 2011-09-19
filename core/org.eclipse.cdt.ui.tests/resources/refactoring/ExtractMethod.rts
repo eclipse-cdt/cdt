@@ -2218,7 +2218,7 @@ Test::Test() {
 Test::~Test() {
 }
 
-RetType Test::exp()
+RetValueType Test::exp()
 {
     return RetType();
 }

@@ -7321,4 +7321,25 @@ public class AST2Tests extends AST2BaseTest {
 		bh.assertNonProblem("a;", 1);
 	}
 
+	//	void a() {
+	//	    typedef float size_t;
+	//	    sizeof(10); // wrong - getExpressionType returns float
+	//	    sizeof(int); // wrong - getExpressionType returns float
+	//	}
+	public void testTypeOfSizeof_Bug355052() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu= parseAndCheckBindings(code, ParserLanguage.CPP);
+		IASTFunctionDefinition a= getDeclaration(tu, 0);
+		IASTExpressionStatement es= getStatement(a, 1);
+		assertEquals("unsigned long int", ASTTypeUtil.getType(es.getExpression().getExpressionType()));
+		es= getStatement(a, 2);
+		assertEquals("unsigned long int", ASTTypeUtil.getType(es.getExpression().getExpressionType()));
+
+		tu= parseAndCheckBindings(code, ParserLanguage.C);
+		a= getDeclaration(tu, 0);
+		es= getStatement(a, 1);
+		assertEquals("unsigned long int", ASTTypeUtil.getType(es.getExpression().getExpressionType()));
+		es= getStatement(a, 2);
+		assertEquals("unsigned long int", ASTTypeUtil.getType(es.getExpression().getExpressionType()));
+	}
 }

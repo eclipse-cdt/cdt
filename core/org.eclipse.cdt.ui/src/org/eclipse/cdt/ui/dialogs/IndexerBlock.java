@@ -88,6 +88,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 	private Combo 					fBuildConfigComboBox;
 	private ControlEnableState 		fEnableState;
 	private Group fBuildConfigGroup;
+	private int fLastScope;
     
     public IndexerBlock(){
 		super(INDEXER_LABEL);
@@ -381,7 +382,9 @@ public class IndexerBlock extends AbstractCOptionPage {
 	
     protected void onPreferenceScopeChange() {
     	int scope= computeScope();
-    	if (fCurrentProperties == null || scope != IndexerPreferences.SCOPE_PROJECT_PRIVATE) {
+    	if (fCurrentProperties == null || scope == IndexerPreferences.SCOPE_INSTANCE
+    			|| (fLastScope == IndexerPreferences.SCOPE_INSTANCE 
+    			&& scope == IndexerPreferences.SCOPE_PROJECT_SHARED)) {
         	Properties props= IndexerPreferences.getProperties(getProject(), scope);
 
     		String indexerId= props.getProperty(IndexerPreferences.KEY_INDEXER_ID);
@@ -393,14 +396,17 @@ public class IndexerBlock extends AbstractCOptionPage {
     			}
     		}
     		fCurrentProperties= props;
+		} else {
+			fCurrentProperties.putAll(fCurrentPage.getProperties());
 		}
 		updateForNewProperties(scope);
     	updateBuildConfigForScope(scope);
+    	fLastScope= scope;
 	}
 
 	private void updateForNewProperties(int scope) {
 		String indexerId= fCurrentProperties.getProperty(IndexerPreferences.KEY_INDEXER_ID);
-		if (indexerId.equals(IPDOMManager.ID_NO_INDEXER)) {
+		if (IPDOMManager.ID_NO_INDEXER.equals(indexerId)) {
 			fEnableIndexer.setSelection(false);
 		} else {
 			fEnableIndexer.setSelection(true);

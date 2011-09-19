@@ -4108,21 +4108,21 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	private void formatStatements(final List<IASTStatement> statements, boolean insertNewLineAfterLastStatement) {
 		final int statementsLength= statements.size();
 		if (statementsLength > 1) {
-			IASTStatement previousStatement= statements.get(0);
+			IASTStatement firstStatement= statements.get(0);
 			try {
-				previousStatement.accept(this);
+				firstStatement.accept(this);
 			} catch (ASTProblemException e) {
 				skipToNode(statements.get(1));
 			}
 			final int indentLevel= scribe.indentationLevel;
 			for (int i = 1; i < statementsLength - 1; i++) {
 				final IASTStatement statement= statements.get(i);
-				if (!startNode(statement)) {
-					continue;
-				}
 				if (!(statement instanceof IASTNullStatement) &&
 						!doNodeLocationsOverlap(statement, statements.get(i - 1))) {
 					scribe.startNewLine();
+				}
+				if (!startNode(statement)) {
+					continue;
 				}
 				try {
 					statement.accept(this);
@@ -4140,7 +4140,6 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 						scribe.unIndent();
 					}
 				}
-				previousStatement= statement;
 			}
 			final IASTStatement statement= statements.get(statementsLength - 1);
 			final boolean statementIsNullStmt= statement instanceof IASTNullStatement;

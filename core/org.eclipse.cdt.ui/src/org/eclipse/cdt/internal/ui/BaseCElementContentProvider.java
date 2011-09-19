@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -335,11 +335,14 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		}
 		Object parent = null;
 		if (element instanceof ICElement) {
-			if (element instanceof ICContainer && !CCorePlugin.showSourceRootsAtTopOfProject()) {
-				parent = ((ICContainer) element).getResource().getParent();
+			if (element instanceof ISourceRoot && !CCorePlugin.showSourceRootsAtTopOfProject()) {
+				parent = ((ICElement) element).getResource().getParent();
+				if (parent instanceof IProject) {
+					return ((ICElement) element).getCProject();
+				}
 			}
 			else
-			parent = ((ICElement)element).getParent();
+				parent = ((ICElement)element).getParent();
 			// translate working copy parent to original TU,
 			// because working copies are never returned by getChildren
 			// this is necessary for proper show-in-target support

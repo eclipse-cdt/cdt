@@ -19,8 +19,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -642,7 +642,8 @@ public class LanguageManager {
 	 * @param contentType content type of the file
 	 * @param project C/C++ workspace project
 	 * @return CDT language object 
-	 * @since 5.4
+	 * @noreference This method is not intended to be referenced by clients.
+	 * Method will be made public in next CDT version.
 	 */
 	public ILanguage getLanguage(IContentType contentType, IProject project) {
 		return getLanguage(contentType, project, null);
@@ -657,7 +658,8 @@ public class LanguageManager {
 	 * @param project C/C++ workspace project
 	 * @param configurationDescription build configuration or <code>null</code>
 	 * @return CDT language object 
-	 * @since 5.4
+	 * @noreference This method is not intended to be referenced by clients.
+	 * Method will be made public in next CDT version.
 	 */
 	public ILanguage getLanguage(IContentType contentType,
 			IProject project, ICConfigurationDescription configurationDescription) {

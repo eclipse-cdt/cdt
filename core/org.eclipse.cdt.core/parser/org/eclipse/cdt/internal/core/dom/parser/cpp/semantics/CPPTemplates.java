@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -241,41 +240,44 @@ public class CPPTemplates {
 
 	static IBinding isUsedInClassTemplateScope(ICPPClassTemplate ct, IASTName name) {
 		try {
-			IASTName start= name;
+			IScope scope;
 			ICPPASTFunctionDefinition func= CPPVisitor.findEnclosingFunctionDefinition(name);
 			if (func != null) {
-				start= ASTQueries.findInnermostDeclarator(func.getDeclarator()).getName();
-				start= start.getLastName();
+				name= ASTQueries.findInnermostDeclarator(func.getDeclarator()).getName().getLastName();
+				scope= CPPVisitor.getContainingScope(name);
+			} else {
+				scope= CPPVisitor.getContainingScope(name);
+				if (!(scope instanceof IASTInternalScope))
+					return null;
 			}
-
-			IScope scope= CPPVisitor.getContainingScope(start);
-			while (scope instanceof IASTInternalScope) {
+				
+			while (scope != null) {
 				if (scope instanceof ISemanticProblem)
 					return null;
-				final IASTInternalScope internalScope = (IASTInternalScope) scope;
 				if (scope instanceof ICPPClassScope) {
-					final IName scopeName = internalScope.getScopeName();
-					if (scopeName instanceof IASTName) {
-						IBinding b= ((IASTName) scopeName).resolveBinding();
-						if (b instanceof IType && ct.isSameType((IType) b)) {
-							return CPPTemplates.instantiateWithinClassTemplate(ct);
+					ICPPClassType b= ((ICPPClassScope) scope).getClassType();
+					if (b != null && ct.isSameType(b)) {
+						return CPPTemplates.instantiateWithinClassTemplate(ct);
+					}
+					if (b instanceof ICPPClassTemplatePartialSpecialization) {
+						ICPPClassTemplatePartialSpecialization pspec= (ICPPClassTemplatePartialSpecialization) b;
+						if (ct.isSameType(pspec.getPrimaryClassTemplate())) {
+							return CPPTemplates.instantiateWithinClassTemplate(pspec);
 						}
-						if (b instanceof ICPPClassTemplatePartialSpecialization) {
-							ICPPClassTemplatePartialSpecialization pspec= (ICPPClassTemplatePartialSpecialization) b;
-							if (ct.isSameType(pspec.getPrimaryClassTemplate())) {
-								return CPPTemplates.instantiateWithinClassTemplate(pspec);
-							}
-						} else if (b instanceof ICPPClassSpecialization) {
-							ICPPClassSpecialization specialization= (ICPPClassSpecialization) b;
-							if (ct.isSameType(specialization.getSpecializedBinding())) {
-								return specialization;
-							}
-						}
+					} else if (b instanceof ICPPClassSpecialization) {
+						ICPPClassSpecialization specialization= (ICPPClassSpecialization) b;
+						if (ct.isSameType(specialization.getSpecializedBinding())) {
+							return specialization;						}
 					}
 				}
-				scope= CPPVisitor.getContainingScope(internalScope.getPhysicalNode());
-				if (scope == internalScope)
-					return null;
+				if (scope instanceof IASTInternalScope) {
+					IASTInternalScope internalScope= (IASTInternalScope) scope;
+					scope= CPPVisitor.getContainingScope(internalScope.getPhysicalNode());
+					if (scope == internalScope)
+						return null;
+				} else { 
+					scope= scope.getParent();
+				}
 			}
 		} catch (DOMException e) {
 		}

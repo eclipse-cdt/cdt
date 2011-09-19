@@ -2189,7 +2189,7 @@ public:
 	virtual ~Test();
 private:
 	void test();
-    RetType exp();
+    RetValueType exp();
 };
 
 #endif /* TEST_H_ */

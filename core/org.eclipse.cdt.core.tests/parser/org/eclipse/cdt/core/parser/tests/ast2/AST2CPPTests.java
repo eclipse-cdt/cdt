@@ -9490,4 +9490,13 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testAmbiguityResolution_Bug356268() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+
+	//	class A : A {
+	//	};
+	public void testRecursiveClassInheritance_Bug357256() throws Exception {
+		BindingAssertionHelper bh= getAssertionHelper();
+		ICPPClassType c= bh.assertNonProblem("A", 1);
+		assertEquals(0, ClassTypeHelper.getPureVirtualMethods(c).length);
+	}
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
  * Interface for all composite types: classes, structs or unions.
  * 
@@ -18,11 +17,12 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICompositeType extends IBinding, IType {
-
 	public static final int k_struct = IASTCompositeTypeSpecifier.k_struct;
 	public static final int k_union = IASTCompositeTypeSpecifier.k_union;
+
 	/**
-	 *  what kind of composite type is this?
+	 *  Returns the type of the composite, {@link #k_struct}, {@link #k_union}, or
+	 *  {@link org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#k_class}.
 	 */
 	public int getKey();
 	
@@ -46,15 +46,14 @@ public interface ICompositeType extends IBinding, IType {
 	public IField[] getFields();
 	
 	/**
-	 * returns the field that matches name,
-	 * or null if there is no such field.
+	 * Returns the field that matches name, or <code>null</code> if there is no such field.
 	 * 
 	 * @param name
 	 */
 	public IField findField(String name);
 	
 	/**
-	 * get the IScope object that is associated with this composite type
+	 * Returns the IScope object that is associated with this composite type
 	 */
 	public IScope getCompositeScope();
 }

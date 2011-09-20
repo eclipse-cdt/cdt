@@ -112,6 +112,9 @@ public class FindReplaceDialog extends SelectionDialog
 	protected final static String SEARCH_FORMAT_WRAP = "SEARCH_FORMAT_WRAP"; //$NON-NLS-1$
 	protected final static String SEARCH_ENABLE_FIND_NEXT = "SEARCH_ENABLE_FIND_NEXT"; //$NON-NLS-1$
 	
+	//the width of text fields of Find and Replace, increase it to 400 to fix the tvt defect 356901
+	protected final static int FIND_REPLACE_TEXT_WIDTH = 400;
+	
 	private IAction fFindAction = null;
 	public FindReplaceDialog(Shell parent, IMemoryBlockExtension memoryBlock, IMemoryRenderingSite memoryView, Properties properties, IAction findAction)
 	{
@@ -549,7 +552,7 @@ public class FindReplaceDialog extends SelectionDialog
 		fFindText = new Text(composite, SWT.BORDER);
 		FormData data = new FormData();
 		data.left = new FormAttachment(fReplaceText, 0, SWT.LEFT);
-		data.width = 260;
+		data.width = FIND_REPLACE_TEXT_WIDTH;
 		fFindText.setLayoutData(data);
 		fFindText.setText(fProperties.getProperty(SEARCH_FIND, "")); //$NON-NLS-1$
 		
@@ -567,7 +570,7 @@ public class FindReplaceDialog extends SelectionDialog
 		data = new FormData();
 		data.top = new FormAttachment(replaceLabel, 0, SWT.CENTER);
 		data.left = new FormAttachment(replaceLabel);
-		data.width = 260;
+		data.width = FIND_REPLACE_TEXT_WIDTH;
 		fReplaceText.setLayoutData(data);
 		fReplaceText.setText(fProperties.getProperty(SEARCH_REPLACE, "")); //$NON-NLS-1$
 		

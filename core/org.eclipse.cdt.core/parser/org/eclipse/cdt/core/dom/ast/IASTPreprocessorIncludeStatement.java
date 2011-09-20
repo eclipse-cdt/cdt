@@ -6,10 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
+
 
 /**
  * This interface represent a preprocessor #include statement.
@@ -17,9 +18,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTPreprocessorIncludeStatement extends
-		IASTPreprocessorStatement {
-
+public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatement, IFileNomination {
 	/**
 	 * <code>INCLUDE_NAME</code> describes the relationship between an include directive and
 	 * it's name.

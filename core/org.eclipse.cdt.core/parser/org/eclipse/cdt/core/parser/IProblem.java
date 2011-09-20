@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -322,6 +322,12 @@ public interface IProblem
 	 * @see #A_PREPROC_POUND_WARNING
 	 */
 	public final static int PREPROCESSOR_POUND_WARNING = PREPROCESSOR_RELATED | 0x00E;
+	
+	/**
+	 * Maximum inclusion depth is exceeded  
+	 * @since 5.4
+	 */
+	public final static int PREPROCESSOR_EXCEEDS_MAXIMUM_INCLUSION_DEPTH= PREPROCESSOR_RELATED | 0x00F;
 	
 	/**
 	 * Syntax error, detected by the parser.

@@ -136,6 +136,7 @@ public class MacroExpander {
 	private String fFixedCurrentFilename;
 	private int fFixedLineNumber;
 	private char[] fFixedInput;
+	private ScannerContext fReportMacros;
 	
 	public MacroExpander(ILexerLog log, CharArrayMap<PreprocessorMacro> macroDictionary, LocationMap locationMap, LexerOptions lexOptions) {
 		fDictionary= macroDictionary;
@@ -147,8 +148,12 @@ public class MacroExpander {
 	
 	/** 
 	 * Expects that the identifier has been consumed, stores the result in the list provided.
+	 * @param scannerContext 
 	 */
-	public TokenList expand(ITokenSequence lexer, final boolean isPPCondition, PreprocessorMacro macro, Token identifier, boolean completionMode) throws OffsetLimitReachedException {
+	public TokenList expand(ITokenSequence lexer, final boolean isPPCondition,
+			PreprocessorMacro macro, Token identifier, boolean completionMode,
+			ScannerContext scannerContext) throws OffsetLimitReachedException {
+		fReportMacros= scannerContext;
 		fImplicitMacroExpansions.clear();
 		fImageLocationInfos.clear();
 		
@@ -180,6 +185,7 @@ public class MacroExpander {
 			result= e.getParameterTokens().cloneTokens();
 		}
 		postProcessTokens(result);
+		fReportMacros= null;
 		return result;
 	}
 
@@ -193,6 +199,7 @@ public class MacroExpander {
 		fFixedInput= beforeExpansion.toCharArray();
 		fFixedCurrentFilename= filePath;
 		fFixedLineNumber= lineNumber;
+		fReportMacros= null;
 		Lexer lexer= new Lexer(fFixedInput, fLexOptions, fLog, this);
 		
 		try {
@@ -240,6 +247,9 @@ public class MacroExpander {
 			IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden, TokenSource input, TokenList result,
 			MacroExpansionTracker tracker) 
 			throws OffsetLimitReachedException {
+		if (fReportMacros != null)
+			fReportMacros.significantMacro(macro);
+		
 		if (macro.isFunctionStyle()) {
 			final int paramCount = macro.getParameterPlaceholderList().length;
 			final TokenSource[] argInputs= new TokenSource[paramCount];
@@ -351,6 +361,13 @@ public class MacroExpander {
 					protect= true;
 				} else if (macro == null || (macro.isFunctionStyle() && !input.findLParenthesis())) {
 					// Tricky: Don't mark function-style macros if you don't find the left parenthesis
+					if (fReportMacros != null) {
+						if (macro == null) {
+							fReportMacros.significantMacroUndefined(image);
+						} else {
+							fReportMacros.significantMacro(macro);
+						}
+					}
 					result.append(t);
 				} else if (forbidden.containsKey(macro)) {
 					t.setType(CPreprocessor.tEXPANDED_IDENTIFIER); // prevent any further expansion

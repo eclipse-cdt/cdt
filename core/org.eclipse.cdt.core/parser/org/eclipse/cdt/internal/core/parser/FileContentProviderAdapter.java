@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser;
 
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 public class FileContentProviderAdapter extends InternalFileContentProvider {
 
 	/**
-	 * @deprecated avoid using the adapter, its for backwards compatibility, only.
+	 * @deprecated avoid using the adapter, it's for backwards compatibility, only.
 	 */
 	@Deprecated
 	public static InternalFileContentProvider adapt(ICodeReaderFactory fileCreator) {
@@ -57,7 +57,7 @@ public class FileContentProviderAdapter extends InternalFileContentProvider {
 	}
 
 	@Override
-	public InternalFileContent getContentForInclusion(String path) {
+	public InternalFileContent getContentForInclusion(String path, IMacroDictionary macroDictionary) {
 		return (InternalFileContent) FileContent.adapt(fDelegate.createCodeReaderForInclusion(path));
 	}
 
@@ -72,5 +72,4 @@ public class FileContentProviderAdapter extends InternalFileContentProvider {
 		}
 		return null;
 	}
-
 }

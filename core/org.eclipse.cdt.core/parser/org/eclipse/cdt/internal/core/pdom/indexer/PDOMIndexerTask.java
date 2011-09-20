@@ -40,7 +40,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -175,16 +174,6 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 			}
 		}
 		return defaultValue;
-	}
-
-	@Override
-	protected String getASTPathForParsingUpFront() {
-		final IProject project = getProject().getProject();
-		final IPath prjLocation= project.getLocation();
-		if (prjLocation == null) {
-			return null;
-		}
-		return prjLocation.append(super.getASTPathForParsingUpFront()).toString();
 	}
 
 	@Override

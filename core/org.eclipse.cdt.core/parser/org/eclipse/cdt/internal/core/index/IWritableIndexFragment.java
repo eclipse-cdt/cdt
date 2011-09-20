@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Andrew Ferguson (Symbian)
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation
+ *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
 ******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.index;
@@ -18,6 +18,7 @@ import java.util.Collection;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
@@ -44,23 +45,27 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	/**
 	 * Creates a file object for the given location and linkage or returns an existing one.
 	 * @param fileLocation an IIndexFileLocation representing the location of the file.
+	 * @param sigMacros the macro definitions at the inclusion point. 
 	 * @return the existing IIndexFragmentFile for this location, or a newly created one. 
 	 * @throws CoreException
 	 */
-	IIndexFragmentFile addFile(int linkageID, IIndexFileLocation fileLocation) throws CoreException;
+	IIndexFragmentFile addFile(int linkageID, IIndexFileLocation fileLocation,
+			ISignificantMacros sigMacros) throws CoreException;
 
 	/**
 	 * Creates a file object for the given location and linkage. The created file object is not added to
 	 * the file index.
 	 * @param fileLocation an IIndexFileLocation representing the location of the file.
+	 * @param sigMacros the macro definitions at the inclusion point. 
 	 * @return a newly created IIndexFragmentFile. 
 	 * @throws CoreException
 	 */
-	IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation fileLocation) throws CoreException;
+	IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation fileLocation,
+			ISignificantMacros sigMacros) throws CoreException;
 
 	/**
 	 * Makes an uncommitted file that was created earlier by calling
-	 * {@link #addUncommittedFile(int, IIndexFileLocation)} method visible in the index.
+	 * {@link #addUncommittedFile(int, IIndexFileLocation, ISignificantMacros)} method visible in the index.
      *
 	 * @return The file that was updated.
 	 * @throws CoreException

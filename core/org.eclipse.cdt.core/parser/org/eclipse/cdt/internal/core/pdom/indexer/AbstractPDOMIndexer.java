@@ -21,6 +21,9 @@ import org.eclipse.cdt.core.model.ICProject;
  * Abstract base class for all indexers.
  */
 public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
+	// For testing purposes
+	public static boolean noFilesUpFront= false;
+	
 	protected ICProject project;
 	protected Properties fProperties= new Properties();
 		
@@ -82,11 +85,13 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 	}
 
 	public String[] getFilesToParseUpFront() {
-		String prefSetting= getProperty(IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT);
-		if (prefSetting != null) {
-			prefSetting= prefSetting.trim();
-			if (prefSetting.length() > 0) {
-				return prefSetting.split(","); //$NON-NLS-1$
+		if (!noFilesUpFront) {
+			String prefSetting= getProperty(IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT);
+			if (prefSetting != null) {
+				prefSetting= prefSetting.trim();
+				if (prefSetting.length() > 0) {
+					return prefSetting.split(","); //$NON-NLS-1$
+				}
 			}
 		}
 		return new String[0];

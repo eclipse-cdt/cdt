@@ -17,13 +17,13 @@ package org.eclipse.cdt.internal.core.index;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
@@ -208,6 +209,7 @@ public class CIndex implements IIndex {
 		return findNames(binding, FIND_REFERENCES);
 	}
 
+	@Deprecated
 	public IIndexFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			IIndexFragmentFile candidate= fFragments[i].getFile(linkageID, location);
@@ -218,19 +220,53 @@ public class CIndex implements IIndex {
 		return null;
 	}
 
+	public IIndexFile getFile(int linkageID, IIndexFileLocation location,
+			ISignificantMacros significantMacros) throws CoreException {
+		for (int i = 0; i < fPrimaryFragmentCount; i++) {
+			IIndexFragmentFile candidate= fFragments[i].getFile(linkageID, location, significantMacros);
+			if (candidate != null && candidate.hasContent()) {
+				return candidate;
+			}
+		}
+		return null;
+	}
+
+	public IIndexFile[] getFiles(int linkageID, IIndexFileLocation location) throws CoreException {
+		if (location == null) {
+			return IIndexFile.EMPTY_FILE_ARRAY;
+		}
+		Set<ISignificantMacros> handled = new HashSet<ISignificantMacros>();
+		ArrayList<IIndexFragmentFile> result= new ArrayList<IIndexFragmentFile>();
+		for (int i = 0; i < fPrimaryFragmentCount; i++) {
+			IIndexFragmentFile[] candidates= fFragments[i].getFiles(linkageID, location);
+			for (IIndexFragmentFile candidate : candidates) {
+				if (candidate.hasContent()) {
+					ISignificantMacros macroKey = candidate.getSignificantMacros();
+					if (handled.add(macroKey)) {
+						result.add(candidate);
+					}
+				}
+			}
+		}
+		if (result.isEmpty()) {
+			return IIndexFile.EMPTY_FILE_ARRAY;
+		}
+		return result.toArray(new IIndexFile[result.size()]);
+	}
+
 	public IIndexFile[] getFiles(IIndexFileLocation location) throws CoreException {
 		if (location == null) {
 			return IIndexFile.EMPTY_FILE_ARRAY;
 		}
+		Set<FileContentKey> keys = new HashSet<FileContentKey>();
 		ArrayList<IIndexFragmentFile> result= new ArrayList<IIndexFragmentFile>();
-		BitSet linkages= new BitSet();
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			IIndexFragmentFile[] candidates= fFragments[i].getFiles(location);
 			for (IIndexFragmentFile candidate : candidates) {
-				int linkage= candidate.getLinkageID();
-				if (!linkages.get(linkage) && candidate.hasContent()) {
-					result.add(candidate);
-					linkages.set(linkage);
+				if (candidate.hasContent()) {
+					if (keys.add(new FileContentKey(candidate.getLinkageID(), candidate.getLocation(), candidate.getSignificantMacros()))) {
+						result.add(candidate);
+					}
 				}
 			}
 		}
@@ -241,16 +277,16 @@ public class CIndex implements IIndex {
 	}
 
 	public IIndexFile resolveInclude(IIndexInclude include) throws CoreException {
-		if (!include.isResolved()) {
-			return null;
-		}
 		IIndexFragmentInclude fragmentInclude = (IIndexFragmentInclude) include;
 		IIndexFragmentFile result= fragmentInclude.getIncludes();
-		if (result != null && result.hasContent()) {
+		if (result == null)
+			return null;
+		
+		if (result.hasContent()) {
 			return result;
 		}
 
-		return getFile(include.getIncludedBy().getLinkageID(), include.getIncludesLocation());
+		return getFile(result.getLinkageID(), result.getLocation(), result.getSignificantMacros());
 	}
 
 	public IIndexInclude[] findIncludedBy(IIndexFile file) throws CoreException {
@@ -288,7 +324,6 @@ public class CIndex implements IIndex {
 		}
 		findIncludedBy(nextLevel, out, depth, handled);
 	}
-
 
 	public IIndexInclude[] findIncludes(IIndexFile file) throws CoreException {
 		return findIncludes(file, 0);

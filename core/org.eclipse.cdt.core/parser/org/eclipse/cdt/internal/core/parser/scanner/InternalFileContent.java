@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IFileNomination;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexMacro;
@@ -43,6 +44,8 @@ public class InternalFileContent extends FileContent {
 	private final List<IIndexMacro> fMacroDefinitions;
 	private final List<ICPPUsingDirective> fUsingDirectives;
 	private final String fFileLocation;
+	private final IFileNomination fPragmaOnceNomination;
+	private final List<String> fNewPragmaOncePaths;
 	private boolean fHeuristic;
 	private boolean fIsSource= false;
 	private List<IIndexFile> fFiles;
@@ -52,10 +55,11 @@ public class InternalFileContent extends FileContent {
 	 * For skipping include files.
 	 * @param fileLocation the location of the file.
 	 * @param kind must be {@link InclusionKind#SKIP_FILE}.
+	 * @param once 
 	 * @throws IllegalArgumentException if fileLocation is <code>null</code> or the kind value is illegal for
 	 * this constructor.
 	 */
-	public InternalFileContent(String fileLocation, InclusionKind kind) throws IllegalArgumentException {
+	public InternalFileContent(String fileLocation, InclusionKind kind, IFileNomination once) throws IllegalArgumentException {
 		if (fileLocation == null || kind != InclusionKind.SKIP_FILE) {
 			throw new IllegalArgumentException();
 		}
@@ -64,6 +68,8 @@ public class InternalFileContent extends FileContent {
 		fMacroDefinitions= null;
 		fUsingDirectives= null;
 		fSource= null;
+		fPragmaOnceNomination= once;
+		fNewPragmaOncePaths= null;
 	}
 
 	/**
@@ -79,6 +85,8 @@ public class InternalFileContent extends FileContent {
 		fSource= content;
 		fMacroDefinitions= null;
 		fUsingDirectives= null;
+		fPragmaOnceNomination= null;
+		fNewPragmaOncePaths= null;
 		if (fFileLocation == null) {
 			throw new IllegalArgumentException();
 		}
@@ -89,16 +97,19 @@ public class InternalFileContent extends FileContent {
 	 * @param fileLocation the location of the file
 	 * @param macroDefinitions a list of macro definitions
 	 * @param files 
+	 * @param newPragmaOncePaths 
 	 * @throws IllegalArgumentException in case the fileLocation or the macroDefinitions are <code>null</code>.
 	 */
 	public InternalFileContent(String fileLocation, List<IIndexMacro> macroDefinitions, List<ICPPUsingDirective> usingDirectives,
-			List<IIndexFile> files) {
+			List<IIndexFile> files, List<String> newPragmaOncePaths) {
 		fKind= InclusionKind.FOUND_IN_INDEX;
 		fFileLocation= fileLocation;
 		fSource= null;
 		fUsingDirectives= usingDirectives;
 		fMacroDefinitions= macroDefinitions;
 		fFiles= files;
+		fPragmaOnceNomination= null;
+		fNewPragmaOncePaths= newPragmaOncePaths;
 	}
 
 	/**
@@ -155,6 +166,10 @@ public class InternalFileContent extends FileContent {
 	public List<IIndexFile> getFilesIncluded() {
 		return fFiles;
 	}
+	
+	public List<String> getPragmaOncePaths() {
+		return fNewPragmaOncePaths;
+	}
 
 	/**
 	 * Returns whether this inclusion was found by a heuristics.
@@ -183,6 +198,10 @@ public class InternalFileContent extends FileContent {
 		fFoundOnPath= isp;
 	}
 
+	public IFileNomination getPragmaOnceNomination() {
+		return fPragmaOnceNomination;
+	}
+	
 	/**
 	 * This method is slow. Use only for debugging.
 	 */

@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
@@ -71,6 +72,10 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private INodeFactory fNodeFactory;
 	private boolean fForContentAssist;
 	private ITranslationUnit fOriginatingTranslationUnit;
+	private ISignificantMacros fSignificantMacros= ISignificantMacros.NONE;
+	private boolean fPragmaOnceSemantics;
+	private boolean fComplete;
+	
 	/** The semaphore controlling exclusive access to the AST. */
 	private final Semaphore fSemaphore= new Semaphore(1);
 
@@ -367,6 +372,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		if (fIndexFileSet != null) {
 			List<IIndexFile> files= fileContent.getFilesIncluded();
 			for (IIndexFile indexFile : files) {
+				fASTFileSet.remove(indexFile);
 				fIndexFileSet.add(indexFile);
 			}
 		}
@@ -376,13 +382,14 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		return fIndexFileSet;
 	}
 	
-	public void replacingFile(InternalFileContentProvider provider, InternalFileContent fc) {
+	public void parsingFile(InternalFileContentProvider provider, InternalFileContent fc) {
 		if (fASTFileSet != null) {
 			if (provider instanceof IndexBasedFileContentProvider) {
 				try {
-					IIndexFile file= ((IndexBasedFileContentProvider) provider).findIndexFile(fc);
-					if (file != null) {
-						fASTFileSet.add(file);
+					for (IIndexFile file : ((IndexBasedFileContentProvider) provider).findIndexFiles(fc)) {
+						if (!fIndexFileSet.contains(file)) {
+							fASTFileSet.add(file);
+						}
 					}
 				} catch (CoreException e) {
 					// Ignore, tracking of replaced files fails.
@@ -448,6 +455,30 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 
 	public void setOriginatingTranslationUnit(ITranslationUnit tu) {
 		this.fOriginatingTranslationUnit = tu;
+	}
+
+	public ISignificantMacros getSignificantMacros() {
+		return fSignificantMacros;
+	}
+
+	public void setSignificantMacros(ISignificantMacros sigMacros) {
+		assertNotFrozen();
+		if (sigMacros != null)
+			fSignificantMacros= sigMacros;
+		fComplete= true;
+	}
+	
+	public boolean hasPragmaOnceSemantics() {
+		return fPragmaOnceSemantics;
+	}
+	
+	public void setPragmaOnceSemantics(boolean value) {
+		assertNotFrozen();
+		fPragmaOnceSemantics= value;
+	}
+
+	public boolean isComplete() {
+		return fComplete;
 	}
 
 	/**

@@ -28,6 +28,11 @@ public class PDOMFileSet implements IIndexFragmentFileSet {
 		fFileIDs.add(pdomFile.getRecord());
 	}
 
+	public void remove(IIndexFragmentFile fragFile) {
+		PDOMFile pdomFile= (PDOMFile) fragFile;
+		fFileIDs.remove(pdomFile.getRecord());
+	}
+
 	public boolean containsFileOfLocalBinding(IIndexFragmentBinding fb) throws CoreException {
 		PDOMBinding pdomBinding= (PDOMBinding) fb;
 		return fFileIDs.contains(pdomBinding.getLocalToFileRec());

@@ -275,7 +275,6 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 					IResource r= fc.fFile.getResource();
 					if (r != null) {
 						file.setTimestamp(r.getLocalTimeStamp());
-						file.setScannerConfigurationHashcode(0);
 					}
 				}
 			}

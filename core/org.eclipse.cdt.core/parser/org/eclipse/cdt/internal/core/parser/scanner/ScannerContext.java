@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,12 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArraySet;
 
 /**
  * Represents part of the input to the preprocessor. This may be a file or the result of a macro expansion.
@@ -43,6 +47,7 @@ final class ScannerContext {
 	}
 	
 	private CodeState fInactiveState= CodeState.eSkipInactive;
+	private final int fDepth;
 	private final ILocationCtx fLocationCtx;
 	private final ScannerContext fParent;
 	private final Lexer fLexer;
@@ -51,19 +56,32 @@ final class ScannerContext {
 	private CodeState fCurrentState= CodeState.eActive;
 	private IncludeSearchPathElement fFoundOnPath;
 	private String fFoundViaDirective;
+	private CharArraySet fInternalModifications;
+	private CharArrayObjectMap<char[]> fSignificantMacros;
+	private boolean fPragmaOnce;
+	
 
 	/**
 	 * @param ctx 
 	 * @param parent context to be used after this context is done.
 	 */
-	public ScannerContext(ILocationCtx ctx, ScannerContext parent, Lexer lexer) {
+	public ScannerContext(ILocationCtx ctx, ScannerContext parent, Lexer lexer, 
+			boolean trackSignificantMacros) {
 		fLocationCtx= ctx;
 		fParent= parent;
 		fLexer= lexer;
+		fDepth = parent == null ? 0 : parent.fDepth+1;
+		if (trackSignificantMacros) {
+			fInternalModifications= new CharArraySet(5);
+			fSignificantMacros= new CharArrayObjectMap<char[]>(5);
+		} else {
+			fInternalModifications= null;
+			fSignificantMacros= null;
+		}			
 	}
 	
 	public ScannerContext(ILocationCtx ctx, ScannerContext parent, TokenList tokens) {
-		this(ctx, parent, (Lexer) null);
+		this(ctx, parent, null, false);
 		fTokens= tokens.first();
 		fInactiveState= CodeState.eSkipInactive;  // no branches in result of macro expansion
 	}
@@ -87,6 +105,13 @@ final class ScannerContext {
 		return fParent;
 	}
 
+	/**
+	 * Returns the depth of this context, equals the number of parents of this context.
+	 */
+	public final int getDepth() {
+		return fDepth;
+	}
+	
 	/**
 	 * Returns the lexer for this context.
 	 */
@@ -296,5 +321,131 @@ final class ScannerContext {
 	public void setFoundOnPath(IncludeSearchPathElement foundOnPath, String viaDirective) {
 		fFoundOnPath= foundOnPath;
 		fFoundViaDirective= viaDirective;
+	}
+	
+	public void setPragmaOnce() {
+		fPragmaOnce= true;
+	}
+
+	public void internalModification(char[] macroName) {
+		if (fInternalModifications != null)
+			fInternalModifications.put(macroName);
+	}
+	
+	public boolean hasInternalModification(char[] namechars) {
+		return fInternalModifications != null && fInternalModifications.containsKey(namechars);
+	}
+
+	public void significantMacro(IMacroBinding macro) {
+		if (fPragmaOnce)
+			return;
+		final char[] macroName= macro.getNameCharArray();
+		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
+			fSignificantMacros.put(macroName, macro.getExpansion());
+		}
+	}
+	
+	public void significantMacroDefined(char[] macroName) {
+		if (fPragmaOnce)
+			return;
+		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
+			addSignificantMacroDefined(macroName);
+		}
+	}
+
+	private void addSignificantMacroDefined(char[] macroName) {
+		char[] old= fSignificantMacros.put(macroName, SignificantMacros.DEFINED);
+		if (old != null && old != SignificantMacros.DEFINED) {
+			// Put back more detailed condition
+			fSignificantMacros.put(macroName, old);
+		}
+	}
+	
+	public void significantMacroUndefined(char[] macroName) {
+		if (fPragmaOnce)
+			return;
+		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
+			fSignificantMacros.put(macroName, SignificantMacros.UNDEFINED);
+		}
+	}
+	
+	public void addSignificantInclusion(String path) {
+		final char[] inc = path.toCharArray();
+		if (fInternalModifications != null && !fInternalModifications.containsKey(inc)) {
+			fSignificantMacros.put(inc, SignificantMacros.INCLUDED);
+		}
+	}
+
+	public CharArrayObjectMap<char[]> getSignificantMacros() {
+		return fSignificantMacros;
+	}
+
+	public void propagateSignificantMacros() {
+		if (fInternalModifications == null)
+			return;
+		
+		if (fParent != null) {
+			final CharArraySet local = fParent.fInternalModifications;
+			if (local != null) {
+				final CharArrayObjectMap<char[]> significant = fParent.fSignificantMacros;
+				for (int i=0; i<fSignificantMacros.size(); i++) {
+					final char[] name = fSignificantMacros.keyAt(i);
+					if (!local.containsKey(name)) {
+						final char[] value= fSignificantMacros.getAt(i);
+						if (value == SignificantMacros.DEFINED) {
+							if (!local.containsKey(name)) {
+								fParent.addSignificantMacroDefined(name);
+							}
+						} else {
+							significant.put(name, value);
+						}
+					}
+				}
+				local.addAll(fInternalModifications);
+			}
+		}
+		fInternalModifications= null;
+		fSignificantMacros= null;
+	}
+
+	public boolean isSignificant(char[] macro) {
+		return fSignificantMacros != null && fSignificantMacros.containsKey(macro);
+	}
+
+	public void undoSignificance(char[] macro) {
+		if (fSignificantMacros != null) 
+			fSignificantMacros.remove(macro, 0, macro.length);
+	}
+
+	public void addSignificantMacros(ISignificantMacros sm) {
+		if (fInternalModifications == null)
+			return;
+		
+		sm.accept(new ISignificantMacros.IVisitor() {
+			public boolean visitValue(char[] macro, char[] value) {
+				if (!fInternalModifications.containsKey(macro)) {
+					fSignificantMacros.put(macro, value);
+				}
+				return true;
+			}
+			public boolean visitUndefined(char[] macro) {
+				if (!fInternalModifications.containsKey(macro)) {
+					fSignificantMacros.put(macro, SignificantMacros.UNDEFINED);
+				}
+				return true;
+			}
+			public boolean visitDefined(char[] macro) {
+				if (!fInternalModifications.containsKey(macro)) {
+					fSignificantMacros.put(macro, SignificantMacros.DEFINED);
+				}
+				return true;
+			}
+			public boolean visitIncluded(char[] path) {
+				if (!fInternalModifications.containsKey(path)) {
+					fSignificantMacros.put(path, SignificantMacros.INCLUDED);
+				}
+				return true;
+			}
+		});
 	}
 }

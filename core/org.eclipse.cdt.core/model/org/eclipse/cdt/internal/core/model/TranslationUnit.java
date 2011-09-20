@@ -839,30 +839,31 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return fileContentsProvider;
 	}
 
-	private static int[] CTX_LINKAGES= {ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID};
+	private static final int[] CTX_LINKAGES= { ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID };
 	public ITranslationUnit getSourceContextTU(IIndex index, int style) {
 		if (index != null && (style & AST_CONFIGURE_USING_SOURCE_CONTEXT) != 0) {
 			try {
 				fLanguageOfContext= null;
-				for (int element : CTX_LINKAGES) {
+				for (int linkageID : CTX_LINKAGES) {
 					IIndexFile context= null;
 					final IIndexFileLocation ifl = IndexLocationFactory.getIFL(this);
 					if (ifl != null) {
-						IIndexFile indexFile= index.getFile(element, ifl);
-						if (indexFile != null) {
-							// bug 199412, when a source-file includes itself the context may recurse.
-							HashSet<IIndexFile> visited= new HashSet<IIndexFile>();
-							visited.add(indexFile);
-							indexFile = getParsedInContext(indexFile);
-							while (indexFile != null && visited.add(indexFile)) {
-								context= indexFile;
-								indexFile= getParsedInContext(indexFile);
+						for (IIndexFile indexFile : index.getFiles(linkageID, ifl)) {
+							if (indexFile != null) {
+								// Bug 199412, when a source-file includes itself the context may recurse.
+								HashSet<IIndexFile> visited= new HashSet<IIndexFile>();
+								visited.add(indexFile);
+								indexFile = getParsedInContext(indexFile);
+								while (indexFile != null && visited.add(indexFile)) {
+									context= indexFile;
+									indexFile= getParsedInContext(indexFile);
+								}
 							}
-						}
-						if (context != null) {
-							ITranslationUnit tu= CoreModelUtil.findTranslationUnitForLocation(context.getLocation(), getCProject());
-							if (tu != null && tu.isSourceUnit()) {
-								return tu;
+							if (context != null) {
+								ITranslationUnit tu= CoreModelUtil.findTranslationUnitForLocation(context.getLocation(), getCProject());
+								if (tu != null && tu.isSourceUnit()) {
+									return tu;
+								}
 							}
 						}
 					}

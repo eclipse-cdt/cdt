@@ -226,22 +226,22 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 			return false; 
 		}
 	}
-	
+
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
 		}
-		
+
 		if (type instanceof PDOMNode) {
 			PDOMNode node= (PDOMNode) type;
 			if (node.getPDOM() == getPDOM()) {
 				return node.getRecord() == getRecord();
 			}
 		}
-		
+
 		if (type instanceof ICPPClassType && !(type instanceof ProblemBinding)) {
 			ICPPClassType ctype= (ICPPClassType) type;
-			if (ctype.getKey() != getKey())
+			if (getEquivalentKind(ctype) != getEquivalentKind(this))
 				return false;
 			char[] nchars = ctype.getNameCharArray();
 			if (nchars.length == 0) {
@@ -253,6 +253,11 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 			return SemanticUtil.isSameOwner(getOwner(), ctype.getOwner());
 		}
 		return false;
+	}
+
+	private static int getEquivalentKind(ICPPClassType classType) {
+		int key = classType.getKey();
+		return key == k_class ? k_struct : key;
 	}
 
 	public ICPPBase[] getBases() {

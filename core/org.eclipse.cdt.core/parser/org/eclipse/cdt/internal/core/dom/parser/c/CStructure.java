@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
- *    Markus Schorn (Wind River Systems) 
+ *     IBM Rational Software - Initial API and implementation
+ *     Markus Schorn (Wind River Systems) 
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -208,8 +208,9 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
 	 */
 	public int getKey() {
-		return (definition != null) ? ((IASTCompositeTypeSpecifier) definition.getParent()).getKey()
-				: ((IASTElaboratedTypeSpecifier) declarations[0].getParent()).getKind();
+		return definition != null ?
+				((IASTCompositeTypeSpecifier) definition.getParent()).getKey() :
+				((IASTElaboratedTypeSpecifier) declarations[0].getParent()).getKind();
 	}
 
 	/*

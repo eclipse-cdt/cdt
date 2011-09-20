@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM) - Initial API and implementation
- *    Bryan Wilkinson (QNX)
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Niefer (IBM) - Initial API and implementation
+ *     Bryan Wilkinson (QNX)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -224,7 +224,6 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return scope.getNestedClasses();
 	}
 
-
 	public IField[] getFields() {
 		return ClassTypeHelper.getFields(this);
 	}
@@ -241,7 +240,6 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
 	 */
@@ -249,7 +247,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		if (getDefinition() != null)
 			return getCompositeTypeSpecifier().getKey();
 		
-		return (getSpecializedBinding()).getKey();
+		return getSpecializedBinding().getKey();
 	}
 
 	/* (non-Javadoc)
@@ -313,7 +311,6 @@ public class CPPClassSpecialization extends CPPSpecialization
 		}
 		return false;
 	}
-
 
 	public static boolean isSameClassSpecialization(ICPPClassSpecialization t1, ICPPClassSpecialization t2) {
 		// exclude class template specialization or class instance

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.c;
 
@@ -25,7 +25,7 @@ class CompositeCStructure extends CompositeCBinding implements ICompositeType, I
 	}
 
 	public IField findField(String name) {
-		IField preresult = ((ICompositeType)rbinding).findField(name);
+		IField preresult = ((ICompositeType) rbinding).findField(name);
 		return (IField) cf.getCompositeBinding((IIndexFragmentBinding) preresult);
 	}
 
@@ -34,24 +34,26 @@ class CompositeCStructure extends CompositeCBinding implements ICompositeType, I
 	}
 
 	public IField[] getFields() {
-		IField[] result = ((ICompositeType)rbinding).getFields();
-		for(int i=0; i<result.length; i++)
+		IField[] result = ((ICompositeType) rbinding).getFields();
+		for (int i= 0; i < result.length; i++)
 			result[i] = (IField) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
 		return result;
 	}
 
 	public int getKey() {
-		return ((ICompositeType)rbinding).getKey();
+		return ((ICompositeType) rbinding).getKey();
 	}
 
 	public boolean isSameType(IType type) {
-		return ((ICompositeType)rbinding).isSameType(type);
+		return ((ICompositeType) rbinding).isSameType(type);
 	}
 
 	@Override
-	public Object clone() {fail(); return null;}
+	public Object clone() {
+		fail(); return null;
+	}
 
 	public boolean isAnonymous() {
-		return ((ICompositeType)rbinding).isAnonymous();
+		return ((ICompositeType) rbinding).isAnonymous();
 	}
 }

@@ -30,12 +30,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  * Represents a instantiation that cannot be performed because of dependent arguments or an unknown template.
  */
 public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDeferredClassInstance {
-	
 	private final ICPPTemplateArgument[] fArguments;
 	private final ICPPClassTemplate fClassTemplate;
 	private final ICPPScope fLookupScope;
 
-	public CPPDeferredClassInstance(ICPPClassTemplate template, ICPPTemplateArgument[] arguments, ICPPScope lookupScope) throws DOMException {
+	public CPPDeferredClassInstance(ICPPClassTemplate template, ICPPTemplateArgument[] arguments,
+			ICPPScope lookupScope) throws DOMException {
 		// With template template parameters the owner must not be calculated, it'd lead to an infinite loop.
 		// Rather than that we override getOwner().
 		super(null, template.getNameCharArray());
@@ -47,7 +47,6 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	public CPPDeferredClassInstance(ICPPClassTemplate template, ICPPTemplateArgument[] arguments) throws DOMException {
 		this(template, arguments, null);
 	}
-	
 	
 	@Override
 	public IBinding getOwner() {

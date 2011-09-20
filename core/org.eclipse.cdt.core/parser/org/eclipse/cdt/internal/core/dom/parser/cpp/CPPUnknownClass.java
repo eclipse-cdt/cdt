@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM Corporation) - initial API and implementation
- *    Sergey Prigogin (Google)
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
+ *     Sergey Prigogin (Google)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 

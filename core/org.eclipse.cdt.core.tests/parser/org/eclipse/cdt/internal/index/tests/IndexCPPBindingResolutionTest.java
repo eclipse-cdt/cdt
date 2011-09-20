@@ -1595,7 +1595,23 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		IFunction ref= getBindingFromASTName("fun", 0);
 		assertEquals("ns", ref.getOwner().getName());
 	}
-	
+
+	//	class A {};
+	//	void f(A a) {}
+	//	struct B {};
+	//	void g(B b) {}
+
+	//	struct A;
+	//	class B;
+	//
+	//	void test(A a, B b) {
+	//	  f(a);
+	//	  g(b);
+	//	}
+	public void testStructClassMismatch_358282() throws Exception {
+		getBindingFromASTName("f(a)", 1, ICPPFunction.class);
+		getBindingFromASTName("g(b)", 1, ICPPFunction.class);
+	}
 	
 	/* CPP assertion helpers */
 	/* ##################################################################### */

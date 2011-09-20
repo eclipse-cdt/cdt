@@ -185,14 +185,14 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 			}
 			IASTNode n= definition.getParent();
 			if (n instanceof ICPPASTElaboratedTypeSpecifier) {
-				return ((ICPPASTElaboratedTypeSpecifier)n).getKind();
+				return ((ICPPASTElaboratedTypeSpecifier) n).getKind();
 			}
 		}
 
 		if (declarations != null && declarations.length > 0) {
 			IASTNode n = declarations[0].getParent();
 			if (n instanceof ICPPASTElaboratedTypeSpecifier) {
-				return ((ICPPASTElaboratedTypeSpecifier)n).getKind();
+				return ((ICPPASTElaboratedTypeSpecifier) n).getKind();
 			}
 		}
 

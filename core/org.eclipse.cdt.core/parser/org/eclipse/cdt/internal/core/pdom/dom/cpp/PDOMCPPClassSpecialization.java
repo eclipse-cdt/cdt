@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Andrew Ferguson (Symbian)
- *    Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     Andrew Ferguson (Symbian)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -63,8 +63,8 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	private volatile ICPPClassScope fScope;
 	private ObjectMap specializationMap= null; // Obtained from the synchronized PDOM cache
 	
-	public PDOMCPPClassSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType, PDOMBinding specialized)
-			throws CoreException {
+	public PDOMCPPClassSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType,
+			PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) classType, specialized);
 	}
 
@@ -173,8 +173,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		if (base != null) {
 			if (predecessor != null) {
 				predecessor.setNextBase(base.getNextBase());
-			}
-			else {
+			} else {
 				setFirstBase(base.getNextBase());
 			}
 			base.delete();
@@ -290,15 +289,15 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	}
 
 	public int getKey() {
-		return (getSpecializedBinding()).getKey();
+		return getSpecializedBinding().getKey();
 	}
 
 	public boolean isSameType(IType type) {
-		if( type == this )
+		if (type == this)
 			return true;
 
-		if( type instanceof ITypedef )
-			return type.isSameType( this );
+		if (type instanceof ITypedef)
+			return type.isSameType(this);
 
 		if (type instanceof PDOMNode) {
 			PDOMNode node= (PDOMNode) type;

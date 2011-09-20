@@ -280,7 +280,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	}
 
 	public IASTNode getPhysicalNode() {
-		return (definition != null) ? (IASTNode) definition : declarations[0];
+		return definition != null ? (IASTNode) definition : declarations[0];
 	}
 
 	public int getKey() {
@@ -306,7 +306,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 			return;
 		}
 
-		//keep the lowest offset declaration in [0]
+		// Keep the lowest offset declaration in [0]
 		if (declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
 			declarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, declarations, name);
 		} else {

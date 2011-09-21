@@ -2688,4 +2688,12 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//void wrap_when_necessary(more_than_one_template_argument_t<int, float> p1, no_template_arguments_t p2, no_template_arguments_t p3) {}
+
+	//void wrap_when_necessary(more_than_one_template_argument_t<int, float> p1,
+	//		no_template_arguments_t p2, no_template_arguments_t p3) {
+	//}
+	public void testTemplateIdInParameterList_Bug357300() throws Exception {
+		assertFormatterResult();
+	}
 }

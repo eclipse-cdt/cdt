@@ -2089,14 +2089,6 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					int i;
 					for (i = 0; i < elementsLength; i++) {
 						final IASTNode node= elements.get(i);
-						if (i < elementsLength - 1) {
-							scribe.setTailFormatter(
-									new TrailingTokenFormatter(options.fSeparatorToken,
-											options.fSpaceBeforeSeparator,
-											options.fSpaceAfterSeparator));
-						} else {
-							scribe.setTailFormatter(tailFormatter);
-						}
 						scribe.alignFragment(alignment, i);
 						if (node instanceof ICPPASTConstructorChainInitializer) {
 							// Constructor chain initializer is a special case.
@@ -2105,7 +2097,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 							node.accept(this);
 						}
 						if (i < elementsLength - 1) {
+							scribe.setTailFormatter(
+									new TrailingTokenFormatter(options.fSeparatorToken,
+											options.fSpaceBeforeSeparator,
+											options.fSpaceAfterSeparator));
 							scribe.runTailFormatter();
+						} else {
+							scribe.setTailFormatter(tailFormatter);
 						}
 					}
 					if (addEllipsis) {

@@ -35,8 +35,8 @@ class CompositeCStructure extends CompositeCBinding implements ICompositeType, I
 
 	public IField[] getFields() {
 		IField[] result = ((ICompositeType) rbinding).getFields();
-		for(int i= 0; i < result.length; i++)
-			result[i] = (IField) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
+		for (int i= 0; i < result.length; i++)
+			result[i] = (IField) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
 		return result;
 	}
 
@@ -49,7 +49,9 @@ class CompositeCStructure extends CompositeCBinding implements ICompositeType, I
 	}
 
 	@Override
-	public Object clone() {fail(); return null;}
+	public Object clone() {
+		fail(); return null;
+	}
 
 	public boolean isAnonymous() {
 		return ((ICompositeType) rbinding).isAnonymous();

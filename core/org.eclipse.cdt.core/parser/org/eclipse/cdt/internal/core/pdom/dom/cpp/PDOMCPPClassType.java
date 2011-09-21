@@ -6,11 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Andrew Ferguson (Symbian)
- *    Bryan Wilkinson (QNX)
- *    Sergey Prigogin (Google)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
+ *     Bryan Wilkinson (QNX)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -45,19 +45,13 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
- * 
  */
 class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDOMMemberOwner {
-
 	private static final int FIRSTBASE = PDOMCPPBinding.RECORD_SIZE + 0;
-
 	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 4;
-
 	private static final int FIRSTFRIEND = PDOMCPPBinding.RECORD_SIZE + 8;
-	
 	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 12; // byte
 	private static final int ANONYMOUS= PDOMCPPBinding.RECORD_SIZE + 13; // byte
-	
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 14;
 
@@ -163,8 +157,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		if (base != null) {
 			if (predecessor != null) {
 				predecessor.setNextBase(base.getNextBase());
-			}
-			else {
+			} else {
 				setFirstBase(base.getNextBase());
 			}
 			base.delete();
@@ -202,8 +195,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		if (friend != null) {
 			if (predecessor != null) {
 				predecessor.setNextFriend(friend.getNextFriend());
-			}
-			else {
+			} else {
 				setFirstFriend(friend.getNextFriend());
 			}
 			friend.delete();

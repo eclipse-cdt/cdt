@@ -11,11 +11,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.LinkedHashSet;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Map;
-
-import com.ibm.icu.text.NumberFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -38,6 +38,7 @@ import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -46,6 +47,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.osgi.util.NLS;
+
+import com.ibm.icu.text.NumberFormat;
 
 /**
  * Configures the abstract indexer task suitable for indexing projects.
@@ -104,14 +107,34 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 	}
 	
 	private static ITranslationUnit[] concat(ITranslationUnit[] added, ITranslationUnit[] changed) {
-		LinkedHashSet<ITranslationUnit> union = new LinkedHashSet<ITranslationUnit>(added.length + changed.length);
-		for (ITranslationUnit tu : added) {
-			union.add(tu);
-		}
-		for (ITranslationUnit tu : changed) {
-			union.add(tu);
-		}
-		return union.toArray(new ITranslationUnit[union.size()]);
+		HashSet<ITranslationUnit> union = new HashSet<ITranslationUnit>(added.length + changed.length);
+		union.addAll(Arrays.asList(added));
+		union.addAll(Arrays.asList(changed));
+		final ITranslationUnit[] result = union.toArray(new ITranslationUnit[union.size()]);
+		Arrays.sort(result, new Comparator<ITranslationUnit>() {
+			public int compare(ITranslationUnit o1, ITranslationUnit o2) {
+				IResource res1= o1.getResource();
+				IResource res2= o2.getResource();
+				if (res1 != null && res2 != null) {
+					return compare(res1.getFullPath().segments(), res2.getFullPath().segments());
+				}
+				return res1 != null ? -1 : res2 != null ? 1 : 0;
+			}
+
+			private int compare(String[] s1, String[] s2) {
+				int max= Math.min(s1.length, s2.length) - 1;
+				for (int i = 0; i < max; i++) {
+					int cmp= s1[i].compareTo(s2[i]);
+					if (cmp != 0)
+						return cmp;
+				}
+				int cmp = s1.length-s2.length;
+				if (cmp != 0)
+					return cmp;
+				return s1[max].compareTo(s2[max]);
+			}
+		});
+		return result;
 	}
 	
 	public final void setParseUpFront() {

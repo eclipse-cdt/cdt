@@ -2658,6 +2658,23 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//#define EXPR(a) a
+	//void f(){
+	//switch(EXPR(1)){default:break;}
+	//}
+
+	//#define EXPR(a) a
+	//void f() {
+	//    switch (EXPR(1)) {
+	//    default:
+	//        break;
+	//    }
+	//}
+	public void testMacroInSwitch() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
 	//#define IF(cond) if(cond){}
 	//void f() { if(1){}IF(1>0);}
 

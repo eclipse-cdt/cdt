@@ -3526,14 +3526,14 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		 * Controller expression
 		 */
 		IASTExpression controllerExpression = node.getControllerExpression();
-		if (!enclosedInMacroExpansion(controllerExpression)) {
+		if (!doNodesHaveSameOffset(node, controllerExpression)) {
 			scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_switch);
 			if (preferences.insert_space_after_opening_paren_in_switch) {
 				scribe.space();
 			}
 		}
 		controllerExpression.accept(this);
-		if (!enclosedInMacroExpansion(controllerExpression)) {
+		if (peekNextToken() == Token.tRPAREN) {
 			scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_switch);
 		}
 		/*

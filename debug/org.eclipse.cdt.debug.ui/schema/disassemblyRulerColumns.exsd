@@ -1,0 +1,269 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.debug.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.debug.ui" id="disassemblyRulerColumns" name="Disassembly Ruler Column"/>
+      </appInfo>
+      <documentation>
+         Ruler column contributions are line based information areas that are normally shown in the vertical ruler area of the disassembly.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="column" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="column">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name" icon="icon"/>
+         </appInfo>
+         <documentation>
+            The specification of a ruler column contribution.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <choice minOccurs="1" maxOccurs="unbounded">
+               <element ref="targetId"/>
+               <element ref="targetClass"/>
+            </choice>
+            <element ref="placement"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the unique id of this column
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the column, may be used in the user interface (e.g. in preference pages)
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  an optional icon for the column. May be used in the user interface, for example on preference pages.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the class implementing the column; must implement &lt;code&gt;org.eclipse.cdt.debug.ui.disassembly.rulers.IContributedRulerColumn&lt;/code&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.debug.ui.disassembly.rulers.IContributedRulerColumn"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="enabled" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  the default enablement state of this column
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="global" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  controls whether toggling the visibility of this column operates on all targeted disassembly parts, or only the active disassembly part. If true, the ruler is added to all applicable parts when the user enables the column; if false, the ruler is only added to the active disassembly part.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="includeInMenu" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  whether to include a &quot;Show/Hide&quot; menu entry for this column in the ruler context menu
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="targetId">
+      <annotation>
+         <documentation>
+            Describes a disassembly part that the column is contributed to.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the part id of the target disassembly part
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors/editor/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="targetClass">
+      <annotation>
+         <documentation>
+            Describes a disassembly part class that the column is contributed to. Subclasses of the specified class are also targeted by this colum contribution.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully qualified name of a class implementing IWorkbenchPart. The class does not need to be instantiatable.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.IWorkbenchPart"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="placement">
+      <annotation>
+         <documentation>
+            Describes the placement of this ruler column relative to other contributed columns. A column may request to be placed &lt;em&gt;before&lt;/em&gt; or &lt;em&gt;after&lt;/em&gt; other known columns (identified by their &lt;tt&gt;id&lt;/tt&gt;). Columns that would end up at the same position are ordered by &lt;em&gt;gravity&lt;/em&gt; (see below). If the ordering is contradicting or no ordering can be found that fulfills all placement requests, some placement requirements are dropped until the placement can be achieved. If a column does not fully specify its placement it will be placed at an arbitrary but consistent location.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <choice>
+               <element ref="before"/>
+               <element ref="after"/>
+            </choice>
+         </sequence>
+         <attribute name="gravity" type="string" use="default" value="1.0">
+            <annotation>
+               <documentation>
+                  a float number between 0.0 and 1.0 that tells how close the column wants to be to the editor, where 0.0 means as far away as possible and 1.0 means as close as possible. After all &lt;i&gt;before&lt;/i&gt; and &lt;i&gt;after&lt;/i&gt; constraints are evaluated, columns that would end up at the same position are ordered by their &lt;i&gt;gravity&lt;/i&gt; value.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="before">
+      <annotation>
+         <documentation>
+            Requests placement before another column. The meaning of &lt;i&gt;before&lt;/i&gt; is similar to the SWT.LEAD flag: In left-to-right environments, &lt;i&gt;before&lt;/i&gt; means &lt;i&gt;to the left of&lt;/i&gt;, in right-to-left environments, it means &lt;i&gt;to the right of&lt;/i&gt;.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the id of another &lt;tt&gt;rulerColumns&lt;/tt&gt; contribution
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.debug.ui.disassemblyRulerColumns/column/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="after">
+      <annotation>
+         <documentation>
+            Requests placement after another column. The meaning of &lt;i&gt;after&lt;/i&gt; is similar to the SWT.TRAIL flag: In left-to-right environments, &lt;i&gt;after&lt;/i&gt; means &lt;i&gt;to the right of&lt;/i&gt;, in right-to-left environments, it means &lt;i&gt;to the left of&lt;/i&gt;.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the id of another &lt;tt&gt;rulerColumns&lt;/tt&gt; contribution
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.debug.ui.disassemblyRulerColumns/column/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         7.2
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The extension point is supported by the &lt;tt&gt;org.eclipse.cdt.debug.ui.disassembly.rulers&lt;/tt&gt; package. &lt;code&gt;RulerColumnRegistry&lt;/code&gt; gives access to all contributions, which in turn are described by &lt;code&gt;RulerColumnDescriptor&lt;/code&gt; instances.
+      </documentation>
+   </annotation>
+
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         All ruler column contributions must implement &lt;code&gt;org.eclipse.cdt.debug.ui.disassembly.rulers.IContributedRulerColumn&lt;/code&gt;. Many contributors will find the supplied &lt;code&gt;org.eclipse.cdt.debug.ui.disassembly.rulers.AbstractContributedRulerColumn&lt;/code&gt; useful which serves as super class for contributed ruler columns. Others might start off &lt;code&gt;org.eclipse.jface.text.source.AbstractRulerColumn&lt;/code&gt; which takes over most painting and scrolling aspects of a line based column and can be extended at various granularity levels. Those subclassing the latter class will have to implement &lt;code&gt;org.eclipse.cdt.debug.ui.disassembly.rulers.IContributedRulerColumn&lt;/code&gt; on their own by using &lt;code&gt;org.eclipse.cdt.debug.ui.disassembly.rulers.AbstractContributedRulerColumn&lt;/code&gt; as template.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2006, 20011 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+      </documentation>
+   </annotation>
+
+</schema>

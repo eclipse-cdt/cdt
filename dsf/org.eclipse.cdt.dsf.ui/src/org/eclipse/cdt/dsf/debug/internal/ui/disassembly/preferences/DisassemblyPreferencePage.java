@@ -23,8 +23,6 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -46,6 +44,7 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 	private List<Combo> fComboBoxes = new ArrayList<Combo>();
 	private ArrayList<Text> fNumberFields = new ArrayList<Text>();
 	private ModifyListener fNumberFieldListener = new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			numberFieldChanged((Text)e.widget);
 		}
@@ -93,38 +92,17 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 
 		String label;
 
-//		label = DisassemblyMessages.DisassemblyPreferencePage_startAddress; //$NON-NLS-1$
-//		addTextField(composite, label, DisassemblyPreferenceConstants.START_ADDRESS, 20, 0, true);
-//		label = DisassemblyMessages.DisassemblyPreferencePage_endAddress; //$NON-NLS-1$
-//		addTextField(composite, label, DisassemblyPreferenceConstants.END_ADDRESS, 20, 0, true);
-
-		label = DisassemblyMessages.DisassemblyPreferencePage_showAddress;
-		final Button showAddressCB = addCheckBox(composite, label, DisassemblyPreferenceConstants.SHOW_ADDRESS_RULER, 0);
-		showAddressCB.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fAddressFormatCombo.setEnabled(showAddressCB.getSelection());
-			}
-		});
-		showAddressCB.setToolTipText(DisassemblyMessages.DisassemblyPreferencePage_showAddressTooltip);
 		label = DisassemblyMessages.DisassemblyPreferencePage_addressRadix;
 		fAddressFormatCombo = addComboBox(composite, label, DisassemblyPreferenceConstants.ADDRESS_RADIX, fcRadixItems);
 		fAddressFormatCombo.setToolTipText(DisassemblyMessages.DisassemblyPreferencePage_addressFormatTooltip);
 
-		label = DisassemblyMessages.DisassemblyPreferencePage_showCodeBytes;
-		final Button showCodeBytes= addCheckBox(composite, label, DisassemblyPreferenceConstants.SHOW_CODE_BYTES, 0);
-		showCodeBytes.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fOpcodeFormatCombo.setEnabled(showCodeBytes.getSelection());
-			}
-		});
-		showCodeBytes.setToolTipText(DisassemblyMessages.DisassemblyPreferencePage_showCodeBytesTooltip);
+		label = DisassemblyMessages.DisassemblyPreferencePage_showAddressRadix;
+		Button showRadixCB = addCheckBox(composite, label, DisassemblyPreferenceConstants.SHOW_ADDRESS_RADIX, 0);
+		showRadixCB.setToolTipText(DisassemblyMessages.DisassemblyPreferencePage_showRadixTooltip);
+
 		label = DisassemblyMessages.DisassemblyPreferencePage_OpcodeFormat;
 		fOpcodeFormatCombo = addComboBox(composite, label, DisassemblyPreferenceConstants.OPCODE_RADIX, fcRadixItems);
 		fOpcodeFormatCombo.setToolTipText(DisassemblyMessages.DisassemblyPreferencePage_OpcodeFormatTooltip);
-//		label = DisassemblyMessages.DisassemblyPreferencePage_instructionRadix;
-//		addComboBox(composite, label, DisassemblyPreferenceConstants.INSTRUCTION_RADIX, fcRadixItems);
 
 		label = DisassemblyMessages.DisassemblyPreferencePage_showSource;
 		Button showSourceCB = addCheckBox(composite, label, DisassemblyPreferenceConstants.SHOW_SOURCE, 0);
@@ -132,42 +110,6 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 		label = DisassemblyMessages.DisassemblyPreferencePage_showSymbols;
 		Button showSymbolsCB = addCheckBox(composite, label, DisassemblyPreferenceConstants.SHOW_SYMBOLS, 0);
 		showSymbolsCB.setToolTipText(DisassemblyMessages.DisassemblyPreferencePage_showSymbolsTooltip);
-//		label = DisassemblyMessages.DisassemblyPreferencePage_simplifiedMnemonics;
-//		addCheckBox(composite, label, DisassemblyPreferenceConstants.SIMPLIFIED, 0);
-		label = DisassemblyMessages.DisassemblyPreferencePage_showAddressRadix;
-		Button showRadixCB = addCheckBox(composite, label, DisassemblyPreferenceConstants.SHOW_ADDRESS_RADIX, 0);
-		showRadixCB.setToolTipText(DisassemblyMessages.DisassemblyPreferencePage_showRadixTooltip);
-		label = DisassemblyMessages.DisassemblyPreferencePage_showFunctionOffsets;
-		Button showFunctionOffsets = addCheckBox(composite, label, DisassemblyPreferenceConstants.SHOW_FUNCTION_OFFSETS, 0);
-		showFunctionOffsets.setToolTipText(DisassemblyMessages.DisassemblyPreferencePage_showFunctionOffsetsTooltip);
-//		label = DisassemblyMessages.DisassemblyPreferencePage_avoidReadBeforePC;
-//		addCheckBox(composite, label, DisassemblyPreferenceConstants.AVOID_READ_BEFORE_PC, 0);
-
-		// horizontal line
-//		Label separator = new Label(composite, SWT.SEPARATOR|SWT.HORIZONTAL);
-//		GridData data;
-//		data = new GridData(GridData.FILL_HORIZONTAL);
-//		data.horizontalSpan = layout.numColumns;
-//		separator.setLayoutData(data);
-//
-//		label = DisassemblyMessages.DisassemblyPreferencePage_useSourceOnlyMode;
-//		addCheckBox(composite, label, DisassemblyPreferenceConstants.USE_SOURCE_ONLY_MODE, 0);
-//
-//		// note
-//		String noteTitle = DisassemblyMessages.DisassemblyPreferencePage_useSourceOnlyMode_noteTtitle;
-//		String noteMessage = DisassemblyMessages.DisassemblyPreferencePage_useSourceOnlyMode_noteMessage;
-//		Composite note = createNoteComposite(composite.getFont(), composite, noteTitle, noteMessage);
-//		data = (GridData)note.getLayoutData();
-//		if (data == null) {
-//			data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-//			note.setLayoutData(data);
-//		}
-//		data.horizontalSpan = layout.numColumns;
-//		Control msgControl = note.getChildren()[1];
-//		data = new GridData(GridData.FILL_HORIZONTAL);
-//		data.widthHint = convertWidthInCharsToPixels(65);
-//		data.heightHint = convertHeightInCharsToPixels(3);
-//		msgControl.setLayoutData(data);
 
 		Dialog.applyDialogFont(parent);
 
@@ -179,6 +121,7 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
@@ -200,7 +143,7 @@ public class DisassemblyPreferencePage extends PreferencePage implements IWorkbe
 		Label labelControl= new Label(parent, SWT.NONE);
 		labelControl.setText(label);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent = 16;
+		gd.horizontalIndent = 0;
 		gd.horizontalSpan = 2;
 		labelControl.setLayoutData(gd);
 

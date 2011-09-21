@@ -38,6 +38,12 @@ import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyDocument;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.LabelPosition;
+import org.eclipse.cdt.debug.internal.ui.preferences.StringSetSerializer;
+import org.eclipse.cdt.debug.ui.disassembly.rulers.IColumnSupport;
+import org.eclipse.cdt.debug.ui.disassembly.rulers.IContributedRulerColumn;
+import org.eclipse.cdt.debug.ui.disassembly.rulers.RulerColumnDescriptor;
+import org.eclipse.cdt.debug.ui.disassembly.rulers.RulerColumnPreferenceAdapter;
+import org.eclipse.cdt.debug.ui.disassembly.rulers.RulerColumnRegistry;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.AbstractDisassemblyAction;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.ActionGotoAddress;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.ActionGotoProgramCounter;
@@ -50,6 +56,8 @@ import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyDocume
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourceFileInfo;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.preferences.DisassemblyPreferenceConstants;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.presentation.DisassemblyIPAnnotation;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.DisassemblyRulerColumn;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.DisassemblyViewer;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.util.HSL;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
@@ -125,6 +133,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DropTarget;
@@ -133,6 +142,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -171,6 +181,9 @@ import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
+
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * DisassemblyPart
  */
@@ -206,17 +219,19 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	public static final String KEY_BINDING_CONTEXT_DISASSEMBLY = "org.eclipse.cdt.dsf.debug.ui.disassembly.context"; //$NON-NLS-1$
 
+	/**
+	 * A named preference that controls the visible ruler column contributions.
+	 */
+	public static final String PREFERENCE_RULER_CONTRIBUTIONS= "rulerContributions"; //$NON-NLS-1$
+
 	protected DisassemblyViewer fViewer;
 
 	protected AbstractDisassemblyAction fActionGotoPC;
 	protected AbstractDisassemblyAction fActionGotoAddress;
 	protected AbstractDisassemblyAction fActionToggleSource;
-	private AbstractDisassemblyAction fActionToggleFunctionColumn;
-	private AbstractDisassemblyAction fActionToggleOpcodeColumn;
 	protected AbstractDisassemblyAction fActionToggleSymbols;
 	protected AbstractDisassemblyAction fActionRefreshView;
 	protected Action fActionOpenPreferences;
-	private AbstractDisassemblyAction fActionToggleAddressColumn;
 	private AbstractDisassemblyAction fActionToggleBreakpointEnablement;
 
 	protected DisassemblyDocument fDocument;
@@ -244,10 +259,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private TextViewerDragAdapter fDragSourceAdapter;
 	private DisassemblyDropAdapter fDropTargetAdapter;
 
-	private FunctionOffsetRulerColumn fFunctionOffsetRulerColumn;
-	private OpcodeRulerColumn fOpcodeRulerColumn;
-	private AddressRulerColumn fAddressRulerColumn;
-
 	private BigInteger fStartAddress;
 	private BigInteger fEndAddress;
 	private int fAddressSize= 32;
@@ -272,8 +283,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private List<Action> fSelectionActions = new ArrayList<Action>();
 	private List<AbstractDisassemblyAction> fStateDependentActions = new ArrayList<AbstractDisassemblyAction>();
 	private boolean fShowSource;
-	private boolean fShowFunctionOffsets;
-	private boolean fShowOpcodes;
 	private boolean fShowSymbols;
 	private Map<String, Object> fFile2Storage = new HashMap<String, Object>();
 	private boolean fShowDisassembly = true;
@@ -294,26 +303,34 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	protected IPartListener2 fPartListener =
 		new IPartListener2() {
+			@Override
 			public void partActivated(IWorkbenchPartReference partRef) {
 			}
+			@Override
 			public void partBroughtToTop(IWorkbenchPartReference partRef) {
 			}
+			@Override
 			public void partClosed(IWorkbenchPartReference partRef) {
 			}
+			@Override
 			public void partDeactivated(IWorkbenchPartReference partRef) {
 			}
+			@Override
 			public void partOpened(IWorkbenchPartReference partRef) {
 			}
+			@Override
 			public void partHidden(IWorkbenchPartReference partRef) {
 				if (partRef.getPart(false) == DisassemblyPart.this) {
 					setActive(false);
 				}
 			}
+			@Override
 			public void partVisible(IWorkbenchPartReference partRef) {
 				if (partRef.getPart(false) == DisassemblyPart.this) {
 					setActive(true);
 				}
 			}
+			@Override
 			public void partInputChanged(IWorkbenchPartReference partRef) {
 			}
 		};
@@ -337,6 +354,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private Action fJumpToAddressAction = new JumpToAddressAction(this);
 
     private IDebugContextListener fDebugContextListener;
+
+	private IColumnSupport fColumnSupport;
 
     private final class SyncActiveDebugContextAction extends Action {
         public SyncActiveDebugContextAction() {
@@ -380,54 +399,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 	
-	private final class ActionToggleAddressColumn extends AbstractDisassemblyAction {
-		ActionToggleAddressColumn () {
-			super(DisassemblyPart.this);
-			setText(DisassemblyMessages.Disassembly_action_ShowAddresses_label);
-		}
-		@Override
-		public void run() {
-			IPreferenceStore store = DsfUIPlugin.getDefault().getPreferenceStore();
-			store.setValue(DisassemblyPreferenceConstants.SHOW_ADDRESS_RULER, !isAddressRulerVisible());
-		}
-		@Override
-		public void update() {
-			setChecked(isAddressRulerVisible());
-		}
-	}
-
-	private final class ActionToggleFunctionColumn extends AbstractDisassemblyAction {
-		ActionToggleFunctionColumn() {
-			super(DisassemblyPart.this);
-			setText(DisassemblyMessages.Disassembly_action_ShowFunctionOffsets_label);
-		}
-		@Override
-		public void run() {
-			IPreferenceStore store = DsfUIPlugin.getDefault().getPreferenceStore();
-			store.setValue(DisassemblyPreferenceConstants.SHOW_FUNCTION_OFFSETS, !isFunctionOffsetsRulerVisible());
-		}
-		@Override
-		public void update() {
-			setChecked(isFunctionOffsetsRulerVisible());
-		}
-	}
-
-	private final class ActionToggleOpcodeColumn extends AbstractDisassemblyAction {
-		ActionToggleOpcodeColumn() {
-			super(DisassemblyPart.this);
-			setText(DisassemblyMessages.Disassembly_action_ShowOpcode_label);
-		}
-		@Override
-		public void run() {
-			IPreferenceStore store = DsfUIPlugin.getDefault().getPreferenceStore();
-			store.setValue(DisassemblyPreferenceConstants.SHOW_CODE_BYTES, !isOpcodeRulerVisible());
-		}
-		@Override
-		public void update() {
-			setChecked(isOpcodeRulerVisible());
-		}
-	}
-
 	private final class ActionToggleBreakpointEnablement extends AbstractDisassemblyAction {
 		private IBreakpoint fBreakpoint;
 		public ActionToggleBreakpointEnablement() {
@@ -511,6 +482,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		/*
 		 * @see IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 		 */
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			handlePreferenceStoreChanged(event);
 		}
@@ -537,8 +509,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		else
 			fEndAddress = new BigInteger(endAddressString, 16);
 		fShowSource = prefs.getBoolean(DisassemblyPreferenceConstants.SHOW_SOURCE);
-		fShowFunctionOffsets = prefs.getBoolean(DisassemblyPreferenceConstants.SHOW_FUNCTION_OFFSETS);
-		fShowOpcodes = prefs.getBoolean(DisassemblyPreferenceConstants.SHOW_CODE_BYTES);
 		fShowSymbols = prefs.getBoolean(DisassemblyPreferenceConstants.SHOW_SYMBOLS);
 		fUpdateBeforeFocus = !prefs.getBoolean(DisassemblyPreferenceConstants.AVOID_READ_BEFORE_PC);
 		fPCHistorySizeMax = prefs.getInt(DisassemblyPreferenceConstants.PC_HISTORY_SIZE);
@@ -571,13 +541,76 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			return fViewer != null ? fViewer.getTextWidget() : null;
 		} else if (IGotoMarker.class.equals(required)) {
 			return new IGotoMarker() {
+				@Override
 				public void gotoMarker(IMarker marker) {
 					DisassemblyPart.this.gotoMarker(marker);
 				}};
+		} else if (IColumnSupport.class.equals(required)) {
+			if (fColumnSupport == null)
+				fColumnSupport= createColumnSupport();
+			return fColumnSupport;
 		}
+
 		return super.getAdapter(required);
 	}
 
+	/**
+	 * Adds "show" actions for all contributed rulers that support it.
+	 *
+	 * @param menu the ruler context menu
+	 */
+	private void addRulerContributionActions(IMenuManager menu) {
+		// store directly in generic editor preferences
+		final IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
+		IPreferenceStore store= DsfUIPlugin.getDefault().getPreferenceStore();
+		final RulerColumnPreferenceAdapter adapter= new RulerColumnPreferenceAdapter(store, PREFERENCE_RULER_CONTRIBUTIONS);
+		List<RulerColumnDescriptor> descriptors= RulerColumnRegistry.getDefault().getColumnDescriptors();
+		for (final RulerColumnDescriptor descriptor : descriptors) {
+			if (!descriptor.isIncludedInMenu() || !support.isColumnSupported(descriptor))
+				continue;
+			final boolean isVisible= support.isColumnVisible(descriptor);
+			IAction action= new Action(MessageFormat.format(DisassemblyMessages.DisassemblyPart_showRulerColumn_label, new Object[] {descriptor.getName()}), IAction.AS_CHECK_BOX) {
+				@Override
+				public void run() {
+					if (descriptor.isGlobal())
+						// column state is modified via preference listener
+						adapter.setEnabled(descriptor, !isVisible);
+					else
+						// directly modify column for this editor instance
+						support.setColumnVisible(descriptor, !isVisible);
+				}
+			};
+			action.setChecked(isVisible);
+			action.setImageDescriptor(descriptor.getIcon());
+			menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, action);
+		}
+	}
+
+	/**
+	 * Adds enabled ruler contributions to the vertical ruler.
+	 *
+	 * @param ruler the composite ruler to add contributions to
+	 */
+	protected void updateContributedRulerColumns(CompositeRuler ruler) {
+		IColumnSupport support= (IColumnSupport)getAdapter(IColumnSupport.class);
+		if (support == null)
+			return;
+
+		RulerColumnPreferenceAdapter adapter= null;
+		if (fPreferenceStore != null)
+			adapter= new RulerColumnPreferenceAdapter(getPreferenceStore(), PREFERENCE_RULER_CONTRIBUTIONS);
+
+		RulerColumnRegistry registry= RulerColumnRegistry.getDefault();
+		List<RulerColumnDescriptor> descriptors= registry.getColumnDescriptors();
+		for (RulerColumnDescriptor descriptor : descriptors) {
+			support.setColumnVisible(descriptor, adapter == null || adapter.isEnabled(descriptor));
+		}
+	}
+
+	protected IColumnSupport createColumnSupport() {
+		return new DisassemblyColumnSupport(this, RulerColumnRegistry.getDefault());
+	}
+	
 	private void setPreferenceStore(IPreferenceStore store) {
 		if (fPreferenceStore != null) {
 			fPreferenceStore.removePropertyChangeListener(fPropertyChangeListener);
@@ -610,28 +643,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 		if (getFontPropertyPreferenceKey().equals(property)) {
 			initializeViewerFont(fViewer);
-		} else if (property.equals(DisassemblyPreferenceConstants.SHOW_ADDRESS_RULER)) {
-			fActionToggleAddressColumn.update();
-			if (isAddressRulerVisible()) {
-				showAddressRuler();
-			} else {
-				hideAddressRuler();
-			}
-		} else if (property.equals(DisassemblyPreferenceConstants.ADDRESS_RADIX)) {
-			if (fAddressRulerColumn != null) {
-				hideAddressRuler();
-				showAddressRuler();
-			}
-		} else if (property.equals(DisassemblyPreferenceConstants.OPCODE_RADIX)) {
-			if (isOpcodeRulerVisible()) {
-				hideOpcodeRuler();                        
-				showOpcodeRuler();
-			}
-		} else if (property.equals(DisassemblyPreferenceConstants.SHOW_ADDRESS_RADIX)) {
-			if (fAddressRulerColumn != null) {
-				hideAddressRuler();
-				showAddressRuler();
-			}
 		} else if (property.equals(DisassemblyPreferenceConstants.SHOW_SOURCE)) {
 			boolean showSource = store.getBoolean(property);
 			if (fShowSource == showSource) {
@@ -648,22 +659,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			fShowSymbols = showSymbols;
 			fActionToggleSymbols.update();
 			refreshView(10);
-		} else if (property.equals(DisassemblyPreferenceConstants.SHOW_FUNCTION_OFFSETS)) {
-			fShowFunctionOffsets = store.getBoolean(property);
-			fActionToggleFunctionColumn.update();
-			if (isFunctionOffsetsRulerVisible()) {
-				showFunctionOffsetsRuler();
-			} else {
-				hideFunctionOffsetsRuler();
-			}
-		} else if (property.equals(DisassemblyPreferenceConstants.SHOW_CODE_BYTES)) {
-			fShowOpcodes = store.getBoolean(property);			
-			fActionToggleOpcodeColumn.update();
-			if (isOpcodeRulerVisible()) {
-				showOpcodeRuler();
-			} else {
-				hideOpcodeRuler();
-			}			
 		} else if (property.equals(DisassemblyPreferenceConstants.AVOID_READ_BEFORE_PC)) {
 			fUpdateBeforeFocus = !store.getBoolean(property);
 			updateVisibleArea();
@@ -676,7 +671,18 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			}
 		} else if (property.equals(DisassemblyPreferenceConstants.PC_HISTORY_SIZE)) {
 			fPCHistorySizeMax = store.getInt(property);
+		} else if (PREFERENCE_RULER_CONTRIBUTIONS.equals(property)) {
+			String[] difference= StringSetSerializer.getDifference((String) event.getOldValue(), (String) event.getNewValue());
+			IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
+			for (int i= 0; i < difference.length; i++) {
+				RulerColumnDescriptor desc= RulerColumnRegistry.getDefault().getColumnDescriptor(difference[i]);
+				if (desc != null &&  support.isColumnSupported(desc)) {
+					boolean newState= !support.isColumnVisible(desc);
+					support.setColumnVisible(desc, newState);
+				}
+			}
 		}
+
 	}
 
 	/**
@@ -691,7 +697,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		parent.setLayout(layout);
 		fVerticalRuler = createVerticalRuler();
 		int styles = SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
-		fViewer = new DisassemblyViewer(this, parent, fVerticalRuler, getOverviewRuler(), true, styles);
+		fViewer = new DisassemblyViewer(parent, fVerticalRuler, getOverviewRuler(), true, styles);
 		SourceViewerConfiguration sourceViewerConfig = new DisassemblyViewerConfiguration(this);
 		fViewer.addTextPresentationListener(this);
 		fViewer.configure(sourceViewerConfig);
@@ -715,7 +721,21 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		hookContextMenu();
 		contributeToActionBars();
 		
+		fViewer.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
+			@Override
+			public void verifyKey(VerifyEvent event) {
+				switch (event.keyCode) {
+				case SWT.PAGE_UP:
+				case SWT.PAGE_DOWN:
+				case SWT.ARROW_UP:
+				case SWT.ARROW_DOWN:
+					event.doit = !keyScroll(event.keyCode);
+				}
+			}
+		});
+
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelectionDependentActions();
 			}
@@ -726,14 +746,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fSourceColor = getSharedColors().getColor(new RGB(64, 0, 80));
 		fLabelColor = getSharedColors().getColor(new RGB(0, 0, 96));
 
-		if (isAddressRulerVisible()) {
-			showAddressRuler();
-		}
-		if (isFunctionOffsetsRulerVisible()) {
-			showFunctionOffsetsRuler();
-		}
-		if (isOpcodeRulerVisible()) {
-			showOpcodeRuler();
+		IVerticalRuler ruler= getVerticalRuler();
+		if (ruler instanceof CompositeRuler) {
+			updateContributedRulerColumns((CompositeRuler) ruler);
 		}
 
 		initDragAndDrop();
@@ -756,7 +771,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		super.setSite(site);
         site.getPage().addPartListener(fPartListener);
         fDebugContextListener = new IDebugContextListener() {
-            public void debugContextChanged(DebugContextEvent event) {
+            @Override
+			public void debugContextChanged(DebugContextEvent event) {
                 if ((event.getFlags() & DebugContextEvent.ACTIVATED) != 0) {
                     updateDebugContext();
                 }
@@ -822,6 +838,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				fPreferenceStore = null;
 			}
 			fPropertyChangeListener = null;
+		}
+		if (fColumnSupport != null) {
+			fColumnSupport.dispose();
+			fColumnSupport= null;
 		}
 
 		fDocument.dispose();
@@ -1043,44 +1063,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	}
 
 	/**
-	 * Creates a new address ruler column that is appropriately initialized.
-	 *
-	 * @return the created line number column
-	 */
-	protected IVerticalRulerColumn createAddressRulerColumn() {
-		fAddressRulerColumn= new AddressRulerColumn();
-		initializeRulerColumn(fAddressRulerColumn, DisassemblyPreferenceConstants.ADDRESS_COLOR);
-		IPreferenceStore prefs = getPreferenceStore();
-		fAddressRulerColumn.setRadix(prefs.getInt(DisassemblyPreferenceConstants.ADDRESS_RADIX));
-		fAddressRulerColumn.setShowRadixPrefix(prefs.getBoolean(DisassemblyPreferenceConstants.SHOW_ADDRESS_RADIX));
-		return fAddressRulerColumn;
-	}
-
-	/**
-	 * Creates a new ruler column that is appropriately initialized.
-	 *
-	 * @return the created line number column
-	 */
-	protected IVerticalRulerColumn createFunctionOffsetsRulerColumn() {
-		fFunctionOffsetRulerColumn= new FunctionOffsetRulerColumn();
-
-		initializeRulerColumn(fFunctionOffsetRulerColumn, DisassemblyPreferenceConstants.FUNCTION_OFFSETS_COLOR);
-		
-		return fFunctionOffsetRulerColumn;
-	}
-	
-	protected IVerticalRulerColumn createOpcodeRulerColumn() {
-		fOpcodeRulerColumn= new OpcodeRulerColumn();
-		
-		initializeRulerColumn(fOpcodeRulerColumn, DisassemblyPreferenceConstants.CODE_BYTES_COLOR);
-
-		IPreferenceStore prefs = getPreferenceStore();
-		fOpcodeRulerColumn.setRadix(prefs.getInt(DisassemblyPreferenceConstants.OPCODE_RADIX));
-		
-		return fOpcodeRulerColumn;
-	}
-
-	/**
 	 * Initializes the given address ruler column from the preference store.
 	 *
 	 * @param rulerColumn the ruler column to be initialized
@@ -1128,99 +1110,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		return ruler;
 	}
 
-	private boolean isAddressRulerVisible() {
-		return getPreferenceStore().getBoolean(DisassemblyPreferenceConstants.SHOW_ADDRESS_RULER);
-	}
-
-	/**
-	 * Shows the address ruler column.
-	 */
-	private void showAddressRuler() {
-		if (fAddressRulerColumn == null) {
-			IVerticalRuler v= getVerticalRuler();
-			if (v instanceof CompositeRuler) {
-				CompositeRuler c= (CompositeRuler) v;
-				c.addDecorator(1, createAddressRulerColumn());
-			}
-		}
-	}
-
-	/**
-	 * Hides the address ruler column.
-	 */
-	private void hideAddressRuler() {
-		if (fAddressRulerColumn != null) {
-			IVerticalRuler v= getVerticalRuler();
-			if (v instanceof CompositeRuler) {
-				CompositeRuler c= (CompositeRuler) v;
-				c.removeDecorator(fAddressRulerColumn);
-			}
-			fAddressRulerColumn = null;
-		}
-	}
-
-	private boolean isFunctionOffsetsRulerVisible() {
-		return fShowFunctionOffsets;
-	}
-
-	private boolean isOpcodeRulerVisible() {
-		return fShowOpcodes;
-	}
-
-	/**
-	 * Shows the function offset ruler column.
-	 */
-	private void showFunctionOffsetsRuler() {
-		if (fFunctionOffsetRulerColumn == null) {
-			IVerticalRuler v= getVerticalRuler();
-			if (v instanceof CompositeRuler) {
-				CompositeRuler c= (CompositeRuler) v;
-				c.addDecorator(3, createFunctionOffsetsRulerColumn());
-			}
-		}
-	}
-
-	/**
-	 * Hides the function offset ruler column.
-	 */
-	private void hideFunctionOffsetsRuler() {
-		if (fFunctionOffsetRulerColumn != null) {
-			IVerticalRuler v= getVerticalRuler();
-			if (v instanceof CompositeRuler) {
-				CompositeRuler c= (CompositeRuler) v;
-				c.removeDecorator(fFunctionOffsetRulerColumn);
-			}
-			fFunctionOffsetRulerColumn = null;
-		}
-	}
-
-	/**
-	 * Shows the opcode ruler column.
-	 */
-	private void showOpcodeRuler() {
-		if (fOpcodeRulerColumn == null) {
-			IVerticalRuler v= getVerticalRuler();
-			if (v instanceof CompositeRuler) {
-				CompositeRuler c= (CompositeRuler) v;
-				c.addDecorator(2, createOpcodeRulerColumn());
-			}
-		}
-	}
-
-	/**
-	 * Hides the opcode ruler column.
-	 */
-	private void hideOpcodeRuler() {
-		if (fOpcodeRulerColumn != null) {
-			IVerticalRuler v= getVerticalRuler();
-			if (v instanceof CompositeRuler) {
-				CompositeRuler c= (CompositeRuler) v;
-				c.removeDecorator(fOpcodeRulerColumn);
-			}
-			fOpcodeRulerColumn = null;
-		}
-	}
-
 	/**
 	 * Returns the annotation access.
 	 *
@@ -1246,6 +1135,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		MenuManager menuMgr = new MenuManager(id, id);
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				DisassemblyPart.this.fillContextMenu(manager);
 			}
@@ -1260,6 +1150,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		MenuManager menuMgr = new MenuManager(id, id);
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				DisassemblyPart.this.fillRulerContextMenu(manager);
 			}
@@ -1315,9 +1206,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	protected void fillRulerContextMenu(IMenuManager manager) {
 		fActionToggleBreakpointEnablement.update();
-		fActionToggleAddressColumn.update();
-		fActionToggleOpcodeColumn.update();
-		fActionToggleFunctionColumn.update();
 
 		manager.add(new GroupMarker("group.top")); // ICommonMenuConstants.GROUP_TOP //$NON-NLS-1$
 		manager.add(new Separator("group.breakpoints")); //$NON-NLS-1$
@@ -1327,9 +1215,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		manager.add(new GroupMarker(ITextEditorActionConstants.GROUP_RESTORE));
 		manager.add(new Separator("add")); //$NON-NLS-1$
 		manager.add(new Separator(ITextEditorActionConstants.GROUP_RULERS));
-		manager.add(fActionToggleAddressColumn);
-		manager.add(fActionToggleOpcodeColumn);
-		manager.add(fActionToggleFunctionColumn);
+		addRulerContributionActions(manager);
 		manager.add(new Separator(ITextEditorActionConstants.GROUP_REST));
 
 		for (Object listener : fRulerContextMenuListeners.getListeners())
@@ -1429,9 +1315,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			}
 		});
 		fActionToggleBreakpointEnablement = new ActionToggleBreakpointEnablement();
-		fActionToggleAddressColumn = new ActionToggleAddressColumn();
-		fActionToggleOpcodeColumn = new ActionToggleOpcodeColumn();
-		fActionToggleFunctionColumn = new ActionToggleFunctionColumn();
 		fActionToggleSymbols = new ActionToggleSymbols();
 		fActionRefreshView = new ActionRefreshView();
 		fSyncAction = new SyncActiveDebugContextAction();
@@ -1457,6 +1340,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyPart#gotoProgramCounter()
 	 */
+	@Override
 	public final void gotoProgramCounter() {
 		if (fPCAddress != PC_RUNNING) {
 			fPCLastAddress = PC_UNKNOWN;
@@ -1467,6 +1351,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyPart#gotoAddress(java.math.BigInteger)
 	 */
+	@Override
 	public final void gotoAddress(IAddress address) {
 		if (address != null) {
 			gotoAddress(address.getValue());
@@ -1486,6 +1371,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/*
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#gotoAddress(java.math.BigInteger)
 	 */
+	@Override
 	public final void gotoAddress(BigInteger address) {
 		fFocusAddress = address;
 		if (fDebugSessionId == null) {
@@ -1517,6 +1403,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyPart#gotoSymbol(java.lang.String)
 	 */
+	@Override
 	public final void gotoSymbol(final String symbol) {
 		if (!fActive || fBackend == null || !fBackend.hasFrameContext()) {
 			return;
@@ -1563,12 +1450,14 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/*
 	 * @see org.eclipse.jface.text.IViewportListener#viewportChanged(int)
 	 */
+	@Override
 	public void viewportChanged(int verticalOffset) {
 		if (fDebugSessionId != null && fGotoAddressPending == PC_UNKNOWN && fScrollPos == null && !fUpdatePending && !fRefreshViewPending) {
 			fUpdatePending = true;
             final int updateCount = fUpdateCount;
             invokeLater(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     if (updateCount == fUpdateCount) {
                         assert fUpdatePending;
                         if (fUpdatePending) {
@@ -1586,6 +1475,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 * 
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#updateVisibleArea()
 	 */
+	@Override
 	public void updateVisibleArea() {
 		assert isGuiThread();
 		if (!fActive || fUpdatePending || fViewer == null || fDebugSessionId == null) {
@@ -1699,6 +1589,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#asyncExec(java.lang.Runnable)
 	 */
+	@Override
 	public void asyncExec(Runnable runnable) {
 		if (fViewer != null) {
 			fViewer.getControl().getDisplay().asyncExec(runnable);
@@ -1718,6 +1609,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 * 
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#updateInvalidSource()
 	 */
+	@Override
 	public void updateInvalidSource() {
 		assert isGuiThread();
 		if (fViewer == null) {
@@ -1765,7 +1657,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			return;
 		}
         startUpdate(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 if (DEBUG) System.out.println("retrieveDisassembly "+file); //$NON-NLS-1$
                 fBackend.retrieveDisassembly(file, lines, fEndAddress, mixed, fShowSymbols, fShowDisassembly);
             }
@@ -1783,6 +1676,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#retrieveDisassembly(java.math.BigInteger, java.math.BigInteger, int, boolean, boolean)
 	 */
+	@Override
 	public void retrieveDisassembly(final BigInteger startAddress, BigInteger endAddress, final int linesHint, boolean mixed, boolean ignoreFile) {
 		assert isGuiThread();
 		assert !fUpdatePending;
@@ -1811,6 +1705,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#insertError(java.math.BigInteger, java.lang.String)
 	 */
+	@Override
 	public void insertError(BigInteger address, String message) {
 		assert isGuiThread();
 		AddressRangePosition p = null;
@@ -1828,6 +1723,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#getAddressSize()
 	 */
+	@Override
 	public int getAddressSize() {
 		assert isGuiThread();
 		return fAddressSize;
@@ -1836,6 +1732,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#addressSizeChanged(int)
 	 */
+	@Override
 	public void addressSizeChanged(int addressSize) {
 		assert isGuiThread();
 		BigInteger oldEndAddress= fEndAddress;
@@ -1864,7 +1761,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		} else {
 			return;
 		}
-		if (fAddressRulerColumn != null) {
+		AddressRulerColumn fAddressRulerColumn = (AddressRulerColumn) getRulerColumn(AddressRulerColumn.ID);
+		if (fAddressRulerColumn  != null) {
 			fAddressRulerColumn.setAddressSize(addressSize);
 			if (fComposite != null) {
 				fComposite.layout(true);
@@ -1872,9 +1770,24 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 	
+	private IContributedRulerColumn getRulerColumn(String id) {
+		CompositeRuler compositeRuler = (CompositeRuler) getVerticalRuler();
+		for (Iterator<?> iter = compositeRuler.getDecoratorIterator(); iter.hasNext();) {
+			IVerticalRulerColumn column = (IVerticalRulerColumn) iter.next();
+			if (column instanceof IContributedRulerColumn) {
+				IContributedRulerColumn contributedColumn = (IContributedRulerColumn) column;
+				if (id.equals(contributedColumn.getDescriptor().getId())) {
+					return contributedColumn;
+				}
+			}
+		}
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#getPositionOfAddress(java.math.BigInteger)
 	 */
+	@Override
 	public AddressRangePosition getPositionOfAddress(BigInteger address) {
 		assert isGuiThread();
 		if (address == null || address.compareTo(BigInteger.ZERO) < 0) {
@@ -1967,6 +1880,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 		if (needUpdate && fViewer != null) {
 			startUpdate(new Runnable() {
+				@Override
 				public void run() {
 					debugContextChanged();
 				}
@@ -1980,7 +1894,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			
 	    final int updateCount = fUpdateCount;
 	    final SafeRunnable safeUpdate = new SafeRunnable() {
-	        public void run() {
+	        @Override
+			public void run() {
 	            if (updateCount == fUpdateCount) {
 	                update.run();
 	            }
@@ -1992,7 +1907,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	    };
 	    if (fUpdatePending) {
 	        invokeLater(new Runnable() {
-	            public void run() {
+	            @Override
+				public void run() {
 	                if (updateCount == fUpdateCount) {
 	                    SafeRunner.run(safeUpdate);
 	                }
@@ -2057,6 +1973,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fRefreshViewPending = true;
 		final long refreshViewScheduled = System.currentTimeMillis() + delay;
 		final Runnable refresh = new Runnable() {
+			@Override
 			public void run() {
 				fRefreshViewPending = false;
 				long now = System.currentTimeMillis();
@@ -2087,6 +2004,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			}};
 		if (delay > 0) {
 			invokeLater(delay, new Runnable() {
+				@Override
 				public void run() {
 					doScrollLocked(refresh);
 				}});
@@ -2230,6 +2148,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#gotoFrame(int)
 	 */
+	@Override
 	public void gotoFrame(int frame) {
 		assert isGuiThread();
         fGotoAddressPending = PC_UNKNOWN;
@@ -2239,6 +2158,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#gotoFrameIfActive(int)
 	 */
+	@Override
 	public void gotoFrameIfActive(int frame) {
 		assert isGuiThread();
 		if (fActive) {
@@ -2252,6 +2172,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#gotoFrame(int, java.math.BigInteger)
 	 */
+	@Override
 	public void gotoFrame(int frame, BigInteger address) {
 		assert isGuiThread();
 		if (DEBUG) System.out.println("gotoFrame " + frame + " " + getAddressText(address)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -2332,6 +2253,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyPart#isActive()
 	 */
+	@Override
 	public final boolean isActive() {
 		return fActive;
 	}
@@ -2339,6 +2261,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyPart#isConnected()
 	 */
+	@Override
 	public final boolean isConnected() {
 		if (fDebugSessionId == null) {
 			return false;
@@ -2350,6 +2273,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyPart#isSuspended()
 	 */
+	@Override
 	public final boolean isSuspended() {
 		return isConnected() && fBackend.isSuspended();
 	}
@@ -2357,10 +2281,12 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyPart#getTextViewer()
 	 */
+	@Override
 	public final ISourceViewer getTextViewer() {
 		return fViewer;
 	}
 	
+	@Override
 	public final boolean hasViewer() {
 		return fViewer != null;
 	}
@@ -2368,6 +2294,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyPart#addRulerContextMenuListener(org.eclipse.jface.action.IMenuListener)
 	 */
+	@Override
 	public final void addRulerContextMenuListener(IMenuListener listener) {
 		fRulerContextMenuListeners.add(listener);
 	}
@@ -2375,6 +2302,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyPart#removeRulerContextMenuListener(org.eclipse.jface.action.IMenuListener)
 	 */
+	@Override
 	public final void removeRulerContextMenuListener(IMenuListener listener) {
 		fRulerContextMenuListeners.remove(listener);
 	}
@@ -2476,6 +2404,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 *            means target resumed
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#updatePC(java.math.BigInteger)
 	 */
+	@Override
 	public void updatePC(BigInteger pc) {
 		assert isGuiThread();
 		if (!fPendingPCUpdates.isEmpty()) {
@@ -2535,6 +2464,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (!fUpdatePending && !fDoPendingPosted) {
 			fDoPendingPosted = true;
 			invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					doPending();
 					fDoPendingPosted = false;
@@ -2546,6 +2476,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#doPending()
 	 */
+	@Override
 	public void doPending() {
 		assert isGuiThread();
 		if (fViewer == null || fDocument == null) {
@@ -2581,6 +2512,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 * @param doit
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#doScrollLocked(java.lang.Runnable)
 	 */
+	@Override
 	public void doScrollLocked(final Runnable doit) {
 		assert isGuiThread();
 		if (fViewer == null || fDebugSessionId == null) {
@@ -2600,7 +2532,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
         if (fUpdatePending) {
             if (fRunnableQueue.size() == 1) {
                 Runnable doitlater = new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         if (updateCount == fUpdateCount) {
                             doScrollLocked(null);
                         }
@@ -2636,14 +2569,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#lockScroller()
 	 */
+	@Override
 	public void lockScroller() {
 		assert isGuiThread();
 		assert fScrollPos == null;
-		if (isFunctionOffsetsRulerVisible()) {
-			fRedrawControl = fViewer.getControl();
-		} else {
-			fRedrawControl = fViewer.getTextWidget();
-		}
+		fRedrawControl = fViewer.getControl();
 		fRedrawControl.setRedraw(false);
 		try {
 			int topOffset = fViewer.getTopIndexStartOffset();
@@ -2680,6 +2610,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#unlockScroller()
 	 */
+	@Override
 	public void unlockScroller() {
 		assert isGuiThread();
 		try {
@@ -2732,7 +2663,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#insertSource(org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition)
      */
-    public void insertSource(AddressRangePosition _pos) {
+    @Override
+	public void insertSource(AddressRangePosition _pos) {
     	assert isGuiThread();
 		// IDisassemblyPartCallback does not have visibility to the
 		// SourcePosition type, which is DSF-specific, so it uses the base type
@@ -2838,6 +2770,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/*
 	 * @see org.eclipse.jface.text.ITextPresentationListener#applyTextPresentation(org.eclipse.jface.text.TextPresentation)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
     public void applyTextPresentation(TextPresentation textPresentation) {
 		IRegion coverage = textPresentation.getExtent();
@@ -2934,9 +2867,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 
+	@Override
 	public AddressRangePosition insertSource(AddressRangePosition pos, BigInteger address, final String file, int lineNumber) {
 		return insertSource(pos, address, file, lineNumber, lineNumber);
 	}
+	@Override
 	public AddressRangePosition insertSource(AddressRangePosition pos, BigInteger address, final String file, int firstLine, int lastLine) {
 		assert isGuiThread();
 		Object sourceElement = null;
@@ -3020,8 +2955,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#handleTargetSuspended()
 	 */
+	@Override
 	public void handleTargetSuspended() {
 		asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				updatePC(PC_UNKNOWN);
 				firePropertyChange(PROP_SUSPENDED);
@@ -3032,8 +2969,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#handleTargetResumed()
 	 */
+	@Override
 	public void handleTargetResumed() {
 		asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				updatePC(PC_RUNNING);
 				firePropertyChange(PROP_SUSPENDED);
@@ -3044,12 +2983,15 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#handleTargetEnded()
 	 */
+	@Override
 	public void handleTargetEnded() {
 		asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				fDebugSessionId = null;
                 startUpdate(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         debugContextChanged();              
                     }
                 });
@@ -3060,6 +3002,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#setUpdatePending(boolean)
 	 */
+	@Override
 	public void setUpdatePending(boolean pending) {
 		fUpdatePending = pending;
 	}
@@ -3067,6 +3010,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#getUpdatePending()
 	 */
+	@Override
 	public boolean getUpdatePending() {
 		assert isGuiThread();
 		return fUpdatePending;
@@ -3075,6 +3019,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#setGotoAddressPending(java.math.BigInteger)
 	 */
+	@Override
 	public void setGotoAddressPending(BigInteger address) {
 		assert isGuiThread();
 		fGotoAddressPending = address;
@@ -3083,6 +3028,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#getGotoAddressPending()
 	 */
+	@Override
 	public BigInteger getGotoAddressPending() {
 		assert isGuiThread();
 		return fGotoAddressPending;
@@ -3091,6 +3037,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#getDocument()
 	 */
+	@Override
 	public IDisassemblyDocument getDocument() {
 		assert isGuiThread();
 		return fDocument;
@@ -3099,6 +3046,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#getStorageForFile(java.lang.String)
 	 */
+	@Override
 	public Object getStorageForFile(String file) {
 		assert isGuiThread();
 		return fFile2Storage.get(file);

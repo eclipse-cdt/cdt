@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems and others.
+ * Copyright (c) 2007, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,9 @@ import java.math.BigInteger;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyDocument;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourceFileInfo;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.preferences.DisassemblyPreferenceConstants;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.DisassemblyRulerColumn;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -22,6 +25,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.IVerticalRulerInfoExtension;
 import org.eclipse.jface.text.source.IVerticalRulerListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 
 /**
@@ -29,6 +33,8 @@ import org.eclipse.swt.SWT;
  */
 public class AddressRulerColumn extends DisassemblyRulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension, IAnnotationHover {
 
+	public static final String ID = "org.eclipse.cdt.dsf.ui.disassemblyColumn.address"; //$NON-NLS-1$
+	
 	private int fRadix;
 	private boolean fShowRadixPrefix;
 	private String fRadixPrefix;
@@ -40,9 +46,11 @@ public class AddressRulerColumn extends DisassemblyRulerColumn implements IVerti
 	 */
 	public AddressRulerColumn() {
 		super(SWT.LEFT);
-		setShowRadixPrefix(true);
+		IPreferenceStore prefs = getPreferenceStore();
+		setForeground(getColor(DisassemblyPreferenceConstants.ADDRESS_COLOR));
+		setRadix(prefs.getInt(DisassemblyPreferenceConstants.ADDRESS_RADIX));
+		setShowRadixPrefix(prefs.getBoolean(DisassemblyPreferenceConstants.SHOW_ADDRESS_RADIX));
 		setAddressSize(32);
-		setRadix(16);
 	}
 
 	@Override
@@ -128,49 +136,35 @@ public class AddressRulerColumn extends DisassemblyRulerColumn implements IVerti
 		return buf.toString();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
-	 */
+	@Override
 	public int getLineOfLastMouseButtonActivity() {
 		return getParentRuler().getLineOfLastMouseButtonActivity();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#toDocumentLineNumber(int)
-	 */
+	@Override
 	public int toDocumentLineNumber(int y_coordinate) {
 		return getParentRuler().toDocumentLineNumber(y_coordinate);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getHover()
-	 */
+	@Override
 	public IAnnotationHover getHover() {
 		return this;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getModel()
-	 */
+	@Override
 	public IAnnotationModel getModel() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#addVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
-	 */
+	@Override
 	public void addVerticalRulerListener(IVerticalRulerListener listener) {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#removeVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
-	 */
+	@Override
 	public void removeVerticalRulerListener(IVerticalRulerListener listener) {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int)
-	 */
+	@Override
 	public String getHoverInfo(ISourceViewer sourceViewer, int line) {
 		DisassemblyDocument doc = (DisassemblyDocument)getParentRuler().getTextViewer().getDocument();
 		BigInteger address = doc.getAddressOfLine(line);
@@ -179,6 +173,32 @@ public class AddressRulerColumn extends DisassemblyRulerColumn implements IVerti
 			return info.fFile.getFullPath().toOSString();
 		}
 		return null;
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		String property	= event.getProperty();
+		IPreferenceStore store = getPreferenceStore();
+		boolean needRedraw = false;
+		if (DisassemblyPreferenceConstants.ADDRESS_COLOR.equals(property)) {
+			setForeground(getColor(property));
+			needRedraw = true;
+		} else if (DisassemblyPreferenceConstants.ADDRESS_RADIX.equals(property)) {
+			setRadix(store.getInt(property));
+			updateNumberOfDigits();
+			computeIndentations();
+			layout(false);
+			needRedraw = true;
+		} else if (DisassemblyPreferenceConstants.SHOW_ADDRESS_RADIX.equals(property)) {
+			setShowRadixPrefix(store.getBoolean(property));
+			updateNumberOfDigits();
+			computeIndentations();
+			layout(false);
+			needRedraw = true;
+		}
+		if (needRedraw) {
+			redraw();
+		}
 	}
 
 }

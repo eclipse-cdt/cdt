@@ -13,12 +13,18 @@ package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyDocument;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.preferences.DisassemblyPreferenceConstants;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.DisassemblyRulerColumn;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * A vertical ruler column to display the opcodes of instructions.
  */
 public class OpcodeRulerColumn extends DisassemblyRulerColumn {
+
+	public static final String ID = "org.eclipse.cdt.dsf.ui.disassemblyColumn.opcode"; //$NON-NLS-1$
 
 	private int fRadix;
 	private String fRadixPrefix;
@@ -28,6 +34,8 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 	 */
 	public OpcodeRulerColumn() {
 		super();
+		setForeground(getColor(DisassemblyPreferenceConstants.CODE_BYTES_COLOR));
+		setRadix(getPreferenceStore().getInt(DisassemblyPreferenceConstants.OPCODE_RADIX));
 	}
 
 	public void setRadix(int radix) {
@@ -91,4 +99,23 @@ public class OpcodeRulerColumn extends DisassemblyRulerColumn {
 		DisassemblyDocument doc = (DisassemblyDocument)getParentRuler().getTextViewer().getDocument();
 		return doc.getMaxOpcodeLength(fRadix);
 	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		String property	= event.getProperty();
+		IPreferenceStore store = getPreferenceStore();
+		boolean needRedraw = false;
+		if (DisassemblyPreferenceConstants.CODE_BYTES_COLOR.equals(property)) {
+			setForeground(getColor(property));
+			needRedraw = true;
+		} else if (DisassemblyPreferenceConstants.OPCODE_RADIX.equals(property)) {
+			setRadix(store.getInt(property));
+			layout(false);
+			needRedraw = true;
+		}
+		if (needRedraw) {
+			redraw();
+		}
+	}
+
 }

@@ -33,6 +33,7 @@ Export-Package:
  org.eclipse.cdt.debug.ui.breakpointactions,
  org.eclipse.cdt.debug.ui.breakpoints,
  org.eclipse.cdt.debug.ui.disassembly,
+ org.eclipse.cdt.debug.ui.disassembly.rulers,
  org.eclipse.cdt.debug.ui.editors,
  org.eclipse.cdt.debug.ui.importexecutable,
  org.eclipse.cdt.debug.ui.preferences,

@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSWizardHandler;
 import org.eclipse.cdt.ui.newui.INewCfgDialog;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -544,7 +546,20 @@ public class NewCfgDialog implements INewCfgDialog {
 				ICConfigurationDescription base = ManagedBuildManager.getDescriptionForConfiguration(parentConfig);
 				cfgDes = des.createConfiguration(id, newName, base);
 				cfgDes.setDescription(newDescription);
-			} else {
+			} else if (b_importFromOtherProject.getSelection()) {
+				IResource owner = parentConfig.getOwner();
+				if (owner!=null) {
+					// need writable cfg description for cloning
+					ICProjectDescription prjDesOther = CCorePlugin.getDefault().getProjectDescription(owner.getProject(), true);
+					ICConfigurationDescription base = prjDesOther.getConfigurationByName(parentConfig.getName());
+					if (base != null) {
+						cfgDes = des.createConfiguration(id, newName, base);
+						cfgDes.setDescription(newDescription);
+					}
+				}
+			}
+			if (cfgDes == null) {
+				// when "Default" or "Predefined" selected or import from other project failed
 				CConfigurationData data = config.getConfigurationData();
 				cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 			}

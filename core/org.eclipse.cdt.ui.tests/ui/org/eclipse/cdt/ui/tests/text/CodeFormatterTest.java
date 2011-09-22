@@ -1203,8 +1203,8 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//template<typename T, typename U>
 	//struct type_with_multiple_template_parameters {};
 	//
-	//void wrap_when_necessary(type_with_multiple_template_parameters<char, float> p1, int p2, int p3) {
-	//}
+	//void wrap_when_necessary(type_with_multiple_template_parameters<char, float> p1, int p2, int p3) {}
+	//void wrap_when_necessary(type_with_multiple_template_parameters<float, float> p1, int p2, int p3) {}
 
 	//template<typename T, typename U>
 	//struct type_with_multiple_template_parameters {
@@ -1212,6 +1212,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//
 	//void wrap_when_necessary(type_with_multiple_template_parameters<char, float> p1,
 	//        int p2, int p3) {
+	//}
+	//void wrap_when_necessary(
+	//        type_with_multiple_template_parameters<float, float> p1, int p2,
+	//        int p3) {
 	//}
 	public void testFunctionCallWithTemplates_Bug357300() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);

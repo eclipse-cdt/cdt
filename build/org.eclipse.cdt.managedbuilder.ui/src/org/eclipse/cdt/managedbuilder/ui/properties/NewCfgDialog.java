@@ -31,9 +31,9 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSWizardHandler;
 import org.eclipse.cdt.ui.newui.INewCfgDialog;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -73,10 +73,10 @@ public class NewCfgDialog implements INewCfgDialog {
 	private Text configDescription;
 	private Combo cloneConfigSelector;
 	private Combo realConfigSelector;
-	private Button b_clone;
-	private Button b_real;	
-	private Button b_import;	
-	private Button b_importDef;	
+	private Button b_cloneFromProject;
+	private Button b_cloneFromExtension;
+	private Button b_importFromOtherProject;	
+	private Button b_importPredefined;	
 	private Combo importSelector;
 	private Combo importDefSelector;
 	private Label statusLabel;
@@ -109,13 +109,13 @@ public class NewCfgDialog implements INewCfgDialog {
 			if (buttonId == IDialogConstants.OK_ID) {
 				newName = configName.getText().trim();
 				newDescription = configDescription.getText().trim();
-				if (b_clone.getSelection()) 
+				if (b_cloneFromProject.getSelection()) 
 					parentConfig = cfgds[cloneConfigSelector.getSelectionIndex()];
-				else if (b_real.getSelection()) // real cfg
+				else if (b_cloneFromExtension.getSelection()) // real cfg
 					parentConfig = rcfgs[realConfigSelector.getSelectionIndex()];
-				else if (b_import.getSelection())
+				else if (b_importFromOtherProject.getSelection())
 					parentConfig = getConfigFromName(importSelector.getText(), imported);
-				else if (b_importDef.getSelection())
+				else if (b_importPredefined.getSelection())
 					parentConfig = getConfigFromName(importDefSelector.getText(), importedDef);
 				if (parentConfig != null)
 					newConfiguration();
@@ -229,12 +229,12 @@ public class NewCfgDialog implements INewCfgDialog {
 			gd.horizontalSpan = 3;
 			group.setLayoutData(gd);
 
-			b_clone = new Button(group, SWT.RADIO);
-			b_clone.setText(Messages.NewCfgDialog_0); 
+			b_cloneFromProject = new Button(group, SWT.RADIO);
+			b_cloneFromProject.setText(Messages.NewCfgDialog_0); 
 			gd = new GridData(GridData.BEGINNING);
-			b_clone.setLayoutData(gd);
-			b_clone.setSelection(true);
-			b_clone.addSelectionListener(new SelectionAdapter() {
+			b_cloneFromProject.setLayoutData(gd);
+			b_cloneFromProject.setSelection(true);
+			b_cloneFromProject.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					setButtons();		
@@ -255,11 +255,11 @@ public class NewCfgDialog implements INewCfgDialog {
 				}
 			});	
 			
-			b_real = new Button(group, SWT.RADIO);
-			b_real.setText(Messages.NewCfgDialog_1); 
+			b_cloneFromExtension = new Button(group, SWT.RADIO);
+			b_cloneFromExtension.setText(Messages.NewCfgDialog_1); 
 			gd = new GridData(GridData.BEGINNING);
-			b_real.setLayoutData(gd);
-			b_real.addSelectionListener(new SelectionAdapter() {
+			b_cloneFromExtension.setLayoutData(gd);
+			b_cloneFromExtension.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					setButtons();		
@@ -283,14 +283,14 @@ public class NewCfgDialog implements INewCfgDialog {
 			});	
 			
 			if(extCfgs.length == 0)
-				b_real.setEnabled(false);
+				b_cloneFromExtension.setEnabled(false);
 
 			/* import */
-			b_import = new Button(group, SWT.RADIO);
-			b_import.setText(Messages.NewCfgDialog_4); 
+			b_importFromOtherProject = new Button(group, SWT.RADIO);
+			b_importFromOtherProject.setText(Messages.NewCfgDialog_4); 
 			gd = new GridData(GridData.BEGINNING);
-			b_import.setLayoutData(gd);
-			b_import.addSelectionListener(new SelectionAdapter() {
+			b_importFromOtherProject.setLayoutData(gd);
+			b_importFromOtherProject.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					setButtons();		
@@ -312,11 +312,11 @@ public class NewCfgDialog implements INewCfgDialog {
 			});	
 
 			/* import predefined */
-			b_importDef = new Button(group, SWT.RADIO);
-			b_importDef.setText(Messages.NewCfgDialog_5); 
+			b_importPredefined = new Button(group, SWT.RADIO);
+			b_importPredefined.setText(Messages.NewCfgDialog_5); 
 			gd = new GridData(GridData.BEGINNING);
-			b_importDef.setLayoutData(gd);
-			b_importDef.addSelectionListener(new SelectionAdapter() {
+			b_importPredefined.setLayoutData(gd);
+			b_importPredefined.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					setButtons();		
@@ -371,8 +371,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			} else if (isSimilarName(currentName)) {
 				s = NLS.bind(Messages.NewConfiguration_error_caseName, currentName);
 			} else if (!validateName(currentName)) {
-				// TODO Create a decent I18N string to describe this problem
-				s = NLS.bind(Messages.NewConfiguration_error_invalidName, currentName);
+				s = Messages.NewConfiguration_error_invalidName;
 			} 
 			if (statusLabel == null) return;
 			Button b = getButton(IDialogConstants.OK_ID);
@@ -384,15 +383,15 @@ public class NewCfgDialog implements INewCfgDialog {
 				statusLabel.setVisible(false);
 				if (b != null) b.setEnabled(true);
 			}
-			if (b_import.getSelection() && importSelector.getSelectionIndex() == 0)
-				b.setEnabled(false); 
-			if (b_importDef.getSelection() && importDefSelector.getSelectionIndex() == 0)
-				b.setEnabled(false); 
+			if (b_importFromOtherProject.getSelection() && importSelector.getSelectionIndex() == 0)
+				if (b != null) b.setEnabled(false); 
+			if (b_importPredefined.getSelection() && importDefSelector.getSelectionIndex() == 0)
+				if (b != null) b.setEnabled(false); 
 			
-			cloneConfigSelector.setEnabled(b_clone.getSelection());
-			realConfigSelector.setEnabled(b_real.getSelection());
-			importSelector.setEnabled(b_import.getSelection());
-			importDefSelector.setEnabled(b_importDef.getSelection());
+			cloneConfigSelector.setEnabled(b_cloneFromProject.getSelection());
+			realConfigSelector.setEnabled(b_cloneFromExtension.getSelection());
+			importSelector.setEnabled(b_importFromOtherProject.getSelection());
+			importDefSelector.setEnabled(b_importPredefined.getSelection());
 		}
 	}
 
@@ -541,30 +540,28 @@ public class NewCfgDialog implements INewCfgDialog {
 		try {
 			ICConfigurationDescription cfgDes = null;
 			Configuration config = new Configuration(mp, (Configuration)parentConfig, id, false, true);
-			if (config != null) {
-				if (b_clone.getSelection()) {
-					ICConfigurationDescription base = ManagedBuildManager.getDescriptionForConfiguration(parentConfig);
-					cfgDes = des.createConfiguration(id, newName, base);
-					cfgDes.setDescription(newDescription);
-				} else {
-					CConfigurationData data = config.getConfigurationData();
-					cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
-				}
-				if (cfgDes != null) {
-					config.setConfigurationDescription(cfgDes);
-					config.setName(newName);
-					config.setDescription(newDescription);
-					
-					String target = config.getArtifactName();
-					if (target == null || target.length() == 0)
-						config.setArtifactName(mp.getDefaultArtifactName());
-
-					// Export artifact info as needed by project references
-					config.exportArtifactInfo();
-				}
+			if (b_cloneFromProject.getSelection()) {
+				ICConfigurationDescription base = ManagedBuildManager.getDescriptionForConfiguration(parentConfig);
+				cfgDes = des.createConfiguration(id, newName, base);
+				cfgDes.setDescription(newDescription);
+			} else {
+				CConfigurationData data = config.getConfigurationData();
+				cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 			}
-			if (config == null || cfgDes == null) {
-				throw new CoreException(new Status(IStatus.ERROR, 
+			if (cfgDes != null) {
+				config.setConfigurationDescription(cfgDes);
+				config.setName(newName);
+				config.setDescription(newDescription);
+				
+				String target = config.getArtifactName();
+				if (target == null || target.length() == 0)
+					config.setArtifactName(mp.getDefaultArtifactName());
+
+				// Export artifact info as needed by project references
+				config.exportArtifactInfo();
+			}
+			if (cfgDes == null) {
+				throw new CoreException(new Status(IStatus.ERROR,
 					"org.eclipse.cdt.managedbuilder.ui", -1, //$NON-NLS-1$
 					Messages.NewCfgDialog_2, null));  
 			}

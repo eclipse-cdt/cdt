@@ -256,6 +256,8 @@ class ASTPragmaOperator extends ASTPragma {
 }
 
 class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreprocessorIncludeStatement {
+	private static final ISignificantMacros[] NO_VERSIONS = {};
+	
 	private final ASTPreprocessorName fName;
 	private final String fPath;
 	private final boolean fIsResolved;
@@ -263,8 +265,8 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	private final boolean fFoundByHeuristics;
 	private final IFileNomination fNominationDelegate;
 	private boolean fPragmaOnce;
-	private boolean fComplete;
 	private ISignificantMacros fSignificantMacros;
+	private ISignificantMacros[] fLoadedVersions = NO_VERSIONS;
 
 	public ASTInclusionStatement(IASTTranslationUnit parent, 
 			int startNumber, int nameStartNumber, int nameEndNumber, int endNumber,
@@ -339,11 +341,14 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 		assert sig != null;
 		assert fNominationDelegate == null;
 		fSignificantMacros= sig;
-		fComplete= true;
 	}
 
-	public boolean isComplete() {
-		return fComplete;
+	public void setLoadedVersions(ISignificantMacros[] versions) {
+		fLoadedVersions= versions;
+	}
+
+	public ISignificantMacros[] getLoadedVersions() {
+		return fLoadedVersions;
 	}
 }
 

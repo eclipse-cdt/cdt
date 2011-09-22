@@ -30,4 +30,8 @@ public interface ILocationCtx {
 	 */
 	ILocationCtx getParent();
 
+	/**
+	 * Returns inclusion statement that created this context, or <code>null</code>.
+	 */
+	ASTInclusionStatement getInclusionStatement();
 }

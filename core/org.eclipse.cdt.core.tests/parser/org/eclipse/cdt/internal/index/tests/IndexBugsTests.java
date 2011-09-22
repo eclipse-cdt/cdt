@@ -1116,7 +1116,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// #endif
 
 	// #ifndef _h1
-	// #include "header1.h"   // is inactive, but must be resolved, h1 is not significant
+	// #include "header1.h"   // is inactive, but must be resolved
 	// #endif
 
 	// #include "header1.h"
@@ -1127,7 +1127,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	// #include "header2.h"
 	// #ifndef _h1
-	// #include "header1.h"   // inactive and not resolved because header1.h is internally included.
+	// #include "header1.h"   // inactive but resolved.
 	// #endif
 	public void testIncludeGuardsOutsideOfHeader_Bug167100() throws Exception {
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1152,26 +1152,15 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(1, names.length);
 			assertEquals(f4.getFullPath().toString(), names[0].getFile().getLocation().getFullPath());
 
-			IIndexFile[] idxFiles= index.getFiles(ILinkage.CPP_LINKAGE_ID, 
-					IndexLocationFactory.getWorkspaceIFL(f2));
+			IIndexFile[] idxFiles= index.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f5));
 			assertEquals(1, idxFiles.length);
 			IIndexFile idxFile= idxFiles[0];
-			
 			IIndexInclude[] includes= idxFile.getIncludes();
-			assertEquals(1, includes.length);
-			assertFalse(includes[0].isActive());
-			assertTrue(includes[0].isResolved());
-			assertEquals("{}", idxFile.getSignificantMacros().toString());
-			
-			idxFiles= index.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f5));
-			assertEquals(1, idxFiles.length);
-			idxFile= idxFiles[0];
-			includes= idxFile.getIncludes();
 			assertEquals(2, includes.length);
 			assertTrue(includes[0].isActive());
 			assertTrue(includes[0].isResolved());
 			assertFalse(includes[1].isActive());
-			assertFalse(includes[1].isResolved());
+			// includes[1].isResolved()); May or may not be resolved.
 		} finally {
 			index.releaseReadLock();
 		}
@@ -1725,8 +1714,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// #endif
 
 	// #include "a.h"
-	public void _testStrangeIncludeStrategy_Bug249884() throws Exception {
-		// TODO(197989) Should work again once the significant macro dictionary is used.
+	public void testStrangeIncludeStrategy_Bug249884() throws Exception {
 		String[] contents= getContentsForTest(3);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
 		IFile ah= TestSourceReader.createFile(fCProject.getProject(), "a.h", contents[0]);

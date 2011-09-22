@@ -865,11 +865,6 @@ public class PDOMFile implements IIndexFragmentFile {
 		return sigMacros;
 	}
 
-	
-	public boolean isComplete() {
-		return true;
-	}
-
 	public boolean hasContent() throws CoreException {
 		return getTimestamp() != -1;
 	}

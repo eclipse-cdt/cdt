@@ -12,13 +12,17 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IFileNomination;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
@@ -30,6 +34,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.Inclusio
 public abstract class InternalFileContentProvider extends IncludeFileContentProvider {
 	private IIncludeFileResolutionHeuristics fIncludeResolutionHeuristics;
     private final Map<String, IFileNomination> fPragmaOnce= new HashMap<String, IFileNomination>();
+    private final Map<String, List<ISignificantMacros>> fLoadedVersions= new HashMap<String, List<ISignificantMacros>>();
 
 	/**
 	 * Checks whether the specified inclusion exists.
@@ -65,8 +70,9 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 		return null;
 	}
 
-	public void resetPragmaOnceTracking() {
+	public void resetForTranslationUnit() {
 		fPragmaOnce.clear();
+		fLoadedVersions.clear();
 	}
 
 	/** 
@@ -96,4 +102,26 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	public final void setIncludeResolutionHeuristics(IIncludeFileResolutionHeuristics heuristics) {
 		fIncludeResolutionHeuristics= heuristics;
 	}
+
+	public List<ISignificantMacros> getLoadedVersions(String path) {
+		List<ISignificantMacros> result = fLoadedVersions.get(path);
+		return result == null ? Collections.<ISignificantMacros>emptyList() : result;
+	}
+
+	public void addLoadedVersions(String path, int reduceVersions, ISignificantMacros sig) {
+		List<ISignificantMacros> list= fLoadedVersions.get(path);
+		if (list == null || reduceVersions == 0) {
+			fLoadedVersions.put(path, Collections.singletonList(sig));
+		} else if (!list.contains(sig)) {
+			if (list.size() == 1) {
+				ISignificantMacros first = list.get(0);
+				list= new ArrayList<ISignificantMacros>(2);
+				list.add(first);
+				fLoadedVersions.put(path, list);
+			} else if (reduceVersions > 0 && reduceVersions < list.size()) {
+				list.subList(reduceVersions, list.size()).clear();
+			}
+			list.add(sig);
+		}
+	}		
 }

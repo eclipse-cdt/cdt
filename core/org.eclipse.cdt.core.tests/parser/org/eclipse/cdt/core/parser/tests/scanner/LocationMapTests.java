@@ -507,21 +507,21 @@ public class LocationMapTests extends BaseTestCase {
 		ILocationCtx i2= fLocationMap.pushInclusion(6, 7, 8, 9, new CharArray("c1c2c3c4c5"), "pre11", "pre11".toCharArray(), false, false, false);
 		assertEquals("pre11", fLocationMap.getCurrentFilePath());
 		fLocationMap.encounteredComment(2,6,true);
-		fLocationMap.popContext(i2, null);
+		fLocationMap.popContext(i2);
 		// add a comment before the include
 		fLocationMap.encounteredComment(4,6,false);
 
 		assertEquals("pre1", fLocationMap.getCurrentFilePath());
-		fLocationMap.popContext(i1, null);
+		fLocationMap.popContext(i1);
 		assertEquals(FN, fLocationMap.getCurrentFilePath());
-		fLocationMap.popContext(pre2, null);
+		fLocationMap.popContext(pre2);
 		assertEquals(FN, fLocationMap.getCurrentFilePath());
 		// number [36, 46)
 		ILocationCtx i3= fLocationMap.pushInclusion(0, 2, 4, 6, new CharArray("d1d2d3d4d5"), "pre2", "pre2".toCharArray(), false, false, false);
 		assertEquals("pre2", fLocationMap.getCurrentFilePath());
 		fLocationMap.encounteredComment(0,2,true);
-		fLocationMap.popContext(i3, null);
-		fLocationMap.popContext(pre1, null);
+		fLocationMap.popContext(i3);
+		fLocationMap.popContext(pre1);
 		assertEquals(FN, fLocationMap.getCurrentFilePath());
 		
 		

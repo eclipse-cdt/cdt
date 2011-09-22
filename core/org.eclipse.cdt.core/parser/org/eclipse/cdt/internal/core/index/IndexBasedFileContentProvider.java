@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +35,7 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.FileVersion;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.InclusionKind;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
@@ -86,7 +88,8 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 	}
 	
 	@Override
-	public void resetPragmaOnceTracking() {
+	public void resetForTranslationUnit() {
+		super.resetForTranslationUnit();
 		fPragmaOnce.clear();
 	}
 
@@ -128,11 +131,11 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 					List<IIndexMacro> macros= new ArrayList<IIndexMacro>();
 					List<ICPPUsingDirective> directives= new ArrayList<ICPPUsingDirective>();
 					Map<IIndexFileLocation, IFileNomination> newPragmaOnce= new HashMap<IIndexFileLocation, IFileNomination>();
-					collectFileContent(file, null, newPragmaOnce, files, macros, directives, null);
+					LinkedHashSet<IIndexFile> preLoaded= new LinkedHashSet<IIndexFile>();
+					collectFileContent(file, null, newPragmaOnce, preLoaded, files, macros, directives, null);
 					// Report pragma once inclusions, only if no exception was thrown.
 					fPragmaOnce.putAll(newPragmaOnce);
-					List<String> newPragmaOncePaths = toPathList(newPragmaOnce.keySet());
-					return new InternalFileContent(path, macros, directives, files, newPragmaOncePaths);
+					return new InternalFileContent(path, macros, directives, files, toList(preLoaded));
 				} catch (NeedToParseException e) {
 				}
 			} 
@@ -142,7 +145,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 
 		// Skip large files
 		if (fFileSizeLimit > 0 && fPathResolver.getFileSize(path) > fFileSizeLimit) {
-			return new InternalFileContent(path, InclusionKind.SKIP_FILE, null);
+			return new InternalFileContent(path, InclusionKind.SKIP_FILE);
 		}
 
 		if (fFallBackFactory != null) {
@@ -182,10 +185,11 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		return null;
 	}
 
-	private boolean collectFileContent(IIndexFile file, IIndexFile stopAt, Map<IIndexFileLocation, IFileNomination> newPragmaOnce,
-			List<IIndexFile> files, List<IIndexMacro> macros,
-			List<ICPPUsingDirective> usingDirectives, Set<IIndexFile> preventRecursion)
-			throws CoreException, NeedToParseException {
+	private boolean collectFileContent(IIndexFile file, IIndexFile stopAt,
+			Map<IIndexFileLocation, IFileNomination> newPragmaOnce,
+			LinkedHashSet<IIndexFile> preLoaded, List<IIndexFile> files,
+			List<IIndexMacro> macros, List<ICPPUsingDirective> usingDirectives,
+			Set<IIndexFile> preventRecursion) throws CoreException, NeedToParseException {
 		if (file.equals(stopAt))
 			return true;
 		
@@ -218,6 +222,9 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		}
 		
 		files.add(file);
+		if (!file.hasPragmaOnceSemantics()) {
+			preLoaded.add(file);
+		}
 		int udx= 0;
 		for (Object d : pds) {
 			if (d instanceof IIndexMacro) {
@@ -231,7 +238,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 					for (; udx < uds.length && uds[udx].getPointOfDeclaration() <= offset; udx++) {
 						usingDirectives.add(uds[udx]);
 					}
-					if (collectFileContent(includedFile, stopAt, newPragmaOnce, files, macros, usingDirectives, preventRecursion))
+					if (collectFileContent(includedFile, stopAt, newPragmaOnce, preLoaded, files, macros, usingDirectives, preventRecursion))
 						return true;
 				}
 			}
@@ -274,8 +281,9 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 			List<IIndexFile> filesIncluded= new ArrayList<IIndexFile>();
 			ArrayList<IIndexMacro> macros= new ArrayList<IIndexMacro>();
 			ArrayList<ICPPUsingDirective> directives= new ArrayList<ICPPUsingDirective>();
+			LinkedHashSet<IIndexFile> preLoaded= new LinkedHashSet<IIndexFile>();
 			try {
-				if (!collectFileContent(contextFile, targetFile, newPragmaOnce,
+				if (!collectFileContent(contextFile, targetFile, newPragmaOnce, preLoaded,
 						filesIncluded, macros, directives, new HashSet<IIndexFile>())) {
 					return null;
 				}
@@ -285,13 +293,20 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 
 			// Report pragma once inclusions.
 			fPragmaOnce.putAll(newPragmaOnce);
-			List<String> newPragmaOncePaths = toPathList(newPragmaOnce.keySet());
-			return new InternalFileContent(GAP, macros, directives, new ArrayList<IIndexFile>(filesIncluded),
-					newPragmaOncePaths);
+			return new InternalFileContent(GAP, macros, directives, filesIncluded, toList(preLoaded));
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
 		return null;
+	}
+
+	private List<FileVersion> toList(LinkedHashSet<IIndexFile> preLoaded) throws CoreException {
+		List<FileVersion> result= new ArrayList<InternalFileContent.FileVersion>(preLoaded.size());
+		for (IIndexFile file : preLoaded) {
+			String path= fPathResolver.getASTPath(file.getLocation());
+			result.add(new FileVersion(path, file.getSignificantMacros()));
+		}
+		return result;
 	}
 
 	private IIndexFile findContext(IIndexFile file) throws CoreException {

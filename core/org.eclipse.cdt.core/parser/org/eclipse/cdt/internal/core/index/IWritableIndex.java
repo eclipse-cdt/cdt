@@ -34,10 +34,19 @@ import org.eclipse.core.runtime.CoreException;
 public interface IWritableIndex extends IIndex {
 	
 	static class IncludeInformation {
-		public IASTPreprocessorIncludeStatement fStatement;
-		public IIndexFileLocation fLocation;
+		public final IASTPreprocessorIncludeStatement fStatement;
+		public final IIndexFileLocation fLocation;
+		public final ISignificantMacros fSignificantMacros;
+		public final boolean fIsContext;
 		public IIndexFragmentFile fTargetFile;
-		public boolean fIsContext= false;
+		
+		public IncludeInformation(IASTPreprocessorIncludeStatement stmt, 
+				IIndexFileLocation location, ISignificantMacros sig, boolean isContext) {
+			fStatement= stmt;
+			fSignificantMacros= sig;
+			fLocation= location;
+			fIsContext= isContext;
+		}
 	}
 	
 	/**

@@ -85,7 +85,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 			for (IncludeInformation include : includes) {
 				if (include.fLocation != null) {
 					include.fTargetFile= addFile(linkageID, include.fLocation,
-							include.fStatement.getSignificantMacros());
+							include.fSignificantMacros);
 				}
 			}
 			((IWritableIndexFragment) indexFragment).addFileContent(file, includes, macros, names, resolver, lock);

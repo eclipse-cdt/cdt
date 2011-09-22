@@ -209,7 +209,7 @@ public class LocationMap implements ILocationResolver {
 	 * Ends the current context.
 	 * @param locationCtx the current context, used to check whether caller and location map are still in sync.
 	 */
-	public void popContext(ILocationCtx locationCtx, CharArrayObjectMap<char[]> sigMacros) {
+	public void popContext(ILocationCtx locationCtx) {
 		assert fCurrentContext == locationCtx;
 		final LocationCtx child= fCurrentContext;
 		final LocationCtx parent= (LocationCtx) fCurrentContext.getParent();
@@ -217,18 +217,6 @@ public class LocationMap implements ILocationResolver {
 			fCurrentContext= parent;
 			fLastChildInsertionOffset= child.fEndOffsetInParent;
 			parent.addChildSequenceLength(child.getSequenceLength());
-		}
-		if (sigMacros != null && locationCtx instanceof LocationCtxFile) {
-			ISignificantMacros sig = sigMacros.isEmpty() ? ISignificantMacros.NONE 
-					: new SignificantMacros(sigMacros);
-			ASTInclusionStatement inc = ((LocationCtxFile) locationCtx).getInclusionStatement();
-			if (inc != null) {
-				inc.setSignificantMacros(sig);
-			} else if (locationCtx == fRootContext) {
-				if (fTranslationUnit != null) {
-					fTranslationUnit.setSignificantMacros(sig);
-				}
-			}
 		}
 	}
 
@@ -242,7 +230,7 @@ public class LocationMap implements ILocationResolver {
 	 * @param userInclude <code>true</code> when specified with double-quotes.
 	 * @param active <code>true</code> when include appears in active code.
 	 */
-	public void encounterPoundInclude(int startOffset, int nameOffset, int nameEndOffset, int endOffset,
+	public ASTInclusionStatement encounterPoundInclude(int startOffset, int nameOffset, int nameEndOffset, int endOffset,
 			char[] name, String filename, boolean userInclude, boolean active, boolean heuristic,
 			IFileNomination nominationDelegate) {
 		startOffset= getSequenceNumberForOffset(startOffset);	
@@ -252,6 +240,7 @@ public class LocationMap implements ILocationResolver {
 		final ASTInclusionStatement inc = new ASTInclusionStatement(fTranslationUnit, startOffset, nameOffset,
 				nameEndOffset, endOffset, name, filename, userInclude, active, heuristic, nominationDelegate);
 		fDirectives.add(inc);
+		return inc;
 	}
 
 	public void encounteredComment(int offset, int endOffset, boolean isBlockComment) {

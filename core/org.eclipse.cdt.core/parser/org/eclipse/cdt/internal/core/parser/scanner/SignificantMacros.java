@@ -30,10 +30,8 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 public class SignificantMacros implements ISignificantMacros {
 	public static final char[] UNDEFINED = {}; 
 	public static final char[] DEFINED = {};
-	public static final char[] INCLUDED = {};
 	private static final int ENCODED_UNDEFINED = Character.MAX_VALUE;
 	private static final int ENCODED_DEFINED = Character.MAX_VALUE-1;
-	private static final int ENCODED_INCLUDED = Character.MAX_VALUE-2;
 	private static final Comparator<Object> SORTER = new Comparator<Object>() {
 		public int compare(Object o1, Object o2) {
 			return CharArrayUtils.compare((char[])o1, (char[])o2);
@@ -64,8 +62,6 @@ public class SignificantMacros implements ISignificantMacros {
 				buffer.append((char) ENCODED_DEFINED);
 			} else if (value == UNDEFINED) {
 				buffer.append((char) ENCODED_UNDEFINED);
-			} else if (value == INCLUDED) {
-				buffer.append((char) ENCODED_INCLUDED);
 			} else {
 				buffer.append((char) value.length).append(value);
 			}
@@ -120,11 +116,6 @@ public class SignificantMacros implements ISignificantMacros {
 				if (!visitor.visitDefined(macro))
 					return false;
 				break;
-			case ENCODED_INCLUDED:
-				i= v;
-				if (!visitor.visitIncluded(macro))
-					return false;
-				break;
 			default:
 				i= v+len2;
 				if (i > len) 
@@ -162,10 +153,6 @@ public class SignificantMacros implements ISignificantMacros {
 			}
 			public boolean visitUndefined(char[] macro) {
 				buf.append(macro).append('=').append("null,");
-				return true;
-			}
-			public boolean visitIncluded(char[] path) {
-				buf.append(path).append(',');
 				return true;
 			}
 			public boolean visitDefined(char[] macro) {

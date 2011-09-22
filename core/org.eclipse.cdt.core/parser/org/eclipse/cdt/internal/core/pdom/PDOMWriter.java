@@ -488,6 +488,7 @@ abstract public class PDOMWriter {
 		IIndexFileLocation location = fileKey.getLocation();
 		ISignificantMacros significantMacros = fileKey.getSignificantMacros();
 		IIndexFragmentFile oldFile = index.getWritableFile(linkageID, location, significantMacros);
+		// mstodo this is wrong, see correct implementation in PDOMFile.clear().
 		if (oldFile != null) {
 			IIndexInclude[] includedBy = index.findIncludedBy(oldFile);
 			if (includedBy.length > 0) {
@@ -513,18 +514,26 @@ abstract public class PDOMWriter {
 					}
 				}
 
-				IncludeInformation[] includeInfos= new IncludeInformation[lists.fIncludes.size()];
+				List<IncludeInformation> includeInfos= new ArrayList<IncludeInformation>();
 				for (int i= 0; i < lists.fIncludes.size(); i++) {
-					final IASTPreprocessorIncludeStatement include = lists.fIncludes.get(i);
-					final IncludeInformation info= includeInfos[i]= new IncludeInformation();
-					info.fStatement= include;
-					if (include.isResolved()) {
-						info.fLocation= fResolver.resolveASTPath(include.getPath());
-						info.fIsContext= include.isActive() &&
-							(data.fContextIncludes.contains(include) || clearedContexts.contains(info.fLocation));
+					final IASTPreprocessorIncludeStatement stmt = lists.fIncludes.get(i);
+					if (!stmt.isResolved()) {
+						includeInfos.add(new IncludeInformation(stmt, null, ISignificantMacros.NONE, false));
+					} else {
+						IIndexFileLocation targetLoc = fResolver.resolveASTPath(stmt.getPath());
+						ISignificantMacros mainSig= stmt.getSignificantMacros();
+						for (ISignificantMacros sig : stmt.getLoadedVersions()) {
+							if (!sig.equals(mainSig)) {
+								includeInfos.add(new IncludeInformation(stmt, targetLoc, sig, false));
+							}
+						}
+						final boolean isContext = stmt.isActive() &&
+								(data.fContextIncludes.contains(stmt) || clearedContexts.contains(targetLoc));
+						includeInfos.add(new IncludeInformation(stmt, targetLoc, mainSig, isContext));
 					}
 				}
-				index.setFileContent(file, linkageID, includeInfos, macros, names, fResolver, lock);
+				IncludeInformation[] includeInfoArray= includeInfos.toArray(new IncludeInformation[includeInfos.size()]);
+				index.setFileContent(file, linkageID, includeInfoArray, macros, names, fResolver, lock);
 			}
 			file.setTimestamp(fResolver.getLastModified(location));
 			file.setEncodingHashcode(fResolver.getEncoding(location).hashCode());

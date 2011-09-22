@@ -59,29 +59,22 @@ final class ScannerContext {
 	private CharArraySet fInternalModifications;
 	private CharArrayObjectMap<char[]> fSignificantMacros;
 	private boolean fPragmaOnce;
+	private int fLoadedVersionCount;
 	
 
 	/**
 	 * @param ctx 
 	 * @param parent context to be used after this context is done.
 	 */
-	public ScannerContext(ILocationCtx ctx, ScannerContext parent, Lexer lexer, 
-			boolean trackSignificantMacros) {
+	public ScannerContext(ILocationCtx ctx, ScannerContext parent, Lexer lexer) {
 		fLocationCtx= ctx;
 		fParent= parent;
 		fLexer= lexer;
 		fDepth = parent == null ? 0 : parent.fDepth+1;
-		if (trackSignificantMacros) {
-			fInternalModifications= new CharArraySet(5);
-			fSignificantMacros= new CharArrayObjectMap<char[]>(5);
-		} else {
-			fInternalModifications= null;
-			fSignificantMacros= null;
-		}			
 	}
 	
 	public ScannerContext(ILocationCtx ctx, ScannerContext parent, TokenList tokens) {
-		this(ctx, parent, null, false);
+		this(ctx, parent, (Lexer) null);
 		fTokens= tokens.first();
 		fInactiveState= CodeState.eSkipInactive;  // no branches in result of macro expansion
 	}
@@ -323,8 +316,17 @@ final class ScannerContext {
 		fFoundViaDirective= viaDirective;
 	}
 	
-	public void setPragmaOnce() {
-		fPragmaOnce= true;
+	public void trackSignificantMacros() {
+		fInternalModifications= new CharArraySet(5);
+		fSignificantMacros= new CharArrayObjectMap<char[]>(5);
+	}
+	
+	public void setPragmaOnce(boolean val) {
+		fPragmaOnce= val;
+	}
+	
+	public boolean isPragmaOnce() {
+		return fPragmaOnce;
 	}
 
 	public void internalModification(char[] macroName) {
@@ -332,13 +334,7 @@ final class ScannerContext {
 			fInternalModifications.put(macroName);
 	}
 	
-	public boolean hasInternalModification(char[] namechars) {
-		return fInternalModifications != null && fInternalModifications.containsKey(namechars);
-	}
-
 	public void significantMacro(IMacroBinding macro) {
-		if (fPragmaOnce)
-			return;
 		final char[] macroName= macro.getNameCharArray();
 		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
 			fSignificantMacros.put(macroName, macro.getExpansion());
@@ -346,8 +342,6 @@ final class ScannerContext {
 	}
 	
 	public void significantMacroDefined(char[] macroName) {
-		if (fPragmaOnce)
-			return;
 		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
 			addSignificantMacroDefined(macroName);
 		}
@@ -362,20 +356,11 @@ final class ScannerContext {
 	}
 	
 	public void significantMacroUndefined(char[] macroName) {
-		if (fPragmaOnce)
-			return;
 		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
 			fSignificantMacros.put(macroName, SignificantMacros.UNDEFINED);
 		}
 	}
 	
-	public void addSignificantInclusion(String path) {
-		final char[] inc = path.toCharArray();
-		if (fInternalModifications != null && !fInternalModifications.containsKey(inc)) {
-			fSignificantMacros.put(inc, SignificantMacros.INCLUDED);
-		}
-	}
-
 	public CharArrayObjectMap<char[]> getSignificantMacros() {
 		return fSignificantMacros;
 	}
@@ -408,15 +393,6 @@ final class ScannerContext {
 		fSignificantMacros= null;
 	}
 
-	public boolean isSignificant(char[] macro) {
-		return fSignificantMacros != null && fSignificantMacros.containsKey(macro);
-	}
-
-	public void undoSignificance(char[] macro) {
-		if (fSignificantMacros != null) 
-			fSignificantMacros.remove(macro, 0, macro.length);
-	}
-
 	public void addSignificantMacros(ISignificantMacros sm) {
 		if (fInternalModifications == null)
 			return;
@@ -440,12 +416,22 @@ final class ScannerContext {
 				}
 				return true;
 			}
-			public boolean visitIncluded(char[] path) {
-				if (!fInternalModifications.containsKey(path)) {
-					fSignificantMacros.put(path, SignificantMacros.INCLUDED);
-				}
-				return true;
-			}
 		});
+	}
+
+	public int getLoadedVersionCount() {
+		return fLoadedVersionCount;
+	}
+
+	public void setLoadedVersionCount(int count) {
+		fLoadedVersionCount= count;
+	}
+	
+	@Override
+	public String toString() {
+		if (fParent == null)
+			return fLocationCtx.toString();
+		
+		return fParent.toString() + "\n" + fLocationCtx.toString(); //$NON-NLS-1$
 	}
 }

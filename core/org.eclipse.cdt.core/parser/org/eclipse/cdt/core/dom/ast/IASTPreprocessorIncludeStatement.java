@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.core.parser.ISignificantMacros;
+
 
 /**
  * This interface represent a preprocessor #include statement.
@@ -63,4 +65,12 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	 * @since 5.1
 	 */
 	public boolean isResolvedByHeuristics();
+
+	/**
+	 * Returns the list of versions of the target file, each of which is 
+	 * identified by its significant macros, that had been included 
+	 * in this translation-unit prior to this statement.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public ISignificantMacros[] getLoadedVersions();
 }

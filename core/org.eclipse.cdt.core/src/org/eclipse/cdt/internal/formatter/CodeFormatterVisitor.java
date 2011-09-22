@@ -211,10 +211,6 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					spaceBeforeToken, spaceAfterToken);
 		}
 
-		TrailingTokenFormatter(int tokenType, boolean spaceBeforeToken, boolean spaceAfterToken) {
-			this(tokenType, scribe.findToken(tokenType), spaceBeforeToken, spaceAfterToken);
-		}
-
 		public void run() {
 			int offset = scribe.scanner.getCurrentPosition();
 			if (tokenPosition < 0 || offset > tokenPosition)
@@ -2092,6 +2088,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 						if (i < elementsLength - 1) {
 							scribe.setTailFormatter(
 									new TrailingTokenFormatter(options.fSeparatorToken,
+											findTokenAfterNode(options.fSeparatorToken, node),
 											options.fSpaceBeforeSeparator,
 											options.fSpaceAfterSeparator));
 						} else {
@@ -4335,5 +4332,11 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		IASTFileLocation location = node.getFileLocation();
 		int endOffset = location.getNodeOffset() + location.getNodeLength();
 		return scribe.findToken(tokenType, endOffset);
+	}
+
+	private int findTokenAfterNode(int tokenType, IASTNode node) {
+		IASTFileLocation location = node.getFileLocation();
+		int startOffset = location.getNodeOffset() + location.getNodeLength();
+		return scribe.findToken(tokenType, startOffset, scribe.scannerEndPosition - 1);
 	}
 }

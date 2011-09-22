@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GDB/MI reference application tests
 Bundle-SymbolicName: org.eclipse.cdt.tests.dsf.gdb;singleton:=true
-Bundle-Version: 2.1.0.qualifier
+Bundle-Version: 2.2.0.qualifier
 Bundle-Vendor: Ericsson
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.dsf,

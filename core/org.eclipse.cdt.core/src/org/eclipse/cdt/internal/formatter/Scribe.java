@@ -1926,7 +1926,7 @@ public class Scribe {
 	 * The scanner position is left unchanged.
 	 * 
 	 * @param tokenType type of the token to look for
-	 * @return <code>true</code> if a matching token was found
+	 * @return the position of the matching token, if found, otherwise -1.
 	 */
 	public int findToken(int tokenType) {
 		return findToken(tokenType, scannerEndPosition - 1);
@@ -1939,7 +1939,7 @@ public class Scribe {
 	 * 
 	 * @param tokenType type of the token to look for
 	 * @param endPosition end position limiting the search
-	 * @return <code>true</code> if a matching token was found
+	 * @return the position of the matching token, if found, otherwise -1.
 	 */
 	public int findToken(int tokenType, int endPosition) {
 		int startPosition= scanner.getCurrentPosition();
@@ -2000,6 +2000,26 @@ public class Scribe {
 			scanner.resetTo(startPosition, scannerEndPosition - 1);
 		}
 		return -1;
+	}
+
+	/**
+	 * Searches for the next occurrence of the given token type.
+	 * If successful, returns the offset of the found token, otherwise -1.
+	 * The scanner position is left unchanged.
+	 * 
+	 * @param tokenType type of the token to look for
+	 * @param startPosition position where to start the search
+	 * @param endPosition end position limiting the search
+	 * @return the position of the matching token, if found, otherwise -1.
+	 */
+	public int findToken(int tokenType, int startPosition, int endPosition) {
+		int currentPosition= scanner.getCurrentPosition();
+		try {
+			scanner.resetTo(startPosition, scannerEndPosition - 1);
+			return findToken(tokenType, endPosition);
+		} finally {
+			scanner.resetTo(currentPosition, scannerEndPosition - 1);
+		}
 	}
 
 	public boolean printCommentPreservingNewLines() {

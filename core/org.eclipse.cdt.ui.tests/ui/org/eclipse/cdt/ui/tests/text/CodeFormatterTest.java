@@ -1176,6 +1176,48 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//int function_with_a_long_name(int, int);
+	//int function_with_an_even_looooooooooooooooonger_name(int, int);
+	//
+	//void test() {
+	//function_with_a_long_name(function_with_an_even_looooooooooooooooonger_name(1000000,2000000),3000000);
+	//function_with_a_long_name(function_with_an_even_looooooooooooooooonger_name(1000000,20000000),3000000);
+	//}
+
+	//int function_with_a_long_name(int, int);
+	//int function_with_an_even_looooooooooooooooonger_name(int, int);
+	//
+	//void test() {
+	//    function_with_a_long_name(
+	//            function_with_an_even_looooooooooooooooonger_name(1000000, 2000000),
+	//            3000000);
+	//    function_with_a_long_name(
+	//            function_with_an_even_looooooooooooooooonger_name(1000000,
+	//                    20000000), 3000000);
+	//}
+	public void testFunctionCall_4() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
+	//template<typename T, typename U>
+	//struct type_with_multiple_template_parameters {};
+	//
+	//void wrap_when_necessary(type_with_multiple_template_parameters<char, float> p1, int p2, int p3) {
+	//}
+
+	//template<typename T, typename U>
+	//struct type_with_multiple_template_parameters {
+	//};
+	//
+	//void wrap_when_necessary(type_with_multiple_template_parameters<char, float> p1,
+	//        int p2, int p3) {
+	//}
+	public void testFunctionCallWithTemplates_Bug357300() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
 	//void function(const char* s);
 	//
 	//void test() {

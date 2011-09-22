@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.testplugin.CModelMock;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
@@ -103,12 +104,19 @@ public class LanguageSettingsPersistenceProjectTests extends TestCase {
 		}
 	}
 
-	private class MockProvider extends LanguageSettingsSerializable {
-		public MockProvider(String id, String name) {
+	private class MockEditableProvider extends LanguageSettingsSerializable implements ILanguageSettingsEditableProvider {
+		public MockEditableProvider(String id, String name) {
 			super(id, name);
 		}
+		@Override
+		public MockEditableProvider cloneShallow() throws CloneNotSupportedException {
+			return (MockEditableProvider) super.cloneShallow();
+		}
+		@Override
+		public MockEditableProvider clone() throws CloneNotSupportedException {
+			return (MockEditableProvider) super.clone();
+		}
 	}
-
 
 	/**
 	 * Constructor.
@@ -178,21 +186,88 @@ public class LanguageSettingsPersistenceProjectTests extends TestCase {
 
 	/**
 	 */
-	public void testReadOnlyDescription() throws Exception {
+	public void testProjectDescription_ReadWriteProviders() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
-		// get read-only description
-		ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
-		assertNotNull(prjDescription);
-		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
-		assertNotNull(cfgDescription);
+		
+		{
+			// get read-only description
+			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			assertNotNull(prjDescription);
+			ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
+			assertNotNull(cfgDescription);
+	
+			// try to write to it
+			try {
+				List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+				cfgDescription.setLanguageSettingProviders(providers);
+				fail("WriteAccessException was expected but it was not throw.");
+			} catch (WriteAccessException e) {
+				// exception is expected
+			}
+		}
 
-		try {
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(new CIncludePathEntry("path0", 0));
+
+		{
+			// get project descriptions
+			ICProjectDescription writableProjDescription = coreModel.getProjectDescription(project);
+			assertNotNull(writableProjDescription);
+			ICConfigurationDescription[] cfgDescriptions = writableProjDescription.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+
+			// create a provider
+			LanguageSettingsSerializable mockProvider = new MockEditableProvider(PROVIDER_0, PROVIDER_NAME_0);
+			mockProvider.setStoringEntriesInProjectArea(true);
+			mockProvider.setSettingEntries(cfgDescription, null, null, entries);
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			providers.add(mockProvider);
 			cfgDescription.setLanguageSettingProviders(providers);
-			fail("WriteAccessException was expected but it was not throw.");
-		} catch (WriteAccessException e) {
-			// exception is expected
+			List<ILanguageSettingsProvider> storedProviders = cfgDescription.getLanguageSettingProviders();
+			assertEquals(1, storedProviders.size());
+
+			// apply new project description to the project model
+			coreModel.setProjectDescription(project, writableProjDescription);
+		}
+		{
+			// get read-only project descriptions
+			ICProjectDescription readOnlyProjDescription = coreModel.getProjectDescription(project, false);
+			assertNotNull(readOnlyProjDescription);
+			ICConfigurationDescription[] cfgDescriptions = readOnlyProjDescription.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+
+			List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			ILanguageSettingsProvider loadedProvider = providers.get(0);
+			assertTrue(loadedProvider instanceof LanguageSettingsSerializable);
+			assertEquals(PROVIDER_0, loadedProvider.getId());
+			assertEquals(PROVIDER_NAME_0, loadedProvider.getName());
+
+			List<ICLanguageSettingEntry> actual = loadedProvider.getSettingEntries(cfgDescription, null, null);
+			assertEquals(entries.get(0), actual.get(0));
+			assertEquals(entries.size(), actual.size());
+		}
+		{
+			// get writable project descriptions
+			ICProjectDescription writableProjDescription = coreModel.getProjectDescription(project);
+			assertNotNull(writableProjDescription);
+			ICConfigurationDescription[] cfgDescriptions = writableProjDescription.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+			
+			List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			ILanguageSettingsProvider loadedProvider = providers.get(0);
+			assertTrue(loadedProvider instanceof LanguageSettingsSerializable);
+			assertEquals(PROVIDER_0, loadedProvider.getId());
+			assertEquals(PROVIDER_NAME_0, loadedProvider.getName());
+			
+			List<ICLanguageSettingEntry> actual = loadedProvider.getSettingEntries(cfgDescription, null, null);
+			assertEquals(entries.get(0), actual.get(0));
+			assertEquals(entries.size(), actual.size());
 		}
 	}
 

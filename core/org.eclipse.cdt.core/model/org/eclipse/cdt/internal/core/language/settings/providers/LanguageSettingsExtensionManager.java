@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.language.settings.providers;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -24,11 +25,13 @@ import org.eclipse.cdt.core.AbstractExecutableExtensionBase;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProvider;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
@@ -37,7 +40,10 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -611,6 +617,142 @@ public class LanguageSettingsExtensionManager {
 		String id = provider.getId();
 		ILanguageSettingsProvider extensionProvider = fExtensionProviders.get(id);
 		return provider.equals(extensionProvider);
+	}
+	
+	/**
+	 * TODO - remove me
+	 * Temporary method to report inconsistency in log.
+	 */
+	@Deprecated
+	public static void assertConsistency(ICProjectDescription prjDescription) {
+		if (prjDescription != null) {
+			List<ILanguageSettingsProvider> prjProviders = new ArrayList<ILanguageSettingsProvider>();
+			for (ICConfigurationDescription cfgDescription : prjDescription.getConfigurations()) {
+				List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
+				for (ILanguageSettingsProvider provider : providers) {
+					if (!LanguageSettingsManager.isWorkspaceProvider(provider)) {
+						if (isObjectInTheList(prjProviders, provider)) {
+							IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Inconsistent state, duplicate LSP in project description "
+									+ "[" + System.identityHashCode(provider) + "] "
+									+ provider);
+							CoreException e = new CoreException(status);
+							CCorePlugin.log(e);
+						}
+						prjProviders.add(provider);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * TODO - remove me
+	 * Temporary method to report inconsistency in log.
+	 */
+	@Deprecated
+	public static void assertConsistency(ICConfigurationDescription cfgDescription) {
+		List<ILanguageSettingsProvider> listeners = new ArrayList<ILanguageSettingsProvider>();
+		List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
+		for (ILanguageSettingsProvider provider : providers) {
+			if (isObjectInTheList(listeners, provider)) {
+				IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Inconsistent state, duplicate LSP in project description " + provider);
+				CoreException e = new CoreException(status);
+				CCorePlugin.log(e);
+			}
+			listeners.add(provider);
+		}
+	}
+	
+	/**
+	 * Get a providers list including only providers of type IResourceChangeListener
+	 * for a given project description - collecting from all configurations.
+	 */
+	private static List<IResourceChangeListener> getResourceChangeListeners(ICProjectDescription prjDescription) {
+		List<IResourceChangeListener> listeners = new ArrayList<IResourceChangeListener>();
+		if (prjDescription != null) {
+			for (ICConfigurationDescription cfgDescription : prjDescription.getConfigurations()) {
+				List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
+				for (ILanguageSettingsProvider provider : providers) {
+					if (provider instanceof IResourceChangeListener) {
+						listeners.add((IResourceChangeListener) provider);
+					}
+				}
+			}
+		}
+		return listeners;
+	}
+	
+	/**
+	 * Unregister listeners which are not used anymore and register new listeners.
+	 * The method is used when project description is applied to workspace.
+	 * @param oldPrjDescription - old project descriptions being replaced in the workspace.
+	 * @param newPrjDescription - new project description being applied to the workspace.
+	 */
+	public static void reRegisterListeners(ICProjectDescription oldPrjDescription, ICProjectDescription newPrjDescription) {
+		if (oldPrjDescription == newPrjDescription) {
+			assertConsistency(oldPrjDescription); // TODO - remove me
+			return;
+		}
+
+		assertConsistency(oldPrjDescription); // TODO - remove me
+		assertConsistency(newPrjDescription); // TODO - remove me
+		
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		
+		List<IResourceChangeListener> oldListeners = getResourceChangeListeners(oldPrjDescription);
+		List<IResourceChangeListener> newListeners = getResourceChangeListeners(newPrjDescription);
+		
+		for (IResourceChangeListener listener : oldListeners) {
+			if (!isObjectInTheList(newListeners, listener)) {
+				workspace.removeResourceChangeListener(listener);
+				// TODO - remove me
+				CCorePlugin.log(new Status(IStatus.WARNING,CCorePlugin.PLUGIN_ID, oldPrjDescription.getProject() + ": Removed IResourceChangeListener "
+						+ "[" + System.identityHashCode(listener) + "] "
+						+ listener));
+			}
+		}
+		
+		for (IResourceChangeListener listener : newListeners) {
+			if (!isObjectInTheList(oldListeners, listener)) {
+				workspace.addResourceChangeListener(listener);
+				// TODO - remove me
+				CCorePlugin.log(new Status(IStatus.WARNING,CCorePlugin.PLUGIN_ID, newPrjDescription.getProject() + ": Added IResourceChangeListener "
+						+ "[" + System.identityHashCode(listener) + "] "
+						+ listener));
+			}
+		}
+		
+	}
+
+	private static <T> boolean  isObjectInTheList(Collection<T> list, T element) {
+		// list.contains(element) won't do it as we are interested in exact object, not in equal object
+		for (T elem : list) {
+			if (elem == element)
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Deep clone of a list of language settings providers.
+	 * 
+	 * @param baseProviders - list of providers to clone.
+	 * @return newly cloned list.
+	 */
+	public static List<ILanguageSettingsProvider> cloneProviders(List<ILanguageSettingsProvider> baseProviders) {
+		List<ILanguageSettingsProvider> newProviders = new ArrayList<ILanguageSettingsProvider>();
+		for (ILanguageSettingsProvider provider : baseProviders) {
+			if (provider instanceof ILanguageSettingsEditableProvider) {
+				try {
+					provider = ((ILanguageSettingsEditableProvider) provider).clone();
+				} catch (CloneNotSupportedException e) {
+					IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Not able to clone provider " + provider.getClass());
+					CCorePlugin.log(new CoreException(status));
+				}
+			}
+			newProviders.add(provider);
+		}
+		return new ArrayList<ILanguageSettingsProvider>(newProviders);
 	}
 	
 

@@ -41,7 +41,6 @@ import org.eclipse.cdt.internal.core.COwner;
 import org.eclipse.cdt.internal.core.COwnerConfiguration;
 import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.runtime.CoreException;
@@ -189,7 +188,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 
 		copyExtensionInfo(base);
 		
-		fLanguageSettingsProviders = LanguageSettingsExtensionManager.cloneProviders(base.getLanguageSettingProviders());
+		fLanguageSettingsProviders = LanguageSettingsProvidersSerializer.cloneProviders(base.getLanguageSettingProviders());
 	}
 
 //	private void copyRefInfos(Map infosMap){

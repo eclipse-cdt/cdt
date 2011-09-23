@@ -42,7 +42,6 @@ import org.eclipse.cdt.core.settings.model.extension.ICProjectConverter;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.envvar.ContributedEnvironment;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.settings.model.AbstractCProjectDescriptionStorage;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
@@ -377,7 +376,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 			fProjectDescription = new SoftReference<ICProjectDescription>(null);
 		}
 
-		LanguageSettingsExtensionManager.reRegisterListeners(oldDes, fProjectDescription.get());
+		LanguageSettingsProvidersSerializer.reRegisterListeners(oldDes, fProjectDescription.get());
 		return true;
 	}
 

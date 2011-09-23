@@ -181,6 +181,11 @@ public class TestConfiguration implements IConfiguration {
 		return null;
 	}
 
+	public String getDefaultLanguageSettingsProvidersIds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public ITool[] getFilteredTools() {
 		// TODO Auto-generated method stub
 		return null;

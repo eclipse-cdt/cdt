@@ -29,6 +29,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -387,7 +388,8 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 			if (cfgDescription != null) {
 				IPath path = rc.getProjectRelativePath();
 				ICResourceDescription rcDescription = cfgDescription.getResourceDescription(path, true);
-				if (rcDescription != null)
+				boolean isLSCustomized = LanguageSettingsManager_TBD.isCustomizedResource(cfgDescription, rc);
+				if (rcDescription != null || isLSCustomized)
 					result |= TICK_CONFIGURATION;
 			}
 		}

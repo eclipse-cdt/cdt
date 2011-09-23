@@ -46,6 +46,7 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	// Schema element names
 	public static final String CONFIGURATION_ELEMENT_NAME = "configuration";	//$NON-NLS-1$
 	public static final String ERROR_PARSERS = "errorParsers";	//$NON-NLS-1$
+	public static final String LANGUAGE_SETTINGS_PROVIDERS = "languageSettingsProviders";
 	public static final String EXTENSION = "artifactExtension";	//$NON-NLS-1$
 	public static final String PARENT = "parent";	//$NON-NLS-1$
 	
@@ -170,6 +171,8 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	 */
 	public String[] getErrorParserList();
 	
+	public String getDefaultLanguageSettingsProvidersIds();
+
 	/**
 	 * Projects have C or CC natures. Tools can specify a filter so they are not 
 	 * misapplied to a project. This method allows the caller to retrieve a list 

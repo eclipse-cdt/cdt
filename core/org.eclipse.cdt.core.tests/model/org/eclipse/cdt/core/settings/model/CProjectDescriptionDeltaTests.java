@@ -19,6 +19,8 @@ import java.util.Map;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
@@ -993,6 +995,53 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		assertTrue(delta.getNewSetting() instanceof ICProjectDescription);
 		ICProjectDescription newSetting = (ICProjectDescription)delta.getNewSetting();
 		assertEquals(cfgDescription1.getName(), newSetting.getDefaultSettingConfiguration().getName());
+	}
+	
+	public void testDelta_LANGUAGE_SETTINGS_PROVIDERS() throws Exception {
+		String projName = getName();
+		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
+		
+		initListener(projName);
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projName);
+		
+		// Get writable project description and its configuration
+		ICProjectDescription prjDescription = mngr.getProjectDescription(project, true);
+		assertNotNull(prjDescription);
+		ICConfigurationDescription cfgDescription = prjDescription.getConfigurations()[0];
+		assertNotNull(cfgDescription);
+		List<ILanguageSettingsProvider> originalProviders = cfgDescription.getLanguageSettingProviders();
+		
+		// Modification LANGUAGE_SETTINGS_PROVIDERS
+		ILanguageSettingsProvider provider = new LanguageSettingsSerializable("id", "name");
+		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		providers.add(provider);
+		cfgDescription.setLanguageSettingProviders(providers);
+		
+		// Write project description
+		listener.clearNotified();
+		mngr.setProjectDescription(project, prjDescription);
+		assertEquals(true, listener.isNotified());
+		
+		// Analyze delta
+		ICDescriptionDelta rootDelta = listener.getDelta();
+		assertNotNull(rootDelta);
+		List<ICDescriptionDelta> deltas = findDeltas(rootDelta, ICDescriptionDelta.LANGUAGE_SETTINGS_PROVIDERS);
+		assertEquals(1, deltas.size());
+		ICDescriptionDelta delta = deltas.get(0);
+		assertNotNull(delta);
+		assertEquals(ICDescriptionDelta.LANGUAGE_SETTINGS_PROVIDERS, delta.getChangeFlags());
+		
+		// Check old setting
+		assertTrue(delta.getOldSetting() instanceof ICConfigurationDescription);
+		ICConfigurationDescription oldSetting = (ICConfigurationDescription)delta.getOldSetting();
+		List<ILanguageSettingsProvider> oldProviders = oldSetting.getLanguageSettingProviders();
+		assertEquals(originalProviders, oldProviders);
+		
+		// Check new setting
+		assertTrue(delta.getNewSetting() instanceof ICConfigurationDescription);
+		ICConfigurationDescription newSetting = (ICConfigurationDescription)delta.getNewSetting();
+		List<ILanguageSettingsProvider> newProviders = newSetting.getLanguageSettingProviders();
+		assertEquals(providers, newProviders);
 	}
 
 }

@@ -24,6 +24,7 @@ import java.util.SortedMap;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager.PathInfoCache;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
@@ -50,6 +51,8 @@ import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSu
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
 import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpression;
 import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -85,6 +88,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 	private String targetToolIds;
 	private String secondaryOutputIds;
 	private Boolean isAbstract;
+	private String defaultLanguageSettingsProvidersIds;
     private String scannerConfigDiscoveryProfileId;
 	private String versionsSupported;
 	private String convertToId;
@@ -554,6 +558,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		// Get the target tool id
 		targetToolIds = SafeStringInterner.safeIntern(element.getAttribute(TARGET_TOOL));
 		
+		// Get the initial/default language setttings providers IDs
+		defaultLanguageSettingsProvidersIds = element.getAttribute(LANGUAGE_SETTINGS_PROVIDERS);
+
 		// Get the scanner config discovery profile id
         scannerConfigDiscoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(SCANNER_CONFIG_PROFILE_ID));
         String tmp = element.getAttribute(RESOURCE_TYPE_BASED_DISCOVERY);
@@ -1501,18 +1508,66 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		setDirty(true);
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getScannerConfigDiscoveryProfileId()
-     */
-    public String getScannerConfigDiscoveryProfileId() {
-        if (scannerConfigDiscoveryProfileId == null) {
-            if (getSuperClass() != null) {
-                return getSuperClass().getScannerConfigDiscoveryProfileId();
-            }
-        }
-        return scannerConfigDiscoveryProfileId;
-    }
+	public String getDefaultLanguageSettingsProvidersIds() {
+		return defaultLanguageSettingsProvidersIds;
+	}
 
+	/**
+	 * Temporary method to support compatibility during SD transition.
+	 */
+	private boolean isLanguageSettingsProvidersFunctionalityEnabled() {
+		boolean isLanguageSettingsProvidersEnabled = false;
+		IConfiguration cfg = getParent();
+		if (cfg!=null) {
+			IResource rc = cfg.getOwner();
+			if (rc!=null) {
+				IProject project = rc.getProject();
+				isLanguageSettingsProvidersEnabled = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project);
+			}
+		}
+		return isLanguageSettingsProvidersEnabled;
+	}
+
+	/**
+	 * Temporary method to support compatibility during SD transition.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public String getLegacyScannerConfigDiscoveryProfileId() {
+		String profileId = scannerConfigDiscoveryProfileId;
+		if (profileId==null) {
+			profileId = ScannerDiscoveryLegacySupport.getDeprecatedLegacyProfiles(id);
+			if (profileId == null) {
+				IToolChain superClass = getSuperClass();
+				if (superClass instanceof ToolChain) {
+					profileId = ((ToolChain) superClass).getLegacyScannerConfigDiscoveryProfileId();
+				}
+			}
+		}
+		return profileId;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getScannerConfigDiscoveryProfileId()
+	 */
+	public String getScannerConfigDiscoveryProfileId() {
+		if (!isLanguageSettingsProvidersFunctionalityEnabled())
+			return getLegacyScannerConfigDiscoveryProfileId();
+
+		return getScannerConfigDiscoveryProfileIdInternal();
+	}
+
+	/**
+	 * Method extracted temporarily to support compatibility during SD transition.
+	 */
+	private String getScannerConfigDiscoveryProfileIdInternal() {
+		if (scannerConfigDiscoveryProfileId == null && superClass instanceof ToolChain) {
+			return ((ToolChain) getSuperClass()).getScannerConfigDiscoveryProfileIdInternal();
+		}
+		return scannerConfigDiscoveryProfileId;
+	}
+	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setScannerConfigDiscoveryProfileId(java.lang.String)
      */

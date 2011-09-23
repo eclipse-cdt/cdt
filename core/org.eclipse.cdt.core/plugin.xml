@@ -638,8 +638,9 @@
    <extension-point id="templateProcessTypes" name="%templateProcessTypes.name" schema="schema/templateProcessTypes.exsd"/>
    <extension-point id="templateAssociations" name="%templateAssociations.name" schema="schema/templateAssociations.exsd"/>
    <extension-point id="ScannerInfoProvider2" name="%scannerInfoProvider2.name" schema="schema/ScannerInfoProvider2.exsd"/>
-   <extension-point id="EFSExtensionProvider" name="%efsExtensionProvider.name" schema="schema/EFSExtensionProvider.exsd"/>
-   <extension-point id="RefreshExclusionFactory" name="%refreshExclusionFactory.name" schema="schema/RefreshExclusionFactory.exsd"/>
+   <extension-point id="EFSExtensionProvider" name="EFSExtensionProvider" schema="schema/EFSExtensionProvider.exsd"/>
+   <extension-point id="LanguageSettingsProvider" name="%LanguageSettingsProvider.name" schema="schema/LanguageSettingsProvider.exsd"/>
+   <extension-point id="RefreshExclusionFactory" name="Refresh Exclusion Factory" schema="schema/RefreshExclusionFactory.exsd"/>
    <extension-point id="UNCPathConverter" name="%uncPathConverter.name" schema="schema/UNCPathConverter.exsd"/>
 
    <extension
@@ -749,6 +750,13 @@
             exclusionClass="org.eclipse.cdt.internal.core.resources.ResourceExclusion"
             factoryClass="org.eclipse.cdt.internal.core.resources.ResourceExclusionFactory">
       </exclusionFactory>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.EFSExtensionProvider">
+      <EFSExtensionProvider
+            class="org.eclipse.cdt.internal.core.resources.CygwinEFSExtensionProvider"
+            scheme="cygwin">
+      </EFSExtensionProvider>
    </extension>
 
 </plugin>

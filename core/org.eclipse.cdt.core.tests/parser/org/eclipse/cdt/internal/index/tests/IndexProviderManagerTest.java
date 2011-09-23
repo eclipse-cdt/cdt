@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.provider.IIndexProvider;
 import org.eclipse.cdt.core.internal.index.provider.test.DummyProviderTraces;
 import org.eclipse.cdt.core.internal.index.provider.test.Providers;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -704,6 +705,12 @@ class MockConfig implements ICConfigurationDescription {
 	}
 
 	public void setReadOnly(boolean readOnly, boolean keepModify) {}
+
+	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {}
+
+	public List<ILanguageSettingsProvider> getLanguageSettingProviders() {
+		return null;
+	}
 }
 
 /*

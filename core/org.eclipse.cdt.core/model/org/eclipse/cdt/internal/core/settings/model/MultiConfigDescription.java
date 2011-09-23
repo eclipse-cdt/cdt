@@ -14,9 +14,11 @@ package org.eclipse.cdt.internal.core.settings.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
@@ -579,6 +581,17 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	public void removeStorage(String id) throws CoreException {
 		for (int i=0; i<fCfgs.length; i++)
 			fCfgs[i].removeStorage(id);
+	}
+
+	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
+		if (DEBUG)
+			System.out.println("Bad multi access: MultiConfigDescription.setLanguageSettingProviders()"); //$NON-NLS-1$
+	}
+
+	public List<ILanguageSettingsProvider> getLanguageSettingProviders() {
+		if (DEBUG)
+			System.out.println("Bad multi access: MultiConfigDescription.getLanguageSettingProviders()"); //$NON-NLS-1$
+		return null;
 	}
 
 }

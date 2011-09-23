@@ -160,6 +160,13 @@
       </filesystem>
    </extension>
    <extension
+         point="org.eclipse.cdt.core.EFSExtensionProvider">
+      <EFSExtensionProvider
+            class="org.eclipse.cdt.core.internal.tests.filesystem.ram.MemoryEFSExtensionProvider"
+            scheme="mem">
+      </EFSExtensionProvider>
+   </extension>
+   <extension
          id="RegexErrorParserId"
          name="Test Plugin RegexErrorParser"
          point="org.eclipse.cdt.core.ErrorParser">
@@ -182,6 +189,156 @@
             class="org.eclipse.cdt.core.internal.efsextension.tests.EFSExtensionProviderTestsProvider"
             scheme="EFSExtensionProviderTestsScheme">
       </EFSExtensionProvider>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.LanguageSettingsProvider">
+<!-- uncomment to test message about missing class in the log
+      <provider
+            class="org.eclipse.cdt.core.language.settings.providers.MissingClass"
+            id="org.eclipse.cdt.core.tests.missing.language.settings.provider"
+            name="Test Plugin Missing Language Settings Provider">
+      </provider>
+-->
+      <provider
+            id="org.eclipse.cdt.core.tests.language.settings.base.provider"
+            name="Test Plugin Language Settings Base Provider"
+            parameter="custom parameter">
+         <language-scope
+               id="org.eclipse.cdt.core.tests.language.id">
+         </language-scope>
+         <entry
+               kind="includePath"
+               name="/usr/include/">
+            <flag
+                  value="BUILTIN">
+            </flag>
+            <flag
+                  value="LOCAL">
+            </flag>
+            <flag
+                  value="VALUE_WORKSPACE_PATH">
+            </flag>
+            <flag
+                  value="RESOLVED">
+            </flag>
+            <flag
+                  value="UNDEFINED">
+            </flag>
+         </entry>
+            <entry
+               kind="macro"
+               name="TEST_DEFINE"
+               value="100">
+         </entry>
+         <entry
+               kind="includeFile"
+               name="/include/file.inc">
+         </entry>
+         <entry
+               kind="libraryPath"
+               name="/usr/lib/">
+         </entry>
+         <entry
+               kind="libraryFile"
+               name="libdomain.a">
+         </entry>
+         <entry
+               kind="macroFile"
+               name="/macro/file.mac">
+         </entry>
+      </provider>
+      <provider
+            class="org.eclipse.cdt.core.language.settings.providers.MockLanguageSettingsProvider"
+            id="org.eclipse.cdt.core.tests.custom.language.settings.provider"
+            name="Test Plugin Language Settings Provider">
+      </provider>
+      <provider
+            class="org.eclipse.cdt.core.language.settings.providers.MockLanguageSettingsSerializableProvider"
+            id="org.eclipse.cdt.core.tests.custom.serializable.language.settings.provider"
+            name="Test Plugin Serializable Language Settings Provider">
+         <entry
+               kind="macro"
+               name="MACRO"
+               value="value">
+         </entry>
+      </provider>
+      <provider
+            class="org.eclipse.cdt.core.language.settings.providers.MockLanguageSettingsEditableProvider"
+            id="org.eclipse.cdt.core.tests.custom.editable.language.settings.provider"
+            name="Test Plugin Editable Language Settings Provider">
+         <entry
+               kind="macro"
+               name="MACRO"
+               value="value">
+         </entry>
+      </provider>
+      <provider
+            class="org.eclipse.cdt.core.language.settings.providers.MockLanguageSettingsBaseProvider"
+            id="org.eclipse.cdt.core.tests.language.settings.base.provider.subclass"
+            name="Test Plugin Base Provider Subclass"
+            parameter="custom parameter subclass">
+         <entry
+               kind="includePath"
+               name="/usr/include/">
+            <flag
+                  value="BUILTIN">
+            </flag>
+         </entry>
+      </provider>
+      <provider
+            id="org.eclipse.cdt.core.tests.language.settings"
+            name="Test Plugin Setting Entries UI Tester">
+         <language-scope
+               id="org.eclipse.cdt.core.gcc">
+         </language-scope>
+         <entry
+               kind="includePath"
+               name="/test/include/path">
+         </entry>
+         <entry
+               kind="includePath"
+               name="/test/workspace/include/path">
+            <flag
+                  value="VALUE_WORKSPACE_PATH">
+            </flag>
+         </entry>
+         <entry
+               kind="includePath"
+               name="/test/builtin/include/path">
+            <flag
+                  value="BUILTIN">
+            </flag>
+         </entry>
+         <entry
+               kind="macro"
+               name="MACRO"
+               value="macro">
+         </entry>
+         <entry
+               kind="macro"
+               name="BUILTIN_MACRO"
+               value="builtin-macro">
+            <flag
+                  value="BUILTIN">
+            </flag>
+         </entry>
+         <entry
+               kind="includeFile"
+               name="/test/includes/file">
+         </entry>
+         <entry
+               kind="libraryPath"
+               name="/test/library/path">
+         </entry>
+         <entry
+               kind="libraryFile"
+               name="/test/library/file">
+         </entry>
+         <entry
+               kind="macroFile"
+               name="/test/macro/file">
+         </entry>
+      </provider>
    </extension>
    <extension
          point="org.eclipse.cdt.core.RefreshExclusionFactory">

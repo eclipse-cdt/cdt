@@ -53,6 +53,8 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	// The attribute name for the scanner info collector
 	public static final String SCANNER_CONFIG_PROFILE_ID = "scannerConfigDiscoveryProfileId"; //$NON-NLS-1$
 
+	public static final String LANGUAGE_SETTINGS_PROVIDERS = "languageSettingsProviders";
+
 	/**
 	 * Returns the configuration that is the parent of this tool-chain.
 	 * 
@@ -260,6 +262,13 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	 * Sets the semicolon separated list of error parser ids.
 	 */
 	public void setErrorParserIds(String ids);
+
+	/**
+	 * Returns the default language settings providers IDs.
+	 *
+	 * @return the default language settings providers IDs separated by semicolon or {@code null} if none.
+	 */
+	public String getDefaultLanguageSettingsProvidersIds();
 
 	/**
 	 * Returns the scanner config discovery profile id or <code>null</code> if none. 

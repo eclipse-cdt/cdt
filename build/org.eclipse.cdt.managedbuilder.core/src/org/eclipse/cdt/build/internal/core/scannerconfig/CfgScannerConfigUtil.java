@@ -159,7 +159,12 @@ public class CfgScannerConfigUtil {
 		Set<String> profiles = new TreeSet<String>();
 		
 		if (toolchain!=null) {
-			String toolchainProfileId = toolchain.getScannerConfigDiscoveryProfileId();
+			String toolchainProfileId = null;
+			if (toolchain instanceof ToolChain) {
+				toolchainProfileId = ((ToolChain) toolchain).getLegacyScannerConfigDiscoveryProfileId();
+			} else {
+				toolchainProfileId = toolchain.getScannerConfigDiscoveryProfileId();
+			}
 			if (toolchainProfileId!=null && toolchainProfileId.length()>0) {
 				profiles.add(toolchainProfileId);
 			}
@@ -227,7 +232,7 @@ public class CfgScannerConfigUtil {
 		
 		Set<String> profiles = new TreeSet<String>();
 
-		String attribute = ((InputType) inputType).getDiscoveryProfileIdAttribute();
+		String attribute = ((InputType) inputType).getLegacyDiscoveryProfileIdAttribute();
 		if (attribute!=null) {
 			// FIXME: temporary; we should add new method to IInputType instead of that
 			for (String profileId : attribute.split("\\|")) { //$NON-NLS-1$

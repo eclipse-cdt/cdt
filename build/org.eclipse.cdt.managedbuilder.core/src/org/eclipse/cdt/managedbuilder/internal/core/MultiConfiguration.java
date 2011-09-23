@@ -403,6 +403,11 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		return s;
 	}
 
+	public String getDefaultLanguageSettingsProvidersIds() {
+		ManagedBuilderCorePlugin.error("Default Language Settings Providers are not supported in multiconfiguration mode");
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getFilteredTools()
 	 */

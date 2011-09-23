@@ -186,6 +186,32 @@ public class LanguageSettingsPersistenceProjectTests extends TestCase {
 
 	/**
 	 */
+	public void testProjectDescription_PreventBackDoorAccess() throws Exception {
+		// create a project
+		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
+		
+		// get project descriptions
+		ICProjectDescription writableProjDescription = coreModel.getProjectDescription(project);
+		assertNotNull(writableProjDescription);
+		ICConfigurationDescription[] cfgDescriptions = writableProjDescription.getConfigurations();
+		assertEquals(1, cfgDescriptions.length);
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+		List<ILanguageSettingsProvider> originalProviders = cfgDescription.getLanguageSettingProviders();
+		int originalSize = originalProviders.size();
+		
+		// create new provider list
+		LanguageSettingsSerializable mockProvider = new MockEditableProvider(PROVIDER_0, PROVIDER_NAME_0);
+		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(originalProviders);
+		providers.add(mockProvider);
+		assertTrue(originalSize != providers.size());
+		
+		// changing providers shouldn't affect the original list
+		cfgDescription.setLanguageSettingProviders(providers);
+		assertEquals(originalSize, originalProviders.size());
+	}
+
+	/**
+	 */
 	public void testProjectDescription_ReadWriteProviders() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
@@ -196,7 +222,7 @@ public class LanguageSettingsPersistenceProjectTests extends TestCase {
 			assertNotNull(prjDescription);
 			ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 			assertNotNull(cfgDescription);
-	
+			
 			// try to write to it
 			try {
 				List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
@@ -206,10 +232,10 @@ public class LanguageSettingsPersistenceProjectTests extends TestCase {
 				// exception is expected
 			}
 		}
-
+		
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 		entries.add(new CIncludePathEntry("path0", 0));
-
+		
 		{
 			// get project descriptions
 			ICProjectDescription writableProjDescription = coreModel.getProjectDescription(project);
@@ -217,7 +243,7 @@ public class LanguageSettingsPersistenceProjectTests extends TestCase {
 			ICConfigurationDescription[] cfgDescriptions = writableProjDescription.getConfigurations();
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-
+			
 			// create a provider
 			LanguageSettingsSerializable mockProvider = new MockEditableProvider(PROVIDER_0, PROVIDER_NAME_0);
 			mockProvider.setStoringEntriesInProjectArea(true);
@@ -227,7 +253,7 @@ public class LanguageSettingsPersistenceProjectTests extends TestCase {
 			cfgDescription.setLanguageSettingProviders(providers);
 			List<ILanguageSettingsProvider> storedProviders = cfgDescription.getLanguageSettingProviders();
 			assertEquals(1, storedProviders.size());
-
+			
 			// apply new project description to the project model
 			coreModel.setProjectDescription(project, writableProjDescription);
 		}
@@ -238,14 +264,14 @@ public class LanguageSettingsPersistenceProjectTests extends TestCase {
 			ICConfigurationDescription[] cfgDescriptions = readOnlyProjDescription.getConfigurations();
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-
+			
 			List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
 			assertEquals(1, providers.size());
 			ILanguageSettingsProvider loadedProvider = providers.get(0);
 			assertTrue(loadedProvider instanceof LanguageSettingsSerializable);
 			assertEquals(PROVIDER_0, loadedProvider.getId());
 			assertEquals(PROVIDER_NAME_0, loadedProvider.getName());
-
+			
 			List<ICLanguageSettingEntry> actual = loadedProvider.getSettingEntries(cfgDescription, null, null);
 			assertEquals(entries.get(0), actual.get(0));
 			assertEquals(entries.size(), actual.size());
@@ -270,7 +296,7 @@ public class LanguageSettingsPersistenceProjectTests extends TestCase {
 			assertEquals(entries.size(), actual.size());
 		}
 	}
-
+	
 	/**
 	 */
 	public void testWorkspacePersistence_ModifiedExtensionProvider() throws Exception {

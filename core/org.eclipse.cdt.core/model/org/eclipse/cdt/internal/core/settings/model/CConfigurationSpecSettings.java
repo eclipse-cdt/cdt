@@ -989,7 +989,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	 * @param providers - list of providers to keep in the specs.
 	 */
 	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
-		fLanguageSettingsProviders.clear();
+		fLanguageSettingsProviders = new ArrayList<ILanguageSettingsProvider>(0);
 		Set<String> ids = new HashSet<String>();
 		for (ILanguageSettingsProvider provider : providers) {
 			String id = provider.getId();

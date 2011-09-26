@@ -70,6 +70,8 @@ import org.eclipse.swt.widgets.ScrollBar;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPreferencePageContainer {
+		private static ToolListElement selectedElement;
+
 		/*
 		 * Dialog widgets
 		 */
@@ -87,7 +89,6 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		private Map<String, List<AbstractToolSettingUI>> configToPageListMap;
 		private IPreferenceStore settingsStore;
 		private AbstractToolSettingUI currentSettingsPage;
-		private ToolListElement selectedElement;
 		private ToolListContentProvider listprovider;
 		private Object propertyObject;
 
@@ -377,7 +378,6 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		@Override
 		public void setVisible(boolean visible){
 			if(visible){
-				selectedElement = null;
 				updateData(page.getResDesc());
 			}
 			super.setVisible(visible);
@@ -414,7 +414,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			//  with an object in the new element list.
 			//  Otherwise, select the first tool in the tree
 			Object primaryObject = null;
-			if (selectedElement != null) {
+			if (selectedElement != null && newElements != null) {
 				selectedElement = matchSelectionElement(selectedElement, newElements);
 			}
 

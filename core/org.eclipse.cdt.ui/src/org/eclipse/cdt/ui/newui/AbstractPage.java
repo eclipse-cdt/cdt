@@ -151,6 +151,8 @@ implements
 	private static final String PREF_ASK_REINDEX = "askReindex"; //$NON-NLS-1$
 	
 	private Map<URL, Image> loadedIcons = new HashMap<URL, Image>();
+	private static Map<Class<? extends AbstractPage>, Class<? extends ICPropertyTab>> recentTabs =
+			new HashMap<Class<? extends AbstractPage>, Class<? extends ICPropertyTab>>();
 
 	private final Image IMG_WARN = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_REFACTORING_WARNING);
 	/*
@@ -362,20 +364,40 @@ implements
 		// Set listener after data load, to avoid firing
 		// selection event on not-initialized tab items 
 		if (folder != null) {
-		    folder.addSelectionListener(new SelectionAdapter() {
-			      @Override
+			folder.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
-			    	  if (folder.getSelection().length > 0 ) {
-			    		  ICPropertyTab newTab = (ICPropertyTab)folder.getSelection()[0].getData();
-			    		  if (newTab != null && currentTab != newTab) {
-				    		  if (currentTab != null) currentTab.handleTabEvent(ICPropertyTab.VISIBLE, null);			    			  
-				    		  currentTab = newTab;
-				    		  currentTab.handleTabEvent(ICPropertyTab.VISIBLE, NOT_NULL);
-			    		  }
-			    	  }
-			      }
-			    });
-		    if (folder.getItemCount() > 0) folder.setSelection(0);
+					if (folder.getSelection().length > 0 ) {
+						updateSelectedTab();
+					}
+				}
+			});
+			if (folder.getItemCount() > 0) {
+				int selectedTab = 0;
+				Class<? extends ICPropertyTab> recentTab = recentTabs.get(getClass());
+				if (recentTab != null) {
+					TabItem[] tabs = folder.getItems();
+					for (int i = 0; i < tabs.length; i++) {
+						TabItem control = tabs[i];
+						if (recentTab.isInstance(control.getData())) {
+							selectedTab = i;
+							break;
+						}
+					}
+				}
+				folder.setSelection(selectedTab);
+				updateSelectedTab();
+			}
+		}
+	}
+	
+	private void updateSelectedTab() {
+		ICPropertyTab newTab = (ICPropertyTab)folder.getSelection()[0].getData();
+		if (newTab != null && currentTab != newTab) {
+			recentTabs.put(getClass(), newTab.getClass());
+			if (currentTab != null) currentTab.handleTabEvent(ICPropertyTab.VISIBLE, null);			    			  
+			currentTab = newTab;
+			currentTab.handleTabEvent(ICPropertyTab.VISIBLE, NOT_NULL);
 		}
 	}
 	/**

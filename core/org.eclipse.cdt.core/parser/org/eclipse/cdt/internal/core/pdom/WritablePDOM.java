@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.pdom;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +31,6 @@ import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
-import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
@@ -88,20 +86,16 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		if (uncommittedFile == null)
 			return null;
 		PDOMFile file;
-		BTree fileIndex = getFileIndex();
 		if (fileBeingUpdated == null) {
-			// New file.
+			// New file, insert it into the index.
 			file = uncommittedFile;
+			getFileIndex().insert(file.getRecord()); 
 		} else {
 			// Existing file.
-			// Remove the file from the index before replacing its contents since position of
-			// the file in the index is content-dependent.
-			fileIndex.delete(fileBeingUpdated.getRecord());
 			fileBeingUpdated.replaceContentsFrom(uncommittedFile);
 			file = fileBeingUpdated;
 			fileBeingUpdated = null;
 		}
-		fileIndex.insert(file.getRecord()); // Insert the file to the file index.
 		fEvent.fFilesWritten.add(uncommittedKey.getLocation());
 		uncommittedFile = null;
 		uncommittedKey = null;
@@ -111,7 +105,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	public void clearUncommittedFile() throws CoreException {
 		if (uncommittedFile != null) {
 			try {
-				uncommittedFile.clear(null);
+				uncommittedFile.clear();
 				uncommittedFile.delete();
 			} finally {
 				uncommittedFile = null;
@@ -127,7 +121,6 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		assert sourceFile.getIndexFragment() == this;
 		
 		PDOMFile pdomFile = (PDOMFile) sourceFile;
-		pdomFile.addIncludesTo(includes);
 		pdomFile.addMacros(macros);
 		final ASTFilePathResolver origResolver= fPathResolver;
 		fPathResolver= pathResolver;
@@ -136,6 +129,8 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		} finally {
 			fPathResolver= origResolver;
 		}
+		// Includes expose the temporary file in the index, we must not yield the lock beyond this point.
+		pdomFile.addIncludesTo(includes);
 		
 		final IIndexFileLocation location = pdomFile.getLocation();
 		if (location != null) {
@@ -144,12 +139,11 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		}
 	}
 
-	public void clearFile(IIndexFragmentFile file, Collection<IIndexFileLocation> contextsRemoved)
-			throws CoreException {
+	public void clearFile(IIndexFragmentFile file) throws CoreException {
 		assert file.getIndexFragment() == this;
 		IIndexFileLocation location = file.getLocation();
 		PDOMFile pdomFile = (PDOMFile) file;
-		pdomFile.clear(contextsRemoved);	
+		pdomFile.clear();	
 
 		fEvent.fClearedFiles.add(location);
 	}
@@ -214,7 +208,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		// remove content where converter returns null
 		for (PDOMFile file : notConverted) {
 			file.convertIncludersToUnresolved();
-			file.clear(null);
+			file.clear();
 		}
 	}
 

@@ -56,9 +56,8 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 	private final InternalFileContentProvider fFallBackFactory;
 	private final ASTFilePathResolver fPathResolver;
 	private final AbstractIndexerTask fRelatedIndexerTask;
-	private boolean fSupportFillGapFromContextToHeader;
 	private long fFileSizeLimit= 0;
-
+	private IIndexFile[] fContextToHeaderGap;
 	private final Map<IIndexFileLocation, IFileNomination> fPragmaOnce= new HashMap<IIndexFileLocation, IFileNomination>();
 
 	public IndexBasedFileContentProvider(IIndex index,
@@ -75,8 +74,8 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		fLinkage= linkage;
 	}
 
-	public void setSupportFillGapFromContextToHeader(boolean val) {
-		fSupportFillGapFromContextToHeader= val;
+	public void setContextToHeaderGap(IIndexFile[] ctxToHeader) {
+		fContextToHeaderGap= ctxToHeader;
 	}
 	
 	public void setFileSizeLimit(long limit) {
@@ -254,29 +253,16 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 	@Override
 	public InternalFileContent getContentForContextToHeaderGap(String path,
 			IMacroDictionary macroDictionary) {
-		if (!fSupportFillGapFromContextToHeader) {
+		if (fContextToHeaderGap == null) {
 			return null;
 		}
 		
-		IIndexFileLocation ifl= fPathResolver.resolveASTPath(path);
-		if (ifl == null) {
-			return null;
-		}
-
 		try {
-			// TODO(197989) This is wrong, the dictionary at this point does not relate to the target
-			// file. We'll have to provide the target file from the outside (i.e. from the indexer
-			// task.
-			IIndexFile targetFile = selectIndexFile(macroDictionary, ifl);
-			if (targetFile == null) {
+			IIndexFile contextFile= fContextToHeaderGap[0];
+			IIndexFile targetFile = fContextToHeaderGap[1];
+			if (contextFile == null || targetFile == null ||  contextFile == targetFile) 
 				return null;
-			}
 
-			IIndexFile contextFile= findContext(targetFile);
-			if (contextFile == targetFile || contextFile == null) {
-				return null;
-			}
-			
 			Map<IIndexFileLocation, IFileNomination> newPragmaOnce= new HashMap<IIndexFileLocation, IFileNomination>();
 			List<IIndexFile> filesIncluded= new ArrayList<IIndexFile>();
 			ArrayList<IIndexMacro> macros= new ArrayList<IIndexMacro>();
@@ -308,22 +294,6 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		}
 		return result;
 	}
-
-	private IIndexFile findContext(IIndexFile file) throws CoreException {
-		final HashSet<IIndexFile> ifiles= new HashSet<IIndexFile>();
-		ifiles.add(file);
-		IIndexInclude include= file.getParsedInContext();
-		while (include != null) {
-			final IIndexFile context= include.getIncludedBy();
-			if (!ifiles.add(context)) {
-				return file;
-			}
-			file= context;
-			include= context.getParsedInContext();
-		}
-		return file;
-	}
-
 
 	public IIndexFile[] findIndexFiles(InternalFileContent fc) throws CoreException {
 		IIndexFileLocation ifl = fPathResolver.resolveASTPath(fc.getFileLocation());

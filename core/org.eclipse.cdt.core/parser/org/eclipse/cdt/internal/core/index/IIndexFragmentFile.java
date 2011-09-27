@@ -55,4 +55,10 @@ public interface IIndexFragmentFile extends IIndexFile {
 	 * Returns the id of the linkage this file belongs to.
 	 */
 	int getLinkageID() throws CoreException;
+
+	/**
+	 * Changes the inclusions pointing to 'source' to point to this file, instead. 
+	 * The file 'source' must belong to the same fragment as this file.
+	 */
+	void transferIncluders(IIndexFragmentFile source) throws CoreException;
 }

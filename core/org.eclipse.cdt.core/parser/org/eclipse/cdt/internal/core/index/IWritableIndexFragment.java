@@ -13,8 +13,6 @@
 
 package org.eclipse.cdt.internal.core.index;
 
-import java.util.Collection;
-
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -40,7 +38,7 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	 * @param a collection that receives IndexFileLocation objects for files that
 	 *     had the cleared file as a context.
 	 */
-	void clearFile(IIndexFragmentFile file, Collection<IIndexFileLocation> contextsRemoved) throws CoreException;
+	void clearFile(IIndexFragmentFile file) throws CoreException;
 
 	/**
 	 * Creates a file object for the given location and linkage or returns an existing one.

@@ -876,7 +876,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				long rec= file.getLastUsingDirectiveRec();
 				PDOMCPPUsingDirective ud= new PDOMCPPUsingDirective(this, rec, containerNS,
 						pdomName.getBinding(), pdomName.getFileLocation().getNodeOffset());
-				file.setFirstUsingDirectiveRec(ud.getRecord());
+				file.setLastUsingDirective(ud.getRecord());
 			}
 		} else if (parentNode instanceof ICPPASTElaboratedTypeSpecifier) {
 			ICPPASTElaboratedTypeSpecifier elaboratedSpecifier = (ICPPASTElaboratedTypeSpecifier)parentNode;

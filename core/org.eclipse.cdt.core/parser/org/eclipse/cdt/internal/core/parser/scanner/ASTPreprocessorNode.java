@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTIncl
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFileNomination;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -265,8 +266,10 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	private final boolean fFoundByHeuristics;
 	private final IFileNomination fNominationDelegate;
 	private boolean fPragmaOnce;
+	private boolean fCreatesAST;
 	private ISignificantMacros fSignificantMacros;
 	private ISignificantMacros[] fLoadedVersions = NO_VERSIONS;
+	private long fContentsHash;
 
 	public ASTInclusionStatement(IASTTranslationUnit parent, 
 			int startNumber, int nameStartNumber, int nameEndNumber, int endNumber,
@@ -349,6 +352,30 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 
 	public ISignificantMacros[] getLoadedVersions() {
 		return fLoadedVersions;
+	}
+	
+	public long getContentsHash() {
+		if (fNominationDelegate != null) {
+			return 0;
+		} 	
+		return fContentsHash;
+	}
+	
+	public void setContentsHash(long hash) {
+		assert fNominationDelegate == null;
+		fCreatesAST= true;
+		fContentsHash= hash;
+	}
+
+	public boolean createsAST() {
+		return fCreatesAST;
+	}
+	
+	public IIndexFile getImportedIndexFile() {
+		if (fNominationDelegate instanceof IIndexFile)
+			return (IIndexFile) fNominationDelegate;
+		
+		return null;
 	}
 }
 

@@ -1407,7 +1407,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			final char[] nameChars= new char[len];
 			name.getChars(0, len, nameChars, 0);
 			handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, nameChars, poundOffset, condEndOffset);
-			// Inactive, found in index, skipped, or unresolved.
 			fLocationMap.encounterPoundInclude(poundOffset, nameOffsets[0], nameOffsets[1],
 					condEndOffset, headerName, null, userInclude, active, false, null);
 			return;
@@ -1448,6 +1447,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				fCurrentContext= fctx;
 				fLocationMap.parsingFile(fFileContentProvider, fi);
 				stmt= ctx.getInclusionStatement();
+				stmt.setContentsHash(source.getContentsHash());
 				if (!fCurrentContext.isPragmaOnce()) {
 					// Track the loaded version count, even in a non-pragma-once context.
 					loadedVerisons= fFileContentProvider.getLoadedVersions(path);
@@ -1462,7 +1462,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			break;
 		}
 		if (stmt == null) {
-			// Inactive, found in index, skipped, or unresolved.
+			// Found in index or skipped.
 			stmt= fLocationMap.encounterPoundInclude(poundOffset, nameOffsets[0], nameOffsets[1],
 					condEndOffset, headerName, path, userInclude, active, isHeuristic, nominationDelegate);
 		}

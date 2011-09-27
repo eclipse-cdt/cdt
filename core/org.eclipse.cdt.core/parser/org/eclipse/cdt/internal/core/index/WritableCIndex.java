@@ -12,8 +12,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.index;
 
-import java.util.Collection;
-
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -101,12 +99,12 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 				isWritableFragment(((IIndexFragmentFile)file).getIndexFragment());
 	}
 	
-	public void clearFile(IIndexFragmentFile file, Collection<IIndexFileLocation> clearedContexts) throws CoreException {
+	public void clearFile(IIndexFragmentFile file) throws CoreException {
 		IIndexFragment indexFragment = file.getIndexFragment();
 		if (!isWritableFragment(indexFragment)) {
 			assert false : "Attempt to clear file of read-only fragment"; //$NON-NLS-1$
 		} else {
-			((IWritableIndexFragment) indexFragment).clearFile(file, clearedContexts);
+			((IWritableIndexFragment) indexFragment).clearFile(file);
 		}
 	}
 
@@ -126,25 +124,25 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 			fThread= null;
 	}
 
-	public void acquireWriteLock(int giveupReadlockCount) throws InterruptedException {
+	public void acquireWriteLock() throws InterruptedException {
 		checkThread();
 		assert !fIsWriteLocked: "Multiple write locks is not allowed"; //$NON-NLS-1$
-		assert giveupReadlockCount == getReadLockCount(): "Unexpected read lock is not allowed"; //$NON-NLS-1$
 		
-		fWritableFragment.acquireWriteLock(giveupReadlockCount);
+		fWritableFragment.acquireWriteLock(getReadLockCount());
 		fIsWriteLocked= true;
 	}
 
-	public void releaseWriteLock(int establishReadlockCount) {
-		releaseWriteLock(establishReadlockCount, true);
+	public void releaseWriteLock() {
+		releaseWriteLock(true);
 	}
 
-	public void releaseWriteLock(int establishReadlockCount, boolean flush) {
+	public void releaseWriteLock(boolean flush) {
 		checkThread();
 		assert fIsWriteLocked: "No write lock to be released"; //$NON-NLS-1$
-		assert establishReadlockCount == getReadLockCount(): "Unexpected read lock is not allowed"; //$NON-NLS-1$
+		
 
 		// Bug 297641: Result cache of read only providers needs to be cleared.
+		int establishReadlockCount = getReadLockCount();
 		if (establishReadlockCount == 0) {
 			clearResultCache();
 		}
@@ -176,10 +174,15 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		fWritableFragment.flush();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.index.IWritableIndex#getDatabaseSizeBytes()
-	 */
 	public long getDatabaseSizeBytes() {
 		return fWritableFragment.getDatabaseSizeBytes();
+	}
+
+	public void transferIncluders(IIndexFragmentFile source, IIndexFragmentFile target) throws CoreException {
+		if (source == null || target == null || !isWritableFile(source) || !isWritableFile(target))
+			throw new IllegalArgumentException();
+		if (source.equals(target))
+			return;
+		target.transferIncluders(source);
 	}
 }

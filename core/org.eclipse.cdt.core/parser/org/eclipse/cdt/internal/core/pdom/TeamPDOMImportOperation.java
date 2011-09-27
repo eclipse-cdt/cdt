@@ -264,7 +264,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 			for (IIndexFragmentFile ifile : filesToDelete) {
 				if (ifile != null) {
 					checkMonitor(monitor);
-					pdom.clearFile(ifile, null);
+					pdom.clearFile(ifile);
 				}
 			}
 			for (FileAndChecksum fc : updateTimestamps) {

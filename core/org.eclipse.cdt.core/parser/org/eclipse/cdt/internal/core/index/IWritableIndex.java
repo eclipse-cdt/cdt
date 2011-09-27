@@ -12,8 +12,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.index;
 
-import java.util.Collection;
-
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
@@ -73,7 +71,7 @@ public interface IWritableIndex extends IIndex {
 	 * @param a collection that receives IndexFileLocation objects for files that
 	 *     had the cleared file as a context. May be <code>null</code>.
 	 */
-	void clearFile(IIndexFragmentFile file, Collection<IIndexFileLocation> clearedContexts) throws CoreException;
+	void clearFile(IIndexFragmentFile file) throws CoreException;
 
 	/**
 	 * Creates a file object for the given location or returns an existing one.
@@ -124,20 +122,20 @@ public interface IWritableIndex extends IIndex {
 	/**
 	 * Acquires a write lock, while giving up a certain amount of read locks.
 	 */
-	void acquireWriteLock(int giveupReadLockCount) throws InterruptedException;
+	void acquireWriteLock() throws InterruptedException;
 
 	/**
 	 * Releases a write lock, reestablishing a certain amount of read locks.
 	 * Fully equivalent to <code>releaseWriteLock(int, true)</code>.
 	 */
-	void releaseWriteLock(int establishReadLockCount);
+	void releaseWriteLock();
 
 	/**
 	 * Releases a write lock, reestablishing a certain amount of read locks.
 	 * @param establishReadLockCount amount of read-locks to establish.
 	 * @param flushDatabase when true the changes are flushed to disk.
 	 */
-	void releaseWriteLock(int establishReadLockCount, boolean flushDatabase);
+	void releaseWriteLock(boolean flushDatabase);
 	
 	/**
 	 * Resets the counters for cache-hits
@@ -174,4 +172,10 @@ public interface IWritableIndex extends IIndex {
 	 * Clears the result cache, caller needs to hold a write-lock.
 	 */
 	void clearResultCache();
+
+	/**
+	 * Changes the inclusions pointing to 'source' to point to 'target', instead. 
+	 * Both files must belong to the writable fragment.
+	 */
+	void transferIncluders(IIndexFragmentFile source, IIndexFragmentFile target) throws CoreException;
 }

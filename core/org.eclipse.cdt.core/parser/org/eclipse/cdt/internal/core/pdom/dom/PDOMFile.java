@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -31,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
-import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
@@ -168,79 +166,38 @@ public class PDOMFile implements IIndexFragmentFile {
 	 * @throws CoreException
 	 */
 	public void replaceContentsFrom(PDOMFile sourceFile) throws CoreException {
-		ICPPUsingDirective[] directives= getUsingDirectives();
-		for (ICPPUsingDirective ud : directives) {
-			if (ud instanceof IPDOMNode) {
-				((IPDOMNode) ud).delete(null);
-			}
-		}
-		setFirstUsingDirectiveRec(sourceFile.getLastUsingDirectiveRec());
+		// Delete current content
+		clear();
 
-		// Replace the includes
-		PDOMInclude include = getFirstInclude();
-		while (include != null) {
-			PDOMInclude nextInclude = include.getNextInIncludes();
-			IIndexFile includedBy = include.getIncludedBy();
-			if (this.equals(includedBy)) {
-				include.delete();
-			}
-			include = nextInclude;
-		}
-		include = sourceFile.getFirstInclude();
+		// Link in the using directives
+		setLastUsingDirective(sourceFile.getLastUsingDirectiveRec());
+
+		// Link in the includes, replace the owner.
+		PDOMInclude include = sourceFile.getFirstInclude();
 		setFirstInclude(include);
-		while (include != null) {
-			IIndexFile includedBy = include.getIncludedBy();
-			if (sourceFile.equals(includedBy)) {
-				include.setIncludedBy(this);
-				if (sourceFile.equals(include.getIncludes())) {
-					include.setIncludes(this);
-				}
-			}
-			include = include.getNextInIncludes();
+		for (; include != null; include= include.getNextInIncludes()) {
+			include.setIncludedBy(this);
 		}
 
-		// Replace all the macros in this file.
-		PDOMLinkage linkage= getLinkage();
-		PDOMMacro macro = getFirstMacro();
-		while (macro != null) {
-			PDOMMacro nextMacro = macro.getNextMacro();
-			macro.delete(linkage);
-			macro = nextMacro;
-		}
-		macro = sourceFile.getFirstMacro();
+		// In the unexpected case that there is an included by relation, append it.
+		transferIncluders(sourceFile);
+
+		// Link in the macros.
+		PDOMMacro macro = sourceFile.getFirstMacro();
 		setFirstMacro(macro);
 		for (; macro != null; macro = macro.getNextMacro()) {
 			macro.setFile(this);
 		}
 
-		// Replace all macro references
-		ArrayList<PDOMMacroReferenceName> mrefs= new ArrayList<PDOMMacroReferenceName>();
-		PDOMMacroReferenceName mref = getFirstMacroReference();
-		while (mref != null) {
-			mrefs.add(mref);
-			mref= mref.getNextInFile();
-		}
-		for (PDOMMacroReferenceName m : mrefs) {
-			m.delete();
-		}
-		mref = sourceFile.getFirstMacroReference();
+		// Link in macro references
+		PDOMMacroReferenceName mref = sourceFile.getFirstMacroReference();
 		setFirstMacroReference(mref);
 		for (; mref != null; mref = mref.getNextInFile()) {
 			mref.setFile(this);
 		}
 
 		// Replace all the names in this file
-		ArrayList<PDOMName> names= new ArrayList<PDOMName>();
-		PDOMName name = getFirstName();
-		for (; name != null; name= name.getNextInFile()) {
-			names.add(name);
-			linkage.onDeleteName(name);
-		}
-		for (Iterator<PDOMName> iterator = names.iterator(); iterator.hasNext();) {
-			name = iterator.next();
-			name.delete();
-		}
-		name = sourceFile.getFirstName();
+		PDOMName name = sourceFile.getFirstName();
 		setFirstName(name);
 		for (; name != null; name= name.getNextInFile()) {
 			name.setFile(this);
@@ -250,11 +207,33 @@ public class PDOMFile implements IIndexFragmentFile {
 		setEncodingHashcode(sourceFile.getEncodingHashcode());
 		setContentsHash(sourceFile.getContentsHash());
 
+		// Transfer the flags. 
 		Database db= fLinkage.getDB();
-		// Transfer the flags.
 		db.putByte(record + FLAGS, db.getByte(sourceFile.record + FLAGS));
-
+		
+		// Delete the source file
 		sourceFile.delete();
+	}
+
+	public void transferIncluders(IIndexFragmentFile sourceFile) throws CoreException {
+		PDOMFile source= (PDOMFile) sourceFile;
+		PDOMInclude include = source.getFirstIncludedBy();
+		if (include != null) {
+			for (PDOMInclude i=include; i != null; i= i.getNextInIncludedBy()) {
+				i.setIncludes(this);
+			}
+			PDOMInclude last= getFirstIncludedBy();
+			if (last == null) {
+				setFirstInclude(include);
+			} else {
+				for (PDOMInclude i=include; i != null; i= i.getNextInIncludedBy()) {
+					last= i;
+				}
+				last.setNextInIncludedBy(include);
+				include.setPrevInIncludedBy(last);
+			}
+		}
+		source.setFirstIncludedBy(null);
 	}
 
 	/**
@@ -494,22 +473,22 @@ public class PDOMFile implements IIndexFragmentFile {
 		return new PDOMMacroReferenceName(fLinkage, name, this, cont);
 	}
 
-	public void clear(Collection<IIndexFileLocation> contextsRemoved) throws CoreException {
+	public void clear() throws CoreException {
 		ICPPUsingDirective[] directives= getUsingDirectives();
 		for (ICPPUsingDirective ud : directives) {
 			if (ud instanceof IPDOMNode) {
 				((IPDOMNode) ud).delete(null);
 			}
 		}
-		setFirstUsingDirectiveRec(0);
+		setLastUsingDirective(0);
 
 		// Remove the includes
 		PDOMInclude include = getFirstInclude();
 		while (include != null) {
 			PDOMInclude nextInclude = include.getNextInIncludes();
-			if (contextsRemoved != null && include.getPrevInIncludedByRecord() == 0) {
-				contextsRemoved.add(include.getIncludesLocation());
-			}
+//			if (contextsRemoved != null && include.getPrevInIncludedByRecord() == 0) {
+//				contextsRemoved.add(include.getIncludesLocation());
+//			}
 			include.delete();
 			include = nextInclude;
 		}
@@ -886,7 +865,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		return fLinkage.getDB().getRecPtr(record + LAST_USING_DIRECTIVE);
 	}
 
-	public void setFirstUsingDirectiveRec(long rec) throws CoreException {
+	public void setLastUsingDirective(long rec) throws CoreException {
 		fLinkage.getDB().putRecPtr(record + LAST_USING_DIRECTIVE, rec);
 	}
 

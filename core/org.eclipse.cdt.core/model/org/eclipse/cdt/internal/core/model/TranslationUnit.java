@@ -769,7 +769,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public IASTTranslationUnit getAST(IIndex index, int style, IProgressMonitor monitor) throws CoreException {
-		ITranslationUnit configureWith = getSourceContextTU(index, style);
+		IIndexFile[] contextToHeader = getContextToHeader(index, style);
+		ITranslationUnit configureWith = getConfigureWith(contextToHeader);
+		if (configureWith == this)
+			contextToHeader= null;
 		
 		IScannerInfo scanInfo= configureWith.getScannerInfo((style & AST_SKIP_IF_NO_BUILD_INFO) == 0);
 		if (scanInfo == null) {
@@ -786,7 +789,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			return null;
 		}
 
-		IncludeFileContentProvider crf= getIncludeFileContentProvider(style, index, language.getLinkageID());
+		IncludeFileContentProvider crf= getIncludeFileContentProvider(style, index, language.getLinkageID(), contextToHeader);
 		int options= 0;
 		if ((style & AST_SKIP_FUNCTION_BODIES) != 0) {
 			options |= ILanguage.OPTION_SKIP_FUNCTION_BODIES;
@@ -812,7 +815,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return ast;
 	}
 
-	private IncludeFileContentProvider getIncludeFileContentProvider(int style, IIndex index, int linkageID) {
+	private IncludeFileContentProvider getIncludeFileContentProvider(int style, IIndex index, int linkageID, IIndexFile[] contextToHeader) {
 		final ICProject cprj= getCProject();
 		final ProjectIndexerInputAdapter pathResolver = new ProjectIndexerInputAdapter(cprj);
 		IncludeFileContentProvider fileContentsProvider;
@@ -825,9 +828,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (index != null && (style & AST_SKIP_INDEXED_HEADERS) != 0) {
 			IndexBasedFileContentProvider ibcf= new IndexBasedFileContentProvider(index, pathResolver, linkageID,
 					fileContentsProvider);
-			if ((style & AST_CONFIGURE_USING_SOURCE_CONTEXT) != 0) {
-				ibcf.setSupportFillGapFromContextToHeader(true);
-			}
+			ibcf.setContextToHeaderGap(contextToHeader);
 			fileContentsProvider= ibcf;
 		}
 		
@@ -840,31 +841,36 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	private static final int[] CTX_LINKAGES= { ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID };
-	public ITranslationUnit getSourceContextTU(IIndex index, int style) {
+	public IIndexFile[] getContextToHeader(IIndex index, int style) {
 		if (index != null && (style & AST_CONFIGURE_USING_SOURCE_CONTEXT) != 0) {
 			try {
 				fLanguageOfContext= null;
-				for (int linkageID : CTX_LINKAGES) {
-					IIndexFile context= null;
-					final IIndexFileLocation ifl = IndexLocationFactory.getIFL(this);
-					if (ifl != null) {
+				final IIndexFileLocation ifl = IndexLocationFactory.getIFL(this);
+				if (ifl != null) {
+					IIndexFile best= null;
+					int mostContent= -1;
+					for (int linkageID : CTX_LINKAGES) {
 						for (IIndexFile indexFile : index.getFiles(linkageID, ifl)) {
-							if (indexFile != null) {
-								// Bug 199412, when a source-file includes itself the context may recurse.
-								HashSet<IIndexFile> visited= new HashSet<IIndexFile>();
-								visited.add(indexFile);
-								indexFile = getParsedInContext(indexFile);
-								while (indexFile != null && visited.add(indexFile)) {
-									context= indexFile;
-									indexFile= getParsedInContext(indexFile);
-								}
+							int count= indexFile.getMacros().length;
+							if (count > mostContent) {
+								mostContent= count;
+								best= indexFile;
 							}
-							if (context != null) {
-								ITranslationUnit tu= CoreModelUtil.findTranslationUnitForLocation(context.getLocation(), getCProject());
-								if (tu != null && tu.isSourceUnit()) {
-									return tu;
-								}
-							}
+						}
+					}
+					
+					if (best != null) {
+						IIndexFile context= best;
+						HashSet<IIndexFile> visited= new HashSet<IIndexFile>();
+						// Bug 199412, may recurse.
+						while (visited.add(context)) {
+							IIndexFile next= getParsedInContext(context);
+							if (next == null)
+								break;
+							context= next;
+						}
+						if (context != best) {
+							return new IIndexFile[] {context, best};
 						}
 					}
 				}
@@ -872,7 +878,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				CCorePlugin.log(e);
 			}
 		}
-		return this;
+		return null;
 	}
 
 	private IIndexFile getParsedInContext(IIndexFile indexFile)
@@ -883,9 +889,21 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 		return null;
 	}
+	
+	private ITranslationUnit getConfigureWith(IIndexFile[] contextToHeader) throws CoreException {
+		if (contextToHeader != null) { 
+			ITranslationUnit configureWith = CoreModelUtil.findTranslationUnitForLocation(contextToHeader[0].getLocation(), getCProject());
+			if (configureWith != null) 
+				return configureWith;
+		}
+		return this;
+	}
 
 	public IASTCompletionNode getCompletionNode(IIndex index, int style, int offset) throws CoreException {
-		ITranslationUnit configureWith= getSourceContextTU(index, style);
+		IIndexFile[] contextToHeader = getContextToHeader(index, style);
+		ITranslationUnit configureWith = getConfigureWith(contextToHeader);
+		if (configureWith == this)
+			contextToHeader= null;
 		
 		IScannerInfo scanInfo = configureWith.getScannerInfo((style & ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO) == 0);
 		if (scanInfo == null) {
@@ -897,7 +915,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		ILanguage language= configureWith.getLanguage();
 		fLanguageOfContext= language;
 		if (language != null) {
-			IncludeFileContentProvider crf= getIncludeFileContentProvider(style, index, language.getLinkageID());
+			IncludeFileContentProvider crf= getIncludeFileContentProvider(style, index, language.getLinkageID(), contextToHeader);
 			IASTCompletionNode result = language.getCompletionNode(fileContent, scanInfo, crf, index,
 					ParserUtil.getParserLogService(), offset);
 			if (result != null) {

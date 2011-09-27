@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 
 
@@ -73,4 +74,25 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public ISignificantMacros[] getLoadedVersions();
+
+	/**
+	 * Returns a hash-code for the contents of the file included, or <code>0</code>
+	 * if the content has not been parsed.
+	 * @since 5.4
+	 */
+	public long getContentsHash();
+
+	/**
+	 * Returns true, if an attempt will be or has been made to create AST for the target
+	 * of this inclusion.
+	 * @since 5.4
+	 */
+	public boolean createsAST();
+	
+	/**
+	 * Returns the file from the index that this include statement has pulled in, or <code>null</code>
+	 * if the include creates AST or is unresolved or skipped.
+	 * @since 5.4
+	 */
+	public IIndexFile getImportedIndexFile(); 
 }

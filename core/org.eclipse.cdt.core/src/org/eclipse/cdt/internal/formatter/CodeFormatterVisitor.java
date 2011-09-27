@@ -918,8 +918,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 */
 	@Override
 	public int visit(IASTStatement node) {
-		if (startsWithMacroExpansion(node))
+		if (scribe.scanner.getCurrentPosition() <= node.getFileLocation().getNodeOffset() &&
+				startsWithMacroExpansion(node)) {
 			scribe.printCommentPreservingNewLines();
+		}
 		if (!startNode(node)) { return PROCESS_SKIP; }
 		int indentLevel= scribe.indentationLevel;
 		try {

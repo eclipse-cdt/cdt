@@ -35,7 +35,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -119,6 +118,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		};
 
 	private static final Comparator<Object> comp = CDTListComparator.getInstance();
+	private static String selectedLanguageId;
 
 	private final static Image IMG_FOLDER = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_FOLDER);
 	private final static Image IMG_INCLUDES_FOLDER = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER);
@@ -291,6 +291,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 					ICLanguageSetting langSetting = (ICLanguageSetting) items[0].getData();
 					if (langSetting != null) {
 						lang = langSetting;
+						selectedLanguageId = lang.getLanguageId();
 						update();
 					}
 				}
@@ -372,7 +373,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		if (rcDes == null || !canBeVisible()) return;
 		updateExport();
 		langTree.removeAll();
-		TreeItem firstItem = null;
+		TreeItem selectedItem = null;
 		ls = getLangSetting(rcDes);
 		if (ls != null) {
 			Arrays.sort(ls, CDTListComparator.getInstance());
@@ -392,15 +393,15 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 						langId = langSetting.getName();
 					t.setText(0, langId);
 					t.setData(langSetting);
-					if (firstItem == null) {
-						firstItem = t;
+					if (selectedItem == null || langSetting.getLanguageId().equals(selectedLanguageId)) {
+						selectedItem = t;
 						lang = langSetting;
 					}
 				}
 			}
 
-			if (firstItem != null && table != null) {
-				langTree.setSelection(firstItem);
+			if (selectedItem != null && table != null) {
+				langTree.setSelection(selectedItem);
 			}
 		}
 		update();

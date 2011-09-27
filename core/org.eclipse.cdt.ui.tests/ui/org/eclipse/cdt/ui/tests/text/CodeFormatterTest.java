@@ -2472,8 +2472,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//#define MY_MACRO switch (0) case 0: default: if (bool x = false) ; else GetStream()
 	//
 	//void test() {
-	//MY_MACRO << "Loooooooooooooooooooong string literal" << " another literal.";
-	//MY_MACRO << "Looooooooooooooooooooong string literal" << " another literal.";
+	//MY_MACRO
+	//<< "Loooooooooooooooooooong string literal" << " another literal.";
+	//MY_MACRO
+	//<< "Looooooooooooooooooooong string literal" << " another literal.";
 	//}
 
 	//struct Stream {

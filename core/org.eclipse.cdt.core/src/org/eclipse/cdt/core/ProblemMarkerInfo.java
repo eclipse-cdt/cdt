@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -52,7 +53,7 @@ public  class ProblemMarkerInfo {
 		 * @param variableName - the name of the variable involved in the error if any.
 		 */
 		public ProblemMarkerInfo(IResource file, int lineNumber, String description, int severity, String variableName) {
-			this.file = file;
+			this.file = (file != null) ? file : ResourcesPlugin.getWorkspace().getRoot();
 			this.lineNumber = lineNumber;
 			this.description = description;
 			this.severity = severity;

@@ -118,7 +118,7 @@ public class ErrorParserManager extends OutputStream {
 	 * @param parsersIDs - array of error parsers' IDs.
 	 */
 	public ErrorParserManager(IProject project, IMarkerGenerator markerGenerator, String[] parsersIDs) {
-		this(project, project.getLocationURI(), markerGenerator, parsersIDs);
+		this(project, (URI)null, markerGenerator, parsersIDs);
 	}
 
 	/**
@@ -154,8 +154,10 @@ public class ErrorParserManager extends OutputStream {
 
 		if (baseDirectoryURI != null)
 			fBaseDirectoryURI = baseDirectoryURI;
-		else
+		else if (project != null)
 			fBaseDirectoryURI = project.getLocationURI();
+		else
+			fBaseDirectoryURI = org.eclipse.core.filesystem.URIUtil.toURI(System.getProperty("user.dir")); // CWD  //$NON-NLS-1$
 	}
 
 	private void enableErrorParsers(String[] parsersIDs) {
@@ -420,12 +422,15 @@ outer:
 		// Try to find best match considering known partial path
 		if (file==null) {
 			path = path.setDevice(null);
-			IProject[] prjs = new IProject[] { fProject };
-			IFile[] files = ResourceLookup.findFilesByName(path, prjs, false);
-			if (files.length == 0)
-				files = ResourceLookup.findFilesByName(path, prjs, /* ignoreCase */ true);
-			if (files.length == 0) {
-				prjs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+			IFile[] files = null;
+			if (fProject != null) {
+				IProject[] prjs = new IProject[] { fProject };
+				files = ResourceLookup.findFilesByName(path, prjs, false);
+				if (files.length == 0)
+					files = ResourceLookup.findFilesByName(path, prjs, /* ignoreCase */ true);
+			}
+			if (files == null || files.length == 0) {
+				IProject[] prjs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 				files = ResourceLookup.findFilesByName(path, prjs, false);
 				if (files.length == 0)
 					files = ResourceLookup.findFilesByName(path, prjs, /* ignoreCase */ true);

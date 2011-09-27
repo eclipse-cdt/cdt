@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 
 /**
@@ -17,9 +18,9 @@ import org.eclipse.core.resources.IResource;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IMarkerGenerator {
-	int SEVERITY_INFO = 0;
-	int SEVERITY_WARNING = 1;
-	int SEVERITY_ERROR_RESOURCE = 2;
+	int SEVERITY_INFO = IMarker.SEVERITY_INFO; // 0
+	int SEVERITY_WARNING = IMarker.SEVERITY_WARNING; // 1
+	int SEVERITY_ERROR_RESOURCE = IMarker.SEVERITY_ERROR; // 2
 	int SEVERITY_ERROR_BUILD = 3;
 
 	/**

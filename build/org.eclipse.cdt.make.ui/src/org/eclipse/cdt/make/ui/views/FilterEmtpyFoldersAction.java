@@ -75,17 +75,12 @@ public class FilterEmtpyFoldersAction extends Action {
 						if(haveTargets[0]) {
 							return false;	//We found what we were looking for
 						}
+
 						if(proxy.getType() != IResource.FOLDER) {
 							return true;	//We only look at folders for content
 						}
-						IContainer folder = (IContainer) proxy.requestResource();
-						if (CCorePlugin.showSourceRootsAtTopOfProject() && !(folder instanceof IProject)) {
-							boolean isSourceEntry = MakeContentProvider.isSourceEntry(folder);
-							if (isSourceEntry)
-								return false;
-						}
 
-						
+						IContainer folder = (IContainer) proxy.requestResource();
 						IMakeTarget [] targets = MakeCorePlugin.getDefault().getTargetManager().getTargets(folder);
 						if(targets != null && targets.length > 0) {
 							haveTargets[0] = true;
